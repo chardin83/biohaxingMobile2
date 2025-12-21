@@ -1,0 +1,366 @@
+{
+  "energy": {
+    "title": "Energi",
+    "description": "Öka daglig energi",
+    "levels": {
+      "generalHealth": {
+        "steps": {
+          "step1": {
+            "title": "Allmän hälsa",
+            "instructions": "Ta en multivitamin varje dag för att stödja allmän hälsa och energinivåer.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'allmän hälsa'.",
+            "information": {
+              "text": "Multivitaminer stödjer energinivåer genom att fylla näringsluckor."
+            }
+          }
+        }
+      },
+      "vitaminDComprehensive": {
+        "title": "Vitamin D omfattande",
+        "steps": {
+          "step1": {
+            "title": "Gör ett vitamin D-test",
+            "instructions": "Ta ett blodprov för att mäta dina nuvarande nivåer av vitamin D.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'Vitamin D omfattande'.",
+            "information": {
+              "text": "Testning hjälper dig att förstå din grundläggande vitamin D-status."
+            }
+          },
+          "step2": {
+            "title": "Tillskott med vitamin D3",
+            "instructions": "Ta vitamin D3 dagligen baserat på dina testresultat.",
+            "information": {
+              "text": "Vitamin D3 stödjer immunförsvaret och benhälsan."
+            }
+          },
+          "step3": {
+            "title": "Analysera vitamin D-nivåer",
+            "instructions": "Granska dina vitamin D-nivåer efter 3 månaders tillskott.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'Vitamin D omfattande'.",
+            "information": {
+              "text": "Lär dig vad olika vitamin D-nivåer innebär och hur du tolkar resultaten."
+            }
+          }
+        }
+      },
+      "mitochondrialSupport": {
+        "steps": {
+          "step1": {
+            "title": "Mitokondriestöd",
+            "instructions": "Ta CoQ10 dagligen för att stödja mitokondriell funktion och cellenergi.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'mitokondriestöd'.",
+            "information": {
+              "text": "CoQ10 omvandlar näring till energi i mitokondrierna."
+            }
+          }
+        }
+      },
+      "cellularEnergy": {
+        "steps": {
+          "step1": {
+            "title": "Cellenergi & metylering",
+            "instructions": "Ta NAD+ dagligen för att stödja cellenergi och metyleringsprocesser.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'cellenergi & metylering'.",
+            "information": {
+              "text": "NAD+ är viktigt för cellmetabolism och DNA-reparation."
+            }
+          }
+        }
+      },
+      "metabolicActivation": {
+        "steps": {
+          "step1": {
+            "title": "Metabol aktivering",
+            "instructions": "Ta alfa-liponsyra dagligen för att stödja glukosmetabolism och antioxidantfunktion.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'metabol aktivering'.",
+            "information": {
+              "text": "Alfa-liponsyra stödjer insulinkänslighet och minskar oxidativ stress."
+            }
+          }
+        }
+      },
+      "longevity": {
+        "steps": {
+          "step1": {
+            "title": "Lång livslängd",
+            "instructions": "Ta shilajit dagligen för att stödja livslängd och energiproduktion på cellnivå.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'lång livslängd'.",
+            "information": {
+              "text": "Shilajit innehåller fulvosyra som stödjer energi och anti-aging."
+            }
+          }
+        }
+      }
+    }
+  },
+  "sleepQuality": {
+    "title": "Sömn",
+    "description": "Förbättra sömnkvalitet",
+    "levels": {
+      "sleepBy2230": {
+        "steps": {
+          "step1": {
+            "title": "Sov före 22:30",
+            "instructions": "Försök att lägga dig före 22:30 varje kväll för att anpassa dig till kroppens naturliga dygnsrytm.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'sov före 22:30'."
+          }
+        }
+      },
+      "hormonalSupport": {
+        "steps": {
+          "step1": {
+            "title": "Hormonstöd",
+            "instructions": "Ta magnesium på kvällen för att främja avslappning och hormonbalans.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'hormonstöd'."
+          }
+        }
+      },
+      "neuroregulation": {
+        "steps": {
+          "step1": {
+            "title": "Neuroreglering",
+            "instructions": "Använd L-Theanin före sänggående för att minska ångest och stödja djupare sömn.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'neuroreglering'."
+          }
+        }
+      }
+    }
+  },
+  "focus": {
+    "title": "Fokus",
+    "description": "Förbättra fokus och koncentration",
+    "levels": {
+      "calmAlertness": {
+        "steps": {
+          "step1": {
+            "title": "Lugnt fokus",
+            "instructions": "Ta L-Theanin dagligen för att främja lugnt fokus och minska distraktion.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'lugnt fokus'."
+          }
+        }
+      },
+      "neurotransmitterSupport": {
+        "steps": {
+          "step1": {
+            "title": "Signalsubstansstöd",
+            "instructions": "Stöd dopaminproduktion med L-Tyrosin på morgonen före mentalt krävande uppgifter.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'signalsubstansstöd'."
+          }
+        }
+      },
+      "nootropicStimulation": {
+        "steps": {
+          "step1": {
+            "title": "Kognitiv stimulans",
+            "instructions": "Utför hjärnträning som dual n-back eller problemlösningsuppgifter.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'kognitiv stimulans'."
+          }
+        }
+      }
+    }
+  },
+  "immuneSupport": {
+    "title": "Immunförsvar",
+    "description": "Stärk immunförsvaret",
+    "levels": {
+      "vitaminC": {
+        "steps": {
+          "step1": {
+            "title": "Vitaminstöd",
+            "instructions": "Dagligt intag av C-vitamin för att stärka immunförsvaret.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'vitaminstöd'."
+          }
+        }
+      },
+      "naturalImmunity": {
+        "steps": {
+          "step1": {
+            "title": "Naturligt försvar",
+            "instructions": "Ta Echinacea på morgonen för att stärka immunförsvaret.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'naturligt försvar'."
+          }
+        }
+      },
+      "glutathioneDetox": {
+        "steps": {
+          "step1": {
+            "title": "Glutation & avgiftning",
+            "instructions": "Stöd avgiftning genom tillskott av NAC.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'glutation & avgiftning'."
+          }
+        }
+      }
+    }
+  },
+  "stressRelief": {
+    "title": "Stress",
+    "description": "Minska stressnivåer",
+    "levels": {
+      "ashwagandha": {
+        "steps": {
+          "step1": {
+            "title": "Adaptogener",
+            "instructions": "Ta Ashwagandha en till två gånger dagligen för att minska kortisol och förbättra återhämtning.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'adaptogener'."
+          }
+        }
+      },
+      "glycine": {
+        "steps": {
+          "step1": {
+            "title": "Lugnande ämnen",
+            "instructions": "Ta glycin före sänggående för att förbättra sömn och minska ångest.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'lugnande ämnen'."
+          }
+        }
+      },
+      "neurochemicalSupport": {
+        "steps": {
+          "step1": {
+            "title": "Neurokemiskt stöd",
+            "instructions": "Använd Semax för att reglera humör och stödja neurokemisk balans.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'neurokemiskt stöd'."
+          }
+        }
+      }
+    }
+  },
+  "musclePerformance": {
+    "title": "Prestation",
+    "description": "Förbättra muskelprestation",
+    "levels": {
+      "basicSupport": {
+        "steps": {
+          "step1": {
+            "title": "Grundläggande stöd",
+            "instructions": "Ta kreatin dagligen för att förbättra muskelstyrka och energi.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'grundläggande stöd'."
+          }
+        }
+      },
+      "enduranceRecovery": {
+        "steps": {
+          "step1": {
+            "title": "Uthållighet & återhämtning",
+            "instructions": "Tillsätt beta-alanin för att öka muskulär uthållighet.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'uthållighet & återhämtning'."
+          }
+        }
+      },
+      "hormonalBoosters": {
+        "steps": {
+          "step1": {
+            "title": "Hormonstimulans",
+            "instructions": "Använd shilajit för att stödja testosteron och fysisk prestation.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'hormonstimulans'."
+          }
+        }
+      },
+      "androgenicEnhancers": {
+        "steps": {
+          "step1": {
+            "title": "Androgenstöd",
+            "instructions": "Ta Fadogia för att stödja kroppens naturliga testosteronproduktion.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'androgenstöd'."
+          }
+        }
+      }
+    }
+  },
+  "digestiveHealth": {
+    "title": "Matsmältning",
+    "description": "Förbättra matsmältningen",
+    "levels": {
+      "gutFlora": {
+        "steps": {
+          "step1": {
+            "title": "Tarmflora & fiber",
+            "instructions": "Ta probiotika före måltider för att stödja tarmfloran.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'tarmflora & fiber'."
+          },
+          "step2": {
+            "title": "Nötter och fröer",
+            "instructions": "I en ny studie från Zoe har man hittat en ny bakteriestam som kan förbättra tarmhälsan, SGB15249. Personer som inkluderade en daglig portion nötter och fröer visade sig ha denna bakterie. Inkludera en daglig portion nötter och fröer för att öka fiberintaget och stödja mikrobiomet.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'nötter och fröer'"
+          }
+        }
+      },
+      "liverEnzymes": {
+        "steps": {
+          "step1": {
+            "title": "Lever & enzymer",
+            "instructions": "Ta Mjölktistel för att skydda och stödja leverns avgiftningsfunktion.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'lever & enzymer'."
+          }
+        }
+      },
+      "advancedGut": {
+        "steps": {
+          "step1": {
+            "title": "Avancerat tarmstöd",
+            "instructions": "Använd TUDCA dagligen för att stödja gallflöde och lever-tarmhälsa.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'avancerat tarmstöd'."
+          }
+        }
+      }
+    }
+  },
+  "cardioFitness": {
+    "title": "Kondition",
+    "description": "Förbättra kondition och uthållighet",
+    "levels": {
+      "hiit": {
+        "steps": {
+          "step1": {
+            "title": "HIIT 2 ggr/vecka",
+            "instructions": "Utför minst 2 HIIT-pass per vecka. Logga träning i appen eller via ansluten enhet.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'hiit 2 ggr/vecka'."
+          }
+        }
+      },
+      "runningVolume": {
+        "steps": {
+          "step1": {
+            "title": "Öka löpvolym",
+            "instructions": "Öka veckovis löpdistans gradvis. Använd GPS-data för att följa upp.",
+            "analyzePrompt": "Analysera bilden och avgör om den innehåller data för 'öka löpvolym'.",
+            "analyzePrompt2": "Analysera hur den ökade löpvolymen påverkat konditionen."
+          }
+        }
+      },
+      "vo2max": {
+        "steps": {
+          "step1": {
+            "title": "VO₂ max på 4 veckor",
+            "instructions": "Följ ett strukturerat konditionsprogram. Följ VO₂ max-data via Garmin eller liknande.",
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'vo₂ max på 4 veckor'."
+          }
+        }
+      }
+    }
+  },
+  "mind": {
+    "title": "Mind",
+    "description": "Utforska hjärt–hjärn-koherens och mentala tillstånd",
+    "levels": {
+      "coherence": {
+        "steps": {
+          "step1": {
+            "title": "Utforska Heart–Brain Coherence",
+            "instructions": "Genomför en HRV-session där du testar olika känslotillstånd i följd och jämför skillnaderna.",
+            "startPrompt": "Genomför sessionen enligt stegen nedan. Ta sedan en bild av din HRV-mätning och ladda upp.",
+            "analyzePrompt": "Analysera den uppladdade bilden: Hur skiljer sig puls, HRV och kurvans form mellan stegen?",
+            "information": {
+              "text": "Heart–Brain Coherence innebär att hjärtats rytm blir jämn och sinusformad, vilket skickar lugnande signaler till hjärnan. Detta kan uppnås genom medveten andning och positiva känslor."
+            },
+            "tasks": {
+              "task1": "HRV-mätning i baseline (sitt stilla, tänk inte på något särskilt).",
+              "task2": "HRV-mätning medan du tänker på något stressigt eller irriterande.",
+              "task3": "HRV-mätning under återhämtning med lugn andning.",
+              }
+          }
+        }
+      }
+    }
+  }
+}

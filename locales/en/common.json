@@ -1,0 +1,121 @@
+{
+  "back": "Back",
+  "monthNames": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+  "monthNamesShort": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+  "dayNames": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+  "dayNamesShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+  "today": "Today",
+  "general": {
+    "areYouSure": "Are you sure?",
+    "add": "Add",
+    "cancel": "Cancel",
+    "close": "Close",
+    "save": "Save"
+  },
+  "layout": {
+    "dashboard": "Dashboard",
+    "calendar": "Calendar",
+    "plan": "Plan",
+    "goals": "Goals"
+  },
+  "selectedSupplementList": { "choosenFor": "Supplements taken" },
+  "plan": {
+    "chosePlanToEdit": "Choose plan to edit",
+    "createPlan": "Create new plan",
+    "editPlan": "Edit plan",
+    "planName": "Name of the plan",
+    "addSupplement": "Add supplement",
+    "addSupplementFor": "Add supplement for",
+    "editSupplementFor": "Edit supplement for",
+    "prefferedTime": "Preferred time",
+    "defaultPlan": {
+      "morning": "Morning",
+      "lunch": "Lunch",
+      "dinner": "Dinner"
+    },
+    "supplements": [],
+    "supplementExists": "The supplement \"{{supplementName}}\" already exists in the selected plan."
+  },
+  "supplementForm": {
+    "dosage": "dosage",
+    "unit": "unit"
+  },
+  "dayEdit": {
+    "addSupplement": "Add supplement",
+    "addFromPlan": "Add from plan",
+    "choosePlan": "Choose plan",
+    "editSupplement": "Edit supplements for",
+    "chooseTime": "Choose time",
+    "logMeal": "Logged meal",
+    "pickImage": "Photo analyze meal",
+    "nutritionSummary": "Nutrition summary"
+  },
+  "supplementDropdown": {
+    "chooseSupplement": "Choose supplement",
+    "searchAndAdd": "Search or choose...",
+    "search": "Search...",
+    "day": "day"
+  },
+  "goals": {
+    "selectGoal": "Select what goals you want to work with",
+    "editGoal": "Edit goal",
+    "addGoal": "Add goal",
+    "confirmAddSupplements": "Do you want to add supplements for this goal?"
+  },
+  "selectGoal": {
+      "description": "Select a goal to start working on it:"
+  },
+  "goalDetails": {
+    "taskInfo": "Task",
+    "information": "Information",
+    "aiInsights": "AI Insights",
+    "skip": "Skip",
+    "start": "Start",
+    "analyze": "Analyze",
+    "finish": "Finish",
+    "analyzeHint": "You can analyze once the time period is over.",
+    "analysisTitle": "Analyze",
+    "selectFileBody": "Select file to analyze",
+    "loading": "Analyseras av AI",
+    "takePhoto": "Take photo",
+    "selectFileConfirm": "Select file",
+    "defaultTitle": "AI analysis",
+    "analysisMatch": "✅ The supplement matches the goal with {{confidence}}% certainty.",
+    "analysisNoMatch": "❌ No matching supplement identified (confidence {{confidence}}%).",
+    "noAnswer": "🤖 No answer available.",
+    "analysisError": "Something went wrong during the analysis. Please try again.",
+    "permissionTitle": "Permission required",
+    "permissionDenied": "Camera access is required to take a photo.",
+    "durationUnits": {
+      "days": "days",
+      "weeks": "weeks",
+      "months": "months",
+      "time": "time"
+    },
+    "completed": "Goal completed",
+    "timeLeft": {
+      "days": "{{count}} day left",
+      "days_plural": "{{count}} days left",
+      "weeks": "{{count}} week left",
+      "weeks_plural": "{{count}} weeks left",
+      "months": "{{count}} month left",
+      "months_plural": "{{count}} months left"
+    },
+    "skipConfirmBody": "If you skip now, you'll have to start over.",
+    "skipConfirmYes": "Yes, skip goal"
+  },
+  "chat": {
+      "welcomeMessage": "Hi! I'm your personal health coach – specialized in biohacking and supplements. Ask me about daily routines or optimizing your health. 💪🌿",
+      "introPrompt": "I just added a new health goal ({{goal}}). It includes these supplements: {{supplements}}. Do you have any tips or warnings?",
+      "askToAddSupplements": "Do you want me to add these supplements to your plan? Reply 'yes' or 'no'."
+    },
+  "onboarding": {
+    "whatSupplementDoYouTakeAlready": "What supplements do you take already?",
+    "continue": "Continue"
+  },
+  "imagePicker": {
+    "title": "Select Image",
+    "takePhoto": "Take photo",
+    "chooseFromLibrary": "Select from library"
+  }
+}

@@ -1,0 +1,128 @@
+{
+    "back": "Tillbaka",
+    "monthNames": [
+      "Januari", "Februari", "Mars", "April", "Maj", "Juni",
+      "Juli", "Augusti", "September", "Oktober", "November", "December"
+    ],
+    "monthNamesShort": ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"],
+    "dayNames": ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
+    "dayNamesShort": ["Sön", "Mån", "Tis", "Ons", "Tor", "Fre", "Lör"],
+    "today": "Idag",
+    "general": {
+      "areYouSure": "Är du säker?",
+      "add": "Lägg till",
+      "cancel": "Avbryt",
+      "close": "Stäng",
+      "save": "Spara"
+    },
+    "layout": {
+      "dashboard": "Dashboard",
+      "calendar": "Kalender",
+      "plan": "Plan",
+      "goals": "Mål"
+    },
+    "selectedSupplementList": { "choosenFor":"Tagna kosttillskott"},
+ 
+    "plan": {
+      "chosePlanToEdit": "Välj plan att redigera",
+      "createPlan": "Skapa ny plan",
+      "editPlan": "Redigera plan",
+      "planName": "Namn på planen",
+      "addSupplement": "Lägg till tillskott",
+      "addSupplementFor": "Lägg till tillskott för",
+      "editSupplementFor": "Redigera tillskott för",
+      "prefferedTime": "Föredragen tid",
+      "defaultPlan": {
+          "morning": "Morgon",
+          "lunch": "Lunch",
+          "dinner": "Middag"
+        },
+       "supplementExists": "Tillskottet \"{{supplementName}}\" finns redan i vald plan."
+    },
+    "supplementForm":{
+      "dosage": "dos", 
+      "unit": "enhet"
+    },
+    "dayEdit": {
+      "addSupplement": "Lägg till tillskott",
+      "addFromPlan": "Lägg till från plan",
+      "choosePlan": "Välj plan",
+      "editSupplement": "Redigera tillskott för",
+      "chooseTime": "Välj tid",
+      "logMeal": "Loggade måltider",
+      "pickImage": "Fotoanalysera måltid",
+      "nutritionSummary": "Näringsöversikt"
+    },
+    "supplementDropdown": {
+      "chooseSupplement": "Välj tillskott",
+      "searchAndAdd": "Sök eller välj...",
+      "search": "Sök...",
+      "day": "dag"
+      
+    },
+    "goals": {
+      "selectGoal": "Välj vilka mål du vill arbeta med",
+      "editGoal": "Redigera mål",
+      "addGoal": "Lägg till mål",
+      "confirmAddSupplements": "Vill du undersöka kosttillskott för detta mål?"
+    },
+    "selectGoal": {
+      "description": "Välj ett mål att arbeta med:"
+    },
+    "goalDetails": {
+      "taskInfo": "Uppgift",
+      "information": "Information",
+      "aiInsights": "AI-insikter",
+      "skip": "Skippa",
+      "start": "Starta",
+      "analyze": "Analysera",
+      "finish": "Slutför",
+      "analyzeHint": "Du kan analysera när tidsperioden är slut.",
+      "analysisTitle": "Analysera",
+      "takePhoto": "Ta foto",
+      "selectFileBody": "Välj fil att analysera",
+      "loading": "Analyseras av AI",
+      "selectFileConfirm": "Välj fil",
+      "defaultTitle": "AI-analys",
+      "analysisMatch": "✅ Tillskottet matchar målet med {{confidence}}% säkerhet.",
+      "analysisNoMatch": "❌ Inget matchande tillskott identifierat (säkerhet {{confidence}}%).",
+      "noAnswer": "🤖 Inget svar tillgängligt.",
+      "analysisError": "Något gick fel vid analys. Försök igen.",
+      "permissionTitle": "Behörighet krävs",
+      "permissionDenied": "Kameratillstånd krävs för att ta ett foto.",
+      "durationUnits": {
+        "days": "dagar",
+        "weeks": "veckor",
+        "months": "månader",
+        "time": "gång"
+      },
+      "completed": "Målet är klart",
+      "timeLeft": {
+        "days": "{{count}} dag kvar",
+        "days_plural": "{{count}} dagar kvar",
+        "weeks": "{{count}} vecka kvar",
+        "weeks_plural": "{{count}} veckor kvar",
+        "months": "{{count}} månad kvar",
+        "months_plural": "{{count}} månader kvar"
+      },
+      "skipConfirmBody": "Om du hoppar över nu måste du börja om från början.",
+      "skipConfirmYes": "Ja, hoppa över"
+    },
+   "chat": {
+      "welcomeMessage": "Hej! Jag är din personliga hälsocoach – specialiserad på biohacking och kosttillskott. Ställ gärna en fråga om tillskott, dagliga rutiner eller hur du optimerar din hälsa. 💪🌿",
+      "introPrompt": "Jag har precis lagt till ett nytt hälsomål: {{goal}}. Det innehåller dessa tillskott: {{supplements}}. Kan du gå igenom varje tillskott, ge råd om fördelar, tidpunkt att ta det, och varningar om det behövs?",
+      "askToAddSupplements": "Vill du att jag lägger till dessa tillskott i din plan?",
+      "systemPromptWithPlan": "📝 Användaren har följande plan:\n{{plan}}\n\nDu är en professionell hälsocoach med expertis inom biohacking och kosttillskott. När du svarar:\n\n1. Ange fördelar med varje tillskott.\n2. Ange lämplig tidpunkt på dagen att ta varje tillskott.\n3. Ange eventuella varningar.\n4. Om användaren har en plan: föreslå endast tillskott som passar tider som ännu inte är upptagna.\n5. Avsluta med en fråga om du ska lägga till tillskotten i användarens plan.\n\nSvara tydligt på svenska, gärna i punktform.",
+      "systemPromptNoPlan": "⚠️ Användaren har inte delat sin plan.\n\nDu är en professionell hälsocoach inom biohacking. När du svarar:\n\n1. Ange fördelar med varje tillskott.\n2. Ange lämplig tidpunkt att ta varje tillskott.\n3. Ange eventuella varningar.\n\nSvara på svenska, gärna i punktform."
+    },
+    "onboarding": {
+      "whatSupplementDoYouTakeAlready": "Vilka tillskott tar du redan?",
+      "continue": "Fortsätt"
+    },
+    "imagePicker": {
+      "title": "Välj en bild",
+      "takePhoto": "Ta foto",
+      "chooseFromLibrary": "Välj från biblioteket"
+    }
+  }
+    
