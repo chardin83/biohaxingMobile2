@@ -5,7 +5,7 @@ type SupplementReference = {
 };
 
 type TaskInfo = {
-    instructions: string;
+    description: string;
     warning?: string;
     duration: {
         amount: number;
@@ -14,7 +14,7 @@ type TaskInfo = {
     tasks?: string[];
 };
 
-export type GoalStep = {
+export type Tip = {
   id: string;
   title: string;
   taskInfo: TaskInfo;
@@ -24,13 +24,13 @@ export type GoalStep = {
   information?: Information;
 };
 
-export type Goal = {
+export type TipCategory = {
   id: string;
   level: number;
   xp: number;
   title: string;
   mainGoalIds: string[];
-  steps?: GoalStep[];           // NYTT: Flerstegsstruktur
+  tips?: Tip[];
 };
 
 export type Information = {
@@ -38,25 +38,25 @@ export type Information = {
     author: string;
 }
 
-export const goals: Goal[] = [
+export const tipCategories: TipCategory[] = [
   {
     id: "level_energy_1",
     level: 1,
     xp: 300,
-    title: "energy.levels.generalHealth.steps.step1.title",
+    title: "energy.levels.generalHealth.tips.0.title",
     mainGoalIds: ["energy"],
-    steps: [
+    tips: [
       {
         id: "level_energy_1_step1",
-        title: "energy.levels.generalHealth.steps.step1.title",
+        title: "energy.levels.generalHealth.tips.0.title",
         taskInfo: {
-          instructions: "energy.levels.generalHealth.steps.step1.instructions",
+          description: "energy.levels.generalHealth.tips.0.description",
           duration: { amount: 6, unit: "days" },
         },
         supplements: [{ id: "multivitamin" }],
         startPrompt: "energy.levels.generalHealth.startPrompt",
         information: {
-          text: "energy.levels.generalHealth.steps.step1.information.text",
+          text: "energy.levels.generalHealth.tips.0.information.text",
           author: "Christina",
         },
       },
@@ -68,46 +68,46 @@ export const goals: Goal[] = [
     xp: 900,
     title: "energy.levels.vitaminDComprehensive.title",
     mainGoalIds: ["energy", "immuneSupport"],
-    steps: [
+    tips: [
       {
         id: "step1_test",
-        title: "energy.levels.vitaminDComprehensive.steps.step1.title",
+        title: "energy.levels.vitaminDComprehensive.tips.0.title",
         taskInfo: {
-          instructions:
-            "energy.levels.vitaminDComprehensive.steps.step1.instructions",
+          description:
+            "energy.levels.vitaminDComprehensive.tips.0.description",
           duration: { amount: 2, unit: "days" },
         },
         startPrompt:
-          "energy.levels.vitaminDComprehensive.steps.step1.startPrompt",
+          "energy.levels.vitaminDComprehensive.tips.0.startPrompt",
         information: {
-          text: "energy.levels.vitaminDComprehensive.steps.step1.information.text",
+          text: "energy.levels.vitaminDComprehensive.tips.0.information.text",
           author: "Christina",
         },
       },
       {
         id: "step2_interpret",
-        title: "energy.levels.vitaminDComprehensive.steps.step2.title",
+        title: "energy.levels.vitaminDComprehensive.tips.1.title",
         taskInfo: {
-          instructions:
-            "energy.levels.vitaminDComprehensive.steps.step2.instructions",
+          description:
+            "energy.levels.vitaminDComprehensive.tips.1.description",
           duration: { amount: 3, unit: "days" },
         },
-        analyzePrompt: "energy.levels.vitaminDComprehensive.steps.step2.analyzePrompt",
+        analyzePrompt: "energy.levels.vitaminDComprehensive.tips.1.analyzePrompt",
         information: {
-          text: "energy.levels.vitaminDComprehensive.steps.step2.information.text",
+          text: "energy.levels.vitaminDComprehensive.tips.1.information.text",
           author: "Christina",
         },
       },
       {
         id: "step3_genetics",
-        title: "energy.levels.vitaminDComprehensive.steps.step3.title",
+        title: "energy.levels.vitaminDComprehensive.tips.2.title",
         taskInfo: {
-          instructions:
-            "energy.levels.vitaminDComprehensive.steps.step3.instructions",
+          description:
+            "energy.levels.vitaminDComprehensive.tips.2.description",
           duration: { amount: 7, unit: "days" },
         },
         information: {
-          text: "energy.levels.vitaminDComprehensive.steps.step3.information.text",
+          text: "energy.levels.vitaminDComprehensive.tips.2.information.text",
           author: "Christina",
         },
       },
@@ -117,20 +117,20 @@ export const goals: Goal[] = [
     id: "level_energy_3",
     level: 3,
     xp: 700,
-    title: "energy.levels.mitochondrialSupport.steps.step1.title",
+    title: "energy.levels.mitochondrialSupport.tips.0.title",
     mainGoalIds: ["energy"],
-    steps: [
+    tips: [
       {
         id: "level_energy_3_step1",
-        title: "energy.levels.mitochondrialSupport.steps.step1.title",
+        title: "energy.levels.mitochondrialSupport.tips.0.title",
         taskInfo: {
-          instructions: "energy.levels.mitochondrialSupport.steps.step1.instructions",
+          description: "energy.levels.mitochondrialSupport.tips.0.description",
           duration: { amount: 21, unit: "days" },
         },
         supplements: [{ id: "coenzymeQ10" }],
         startPrompt: "energy.levels.mitochondrialSupport.startPrompt",
         information: {
-          text: "energy.levels.mitochondrialSupport.steps.step1.information.text",
+          text: "energy.levels.mitochondrialSupport.tips.0.information.text",
           author: "Christina",
         },
       },
@@ -140,20 +140,20 @@ export const goals: Goal[] = [
     id: "level_energy_4",
     level: 4,
     xp: 900,
-    title: "energy.levels.cellularEnergy.steps.step1.title",
+    title: "energy.levels.cellularEnergy.tips.0.title",
     mainGoalIds: ["energy"],
-    steps: [
+    tips: [
       {
         id: "level_energy_4_step1",
-        title: "energy.levels.cellularEnergy.steps.step1.title",
+        title: "energy.levels.cellularEnergy.tips.0.title",
         taskInfo: {
-          instructions: "energy.levels.cellularEnergy.steps.step1.instructions",
+          description: "energy.levels.cellularEnergy.tips.0.description",
           duration: { amount: 21, unit: "days" },
         },
         supplements: [{ id: "nad" }],
         startPrompt: "energy.levels.cellularEnergy.startPrompt",
         information: {
-          text: "energy.levels.cellularEnergy.steps.step1.information.text",
+          text: "energy.levels.cellularEnergy.tips.0.information.text",
           author: "Christina",
         },
       },
@@ -163,20 +163,20 @@ export const goals: Goal[] = [
     id: "level_energy_5",
     level: 5,
     xp: 1100,
-    title: "energy.levels.metabolicActivation.steps.step1.title",
+    title: "energy.levels.metabolicActivation.tips.0.title",
     mainGoalIds: ["energy"],
-    steps: [
+    tips: [
       {
         id: "level_energy_5_step1",
-        title: "energy.levels.metabolicActivation.steps.step1.title",
+        title: "energy.levels.metabolicActivation.tips.0.title",
         taskInfo: {
-          instructions: "energy.levels.metabolicActivation.steps.step1.instructions",
+          description: "energy.levels.metabolicActivation.tips.0.description",
           duration: { amount: 21, unit: "days" },
         },
         supplements: [{ id: "alphaLipoicAcid" }],
         startPrompt: "energy.levels.metabolicActivation.startPrompt",
         information: {
-          text: "energy.levels.metabolicActivation.steps.step1.information.text",
+          text: "energy.levels.metabolicActivation.tips.0.information.text",
           author: "Christina",
         },
       },
@@ -186,20 +186,20 @@ export const goals: Goal[] = [
     id: "level_energy_6",
     level: 6,
     xp: 1300,
-    title: "energy.levels.longevity.steps.step1.title",
+    title: "energy.levels.longevity.tips.0.title",
     mainGoalIds: ["energy", "musclePerformance"],
-    steps: [
+    tips: [
       {
         id: "level_energy_6_step1",
-        title: "energy.levels.longevity.steps.step1.title",
+        title: "energy.levels.longevity.tips.0.title",
         taskInfo: {
-          instructions: "energy.levels.longevity.steps.step1.instructions",
+          description: "energy.levels.longevity.tips.0.description",
           duration: { amount: 30, unit: "days" },
         },
         supplements: [{ id: "shilajit" }],
         startPrompt: "energy.levels.longevity.startPrompt",
         information: {
-          text: "energy.levels.longevity.steps.step1.information.text",
+          text: "energy.levels.longevity.tips.0.information.text",
           author: "Christina",
         },
       },
@@ -211,14 +211,14 @@ export const goals: Goal[] = [
     id: "level_sleepQuality_1",
     level: 1,
     xp: 300,
-    title: "sleepQuality.levels.sleepBy2230.steps.step1.title",
+    title: "sleepQuality.levels.sleepBy2230.tips.0.title",
     mainGoalIds: ["sleepQuality"],
-    steps: [
+    tips: [
       {
         id: "level_sleepQuality_1_step1",
-        title: "sleepQuality.levels.sleepBy2230.steps.step1.title",
+        title: "sleepQuality.levels.sleepBy2230.tips.0.title",
         taskInfo: {
-          instructions: "sleepQuality.levels.sleepBy2230.steps.step1.instructions",
+          description: "sleepQuality.levels.sleepBy2230.tips.0.description",
           duration: { amount: 7, unit: "days" },
         },
       },
@@ -228,14 +228,14 @@ export const goals: Goal[] = [
     id: "level_sleepQuality_2",
     level: 2,
     xp: 500,
-    title: "sleepQuality.levels.hormonalSupport.steps.step1.title",
+    title: "sleepQuality.levels.hormonalSupport.tips.0.title",
     mainGoalIds: ["sleepQuality"],
-    steps: [
+    tips: [
       {
         id: "level_sleepQuality_2_step1",
-        title: "sleepQuality.levels.hormonalSupport.steps.step1.title",
+        title: "sleepQuality.levels.hormonalSupport.tips.0.title",
         taskInfo: {
-          instructions: "sleepQuality.levels.hormonalSupport.steps.step1.instructions",
+          description: "sleepQuality.levels.hormonalSupport.tips.0.description",
           duration: { amount: 14, unit: "days" },
         },
         supplements: [{ id: supplementIds.magnesium }],
@@ -246,14 +246,14 @@ export const goals: Goal[] = [
     id: "level_sleepQuality_3",
     level: 3,
     xp: 700,
-    title: "sleepQuality.levels.neuroregulation.steps.step1.title",
+    title: "sleepQuality.levels.neuroregulation.tips.0.title",
     mainGoalIds: ["sleepQuality", "focus"],
-    steps: [
+    tips: [
       {
         id: "level_sleepQuality_3_step1",
-        title: "sleepQuality.levels.neuroregulation.steps.step1.title",
+        title: "sleepQuality.levels.neuroregulation.tips.0.title",
         taskInfo: {
-          instructions: "sleepQuality.levels.neuroregulation.steps.step1.instructions",
+          description: "sleepQuality.levels.neuroregulation.tips.0.description",
           duration: { amount: 14, unit: "days" },
         },
         supplements: [{ id: supplementIds.lTheanine }],
@@ -266,14 +266,14 @@ export const goals: Goal[] = [
     id: "level_focus_1",
     level: 1,
     xp: 300,
-    title: "focus.levels.calmAlertness.steps.step1.title",
+    title: "focus.levels.calmAlertness.tips.0.title",
     mainGoalIds: ["focus"],
-    steps: [
+    tips: [
       {
         id: "level_focus_1_step1",
-        title: "focus.levels.calmAlertness.steps.step1.title",
+        title: "focus.levels.calmAlertness.tips.0.title",
         taskInfo: {
-          instructions: "focus.levels.calmAlertness.steps.step1.instructions",
+          description: "focus.levels.calmAlertness.tips.0.description",
           duration: { amount: 14, unit: "days" },
         },
         supplements: [{ id: supplementIds.lTheanine }],
@@ -284,14 +284,14 @@ export const goals: Goal[] = [
     id: "level_focus_2",
     level: 2,
     xp: 500,
-    title: "focus.levels.neurotransmitterSupport.steps.step1.title",
+    title: "focus.levels.neurotransmitterSupport.tips.0.title",
     mainGoalIds: ["focus"],
-    steps: [
+    tips: [
       {
         id: "level_focus_2_step1",
-        title: "focus.levels.neurotransmitterSupport.steps.step1.title",
+        title: "focus.levels.neurotransmitterSupport.tips.0.title",
         taskInfo: {
-          instructions: "focus.levels.neurotransmitterSupport.steps.step1.instructions",
+          description: "focus.levels.neurotransmitterSupport.tips.0.description",
           duration: { amount: 14, unit: "days" },
         },
         supplements: [{ id: supplementIds.lTyrosine }],
@@ -302,14 +302,14 @@ export const goals: Goal[] = [
     id: "level_focus_3",
     level: 3,
     xp: 700,
-    title: "focus.levels.nootropicStimulation.steps.step1.title",
+    title: "focus.levels.nootropicStimulation.tips.0.title",
     mainGoalIds: ["focus"],
-    steps: [
+    tips: [
       {
         id: "level_focus_3_step1",
-        title: "focus.levels.nootropicStimulation.steps.step1.title",
+        title: "focus.levels.nootropicStimulation.tips.0.title",
         taskInfo: {
-          instructions: "focus.levels.nootropicStimulation.steps.step1.instructions",
+          description: "focus.levels.nootropicStimulation.tips.0.description",
           duration: { amount: 7, unit: "days" },
         },
       },
@@ -321,14 +321,14 @@ export const goals: Goal[] = [
     id: "level_immuneSupport_1",
     level: 1,
     xp: 300,
-    title: "immuneSupport.levels.vitaminC.steps.step1.title",
+    title: "immuneSupport.levels.vitaminC.tips.0.title",
     mainGoalIds: ["immuneSupport"],
-    steps: [
+    tips: [
       {
         id: "level_immuneSupport_1_step1",
-        title: "immuneSupport.levels.vitaminC.steps.step1.title",
+        title: "immuneSupport.levels.vitaminC.tips.0.title",
         taskInfo: {
-          instructions: "immuneSupport.levels.vitaminC.steps.step1.instructions",
+          description: "immuneSupport.levels.vitaminC.tips.0.description",
           duration: { amount: 5, unit: "days" },
         },
         supplements: [{ id: "vitaminC" }],
@@ -339,14 +339,14 @@ export const goals: Goal[] = [
     id: "level_immuneSupport_2",
     level: 2,
     xp: 500,
-    title: "immuneSupport.levels.naturalImmunity.steps.step1.title",
+    title: "immuneSupport.levels.naturalImmunity.tips.0.title",
     mainGoalIds: ["immuneSupport"],
-    steps: [
+    tips: [
       {
         id: "level_immuneSupport_2_step1",
-        title: "immuneSupport.levels.naturalImmunity.steps.step1.title",
+        title: "immuneSupport.levels.naturalImmunity.tips.0.title",
         taskInfo: {
-          instructions: "immuneSupport.levels.naturalImmunity.steps.step1.instructions",
+          description: "immuneSupport.levels.naturalImmunity.tips.0.description",
           duration: { amount: 14, unit: "days" },
         },
         supplements: [{ id: "echinacea" }],
@@ -357,14 +357,14 @@ export const goals: Goal[] = [
     id: "level_immuneSupport_3",
     level: 3,
     xp: 700,
-    title: "immuneSupport.levels.glutathioneDetox.steps.step1.title",
+    title: "immuneSupport.levels.glutathioneDetox.tips.0.title",
     mainGoalIds: ["immuneSupport"],
-    steps: [
+    tips: [
       {
         id: "level_immuneSupport_3_step1",
-        title: "immuneSupport.levels.glutathioneDetox.steps.step1.title",
+        title: "immuneSupport.levels.glutathioneDetox.tips.0.title",
         taskInfo: {
-          instructions: "immuneSupport.levels.glutathioneDetox.steps.step1.instructions",
+          description: "immuneSupport.levels.glutathioneDetox.tips.0.description",
           duration: { amount: 21, unit: "days" },
         },
         supplements: [{ id: "nac" }],
@@ -377,14 +377,14 @@ export const goals: Goal[] = [
     id: "level_stressRelief_1",
     level: 1,
     xp: 300,
-    title: "stressRelief.levels.ashwagandha.steps.step1.title",
+    title: "stressRelief.levels.ashwagandha.tips.0.title",
     mainGoalIds: ["stressRelief"],
-    steps: [
+    tips: [
       {
         id: "level_stressRelief_1_step1",
-        title: "stressRelief.levels.ashwagandha.steps.step1.title",
+        title: "stressRelief.levels.ashwagandha.tips.0.title",
         taskInfo: {
-          instructions: "stressRelief.levels.ashwagandha.steps.step1.instructions",
+          description: "stressRelief.levels.ashwagandha.tips.0.description",
           duration: { amount: 14, unit: "days" },
         },
         supplements: [{ id: "ashwagandha" }],
@@ -395,14 +395,14 @@ export const goals: Goal[] = [
     id: "level_stressRelief_2",
     level: 2,
     xp: 500,
-    title: "stressRelief.levels.glycine.steps.step1.title",
+    title: "stressRelief.levels.glycine.tips.0.title",
     mainGoalIds: ["stressRelief"],
-    steps: [
+    tips: [
       {
         id: "level_stressRelief_2_step1",
-        title: "stressRelief.levels.glycine.steps.step1.title",
+        title: "stressRelief.levels.glycine.tips.0.title",
         taskInfo: {
-          instructions: "stressRelief.levels.glycine.steps.step1.instructions",
+          description: "stressRelief.levels.glycine.tips.0.description",
           duration: { amount: 10, unit: "days" },
         },
         supplements: [{ id: "glycine" }],
@@ -413,14 +413,14 @@ export const goals: Goal[] = [
     id: "level_stressRelief_3",
     level: 3,
     xp: 700,
-    title: "stressRelief.levels.neurochemicalSupport.steps.step1.title",
+    title: "stressRelief.levels.neurochemicalSupport.tips.0.title",
     mainGoalIds: ["stressRelief"],
-    steps: [
+    tips: [
       {
         id: "level_stressRelief_3_step1",
-        title: "stressRelief.levels.neurochemicalSupport.steps.step1.title",
+        title: "stressRelief.levels.neurochemicalSupport.tips.0.title",
         taskInfo: {
-          instructions: "stressRelief.levels.neurochemicalSupport.steps.step1.instructions",
+          description: "stressRelief.levels.neurochemicalSupport.tips.0.description",
           duration: { amount: 14, unit: "days" },
         },
         supplements: [{ id: "semax" }],
@@ -433,14 +433,14 @@ export const goals: Goal[] = [
     id: "level_musclePerformance_1",
     level: 1,
     xp: 300,
-    title: "musclePerformance.levels.basicSupport.steps.step1.title",
+    title: "musclePerformance.levels.basicSupport.tips.0.title",
     mainGoalIds: ["musclePerformance"],
-    steps: [
+    tips: [
       {
         id: "level_musclePerformance_1_step1",
-        title: "musclePerformance.levels.basicSupport.steps.step1.title",
+        title: "musclePerformance.levels.basicSupport.tips.0.title",
         taskInfo: {
-          instructions: "musclePerformance.levels.basicSupport.steps.step1.instructions",
+          description: "musclePerformance.levels.basicSupport.tips.0.description",
           duration: { amount: 21, unit: "days" },
         },
         supplements: [{ id: "creatine" }],
@@ -453,12 +453,12 @@ export const goals: Goal[] = [
     xp: 0,
     title: "Aktivera fler motorenheter",
     mainGoalIds: ["musclePerformance"],
-    steps: [
+    tips: [
       {
         id: "motorUnitActivation_step1",
         title: "Aktivera fler motorenheter",
         taskInfo: {
-          instructions: "musclePerformance.levels.basicSupport.steps.step1.instructions",
+          description: "musclePerformance.levels.basicSupport.tips.0.description",
           duration: { amount: 21, unit: "days" },
         },
         supplements: [],
@@ -469,14 +469,14 @@ export const goals: Goal[] = [
     id: "level_musclePerformance_2",
     level: 2,
     xp: 500,
-    title: "musclePerformance.levels.enduranceRecovery.steps.step1.title",
+    title: "musclePerformance.levels.enduranceRecovery.tips.0.title",
     mainGoalIds: ["musclePerformance"],
-    steps: [
+    tips: [
       {
         id: "level_musclePerformance_2_step1",
-        title: "musclePerformance.levels.enduranceRecovery.steps.step1.title",
+        title: "musclePerformance.levels.enduranceRecovery.tips.0.title",
         taskInfo: {
-          instructions: "musclePerformance.levels.enduranceRecovery.steps.step1.instructions",
+          description: "musclePerformance.levels.enduranceRecovery.tips.0.description",
           duration: { amount: 21, unit: "days" },
         },
         supplements: [{ id: "betaAlanine" }],
@@ -487,14 +487,14 @@ export const goals: Goal[] = [
     id: "level_musclePerformance_3",
     level: 3,
     xp: 700,
-    title: "musclePerformance.levels.hormonalBoosters.steps.step1.title",
+    title: "musclePerformance.levels.hormonalBoosters.tips.0.title",
     mainGoalIds: ["musclePerformance"],
-    steps: [
+    tips: [
       {
         id: "level_musclePerformance_3_step1",
-        title: "musclePerformance.levels.hormonalBoosters.steps.step1.title",
+        title: "musclePerformance.levels.hormonalBoosters.tips.0.title",
         taskInfo: {
-          instructions: "musclePerformance.levels.hormonalBoosters.steps.step1.instructions",
+          description: "musclePerformance.levels.hormonalBoosters.tips.0.description",
           duration: { amount: 21, unit: "days" },
         },
         supplements: [{ id: "shilajit" }],
@@ -505,14 +505,14 @@ export const goals: Goal[] = [
     id: "level_musclePerformance_4",
     level: 4,
     xp: 900,
-    title: "musclePerformance.levels.androgenicEnhancers.steps.step1.title",
+    title: "musclePerformance.levels.androgenicEnhancers.tips.0.title",
     mainGoalIds: ["musclePerformance"],
-    steps: [
+    tips: [
       {
         id: "level_musclePerformance_4_step1",
-        title: "musclePerformance.levels.androgenicEnhancers.steps.step1.title",
+        title: "musclePerformance.levels.androgenicEnhancers.tips.0.title",
         taskInfo: {
-          instructions: "musclePerformance.levels.androgenicEnhancers.steps.step1.instructions",
+          description: "musclePerformance.levels.androgenicEnhancers.tips.0.description",
           duration: { amount: 14, unit: "days" },
         },
         supplements: [{ id: "fadogia" }],
@@ -525,24 +525,24 @@ export const goals: Goal[] = [
     id: "level_digestiveHealth_1",
     level: 1,
     xp: 300,
-    title: "digestiveHealth.levels.gutFlora.steps.step1.title",
+    title: "digestiveHealth.levels.gutFlora.tips.0.title",
     mainGoalIds: ["digestiveHealth"],
-    steps: [
+    tips: [
       {
         id: "level_digestiveHealth_1_step1",
-        title: "digestiveHealth.levels.gutFlora.steps.step1.title",
+        title: "digestiveHealth.levels.gutFlora.tips.0.title",
         taskInfo: {
-          instructions: "digestiveHealth.levels.gutFlora.steps.step1.instructions",
+          description: "digestiveHealth.levels.gutFlora.tips.0.description",
           duration: { amount: 14, unit: "days" },
         },
         supplements: [{ id: "probiotics" }],
       },
       {
         id: "level_digestiveHealth_1_step2",
-        title: "digestiveHealth.levels.gutFlora.steps.step2.title",
+        title: "digestiveHealth.levels.gutFlora.tips.1.title",
         taskInfo: {
-          instructions: "digestiveHealth.levels.gutFlora.steps.step2.instructions",
-          warning: "digestiveHealth.levels.gutFlora.steps.step2.warning",
+          description: "digestiveHealth.levels.gutFlora.tips.1.description",
+          warning: "digestiveHealth.levels.gutFlora.tips.1.warning",
           duration: { amount: 14, unit: "days" },
         },
         supplements: [{ id: "probiotics" }],
@@ -553,14 +553,14 @@ export const goals: Goal[] = [
     id: "level_digestiveHealth_2",
     level: 2,
     xp: 500,
-    title: "digestiveHealth.levels.liverEnzymes.steps.step1.title",
+    title: "digestiveHealth.levels.liverEnzymes.tips.0.title",
     mainGoalIds: ["digestiveHealth"],
-    steps: [
+    tips: [
       {
         id: "level_digestiveHealth_2_step1",
-        title: "digestiveHealth.levels.liverEnzymes.steps.step1.title",
+        title: "digestiveHealth.levels.liverEnzymes.tips.0.title",
         taskInfo: {
-          instructions: "digestiveHealth.levels.liverEnzymes.steps.step1.instructions",
+          description: "digestiveHealth.levels.liverEnzymes.tips.0.description",
           duration: { amount: 14, unit: "days" },
         },
         supplements: [{ id: "milkThistle" }],
@@ -571,14 +571,14 @@ export const goals: Goal[] = [
     id: "level_digestiveHealth_3",
     level: 3,
     xp: 700,
-    title: "digestiveHealth.levels.advancedGut.steps.step1.title",
+    title: "digestiveHealth.levels.advancedGut.tips.0.title",
     mainGoalIds: ["digestiveHealth"],
-    steps: [
+    tips: [
       {
         id: "level_digestiveHealth_3_step1",
-        title: "digestiveHealth.levels.advancedGut.steps.step1.title",
+        title: "digestiveHealth.levels.advancedGut.tips.0.title",
         taskInfo: {
-          instructions: "digestiveHealth.levels.advancedGut.steps.step1.instructions",
+          description: "digestiveHealth.levels.advancedGut.tips.0.description",
           duration: { amount: 21, unit: "days" },
         },
         supplements: [{ id: "tudca" }],
@@ -591,14 +591,14 @@ export const goals: Goal[] = [
     id: "level_cardioFitness_1",
     level: 1,
     xp: 300,
-    title: "cardioFitness.levels.hiit.steps.step1.title",
+    title: "cardioFitness.levels.hiit.tips.0.title",
     mainGoalIds: ["cardioFitness"],
-    steps: [
+    tips: [
       {
         id: "level_cardioFitness_1_step1",
-        title: "cardioFitness.levels.hiit.steps.step1.title",
+        title: "cardioFitness.levels.hiit.tips.0.title",
         taskInfo: {
-          instructions: "cardioFitness.levels.hiit.steps.step1.instructions",
+          description: "cardioFitness.levels.hiit.tips.0.description",
           duration: { amount: 2, unit: "weeks" },
         },
         supplements: [],
@@ -610,14 +610,14 @@ export const goals: Goal[] = [
     id: "level_cardioFitness_2",
     level: 2,
     xp: 500,
-    title: "cardioFitness.levels.runningVolume.steps.step1.title",
+    title: "cardioFitness.levels.runningVolume.tips.0.title",
     mainGoalIds: ["cardioFitness"],
-    steps: [
+    tips: [
       {
         id: "level_cardioFitness_2_step1",
-        title: "cardioFitness.levels.runningVolume.steps.step1.title",
+        title: "cardioFitness.levels.runningVolume.tips.0.title",
         taskInfo: {
-          instructions: "cardioFitness.levels.runningVolume.steps.step1.instructions",
+          description: "cardioFitness.levels.runningVolume.tips.0.description",
           duration: { amount: 3, unit: "weeks" },
         },
         supplements: [],
@@ -629,14 +629,14 @@ export const goals: Goal[] = [
     id: "level_cardioFitness_3",
     level: 3,
     xp: 700,
-    title: "cardioFitness.levels.vo2max.steps.step1.title",
+    title: "cardioFitness.levels.vo2max.tips.0.title",
     mainGoalIds: ["cardioFitness"],
-    steps: [
+    tips: [
       {
         id: "level_cardioFitness_3_step1",
-        title: "cardioFitness.levels.vo2max.steps.step1.title",
+        title: "cardioFitness.levels.vo2max.tips.0.title",
         taskInfo: {
-          instructions: "cardioFitness.levels.vo2max.steps.step1.instructions",
+          description: "cardioFitness.levels.vo2max.tips.0.description",
           duration: { amount: 4, unit: "weeks" },
         },
         supplements: [],
@@ -650,23 +650,23 @@ export const goals: Goal[] = [
     xp: 300,
     title: "mind.coherence.title",
     mainGoalIds: ["mind"],
-    steps: [
+    tips: [
       {
         id: "mind_coherence_1_step1",
-        title: "mind.levels.coherence.steps.step1.title",
+        title: "mind.levels.coherence.tips.0.title",
         taskInfo: {
-          instructions: "mind.levels.coherence.steps.step1.instructions", // t.ex. “Genomför en hel session i ett svep…”
+          description: "mind.levels.coherence.tips.0.description", // t.ex. “Genomför en hel session i ett svep…”
           duration: { amount: 1, unit: "time" },
           tasks: [
-            "mind.levels.coherence.steps.step1.tasks.task1",  // “Mät HRV och puls med klocka eller band”
-            "mind.levels.coherence.steps.step1.tasks.task2",  // “Utför en sammanhängande mätning varje dag”
-            "mind.levels.coherence.steps.step1.tasks.task3",  // “Försök vara så stilla som möjligt”
+            "mind.levels.coherence.tips.0.tasks.task1",  // “Mät HRV och puls med klocka eller band”
+            "mind.levels.coherence.tips.0.tasks.task2",  // “Utför en sammanhängande mätning varje dag”
+            "mind.levels.coherence.tips.0.tasks.task3",  // “Försök vara så stilla som möjligt”
           ]              // kör testet flera dagar i rad
         },
-        //startPrompt: "mind.levels.coherence.steps.step1.startPrompt",       // “Starta en sammanhängande mätning…”
-        analyzePrompt: "mind.levels.coherence.steps.step1.analyzePrompt",   // “Analysera HRV/puls per stegsegment…”
+        //startPrompt: "mind.levels.coherence.tips.0.startPrompt",       // “Starta en sammanhängande mätning…”
+        analyzePrompt: "mind.levels.coherence.tips.0.analyzePrompt",   // “Analysera HRV/puls per stegsegment…”
         information: {
-          text: "mind.levels.coherence.steps.step1.information.text",              // vad heart–brain coherence är, tolkning etc
+          text: "mind.levels.coherence.tips.0.information.text",              // vad heart–brain coherence är, tolkning etc
           author: "Christina",
         },
         // Inga supplement för “mind” som default

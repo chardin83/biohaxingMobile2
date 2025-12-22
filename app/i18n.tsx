@@ -2,10 +2,10 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import * as Localization from "expo-localization"; // Use expo-localization
 import enCommon from "../locales/en/common.json";
-import enGoals from "../locales/en/goals.json";
+import enTips from "../locales/en/tips.json";
 import enSupplements from "../locales/en/supplements.json";
 import svCommon from "../locales/sv/common.json";
-import svGoals from "../locales/sv/goals.json";
+import svTips from "../locales/sv/tips.json";
 import svSupplements from "../locales/sv/supplements.json";
 import svLevels from "../locales/sv/levels.json";
 import enLevels from "../locales/en/levels.json";
@@ -16,14 +16,14 @@ import svPrompts from "../locales/sv/prompts.json";
 const resources = {
   en: {
     common: enCommon,
-    goals: enGoals,
+    tips: enTips,
     supplements: enSupplements,
     levels: enLevels,
     prompts: enPrompts
   },
   sv: {
     common: svCommon,
-    goals: svGoals,
+    tips: svTips,
     supplements: svSupplements,
     levels: svLevels,
     prompts: svPrompts
@@ -54,7 +54,7 @@ i18n
     fallbackLng: "en",
     debug: false,
     defaultNS: "common", // Default namespace
-    ns: ["common", "goals", "supplements", "levels", "prompts"], // Available namespaces
+    ns: ["common", "tips", "supplements", "levels", "prompts"], // Available namespaces
     interpolation: {
       escapeValue: false, // Not needed for React
     },

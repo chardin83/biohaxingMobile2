@@ -1,0 +1,430 @@
+{
+  "energy": {
+    "title": "Energi",
+    "description": "Information och livsstilsrelaterade tips som ofta diskuteras i relation till dagliga energinivåer.",
+    "levels": {
+      "generalHealth": {
+        "tips": [
+          {
+            "title": "Allmänt näringstillskott",
+            "description": "Adekvat intag av essentiella vitaminer och mineraler diskuteras ofta som en del av att upprätthålla allmän vitalitet.",
+            "information": {
+              "text": "Multivitaminer används ibland för att täcka potentiella näringsluckor i kosten."
+            }
+          }
+        ]
+      },
+      "vitaminDComprehensive": {
+        "title": "Vitamin D-översikt",
+        "tips": [
+          {
+            "title": "Vitamin D-statusmedvetenhet",
+            "description": "Vitamin D-nivåer kan variera baserat på faktorer som solexponering, kost och geografisk plats.",
+            "information": {
+              "text": "Vitamin D-status bedöms vanligtvis i kliniska miljöer med hjälp av blodbaserade mätningar."
+            }
+          },
+          {
+            "title": "Överväganden för vitamin D-intag",
+            "description": "Vitamin D finns tillgängligt från solljus, matkällor och kosttillskott.",
+            "information": {
+              "text": "Vitamin D3 är en vanligt använd tillskottsform som har studerats brett."
+            }
+          },
+          {
+            "title": "Förstå vitamin D-mätningar",
+            "description": "Vårdpersonal kan utvärdera vitamin D-nivåer över tid för att förstå trender och förändringar.",
+            "information": {
+              "text": "Olika vitamin D-intervall används kliniskt för att tolka laboratorieresultat."
+            }
+          }
+        ]
+      },
+      "vitaminSupport": {
+        "tips": [
+          {
+            "title": "Vitamin- och mineralbalans",
+            "description": "Vitaminer och mineraler spelar roller i många metaboliska och immunrelaterade processer.",
+            "information": {
+              "text": "Vitamin D är involverat i immunreglering och metaboliska vägar."
+            }
+          }
+        ]
+      },
+      "mitochondrialSupport": {
+        "tips": [
+          {
+            "title": "Mitokondriella näringsämnen",
+            "description": "Vissa näringsämnen är involverade i mitokondriella processer relaterade till cellulär energiproduktion.",
+            "information": {
+              "text": "CoQ10 deltar i energiöverföring inom mitokondrierna."
+            }
+          }
+        ]
+      },
+      "cellularEnergy": {
+        "tips": [
+          {
+            "title": "Cellulär energimetabolism",
+            "description": "Cellulär energiproduktion förlitar sig på komplexa metaboliska vägar.",
+            "information": {
+              "text": "NAD+ är involverat i cellmetabolism och DNA-underhållsmekanismer."
+            }
+          }
+        ]
+      },
+      "metabolicActivation": {
+        "tips": [
+          {
+            "title": "Metaboliska hälsofaktorer",
+            "description": "Glukosmetabolism är en viktig komponent för bibehållna energinivåer.",
+            "information": {
+              "text": "Alfa-liponsyra har studerats i relation till insulinkänslighet och antioxidantaktivitet."
+            }
+          }
+        ]
+      },
+      "longevity": {
+        "tips": [
+          {
+            "title": "Traditionella långlivadhetspreparat",
+            "description": "Vissa traditionella substanser har historiskt associerats med vitalitet och motståndskraft.",
+            "information": {
+              "text": "Shilajit innehåller fulvosyra och har använts i traditionella hälsosammanhang."
+            }
+          }
+        ]
+      }
+    }
+  },
+  "sleepQuality": {
+    "title": "Sömn",
+    "description": "Information om sömnkvalitet och faktorer som kan påverka vila.",
+    "levels": {
+      "sleepBy2230": {
+        "tips": [
+          {
+            "title": "Medvetenhet om sömntiming",
+            "description": "Tidig sänggång diskuteras ofta i relation till anpassning av dygnsrytm.",
+            "information": {
+              "text": "Sömntiming har studerats i samband med melatonincykler och återhämtningsprocesser."
+            }
+          }
+        ]
+      },
+      "hormonalSupport": {
+        "tips": [
+          {
+            "title": "Överväganden för hormonellt stöd",
+            "description": "Magnesium är ett mineral som har studerats i relation till avslappning och sömn.",
+            "information": {
+              "text": "Magnesium har forskats i samband med sömnkvalitet och kortisolreglering."
+            }
+          }
+        ]
+      },
+      "neuroregulation": {
+        "tips": [
+          {
+            "title": "Neuroregulerande föreningar",
+            "description": "L-Theanin är en aminosyra som finns i te och har studerats för sina lugnande egenskaper.",
+            "information": {
+              "text": "L-Theanin har associerats med alfabrainvågsaktivitet och avslappning i forskningsstudier."
+            }
+          }
+        ]
+      }
+    }
+  },
+  "focus": {
+    "title": "Fokus",
+    "description": "Information om faktorer som kan påverka fokus och koncentration.",
+    "levels": {
+      "calmAlertness": {
+        "tips": [
+          {
+            "title": "Föreningar för lugn vakenhet",
+            "description": "L-Theanin finns vanligtvis i grönt te och har studerats för sina effekter på uppmärksamhet.",
+            "information": {
+              "text": "L-Theanin har forskats i relation till lugnt fokus och minskad distraktion."
+            }
+          }
+        ]
+      },
+      "neurotransmitterSupport": {
+        "tips": [
+          {
+            "title": "Neurotransmittorprekursorer",
+            "description": "L-Tyrosin är en aminosyra som fungerar som prekursor till dopamin.",
+            "information": {
+              "text": "L-Tyrosin har studerats i relation till kognitiv funktion under stressiga förhållanden."
+            }
+          }
+        ]
+      },
+      "nootropicStimulation": {
+        "tips": [
+          {
+            "title": "Kognitiva träningsmetoder",
+            "description": "Kognitiva övningar såsom dual n-back och problemlösningsuppgifter har studerats i relation till mental prestation.",
+            "information": {
+              "text": "Mentala övningar har forskats för sina potentiella effekter på arbetsminne och neuroplasticitet."
+            }
+          }
+        ]
+      }
+    }
+  },
+  "immuneSupport": {
+    "title": "Immunförsvar",
+    "description": "Information om faktorer som ofta diskuteras i relation till immunfunktion.",
+    "levels": {
+      "vitaminC": {
+        "tips": [
+          {
+            "title": "Vitamin C-översikt",
+            "description": "Vitamin C är ett vattenlösligt vitamin som finns i frukt och grönsaker.",
+            "information": {
+              "text": "Vitamin C är en antioxidant som har studerats i relation till immuncellsfunktion."
+            }
+          }
+        ]
+      },
+      "naturalImmunity": {
+        "tips": [
+          {
+            "title": "Traditionella örtpreparat",
+            "description": "Echinacea är en ört som traditionellt har använts och studerats i relation till immunhälsa.",
+            "information": {
+              "text": "Echinacea har forskats för sina potentiella effekter på förkylningslängd och immunmotståndskraft."
+            }
+          }
+        ]
+      },
+      "glutathioneDetox": {
+        "tips": [
+          {
+            "title": "Glutationvägar",
+            "description": "N-acetylcystein (NAC) är ett aminosyraderivat som har studerats i relation till antioxidantsystem.",
+            "information": {
+              "text": "NAC är en prekursor till glutation, som spelar en roll i cellulära antioxidantprocesser."
+            }
+          }
+        ]
+      }
+    }
+  },
+  "stressRelief": {
+    "title": "Stress",
+    "description": "Information om faktorer som ofta diskuteras i relation till stresshantering.",
+    "levels": {
+      "ashwagandha": {
+        "tips": [
+          {
+            "title": "Adaptogena örter",
+            "description": "Ashwagandha är en adaptogen ört som traditionellt har använts och studerats i stressforskning.",
+            "information": {
+              "text": "Ashwagandha har forskats i relation till kortisolnivåer och stressmotståndskraft."
+            }
+          }
+        ]
+      },
+      "glycine": {
+        "tips": [
+          {
+            "title": "Lugnande aminosyror",
+            "description": "Glycin är en aminosyra som fungerar som en neurotransmittor i centrala nervsystemet.",
+            "information": {
+              "text": "Glycin har studerats för sina potentiella lugnande effekter och påverkan på sömnkvalitet."
+            }
+          }
+        ]
+      },
+      "neurochemicalSupport": {
+        "tips": [
+          {
+            "title": "Neuropeptidforskning",
+            "description": "Semax är en syntetisk peptid som har studerats i neurologiska forskningssammanhang.",
+            "information": {
+              "text": "Semax har forskats för sina potentiella effekter på hjärnkemi och kognitiv funktion."
+            }
+          }
+        ]
+      }
+    }
+  },
+  "musclePerformance": {
+    "title": "Prestation",
+    "description": "Information om faktorer som ofta diskuteras i relation till fysisk prestation.",
+    "levels": {
+      "basicSupport": {
+        "tips": [
+          {
+            "title": "Energisubstratföreningar",
+            "description": "Kreatin är ett av de mest forskade tillskotten inom idrottsvetenskap.",
+            "information": {
+              "text": "Kreatin har studerats omfattande i relation till ATP-produktion och styrkeprestanda."
+            }
+          }
+        ]
+      },
+      "motorUnits": {
+        "tips": [
+          {
+            "title": "Neuromuskulära träningskoncept",
+            "description": "Proteinintag och neuromuskulär träning har studerats inom idrottsvetenskap.",
+            "information": {
+              "text": "Motorenhetsrekrytering och neuromuskulär effektivitet är nyckelkoncept i forskning om styrka och kraftutveckling."
+            }
+          }
+        ]
+      },
+      "enduranceRecovery": {
+        "tips": [
+          {
+            "title": "Uthållighetsrelaterade föreningar",
+            "description": "Beta-alanin är en aminosyra som har studerats i relation till träningsprestanda.",
+            "information": {
+              "text": "Beta-alanin har forskats för sin roll i buffring av vätejoner under högintensiv träning."
+            }
+          }
+        ]
+      },
+      "hormonalBoosters": {
+        "tips": [
+          {
+            "title": "Traditionella prestationspreparat",
+            "description": "Shilajit är en traditionell substans som innehåller mineraler och fulvosyra.",
+            "information": {
+              "text": "Shilajit har studerats i vissa forskningssammanhang relaterade till fysisk prestation."
+            }
+          }
+        ]
+      },
+      "androgenicEnhancers": {
+        "tips": [
+          {
+            "title": "Hormonell vägforskning",
+            "description": "Fadogia agrestis är en växt som har studerats i preliminära forskningssammanhang.",
+            "information": {
+              "text": "Viss forskning har utforskat Fadogia i relation till luteiniserande hormonvägar."
+            }
+          }
+        ]
+      }
+    }
+  },
+  "digestiveHealth": {
+    "title": "Matsmältning",
+    "description": "Information om faktorer som ofta diskuteras i relation till matsmältningshälsa.",
+    "levels": {
+      "gutFlora": {
+        "tips": [
+          {
+            "title": "Tarmmikrobiotaöversikt",
+            "description": "Probiotika är levande mikroorganismer som har studerats i relation till tarmhälsa.",
+            "information": {
+              "text": "Probiotika har forskats för sina potentiella effekter på tarmmikrobiotabalans och immunfunktion."
+            }
+          },
+          {
+            "title": "Kostfiberkällor",
+            "description": "Forskning har identifierat olika bakteriestammar i tarmen. En studie från Zoe identifierade stammen SGB15249 hos individer som konsumerade nötter och frön regelbundet.",
+            "information": {
+              "text": "Nötter och frön är kostkällor till fiber som har studerats i relation till mikrobiomsammansättning."
+            },
+            "startPrompt": "Analysera bilden och avgör om den innehåller det som krävs för målet 'nötter och frön'."
+          }
+        ]
+      },
+      "liverEnzymes": {
+        "tips": [
+          {
+            "title": "Hepatiskt stödjande föreningar",
+            "description": "Mjölktistel är en ört som innehåller silymarin, vilket har studerats i leverforskning.",
+            "information": {
+              "text": "Mjölktistel har forskats för sin potentiella roll i levercellsfunktion och regenerering."
+            }
+          }
+        ]
+      },
+      "advancedGut": {
+        "tips": [
+          {
+            "title": "Gallsyraföreningar",
+            "description": "TUDCA (tauroursodeoxycholsyra) är en gallsyra som har studerats i relation till matsmältningsprocesser.",
+            "information": {
+              "text": "TUDCA har forskats för sina potentiella effekter på gallflöde och cellulär hälsa."
+            }
+          }
+        ]
+      }
+    }
+  },
+  "cardioFitness": {
+    "title": "Kondition",
+    "description": "Information om kardiovaskulära träningsmetoder som ofta diskuteras inom träningsvetenskap.",
+    "levels": {
+      "hiit": {
+        "tips": [
+          {
+            "title": "Högintensiv intervallträning",
+            "description": "HIIT är en träningsmetod som har studerats omfattande inom träningsfysiologi.",
+            "information": {
+              "text": "HIIT har forskats för sina effekter på VO₂ max och metaboliska anpassningar."
+            },
+            "startPrompt": "Användaren har ett mål att utföra minst 2 högintensiva intervallträningspass (HIIT) per vecka. Baserat på träningsloggen nedan, utvärdera om målet uppnåddes. Sammanfatta framsteg och ge uppmuntran eller råd."
+          }
+        ]
+      },
+      "runningVolume": {
+        "tips": [
+          {
+            "title": "Progressiv volymträning",
+            "description": "Gradvisa ökningar av träningsvolym diskuteras ofta i löpprogram.",
+            "information": {
+              "text": "Progressiva volymökningar har studerats i relation till aerob basutveckling och skadeförebyggande."
+            },
+            "startPrompt": "Användaren arbetar med att öka total löpdistans varje vecka. Givet träningsdata, analysera om det finns en uppåtgående trend. Nämn eventuella tecken på överträning eller framstegsstagnation."
+          }
+        ]
+      },
+      "vo2max": {
+        "tips": [
+          {
+            "title": "VO₂ max-övervakning",
+            "description": "VO₂ max är ett mått på aerob kapacitet som kan följas med olika fitnessenheter.",
+            "information": {
+              "text": "VO₂ max är väl erkänt inom träningsvetenskap som en nyckelfaktor för kardiovaskulär kondition och uthållighetskapacitet."
+            },
+            "startPrompt": "Utvärdera trenden i VO2 max under den senaste månaden med data nedan. Har användaren förbättrats? Ge uppmuntran eller föreslå förändringar i träningen baserat på resultaten."
+          }
+        ]
+      }
+    }
+  },
+  "mind": {
+    "title": "Mind",
+    "description": "Information om hjärt–hjärn-koherens och utforskning av mentala tillstånd.",
+    "levels": {
+      "coherence": {
+        "tips": [
+          {
+            "title": "Utforskning av Heart–Brain Coherence",
+            "description": "HRV (hjärtfrekvensvariabilitet) kan användas för att observera mönster associerade med olika mentala tillstånd.",
+            "information": {
+              "text": "Heart–Brain Coherence är ett koncept som beskriver ett tillstånd där hjärtrytmmönster blir jämna och sinusformade. Detta fenomen har studerats i relation till andningstekniker och emotionella tillstånd."
+            },
+            "startPrompt": "Genomför sessionen enligt stegen nedan. Ta sedan en bild av din HRV-mätning och ladda upp.",
+            "analyzePrompt": "Analysera den uppladdade bilden: Hur skiljer sig puls, HRV och kurvans form mellan stegen?",
+            "tasks": {
+              "task1": "HRV-mätning i baseline (sitta stilla utan specifikt mentalt fokus).",
+              "task2": "HRV-mätning medan fokus ligger på en stressande eller utmanande tanke.",
+              "task3": "HRV-mätning under återhämtning med lugn andning."
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,432 @@
+{
+ "energy": {
+  "title": "Energy",
+  "description": "Information and lifestyle-related tips commonly discussed in relation to daily energy levels.",
+  "levels": {
+    "generalHealth": {
+      "tips": [
+        {
+          "title": "General nutritional support",
+          "description": "Adequate intake of essential vitamins and minerals is often discussed as part of maintaining overall vitality.",
+          "information": {
+            "text": "Multivitamins are sometimes used to help cover potential nutritional gaps in the diet."
+          }
+        }
+      ]
+    },
+    "vitaminDComprehensive": {
+      "title": "Vitamin D overview",
+      "tips": [
+        {
+          "title": "Vitamin D status awareness",
+          "description": "Vitamin D levels can vary based on factors such as sun exposure, diet, and geographic location.",
+          "information": {
+            "text": "Vitamin D status is commonly assessed in clinical settings using blood-based measurements."
+          }
+        },
+        {
+          "title": "Vitamin D intake considerations",
+          "description": "Vitamin D is available from sunlight, food sources, and dietary supplements.",
+          "information": {
+            "text": "Vitamin D3 is a commonly used supplemental form and has been widely studied."
+          }
+        },
+        {
+          "title": "Understanding vitamin D measurements",
+          "description": "Healthcare professionals may evaluate vitamin D levels over time to understand trends and changes.",
+          "information": {
+            "text": "Different vitamin D ranges are used clinically to interpret laboratory results."
+          }
+        }
+      ]
+    },
+    "vitaminSupport": {
+      "tips": [
+        {
+          "title": "Vitamin and mineral balance",
+          "description": "Vitamins and minerals play roles in many metabolic and immune-related processes.",
+          "information": {
+            "text": "Vitamin D is involved in immune regulation and metabolic pathways."
+          }
+        }
+      ]
+    },
+    "mitochondrialSupport": {
+      "tips": [
+        {
+          "title": "Mitochondrial nutrients",
+          "description": "Certain nutrients are involved in mitochondrial processes related to cellular energy production.",
+          "information": {
+            "text": "CoQ10 participates in energy transfer within the mitochondria."
+          }
+        }
+      ]
+    },
+    "cellularEnergy": {
+      "tips": [
+        {
+          "title": "Cellular energy metabolism",
+          "description": "Cellular energy production relies on complex metabolic pathways.",
+          "information": {
+            "text": "NAD+ is involved in cellular metabolism and DNA maintenance mechanisms."
+          }
+        }
+      ]
+    },
+    "metabolicActivation": {
+      "tips": [
+        {
+          "title": "Metabolic health factors",
+          "description": "Glucose metabolism is an important component of sustained energy levels.",
+          "information": {
+            "text": "Alpha-lipoic acid has been studied in relation to insulin sensitivity and antioxidant activity."
+          }
+        }
+      ]
+    },
+    "longevity": {
+      "tips": [
+        {
+          "title": "Traditional longevity compounds",
+          "description": "Some traditional substances have historically been associated with vitality and resilience.",
+          "information": {
+            "text": "Shilajit contains fulvic acid and has been used in traditional wellness contexts."
+          }
+        }
+      ]
+    }
+  }
+}
+,
+
+  "sleepQuality": {
+    "title": "Sleep",
+    "description": "Information about sleep quality and factors that may influence rest.",
+    "levels": {
+      "sleepBy2230": {
+        "tips": [
+          {
+            "title": "Sleep timing awareness",
+            "description": "Early bedtimes are commonly discussed in relation to circadian rhythm alignment.",
+            "information": {
+              "text": "Sleep timing has been studied in connection with melatonin cycles and recovery processes."
+            }
+          }
+        ]
+      },
+      "hormonalSupport": {
+        "tips": [
+          {
+            "title": "Hormonal support considerations",
+            "description": "Magnesium is a mineral that has been studied in relation to relaxation and sleep.",
+            "information": {
+              "text": "Magnesium has been researched in connection with sleep quality and cortisol regulation."
+            }
+          }
+        ]
+      },
+      "neuroregulation": {
+        "tips": [
+          {
+            "title": "Neuroregulation compounds",
+            "description": "L-Theanine is an amino acid found in tea that has been studied for its calming properties.",
+            "information": {
+              "text": "L-Theanine has been associated with alpha brain wave activity and relaxation in research studies."
+            }
+          }
+        ]
+      }
+    }
+  },
+  "focus": {
+    "title": "Focus",
+    "description": "Information about factors that may influence focus and concentration.",
+    "levels": {
+      "calmAlertness": {
+        "tips": [
+          {
+            "title": "Calm alertness compounds",
+            "description": "L-Theanine is commonly found in green tea and has been studied for its effects on attention.",
+            "information": {
+              "text": "L-Theanine has been researched in relation to calm focus and reduced distraction."
+            }
+          }
+        ]
+      },
+      "neurotransmitterSupport": {
+        "tips": [
+          {
+            "title": "Neurotransmitter precursors",
+            "description": "L-Tyrosine is an amino acid that serves as a precursor to dopamine.",
+            "information": {
+              "text": "L-Tyrosine has been studied in relation to cognitive function during stressful conditions."
+            }
+          }
+        ]
+      },
+      "nootropicStimulation": {
+        "tips": [
+          {
+            "title": "Cognitive training approaches",
+            "description": "Cognitive exercises such as dual n-back and problem-solving tasks have been studied in relation to mental performance.",
+            "information": {
+              "text": "Mental exercises have been researched for their potential effects on working memory and neuroplasticity."
+            }
+          }
+        ]
+      }
+    }
+  },
+  "immuneSupport": {
+    "title": "Immune support",
+    "description": "Information about factors commonly discussed in relation to immune function.",
+    "levels": {
+      "vitaminC": {
+        "tips": [
+          {
+            "title": "Vitamin C overview",
+            "description": "Vitamin C is a water-soluble vitamin found in fruits and vegetables.",
+            "information": {
+              "text": "Vitamin C is an antioxidant that has been studied in relation to immune cell function."
+            }
+          }
+        ]
+      },
+      "naturalImmunity": {
+        "tips": [
+          {
+            "title": "Traditional herbal compounds",
+            "description": "Echinacea is an herb that has been traditionally used and studied in relation to immune health.",
+            "information": {
+              "text": "Echinacea has been researched for its potential effects on cold duration and immune resilience."
+            }
+          }
+        ]
+      },
+      "glutathioneDetox": {
+        "tips": [
+          {
+            "title": "Glutathione pathways",
+            "description": "N-acetylcysteine (NAC) is an amino acid derivative that has been studied in relation to antioxidant systems.",
+            "information": {
+              "text": "NAC is a precursor to glutathione, which plays a role in cellular antioxidant processes."
+            }
+          }
+        ]
+      }
+    }
+  },
+  "stressRelief": {
+    "title": "Stress",
+    "description": "Information about factors commonly discussed in relation to stress management.",
+    "levels": {
+      "ashwagandha": {
+        "tips": [
+          {
+            "title": "Adaptogenic herbs",
+            "description": "Ashwagandha is an adaptogenic herb that has been traditionally used and studied in stress research.",
+            "information": {
+              "text": "Ashwagandha has been researched in relation to cortisol levels and stress resilience."
+            }
+          }
+        ]
+      },
+      "glycine": {
+        "tips": [
+          {
+            "title": "Calming amino acids",
+            "description": "Glycine is an amino acid that functions as a neurotransmitter in the central nervous system.",
+            "information": {
+              "text": "Glycine has been studied for its potential calming effects and influence on sleep quality."
+            }
+          }
+        ]
+      },
+      "neurochemicalSupport": {
+        "tips": [
+          {
+            "title": "Neuropeptide research",
+            "description": "Semax is a synthetic peptide that has been studied in neurological research contexts.",
+            "information": {
+              "text": "Semax has been researched for its potential effects on brain chemistry and cognitive function."
+            }
+          }
+        ]
+      }
+    }
+  },
+  "musclePerformance": {
+    "title": "Performance",
+    "description": "Information about factors commonly discussed in relation to physical performance.",
+    "levels": {
+      "basicSupport": {
+        "tips": [
+          {
+            "title": "Energy substrate compounds",
+            "description": "Creatine is one of the most researched supplements in sports science.",
+            "information": {
+              "text": "Creatine has been extensively studied in relation to ATP production and strength performance."
+            }
+          }
+        ]
+      },
+      "motorUnits": {
+        "tips": [
+          {
+            "title": "Neuromuscular training concepts",
+            "description": "Protein intake and neuromuscular training have been studied in sports science.",
+            "information": {
+              "text": "Motor unit recruitment and neuromuscular efficiency are key concepts in strength and power development research."
+            }
+          }
+        ]
+      },
+      "enduranceRecovery": {
+        "tips": [
+          {
+            "title": "Endurance-related compounds",
+            "description": "Beta-alanine is an amino acid that has been studied in relation to exercise performance.",
+            "information": {
+              "text": "Beta-alanine has been researched for its role in buffering hydrogen ions during high-intensity exercise."
+            }
+          }
+        ]
+      },
+      "hormonalBoosters": {
+        "tips": [
+          {
+            "title": "Traditional performance compounds",
+            "description": "Shilajit is a traditional substance containing minerals and fulvic acid.",
+            "information": {
+              "text": "Shilajit has been studied in some research contexts related to physical performance."
+            }
+          }
+        ]
+      },
+      "androgenicEnhancers": {
+        "tips": [
+          {
+            "title": "Hormonal pathway research",
+            "description": "Fadogia agrestis is a plant that has been studied in preliminary research contexts.",
+            "information": {
+              "text": "Some research has explored Fadogia in relation to luteinizing hormone pathways."
+            }
+          }
+        ]
+      }
+    }
+  },
+  "digestiveHealth": {
+    "title": "Digestion",
+    "description": "Information about factors commonly discussed in relation to digestive health.",
+    "levels": {
+      "gutFlora": {
+        "tips": [
+          {
+            "title": "Gut microbiota overview",
+            "description": "Probiotics are live microorganisms that have been studied in relation to gut health.",
+            "information": {
+              "text": "Probiotics have been researched for their potential effects on gut microbiota balance and immune function."
+            }
+          },
+          {
+            "title": "Dietary fiber sources",
+            "description": "Research has identified various bacterial strains in the gut. A study from Zoe identified the strain SGB15249 in individuals who consumed nuts and seeds regularly.",
+            "information": {
+              "text": "Nuts and seeds are dietary sources of fiber that have been studied in relation to microbiome composition."
+            },
+            "startPrompt": "Analyze the image and determine if it contains what is needed for the goal 'nuts and seeds'."
+          }
+        ]
+      },
+      "liverEnzymes": {
+        "tips": [
+          {
+            "title": "Hepatic support compounds",
+            "description": "Milk Thistle is an herb that contains silymarin, which has been studied in liver research.",
+            "information": {
+              "text": "Milk Thistle has been researched for its potential role in liver cell function and regeneration."
+            }
+          }
+        ]
+      },
+      "advancedGut": {
+        "tips": [
+          {
+            "title": "Bile acid compounds",
+            "description": "TUDCA (tauroursodeoxycholic acid) is a bile acid that has been studied in relation to digestive processes.",
+            "information": {
+              "text": "TUDCA has been researched for its potential effects on bile flow and cellular health."
+            }
+          }
+        ]
+      }
+    }
+  },
+  "cardioFitness": {
+    "title": "Cardio fitness",
+    "description": "Information about cardiovascular training approaches commonly discussed in exercise science.",
+    "levels": {
+      "hiit": {
+        "tips": [
+          {
+            "title": "High-intensity interval training",
+            "description": "HIIT is a training method that has been extensively studied in exercise physiology.",
+            "information": {
+              "text": "HIIT has been researched for its effects on VO₂ max and metabolic adaptations."
+            },
+            "startPrompt": "The user has a goal to perform at least 2 high-intensity interval training (HIIT) sessions per week. Based on the workout log below, evaluate whether the goal was achieved. Summarize progress and give encouragement or advice."
+          }
+        ]
+      },
+      "runningVolume": {
+        "tips": [
+          {
+            "title": "Progressive volume training",
+            "description": "Gradual increases in training volume are commonly discussed in running programs.",
+            "information": {
+              "text": "Progressive volume increases have been studied in relation to aerobic base development and injury prevention."
+            },
+            "startPrompt": "The user is working to increase total running distance each week. Given the workout data, analyze if there's an upward trend. Mention any signs of overtraining or progress plateaus."
+          }
+        ]
+      },
+      "vo2max": {
+        "tips": [
+          {
+            "title": "VO₂ max monitoring",
+            "description": "VO₂ max is a measure of aerobic capacity that can be tracked using various fitness devices.",
+            "information": {
+              "text": "VO₂ max is widely recognized in exercise science as a key marker of cardiovascular fitness and endurance capacity."
+            },
+            "startPrompt": "Evaluate the trend in VO2 max over the past month using the data below. Has the user improved? Offer encouragement or suggest changes to training based on results."
+          }
+        ]
+      }
+   }
+},
+      "mind": {
+        "title": "Mind",
+        "description": "Information about heart–brain coherence and mental state exploration.",
+        "levels": {
+          "coherence": {
+            "tips": [
+              {
+                "title": "Heart–Brain Coherence exploration",
+                "description": "HRV (Heart Rate Variability) can be used to observe patterns associated with different mental states.",
+                "information": {
+                  "text": "Heart–Brain Coherence is a concept describing a state where heart rhythm patterns become smooth and sinusoidal. This phenomenon has been studied in relation to breathing techniques and emotional states."
+                },
+                "startPrompt": "Complete the session according to the steps below. Then take a picture of your HRV measurement and upload it.",
+                "analyzePrompt": "Analyze the uploaded image: How do heart rate, HRV, and the curve pattern differ between the steps?",
+                "tasks": {
+                  "task1": "HRV measurement in baseline (sitting still without specific mental focus).",
+                  "task2": "HRV measurement while focusing on a stressful or challenging thought.",
+                  "task3": "HRV measurement during recovery with calm breathing."
+                }
+              }
+            ]
+          }
+        }
+      }
+    }

@@ -18,7 +18,7 @@ import {
 } from "../utils/goalUtils";
 import AppBox from "@/components/ui/AppBox";
 import ProgressBarWithLabel from "@/components/ui/ProgressbarWithLabel";
-import { goals } from "@/locales/goals";
+import { tipCategories } from "@/locales/tips";
 import AnalysisModal from "@/components/modals/FileAnalysisModal";
 import { sendFileToAIAnalysis, sendFileToAISupplementAnalysis } from "@/services/gptServices";
 
@@ -38,12 +38,12 @@ export default function GoalDetailScreen() {
   const [showStartModal, setShowStartModal] = React.useState(false);
 
   const mainGoal = mainGoals.find((g) => g.id === mainGoalId);
-  const goal = goals.find((l) => l.id === goalId);
+  const goal = tipCategories.find((l) => l.id === goalId);
   const activeGoal = activeGoals.find((g) => g.mainGoalId === mainGoalId);
   const startDate = activeGoal ? new Date(activeGoal.startedAt) : null;
 
   // Use first step when available, fall back to older flat structure
-  const step: any = goal?.steps?.[0] ?? {};
+  const step: any = goal?.tips?.[0] ?? {};
 
   const goalIcon = mainGoal?.icon ?? "target";
   const supplementId =
@@ -179,7 +179,7 @@ const handleAnalyzePressed = () => {
 
   // ny: flytta analyslogik hit så modalen bara visar resultatet
   const handleAnalyzeFile = async (file: { uri?: string; name?: string; type?: string; file_base64?: string; mime?: string }) => {
-    const promptToSend = analyzePromptKey ? t(`goals:${analyzePromptKey}`) : t(`goals:${titleKey}`);
+    const promptToSend = analyzePromptKey ? t(`tips:${analyzePromptKey}`) : t(`tips:${titleKey}`);
     const resp = await sendFileToAIAnalysis({
       uri: file.uri,
       name: file.name,
@@ -242,13 +242,13 @@ const handleAnalyzePressed = () => {
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
     >
-      <Text style={styles.goalTitle}>{t(`goals:${mainGoalId}.title`)}</Text>
+      <Text style={styles.goalTitle}>{t(`tips:${mainGoalId}.title`)}</Text>
       <View style={styles.topSection}>
         <View style={styles.iconWrapper}>
           <Icon source={goalIcon} size={50} color={Colors.dark.primary} />
         </View>
         <Text style={styles.subTitle}>
-          {supplementName ?? t(`goals:${titleKey}`)}
+          {supplementName ?? t(`tips:${titleKey}`)}
         </Text>
         <Text style={styles.xpText}>{goal.xp ?? 0} XP</Text>
         {startDate && endDate && progress && (
@@ -262,7 +262,7 @@ const handleAnalyzePressed = () => {
       {information && (
         <AppBox title={t("common:goalDetails.information")}>
           <Text style={{ color: Colors.dark.textLight, marginBottom: 8 }}>
-            {information.text ? t(`goals:${information.text}`) : information}
+            {information.text ? t(`tips:${information.text}`) : information}
           </Text>
           <Text
             style={{
@@ -271,14 +271,14 @@ const handleAnalyzePressed = () => {
               fontWeight: "bold",
             }}
           >
-            {information.author ? t(`goals:${information.author}`) : ""}
+            {information.author ? t(`tips:${information.author}`) : ""}
           </Text>
         </AppBox>
       )}
 
 <AppBox title={t(`common:goalDetails.taskInfo`)}>
   <Text style={{ color: Colors.dark.textLight }}>
-    {taskInstructionsKey ? t(`goals:${taskInstructionsKey}`) : ""}
+    {taskInstructionsKey ? t(`tips:${taskInstructionsKey}`) : ""}
     {duration &&
       `\n\n${duration.amount} ${t(
         `common:goalDetails.durationUnits.${duration.unit}`

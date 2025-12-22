@@ -9,7 +9,7 @@ import { useSupplements } from "@/locales/supplements";
 import AppCard from "@/components/ui/AppCard";
 import ProgressBarWithLabel from "@/components/ui/ProgressbarWithLabel";
 import { levels } from "@/locales/levels";
-import { Goal, goals } from "@/locales/goals";
+import { TipCategory, tipCategories } from "@/locales/tips";
 import { mainGoals } from "@/locales/mainGoals";
 
 export default function BiohackerDashboard() {
@@ -28,12 +28,12 @@ export default function BiohackerDashboard() {
 
   // Hantera nya steps-strukturen: visa tillskott från första steget (om finns),
   // annars visa översatt titel för steget/goal
-  const getSupplementsText = (goal: Goal) => {
+  const getSupplementsText = (goal: TipCategory) => {
     if (!goal) return "";
-    const step = goal.steps?.[0];
-    if (!step) return t(`goals:${goal.title}`);
+    const step = goal.tips?.[0];
+    if (!step) return t(`tips:${goal.title}`);
     if (!step.supplements || step.supplements.length === 0)
-      return t(`goals:${step.title}`);
+      return t(`tips:${step.title}`);
     return step.supplements
       .map((s) => supplements.find((ss) => ss.id === s.id)?.name ?? s.id)
       .join(", ");
@@ -54,7 +54,7 @@ export default function BiohackerDashboard() {
       {mainGoals
         .filter((item) => myGoals.includes(item.id))
         .filter((item) => {
-          const relatedGoals = goals.filter((g) =>
+          const relatedGoals = tipCategories.filter((g) =>
             g.mainGoalIds.includes(item.id)
           );
           const finishedForMainGoal = finishedGoals.filter(
@@ -65,7 +65,7 @@ export default function BiohackerDashboard() {
         })
         .map((item) => {
           const mainGoalId = item.id;
-          const goalLevels = goals
+          const goalLevels = tipCategories
             .filter(
               (lvl) =>
                 lvl.mainGoalIds.includes(mainGoalId) &&
@@ -80,7 +80,7 @@ export default function BiohackerDashboard() {
             (g) => g.mainGoalId === mainGoalId
           );
           const goalId = activeGoal?.goalId;
-          const goal = goals.find((lvl) => lvl.id === goalId);
+          const goal = tipCategories.find((lvl) => lvl.id === goalId);
 
           const isActive = Boolean(activeGoal);
           const hasSelected = Boolean(goal);
@@ -100,7 +100,7 @@ export default function BiohackerDashboard() {
             <AppCard
               key={mainGoalId}
               icon={item.icon}
-              title={t(`goals:${mainGoalId}.title`)}
+              title={t(`tips:${mainGoalId}.title`)}
               description={description}
               isActive={isActive}
               onPress={() =>
@@ -110,7 +110,7 @@ export default function BiohackerDashboard() {
                       params: { mainGoalId, goalId },
                     })
                   : router.push({
-                      pathname: "/(goal)/selectGoal",
+                      pathname: "/(goal)/[mainGoalId]"
                       params: { mainGoalId },
                     })
               }

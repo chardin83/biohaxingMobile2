@@ -63,7 +63,7 @@
     "confirmAddSupplements": "Do you want to add supplements for this goal?"
   },
   "selectGoal": {
-      "description": "Select a goal to start working on it:"
+      "description": "Different tips and supplements can help you reach your health goals. Select one for more information"
   },
   "goalDetails": {
     "taskInfo": "Task",

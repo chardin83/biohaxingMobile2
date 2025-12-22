@@ -2,7 +2,7 @@ import React from "react";
 import { Text, StyleSheet, ScrollView } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { goals, GoalStep } from "@/locales/goals";
+import { Tip, tipCategories } from "@/locales/tips";
 import { useSupplements } from "@/locales/supplements";
 import { Colors } from "@/constants/Colors";
 import AppCard from "@/components/ui/AppCard";
@@ -11,50 +11,50 @@ import { useStorage } from "../context/StorageContext";
 export default function SelectLevelScreen() {
   const { mainGoalId } = useLocalSearchParams<{ mainGoalId: string }>();
   const { myLevel } = useStorage();
-  const { t } = useTranslation(["goals", "levels"]);
+  const { t } = useTranslation(["tips", "levels"]);
   const supplements = useSupplements();
   const router = useRouter();
   const { finishedGoals } = useStorage();
 
-  const finishedGoalsForMainGoal = finishedGoals.filter((goal) => goal.mainGoalId);
-  const finishedGoalIds = finishedGoalsForMainGoal.map((goal) => goal.goalId);
-  const newGoals = goals
-    .filter((goal) => goal.mainGoalIds.includes(mainGoalId) && goal.level <= myLevel)
-    .filter((goal) => !finishedGoalIds.includes(goal.id))
+  const finishedGoalsForMainGoal = finishedGoals.filter((tip) => tip.mainGoalId);
+  const finishedTipIds = finishedGoalsForMainGoal.map((tipCategory) => tipCategory.goalId);
+  const newTips = tipCategories
+    .filter((tip) => tip.mainGoalIds.includes(mainGoalId) && tip.level <= myLevel)
+    .filter((tip) => !finishedTipIds.includes(tip.id))
     .sort((a, b) => a.level - b.level);
 
-const getSupplementNames = (goal: GoalStep) => {
-  if (!goal?.supplements || !Array.isArray(goal.supplements)) return "";
+const getSupplementNames = (tip: Tip) => {
+  if (!tip?.supplements || !Array.isArray(tip.supplements)) return "";
 
-  return goal.supplements
+  return tip.supplements
     .map((s) => supplements?.find((ss) => ss.id === s.id)?.name ?? s.id)
     .join(", ");
 };
 
 
-const handleSelectLevel = (goalId: string) => {
+const handleSelectLevel = (tipId: string) => {
   router.push({
     pathname: "/(goal)/details",
-    params: { mainGoalId, goalId },
+    params: { mainGoalId, goalId: tipId },
   });
 };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>{t(`goals:${mainGoalId}.title`)}</Text>
+      <Text style={styles.header}>{t(`tips:${mainGoalId}.title`)}</Text>
       <Text style={styles.subHeader}>{t("common:selectGoal.description")}</Text>
 
-      {newGoals.map((goal) => {
-        const supplementsText = goal.steps ? getSupplementNames(goal.steps[0]) : "";
-        const title = t(`goals:${goal.title}`);
-        const instructions = goal.steps && goal.steps[0].taskInfo ? t(goal.steps[0].taskInfo.instructions) : "";
+      {newTips.map((tip) => {
+        const supplementsText = tip.tips ? getSupplementNames(tip.tips[0]) : "";
+        const title = t(`tips:${tip.title}`);
+        const description = tip.tips && tip.tips[0].taskInfo ? t(tip.tips[0].taskInfo.description) : "";
 
         return (
           <AppCard
-            key={goal.id}
-            title={`Nivå ${goal.level}: ${title}`}
-            description={`${instructions}\n\n${supplementsText}`}
-            onPress={() => handleSelectLevel(goal.id)}
+            key={tip.id}
+            title={`Nivå ${tip.level}: ${title}`}
+            description={`${description}\n\n${supplementsText}`}
+            onPress={() => handleSelectLevel(tip.id)}
           />
         );
       })}
