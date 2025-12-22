@@ -372,19 +372,19 @@ export const tipCategories: TipCategory[] = [
     ],
   },
 
-  // stressRelief
+  // nervousSystem
   {
-    id: "level_stressRelief_1",
+    id: "level_nervousSystem_1",
     level: 1,
     xp: 300,
-    title: "stressRelief.levels.ashwagandha.tips.0.title",
-    mainGoalIds: ["stressRelief"],
+    title: "nervousSystem.levels.ashwagandha.tips.0.title",
+    mainGoalIds: ["nervousSystem"],
     tips: [
       {
-        id: "level_stressRelief_1_step1",
-        title: "stressRelief.levels.ashwagandha.tips.0.title",
+        id: "level_nervousSystem_1_step1",
+        title: "nervousSystem.levels.ashwagandha.tips.0.title",
         taskInfo: {
-          description: "stressRelief.levels.ashwagandha.tips.0.description",
+          description: "nervousSystem.levels.ashwagandha.tips.0.description",
           duration: { amount: 14, unit: "days" },
         },
         supplements: [{ id: "ashwagandha" }],
@@ -392,17 +392,17 @@ export const tipCategories: TipCategory[] = [
     ],
   },
   {
-    id: "level_stressRelief_2",
+    id: "level_nervousSystem_2",
     level: 2,
     xp: 500,
-    title: "stressRelief.levels.glycine.tips.0.title",
-    mainGoalIds: ["stressRelief"],
+    title: "nervousSystem.levels.glycine.tips.0.title",
+    mainGoalIds: ["nervousSystem"],
     tips: [
       {
-        id: "level_stressRelief_2_step1",
-        title: "stressRelief.levels.glycine.tips.0.title",
+        id: "level_nervousSystem_2_step1",
+        title: "nervousSystem.levels.glycine.tips.0.title",
         taskInfo: {
-          description: "stressRelief.levels.glycine.tips.0.description",
+          description: "nervousSystem.levels.glycine.tips.0.description",
           duration: { amount: 10, unit: "days" },
         },
         supplements: [{ id: "glycine" }],
@@ -410,17 +410,17 @@ export const tipCategories: TipCategory[] = [
     ],
   },
   {
-    id: "level_stressRelief_3",
+    id: "level_nervousSystem_3",
     level: 3,
     xp: 700,
-    title: "stressRelief.levels.neurochemicalSupport.tips.0.title",
-    mainGoalIds: ["stressRelief"],
+    title: "nervousSystem.levels.neurochemicalSupport.tips.0.title",
+    mainGoalIds: ["nervousSystem"],
     tips: [
       {
-        id: "level_stressRelief_3_step1",
-        title: "stressRelief.levels.neurochemicalSupport.tips.0.title",
+        id: "level_nervousSystem_3_step1",
+        title: "nervousSystem.levels.neurochemicalSupport.tips.0.title",
         taskInfo: {
-          description: "stressRelief.levels.neurochemicalSupport.tips.0.description",
+          description: "nervousSystem.levels.neurochemicalSupport.tips.0.description",
           duration: { amount: 14, unit: "days" },
         },
         supplements: [{ id: "semax" }],

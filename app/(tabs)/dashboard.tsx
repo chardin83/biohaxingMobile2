@@ -110,7 +110,7 @@ export default function BiohackerDashboard() {
                       params: { mainGoalId, goalId },
                     })
                   : router.push({
-                      pathname: "/(goal)/[mainGoalId]"
+                      pathname: "/(goal)/[mainGoalId]",
                       params: { mainGoalId },
                     })
               }

@@ -10,7 +10,7 @@ export const mainGoals: MainGoal[] = [
   { id: "sleepQuality", instructions: "sleepQuality.description", icon: "sleep" },
   { id: "focus", instructions: "focus.description", icon: "eye" },
   { id: "immuneSupport", instructions: "immuneSupport.description", icon: "shield-check" },
-  { id: "stressRelief", instructions: "stressRelief.description", icon: "emoticon-neutral" },
+  { id: "nervousSystem", instructions: "nervousSystem.description", icon: "emoticon-neutral" },
   { id: "musclePerformance", instructions: "musclePerformance.description", icon: "arm-flex" },
   { id: "digestiveHealth", instructions: "digestiveHealth.description", icon: "food-apple" },
   { id: "cardioFitness", instructions: "cardioFitness.description", icon: "heart-pulse" },

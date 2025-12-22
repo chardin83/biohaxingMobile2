@@ -214,8 +214,8 @@
       }
     }
   },
-  "stressRelief": {
-    "title": "Stress",
+  "nervousSystem": {
+    "title": "Nervsystem",
     "description": "Information om faktorer som ofta diskuteras i relation till stresshantering.",
     "levels": {
       "ashwagandha": {

@@ -73,6 +73,14 @@ export default function RootLayout() {
                   },
                 }}
               >
+                 <Stack.Screen
+                  name="(goal)"
+                  options={{
+                    headerShown: true,
+                    title: "",
+                    headerBackTitle: t("back"),
+                  }}
+                />
                 <Stack.Screen
                   name="(tabs)"
                   options={{
@@ -81,22 +89,7 @@ export default function RootLayout() {
                     headerBackTitle: t("back"),
                   }}
                 />
-                <Stack.Screen
-                  name="(goal)/details"
-                  options={{
-                    headerShown: true,
-                    headerTitle: "",
-                    headerBackTitle: t("back"),
-                  }}
-                />
-                <Stack.Screen
-                  name="(goal)/selectGoal"
-                  options={{
-                    headerShown: true,
-                    headerTitle: "",
-                    headerBackTitle: t("back"), // ✅ Visas som text på back-knapp i nästa skärm
-                  }}
-                />
+
                 <Stack.Screen
                   name="(onboarding)/onboardingsupplements"
                   options={{

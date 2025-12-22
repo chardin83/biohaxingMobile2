@@ -216,8 +216,8 @@
       }
     }
   },
-  "stressRelief": {
-    "title": "Stress",
+  "nervousSystem": {
+    "title": "Nervous system",
     "description": "Information about factors commonly discussed in relation to stress management.",
     "levels": {
       "ashwagandha": {
