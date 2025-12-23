@@ -1,22 +1,89 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import { useWearable } from "@/wearables/wearableProvider";
+import { TimeRange, SleepSummary, DailyActivity, EnergySignal } from "@/wearables/types";
+import { WearableStatus } from "@/components/WearableStatus";
 
 export default function DigestiveScreen() {
-  const router = useRouter();
+  const { adapter, status } = useWearable();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [sleepData, setSleepData] = useState<SleepSummary[]>([]);
+  const [activityData, setActivityData] = useState<DailyActivity[]>([]);
+  const [energyData, setEnergyData] = useState<EnergySignal[]>([]);
 
-  // 🔹 Här hämtar du data från store / hook / context
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const range: TimeRange = {
+          start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+          end: new Date().toISOString(),
+        };
+
+        const [sleep, activity, energy] = await Promise.all([
+          adapter.getSleep(range),
+          adapter.getDailyActivity(range),
+          adapter.getEnergySignal(range),
+        ]);
+
+        setSleepData(sleep);
+        setActivityData(activity);
+        setEnergyData(energy);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [adapter]);
+
+  if (loading) {
+    return (
+      <LinearGradient colors={["#071526", "#040B16"]} style={styles.bg}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="rgba(120,255,220,0.95)" />
+          <Text style={styles.loadingText}>Loading digestive data...</Text>
+        </View>
+      </LinearGradient>
+    );
+  }
+
+  if (error) {
+    return (
+      <LinearGradient colors={["#071526", "#040B16"]} style={styles.bg}>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Error: {error}</Text>
+        </View>
+      </LinearGradient>
+    );
+  }
+
+  // Transform wearable data to digestive metrics
+  const latestSleep = sleepData[0];
+  const latestActivity = activityData[0];
+  const latestEnergy = energyData[0];
+
+   const getSleepQuality = (): string => {
+    if (!latestSleep || latestSleep.efficiencyPct === undefined) {
+      return "Good";
+    }
+    return latestSleep.efficiencyPct > 80 ? "Good" : "Fair";
+  };
+
   const digestive = {
-    stressLevel: "Low",
-    bodyBattery: 82,
-    sleepHours: 7.8,
-    sleepQuality: "Good",
-    activityMinutes: 145,
-    stepCount: 9500,
-    hydration: 2.1, // Liters (om manuellt loggat)
-    lastMealLogged: "3h ago",
-    symptomsToday: 0,
+    stressLevel: (latestEnergy?.bodyBatteryLevel ?? 82) > 70 ? "Low" : "Moderate",
+    bodyBattery: latestEnergy?.bodyBatteryLevel ?? 82,
+    sleepHours: latestSleep ? latestSleep.durationMinutes / 60 : 7.8,
+    sleepQuality: getSleepQuality(),
+    activityMinutes: latestActivity?.activeMinutes ?? 145,
+    stepCount: latestActivity?.steps ?? 9500,
+    hydration: 2.1, // Would need manual logging
+    lastMealLogged: "3h ago", // Would need manual logging
+    symptomsToday: 0, // Would need manual logging
   };
 
   return (
@@ -26,6 +93,8 @@ export default function DigestiveScreen() {
         <Text style={styles.subtitle}>
           Factors influencing digestive health and gut function
         </Text>
+
+        <WearableStatus status={status} />
 
         {/* Overview card - Indirect metrics */}
         <View style={styles.card}>
@@ -37,20 +106,29 @@ export default function DigestiveScreen() {
               <Text style={styles.label}>Stress level</Text>
               <Text style={styles.valueSmall}>{digestive.stressLevel}</Text>
               <Text style={styles.muted}>Battery: {digestive.bodyBattery}%</Text>
+              {latestEnergy && (
+                <Text style={styles.source}>{latestEnergy.source}</Text>
+              )}
             </View>
 
             {/* Sleep */}
             <View style={[styles.col, styles.colWithDivider]}>
               <Text style={styles.label}>Sleep</Text>
-              <Text style={styles.value}>{digestive.sleepHours}h</Text>
+              <Text style={styles.value}>{digestive.sleepHours.toFixed(1)}h</Text>
               <Text style={styles.accent}>{digestive.sleepQuality}</Text>
+              {latestSleep && (
+                <Text style={styles.source}>{latestSleep.source}</Text>
+              )}
             </View>
 
             {/* Activity */}
             <View style={styles.col}>
               <Text style={styles.label}>Activity</Text>
               <Text style={styles.valueSmall}>{digestive.activityMinutes}m</Text>
-              <Text style={styles.muted}>{digestive.stepCount} steps</Text>
+              <Text style={styles.muted}>{digestive.stepCount.toLocaleString()} steps</Text>
+              {latestActivity && (
+                <Text style={styles.source}>{latestActivity.source}</Text>
+              )}
             </View>
           </View>
         </View>
@@ -227,6 +305,11 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontWeight: "600",
   },
+  source: {
+    color: "rgba(255,255,255,0.4)",
+    fontSize: 10,
+    marginTop: 4,
+  },
   buttonRow: {
     flexDirection: "row",
     justifyContent: "space-around",
@@ -265,5 +348,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 24,
     marginBottom: 4,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    color: "rgba(255,255,255,0.75)",
+    fontSize: 16,
+    marginTop: 12,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorText: {
+    color: "rgba(255,100,100,0.9)",
+    fontSize: 16,
   },
 });

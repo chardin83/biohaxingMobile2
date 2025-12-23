@@ -1,27 +1,91 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import { useWearable } from "@/wearables/wearableProvider";
+import { TimeRange, SleepSummary, HRVSummary, DailyActivity, EnergySignal } from "@/wearables/types";
+import { WearableStatus } from "@/components/WearableStatus";
 
 export default function EnergyScreen() {
-  const router = useRouter();
+  const { adapter, status } = useWearable();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [sleepData, setSleepData] = useState<SleepSummary[]>([]);
+  const [hrvData, setHrvData] = useState<HRVSummary[]>([]);
+  const [activityData, setActivityData] = useState<DailyActivity[]>([]);
+  const [energyData, setEnergyData] = useState<EnergySignal[]>([]);
 
-  // 🔹 Här hämtar du data från store / hook / context
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const range: TimeRange = {
+          start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+          end: new Date().toISOString(),
+        };
+
+        const [sleep, hrv, activity, energy] = await Promise.all([
+          adapter.getSleep(range),
+          adapter.getHRV(range),
+          adapter.getDailyActivity(range),
+          adapter.getEnergySignal(range),
+        ]);
+
+        setSleepData(sleep);
+        setHrvData(hrv);
+        setActivityData(activity);
+        setEnergyData(energy);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [adapter]);
+
+  if (loading) {
+    return (
+      <LinearGradient colors={["#071526", "#040B16"]} style={styles.bg}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="rgba(255,215,100,0.95)" />
+          <Text style={styles.loadingText}>Loading energy data...</Text>
+        </View>
+      </LinearGradient>
+    );
+  }
+
+  if (error) {
+    return (
+      <LinearGradient colors={["#071526", "#040B16"]} style={styles.bg}>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Error loading data: {error}</Text>
+        </View>
+      </LinearGradient>
+    );
+  }
+
+  // Transform wearable data to energy metrics
+  const latestSleep = sleepData[0];
+  const latestHRV = hrvData[0];
+  const latestActivity = activityData[0];
+  const latestEnergy = energyData[0];
+
   const energy = {
-    bodyBattery: 72,
+    bodyBattery: latestEnergy?.bodyBatteryLevel ?? 0,
     bodyBatteryChange: "+18",
-    bodyBatteryStatus: "Good",
+    bodyBatteryStatus: (latestEnergy?.bodyBatteryLevel ?? 72) > 60 ? "Good" : "Low",
     stressScore: 32,
     stressLevel: "Moderate",
-    sleepHours: 7.5,
-    sleepQuality: 82,
-    deepSleepMinutes: 98,
+    sleepHours: latestSleep ? latestSleep.durationMinutes / 60 : 7.5,
+    sleepQuality: latestSleep?.efficiencyPct ?? 82,
+    deepSleepMinutes: latestSleep?.stages?.deepMinutes ?? 98,
     vo2max: 46,
     vo2maxStatus: "Good",
-    restingHR: 56,
-    hrv: 64,
-    activityMinutes: 128,
-    steps: 8900,
+    restingHR: latestHRV?.avgRestingHrBpm ?? 56,
+    hrv: latestHRV?.rmssdMs ?? 64,
+    activityMinutes: latestActivity?.activeMinutes ?? 128,
+    steps: latestActivity?.steps ?? 8900,
     intensityMinutes: 45,
   };
 
@@ -32,7 +96,8 @@ export default function EnergyScreen() {
         <Text style={styles.subtitle}>
           Mitochondrial function and cellular energy production
         </Text>
-
+        <WearableStatus status={status} />
+       
         {/* Body Battery - Main Energy Indicator */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Cellular Energy Reserves</Text>
@@ -459,5 +524,32 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     borderTopWidth: 1,
     borderTopColor: "rgba(255,255,255,0.1)",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    color: "rgba(255,255,255,0.75)",
+    fontSize: 16,
+    marginTop: 12,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorText: {
+    color: "rgba(255,0,0,0.85)",
+    fontSize: 16,
+    marginTop: 12,
+  },
+  dataSource: {
+    color: "rgba(255,255,255,0.5)",
+    fontSize: 12,
+    marginTop: 4,
+    marginBottom: 16,
+    textAlign: "center",
   },
 });

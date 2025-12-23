@@ -1,25 +1,112 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import { useWearable } from "@/wearables/wearableProvider";
+import { WearableStatus } from "@/components/WearableStatus";
+
+function daysAgo(n: number) {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return d.toISOString();
+}
+
+function calculateHRVMetrics(hrvData: any[]) {
+  if (hrvData.length === 0) return { hrv: null, hrvDelta: 0, restingHR: null, restingHRDelta: 0 };
+  
+  const latest = hrvData[hrvData.length - 1];
+  const hrv = latest.rmssdMs ?? null;
+  const restingHR = latest.avgRestingHrBpm ?? null;
+  
+  let hrvDelta = 0;
+  let restingHRDelta = 0;
+  
+  if (hrvData.length >= 2) {
+    const avg7d = hrvData.slice(0, -1).reduce((sum, d) => sum + (d.rmssdMs ?? 0), 0) / (hrvData.length - 1);
+    hrvDelta = latest.rmssdMs && avg7d > 0 ? Math.round(((latest.rmssdMs - avg7d) / avg7d) * 100) : 0;
+    
+    const avgHR = hrvData.slice(0, -1).reduce((sum, d) => sum + (d.avgRestingHrBpm ?? 0), 0) / (hrvData.length - 1);
+    restingHRDelta = latest.avgRestingHrBpm && avgHR > 0 ? Math.round(latest.avgRestingHrBpm - avgHR) : 0;
+  }
+  
+  return { hrv, hrvDelta, restingHR, restingHRDelta };
+}
+
+function getBalanceMessage(stressScore: number): string {
+  if (stressScore < 40) {
+    return "Your nervous system is currently in a parasympathetic-dominant state, indicating good recovery and relaxation.";
+  } else if (stressScore < 70) {
+    return "Your nervous system shows balanced activity between sympathetic and parasympathetic states.";
+  } else {
+    return "Your nervous system shows elevated sympathetic activity. Consider rest and recovery practices.";
+  }
+}
+
+function getStressLevel(stressScore: number): string {
+  if (stressScore < 30) {
+    return "Low";
+  } else if (stressScore < 60) {
+    return "Moderate";
+  } else {
+    return "High";
+  }
+}
+
+function getRecoveryStatus(hrv: number | null, sleepHours: number | null): string {
+  if (hrv && hrv >= 65 && sleepHours && sleepHours >= 7.5) {
+    return "Fully Recovered";
+  } else if (hrv && hrv >= 50 && sleepHours && sleepHours >= 6.5) {
+    return "Good Recovery";
+  } else {
+    return "Needs Recovery";
+  }
+}
 
 export default function NervousSystemScreen() {
-  const router = useRouter();
+  const { adapter, status } = useWearable();
 
-  // 🔹 Här hämtar du data från store / hook / context
-  const nervousSystem = {
-    hrv: 65,
-    hrvStatus: "Balanced",
-    hrvDelta: 12,
-    stressScore: 28,
-    stressLevel: "Low",
-    bodyBattery: 85,
-    bodyBatteryChange: "+15",
-    restingHR: 54,
-    restingHRDelta: -2,
-    sleepHours: 7.8,
-    recoveryStatus: "Fully Recovered",
-  };
+  const [loading, setLoading] = React.useState(true);
+  const [hrv, setHrv] = React.useState<number | null>(null);
+  const [hrvDelta, setHrvDelta] = React.useState<number>(0);
+  const [restingHR, setRestingHR] = React.useState<number | null>(null);
+  const [restingHRDelta, setRestingHRDelta] = React.useState<number>(0);
+  const [bodyBattery, setBodyBattery] = React.useState<number | null>(null);
+  const [sleepHours, setSleepHours] = React.useState<number | null>(null);
+
+  React.useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const range = { start: daysAgo(7), end: new Date().toISOString() };
+
+      // Hämta HRV data
+      const hrvData = await adapter.getHRV(range);
+      const hrvMetrics = calculateHRVMetrics(hrvData);
+      setHrv(hrvMetrics.hrv);
+      setHrvDelta(hrvMetrics.hrvDelta);
+      setRestingHR(hrvMetrics.restingHR);
+      setRestingHRDelta(hrvMetrics.restingHRDelta);
+
+      // Hämta Body Battery
+      const energyData = await adapter.getEnergySignal(range);
+      if (energyData.length > 0) {
+        const latest = energyData[energyData.length - 1];
+        setBodyBattery(latest.bodyBatteryLevel ?? null);
+      }
+
+      // Hämta sleep
+      const sleepData = await adapter.getSleep(range);
+      if (sleepData.length > 0) {
+        const latest = sleepData[sleepData.length - 1];
+        setSleepHours(latest.durationMinutes ? latest.durationMinutes / 60 : null);
+      }
+
+      setLoading(false);
+    })().catch(() => setLoading(false));
+  }, [adapter]);
+
+  // Beräkna status baserat på HRV
+  const stressScore = hrv ? Math.max(0, Math.min(100, 100 - hrv)) : 50;
+  const stressLevel = getStressLevel(stressScore);
+  const recoveryStatus = getRecoveryStatus(hrv, sleepHours);
 
   return (
     <LinearGradient colors={["#071526", "#040B16"]} style={styles.bg}>
@@ -29,71 +116,89 @@ export default function NervousSystemScreen() {
           Autonomic nervous system balance and recovery metrics
         </Text>
 
+        <WearableStatus status={status} />
+
         {/* Overview card - Main ANS metrics */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Autonomic nervous system</Text>
 
-          <View style={styles.row}>
-            {/* HRV */}
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>HRV</Text>
-              <Text style={styles.value}>{nervousSystem.hrv}</Text>
-              <Text style={styles.accent}>+{nervousSystem.hrvDelta}% 7d avg</Text>
-            </View>
+          {loading ? (
+            <Text style={styles.muted}>Loading…</Text>
+          ) : (
+            <>
+              <View style={styles.row}>
+                {/* HRV */}
+                <View style={[styles.col, styles.colWithDivider]}>
+                  <Text style={styles.label}>HRV</Text>
+                  <Text style={styles.value}>{hrv ?? "—"}</Text>
+                  <Text style={styles.accent}>
+                    {hrvDelta > 0 ? "+" : ""}{hrvDelta}% 7d avg
+                  </Text>
+                </View>
 
-            {/* Stress Score */}
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>Stress score</Text>
-              <Text style={styles.value}>{nervousSystem.stressScore}</Text>
-              <Text style={styles.accent}>{nervousSystem.stressLevel}</Text>
-            </View>
+                {/* Stress Score */}
+                <View style={[styles.col, styles.colWithDivider]}>
+                  <Text style={styles.label}>Stress score</Text>
+                  <Text style={styles.value}>{Math.round(stressScore)}</Text>
+                  <Text style={styles.accent}>{stressLevel}</Text>
+                </View>
 
-            {/* Body Battery */}
-            <View style={styles.col}>
-              <Text style={styles.label}>Body Battery</Text>
-              <Text style={styles.valueSmall}>{nervousSystem.bodyBattery}%</Text>
-              <Text style={styles.accent}>{nervousSystem.bodyBatteryChange}</Text>
-            </View>
-          </View>
+                {/* Body Battery */}
+                <View style={styles.col}>
+                  <Text style={styles.label}>Body Battery</Text>
+                  <Text style={styles.valueSmall}>{bodyBattery ?? "—"}%</Text>
+                </View>
+              </View>
 
-          {/* Second row */}
-          <View style={[styles.row, { marginTop: 20 }]}>
-            {/* Resting HR */}
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>Resting HR</Text>
-              <Text style={styles.value}>{nervousSystem.restingHR}</Text>
-              <Text style={styles.accent}>{nervousSystem.restingHRDelta} bpm</Text>
-            </View>
+              {/* Second row */}
+              <View style={[styles.row, { marginTop: 20 }]}>
+                {/* Resting HR */}
+                <View style={[styles.col, styles.colWithDivider]}>
+                  <Text style={styles.label}>Resting HR</Text>
+                  <Text style={styles.value}>{restingHR ?? "—"}</Text>
+                  <Text style={styles.accent}>
+                    {restingHRDelta > 0 ? "+" : ""}{restingHRDelta} bpm
+                  </Text>
+                </View>
 
-            {/* Recovery Status */}
-            <View style={styles.col}>
-              <Text style={styles.label}>Recovery status</Text>
-              <Text style={styles.valueSmall}>{nervousSystem.recoveryStatus}</Text>
-              <Text style={styles.muted}>{nervousSystem.sleepHours}h sleep</Text>
-            </View>
-          </View>
+                {/* Recovery Status */}
+                <View style={styles.col}>
+                  <Text style={styles.label}>Recovery status</Text>
+                  <Text style={styles.valueSmall}>{recoveryStatus}</Text>
+                  <Text style={styles.muted}>
+                    {sleepHours ? `${sleepHours.toFixed(1)}h sleep` : "No sleep data"}
+                  </Text>
+                </View>
+              </View>
+            </>
+          )}
         </View>
 
         {/* ANS Balance visualization */}
         <View style={[styles.card, { marginTop: 16 }]}>
           <Text style={styles.cardTitle}>Sympathetic vs Parasympathetic</Text>
           
-          <View style={styles.balanceContainer}>
-            <View style={styles.balanceBar}>
-              <View style={[styles.sympatheticBar, { flex: 35 }]} />
-              <View style={[styles.parasympatheticBar, { flex: 65 }]} />
-            </View>
-            
-            <View style={styles.balanceLabels}>
-              <Text style={styles.balanceLabel}>⚡ Fight/Flight</Text>
-              <Text style={styles.balanceLabel}>😌 Rest/Digest</Text>
-            </View>
-          </View>
+          {loading ? (
+            <Text style={styles.muted}>Loading…</Text>
+          ) : (
+            <>
+              <View style={styles.balanceContainer}>
+                <View style={styles.balanceBar}>
+                  <View style={[styles.sympatheticBar, { flex: stressScore }]} />
+                  <View style={[styles.parasympatheticBar, { flex: 100 - stressScore }]} />
+                </View>
+                
+                <View style={styles.balanceLabels}>
+                  <Text style={styles.balanceLabel}>⚡ Fight/Flight</Text>
+                  <Text style={styles.balanceLabel}>😌 Rest/Digest</Text>
+                </View>
+              </View>
 
-          <Text style={styles.balanceText}>
-            Your nervous system is currently in a parasympathetic-dominant state, 
-            indicating good recovery and relaxation.
-          </Text>
+              <Text style={styles.balanceText}>
+                {getBalanceMessage(stressScore)}
+              </Text>
+            </>
+          )}
         </View>
 
         {/* Information card */}
@@ -142,28 +247,34 @@ export default function NervousSystemScreen() {
           <Text style={styles.cardTitle}>Optimize your nervous system</Text>
           
           <Text style={styles.tipText}>
-            • Practice daily breathwork (4-7-8 breathing, box breathing)
+            🧘 Practice daily breathwork (4-7-8 breathing, box breathing)
           </Text>
           <Text style={styles.tipText}>
-            • Prioritize 7-9 hours of quality sleep
+            😴 Prioritize 7-9 hours of quality sleep
           </Text>
           <Text style={styles.tipText}>
-            • Morning sunlight exposure regulates circadian rhythm
+            ☀️ Morning sunlight exposure regulates circadian rhythm
           </Text>
           <Text style={styles.tipText}>
-            • Cold exposure (showers, ice baths) trains ANS resilience
+            ❄️ Cold exposure (showers, ice baths) trains ANS resilience
           </Text>
           <Text style={styles.tipText}>
-            • Meditation and mindfulness reduce sympathetic activation
+            🧘‍♀️ Meditation and mindfulness reduce sympathetic activation
           </Text>
           <Text style={styles.tipText}>
-            • Time in nature activates parasympathetic nervous system
+            🌳 Time in nature activates parasympathetic nervous system
           </Text>
           <Text style={styles.tipText}>
-            • Avoid overtraining - monitor HRV for recovery status
+            📊 Avoid overtraining - monitor HRV for recovery status
           </Text>
           <Text style={styles.tipText}>
-            • Social connection and laughter boost vagal tone
+            😊 Social connection and laughter boost vagal tone
+          </Text>
+          <Text style={styles.tipText}>
+            🎵 Listen to calming music or binaural beats (promote alpha waves)
+          </Text>
+          <Text style={styles.tipText}>
+            🍵 Adaptogenic herbs (ashwagandha, rhodiola) support ANS balance
           </Text>
         </View>
       </ScrollView>

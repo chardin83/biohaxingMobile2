@@ -1,21 +1,85 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import { useWearable } from "@/wearables/wearableProvider";
+import { TimeRange, HRVSummary, DailyActivity, EnergySignal } from "@/wearables/types";
+import { WearableStatus } from "@/components/WearableStatus";
 
 export default function CardioScreen() {
-  const router = useRouter();
+  const { adapter, status } = useWearable();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [hrvData, setHrvData] = useState<HRVSummary[]>([]);
+  const [activityData, setActivityData] = useState<DailyActivity[]>([]);
+  const [energyData, setEnergyData] = useState<EnergySignal[]>([]);
 
-  // 🔹 Här hämtar du data från store / hook / context
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const range: TimeRange = {
+          start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+          end: new Date().toISOString(),
+        };
+
+        const [hrv, activity, energy] = await Promise.all([
+          adapter.getHRV(range),
+          adapter.getDailyActivity(range),
+          adapter.getEnergySignal(range),
+        ]);
+
+        setHrvData(hrv);
+        setActivityData(activity);
+        setEnergyData(energy);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [adapter]);
+
+  if (loading) {
+    return (
+      <LinearGradient colors={["#071526", "#040B16"]} style={styles.bg}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="rgba(120,255,220,0.95)" />
+          <Text style={styles.loadingText}>Loading cardio data...</Text>
+        </View>
+      </LinearGradient>
+    );
+  }
+
+  if (error) {
+    return (
+      <LinearGradient colors={["#071526", "#040B16"]} style={styles.bg}>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Error: {error}</Text>
+        </View>
+      </LinearGradient>
+    );
+  }
+
+  // Transform wearable data to cardio metrics
+  const latestHRV = hrvData[0];
+  const latestActivity = activityData[0];
+  const latestEnergy = energyData[0];
+
+  // Calculate weekly training load from activity data
+  const weeklyActiveMinutes = activityData.reduce((sum, day) => sum + (day.activeMinutes || 0), 0);
+  const trainingLoad = weeklyActiveMinutes * 2; // Simple calculation
+
   const cardio = {
-    vo2max: 48,
+    vo2max: 48, // Would need fitness data from wearable
     vo2maxDelta: 3,
-    restingHR: 52,
-    restingHRDelta: -4,
-    trainingLoad: 285,
-    trainingLoadStatus: "Optimal",
-    recoveryTime: 18,
-    fitnessAge: 32,
+    restingHR: latestHRV?.avgRestingHrBpm ?? 52,
+    restingHRDelta: -4, // Would need historical data to calculate
+    trainingLoad: trainingLoad || 285,
+    trainingLoadStatus: trainingLoad > 400 ? "High" : trainingLoad > 200 ? "Optimal" : "Low",
+    recoveryTime: (latestEnergy?.bodyBatteryLevel ?? 0) > 80 ? 12 : 18,
+    fitnessAge: 32, // Would be calculated from VO2max and other factors
     actualAge: 38,
   };
 
@@ -26,6 +90,8 @@ export default function CardioScreen() {
         <Text style={styles.subtitle}>
           Cardiovascular endurance metrics and training insights
         </Text>
+
+        <WearableStatus status={status} />
 
         {/* Overview card */}
         <View style={styles.card}>
@@ -44,6 +110,9 @@ export default function CardioScreen() {
               <Text style={styles.label}>Resting HR</Text>
               <Text style={styles.value}>{cardio.restingHR}</Text>
               <Text style={styles.accent}>{cardio.restingHRDelta} bpm</Text>
+              {latestHRV && (
+                <Text style={styles.source}>{latestHRV.source}</Text>
+              )}
             </View>
 
             {/* Training Load */}
@@ -51,6 +120,9 @@ export default function CardioScreen() {
               <Text style={styles.label}>Training Load</Text>
               <Text style={styles.valueSmall}>{cardio.trainingLoad}</Text>
               <Text style={styles.muted}>{cardio.trainingLoadStatus}</Text>
+              {activityData.length > 0 && (
+                <Text style={styles.source}>7-day total</Text>
+              )}
             </View>
           </View>
 
@@ -61,6 +133,9 @@ export default function CardioScreen() {
               <Text style={styles.label}>Recovery time</Text>
               <Text style={styles.value}>{cardio.recoveryTime}h</Text>
               <Text style={styles.muted}>Until next hard effort</Text>
+              {latestEnergy && (
+                <Text style={styles.source}>Based on battery: {latestEnergy.bodyBatteryLevel}%</Text>
+              )}
             </View>
 
             {/* Fitness Age */}
@@ -93,7 +168,8 @@ export default function CardioScreen() {
             <Text style={styles.infoLabel}>🫀 Resting Heart Rate</Text>
             <Text style={styles.infoText}>
               Lower resting heart rate typically indicates better cardiovascular fitness. 
-              Athletes often have resting heart rates below 60 bpm. Monitor trends over time.
+              Athletes often have resting heart rates below 60 bpm. Monitor trends over time. 
+              A sudden increase may signal overtraining, illness, or stress.
             </Text>
           </View>
 
@@ -101,7 +177,8 @@ export default function CardioScreen() {
             <Text style={styles.infoLabel}>💪 Training Load</Text>
             <Text style={styles.infoText}>
               Training Load tracks the cumulative intensity and volume of your workouts over 7 days. 
-              Optimal load means you're training effectively without overtraining.
+              Optimal load means you're training effectively without overtraining. Too high = risk of injury/burnout. 
+              Too low = insufficient stimulus for adaptation.
             </Text>
           </View>
 
@@ -109,7 +186,8 @@ export default function CardioScreen() {
             <Text style={styles.infoLabel}>⏱️ Recovery Time</Text>
             <Text style={styles.infoText}>
               Time needed before your body is ready for another hard training session. 
-              Respecting recovery prevents injury and improves performance.
+              Based on HRV, sleep quality, and body battery. Respecting recovery prevents injury and improves performance. 
+              Training hard when recovery is incomplete leads to diminished returns.
             </Text>
           </View>
 
@@ -117,32 +195,51 @@ export default function CardioScreen() {
             <Text style={styles.infoLabel}>🎂 Fitness Age</Text>
             <Text style={styles.infoText}>
               Based on your VO₂ max, resting heart rate, and other factors. 
-              A lower fitness age indicates superior cardiovascular health.
+              A lower fitness age indicates superior cardiovascular health. Regular aerobic training 
+              can reduce your fitness age by 10-20 years compared to sedentary peers.
             </Text>
           </View>
         </View>
 
         {/* Training zones card */}
         <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Optimize your training</Text>
+          <Text style={styles.cardTitle}>Optimize your cardio training</Text>
           
           <Text style={styles.tipText}>
-            • Zone 2 training (60-70% max HR) builds aerobic base
+            🏃 Zone 2 training (60-70% max HR) builds aerobic base - majority of training
           </Text>
           <Text style={styles.tipText}>
-            • HIIT workouts (2x/week) improve VO₂ max effectively
+            ⚡ HIIT workouts (2x/week) improve VO₂ max most effectively
           </Text>
           <Text style={styles.tipText}>
-            • Progressive overload: gradually increase distance or intensity
+            📈 Progressive overload: gradually increase distance or intensity by 10% weekly
           </Text>
           <Text style={styles.tipText}>
-            • Mix intensities: 80% easy, 20% hard (80/20 rule)
+            ⚖️ Mix intensities: 80% easy, 20% hard (80/20 rule for optimal adaptation)
           </Text>
           <Text style={styles.tipText}>
-            • Monitor HRV to optimize training timing
+            💓 Monitor HRV daily to optimize training timing - skip hard workouts when HRV drops
           </Text>
           <Text style={styles.tipText}>
-            • Adequate sleep and nutrition are crucial for adaptation
+            😴 Adequate sleep (7-9h) and nutrition crucial for adaptation and performance
+          </Text>
+          <Text style={styles.tipText}>
+            🚴 Cross-train: mix running, cycling, swimming to prevent overuse injuries
+          </Text>
+          <Text style={styles.tipText}>
+            🧊 Cold exposure post-workout may reduce inflammation (but wait 4h for hypertrophy)
+          </Text>
+          <Text style={styles.tipText}>
+            🎯 Track resting HR trend - consistent low HR = good fitness, rising = overtraining
+          </Text>
+          <Text style={styles.tipText}>
+            🔄 Deload weeks (reduce volume 40%) every 4-6 weeks for recovery
+          </Text>
+          <Text style={styles.tipText}>
+            🫀 Increase stroke volume: long, slow runs improve heart efficiency
+          </Text>
+          <Text style={styles.tipText}>
+            🍽️ Carb timing: consume carbs around hard workouts for glycogen replenishment
           </Text>
         </View>
       </ScrollView>
@@ -220,6 +317,11 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontWeight: "600",
   },
+  source: {
+    color: "rgba(255,255,255,0.4)",
+    fontSize: 10,
+    marginTop: 4,
+  },
   infoSection: {
     marginBottom: 16,
   },
@@ -239,5 +341,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 24,
     marginBottom: 4,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    color: "rgba(255,255,255,0.75)",
+    fontSize: 16,
+    marginTop: 12,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorText: {
+    color: "rgba(255,100,100,0.9)",
+    fontSize: 16,
   },
 });

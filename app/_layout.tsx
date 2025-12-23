@@ -20,6 +20,7 @@ import { Stack } from "expo-router";
 import { t } from "i18next";
 import GlobalLevelUpModal from "@/components/GlobalLevelUpModal";
 import { MenuProvider } from "react-native-popup-menu";
+import { WearableProvider } from "@/wearables/wearableProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -52,7 +53,7 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      
+      <WearableProvider>
       <SessionProvider>
         <StorageProvider>
           <PaperProvider>
@@ -113,6 +114,7 @@ export default function RootLayout() {
           </PaperProvider>
         </StorageProvider>
       </SessionProvider>
+      </WearableProvider>
     </GestureHandlerRootView>
   );
 }

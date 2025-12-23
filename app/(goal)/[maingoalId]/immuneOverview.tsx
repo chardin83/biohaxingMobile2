@@ -1,21 +1,81 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import { useWearable } from "@/wearables/wearableProvider";
+import { TimeRange, SleepSummary, HRVSummary, EnergySignal } from "@/wearables/types";
+import { WearableStatus } from "@/components/WearableStatus";
 
 export default function ImmuneScreen() {
-  const router = useRouter();
+  const { adapter, status } = useWearable();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [sleepData, setSleepData] = useState<SleepSummary[]>([]);
+  const [hrvData, setHrvData] = useState<HRVSummary[]>([]);
+  const [energyData, setEnergyData] = useState<EnergySignal[]>([]);
 
-  // 🔹 Här hämtar du data från store / hook / context
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const range: TimeRange = {
+          start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+          end: new Date().toISOString(),
+        };
+
+        const [sleep, hrv, energy] = await Promise.all([
+          adapter.getSleep(range),
+          adapter.getHRV(range),
+          adapter.getEnergySignal(range),
+        ]);
+
+        setSleepData(sleep);
+        setHrvData(hrv);
+        setEnergyData(energy);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [adapter]);
+
+  if (loading) {
+    return (
+      <LinearGradient colors={["#071526", "#040B16"]} style={styles.bg}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="rgba(120,255,220,0.95)" />
+          <Text style={styles.loadingText}>Loading immune data...</Text>
+        </View>
+      </LinearGradient>
+    );
+  }
+
+  if (error) {
+    return (
+      <LinearGradient colors={["#071526", "#040B16"]} style={styles.bg}>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Error: {error}</Text>
+        </View>
+      </LinearGradient>
+    );
+  }
+
+  // Transform wearable data to immune metrics
+  const latestSleep = sleepData[0];
+  const latestHRV = hrvData[0];
+  const latestEnergy = energyData[0];
+
   const immune = {
-    sleepHours: 7.5,
-    sleepDelta: 5,
-    stressLevel: "Low",
-    bodyBattery: 78,
-    hrv: 62,
-    hrvDelta: 8,
-    restingHR: 58,
-    restingHRDelta: -2,
+    sleepHours: latestSleep ? latestSleep.durationMinutes / 60 : 7.5,
+    sleepDelta: latestSleep?.efficiencyPct ? Math.round((latestSleep.efficiencyPct - 80) / 2) : 5,
+    stressLevel: (latestEnergy?.bodyBatteryLevel ?? 78) > 70 ? "Low" : "Moderate",
+    bodyBattery: latestEnergy?.bodyBatteryLevel ?? 78,
+    hrv: latestHRV?.rmssdMs ?? 62,
+    hrvDelta: 8, // Would need historical data to calculate
+    restingHR: latestHRV?.avgRestingHrBpm ?? 58,
+    restingHRDelta: -2, // Would need historical data to calculate
   };
 
   return (
@@ -26,6 +86,8 @@ export default function ImmuneScreen() {
           Key metrics that influence immune system function and resilience
         </Text>
 
+        <WearableStatus status={status} />
+
         {/* Overview card */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Your immune health indicators</Text>
@@ -34,8 +96,11 @@ export default function ImmuneScreen() {
             {/* Sleep */}
             <View style={[styles.col, styles.colWithDivider]}>
               <Text style={styles.label}>Sleep</Text>
-              <Text style={styles.value}>{immune.sleepHours}h</Text>
+              <Text style={styles.value}>{immune.sleepHours.toFixed(1)}h</Text>
               <Text style={styles.accent}>+{immune.sleepDelta}% vs avg</Text>
+              {latestSleep && (
+                <Text style={styles.source}>{latestSleep.source}</Text>
+              )}
             </View>
 
             {/* Stress/Body Battery */}
@@ -43,6 +108,9 @@ export default function ImmuneScreen() {
               <Text style={styles.label}>Stress level</Text>
               <Text style={styles.valueSmall}>{immune.stressLevel}</Text>
               <Text style={styles.muted}>Battery: {immune.bodyBattery}%</Text>
+              {latestEnergy && (
+                <Text style={styles.source}>{latestEnergy.source}</Text>
+              )}
             </View>
 
             {/* HRV */}
@@ -50,6 +118,9 @@ export default function ImmuneScreen() {
               <Text style={styles.label}>HRV</Text>
               <Text style={styles.valueSmall}>{immune.hrv} ms</Text>
               <Text style={styles.accent}>+{immune.hrvDelta}% trend</Text>
+              {latestHRV && (
+                <Text style={styles.source}>{latestHRV.source}</Text>
+              )}
             </View>
           </View>
 
@@ -65,8 +136,12 @@ export default function ImmuneScreen() {
             {/* Recovery Status */}
             <View style={styles.col}>
               <Text style={styles.label}>Recovery status</Text>
-              <Text style={styles.valueSmall}>Good</Text>
-              <Text style={styles.muted}>Ready for activity</Text>
+              <Text style={styles.valueSmall}>
+                {immune.bodyBattery > 70 ? "Good" : "Moderate"}
+              </Text>
+              <Text style={styles.muted}>
+                {immune.bodyBattery > 70 ? "Ready for activity" : "Need recovery"}
+              </Text>
             </View>
           </View>
         </View>
@@ -199,6 +274,11 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontWeight: "600",
   },
+  source: {
+    color: "rgba(255,255,255,0.4)",
+    fontSize: 10,
+    marginTop: 4,
+  },
   infoSection: {
     marginBottom: 16,
   },
@@ -218,5 +298,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 24,
     marginBottom: 4,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    color: "rgba(255,255,255,0.75)",
+    fontSize: 16,
+    marginTop: 12,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorText: {
+    color: "rgba(255,100,100,0.9)",
+    fontSize: 16,
   },
 });
