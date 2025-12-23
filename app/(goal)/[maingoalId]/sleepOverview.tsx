@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useWearable } from "@/wearables/wearableProvider";
 import { WearableStatus } from "@/components/WearableStatus";
+import { SleepMetric } from "@/components/metrics/SleepMetric";
+import { SleepSummary } from "@/wearables/types";
 
 function daysAgo(n: number) {
   const d = new Date();
@@ -14,13 +16,11 @@ export default function SleepScreen() {
   const { adapter, status } = useWearable();
 
   const [loading, setLoading] = React.useState(true);
-  const [sleepMinutes, setSleepMinutes] = React.useState<number | null>(null);
+  const [sleepData, setSleepData] = React.useState<SleepSummary[]>([]);
   const [consistencyLabel, setConsistencyLabel] = React.useState<"High"|"Moderate"|"Low">("Moderate");
   const [qualityScore, setQualityScore] = React.useState<number>(6.6);
   const [deepSleepMinutes, setDeepSleepMinutes] = React.useState<number | null>(null);
   const [remSleepMinutes, setRemSleepMinutes] = React.useState<number | null>(null);
-  const [efficiency, setEfficiency] = React.useState<number | null>(null);
-  const [source, setSource] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     (async () => {
@@ -28,14 +28,12 @@ export default function SleepScreen() {
       const range = { start: daysAgo(7), end: new Date().toISOString() };
 
       const sleeps = await adapter.getSleep(range);
+      setSleepData(sleeps);
 
       // V1: visa senaste nattens duration
       const latest = sleeps[sleeps.length - 1];
-      setSleepMinutes(latest?.durationMinutes ?? null);
       setDeepSleepMinutes(latest?.stages?.deepMinutes ?? null);
       setRemSleepMinutes(latest?.stages?.remMinutes ?? null);
-      setEfficiency(latest?.efficiencyPct ?? null);
-      setSource(latest?.source ?? null);
 
       // "consistency" i V1 kan vara väldigt enkel:
       // här bara en placeholder som du kan byta senare
@@ -47,9 +45,6 @@ export default function SleepScreen() {
       setLoading(false);
     })().catch(() => setLoading(false));
   }, [adapter]);
-
-  const sleepHours = sleepMinutes ? Math.floor(sleepMinutes / 60) : null;
-  const sleepMins = sleepMinutes ? sleepMinutes % 60 : null;
 
   return (
     <LinearGradient colors={["#071526", "#040B16"]} style={styles.bg}>
@@ -68,17 +63,8 @@ export default function SleepScreen() {
           {loading ? (
             <Text style={styles.muted}>Loading…</Text>
           ) : (
-            <>
-              <View style={styles.row}>
-                <View style={[styles.col, styles.colWithDivider]}>
-                  <Text style={styles.label}>Sleep duration</Text>
-                  <Text style={styles.value}>
-                    {sleepMinutes == null ? "—" : `${sleepHours}h ${String(sleepMins).padStart(2,"0")}m`}
-                  </Text>
-                  <Text style={styles.accent}>
-                    {efficiency ? `${efficiency}% efficiency` : ""}
-                  </Text>
-                </View>
+            <View style={styles.row}>
+                <SleepMetric sleepData={sleepData} showDivider />
 
                 <View style={[styles.col, styles.colWithDivider]}>
                   <Text style={styles.label}>Sleep consistency</Text>
@@ -92,11 +78,6 @@ export default function SleepScreen() {
                   <Text style={styles.muted}>out of 10</Text>
                 </View>
               </View>
-
-              {source && (
-                <Text style={styles.source}>Source: {source}</Text>
-              )}
-            </>
           )}
         </View>
 
@@ -336,17 +317,6 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.5)", 
     fontSize: 12, 
     marginTop: 6 
-  },
-  accent: {
-    color: "rgba(120,255,220,0.85)",
-    fontSize: 12,
-    marginTop: 6,
-    fontWeight: "600",
-  },
-  source: {
-    color: "rgba(255,255,255,0.4)",
-    fontSize: 11,
-    marginTop: 12,
   },
   stageText: {
     color: "rgba(255,255,255,0.65)",

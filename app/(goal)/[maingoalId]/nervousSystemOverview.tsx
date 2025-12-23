@@ -3,32 +3,16 @@ import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useWearable } from "@/wearables/wearableProvider";
 import { WearableStatus } from "@/components/WearableStatus";
+import { HRVMetric } from "@/components/metrics/HRVMetric";
+import { RestingHRMetric } from "@/components/metrics/RestingHRMetric";
+import { calculateHRVMetrics } from "@/utils/hrvCalculations";
+import { HRVSummary } from "@/wearables/types";
+
 
 function daysAgo(n: number) {
   const d = new Date();
   d.setDate(d.getDate() - n);
   return d.toISOString();
-}
-
-function calculateHRVMetrics(hrvData: any[]) {
-  if (hrvData.length === 0) return { hrv: null, hrvDelta: 0, restingHR: null, restingHRDelta: 0 };
-  
-  const latest = hrvData[hrvData.length - 1];
-  const hrv = latest.rmssdMs ?? null;
-  const restingHR = latest.avgRestingHrBpm ?? null;
-  
-  let hrvDelta = 0;
-  let restingHRDelta = 0;
-  
-  if (hrvData.length >= 2) {
-    const avg7d = hrvData.slice(0, -1).reduce((sum, d) => sum + (d.rmssdMs ?? 0), 0) / (hrvData.length - 1);
-    hrvDelta = latest.rmssdMs && avg7d > 0 ? Math.round(((latest.rmssdMs - avg7d) / avg7d) * 100) : 0;
-    
-    const avgHR = hrvData.slice(0, -1).reduce((sum, d) => sum + (d.avgRestingHrBpm ?? 0), 0) / (hrvData.length - 1);
-    restingHRDelta = latest.avgRestingHrBpm && avgHR > 0 ? Math.round(latest.avgRestingHrBpm - avgHR) : 0;
-  }
-  
-  return { hrv, hrvDelta, restingHR, restingHRDelta };
 }
 
 function getBalanceMessage(stressScore: number): string {
@@ -65,10 +49,8 @@ export default function NervousSystemScreen() {
   const { adapter, status } = useWearable();
 
   const [loading, setLoading] = React.useState(true);
+  const [hrvData, setHrvData] = React.useState<HRVSummary[]>([]);
   const [hrv, setHrv] = React.useState<number | null>(null);
-  const [hrvDelta, setHrvDelta] = React.useState<number>(0);
-  const [restingHR, setRestingHR] = React.useState<number | null>(null);
-  const [restingHRDelta, setRestingHRDelta] = React.useState<number>(0);
   const [bodyBattery, setBodyBattery] = React.useState<number | null>(null);
   const [sleepHours, setSleepHours] = React.useState<number | null>(null);
 
@@ -78,12 +60,11 @@ export default function NervousSystemScreen() {
       const range = { start: daysAgo(7), end: new Date().toISOString() };
 
       // Hämta HRV data
-      const hrvData = await adapter.getHRV(range);
-      const hrvMetrics = calculateHRVMetrics(hrvData);
+      const data = await adapter.getHRV(range);
+      setHrvData(data);
+      
+      const hrvMetrics = calculateHRVMetrics(data);
       setHrv(hrvMetrics.hrv);
-      setHrvDelta(hrvMetrics.hrvDelta);
-      setRestingHR(hrvMetrics.restingHR);
-      setRestingHRDelta(hrvMetrics.restingHRDelta);
 
       // Hämta Body Battery
       const energyData = await adapter.getEnergySignal(range);
@@ -127,14 +108,7 @@ export default function NervousSystemScreen() {
           ) : (
             <>
               <View style={styles.row}>
-                {/* HRV */}
-                <View style={[styles.col, styles.colWithDivider]}>
-                  <Text style={styles.label}>HRV</Text>
-                  <Text style={styles.value}>{hrv ?? "—"}</Text>
-                  <Text style={styles.accent}>
-                    {hrvDelta > 0 ? "+" : ""}{hrvDelta}% 7d avg
-                  </Text>
-                </View>
+                <HRVMetric hrvData={hrvData} showDivider />
 
                 {/* Stress Score */}
                 <View style={[styles.col, styles.colWithDivider]}>
@@ -152,14 +126,7 @@ export default function NervousSystemScreen() {
 
               {/* Second row */}
               <View style={[styles.row, { marginTop: 20 }]}>
-                {/* Resting HR */}
-                <View style={[styles.col, styles.colWithDivider]}>
-                  <Text style={styles.label}>Resting HR</Text>
-                  <Text style={styles.value}>{restingHR ?? "—"}</Text>
-                  <Text style={styles.accent}>
-                    {restingHRDelta > 0 ? "+" : ""}{restingHRDelta} bpm
-                  </Text>
-                </View>
+                <RestingHRMetric hrvData={hrvData} showDivider />
 
                 {/* Recovery Status */}
                 <View style={styles.col}>

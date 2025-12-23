@@ -4,6 +4,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useWearable } from "@/wearables/wearableProvider";
 import { TimeRange, SleepSummary, HRVSummary, DailyActivity, EnergySignal } from "@/wearables/types";
 import { WearableStatus } from "@/components/WearableStatus";
+import { HRVMetric } from "@/components/metrics/HRVMetric";
+import { RestingHRMetric } from "@/components/metrics/RestingHRMetric";
+import { VO2MaxMetric } from "@/components/metrics/VO2MaxMetric";
+import { calculateHRVMetrics } from "@/utils/hrvCalculations";
+import { calculateRestingHRMetrics } from "@/utils/restingHRCalculations";
 
 export default function EnergyScreen() {
   const { adapter, status } = useWearable();
@@ -67,9 +72,12 @@ export default function EnergyScreen() {
 
   // Transform wearable data to energy metrics
   const latestSleep = sleepData[0];
-  const latestHRV = hrvData[0];
   const latestActivity = activityData[0];
   const latestEnergy = energyData[0];
+
+  // Calculate metrics only for display in energy object
+  const { hrv } = calculateHRVMetrics(hrvData);
+  const { restingHR } = calculateRestingHRMetrics(hrvData);
 
   const energy = {
     bodyBattery: latestEnergy?.bodyBatteryLevel ?? 0,
@@ -82,8 +90,8 @@ export default function EnergyScreen() {
     deepSleepMinutes: latestSleep?.stages?.deepMinutes ?? 98,
     vo2max: 46,
     vo2maxStatus: "Good",
-    restingHR: latestHRV?.avgRestingHrBpm ?? 56,
-    hrv: latestHRV?.rmssdMs ?? 64,
+    restingHR: restingHR ?? 56,
+    hrv: hrv ?? 64,
     activityMinutes: latestActivity?.activeMinutes ?? 128,
     steps: latestActivity?.steps ?? 8900,
     intensityMinutes: 45,
@@ -125,23 +133,11 @@ export default function EnergyScreen() {
           <Text style={styles.cardTitle}>Energy Production Metrics</Text>
 
           <View style={styles.row}>
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>VO₂ max</Text>
-              <Text style={styles.value}>{energy.vo2max}</Text>
-              <Text style={styles.accent}>{energy.vo2maxStatus}</Text>
-            </View>
+            <VO2MaxMetric vo2max={energy.vo2max} status={energy.vo2maxStatus} showDivider />
 
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>Resting HR</Text>
-              <Text style={styles.value}>{energy.restingHR}</Text>
-              <Text style={styles.muted}>bpm</Text>
-            </View>
+            <RestingHRMetric hrvData={hrvData} showDivider />
 
-            <View style={styles.col}>
-              <Text style={styles.label}>HRV</Text>
-              <Text style={styles.value}>{energy.hrv}</Text>
-              <Text style={styles.muted}>ms</Text>
-            </View>
+            <HRVMetric hrvData={hrvData} />
           </View>
 
           <Text style={styles.metricExplainer}>

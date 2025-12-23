@@ -4,6 +4,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useWearable } from "@/wearables/wearableProvider";
 import { TimeRange, HRVSummary, DailyActivity, EnergySignal } from "@/wearables/types";
 import { WearableStatus } from "@/components/WearableStatus";
+import { VO2MaxMetric } from "@/components/metrics/VO2MaxMetric";
+import { RestingHRMetric } from "@/components/metrics/RestingHRMetric";
 
 export default function CardioScreen() {
   const { adapter, status } = useWearable();
@@ -63,8 +65,6 @@ export default function CardioScreen() {
   }
 
   // Transform wearable data to cardio metrics
-  const latestHRV = hrvData[0];
-  const latestActivity = activityData[0];
   const latestEnergy = energyData[0];
 
   // Calculate weekly training load from activity data
@@ -74,8 +74,6 @@ export default function CardioScreen() {
   const cardio = {
     vo2max: 48, // Would need fitness data from wearable
     vo2maxDelta: 3,
-    restingHR: latestHRV?.avgRestingHrBpm ?? 52,
-    restingHRDelta: -4, // Would need historical data to calculate
     trainingLoad: trainingLoad || 285,
     trainingLoadStatus: trainingLoad > 400 ? "High" : trainingLoad > 200 ? "Optimal" : "Low",
     recoveryTime: (latestEnergy?.bodyBatteryLevel ?? 0) > 80 ? 12 : 18,
@@ -99,21 +97,14 @@ export default function CardioScreen() {
 
           <View style={styles.row}>
             {/* VO2 Max */}
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>VO₂ Max</Text>
-              <Text style={styles.value}>{cardio.vo2max}</Text>
-              <Text style={styles.accent}>+{cardio.vo2maxDelta}% trend</Text>
-            </View>
+            <VO2MaxMetric 
+              vo2max={cardio.vo2max} 
+              trend={cardio.vo2maxDelta}
+              showDivider 
+            />
 
             {/* Resting HR */}
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>Resting HR</Text>
-              <Text style={styles.value}>{cardio.restingHR}</Text>
-              <Text style={styles.accent}>{cardio.restingHRDelta} bpm</Text>
-              {latestHRV && (
-                <Text style={styles.source}>{latestHRV.source}</Text>
-              )}
-            </View>
+            <RestingHRMetric hrvData={hrvData} showDivider />
 
             {/* Training Load */}
             <View style={styles.col}>

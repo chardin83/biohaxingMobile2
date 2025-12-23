@@ -4,6 +4,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useWearable } from "@/wearables/wearableProvider";
 import { TimeRange, SleepSummary, HRVSummary, EnergySignal } from "@/wearables/types";
 import { WearableStatus } from "@/components/WearableStatus";
+import { HRVMetric } from "@/components/metrics/HRVMetric";
+import { RestingHRMetric } from "@/components/metrics/RestingHRMetric";
+import { SleepMetric } from "@/components/metrics/SleepMetric";
 
 export default function ImmuneScreen() {
   const { adapter, status } = useWearable();
@@ -63,19 +66,11 @@ export default function ImmuneScreen() {
   }
 
   // Transform wearable data to immune metrics
-  const latestSleep = sleepData[0];
-  const latestHRV = hrvData[0];
   const latestEnergy = energyData[0];
 
   const immune = {
-    sleepHours: latestSleep ? latestSleep.durationMinutes / 60 : 7.5,
-    sleepDelta: latestSleep?.efficiencyPct ? Math.round((latestSleep.efficiencyPct - 80) / 2) : 5,
     stressLevel: (latestEnergy?.bodyBatteryLevel ?? 78) > 70 ? "Low" : "Moderate",
     bodyBattery: latestEnergy?.bodyBatteryLevel ?? 78,
-    hrv: latestHRV?.rmssdMs ?? 62,
-    hrvDelta: 8, // Would need historical data to calculate
-    restingHR: latestHRV?.avgRestingHrBpm ?? 58,
-    restingHRDelta: -2, // Would need historical data to calculate
   };
 
   return (
@@ -94,14 +89,7 @@ export default function ImmuneScreen() {
 
           <View style={styles.row}>
             {/* Sleep */}
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>Sleep</Text>
-              <Text style={styles.value}>{immune.sleepHours.toFixed(1)}h</Text>
-              <Text style={styles.accent}>+{immune.sleepDelta}% vs avg</Text>
-              {latestSleep && (
-                <Text style={styles.source}>{latestSleep.source}</Text>
-              )}
-            </View>
+            <SleepMetric sleepData={sleepData} showDivider />
 
             {/* Stress/Body Battery */}
             <View style={[styles.col, styles.colWithDivider]}>
@@ -114,24 +102,13 @@ export default function ImmuneScreen() {
             </View>
 
             {/* HRV */}
-            <View style={styles.col}>
-              <Text style={styles.label}>HRV</Text>
-              <Text style={styles.valueSmall}>{immune.hrv} ms</Text>
-              <Text style={styles.accent}>+{immune.hrvDelta}% trend</Text>
-              {latestHRV && (
-                <Text style={styles.source}>{latestHRV.source}</Text>
-              )}
-            </View>
+            <HRVMetric hrvData={hrvData} />
           </View>
 
           {/* Second row */}
           <View style={[styles.row, { marginTop: 20 }]}>
             {/* Resting Heart Rate */}
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>Resting HR</Text>
-              <Text style={styles.value}>{immune.restingHR}</Text>
-              <Text style={styles.accent}>{immune.restingHRDelta} bpm</Text>
-            </View>
+            <RestingHRMetric hrvData={hrvData} showDivider />
 
             {/* Recovery Status */}
             <View style={styles.col}>
@@ -251,12 +228,6 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.65)",
     fontSize: 13,
   },
-  value: {
-    color: "white",
-    fontSize: 26,
-    fontWeight: "700",
-    marginTop: 4,
-  },
   valueSmall: {
     color: "white",
     fontSize: 18,
@@ -267,12 +238,6 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.5)",
     fontSize: 12,
     marginTop: 6,
-  },
-  accent: {
-    color: "rgba(120,255,220,0.85)",
-    fontSize: 12,
-    marginTop: 6,
-    fontWeight: "600",
   },
   source: {
     color: "rgba(255,255,255,0.4)",
