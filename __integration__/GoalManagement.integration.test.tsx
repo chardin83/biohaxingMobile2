@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent, act, waitFor } from '@testing-library/react-native';
 import { StorageProvider, useStorage } from '../app/context/StorageContext';
-import GoalDetailScreen from '../app/(goal)/details';
+import GoalDetailScreen from '../app/(goal)/[mainGoalId]/details';
 import { useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as useSupplementsModule from '@/locales/supplements';

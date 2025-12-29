@@ -427,7 +427,135 @@ export const tipCategories: TipCategory[] = [
       },
     ],
   },
-
+  {
+    id: "level_nervousSystem_optimization",
+    level: 0,
+    xp: 0,
+    title: "Optimize your nervous system",
+    mainGoalIds: ["nervousSystem"],
+    tips: [
+      {
+        id: "breathwork",
+        title: "nervousSystem.levels.optimization.tips.0.title",
+        taskInfo: {
+          description: "nervousSystem.levels.optimization.tips.0.description",
+          duration: { amount: 14, unit: "days" },
+        },
+        information: {
+          text: "nervousSystem.levels.optimization.tips.0.information.text",
+          author: "Christina",
+        },
+      },
+      {
+        id: "sleep_optimization",
+        title: "nervousSystem.levels.optimization.tips.1.title",
+        taskInfo: {
+          description: "nervousSystem.levels.optimization.tips.1.description",
+          duration: { amount: 7, unit: "days" },
+        },
+        information: {
+          text: "nervousSystem.levels.optimization.tips.1.information.text",
+          author: "Christina",
+        },
+      },
+      {
+        id: "sunlight",
+        title: "nervousSystem.levels.optimization.tips.2.title",
+        taskInfo: {
+          description: "nervousSystem.levels.optimization.tips.2.description",
+          duration: { amount: 14, unit: "days" },
+        },
+        information: {
+          text: "nervousSystem.levels.optimization.tips.2.information.text",
+          author: "Christina",
+        },
+      },
+      {
+        id: "cold_exposure",
+        title: "nervousSystem.levels.optimization.tips.3.title",
+        taskInfo: {
+          description: "nervousSystem.levels.optimization.tips.3.description",
+          duration: { amount: 21, unit: "days" },
+        },
+        information: {
+          text: "nervousSystem.levels.optimization.tips.3.information.text",
+          author: "Christina",
+        },
+      },
+      {
+        id: "meditation",
+        title: "nervousSystem.levels.optimization.tips.4.title",
+        taskInfo: {
+          description: "nervousSystem.levels.optimization.tips.4.description",
+          duration: { amount: 21, unit: "days" },
+        },
+        information: {
+          text: "nervousSystem.levels.optimization.tips.4.information.text",
+          author: "Christina",
+        },
+      },
+      {
+        id: "nature",
+        title: "nervousSystem.levels.optimization.tips.5.title",
+        taskInfo: {
+          description: "nervousSystem.levels.optimization.tips.5.description",
+          duration: { amount: 14, unit: "days" },
+        },
+        information: {
+          text: "nervousSystem.levels.optimization.tips.5.information.text",
+          author: "Christina",
+        },
+      },
+      {
+        id: "recovery_monitoring",
+        title: "nervousSystem.levels.optimization.tips.6.title",
+        taskInfo: {
+          description: "nervousSystem.levels.optimization.tips.6.description",
+          duration: { amount: 21, unit: "days" },
+        },
+        information: {
+          text: "nervousSystem.levels.optimization.tips.6.information.text",
+          author: "Christina",
+        },
+      },
+      {
+        id: "social_connection",
+        title: "nervousSystem.levels.optimization.tips.7.title",
+        taskInfo: {
+          description: "nervousSystem.levels.optimization.tips.7.description",
+          duration: { amount: 14, unit: "days" },
+        },
+        information: {
+          text: "nervousSystem.levels.optimization.tips.7.information.text",
+          author: "Christina",
+        },
+      },
+      {
+        id: "calming_music",
+        title: "nervousSystem.levels.optimization.tips.8.title",
+        taskInfo: {
+          description: "nervousSystem.levels.optimization.tips.8.description",
+          duration: { amount: 14, unit: "days" },
+        },
+        information: {
+          text: "nervousSystem.levels.optimization.tips.8.information.text",
+          author: "Christina",
+        },
+      },
+      {
+        id: "adaptogens",
+        title: "nervousSystem.levels.optimization.tips.9.title",
+        taskInfo: {
+          description: "nervousSystem.levels.optimization.tips.9.description",
+          duration: { amount: 21, unit: "days" },
+        },
+        information: {
+          text: "nervousSystem.levels.optimization.tips.9.information.text",
+          author: "Christina",
+        },
+      },
+    ],
+  },
   // musclePerformance
   {
     id: "level_musclePerformance_1",

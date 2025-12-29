@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useWearable } from "@/wearables/wearableProvider";
 import { WearableStatus } from "@/components/WearableStatus";
@@ -7,6 +7,9 @@ import { HRVMetric } from "@/components/metrics/HRVMetric";
 import { RestingHRMetric } from "@/components/metrics/RestingHRMetric";
 import { calculateHRVMetrics } from "@/utils/hrvCalculations";
 import { HRVSummary } from "@/wearables/types";
+import { useTranslation } from "react-i18next";
+import { useRouter } from "expo-router";
+import { tipCategories } from "@/locales/tips";
 
 
 function daysAgo(n: number) {
@@ -45,8 +48,13 @@ function getRecoveryStatus(hrv: number | null, sleepHours: number | null): strin
   }
 }
 
-export default function NervousSystemScreen() {
+export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();
+  const { t } = useTranslation();
+  const router = useRouter();
+
+  console.log("=== NERVOUS SYSTEM MOUNTED ===");
+  console.log("mainGoalId from props:", mainGoalId);
 
   const [loading, setLoading] = React.useState(true);
   const [hrvData, setHrvData] = React.useState<HRVSummary[]>([]);
@@ -88,6 +96,31 @@ export default function NervousSystemScreen() {
   const stressScore = hrv ? Math.max(0, Math.min(100, 100 - hrv)) : 50;
   const stressLevel = getStressLevel(stressScore);
   const recoveryStatus = getRecoveryStatus(hrv, sleepHours);
+
+  // Hämta optimization tips från tips.json
+  const optimizationTips = t("tips:nervousSystem.levels.optimization.tips", { returnObjects: true }) as any[];
+
+  const handleTipPress = (tipIndex: number) => {
+    const optimizationCategory = tipCategories.find(
+      cat => cat.id === "level_nervousSystem_optimization"
+    );
+    const tip = optimizationCategory?.tips?.[tipIndex];
+    
+    if (tip) {
+      console.log("=== NAVIGATION DEBUG ===");
+      console.log("mainGoalId:", mainGoalId);
+      console.log("Navigating to details with tipId:", tip.id);
+      
+      // Använd absolut path med mainGoalId
+      router.push({
+        pathname: `/(goal)/${mainGoalId}/details` as any,
+        params: {
+          goalId: "level_nervousSystem_optimization",
+          tipId: tip.id,
+        }
+      });
+    }
+  };
 
   return (
     <LinearGradient colors={["#071526", "#040B16"]} style={styles.bg}>
@@ -211,38 +244,22 @@ export default function NervousSystemScreen() {
 
         {/* Tips card */}
         <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Optimize your nervous system</Text>
+          <Text style={styles.cardTitle}>{t("tips:nervousSystem.levels.optimization.title")}</Text>
           
-          <Text style={styles.tipText}>
-            🧘 Practice daily breathwork (4-7-8 breathing, box breathing)
-          </Text>
-          <Text style={styles.tipText}>
-            😴 Prioritize 7-9 hours of quality sleep
-          </Text>
-          <Text style={styles.tipText}>
-            ☀️ Morning sunlight exposure regulates circadian rhythm
-          </Text>
-          <Text style={styles.tipText}>
-            ❄️ Cold exposure (showers, ice baths) trains ANS resilience
-          </Text>
-          <Text style={styles.tipText}>
-            🧘‍♀️ Meditation and mindfulness reduce sympathetic activation
-          </Text>
-          <Text style={styles.tipText}>
-            🌳 Time in nature activates parasympathetic nervous system
-          </Text>
-          <Text style={styles.tipText}>
-            📊 Avoid overtraining - monitor HRV for recovery status
-          </Text>
-          <Text style={styles.tipText}>
-            😊 Social connection and laughter boost vagal tone
-          </Text>
-          <Text style={styles.tipText}>
-            🎵 Listen to calming music or binaural beats (promote alpha waves)
-          </Text>
-          <Text style={styles.tipText}>
-            🍵 Adaptogenic herbs (ashwagandha, rhodiola) support ANS balance
-          </Text>
+          {Array.isArray(optimizationTips) && optimizationTips.map((tip, index) => (
+            <Pressable
+              key={index}
+              style={({ pressed }) => [
+                styles.tipSection,
+                pressed && styles.tipPressed,
+              ]}
+              onPress={() => handleTipPress(index)}
+            >
+              <Text style={styles.tipTitle}>{tip.title}</Text>
+              <Text style={styles.tipDescription}>{tip.description}</Text>
+              <Text style={styles.tapHint}>Tap for details →</Text>
+            </Pressable>
+          ))}
         </View>
       </ScrollView>
     </LinearGradient>
@@ -252,7 +269,6 @@ export default function NervousSystemScreen() {
 const styles = StyleSheet.create({
   bg: { flex: 1 },
   container: {
-    paddingTop: 80,
     paddingHorizontal: 18,
     paddingBottom: 32,
   },
@@ -364,10 +380,33 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
   },
-  tipText: {
-    color: "rgba(255,255,255,0.75)",
+  tipSection: {
+    marginBottom: 12,
+    padding: 12,
+    backgroundColor: "rgba(255,255,255,0.03)",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(120,255,220,0.1)",
+  },
+  tipPressed: {
+    backgroundColor: "rgba(255,255,255,0.08)",
+    borderColor: "rgba(120,255,220,0.3)",
+  },
+  tipTitle: {
+    color: "rgba(255,255,255,0.85)",
     fontSize: 14,
-    lineHeight: 24,
+    fontWeight: "600",
     marginBottom: 4,
+  },
+  tipDescription: {
+    color: "rgba(255,255,255,0.65)",
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  tapHint: {
+    color: "rgba(120,255,220,0.6)",
+    fontSize: 12,
+    marginTop: 6,
+    fontStyle: "italic",
   },
 });

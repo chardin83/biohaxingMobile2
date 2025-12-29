@@ -1,104 +1,102 @@
 {
- "energy": {
-  "title": "Energy",
-  "description": "Information and lifestyle-related tips commonly discussed in relation to daily energy levels.",
-  "levels": {
-    "generalHealth": {
-      "tips": [
-        {
-          "title": "General nutritional support",
-          "description": "Adequate intake of essential vitamins and minerals is often discussed as part of maintaining overall vitality.",
-          "information": {
-            "text": "Multivitamins are sometimes used to help cover potential nutritional gaps in the diet."
+  "energy": {
+    "title": "Energy",
+    "description": "Information and lifestyle-related tips commonly discussed in relation to daily energy levels.",
+    "levels": {
+      "generalHealth": {
+        "tips": [
+          {
+            "title": "General nutritional support",
+            "description": "Adequate intake of essential vitamins and minerals is often discussed as part of maintaining overall vitality.",
+            "information": {
+              "text": "Multivitamins are sometimes used to help cover potential nutritional gaps in the diet."
+            }
           }
-        }
-      ]
-    },
-    "vitaminDComprehensive": {
-      "title": "Vitamin D overview",
-      "tips": [
-        {
-          "title": "Vitamin D status awareness",
-          "description": "Vitamin D levels can vary based on factors such as sun exposure, diet, and geographic location.",
-          "information": {
-            "text": "Vitamin D status is commonly assessed in clinical settings using blood-based measurements."
+        ]
+      },
+      "vitaminDComprehensive": {
+        "title": "Vitamin D overview",
+        "tips": [
+          {
+            "title": "Vitamin D status awareness",
+            "description": "Vitamin D levels can vary based on factors such as sun exposure, diet, and geographic location.",
+            "information": {
+              "text": "Vitamin D status is commonly assessed in clinical settings using blood-based measurements."
+            }
+          },
+          {
+            "title": "Vitamin D intake considerations",
+            "description": "Vitamin D is available from sunlight, food sources, and dietary supplements.",
+            "information": {
+              "text": "Vitamin D3 is a commonly used supplemental form and has been widely studied."
+            }
+          },
+          {
+            "title": "Understanding vitamin D measurements",
+            "description": "Healthcare professionals may evaluate vitamin D levels over time to understand trends and changes.",
+            "information": {
+              "text": "Different vitamin D ranges are used clinically to interpret laboratory results."
+            }
           }
-        },
-        {
-          "title": "Vitamin D intake considerations",
-          "description": "Vitamin D is available from sunlight, food sources, and dietary supplements.",
-          "information": {
-            "text": "Vitamin D3 is a commonly used supplemental form and has been widely studied."
+        ]
+      },
+      "vitaminSupport": {
+        "tips": [
+          {
+            "title": "Vitamin and mineral balance",
+            "description": "Vitamins and minerals play roles in many metabolic and immune-related processes.",
+            "information": {
+              "text": "Vitamin D is involved in immune regulation and metabolic pathways."
+            }
           }
-        },
-        {
-          "title": "Understanding vitamin D measurements",
-          "description": "Healthcare professionals may evaluate vitamin D levels over time to understand trends and changes.",
-          "information": {
-            "text": "Different vitamin D ranges are used clinically to interpret laboratory results."
+        ]
+      },
+      "mitochondrialSupport": {
+        "tips": [
+          {
+            "title": "Mitochondrial nutrients",
+            "description": "Certain nutrients are involved in mitochondrial processes related to cellular energy production.",
+            "information": {
+              "text": "CoQ10 participates in energy transfer within the mitochondria."
+            }
           }
-        }
-      ]
-    },
-    "vitaminSupport": {
-      "tips": [
-        {
-          "title": "Vitamin and mineral balance",
-          "description": "Vitamins and minerals play roles in many metabolic and immune-related processes.",
-          "information": {
-            "text": "Vitamin D is involved in immune regulation and metabolic pathways."
+        ]
+      },
+      "cellularEnergy": {
+        "tips": [
+          {
+            "title": "Cellular energy metabolism",
+            "description": "Cellular energy production relies on complex metabolic pathways.",
+            "information": {
+              "text": "NAD+ is involved in cellular metabolism and DNA maintenance mechanisms."
+            }
           }
-        }
-      ]
-    },
-    "mitochondrialSupport": {
-      "tips": [
-        {
-          "title": "Mitochondrial nutrients",
-          "description": "Certain nutrients are involved in mitochondrial processes related to cellular energy production.",
-          "information": {
-            "text": "CoQ10 participates in energy transfer within the mitochondria."
+        ]
+      },
+      "metabolicActivation": {
+        "tips": [
+          {
+            "title": "Metabolic health factors",
+            "description": "Glucose metabolism is an important component of sustained energy levels.",
+            "information": {
+              "text": "Alpha-lipoic acid has been studied in relation to insulin sensitivity and antioxidant activity."
+            }
           }
-        }
-      ]
-    },
-    "cellularEnergy": {
-      "tips": [
-        {
-          "title": "Cellular energy metabolism",
-          "description": "Cellular energy production relies on complex metabolic pathways.",
-          "information": {
-            "text": "NAD+ is involved in cellular metabolism and DNA maintenance mechanisms."
+        ]
+      },
+      "longevity": {
+        "tips": [
+          {
+            "title": "Traditional longevity compounds",
+            "description": "Some traditional substances have historically been associated with vitality and resilience.",
+            "information": {
+              "text": "Shilajit contains fulvic acid and has been used in traditional wellness contexts."
+            }
           }
-        }
-      ]
-    },
-    "metabolicActivation": {
-      "tips": [
-        {
-          "title": "Metabolic health factors",
-          "description": "Glucose metabolism is an important component of sustained energy levels.",
-          "information": {
-            "text": "Alpha-lipoic acid has been studied in relation to insulin sensitivity and antioxidant activity."
-          }
-        }
-      ]
-    },
-    "longevity": {
-      "tips": [
-        {
-          "title": "Traditional longevity compounds",
-          "description": "Some traditional substances have historically been associated with vitality and resilience.",
-          "information": {
-            "text": "Shilajit contains fulvic acid and has been used in traditional wellness contexts."
-          }
-        }
-      ]
+        ]
+      }
     }
-  }
-}
-,
-
+  },
   "sleepQuality": {
     "title": "Sleep",
     "description": "Information about sleep quality and factors that may influence rest.",
@@ -218,7 +216,7 @@
   },
   "nervousSystem": {
     "title": "Nervous system",
-    "description": "Information about factors commonly discussed in relation to stress management.",
+    "description": "Information about factors commonly discussed in relation to stress management and autonomic nervous system optimization.",
     "levels": {
       "ashwagandha": {
         "tips": [
@@ -249,6 +247,81 @@
             "description": "Semax is a synthetic peptide that has been studied in neurological research contexts.",
             "information": {
               "text": "Semax has been researched for its potential effects on brain chemistry and cognitive function."
+            }
+          }
+        ]
+      },
+      "optimization": {
+        "title": "Optimize your nervous system",
+        "tips": [
+          {
+            "title": "Breathwork practices",
+            "description": "Practice daily breathwork (4-7-8 breathing, box breathing) to activate parasympathetic nervous system.",
+            "information": {
+              "text": "Controlled breathing techniques have been studied in relation to heart rate variability and stress reduction."
+            }
+          },
+          {
+            "title": "Sleep optimization",
+            "description": "Prioritize 7-9 hours of quality sleep for nervous system recovery.",
+            "information": {
+              "text": "Sleep is essential for autonomic nervous system balance and restoration."
+            }
+          },
+          {
+            "title": "Sunlight exposure",
+            "description": "Morning sunlight exposure regulates circadian rhythm and cortisol patterns.",
+            "information": {
+              "text": "Light exposure timing has been studied in relation to circadian rhythm entrainment."
+            }
+          },
+          {
+            "title": "Cold exposure",
+            "description": "Cold exposure (showers, ice baths) trains ANS resilience and vagal tone.",
+            "information": {
+              "text": "Cold water immersion has been researched for its effects on sympathetic activation and adaptation."
+            }
+          },
+          {
+            "title": "Meditation and mindfulness",
+            "description": "Meditation and mindfulness reduce sympathetic activation and improve HRV.",
+            "information": {
+              "text": "Mindfulness practices have been extensively studied in relation to stress reduction and autonomic regulation."
+            }
+          },
+          {
+            "title": "Nature exposure",
+            "description": "Time in nature activates parasympathetic nervous system and reduces stress hormones.",
+            "information": {
+              "text": "Forest bathing and nature exposure have been studied for their calming physiological effects."
+            }
+          },
+          {
+            "title": "Recovery monitoring",
+            "description": "Avoid overtraining - monitor HRV for recovery status before intense workouts.",
+            "information": {
+              "text": "HRV monitoring has been studied as a tool for optimizing training load and recovery."
+            }
+          },
+          {
+            "title": "Social connection",
+            "description": "Social connection and laughter boost vagal tone and parasympathetic activity.",
+            "information": {
+              "text": "Social bonding has been researched in relation to vagus nerve activity and stress buffering."
+            }
+          },
+          {
+            "title": "Calming music",
+            "description": "Listen to calming music or binaural beats to promote alpha wave activity.",
+            "information": {
+              "text": "Music therapy and binaural beats have been studied for their effects on brain wave patterns and relaxation."
+            }
+          },
+          {
+            "title": "Adaptogenic herbs",
+            "description": "Adaptogenic herbs (ashwagandha, rhodiola) support ANS balance under stress.",
+            "information": {
+              "text": "Adaptogens have been researched for their potential to modulate stress response systems."
             }
           }
         ]
@@ -403,30 +476,30 @@
           }
         ]
       }
-   }
-},
-      "mind": {
-        "title": "Mind",
-        "description": "Information about heart–brain coherence and mental state exploration.",
-        "levels": {
-          "coherence": {
-            "tips": [
-              {
-                "title": "Heart–Brain Coherence exploration",
-                "description": "HRV (Heart Rate Variability) can be used to observe patterns associated with different mental states.",
-                "information": {
-                  "text": "Heart–Brain Coherence is a concept describing a state where heart rhythm patterns become smooth and sinusoidal. This phenomenon has been studied in relation to breathing techniques and emotional states."
-                },
-                "startPrompt": "Complete the session according to the steps below. Then take a picture of your HRV measurement and upload it.",
-                "analyzePrompt": "Analyze the uploaded image: How do heart rate, HRV, and the curve pattern differ between the steps?",
-                "tasks": {
-                  "task1": "HRV measurement in baseline (sitting still without specific mental focus).",
-                  "task2": "HRV measurement while focusing on a stressful or challenging thought.",
-                  "task3": "HRV measurement during recovery with calm breathing."
-                }
-              }
-            ]
+    }
+  },
+  "mind": {
+    "title": "Mind",
+    "description": "Information about heart–brain coherence and mental state exploration.",
+    "levels": {
+      "coherence": {
+        "tips": [
+          {
+            "title": "Heart–Brain Coherence exploration",
+            "description": "HRV (Heart Rate Variability) can be used to observe patterns associated with different mental states.",
+            "information": {
+              "text": "Heart–Brain Coherence is a concept describing a state where heart rhythm patterns become smooth and sinusoidal. This phenomenon has been studied in relation to breathing techniques and emotional states."
+            },
+            "startPrompt": "Complete the session according to the steps below. Then take a picture of your HRV measurement and upload it.",
+            "analyzePrompt": "Analyze the uploaded image: How do heart rate, HRV, and the curve pattern differ between the steps?",
+            "tasks": {
+              "task1": "HRV measurement in baseline (sitting still without specific mental focus).",
+              "task2": "HRV measurement while focusing on a stressful or challenging thought.",
+              "task3": "HRV measurement during recovery with calm breathing."
+            }
           }
-        }
+        ]
       }
     }
+  }
+}

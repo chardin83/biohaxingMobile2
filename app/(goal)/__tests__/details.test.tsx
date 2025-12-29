@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import GoalDetailScreen from '../details';
+import GoalDetailScreen from '../[mainGoalId]/details';
 import * as StorageContext from '../../context/StorageContext';
 import * as useSupplementsModule from '@/locales/supplements';
 import { useLocalSearchParams } from 'expo-router';

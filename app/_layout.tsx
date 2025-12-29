@@ -77,7 +77,7 @@ export default function RootLayout() {
                  <Stack.Screen
                   name="(goal)"
                   options={{
-                    headerShown: true,
+                    headerShown: false,
                     title: "",
                     headerBackTitle: t("back"),
                   }}

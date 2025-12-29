@@ -1,34 +1,32 @@
 import React from "react";
+import { SafeAreaView } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams } from "expo-router";
+import BackButton from "@/components/BackButton";
+import NervousSystemOverview from "./nervousSystemOverview";
 import SleepOverview from "./sleepOverview";
-import ImmuneOverview from "./immuneOverview";
+import EnergyOverview from "./energyOverview";
+import MusclePerformanceOverview from "./musclePerformanceOverview";
 import CardioOverview from "./cardioOverview";
 import DigestiveOverview from "./digestiveOverview";
-import NervousSystemOverview from "./nervousSystemOverview";
-import MusclePerformanceOverview from "./musclePerformanceOverview";
-import EnergyOverview from "./energyOverview";
+import ImmuneOverview from "./immuneOverview";
 
 export default function GoalRootScreen() {
   const { mainGoalId } = useLocalSearchParams<{ mainGoalId: string }>();
 
-  switch (mainGoalId) {
-    case "sleep":
-      return <SleepOverview/>;
-    case "energy":
-      return <EnergyOverview />;
-    case "recovery":
-      return <SleepOverview />;
-    case "immuneSupport":
-      return <ImmuneOverview />;
-    case "cardioFitness":
-      return <CardioOverview />;
-      case "digestiveHealth":
-      return <DigestiveOverview />;
-      case "nervousSystem":
-      return <NervousSystemOverview />;
-      case "musclePerformance":
-      return <MusclePerformanceOverview />;
-    default:
-      return <SleepOverview />; // eller en "Not found"
-  }
+  return (
+    <LinearGradient colors={["#071526", "#040B16"]} style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <BackButton />
+
+        {mainGoalId === "nervousSystem" && <NervousSystemOverview mainGoalId={mainGoalId} />}
+        {mainGoalId === "sleep" && <SleepOverview mainGoalId={mainGoalId} />}
+        {mainGoalId === "energy" && <EnergyOverview mainGoalId={mainGoalId} />}
+        {mainGoalId === "recovery" && <MusclePerformanceOverview mainGoalId={mainGoalId} />}
+        {mainGoalId === "cardioFitness" && <CardioOverview mainGoalId={mainGoalId} />}
+        {mainGoalId === "digestiveHealth" && <DigestiveOverview mainGoalId={mainGoalId} />}
+        {mainGoalId === "immuneSupport" && <ImmuneOverview mainGoalId={mainGoalId} />}
+      </SafeAreaView>
+    </LinearGradient>
+  );
 }
