@@ -24,6 +24,7 @@ import { useStorage } from "@/app/context/StorageContext";
 import BackButton from "@/components/BackButton";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { AIPrompts } from "@/constants/AIPrompts";
 
 export default function GoalDetailScreen() {
   const { t } = useTranslation();
@@ -223,10 +224,36 @@ export default function GoalDetailScreen() {
 
   const effectiveIsFinished = isGoalFinished || analysisApproved;
 
+  const handleAIInsightPress = (question: string) => {
+    //const tipInfo = `Tip: ${t(`tips:${titleKey}`)}\nDescription: ${t(`tips:${step?.taskInfo?.description}`) || ''}\nInformation: ${t(`tips:${information?.text}`) || ''}`;
+    const tipInfo = `Tip: ${t(`tips:${titleKey}`)}\nDescription: ${t(`tips:${step?.taskInfo?.description}`) || ''} \nInformation: ${t(`tips:${information.text}`)  || ''}`;
+    
+    let fullPrompt = '';
+    
+    if (question.includes("What studies exist")) {
+      fullPrompt = AIPrompts.insights.studies(tipInfo);
+    } else if (question.includes("Which people are talking")) {
+      fullPrompt = AIPrompts.insights.experts(tipInfo);
+    } else if (question.includes("What risks")) {
+      fullPrompt = AIPrompts.insights.risks(tipInfo);
+    } else {
+      fullPrompt = `${question}\n\n${tipInfo}`;
+    }
+    
+    router.push({
+      pathname: "/(tabs)/chat",
+      params: {
+        initialPrompt: fullPrompt,
+        returnPath: `/(goal)/${mainGoalId}/details`,
+        returnParams: JSON.stringify({ mainGoalId, goalId, tipId }),
+      }
+    });
+  };
+
   return (
     <LinearGradient colors={["#071526", "#040B16"]} style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <BackButton />
+        <BackButton onPress={() => router.replace(`/(goal)/${mainGoalId}`)} />
         
         <ScrollView
           contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 140, flexGrow: 1 }]}
@@ -267,95 +294,31 @@ export default function GoalDetailScreen() {
             </AppBox>
           )}
 
-          <AppBox title={t(`common:goalDetails.taskInfo`)}>
-            <Text style={{ color: Colors.dark.textLight }}>
-              {taskInstructionsKey ? t(`tips:${taskInstructionsKey}`) : ""}
-              {duration &&
-                `\n\n${duration.amount} ${t(
-                  `common:goalDetails.durationUnits.${duration.unit}`
-                )}`}
-            </Text>
-            {tasks.length > 0 && (
-              <View style={{ gap: 12, marginTop: 12 }}>
-                {tasks.map((taskKeyStr, i) => {
-                  const checked = checkedTasks[i];
-                  const isMissing = missingTasks[i];
-                  return (
-                    <Pressable
-                      key={i}
-                      onPress={() => toggleTask(i)}
-                      disabled={!activeGoal}
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        opacity: !activeGoal ? 0.5 : 1,
-                      }}
-                    >
-                      <Icon
-                        source={checked ? "checkbox-marked" : "checkbox-blank-outline"}
-                        size={24}
-                        color={isMissing ? "#ff3b30" : Colors.dark.primary}
-                      />
-                      <Text
-                        style={{
-                          marginLeft: 8,
-                          color: isMissing ? "#ff3b30" : Colors.dark.textLight,
-                        }}
-                      >
-                        {t(`goals:${taskKeyStr}`)}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            )}
+          <AppBox title={t(`common:goalDetails.aiInsights`)}>
+            <Pressable 
+              onPress={() => handleAIInsightPress("What studies exists?")}
+              style={styles.insightButton}
+            >
+              <Text style={styles.insightText}>What studies exists?</Text>
+            </Pressable>
+            
+            <Pressable 
+              onPress={() => handleAIInsightPress("Which people are talking about this subject?")}
+              style={styles.insightButton}
+            >
+              <Text style={styles.insightText}>Which people are talking about this subject?</Text>
+            </Pressable>
+            
+            <Pressable 
+              onPress={() => handleAIInsightPress("What risks are associated with this?")}
+              style={styles.insightButton}
+            >
+              <Text style={styles.insightText}>What risks are associated with this?</Text>
+            </Pressable>
           </AppBox>
 
-          <AppBox title={t(`common:goalDetails.aiInsights`)}>TBC...</AppBox>
-
           <View>
-            <View style={styles.buttonRow}>
-              {activeGoal ? (
-                analyzePromptKey && !analysisApproved ? (
-                  <View style={styles.analyzeWrapper}>
-                    <AppButton
-                      title={t("common:goalDetails.analyze")}
-                      onPress={handleAnalyzePressed}
-                      disabled={!effectiveIsFinished}
-                      variant="primary"
-                      glow={true}
-                      style={!effectiveIsFinished ? { opacity: 0.5 } : undefined}
-                    />
-                  </View>
-                ) : (
-                  <View style={styles.analyzeWrapper}>
-                    <AppButton
-                      title={t("common:goalDetails.finish")}
-                      onPress={handleFinishGoal}
-                      disabled={!effectiveIsFinished}
-                      variant="primary"
-                      glow={true}
-                      style={!effectiveIsFinished ? { opacity: 0.5 } : undefined}
-                    />
-                  </View>
-                )
-              ) : (
-                <>
-                  <AppButton
-                    title={t("common:goalDetails.start")}
-                    onPress={() => setShowStartModal(true)}
-                    variant="primary"
-                    glow={true}
-                  />
-                  <AppButton
-                    title={t("common:goalDetails.skip")}
-                    onPress={handleSkipGoal}
-                    variant="secondary"
-                  />
-                </>
-              )}
-            </View>
-
+           
             {activeGoal && !isGoalFinished && (
               <Text style={styles.disabledHint}>
                 {t("common:goalDetails.analyzeHint")}
@@ -479,5 +442,18 @@ const styles = StyleSheet.create({
     color: Colors.dark.textLight,
     marginTop: 6,
     textAlign: "center",
+  },
+  insightButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginBottom: 8,
+    backgroundColor: "rgba(120,255,220,0.1)",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "rgba(120,255,220,0.3)",
+  },
+  insightText: {
+    color: Colors.dark.textLight,
+    fontSize: 16,
   },
 });

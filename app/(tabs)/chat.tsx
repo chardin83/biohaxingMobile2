@@ -22,15 +22,21 @@ import { t } from "i18next";
 import { Colors } from "@/constants/Colors";
 import { Message } from "../domain/Message";
 import { askGPT, buildSystemPrompt } from "@/services/gptServices";
+import BackButton from "@/components/BackButton";
+import { useRouter } from "expo-router";
 
 export default function ChatWithGPT4o(): JSX.Element {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { handleGPTFunctionCall } = useGPTFunctionHandler();
-  const { supplements, goal } = useLocalSearchParams<{
+  const router = useRouter();
+  const { supplements, goal, initialPrompt, returnPath, returnParams } = useLocalSearchParams<{
     supplements?: string;
     goal?: string;
+    initialPrompt?: string;
+    returnPath?: string;
+    returnParams?: string;
   }>();
 
   const parsedSupplements = supplements
@@ -42,6 +48,22 @@ export default function ChatWithGPT4o(): JSX.Element {
   const scrollRef = useRef<ScrollView>(null);
   const { plans, errorMessage, shareHealthPlan } = useStorage();
 
+  // Visa back-knappen om vi har initialPrompt, supplements eller goal
+  const showBackButton = !!(initialPrompt || supplements || goal);
+
+  // Custom back handler
+  const handleBack = () => {
+    if (returnPath) {
+      const params = returnParams ? JSON.parse(returnParams) : {};
+      router.push({
+        pathname: returnPath,
+        params,
+      });
+    } else {
+      router.back();
+    }
+  };
+
   const fullSystemPrompt = () => buildSystemPrompt(plans, shareHealthPlan);
 
   useEffect(() => {
@@ -52,6 +74,43 @@ export default function ChatWithGPT4o(): JSX.Element {
       },
     ]);
   }, []);
+
+  useEffect(() => {
+    if (initialPrompt) {
+      // TA BORT: setInput(initialPrompt);
+      // Skicka direkt istället:
+      const sendInitialPrompt = async () => {
+        const userMessage: Message = { role: "user", content: initialPrompt };
+        const planOverviewMessage: Message = {
+          role: "system",
+          content: fullSystemPrompt(),
+        };
+
+        const visibleMessages: Message[] = [userMessage];
+        const messagesToSend: Message[] = [planOverviewMessage, ...visibleMessages];
+
+        setMessages(visibleMessages);
+        setLoading(true);
+
+        try {
+          const data = await askGPT(messagesToSend);
+          if (data.type === "text") {
+            const content = data.content ?? "🤖 Inget svar tillgängligt.";
+            setMessages((prev) => [...prev, { role: "assistant", content }]);
+          }
+        } catch (error) {
+          setMessages((prev) => [
+            ...prev,
+            { role: "assistant", content: "Något gick fel. 😕 " + error },
+          ]);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      sendInitialPrompt();
+    }
+  }, [initialPrompt]);
 
   useEffect(() => {
     if (parsedSupplements.length > 0) {
@@ -146,6 +205,8 @@ export default function ChatWithGPT4o(): JSX.Element {
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ flex: 1 }}>
+          {showBackButton && <BackButton onPress={handleBack} />}
+          
           <ScrollView
             ref={scrollRef}
             style={{ flex: 1 }}
@@ -154,6 +215,7 @@ export default function ChatWithGPT4o(): JSX.Element {
               flexGrow: 1,
               justifyContent: "flex-end",
               paddingBottom: tabBarHeight + 80,
+              paddingTop: showBackButton ? 0 : 10,
             }}
           >
             {messages.map((msg, index) => (
@@ -247,7 +309,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderTopWidth: 1,
     borderColor: Colors.dark.border,
-    backgroundColor: "rgba(0, 19, 38, 0.9)", // eller Colors.dark.secondary med alpha
+    backgroundColor: "rgba(0, 19, 38, 0.9)",
   },
   input: {
     borderWidth: 1,
