@@ -41,5 +41,36 @@ export const Colors = {
     assistantBubble: "#2C2C2C",
     delete: "#FF3B30",
     error: "#FF3B30",
+    // Core colors
+    accentColor: "rgba(120,255,220,1)",     // Cyan - primary accent
+    warmColor: "rgba(255,100,100,1)",       // Red - sympathetic/stress
+    successColor: "rgba(255,215,0,1)",      // Gold - relevant/success
+    infoColor: "rgba(120,200,255,1)",       // Blue - information
+    
+    // Text variants
+    textPrimary: "rgba(255,255,255,0.95)",   // Strong text
+    textSecondary: "rgba(255,255,255,0.85)", // Secondary text
+    textTertiary: "rgba(255,255,255,0.7)",   // Tertiary text
+    textMuted: "rgba(255,255,255,0.5)",      // Muted/disabled text
+    textWeak: "rgba(255,255,255,0.1)",       // Very weak/borders
+    
+    // Accent opacity variants
+    accentStrong: "rgba(120,255,220,0.95)",
+    accentDefault: "rgba(120,255,220,0.6)",
+    accentMedium: "rgba(120,255,220,0.4)",
+    accentWeak: "rgba(120,255,220,0.18)",
+    accentVeryWeak: "rgba(120,255,220,0.05)",
+    
+    // Warm/Red variants
+    warmDefault: "rgba(255,100,100,0.5)",
+    warmWeak: "rgba(255,100,100,0.05)",
+    
+    // Success/Gold variants
+    successDefault: "rgba(255,215,0,0.6)",
+    successWeak: "rgba(255,215,0,0.08)",
+    
+    // Info/Blue variants
+    infoDefault: "rgba(120,200,255,0.5)",
+    infoWeak: "rgba(120,200,255,0.06)",
   },
 };

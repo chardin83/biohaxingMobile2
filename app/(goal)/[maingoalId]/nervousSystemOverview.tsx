@@ -8,6 +8,7 @@ import { RestingHRMetric } from "@/components/metrics/RestingHRMetric";
 import { calculateHRVMetrics } from "@/utils/hrvCalculations";
 import { HRVSummary } from "@/wearables/types";
 import { useTranslation } from "react-i18next";
+import { Colors } from "@/constants/Colors";
 import { useRouter } from "expo-router";
 import { tipCategories } from "@/locales/tips";
 import { useStorage } from "@/app/context/StorageContext";
@@ -409,15 +410,15 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 18,
     paddingBottom: 32,
-    paddingTop: 20, // Tillbaka till normalt padding
+    paddingTop: 20,
   },
   title: {
     fontSize: 44,
     fontWeight: "700",
-    color: "rgba(120,255,220,0.95)",
+    color: Colors.dark.accentStrong,
   },
   subtitle: {
-    color: "rgba(255,255,255,0.7)",
+    color: Colors.dark.textTertiary,
     fontSize: 16,
     marginTop: 6,
     marginBottom: 16,
@@ -427,10 +428,10 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     padding: 16,
     borderWidth: 1,
-    borderColor: "rgba(120,255,220,0.18)",
+    borderColor: Colors.dark.accentVeryWeak,
   },
   cardTitle: {
-    color: "rgba(255,255,255,0.85)",
+    color: Colors.dark.textSecondary,
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 14,
@@ -448,28 +449,28 @@ const styles = StyleSheet.create({
     borderRightColor: "rgba(255,255,255,0.10)",
   },
   label: {
-    color: "rgba(255,255,255,0.65)",
+    color: Colors.dark.textTertiary,
     fontSize: 13,
   },
   value: {
-    color: "white",
+    color: Colors.dark.textPrimary,
     fontSize: 26,
     fontWeight: "700",
     marginTop: 4,
   },
   valueSmall: {
-    color: "white",
+    color: Colors.dark.textPrimary,
     fontSize: 18,
     fontWeight: "700",
     marginTop: 4,
   },
   muted: {
-    color: "rgba(255,255,255,0.5)",
+    color: Colors.dark.textMuted,
     fontSize: 12,
     marginTop: 6,
   },
   accent: {
-    color: "rgba(120,255,220,0.85)",
+    color: Colors.dark.accentDefault,
     fontSize: 12,
     marginTop: 6,
     fontWeight: "600",
@@ -484,10 +485,10 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   sympatheticBar: {
-    backgroundColor: "rgba(255,100,100,0.5)",
+    backgroundColor: Colors.dark.warmDefault,
   },
   parasympatheticBar: {
-    backgroundColor: "rgba(120,255,220,0.5)",
+    backgroundColor: Colors.dark.accentDefault,
   },
   balanceLabels: {
     flexDirection: "row",
@@ -495,12 +496,12 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   balanceLabel: {
-    color: "rgba(255,255,255,0.75)",
+    color: Colors.dark.textPrimary,
     fontSize: 13,
     fontWeight: "600",
   },
   balanceText: {
-    color: "rgba(255,255,255,0.65)",
+    color: Colors.dark.textTertiary,
     fontSize: 14,
     lineHeight: 20,
     marginTop: 8,
@@ -509,13 +510,13 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   infoLabel: {
-    color: "rgba(255,255,255,0.85)",
+    color: Colors.dark.textSecondary,
     fontSize: 15,
     fontWeight: "600",
     marginBottom: 6,
   },
   infoText: {
-    color: "rgba(255,255,255,0.65)",
+    color: Colors.dark.textTertiary,
     fontSize: 14,
     lineHeight: 20,
   },
@@ -525,29 +526,29 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.03)",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "rgba(120,255,220,0.1)",
+    borderColor: Colors.dark.accentVeryWeak,
   },
   tipPressed: {
     backgroundColor: "rgba(255,255,255,0.08)",
-    borderColor: "rgba(120,255,220,0.3)",
+    borderColor: Colors.dark.accentMedium,
   },
   tipCompleted: {
-    borderColor: "rgba(120,255,220,0.4)",
-    backgroundColor: "rgba(120,255,220,0.05)",
+    borderColor: Colors.dark.accentMedium,
+    backgroundColor: Colors.dark.accentVeryWeak,
   },
   tipRelevant: {
-    borderColor: "rgba(255,215,0,0.6)",
-    backgroundColor: "rgba(255,215,0,0.08)",
+    borderColor: Colors.dark.successDefault,
+    backgroundColor: Colors.dark.successWeak,
     borderWidth: 2,
   },
   tipInteresting: {
-    borderColor: "rgba(120,200,255,0.5)",
-    backgroundColor: "rgba(120,200,255,0.06)",
+    borderColor: Colors.dark.infoDefault,
+    backgroundColor: Colors.dark.infoWeak,
     borderWidth: 2,
   },
   tipSkeptical: {
-    borderColor: "rgba(255,100,100,0.4)",
-    backgroundColor: "rgba(255,100,100,0.05)",
+    borderColor: Colors.dark.warmDefault,
+    backgroundColor: Colors.dark.warmWeak,
     opacity: 0.7,
   },
   tipHeader: {
@@ -561,26 +562,26 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   tipTitle: {
-    color: "rgba(255,255,255,0.85)",
+    color: Colors.dark.textSecondary,
     fontSize: 14,
     fontWeight: "600",
     marginBottom: 4,
   },
   tipDescription: {
-    color: "rgba(255,255,255,0.65)",
+    color: Colors.dark.textTertiary,
     fontSize: 14,
     lineHeight: 20,
   },
   xpBadge: {
-    backgroundColor: "rgba(120,255,220,0.2)",
+    backgroundColor: Colors.dark.accentWeak,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "rgba(120,255,220,0.4)",
+    borderColor: Colors.dark.accentMedium,
   },
   xpText: {
-    color: "rgba(120,255,220,0.95)",
+    color: Colors.dark.accentStrong,
     fontSize: 12,
     fontWeight: "700",
   },
@@ -590,21 +591,21 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 6,
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: Colors.dark.textWeak,
     borderRadius: 3,
     overflow: "hidden",
   },
   progressFill: {
     height: "100%",
-    backgroundColor: "rgba(120,255,220,0.6)",
+    backgroundColor: Colors.dark.accentDefault,
   },
   progressText: {
-    color: "rgba(255,255,255,0.6)",
+    color: Colors.dark.textMuted,
     fontSize: 11,
     marginTop: 4,
   },
   tapHint: {
-    color: "rgba(120,255,220,0.6)",
+    color: Colors.dark.accentDefault,
     fontSize: 12,
     marginTop: 6,
     fontStyle: "italic",
@@ -614,10 +615,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: "center",
     borderTopWidth: 1,
-    borderTopColor: "rgba(255,255,255,0.1)",
+    borderTopColor: Colors.dark.textWeak,
   },
   showAllText: {
-    color: "rgba(120,255,220,0.8)",
+    color: Colors.dark.accentDefault,
     fontSize: 14,
     fontWeight: "600",
   },

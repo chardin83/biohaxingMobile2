@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   },
   appTitle: {
     fontSize: 24,
-    color: Colors.dark.primary,
+    color: Colors.dark.accentStrong,
     marginVertical: 10,
   },
   imageWrapper: {
@@ -128,19 +128,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 6,
     textShadowOffset: { width: 1, height: 1 },
-    textShadowColor: Colors.dark.primary,
+    textShadowColor: Colors.dark.accentStrong,
     textShadowRadius: 6,
   },
   title: {
     fontSize: 20,
-    color: Colors.dark.primary,
+    color: Colors.dark.accentStrong,
     fontWeight: "bold",
     marginBottom: 10,
     textTransform: "uppercase",
   },
   sectionTitle: {
     fontSize: 18,
-    color: Colors.dark.primary,
+    color: Colors.dark.accentStrong,
     fontWeight: "bold",
     marginTop: 20,
     marginBottom: 10,
