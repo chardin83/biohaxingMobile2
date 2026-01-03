@@ -50,6 +50,15 @@ type FinishedGoal = {
   goalId: string;
 };
 
+export interface ViewedTip {
+  mainGoalId: string;
+  goalId: string;
+  tipId: string;
+  viewedAt: string;
+  askedQuestions: string[]; // Array av frågor som ställts: ["studies", "experts", "risks"]
+  xpEarned: number;
+}
+
 interface StorageContextType {
   plans: Plan[];
   setPlans: (plans: Plan[] | ((prev: Plan[]) => Plan[])) => void;
@@ -97,6 +106,11 @@ interface StorageContextType {
           prev: Record<string, DailyNutritionSummary>
         ) => Record<string, DailyNutritionSummary>)
   ) => void;
+  viewedTips: ViewedTip[];
+  setViewedTips: (tips: ViewedTip[] | ((prev: ViewedTip[]) => ViewedTip[])) => void;
+  addTipView: (mainGoalId: string, goalId: string, tipId: string) => number;
+  incrementTipChat: (mainGoalId: string, goalId: string, tipId: string, questionType: string) => number;
+  addChatMessageXP: (mainGoalId: string, goalId: string, tipId: string) => number;
 }
 
 const STORAGE_KEYS = {
@@ -112,6 +126,7 @@ const STORAGE_KEYS = {
   MY_XP: "myXP",
   MY_LEVEL: "myLevel",
   DAILY_NUTRITION: "dailyNutritionSummary",
+  VIEWED_TIPS: "viewedTips",
 };
 
 const StorageContext = createContext<StorageContextType | undefined>(undefined);
@@ -143,6 +158,7 @@ export const StorageProvider = ({
   const [newLevelReached, setNewLevelReached] = useState<number | null>(null);
   const [dailyNutritionSummariesState, setDailyNutritionSummariesState] =
     useState<Record<string, DailyNutritionSummary>>({});
+  const [viewedTipsState, setViewedTipsState] = useState<ViewedTip[]>([]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -160,6 +176,7 @@ export const StorageProvider = ({
           myXPRaw,
           myLevelRaw,
           dailyNutritionRaw,
+          viewedTipsRaw,
         ] = await Promise.all([
           AsyncStorage.getItem(STORAGE_KEYS.PLANS),
           AsyncStorage.getItem(STORAGE_KEYS.HAS_VISITED_CHAT),
@@ -173,6 +190,7 @@ export const StorageProvider = ({
           AsyncStorage.getItem(STORAGE_KEYS.MY_XP),
           AsyncStorage.getItem(STORAGE_KEYS.MY_LEVEL),
           AsyncStorage.getItem(STORAGE_KEYS.DAILY_NUTRITION),
+          AsyncStorage.getItem(STORAGE_KEYS.VIEWED_TIPS),
         ]);
 
         if (plansRaw) setPlansState(JSON.parse(plansRaw));
@@ -190,6 +208,7 @@ export const StorageProvider = ({
         if (myLevelRaw) setMyLevelState(parseInt(myLevelRaw));
         if (dailyNutritionRaw)
           setDailyNutritionSummariesState(JSON.parse(dailyNutritionRaw));
+        if (viewedTipsRaw) setViewedTipsState(JSON.parse(viewedTipsRaw));
       } catch (err) {
         console.error("Kunde inte ladda från AsyncStorage:", err);
       } finally {
@@ -330,6 +349,85 @@ export const StorageProvider = ({
     });
   };
 
+  const setViewedTips = (update: ViewedTip[] | ((prev: ViewedTip[]) => ViewedTip[])) => {
+    setViewedTipsState((prev) => {
+      const newTips = typeof update === "function" ? update(prev) : update;
+      AsyncStorage.setItem(STORAGE_KEYS.VIEWED_TIPS, JSON.stringify(newTips));
+      return newTips;
+    });
+  };
+
+  const addTipView = (mainGoalId: string, goalId: string, tipId: string): number => {
+    const existing = viewedTipsState.find(
+      (v) => v.mainGoalId === mainGoalId && v.goalId === goalId && v.tipId === tipId
+    );
+
+    if (existing) {
+      return 0; // Redan sett, ingen XP
+    }
+
+    const xpForView = 10;
+    const newView: ViewedTip = {
+      mainGoalId,
+      goalId,
+      tipId,
+      viewedAt: new Date().toISOString(),
+      askedQuestions: [], // Tom array från början
+      xpEarned: xpForView,
+    };
+
+    setViewedTips([...viewedTipsState, newView]);
+    setMyXP((prev) => prev + xpForView);
+    return xpForView;
+  };
+
+  const incrementTipChat = (mainGoalId: string, goalId: string, tipId: string, questionType: string): number => {
+    const existing = viewedTipsState.find(
+      (v) => v.mainGoalId === mainGoalId && v.goalId === goalId && v.tipId === tipId
+    );
+
+    // Om frågan redan ställts, ingen XP
+    if (existing?.askedQuestions.includes(questionType)) {
+      return 0;
+    }
+
+    const xpForChat = 5;
+    
+    const updated = viewedTipsState.map((v) => {
+      if (v.mainGoalId === mainGoalId && v.goalId === goalId && v.tipId === tipId) {
+        return { 
+          ...v, 
+          askedQuestions: [...v.askedQuestions, questionType],
+          xpEarned: v.xpEarned + xpForChat,
+        };
+      }
+      return v;
+    });
+
+    setViewedTips(updated);
+    setMyXP((prev) => prev + xpForChat);
+    return xpForChat;
+  };
+
+  // Lägg till ny funktion för att ge XP för varje chat-meddelande
+  const addChatMessageXP = (mainGoalId: string, goalId: string, tipId: string): number => {
+    const xpPerMessage = 2; // 2 XP per meddelande
+    
+    const updated = viewedTipsState.map((v) => {
+      if (v.mainGoalId === mainGoalId && v.goalId === goalId && v.tipId === tipId) {
+        return { 
+          ...v, 
+          xpEarned: v.xpEarned + xpPerMessage,
+        };
+      }
+      return v;
+    });
+
+    setViewedTips(updated);
+    setMyXP((prev) => prev + xpPerMessage);
+    return xpPerMessage;
+  };
+
   const value = useMemo(
     () => ({
       plans: plansState,
@@ -362,6 +460,11 @@ export const StorageProvider = ({
       newLevelReached,
       dailyNutritionSummaries: dailyNutritionSummariesState,
       setDailyNutritionSummaries,
+      viewedTips: viewedTipsState,
+      setViewedTips,
+      addTipView,
+      incrementTipChat,
+      addChatMessageXP,
     }),
     [
       plansState,
@@ -382,6 +485,7 @@ export const StorageProvider = ({
       newLevelReached,
       dailyNutritionSummariesState,
       setDailyNutritionSummaries,
+      viewedTipsState,
     ]
   );
 

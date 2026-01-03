@@ -33,21 +33,15 @@ export default function GoalDetailScreen() {
   const { mainGoalId, goalId, tipId } = useLocalSearchParams<{
     mainGoalId: string;
     goalId: string;
-    tipId?: string;  // Lägg till tipId
+    tipId?: string;
   }>();
   const supplements = useSupplements();
-  const { setActiveGoals, activeGoals, setFinishedGoals, setMyXP } =
-    useStorage();
-  const [showSkipModal, setShowSkipModal] = React.useState(false);
-  const [showAnalyzeModal, setShowAnalyzeModal] = React.useState(false);
-  const [showStartModal, setShowStartModal] = React.useState(false);
-
+  const { addTipView, incrementTipChat, viewedTips } = useStorage();
+  
   const mainGoal = mainGoals.find((g) => g.id === mainGoalId);
   const goal = tipCategories.find((l) => l.id === goalId);
-  const activeGoal = activeGoals.find((g) => g.mainGoalId === mainGoalId);
-  const startDate = activeGoal ? new Date(activeGoal.startedAt) : null;
 
-  // Hitta rätt tip baserat på tipId, annars använd första
+  // Hitta rätt tip baserat på tipId
   const step: any = tipId 
     ? goal?.tips?.find((tip) => tip.id === tipId) ?? {}
     : goal?.tips?.[0] ?? {};
@@ -55,23 +49,6 @@ export default function GoalDetailScreen() {
   const goalIcon = mainGoal?.icon ?? "target";
   const supplementId = step?.supplements?.[0]?.id ?? undefined;
   const supplementName = supplements?.find((s) => s.id === supplementId)?.name;
-
-  const duration = step?.taskInfo?.duration ?? undefined;
-  const endDate =
-    startDate && duration
-      ? getEndDate(startDate, duration.amount, duration.unit)
-      : null;
-
-  const now = new Date();
-  let progress = null;
-  let timeLeftText = "";
-  let isGoalFinished = false;
-
-  if (startDate && duration && endDate) {
-    progress = calculateGoalProgress(startDate, duration);
-    timeLeftText = getTimeLeftText(t, endDate, duration.unit);
-    isGoalFinished = now >= endDate;
-  }
 
   if (!mainGoal || !goal) {
     return (
@@ -81,152 +58,35 @@ export default function GoalDetailScreen() {
     );
   }
 
-  const confirmStartGoal = () => {
-    setActiveGoals((prev) => [
-      ...prev.filter((g) => g.mainGoalId !== mainGoalId),
-      {
-        mainGoalId,
-        goalId: goalId,
-        startedAt: new Date().toISOString(),
-      },
-    ]);
-    if (tasks.length > 0) { /* empty */ } else {
-      router.replace("/(tabs)/dashboard");
-    }
-  };
-  
-  const handleFinishGoal = () => {
-    setFinishedGoals((prev) => [
-      ...prev,
-      { mainGoalId, finished: new Date().toISOString(), goalId: goalId },
-    ]);
-
-    setActiveGoals((prev) =>
-      prev.filter((g) => g.mainGoalId !== mainGoalId)
-    );
-    setMyXP((prev) => prev + (goal.xp ?? 0));
-    router.replace("/(tabs)/dashboard");
-  };
-
-  const handleSkipGoal = () => {
-    if (activeGoal && !isGoalFinished) {
-      setShowSkipModal(true);
-    } else {
-      actuallySkipGoal();
-    }
-  };
-
-  const actuallySkipGoal = () => {
-    setActiveGoals((prev) => prev.filter((g) => g.mainGoalId !== mainGoalId));
-    router.back();
-  };
-
   const information = step?.information;
-  const startPromptKey = step?.startPrompt;
-  const analyzePromptKey = step?.analyzePrompt;
   const titleKey = step?.title;
-  const taskInstructionsKey = step?.taskInfo?.instructions;
-  const tasks: string[] = step?.taskInfo?.tasks ?? [];
-  const [checkedTasks, setCheckedTasks] = React.useState<boolean[]>(
-    Array(tasks.length).fill(false)
-  );
 
-  const [missingTasks, setMissingTasks] = React.useState<boolean[]>(
-    Array(tasks.length).fill(false)
-  );
-
+  // Ge XP när tips öppnas (första gången)
   React.useEffect(() => {
-    setCheckedTasks(Array(tasks.length).fill(false));
-    setMissingTasks(Array(tasks.length).fill(false));
-  }, [tasks.length, activeGoal?.startedAt]);
-
-  const toggleTask = (index: number) => {
-    if (!activeGoal) return;
-    setCheckedTasks((prev) => {
-      const updated = [...prev];
-      updated[index] = !updated[index];
-
-      setMissingTasks((mPrev) => {
-        const mUpdated = [...mPrev];
-        mUpdated[index] = !updated[index] ? mUpdated[index] : false;
-        return mUpdated;
-      });
-
-      return updated;
-    });
-  };
-
-  const handleAnalyzePressed = () => {
-    const missing = checkedTasks.map((c) => !c);
-    const hasMissing = missing.some(Boolean);
-    setMissingTasks(missing);
-    if (!hasMissing) {
-      setShowAnalyzeModal(true);
-    }
-  };
-
-  const [analysisApproved, setAnalysisApproved] = React.useState(false);
-
-  React.useEffect(() => {
-    setAnalysisApproved(false);
-  }, [activeGoal?.startedAt, mainGoalId]);
-
-  const handleAnalyzeFile = async (file: { uri?: string; name?: string; type?: string; file_base64?: string; mime?: string }) => {
-    const promptToSend = analyzePromptKey ? t(`tips:${analyzePromptKey}`) : t(`tips:${titleKey}`);
-    const resp = await sendFileToAIAnalysis({
-      uri: file.uri,
-      name: file.name,
-      type: file.type,
-      prompt: promptToSend,
-      supplement: supplementName,
-      file_base64: (file as any).file_base64,
-      mime: (file as any).mime,
-    });
-
-    const payload = resp && typeof resp === "object" && "result" in resp ? resp.result : resp;
-
-    if (payload?.is_valid === false && payload?.raw?.message?.function_call?.arguments) {
-      try {
-        const argsStr = payload.raw.message.function_call.arguments;
-        const parsedArgs = typeof argsStr === "string" ? JSON.parse(argsStr) : argsStr;
-        if (parsedArgs && typeof parsedArgs === "object") Object.assign(payload, parsedArgs);
-      } catch {
-        /* ignore */
+    if (mainGoalId && goalId && tipId) {
+      const xpGained = addTipView(mainGoalId, goalId, tipId);
+      if (xpGained > 0) {
+        console.log(`🎉 You gained ${xpGained} XP for viewing this tip!`);
       }
     }
+  }, [mainGoalId, goalId, tipId]);
 
-    if (typeof payload?.is_valid === "boolean") {
-      const conf = Math.round((payload.confidence || 0) * 100);
-      if (!payload.is_valid) {
-        const reason = payload.reason ?? payload.reason_text ?? t("common:goalDetails.analysisNoMatchReason");
-        return { output: `${t("common:goalDetails.analysisInvalid")} (${conf}%)\n\n${reason}`, preview: payload.preview ?? file.uri };
-      } else {
-        const parts: string[] = [];
-        if (payload.analysis_text) parts.push(payload.analysis_text);
-        if (payload.analysis_object) {
-          try { parts.push("```\n" + JSON.stringify(payload.analysis_object, null, 2) + "\n```"); } catch { parts.push(String(payload.analysis_object)); }
-        }
-        if (payload.preview) parts.unshift(`![preview](${payload.preview})`);
-        const out = parts.length > 0 ? parts.join("\n\n") : (payload.analysis_text ?? t("common:goalDetails.noAnswer"));
-        setAnalysisApproved(true);
-        return { output: out, preview: payload.preview ?? file.uri };
-      }
-    }
+  // Hitta vilka frågor som redan ställts
+  const currentTip = viewedTips?.find(
+    (v) => v.mainGoalId === mainGoalId && v.goalId === goalId && v.tipId === tipId
+  );
+  const askedQuestions = currentTip?.askedQuestions || [];
+  const totalXpEarned = currentTip?.xpEarned || 0;
 
-    if (payload?.content) {
-      return { output: typeof payload.content === "string" ? payload.content : JSON.stringify(payload.content, null, 2), preview: payload.preview ?? file.uri };
-    }
-    if (typeof payload === "string") {
-      return { output: payload, preview: file.uri };
-    }
-    return { output: payload ? JSON.stringify(payload, null, 2) : t("common:goalDetails.noAnswer"), preview: file.uri };
-  };
+  // Beräkna progress baserat på unika frågor
+  const maxChats = 3;
+  const progress = Math.min(askedQuestions.length / maxChats, 1);
+  const progressLabel = askedQuestions.length >= maxChats 
+    ? t("common:goalDetails.fullyExplored") || "Fully Explored! 🎉"
+    : `${askedQuestions.length}/${maxChats} questions explored`;
 
-  const effectiveIsFinished = isGoalFinished || analysisApproved;
-
-  const handleAIInsightPress = (question: string) => {
-    //const tipInfo = `Tip: ${t(`tips:${titleKey}`)}\nDescription: ${t(`tips:${step?.taskInfo?.description}`) || ''}\nInformation: ${t(`tips:${information?.text}`) || ''}`;
-    const tipInfo = `Tip: ${t(`tips:${titleKey}`)}\nDescription: ${t(`tips:${step?.taskInfo?.description}`) || ''} \nInformation: ${t(`tips:${information.text}`)  || ''}`;
+  const handleAIInsightPress = (question: string, questionType: string) => {
+    const tipInfo = `Tip: ${t(`tips:${titleKey}`)}\nDescription: ${t(`tips:${step?.taskInfo?.description}`) || ''}\nInformation: ${t(`tips:${information?.text}`) || ''}`;
     
     let fullPrompt = '';
     
@@ -240,6 +100,16 @@ export default function GoalDetailScreen() {
       fullPrompt = `${question}\n\n${tipInfo}`;
     }
     
+    // Ge XP för att chatta om tipset (om det är första gången för denna fråga)
+    if (mainGoalId && goalId && tipId) {
+      const xpGained = incrementTipChat(mainGoalId, goalId, tipId, questionType);
+      if (xpGained > 0) {
+        console.log(`🎉 You gained ${xpGained} XP for exploring this question!`);
+      } else {
+        console.log(`ℹ️ You've already explored this question`);
+      }
+    }
+    
     router.push({
       pathname: "/(tabs)/chat",
       params: {
@@ -249,6 +119,9 @@ export default function GoalDetailScreen() {
       }
     });
   };
+
+  // Kolla om en fråga redan är besvarad
+  const isQuestionAsked = (questionType: string) => askedQuestions.includes(questionType);
 
   return (
     <LinearGradient colors={["#071526", "#040B16"]} style={{ flex: 1 }}>
@@ -268,13 +141,15 @@ export default function GoalDetailScreen() {
             <Text style={styles.subTitle}>
               {supplementName ?? t(`tips:${titleKey}`)}
             </Text>
-            <Text style={styles.xpText}>{goal.xp ?? 0} XP</Text>
-            {startDate && endDate && progress && (
-              <ProgressBarWithLabel
-                progress={progress.progress}
-                label={timeLeftText}
-              />
-            )}
+            <Text style={styles.xpText}>
+              {totalXpEarned} XP earned
+            </Text>
+            
+            {/* Progress bar baserad på chat count */}
+            <ProgressBarWithLabel
+              progress={progress}
+              label={progressLabel}
+            />
           </View>
 
           {information && (
@@ -296,85 +171,44 @@ export default function GoalDetailScreen() {
 
           <AppBox title={t(`common:goalDetails.aiInsights`)}>
             <Pressable 
-              onPress={() => handleAIInsightPress("What studies exists?")}
-              style={styles.insightButton}
+              onPress={() => handleAIInsightPress("What studies exist?", "studies")}
+              style={[
+                styles.insightButton,
+                isQuestionAsked("studies") && styles.insightButtonAsked
+              ]}
             >
-              <Text style={styles.insightText}>What studies exists?</Text>
+              <Text style={styles.insightText}>
+                {isQuestionAsked("studies") ? "✅" : "📚"} What studies exist? 
+                {!isQuestionAsked("studies") && " (+5 XP)"}
+              </Text>
             </Pressable>
             
             <Pressable 
-              onPress={() => handleAIInsightPress("Which people are talking about this subject?")}
-              style={styles.insightButton}
+              onPress={() => handleAIInsightPress("Which people are talking about this subject?", "experts")}
+              style={[
+                styles.insightButton,
+                isQuestionAsked("experts") && styles.insightButtonAsked
+              ]}
             >
-              <Text style={styles.insightText}>Which people are talking about this subject?</Text>
+              <Text style={styles.insightText}>
+                {isQuestionAsked("experts") ? "✅" : "👥"} Who are the experts? 
+                {!isQuestionAsked("experts") && " (+5 XP)"}
+              </Text>
             </Pressable>
             
             <Pressable 
-              onPress={() => handleAIInsightPress("What risks are associated with this?")}
-              style={styles.insightButton}
+              onPress={() => handleAIInsightPress("What risks are associated with this?", "risks")}
+              style={[
+                styles.insightButton,
+                isQuestionAsked("risks") && styles.insightButtonAsked
+              ]}
             >
-              <Text style={styles.insightText}>What risks are associated with this?</Text>
+              <Text style={styles.insightText}>
+                {isQuestionAsked("risks") ? "✅" : "⚠️"} What are the risks? 
+                {!isQuestionAsked("risks") && " (+5 XP)"}
+              </Text>
             </Pressable>
           </AppBox>
-
-          <View>
-           
-            {activeGoal && !isGoalFinished && (
-              <Text style={styles.disabledHint}>
-                {t("common:goalDetails.analyzeHint")}
-              </Text>
-            )}
-          </View>
-
-          <ThemedModal
-            visible={showSkipModal}
-            title={t("common:general.areYouSure")}
-            onClose={() => setShowSkipModal(false)}
-            onSave={() => {
-              setShowSkipModal(false);
-              actuallySkipGoal();
-            }}
-            okLabel={t("common:goalDetails.skipConfirmYes")}
-          >
-            <ThemedText
-              style={{ textAlign: "center", color: Colors.dark.textLight }}
-            >
-              {t("common:goalDetails.skipConfirmBody")}
-            </ThemedText>
-          </ThemedModal>
-
-          <AnalysisModal
-            visible={showAnalyzeModal}
-            onClose={() => setShowAnalyzeModal(false)}
-            t={t}
-            prompt={analyzePromptKey ? t(`goals:${analyzePromptKey}`) : t(`goals:${titleKey}`)}
-            analyzeFn={handleAnalyzeFile}
-          />
-
-          <AnalysisModal
-            visible={showStartModal}
-            onClose={() => setShowStartModal(false)}
-            t={t}
-            prompt={startPromptKey ?? ""}
-            onConfirm={() => {
-              setShowStartModal(false);
-              confirmStartGoal();
-            }}
-            description="Vänligen ta ett foto av kosttillskottets burk med namnet synligt för att starta denna nivå."
-            supplement={supplementName}
-            analyzeFn={async (file) => {
-              const promptToSend = analyzePromptKey ? t(`goals:${analyzePromptKey}`) : t(`goals:${titleKey}`);
-              return await sendFileToAISupplementAnalysis({
-                uri: file.uri,
-                name: file.name,
-                type: file.type,
-                prompt: promptToSend,
-                supplement: supplementName,
-                file_base64: (file as any).file_base64,
-                mime: (file as any).mime,
-              });
-            }}
-          />
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
@@ -451,6 +285,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "rgba(120,255,220,0.3)",
+  },
+  insightButtonAsked: {
+    backgroundColor: "rgba(120,255,220,0.05)",
+    borderColor: "rgba(120,255,220,0.15)",
+    opacity: 0.7,
   },
   insightText: {
     color: Colors.dark.textLight,

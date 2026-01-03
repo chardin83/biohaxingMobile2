@@ -46,7 +46,10 @@ export default function ChatWithGPT4o(): JSX.Element {
   const tabBarHeight = useBottomTabBarHeight();
   const isKeyboardVisible = useKeyboardVisible();
   const scrollRef = useRef<ScrollView>(null);
-  const { plans, errorMessage, shareHealthPlan } = useStorage();
+  const { plans, errorMessage, shareHealthPlan, addChatMessageXP } = useStorage();
+
+  // Parse returnParams för att få tillgång till mainGoalId, goalId, tipId
+  const tipContext = returnParams ? JSON.parse(returnParams) : null;
 
   // Visa back-knappen om vi har initialPrompt, supplements eller goal
   const showBackButton = !!(initialPrompt || supplements || goal);
@@ -56,7 +59,7 @@ export default function ChatWithGPT4o(): JSX.Element {
     if (returnPath) {
       const params = returnParams ? JSON.parse(returnParams) : {};
       router.push({
-        pathname: returnPath,
+        pathname: returnPath as any,
         params,
       });
     } else {
@@ -77,8 +80,6 @@ export default function ChatWithGPT4o(): JSX.Element {
 
   useEffect(() => {
     if (initialPrompt) {
-      // TA BORT: setInput(initialPrompt);
-      // Skicka direkt istället:
       const sendInitialPrompt = async () => {
         const userMessage: Message = { role: "user", content: initialPrompt };
         const planOverviewMessage: Message = {
@@ -174,6 +175,16 @@ export default function ChatWithGPT4o(): JSX.Element {
     setInput("");
     setLoading(true);
 
+    // Ge XP för meddelandet om vi har tip-kontext
+    if (tipContext?.mainGoalId && tipContext?.goalId && tipContext?.tipId) {
+      const xpGained = addChatMessageXP(
+        tipContext.mainGoalId, 
+        tipContext.goalId, 
+        tipContext.tipId
+      );
+      console.log(`💬 +${xpGained} XP for chatting!`);
+    }
+
     try {
       const data = await askGPT(messagesToSend);
 
@@ -207,6 +218,13 @@ export default function ChatWithGPT4o(): JSX.Element {
         <View style={{ flex: 1 }}>
           {showBackButton && <BackButton onPress={handleBack} />}
           
+          {/* Visa XP-indikator om vi har tip-kontext */}
+          {tipContext && (
+            <View style={styles.xpIndicator}>
+              <Text style={styles.xpIndicatorText}>💬 +2 XP per message</Text>
+            </View>
+          )}
+          
           <ScrollView
             ref={scrollRef}
             style={{ flex: 1 }}
@@ -215,7 +233,7 @@ export default function ChatWithGPT4o(): JSX.Element {
               flexGrow: 1,
               justifyContent: "flex-end",
               paddingBottom: tabBarHeight + 80,
-              paddingTop: showBackButton ? 0 : 10,
+              paddingTop: showBackButton ? (tipContext ? 40 : 0) : 10,
             }}
           >
             {messages.map((msg, index) => (
@@ -349,6 +367,23 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 6,
+  },
+  xpIndicator: {
+    position: "absolute",
+    top: 50,
+    right: 20,
+    backgroundColor: "rgba(120,255,220,0.15)",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(120,255,220,0.3)",
+    zIndex: 10,
+  },
+  xpIndicatorText: {
+    color: Colors.dark.primary,
+    fontSize: 12,
+    fontWeight: "600",
   },
 });
 

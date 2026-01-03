@@ -10,6 +10,7 @@ import { HRVSummary } from "@/wearables/types";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
 import { tipCategories } from "@/locales/tips";
+import { useStorage } from "@/app/context/StorageContext";
 
 
 function daysAgo(n: number) {
@@ -52,6 +53,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
   const { adapter, status } = useWearable();
   const { t } = useTranslation();
   const router = useRouter();
+  const { viewedTips } = useStorage();
 
   console.log("=== NERVOUS SYSTEM MOUNTED ===");
   console.log("mainGoalId from props:", mainGoalId);
@@ -98,20 +100,40 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
   const recoveryStatus = getRecoveryStatus(hrv, sleepHours);
 
   // Hämta optimization tips från tips.json
-  const optimizationTips = t("tips:nervousSystem.levels.optimization.tips", { returnObjects: true }) as any[];
+  const optimizationCategory = tipCategories.find(
+    cat => cat.id === "level_nervousSystem_optimization"
+  );
+  const optimizationTips = optimizationCategory?.tips || [];
+
+  const getTipProgress = (tipId: string) => {
+    const viewedTip = viewedTips?.find(
+      v => v.mainGoalId === mainGoalId && 
+           v.goalId === "level_nervousSystem_optimization" && 
+           v.tipId === tipId
+    );
+    
+    if (!viewedTip) {
+      return { xp: 0, progress: 0, askedQuestions: 0 };
+    }
+
+    const maxQuestions = 3;
+    const progress = Math.min(viewedTip.askedQuestions.length / maxQuestions, 1);
+    
+    return {
+      xp: viewedTip.xpEarned,
+      progress,
+      askedQuestions: viewedTip.askedQuestions.length,
+    };
+  };
 
   const handleTipPress = (tipIndex: number) => {
-    const optimizationCategory = tipCategories.find(
-      cat => cat.id === "level_nervousSystem_optimization"
-    );
-    const tip = optimizationCategory?.tips?.[tipIndex];
+    const tip = optimizationTips[tipIndex];
     
     if (tip) {
       console.log("=== NAVIGATION DEBUG ===");
       console.log("mainGoalId:", mainGoalId);
       console.log("Navigating to details with tipId:", tip.id);
       
-      // Använd absolut path med mainGoalId
       router.push({
         pathname: `/(goal)/${mainGoalId}/details` as any,
         params: {
@@ -246,20 +268,62 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
         <View style={[styles.card, { marginTop: 16 }]}>
           <Text style={styles.cardTitle}>{t("tips:nervousSystem.levels.optimization.title")}</Text>
           
-          {Array.isArray(optimizationTips) && optimizationTips.map((tip, index) => (
-            <Pressable
-              key={index}
-              style={({ pressed }) => [
-                styles.tipSection,
-                pressed && styles.tipPressed,
-              ]}
-              onPress={() => handleTipPress(index)}
-            >
-              <Text style={styles.tipTitle}>{tip.title}</Text>
-              <Text style={styles.tipDescription}>{tip.description}</Text>
-              <Text style={styles.tapHint}>Tap for details →</Text>
-            </Pressable>
-          ))}
+          {optimizationTips.map((tip, index) => {
+            const tipProgress = getTipProgress(tip.id);
+            const isStarted = tipProgress.xp > 0;
+            const isCompleted = tipProgress.progress >= 1;
+
+            return (
+              <Pressable
+                key={index}
+                style={({ pressed }) => [
+                  styles.tipSection,
+                  pressed && styles.tipPressed,
+                  isCompleted && styles.tipCompleted,
+                ]}
+                onPress={() => handleTipPress(index)}
+              >
+                <View style={styles.tipHeader}>
+                  <View style={styles.tipHeaderLeft}>
+                    <Text style={styles.tipTitle}>
+                      {isCompleted && "✅ "}
+                      {t(`tips:${tip.title}`)}
+                    </Text>
+                    <Text style={styles.tipDescription}>
+                      {t(`tips:${tip.taskInfo?.description}`)}
+                    </Text>
+                  </View>
+                  
+                  {isStarted && (
+                    <View style={styles.xpBadge}>
+                      <Text style={styles.xpText}>{tipProgress.xp} XP</Text>
+                    </View>
+                  )}
+                </View>
+
+                {/* Progress bar */}
+                {isStarted && (
+                  <View style={styles.progressContainer}>
+                    <View style={styles.progressBar}>
+                      <View 
+                        style={[
+                          styles.progressFill, 
+                          { width: `${tipProgress.progress * 100}%` }
+                        ]} 
+                      />
+                    </View>
+                    <Text style={styles.progressText}>
+                      {tipProgress.askedQuestions}/3 {t("common:goalDetails.questionsExplored")}
+                    </Text>
+                  </View>
+                )}
+
+                <Text style={styles.tapHint}>
+                  {isStarted ? t("common:goalDetails.continueExploring") : t("common:goalDetails.startExploring")}
+                </Text>
+              </Pressable>
+            );
+          })}
         </View>
       </ScrollView>
     </LinearGradient>
@@ -271,6 +335,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 18,
     paddingBottom: 32,
+    paddingTop: 20, // Tillbaka till normalt padding
   },
   title: {
     fontSize: 44,
@@ -392,6 +457,20 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.08)",
     borderColor: "rgba(120,255,220,0.3)",
   },
+  tipCompleted: {
+    borderColor: "rgba(120,255,220,0.4)",
+    backgroundColor: "rgba(120,255,220,0.05)",
+  },
+  tipHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 8,
+  },
+  tipHeaderLeft: {
+    flex: 1,
+    marginRight: 12,
+  },
   tipTitle: {
     color: "rgba(255,255,255,0.85)",
     fontSize: 14,
@@ -402,6 +481,38 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.65)",
     fontSize: 14,
     lineHeight: 20,
+  },
+  xpBadge: {
+    backgroundColor: "rgba(120,255,220,0.2)",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(120,255,220,0.4)",
+  },
+  xpText: {
+    color: "rgba(120,255,220,0.95)",
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  progressContainer: {
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  progressBar: {
+    height: 6,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderRadius: 3,
+    overflow: "hidden",
+  },
+  progressFill: {
+    height: "100%",
+    backgroundColor: "rgba(120,255,220,0.6)",
+  },
+  progressText: {
+    color: "rgba(255,255,255,0.6)",
+    fontSize: 11,
+    marginTop: 4,
   },
   tapHint: {
     color: "rgba(120,255,220,0.6)",

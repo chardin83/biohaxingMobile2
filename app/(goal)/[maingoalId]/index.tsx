@@ -1,7 +1,7 @@
 import React from "react";
 import { SafeAreaView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import BackButton from "@/components/BackButton";
 import NervousSystemOverview from "./nervousSystemOverview";
 import SleepOverview from "./sleepOverview";
@@ -17,7 +17,7 @@ export default function GoalRootScreen() {
   return (
     <LinearGradient colors={["#071526", "#040B16"]} style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <BackButton />
+        <BackButton onPress={() => router.push("/(tabs)/dashboard")} />
 
         {mainGoalId === "nervousSystem" && <NervousSystemOverview mainGoalId={mainGoalId} />}
         {mainGoalId === "sleep" && <SleepOverview mainGoalId={mainGoalId} />}
