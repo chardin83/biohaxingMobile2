@@ -36,7 +36,7 @@ export default function GoalDetailScreen() {
     tipId?: string;
   }>();
   const supplements = useSupplements();
-  const { addTipView, incrementTipChat, viewedTips } = useStorage();
+  const { addTipView, incrementTipChat, viewedTips, setTipVerdict } = useStorage();
   
   const mainGoal = mainGoals.find((g) => g.id === mainGoalId);
   const goal = tipCategories.find((l) => l.id === goalId);
@@ -77,6 +77,17 @@ export default function GoalDetailScreen() {
   );
   const askedQuestions = currentTip?.askedQuestions || [];
   const totalXpEarned = currentTip?.xpEarned || 0;
+  const currentVerdict = currentTip?.verdict;
+
+  // Hantera verdict-klick
+  const handleVerdictPress = (verdict: "relevant" | "interesting" | "skeptical") => {
+    if (mainGoalId && goalId && tipId) {
+      const xpGained = setTipVerdict(mainGoalId, goalId, tipId, verdict);
+      if (xpGained > 0) {
+        console.log(`🎉 You gained ${xpGained} XP for your verdict!`);
+      }
+    }
+  };
 
   // Beräkna progress baserat på unika frågor
   const maxChats = 3;
@@ -209,6 +220,65 @@ export default function GoalDetailScreen() {
               </Text>
             </Pressable>
           </AppBox>
+
+          <AppBox title={t("common:goalDetails.verdict")}>
+            <Pressable 
+              style={[
+                styles.verdictCard,
+                currentVerdict === "relevant" && styles.verdictCardSelected
+              ]}
+              onPress={() => handleVerdictPress("relevant")}
+            >
+              <View style={styles.verdictCardContent}>
+                <Text style={styles.verdictCardIcon}>⭐</Text>
+                <View style={styles.verdictCardText}>
+                  <Text style={styles.verdictCardTitle}>{t("common:goalDetails.verdictRelevant")}</Text>
+                  <Text style={styles.verdictCardSubtitle}>{t("common:goalDetails.verdictRelevantDesc")}</Text>
+                </View>
+              </View>
+              <Text style={styles.verdictCardXP}>
+                {currentVerdict === "relevant" ? "✓" : currentVerdict ? "" : "+5 XP"}
+              </Text>
+            </Pressable>
+
+            <Pressable 
+              style={[
+                styles.verdictCard,
+                currentVerdict === "interesting" && styles.verdictCardSelected
+              ]}
+              onPress={() => handleVerdictPress("interesting")}
+            >
+              <View style={styles.verdictCardContent}>
+                <Text style={styles.verdictCardIcon}>🔍</Text>
+                <View style={styles.verdictCardText}>
+                  <Text style={styles.verdictCardTitle}>{t("common:goalDetails.verdictFollowResearch")}</Text>
+                  <Text style={styles.verdictCardSubtitle}>{t("common:goalDetails.verdictFollowResearchDesc")}</Text>
+                </View>
+              </View>
+              <Text style={styles.verdictCardXP}>
+                {currentVerdict === "interesting" ? "✓" : currentVerdict ? "" : "+5 XP"}
+              </Text>
+            </Pressable>
+
+            <Pressable 
+              style={[
+                styles.verdictCard,
+                currentVerdict === "skeptical" && styles.verdictCardSelected
+              ]}
+              onPress={() => handleVerdictPress("skeptical")}
+            >
+              <View style={styles.verdictCardContent}>
+                <Text style={styles.verdictCardIcon}>🤨</Text>
+                <View style={styles.verdictCardText}>
+                  <Text style={styles.verdictCardTitle}>{t("common:goalDetails.verdictSkeptical")}</Text>
+                  <Text style={styles.verdictCardSubtitle}>{t("common:goalDetails.verdictSkepticalDesc")}</Text>
+                </View>
+              </View>
+              <Text style={styles.verdictCardXP}>
+                {currentVerdict === "skeptical" ? "✓" : currentVerdict ? "" : "+5 XP"}
+              </Text>
+            </Pressable>
+          </AppBox>
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
@@ -294,5 +364,50 @@ const styles = StyleSheet.create({
   insightText: {
     color: Colors.dark.textLight,
     fontSize: 16,
+  },
+  verdictCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    marginBottom: 12,
+    backgroundColor: "rgba(120, 255, 220, 0.08)",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(120, 255, 220, 0.2)",
+  },
+  verdictCardSelected: {
+    backgroundColor: "rgba(120, 255, 220, 0.2)",
+    borderColor: "rgba(120, 255, 220, 0.6)",
+    borderWidth: 2,
+  },
+  verdictCardContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  verdictCardIcon: {
+    fontSize: 28,
+    marginRight: 12,
+  },
+  verdictCardText: {
+    flex: 1,
+  },
+  verdictCardTitle: {
+    color: Colors.dark.primary,
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 4,
+  },
+  verdictCardSubtitle: {
+    color: Colors.dark.textLight,
+    fontSize: 13,
+  },
+  verdictCardXP: {
+    color: Colors.dark.primary,
+    fontSize: 14,
+    fontWeight: "600",
+    marginLeft: 12,
   },
 });

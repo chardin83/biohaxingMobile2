@@ -109,7 +109,14 @@
         "months_plural": "{{count}} månader kvar"
       },
       "skipConfirmBody": "Om du hoppar över nu måste du börja om från början.",
-      "skipConfirmYes": "Ja, hoppa över"
+      "skipConfirmYes": "Ja, hoppa över",
+      "verdict": "Vad tycker du om detta?",
+      "verdictRelevant": "Relevant för mig",
+      "verdictRelevantDesc": "Jag tycker detta verkar intressant.",
+      "verdictFollowResearch": "Intressant",
+      "verdictFollowResearchDesc": "Men jag vill ha mer forskning först.",
+      "verdictSkeptical": "Skeptisk till detta",
+      "verdictSkepticalDesc": "Jag är tveksam till denna idé."
     },
    "chat": {
       "welcomeMessage": "Hej! Jag är din personliga hälsocoach – specialiserad på biohacking och kosttillskott. Ställ gärna en fråga om tillskott, dagliga rutiner eller hur du optimerar din hälsa. 💪🌿",
@@ -126,6 +133,11 @@
       "title": "Välj en bild",
       "takePhoto": "Ta foto",
       "chooseFromLibrary": "Välj från biblioteket"
+    },
+    "dashboard": {
+      "appTitle": "BIOHAXING",
+      "level": "NIVÅ",
+      "noFavorites": "Inga favoriter än"
     }
   }
     

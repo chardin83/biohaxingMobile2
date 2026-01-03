@@ -14,7 +14,7 @@ import { mainGoals } from "@/locales/mainGoals";
 
 export default function BiohackerDashboard() {
   const { t } = useTranslation(["common", "goals", "levels"]);
-  const { myGoals, activeGoals, myXP, myLevel, finishedGoals } = useStorage();
+  const { myGoals, activeGoals, myXP, myLevel, finishedGoals, viewedTips } = useStorage();
   const router = useRouter();
   const supplements = useSupplements();
 
@@ -39,13 +39,25 @@ export default function BiohackerDashboard() {
       .join(", ");
   };
 
+  // Hitta favorit-markerade tips för ett specifikt mainGoal
+  const getFavoriteTipsForMainGoal = (mainGoalId: string) => {
+    return viewedTips
+      ?.filter(tip => tip.mainGoalId === mainGoalId && tip.verdict === "relevant")
+      .map(tip => {
+        const goalCategory = tipCategories.find(c => c.id === tip.goalId);
+        const tipDetails = goalCategory?.tips?.find(t => t.id === tip.tipId);
+        return tipDetails ? t(`tips:${tipDetails.title}`) : null;
+      })
+      .filter(Boolean) || [];
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.appTitle}>BIOHAXING</Text>
+      <Text style={styles.appTitle}>{t("common:dashboard.appTitle")}</Text>
 
       <View style={styles.imageWrapper}>
         <Image source={Smart} style={styles.image} resizeMode="cover" />
-        <Text style={styles.levelOverlay}>LEVEL {myLevel}</Text>
+        <Text style={styles.levelOverlay}>{t("common:dashboard.level")} {myLevel}</Text>
       </View>
 
       <Text style={styles.title}>{t(`levels:${levelTitle}`)}</Text>
@@ -53,48 +65,14 @@ export default function BiohackerDashboard() {
 
       {mainGoals
         .filter((item) => myGoals.includes(item.id))
-        .filter((item) => {
-          const relatedGoals = tipCategories.filter((g) =>
-            g.mainGoalIds.includes(item.id)
-          );
-          const finishedForMainGoal = finishedGoals.filter(
-            (f) => f.mainGoalId === item.id
-          );
-          // Visa endast om det finns några kvar att göra
-          return finishedForMainGoal.length < relatedGoals.length;
-        })
         .map((item) => {
           const mainGoalId = item.id;
-          const goalLevels = tipCategories
-            .filter(
-              (lvl) =>
-                lvl.mainGoalIds.includes(mainGoalId) &&
-                lvl.level <= myLevel &&
-                !finishedGoals.some(
-                  (f) => f.goalId === lvl.id && f.mainGoalId === mainGoalId
-                )
-            )
-            .sort((a, b) => a.level - b.level);
-
-          const activeGoal = activeGoals.find(
-            (g) => g.mainGoalId === mainGoalId
-          );
-          const goalId = activeGoal?.goalId;
-          const goal = tipCategories.find((lvl) => lvl.id === goalId);
-
-          const isActive = Boolean(activeGoal);
-          const hasSelected = Boolean(goal);
-
-          let description = "";
-
-          if (hasSelected && goal) {
-            description = getSupplementsText(goal);
-          } else {
-            description = goalLevels
-              .map((lvl) => getSupplementsText(lvl))
-              .filter(Boolean)
-              .join("\n");
-          }
+          const favoriteTipsList = getFavoriteTipsForMainGoal(mainGoalId);
+          
+          // Om det finns favoriter, visa dem, annars visa en standard-text
+          const description = favoriteTipsList.length > 0 
+            ? `${favoriteTipsList.join("\n")}`
+            : t("common:dashboard.noFavorites");
 
           return (
             <AppCard
@@ -102,17 +80,12 @@ export default function BiohackerDashboard() {
               icon={item.icon}
               title={t(`tips:${mainGoalId}.title`)}
               description={description}
-              isActive={isActive}
+              isActive={favoriteTipsList.length > 0}
               onPress={() =>
-                hasSelected
-                  ? router.push({
-                      pathname: "/(goal)/details",
-                      params: { mainGoalId, goalId },
-                    })
-                  : router.push({
-                      pathname: "/(goal)/[mainGoalId]",
-                      params: { mainGoalId },
-                    })
+                router.push({
+                  pathname: "/(goal)/[mainGoalId]",
+                  params: { mainGoalId },
+                })
               }
             />
           );
@@ -162,6 +135,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: Colors.dark.primary,
     fontWeight: "bold",
+    marginBottom: 10,
+    textTransform: "uppercase",
+  },
+  sectionTitle: {
+    fontSize: 18,
+    color: Colors.dark.primary,
+    fontWeight: "bold",
+    marginTop: 20,
     marginBottom: 10,
     textTransform: "uppercase",
   },

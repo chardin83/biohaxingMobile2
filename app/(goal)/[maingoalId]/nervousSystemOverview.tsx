@@ -63,6 +63,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
   const [hrv, setHrv] = React.useState<number | null>(null);
   const [bodyBattery, setBodyBattery] = React.useState<number | null>(null);
   const [sleepHours, setSleepHours] = React.useState<number | null>(null);
+  const [showAllTips, setShowAllTips] = React.useState(false);
 
   React.useEffect(() => {
     (async () => {
@@ -103,7 +104,56 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
   const optimizationCategory = tipCategories.find(
     cat => cat.id === "level_nervousSystem_optimization"
   );
-  const optimizationTips = optimizationCategory?.tips || [];
+  const optimizationTipsRaw = optimizationCategory?.tips || [];
+
+  // Sortera tips så att "relevant" visas först, sedan "interesting"
+  const optimizationTips = React.useMemo(() => {
+    return [...optimizationTipsRaw].sort((a, b) => {
+      const aViewed = viewedTips?.find(
+        v => v.mainGoalId === mainGoalId && 
+             v.goalId === "level_nervousSystem_optimization" && 
+             v.tipId === a.id
+      );
+      const bViewed = viewedTips?.find(
+        v => v.mainGoalId === mainGoalId && 
+             v.goalId === "level_nervousSystem_optimization" && 
+             v.tipId === b.id
+      );
+
+      const aIsRelevant = aViewed?.verdict === "relevant";
+      const bIsRelevant = bViewed?.verdict === "relevant";
+      const aIsInteresting = aViewed?.verdict === "interesting";
+      const bIsInteresting = bViewed?.verdict === "interesting";
+
+      // Relevant först
+      if (aIsRelevant && !bIsRelevant) return -1;
+      if (!aIsRelevant && bIsRelevant) return 1;
+      
+      // Interesting efter relevant
+      if (aIsInteresting && !bIsInteresting && !bIsRelevant) return -1;
+      if (!aIsInteresting && bIsInteresting && !aIsRelevant) return 1;
+      
+      return 0;
+    });
+  }, [optimizationTipsRaw, viewedTips, mainGoalId]);
+
+  // Filtrera tips baserat på verdict och showAllTips
+  const visibleTips = React.useMemo(() => {
+    if (showAllTips) {
+      return optimizationTips;
+    }
+    // Dölj skeptiska tips om inte "show all" är aktiverat
+    return optimizationTips.filter(tip => {
+      const viewedTip = viewedTips?.find(
+        v => v.mainGoalId === mainGoalId && 
+             v.goalId === "level_nervousSystem_optimization" && 
+             v.tipId === tip.id
+      );
+      return viewedTip?.verdict !== "skeptical";
+    });
+  }, [optimizationTips, showAllTips, viewedTips, mainGoalId]);
+
+  const hiddenTipsCount = optimizationTips.length - visibleTips.length;
 
   const getTipProgress = (tipId: string) => {
     const viewedTip = viewedTips?.find(
@@ -113,7 +163,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
     );
     
     if (!viewedTip) {
-      return { xp: 0, progress: 0, askedQuestions: 0 };
+      return { xp: 0, progress: 0, askedQuestions: 0, verdict: undefined };
     }
 
     const maxQuestions = 3;
@@ -123,6 +173,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
       xp: viewedTip.xpEarned,
       progress,
       askedQuestions: viewedTip.askedQuestions.length,
+      verdict: viewedTip.verdict,
     };
   };
 
@@ -268,10 +319,13 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
         <View style={[styles.card, { marginTop: 16 }]}>
           <Text style={styles.cardTitle}>{t("tips:nervousSystem.levels.optimization.title")}</Text>
           
-          {optimizationTips.map((tip, index) => {
+          {visibleTips.map((tip, index) => {
             const tipProgress = getTipProgress(tip.id);
             const isStarted = tipProgress.xp > 0;
             const isCompleted = tipProgress.progress >= 1;
+            const isRelevant = tipProgress.verdict === "relevant";
+            const isInteresting = tipProgress.verdict === "interesting";
+            const isSkeptical = tipProgress.verdict === "skeptical";
 
             return (
               <Pressable
@@ -280,12 +334,18 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
                   styles.tipSection,
                   pressed && styles.tipPressed,
                   isCompleted && styles.tipCompleted,
+                  isRelevant && styles.tipRelevant,
+                  isInteresting && styles.tipInteresting,
+                  isSkeptical && styles.tipSkeptical,
                 ]}
                 onPress={() => handleTipPress(index)}
               >
                 <View style={styles.tipHeader}>
                   <View style={styles.tipHeaderLeft}>
                     <Text style={styles.tipTitle}>
+                      {isRelevant && "⭐ "}
+                      {isInteresting && "🔍 "}
+                      {isSkeptical && "🤨 "}
                       {isCompleted && "✅ "}
                       {t(`tips:${tip.title}`)}
                     </Text>
@@ -324,6 +384,20 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
               </Pressable>
             );
           })}
+
+          {hiddenTipsCount > 0 && (
+            <Pressable 
+              style={styles.showAllButton}
+              onPress={() => setShowAllTips(!showAllTips)}
+            >
+              <Text style={styles.showAllText}>
+                {showAllTips 
+                  ? "Hide skeptical tips" 
+                  : `Show all (${hiddenTipsCount} hidden)`
+                }
+              </Text>
+            </Pressable>
+          )}
         </View>
       </ScrollView>
     </LinearGradient>
@@ -461,6 +535,21 @@ const styles = StyleSheet.create({
     borderColor: "rgba(120,255,220,0.4)",
     backgroundColor: "rgba(120,255,220,0.05)",
   },
+  tipRelevant: {
+    borderColor: "rgba(255,215,0,0.6)",
+    backgroundColor: "rgba(255,215,0,0.08)",
+    borderWidth: 2,
+  },
+  tipInteresting: {
+    borderColor: "rgba(120,200,255,0.5)",
+    backgroundColor: "rgba(120,200,255,0.06)",
+    borderWidth: 2,
+  },
+  tipSkeptical: {
+    borderColor: "rgba(255,100,100,0.4)",
+    backgroundColor: "rgba(255,100,100,0.05)",
+    opacity: 0.7,
+  },
   tipHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -519,5 +608,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 6,
     fontStyle: "italic",
+  },
+  showAllButton: {
+    marginTop: 12,
+    paddingVertical: 12,
+    alignItems: "center",
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255,255,255,0.1)",
+  },
+  showAllText: {
+    color: "rgba(120,255,220,0.8)",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });

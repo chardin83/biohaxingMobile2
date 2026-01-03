@@ -57,6 +57,7 @@ export interface ViewedTip {
   viewedAt: string;
   askedQuestions: string[]; // Array av frågor som ställts: ["studies", "experts", "risks"]
   xpEarned: number;
+  verdict?: "relevant" | "interesting" | "skeptical"; // Användarens bedömning
 }
 
 interface StorageContextType {
@@ -111,6 +112,7 @@ interface StorageContextType {
   addTipView: (mainGoalId: string, goalId: string, tipId: string) => number;
   incrementTipChat: (mainGoalId: string, goalId: string, tipId: string, questionType: string) => number;
   addChatMessageXP: (mainGoalId: string, goalId: string, tipId: string) => number;
+  setTipVerdict: (mainGoalId: string, goalId: string, tipId: string, verdict: "relevant" | "interesting" | "skeptical") => number;
 }
 
 const STORAGE_KEYS = {
@@ -428,6 +430,42 @@ export const StorageProvider = ({
     return xpPerMessage;
   };
 
+  const setTipVerdict = (mainGoalId: string, goalId: string, tipId: string, verdict: "relevant" | "interesting" | "skeptical"): number => {
+    const existing = viewedTipsState.find(
+      (v) => v.mainGoalId === mainGoalId && v.goalId === goalId && v.tipId === tipId
+    );
+
+    // Om verdict redan satt, ingen XP
+    if (existing?.verdict) {
+      // Uppdatera bara verdict, ingen XP
+      const updated = viewedTipsState.map((v) => {
+        if (v.mainGoalId === mainGoalId && v.goalId === goalId && v.tipId === tipId) {
+          return { ...v, verdict };
+        }
+        return v;
+      });
+      setViewedTips(updated);
+      return 0;
+    }
+
+    const xpForVerdict = 5;
+    
+    const updated = viewedTipsState.map((v) => {
+      if (v.mainGoalId === mainGoalId && v.goalId === goalId && v.tipId === tipId) {
+        return { 
+          ...v, 
+          verdict,
+          xpEarned: v.xpEarned + xpForVerdict,
+        };
+      }
+      return v;
+    });
+
+    setViewedTips(updated);
+    setMyXP((prev) => prev + xpForVerdict);
+    return xpForVerdict;
+  };
+
   const value = useMemo(
     () => ({
       plans: plansState,
@@ -465,6 +503,7 @@ export const StorageProvider = ({
       addTipView,
       incrementTipChat,
       addChatMessageXP,
+      setTipVerdict,
     }),
     [
       plansState,
