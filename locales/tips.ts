@@ -197,7 +197,7 @@ export const tipCategories: TipCategory[] = [
         id: "level_sleepQuality_1_step1",
         level: 1,
         xp: 300,
-        mainGoalIds: ["sleepQuality"],
+        mainGoalIds: ["sleepQuality", "immuneSupport", "energy"],
         title: "sleepQuality.levels.sleepBy2230.tips.0.title",
         taskInfo: {
           description: "sleepQuality.levels.sleepBy2230.tips.0.description",
@@ -208,7 +208,7 @@ export const tipCategories: TipCategory[] = [
         id: "level_sleepQuality_2_step1",
         level: 2,
         xp: 500,
-        mainGoalIds: ["sleepQuality"],
+        mainGoalIds: ["sleepQuality", "immuneSupport", "energy"],
         title: "sleepQuality.levels.hormonalSupport.tips.0.title",
         taskInfo: {
           description: "sleepQuality.levels.hormonalSupport.tips.0.description",
@@ -220,7 +220,7 @@ export const tipCategories: TipCategory[] = [
         id: "level_sleepQuality_3_step1",
         level: 3,
         xp: 700,
-        mainGoalIds: ["sleepQuality"],
+        mainGoalIds: ["sleepQuality", "immuneSupport", "energy"],
         title: "sleepQuality.levels.neuroregulation.tips.0.title",
         taskInfo: {
           description: "sleepQuality.levels.neuroregulation.tips.0.description",
@@ -290,6 +290,21 @@ export const tipCategories: TipCategory[] = [
           duration: { amount: 5, unit: "days" },
         },
         supplements: [{ id: "vitaminC" }],
+      },
+      {
+        id: "hydration_nutrition",
+        level: 1,
+        xp: 300,
+        mainGoalIds: ["immuneSupport", "energy", "cardioFitness"],
+        title: "immuneSupport.levels.hydration.tips.0.title",
+        taskInfo: {
+          description: "immuneSupport.levels.hydration.tips.0.description",
+          duration: { amount: 7, unit: "days" },
+        },
+        information: {
+          text: "immuneSupport.levels.hydration.tips.0.information.text",
+          author: "Christina",
+        },
       },
       {
         id: "level_immuneSupport_2_step1",
@@ -362,7 +377,7 @@ export const tipCategories: TipCategory[] = [
         id: "breathwork",
         level: 1,
         xp: 0,
-        mainGoalIds: ["nervousSystem"],
+        mainGoalIds: ["nervousSystem", "immuneSupport", "energy"],
         title: "nervousSystem.levels.optimization.tips.0.title",
         taskInfo: {
           description: "nervousSystem.levels.optimization.tips.0.description",
@@ -377,7 +392,7 @@ export const tipCategories: TipCategory[] = [
         id: "sleep_optimization",
         level: 1,
         xp: 0,
-        mainGoalIds: ["nervousSystem"],
+        mainGoalIds: ["nervousSystem", "immuneSupport", "energy", "cardioFitness", "sleepQuality"],
         title: "nervousSystem.levels.optimization.tips.1.title",
         taskInfo: {
           description: "nervousSystem.levels.optimization.tips.1.description",
@@ -392,7 +407,7 @@ export const tipCategories: TipCategory[] = [
         id: "sunlight",
         level: 1,
         xp: 0,
-        mainGoalIds: ["nervousSystem"],
+        mainGoalIds: ["nervousSystem", "immuneSupport"],
         title: "nervousSystem.levels.optimization.tips.2.title",
         taskInfo: {
           description: "nervousSystem.levels.optimization.tips.2.description",
@@ -422,7 +437,7 @@ export const tipCategories: TipCategory[] = [
         id: "meditation",
         level: 2,
         xp: 0,
-        mainGoalIds: ["nervousSystem"],
+        mainGoalIds: ["nervousSystem", "immuneSupport", "energy"],
         title: "nervousSystem.levels.optimization.tips.4.title",
         taskInfo: {
           description: "nervousSystem.levels.optimization.tips.4.description",
@@ -437,7 +452,7 @@ export const tipCategories: TipCategory[] = [
         id: "nature",
         level: 2,
         xp: 0,
-        mainGoalIds: ["nervousSystem"],
+        mainGoalIds: ["nervousSystem", "immuneSupport", "energy"],
         title: "nervousSystem.levels.optimization.tips.5.title",
         taskInfo: {
           description: "nervousSystem.levels.optimization.tips.5.description",
@@ -452,7 +467,7 @@ export const tipCategories: TipCategory[] = [
         id: "recovery_monitoring",
         level: 3,
         xp: 0,
-        mainGoalIds: ["nervousSystem"],
+        mainGoalIds: ["nervousSystem", "immuneSupport", "energy", "cardioFitness", "musclePerformance"],
         title: "nervousSystem.levels.optimization.tips.6.title",
         taskInfo: {
           description: "nervousSystem.levels.optimization.tips.6.description",
@@ -587,7 +602,7 @@ export const tipCategories: TipCategory[] = [
         id: "level_digestiveHealth_1_step1",
         level: 1,
         xp: 300,
-        mainGoalIds: ["digestiveHealth"],
+        mainGoalIds: ["digestiveHealth", "immuneSupport"],
         title: "digestiveHealth.levels.gutFlora.tips.0.title",
         taskInfo: {
           description: "digestiveHealth.levels.gutFlora.tips.0.description",
@@ -599,7 +614,7 @@ export const tipCategories: TipCategory[] = [
         id: "level_digestiveHealth_1_step2",
         level: 1,
         xp: 300,
-        mainGoalIds: ["digestiveHealth"],
+        mainGoalIds: ["digestiveHealth", "immuneSupport"],
         title: "digestiveHealth.levels.gutFlora.tips.1.title",
         taskInfo: {
           description: "digestiveHealth.levels.gutFlora.tips.1.description",
@@ -612,7 +627,7 @@ export const tipCategories: TipCategory[] = [
         id: "level_digestiveHealth_2_step1",
         level: 2,
         xp: 500,
-        mainGoalIds: ["digestiveHealth"],
+        mainGoalIds: ["digestiveHealth", "immuneSupport"],
         title: "digestiveHealth.levels.liverEnzymes.tips.0.title",
         taskInfo: {
           description: "digestiveHealth.levels.liverEnzymes.tips.0.description",
@@ -624,7 +639,7 @@ export const tipCategories: TipCategory[] = [
         id: "level_digestiveHealth_3_step1",
         level: 3,
         xp: 700,
-        mainGoalIds: ["digestiveHealth"],
+        mainGoalIds: ["digestiveHealth", "immuneSupport"],
         title: "digestiveHealth.levels.advancedGut.tips.0.title",
         taskInfo: {
           description: "digestiveHealth.levels.advancedGut.tips.0.description",

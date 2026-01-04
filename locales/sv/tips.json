@@ -211,6 +211,17 @@
             }
           }
         ]
+      },
+      "hydration": {
+        "tips": [
+          {
+            "title": "Upprätthåll hydrering",
+            "description": "Konsekvent daglig hydrering stödjer cirkulation, temperaturreglering och immunresiliens.",
+            "information": {
+              "text": "Vätskestatus kan påverka immunfunktion, återhämtning och allmänt välbefinnande."
+            }
+          }
+        ]
       }
     }
   },

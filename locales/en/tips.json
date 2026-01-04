@@ -211,6 +211,17 @@
             }
           }
         ]
+      },
+      "hydration": {
+        "tips": [
+          {
+            "title": "Maintain hydration",
+            "description": "Consistent daily hydration supports circulation, temperature regulation, and immune resilience.",
+            "information": {
+              "text": "Hydration status can influence immune function, recovery, and overall well-being."
+            }
+          }
+        ]
       }
     }
   },
