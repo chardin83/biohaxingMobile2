@@ -90,9 +90,9 @@ console.log("🤖 TabBarBackground loaded:", TabBarBackground?.name);
         }}
       />
       <Tabs.Screen
-        name="goals"
+        name="areas"
         options={{
-          title: t("layout.goals"),
+          title: t("layout.areas"),
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="target" color={color} />
           ),

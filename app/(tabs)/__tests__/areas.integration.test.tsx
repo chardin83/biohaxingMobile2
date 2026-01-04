@@ -51,8 +51,8 @@ jest.mock('@/locales/supplements', () => ({
 }));
 
 // Mock the goals data
-jest.mock('@/locales/mainGoals', () => ({
-  mainGoals: [
+jest.mock('@/locales/areas', () => ({
+  areas: [
     {
       id: 'improve-energy',
       title: 'Improve Energy',

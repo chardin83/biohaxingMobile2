@@ -162,7 +162,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
 
         {/* Tips card */}
         <TipsList
-          mainGoalId={mainGoalId}
+          areaId={mainGoalId}
           title="tips:immune.levels.optimization.title"
         />
       </ScrollView>

@@ -16,7 +16,7 @@
     "dashboard": "Dashboard",
     "calendar": "Calendar",
     "plan": "Plan",
-    "goals": "Goals"
+    "areas": "Areas"
   },
   "selectedSupplementList": { "choosenFor": "Supplements taken" },
   "plan": {
@@ -56,14 +56,14 @@
     "search": "Search...",
     "day": "day"
   },
-  "goals": {
-    "selectGoal": "Select what goals you want to work with",
-    "editGoal": "Edit goal",
-    "addGoal": "Add goal",
-    "confirmAddSupplements": "Do you want to add supplements for this goal?"
+  "areas": {
+    "selectArea": "Select what areas you want to focus on",
+    "editArea": "Edit area",
+    "addArea": "Add area",
+    "confirmAddSupplements": "Do you want to add supplements for this area?"
   },
-  "selectGoal": {
-      "description": "Different tips and supplements can help you reach your health goals. Select one for more information"
+  "selectArea": {
+      "description": "Different tips and supplements can help you achieve your health goals. Select one for more information"
   },
   "goalDetails": {
     "taskInfo": "Task",

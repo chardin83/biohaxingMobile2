@@ -10,10 +10,10 @@ import AppCard from "@/components/ui/AppCard";
 import ProgressBarWithLabel from "@/components/ui/ProgressbarWithLabel";
 import { levels } from "@/locales/levels";
 import { tips } from "@/locales/tips";
-import { mainGoals } from "@/locales/mainGoals";
+import { areas } from "@/locales/areas";
 
 export default function BiohackerDashboard() {
-  const { t } = useTranslation(["common", "goals", "levels"]);
+  const { t } = useTranslation(["common", "areas", "levels"]);
   const { myGoals, activeGoals, myXP, myLevel, finishedGoals, viewedTips } = useStorage();
   const router = useRouter();
   const supplements = useSupplements();
@@ -26,10 +26,10 @@ export default function BiohackerDashboard() {
   const progressText = `${myXP} / ${xpMax} XP`;
   const levelTitle = levels.find((o) => o.level === myLevel)?.titleKey;
 
-  // Hitta favorit-markerade tips för ett specifikt mainGoal
-  const getFavoriteTipsForMainGoal = (mainGoalId: string) => {
+  // Hitta favorit-markerade tips för ett specifikt område
+  const getFavoriteTipsForArea = (areaId: string) => {
     return viewedTips
-      ?.filter(tip => tip.mainGoalId === mainGoalId && tip.verdict === "relevant")
+      ?.filter(tip => tip.mainGoalId === areaId && tip.verdict === "relevant")
       .map(tip => {
         const tipDetails = tips.find(t => t.id === tip.tipId);
         return tipDetails ? t(`tips:${tipDetails.title}`) : null;
@@ -49,11 +49,11 @@ export default function BiohackerDashboard() {
       <Text style={styles.title}>{t(`levels:${levelTitle}`)}</Text>
       <ProgressBarWithLabel progress={myXP / xpMax} label={progressText} />
 
-      {mainGoals
+      {areas
         .filter((item) => myGoals.includes(item.id))
         .map((item) => {
-          const mainGoalId = item.id;
-          const favoriteTipsList = getFavoriteTipsForMainGoal(mainGoalId);
+          const areaId = item.id;
+          const favoriteTipsList = getFavoriteTipsForArea(areaId);
           
           // Om det finns favoriter, visa dem, annars visa en standard-text
           const description = favoriteTipsList.length > 0 
@@ -62,15 +62,15 @@ export default function BiohackerDashboard() {
 
           return (
             <AppCard
-              key={mainGoalId}
+              key={areaId}
               icon={item.icon}
-              title={t(`tips:${mainGoalId}.title`)}
+              title={t(`areas:${item.id}.title`)}
               description={description}
               isActive={favoriteTipsList.length > 0}
               onPress={() =>
                 router.push({
-                  pathname: "/(goal)/[mainGoalId]",
-                  params: { mainGoalId },
+                  pathname: "/(goal)/[areaId]",
+                  params: { areaId },
                 })
               }
             />

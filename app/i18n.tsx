@@ -1,12 +1,14 @@
-import i18n from "i18next";
+import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
 import * as Localization from "expo-localization"; // Use expo-localization
 import enCommon from "../locales/en/common.json";
 import enTips from "../locales/en/tips.json";
 import enSupplements from "../locales/en/supplements.json";
+import enAreas from "../locales/en/areas.json";
 import svCommon from "../locales/sv/common.json";
 import svTips from "../locales/sv/tips.json";
 import svSupplements from "../locales/sv/supplements.json";
+import svAreas from "../locales/sv/areas.json";
 import svLevels from "../locales/sv/levels.json";
 import enLevels from "../locales/en/levels.json";
 import enPrompts from "../locales/en/prompts.json";
@@ -18,6 +20,7 @@ const resources = {
     common: enCommon,
     tips: enTips,
     supplements: enSupplements,
+    areas: enAreas,
     levels: enLevels,
     prompts: enPrompts
   },
@@ -25,6 +28,7 @@ const resources = {
     common: svCommon,
     tips: svTips,
     supplements: svSupplements,
+    areas: svAreas,
     levels: svLevels,
     prompts: svPrompts
   },
@@ -46,7 +50,7 @@ const customLanguageDetector = {
 };
 
 // Initialize i18n
-i18n
+i18next
   .use(customLanguageDetector)
   .use(initReactI18next)
   .init({
@@ -54,10 +58,11 @@ i18n
     fallbackLng: "en",
     debug: false,
     defaultNS: "common", // Default namespace
-    ns: ["common", "tips", "supplements", "levels", "prompts"], // Available namespaces
+    ns: ["common", "tips", "supplements", "areas", "levels", "prompts"], // Available namespaces
     interpolation: {
       escapeValue: false, // Not needed for React
     },
   });
 
-export default i18n;
+// eslint-disable-next-line import/no-default-export
+export default i18next;

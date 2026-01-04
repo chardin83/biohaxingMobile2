@@ -21,8 +21,8 @@ jest.mock('react-i18next', () => ({
 }));
 
 // Mock main goals
-jest.mock('@/locales/mainGoals', () => ({
-  mainGoals: [
+jest.mock('@/locales/focuses', () => ({
+  focuses: [
     { id: 'improve_sleep', icon: 'moon', title: 'Sleep' },
     { id: 'boost_energy', icon: 'battery', title: 'Energy' },
     { id: 'enhance_focus', icon: 'brain', title: 'Focus' },

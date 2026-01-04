@@ -1,5 +1,0 @@
-Need to manually flatten by:
-1. Remove all { id: xxx, title: xxx, tips: [ wrappers
-2. Keep only the tip objects themselves
-3. Convert mainGoalIds to goals array
-4. Remove closing ] } for categories

@@ -207,7 +207,7 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
 
         {/* Tips card */}
         <TipsList
-          mainGoalId={mainGoalId}
+          areaId={mainGoalId}
           title="tips:digestive.levels.optimization.title"
         />
       </ScrollView>

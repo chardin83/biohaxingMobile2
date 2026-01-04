@@ -11,21 +11,21 @@ import CardioOverview from "./cardioOverview";
 import DigestiveOverview from "./digestiveOverview";
 import ImmuneOverview from "./immuneOverview";
 
-export default function GoalRootScreen() {
-  const { mainGoalId } = useLocalSearchParams<{ mainGoalId: string }>();
+export default function AreaRootScreen() {
+  const { areaId } = useLocalSearchParams<{ areaId: string }>();
 
   return (
     <LinearGradient colors={["#071526", "#040B16"]} style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
         <BackButton onPress={() => router.push("/(tabs)/dashboard")} />
 
-        {mainGoalId === "nervousSystem" && <NervousSystemOverview mainGoalId={mainGoalId} />}
-        {mainGoalId === "sleepQuality" && <SleepOverview mainGoalId={mainGoalId} />}
-        {mainGoalId === "energy" && <EnergyOverview mainGoalId={mainGoalId} />}
-        {mainGoalId === "musclePerformance" && <MusclePerformanceOverview mainGoalId={mainGoalId} />}
-        {mainGoalId === "cardioFitness" && <CardioOverview mainGoalId={mainGoalId} />}
-        {mainGoalId === "digestiveHealth" && <DigestiveOverview mainGoalId={mainGoalId} />}
-        {mainGoalId === "immuneSupport" && <ImmuneOverview mainGoalId={mainGoalId} />}
+        {areaId === "nervousSystem" && <NervousSystemOverview mainGoalId={areaId} />}
+        {areaId === "sleepQuality" && <SleepOverview mainGoalId={areaId} />}
+        {areaId === "energy" && <EnergyOverview mainGoalId={areaId} />}
+        {areaId === "musclePerformance" && <MusclePerformanceOverview mainGoalId={areaId} />}
+        {areaId === "cardioFitness" && <CardioOverview mainGoalId={areaId} />}
+        {areaId === "digestiveHealth" && <DigestiveOverview mainGoalId={areaId} />}
+        {areaId === "immuneSupport" && <ImmuneOverview mainGoalId={areaId} />}
       </SafeAreaView>
     </LinearGradient>
   );

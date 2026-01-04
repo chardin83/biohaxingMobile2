@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import GoalDetailScreen from '../[mainGoalId]/details';
+import GoalDetailScreen from '../[areaId]/details';
 import * as StorageContext from '../../context/StorageContext';
 import * as useSupplementsModule from '@/locales/supplements';
 import { useLocalSearchParams } from 'expo-router';
@@ -13,7 +13,7 @@ jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: jest.fn(() => ({ bottom: 0 })),
 }));
 jest.mock('@/locales/supplements', () => ({ useSupplements: jest.fn() }));
-jest.mock('@/locales/mainGoals', () => ({ mainGoals: [{ id: 'main1', icon: 'target', title: 'Main Goal' }] }));
+jest.mock('@/locales/areas', () => ({ areas: [{ id: 'main1', icon: 'target', title: 'Main Goal' }] }));
 jest.mock('@/locales/goals', () => ({
   goals: [
     {

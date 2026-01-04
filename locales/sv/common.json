@@ -19,7 +19,7 @@
       "dashboard": "Dashboard",
       "calendar": "Kalender",
       "plan": "Plan",
-      "goals": "Mål"
+      "areas": "Områden"
     },
     "selectedSupplementList": { "choosenFor":"Tagna kosttillskott"},
  
@@ -60,14 +60,14 @@
       "day": "dag"
       
     },
-    "goals": {
-      "selectGoal": "Välj vilka mål du vill arbeta med",
-      "editGoal": "Redigera mål",
-      "addGoal": "Lägg till mål",
-      "confirmAddSupplements": "Vill du undersöka kosttillskott för detta mål?"
+    "areas": {
+      "selectArea": "Välj vilka områden du vill arbeta med",
+      "editArea": "Redigera område",
+      "addArea": "Lägg till område",
+      "confirmAddSupplements": "Vill du undersöka kosttillskott för detta område?"
     },
-    "selectGoal": {
-      "description": "Välj ett mål att arbeta med:"
+    "selectArea": {
+      "description": "Olika tips och tillskott kan hjälpa dig nå dina hälsomål. Välj ett för mer information"
     },
     "goalDetails": {
       "taskInfo": "Uppgift",

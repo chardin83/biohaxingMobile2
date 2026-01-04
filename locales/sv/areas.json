@@ -1,0 +1,38 @@
+{
+  "energy": {
+    "title": "Energi & Vitalitet",
+    "description": "Öka din dagliga energi och övervinn trötthet"
+  },
+  "sleepQuality": {
+    "title": "Sömnkvalitet",
+    "description": "Förbättra sömnens längd och kvalitet"
+  },
+  "focus": {
+    "title": "Fokus & Koncentration",
+    "description": "Förbättra mental klarhet och utmattad uppmärksamhet"
+  },
+  "immuneSupport": {
+    "title": "Immunt Stöd",
+    "description": "Stärk ditt immunförsvar"
+  },
+  "nervousSystem": {
+    "title": "Nervsystem",
+    "description": "Balansera ditt autonoma nervsystem för bättre stressresiliens"
+  },
+  "musclePerformance": {
+    "title": "Muskelprestation",
+    "description": "Bygga styrka och förbättra atletisk prestanda"
+  },
+  "digestiveHealth": {
+    "title": "Matsmältningshälsa",
+    "description": "Stöd hälsosam matsmältning och tarmflora"
+  },
+  "cardioFitness": {
+    "title": "Kardiovaskulär Fitness",
+    "description": "Förbättra hjärthälsa och aerob kapacitet"
+  },
+  "mind": {
+    "title": "Sinne & Kognition",
+    "description": "Stöd kognitiv funktion och mental prestanda"
+  }
+}

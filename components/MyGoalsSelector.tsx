@@ -1,35 +1,35 @@
 import React from "react";
 import { FlatList } from "react-native";
 import AppCard from "@/components/ui/AppCard";
-import { MainGoal, mainGoals } from "@/locales/mainGoals";
+import { Area, areas } from "@/locales/areas";
 import { useTranslation } from "react-i18next";
 import { useStorage } from "@/app/context/StorageContext";
 
 interface Props {
-  readonly onGoalSelected?: (goal: MainGoal) => void;
+  readonly onGoalSelected?: (area: Area) => void;
 }
 
 export default function MyGoalsSelector({ onGoalSelected }: Props) {
-  const { t } = useTranslation(["goals"]);
+  const { t } = useTranslation(["areas"]);
   const { myGoals, setMyGoals } = useStorage();
 
-  const handlePress = (goal: MainGoal) => {
+  const handlePress = (area: Area) => {
     setMyGoals((prev) =>
-      prev.includes(goal.id)
-        ? prev.filter((id) => id !== goal.id)
-        : [...prev, goal.id]
+      prev.includes(area.id)
+        ? prev.filter((id) => id !== area.id)
+        : [...prev, area.id]
     );
-    onGoalSelected?.(goal);
+    onGoalSelected?.(area);
   };
 
   return (
     <FlatList
-      data={mainGoals}
+      data={areas}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
         <AppCard
-          title={t(`goals:${item.id}.title`)}
-          description={t(`goals:${item.id}.description`)}
+          title={t(`areas:${item.id}.title`)}
+          description={t(`areas:${item.id}.description`)}
           isActive={myGoals.includes(item.id)}
           onPress={() => handlePress(item)}
         />

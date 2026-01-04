@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { mainGoals } from "@/locales/mainGoals";
+import { areas } from "@/locales/areas";
 import { Colors } from "@/constants/Colors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSupplements } from "@/locales/supplements";
@@ -26,27 +26,27 @@ import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AIPrompts } from "@/constants/AIPrompts";
 
-export default function GoalDetailScreen() {
+export default function AreaDetailScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { mainGoalId, tipId } = useLocalSearchParams<{
-    mainGoalId: string;
+  const { areaId, tipId } = useLocalSearchParams<{
+    areaId: string;
     tipId?: string;
   }>();
   const supplements = useSupplements();
   const { addTipView, incrementTipChat, viewedTips, setTipVerdict } = useStorage();
   
-  const mainGoal = mainGoals.find((g) => g.id === mainGoalId);
+  const mainArea = areas.find((g) => g.id === areaId);
   const tip = tipId
     ? tips.find((t) => t.id === tipId)
-    : tips.find((t) => t.goals.some((g) => g.id === mainGoalId));
+    : tips.find((t) => t.goals.some((g) => g.id === areaId));
 
-  const goalIcon = mainGoal?.icon ?? "target";
+  const goalIcon = mainArea?.icon ?? "target";
   const supplementId = tip?.supplements?.[0]?.id ?? undefined;
   const supplementName = supplements?.find((s) => s.id === supplementId)?.name;
 
-  if (!mainGoal || !tip) {
+  if (!mainArea || !tip) {
     return (
       <View style={styles.container}>
         <Text style={styles.notFound}>Goal not found.</Text>
@@ -59,17 +59,17 @@ export default function GoalDetailScreen() {
 
   // Ge XP när tips öppnas (första gången)
   React.useEffect(() => {
-    if (mainGoalId && tipId) {
-      const xpGained = addTipView(mainGoalId, tipId);
+    if (areaId && tipId) {
+      const xpGained = addTipView(areaId, tipId);
       if (xpGained > 0) {
         console.log(`🎉 You gained ${xpGained} XP for viewing this tip!`);
       }
     }
-  }, [mainGoalId, tipId]);
+  }, [areaId, tipId]);
 
   // Hitta vilka frågor som redan ställts
   const currentTip = viewedTips?.find(
-    (v) => v.mainGoalId === mainGoalId && v.tipId === tipId
+    (v) => v.mainGoalId === areaId && v.tipId === tipId
   );
   const askedQuestions = currentTip?.askedQuestions || [];
   const totalXpEarned = currentTip?.xpEarned || 0;
@@ -77,8 +77,8 @@ export default function GoalDetailScreen() {
 
   // Hantera verdict-klick
   const handleVerdictPress = (verdict: "relevant" | "interesting" | "skeptical") => {
-    if (mainGoalId && tipId) {
-      const xpGained = setTipVerdict(mainGoalId, tipId, verdict);
+    if (areaId && tipId) {
+      const xpGained = setTipVerdict(areaId, tipId, verdict);
       if (xpGained > 0) {
         console.log(`🎉 You gained ${xpGained} XP for your verdict!`);
       }
@@ -108,8 +108,8 @@ export default function GoalDetailScreen() {
     }
     
     // Ge XP för att chatta om tipset (om det är första gången för denna fråga)
-    if (mainGoalId && tipId) {
-      const xpGained = incrementTipChat(mainGoalId, tipId, questionType);
+    if (areaId && tipId) {
+      const xpGained = incrementTipChat(areaId, tipId, questionType);
       if (xpGained > 0) {
         console.log(`🎉 You gained ${xpGained} XP for exploring this question!`);
       } else {
@@ -121,8 +121,8 @@ export default function GoalDetailScreen() {
       pathname: "/(tabs)/chat",
       params: {
         initialPrompt: fullPrompt,
-        returnPath: `/(goal)/${mainGoalId}/details`,
-        returnParams: JSON.stringify({ mainGoalId, tipId }),
+        returnPath: `/(goal)/${areaId}/details`,
+        returnParams: JSON.stringify({ areaId, tipId }),
       }
     });
   };
@@ -133,14 +133,14 @@ export default function GoalDetailScreen() {
   return (
     <LinearGradient colors={["#071526", "#040B16"]} style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <BackButton onPress={() => router.replace(`/(goal)/${mainGoalId}`)} />
+        <BackButton onPress={() => router.replace(`/(goal)/${areaId}`)} />
         
         <ScrollView
           contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 140, flexGrow: 1 }]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.goalTitle}>{t(`tips:${mainGoalId}.title`)}</Text>
+          <Text style={styles.goalTitle}>{t(`tips:${areaId}.title`)}</Text>
           <View style={styles.topSection}>
             <View style={styles.iconWrapper}>
               <Icon source={goalIcon} size={50} color={Colors.dark.primary} />

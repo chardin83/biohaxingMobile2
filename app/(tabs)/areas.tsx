@@ -6,10 +6,10 @@ import MyGoalsSelector from "@/components/MyGoalsSelector";
 import { Colors } from "@/constants/Colors";
 import { t } from "i18next";
 
-export default function Goals() {
+export default function Areas() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{t("common:goals.selectGoal")}</Text>
+      <Text style={styles.title}>{t("common:areas.selectArea")}</Text>
       <MyGoalsSelector />
     </View>
   );

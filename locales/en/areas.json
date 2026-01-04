@@ -1,0 +1,38 @@
+{
+  "energy": {
+    "title": "Energy & Vitality",
+    "description": "Boost your daily energy levels and overcome fatigue"
+  },
+  "sleepQuality": {
+    "title": "Sleep Quality",
+    "description": "Improve sleep duration and sleep quality"
+  },
+  "focus": {
+    "title": "Focus & Concentration",
+    "description": "Enhance mental clarity and sustained attention"
+  },
+  "immuneSupport": {
+    "title": "Immune Support",
+    "description": "Strengthen your immune system"
+  },
+  "nervousSystem": {
+    "title": "Nervous System",
+    "description": "Balance your autonomic nervous system for better stress resilience"
+  },
+  "musclePerformance": {
+    "title": "Muscle Performance",
+    "description": "Build strength and improve athletic performance"
+  },
+  "digestiveHealth": {
+    "title": "Digestive Health",
+    "description": "Support healthy digestion and gut microbiome"
+  },
+  "cardioFitness": {
+    "title": "Cardiovascular Fitness",
+    "description": "Improve heart health and aerobic capacity"
+  },
+  "mind": {
+    "title": "Mind & Cognition",
+    "description": "Support cognitive function and mental performance"
+  }
+}

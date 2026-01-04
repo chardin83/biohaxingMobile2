@@ -23,8 +23,8 @@ jest.mock('@/locales/supplements', () => ({
   ])
 }));
 
-jest.mock('@/locales/mainGoals', () => ({ 
-  mainGoals: [
+jest.mock('@/locales/focuses', () => ({ 
+  focuses: [
     { id: 'main1', icon: 'target', title: 'Energy Boost' }
   ]
 }));

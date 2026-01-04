@@ -8,29 +8,29 @@ import { Colors } from "@/constants/Colors";
 import TipCard from "./TipCard";
 
 interface TipsListProps {
-  mainGoalId: string;
+  areaId: string;
   title: string;
 }
 
-export default function TipsList({ mainGoalId, title }: TipsListProps) {
+export default function TipsList({ areaId, title }: TipsListProps) {
   const { t } = useTranslation();
   const router = useRouter();
   const { viewedTips } = useStorage();
   const [showAllTips, setShowAllTips] = React.useState(false);
 
-  const tipsRaw = tips.filter(tip => tip.goals.some(goal => goal.id === mainGoalId));
+  const tipsRaw = tips.filter(tip => tip.goals.some(goal => goal.id === areaId));
 
   // Sortera tips: relevant → interesting → skeptical
   const sortedTips = React.useMemo(() => {
     return [...tipsRaw].sort((a, b) => {
       const aViewed = viewedTips?.find(
         v =>
-            v.mainGoalId === mainGoalId &&
+            v.mainGoalId === areaId &&
             v.tipId === a.id
       );
       const bViewed = viewedTips?.find(
         v =>
-            v.mainGoalId === mainGoalId &&
+            v.mainGoalId === areaId &&
             v.tipId === b.id
       );
 
@@ -46,7 +46,7 @@ export default function TipsList({ mainGoalId, title }: TipsListProps) {
 
       return 0;
     });
-  }, [tipsRaw, viewedTips, mainGoalId]);
+  }, [tipsRaw, viewedTips, areaId]);
 
   // Filtrera tips: dölj skeptical om inte "show all"
   const visibleTips = React.useMemo(() => {
@@ -56,19 +56,19 @@ export default function TipsList({ mainGoalId, title }: TipsListProps) {
     return sortedTips.filter(tip => {
       const viewedTip = viewedTips?.find(
         v =>
-          v.mainGoalId === mainGoalId &&
+          v.mainGoalId === areaId &&
           v.tipId === tip.id
       );
       return viewedTip?.verdict !== "skeptical";
     });
-  }, [sortedTips, showAllTips, viewedTips, mainGoalId]);
+  }, [sortedTips, showAllTips, viewedTips, areaId]);
 
   const hiddenTipsCount = sortedTips.length - visibleTips.length;
 
   const getTipProgress = (tipId: string) => {
     const viewedTip = viewedTips?.find(
       v =>
-        v.mainGoalId === mainGoalId &&
+        v.mainGoalId === areaId &&
         v.tipId === tipId
     );
 
@@ -95,7 +95,7 @@ export default function TipsList({ mainGoalId, title }: TipsListProps) {
 
     if (tip) {
       router.push({
-        pathname: `/(goal)/${mainGoalId}/details` as any,
+          pathname: `/(goal)/${areaId}/details` as any,
         params: {
           tipId: tip.id,
         },

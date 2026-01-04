@@ -60,8 +60,8 @@ jest.mock('@/locales/goals', () => ({
   ],
 }));
 
-jest.mock('@/locales/mainGoals', () => ({
-  mainGoals: [
+jest.mock('@/locales/areas', () => ({
+  areas: [
     { id: 'improve_sleep', icon: 'moon', title: 'Sleep' },
     { id: 'boost_energy', icon: 'battery', title: 'Energy' },
   ],
