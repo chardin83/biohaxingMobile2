@@ -4,8 +4,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useWearable } from "@/wearables/wearableProvider";
 import { TimeRange, SleepSummary, DailyActivity, EnergySignal } from "@/wearables/types";
 import { WearableStatus } from "@/components/WearableStatus";
+import TipsList from "@/components/ui/TipsList";
 
-export default function DigestiveScreen() {
+export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -205,31 +206,11 @@ export default function DigestiveScreen() {
         </View>
 
         {/* Tips card */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Support your digestion</Text>
-          
-          <Text style={styles.tipText}>
-            • Eat fiber-rich foods (nuts, seeds, vegetables) daily
-          </Text>
-          <Text style={styles.tipText}>
-            • Include fermented foods for probiotics (yogurt, kefir, kimchi)
-          </Text>
-          <Text style={styles.tipText}>
-            • Practice stress management (meditation, breathing, nature)
-          </Text>
-          <Text style={styles.tipText}>
-            • Stay hydrated throughout the day
-          </Text>
-          <Text style={styles.tipText}>
-            • Regular meal timing helps regulate digestion
-          </Text>
-          <Text style={styles.tipText}>
-            • Light movement after meals aids digestion
-          </Text>
-          <Text style={styles.tipText}>
-            • Track patterns: note foods and symptoms to identify triggers
-          </Text>
-        </View>
+        <TipsList
+          mainGoalId={mainGoalId}
+          categoryId="level_digestiveHealth_1"
+          title="tips:digestive.levels.optimization.title"
+        />
       </ScrollView>
     </LinearGradient>
   );

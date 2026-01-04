@@ -9,8 +9,9 @@ import { RestingHRMetric } from "@/components/metrics/RestingHRMetric";
 import { VO2MaxMetric } from "@/components/metrics/VO2MaxMetric";
 import { calculateHRVMetrics } from "@/utils/hrvCalculations";
 import { calculateRestingHRMetrics } from "@/utils/restingHRCalculations";
+import TipsList from "@/components/ui/TipsList";
 
-export default function EnergyScreen() {
+export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -243,47 +244,12 @@ export default function EnergyScreen() {
           </View>
         </View>
 
-        {/* Optimization Tips */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Optimize Mitochondrial Function</Text>
-          
-          <Text style={styles.tipText}>
-            🏃 Zone 2 cardio: 30-60min at conversational pace, 3-4x/week (triggers mitochondrial biogenesis)
-          </Text>
-          <Text style={styles.tipText}>
-            💪 High-intensity intervals: HIIT 1-2x/week improves mitochondrial efficiency
-          </Text>
-          <Text style={styles.tipText}>
-            🌅 Morning sunlight: Regulates circadian rhythm and mitochondrial ATP production
-          </Text>
-          <Text style={styles.tipText}>
-            🥶 Cold exposure: Cold showers/ice baths activate brown fat mitochondria (thermogenesis)
-          </Text>
-          <Text style={styles.tipText}>
-            🍽️ Intermittent fasting: 16:8 or 18:6 fasting promotes mitophagy and mitochondrial cleanup
-          </Text>
-          <Text style={styles.tipText}>
-            😴 Sleep 7-9 hours: Deep sleep enables mitochondrial repair and NAD+ restoration
-          </Text>
-          <Text style={styles.tipText}>
-            💊 CoQ10: Essential for electron transport chain, especially important 30+
-          </Text>
-          <Text style={styles.tipText}>
-            🧪 NAD+ precursors: NR/NMN supplements may support declining NAD+ levels with age
-          </Text>
-          <Text style={styles.tipText}>
-            🥗 Antioxidants: Colorful vegetables (polyphenols) protect against oxidative stress
-          </Text>
-          <Text style={styles.tipText}>
-            🚭 Avoid toxins: Smoking, excessive alcohol, processed foods impair mitochondrial function
-          </Text>
-          <Text style={styles.tipText}>
-            🧘 Stress management: Chronic cortisol damages mitochondria and reduces ATP production
-          </Text>
-          <Text style={styles.tipText}>
-            ☀️ Vitamin D: Required for mitochondrial function and ATP production efficiency
-          </Text>
-        </View>
+        {/* Tips Card */}
+        <TipsList
+          mainGoalId={mainGoalId}
+          categoryId="level_energy_1"
+          title="tips:energy.levels.optimization.title"
+        />
 
         {/* Activity Tracking */}
         <View style={[styles.card, { marginTop: 16 }]}>

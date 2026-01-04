@@ -6,8 +6,9 @@ import { TimeRange, HRVSummary, DailyActivity, EnergySignal } from "@/wearables/
 import { WearableStatus } from "@/components/WearableStatus";
 import { VO2MaxMetric } from "@/components/metrics/VO2MaxMetric";
 import { RestingHRMetric } from "@/components/metrics/RestingHRMetric";
+import TipsList from "@/components/ui/TipsList";
 
-export default function CardioScreen() {
+export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -192,47 +193,12 @@ export default function CardioScreen() {
           </View>
         </View>
 
-        {/* Training zones card */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Optimize your cardio training</Text>
-          
-          <Text style={styles.tipText}>
-            🏃 Zone 2 training (60-70% max HR) builds aerobic base - majority of training
-          </Text>
-          <Text style={styles.tipText}>
-            ⚡ HIIT workouts (2x/week) improve VO₂ max most effectively
-          </Text>
-          <Text style={styles.tipText}>
-            📈 Progressive overload: gradually increase distance or intensity by 10% weekly
-          </Text>
-          <Text style={styles.tipText}>
-            ⚖️ Mix intensities: 80% easy, 20% hard (80/20 rule for optimal adaptation)
-          </Text>
-          <Text style={styles.tipText}>
-            💓 Monitor HRV daily to optimize training timing - skip hard workouts when HRV drops
-          </Text>
-          <Text style={styles.tipText}>
-            😴 Adequate sleep (7-9h) and nutrition crucial for adaptation and performance
-          </Text>
-          <Text style={styles.tipText}>
-            🚴 Cross-train: mix running, cycling, swimming to prevent overuse injuries
-          </Text>
-          <Text style={styles.tipText}>
-            🧊 Cold exposure post-workout may reduce inflammation (but wait 4h for hypertrophy)
-          </Text>
-          <Text style={styles.tipText}>
-            🎯 Track resting HR trend - consistent low HR = good fitness, rising = overtraining
-          </Text>
-          <Text style={styles.tipText}>
-            🔄 Deload weeks (reduce volume 40%) every 4-6 weeks for recovery
-          </Text>
-          <Text style={styles.tipText}>
-            🫀 Increase stroke volume: long, slow runs improve heart efficiency
-          </Text>
-          <Text style={styles.tipText}>
-            🍽️ Carb timing: consume carbs around hard workouts for glycogen replenishment
-          </Text>
-        </View>
+        {/* Tips Card */}
+        <TipsList
+          mainGoalId={mainGoalId}
+          categoryId="level_cardioFitness_1"
+          title="tips:cardio.levels.optimization.title"
+        />
       </ScrollView>
     </LinearGradient>
   );

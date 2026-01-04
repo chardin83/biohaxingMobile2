@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useWearable } from "@/wearables/wearableProvider";
 import { WearableStatus } from "@/components/WearableStatus";
@@ -10,8 +10,8 @@ import { HRVSummary } from "@/wearables/types";
 import { useTranslation } from "react-i18next";
 import { Colors } from "@/constants/Colors";
 import { useRouter } from "expo-router";
-import { tipCategories } from "@/locales/tips";
 import { useStorage } from "@/app/context/StorageContext";
+import TipsList from "@/components/ui/TipsList";
 
 
 function daysAgo(n: number) {
@@ -53,7 +53,6 @@ function getRecoveryStatus(hrv: number | null, sleepHours: number | null): strin
 export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();
   const { t } = useTranslation();
-  const router = useRouter();
   const { viewedTips } = useStorage();
 
   console.log("=== NERVOUS SYSTEM MOUNTED ===");
@@ -64,7 +63,6 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
   const [hrv, setHrv] = React.useState<number | null>(null);
   const [bodyBattery, setBodyBattery] = React.useState<number | null>(null);
   const [sleepHours, setSleepHours] = React.useState<number | null>(null);
-  const [showAllTips, setShowAllTips] = React.useState(false);
 
   React.useEffect(() => {
     (async () => {
@@ -100,101 +98,6 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
   const stressScore = hrv ? Math.max(0, Math.min(100, 100 - hrv)) : 50;
   const stressLevel = getStressLevel(stressScore);
   const recoveryStatus = getRecoveryStatus(hrv, sleepHours);
-
-  // Hämta optimization tips från tips.json
-  const optimizationCategory = tipCategories.find(
-    cat => cat.id === "level_nervousSystem_optimization"
-  );
-  const optimizationTipsRaw = optimizationCategory?.tips || [];
-
-  // Sortera tips så att "relevant" visas först, sedan "interesting"
-  const optimizationTips = React.useMemo(() => {
-    return [...optimizationTipsRaw].sort((a, b) => {
-      const aViewed = viewedTips?.find(
-        v => v.mainGoalId === mainGoalId && 
-             v.goalId === "level_nervousSystem_optimization" && 
-             v.tipId === a.id
-      );
-      const bViewed = viewedTips?.find(
-        v => v.mainGoalId === mainGoalId && 
-             v.goalId === "level_nervousSystem_optimization" && 
-             v.tipId === b.id
-      );
-
-      const aIsRelevant = aViewed?.verdict === "relevant";
-      const bIsRelevant = bViewed?.verdict === "relevant";
-      const aIsInteresting = aViewed?.verdict === "interesting";
-      const bIsInteresting = bViewed?.verdict === "interesting";
-
-      // Relevant först
-      if (aIsRelevant && !bIsRelevant) return -1;
-      if (!aIsRelevant && bIsRelevant) return 1;
-      
-      // Interesting efter relevant
-      if (aIsInteresting && !bIsInteresting && !bIsRelevant) return -1;
-      if (!aIsInteresting && bIsInteresting && !aIsRelevant) return 1;
-      
-      return 0;
-    });
-  }, [optimizationTipsRaw, viewedTips, mainGoalId]);
-
-  // Filtrera tips baserat på verdict och showAllTips
-  const visibleTips = React.useMemo(() => {
-    if (showAllTips) {
-      return optimizationTips;
-    }
-    // Dölj skeptiska tips om inte "show all" är aktiverat
-    return optimizationTips.filter(tip => {
-      const viewedTip = viewedTips?.find(
-        v => v.mainGoalId === mainGoalId && 
-             v.goalId === "level_nervousSystem_optimization" && 
-             v.tipId === tip.id
-      );
-      return viewedTip?.verdict !== "skeptical";
-    });
-  }, [optimizationTips, showAllTips, viewedTips, mainGoalId]);
-
-  const hiddenTipsCount = optimizationTips.length - visibleTips.length;
-
-  const getTipProgress = (tipId: string) => {
-    const viewedTip = viewedTips?.find(
-      v => v.mainGoalId === mainGoalId && 
-           v.goalId === "level_nervousSystem_optimization" && 
-           v.tipId === tipId
-    );
-    
-    if (!viewedTip) {
-      return { xp: 0, progress: 0, askedQuestions: 0, verdict: undefined };
-    }
-
-    const maxQuestions = 3;
-    const progress = Math.min(viewedTip.askedQuestions.length / maxQuestions, 1);
-    
-    return {
-      xp: viewedTip.xpEarned,
-      progress,
-      askedQuestions: viewedTip.askedQuestions.length,
-      verdict: viewedTip.verdict,
-    };
-  };
-
-  const handleTipPress = (tipIndex: number) => {
-    const tip = optimizationTips[tipIndex];
-    
-    if (tip) {
-      console.log("=== NAVIGATION DEBUG ===");
-      console.log("mainGoalId:", mainGoalId);
-      console.log("Navigating to details with tipId:", tip.id);
-      
-      router.push({
-        pathname: `/(goal)/${mainGoalId}/details` as any,
-        params: {
-          goalId: "level_nervousSystem_optimization",
-          tipId: tip.id,
-        }
-      });
-    }
-  };
 
   return (
     <LinearGradient colors={["#071526", "#040B16"]} style={styles.bg}>
@@ -317,89 +220,11 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
         </View>
 
         {/* Tips card */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>{t("tips:nervousSystem.levels.optimization.title")}</Text>
-          
-          {visibleTips.map((tip, index) => {
-            const tipProgress = getTipProgress(tip.id);
-            const isStarted = tipProgress.xp > 0;
-            const isCompleted = tipProgress.progress >= 1;
-            const isRelevant = tipProgress.verdict === "relevant";
-            const isInteresting = tipProgress.verdict === "interesting";
-            const isSkeptical = tipProgress.verdict === "skeptical";
-
-            return (
-              <Pressable
-                key={index}
-                style={({ pressed }) => [
-                  styles.tipSection,
-                  pressed && styles.tipPressed,
-                  isCompleted && styles.tipCompleted,
-                  isRelevant && styles.tipRelevant,
-                  isInteresting && styles.tipInteresting,
-                  isSkeptical && styles.tipSkeptical,
-                ]}
-                onPress={() => handleTipPress(index)}
-              >
-                <View style={styles.tipHeader}>
-                  <View style={styles.tipHeaderLeft}>
-                    <Text style={styles.tipTitle}>
-                      {isRelevant && "⭐ "}
-                      {isInteresting && "🔍 "}
-                      {isSkeptical && "🤨 "}
-                      {isCompleted && "✅ "}
-                      {t(`tips:${tip.title}`)}
-                    </Text>
-                    <Text style={styles.tipDescription}>
-                      {t(`tips:${tip.taskInfo?.description}`)}
-                    </Text>
-                  </View>
-                  
-                  {isStarted && (
-                    <View style={styles.xpBadge}>
-                      <Text style={styles.xpText}>{tipProgress.xp} XP</Text>
-                    </View>
-                  )}
-                </View>
-
-                {/* Progress bar */}
-                {isStarted && (
-                  <View style={styles.progressContainer}>
-                    <View style={styles.progressBar}>
-                      <View 
-                        style={[
-                          styles.progressFill, 
-                          { width: `${tipProgress.progress * 100}%` }
-                        ]} 
-                      />
-                    </View>
-                    <Text style={styles.progressText}>
-                      {tipProgress.askedQuestions}/3 {t("common:goalDetails.questionsExplored")}
-                    </Text>
-                  </View>
-                )}
-
-                <Text style={styles.tapHint}>
-                  {isStarted ? t("common:goalDetails.continueExploring") : t("common:goalDetails.startExploring")}
-                </Text>
-              </Pressable>
-            );
-          })}
-
-          {hiddenTipsCount > 0 && (
-            <Pressable 
-              style={styles.showAllButton}
-              onPress={() => setShowAllTips(!showAllTips)}
-            >
-              <Text style={styles.showAllText}>
-                {showAllTips 
-                  ? "Hide skeptical tips" 
-                  : `Show all (${hiddenTipsCount} hidden)`
-                }
-              </Text>
-            </Pressable>
-          )}
-        </View>
+        <TipsList
+          mainGoalId={mainGoalId}
+          categoryId="level_nervousSystem_optimization"
+          title="tips:nervousSystem.levels.optimization.title"
+        />
       </ScrollView>
     </LinearGradient>
   );
@@ -519,107 +344,5 @@ const styles = StyleSheet.create({
     color: Colors.dark.textTertiary,
     fontSize: 14,
     lineHeight: 20,
-  },
-  tipSection: {
-    marginBottom: 12,
-    padding: 12,
-    backgroundColor: "rgba(255,255,255,0.03)",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Colors.dark.accentVeryWeak,
-  },
-  tipPressed: {
-    backgroundColor: "rgba(255,255,255,0.08)",
-    borderColor: Colors.dark.accentMedium,
-  },
-  tipCompleted: {
-    borderColor: Colors.dark.accentMedium,
-    backgroundColor: Colors.dark.accentVeryWeak,
-  },
-  tipRelevant: {
-    borderColor: Colors.dark.successDefault,
-    backgroundColor: Colors.dark.successWeak,
-    borderWidth: 2,
-  },
-  tipInteresting: {
-    borderColor: Colors.dark.infoDefault,
-    backgroundColor: Colors.dark.infoWeak,
-    borderWidth: 2,
-  },
-  tipSkeptical: {
-    borderColor: Colors.dark.warmDefault,
-    backgroundColor: Colors.dark.warmWeak,
-    opacity: 0.7,
-  },
-  tipHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 8,
-  },
-  tipHeaderLeft: {
-    flex: 1,
-    marginRight: 12,
-  },
-  tipTitle: {
-    color: Colors.dark.textSecondary,
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 4,
-  },
-  tipDescription: {
-    color: Colors.dark.textTertiary,
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  xpBadge: {
-    backgroundColor: Colors.dark.accentWeak,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Colors.dark.accentMedium,
-  },
-  xpText: {
-    color: Colors.dark.accentStrong,
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  progressContainer: {
-    marginTop: 8,
-    marginBottom: 4,
-  },
-  progressBar: {
-    height: 6,
-    backgroundColor: Colors.dark.textWeak,
-    borderRadius: 3,
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    backgroundColor: Colors.dark.accentDefault,
-  },
-  progressText: {
-    color: Colors.dark.textMuted,
-    fontSize: 11,
-    marginTop: 4,
-  },
-  tapHint: {
-    color: Colors.dark.accentDefault,
-    fontSize: 12,
-    marginTop: 6,
-    fontStyle: "italic",
-  },
-  showAllButton: {
-    marginTop: 12,
-    paddingVertical: 12,
-    alignItems: "center",
-    borderTopWidth: 1,
-    borderTopColor: Colors.dark.textWeak,
-  },
-  showAllText: {
-    color: Colors.dark.accentDefault,
-    fontSize: 14,
-    fontWeight: "600",
   },
 });

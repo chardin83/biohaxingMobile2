@@ -4,8 +4,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useWearable } from "@/wearables/wearableProvider";
 import { TimeRange, SleepSummary, HRVSummary, DailyActivity, EnergySignal } from "@/wearables/types";
 import { WearableStatus } from "@/components/WearableStatus";
+import TipsList from "@/components/ui/TipsList";
 
-export default function MusclePerformanceScreen() {
+export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -260,37 +261,11 @@ export default function MusclePerformanceScreen() {
         </View>
 
         {/* Optimization Tips Card */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Optimize strength gains</Text>
-          
-          <Text style={styles.tipText}>
-            💪 Progressive overload: Increase weight by 2.5-5% when hitting rep targets
-          </Text>
-          <Text style={styles.tipText}>
-            📈 Track volume: Monitor sets × reps × weight for each muscle group weekly
-          </Text>
-          <Text style={styles.tipText}>
-            🔄 Deload weeks: Reduce volume by 40-50% every 4-6 weeks for supercompensation
-          </Text>
-          <Text style={styles.tipText}>
-            🍖 Protein timing: Front-load protein in first meal (30-40g) to maximize MPS
-          </Text>
-          <Text style={styles.tipText}>
-            💊 Creatine: 5g daily improves strength output by 5-15% (most researched supplement)
-          </Text>
-          <Text style={styles.tipText}>
-            🧊 Post-workout cold therapy: Wait 4+ hours to not blunt hypertrophy response
-          </Text>
-          <Text style={styles.tipText}>
-            😴 Prioritize deep sleep: Use sleep tracking to optimize recovery quality
-          </Text>
-          <Text style={styles.tipText}>
-            📊 Listen to HRV: Skip heavy lifts when HRV is 20%+ below baseline
-          </Text>
-          <Text style={styles.tipText}>
-            🎯 Mind-muscle connection: Slower eccentrics (3-4s) increase time under tension
-          </Text>
-        </View>
+        <TipsList
+          mainGoalId={mainGoalId}
+          categoryId="level_musclePerformance_1"
+          title="tips:muscle.levels.optimization.title"
+        />
       </ScrollView>
     </LinearGradient>
   );

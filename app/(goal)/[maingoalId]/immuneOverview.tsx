@@ -7,9 +7,13 @@ import { WearableStatus } from "@/components/WearableStatus";
 import { HRVMetric } from "@/components/metrics/HRVMetric";
 import { RestingHRMetric } from "@/components/metrics/RestingHRMetric";
 import { SleepMetric } from "@/components/metrics/SleepMetric";
+import { useTranslation } from "react-i18next";
+import { Colors } from "@/constants/Colors";
+import TipsList from "@/components/ui/TipsList";
 
-export default function ImmuneScreen() {
+export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sleepData, setSleepData] = useState<SleepSummary[]>([]);
@@ -157,25 +161,11 @@ export default function ImmuneScreen() {
         </View>
 
         {/* Tips card */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Support your immune system</Text>
-          
-          <Text style={styles.tipText}>
-            • Prioritize 7-9 hours of quality sleep
-          </Text>
-          <Text style={styles.tipText}>
-            • Manage stress through meditation, breathing exercises, or nature walks
-          </Text>
-          <Text style={styles.tipText}>
-            • Stay hydrated and maintain a nutrient-rich diet
-          </Text>
-          <Text style={styles.tipText}>
-            • Allow adequate recovery between intense workouts
-          </Text>
-          <Text style={styles.tipText}>
-            • Monitor your metrics for unusual changes that may indicate illness
-          </Text>
-        </View>
+        <TipsList
+          mainGoalId={mainGoalId}
+          categoryId="level_immuneSupport_1"
+          title="tips:immune.levels.optimization.title"
+        />
       </ScrollView>
     </LinearGradient>
   );
@@ -191,10 +181,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 44,
     fontWeight: "700",
-    color: "rgba(120,255,220,0.95)",
+    color: Colors.dark.accentStrong,
   },
   subtitle: {
-    color: "rgba(255,255,255,0.7)",
+    color: Colors.dark.textTertiary,
     fontSize: 16,
     marginTop: 6,
     marginBottom: 16,
@@ -204,10 +194,10 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     padding: 16,
     borderWidth: 1,
-    borderColor: "rgba(120,255,220,0.18)",
+    borderColor: Colors.dark.accentWeak,
   },
   cardTitle: {
-    color: "rgba(255,255,255,0.85)",
+    color: Colors.dark.textSecondary,
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 14,
@@ -225,22 +215,22 @@ const styles = StyleSheet.create({
     borderRightColor: "rgba(255,255,255,0.10)",
   },
   label: {
-    color: "rgba(255,255,255,0.65)",
+    color: Colors.dark.textTertiary,
     fontSize: 13,
   },
   valueSmall: {
-    color: "white",
+    color: Colors.dark.textPrimary,
     fontSize: 18,
     fontWeight: "700",
     marginTop: 4,
   },
   muted: {
-    color: "rgba(255,255,255,0.5)",
+    color: Colors.dark.textMuted,
     fontSize: 12,
     marginTop: 6,
   },
   source: {
-    color: "rgba(255,255,255,0.4)",
+    color: Colors.dark.textMuted,
     fontSize: 10,
     marginTop: 4,
   },
@@ -248,21 +238,15 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   infoLabel: {
-    color: "rgba(255,255,255,0.85)",
+    color: Colors.dark.textSecondary,
     fontSize: 15,
     fontWeight: "600",
     marginBottom: 6,
   },
   infoText: {
-    color: "rgba(255,255,255,0.65)",
+    color: Colors.dark.textTertiary,
     fontSize: 14,
     lineHeight: 20,
-  },
-  tipText: {
-    color: "rgba(255,255,255,0.75)",
-    fontSize: 14,
-    lineHeight: 24,
-    marginBottom: 4,
   },
   loadingContainer: {
     flex: 1,
@@ -270,7 +254,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   loadingText: {
-    color: "rgba(255,255,255,0.75)",
+    color: Colors.dark.textTertiary,
     fontSize: 16,
     marginTop: 12,
   },
@@ -280,7 +264,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   errorText: {
-    color: "rgba(255,100,100,0.9)",
+    color: Colors.dark.warmDefault,
     fontSize: 16,
   },
 });

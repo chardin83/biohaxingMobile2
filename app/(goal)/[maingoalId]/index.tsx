@@ -22,7 +22,7 @@ export default function GoalRootScreen() {
         {mainGoalId === "nervousSystem" && <NervousSystemOverview mainGoalId={mainGoalId} />}
         {mainGoalId === "sleep" && <SleepOverview mainGoalId={mainGoalId} />}
         {mainGoalId === "energy" && <EnergyOverview mainGoalId={mainGoalId} />}
-        {mainGoalId === "recovery" && <MusclePerformanceOverview mainGoalId={mainGoalId} />}
+        {mainGoalId === "musclePerformance" && <MusclePerformanceOverview mainGoalId={mainGoalId} />}
         {mainGoalId === "cardioFitness" && <CardioOverview mainGoalId={mainGoalId} />}
         {mainGoalId === "digestiveHealth" && <DigestiveOverview mainGoalId={mainGoalId} />}
         {mainGoalId === "immuneSupport" && <ImmuneOverview mainGoalId={mainGoalId} />}
