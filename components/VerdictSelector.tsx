@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { useTranslation } from "react-i18next";
 import AppBox from "@/components/ui/AppBox";
+import PlayIcon from "@/assets/icons/play.svg";
 
 type VerdictValue = "interested" | "startNow" | "wantMore" | "alreadyWorks" | "notInterested" | "noResearch" | "testedFailed";
 
@@ -40,7 +41,7 @@ export default function VerdictSelector({ currentVerdict, onVerdictPress }: Verd
   const isSelectedInCategory = (verdict: VerdictValue) => currentVerdict === verdict;
 
   // För sub-alternativ: anropa callback och stäng vyn
-  const getSubOption = (icon: string, titleKey: string, verdictValue: VerdictValue, xp = true) => (
+  const getSubOption = (icon: string | React.ReactNode, titleKey: string, verdictValue: VerdictValue, xp = true) => (
     <Pressable 
       style={[
         styles.verdictCard,
@@ -52,7 +53,11 @@ export default function VerdictSelector({ currentVerdict, onVerdictPress }: Verd
       }}
     >
       <View style={styles.verdictCardContent}>
-        <Text style={styles.verdictCardIcon}>{icon}</Text>
+        {typeof icon === "string" ? (
+          <Text style={styles.verdictCardIcon}>{icon}</Text>
+        ) : (
+          <View style={styles.iconContainer}>{icon}</View>
+        )}
         <View style={styles.verdictCardText}>
           <Text style={styles.verdictCardTitle}>{t(`common:goalDetails.${titleKey}`)}</Text>
         </View>
@@ -112,7 +117,7 @@ export default function VerdictSelector({ currentVerdict, onVerdictPress }: Verd
         >
           <Text style={styles.backButtonText}>{t("back")}</Text>
         </Pressable>
-        {getSubOption("▶️", "verdictStartNow", "startNow")}
+        {getSubOption(<PlayIcon width={28} height={28} />, "verdictStartNow", "startNow")}
         {getSubOption("🔍", "verdictWantMore", "wantMore")}
         {getSubOption("✅", "verdictAlreadyWorks", "alreadyWorks")}
       </AppBox>
@@ -163,6 +168,9 @@ const styles = StyleSheet.create({
   },
   verdictCardIcon: {
     fontSize: 28,
+    marginRight: 12,
+  },
+  iconContainer: {
     marginRight: 12,
   },
   verdictCardText: {
