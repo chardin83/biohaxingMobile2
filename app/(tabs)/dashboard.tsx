@@ -9,7 +9,7 @@ import { useSupplements } from "@/locales/supplements";
 import AppCard from "@/components/ui/AppCard";
 import ProgressBarWithLabel from "@/components/ui/ProgressbarWithLabel";
 import { levels } from "@/locales/levels";
-import { TipCategory, tipCategories } from "@/locales/tips";
+import { tips } from "@/locales/tips";
 import { mainGoals } from "@/locales/mainGoals";
 
 export default function BiohackerDashboard() {
@@ -26,26 +26,12 @@ export default function BiohackerDashboard() {
   const progressText = `${myXP} / ${xpMax} XP`;
   const levelTitle = levels.find((o) => o.level === myLevel)?.titleKey;
 
-  // Hantera nya steps-strukturen: visa tillskott från första steget (om finns),
-  // annars visa översatt titel för steget/goal
-  const getSupplementsText = (goal: TipCategory) => {
-    if (!goal) return "";
-    const step = goal.tips?.[0];
-    if (!step) return t(`tips:${goal.title}`);
-    if (!step.supplements || step.supplements.length === 0)
-      return t(`tips:${step.title}`);
-    return step.supplements
-      .map((s) => supplements.find((ss) => ss.id === s.id)?.name ?? s.id)
-      .join(", ");
-  };
-
   // Hitta favorit-markerade tips för ett specifikt mainGoal
   const getFavoriteTipsForMainGoal = (mainGoalId: string) => {
     return viewedTips
       ?.filter(tip => tip.mainGoalId === mainGoalId && tip.verdict === "relevant")
       .map(tip => {
-        const goalCategory = tipCategories.find(c => c.id === tip.goalId);
-        const tipDetails = goalCategory?.tips?.find(t => t.id === tip.tipId);
+        const tipDetails = tips.find(t => t.id === tip.tipId);
         return tipDetails ? t(`tips:${tipDetails.title}`) : null;
       })
       .filter(Boolean) || [];

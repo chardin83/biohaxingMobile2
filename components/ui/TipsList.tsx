@@ -3,40 +3,35 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
 import { useStorage } from "@/app/context/StorageContext";
-import { tipCategories } from "@/locales/tips";
+import { tips } from "@/locales/tips";
 import { Colors } from "@/constants/Colors";
 import TipCard from "./TipCard";
 
 interface TipsListProps {
   mainGoalId: string;
-  categoryId: string;
   title: string;
 }
 
-export default function TipsList({ mainGoalId, categoryId, title }: TipsListProps) {
+export default function TipsList({ mainGoalId, title }: TipsListProps) {
   const { t } = useTranslation();
   const router = useRouter();
   const { viewedTips } = useStorage();
   const [showAllTips, setShowAllTips] = React.useState(false);
 
-  // Hämta tips från kategorin
-  const tipsCategory = tipCategories.find(cat => cat.id === categoryId);
-  const tipsRaw = tipsCategory?.tips || [];
+  const tipsRaw = tips.filter(tip => tip.goals.some(goal => goal.id === mainGoalId));
 
   // Sortera tips: relevant → interesting → skeptical
   const sortedTips = React.useMemo(() => {
     return [...tipsRaw].sort((a, b) => {
       const aViewed = viewedTips?.find(
         v =>
-          v.mainGoalId === mainGoalId &&
-          v.goalId === categoryId &&
-          v.tipId === a.id
+            v.mainGoalId === mainGoalId &&
+            v.tipId === a.id
       );
       const bViewed = viewedTips?.find(
         v =>
-          v.mainGoalId === mainGoalId &&
-          v.goalId === categoryId &&
-          v.tipId === b.id
+            v.mainGoalId === mainGoalId &&
+            v.tipId === b.id
       );
 
       const aIsRelevant = aViewed?.verdict === "relevant";
@@ -51,7 +46,7 @@ export default function TipsList({ mainGoalId, categoryId, title }: TipsListProp
 
       return 0;
     });
-  }, [tipsRaw, viewedTips, mainGoalId, categoryId]);
+  }, [tipsRaw, viewedTips, mainGoalId]);
 
   // Filtrera tips: dölj skeptical om inte "show all"
   const visibleTips = React.useMemo(() => {
@@ -62,12 +57,11 @@ export default function TipsList({ mainGoalId, categoryId, title }: TipsListProp
       const viewedTip = viewedTips?.find(
         v =>
           v.mainGoalId === mainGoalId &&
-          v.goalId === categoryId &&
           v.tipId === tip.id
       );
       return viewedTip?.verdict !== "skeptical";
     });
-  }, [sortedTips, showAllTips, viewedTips, mainGoalId, categoryId]);
+  }, [sortedTips, showAllTips, viewedTips, mainGoalId]);
 
   const hiddenTipsCount = sortedTips.length - visibleTips.length;
 
@@ -75,7 +69,6 @@ export default function TipsList({ mainGoalId, categoryId, title }: TipsListProp
     const viewedTip = viewedTips?.find(
       v =>
         v.mainGoalId === mainGoalId &&
-        v.goalId === categoryId &&
         v.tipId === tipId
     );
 
@@ -104,7 +97,6 @@ export default function TipsList({ mainGoalId, categoryId, title }: TipsListProp
       router.push({
         pathname: `/(goal)/${mainGoalId}/details` as any,
         params: {
-          goalId: categoryId,
           tipId: tip.id,
         },
       });

@@ -179,7 +179,6 @@ export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
         {/* Tips card */}
         <TipsList
           mainGoalId={mainGoalId}
-          categoryId="sleepQuality_optimization"
           title="sleepQuality.levels.sleepBy2230.tips.0.title"
         />
       </ScrollView>

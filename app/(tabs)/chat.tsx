@@ -48,7 +48,7 @@ export default function ChatWithGPT4o(): JSX.Element {
   const scrollRef = useRef<ScrollView>(null);
   const { plans, errorMessage, shareHealthPlan, addChatMessageXP } = useStorage();
 
-  // Parse returnParams för att få tillgång till mainGoalId, goalId, tipId
+  // Parse returnParams för att få tillgång till mainGoalId, tipId
   const tipContext = returnParams ? JSON.parse(returnParams) : null;
 
   // Visa back-knappen om vi har initialPrompt, supplements eller goal
@@ -176,10 +176,9 @@ export default function ChatWithGPT4o(): JSX.Element {
     setLoading(true);
 
     // Ge XP för meddelandet om vi har tip-kontext
-    if (tipContext?.mainGoalId && tipContext?.goalId && tipContext?.tipId) {
+    if (tipContext?.mainGoalId && tipContext?.tipId) {
       const xpGained = addChatMessageXP(
         tipContext.mainGoalId, 
-        tipContext.goalId, 
         tipContext.tipId
       );
       console.log(`💬 +${xpGained} XP for chatting!`);

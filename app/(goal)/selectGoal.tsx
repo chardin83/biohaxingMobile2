@@ -2,7 +2,7 @@ import React from "react";
 import { Text, StyleSheet, ScrollView } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { Tip, tipCategories } from "@/locales/tips";
+import { Tip, tips } from "@/locales/tips";
 import { useSupplements } from "@/locales/supplements";
 import { Colors } from "@/constants/Colors";
 import AppCard from "@/components/ui/AppCard";
@@ -17,11 +17,11 @@ export default function SelectLevelScreen() {
   const { finishedGoals } = useStorage();
 
   const finishedGoalsForMainGoal = finishedGoals.filter((tip) => tip.mainGoalId);
-  const finishedTipIds = finishedGoalsForMainGoal.map((tipCategory) => tipCategory.goalId);
-  const newTips = tipCategories
-    .filter((tip) => tip.mainGoalIds.includes(mainGoalId) && tip.level <= myLevel)
+  const finishedTipIds = finishedGoalsForMainGoal.map((tip) => tip.tipId);
+  const newTips = tips
+    .filter((tip) => tip.goals.some((g) => g.id === mainGoalId) && (tip.level ?? 0) <= myLevel)
     .filter((tip) => !finishedTipIds.includes(tip.id))
-    .sort((a, b) => a.level - b.level);
+    .sort((a, b) => (a.level ?? 0) - (b.level ?? 0));
 
 const getSupplementNames = (tip: Tip) => {
   if (!tip?.supplements || !Array.isArray(tip.supplements)) return "";
@@ -35,7 +35,7 @@ const getSupplementNames = (tip: Tip) => {
 const handleSelectLevel = (tipId: string) => {
   router.push({
     pathname: "/(goal)/details",
-    params: { mainGoalId, goalId: tipId },
+    params: { mainGoalId, tipId },
   });
 };
 
@@ -45,9 +45,9 @@ const handleSelectLevel = (tipId: string) => {
       <Text style={styles.subHeader}>{t("common:selectGoal.description")}</Text>
 
       {newTips.map((tip) => {
-        const supplementsText = tip.tips ? getSupplementNames(tip.tips[0]) : "";
+        const supplementsText = getSupplementNames(tip);
         const title = t(`tips:${tip.title}`);
-        const description = tip.tips && tip.tips[0].taskInfo ? t(tip.tips[0].taskInfo.description) : "";
+        const description = tip.taskInfo ? t(tip.taskInfo.description) : "";
 
         return (
           <AppCard

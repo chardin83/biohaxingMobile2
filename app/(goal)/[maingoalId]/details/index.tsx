@@ -17,7 +17,7 @@ import {
 } from "@/app/utils/goalUtils";
 import AppBox from "@/components/ui/AppBox";
 import ProgressBarWithLabel from "@/components/ui/ProgressbarWithLabel";
-import { tipCategories } from "@/locales/tips";
+import { tips } from "@/locales/tips";
 import AnalysisModal from "@/components/modals/FileAnalysisModal";
 import { sendFileToAIAnalysis, sendFileToAISupplementAnalysis } from "@/services/gptServices";
 import { useStorage } from "@/app/context/StorageContext";
@@ -30,27 +30,23 @@ export default function GoalDetailScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { mainGoalId, goalId, tipId } = useLocalSearchParams<{
+  const { mainGoalId, tipId } = useLocalSearchParams<{
     mainGoalId: string;
-    goalId: string;
     tipId?: string;
   }>();
   const supplements = useSupplements();
   const { addTipView, incrementTipChat, viewedTips, setTipVerdict } = useStorage();
   
   const mainGoal = mainGoals.find((g) => g.id === mainGoalId);
-  const goal = tipCategories.find((l) => l.id === goalId);
-
-  // Hitta rätt tip baserat på tipId
-  const step: any = tipId 
-    ? goal?.tips?.find((tip) => tip.id === tipId) ?? {}
-    : goal?.tips?.[0] ?? {};
+  const tip = tipId
+    ? tips.find((t) => t.id === tipId)
+    : tips.find((t) => t.goals.some((g) => g.id === mainGoalId));
 
   const goalIcon = mainGoal?.icon ?? "target";
-  const supplementId = step?.supplements?.[0]?.id ?? undefined;
+  const supplementId = tip?.supplements?.[0]?.id ?? undefined;
   const supplementName = supplements?.find((s) => s.id === supplementId)?.name;
 
-  if (!mainGoal || !goal) {
+  if (!mainGoal || !tip) {
     return (
       <View style={styles.container}>
         <Text style={styles.notFound}>Goal not found.</Text>
@@ -58,22 +54,22 @@ export default function GoalDetailScreen() {
     );
   }
 
-  const information = step?.information;
-  const titleKey = step?.title;
+  const information = tip?.information;
+  const titleKey = tip?.title;
 
   // Ge XP när tips öppnas (första gången)
   React.useEffect(() => {
-    if (mainGoalId && goalId && tipId) {
-      const xpGained = addTipView(mainGoalId, goalId, tipId);
+    if (mainGoalId && tipId) {
+      const xpGained = addTipView(mainGoalId, tipId);
       if (xpGained > 0) {
         console.log(`🎉 You gained ${xpGained} XP for viewing this tip!`);
       }
     }
-  }, [mainGoalId, goalId, tipId]);
+  }, [mainGoalId, tipId]);
 
   // Hitta vilka frågor som redan ställts
   const currentTip = viewedTips?.find(
-    (v) => v.mainGoalId === mainGoalId && v.goalId === goalId && v.tipId === tipId
+    (v) => v.mainGoalId === mainGoalId && v.tipId === tipId
   );
   const askedQuestions = currentTip?.askedQuestions || [];
   const totalXpEarned = currentTip?.xpEarned || 0;
@@ -81,8 +77,8 @@ export default function GoalDetailScreen() {
 
   // Hantera verdict-klick
   const handleVerdictPress = (verdict: "relevant" | "interesting" | "skeptical") => {
-    if (mainGoalId && goalId && tipId) {
-      const xpGained = setTipVerdict(mainGoalId, goalId, tipId, verdict);
+    if (mainGoalId && tipId) {
+      const xpGained = setTipVerdict(mainGoalId, tipId, verdict);
       if (xpGained > 0) {
         console.log(`🎉 You gained ${xpGained} XP for your verdict!`);
       }
@@ -112,8 +108,8 @@ export default function GoalDetailScreen() {
     }
     
     // Ge XP för att chatta om tipset (om det är första gången för denna fråga)
-    if (mainGoalId && goalId && tipId) {
-      const xpGained = incrementTipChat(mainGoalId, goalId, tipId, questionType);
+    if (mainGoalId && tipId) {
+      const xpGained = incrementTipChat(mainGoalId, tipId, questionType);
       if (xpGained > 0) {
         console.log(`🎉 You gained ${xpGained} XP for exploring this question!`);
       } else {
@@ -126,7 +122,7 @@ export default function GoalDetailScreen() {
       params: {
         initialPrompt: fullPrompt,
         returnPath: `/(goal)/${mainGoalId}/details`,
-        returnParams: JSON.stringify({ mainGoalId, goalId, tipId }),
+        returnParams: JSON.stringify({ mainGoalId, tipId }),
       }
     });
   };

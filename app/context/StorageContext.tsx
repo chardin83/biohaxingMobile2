@@ -41,18 +41,17 @@ export type DailyNutritionSummary = {
 type ActiveGoal = {
   mainGoalId: string;
   startedAt: string;
-  goalId: string;
+  tipId: string;
 };
 
 type FinishedGoal = {
   mainGoalId: string;
   finished: string;
-  goalId: string;
+  tipId: string;
 };
 
 export interface ViewedTip {
   mainGoalId: string;
-  goalId: string;
   tipId: string;
   viewedAt: string;
   askedQuestions: string[]; // Array av frågor som ställts: ["studies", "experts", "risks"]
@@ -109,10 +108,10 @@ interface StorageContextType {
   ) => void;
   viewedTips: ViewedTip[];
   setViewedTips: (tips: ViewedTip[] | ((prev: ViewedTip[]) => ViewedTip[])) => void;
-  addTipView: (mainGoalId: string, goalId: string, tipId: string) => number;
-  incrementTipChat: (mainGoalId: string, goalId: string, tipId: string, questionType: string) => number;
-  addChatMessageXP: (mainGoalId: string, goalId: string, tipId: string) => number;
-  setTipVerdict: (mainGoalId: string, goalId: string, tipId: string, verdict: "relevant" | "interesting" | "skeptical") => number;
+  addTipView: (mainGoalId: string, tipId: string) => number;
+  incrementTipChat: (mainGoalId: string, tipId: string, questionType: string) => number;
+  addChatMessageXP: (mainGoalId: string, tipId: string) => number;
+  setTipVerdict: (mainGoalId: string, tipId: string, verdict: "relevant" | "interesting" | "skeptical") => number;
 }
 
 const STORAGE_KEYS = {
@@ -359,9 +358,9 @@ export const StorageProvider = ({
     });
   };
 
-  const addTipView = (mainGoalId: string, goalId: string, tipId: string): number => {
+  const addTipView = (mainGoalId: string, tipId: string): number => {
     const existing = viewedTipsState.find(
-      (v) => v.mainGoalId === mainGoalId && v.goalId === goalId && v.tipId === tipId
+      (v) => v.mainGoalId === mainGoalId && v.tipId === tipId
     );
 
     if (existing) {
@@ -371,7 +370,6 @@ export const StorageProvider = ({
     const xpForView = 10;
     const newView: ViewedTip = {
       mainGoalId,
-      goalId,
       tipId,
       viewedAt: new Date().toISOString(),
       askedQuestions: [], // Tom array från början
@@ -383,9 +381,9 @@ export const StorageProvider = ({
     return xpForView;
   };
 
-  const incrementTipChat = (mainGoalId: string, goalId: string, tipId: string, questionType: string): number => {
+  const incrementTipChat = (mainGoalId: string, tipId: string, questionType: string): number => {
     const existing = viewedTipsState.find(
-      (v) => v.mainGoalId === mainGoalId && v.goalId === goalId && v.tipId === tipId
+      (v) => v.mainGoalId === mainGoalId && v.tipId === tipId
     );
 
     // Om frågan redan ställts, ingen XP
@@ -396,7 +394,7 @@ export const StorageProvider = ({
     const xpForChat = 5;
     
     const updated = viewedTipsState.map((v) => {
-      if (v.mainGoalId === mainGoalId && v.goalId === goalId && v.tipId === tipId) {
+      if (v.mainGoalId === mainGoalId && v.tipId === tipId) {
         return { 
           ...v, 
           askedQuestions: [...v.askedQuestions, questionType],
@@ -412,11 +410,11 @@ export const StorageProvider = ({
   };
 
   // Lägg till ny funktion för att ge XP för varje chat-meddelande
-  const addChatMessageXP = (mainGoalId: string, goalId: string, tipId: string): number => {
+  const addChatMessageXP = (mainGoalId: string, tipId: string): number => {
     const xpPerMessage = 2; // 2 XP per meddelande
     
     const updated = viewedTipsState.map((v) => {
-      if (v.mainGoalId === mainGoalId && v.goalId === goalId && v.tipId === tipId) {
+      if (v.mainGoalId === mainGoalId && v.tipId === tipId) {
         return { 
           ...v, 
           xpEarned: v.xpEarned + xpPerMessage,
@@ -430,16 +428,16 @@ export const StorageProvider = ({
     return xpPerMessage;
   };
 
-  const setTipVerdict = (mainGoalId: string, goalId: string, tipId: string, verdict: "relevant" | "interesting" | "skeptical"): number => {
+  const setTipVerdict = (mainGoalId: string, tipId: string, verdict: "relevant" | "interesting" | "skeptical"): number => {
     const existing = viewedTipsState.find(
-      (v) => v.mainGoalId === mainGoalId && v.goalId === goalId && v.tipId === tipId
+      (v) => v.mainGoalId === mainGoalId && v.tipId === tipId
     );
 
     // Om verdict redan satt, ingen XP
     if (existing?.verdict) {
       // Uppdatera bara verdict, ingen XP
       const updated = viewedTipsState.map((v) => {
-        if (v.mainGoalId === mainGoalId && v.goalId === goalId && v.tipId === tipId) {
+        if (v.mainGoalId === mainGoalId && v.tipId === tipId) {
           return { ...v, verdict };
         }
         return v;
@@ -451,7 +449,7 @@ export const StorageProvider = ({
     const xpForVerdict = 5;
     
     const updated = viewedTipsState.map((v) => {
-      if (v.mainGoalId === mainGoalId && v.goalId === goalId && v.tipId === tipId) {
+      if (v.mainGoalId === mainGoalId && v.tipId === tipId) {
         return { 
           ...v, 
           verdict,

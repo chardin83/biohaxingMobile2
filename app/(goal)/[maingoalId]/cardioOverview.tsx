@@ -196,7 +196,6 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
         {/* Tips Card */}
         <TipsList
           mainGoalId={mainGoalId}
-          categoryId="cardioFitness_optimization"
           title="tips:cardio.levels.optimization.title"
         />
       </ScrollView>

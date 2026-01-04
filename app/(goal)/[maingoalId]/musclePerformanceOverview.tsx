@@ -263,7 +263,6 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
         {/* Optimization Tips Card */}
         <TipsList
           mainGoalId={mainGoalId}
-          categoryId="musclePerformance_optimization"
           title="tips:muscle.levels.optimization.title"
         />
       </ScrollView>
