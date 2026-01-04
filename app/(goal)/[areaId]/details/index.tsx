@@ -77,9 +77,9 @@ export default function AreaDetailScreen() {
   const currentVerdict = currentTip?.verdict;
 
   // Hantera verdict-klick
-  const handleVerdictPress = (verdict: "relevant" | "interesting" | "skeptical") => {
+  const handleVerdictPress = (verdict: "interested" | "startNow" | "wantMore" | "alreadyWorks" | "notInterested" | "noResearch" | "testedFailed") => {
     if (areaId && tipId) {
-      const xpGained = setTipVerdict(areaId, tipId, verdict);
+      const xpGained = setTipVerdict(areaId, tipId, verdict as any);
       if (xpGained > 0) {
         console.log(`🎉 You gained ${xpGained} XP for your verdict!`);
       }

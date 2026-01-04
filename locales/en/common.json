@@ -107,12 +107,13 @@
     "skipConfirmBody": "If you skip now, you'll have to start over.",
     "skipConfirmYes": "Yes, skip goal",
     "verdict": "What do you think?",
-    "verdictRelevant": "Relevant for me",
-    "verdictRelevantDesc": "I think this seems interesting.",
-    "verdictFollowResearch": "Interesting",
-    "verdictFollowResearchDesc": "But I want more research first.",
-    "verdictSkeptical": "Skeptical about this",
-    "verdictSkepticalDesc": "I'm skeptical about this idea."
+    "verdictInterested": "Interested",
+    "verdictNotInterested": "Not interested",
+    "verdictStartNow": "Start now",
+    "verdictWantMore": "Want more research",
+    "verdictAlreadyWorks": "Already tested - works",
+    "verdictNoResearch": "No research support",
+    "verdictTestedFailed": "Already tested - didn't work"
   },
   "chat": {
       "welcomeMessage": "Hi! I'm your personal health coach – specialized in biohacking and supplements. Ask me about daily routines or optimizing your health. 💪🌿",

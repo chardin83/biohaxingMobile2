@@ -115,8 +115,14 @@
       "verdictRelevantDesc": "Jag tycker detta verkar intressant.",
       "verdictFollowResearch": "Intressant",
       "verdictFollowResearchDesc": "Men jag vill ha mer forskning först.",
-      "verdictSkeptical": "Skeptisk till detta",
-      "verdictSkepticalDesc": "Jag är tveksam till denna idé."
+      "verdict": "Vad tycker du?",
+      "verdictInterested": "Intresserad",
+      "verdictNotInterested": "Inte intresserad",
+      "verdictStartNow": "Börja nu",
+      "verdictWantMore": "Vill veta mer",
+      "verdictAlreadyWorks": "Redan testad - funkar",
+      "verdictNoResearch": "Inte stöd i forskning",
+      "verdictTestedFailed": "Redan testad - funkade inte"
     },
    "chat": {
       "welcomeMessage": "Hej! Jag är din personliga hälsocoach – specialiserad på biohacking och kosttillskott. Ställ gärna en fråga om tillskott, dagliga rutiner eller hur du optimerar din hälsa. 💪🌿",
