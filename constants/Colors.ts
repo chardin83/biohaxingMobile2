@@ -72,5 +72,15 @@ export const Colors = {
     // Info/Blue variants
     infoDefault: "rgba(120,200,255,0.5)",
     infoWeak: "rgba(120,200,255,0.06)",
+
+    // Gradients
+    gradients: {
+      sunrise: {
+        colors: ["#0B1021", "#1F3150", "#FF8E53"],
+        locations: [0, 0.7, 1],
+        start: { x: 0.5, y: 0.35 },
+        end: { x: 0.5, y: 1 },
+      },
+    },
   },
 };

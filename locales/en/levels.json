@@ -1,17 +1,17 @@
 {
-    "1": "Curious Biohacker",
-    "2": "Supplement Seeker",
-    "3": "Circadian Explorer",
-    "4": "Neurohacker",
-    "5": "Mitochondria Master",
-    "6": "Hormone Alchemist",
-    "7": "Longevity Strategist",
-    "8": "Epigenetic Engineer",
-    "9": "Quantum Wellness Hacker",
-    "10": "Transhuman Visionary",
-    "levelUp": {
-        "title": "You've leveled up!",
-        "level": "Level"
-    }
+  "1": "Curious Biohacker",
+  "2": "Seeker Biohacker",
+  "3": "Biological Optimizer",
+  "4": "Neurohacker",
+  "5": "Mitochondria Master",
+  "6": "Hormone Alchemist",
+  "7": "Longevity Strategist",
+  "8": "Epigenetic Engineer",
+  "9": "Quantum Wellness Hacker",
+  "10": "Transhuman Visionary",
+  "levelUp": {
+    "title": "You've leveled up!",
+    "level": "Level"
+  }
 }
   

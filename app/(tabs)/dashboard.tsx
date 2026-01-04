@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
-import Smart from "@/assets/images/smart.png";
+import { LinearGradient } from "expo-linear-gradient";
+import Smart from "@/assets/images/level1_small.png";
 import { Colors } from "@/constants/Colors";
 import { useStorage } from "../context/StorageContext";
 import { useRouter } from "expo-router";
@@ -38,59 +39,70 @@ export default function BiohackerDashboard() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.appTitle}>{t("common:dashboard.appTitle")}</Text>
+    <LinearGradient
+      colors={Colors.dark.gradients.sunrise.colors}
+      locations={Colors.dark.gradients.sunrise.locations}
+      start={Colors.dark.gradients.sunrise.start}
+      end={Colors.dark.gradients.sunrise.end}
+      style={styles.gradient}
+    >
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.appTitle}>{t("common:dashboard.appTitle")}</Text>
 
-      <View style={styles.imageWrapper}>
-        <Image source={Smart} style={styles.image} resizeMode="cover" />
-        <Text style={styles.levelOverlay}>{t("common:dashboard.level")} {myLevel}</Text>
-      </View>
+        <View style={styles.imageWrapper}>
+          <Image source={Smart} style={styles.image} resizeMode="cover" />
+          <Text style={styles.levelOverlay}>{t("common:dashboard.level")} {myLevel}</Text>
+        </View>
 
-      <Text style={styles.title}>{t(`levels:${levelTitle}`)}</Text>
-      <ProgressBarWithLabel progress={myXP / xpMax} label={progressText} />
+        <Text style={styles.title}>{t(`levels:${levelTitle}`)}</Text>
+        <ProgressBarWithLabel progress={myXP / xpMax} label={progressText} />
 
-      {areas
-        .filter((item) => myGoals.includes(item.id))
-        .map((item) => {
-          const areaId = item.id;
-          const favoriteTipsList = getFavoriteTipsForArea(areaId);
-          
-          // Om det finns favoriter, visa dem, annars visa en standard-text
-          const description = favoriteTipsList.length > 0 
-            ? `${favoriteTipsList.join("\n")}`
-            : t("common:dashboard.noFavorites");
+        {areas
+          .filter((item) => myGoals.includes(item.id))
+          .map((item) => {
+            const areaId = item.id;
+            const favoriteTipsList = getFavoriteTipsForArea(areaId);
+            
+            // Om det finns favoriter, visa dem, annars visa en standard-text
+            const description = favoriteTipsList.length > 0 
+              ? `${favoriteTipsList.join("\n")}`
+              : t("common:dashboard.noFavorites");
 
-          return (
-            <AppCard
-              key={areaId}
-              icon={item.icon}
-              title={t(`areas:${item.id}.title`)}
-              description={description}
-              isActive={favoriteTipsList.length > 0}
-              onPress={() =>
-                router.push({
-                  pathname: "/(goal)/[areaId]",
-                  params: { areaId },
-                })
-              }
-            />
-          );
-        })}
+            return (
+              <AppCard
+                key={areaId}
+                icon={item.icon}
+                title={t(`areas:${item.id}.title`)}
+                description={description}
+                isActive={favoriteTipsList.length > 0}
+                onPress={() =>
+                  router.push({
+                    pathname: "/(goal)/[areaId]",
+                    params: { areaId },
+                  })
+                }
+              />
+            );
+          })}
 
-      <View style={styles.editLinkRow}>
-        <TouchableOpacity onPress={() => router.push("/(manage)/areas")}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <Text style={styles.editButtonText}>{t("common:dashboard.editAreas")}</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        <View style={styles.editLinkRow}>
+          <TouchableOpacity onPress={() => router.push("/(manage)/areas")}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Text style={styles.editButtonText}>{t("common:dashboard.editAreas")}</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
+  gradient: {
+    flex: 1,
+  },
   container: {
-    backgroundColor: Colors.dark.background,
+    backgroundColor: "transparent",
     flexGrow: 1,
     alignItems: "center",
     padding: 10,
