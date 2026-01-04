@@ -218,7 +218,6 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
 const styles = StyleSheet.create({
   bg: { flex: 1 },
   container: {
-    paddingTop: 80,
     paddingHorizontal: 18,
     paddingBottom: 32,
   },

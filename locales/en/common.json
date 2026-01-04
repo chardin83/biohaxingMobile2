@@ -131,6 +131,7 @@
   "dashboard": {
     "appTitle": "BIOHAXING",
     "level": "LEVEL",
-    "noFavorites": "No favorites yet"
+    "noFavorites": "No favorites yet",
+    "editAreas": "Edit Areas"
   }
 }

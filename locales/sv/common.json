@@ -137,7 +137,8 @@
     "dashboard": {
       "appTitle": "BIOHAXING",
       "level": "NIVÅ",
-      "noFavorites": "Inga favoriter än"
+      "noFavorites": "Inga favoriter än",
+      "editAreas": "Redigera Områden"
     }
   }
     

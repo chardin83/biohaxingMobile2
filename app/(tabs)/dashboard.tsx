@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
 import Smart from "@/assets/images/smart.png";
 import { Colors } from "@/constants/Colors";
 import { useStorage } from "../context/StorageContext";
@@ -76,6 +76,14 @@ export default function BiohackerDashboard() {
             />
           );
         })}
+
+      <View style={styles.editLinkRow}>
+        <TouchableOpacity onPress={() => router.push("/(manage)/areas")}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Text style={styles.editButtonText}>{t("common:dashboard.editAreas")}</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }
@@ -131,5 +139,17 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
     textTransform: "uppercase",
+  },
+  editLinkRow: {
+    width: "100%",
+    alignItems: "flex-end",
+    paddingRight: 20,
+    marginTop: 12,
+    marginBottom: 24,
+  },
+  editButtonText: {
+    color: Colors.dark.accentStrong,
+    fontSize: 14,
+    fontWeight: "600",
   },
 });

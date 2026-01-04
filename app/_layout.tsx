@@ -92,6 +92,15 @@ export default function RootLayout() {
                 />
 
                 <Stack.Screen
+                  name="(manage)"
+                  options={{
+                    headerShown: false,
+                    title: "",
+                    headerBackTitle: t("back"),
+                  }}
+                />
+
+                <Stack.Screen
                   name="(onboarding)/onboardingsupplements"
                   options={{
                     headerShown: false,

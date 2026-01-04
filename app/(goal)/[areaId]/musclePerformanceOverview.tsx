@@ -273,7 +273,6 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
 const styles = StyleSheet.create({
   bg: { flex: 1 },
   container: {
-    paddingTop: 80,
     paddingHorizontal: 18,
     paddingBottom: 32,
   },
