@@ -20,7 +20,7 @@ export default function GoalRootScreen() {
         <BackButton onPress={() => router.push("/(tabs)/dashboard")} />
 
         {mainGoalId === "nervousSystem" && <NervousSystemOverview mainGoalId={mainGoalId} />}
-        {mainGoalId === "sleep" && <SleepOverview mainGoalId={mainGoalId} />}
+        {mainGoalId === "sleepQuality" && <SleepOverview mainGoalId={mainGoalId} />}
         {mainGoalId === "energy" && <EnergyOverview mainGoalId={mainGoalId} />}
         {mainGoalId === "musclePerformance" && <MusclePerformanceOverview mainGoalId={mainGoalId} />}
         {mainGoalId === "cardioFitness" && <CardioOverview mainGoalId={mainGoalId} />}

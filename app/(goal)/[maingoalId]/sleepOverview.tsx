@@ -5,6 +5,7 @@ import { useWearable } from "@/wearables/wearableProvider";
 import { WearableStatus } from "@/components/WearableStatus";
 import { SleepMetric } from "@/components/metrics/SleepMetric";
 import { SleepSummary } from "@/wearables/types";
+import TipsList from "@/components/ui/TipsList";
 
 function daysAgo(n: number) {
   const d = new Date();
@@ -12,7 +13,7 @@ function daysAgo(n: number) {
   return d.toISOString();
 }
 
-export default function SleepScreen() {
+export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();
 
   const [loading, setLoading] = React.useState(true);
@@ -176,79 +177,11 @@ export default function SleepScreen() {
         </View>
 
         {/* Tips card */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Optimize your sleep</Text>
-          
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>🫀 Lower Your Heart Rate Before Bed (Most Important!)</Text>
-            <Text style={styles.infoText}>
-              The key to great sleep is entering bed with a low resting heart rate. 
-              A calm nervous system signals your body it's safe to enter deep sleep. 
-              High HR keeps you in fight-or-flight mode and fragments sleep cycles.
-            </Text>
-          </View>
-
-          <Text style={styles.tipText}>
-            ⏰ Stop eating 3-4 hours before bed (digestion raises HR by 10-15 bpm)
-          </Text>
-          <Text style={styles.tipText}>
-            ☕ No caffeine after 2 PM (raises HR and blocks adenosine for 6-8 hours)
-          </Text>
-          <Text style={styles.tipText}>
-            📰 Avoid news, debates, or conflict 2 hours before bed (cortisol spike)
-          </Text>
-          <Text style={styles.tipText}>
-            🎬 Skip thriller/horror movies in the evening (adrenaline stays elevated)
-          </Text>
-          <Text style={styles.tipText}>
-            🧘 Practice 4-7-8 breathing: inhale 4s, hold 7s, exhale 8s (lowers HR 5-10 bpm)
-          </Text>
-          <Text style={styles.tipText}>
-            💡 Dim lights after sunset - use red/amber bulbs or salt lamps (preserves melatonin)
-          </Text>
-          <Text style={styles.tipText}>
-            🔴 Red light therapy (630-700nm) safe for evening use - doesn't suppress melatonin
-          </Text>
-          <Text style={styles.tipText}>
-            📱 No screens 1-2 hours before bed OR use blue light blockers/night mode
-          </Text>
-          <Text style={styles.tipText}>
-            🕶️ Blue light blocking glasses (amber lenses) 2-3h before bed if using screens
-          </Text>
-          <Text style={styles.tipText}>
-            💡 Avoid bright overhead lights in evening - use lamps with warm bulbs (&lt;2700K)
-          </Text>
-          <Text style={styles.tipText}>
-            🛁 Hot bath/shower 90 min before bed (temperature drop signals sleep)
-          </Text>
-          <Text style={styles.tipText}>
-            📖 Replace screen time with reading (use dim amber book light)
-          </Text>
-          <Text style={styles.tipText}>
-            🌅 Get morning sunlight (10-30 min) to anchor circadian rhythm
-          </Text>
-          <Text style={styles.tipText}>
-            ❄️ Keep bedroom cool (60-67°F / 15-19°C) for optimal sleep
-          </Text>
-          <Text style={styles.tipText}>
-            🌑 Complete darkness - use blackout curtains or eye mask
-          </Text>
-          <Text style={styles.tipText}>
-            🍷 Limit alcohol - it fragments sleep and reduces REM
-          </Text>
-          <Text style={styles.tipText}>
-            🏃 Exercise regularly, but finish 3+ hours before bed
-          </Text>
-          <Text style={styles.tipText}>
-            ⏰ Consistent sleep/wake times (even weekends) - within 30 min
-          </Text>
-          <Text style={styles.tipText}>
-            💊 Consider magnesium glycinate (200-400mg) 1-2h before bed
-          </Text>
-          <Text style={styles.tipText}>
-            🛏️ Use bed only for sleep (not work, TV, phone scrolling)
-          </Text>
-        </View>
+        <TipsList
+          mainGoalId={mainGoalId}
+          categoryId="sleepQuality_optimization"
+          title="sleepQuality.levels.sleepBy2230.tips.0.title"
+        />
       </ScrollView>
     </LinearGradient>
   );

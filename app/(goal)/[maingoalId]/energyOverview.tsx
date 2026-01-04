@@ -247,7 +247,7 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
         {/* Tips Card */}
         <TipsList
           mainGoalId={mainGoalId}
-          categoryId="level_energy_1"
+          categoryId="energy_optimization"
           title="tips:energy.levels.optimization.title"
         />
 

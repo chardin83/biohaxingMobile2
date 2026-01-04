@@ -222,7 +222,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
         {/* Tips card */}
         <TipsList
           mainGoalId={mainGoalId}
-          categoryId="level_nervousSystem_optimization"
+          categoryId="nervousSystem_optimization"
           title="tips:nervousSystem.levels.optimization.title"
         />
       </ScrollView>
