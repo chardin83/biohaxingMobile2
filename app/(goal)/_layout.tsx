@@ -7,8 +7,7 @@ export default function GoalLayout() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="selectGoal" />
-      <Stack.Screen name="[mainGoalId]" />
+      <Stack.Screen name="[areaId]" />
     </Stack>
   );
 }

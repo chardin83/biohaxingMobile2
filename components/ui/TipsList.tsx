@@ -23,7 +23,7 @@ export default function TipsList({ areaId, title }: Readonly<TipsListProps>) {
   const { viewedTips } = useStorage();
   const [showAllTips, setShowAllTips] = React.useState(false);
 
-  const tipsRaw = tips.filter(tip => tip.goals.some(goal => goal.id === areaId));
+  const tipsRaw = tips.filter(tip => tip.areas.some(area => area.id === areaId));
 
   const positiveVerdicts = React.useMemo(() => new Set(POSITIVE_VERDICTS), []);
   const negativeVerdicts = React.useMemo(() => new Set(NEGATIVE_VERDICTS), []);

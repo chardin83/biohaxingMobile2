@@ -40,7 +40,7 @@ export default function AreaDetailScreen() {
   const mainArea = areas.find((g) => g.id === areaId);
   const tip = tipId
     ? tips.find((t) => t.id === tipId)
-    : tips.find((t) => t.goals.some((g) => g.id === areaId));
+    : tips.find((t) => t.areas.some((a) => a.id === areaId));
 
   const goalIcon = mainArea?.icon ?? "target";
   const supplementId = tip?.supplements?.[0]?.id ?? undefined;
@@ -137,7 +137,7 @@ export default function AreaDetailScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.goalTitle}>{t(`tips:${areaId}.title`)}</Text>
+          <Text style={styles.goalTitle}>{t(`areas:${areaId}.title`)}</Text>
           <View style={styles.topSection}>
             <View style={styles.iconWrapper}>
               <Icon source={goalIcon} size={50} color={Colors.dark.primary} />

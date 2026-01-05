@@ -14,7 +14,7 @@ type TaskInfo = {
     tasks?: string[];
 };
 
-export type TipGoal = {
+export type TipArea = {
   id: string;
   description: string;
 };
@@ -28,7 +28,7 @@ export type Tip = {
   id: string;
   level?: number;
   xp?: number;
-  goals: TipGoal[];
+  areas: TipArea[];
   title: string;
   taskInfo: TaskInfo;
   supplements?: SupplementReference[];
@@ -43,7 +43,7 @@ export const tips: Tip[] = [
     id: "nutritional_support_vitality",
     level: 1,
     xp: 300,
-    goals: [
+    areas: [
       { id: "energy", description: "nutritional_support_vitality.description" }
     ],
     title: "nutritional_support_vitality.title",
@@ -62,7 +62,7 @@ export const tips: Tip[] = [
     id: "vitamin_d_status_awareness",
     level: 3,
     xp: 700,
-    goals: [
+    areas: [
       { id: "energy", description: "vitamin_d_status_awareness.description" }
     ],
     title: "vitamin_d_status_awareness.title",
@@ -81,7 +81,7 @@ export const tips: Tip[] = [
     id: "vitamin_d_intake",
     level: 4,
     xp: 900,
-    goals: [{ id: "energy", description: "vitamin_d_intake.description" }],
+    areas: [{ id: "energy", description: "vitamin_d_intake.description" }],
     title: "vitamin_d_intake.title",
     taskInfo: {
       description: "vitamin_d_intake.description",
@@ -98,7 +98,7 @@ export const tips: Tip[] = [
     id: "vitamin_d_measurements",
     level: 5,
     xp: 1100,
-    goals: [{ id: "energy", description: "vitamin_d_measurements.description" }],
+    areas: [{ id: "energy", description: "vitamin_d_measurements.description" }],
     title: "vitamin_d_measurements.title",
     taskInfo: {
       description: "vitamin_d_measurements.description",
@@ -115,7 +115,7 @@ export const tips: Tip[] = [
     id: "vitamin_mineral_balance",
     level: 6,
     xp: 1300,
-    goals: [{ id: "energy", description: "vitamin_mineral_balance.description" }],
+    areas: [{ id: "energy", description: "vitamin_mineral_balance.description" }],
     title: "vitamin_mineral_balance.title",
     taskInfo: {
       description: "vitamin_mineral_balance.description",
@@ -132,7 +132,7 @@ export const tips: Tip[] = [
     id: "mitochondrial_nutrients_coq10",
     level: 2,
     xp: 500,
-    goals: [
+    areas: [
       { id: "energy", description: "mitochondrial_nutrients_coq10.description" },
       { id: "immuneSupport", description: "mitochondrial_nutrients_coq10.description" }
     ],
@@ -151,7 +151,7 @@ export const tips: Tip[] = [
     id: "cellular_energy_nad",
     level: 2,
     xp: 500,
-    goals: [
+    areas: [
       { id: "energy", description: "cellular_energy_nad.description" },
       { id: "immuneSupport", description: "cellular_energy_nad.description" }
     ],
@@ -169,7 +169,7 @@ export const tips: Tip[] = [
     id: "sleep_timing_circadian",
     level: 2,
     xp: 500,
-    goals: [
+    areas: [
       { id: "sleepQuality", description: "sleep_timing_circadian.description" },
       { id: "immuneSupport", description: "sleep_timing_circadian.description" },
       { id: "energy", description: "sleep_timing_circadian.description" }
@@ -179,13 +179,12 @@ export const tips: Tip[] = [
       description: "sleep_timing_circadian.description",
       duration: { amount: 14, unit: "days" },
     },
-    supplements: [{ id: "magnesium" }],
   },
   {
     id: "sleep_magnesium_hormonal",
     level: 3,
     xp: 700,
-    goals: [
+    areas: [
       { id: "sleepQuality", description: "sleep_magnesium_hormonal.description" },
       { id: "immuneSupport", description: "sleep_magnesium_hormonal.description" },
       { id: "energy", description: "sleep_magnesium_hormonal.description" }
@@ -201,7 +200,7 @@ export const tips: Tip[] = [
     id: "calm_alertness_ltheanine",
     level: 2,
     xp: 500,
-    goals: [{ id: "focus", description: "calm_alertness_ltheanine.description" }],
+    areas: [{ id: "focus", description: "calm_alertness_ltheanine.description" }],
     title: "calm_alertness_ltheanine.title",
     taskInfo: {
       description: "calm_alertness_ltheanine.description",
@@ -212,7 +211,7 @@ export const tips: Tip[] = [
     id: "neurotransmitter_ltyrosine",
     level: 3,
     xp: 700,
-    goals: [{ id: "focus", description: "neurotransmitter_ltyrosine.description" }],
+    areas: [{ id: "focus", description: "neurotransmitter_ltyrosine.description" }],
     title: "neurotransmitter_ltyrosine.title",
     taskInfo: {
       description: "neurotransmitter_ltyrosine.description",
@@ -223,7 +222,7 @@ export const tips: Tip[] = [
     id: "maintain_hydration",
     level: 1,
     xp: 300,
-    goals: [
+    areas: [
       { id: "immuneSupport", description: "maintain_hydration.description" },
       { id: "energy", description: "maintain_hydration.description" },
       { id: "cardioFitness", description: "maintain_hydration.description" }
@@ -242,7 +241,7 @@ export const tips: Tip[] = [
     id: "vitamin_c_immunity",
     level: 2,
     xp: 500,
-    goals: [{ id: "immuneSupport", description: "vitamin_c_immunity.description" }],
+    areas: [{ id: "immuneSupport", description: "vitamin_c_immunity.description" }],
     title: "vitamin_c_immunity.title",
     taskInfo: {
       description: "vitamin_c_immunity.description",
@@ -253,7 +252,7 @@ export const tips: Tip[] = [
     id: "echinacea_herbs",
     level: 3,
     xp: 700,
-    goals: [{ id: "immuneSupport", description: "echinacea_herbs.description" }],
+    areas: [{ id: "immuneSupport", description: "echinacea_herbs.description" }],
     title: "echinacea_herbs.title",
     taskInfo: {
       description: "echinacea_herbs.description",
@@ -264,7 +263,7 @@ export const tips: Tip[] = [
     id: "calming_glycine",
     level: 2,
     xp: 500,
-    goals: [{ id: "nervousSystem", description: "calming_glycine.description" }],
+    areas: [{ id: "nervousSystem", description: "calming_glycine.description" }],
     title: "calming_glycine.title",
     taskInfo: {
       description: "calming_glycine.description",
@@ -276,7 +275,7 @@ export const tips: Tip[] = [
     id: "neuropeptide_semax",
     level: 3,
     xp: 700,
-    goals: [{ id: "nervousSystem", description: "neuropeptide_semax.description" }],
+    areas: [{ id: "nervousSystem", description: "neuropeptide_semax.description" }],
     title: "neuropeptide_semax.title",
     taskInfo: {
       description: "neuropeptide_semax.description",
@@ -287,7 +286,7 @@ export const tips: Tip[] = [
     id: "breathwork_parasympathetic",
     level: 1,
     xp: 0,
-    goals: [
+    areas: [
       { id: "nervousSystem", description: "breathwork_parasympathetic.description" },
       { id: "immuneSupport", description: "breathwork_parasympathetic.description" },
       { id: "energy", description: "breathwork_parasympathetic.description" }
@@ -306,7 +305,7 @@ export const tips: Tip[] = [
     id: "sleep_optimization_recovery",
     level: 1,
     xp: 0,
-    goals: [
+    areas: [
       { id: "nervousSystem", description: "sleep_optimization_recovery.description" },
       { id: "immuneSupport", description: "sleep_optimization_recovery.description" },
       { id: "energy", description: "sleep_optimization_recovery.description" },
@@ -327,7 +326,7 @@ export const tips: Tip[] = [
     id: "sunlight_circadian",
     level: 1,
     xp: 0,
-    goals: [
+    areas: [
       { id: "nervousSystem", description: "sunlight_circadian.description" },
       { id: "immuneSupport", description: "sunlight_circadian.description" }
     ],
@@ -345,7 +344,7 @@ export const tips: Tip[] = [
     id: "cold_exposure_ans",
     level: 2,
     xp: 0,
-    goals: [{ id: "nervousSystem", description: "cold_exposure_ans.description" }],
+    areas: [{ id: "nervousSystem", description: "cold_exposure_ans.description" }],
     title: "cold_exposure_ans.title",
     taskInfo: {
       description: "cold_exposure_ans.description",
@@ -360,7 +359,7 @@ export const tips: Tip[] = [
     id: "meditation_mindfulness",
     level: 2,
     xp: 0,
-    goals: [
+    areas: [
       { id: "nervousSystem", description: "meditation_mindfulness.description" },
       { id: "immuneSupport", description: "meditation_mindfulness.description" },
       { id: "energy", description: "meditation_mindfulness.description" }
@@ -379,7 +378,7 @@ export const tips: Tip[] = [
     id: "nature_parasympathetic",
     level: 2,
     xp: 0,
-    goals: [
+    areas: [
       { id: "nervousSystem", description: "nature_parasympathetic.description" },
       { id: "immuneSupport", description: "nature_parasympathetic.description" },
       { id: "energy", description: "nature_parasympathetic.description" }
@@ -398,7 +397,7 @@ export const tips: Tip[] = [
     id: "hrv_recovery_monitoring",
     level: 3,
     xp: 0,
-    goals: [
+    areas: [
       { id: "nervousSystem", description: "hrv_recovery_monitoring.description" },
       { id: "immuneSupport", description: "hrv_recovery_monitoring.description" },
       { id: "energy", description: "hrv_recovery_monitoring.description" },
@@ -419,7 +418,7 @@ export const tips: Tip[] = [
     id: "social_connection_vagal",
     level: 2,
     xp: 0,
-    goals: [{ id: "nervousSystem", description: "social_connection_vagal.description" }],
+    areas: [{ id: "nervousSystem", description: "social_connection_vagal.description" }],
     title: "social_connection_vagal.title",
     taskInfo: {
       description: "social_connection_vagal.description",
@@ -434,7 +433,7 @@ export const tips: Tip[] = [
     id: "calming_music_waves",
     level: 1,
     xp: 0,
-    goals: [{ id: "nervousSystem", description: "calming_music_waves.description" }],
+    areas: [{ id: "nervousSystem", description: "calming_music_waves.description" }],
     title: "calming_music_waves.title",
     taskInfo: {
       description: "calming_music_waves.description",
@@ -449,7 +448,7 @@ export const tips: Tip[] = [
     id: "adaptogenic_herbs",
     level: 3,
     xp: 0,
-    goals: [{ id: "nervousSystem", description: "adaptogenic_herbs.description" }],
+    areas: [{ id: "nervousSystem", description: "adaptogenic_herbs.description" }],
     title: "adaptogenic_herbs.title",
     taskInfo: {
       description: "adaptogenic_herbs.description",
@@ -464,7 +463,7 @@ export const tips: Tip[] = [
     id: "neuromuscular_training",
     level: 1,
     xp: 0,
-    goals: [{ id: "musclePerformance", description: "neuromuscular_training.description" }],
+    areas: [{ id: "musclePerformance", description: "neuromuscular_training.description" }],
     title: "neuromuscular_training.title",
     taskInfo: {
       description: "neuromuscular_training.description",
@@ -476,7 +475,7 @@ export const tips: Tip[] = [
     id: "creatine_atp_strength",
     level: 2,
     xp: 500,
-    goals: [{ id: "musclePerformance", description: "creatine_atp_strength.description" }],
+    areas: [{ id: "musclePerformance", description: "creatine_atp_strength.description" }],
     title: "creatine_atp_strength.title",
     taskInfo: {
       description: "creatine_atp_strength.description",
@@ -492,7 +491,7 @@ export const tips: Tip[] = [
     id: "betaalanine_endurance",
     level: 3,
     xp: 700,
-    goals: [{ id: "musclePerformance", description: "betaalanine_endurance.description" }],
+    areas: [{ id: "musclePerformance", description: "betaalanine_endurance.description" }],
     title: "betaalanine_endurance.title",
     taskInfo: {
       description: "betaalanine_endurance.description",
@@ -508,7 +507,7 @@ export const tips: Tip[] = [
     id: "shilajit_performance",
     level: 4,
     xp: 900,
-    goals: [{ id: "musclePerformance", description: "shilajit_performance.description" }],
+    areas: [{ id: "musclePerformance", description: "shilajit_performance.description" }],
     title: "shilajit_performance.title",
     taskInfo: {
       description: "shilajit_performance.description",
@@ -524,7 +523,7 @@ export const tips: Tip[] = [
     id: "probiotics_microbiota",
     level: 1,
     xp: 300,
-    goals: [
+    areas: [
       { id: "digestiveHealth", description: "probiotics_microbiota.description" },
       { id: "immuneSupport", description: "probiotics_microbiota.description" }
     ],
@@ -540,7 +539,7 @@ export const tips: Tip[] = [
     id: "fiber_microbiome",
     level: 2,
     xp: 500,
-    goals: [
+    areas: [
       { id: "digestiveHealth", description: "fiber_microbiome.description" },
       { id: "immuneSupport", description: "fiber_microbiome.description" }
     ],
@@ -555,7 +554,7 @@ export const tips: Tip[] = [
     id: "milk_thistle_liver",
     level: 3,
     xp: 700,
-    goals: [
+    areas: [
       { id: "digestiveHealth", description: "milk_thistle_liver.description" },
       { id: "immuneSupport", description: "milk_thistle_liver.description" }
     ],
@@ -570,7 +569,7 @@ export const tips: Tip[] = [
     id: "hiit_vo2max",
     level: 2,
     xp: 500,
-    goals: [{ id: "cardioFitness", description: "hiit_vo2max.description" }],
+    areas: [{ id: "cardioFitness", description: "hiit_vo2max.description" }],
     title: "hiit_vo2max.title",
     taskInfo: {
       description: "hiit_vo2max.description",
@@ -587,7 +586,7 @@ export const tips: Tip[] = [
     id: "running_volume_aerobic",
     level: 3,
     xp: 700,
-    goals: [{ id: "cardioFitness", description: "running_volume_aerobic.description" }],
+    areas: [{ id: "cardioFitness", description: "running_volume_aerobic.description" }],
     title: "running_volume_aerobic.title",
     taskInfo: {
       description: "running_volume_aerobic.description",

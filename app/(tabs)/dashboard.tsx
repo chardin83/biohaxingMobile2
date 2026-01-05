@@ -28,16 +28,19 @@ export default function BiohackerDashboard() {
   const progressText = `${myXP} / ${xpMax} XP`;
   const levelTitle = levels.find((o) => o.level === myLevel)?.titleKey;
 
+  const positiveVerdictsSet = React.useMemo(
+    () => new Set(POSITIVE_VERDICTS),
+    []
+  );
+
   // Hitta favorit-markerade tips för ett specifikt område
   const getFavoriteTipsForArea = (areaId: string) => {
-    const positiveVerdicts = React.useMemo(() => new Set(POSITIVE_VERDICTS), []);
-
     return viewedTips
       ?.filter(
         (tip) =>
           tip.mainGoalId === areaId &&
           tip.verdict &&
-          positiveVerdicts.has(tip.verdict as VerdictValue)
+          positiveVerdictsSet.has(tip.verdict as VerdictValue)
       )
       .map(tip => {
         const tipDetails = tips.find(t => t.id === tip.tipId);
