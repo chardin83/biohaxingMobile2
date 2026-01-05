@@ -8,15 +8,14 @@ import SearchIcon from "@/assets/icons/search.svg";
 import CheckIcon from "@/assets/icons/check.svg";
 import StarIcon from "@/assets/icons/star.svg";
 import ProhibitionIcon from "@/assets/icons/prohibition.svg";
+import { VerdictValue } from "@/types/verdict";
 
 const ICON_SIZE = 40;
 
-type VerdictValue = "interested" | "startNow" | "wantMore" | "alreadyWorks" | "notInterested" | "noResearch" | "testedFailed";
-
-interface VerdictSelectorProps {
+type Props = {
   currentVerdict?: VerdictValue;
   onVerdictPress: (verdict: VerdictValue) => void;
-}
+};
 
 const getMainCategory = (verdict: VerdictValue): "interested" | "notInterested" | null => {
   if (["startNow", "wantMore", "alreadyWorks"].includes(verdict)) return "interested";
@@ -37,7 +36,7 @@ const getSubOptionLabel = (verdict: VerdictValue, t: any): string => {
   return labels[verdict] || "";
 };
 
-export default function VerdictSelector({ currentVerdict, onVerdictPress }: VerdictSelectorProps) {
+export default function VerdictSelector({ currentVerdict, onVerdictPress }: Props) {
   const { t } = useTranslation();
   const [selectedCategory, setSelectedCategory] = useState<"interested" | "notInterested" | null>(null);
 

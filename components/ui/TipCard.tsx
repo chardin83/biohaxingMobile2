@@ -7,15 +7,13 @@ import SearchIcon from "@/assets/icons/search.svg";
 import CheckIcon from "@/assets/icons/check.svg";
 import StarIcon from "@/assets/icons/star.svg";
 import ProhibitionIcon from "@/assets/icons/prohibition.svg";
+import {
+  VerdictValue,
+  isPositiveVerdict,
+  isNegativeVerdict,
+} from "@/types/verdict";
 
-type TipVerdict =
-  | "interested"
-  | "startNow"
-  | "wantMore"
-  | "alreadyWorks"
-  | "notInterested"
-  | "noResearch"
-  | "testedFailed";
+type TipVerdict = VerdictValue;
 
 const ICON_SIZE = 22;
 
@@ -38,37 +36,25 @@ interface TipCardProps {
   onPress: () => void;
 }
 
-export default function TipCard({ tip, tipProgress, onPress }: <readonly>TipCardProps) {
+export default function TipCard({ tip, tipProgress, onPress }: Readonly<TipCardProps>) {
   const { t } = useTranslation();
 
   const isStarted = tipProgress.xp > 0;
   const isCompleted = tipProgress.progress >= 1;
 
-  const positiveVerdicts: TipVerdict[] = [
-    "interested",
-    "startNow",
-    "wantMore",
-    "alreadyWorks",
-  ];
-  const negativeVerdicts: TipVerdict[] = [
-    "notInterested",
-    "noResearch",
-    "testedFailed",
-  ];
-
   const verdict = tipProgress.verdict;
-  const isPositive = verdict ? positiveVerdicts.includes(verdict) : false;
-  const isNegative = verdict ? negativeVerdicts.includes(verdict) : false;
+  const isPositive = isPositiveVerdict(verdict);
+  const isNegative = isNegativeVerdict(verdict);
 
   const iconColor = Colors.dark.accentStrong;
-  const verdictIconMap: Partial<Record<TipVerdict, React.ReactNode>> = {
-    interested: <StarIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
-    startNow: <PlayIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
-    wantMore: <SearchIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
-    alreadyWorks: <CheckIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
-    notInterested: <ProhibitionIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
-    noResearch: <ProhibitionIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
-    testedFailed: <ProhibitionIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
+  const verdictIconMap: Partial<Record<VerdictValue, React.ReactNode>> = {
+    [VerdictValue.Interested]: <StarIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
+    [VerdictValue.StartNow]: <PlayIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
+    [VerdictValue.WantMore]: <SearchIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
+    [VerdictValue.AlreadyWorks]: <CheckIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
+    [VerdictValue.NotInterested]: <ProhibitionIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
+    [VerdictValue.NoResearch]: <ProhibitionIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
+    [VerdictValue.TestedFailed]: <ProhibitionIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
   };
   const verdictIcon = verdict ? verdictIconMap[verdict] : undefined;
 

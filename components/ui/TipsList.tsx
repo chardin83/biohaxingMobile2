@@ -6,13 +6,18 @@ import { useStorage } from "@/app/context/StorageContext";
 import { tips } from "@/locales/tips";
 import { Colors } from "@/constants/Colors";
 import TipCard from "./TipCard";
+import {
+  VerdictValue,
+  POSITIVE_VERDICTS,
+  NEGATIVE_VERDICTS,
+} from "@/types/verdict";
 
 interface TipsListProps {
   areaId: string;
   title: string;
 }
 
-export default function TipsList({ areaId, title }: <readonly>TipsListProps) {
+export default function TipsList({ areaId, title }: Readonly<TipsListProps>) {
   const { t } = useTranslation();
   const router = useRouter();
   const { viewedTips } = useStorage();
@@ -20,8 +25,21 @@ export default function TipsList({ areaId, title }: <readonly>TipsListProps) {
 
   const tipsRaw = tips.filter(tip => tip.goals.some(goal => goal.id === areaId));
 
-  const positiveVerdicts = ["interested", "startNow", "wantMore", "alreadyWorks"] as const;
-  const negativeVerdicts = ["notInterested", "noResearch", "testedFailed"] as const;
+  const positiveVerdicts = React.useMemo(() => new Set(POSITIVE_VERDICTS), []);
+  const negativeVerdicts = React.useMemo(() => new Set(NEGATIVE_VERDICTS), []);
+
+  const getVerdictScore = (verdict: string | undefined): number => {
+    if (!verdict) {
+      return 1;
+    }
+    if (positiveVerdicts.has(verdict as VerdictValue)) {
+      return 2;
+    }
+    if (negativeVerdicts.has(verdict as VerdictValue)) {
+      return 0;
+    }
+    return 1;
+  };
 
   // Sortera tips: positiva → neutrala → negativa
   const sortedTips = React.useMemo(() => {
@@ -36,20 +54,8 @@ export default function TipsList({ areaId, title }: <readonly>TipsListProps) {
       const aVerdict = aViewed?.verdict;
       const bVerdict = bViewed?.verdict;
 
-      const aScore = aVerdict
-        ? positiveVerdicts.includes(aVerdict as any)
-          ? 2
-          : negativeVerdicts.includes(aVerdict as any)
-            ? 0
-            : 1
-        : 1;
-      const bScore = bVerdict
-        ? positiveVerdicts.includes(bVerdict as any)
-          ? 2
-          : negativeVerdicts.includes(bVerdict as any)
-            ? 0
-            : 1
-        : 1;
+      const aScore = getVerdictScore(aVerdict);
+      const bScore = getVerdictScore(bVerdict);
 
       return bScore - aScore;
     });
@@ -64,7 +70,9 @@ export default function TipsList({ areaId, title }: <readonly>TipsListProps) {
       const viewedTip = viewedTips?.find(
         (v) => v.mainGoalId === areaId && v.tipId === tip.id
       );
-      return viewedTip?.verdict ? !negativeVerdicts.includes(viewedTip.verdict as any) : true;
+      return viewedTip?.verdict
+        ? !negativeVerdicts.has(viewedTip.verdict as VerdictValue)
+        : true;
     });
   }, [sortedTips, showAllTips, viewedTips, areaId]);
 

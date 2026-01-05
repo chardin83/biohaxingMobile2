@@ -3,27 +3,16 @@ import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { areas } from "@/locales/areas";
 import { Colors } from "@/constants/Colors";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSupplements } from "@/locales/supplements";
 import { useTranslation } from "react-i18next";
 import { Icon } from "react-native-paper";
-import { ThemedModal } from "@/components/ThemedModal";
-import { ThemedText } from "@/components/ThemedText";
-import AppButton from "@/components/ui/AppButton";
-import {
-  calculateGoalProgress,
-  getEndDate,
-  getTimeLeftText,
-} from "@/app/utils/goalUtils";
 import AppBox from "@/components/ui/AppBox";
 import ProgressBarWithLabel from "@/components/ui/ProgressbarWithLabel";
 import { tips } from "@/locales/tips";
-import AnalysisModal from "@/components/modals/FileAnalysisModal";
-import { sendFileToAIAnalysis, sendFileToAISupplementAnalysis } from "@/services/gptServices";
 import { useStorage } from "@/app/context/StorageContext";
 import BackButton from "@/components/BackButton";
 import { LinearGradient } from "expo-linear-gradient";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { AIPrompts } from "@/constants/AIPrompts";
 import VerdictSelector from "@/components/VerdictSelector";
 
@@ -37,6 +26,16 @@ export default function AreaDetailScreen() {
   }>();
   const supplements = useSupplements();
   const { addTipView, incrementTipChat, viewedTips, setTipVerdict } = useStorage();
+
+    // Ge XP när tips öppnas (första gången)
+  React.useEffect(() => {
+    if (areaId && tipId) {
+      const xpGained = addTipView(areaId, tipId);
+      if (xpGained > 0) {
+        console.log(`🎉 You gained ${xpGained} XP for viewing this tip!`);
+      }
+    }
+  }, [areaId, tipId]);
   
   const mainArea = areas.find((g) => g.id === areaId);
   const tip = tipId
@@ -58,15 +57,7 @@ export default function AreaDetailScreen() {
   const information = tip?.information;
   const titleKey = tip?.title;
 
-  // Ge XP när tips öppnas (första gången)
-  React.useEffect(() => {
-    if (areaId && tipId) {
-      const xpGained = addTipView(areaId, tipId);
-      if (xpGained > 0) {
-        console.log(`🎉 You gained ${xpGained} XP for viewing this tip!`);
-      }
-    }
-  }, [areaId, tipId]);
+
 
   // Hitta vilka frågor som redan ställts
   const currentTip = viewedTips?.find(
@@ -96,7 +87,10 @@ export default function AreaDetailScreen() {
     : `${askedQuestions.length}/${maxChats} questions explored`;
 
   const handleAIInsightPress = (question: string, questionType: string) => {
-    const tipInfo = `Tip: ${t(`tips:${titleKey}`)}\nDescription: ${t(`tips:${step?.taskInfo?.description}`) || ''}\nInformation: ${t(`tips:${information?.text}`) || ''}`;
+    const tipTranslation = t(`tips:${titleKey}`);
+    const descriptionTranslation = t(`tips:${step?.taskInfo?.description}`) || '';
+    const informationTranslation = t(`tips:${information?.text}`) || '';
+    const tipInfo = `Tip: ${tipTranslation}\nDescription: ${descriptionTranslation}\nInformation: ${informationTranslation}`;
     
     let fullPrompt = '';
     

@@ -12,6 +12,7 @@ import ProgressBarWithLabel from "@/components/ui/ProgressbarWithLabel";
 import { levels } from "@/locales/levels";
 import { tips } from "@/locales/tips";
 import { areas } from "@/locales/areas";
+import { VerdictValue, POSITIVE_VERDICTS } from "@/types/verdict";
 
 export default function BiohackerDashboard() {
   const { t } = useTranslation(["common", "areas", "levels"]);
@@ -29,19 +30,14 @@ export default function BiohackerDashboard() {
 
   // Hitta favorit-markerade tips för ett specifikt område
   const getFavoriteTipsForArea = (areaId: string) => {
-    const positiveVerdicts = [
-      "interested",
-      "startNow",
-      "wantMore",
-      "alreadyWorks",
-    ];
+    const positiveVerdicts = React.useMemo(() => new Set(POSITIVE_VERDICTS), []);
 
     return viewedTips
       ?.filter(
         (tip) =>
           tip.mainGoalId === areaId &&
           tip.verdict &&
-          positiveVerdicts.includes(tip.verdict)
+          positiveVerdicts.has(tip.verdict as VerdictValue)
       )
       .map(tip => {
         const tipDetails = tips.find(t => t.id === tip.tipId);
