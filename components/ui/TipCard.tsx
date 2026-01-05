@@ -12,6 +12,7 @@ import {
   isPositiveVerdict,
   isNegativeVerdict,
 } from "@/types/verdict";
+import { Tip } from "@/locales/tips";
 
 type TipVerdict = VerdictValue;
 
@@ -25,13 +26,7 @@ interface TipProgress {
 }
 
 interface TipCardProps {
-  tip: {
-    id: string;
-    title: string;
-    taskInfo?: {
-      description: string;
-    };
-  };
+  tip: Tip;
   tipProgress: TipProgress;
   onPress: () => void;
 }
@@ -79,7 +74,7 @@ export default function TipCard({ tip, tipProgress, onPress }: Readonly<TipCardP
             <Text style={styles.tipTitle}>{t(`tips:${tip.title}`)}</Text>
           </View>
           <Text style={styles.tipDescription}>
-            {t(`tips:${tip.taskInfo?.description}`)}
+            {t(`tips:${tip.descriptionKey}`)}
           </Text>
         </View>
 

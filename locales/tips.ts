@@ -1,19 +1,12 @@
 import { supplementIds } from "./supplementIds";
 
 type SupplementReference = {
-    id: string;
+  id: string;
 };
-
-
 
 export type TipArea = {
   id: string;
   descriptionKey: string;
-};
-
-export type Information = {
-    text: string;
-    author: string;
 };
 
 export type Tip = {
@@ -22,10 +15,10 @@ export type Tip = {
   xp?: number;
   areas: TipArea[];
   title: string;
+  descriptionKey: string; // Kopplar till översättningsfilen
   supplements?: SupplementReference[];
   analyzePrompt?: string;
   startPrompt?: string;
-  information?: Information;
 };
 
 export const tips: Tip[] = [
@@ -37,12 +30,9 @@ export const tips: Tip[] = [
       { id: "energy", descriptionKey: "nutritional_support_vitality.areas.energy" }
     ],
     title: "nutritional_support_vitality.title",
+    descriptionKey: "nutritional_support_vitality.description",
     supplements: [{ id: "multivitamin_general" }],
     startPrompt: "nutritional_support_vitality.startPrompt",
-    information: {
-      text: "nutritional_support_vitality.information.text",
-      author: "Christina",
-    },
   },
   {
     id: "vitamin_d",
@@ -55,12 +45,9 @@ export const tips: Tip[] = [
       { id: "nervousSystem", descriptionKey: "vitamin_d.areas.nervousSystem" }
     ],
     title: "vitamin_d.title",
+    descriptionKey: "vitamin_d.description",
     supplements: [{ id: "vitamin_d" }],
     startPrompt: "vitamin_d.startPrompt",
-    information: {
-      text: "vitamin_d.information.text",
-      author: "Christina",
-    },
   },
   {
     id: "vitamin_mineral_balance",
@@ -68,12 +55,9 @@ export const tips: Tip[] = [
     xp: 1300,
     areas: [{ id: "energy", descriptionKey: "vitamin_mineral_balance.description" }],
     title: "vitamin_mineral_balance.title",
+    descriptionKey: "vitamin_mineral_balance.description",
     supplements: [{ id: "vitamin_d" }],
     startPrompt: "vitamin_mineral_balance.startPrompt",
-    information: {
-      text: "vitamin_mineral_balance.information.text",
-      author: "Christina",
-    },
   },
   {
     id: "mitochondrial_nutrients_coq10",
@@ -84,11 +68,8 @@ export const tips: Tip[] = [
       { id: "immuneSupport", descriptionKey: "mitochondrial_nutrients_coq10.areas.immuneSupport" }
     ],
     title: "mitochondrial_nutrients_coq10.title",
+    descriptionKey: "mitochondrial_nutrients_coq10.description",
     analyzePrompt: "mitochondrial_nutrients_coq10.analyzePrompt",
-    information: {
-      text: "mitochondrial_nutrients_coq10.information.text",
-      author: "Christina",
-    },
   },
   {
     id: "cellular_energy_nad",
@@ -99,10 +80,7 @@ export const tips: Tip[] = [
       { id: "immuneSupport", descriptionKey: "cellular_energy_nad.description" }
     ],
     title: "cellular_energy_nad.title",
-    information: {
-      text: "cellular_energy_nad.information.text",
-      author: "Christina",
-    },
+    descriptionKey: "cellular_energy_nad.description",
   },
   {
     id: "sleep_timing_circadian",
@@ -114,6 +92,7 @@ export const tips: Tip[] = [
       { id: "energy", descriptionKey: "sleep_timing_circadian.description" }
     ],
     title: "sleep_timing_circadian.title",
+    descriptionKey: "sleep_timing_circadian.description",
   },
   {
     id: "sleep_magnesium_hormonal",
@@ -125,6 +104,7 @@ export const tips: Tip[] = [
       { id: "energy", descriptionKey: "sleep_magnesium_hormonal.description" }
     ],
     title: "sleep_magnesium_hormonal.title",
+    descriptionKey: "sleep_magnesium_hormonal.description",
     supplements: [{ id: "magnesium" }],
   },
   {
@@ -133,6 +113,7 @@ export const tips: Tip[] = [
     xp: 500,
     areas: [{ id: "focus", descriptionKey: "calm_alertness_ltheanine.description" }],
     title: "calm_alertness_ltheanine.title",
+    descriptionKey: "calm_alertness_ltheanine.description",
   },
   {
     id: "neurotransmitter_ltyrosine",
@@ -140,6 +121,7 @@ export const tips: Tip[] = [
     xp: 700,
     areas: [{ id: "focus", descriptionKey: "neurotransmitter_ltyrosine.description" }],
     title: "neurotransmitter_ltyrosine.title",
+    descriptionKey: "neurotransmitter_ltyrosine.description",
   },
   {
     id: "maintain_hydration",
@@ -151,10 +133,7 @@ export const tips: Tip[] = [
       { id: "cardioFitness", descriptionKey: "maintain_hydration.description" }
     ],
     title: "maintain_hydration.title",
-    information: {
-      text: "maintain_hydration.information.text",
-      author: "Christina",
-    },
+    descriptionKey: "maintain_hydration.description",
   },
   {
     id: "vitamin_c_immunity",
@@ -162,6 +141,7 @@ export const tips: Tip[] = [
     xp: 500,
     areas: [{ id: "immuneSupport", descriptionKey: "vitamin_c_immunity.description" }],
     title: "vitamin_c_immunity.title",
+    descriptionKey: "vitamin_c_immunity.description",
   },
   {
     id: "echinacea_herbs",
@@ -169,6 +149,7 @@ export const tips: Tip[] = [
     xp: 700,
     areas: [{ id: "immuneSupport", descriptionKey: "echinacea_herbs.description" }],
     title: "echinacea_herbs.title",
+    descriptionKey: "echinacea_herbs.description",
   },
   {
     id: "calming_glycine",
@@ -195,10 +176,6 @@ export const tips: Tip[] = [
       { id: "energy", descriptionKey: "breathwork_parasympathetic.description" }
     ],
     title: "breathwork_parasympathetic.title",
-    information: {
-      text: "breathwork_parasympathetic.information.text",
-      author: "Christina",
-    },
   },
   {
     id: "sleep_optimization_recovery",
@@ -212,10 +189,6 @@ export const tips: Tip[] = [
       { id: "sleepQuality", descriptionKey: "sleep_optimization_recovery.description" }
     ],
     title: "sleep_optimization_recovery.title",
-    information: {
-      text: "sleep_optimization_recovery.information.text",
-      author: "Christina",
-    },
   },
   {
     id: "sunlight_circadian",
@@ -226,10 +199,6 @@ export const tips: Tip[] = [
       { id: "immuneSupport", descriptionKey: "sunlight_circadian.description" }
     ],
     title: "sunlight_circadian.title",
-    information: {
-      text: "sunlight_circadian.information.text",
-      author: "Christina",
-    },
   },
   {
     id: "cold_exposure_ans",
@@ -237,10 +206,6 @@ export const tips: Tip[] = [
     xp: 0,
     areas: [{ id: "nervousSystem", descriptionKey: "cold_exposure_ans.description" }],
     title: "cold_exposure_ans.title",
-    information: {
-      text: "cold_exposure_ans.information.text",
-      author: "Christina",
-    },
   },
   {
     id: "meditation_mindfulness",
@@ -252,10 +217,6 @@ export const tips: Tip[] = [
       { id: "energy", descriptionKey: "meditation_mindfulness.description" }
     ],
     title: "meditation_mindfulness.title",
-    information: {
-      text: "meditation_mindfulness.information.text",
-      author: "Christina",
-    },
   },
   {
     id: "nature_parasympathetic",
@@ -267,10 +228,6 @@ export const tips: Tip[] = [
       { id: "energy", descriptionKey: "nature_parasympathetic.description" }
     ],
     title: "nature_parasympathetic.title",
-    information: {
-      text: "nature_parasympathetic.information.text",
-      author: "Christina",
-    },
   },
   {
     id: "hrv_recovery_monitoring",
@@ -284,10 +241,6 @@ export const tips: Tip[] = [
       { id: "musclePerformance", descriptionKey: "hrv_recovery_monitoring.description" }
     ],
     title: "hrv_recovery_monitoring.title",
-    information: {
-      text: "hrv_recovery_monitoring.information.text",
-      author: "Christina",
-    },
   },
   {
     id: "social_connection_vagal",
@@ -295,10 +248,6 @@ export const tips: Tip[] = [
     xp: 0,
     areas: [{ id: "nervousSystem", descriptionKey: "social_connection_vagal.description" }],
     title: "social_connection_vagal.title",
-    information: {
-      text: "social_connection_vagal.information.text",
-      author: "Christina",
-    },
   },
   {
     id: "calming_music_waves",
@@ -306,10 +255,6 @@ export const tips: Tip[] = [
     xp: 0,
     areas: [{ id: "nervousSystem", descriptionKey: "calming_music_waves.description" }],
     title: "calming_music_waves.title",
-    information: {
-      text: "calming_music_waves.information.text",
-      author: "Christina",
-    },
   },
   {
     id: "adaptogenic_herbs",
@@ -317,10 +262,6 @@ export const tips: Tip[] = [
     xp: 0,
     areas: [{ id: "nervousSystem", descriptionKey: "adaptogenic_herbs.description" }],
     title: "adaptogenic_herbs.title",
-    information: {
-      text: "adaptogenic_herbs.information.text",
-      author: "Christina",
-    },
   },
   {
     id: "neuromuscular_training",
@@ -337,10 +278,6 @@ export const tips: Tip[] = [
     areas: [{ id: "musclePerformance", descriptionKey: "creatine_atp_strength.description" }],
     title: "creatine_atp_strength.title",
     supplements: [{ id: "creatine_atp_strength" }],
-    information: {
-      text: "creatine_atp_strength.information.text",
-      author: "Christina",
-    },
   },
   {
     id: "betaalanine_endurance",
@@ -349,10 +286,6 @@ export const tips: Tip[] = [
     areas: [{ id: "musclePerformance", descriptionKey: "betaalanine_endurance.description" }],
     title: "betaalanine_endurance.title",
     supplements: [],
-    information: {
-      text: "betaalanine_endurance.information.text",
-      author: "Christina",
-    },
   },
   {
     id: "shilajit_performance",
@@ -361,10 +294,6 @@ export const tips: Tip[] = [
     areas: [{ id: "musclePerformance", descriptionKey: "shilajit_performance.description" }],
     title: "shilajit_performance.title",
     supplements: [],
-    information: {
-      text: "shilajit_performance.information.text",
-      author: "Christina",
-    },
   },
   {
     id: "probiotics_microbiota",
@@ -407,10 +336,6 @@ export const tips: Tip[] = [
     title: "hiit_vo2max.title",
     supplements: [],
     analyzePrompt: "hiit_vo2max.analyzePrompt",
-    information: {
-      text: "hiit_vo2max.information.text",
-      author: "Christina",
-    },
   },
   {
     id: "running_volume_aerobic",
@@ -420,9 +345,5 @@ export const tips: Tip[] = [
     title: "running_volume_aerobic.title",
     supplements: [],
     analyzePrompt: "running_volume_aerobic.analyzePrompt",
-    information: {
-      text: "running_volume_aerobic.information.text",
-      author: "Christina",
-    },
   }
 ];

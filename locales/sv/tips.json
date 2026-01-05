@@ -4,9 +4,6 @@
     "description": "Tillräcklig tillförsel av väsentliga vitaminer och mineraler diskuteras ofta som en del av att upprätthålla övergripande vitalitet.",
     "areas": {
       "energy": ""
-    },
-    "information": {
-      "text": "Multivitaminer används ibland för att täcka potentiella näringsluckor i kosten."
     }
   },
   "vitamin_d": {
@@ -17,9 +14,6 @@
       "immuneSupport": "D-vitamin modulerar både medfött och adaptivt immunsvar, och låga nivåer är associerade med ökad infektionskänslighet.",
       "musclePerformance": "D-vitamin är avgörande för muskelstyrka och funktion genom kalciumreglering och muskelproteinsyntesvägar.",
       "nervousSystem": "D-vitamin påverkar neurotransmittorproduktion och har neuroprotektiva effekter i det centrala nervsystemet."
-    },
-    "information": {
-      "text": "D-vitaminstatusen bedöms vanligtvis i kliniska miljöer med hjälp av blodbaserade mätningar."
     }
   },
   "mitochondrial_nutrients_coq10": {
@@ -29,157 +23,91 @@
       "energy": "",
       "immuneSupport": ""
     },
-    "information": {
-      "text": "CoQ10 deltar i energiöverföringen inom mitokondrierna."
-    },
     "analyzePrompt": "Analysera bilden och bestäm mitokondriensbehov av stöd."
   },
   "cellular_energy_nad": {
     "title": "Cellulär energimetabolism",
-    "description": "Cellulär energiproduktion beror på komplexa metabola vägar.",
-    "information": {
-      "text": "NAD+ är involverat i cellulär metabolism och DNA-underhållsmekanismer."
-    }
+    "description": "Cellulär energiproduktion beror på komplexa metabola vägar."
   },
   "sleep_timing_circadian": {
     "title": "Medvetenhet om sömnöversättning",
-    "description": "Tidiga sömnöversättningar diskuteras ofta i samband med cirkadisk rytmjustering.",
-    "information": {
-      "text": "Sömnöversättningen har studerats i samband med melatoninmycken och återhämtningsprocesser."
-    }
+    "description": "Tidiga sömnöversättningar diskuteras ofta i samband med cirkadisk rytmjustering."
   },
   "sleep_magnesium_hormonal": {
     "title": "Hormonstödjande överväganden",
-    "description": "Magnesium är ett mineral som har studerats i relation till avslappning och sömn.",
-    "information": {
-      "text": "Magnesium har undersökts i samband med sömnkvalitet och kortisolreglering."
-    }
+    "description": "Magnesium är ett mineral som har studerats i relation till avslappning och sömn."
   },
   "calm_alertness_ltheanine": {
     "title": "Lugn vaksamhetsföreningar",
-    "description": "L-theanin finns vanligtvis i grönt te och har studerats för dess effekter på uppmärksamhet.",
-    "information": {
-      "text": "L-theanin har undersökts i relation till lugnt fokus och minskad distans."
-    }
+    "description": "L-theanin finns vanligtvis i grönt te och har studerats för dess effekter på uppmärksamhet."
   },
   "neurotransmitter_ltyrosine": {
     "title": "Neurotransmitterförfäder",
-    "description": "L-tyrosin är en aminosyra som är en föregångare till dopamin.",
-    "information": {
-      "text": "L-tyrosin har studerats i relation till kognitiv funktion under stressande förhållanden."
-    }
+    "description": "L-tyrosin är en aminosyra som är en föregångare till dopamin."
   },
   "maintain_hydration": {
     "title": "Bibehåll vätskebalans",
-    "description": "Konsekvent daglig vätskeintag stödjer cirkulationen, temperaturreglering och immunmotstånd.",
-    "information": {
-      "text": "Vätskebalansstatus kan påverka immunfunktion, återhämtning och övergripande välbefinnande."
-    }
+    "description": "Konsekvent daglig vätskeintag stödjer cirkulationen, temperaturreglering och immunmotstånd."
   },
   "vitamin_c_immunity": {
     "title": "C-vitaminöversikt",
-    "description": "C-vitamin är ett vattenlösligt vitamin som finns i frukt och grönsaker.",
-    "information": {
-      "text": "C-vitamin är ett antioxidant som har studerats i relation till immuncellsfunktion."
-    }
+    "description": "C-vitamin är ett vattenlösligt vitamin som finns i frukt och grönsaker."
   },
   "echinacea_herbs": {
     "title": "Traditionella växtföreningar",
-    "description": "Echinacea är en växt som traditionellt har använts och studerats i relation till immunhälsa.",
-    "information": {
-      "text": "Echinacea har undersökts för dess potentiella effekter på förkylningsvaraktighet och immunmotstånd."
-    }
+    "description": "Echinacea är en växt som traditionellt har använts och studerats i relation till immunhälsa."
   },
   "calming_glycine": {
     "title": "Lugna aminosyror",
-    "description": "Glycin är en aminosyra som fungerar som en neurotransmitter i det centrala nervsystemet.",
-    "information": {
-      "text": "Glycin har studerats för dess potentiella lugnande effekter och inverkan på sömnkvalitet."
-    }
+    "description": "Glycin är en aminosyra som fungerar som en neurotransmitter i det centrala nervsystemet."
   },
   "neuropeptide_semax": {
     "title": "Neuropeptid-forskning",
-    "description": "Semax är en syntetisk peptid som har studerats i neurologiska forskningssammanhang.",
-    "information": {
-      "text": "Semax har undersökts för dess potentiella effekter på hjärnkemi och kognitiv funktion."
-    }
+    "description": "Semax är en syntetisk peptid som har studerats i neurologiska forskningssammanhang."
   },
   "breathwork_parasympathetic": {
     "title": "Andningsövningar",
-    "description": "Öva dagligt andningsarbete (4-7-8 andning, lådaandning) för att aktivera det parasympatiska nervsystemet.",
-    "information": {
-      "text": "Kontrollerade andningstekniker har studerats i relation till hjärtfrekvensvariation och stressreduktion."
-    }
+    "description": "Öva dagligt andningsarbete (4-7-8 andning, lådaandning) för att aktivera det parasympatiska nervsystemet."
   },
   "sleep_optimization_recovery": {
     "title": "Sömnoptimering",
-    "description": "Prioritera 7-9 timmars högkvalitativ sömn för nervösa systemåterhämtning.",
-    "information": {
-      "text": "Sömn är väsentlig för autonom nervsystembalans och återställning."
-    }
+    "description": "Prioritera 7-9 timmars högkvalitativ sömn för nervösa systemåterhämtning."
   },
   "sunlight_circadian": {
     "title": "Solljusexponering",
-    "description": "Morgonsolljusexponering reglerar cirkadisk rytm och kortisolmönster.",
-    "information": {
-      "text": "Ljusexponeringstidpunkt har studerats i relation till cirkadisk rytmindökning."
-    }
+    "description": "Morgonsolljusexponering reglerar cirkadisk rytm och kortisolmönster."
   },
   "cold_exposure_ans": {
     "title": "Kallexponering",
-    "description": "Kallexponering (duschar, isbadar) tränar ANS-elasticitet och vagal ton.",
-    "information": {
-      "text": "Kallvatterdoppning har undersökts för dess effekter på sympatisk aktivering och anpassning."
-    }
+    "description": "Kallexponering (duschar, isbadar) tränar ANS-elasticitet och vagal ton."
   },
   "meditation_mindfulness": {
     "title": "Meditation och mindfulness",
-    "description": "Meditation och mindfulness minskar sympatisk aktivering och förbättrar HRV.",
-    "information": {
-      "text": "Mindfulness-praktiker har studerats omfattande i relation till stressreduktion och autonom reglering."
-    }
+    "description": "Meditation och mindfulness minskar sympatisk aktivering och förbättrar HRV."
   },
   "nature_parasympathetic": {
     "title": "Naturexponering",
-    "description": "Tid i naturen aktiverar det parasympatiska nervsystemet och minskar stresshormoner.",
-    "information": {
-      "text": "Skogsbadning och naturexponering har studerats för sina lugnande fysiologiska effekter."
-    }
+    "description": "Tid i naturen aktiverar det parasympatiska nervsystemet och minskar stresshormoner."
   },
   "hrv_recovery_monitoring": {
     "title": "Återhämtningsövervakning",
-    "description": "Undvik överträning - övervaka HRV för återhämtningsstatus före intensiv träning.",
-    "information": {
-      "text": "HRV-övervakning har studerats som ett verktyg för att optimera träningsbelastning och återhämtning."
-    }
+    "description": "Undvik överträning - övervaka HRV för återhämtningsstatus före intensiv träning."
   },
   "social_connection_vagal": {
     "title": "Social anslutning",
-    "description": "Social anslutning och skratt ökar vagal ton och parasympatisk aktivitet.",
-    "information": {
-      "text": "Social bindning har undersökts i relation till vagusnervsaktivitet och stressdämpning."
-    }
+    "description": "Social anslutning och skratt ökar vagal ton och parasympatisk aktivitet."
   },
   "calming_music_waves": {
     "title": "Lugn musik",
-    "description": "Lyssna på lugn musik eller binaurala slag för att främja alfavågaktivitet.",
-    "information": {
-      "text": "Musikterapi och binaurala slag har studerats för sina effekter på hjärnvågsmönster och avslappning."
-    }
+    "description": "Lyssna på lugn musik eller binaurala slag för att främja alfavågaktivitet."
   },
   "adaptogenic_herbs": {
     "title": "Adaptogena växter",
-    "description": "Adaptogena växter (ashwagandha, rhodiola) stödjer ANS-balans under stress.",
-    "information": {
-      "text": "Adaptogens har undersökts för sin potential att modulera stresssvarsystem."
-    }
+    "description": "Adaptogena växter (ashwagandha, rhodiola) stödjer ANS-balans under stress."
   },
   "neuromuscular_training": {
     "title": "Neuromuskulära träningsbegrepp",
-    "description": "Proteinintag och neuromuskulär träning har studerats inom idrott.",
-    "information": {
-      "text": "Motorenhetrekrytering och neuromuskulär effektivitet är nyckelbegrepp i styrka- och kraftutvecklingsforskning."
-    }
+    "description": "Proteinintag och neuromuskulär träning har studerats inom idrott."
   },
   "creatine_atp_strength": {
     "title": "Kreatin",
@@ -188,54 +116,33 @@
   },
   "betaalanine_endurance": {
     "title": "Uthållighetsrelaterade föreningar",
-    "description": "Beta-alanin är en aminosyra som har studerats i relation till träningsprestation.",
-    "information": {
-      "text": "Beta-alanin har undersökts för dess roll i att buffra vätejonter under högintensiv träning."
-    }
+    "description": "Beta-alanin är en aminosyra som har studerats i relation till träningsprestation."
   },
   "shilajit_performance": {
     "title": "Traditionella prestandaföreningar",
-    "description": "Shilajit är ett traditionellt ämne som innehåller mineraler och fulvinsyra.",
-    "information": {
-      "text": "Shilajit har studerats i vissa forskningssammanhang relaterade till fysisk prestanda."
-    }
+    "description": "Shilajit är ett traditionellt ämne som innehåller mineraler och fulvinsyra."
   },
   "probiotics_microbiota": {
     "title": "Tarmbakterieöversikt",
     "description": "Probiotika är levande mikroorganismer som har studerats i relation till tarmhälsa.",
-    "information": {
-      "text": "Probiotika har undersökts för sina potentiella effekter på tarmflorabalans och immunfunktion."
-    },
     "warning": "Rådgör med en sjukvårdsperson innan du börjar probiotiskatillskott om du har nedsatt immunitet."
   },
   "fiber_microbiome": {
     "title": "Kostfiberkällor",
-    "description": "Forskningen har identifierat olika bakteriestammar i tarmen. En studie från Zoe identifierade stammen SGB15249 hos personer som regelbundet konsumerade nötter och frön.",
-    "information": {
-      "text": "Nötter och frön är kostfiberkällor som har studerats i relation till mikrobiotasammansättning."
-    }
+    "description": "Forskningen har identifierat olika bakteriestammar i tarmen. En studie från Zoe identifierade stammen SGB15249 hos personer som regelbundet konsumerade nötter och frön."
   },
   "milk_thistle_liver": {
     "title": "Leverunderstödjande föreningar",
-    "description": "Mjölktistel är en växt som innehåller silymarin, vilket har studerats i leverforskning.",
-    "information": {
-      "text": "Mjölktistel har undersökts för sin potentiella roll i levercellsfunktion och regenerering."
-    }
+    "description": "Mjölktistel är en växt som innehåller silymarin, vilket har studerats i leverforskning."
   },
   "hiit_vo2max": {
     "title": "Högintensiv intervallträning",
     "description": "HIIT är en träningsmetod som har studerats omfattande inom träningsfysiologi.",
-    "information": {
-      "text": "HIIT har undersökts för dess effekter på VO₂ max och metaboliska adaptioner."
-    },
     "analyzePrompt": "Användaren har ett mål att utföra minst 2 högintensiva intervallträningspass (HIIT) per vecka. Baserat på träningsloggen, utvärdera om målet uppnåddes. Sammanfatta framstegen och ge uppmuntran eller råd."
   },
   "running_volume_aerobic": {
     "title": "Progressiv volymträning",
     "description": "Gradvisa ökningar av träningsvolym diskuteras ofta i löpprogrammen.",
-    "information": {
-      "text": "Progressiv volymökning har studerats i relation till aerob basutveckling och skadeprevention."
-    },
     "analyzePrompt": "Användaren arbetar med att öka det totala löpavståndet varje vecka. Givet träningsdata, analysera om det finns en uppåtgående trend. Nämn eventuella tecken på överträning eller framstegsstillstånd."
   },
   "multivitamin_general": {

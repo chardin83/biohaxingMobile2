@@ -60,7 +60,7 @@ export default function AreaDetailScreen() {
     );
   }
 
-  const information = tip?.information;
+  const descriptionKey = tip?.descriptionKey;
   const titleKey = tip?.title;
 
 
@@ -94,7 +94,7 @@ export default function AreaDetailScreen() {
 
   const handleAIInsightPress = (question: string, questionType: string) => {
     const tipTranslation = t(`tips:${titleKey}`);
-    const informationTranslation = t(`tips:${information?.text}`) || '';
+    const informationTranslation = t(`tips:${information}`) || '';
     const tipInfo = `Tip: ${tipTranslation}\nInformation: ${informationTranslation}`;
     
     let fullPrompt = '';
@@ -166,19 +166,10 @@ export default function AreaDetailScreen() {
             />
           </View>
 
-          {information && (
+          {descriptionKey && (
             <AppBox title={t("common:goalDetails.information")}>
               <Text style={{ color: Colors.dark.textLight, marginBottom: 8 }}>
-                {information.text ? t(`tips:${information.text}`) : information}
-              </Text>
-              <Text
-                style={{
-                  color: Colors.dark.textLight,
-                  fontStyle: "italic",
-                  fontWeight: "bold",
-                }}
-              >
-                {information.author ? t(`tips:${information.author}`) : ""}
+                {t(`tips:${descriptionKey}`)}
               </Text>
             </AppBox>
           )}

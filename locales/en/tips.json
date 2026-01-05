@@ -4,9 +4,6 @@
     "description": "Adequate intake of essential vitamins and minerals is often discussed as part of maintaining overall vitality.",
     "areas": {
       "energy": ""
-    },
-    "information": {
-      "text": "Multivitamins are sometimes used to help cover potential nutritional gaps in the diet."
     }
   },
   "vitamin_d": {
@@ -17,232 +14,109 @@
       "immuneSupport": "Vitamin D modulates both innate and adaptive immune responses, with low levels associated with increased infection susceptibility.",
       "musclePerformance": "Vitamin D is critical for muscle strength and function through calcium regulation and muscle protein synthesis pathways.",
       "nervousSystem": "Vitamin D influences neurotransmitter production and has neuroprotective effects in the central nervous system."
-    },
-    "information": {
-      "text": "Vitamin D status is commonly assessed in clinical settings using blood-based measurements."
     }
   },
   "vitamin_mineral_balance": {
     "title": "Vitamin and mineral balance",
-    "description": "Vitamins and minerals play roles in many metabolic and immune-related processes.",
-    "information": {
-      "text": "Vitamin D is involved in immune regulation and metabolic pathways."
-    }
+    "description": "Vitamins and minerals play roles in many metabolic and immune-related processes."
   },
   "mitochondrial_nutrients_coq10": {
     "title": "Mitochondrial nutrients",
     "description": "Certain nutrients are involved in mitochondrial processes related to cellular energy production.",
     "areas": {
-      "energy": "",
       "immuneSupport": ""
-    },
-    "information": {
-      "text": "CoQ10 participates in energy transfer within the mitochondria."
     },
     "analyzePrompt": "Analyze the image and determine mitochondrial support needs."
   },
   "cellular_energy_nad": {
-    "title": "Cellular energy metabolism",
-    "description": "Cellular energy production relies on complex metabolic pathways.",
-    "information": {
-      "text": "NAD+ is involved in cellular metabolism and DNA maintenance mechanisms."
-    }
+    "title": "Cellular energy metabolism"
   },
   "sleep_timing_circadian": {
-    "title": "Sleep timing awareness",
-    "description": "Early bedtimes are commonly discussed in relation to circadian rhythm alignment.",
-    "information": {
-      "text": "Sleep timing has been studied in connection with melatonin cycles and recovery processes."
-    }
+    "title": "Sleep timing awareness"
   },
   "sleep_magnesium_hormonal": {
-    "title": "Hormonal support considerations",
-    "description": "Magnesium is a mineral that has been studied in relation to relaxation and sleep.",
-    "information": {
-      "text": "Magnesium has been researched in connection with sleep quality and cortisol regulation."
-    }
+    "title": "Hormonal support considerations"
   },
   "calm_alertness_ltheanine": {
-    "title": "Calm alertness compounds",
-    "description": "L-Theanine is commonly found in green tea and has been studied for its effects on attention.",
-    "information": {
-      "text": "L-Theanine has been researched in relation to calm focus and reduced distraction."
-    }
+    "title": "Calm alertness compounds"
   },
   "neurotransmitter_ltyrosine": {
-    "title": "Neurotransmitter precursors",
-    "description": "L-Tyrosine is an amino acid that serves as a precursor to dopamine.",
-    "information": {
-      "text": "L-Tyrosine has been studied in relation to cognitive function during stressful conditions."
-    }
+    "title": "Neurotransmitter precursors"
   },
   "maintain_hydration": {
-    "title": "Maintain hydration",
-    "description": "Consistent daily hydration supports circulation, temperature regulation, and immune resilience.",
-    "information": {
-      "text": "Hydration status can influence immune function, recovery, and overall well-being."
-    }
+    "title": "Maintain hydration"
   },
   "vitamin_c_immunity": {
-    "title": "Vitamin C overview",
-    "description": "Vitamin C is a water-soluble vitamin found in fruits and vegetables.",
-    "information": {
-      "text": "Vitamin C is an antioxidant that has been studied in relation to immune cell function."
-    }
+    "title": "Vitamin C overview"
   },
   "echinacea_herbs": {
-    "title": "Traditional herbal compounds",
-    "description": "Echinacea is an herb that has been traditionally used and studied in relation to immune health.",
-    "information": {
-      "text": "Echinacea has been researched for its potential effects on cold duration and immune resilience."
-    }
+    "title": "Traditional plant compounds"
   },
   "calming_glycine": {
-    "title": "Calming amino acids",
-    "description": "Glycine is an amino acid that functions as a neurotransmitter in the central nervous system.",
-    "information": {
-      "text": "Glycine has been studied for its potential calming effects and influence on sleep quality."
-    }
+    "title": "Calming amino acids"
   },
   "neuropeptide_semax": {
-    "title": "Neuropeptide research",
-    "description": "Semax is a synthetic peptide that has been studied in neurological research contexts.",
-    "information": {
-      "text": "Semax has been researched for its potential effects on brain chemistry and cognitive function."
-    }
+    "title": "Neuropeptide research"
   },
   "breathwork_parasympathetic": {
-    "title": "Breathwork practices",
-    "description": "Practice daily breathwork (4-7-8 breathing, box breathing) to activate parasympathetic nervous system.",
-    "information": {
-      "text": "Controlled breathing techniques have been studied in relation to heart rate variability and stress reduction."
-    }
+    "title": "Breathwork exercises"
   },
   "sleep_optimization_recovery": {
-    "title": "Sleep optimization",
-    "description": "Prioritize 7-9 hours of quality sleep for nervous system recovery.",
-    "information": {
-      "text": "Sleep is essential for autonomic nervous system balance and restoration."
-    }
+    "title": "Sleep optimization"
   },
   "sunlight_circadian": {
-    "title": "Sunlight exposure",
-    "description": "Morning sunlight exposure regulates circadian rhythm and cortisol patterns.",
-    "information": {
-      "text": "Light exposure timing has been studied in relation to circadian rhythm entrainment."
-    }
+    "title": "Sunlight exposure"
   },
   "cold_exposure_ans": {
-    "title": "Cold exposure",
-    "description": "Cold exposure (showers, ice baths) trains ANS resilience and vagal tone.",
-    "information": {
-      "text": "Cold water immersion has been researched for its effects on sympathetic activation and adaptation."
-    }
+    "title": "Cold exposure"
   },
   "meditation_mindfulness": {
-    "title": "Meditation and mindfulness",
-    "description": "Meditation and mindfulness reduce sympathetic activation and improve HRV.",
-    "information": {
-      "text": "Mindfulness practices have been extensively studied in relation to stress reduction and autonomic regulation."
-    }
+    "title": "Meditation and mindfulness"
   },
   "nature_parasympathetic": {
-    "title": "Nature exposure",
-    "description": "Time in nature activates parasympathetic nervous system and reduces stress hormones.",
-    "information": {
-      "text": "Forest bathing and nature exposure have been studied for their calming physiological effects."
-    }
+    "title": "Nature exposure"
   },
   "hrv_recovery_monitoring": {
-    "title": "Recovery monitoring",
-    "description": "Avoid overtraining - monitor HRV for recovery status before intense workouts.",
-    "information": {
-      "text": "HRV monitoring has been studied as a tool for optimizing training load and recovery."
-    }
+    "title": "Recovery monitoring"
   },
   "social_connection_vagal": {
-    "title": "Social connection",
-    "description": "Social connection and laughter boost vagal tone and parasympathetic activity.",
-    "information": {
-      "text": "Social bonding has been researched in relation to vagus nerve activity and stress buffering."
-    }
+    "title": "Social connection"
   },
   "calming_music_waves": {
-    "title": "Calming music",
-    "description": "Listen to calming music or binaural beats to promote alpha wave activity.",
-    "information": {
-      "text": "Music therapy and binaural beats have been studied for their effects on brain wave patterns and relaxation."
-    }
+    "title": "Calming music"
   },
   "adaptogenic_herbs": {
-    "title": "Adaptogenic herbs",
-    "description": "Adaptogenic herbs (ashwagandha, rhodiola) support ANS balance under stress.",
-    "information": {
-      "text": "Adaptogens have been researched for their potential to modulate stress response systems."
-    }
+    "title": "Adaptogenic herbs"
   },
   "neuromuscular_training": {
-    "title": "Neuromuscular training concepts",
-    "description": "Protein intake and neuromuscular training have been studied in sports science.",
-    "information": {
-      "text": "Motor unit recruitment and neuromuscular efficiency are key concepts in strength and power development research."
-    }
+    "title": "Neuromuscular training concepts"
   },
   "creatine_atp_strength": {
     "title": "Creatine",
-    "description": "Creatine supports ATP production and physical performance.",
     "warning": "Creatine supplementation may affect kidney function in individuals with pre-existing conditions."
   },
   "betaalanine_endurance": {
-    "title": "Endurance-related compounds",
-    "description": "Beta-alanine is an amino acid that has been studied in relation to exercise performance.",
-    "information": {
-      "text": "Beta-alanine has been researched for its role in buffering hydrogen ions during high-intensity exercise."
-    }
+    "title": "Endurance-related compounds"
   },
   "shilajit_performance": {
-    "title": "Traditional performance compounds",
-    "description": "Shilajit is a traditional substance containing minerals and fulvic acid.",
-    "information": {
-      "text": "Shilajit has been studied in some research contexts related to physical performance."
-    }
+    "title": "Traditional performance compounds"
   },
   "probiotics_microbiota": {
     "title": "Gut microbiota overview",
-    "description": "Probiotics are live microorganisms that have been studied in relation to gut health.",
-    "information": {
-      "text": "Probiotics have been researched for their potential effects on gut microbiota balance and immune function."
-    },
     "warning": "Consult with a healthcare provider before starting probiotic supplementation if you have compromised immunity."
   },
   "fiber_microbiome": {
-    "title": "Dietary fiber sources",
-    "description": "Research has identified various bacterial strains in the gut. A study from Zoe identified the strain SGB15249 in individuals who consumed nuts and seeds regularly.",
-    "information": {
-      "text": "Nuts and seeds are dietary sources of fiber that have been studied in relation to microbiome composition."
-    }
+    "title": "Dietary fiber sources"
   },
   "milk_thistle_liver": {
-    "title": "Hepatic support compounds",
-    "description": "Milk Thistle is an herb that contains silymarin, which has been studied in liver research.",
-    "information": {
-      "text": "Milk Thistle has been researched for its potential role in liver cell function and regeneration."
-    }
+    "title": "Liver-supporting compounds"
   },
   "hiit_vo2max": {
     "title": "High-intensity interval training",
-    "description": "HIIT is a training method that has been extensively studied in exercise physiology.",
-    "information": {
-      "text": "HIIT has been researched for its effects on VO₂ max and metabolic adaptations."
-    },
     "analyzePrompt": "The user has a goal to perform at least 2 high-intensity interval training (HIIT) sessions per week. Based on the workout log, evaluate whether the goal was achieved. Summarize progress and give encouragement or advice."
   },
   "running_volume_aerobic": {
     "title": "Progressive volume training",
-    "description": "Gradual increases in training volume are commonly discussed in running programs.",
-    "information": {
-      "text": "Progressive volume increases have been studied in relation to aerobic base development and injury prevention."
-    },
     "analyzePrompt": "The user is working to increase total running distance each week. Given the workout data, analyze if there's an upward trend. Mention any signs of overtraining or progress plateaus."
   },
   "multivitamin_general": {
