@@ -2,12 +2,28 @@ import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Colors } from "@/constants/Colors";
+import PlayIcon from "@/assets/icons/play.svg";
+import SearchIcon from "@/assets/icons/search.svg";
+import CheckIcon from "@/assets/icons/check.svg";
+import StarIcon from "@/assets/icons/star.svg";
+import ProhibitionIcon from "@/assets/icons/prohibition.svg";
+
+type TipVerdict =
+  | "interested"
+  | "startNow"
+  | "wantMore"
+  | "alreadyWorks"
+  | "notInterested"
+  | "noResearch"
+  | "testedFailed";
+
+const ICON_SIZE = 22;
 
 interface TipProgress {
   xp: number;
   progress: number;
   askedQuestions: number;
-  verdict?: "relevant" | "interesting" | "skeptical";
+  verdict?: TipVerdict;
 }
 
 interface TipCardProps {
@@ -22,14 +38,39 @@ interface TipCardProps {
   onPress: () => void;
 }
 
-export default function TipCard({ tip, tipProgress, onPress }: TipCardProps) {
+export default function TipCard({ tip, tipProgress, onPress }: <readonly>TipCardProps) {
   const { t } = useTranslation();
 
   const isStarted = tipProgress.xp > 0;
   const isCompleted = tipProgress.progress >= 1;
-  const isRelevant = tipProgress.verdict === "relevant";
-  const isInteresting = tipProgress.verdict === "interesting";
-  const isSkeptical = tipProgress.verdict === "skeptical";
+
+  const positiveVerdicts: TipVerdict[] = [
+    "interested",
+    "startNow",
+    "wantMore",
+    "alreadyWorks",
+  ];
+  const negativeVerdicts: TipVerdict[] = [
+    "notInterested",
+    "noResearch",
+    "testedFailed",
+  ];
+
+  const verdict = tipProgress.verdict;
+  const isPositive = verdict ? positiveVerdicts.includes(verdict) : false;
+  const isNegative = verdict ? negativeVerdicts.includes(verdict) : false;
+
+  const iconColor = Colors.dark.accentStrong;
+  const verdictIconMap: Partial<Record<TipVerdict, React.ReactNode>> = {
+    interested: <StarIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
+    startNow: <PlayIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
+    wantMore: <SearchIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
+    alreadyWorks: <CheckIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
+    notInterested: <ProhibitionIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
+    noResearch: <ProhibitionIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
+    testedFailed: <ProhibitionIcon width={ICON_SIZE} height={ICON_SIZE} color={iconColor} />,
+  };
+  const verdictIcon = verdict ? verdictIconMap[verdict] : undefined;
 
   return (
     <Pressable
@@ -37,21 +78,20 @@ export default function TipCard({ tip, tipProgress, onPress }: TipCardProps) {
         styles.tipSection,
         pressed && styles.tipPressed,
         isCompleted && styles.tipCompleted,
-        isRelevant && styles.tipRelevant,
-        isInteresting && styles.tipInteresting,
-        isSkeptical && styles.tipSkeptical,
+        isPositive && styles.tipPositive,
+        isNegative && styles.tipNegative,
       ]}
       onPress={onPress}
     >
       <View style={styles.tipHeader}>
         <View style={styles.tipHeaderLeft}>
-          <Text style={styles.tipTitle}>
-            {isRelevant && "⭐ "}
-            {isInteresting && "🔍 "}
-            {isSkeptical && "🤨 "}
-            {isCompleted && "✅ "}
-            {t(`tips:${tip.title}`)}
-          </Text>
+          <View style={styles.tipTitleRow}>
+            {verdictIcon && <View style={styles.inlineIcon}>{verdictIcon}</View>}
+            {!verdictIcon && isCompleted && (
+              <Text style={styles.fallbackIcon}>✅</Text>
+            )}
+            <Text style={styles.tipTitle}>{t(`tips:${tip.title}`)}</Text>
+          </View>
           <Text style={styles.tipDescription}>
             {t(`tips:${tip.taskInfo?.description}`)}
           </Text>
@@ -107,20 +147,15 @@ const styles = StyleSheet.create({
     borderColor: Colors.dark.accentMedium,
     backgroundColor: Colors.dark.accentVeryWeak,
   },
-  tipRelevant: {
+  tipPositive: {
     borderColor: Colors.dark.successDefault,
     backgroundColor: Colors.dark.successWeak,
     borderWidth: 2,
   },
-  tipInteresting: {
-    borderColor: Colors.dark.infoDefault,
-    backgroundColor: Colors.dark.infoWeak,
-    borderWidth: 2,
-  },
-  tipSkeptical: {
+  tipNegative: {
     borderColor: Colors.dark.warmDefault,
     backgroundColor: Colors.dark.warmWeak,
-    opacity: 0.7,
+    borderWidth: 2,
   },
   tipHeader: {
     flexDirection: "row",
@@ -132,11 +167,22 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 12,
   },
+  tipTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  inlineIcon: {
+    marginRight: 6,
+  },
   tipTitle: {
     color: Colors.dark.textSecondary,
     fontSize: 14,
     fontWeight: "600",
-    marginBottom: 4,
+  },
+  fallbackIcon: {
+    fontSize: 14,
+    marginRight: 6,
   },
   tipDescription: {
     color: Colors.dark.textTertiary,

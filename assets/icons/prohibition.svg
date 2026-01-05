@@ -1,0 +1,47 @@
+<!-- prohibition-outline.svg -->
+<svg width="48" height="48" viewBox="0 0 48 48"
+     xmlns="http://www.w3.org/2000/svg" fill="none"
+     role="img" aria-label="Prohibition">
+
+  <defs>
+    <!-- Inner glow -->
+    <radialGradient id="innerGlowProhibition" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Soft shadow -->
+    <filter id="softShadowProhibition" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1.5"
+        flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Transparent inner glow -->
+  <circle
+    cx="24"
+    cy="24"
+    r="20"
+    fill="url(#innerGlowProhibition)"
+  />
+
+  <!-- Prohibition icon -->
+  <g filter="url(#softShadowProhibition)">
+    <!-- Circle -->
+    <circle
+      cx="24"
+      cy="24"
+      r="18"
+      stroke="currentColor"
+      stroke-width="2"
+      fill="none"
+    />
+    <!-- Diagonal line -->
+    <path
+      d="M9 9L39 39"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+    />
+  </g>
+</svg>

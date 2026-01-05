@@ -1,0 +1,44 @@
+<!-- star-outline.svg -->
+<svg width="48" height="48" viewBox="0 0 48 48"
+     xmlns="http://www.w3.org/2000/svg" fill="none"
+     role="img" aria-label="Star">
+
+  <defs>
+    <!-- Inner glow -->
+    <radialGradient id="innerGlowStar" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Soft shadow -->
+    <filter id="softShadowStar" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1.5"
+        flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+
+    <!-- Clip path for star shape -->
+    <clipPath id="starClip">
+      <path d="M24 6L32 20H48L34 28L40 42L24 34L8 42L14 28L0 20H16L24 6Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background glow inside star only -->
+  <circle
+    cx="24"
+    cy="24"
+    r="20"
+    fill="url(#innerGlowStar)"
+    clip-path="url(#starClip)"
+  />
+
+  <!-- Star icon -->
+  <g filter="url(#softShadowStar)">
+    <path
+      d="M24 6L32 20H48L34 28L40 42L24 34L8 42L14 28L0 20H16L24 6Z"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linejoin="round"
+      fill="none"
+    />
+  </g>
+</svg>

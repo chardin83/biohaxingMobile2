@@ -29,8 +29,20 @@ export default function BiohackerDashboard() {
 
   // Hitta favorit-markerade tips för ett specifikt område
   const getFavoriteTipsForArea = (areaId: string) => {
+    const positiveVerdicts = [
+      "interested",
+      "startNow",
+      "wantMore",
+      "alreadyWorks",
+    ];
+
     return viewedTips
-      ?.filter(tip => tip.mainGoalId === areaId && tip.verdict === "relevant")
+      ?.filter(
+        (tip) =>
+          tip.mainGoalId === areaId &&
+          tip.verdict &&
+          positiveVerdicts.includes(tip.verdict)
+      )
       .map(tip => {
         const tipDetails = tips.find(t => t.id === tip.tipId);
         return tipDetails ? t(`tips:${tipDetails.title}`) : null;

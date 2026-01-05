@@ -12,7 +12,7 @@ interface TipsListProps {
   title: string;
 }
 
-export default function TipsList({ areaId, title }: TipsListProps) {
+export default function TipsList({ areaId, title }: <readonly>TipsListProps) {
   const { t } = useTranslation();
   const router = useRouter();
   const { viewedTips } = useStorage();
@@ -20,46 +20,51 @@ export default function TipsList({ areaId, title }: TipsListProps) {
 
   const tipsRaw = tips.filter(tip => tip.goals.some(goal => goal.id === areaId));
 
-  // Sortera tips: relevant → interesting → skeptical
+  const positiveVerdicts = ["interested", "startNow", "wantMore", "alreadyWorks"] as const;
+  const negativeVerdicts = ["notInterested", "noResearch", "testedFailed"] as const;
+
+  // Sortera tips: positiva → neutrala → negativa
   const sortedTips = React.useMemo(() => {
     return [...tipsRaw].sort((a, b) => {
       const aViewed = viewedTips?.find(
-        v =>
-            v.mainGoalId === areaId &&
-            v.tipId === a.id
+        (v) => v.mainGoalId === areaId && v.tipId === a.id
       );
       const bViewed = viewedTips?.find(
-        v =>
-            v.mainGoalId === areaId &&
-            v.tipId === b.id
+        (v) => v.mainGoalId === areaId && v.tipId === b.id
       );
 
-      const aIsRelevant = aViewed?.verdict === "relevant";
-      const bIsRelevant = bViewed?.verdict === "relevant";
-      const aIsInteresting = aViewed?.verdict === "interesting";
-      const bIsInteresting = bViewed?.verdict === "interesting";
+      const aVerdict = aViewed?.verdict;
+      const bVerdict = bViewed?.verdict;
 
-      if (aIsRelevant && !bIsRelevant) return -1;
-      if (!aIsRelevant && bIsRelevant) return 1;
-      if (aIsInteresting && !bIsInteresting && !bIsRelevant) return -1;
-      if (!aIsInteresting && bIsInteresting && !aIsRelevant) return 1;
+      const aScore = aVerdict
+        ? positiveVerdicts.includes(aVerdict as any)
+          ? 2
+          : negativeVerdicts.includes(aVerdict as any)
+            ? 0
+            : 1
+        : 1;
+      const bScore = bVerdict
+        ? positiveVerdicts.includes(bVerdict as any)
+          ? 2
+          : negativeVerdicts.includes(bVerdict as any)
+            ? 0
+            : 1
+        : 1;
 
-      return 0;
+      return bScore - aScore;
     });
   }, [tipsRaw, viewedTips, areaId]);
 
-  // Filtrera tips: dölj skeptical om inte "show all"
+  // Filtrera tips: dölj "not interested"-liknande om inte "show all"
   const visibleTips = React.useMemo(() => {
     if (showAllTips) {
       return sortedTips;
     }
-    return sortedTips.filter(tip => {
+    return sortedTips.filter((tip) => {
       const viewedTip = viewedTips?.find(
-        v =>
-          v.mainGoalId === areaId &&
-          v.tipId === tip.id
+        (v) => v.mainGoalId === areaId && v.tipId === tip.id
       );
-      return viewedTip?.verdict !== "skeptical";
+      return viewedTip?.verdict ? !negativeVerdicts.includes(viewedTip.verdict as any) : true;
     });
   }, [sortedTips, showAllTips, viewedTips, areaId]);
 
@@ -127,8 +132,8 @@ export default function TipsList({ areaId, title }: TipsListProps) {
         >
           <Text style={styles.showAllText}>
             {showAllTips
-              ? "Hide skeptical tips"
-              : `Show all (${hiddenTipsCount} hidden)`}
+              ? t("common:tips.hideNotInterested", "Hide not interested")
+              : t("common:tips.showAll", { defaultValue: "Show all ({{count}} hidden)", count: hiddenTipsCount })}
           </Text>
         </Pressable>
       )}

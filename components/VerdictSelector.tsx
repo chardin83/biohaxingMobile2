@@ -4,6 +4,12 @@ import { Colors } from "@/constants/Colors";
 import { useTranslation } from "react-i18next";
 import AppBox from "@/components/ui/AppBox";
 import PlayIcon from "@/assets/icons/play.svg";
+import SearchIcon from "@/assets/icons/search.svg";
+import CheckIcon from "@/assets/icons/check.svg";
+import StarIcon from "@/assets/icons/star.svg";
+import ProhibitionIcon from "@/assets/icons/prohibition.svg";
+
+const ICON_SIZE = 40;
 
 type VerdictValue = "interested" | "startNow" | "wantMore" | "alreadyWorks" | "notInterested" | "noResearch" | "testedFailed";
 
@@ -41,32 +47,41 @@ export default function VerdictSelector({ currentVerdict, onVerdictPress }: Verd
   const isSelectedInCategory = (verdict: VerdictValue) => currentVerdict === verdict;
 
   // För sub-alternativ: anropa callback och stäng vyn
-  const getSubOption = (icon: string | React.ReactNode, titleKey: string, verdictValue: VerdictValue, xp = true) => (
-    <Pressable 
-      style={[
-        styles.verdictCard,
-        isSelectedInCategory(verdictValue) && styles.verdictCardSelected
-      ]}
-      onPress={() => {
-        onVerdictPress(verdictValue);
-        setSelectedCategory(null);
-      }}
-    >
-      <View style={styles.verdictCardContent}>
-        {typeof icon === "string" ? (
-          <Text style={styles.verdictCardIcon}>{icon}</Text>
-        ) : (
-          <View style={styles.iconContainer}>{icon}</View>
-        )}
-        <View style={styles.verdictCardText}>
-          <Text style={styles.verdictCardTitle}>{t(`common:goalDetails.${titleKey}`)}</Text>
+  const getSubOption = (icon: string | React.ReactNode, titleKey: string, verdictValue: VerdictValue, xp = true) => {
+    let xpLabel = "";
+    if (isSelectedInCategory(verdictValue)) {
+      xpLabel = "✓";
+    } else if (xp) {
+      xpLabel = "+5 XP";
+    }
+
+    return (
+      <Pressable 
+        style={[
+          styles.verdictCard,
+          isSelectedInCategory(verdictValue) && styles.verdictCardSelected
+        ]}
+        onPress={() => {
+          onVerdictPress(verdictValue);
+          setSelectedCategory(null);
+        }}
+      >
+        <View style={styles.verdictCardContent}>
+          {typeof icon === "string" ? (
+            <Text style={styles.verdictCardIcon}>{icon}</Text>
+          ) : (
+            <View style={styles.iconContainer}>{icon}</View>
+          )}
+          <View style={styles.verdictCardText}>
+            <Text style={styles.verdictCardTitle}>{t(`common:goalDetails.${titleKey}`)}</Text>
+          </View>
         </View>
-      </View>
-      <Text style={styles.verdictCardXP}>
-        {isSelectedInCategory(verdictValue) ? "✓" : xp ? "+5 XP" : ""}
-      </Text>
-    </Pressable>
-  );
+        <Text style={styles.verdictCardXP}>
+          {xpLabel}
+        </Text>
+      </Pressable>
+    );
+  };
 
   // For displaying category button with sub-option label
   const getCategoryButtonWithLabel = (icon: string, titleKey: string, category: "interested" | "notInterested") => {
@@ -101,8 +116,8 @@ export default function VerdictSelector({ currentVerdict, onVerdictPress }: Verd
   if (!selectedCategory) {
     return (
       <AppBox title={t("common:goalDetails.verdict")}>
-        {getCategoryButtonWithLabel("⭐", "verdictInterested", "interested")}
-        {getCategoryButtonWithLabel("🚫", "verdictNotInterested", "notInterested")}
+        {getCategoryButtonWithLabel(<StarIcon width={ICON_SIZE} height={ICON_SIZE} color={Colors.dark.accentStrong} />, "verdictInterested", "interested")}
+        {getCategoryButtonWithLabel(<ProhibitionIcon width={ICON_SIZE} height={ICON_SIZE} color={Colors.dark.accentStrong} />, "verdictNotInterested", "notInterested")}
       </AppBox>
     );
   }
@@ -117,9 +132,9 @@ export default function VerdictSelector({ currentVerdict, onVerdictPress }: Verd
         >
           <Text style={styles.backButtonText}>{t("back")}</Text>
         </Pressable>
-        {getSubOption(<PlayIcon width={28} height={28} />, "verdictStartNow", "startNow")}
-        {getSubOption("🔍", "verdictWantMore", "wantMore")}
-        {getSubOption("✅", "verdictAlreadyWorks", "alreadyWorks")}
+        {getSubOption(<PlayIcon width={ICON_SIZE} height={ICON_SIZE} color={Colors.dark.accentStrong} />, "verdictStartNow", "startNow")}
+        {getSubOption(<SearchIcon width={ICON_SIZE} height={ICON_SIZE} color={Colors.dark.accentStrong} />, "verdictWantMore", "wantMore")}
+        {getSubOption(<CheckIcon width={ICON_SIZE} height={ICON_SIZE} color={Colors.dark.accentStrong} />, "verdictAlreadyWorks", "alreadyWorks")}
       </AppBox>
     );
   }
@@ -202,24 +217,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
   },
-  selectedLabel: {
-    color: Colors.dark.accentStrong,
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 16,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: Colors.dark.accentVeryWeak,
-    borderRadius: 8,
-    borderLeftWidth: 3,
-    borderLeftColor: Colors.dark.accentStrong,
-  },
   subOptionLabel: {
     color: Colors.dark.textLight,
-    fontSize: 13,
+    fontSize: 15,
     fontStyle: "italic",
-    marginLeft: 16,
-    marginTop: -8,
+    marginLeft: 0,
+    marginTop: 3,
     marginBottom: 12,
   },
 });

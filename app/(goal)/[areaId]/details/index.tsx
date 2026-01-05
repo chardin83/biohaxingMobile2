@@ -75,6 +75,8 @@ export default function AreaDetailScreen() {
   const askedQuestions = currentTip?.askedQuestions || [];
   const totalXpEarned = currentTip?.xpEarned || 0;
   const currentVerdict = currentTip?.verdict;
+  const positiveVerdicts = ["interested", "startNow", "wantMore", "alreadyWorks"] as const;
+  const isFavorite = currentVerdict ? positiveVerdicts.includes(currentVerdict as any) : false;
 
   // Hantera verdict-klick
   const handleVerdictPress = (verdict: "interested" | "startNow" | "wantMore" | "alreadyWorks" | "notInterested" | "noResearch" | "testedFailed") => {
@@ -149,6 +151,11 @@ export default function AreaDetailScreen() {
             <Text style={styles.subTitle}>
               {supplementName ?? t(`tips:${titleKey}`)}
             </Text>
+            {isFavorite && (
+              <View style={styles.favoriteChip}>
+                <Text style={styles.favoriteChipText}>★ {t("common:dashboard.favorite", "Favorite")}</Text>
+              </View>
+            )}
             <Text style={styles.xpText}>
               {totalXpEarned} XP earned
             </Text>
@@ -249,6 +256,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 10,
+  },
+  favoriteChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    backgroundColor: Colors.dark.accentWeak,
+    borderRadius: 12,
+    marginTop: 6,
+  },
+  favoriteChipText: {
+    color: Colors.dark.primary,
+    fontWeight: "700",
+    fontSize: 13,
   },
   notFound: {
     fontSize: 18,
