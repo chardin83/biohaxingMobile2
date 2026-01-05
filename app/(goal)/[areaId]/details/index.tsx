@@ -38,9 +38,15 @@ export default function AreaDetailScreen() {
   }, [areaId, tipId]);
   
   const mainArea = areas.find((g) => g.id === areaId);
-  const tip = tipId
-    ? tips.find((t) => t.id === tipId)
-    : tips.find((t) => t.areas.some((a) => a.id === areaId));
+  const findTip = (tipId: string | undefined, areaId: string) => {
+    return tipId
+      ? tips.find((t) => t.id === tipId)
+      : tips.find((t) => t.areas.some((a) => a.id === areaId));
+  };
+
+  const tip = findTip(tipId, areaId);
+
+  const [showAllAreas, setShowAllAreas] = React.useState(false);
 
   const goalIcon = mainArea?.icon ?? "target";
   const supplementId = tip?.supplements?.[0]?.id ?? undefined;
@@ -88,9 +94,8 @@ export default function AreaDetailScreen() {
 
   const handleAIInsightPress = (question: string, questionType: string) => {
     const tipTranslation = t(`tips:${titleKey}`);
-    const descriptionTranslation = t(`tips:${step?.taskInfo?.description}`) || '';
     const informationTranslation = t(`tips:${information?.text}`) || '';
-    const tipInfo = `Tip: ${tipTranslation}\nDescription: ${descriptionTranslation}\nInformation: ${informationTranslation}`;
+    const tipInfo = `Tip: ${tipTranslation}\nInformation: ${informationTranslation}`;
     
     let fullPrompt = '';
     
@@ -177,6 +182,41 @@ export default function AreaDetailScreen() {
               </Text>
             </AppBox>
           )}
+
+          {tip?.areas.length ? (
+            <>
+              <Text style={styles.relevanceHeading}>
+                {t("common:goalDetails.relevance")}
+              </Text>
+
+             
+
+              {(showAllAreas ? tip.areas : tip.areas.filter((a) => a.id === areaId)).map((a) => {
+                const areaTitle = t(`areas:${a.id}.title`);
+                return (
+                  <AppBox
+                    key={a.id}
+                    title={areaTitle}
+                  >
+                    <Text style={{ color: Colors.dark.textLight, marginBottom: 8 }}>
+                      {t(`tips:${a.descriptionKey}`)}
+                    </Text>
+                  </AppBox>
+                );
+              })}
+            </>
+          ) : null}
+
+           {tip.areas.length > 1 && (
+                <Pressable
+                  onPress={() => setShowAllAreas((v) => !v)}
+                  style={styles.showAllButton}
+                >
+                  <Text style={styles.showAllText}>
+                    {showAllAreas ? t("common:goalDetails.showLess") : t("common:goalDetails.showAll")}
+                  </Text>
+                </Pressable>
+              )}
 
           <AppBox title={t(`common:goalDetails.aiInsights`)}>
             <Pressable 
@@ -323,4 +363,23 @@ const styles = StyleSheet.create({
     color: Colors.dark.textLight,
     fontSize: 16,
   },
+  relevanceHeading: {
+    alignSelf: "flex-start",
+    color: Colors.dark.textPrimary,
+    fontSize: 16,
+    fontWeight: "700",
+    marginBottom: 6,
+  },
+  showAllButton: {
+    alignSelf: "flex-end",
+    paddingHorizontal: 10,
+    marginTop: -10,
+    marginBottom: 40,
+  },
+  showAllText: {
+    color: Colors.dark.accentDefault,
+    fontSize: 14,
+    fontWeight: "600",
+  },
 });
+

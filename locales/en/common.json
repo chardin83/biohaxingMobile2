@@ -113,7 +113,10 @@
     "verdictWantMore": "Want more research",
     "verdictAlreadyWorks": "Already tested - works",
     "verdictNoResearch": "No research support",
-    "verdictTestedFailed": "Already tested - didn't work"
+    "verdictTestedFailed": "Already tested - didn't work",
+    "relevance": "Why this matters",
+    "showAll": "Show all",
+    "showLess": "Show less"
   },
   "chat": {
       "welcomeMessage": "Hi! I'm your personal health coach – specialized in biohacking and supplements. Ask me about daily routines or optimizing your health. 💪🌿",

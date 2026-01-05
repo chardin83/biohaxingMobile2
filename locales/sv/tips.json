@@ -1,42 +1,34 @@
 {
   "nutritional_support_vitality": {
-    "title": "Allmänt näringstöd",
+    "title": "Multivitamin",
     "description": "Tillräcklig tillförsel av väsentliga vitaminer och mineraler diskuteras ofta som en del av att upprätthålla övergripande vitalitet.",
+    "areas": {
+      "energy": ""
+    },
     "information": {
       "text": "Multivitaminer används ibland för att täcka potentiella näringsluckor i kosten."
     }
   },
-  "vitamin_d_status_awareness": {
-    "title": "Medvetenhet om D-vitaminstatus",
+  "vitamin_d": {
+    "title": "D-vitamin",
     "description": "D-vitaminhalterna kan variera beroende på faktorer som solexponering, diet och geografisk plats.",
+    "areas": {
+      "energy": "D-vitamin stödjer mitokondriell funktion och cellulär energiproduktion genom att reglera kalciumhomeostas.",
+      "immuneSupport": "D-vitamin modulerar både medfött och adaptivt immunsvar, och låga nivåer är associerade med ökad infektionskänslighet.",
+      "musclePerformance": "D-vitamin är avgörande för muskelstyrka och funktion genom kalciumreglering och muskelproteinsyntesvägar.",
+      "nervousSystem": "D-vitamin påverkar neurotransmittorproduktion och har neuroprotektiva effekter i det centrala nervsystemet."
+    },
     "information": {
       "text": "D-vitaminstatusen bedöms vanligtvis i kliniska miljöer med hjälp av blodbaserade mätningar."
-    }
-  },
-  "vitamin_d_intake": {
-    "title": "Överväganden kring D-vitaminintag",
-    "description": "D-vitamin är tillgängligt från solljus, livsmedelskällor och kosttillskott.",
-    "information": {
-      "text": "Vitamin D3 är en vanlig tillskottsform och har studerats omfattande."
-    }
-  },
-  "vitamin_d_measurements": {
-    "title": "Förståelse för D-vitaminmätningar",
-    "description": "Sjukvårdspersonal kan utvärdera D-vitaminhalterna över tid för att förstå trender och förändringar.",
-    "information": {
-      "text": "Olika D-vitaminintervall används kliniskt för att tolka laboratoriella resultat."
-    }
-  },
-  "vitamin_mineral_balance": {
-    "title": "Vitamin- och mineralbalans",
-    "description": "Vitaminer och mineraler spelar roller i många metabola och immunrelaterade processer.",
-    "information": {
-      "text": "D-vitamin är inblandat i immunreglering och metabola vägar."
     }
   },
   "mitochondrial_nutrients_coq10": {
     "title": "Mitokondrienäring",
     "description": "Vissa näringsämnen är involverade i mitokondriella processer relaterade till cellulär energiproduktion.",
+    "areas": {
+      "energy": "",
+      "immuneSupport": ""
+    },
     "information": {
       "text": "CoQ10 deltar i energiöverföringen inom mitokondrierna."
     },
@@ -195,7 +187,7 @@
     "warning": "Kreatintillskott kan påverka njurfunktionen hos personer med redan befintliga tillstånd."
   },
   "betaalanine_endurance": {
-    "title": "Uthålligheitsrelaterade föreningar",
+    "title": "Uthållighetsrelaterade föreningar",
     "description": "Beta-alanin är en aminosyra som har studerats i relation till träningsprestation.",
     "information": {
       "text": "Beta-alanin har undersökts för dess roll i att buffra vätejonter under högintensiv träning."

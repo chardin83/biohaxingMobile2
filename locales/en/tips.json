@@ -1,30 +1,25 @@
 {
   "nutritional_support_vitality": {
-    "title": "General nutritional support",
+    "title": "Multivitamin",
     "description": "Adequate intake of essential vitamins and minerals is often discussed as part of maintaining overall vitality.",
+    "areas": {
+      "energy": ""
+    },
     "information": {
       "text": "Multivitamins are sometimes used to help cover potential nutritional gaps in the diet."
     }
   },
-  "vitamin_d_status_awareness": {
-    "title": "Vitamin D status awareness",
+  "vitamin_d": {
+    "title": "Vitamin D",
     "description": "Vitamin D levels can vary based on factors such as sun exposure, diet, and geographic location.",
+    "areas": {
+      "energy": "Vitamin D supports mitochondrial function and cellular energy production by regulating calcium homeostasis.",
+      "immuneSupport": "Vitamin D modulates both innate and adaptive immune responses, with low levels associated with increased infection susceptibility.",
+      "musclePerformance": "Vitamin D is critical for muscle strength and function through calcium regulation and muscle protein synthesis pathways.",
+      "nervousSystem": "Vitamin D influences neurotransmitter production and has neuroprotective effects in the central nervous system."
+    },
     "information": {
       "text": "Vitamin D status is commonly assessed in clinical settings using blood-based measurements."
-    }
-  },
-  "vitamin_d_intake": {
-    "title": "Vitamin D intake considerations",
-    "description": "Vitamin D is available from sunlight, food sources, and dietary supplements.",
-    "information": {
-      "text": "Vitamin D3 is a commonly used supplemental form and has been widely studied."
-    }
-  },
-  "vitamin_d_measurements": {
-    "title": "Understanding vitamin D measurements",
-    "description": "Healthcare professionals may evaluate vitamin D levels over time to understand trends and changes.",
-    "information": {
-      "text": "Different vitamin D ranges are used clinically to interpret laboratory results."
     }
   },
   "vitamin_mineral_balance": {
@@ -37,6 +32,10 @@
   "mitochondrial_nutrients_coq10": {
     "title": "Mitochondrial nutrients",
     "description": "Certain nutrients are involved in mitochondrial processes related to cellular energy production.",
+    "areas": {
+      "energy": "",
+      "immuneSupport": ""
+    },
     "information": {
       "text": "CoQ10 participates in energy transfer within the mitochondria."
     },
