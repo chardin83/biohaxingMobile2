@@ -16,20 +16,24 @@
       "nervousSystem": "Vitamin D influences neurotransmitter production and has neuroprotective effects in the central nervous system."
     }
   },
-  "vitamin_mineral_balance": {
-    "title": "Vitamin and mineral balance",
-    "description": "Vitamins and minerals play roles in many metabolic and immune-related processes."
-  },
-  "mitochondrial_nutrients_coq10": {
-    "title": "Mitochondrial nutrients",
-    "description": "Certain nutrients are involved in mitochondrial processes related to cellular energy production.",
+  "coq10": {
+    "title": "Mitokondrienäring",
+    "description": "Vissa näringsämnen är involverade i mitokondriella processer relaterade till cellulär energiproduktion.",
     "areas": {
-      "immuneSupport": ""
+      "energy": "CoQ10 spelar en kritisk roll i den mitokondriella elektrontransportkedjan, vilket är avgörande för cellulär energiproduktion.",
+      "immuneSupport": "CoQ10 har antioxidantegenskaper som hjälper till att skydda celler från oxidativ stress och stödjer immunsystemets funktion."
     },
-    "analyzePrompt": "Analyze the image and determine mitochondrial support needs."
+    "analyzePrompt": "Analysera bilden och bestäm mitokondriens behov av stöd."
   },
   "cellular_energy_nad": {
-    "title": "Cellular energy metabolism"
+    "title": "NAD+",
+    "description": "NAD+ (Nicotinamide Adenine Dinucleotide) is a critical coenzyme found in every cell of the body. It plays a key role in cellular energy metabolism, DNA repair, and maintaining overall cellular health.",
+    "areas": {
+      "energy": "NAD+ is essential for the mitochondrial processes that generate ATP, the primary energy currency of the cell.",
+      "nervousSystem": "NAD+ supports the nervous system by aiding in cellular repair and protecting neurons from oxidative stress.",
+      "immuneSupport": "NAD+ contributes to immune function by supporting cellular metabolism and repair mechanisms vital for immune cells."
+    },
+    "analyzePrompt": "Analyze the user's NAD+ levels and suggest strategies to optimize cellular energy metabolism."
   },
   "sleep_timing_circadian": {
     "title": "Sleep timing awareness"
@@ -53,7 +57,13 @@
     "title": "Traditional plant compounds"
   },
   "calming_glycine": {
-    "title": "Calming amino acids"
+    "title": "Calming amino acids",
+    "description": "Glycine is an amino acid that acts as a neurotransmitter in the central nervous system. It has been studied for its calming effects and its role in promoting relaxation and better sleep.",
+    "areas": {
+      "nervousSystem": "Glycine acts as an inhibitory neurotransmitter, helping to calm the nervous system and reduce stress.",
+      "sleepQuality": "Glycine has been shown to improve sleep quality by promoting relaxation and regulating body temperature.",
+      "immuneSupport": "Glycine supports immune function by reducing inflammation and promoting cellular repair."
+    }
   },
   "neuropeptide_semax": {
     "title": "Neuropeptide research"
@@ -89,7 +99,13 @@
     "title": "Adaptogenic herbs"
   },
   "neuromuscular_training": {
-    "title": "Neuromuscular training concepts"
+    "title": "Neuromuscular training concepts",
+    "description": "Neuromuscular training focuses on improving the connection between the nervous system and muscles to enhance strength, coordination, and overall performance.",
+    "areas": {
+      "musclePerformance": "Neuromuscular training enhances muscle strength and coordination, improving physical performance.",
+      "cardioFitness": "This training supports cardiovascular fitness by improving endurance and oxygen utilization during physical activity.",
+      "nervousSystem": "Neuromuscular training strengthens the communication between the nervous system and muscles, optimizing movement efficiency."
+    }
   },
   "creatine_atp_strength": {
     "title": "Creatine",
@@ -123,10 +139,6 @@
     "title": "Multivitamin",
     "description": "Essential vitamins and minerals support overall health and vitality."
   },
-  "coq10_mitochondrial": {
-    "title": "Coenzyme Q10",
-    "description": "CoQ10 supports mitochondrial energy production and cellular health."
-  },
   "nad_plus_energy": {
     "title": "NAD+",
     "description": "NAD+ is involved in cellular metabolism and energy pathways."
@@ -142,5 +154,40 @@
   "betaine_cardiovascular": {
     "title": "Betaine",
     "description": "Betaine supports cardiovascular function and physical performance."
+  },
+  "ashwagandha_adaptogen": {
+    "title": "Ashwagandha",
+    "description": "Ashwagandha is an adaptogenic herb traditionally used in Ayurvedic medicine. It helps the body manage stress by supporting cortisol balance and promoting relaxation.",
+    "areas": {
+      "nervousSystem": "Ashwagandha supports the nervous system by reducing stress and promoting calm through cortisol regulation.",
+      "energy": "Ashwagandha helps combat fatigue and supports sustained energy levels throughout the day.",
+      "immuneSupport": "Ashwagandha has immune-modulating properties that support overall immune health."
+    }
+  },
+  "rhodiola_adaptogen": {
+    "title": "Rhodiola",
+    "description": "Rhodiola is an adaptogenic herb known for enhancing mental and physical performance. It helps the body adapt to stress and supports cognitive function.",
+    "areas": {
+      "nervousSystem": "Rhodiola supports the nervous system by reducing mental fatigue and improving stress resilience.",
+      "energy": "Rhodiola enhances physical endurance and reduces fatigue during demanding activities.",
+      "focus": "Rhodiola improves cognitive function, focus, and mental clarity, especially under stress."
+    }
+  },
+  "holy_basil_adaptogen": {
+    "title": "Holy Basil (Tulsi)",
+    "description": "Holy Basil, also known as Tulsi, is an adaptogenic herb revered in traditional medicine for its stress-reducing and immune-supporting properties.",
+    "areas": {
+      "nervousSystem": "Holy Basil helps calm the nervous system and reduce stress through its adaptogenic effects.",
+      "immuneSupport": "Holy Basil supports immune function with its antimicrobial and anti-inflammatory properties."
+    }
+  },
+  "cordyceps_adaptogen": {
+    "title": "Cordyceps",
+    "description": "Cordyceps is a medicinal mushroom known for its energy-boosting and performance-enhancing properties. It supports cellular energy production and endurance.",
+    "areas": {
+      "energy": "Cordyceps enhances cellular energy production by supporting mitochondrial function and ATP generation.",
+      "cardioFitness": "Cordyceps improves oxygen utilization and cardiovascular endurance during physical activity.",
+      "immuneSupport": "Cordyceps has immune-modulating effects that support overall immune health."
+    }
   }
 }

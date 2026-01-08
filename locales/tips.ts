@@ -19,6 +19,8 @@ export type Tip = {
   supplements?: SupplementReference[];
   analyzePrompt?: string;
   startPrompt?: string;
+  parentId?: string; // Ny egenskap för att länka till förälder
+  isParent?: boolean; // Markera om detta är en överordnad kategori
 };
 
 export const tips: Tip[] = [
@@ -60,7 +62,7 @@ export const tips: Tip[] = [
     startPrompt: "vitamin_mineral_balance.startPrompt",
   },
   {
-    id: "mitochondrial_nutrients_coq10",
+    id: "coq10",
     level: 2,
     xp: 500,
     areas: [
@@ -76,8 +78,9 @@ export const tips: Tip[] = [
     level: 2,
     xp: 500,
     areas: [
-      { id: "energy", descriptionKey: "cellular_energy_nad.description" },
-      { id: "immuneSupport", descriptionKey: "cellular_energy_nad.description" }
+      { id: "energy", descriptionKey: "cellular_energy_nad.areas.energy" },
+      { id: "immuneSupport", descriptionKey: "cellular_energy_nad.areas.immuneSupport" },
+      { id: "nervousSystem", descriptionKey: "cellular_energy_nad.areas.nervousSystem" }
     ],
     title: "cellular_energy_nad.title",
     descriptionKey: "cellular_energy_nad.description",
@@ -155,8 +158,13 @@ export const tips: Tip[] = [
     id: "calming_glycine",
     level: 2,
     xp: 500,
-    areas: [{ id: "nervousSystem", descriptionKey: "calming_glycine.description" }],
+    areas: [
+      { id: "nervousSystem", descriptionKey: "calming_glycine.areas.nervousSystem" },
+      { id: "sleepQuality", descriptionKey: "calming_glycine.areas.sleepQuality" },
+      { id: "immuneSupport", descriptionKey: "calming_glycine.areas.immuneSupport" }
+    ],
     title: "calming_glycine.title",
+    descriptionKey: "calming_glycine.description",
     supplements: [{ id: "glycine" }],
   },
   {
@@ -267,8 +275,13 @@ export const tips: Tip[] = [
     id: "neuromuscular_training",
     level: 1,
     xp: 0,
-    areas: [{ id: "musclePerformance", descriptionKey: "neuromuscular_training.description" }],
+    areas: [
+      { id: "musclePerformance", descriptionKey: "neuromuscular_training.areas.musclePerformance" },
+      { id: "cardioFitness", descriptionKey: "neuromuscular_training.areas.cardioFitness" },
+      { id: "nervousSystem", descriptionKey: "neuromuscular_training.areas.nervousSystem" }
+    ],
     title: "neuromuscular_training.title",
+    descriptionKey: "neuromuscular_training.description",
     supplements: [],
   },
   {
@@ -345,5 +358,56 @@ export const tips: Tip[] = [
     title: "running_volume_aerobic.title",
     supplements: [],
     analyzePrompt: "running_volume_aerobic.analyzePrompt",
-  }
+  },
+  {
+    id: "ashwagandha_adaptogen",
+    level: 3,
+    xp: 0,
+    areas: [
+      { id: "nervousSystem", descriptionKey: "ashwagandha_adaptogen.areas.nervousSystem" },
+      { id: "energy", descriptionKey: "ashwagandha_adaptogen.areas.energy" },
+      { id: "immuneSupport", descriptionKey: "ashwagandha_adaptogen.areas.immuneSupport" }
+    ],
+    title: "ashwagandha_adaptogen.title",
+    descriptionKey: "ashwagandha_adaptogen.description",
+    supplements: [],
+  },
+  {
+    id: "rhodiola_adaptogen",
+    level: 3,
+    xp: 0,
+    areas: [
+      { id: "nervousSystem", descriptionKey: "rhodiola_adaptogen.areas.nervousSystem" },
+      { id: "energy", descriptionKey: "rhodiola_adaptogen.areas.energy" },
+      { id: "focus", descriptionKey: "rhodiola_adaptogen.areas.focus" }
+    ],
+    title: "rhodiola_adaptogen.title",
+    descriptionKey: "rhodiola_adaptogen.description",
+    supplements: [],
+  },
+  {
+    id: "holy_basil_adaptogen",
+    level: 3,
+    xp: 0,
+    areas: [
+      { id: "nervousSystem", descriptionKey: "holy_basil_adaptogen.areas.nervousSystem" },
+      { id: "immuneSupport", descriptionKey: "holy_basil_adaptogen.areas.immuneSupport" }
+    ],
+    title: "holy_basil_adaptogen.title",
+    descriptionKey: "holy_basil_adaptogen.description",
+    supplements: [],
+  },
+  {
+    id: "cordyceps_adaptogen",
+    level: 3,
+    xp: 0,
+    areas: [
+      { id: "energy", descriptionKey: "cordyceps_adaptogen.areas.energy" },
+      { id: "cardioFitness", descriptionKey: "cordyceps_adaptogen.areas.cardioFitness" },
+      { id: "immuneSupport", descriptionKey: "cordyceps_adaptogen.areas.immuneSupport" }
+    ],
+    title: "cordyceps_adaptogen.title",
+    descriptionKey: "cordyceps_adaptogen.description",
+    supplements: [],
+  },
 ];

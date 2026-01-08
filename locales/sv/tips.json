@@ -16,18 +16,24 @@
       "nervousSystem": "D-vitamin påverkar neurotransmittorproduktion och har neuroprotektiva effekter i det centrala nervsystemet."
     }
   },
-  "mitochondrial_nutrients_coq10": {
-    "title": "Mitokondrienäring",
-    "description": "Vissa näringsämnen är involverade i mitokondriella processer relaterade till cellulär energiproduktion.",
+  "coq10": {
+    "title": "Koenzym Q10",
+    "description": "Koenzym Q10 (CoQ10) är en viktig förening som spelar en nyckelroll i mitokondriell energiproduktion och fungerar som en kraftfull antioxidant. Det stödjer cellulär hälsa, ökar energinivåerna och skyddar celler från oxidativ skada, vilket bidrar till övergripande vitalitet och immunfunktion.",
     "areas": {
-      "energy": "",
-      "immuneSupport": ""
+      "energy": "CoQ10 spelar en kritisk roll i den mitokondriella elektrontransportkedjan, vilket är avgörande för cellulär energiproduktion.",
+      "immuneSupport": "CoQ10 har antioxidantegenskaper som hjälper till att skydda celler från oxidativ stress och stödjer immunsystemets funktion."
     },
-    "analyzePrompt": "Analysera bilden och bestäm mitokondriensbehov av stöd."
+    "analyzePrompt": "Analysera bilden och bestäm mitokondriens behov av stöd."
   },
   "cellular_energy_nad": {
-    "title": "Cellulär energimetabolism",
-    "description": "Cellulär energiproduktion beror på komplexa metabola vägar."
+    "title": "NAD+",
+    "description": "NAD+ (Nikotinamidadenindinukleotid) är ett viktigt koenzym som finns i varje cell i kroppen. Det spelar en nyckelroll i cellulär energimetabolism, DNA-reparation och upprätthållande av övergripande cellulär hälsa.",
+    "areas": {
+      "energy": "NAD+ är avgörande för de mitokondriella processer som genererar ATP, cellens primära energivaluta.",
+      "nervousSystem": "NAD+ stödjer nervsystemet genom att hjälpa till med cellulär reparation och skydda neuroner från oxidativ stress.",
+      "immuneSupport": "NAD+ bidrar till immunfunktionen genom att stödja cellulär metabolism och reparationsmekanismer som är viktiga för immunceller."
+    },
+    "analyzePrompt": "Analysera användarens NAD+-nivåer och föreslå strategier för att optimera cellulär energimetabolism."
   },
   "sleep_timing_circadian": {
     "title": "Medvetenhet om sömnöversättning",
@@ -59,7 +65,12 @@
   },
   "calming_glycine": {
     "title": "Lugna aminosyror",
-    "description": "Glycin är en aminosyra som fungerar som en neurotransmitter i det centrala nervsystemet."
+    "description": "Glycin är en aminosyra som fungerar som en neurotransmitter i det centrala nervsystemet. Den har studerats för sina lugnande effekter och sin roll i att främja avslappning och bättre sömn.",
+    "areas": {
+      "nervousSystem": "Glycin fungerar som en hämmande neurotransmitter som hjälper till att lugna nervsystemet och minska stress.",
+      "sleepQuality": "Glycin har visat sig förbättra sömnkvaliteten genom att främja avslappning och reglera kroppstemperaturen.",
+      "immuneSupport": "Glycin stödjer immunfunktionen genom att minska inflammation och främja cellulär reparation."
+    }
   },
   "neuropeptide_semax": {
     "title": "Neuropeptid-forskning",
@@ -107,7 +118,12 @@
   },
   "neuromuscular_training": {
     "title": "Neuromuskulära träningsbegrepp",
-    "description": "Proteinintag och neuromuskulär träning har studerats inom idrott."
+    "description": "Neuromuskulär träning fokuserar på att förbättra kopplingen mellan nervsystemet och musklerna för att öka styrka, koordination och övergripande prestation.",
+    "areas": {
+      "musclePerformance": "Neuromuskulär träning förbättrar muskelstyrka och koordination, vilket ökar fysisk prestation.",
+      "cardioFitness": "Denna träning stödjer kardiovaskulär kondition genom att förbättra uthållighet och syreanvändning under fysisk aktivitet.",
+      "nervousSystem": "Neuromuskulär träning stärker kommunikationen mellan nervsystemet och musklerna, vilket optimerar rörelseeffektiviteten."
+    }
   },
   "creatine_atp_strength": {
     "title": "Kreatin",
@@ -149,10 +165,6 @@
     "title": "Multivitamin",
     "description": "Väsentliga vitaminer och mineraler stödjer övergripande hälsa och vitalitet."
   },
-  "coq10_mitochondrial": {
-    "title": "Koenzym Q10",
-    "description": "CoQ10 stödjer mitokondriell energiproduktion och cellulär hälsa."
-  },
   "nad_plus_energy": {
     "title": "NAD+",
     "description": "NAD+ är involverat i cellulär metabolism och energivägar."
@@ -168,5 +180,40 @@
   "betaine_cardiovascular": {
     "title": "Betain",
     "description": "Betain stödjer kardiovaskulär funktion och fysisk prestanda."
+  },
+  "ashwagandha_adaptogen": {
+    "title": "Ashwagandha",
+    "description": "Ashwagandha är en adaptogen växt som traditionellt används i ayurvedisk medicin. Den hjälper kroppen att hantera stress genom att stödja kortisolbalans och främja avslappning.",
+    "areas": {
+      "nervousSystem": "Ashwagandha stödjer nervsystemet genom att minska stress och främja lugn via kortisolreglering.",
+      "energy": "Ashwagandha hjälper till att bekämpa trötthet och stödjer varaktiga energinivåer under dagen.",
+      "immuneSupport": "Ashwagandha har immunmodulerande egenskaper som stödjer den övergripande immunhälsan."
+    }
+  },
+  "rhodiola_adaptogen": {
+    "title": "Rhodiola",
+    "description": "Rhodiola är en adaptogen växt känd för att förbättra mental och fysisk prestation. Den hjälper kroppen att anpassa sig till stress och stödjer kognitiv funktion.",
+    "areas": {
+      "nervousSystem": "Rhodiola stödjer nervsystemet genom att minska mental trötthet och förbättra stressresiliens.",
+      "energy": "Rhodiola förbättrar fysisk uthållighet och minskar trötthet under krävande aktiviteter.",
+      "focus": "Rhodiola förbättrar kognitiv funktion, fokus och mental klarhet, särskilt under stress."
+    }
+  },
+  "holy_basil_adaptogen": {
+    "title": "Helig basilika (Tulsi)",
+    "description": "Helig basilika, även känd som Tulsi, är en adaptogen växt som vördas i traditionell medicin för sina stressreducerande och immunstödjande egenskaper.",
+    "areas": {
+      "nervousSystem": "Helig basilika hjälper till att lugna nervsystemet och minska stress genom sina adaptogena effekter.",
+      "immuneSupport": "Helig basilika stödjer immunfunktionen med sina antimikrobiella och antiinflammatoriska egenskaper."
+    }
+  },
+  "cordyceps_adaptogen": {
+    "title": "Cordyceps",
+    "description": "Cordyceps är en medicinalsvamp känd för sina energigivande och prestationshöjande egenskaper. Den stödjer cellulär energiproduktion och uthållighet.",
+    "areas": {
+      "energy": "Cordyceps förbättrar cellulär energiproduktion genom att stödja mitokondriell funktion och ATP-generering.",
+      "cardioFitness": "Cordyceps förbättrar syreanvändning och kardiovaskulär uthållighet under fysisk aktivitet.",
+      "immuneSupport": "Cordyceps har immunmodulerande effekter som stödjer den övergripande immunhälsan."
+    }
   }
 }
