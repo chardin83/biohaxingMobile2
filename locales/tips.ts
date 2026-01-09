@@ -168,13 +168,6 @@ export const tips: Tip[] = [
     supplements: [{ id: "glycine" }],
   },
   {
-    id: "neuropeptide_semax",
-    level: 3,
-    xp: 700,
-    areas: [{ id: "nervousSystem", descriptionKey: "neuropeptide_semax.description" }],
-    title: "neuropeptide_semax.title",
-  },
-  {
     id: "breathwork_parasympathetic",
     level: 1,
     xp: 0,
@@ -184,6 +177,60 @@ export const tips: Tip[] = [
       { id: "energy", descriptionKey: "breathwork_parasympathetic.description" }
     ],
     title: "breathwork_parasympathetic.title",
+    descriptionKey: "breathwork_parasympathetic.description",
+    isParent: true,
+  },
+  {
+    id: "box_breathing",
+    level: 1,
+    xp: 0,
+    parentId: "breathwork_parasympathetic",
+    areas: [
+      { id: "nervousSystem", descriptionKey: "box_breathing.areas.nervousSystem" },
+      { id: "immuneSupport", descriptionKey: "box_breathing.areas.immuneSupport" }
+    ],
+    title: "box_breathing.title",
+    descriptionKey: "box_breathing.description",
+    supplements: [],
+  },
+  {
+    id: "4_7_8_breathing",
+    level: 1,
+    xp: 0,
+    parentId: "breathwork_parasympathetic",
+    areas: [
+      { id: "nervousSystem", descriptionKey: "4_7_8_breathing.areas.nervousSystem" },
+      { id: "sleepQuality", descriptionKey: "4_7_8_breathing.areas.sleepQuality" }
+    ],
+    title: "4_7_8_breathing.title",
+    descriptionKey: "4_7_8_breathing.description",
+    supplements: [],
+  },
+  {
+    id: "alternate_nostril_breathing",
+    level: 2,
+    xp: 0,
+    parentId: "breathwork_parasympathetic",
+    areas: [
+      { id: "nervousSystem", descriptionKey: "alternate_nostril_breathing.areas.nervousSystem" },
+      { id: "focus", descriptionKey: "alternate_nostril_breathing.areas.focus" }
+    ],
+    title: "alternate_nostril_breathing.title",
+    descriptionKey: "alternate_nostril_breathing.description",
+    supplements: [],
+  },
+  {
+    id: "diaphragmatic_breathing",
+    level: 1,
+    xp: 0,
+    parentId: "breathwork_parasympathetic",
+    areas: [
+      { id: "nervousSystem", descriptionKey: "diaphragmatic_breathing.areas.nervousSystem" },
+      { id: "energy", descriptionKey: "diaphragmatic_breathing.areas.energy" }
+    ],
+    title: "diaphragmatic_breathing.title",
+    descriptionKey: "diaphragmatic_breathing.description",
+    supplements: [],
   },
   {
     id: "sleep_optimization_recovery",
@@ -197,80 +244,157 @@ export const tips: Tip[] = [
       { id: "sleepQuality", descriptionKey: "sleep_optimization_recovery.description" }
     ],
     title: "sleep_optimization_recovery.title",
+    descriptionKey: "sleep_optimization_recovery.description",
+    isParent: true,
+  },
+  {
+    id: "sleep_duration_consistency",
+    level: 1,
+    xp: 0,
+    parentId: "sleep_optimization_recovery",
+    areas: [
+      { id: "sleepQuality", descriptionKey: "sleep_duration_consistency.areas.sleepQuality" },
+      { id: "energy", descriptionKey: "sleep_duration_consistency.areas.energy" }
+    ],
+    title: "sleep_duration_consistency.title",
+    descriptionKey: "sleep_duration_consistency.description",
+    supplements: [],
+  },
+  {
+    id: "sleep_environment_optimization",
+    level: 1,
+    xp: 0,
+    parentId: "sleep_optimization_recovery",
+    areas: [
+      { id: "sleepQuality", descriptionKey: "sleep_environment_optimization.areas.sleepQuality" },
+      { id: "nervousSystem", descriptionKey: "sleep_environment_optimization.areas.nervousSystem" }
+    ],
+    title: "sleep_environment_optimization.title",
+    descriptionKey: "sleep_environment_optimization.description",
+    supplements: [],
+  },
+  {
+    id: "sleep_hygiene_practices",
+    level: 1,
+    xp: 0,
+    parentId: "sleep_optimization_recovery",
+    areas: [
+      { id: "sleepQuality", descriptionKey: "sleep_hygiene_practices.areas.sleepQuality" },
+      { id: "immuneSupport", descriptionKey: "sleep_hygiene_practices.areas.immuneSupport" }
+    ],
+    title: "sleep_hygiene_practices.title",
+    descriptionKey: "sleep_hygiene_practices.description",
+    supplements: [],
+  },
+  {
+    id: "pre_sleep_wind_down",
+    level: 1,
+    xp: 0,
+    parentId: "sleep_optimization_recovery",
+    areas: [
+      { id: "sleepQuality", descriptionKey: "pre_sleep_wind_down.areas.sleepQuality" },
+      { id: "nervousSystem", descriptionKey: "pre_sleep_wind_down.areas.nervousSystem" }
+    ],
+    title: "pre_sleep_wind_down.title",
+    descriptionKey: "pre_sleep_wind_down.description",
+    supplements: [],
   },
   {
     id: "sunlight_circadian",
     level: 1,
     xp: 0,
     areas: [
-      { id: "nervousSystem", descriptionKey: "sunlight_circadian.description" },
-      { id: "immuneSupport", descriptionKey: "sunlight_circadian.description" }
+      { id: "sleepQuality", descriptionKey: "sunlight_circadian.areas.sleepQuality" },
+      { id: "nervousSystem", descriptionKey: "sunlight_circadian.areas.nervousSystem" },
+      { id: "energy", descriptionKey: "sunlight_circadian.areas.energy" },
+      { id: "immuneSupport", descriptionKey: "sunlight_circadian.areas.immuneSupport" }
     ],
     title: "sunlight_circadian.title",
+    descriptionKey: "sunlight_circadian.description",
   },
   {
     id: "cold_exposure_ans",
     level: 2,
     xp: 0,
-    areas: [{ id: "nervousSystem", descriptionKey: "cold_exposure_ans.description" }],
+    areas: [
+      { id: "nervousSystem", descriptionKey: "cold_exposure_ans.areas.nervousSystem" },
+      { id: "immuneSupport", descriptionKey: "cold_exposure_ans.areas.immuneSupport" },
+      { id: "energy", descriptionKey: "cold_exposure_ans.areas.energy" }
+    ],
     title: "cold_exposure_ans.title",
+    descriptionKey: "cold_exposure_ans.description",
   },
   {
     id: "meditation_mindfulness",
     level: 2,
     xp: 0,
     areas: [
-      { id: "nervousSystem", descriptionKey: "meditation_mindfulness.description" },
-      { id: "immuneSupport", descriptionKey: "meditation_mindfulness.description" },
-      { id: "energy", descriptionKey: "meditation_mindfulness.description" }
+      { id: "nervousSystem", descriptionKey: "meditation_mindfulness.areas.nervousSystem" },
+      { id: "immuneSupport", descriptionKey: "meditation_mindfulness.areas.immuneSupport" },
+      { id: "focus", descriptionKey: "meditation_mindfulness.areas.focus" }
     ],
     title: "meditation_mindfulness.title",
+    descriptionKey: "meditation_mindfulness.description",
   },
   {
     id: "nature_parasympathetic",
     level: 2,
     xp: 0,
     areas: [
-      { id: "nervousSystem", descriptionKey: "nature_parasympathetic.description" },
-      { id: "immuneSupport", descriptionKey: "nature_parasympathetic.description" },
-      { id: "energy", descriptionKey: "nature_parasympathetic.description" }
+      { id: "nervousSystem", descriptionKey: "nature_parasympathetic.areas.nervousSystem" },
+      { id: "immuneSupport", descriptionKey: "nature_parasympathetic.areas.immuneSupport" },
+      { id: "energy", descriptionKey: "nature_parasympathetic.areas.energy" }
     ],
     title: "nature_parasympathetic.title",
+    descriptionKey: "nature_parasympathetic.description",
   },
   {
     id: "hrv_recovery_monitoring",
     level: 3,
     xp: 0,
     areas: [
-      { id: "nervousSystem", descriptionKey: "hrv_recovery_monitoring.description" },
-      { id: "immuneSupport", descriptionKey: "hrv_recovery_monitoring.description" },
-      { id: "energy", descriptionKey: "hrv_recovery_monitoring.description" },
-      { id: "cardioFitness", descriptionKey: "hrv_recovery_monitoring.description" },
-      { id: "musclePerformance", descriptionKey: "hrv_recovery_monitoring.description" }
+      { id: "nervousSystem", descriptionKey: "hrv_recovery_monitoring.areas.nervousSystem" },
+      { id: "immuneSupport", descriptionKey: "hrv_recovery_monitoring.areas.immuneSupport" },
+      { id: "energy", descriptionKey: "hrv_recovery_monitoring.areas.energy" },
+      { id: "cardioFitness", descriptionKey: "hrv_recovery_monitoring.areas.cardioFitness" },
+      { id: "musclePerformance", descriptionKey: "hrv_recovery_monitoring.areas.musclePerformance" }
     ],
     title: "hrv_recovery_monitoring.title",
+    descriptionKey: "hrv_recovery_monitoring.description",
   },
   {
     id: "social_connection_vagal",
     level: 2,
     xp: 0,
-    areas: [{ id: "nervousSystem", descriptionKey: "social_connection_vagal.description" }],
+    areas: [
+      { id: "nervousSystem", descriptionKey: "social_connection_vagal.areas.nervousSystem" },
+      { id: "immuneSupport", descriptionKey: "social_connection_vagal.areas.immuneSupport" },
+      { id: "energy", descriptionKey: "social_connection_vagal.areas.energy" }
+    ],
     title: "social_connection_vagal.title",
+    descriptionKey: "social_connection_vagal.description",
   },
   {
     id: "calming_music_waves",
     level: 1,
     xp: 0,
-    areas: [{ id: "nervousSystem", descriptionKey: "calming_music_waves.description" }],
+    areas: [
+      { id: "nervousSystem", descriptionKey: "calming_music_waves.areas.nervousSystem" },
+      { id: "sleepQuality", descriptionKey: "calming_music_waves.areas.sleepQuality" },
+      { id: "focus", descriptionKey: "calming_music_waves.areas.focus" }
+    ],
     title: "calming_music_waves.title",
+    descriptionKey: "calming_music_waves.description",
   },
-  {
-    id: "adaptogenic_herbs",
-    level: 3,
-    xp: 0,
-    areas: [{ id: "nervousSystem", descriptionKey: "adaptogenic_herbs.description" }],
-    title: "adaptogenic_herbs.title",
-  },
+ {
+  id: "adaptogenic_herbs",
+  level: 3,
+  xp: 0,
+  areas: [{ id: "nervousSystem", descriptionKey: "adaptogenic_herbs.description" }],
+  title: "adaptogenic_herbs.title",
+  descriptionKey: "adaptogenic_herbs.description",
+  isParent: true, // Markera som överordnad kategori
+},
   {
     id: "neuromuscular_training",
     level: 1,
@@ -288,24 +412,39 @@ export const tips: Tip[] = [
     id: "creatine_atp_strength",
     level: 2,
     xp: 500,
-    areas: [{ id: "musclePerformance", descriptionKey: "creatine_atp_strength.description" }],
+    areas: [
+      { id: "musclePerformance", descriptionKey: "creatine_atp_strength.areas.musclePerformance" },
+      { id: "energy", descriptionKey: "creatine_atp_strength.areas.energy" },
+      { id: "cardioFitness", descriptionKey: "creatine_atp_strength.areas.cardioFitness" },
+      { id: "focus", descriptionKey: "creatine_atp_strength.areas.focus" }
+    ],
     title: "creatine_atp_strength.title",
+    descriptionKey: "creatine_atp_strength.description",
     supplements: [{ id: "creatine_atp_strength" }],
   },
   {
     id: "betaalanine_endurance",
     level: 3,
     xp: 700,
-    areas: [{ id: "musclePerformance", descriptionKey: "betaalanine_endurance.description" }],
+    areas: [
+      { id: "musclePerformance", descriptionKey: "betaalanine_endurance.areas.musclePerformance" },
+      { id: "cardioFitness", descriptionKey: "betaalanine_endurance.areas.cardioFitness" }
+    ],
     title: "betaalanine_endurance.title",
+    descriptionKey: "betaalanine_endurance.description",
     supplements: [],
   },
   {
     id: "shilajit_performance",
     level: 4,
     xp: 900,
-    areas: [{ id: "musclePerformance", descriptionKey: "shilajit_performance.description" }],
+    areas: [
+      { id: "musclePerformance", descriptionKey: "shilajit_performance.areas.musclePerformance" },
+      { id: "energy", descriptionKey: "shilajit_performance.areas.energy" },
+      { id: "cardioFitness", descriptionKey: "shilajit_performance.areas.cardioFitness" }
+    ],
     title: "shilajit_performance.title",
+    descriptionKey: "shilajit_performance.description",
     supplements: [],
   },
   {
@@ -313,10 +452,11 @@ export const tips: Tip[] = [
     level: 1,
     xp: 300,
     areas: [
-      { id: "digestiveHealth", descriptionKey: "probiotics_microbiota.description" },
-      { id: "immuneSupport", descriptionKey: "probiotics_microbiota.description" }
+      { id: "digestiveHealth", descriptionKey: "probiotics_microbiota.areas.digestiveHealth" },
+      { id: "immuneSupport", descriptionKey: "probiotics_microbiota.areas.immuneSupport" }
     ],
     title: "probiotics_microbiota.title",
+    descriptionKey: "probiotics_microbiota.description",
     supplements: [],
   },
   {
@@ -324,10 +464,11 @@ export const tips: Tip[] = [
     level: 2,
     xp: 500,
     areas: [
-      { id: "digestiveHealth", descriptionKey: "fiber_microbiome.description" },
-      { id: "immuneSupport", descriptionKey: "fiber_microbiome.description" }
+      { id: "digestiveHealth", descriptionKey: "fiber_microbiome.areas.digestiveHealth" },
+      { id: "immuneSupport", descriptionKey: "fiber_microbiome.areas.immuneSupport" }
     ],
     title: "fiber_microbiome.title",
+    descriptionKey: "fiber_microbiome.description",
     supplements: [],
   },
   {
@@ -335,18 +476,23 @@ export const tips: Tip[] = [
     level: 3,
     xp: 700,
     areas: [
-      { id: "digestiveHealth", descriptionKey: "milk_thistle_liver.description" },
-      { id: "immuneSupport", descriptionKey: "milk_thistle_liver.description" }
+      { id: "digestiveHealth", descriptionKey: "milk_thistle_liver.areas.digestiveHealth" },
+      { id: "immuneSupport", descriptionKey: "milk_thistle_liver.areas.immuneSupport" }
     ],
     title: "milk_thistle_liver.title",
+    descriptionKey: "milk_thistle_liver.description",
     supplements: [],
   },
   {
     id: "hiit_vo2max",
     level: 2,
     xp: 500,
-    areas: [{ id: "cardioFitness", descriptionKey: "hiit_vo2max.description" }],
+    areas: [
+      { id: "cardioFitness", descriptionKey: "hiit_vo2max.areas.cardioFitness" },
+      { id: "energy", descriptionKey: "hiit_vo2max.areas.energy" }
+    ],
     title: "hiit_vo2max.title",
+    descriptionKey: "hiit_vo2max.description",
     supplements: [],
     analyzePrompt: "hiit_vo2max.analyzePrompt",
   },
@@ -354,8 +500,12 @@ export const tips: Tip[] = [
     id: "running_volume_aerobic",
     level: 3,
     xp: 700,
-    areas: [{ id: "cardioFitness", descriptionKey: "running_volume_aerobic.description" }],
+    areas: [
+      { id: "cardioFitness", descriptionKey: "running_volume_aerobic.areas.cardioFitness" },
+      { id: "energy", descriptionKey: "running_volume_aerobic.areas.energy" }
+    ],
     title: "running_volume_aerobic.title",
+    descriptionKey: "running_volume_aerobic.description",
     supplements: [],
     analyzePrompt: "running_volume_aerobic.analyzePrompt",
   },
@@ -363,6 +513,7 @@ export const tips: Tip[] = [
     id: "ashwagandha_adaptogen",
     level: 3,
     xp: 0,
+    parentId: "adaptogenic_herbs",
     areas: [
       { id: "nervousSystem", descriptionKey: "ashwagandha_adaptogen.areas.nervousSystem" },
       { id: "energy", descriptionKey: "ashwagandha_adaptogen.areas.energy" },
@@ -376,6 +527,7 @@ export const tips: Tip[] = [
     id: "rhodiola_adaptogen",
     level: 3,
     xp: 0,
+    parentId: "adaptogenic_herbs",
     areas: [
       { id: "nervousSystem", descriptionKey: "rhodiola_adaptogen.areas.nervousSystem" },
       { id: "energy", descriptionKey: "rhodiola_adaptogen.areas.energy" },
@@ -389,6 +541,7 @@ export const tips: Tip[] = [
     id: "holy_basil_adaptogen",
     level: 3,
     xp: 0,
+    parentId: "adaptogenic_herbs",
     areas: [
       { id: "nervousSystem", descriptionKey: "holy_basil_adaptogen.areas.nervousSystem" },
       { id: "immuneSupport", descriptionKey: "holy_basil_adaptogen.areas.immuneSupport" }
@@ -401,6 +554,7 @@ export const tips: Tip[] = [
     id: "cordyceps_adaptogen",
     level: 3,
     xp: 0,
+    parentId: "adaptogenic_herbs",
     areas: [
       { id: "energy", descriptionKey: "cordyceps_adaptogen.areas.energy" },
       { id: "cardioFitness", descriptionKey: "cordyceps_adaptogen.areas.cardioFitness" },

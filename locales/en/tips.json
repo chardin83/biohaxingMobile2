@@ -65,35 +65,148 @@
       "immuneSupport": "Glycine supports immune function by reducing inflammation and promoting cellular repair."
     }
   },
-  "neuropeptide_semax": {
-    "title": "Neuropeptide research"
-  },
   "breathwork_parasympathetic": {
-    "title": "Breathwork exercises"
+    "title": "Breathwork techniques",
+    "description": "Breathwork is a powerful tool for activating the parasympathetic nervous system, reducing stress, and promoting relaxation. Different breathing techniques can be used for specific outcomes such as calm, focus, or better sleep.",
+    "areas": {
+      "nervousSystem": "Controlled breathing directly activates the parasympathetic nervous system, reducing stress hormones and promoting relaxation.",
+      "immuneSupport": "Regular breathwork can improve immune function by reducing chronic stress and promoting better sleep and recovery.",
+      "energy": "Proper breathing techniques enhance oxygen utilization and energy levels throughout the day."
+    }
+  },
+  "box_breathing": {
+    "title": "Box breathing",
+    "description": "Box breathing (also called square breathing) is a technique where you inhale, hold, exhale, and hold again for equal counts (typically 4-4-4-4). It's excellent for rapid stress relief and focus.",
+    "areas": {
+      "nervousSystem": "Box breathing creates a balanced rhythm that quickly activates the parasympathetic nervous system.",
+      "immuneSupport": "Regular practice helps reduce cortisol levels and supports immune resilience."
+    }
+  },
+  "4_7_8_breathing": {
+    "title": "4-7-8 breathing",
+    "description": "The 4-7-8 technique involves inhaling for 4 counts, holding for 7 counts, and exhaling for 8 counts. It's particularly effective for relaxation and sleep preparation.",
+    "areas": {
+      "nervousSystem": "The extended exhale activates the vagus nerve, promoting deep relaxation and reducing anxiety.",
+      "sleepQuality": "This technique is highly effective for preparing the body and mind for sleep, improving sleep quality."
+    }
+  },
+  "alternate_nostril_breathing": {
+    "title": "Alternate nostril breathing",
+    "description": "Nadi Shodhana (alternate nostril breathing) involves breathing through one nostril at a time in a controlled pattern. It balances the nervous system and enhances mental clarity.",
+    "areas": {
+      "nervousSystem": "This technique balances the left and right sides of the nervous system, promoting harmony and calm.",
+      "focus": "Alternate nostril breathing enhances mental clarity and concentration by balancing brain hemispheres."
+    }
+  },
+  "diaphragmatic_breathing": {
+    "title": "Diaphragmatic breathing",
+    "description": "Also called belly breathing or deep breathing, this technique focuses on breathing deeply into the abdomen rather than the chest. It's fundamental to all breathwork practices.",
+    "areas": {
+      "nervousSystem": "Deep diaphragmatic breathing significantly reduces stress and anxiety by activating the relaxation response.",
+      "energy": "Proper oxygenation through diaphragmatic breathing improves energy levels and mental clarity."
+    }
   },
   "sleep_optimization_recovery": {
-    "title": "Sleep optimization"
+    "title": "Sleep optimization",
+    "description": "Quality sleep is fundamental for physical recovery, immune function, mental clarity, and overall health. Sleep optimization involves multiple factors including duration, consistency, environment, and pre-sleep routines."
+  },
+  "sleep_duration_consistency": {
+    "title": "Sleep duration and consistency",
+    "description": "Getting 7-9 hours of consistent sleep each night is crucial for nervous system recovery, hormonal balance, and cellular repair. Maintaining a consistent sleep schedule helps regulate your circadian rhythm.",
+    "areas": {
+      "sleepQuality": "Consistent 7-9 hours of sleep allows for complete sleep cycles, including deep sleep and REM sleep necessary for memory consolidation and emotional processing.",
+      "energy": "Adequate sleep duration directly impacts energy levels, cognitive function, and physical performance throughout the day."
+    }
+  },
+  "sleep_environment_optimization": {
+    "title": "Sleep environment optimization",
+    "description": "Creating an optimal sleep environment is essential for quality sleep. This includes darkness, cool temperature, quiet conditions, and comfortable bedding that support restorative sleep.",
+    "areas": {
+      "sleepQuality": "A dark, cool (60-67°F), quiet environment promotes melatonin production and deeper sleep cycles.",
+      "nervousSystem": "An optimized sleep environment reduces external stressors and allows the nervous system to fully relax and recover."
+    }
+  },
+  "sleep_hygiene_practices": {
+    "title": "Sleep hygiene practices",
+    "description": "Sleep hygiene encompasses daily habits that promote better sleep, such as avoiding caffeine in the afternoon, limiting screen time before bed, and maintaining regular exercise routines.",
+    "areas": {
+      "sleepQuality": "Good sleep hygiene practices remove barriers to quality sleep and create conditions for deeper, more restorative rest.",
+      "immuneSupport": "Quality sleep from good hygiene practices strengthens immune function and supports the body's ability to fight infections."
+    }
+  },
+  "pre_sleep_wind_down": {
+    "title": "Pre-sleep wind-down routine",
+    "description": "A structured wind-down routine 30-60 minutes before bed signals to your body that it's time to sleep. This can include relaxation techniques, light reading, meditation, or gentle stretching.",
+    "areas": {
+      "sleepQuality": "A proper wind-down routine helps transition the nervous system from wakefulness to sleep, promoting faster sleep onset and deeper sleep.",
+      "nervousSystem": "Pre-sleep relaxation techniques activate the parasympathetic nervous system, preparing the body for restorative sleep."
+    }
   },
   "sunlight_circadian": {
-    "title": "Sunlight exposure"
+    "title": "Morning sunlight exposure",
+    "description": "Exposure to natural sunlight, especially within 30-60 minutes of waking, is crucial for regulating circadian rhythm and optimizing sleep-wake cycles. Morning light suppresses melatonin and signals the start of the day.",
+    "areas": {
+      "sleepQuality": "Morning sunlight exposure helps set your circadian clock, improving sleep quality and making it easier to fall asleep at night.",
+      "nervousSystem": "Natural light exposure regulates the nervous system by synchronizing circadian rhythms and supporting balanced cortisol production.",
+      "energy": "Morning sunlight boosts alertness and energy levels throughout the day by signaling to your body that it's time to be awake.",
+      "immuneSupport": "Regular circadian rhythm from sunlight exposure supports immune function and overall health."
+    }
   },
   "cold_exposure_ans": {
-    "title": "Cold exposure"
+    "title": "Cold exposure therapy",
+    "description": "Deliberate cold exposure, such as cold showers, ice baths, or cold plunges, activates the sympathetic nervous system and builds stress resilience. Regular cold exposure improves immune function, increases energy, and enhances mental clarity.",
+    "areas": {
+      "nervousSystem": "Cold exposure trains the nervous system to handle stress by activating and then balancing the sympathetic and parasympathetic responses.",
+      "immuneSupport": "Regular cold exposure has been shown to increase white blood cell count and strengthen immune function.",
+      "energy": "Cold exposure boosts dopamine and norepinephrine levels, leading to increased alertness, energy, and mood elevation."
+    }
   },
   "meditation_mindfulness": {
-    "title": "Meditation and mindfulness"
+    "title": "Meditation and mindfulness",
+    "description": "Regular meditation and mindfulness practices train the mind to stay present and reduce stress. These practices activate the parasympathetic nervous system, improve emotional regulation, and enhance cognitive function.",
+    "areas": {
+      "nervousSystem": "Meditation activates the parasympathetic nervous system, reducing stress hormones like cortisol and promoting deep relaxation and nervous system recovery.",
+      "immuneSupport": "Regular meditation has been shown to reduce inflammation, strengthen immune response, and improve overall health markers.",
+      "focus": "Mindfulness practices improve attention span, working memory, and cognitive flexibility by strengthening neural pathways associated with focus and awareness."
+    }
   },
   "nature_parasympathetic": {
-    "title": "Nature exposure"
+    "title": "Time in nature",
+    "description": "Spending time in natural environments activates the parasympathetic nervous system and reduces stress. Forest bathing (Shinrin-yoku) and exposure to natural settings have been shown to lower cortisol, reduce blood pressure, and improve overall well-being.",
+    "areas": {
+      "nervousSystem": "Nature exposure activates the parasympathetic nervous system, reducing stress hormones and promoting relaxation and recovery.",
+      "immuneSupport": "Time in nature has been shown to boost natural killer cell activity and strengthen immune function.",
+      "energy": "Natural environments restore mental energy, reduce fatigue, and improve mood through exposure to natural light and fresh air."
+    }
   },
   "hrv_recovery_monitoring": {
-    "title": "Recovery monitoring"
+    "title": "HRV and recovery monitoring",
+    "description": "Heart Rate Variability (HRV) is a key metric for tracking nervous system balance and recovery status. Monitoring HRV helps optimize training intensity, prevent overtraining, and ensure adequate recovery between workouts.",
+    "areas": {
+      "nervousSystem": "HRV reflects the balance between sympathetic and parasympathetic nervous system activity, indicating stress and recovery levels.",
+      "immuneSupport": "Low HRV can indicate increased inflammation and reduced immune function, while higher HRV suggests better recovery and immune resilience.",
+      "energy": "HRV tracking helps identify when the body needs rest, preventing fatigue and optimizing energy management.",
+      "cardioFitness": "Monitoring HRV helps optimize cardiovascular training by ensuring adequate recovery between high-intensity sessions.",
+      "musclePerformance": "HRV data guides training decisions, helping prevent overtraining and optimize muscle recovery and performance gains."
+    }
   },
   "social_connection_vagal": {
-    "title": "Social connection"
+    "title": "Social connection and vagal tone",
+    "description": "Positive social interactions and meaningful relationships activate the vagus nerve and strengthen parasympathetic tone. Social connection is essential for nervous system regulation, emotional well-being, and overall health.",
+    "areas": {
+      "nervousSystem": "Positive social interactions activate the vagus nerve, improving heart rate variability and promoting parasympathetic nervous system activation.",
+      "immuneSupport": "Strong social connections have been shown to reduce inflammation, strengthen immune function, and increase longevity.",
+      "energy": "Meaningful relationships and social support reduce stress and improve energy levels by lowering cortisol and enhancing emotional resilience."
+    }
   },
   "calming_music_waves": {
-    "title": "Calming music"
+    "title": "Calming music and sound therapy",
+    "description": "Listening to calming music, binaural beats, or nature sounds can reduce stress, lower heart rate, and activate the parasympathetic nervous system. Sound therapy has been used for centuries to promote relaxation and healing.",
+    "areas": {
+      "nervousSystem": "Calming music and sound therapy activate the parasympathetic nervous system, reducing stress hormones and promoting deep relaxation.",
+      "sleepQuality": "Listening to calming sounds before bed can improve sleep onset, increase deep sleep duration, and enhance overall sleep quality.",
+      "focus": "Certain frequencies like binaural beats and nature sounds can enhance concentration, reduce mental fatigue, and improve cognitive performance."
+    }
   },
   "adaptogenic_herbs": {
     "title": "Adaptogenic herbs"
@@ -109,31 +222,71 @@
   },
   "creatine_atp_strength": {
     "title": "Creatine",
+    "description": "Creatine is a naturally occurring compound that supports ATP production, the primary energy source for muscle contractions and brain function. It enhances strength, power output, mental clarity, and muscle recovery during intense training.",
+    "areas": {
+      "musclePerformance": "Creatine increases phosphocreatine stores in muscles, enhancing ATP production and improving strength and power output during high-intensity exercise.",
+      "energy": "Creatine supports cellular energy production by replenishing ATP more rapidly, sustaining energy during intense physical activity.",
+      "cardioFitness": "Creatine may support cardiovascular endurance by improving oxygen utilization and reducing fatigue during sustained aerobic activities.",
+      "focus": "Creatine supports brain energy metabolism and cognitive function, improving mental clarity, focus, and memory."
+    },
     "warning": "Creatine supplementation may affect kidney function in individuals with pre-existing conditions."
   },
   "betaalanine_endurance": {
-    "title": "Endurance-related compounds"
+    "title": "Beta-alanine for endurance",
+    "description": "Beta-alanine is a non-essential amino acid that increases carnosine levels in muscles, buffering lactic acid and delaying fatigue during high-intensity exercise. It's particularly effective for activities lasting 1-4 minutes.",
+    "areas": {
+      "musclePerformance": "Beta-alanine increases muscle carnosine levels, reducing fatigue and improving performance during high-intensity exercise.",
+      "cardioFitness": "By buffering lactic acid, beta-alanine extends endurance capacity and allows for longer, more intense cardiovascular training sessions."
+    }
   },
   "shilajit_performance": {
-    "title": "Traditional performance compounds"
+    "title": "Shilajit for performance",
+    "description": "Shilajit is a mineral-rich substance found in the Himalayas that supports mitochondrial function, enhances energy production, and improves physical performance. It contains fulvic acid and over 85 minerals in ionic form.",
+    "areas": {
+      "musclePerformance": "Shilajit supports muscle recovery, reduces exercise-induced muscle damage, and enhances strength and endurance.",
+      "energy": "Shilajit boosts mitochondrial ATP production, increasing cellular energy and reducing fatigue during physical activity.",
+      "cardioFitness": "Shilajit improves oxygen utilization and cardiovascular efficiency, enhancing aerobic capacity and endurance performance."
+    }
   },
   "probiotics_microbiota": {
-    "title": "Gut microbiota overview",
-    "warning": "Consult with a healthcare provider before starting probiotic supplementation if you have compromised immunity."
+    "title": "Probiotics and gut microbiota",
+    "description": "Probiotics are beneficial bacteria that support gut health, strengthen the immune system, and improve nutrient absorption. A healthy gut microbiome is essential for overall health, mood regulation, and disease prevention.",
+    "areas": {
+      "digestiveHealth": "Probiotics restore and maintain healthy gut bacteria balance, improving digestion, reducing bloating, and supporting intestinal barrier function.",
+      "immuneSupport": "About 70% of the immune system resides in the gut. Probiotics strengthen immune function, reduce inflammation, and protect against pathogens."
+    }
   },
   "fiber_microbiome": {
-    "title": "Dietary fiber sources"
+    "title": "Fiber and microbiome health",
+    "description": "Dietary fiber acts as a prebiotic, feeding beneficial gut bacteria and supporting a healthy microbiome. Adequate fiber intake improves digestive health, reduces inflammation, and strengthens immune function.",
+    "areas": {
+      "digestiveHealth": "Fiber promotes regular bowel movements, feeds beneficial bacteria, and supports gut barrier integrity by producing short-chain fatty acids.",
+      "immuneSupport": "A fiber-rich diet strengthens the gut microbiome, which produces metabolites that regulate immune function and reduce systemic inflammation."
+    }
   },
   "milk_thistle_liver": {
-    "title": "Liver-supporting compounds"
+    "title": "Milk thistle for liver health",
+    "description": "Milk thistle contains silymarin, a powerful antioxidant that protects liver cells, supports detoxification, and promotes liver regeneration. It's particularly beneficial for liver health and digestive function.",
+    "areas": {
+      "digestiveHealth": "Milk thistle supports bile production and liver function, improving fat digestion and overall digestive health.",
+      "immuneSupport": "By supporting liver detoxification, milk thistle reduces toxic burden on the body and strengthens overall immune resilience."
+    }
   },
   "hiit_vo2max": {
-    "title": "High-intensity interval training",
-    "analyzePrompt": "The user has a goal to perform at least 2 high-intensity interval training (HIIT) sessions per week. Based on the workout log, evaluate whether the goal was achieved. Summarize progress and give encouragement or advice."
+    "title": "HIIT for VO2 max",
+    "description": "High-Intensity Interval Training (HIIT) is one of the most effective methods to improve VO2 max, the maximum amount of oxygen your body can use during exercise. HIIT enhances cardiovascular fitness, mitochondrial density, and metabolic efficiency.",
+    "areas": {
+      "cardioFitness": "HIIT training significantly increases VO2 max, improving cardiovascular capacity, endurance, and overall aerobic fitness.",
+      "energy": "HIIT boosts mitochondrial biogenesis, increasing cellular energy production and improving metabolic efficiency throughout the day."
+    }
   },
   "running_volume_aerobic": {
-    "title": "Progressive volume training",
-    "analyzePrompt": "The user is working to increase total running distance each week. Given the workout data, analyze if there's an upward trend. Mention any signs of overtraining or progress plateaus."
+    "title": "Running volume for aerobic capacity",
+    "description": "Consistent running volume at moderate intensity builds aerobic base, improves cardiovascular efficiency, and enhances fat metabolism. Long, steady runs develop capillary density and improve oxygen delivery to muscles.",
+    "areas": {
+      "cardioFitness": "Regular running volume strengthens the heart, increases stroke volume, and improves overall cardiovascular endurance and aerobic capacity.",
+      "energy": "Aerobic running improves fat oxidation, enhances mitochondrial function, and increases sustained energy levels for daily activities."
+    }
   },
   "multivitamin_general": {
     "title": "Multivitamin",

@@ -72,45 +72,84 @@
       "immuneSupport": "Glycin stödjer immunfunktionen genom att minska inflammation och främja cellulär reparation."
     }
   },
-  "neuropeptide_semax": {
-    "title": "Neuropeptid-forskning",
-    "description": "Semax är en syntetisk peptid som har studerats i neurologiska forskningssammanhang."
-  },
   "breathwork_parasympathetic": {
     "title": "Andningsövningar",
-    "description": "Öva dagligt andningsarbete (4-7-8 andning, lådaandning) för att aktivera det parasympatiska nervsystemet."
+    "description": "Andningsarbete är ett kraftfullt verktyg för att aktivera det parasympatiska nervsystemet, minska stress och främja avslappning. Olika andningsteknik kan användas för specifika resultat såsom lugn, fokus eller bättre sömn.",
+    "areas": {
+      "nervousSystem": "Kontrollerad andning aktiverar direkt det parasympatiska nervsystemet, vilket minskar stresshormoner och främjar avslappning.",
+      "immuneSupport": "Regelbundet andningsarbete kan förbättra immunfunktionen genom att minska kronisk stress och främja bättre sömn och återhämtning.",
+      "energy": "Korrekta andningsteknik förbättrar syrenanvändning och energinivåer under dagen."
+    }
   },
   "sleep_optimization_recovery": {
     "title": "Sömnoptimering",
-    "description": "Prioritera 7-9 timmars högkvalitativ sömn för nervösa systemåterhämtning."
+    "description": "Högkvalitativ sömn är grundläggande för fysisk återhämtning, immunfunktion, mental klarhet och övergripande hälsa. Sömnoptimering omfattar flera faktorer inklusive varaktighet, konsistens, miljö och sömnförberedelser."
   },
   "sunlight_circadian": {
-    "title": "Solljusexponering",
-    "description": "Morgonsolljusexponering reglerar cirkadisk rytm och kortisolmönster."
+    "title": "Morgonsolljus exponering",
+    "description": "Exponering för naturligt solljus, särskilt inom 30-60 minuter efter uppvaknande, är avgörande för att reglera cirkadisk rytm och optimera sömn-vaken-cykler. Morgonljus undertrycker melatonin och signalerar början av dagen.",
+    "areas": {
+      "sleepQuality": "Morgonsolljus exponering hjälper till att ställa din cirkadiska klocka, vilket förbättrar sömnkvaliteten och gör det lättare att somna på kvällen.",
+      "nervousSystem": "Naturlig ljusexponering reglerar nervsystemet genom att synkronisera cirkadiska rytmer och stödja balanserad kortisolproduktion.",
+      "energy": "Morgonsolljus ökar vaksamhet och energinivåer under dagen genom att signalera till din kropp att det är dags att vara vaken.",
+      "immuneSupport": "Regelbunden cirkadisk rytm från solljusexponering stödjer immunfunktionen och övergripande hälsa."
+    }
   },
   "cold_exposure_ans": {
-    "title": "Kallexponering",
-    "description": "Kallexponering (duschar, isbadar) tränar ANS-elasticitet och vagal ton."
+    "title": "Köldexponering",
+    "description": "Avsiktlig köldexponering, såsom kalla duschar, isbad eller kallbad, aktiverar det sympatiska nervsystemet och bygger stressresiliens. Regelbunden köldexponering förbättrar immunfunktionen, ökar energin och förbättrar mental klarhet.",
+    "areas": {
+      "nervousSystem": "Köldexponering tränar nervsystemet att hantera stress genom att aktivera och sedan balansera de sympatiska och parasympatiska responsen.",
+      "immuneSupport": "Regelbunden köldexponering har visat sig öka antalet vita blodkroppar och stärka immunfunktionen.",
+      "energy": "Köldexponering ökar dopamin- och norepinefrinnivåer, vilket leder till ökad vaksamhet, energi och förbättrat humör."
+    }
   },
   "meditation_mindfulness": {
     "title": "Meditation och mindfulness",
-    "description": "Meditation och mindfulness minskar sympatisk aktivering och förbättrar HRV."
+    "description": "Regelbunden meditation och mindfulness-övningar tränar sinnet att stanna närvarande och minska stress. Dessa övningar aktiverar det parasympatiska nervsystemet, förbättrar emotionell reglering och förbättrar kognitiv funktion.",
+    "areas": {
+      "nervousSystem": "Meditation aktiverar det parasympatiska nervsystemet, vilket minskar stresshormoner som kortisol och främjar djup avslappning och återhämtning av nervsystemet.",
+      "immuneSupport": "Regelbunden meditation har visat sig minska inflammation, stärka immunresponsen och förbättra övergripande hälsomarkörer.",
+      "focus": "Mindfulness-övningar förbättrar uppmärksamhetsspann, arbetsminne och kognitiv flexibilitet genom att stärka neurala vägar kopplade till fokus och medvetenhet."
+    }
   },
   "nature_parasympathetic": {
-    "title": "Naturexponering",
-    "description": "Tid i naturen aktiverar det parasympatiska nervsystemet och minskar stresshormoner."
+    "title": "Tid i naturen",
+    "description": "Att tillbringa tid i naturliga miljöer aktiverar det parasympatiska nervsystemet och minskar stress. Skogsbad (Shinrin-yoku) och exponering för naturliga miljöer har visat sig sänka kortisol, minska blodtryck och förbättra det övergripande välbefinnandet.",
+    "areas": {
+      "nervousSystem": "Naturexponering aktiverar det parasympatiska nervsystemet, vilket minskar stresshormoner och främjar avslappning och återhämtning.",
+      "immuneSupport": "Tid i naturen har visat sig öka aktiviteten hos naturliga mördarceller och stärka immunfunktionen.",
+      "energy": "Naturliga miljöer återställer mental energi, minskar trötthet och förbättrar humöret genom exponering för naturligt ljus och frisk luft."
+    }
   },
   "hrv_recovery_monitoring": {
-    "title": "Återhämtningsövervakning",
-    "description": "Undvik överträning - övervaka HRV för återhämtningsstatus före intensiv träning."
+    "title": "HRV och återhämtningsövervakning",
+    "description": "Hjärtfrekvensvariabilitet (HRV) är ett nyckelmått för att spåra nervsystemets balans och återhämtningsstatus. Övervakning av HRV hjälper till att optimera träningsintensitet, förhindra överträning och säkerställa tillräcklig återhämtning mellan träningspass.",
+    "areas": {
+      "nervousSystem": "HRV återspeglar balansen mellan sympatisk och parasympatisk nervsystemaktivitet, vilket indikerar stress- och återhämtningsnivåer.",
+      "immuneSupport": "Låg HRV kan indikera ökad inflammation och minskad immunfunktion, medan högre HRV tyder på bättre återhämtning och immunresiliens.",
+      "energy": "HRV-spårning hjälper till att identifiera när kroppen behöver vila, vilket förhindrar trötthet och optimerar energihantering.",
+      "cardioFitness": "Övervakning av HRV hjälper till att optimera kardiovaskulär träning genom att säkerställa tillräcklig återhämtning mellan högintensiva pass.",
+      "musclePerformance": "HRV-data vägleder träningsbeslut, vilket hjälper till att förhindra överträning och optimera muskelåterhämtning och prestandavinster."
+    }
   },
   "social_connection_vagal": {
-    "title": "Social anslutning",
-    "description": "Social anslutning och skratt ökar vagal ton och parasympatisk aktivitet."
+    "title": "Social kontakt och vagal ton",
+    "description": "Positiva sociala interaktioner och meningsfulla relationer aktiverar vagusnerven och stärker parasympatisk ton. Social kontakt är avgörande för nervsystemets reglering, emotionellt välbefinnande och övergripande hälsa.",
+    "areas": {
+      "nervousSystem": "Positiva sociala interaktioner aktiverar vagusnerven, vilket förbättrar hjärtfrekvensvariabilitet och främjar parasympatisk nervsystemaktivering.",
+      "immuneSupport": "Starka sociala kontakter har visat sig minska inflammation, stärka immunfunktionen och öka livslängden.",
+      "energy": "Meningsfulla relationer och socialt stöd minskar stress och förbättrar energinivåer genom att sänka kortisol och förbättra emotionell resiliens."
+    }
   },
   "calming_music_waves": {
-    "title": "Lugn musik",
-    "description": "Lyssna på lugn musik eller binaurala slag för att främja alfavågaktivitet."
+    "title": "Lugnande musik och ljudterapi",
+    "description": "Att lyssna på lugnande musik, binaurala beats eller naturljud kan minska stress, sänka hjärtfrekvens och aktivera det parasympatiska nervsystemet. Ljudterapi har använts i århundraden för att främja avslappning och läkning.",
+    "areas": {
+      "nervousSystem": "Lugnande musik och ljudterapi aktiverar det parasympatiska nervsystemet, vilket minskar stresshormoner och främjar djup avslappning.",
+      "sleepQuality": "Att lyssna på lugnande ljud före sänggåendet kan förbättra insomningstiden, öka djupsömnens varaktighet och förbättra den övergripande sömnkvaliteten.",
+      "focus": "Vissa frekvenser som binaurala beats och naturljud kan förbättra koncentrationen, minska mental trötthet och förbättra kognitiv prestanda."
+    }
   },
   "adaptogenic_herbs": {
     "title": "Adaptogena växter",
@@ -127,39 +166,71 @@
   },
   "creatine_atp_strength": {
     "title": "Kreatin",
-    "description": "Kreatin stödjer ATP-produktion och fysisk prestanda.",
+    "description": "Kreatin är en naturligt förekommande förening som stödjer ATP-produktion, den primära energikällan för muskelkontraktioner och hjärnfunktion. Det förbättrar styrka, kraftutgång, mental klarhet och muskelåterhämtning under intensiv träning.",
+    "areas": {
+      "musclePerformance": "Kreatin ökar fosfokreatinlagret i musklerna, vilket förbättrar ATP-produktion och ökar styrka och kraftutgång under högintensiv träning.",
+      "energy": "Kreatin stödjer cellulär energiproduktion genom att fylla på ATP snabbare, vilket upprätthåller energin under intensiv fysisk aktivitet.",
+      "cardioFitness": "Kreatin kan stödja kardiovaskulär uthållighet genom att förbättra syrenanvändning och minska trötthet under varaktiga aeroba aktiviteter.",
+      "focus": "Kreatin stödjer hjärnans energimetabolism och kognitiv funktion, vilket förbättrar mental klarhet, fokus och minne."
+    },
     "warning": "Kreatintillskott kan påverka njurfunktionen hos personer med redan befintliga tillstånd."
   },
   "betaalanine_endurance": {
-    "title": "Uthållighetsrelaterade föreningar",
-    "description": "Beta-alanin är en aminosyra som har studerats i relation till träningsprestation."
+    "title": "Beta-alanin för uthållighet",
+    "description": "Beta-alanin är en icke-essentiell aminosyra som ökar karnosinnivåerna i musklerna, buffrar mjölksyra och försenar trötthet under högintensiv träning. Det är särskilt effektivt för aktiviteter som varar 1-4 minuter.",
+    "areas": {
+      "musclePerformance": "Beta-alanin ökar musklernas karnosinnivåer, minskar trötthet och förbättrar prestationen under högintensiv träning.",
+      "cardioFitness": "Genom att buffra mjölksyra förlänger beta-alanin uthållighetskapaciteten och möjliggör längre och mer intensiva kardiovaskulära träningspass."
+    }
   },
   "shilajit_performance": {
-    "title": "Traditionella prestandaföreningar",
-    "description": "Shilajit är ett traditionellt ämne som innehåller mineraler och fulvinsyra."
+    "title": "Shilajit för prestation",
+    "description": "Shilajit är ett mineralrikt ämne som finns i Himalaya och som stödjer mitokondriell funktion, förbättrar energiproduktion och förbättrar fysisk prestation. Det innehåller fulvinsyra och över 85 mineraler i jonisk form.",
+    "areas": {
+      "musclePerformance": "Shilajit stödjer muskelåterhämtning, minskar träningsinducerad muskelskada och förbättrar styrka och uthållighet.",
+      "energy": "Shilajit ökar mitokondriell ATP-produktion, vilket ökar cellulär energi och minskar trötthet under fysisk aktivitet.",
+      "cardioFitness": "Shilajit förbättrar syrgasutnyttjande och kardiovaskulär effektivitet, vilket förbättrar aerob kapacitet och uthållighetsprestation."
+    }
   },
   "probiotics_microbiota": {
-    "title": "Tarmbakterieöversikt",
-    "description": "Probiotika är levande mikroorganismer som har studerats i relation till tarmhälsa.",
-    "warning": "Rådgör med en sjukvårdsperson innan du börjar probiotiskatillskott om du har nedsatt immunitet."
+    "title": "Probiotika och tarmflora",
+    "description": "Probiotika är nyttiga bakterier som stödjer tarmhälsa, stärker immunsystemet och förbättrar näringsupptag. En hälsosam tarmflora är avgörande för övergripande hälsa, humörreglering och sjukdomsförebyggande.",
+    "areas": {
+      "digestiveHealth": "Probiotika återställer och upprätthåller hälsosam bakteriebalans i tarmen, förbättrar matsmältningen, minskar uppblåsthet och stödjer tarmbarriärfunktionen.",
+      "immuneSupport": "Cirka 70% av immunsystemet finns i tarmen. Probiotika stärker immunfunktionen, minskar inflammation och skyddar mot patogener."
+    }
   },
   "fiber_microbiome": {
-    "title": "Kostfiberkällor",
-    "description": "Forskningen har identifierat olika bakteriestammar i tarmen. En studie från Zoe identifierade stammen SGB15249 hos personer som regelbundet konsumerade nötter och frön."
+    "title": "Fiber och mikrobiomhälsa",
+    "description": "Kostfiber fungerar som prebiotika och matar nyttiga tarmbakterier och stödjer ett hälsosamt mikrobiom. Tillräckligt fiberintag förbättrar tarmhälsan, minskar inflammation och stärker immunfunktionen.",
+    "areas": {
+      "digestiveHealth": "Fiber främjar regelbundna tarmrörelser, matar nyttiga bakterier och stödjer tarmbarriärens integritet genom att producera kortkedjiga fettsyror.",
+      "immuneSupport": "En fiberrik kost stärker tarmmikrobiomet, som producerar metaboliter som reglerar immunfunktionen och minskar systemisk inflammation."
+    }
   },
   "milk_thistle_liver": {
-    "title": "Leverunderstödjande föreningar",
-    "description": "Mjölktistel är en växt som innehåller silymarin, vilket har studerats i leverforskning."
+    "title": "Mjölktistel för leverhälsa",
+    "description": "Mjölktistel innehåller silymarin, en kraftfull antioxidant som skyddar leverceller, stödjer avgiftning och främjar leverregenerering. Det är särskilt fördelaktigt för leverhälsa och matsmältningsfunktion.",
+    "areas": {
+      "digestiveHealth": "Mjölktistel stödjer gallproduktion och leverfunktion, vilket förbättrar fettmatsmältning och övergripande matsmältningshälsa.",
+      "immuneSupport": "Genom att stödja leveravgiftning minskar mjölktistel den toxiska bördan på kroppen och stärker den övergripande immunresiliensen."
+    }
   },
   "hiit_vo2max": {
-    "title": "Högintensiv intervallträning",
-    "description": "HIIT är en träningsmetod som har studerats omfattande inom träningsfysiologi.",
-    "analyzePrompt": "Användaren har ett mål att utföra minst 2 högintensiva intervallträningspass (HIIT) per vecka. Baserat på träningsloggen, utvärdera om målet uppnåddes. Sammanfatta framstegen och ge uppmuntran eller råd."
+    "title": "HIIT för VO2 max",
+    "description": "Högintensiv intervallträning (HIIT) är en av de mest effektiva metoderna för att förbättra VO2 max, den maximala mängden syre din kropp kan använda under träning. HIIT förbättrar kardiovaskulär kondition, mitokondriell densitet och metabolisk effektivitet.",
+    "areas": {
+      "cardioFitness": "HIIT-träning ökar VO2 max avsevärt, vilket förbättrar kardiovaskulär kapacitet, uthållighet och övergripande aerob kondition.",
+      "energy": "HIIT ökar mitokondriell biogenes, vilket ökar cellulär energiproduktion och förbättrar metabolisk effektivitet under hela dagen."
+    }
   },
   "running_volume_aerobic": {
-    "title": "Progressiv volymträning",
-    "description": "Gradvisa ökningar av träningsvolym diskuteras ofta i löpprogrammen.",
-    "analyzePrompt": "Användaren arbetar med att öka det totala löpavståndet varje vecka. Givet träningsdata, analysera om det finns en uppåtgående trend. Nämn eventuella tecken på överträning eller framstegsstillstånd."
+    "title": "Löpvolym för aerob kapacitet",
+    "description": "Konsekvent löpvolym med måttlig intensitet bygger aerob bas, förbättrar kardiovaskulär effektivitet och förbättrar fettmetabolism. Långa, stadiga löppass utvecklar kapillär densitet och förbättrar syretillförseln till musklerna.",
+    "areas": {
+      "cardioFitness": "Regelbunden löpvolym stärker hjärtat, ökar slagvolymen och förbättrar övergripande kardiovaskulär uthållighet och aerob kapacitet.",
+      "energy": "Aerob löpning förbättrar fettoxidation, förbättrar mitokondriell funktion och ökar hållbara energinivåer för dagliga aktiviteter."
+    }
   },
   "multivitamin_general": {
     "title": "Multivitamin",
@@ -214,6 +285,70 @@
       "energy": "Cordyceps förbättrar cellulär energiproduktion genom att stödja mitokondriell funktion och ATP-generering.",
       "cardioFitness": "Cordyceps förbättrar syreanvändning och kardiovaskulär uthållighet under fysisk aktivitet.",
       "immuneSupport": "Cordyceps har immunmodulerande effekter som stödjer den övergripande immunhälsan."
+    }
+  },
+  "box_breathing": {
+    "title": "Låda-andning",
+    "description": "Låda-andning (även kallad fyrkantig andning) är en teknik där du andas in, håller, andas ut och håller igen i samma räkning (typiskt 4-4-4-4). Det är utmärkt för snabb stresslindring och fokus.",
+    "areas": {
+      "nervousSystem": "Låda-andning skapar en balanserad rytm som snabbt aktiverar det parasympatiska nervsystemet.",
+      "immuneSupport": "Regelbunden övning hjälper till att minska kortisolnivåerna och stödjer immunresiliens."
+    }
+  },
+  "4_7_8_breathing": {
+    "title": "4-7-8-andning",
+    "description": "4-7-8-tekniken innebär att andas in i 4 slag, hålla i 7 slag och andas ut i 8 slag. Det är särskilt effektivt för avslappning och sömnförberedelse.",
+    "areas": {
+      "nervousSystem": "Det förlängda utandningen aktiverar vagusnerven, vilket främjar djup avslappning och minskar ångest.",
+      "sleepQuality": "Denna teknik är mycket effektiv för att förbereda kropp och sinne för sömn, vilket förbättrar sömnkvaliteten."
+    }
+  },
+  "alternate_nostril_breathing": {
+    "title": "Växlande näsborrs-andning",
+    "description": "Nadi Shodhana (växlande näsborrs-andning) innebär att andas genom en näsborr i taget i ett kontrollerat mönster. Det balanserar nervsystemet och förbättrar mental klarhet.",
+    "areas": {
+      "nervousSystem": "Denna teknik balanserar vänster och höger sida av nervsystemet, vilket främjar harmoni och lugn.",
+      "focus": "Växlande näsborrs-andning förbättrar mental klarhet och koncentration genom att balansera hjärnhalvorna."
+    }
+  },
+  "diaphragmatic_breathing": {
+    "title": "Diafragmal andning",
+    "description": "Också kallad bukandning eller djup andning, denna teknik fokuserar på att andas djupt in i buken snarare än bröstet. Det är grundläggande för alla andningsövningar.",
+    "areas": {
+      "nervousSystem": "Djup diafragmal andning minskar kraftigt stress och ångest genom att aktivera avslappningsresponsen.",
+      "energy": "Korrekt syrenation genom diafragmal andning förbättrar energinivåerna och mental klarhet."
+    }
+  },
+  "sleep_duration_consistency": {
+    "title": "Sömnvaraktighet och konsistens",
+    "description": "Att få 7-9 timmars konsekvent sömn varje natt är avgörande för återhämtning av nervsystemet, hormonell balans och cellulär reparation. Att upprätthålla ett konsekvent sömnschema hjälper till att reglera din cirkadiska rytm.",
+    "areas": {
+      "sleepQuality": "Konsekvent 7-9 timmars sömn möjliggör fullständiga sömnkyclar, inklusive djup sömn och REM-sömn som är nödvändig för minnesfastställning och känslomässig bearbetning.",
+      "energy": "Tillräcklig sömnvaraktighet påverkar direkt energinivåer, kognitiv funktion och fysisk prestanda under dagen."
+    }
+  },
+  "sleep_environment_optimization": {
+    "title": "Sömnmiljöoptimering",
+    "description": "Att skapa en optimal sömnmiljö är väsentligt för högkvalitativ sömn. Detta inkluderar mörker, cool temperatur, tysta förhållanden och bekväm säng som stödjer återställande sömn.",
+    "areas": {
+      "sleepQuality": "En mörk, cool (15-19°C), tyst miljö främjar melatoninproduktion och djupare sömnkyclar.",
+      "nervousSystem": "En optimerad sömnmiljö minskar externa stressorer och tillåter nervsystemet att helt och hållet vila och återhämta sig."
+    }
+  },
+  "sleep_hygiene_practices": {
+    "title": "Sömnhygieniska rutiner",
+    "description": "Sömnhygien omfattar dagliga vanor som främjar bättre sömn, såsom att undvika koffein på eftermiddagen, begränsa skärmtid före sänggåendet och upprätthålla regelbundna träningsrutiner.",
+    "areas": {
+      "sleepQuality": "Goda sömnhygieniska rutiner tar bort hinder för högkvalitativ sömn och skapar förhållanden för djupare, mer återställande vila.",
+      "immuneSupport": "Högkvalitativ sömn från goda hygienbehov stärker immunfunktionen och stödjer kroppens förmåga att bekämpa infektioner."
+    }
+  },
+  "pre_sleep_wind_down": {
+    "title": "Sömnförberedelse och nedvarvning",
+    "description": "En strukturerad nedvarvningsrutin 30-60 minuter före sänggåendet signalerar till din kropp att det är dags att sova. Detta kan inkludera avslappningsteknik, lätt läsning, meditation eller mild stretching.",
+    "areas": {
+      "sleepQuality": "En korrekt nedvarvningsrutin hjälper till att övergå nervsystemet från vaksamhet till sömn, vilket främjar snabbare sömnbörjan och djupare sömn.",
+      "nervousSystem": "Avslappningsteknik före sänggåendet aktiverar det parasympatiska nervsystemet och förbereder kroppen för återställande sömn."
     }
   }
 }
