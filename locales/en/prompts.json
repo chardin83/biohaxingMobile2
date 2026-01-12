@@ -6,11 +6,13 @@
     "assistant": {
       "askToAddSupplements": "Would you like me to add anything to your plan? 🧠",
       "defaultReply": "🤖 No response available.",
-      "error": "Something went wrong. 😕 "
+      "error": "Something went wrong. 😕 ",
+      "whatAreTheRisks": "Analyze potential risks, side effects, or contraindications associated with this topic. Include:\n- Known risks backed by research\n- Potential interactions or contraindications\n- Populations who should be cautious\n- Safety recommendations\n- Severity of risks (mild, moderate, severe)",
+      "whatStudiesExist": "Find relevant scientific studies about this topic. For each study, include:\n- Title\n- Lead author(s) and year\n- Journal/publication\n- Key findings\n- Sample size if available\n- DOI or link if possible",
+      "whoAreTheExperts": "List influential experts, researchers, doctors, or thought leaders discussing this topic. For each person, include:\n- Name and credentials\n- Their main contribution or perspective\n- Notable publications or talks\n- Social media or website if relevant"
     },
     "chat": {
       "welcome": "Hi! What would you like help with today? 💬",
       "introPromptTemplate": "I want help with my goal: {{goal}}. I'm already taking these supplements: {{supplements}}."
     }
   }
-  

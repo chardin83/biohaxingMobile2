@@ -1,4 +1,4 @@
-export const BASE_IP = '192.168.68.71';
+export const BASE_IP = '192.168.68.74';
 export const API_PORT = '7071';
 
 export const BASE_URL = `http://${BASE_IP}:${API_PORT}`;

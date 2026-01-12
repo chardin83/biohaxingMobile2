@@ -13,7 +13,7 @@ import { useStorage } from "@/app/context/StorageContext";
 import BackButton from "@/components/BackButton";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { AIPrompts } from "@/constants/AIPrompts";
+import { AIPrompts, AIPromptKey } from "@/constants/AIPrompts";
 import VerdictSelector from "@/components/VerdictSelector";
 import { POSITIVE_VERDICTS } from "@/types/verdict";
 
@@ -92,40 +92,39 @@ export default function AreaDetailScreen() {
     ? t("common:goalDetails.fullyExplored") || "Fully Explored! 🎉"
     : `${askedQuestions.length}/${maxChats} questions explored`;
 
-  const handleAIInsightPress = (question: string, questionType: string) => {
+  const handleAIInsightPress = (questionKey: AIPromptKey) => {
     const tipTranslation = t(`tips:${titleKey}`);
     const informationTranslation = t(`tips:${descriptionKey}`) || '';
     const tipInfo = `Tip: ${tipTranslation}\nInformation: ${informationTranslation}`;
     
     let fullPrompt = '';
-    
-    if (question.includes("What studies exist")) {
-      fullPrompt = AIPrompts.insights.studies(tipInfo);
-    } else if (question.includes("Which people are talking")) {
-      fullPrompt = AIPrompts.insights.experts(tipInfo);
-    } else if (question.includes("What risks")) {
-      fullPrompt = AIPrompts.insights.risks(tipInfo);
-    } else {
-      fullPrompt = `${question}\n\n${tipInfo}`;
+
+    // Använd AIPromptKey för att välja rätt prompt
+    if (questionKey === "insights.studies") {
+      fullPrompt = AIPrompts.insights.studies(tipInfo, t);
+    } else if (questionKey === "insights.experts") {
+      fullPrompt = AIPrompts.insights.experts(tipInfo, t);
+    } else if (questionKey === "insights.risks") {
+      fullPrompt = AIPrompts.insights.risks(tipInfo, t);
     }
-    
+
     // Ge XP för att chatta om tipset (om det är första gången för denna fråga)
     if (areaId && tipId) {
-      const xpGained = incrementTipChat(areaId, tipId, questionType);
+      const xpGained = incrementTipChat(areaId, tipId, questionKey.split(".")[1]); // Skicka bara "studies", "experts", eller "risks"
       if (xpGained > 0) {
         console.log(`🎉 You gained ${xpGained} XP for exploring this question!`);
       } else {
         console.log(`ℹ️ You've already explored this question`);
       }
     }
-    
+
     router.push({
       pathname: "/(tabs)/chat",
       params: {
         initialPrompt: fullPrompt,
         returnPath: `/(goal)/${areaId}/details`,
         returnParams: JSON.stringify({ areaId, tipId }),
-      }
+      },
     });
   };
 
@@ -211,40 +210,40 @@ export default function AreaDetailScreen() {
 
           <AppBox title={t(`common:goalDetails.aiInsights`)}>
             <Pressable 
-              onPress={() => handleAIInsightPress("What studies exist?", "studies")}
+              onPress={() => handleAIInsightPress("insights.studies")}
               style={[
                 styles.insightButton,
                 isQuestionAsked("studies") && styles.insightButtonAsked
               ]}
             >
               <Text style={styles.insightText}>
-                {isQuestionAsked("studies") ? "✅" : "📚"} What studies exist? 
+                {isQuestionAsked("studies") ? "✅" : "📚"} {t("common:goalDetails.whatStudiesExist")}
                 {!isQuestionAsked("studies") && " (+5 XP)"}
               </Text>
             </Pressable>
             
             <Pressable 
-              onPress={() => handleAIInsightPress("Which people are talking about this subject?", "experts")}
+              onPress={() => handleAIInsightPress("insights.experts")}
               style={[
                 styles.insightButton,
                 isQuestionAsked("experts") && styles.insightButtonAsked
               ]}
             >
               <Text style={styles.insightText}>
-                {isQuestionAsked("experts") ? "✅" : "👥"} Who are the experts? 
+                {isQuestionAsked("experts") ? "✅" : "👥"} {t("common:goalDetails.whoAreTheExperts")}
                 {!isQuestionAsked("experts") && " (+5 XP)"}
               </Text>
             </Pressable>
             
             <Pressable 
-              onPress={() => handleAIInsightPress("What risks are associated with this?", "risks")}
+              onPress={() => handleAIInsightPress("insights.risks")}
               style={[
                 styles.insightButton,
                 isQuestionAsked("risks") && styles.insightButtonAsked
               ]}
             >
               <Text style={styles.insightText}>
-                {isQuestionAsked("risks") ? "✅" : "⚠️"} What are the risks? 
+                {isQuestionAsked("risks") ? "✅" : "⚠️"} {t("common:goalDetails.whatAreTheRisks")}
                 {!isQuestionAsked("risks") && " (+5 XP)"}
               </Text>
             </Pressable>

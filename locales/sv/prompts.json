@@ -6,7 +6,10 @@
     "assistant": {
       "askToAddSupplements": "Vill du att jag lägger till något i din plan? 🧠",
       "defaultReply": "🤖 Inget svar tillgängligt.",
-      "error": "Något gick fel. 😕 "
+      "error": "Något gick fel. 😕 ",
+      "whatAreTheRisks": "Analysera potentiella risker, biverkningar eller kontraindikationer för detta ämne. Inkludera:\n- Kända risker med stöd av forskning\n- Möjliga interaktioner eller kontraindikationer\n- Grupper som bör vara försiktiga\n- Säkerhetsrekommendationer\n- Riskernas allvarlighetsgrad (mild, måttlig, allvarlig)",
+      "whatStudiesExist": "Hitta relevanta vetenskapliga studier om detta ämne. För varje studie, inkludera:\n- Titel\n- Huvudförfattare och år\n- Tidskrift/publicering\n- Viktiga resultat\n- Urvalsstorlek om tillgängligt\n- DOI eller länk om möjligt",
+      "whoAreTheExperts": "Lista inflytelserika experter, forskare, läkare eller tankeledare som diskuterar detta ämne. För varje person, inkludera:\n- Namn och meriter\n- Deras huvudsakliga bidrag eller perspektiv\n- Noterbara publikationer eller föreläsningar\n- Sociala medier eller webbplats om relevant"
     },
     "chat": {
       "welcome": "Hej! Vad vill du ha hjälp med idag? 💬",

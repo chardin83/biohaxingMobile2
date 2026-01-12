@@ -124,7 +124,10 @@
       "verdictTestedFailed": "Redan testad - funkade inte",
       "relevance": "Varför detta är viktigt",
       "showAll": "Visa alla",
-      "showLess": "Visa mindre"
+      "showLess": "Visa mindre",
+      "whatAreTheRisks": "Vilka risker finns?",
+      "whatStudiesExist": "Vilka studier finns?",
+      "whoAreTheExperts": "Vilka experter finns?"
     },
    "chat": {
       "welcomeMessage": "Hej! Jag är din personliga hälsocoach – specialiserad på biohacking och kosttillskott. Ställ gärna en fråga om tillskott, dagliga rutiner eller hur du optimerar din hälsa. 💪🌿",
@@ -149,4 +152,3 @@
       "editAreas": "Redigera Områden"
     }
   }
-    

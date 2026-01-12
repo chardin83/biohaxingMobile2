@@ -116,7 +116,10 @@
     "verdictTestedFailed": "Already tested - didn't work",
     "relevance": "Why this matters",
     "showAll": "Show all",
-    "showLess": "Show less"
+    "showLess": "Show less",
+    "whatAreTheRisks": "What are the risks?",
+    "whatStudiesExist": "What studies exist?",
+    "whoAreTheExperts": "Who are the experts?"
   },
   "chat": {
       "welcomeMessage": "Hi! I'm your personal health coach – specialized in biohacking and supplements. Ask me about daily routines or optimizing your health. 💪🌿",
