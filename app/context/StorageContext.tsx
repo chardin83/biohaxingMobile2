@@ -9,6 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SupplementTime } from "../domain/SupplementTime";
 import { Plan } from "../domain/Plan";
 import { levels } from "@/locales/levels";
+import { VerdictValue, POSITIVE_VERDICTS, NEGATIVE_VERDICTS } from "@/types/verdict";
 
 export type MealNutrition = {
   date: string; // YYYY-MM-DD
@@ -56,7 +57,7 @@ export interface ViewedTip {
   viewedAt: string;
   askedQuestions: string[]; // Array av frågor som ställts: ["studies", "experts", "risks"]
   xpEarned: number;
-  verdict?: "relevant" | "interesting" | "skeptical"; // Användarens bedömning
+  verdict?: VerdictValue; // Uppdaterad för att använda VerdictValue
 }
 
 interface StorageContextType {
@@ -111,7 +112,7 @@ interface StorageContextType {
   addTipView: (mainGoalId: string, tipId: string) => number;
   incrementTipChat: (mainGoalId: string, tipId: string, questionType: string) => number;
   addChatMessageXP: (mainGoalId: string, tipId: string) => number;
-  setTipVerdict: (mainGoalId: string, tipId: string, verdict: "relevant" | "interesting" | "skeptical") => number;
+  setTipVerdict: (mainGoalId: string, tipId: string, verdict: VerdictValue) => number;
 }
 
 const STORAGE_KEYS = {
@@ -428,7 +429,7 @@ export const StorageProvider = ({
     return xpPerMessage;
   };
 
-  const setTipVerdict = (mainGoalId: string, tipId: string, verdict: "relevant" | "interesting" | "skeptical"): number => {
+  const setTipVerdict = (mainGoalId: string, tipId: string, verdict: VerdictValue): number => {
     const existing = viewedTipsState.find(
       (v) => v.mainGoalId === mainGoalId && v.tipId === tipId
     );

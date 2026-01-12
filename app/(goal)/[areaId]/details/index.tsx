@@ -15,6 +15,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { AIPrompts } from "@/constants/AIPrompts";
 import VerdictSelector from "@/components/VerdictSelector";
+import { POSITIVE_VERDICTS } from "@/types/verdict";
 
 export default function AreaDetailScreen() {
   const { t } = useTranslation();
@@ -71,8 +72,8 @@ export default function AreaDetailScreen() {
   const askedQuestions = currentTip?.askedQuestions || [];
   const totalXpEarned = currentTip?.xpEarned || 0;
   const currentVerdict = currentTip?.verdict;
-  const positiveVerdicts = ["interested", "startNow", "wantMore", "alreadyWorks"] as const;
-  const isFavorite = currentVerdict ? positiveVerdicts.includes(currentVerdict as any) : false;
+  const positiveVerdicts = React.useMemo(() => new Set(POSITIVE_VERDICTS), []);
+  const isFavorite = currentVerdict ? positiveVerdicts.has(currentVerdict as any) : false;
 
   // Hantera verdict-klick
   const handleVerdictPress = (verdict: "interested" | "startNow" | "wantMore" | "alreadyWorks" | "notInterested" | "noResearch" | "testedFailed") => {
