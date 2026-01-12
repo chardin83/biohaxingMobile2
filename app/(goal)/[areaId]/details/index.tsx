@@ -64,7 +64,6 @@ export default function AreaDetailScreen() {
   const titleKey = tip?.title;
 
 
-
   // Hitta vilka frågor som redan ställts
   const currentTip = viewedTips?.find(
     (v) => v.mainGoalId === areaId && v.tipId === tipId
@@ -94,7 +93,7 @@ export default function AreaDetailScreen() {
 
   const handleAIInsightPress = (question: string, questionType: string) => {
     const tipTranslation = t(`tips:${titleKey}`);
-    const informationTranslation = t(`tips:${information}`) || '';
+    const informationTranslation = t(`tips:${descriptionKey}`) || '';
     const tipInfo = `Tip: ${tipTranslation}\nInformation: ${informationTranslation}`;
     
     let fullPrompt = '';
