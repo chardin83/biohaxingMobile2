@@ -1,11 +1,4 @@
 {
-  "nutritional_support_vitality": {
-    "title": "Multivitamin",
-    "description": "Tillräcklig tillförsel av väsentliga vitaminer och mineraler diskuteras ofta som en del av att upprätthålla övergripande vitalitet.",
-    "areas": {
-      "energy": ""
-    }
-  },
   "vitamin_d": {
     "title": "D-vitamin",
     "description": "D-vitaminhalterna kan variera beroende på faktorer som solexponering, diet och geografisk plats.",
@@ -36,32 +29,50 @@
     "analyzePrompt": "Analysera användarens NAD+-nivåer och föreslå strategier för att optimera cellulär energimetabolism."
   },
   "sleep_timing_circadian": {
-    "title": "Medvetenhet om sömnöversättning",
-    "description": "Tidiga sömnöversättningar diskuteras ofta i samband med cirkadisk rytmjustering."
-  },
-  "sleep_magnesium_hormonal": {
-    "title": "Hormonstödjande överväganden",
-    "description": "Magnesium är ett mineral som har studerats i relation till avslappning och sömn."
+    "title": "Sömnrytm och cirkadisk timing",
+    "description": "Att synkronisera sömn med kroppens naturliga dygnsrytm optimerar sömnkvalitet och återhämtning. Konsekvent sömn- och vakentid hjälper till att reglera hormonproduktion och metabolism.",
+    "areas": {
+      "sleepQuality": "Regelbunden sömnrytm förbättrar sömnkvalitet genom att stärka kroppens naturliga melatoninproduktion.",
+      "immuneSupport": "Cirkadisk synkronisering stödjer immunfunktion genom att optimera kroppens naturliga försvarscykler.",
+      "energy": "Konsekvent sömnschema reglerar energinivåer och minskar trötthet under dagen."
+    }
   },
   "calm_alertness_ltheanine": {
-    "title": "Lugn vaksamhetsföreningar",
-    "description": "L-theanin finns vanligtvis i grönt te och har studerats för dess effekter på uppmärksamhet."
+    "title": "L-Theanin för lugn fokus",
+    "description": "L-Theanin är en aminosyra som naturligt förekommer i grönt te. Den främjar avslappning utan dåsighet och förbättrar fokus genom att öka alfabjärnvågor och balansera neurotransmittorer som GABA, dopamin och serotonin.",
+    "areas": {
+      "focus": "L-Theanin förbättrar koncentration och uppmärksamhet samtidigt som det minskar stress och främjar ett tillstånd av lugn vaksamhet."
+    }
   },
   "neurotransmitter_ltyrosine": {
-    "title": "Neurotransmitterförfäder",
-    "description": "L-tyrosin är en aminosyra som är en föregångare till dopamin."
+    "title": "L-Tyrosin för mental prestanda",
+    "description": "L-Tyrosin är en aminosyra som fungerar som en föregångare till dopamin, noradrenalin och adrenalin. Det stödjer kognitiv funktion, fokus och mental prestation, särskilt under stressande situationer.",
+    "areas": {
+      "focus": "L-Tyrosin förbättrar koncentration, uppmärksamhet och kognitiv prestanda genom att öka produktionen av viktiga neurotransmittorer."
+    }
   },
   "maintain_hydration": {
-    "title": "Bibehåll vätskebalans",
-    "description": "Konsekvent daglig vätskeintag stödjer cirkulationen, temperaturreglering och immunmotstånd."
+    "title": "Upprätthåll hydrering",
+    "description": "Konsekvent daglig vätskeintag stödjer cirkulationen, temperaturreglering och immunförsvarets funktion. Tillräcklig hydrering är grundläggande för alla kroppsfunktioner.",
+    "areas": {
+      "immuneSupport": "Hydrering stödjer immunförsvaret genom att främja lymfcirkulation och transport av näringsämnen till celler.",
+      "energy": "Tillräcklig vätska upprätthåller energinivåer och minskar trötthet genom att optimera cellulär metabolism.",
+      "cardioFitness": "Hydrering förbättrar kardiovaskulär prestanda genom att upprätthålla blodvolym och syretransport."
+    }
   },
   "vitamin_c_immunity": {
-    "title": "C-vitaminöversikt",
-    "description": "C-vitamin är ett vattenlösligt vitamin som finns i frukt och grönsaker."
+    "title": "C-vitamin för immunförsvar",
+    "description": "C-vitamin är ett vattenlösligt vitamin som finns i frukt och grönsaker. Det är en kraftfull antioxidant som stödjer immunförsvaret och skyddar celler från oxidativ stress.",
+    "areas": {
+      "immuneSupport": "C-vitamin stärker immunförsvaret genom att stödja vita blodkroppar och öka kroppens motståndskraft mot infektioner."
+    }
   },
   "echinacea_herbs": {
-    "title": "Traditionella växtföreningar",
-    "description": "Echinacea är en växt som traditionellt har använts och studerats i relation till immunhälsa."
+    "title": "Echinacea för immunförsvar",
+    "description": "Echinacea är en blomsterväxt som traditionellt används för att stödja immunfunktionen. Den innehåller aktiva föreningar som kan hjälpa kroppens naturliga försvarsmekanismer och har studerats för sin potential att minska varaktighet och svårighetsgrad av vanliga förkylningar.",
+    "areas": {
+      "immuneSupport": "Echinacea stimulerar immuncellsaktivitet och kan hjälpa kroppen att reagera mer effektivt på infektioner samt stödja övergripande immunresiliens."
+    }
   },
   "calming_glycine": {
     "title": "Lugna aminosyror",
@@ -82,8 +93,15 @@
     }
   },
   "sleep_optimization_recovery": {
-    "title": "Sömnoptimering",
-    "description": "Högkvalitativ sömn är grundläggande för fysisk återhämtning, immunfunktion, mental klarhet och övergripande hälsa. Sömnoptimering omfattar flera faktorer inklusive varaktighet, konsistens, miljö och sömnförberedelser."
+    "title": "Sömnoptimering för återhämtning",
+    "description": "Högkvalitativ sömn är grundläggande för fysisk återhämtning, immunfunktion, mental klarhet och övergripande hälsa. Sömnoptimering omfattar flera faktorer inklusive varaktighet, konsistens, miljö och sömnförberedelser.",
+    "areas": {
+      "nervousSystem": "Kvalitetssömn stödjer nervsystemets återhämtning och balans mellan sympatiska och parasympatiska systemet.",
+      "immuneSupport": "Sömn är avgörande för immunfunktionen och kroppens förmåga att bekämpa infektioner och läka.",
+      "energy": "Tillräcklig sömn återställer energinivåer och optimerar kroppens metaboliska processer.",
+      "cardioFitness": "Sömn stödjer kardiovaskulär hälsa genom att reglera blodtryck och hjärtfrekvens.",
+      "sleepQuality": "Optimerade sömnvanor förbättrar sömnkvalitet, djupsömn och REM-sömn för maximal återhämtning."
+    }
   },
   "sunlight_circadian": {
     "title": "Morgonsolljus exponering",
@@ -152,8 +170,11 @@
     }
   },
   "adaptogenic_herbs": {
-    "title": "Adaptogena växter",
-    "description": "Adaptogena växter (ashwagandha, rhodiola) stödjer ANS-balans under stress."
+    "title": "Adaptogena örter",
+    "description": "Adaptogener är örter och svampar som hjälper kroppen att anpassa sig till stress och främja balans. De stödjer energi, uthållighet och övergripande välbefinnande.",
+    "areas": {
+      "nervousSystem": "Adaptogena örter stödjer nervsystemet genom att modulera stressresponsen och främja mental och fysisk resiliens."
+    }
   },
   "neuromuscular_training": {
     "title": "Neuromuskulära träningsbegrepp",
@@ -234,19 +255,20 @@
   },
   "multivitamin_general": {
     "title": "Multivitamin",
-    "description": "Väsentliga vitaminer och mineraler stödjer övergripande hälsa och vitalitet."
+    "description": "Ett multivitamin tillhandahåller essentiella vitaminer och mineraler som stödjer övergripande hälsa, energi och vitalitet. Det kan hjälpa till att fylla näringsbrister i kosten.",
+    "areas": {
+      "energy": "Multivitaminer stödjer energiproduktion genom att tillhandahålla B-vitaminer och mineraler som är nödvändiga för cellulär metabolism.",
+      "immuneSupport": "Vitaminer och mineraler i multivitaminer stärker immunförsvaret och hjälper kroppen att försvara sig mot infektioner."
+    }
   },
-  "nad_plus_energy": {
-    "title": "NAD+",
-    "description": "NAD+ är involverat i cellulär metabolism och energivägar."
-  },
-  "vitamin_d_support": {
-    "title": "D-vitamin",
-    "description": "D-vitamin stödjer immunfunktion och metabol hälsa."
-  },
-  "magnesium_relaxation": {
-    "title": "Magnesium",
-    "description": "Magnesium stödjer avslappning, sömnkvalitet och nervsystemsfunktion."
+  "magnesium": {
+    "title": "Magnesium för sömn och återhämtning",
+    "description": "Magnesium är ett essentiellt mineral som spelar en viktig roll för muskelavslappning, nervsystemets funktion och sömnkvalitet. Det hjälper kroppen att reglera stresshormoner och främjar djupare, mer återställande sömn.",
+    "areas": {
+      "sleepQuality": "Magnesium förbättrar sömnkvalitet genom att reglera melatonin och främja muskelavslappning.",
+      "nervousSystem": "Magnesium stödjer nervsystemet genom att reglera neurotransmittorer och minska stress.",
+      "energy": "Magnesium är nödvändigt för energiproduktion och minskar trötthet genom att stödja ATP-syntes."
+    }
   },
   "betaine_cardiovascular": {
     "title": "Betain",

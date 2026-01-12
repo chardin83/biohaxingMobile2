@@ -1,11 +1,4 @@
 {
-  "nutritional_support_vitality": {
-    "title": "Multivitamin",
-    "description": "Adequate intake of essential vitamins and minerals is often discussed as part of maintaining overall vitality.",
-    "areas": {
-      "energy": ""
-    }
-  },
   "vitamin_d": {
     "title": "Vitamin D",
     "description": "Vitamin D levels can vary based on factors such as sun exposure, diet, and geographic location.",
@@ -36,25 +29,50 @@
     "analyzePrompt": "Analyze the user's NAD+ levels and suggest strategies to optimize cellular energy metabolism."
   },
   "sleep_timing_circadian": {
-    "title": "Sleep timing awareness"
-  },
-  "sleep_magnesium_hormonal": {
-    "title": "Hormonal support considerations"
+    "title": "Sleep timing and circadian rhythm",
+    "description": "Synchronizing sleep with the body's natural circadian rhythm optimizes sleep quality and recovery. Consistent sleep and wake times help regulate hormone production and metabolism.",
+    "areas": {
+      "sleepQuality": "Regular sleep rhythm improves sleep quality by strengthening the body's natural melatonin production.",
+      "immuneSupport": "Circadian synchronization supports immune function by optimizing the body's natural defense cycles.",
+      "energy": "Consistent sleep schedule regulates energy levels and reduces daytime fatigue."
+    }
   },
   "calm_alertness_ltheanine": {
-    "title": "Calm alertness compounds"
+    "title": "L-Theanine for calm focus",
+    "description": "L-Theanine is an amino acid naturally found in green tea. It promotes relaxation without drowsiness and enhances focus by increasing alpha brain waves and balancing neurotransmitters like GABA, dopamine, and serotonin.",
+    "areas": {
+      "focus": "L-Theanine improves concentration and attention while reducing stress and promoting a state of calm alertness."
+    }
   },
   "neurotransmitter_ltyrosine": {
-    "title": "Neurotransmitter precursors"
+    "title": "L-Tyrosine for mental performance",
+    "description": "L-Tyrosine is an amino acid that serves as a precursor to dopamine, norepinephrine, and adrenaline. It supports cognitive function, focus, and mental performance, especially during stressful situations.",
+    "areas": {
+      "focus": "L-Tyrosine improves concentration, attention, and cognitive performance by increasing the production of key neurotransmitters."
+    }
   },
   "maintain_hydration": {
-    "title": "Maintain hydration"
+    "title": "Maintain hydration",
+    "description": "Consistent daily fluid intake supports circulation, temperature regulation, and immune defense function. Adequate hydration is fundamental for all bodily functions.",
+    "areas": {
+      "immuneSupport": "Hydration supports immune defense by promoting lymph circulation and nutrient transport to cells.",
+      "energy": "Adequate fluid maintains energy levels and reduces fatigue by optimizing cellular metabolism.",
+      "cardioFitness": "Hydration improves cardiovascular performance by maintaining blood volume and oxygen transport."
+    }
   },
   "vitamin_c_immunity": {
-    "title": "Vitamin C overview"
+    "title": "Vitamin C for immunity",
+    "description": "Vitamin C is a water-soluble vitamin found in fruits and vegetables. It is a powerful antioxidant that supports the immune system and protects cells from oxidative stress.",
+    "areas": {
+      "immuneSupport": "Vitamin C strengthens immune defense by supporting white blood cells and increasing the body's resistance to infections."
+    }
   },
   "echinacea_herbs": {
-    "title": "Traditional plant compounds"
+    "title": "Echinacea for immune support",
+    "description": "Echinacea is a flowering plant traditionally used to support immune function. It contains active compounds that may help the body's natural defense mechanisms and has been studied for its potential to reduce the duration and severity of common colds.",
+    "areas": {
+      "immuneSupport": "Echinacea stimulates immune cell activity and may help the body respond more effectively to infections and support overall immune resilience."
+    }
   },
   "calming_glycine": {
     "title": "Calming amino acids",
@@ -107,8 +125,15 @@
     }
   },
   "sleep_optimization_recovery": {
-    "title": "Sleep optimization",
-    "description": "Quality sleep is fundamental for physical recovery, immune function, mental clarity, and overall health. Sleep optimization involves multiple factors including duration, consistency, environment, and pre-sleep routines."
+    "title": "Sleep optimization for recovery",
+    "description": "Quality sleep is fundamental for physical recovery, immune function, mental clarity, and overall health. Sleep optimization involves multiple factors including duration, consistency, environment, and pre-sleep routines.",
+    "areas": {
+      "nervousSystem": "Quality sleep supports nervous system recovery and balance between sympathetic and parasympathetic systems.",
+      "immuneSupport": "Sleep is crucial for immune function and the body's ability to fight infections and heal.",
+      "energy": "Adequate sleep restores energy levels and optimizes the body's metabolic processes.",
+      "cardioFitness": "Sleep supports cardiovascular health by regulating blood pressure and heart rate.",
+      "sleepQuality": "Optimized sleep habits improve sleep quality, deep sleep, and REM sleep for maximum recovery."
+    }
   },
   "sleep_duration_consistency": {
     "title": "Sleep duration and consistency",
@@ -209,7 +234,11 @@
     }
   },
   "adaptogenic_herbs": {
-    "title": "Adaptogenic herbs"
+    "title": "Adaptogenic herbs",
+    "description": "Adaptogens are herbs and mushrooms that help the body adapt to stress and promote balance. They support energy, endurance, and overall wellbeing.",
+    "areas": {
+      "nervousSystem": "Adaptogenic herbs support the nervous system by modulating the stress response and promoting mental and physical resilience."
+    }
   },
   "neuromuscular_training": {
     "title": "Neuromuscular training concepts",
@@ -290,19 +319,20 @@
   },
   "multivitamin_general": {
     "title": "Multivitamin",
-    "description": "Essential vitamins and minerals support overall health and vitality."
+    "description": "A multivitamin provides essential vitamins and minerals that support overall health, energy, and vitality. It can help fill nutritional gaps in the diet.",
+    "areas": {
+      "energy": "Multivitamins support energy production by providing B-vitamins and minerals necessary for cellular metabolism.",
+      "immuneSupport": "Vitamins and minerals in multivitamins strengthen the immune system and help the body defend against infections."
+    }
   },
-  "nad_plus_energy": {
-    "title": "NAD+",
-    "description": "NAD+ is involved in cellular metabolism and energy pathways."
-  },
-  "vitamin_d_support": {
-    "title": "Vitamin D",
-    "description": "Vitamin D supports immune function and metabolic health."
-  },
-  "magnesium_relaxation": {
-    "title": "Magnesium",
-    "description": "Magnesium supports relaxation, sleep quality, and nervous system function."
+  "magnesium": {
+    "title": "Magnesium for sleep and recovery",
+    "description": "Magnesium is an essential mineral that plays a vital role in muscle relaxation, nervous system function, and sleep quality. It helps the body regulate stress hormones and promotes deeper, more restorative sleep.",
+    "areas": {
+      "sleepQuality": "Magnesium improves sleep quality by regulating melatonin and promoting muscle relaxation.",
+      "nervousSystem": "Magnesium supports the nervous system by regulating neurotransmitters and reducing stress.",
+      "energy": "Magnesium is necessary for energy production and reduces fatigue by supporting ATP synthesis."
+    }
   },
   "betaine_cardiovascular": {
     "title": "Betaine",

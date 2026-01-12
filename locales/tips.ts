@@ -25,16 +25,17 @@ export type Tip = {
 
 export const tips: Tip[] = [
   {
-    id: "nutritional_support_vitality",
+    id: "multivitamin_general",
     level: 1,
     xp: 300,
     areas: [
-      { id: "energy", descriptionKey: "nutritional_support_vitality.areas.energy" }
+      { id: "energy", descriptionKey: "multivitamin_general.areas.energy" },
+      { id: "immuneSupport", descriptionKey: "multivitamin_general.areas.immuneSupport" }
     ],
-    title: "nutritional_support_vitality.title",
-    descriptionKey: "nutritional_support_vitality.description",
-    supplements: [{ id: "multivitamin_general" }],
-    startPrompt: "nutritional_support_vitality.startPrompt",
+    title: "multivitamin_general.title",
+    descriptionKey: "multivitamin_general.description",
+    supplements: [{ id: "multivitamin" }],
+    startPrompt: "multivitamin_general.startPrompt",
   },
   {
     id: "vitamin_d",
@@ -50,16 +51,6 @@ export const tips: Tip[] = [
     descriptionKey: "vitamin_d.description",
     supplements: [{ id: "vitamin_d" }],
     startPrompt: "vitamin_d.startPrompt",
-  },
-  {
-    id: "vitamin_mineral_balance",
-    level: 6,
-    xp: 1300,
-    areas: [{ id: "energy", descriptionKey: "vitamin_mineral_balance.description" }],
-    title: "vitamin_mineral_balance.title",
-    descriptionKey: "vitamin_mineral_balance.description",
-    supplements: [{ id: "vitamin_d" }],
-    startPrompt: "vitamin_mineral_balance.startPrompt",
   },
   {
     id: "coq10",
@@ -90,50 +81,52 @@ export const tips: Tip[] = [
     level: 2,
     xp: 500,
     areas: [
-      { id: "sleepQuality", descriptionKey: "sleep_timing_circadian.description" },
-      { id: "immuneSupport", descriptionKey: "sleep_timing_circadian.description" },
-      { id: "energy", descriptionKey: "sleep_timing_circadian.description" }
+      { id: "sleepQuality", descriptionKey: "sleep_timing_circadian.areas.sleepQuality" },
+      { id: "immuneSupport", descriptionKey: "sleep_timing_circadian.areas.immuneSupport" },
+      { id: "energy", descriptionKey: "sleep_timing_circadian.areas.energy" }
     ],
     title: "sleep_timing_circadian.title",
     descriptionKey: "sleep_timing_circadian.description",
   },
   {
-    id: "sleep_magnesium_hormonal",
+    id: "magnesium",
     level: 3,
     xp: 700,
     areas: [
-      { id: "sleepQuality", descriptionKey: "sleep_magnesium_hormonal.description" },
-      { id: "immuneSupport", descriptionKey: "sleep_magnesium_hormonal.description" },
-      { id: "energy", descriptionKey: "sleep_magnesium_hormonal.description" }
+      { id: "sleepQuality", descriptionKey: "magnesium.areas.sleepQuality" },
+      { id: "nervousSystem", descriptionKey: "magnesium.areas.nervousSystem" },
+      { id: "energy", descriptionKey: "magnesium.areas.energy" }
     ],
-    title: "sleep_magnesium_hormonal.title",
-    descriptionKey: "sleep_magnesium_hormonal.description",
+    title: "magnesium.title",
+    descriptionKey: "magnesium.description",
     supplements: [{ id: "magnesium" }],
   },
   {
     id: "calm_alertness_ltheanine",
     level: 2,
     xp: 500,
-    areas: [{ id: "focus", descriptionKey: "calm_alertness_ltheanine.description" }],
+    areas: [{ id: "focus", descriptionKey: "calm_alertness_ltheanine.areas.focus" }],
     title: "calm_alertness_ltheanine.title",
     descriptionKey: "calm_alertness_ltheanine.description",
+    supplements: [{ id: "ltheanine" }],
   },
   {
     id: "neurotransmitter_ltyrosine",
     level: 3,
     xp: 700,
-    areas: [{ id: "focus", descriptionKey: "neurotransmitter_ltyrosine.description" }],
+    areas: [{ id: "focus", descriptionKey: "neurotransmitter_ltyrosine.areas.focus" }],
     title: "neurotransmitter_ltyrosine.title",
     descriptionKey: "neurotransmitter_ltyrosine.description",
+    supplements: [{ id: "ltyrosine" }],
   },
   {
     id: "maintain_hydration",
     level: 1,
     xp: 300,
     areas: [
-      { id: "immuneSupport", descriptionKey: "maintain_hydration.description" },
-      { id: "energy", descriptionKey: "maintain_hydration.description" },
-      { id: "cardioFitness", descriptionKey: "maintain_hydration.description" }
+      { id: "immuneSupport", descriptionKey: "maintain_hydration.areas.immuneSupport" },
+      { id: "energy", descriptionKey: "maintain_hydration.areas.energy" },
+      { id: "cardioFitness", descriptionKey: "maintain_hydration.areas.cardioFitness" }
     ],
     title: "maintain_hydration.title",
     descriptionKey: "maintain_hydration.description",
@@ -142,7 +135,7 @@ export const tips: Tip[] = [
     id: "vitamin_c_immunity",
     level: 2,
     xp: 500,
-    areas: [{ id: "immuneSupport", descriptionKey: "vitamin_c_immunity.description" }],
+    areas: [{ id: "immuneSupport", descriptionKey: "vitamin_c_immunity.areas.immuneSupport" }],
     title: "vitamin_c_immunity.title",
     descriptionKey: "vitamin_c_immunity.description",
   },
@@ -150,7 +143,7 @@ export const tips: Tip[] = [
     id: "echinacea_herbs",
     level: 3,
     xp: 700,
-    areas: [{ id: "immuneSupport", descriptionKey: "echinacea_herbs.description" }],
+    areas: [{ id: "immuneSupport", descriptionKey: "echinacea_herbs.areas.immuneSupport" }],
     title: "echinacea_herbs.title",
     descriptionKey: "echinacea_herbs.description",
   },
@@ -172,9 +165,9 @@ export const tips: Tip[] = [
     level: 1,
     xp: 0,
     areas: [
-      { id: "nervousSystem", descriptionKey: "breathwork_parasympathetic.description" },
-      { id: "immuneSupport", descriptionKey: "breathwork_parasympathetic.description" },
-      { id: "energy", descriptionKey: "breathwork_parasympathetic.description" }
+      { id: "nervousSystem", descriptionKey: "breathwork_parasympathetic.areas.nervousSystem" },
+      { id: "immuneSupport", descriptionKey: "breathwork_parasympathetic.areas.immuneSupport" },
+      { id: "energy", descriptionKey: "breathwork_parasympathetic.areas.energy" }
     ],
     title: "breathwork_parasympathetic.title",
     descriptionKey: "breathwork_parasympathetic.description",
@@ -237,11 +230,11 @@ export const tips: Tip[] = [
     level: 1,
     xp: 0,
     areas: [
-      { id: "nervousSystem", descriptionKey: "sleep_optimization_recovery.description" },
-      { id: "immuneSupport", descriptionKey: "sleep_optimization_recovery.description" },
-      { id: "energy", descriptionKey: "sleep_optimization_recovery.description" },
-      { id: "cardioFitness", descriptionKey: "sleep_optimization_recovery.description" },
-      { id: "sleepQuality", descriptionKey: "sleep_optimization_recovery.description" }
+      { id: "nervousSystem", descriptionKey: "sleep_optimization_recovery.areas.nervousSystem" },
+      { id: "immuneSupport", descriptionKey: "sleep_optimization_recovery.areas.immuneSupport" },
+      { id: "energy", descriptionKey: "sleep_optimization_recovery.areas.energy" },
+      { id: "cardioFitness", descriptionKey: "sleep_optimization_recovery.areas.cardioFitness" },
+      { id: "sleepQuality", descriptionKey: "sleep_optimization_recovery.areas.sleepQuality" }
     ],
     title: "sleep_optimization_recovery.title",
     descriptionKey: "sleep_optimization_recovery.description",
@@ -386,15 +379,15 @@ export const tips: Tip[] = [
     title: "calming_music_waves.title",
     descriptionKey: "calming_music_waves.description",
   },
- {
-  id: "adaptogenic_herbs",
-  level: 3,
-  xp: 0,
-  areas: [{ id: "nervousSystem", descriptionKey: "adaptogenic_herbs.description" }],
-  title: "adaptogenic_herbs.title",
-  descriptionKey: "adaptogenic_herbs.description",
-  isParent: true, // Markera som överordnad kategori
-},
+  {
+    id: "adaptogenic_herbs",
+    level: 3,
+    xp: 0,
+    areas: [{ id: "nervousSystem", descriptionKey: "adaptogenic_herbs.areas.nervousSystem" }],
+    title: "adaptogenic_herbs.title",
+    descriptionKey: "adaptogenic_herbs.description",
+    isParent: true,
+  },
   {
     id: "neuromuscular_training",
     level: 1,
