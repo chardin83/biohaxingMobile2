@@ -17,6 +17,7 @@ interface AppButtonProps {
   style?: StyleProp<ViewStyle>;
   disabled?: boolean;
   glow?: boolean; // 🔸 Ny prop
+  accessibilityLabel?: string;
 }
 
 const AppButton: React.FC<AppButtonProps> = ({
@@ -26,6 +27,7 @@ const AppButton: React.FC<AppButtonProps> = ({
   style,
   disabled = false,
   glow = false,
+  accessibilityLabel,
 }) => {
   const isPrimary = variant === "primary";
 
@@ -40,6 +42,7 @@ const AppButton: React.FC<AppButtonProps> = ({
         style,
       ]}
       disabled={disabled}
+      accessibilityLabel={accessibilityLabel || title}
     >
       <Text
         style={[

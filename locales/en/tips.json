@@ -1,12 +1,21 @@
 {
   "vitamin_d": {
     "title": "Vitamin D",
-    "description": "Vitamin D levels can vary based on factors such as sun exposure, diet, and geographic location.",
+    "description": "Vitamin D levels can vary based on factors such as sun exposure, diet, and geographic location. Pairing D3 with complementary vitamin K2 helps route calcium to bones and protects soft tissues. Consider adding magnesium bisglycinate to support vitamin D activation and efficient calcium uptake.",
     "areas": {
       "energy": "Vitamin D supports mitochondrial function and cellular energy production by regulating calcium homeostasis.",
       "immuneSupport": "Vitamin D modulates both innate and adaptive immune responses, with low levels associated with increased infection susceptibility.",
       "musclePerformance": "Vitamin D is critical for muscle strength and function through calcium regulation and muscle protein synthesis pathways.",
       "nervousSystem": "Vitamin D influences neurotransmitter production and has neuroprotective effects in the central nervous system."
+    }
+  },
+  "vitamin_e_antioxidant_support": {
+    "title": "Vitamin E for antioxidant defense",
+    "description": "Vitamin E shields cell membranes from oxidative stress and supports cardiovascular resilience. Mixed tocopherols and tocotrienols cover a wider spectrum than alpha-tocopherol alone, making them useful when inflammatory or lipid stress is high. Combining with carotenoids like astaxanthin offers complementary membrane protection. Large doses of isolated alpha-tocopherol can crowd out other E forms, so stay near label guidance unless you are using mixed complexes.",
+    "areas": {
+      "immuneSupport": "Vitamin E enhances immune cell signaling and protects lipids in cell membranes from peroxidation.",
+      "cardioFitness": "Adequate vitamin E helps maintain endothelial function and balances oxidative load during exercise.",
+      "energy": "By preserving mitochondrial membranes, vitamin E supports efficient energy production under stress."
     }
   },
   "coq10": {
@@ -20,7 +29,7 @@
   },
   "cellular_energy_nad": {
     "title": "NAD+",
-    "description": "NAD+ (Nicotinamide Adenine Dinucleotide) is a critical coenzyme found in every cell of the body. It plays a key role in cellular energy metabolism, DNA repair, and maintaining overall cellular health.",
+    "description": "NAD+ (Nicotinamide Adenine Dinucleotide) is a critical coenzyme found in every cell of the body. It plays a key role in cellular energy metabolism, DNA repair, and maintaining overall cellular health. Precursors such as NMN, NR, or foundational niacin can sustain NAD+ levels when direct supplementation is not preferred.",
     "areas": {
       "energy": "NAD+ is essential for the mitochondrial processes that generate ATP, the primary energy currency of the cell.",
       "nervousSystem": "NAD+ supports the nervous system by aiding in cellular repair and protecting neurons from oxidative stress.",
@@ -334,6 +343,15 @@
       "energy": "Magnesium is necessary for energy production and reduces fatigue by supporting ATP synthesis."
     }
   },
+  "zinc_comprehensive_support": {
+    "title": "Zinc for immune resilience",
+    "description": "Zinc is a trace mineral critical for immune defense, tissue repair, and hormone balance. Highly absorbable forms can help maintain resilience during stress and intense training.",
+    "areas": {
+      "immuneSupport": "Zinc supports innate and adaptive immunity by regulating cytokine signaling and white blood cell activity.",
+      "nervousSystem": "Adequate zinc helps maintain neurotransmitter balance, supporting mood and stress tolerance.",
+      "energy": "Zinc is required for hundreds of enzymatic reactions linked to energy metabolism and recovery."
+    }
+  },
   "betaine_cardiovascular": {
     "title": "Betaine",
     "description": "Betaine supports cardiovascular function and physical performance."
@@ -468,7 +486,7 @@
   },
   "astaxanthin_recovery_antioxidant": {
     "title": "Astaxanthin for recovery",
-    "description": "Astaxanthin is a powerful fat-soluble antioxidant that protects cell and mitochondrial membranes from oxidative stress. When used with proper timing, it can improve recovery, reduce exercise-induced muscle damage, and support endurance performance.",
+    "description": "Astaxanthin is a powerful fat-soluble antioxidant that protects cell and mitochondrial membranes from oxidative stress. Pairing it with vitamin E tocotrienols delivers the strongest complementary membrane protection; mixed tocopherols are a solid fallback when tocotrienols are unavailable. When used with proper timing, it can improve recovery, reduce exercise-induced muscle damage, and support endurance performance.",
     "areas": {
       "musclePerformance": "Astaxanthin may reduce oxidative muscle damage and delayed onset muscle soreness (DOMS), supporting faster recovery between training sessions.",
       "energy": "By protecting mitochondria from oxidative stress, astaxanthin can help maintain more stable cellular energy production over time.",

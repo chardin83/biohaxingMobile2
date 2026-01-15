@@ -56,6 +56,7 @@ export default function AreaDetailScreen() {
   const [addToPlanVisible, setAddToPlanVisible] = React.useState(false);
   const [pendingSupplement, setPendingSupplement] = React.useState<any | null>(null);
   const [createPlanVisible, setCreatePlanVisible] = React.useState(false);
+  const [expandedSupplements, setExpandedSupplements] = React.useState<string[]>([]);
 
   const goalIcon = mainArea?.icon ?? "target";
   // Använd resolvedSupplements (nedan) för att hämta visningsnamn
@@ -77,6 +78,18 @@ export default function AreaDetailScreen() {
     if (!currentVerdict) return false;
     return positiveVerdicts.has(currentVerdict as any);
   }, [currentVerdict, positiveVerdicts]);
+
+  const plannedSupplements = React.useMemo(() => {
+    const ids = new Set<string>();
+    const names = new Set<string>();
+    plans.forEach((plan) => {
+      plan.supplements?.forEach((supplement) => {
+        if (supplement.id) ids.add(supplement.id);
+        if (supplement.name) names.add(supplement.name);
+      });
+    });
+    return { ids, names };
+  }, [plans]);
 
   const trainingRelationLabel = tip?.trainingRelation
     ? t(`common:goalDetails.trainingRelation.${tip.trainingRelation}`)
@@ -170,6 +183,14 @@ export default function AreaDetailScreen() {
     );
     setAddToPlanVisible(false);
     setPendingSupplement(null);
+  };
+
+  const toggleSupplementInfo = (supplementId: string) => {
+    setExpandedSupplements((prev) =>
+      prev.includes(supplementId)
+        ? prev.filter((id) => id !== supplementId)
+        : [...prev, supplementId]
+    );
   };
 
   // Om mål eller tips saknas, rendera ett enkelt fallback-view (hooks ovanför är alltid anropade)
@@ -329,16 +350,63 @@ export default function AreaDetailScreen() {
           {/* Visa kosttillskott och knapp om det finns referenser */}
           {resolvedSupplements.length > 0 && (
             <AppBox title={t("common:goalDetails.supplements")}>
-              {resolvedSupplements.map((supplement: any) => (
-                <View key={supplement.id} style={styles.supplementRow}>
-                  <Text style={styles.supplementText}>{supplement.name}</Text>
-                  <AppButton
-                    title={t("common:goalDetails.addToPlan")}
-                    onPress={() => handleOpenAddToPlan(supplement)}
-                    variant="primary"
-                  />
-                </View>
-              ))}
+              {resolvedSupplements.map((supplement: any) => {
+                const supplementId = supplement.id || supplement.name;
+                const alreadyPlanned =
+                  plannedSupplements.ids.has(supplement.id) ||
+                  plannedSupplements.names.has(supplement.name);
+                const isExpanded =
+                  !!supplement.description && expandedSupplements.includes(supplementId);
+
+                return (
+                  <View key={supplementId} style={styles.supplementContainer}>
+                    <View style={styles.supplementRow}>
+                      <View style={styles.supplementNameColumn}>
+                        <Text
+                          style={styles.supplementText}
+                          numberOfLines={isExpanded ? undefined : 1}
+                          ellipsizeMode="tail"
+                        >
+                          {supplement.name}
+                        </Text>
+                        {supplement.description ? (
+                          <Pressable
+                            accessibilityRole="button"
+                            onPress={() => toggleSupplementInfo(supplementId)}
+                            style={styles.supplementInfoRow}
+                          >
+                            <Icon
+                              source={isExpanded ? "information" : "information-outline"}
+                              size={14}
+                              color={Colors.dark.primary}
+                            />
+                            <Text style={styles.supplementInfoText}>
+                              {isExpanded
+                                ? t("common:goalDetails.lessInfo")
+                                : t("common:goalDetails.moreInfo")}
+                            </Text>
+                          </Pressable>
+                        ) : null}
+                        </View>
+                      {alreadyPlanned ? (
+                        <View style={styles.supplementCheck}>
+                          <Icon source="check" size={22} color={Colors.dark.primary} />
+                        </View>
+                      ) : (
+                        <AppButton
+                          title="+"
+                          accessibilityLabel={t("common:goalDetails.addToPlan")}
+                          onPress={() => handleOpenAddToPlan(supplement)}
+                          variant="primary"
+                        />
+                      )}
+                    </View>
+                    {supplement.description && isExpanded && (
+                      <Text style={styles.supplementDescription}>{supplement.description}</Text>
+                    )}
+                  </View>
+                );
+              })}
             </AppBox>
           )}
           {/* Modal: välj tidpunkt + lista planer */}
@@ -515,14 +583,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
   },
+  supplementContainer: {
+    width: "100%",
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.dark.border,
+  },
   supplementRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.dark.border,
     width: "100%",
+  },
+  supplementNameColumn: {
+    flex: 1,
+    marginRight: 12,
   },
   supplementText: {
     color: Colors.dark.textLight,
@@ -537,6 +612,25 @@ const styles = StyleSheet.create({
     color: Colors.dark.textLight,
     fontSize: 16,
     marginBottom: 4,
+  },
+  supplementCheck: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  supplementInfoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 2,
+  },
+  supplementInfoText: {
+    color: Colors.dark.primary,
+    fontSize: 12,
+    marginLeft: 4,
+  },
+  supplementDescription: {
+    color: Colors.dark.textLight,
+    fontSize: 14,
+    marginTop: 6,
   },
 });
 

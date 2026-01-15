@@ -148,7 +148,9 @@
       "avoidAfternoon": "Avoid afternoon",
       "avoidMorning": "Avoid morning",
       "avoidNight": "Avoid night"
-    }
+    },
+    "moreInfo": "More info",
+    "lessInfo": "Hide info"
   },
   "chat": {
       "welcomeMessage": "Hi! I'm your personal health coach – specialized in biohacking and supplements. Ask me about daily routines or optimizing your health. 💪🌿",

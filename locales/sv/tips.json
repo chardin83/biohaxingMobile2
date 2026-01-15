@@ -1,12 +1,21 @@
 {
   "vitamin_d": {
     "title": "D-vitamin",
-    "description": "D-vitaminhalterna kan variera beroende på faktorer som solexponering, diet och geografisk plats.",
+    "description": "D-vitaminhalterna kan variera beroende på faktorer som solexponering, diet och geografisk plats. Att kombinera D3 med komplementärt vitamin K2 hjälper kroppen att styra kalcium till skelettet och skydda mjukvävnad. Komplettera gärna med magnesiumbisglycinat för att stödja vitamin D-aktivering och effektivt kalciumupptag.",
     "areas": {
       "energy": "D-vitamin stödjer mitokondriell funktion och cellulär energiproduktion genom att reglera kalciumhomeostas.",
       "immuneSupport": "D-vitamin modulerar både medfött och adaptivt immunsvar, och låga nivåer är associerade med ökad infektionskänslighet.",
       "musclePerformance": "D-vitamin är avgörande för muskelstyrka och funktion genom kalciumreglering och muskelproteinsyntesvägar.",
       "nervousSystem": "D-vitamin påverkar neurotransmittorproduktion och har neuroprotektiva effekter i det centrala nervsystemet."
+    }
+  },
+  "vitamin_e_antioxidant_support": {
+    "title": "E-vitamin för antioxidantskydd",
+    "description": "Vitamin E skyddar cellmembran från oxidativ stress och stödjer kardiovaskulär resiliens. Blandade tokoferoler och tokotrienoler täcker ett bredare spektrum än alfa-tokoferol ensam, särskilt vid hög inflammation eller lipidstress. Att kombinera med karotenoider som astaxantin ger kompletterande membranskydd. Höga doser isolerat alfa-tokoferol kan tränga undan andra E-former, så håll dig kring rekommenderad dos om du inte använder blandade komplex.",
+    "areas": {
+      "immuneSupport": "Vitamin E stärker immuncellers signalering och skyddar lipider i cellmembran mot peroxidation.",
+      "cardioFitness": "Tillräckligt med vitamin E bidrar till god endotel-funktion och balanserar oxidativ belastning under träning.",
+      "energy": "Genom att bevara mitokondriemembran stödjer vitamin E effektiv energiproduktion under stress."
     }
   },
   "coq10": {
@@ -20,7 +29,7 @@
   },
   "cellular_energy_nad": {
     "title": "NAD+",
-    "description": "NAD+ (Nikotinamidadenindinukleotid) är ett viktigt koenzym som finns i varje cell i kroppen. Det spelar en nyckelroll i cellulär energimetabolism, DNA-reparation och upprätthållande av övergripande cellulär hälsa.",
+    "description": "NAD+ (Nikotinamidadenindinukleotid) är ett viktigt koenzym som finns i varje cell i kroppen. Det spelar en nyckelroll i cellulär energimetabolism, DNA-reparation och upprätthållande av övergripande cellulär hälsa. Prekursorer som NMN, NR eller grundläggande niacin kan stödja NAD+-nivåerna när direkt tillskott inte är aktuellt.",
     "areas": {
       "energy": "NAD+ är avgörande för de mitokondriella processer som genererar ATP, cellens primära energivaluta.",
       "nervousSystem": "NAD+ stödjer nervsystemet genom att hjälpa till med cellulär reparation och skydda neuroner från oxidativ stress.",
@@ -270,6 +279,15 @@
       "energy": "Magnesium är nödvändigt för energiproduktion och minskar trötthet genom att stödja ATP-syntes."
     }
   },
+  "zinc_comprehensive_support": {
+    "title": "Zink för immunstyrka",
+    "description": "Zink är ett spårämne som är avgörande för immunförsvaret, vävnadsläkning och hormonbalans. Biotillgängliga former kan hjälpa kroppen att behålla motståndskraft vid stress och hård träning.",
+    "areas": {
+      "immuneSupport": "Zink stödjer både det medfödda och adaptiva immunförsvaret genom att reglera cytokinsignalering och vita blodkroppars aktivitet.",
+      "nervousSystem": "Tillräckligt med zink hjälper till att bibehålla signalsubstansbalans, vilket stödjer humör och stresstålighet.",
+      "energy": "Zink krävs för hundratals enzymreaktioner kopplade till energimetabolism och återhämtning."
+    }
+  },
   "betaine_cardiovascular": {
     "title": "Betain",
     "description": "Betain stödjer kardiovaskulär funktion och fysisk prestanda."
@@ -468,7 +486,7 @@
   },
   "astaxanthin_recovery_antioxidant": {
     "title": "Astaxantin för återhämtning",
-    "description": "Astaxantin är en kraftfull fettlöslig antioxidant som skyddar cell- och mitokondriemembran från oxidativ stress. Den kan förbättra återhämtning, minska träningsinducerad muskelskada och stödja uthållighet när den används med rätt timing.",
+    "description": "Astaxantin är en kraftfull fettlöslig antioxidant som skyddar cell- och mitokondriemembran från oxidativ stress. Kombinera helst med E-vitamin i tokotrienolform för starkast membranskydd; blandade tokoferoler är ett bra andrahandsval om tokotrienoler saknas. Den kan förbättra återhämtning, minska träningsinducerad muskelskada och stödja uthållighet när den används med rätt timing.",
     "areas": {
       "musclePerformance": "Astaxantin kan minska oxidativ muskelskada och träningsvärk, vilket stödjer snabbare återhämtning mellan träningspass.",
       "energy": "Genom att skydda mitokondrier från oxidativ stress kan astaxantin bidra till stabilare energiproduktion över tid.",

@@ -71,10 +71,31 @@ export const tips: Tip[] = [
     ],
     title: "vitamin_d.title",
     descriptionKey: "vitamin_d.description",
-    supplements: [{ id: "vitaminD" }],
+    supplements: [{ id: "vitaminD" }, { id: "vitaminDWithK2" }, { id: "vitaminK2" }, { id: "magnesiumGlycinate" }],
     startPrompt: "vitamin_d.startPrompt",
     trainingRelation: "anytime",
     preferredDayParts: ["morning"],
+    timeRule: "anytime",
+  },
+  {
+    id: "vitamin_e_antioxidant_support",
+    level: 2,
+    xp: 500,
+    areas: [
+      { id: "immuneSupport", descriptionKey: "vitamin_e_antioxidant_support.areas.immuneSupport" },
+      { id: "cardioFitness", descriptionKey: "vitamin_e_antioxidant_support.areas.cardioFitness" },
+      { id: "energy", descriptionKey: "vitamin_e_antioxidant_support.areas.energy" }
+    ],
+    title: "vitamin_e_antioxidant_support.title",
+    descriptionKey: "vitamin_e_antioxidant_support.description",
+    supplements: [
+      { id: "vitaminE" },
+      { id: "vitaminEMixedTocopherols" },
+      { id: "vitaminETocotrienols" },
+      { id: "astaxanthin" }
+    ],
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning", "evening"],
     timeRule: "anytime",
   },
   {
@@ -104,7 +125,12 @@ export const tips: Tip[] = [
     ],
     title: "cellular_energy_nad.title",
     descriptionKey: "cellular_energy_nad.description",
-    supplements: [{ id: "nad" }],
+    supplements: [
+      { id: "nad" },
+      { id: "nmn" },
+      { id: "nr" },
+      { id: "niacin" }
+    ],
     trainingRelation: "anytime",
     preferredDayParts: ["morning"],
     timeRule: "anytime",
@@ -135,9 +161,36 @@ export const tips: Tip[] = [
     ],
     title: "magnesium.title",
     descriptionKey: "magnesium.description",
-    supplements: [{ id: "magnesium" }],
+    supplements: [
+      { id: "magnesium" },
+      { id: "magnesiumGlycinate" },
+      { id: "magnesiumCitrate" },
+      { id: "magnesiumMalate" },
+      { id: "magnesiumThreonate" }
+    ],
     trainingRelation: "anytime",
     preferredDayParts: ["evening", "night"],
+    timeRule: "anytime",
+  },
+  {
+    id: "zinc_comprehensive_support",
+    level: 3,
+    xp: 700,
+    areas: [
+      { id: "immuneSupport", descriptionKey: "zinc_comprehensive_support.areas.immuneSupport" },
+      { id: "nervousSystem", descriptionKey: "zinc_comprehensive_support.areas.nervousSystem" },
+      { id: "energy", descriptionKey: "zinc_comprehensive_support.areas.energy" }
+    ],
+    title: "zinc_comprehensive_support.title",
+    descriptionKey: "zinc_comprehensive_support.description",
+    supplements: [
+      { id: "zinc" },
+      { id: "zincPicolinate" },
+      { id: "zincBisglycinate" },
+      { id: "zincCitrate" }
+    ],
+    trainingRelation: "anytime",
+    preferredDayParts: ["evening"],
     timeRule: "anytime",
   },
   {
@@ -832,7 +885,12 @@ export const tips: Tip[] = [
     ],
     title: "astaxanthin_recovery_antioxidant.title",
     descriptionKey: "astaxanthin_recovery_antioxidant.description",
-    supplements: [{ id: "astaxanthin" }],
+    supplements: [
+      { id: "astaxanthin" },
+      { id: "vitaminETocotrienols" },
+      { id: "vitaminEMixedTocopherols" },
+      { id: "vitaminE" }
+    ],
     trainingRelation: "avoidNearWorkout",
     preferredDayParts: ["evening"],
     timeRule: "anytime",
