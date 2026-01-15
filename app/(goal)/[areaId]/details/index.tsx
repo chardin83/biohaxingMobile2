@@ -78,6 +78,19 @@ export default function AreaDetailScreen() {
     return positiveVerdicts.has(currentVerdict as any);
   }, [currentVerdict, positiveVerdicts]);
 
+  const trainingRelationLabel = tip?.trainingRelation
+    ? t(`common:goalDetails.trainingRelation.${tip.trainingRelation}`)
+    : null;
+  const preferredDayPartLabels = React.useMemo(() => {
+    if (!tip?.preferredDayParts?.length) return [] as string[];
+    return tip.preferredDayParts.map((part) =>
+      t(`common:goalDetails.preferredDayParts.${part}`)
+    );
+  }, [tip?.preferredDayParts, t]);
+  const timeRuleLabel = tip?.timeRule
+    ? t(`common:goalDetails.timeRules.${tip.timeRule}`)
+    : null;
+
   // Lös upp tip.supplements (id-referenser) till fulla supplement-objekt från översättningarna
   const resolvedSupplements = React.useMemo(() => {
     if (!tip?.supplements?.length) return [] as any[];
@@ -207,6 +220,28 @@ export default function AreaDetailScreen() {
               <Text style={{ color: Colors.dark.textLight, marginBottom: 8 }}>
                 {t(`tips:${descriptionKey}`)}
               </Text>
+            </AppBox>
+          )}
+
+          {trainingRelationLabel && (
+            <AppBox title={t("common:goalDetails.trainingRelation.title")}>
+              <Text style={styles.metaText}>{trainingRelationLabel}</Text>
+            </AppBox>
+          )}
+
+          {preferredDayPartLabels.length > 0 && (
+            <AppBox title={t("common:goalDetails.preferredDayParts.title")}>
+              {preferredDayPartLabels.map((label) => (
+                <Text key={label} style={styles.metaText}>
+                  • {label}
+                </Text>
+              ))}
+            </AppBox>
+          )}
+
+          {timeRuleLabel && (
+            <AppBox title={t("common:goalDetails.timeRules.title")}>
+              <Text style={styles.metaText}>{timeRuleLabel}</Text>
             </AppBox>
           )}
 
@@ -497,6 +532,11 @@ const styles = StyleSheet.create({
     color: Colors.dark.primary,
     fontWeight: "bold",
     fontSize: 14,
+  },
+  metaText: {
+    color: Colors.dark.textLight,
+    fontSize: 16,
+    marginBottom: 4,
   },
 });
 

@@ -9,6 +9,21 @@ export type TipArea = {
   descriptionKey: string;
 };
 
+export type TrainingRelation =
+  | "anytime"
+  | "preWorkout"
+  | "postWorkout"
+  | "avoidPreWorkout"
+  | "avoidPostWorkout"
+  | "avoidNearWorkout"; // generellt “inte nära pass” (t.ex. ±3–6h)
+
+export type DayPart = "morning" | "midday" | "afternoon" | "evening" | "night";
+
+export type TimeOfDayRule =
+  | "anytime"
+  | "avoidLateEvening" // koffein
+  | "avoidNight"; // ännu striktare om du vill
+
 export type Tip = {
   id: string;
   level?: number;
@@ -21,6 +36,10 @@ export type Tip = {
   startPrompt?: string;
   parentId?: string; // Ny egenskap för att länka till förälder
   isParent?: boolean; // Markera om detta är en överordnad kategori
+
+  trainingRelation?: TrainingRelation; // (kopplat till workout)
+  preferredDayParts?: DayPart[]; // (när på dagen det passar)
+  timeRule?: TimeOfDayRule; // (tidsrestriktioner)
 };
 
 export const tips: Tip[] = [
@@ -36,6 +55,9 @@ export const tips: Tip[] = [
     descriptionKey: "multivitamin_general.description",
     supplements: [{ id: "multivitamin" }],
     startPrompt: "multivitamin_general.startPrompt",
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning"],
+    timeRule: "anytime",
   },
   {
     id: "vitamin_d",
@@ -51,6 +73,9 @@ export const tips: Tip[] = [
     descriptionKey: "vitamin_d.description",
     supplements: [{ id: "vitaminD" }],
     startPrompt: "vitamin_d.startPrompt",
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning"],
+    timeRule: "anytime",
   },
   {
     id: "coq10",
@@ -64,6 +89,9 @@ export const tips: Tip[] = [
     descriptionKey: "mitochondrial_nutrients_coq10.description",
     supplements: [{ id: "coenzymeQ10" }],
     analyzePrompt: "mitochondrial_nutrients_coq10.analyzePrompt",
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning", "midday"],
+    timeRule: "anytime",
   },
   {
     id: "cellular_energy_nad",
@@ -77,6 +105,9 @@ export const tips: Tip[] = [
     title: "cellular_energy_nad.title",
     descriptionKey: "cellular_energy_nad.description",
     supplements: [{ id: "nad" }],
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning"],
+    timeRule: "anytime",
   },
   {
     id: "sleep_timing_circadian",
@@ -89,6 +120,9 @@ export const tips: Tip[] = [
     ],
     title: "sleep_timing_circadian.title",
     descriptionKey: "sleep_timing_circadian.description",
+    trainingRelation: "anytime",
+    preferredDayParts: ["evening"],
+    timeRule: "anytime",
   },
   {
     id: "magnesium",
@@ -102,6 +136,9 @@ export const tips: Tip[] = [
     title: "magnesium.title",
     descriptionKey: "magnesium.description",
     supplements: [{ id: "magnesium" }],
+    trainingRelation: "anytime",
+    preferredDayParts: ["evening", "night"],
+    timeRule: "anytime",
   },
   {
     id: "calm_alertness_ltheanine",
@@ -111,6 +148,9 @@ export const tips: Tip[] = [
     title: "calm_alertness_ltheanine.title",
     descriptionKey: "calm_alertness_ltheanine.description",
     supplements: [{ id: "lTheanine" }],
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning", "midday"],
+    timeRule: "anytime",
   },
   {
     id: "neurotransmitter_ltyrosine",
@@ -120,6 +160,9 @@ export const tips: Tip[] = [
     title: "neurotransmitter_ltyrosine.title",
     descriptionKey: "neurotransmitter_ltyrosine.description",
     supplements: [{ id: "lTyrosine" }],
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning"],
+    timeRule: "anytime",
   },
   {
     id: "maintain_hydration",
@@ -132,6 +175,9 @@ export const tips: Tip[] = [
     ],
     title: "maintain_hydration.title",
     descriptionKey: "maintain_hydration.description",
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning", "midday", "afternoon", "evening"],
+    timeRule: "anytime",
   },
   {
     id: "vitamin_c_immunity",
@@ -141,6 +187,9 @@ export const tips: Tip[] = [
     title: "vitamin_c_immunity.title",
     descriptionKey: "vitamin_c_immunity.description",
     supplements: [{ id: "vitaminC" }],
+    trainingRelation: "anytime",
+    preferredDayParts: ["midday", "afternoon"],
+    timeRule: "anytime",
   },
   {
     id: "echinacea_herbs",
@@ -150,6 +199,9 @@ export const tips: Tip[] = [
     title: "echinacea_herbs.title",
     descriptionKey: "echinacea_herbs.description",
     supplements: [{ id: "echinacea" }],
+    trainingRelation: "anytime",
+    preferredDayParts: ["midday", "afternoon"],
+    timeRule: "anytime",
   },
   {
     id: "calming_glycine",
@@ -163,6 +215,9 @@ export const tips: Tip[] = [
     title: "calming_glycine.title",
     descriptionKey: "calming_glycine.description",
     supplements: [{ id: "glycin" }],
+    trainingRelation: "anytime",
+    preferredDayParts: ["evening", "night"],
+    timeRule: "anytime",
   },
   {
     id: "breathwork_parasympathetic",
@@ -176,6 +231,9 @@ export const tips: Tip[] = [
     title: "breathwork_parasympathetic.title",
     descriptionKey: "breathwork_parasympathetic.description",
     isParent: true,
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning", "midday", "afternoon", "evening"],
+    timeRule: "anytime",
   },
   {
     id: "box_breathing",
@@ -189,6 +247,9 @@ export const tips: Tip[] = [
     title: "box_breathing.title",
     descriptionKey: "box_breathing.description",
     supplements: [],
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning", "midday", "afternoon"],
+    timeRule: "anytime",
   },
   {
     id: "4_7_8_breathing",
@@ -202,6 +263,9 @@ export const tips: Tip[] = [
     title: "4_7_8_breathing.title",
     descriptionKey: "4_7_8_breathing.description",
     supplements: [],
+    trainingRelation: "anytime",
+    preferredDayParts: ["evening", "night"],
+    timeRule: "anytime",
   },
   {
     id: "alternate_nostril_breathing",
@@ -215,6 +279,9 @@ export const tips: Tip[] = [
     title: "alternate_nostril_breathing.title",
     descriptionKey: "alternate_nostril_breathing.description",
     supplements: [],
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning", "midday"],
+    timeRule: "anytime",
   },
   {
     id: "diaphragmatic_breathing",
@@ -228,6 +295,9 @@ export const tips: Tip[] = [
     title: "diaphragmatic_breathing.title",
     descriptionKey: "diaphragmatic_breathing.description",
     supplements: [],
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning", "midday", "afternoon"],
+    timeRule: "anytime",
   },
   {
     id: "sleep_optimization_recovery",
@@ -243,6 +313,9 @@ export const tips: Tip[] = [
     title: "sleep_optimization_recovery.title",
     descriptionKey: "sleep_optimization_recovery.description",
     isParent: true,
+    trainingRelation: "anytime",
+    preferredDayParts: ["evening"],
+    timeRule: "anytime",
   },
   {
     id: "sleep_duration_consistency",
@@ -256,6 +329,9 @@ export const tips: Tip[] = [
     title: "sleep_duration_consistency.title",
     descriptionKey: "sleep_duration_consistency.description",
     supplements: [],
+    trainingRelation: "anytime",
+    preferredDayParts: ["evening", "night"],
+    timeRule: "anytime",
   },
   {
     id: "sleep_environment_optimization",
@@ -269,6 +345,9 @@ export const tips: Tip[] = [
     title: "sleep_environment_optimization.title",
     descriptionKey: "sleep_environment_optimization.description",
     supplements: [],
+    trainingRelation: "anytime",
+    preferredDayParts: ["evening", "night"],
+    timeRule: "anytime",
   },
   {
     id: "sleep_hygiene_practices",
@@ -282,6 +361,9 @@ export const tips: Tip[] = [
     title: "sleep_hygiene_practices.title",
     descriptionKey: "sleep_hygiene_practices.description",
     supplements: [],
+    trainingRelation: "anytime",
+    preferredDayParts: ["evening"],
+    timeRule: "anytime",
   },
   {
     id: "pre_sleep_wind_down",
@@ -295,6 +377,9 @@ export const tips: Tip[] = [
     title: "pre_sleep_wind_down.title",
     descriptionKey: "pre_sleep_wind_down.description",
     supplements: [],
+    trainingRelation: "anytime",
+    preferredDayParts: ["evening", "night"],
+    timeRule: "anytime",
   },
   {
     id: "sunlight_circadian",
@@ -308,6 +393,9 @@ export const tips: Tip[] = [
     ],
     title: "sunlight_circadian.title",
     descriptionKey: "sunlight_circadian.description",
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning"],
+    timeRule: "anytime",
   },
   {
     id: "cold_exposure_ans",
@@ -320,6 +408,9 @@ export const tips: Tip[] = [
     ],
     title: "cold_exposure_ans.title",
     descriptionKey: "cold_exposure_ans.description",
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning", "midday"],
+    timeRule: "anytime",
   },
   {
     id: "meditation_mindfulness",
@@ -332,6 +423,9 @@ export const tips: Tip[] = [
     ],
     title: "meditation_mindfulness.title",
     descriptionKey: "meditation_mindfulness.description",
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning", "midday", "evening"],
+    timeRule: "anytime",
   },
   {
     id: "nature_parasympathetic",
@@ -344,6 +438,9 @@ export const tips: Tip[] = [
     ],
     title: "nature_parasympathetic.title",
     descriptionKey: "nature_parasympathetic.description",
+    trainingRelation: "anytime",
+    preferredDayParts: ["midday", "afternoon"],
+    timeRule: "anytime",
   },
   {
     id: "hrv_recovery_monitoring",
@@ -358,6 +455,9 @@ export const tips: Tip[] = [
     ],
     title: "hrv_recovery_monitoring.title",
     descriptionKey: "hrv_recovery_monitoring.description",
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning"],
+    timeRule: "anytime",
   },
   {
     id: "social_connection_vagal",
@@ -370,6 +470,9 @@ export const tips: Tip[] = [
     ],
     title: "social_connection_vagal.title",
     descriptionKey: "social_connection_vagal.description",
+    trainingRelation: "anytime",
+    preferredDayParts: ["afternoon", "evening"],
+    timeRule: "anytime",
   },
   {
     id: "calming_music_waves",
@@ -382,6 +485,9 @@ export const tips: Tip[] = [
     ],
     title: "calming_music_waves.title",
     descriptionKey: "calming_music_waves.description",
+    trainingRelation: "anytime",
+    preferredDayParts: ["evening", "night"],
+    timeRule: "anytime",
   },
   {
     id: "adaptogenic_herbs",
@@ -391,6 +497,9 @@ export const tips: Tip[] = [
     title: "adaptogenic_herbs.title",
     descriptionKey: "adaptogenic_herbs.description",
     isParent: true,
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning"],
+    timeRule: "anytime",
   },
   {
     id: "neuromuscular_training",
@@ -404,6 +513,9 @@ export const tips: Tip[] = [
     title: "neuromuscular_training.title",
     descriptionKey: "neuromuscular_training.description",
     supplements: [],
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning", "midday"],
+    timeRule: "anytime",
   },
   {
     id: "creatine_atp_strength",
@@ -418,6 +530,9 @@ export const tips: Tip[] = [
     title: "creatine_atp_strength.title",
     descriptionKey: "creatine_atp_strength.description",
     supplements: [{ id: "creatine" }],
+    trainingRelation: "anytime",
+    preferredDayParts: ["midday", "afternoon"],
+    timeRule: "anytime",
   },
   {
     id: "betaalanine_endurance",
@@ -430,6 +545,9 @@ export const tips: Tip[] = [
     title: "betaalanine_endurance.title",
     descriptionKey: "betaalanine_endurance.description",
     supplements: [{ id: "betaAlanine" }],
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning", "midday"],
+    timeRule: "anytime",
   },
   {
     id: "shilajit_performance",
@@ -443,6 +561,9 @@ export const tips: Tip[] = [
     title: "shilajit_performance.title",
     descriptionKey: "shilajit_performance.description",
     supplements: [{ id: "shilajit" }],
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning"],
+    timeRule: "anytime",
   },
   {
     id: "probiotics_microbiota",
@@ -455,6 +576,9 @@ export const tips: Tip[] = [
     title: "probiotics_microbiota.title",
     descriptionKey: "probiotics_microbiota.description",
     supplements: [{ id: "probiotics" }],
+    trainingRelation: "anytime",
+    preferredDayParts: ["afternoon"],
+    timeRule: "anytime",
   },
   {
     id: "fiber_microbiome",
@@ -466,7 +590,9 @@ export const tips: Tip[] = [
     ],
     title: "fiber_microbiome.title",
     descriptionKey: "fiber_microbiome.description",
-    supplements: [],
+    trainingRelation: "anytime",
+    preferredDayParts: ["afternoon", "evening"],
+    timeRule: "anytime",
   },
   {
     id: "milk_thistle_liver",
@@ -479,6 +605,9 @@ export const tips: Tip[] = [
     title: "milk_thistle_liver.title",
     descriptionKey: "milk_thistle_liver.description",
     supplements: [{ id: "milkThistle" }],
+    trainingRelation: "anytime",
+    preferredDayParts: ["afternoon"],
+    timeRule: "anytime",
   },
   {
     id: "hiit_vo2max",
@@ -490,8 +619,9 @@ export const tips: Tip[] = [
     ],
     title: "hiit_vo2max.title",
     descriptionKey: "hiit_vo2max.description",
-    supplements: [],
     analyzePrompt: "hiit_vo2max.analyzePrompt",
+    preferredDayParts: ["morning", "midday"],
+    timeRule: "anytime",
   },
   {
     id: "running_volume_aerobic",
@@ -503,8 +633,9 @@ export const tips: Tip[] = [
     ],
     title: "running_volume_aerobic.title",
     descriptionKey: "running_volume_aerobic.description",
-    supplements: [],
     analyzePrompt: "running_volume_aerobic.analyzePrompt",
+    preferredDayParts: ["morning", "midday", "afternoon"],
+    timeRule: "anytime",
   },
   {
     id: "ashwagandha_adaptogen",
@@ -519,6 +650,9 @@ export const tips: Tip[] = [
     title: "ashwagandha_adaptogen.title",
     descriptionKey: "ashwagandha_adaptogen.description",
     supplements: [{ id: "ashwagandha" }],
+    trainingRelation: "anytime",
+    preferredDayParts: ["evening"],
+    timeRule: "anytime",
   },
   {
     id: "rhodiola_adaptogen",
@@ -533,6 +667,9 @@ export const tips: Tip[] = [
     title: "rhodiola_adaptogen.title",
     descriptionKey: "rhodiola_adaptogen.description",
     supplements: [{ id: "rhodiolaRosea" }],
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning"],
+    timeRule: "anytime",
   },
   {
     id: "holy_basil_adaptogen",
@@ -546,6 +683,9 @@ export const tips: Tip[] = [
     title: "holy_basil_adaptogen.title",
     descriptionKey: "holy_basil_adaptogen.description",
     supplements: [{ id: "holyBasil" }],
+    trainingRelation: "anytime",
+    preferredDayParts: ["evening"],
+    timeRule: "anytime",
   },
   {
     id: "cordyceps_adaptogen",
@@ -560,113 +700,142 @@ export const tips: Tip[] = [
     title: "cordyceps_adaptogen.title",
     descriptionKey: "cordyceps_adaptogen.description",
     supplements: [{ id: "cordyceps" }],
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning"],
+    timeRule: "anytime",
+  },
+
+  // --- Running / performance tips (added) ---
+  {
+    id: "zone2_mitochondrial_base",
+    level: 2,
+    xp: 500,
+    areas: [
+      { id: "cardioFitness", descriptionKey: "zone2_mitochondrial_base.areas.cardioFitness" },
+      { id: "energy", descriptionKey: "zone2_mitochondrial_base.areas.energy" }
+    ],
+    title: "zone2_mitochondrial_base.title",
+    descriptionKey: "zone2_mitochondrial_base.description",
+    analyzePrompt: "zone2_mitochondrial_base.analyzePrompt",
+    preferredDayParts: ["morning", "midday", "afternoon"],
+    timeRule: "anytime",
   },
   {
-  id: "zone2_mitochondrial_base",
-  level: 2,
-  xp: 500,
-  areas: [
-    { id: "cardioFitness", descriptionKey: "zone2_mitochondrial_base.areas.cardioFitness" },
-    { id: "energy", descriptionKey: "zone2_mitochondrial_base.areas.energy" }
-  ],
-  title: "zone2_mitochondrial_base.title",
-  descriptionKey: "zone2_mitochondrial_base.description",
-  analyzePrompt: "zone2_mitochondrial_base.analyzePrompt",
-},
-{
-  id: "fasted_aerobic_training",
-  level: 3,
-  xp: 700,
-  areas: [
-    { id: "energy", descriptionKey: "fasted_aerobic_training.areas.energy" },
-    { id: "cardioFitness", descriptionKey: "fasted_aerobic_training.areas.cardioFitness" }
-  ],
-  title: "fasted_aerobic_training.title",
-  descriptionKey: "fasted_aerobic_training.description",
-},
-{
-  id: "lactate_threshold_training",
-  level: 3,
-  xp: 700,
-  areas: [
-    { id: "cardioFitness", descriptionKey: "lactate_threshold_training.areas.cardioFitness" },
-    { id: "energy", descriptionKey: "lactate_threshold_training.areas.energy" }
-  ],
-  title: "lactate_threshold_training.title",
-  descriptionKey: "lactate_threshold_training.description",
-  analyzePrompt: "lactate_threshold_training.analyzePrompt",
-},
-{
-  id: "running_economy_drills",
-  level: 2,
-  xp: 500,
-  areas: [
-    { id: "neuromuscular", descriptionKey: "running_economy_drills.areas.neuromuscular" },
-    { id: "cardioFitness", descriptionKey: "running_economy_drills.areas.cardioFitness" }
-  ],
-  title: "running_economy_drills.title",
-  descriptionKey: "running_economy_drills.description",
-},
-{
-  id: "stride_frequency_optimization",
-  level: 3,
-  xp: 700,
-  areas: [
-    { id: "neuromuscular", descriptionKey: "stride_frequency_optimization.areas.neuromuscular" },
-    { id: "energy", descriptionKey: "stride_frequency_optimization.areas.energy" }
-  ],
-  title: "stride_frequency_optimization.title",
-  descriptionKey: "stride_frequency_optimization.description",
-},
-{
-  id: "caffeine_endurance_performance",
-  level: 2,
-  xp: 500,
-  areas: [
-    { id: "energy", descriptionKey: "caffeine_endurance_performance.areas.energy" },
-    { id: "focus", descriptionKey: "caffeine_endurance_performance.areas.focus" },
-    { id: "cardioFitness", descriptionKey: "caffeine_endurance_performance.areas.cardioFitness" }
-  ],
-  title: "caffeine_endurance_performance.title",
-  descriptionKey: "caffeine_endurance_performance.description",
-  supplements: [{ id: "caffeine" }],
-},
-{
-  id: "nitrate_no_efficiency",
-  level: 3,
-  xp: 700,
-  areas: [
-    { id: "cardioFitness", descriptionKey: "nitrate_no_efficiency.areas.cardioFitness" },
-    { id: "energy", descriptionKey: "nitrate_no_efficiency.areas.energy" }
-  ],
-  title: "nitrate_no_efficiency.title",
-  descriptionKey: "nitrate_no_efficiency.description",
-  supplements: [{ id: "beetrootExtract" }],
-},
-{
-  id: "l_carnitine_fat_transport",
-  level: 3,
-  xp: 700,
-  areas: [
-    { id: "energy", descriptionKey: "l_carnitine_fat_transport.areas.energy" },
-    { id: "cardioFitness", descriptionKey: "l_carnitine_fat_transport.areas.cardioFitness" }
-  ],
-  title: "l_carnitine_fat_transport.title",
-  descriptionKey: "l_carnitine_fat_transport.description",
-  supplements: [{ id: "lCarnitine" }],
-},
-{
-  id: "astaxanthin_recovery_antioxidant",
-  level: 3,
-  xp: 700,
-  areas: [
-    { id: "musclePerformance", descriptionKey: "astaxanthin_recovery_antioxidant.areas.musclePerformance" },
-    { id: "energy", descriptionKey: "astaxanthin_recovery_antioxidant.areas.energy" },
-    { id: "cardioFitness", descriptionKey: "astaxanthin_recovery_antioxidant.areas.cardioFitness" }
-  ],
-  title: "astaxanthin_recovery_antioxidant.title",
-  descriptionKey: "astaxanthin_recovery_antioxidant.description",
-  supplements: [{ id: "astaxanthin" }],
-  analyzePrompt: "astaxanthin_recovery_antioxidant.analyzePrompt",
-}
+    id: "fasted_aerobic_training",
+    level: 3,
+    xp: 700,
+    areas: [
+      { id: "energy", descriptionKey: "fasted_aerobic_training.areas.energy" },
+      { id: "cardioFitness", descriptionKey: "fasted_aerobic_training.areas.cardioFitness" }
+    ],
+    title: "fasted_aerobic_training.title",
+    descriptionKey: "fasted_aerobic_training.description",
+    preferredDayParts: ["morning"],
+    timeRule: "anytime",
+  },
+  {
+    id: "lactate_threshold_training",
+    level: 3,
+    xp: 700,
+    areas: [
+      { id: "cardioFitness", descriptionKey: "lactate_threshold_training.areas.cardioFitness" },
+      { id: "energy", descriptionKey: "lactate_threshold_training.areas.energy" }
+    ],
+    title: "lactate_threshold_training.title",
+    descriptionKey: "lactate_threshold_training.description",
+    analyzePrompt: "lactate_threshold_training.analyzePrompt",
+    preferredDayParts: ["morning", "midday"],
+    timeRule: "anytime",
+  },
+  {
+    id: "running_economy_drills",
+    level: 2,
+    xp: 500,
+    areas: [
+      { id: "musclePerformance", descriptionKey: "running_economy_drills.areas.musclePerformance" },
+      { id: "nervousSystem", descriptionKey: "running_economy_drills.areas.nervousSystem" },
+      { id: "cardioFitness", descriptionKey: "running_economy_drills.areas.cardioFitness" }
+    ],
+    title: "running_economy_drills.title",
+    descriptionKey: "running_economy_drills.description",
+    preferredDayParts: ["morning", "midday"],
+    timeRule: "anytime",
+  },
+  {
+    id: "stride_frequency_optimization",
+    level: 3,
+    xp: 700,
+    areas: [
+      { id: "musclePerformance", descriptionKey: "stride_frequency_optimization.areas.musclePerformance" },
+      { id: "nervousSystem", descriptionKey: "stride_frequency_optimization.areas.nervousSystem" },
+      { id: "energy", descriptionKey: "stride_frequency_optimization.areas.energy" }
+    ],
+    title: "stride_frequency_optimization.title",
+    descriptionKey: "stride_frequency_optimization.description",
+    preferredDayParts: ["morning", "midday"],
+    timeRule: "anytime",
+  },
+  {
+    id: "caffeine_endurance_performance",
+    level: 2,
+    xp: 500,
+    areas: [
+      { id: "energy", descriptionKey: "caffeine_endurance_performance.areas.energy" },
+      { id: "focus", descriptionKey: "caffeine_endurance_performance.areas.focus" },
+      { id: "cardioFitness", descriptionKey: "caffeine_endurance_performance.areas.cardioFitness" }
+    ],
+    title: "caffeine_endurance_performance.title",
+    descriptionKey: "caffeine_endurance_performance.description",
+    supplements: [{ id: "caffeine" }],
+    trainingRelation: "preWorkout",
+    preferredDayParts: ["morning", "midday"],
+    timeRule: "avoidLateEvening",
+  },
+  {
+    id: "nitrate_no_efficiency",
+    level: 3,
+    xp: 700,
+    areas: [
+      { id: "cardioFitness", descriptionKey: "nitrate_no_efficiency.areas.cardioFitness" },
+      { id: "energy", descriptionKey: "nitrate_no_efficiency.areas.energy" }
+    ],
+    title: "nitrate_no_efficiency.title",
+    descriptionKey: "nitrate_no_efficiency.description",
+    supplements: [{ id: "beetrootExtract" }],
+    trainingRelation: "preWorkout",
+    preferredDayParts: ["morning", "midday"],
+    timeRule: "anytime",
+  },
+  {
+    id: "l_carnitine_fat_transport",
+    level: 3,
+    xp: 700,
+    areas: [
+      { id: "energy", descriptionKey: "l_carnitine_fat_transport.areas.energy" },
+      { id: "cardioFitness", descriptionKey: "l_carnitine_fat_transport.areas.cardioFitness" }
+    ],
+    title: "l_carnitine_fat_transport.title",
+    descriptionKey: "l_carnitine_fat_transport.description",
+    supplements: [{ id: "lCarnitine" }],
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning", "midday", "afternoon"],
+    timeRule: "anytime",
+  },
+  {
+    id: "astaxanthin_recovery_antioxidant",
+    level: 3,
+    xp: 700,
+    areas: [
+      { id: "musclePerformance", descriptionKey: "astaxanthin_recovery_antioxidant.areas.musclePerformance" },
+      { id: "energy", descriptionKey: "astaxanthin_recovery_antioxidant.areas.energy" },
+      { id: "cardioFitness", descriptionKey: "astaxanthin_recovery_antioxidant.areas.cardioFitness" }
+    ],
+    title: "astaxanthin_recovery_antioxidant.title",
+    descriptionKey: "astaxanthin_recovery_antioxidant.description",
+    supplements: [{ id: "astaxanthin" }],
+    trainingRelation: "avoidNearWorkout",
+    preferredDayParts: ["evening"],
+    timeRule: "anytime",
+    analyzePrompt: "astaxanthin_recovery_antioxidant.analyzePrompt",
+  }
 ];

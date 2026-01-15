@@ -122,7 +122,33 @@
     "whoAreTheExperts": "Who are the experts?",
     "supplements": "Supplements",
     "addToPlan": "Add to plan",
-    "fullyExplored": "Fully explored!"
+    "fullyExplored": "Fully explored!",
+    "trainingRelation": {
+      "title": "Workout timing",
+      "anytime": "No special workout timing",
+      "preWorkout": "Take before workouts",
+      "postWorkout": "Take after workouts",
+      "avoidPreWorkout": "Avoid shortly before workouts",
+      "avoidPostWorkout": "Avoid right after workouts",
+      "avoidNearWorkout": "Avoid close to workouts"
+    },
+    "preferredDayParts": {
+      "title": "Suggested times of day",
+      "morning": "Morning",
+      "midday": "Midday",
+      "afternoon": "Afternoon",
+      "evening": "Evening",
+      "night": "Night"
+    },
+    "timeRules": {
+      "title": "Timing cautions",
+      "anytime": "Any time of day",
+      "avoidLateEvening": "Avoid late evening",
+      "avoidEvening": "Avoid evening",
+      "avoidAfternoon": "Avoid afternoon",
+      "avoidMorning": "Avoid morning",
+      "avoidNight": "Avoid night"
+    }
   },
   "chat": {
       "welcomeMessage": "Hi! I'm your personal health coach – specialized in biohacking and supplements. Ask me about daily routines or optimizing your health. 💪🌿",

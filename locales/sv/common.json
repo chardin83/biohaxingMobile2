@@ -130,7 +130,33 @@
       "whoAreTheExperts": "Vilka experter finns?",
       "supplements": "Tillskott",
       "addToPlan": "Lägg till i plan",
-      "fullyExplored": "Fullt utforskat!"
+      "fullyExplored": "Fullt utforskat!",
+      "trainingRelation": {
+        "title": "Relation till träning",
+        "anytime": "Kan tas oavsett träning",
+        "preWorkout": "Ta före pass",
+        "postWorkout": "Ta efter pass",
+        "avoidPreWorkout": "Undvik strax före pass",
+        "avoidPostWorkout": "Undvik direkt efter pass",
+        "avoidNearWorkout": "Undvik nära träningspass"
+      },
+      "preferredDayParts": {
+        "title": "Rekommenderade tider på dagen",
+        "morning": "Morgon",
+        "midday": "Lunch",
+        "afternoon": "Eftermiddag",
+        "evening": "Kväll",
+        "night": "Natt"
+      },
+      "timeRules": {
+        "title": "Undvik tid",
+        "anytime": "Kan tas när som helst",
+        "avoidLateEvening": "Undvik sena kvällar",
+        "avoidEvening": "Undvik kvällstid",
+        "avoidAfternoon": "Undvik eftermiddag",
+        "avoidMorning": "Undvik morgon",
+        "avoidNight": "Undvik nattetid"
+      }
     },
    "chat": {
       "welcomeMessage": "Hej! Jag är din personliga hälsocoach – specialiserad på biohacking och kosttillskott. Ställ gärna en fråga om tillskott, dagliga rutiner eller hur du optimerar din hälsa. 💪🌿",
