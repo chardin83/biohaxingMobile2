@@ -7,6 +7,15 @@
       "immuneSupport": "D-vitamin modulerar både medfött och adaptivt immunsvar, och låga nivåer är associerade med ökad infektionskänslighet.",
       "musclePerformance": "D-vitamin är avgörande för muskelstyrka och funktion genom kalciumreglering och muskelproteinsyntesvägar.",
       "nervousSystem": "D-vitamin påverkar neurotransmittorproduktion och har neuroprotektiva effekter i det centrala nervsystemet."
+    },
+    "nutritionFoods": {
+      "title": "Livsmedel rika på D-vitamin",
+      "items": {
+        "fattyFish": "Fet fisk (lax, makrill, sardiner)",
+        "eggYolks": "Äggulor",
+        "fortifiedDairy": "Berikade mejeri- eller växtdrycker",
+        "mushrooms": "Svamp som fått solljus"
+      }
     }
   },
   "vitamin_e_antioxidant_support": {
@@ -74,6 +83,16 @@
     "description": "C-vitamin är ett vattenlösligt vitamin som finns i frukt och grönsaker. Det är en kraftfull antioxidant som stödjer immunförsvaret och skyddar celler från oxidativ stress.",
     "areas": {
       "immuneSupport": "C-vitamin stärker immunförsvaret genom att stödja vita blodkroppar och öka kroppens motståndskraft mot infektioner."
+    },
+    "nutritionFoods": {
+      "title": "Livsmedel rika på C-vitamin",
+      "items": {
+        "citrusFruits": "Citrusfrukter (apelsin, grapefrukt, citron)",
+        "berries": "Bär (jordgubbar, svarta vinbär)",
+        "bellPeppers": "Paprika",
+        "kiwi": "Kiwi",
+        "fermentedCabbage": "Fermenterad kål (surkål, kimchi)"
+      }
     }
   },
   "echinacea_herbs": {
@@ -228,6 +247,16 @@
     "areas": {
       "digestiveHealth": "Probiotika återställer och upprätthåller hälsosam bakteriebalans i tarmen, förbättrar matsmältningen, minskar uppblåsthet och stödjer tarmbarriärfunktionen.",
       "immuneSupport": "Cirka 70% av immunsystemet finns i tarmen. Probiotika stärker immunfunktionen, minskar inflammation och skyddar mot patogener."
+    },
+    "nutritionFoods": {
+      "title": "Probiotiska livsmedel",
+      "items": {
+        "yogurt": "Yoghurt med levande kulturer",
+        "kefir": "Kefir",
+        "sauerkraut": "Surkål",
+        "kimchi": "Kimchi",
+        "miso": "Miso"
+      }
     }
   },
   "fiber_microbiome": {
@@ -236,6 +265,16 @@
     "areas": {
       "digestiveHealth": "Fiber främjar regelbundna tarmrörelser, matar nyttiga bakterier och stödjer tarmbarriärens integritet genom att producera kortkedjiga fettsyror.",
       "immuneSupport": "En fiberrik kost stärker tarmmikrobiomet, som producerar metaboliter som reglerar immunfunktionen och minskar systemisk inflammation."
+    },
+    "nutritionFoods": {
+      "title": "Fiberrika livsmedel",
+      "items": {
+        "oats": "Havre och korn",
+        "legumes": "Baljväxter (linser, kikärtor, bönor)",
+        "chiaSeeds": "Chia- eller linfrön",
+        "berries": "Bär",
+        "cruciferousVeg": "Korsblommiga grönsaker (broccoli, brysselkål)"
+      }
     }
   },
   "milk_thistle_liver": {

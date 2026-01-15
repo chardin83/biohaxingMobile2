@@ -7,6 +7,15 @@
       "immuneSupport": "Vitamin D modulates both innate and adaptive immune responses, with low levels associated with increased infection susceptibility.",
       "musclePerformance": "Vitamin D is critical for muscle strength and function through calcium regulation and muscle protein synthesis pathways.",
       "nervousSystem": "Vitamin D influences neurotransmitter production and has neuroprotective effects in the central nervous system."
+    },
+    "nutritionFoods": {
+      "title": "Vitamin D food sources",
+      "items": {
+        "fattyFish": "Fatty fish (salmon, mackerel, sardines)",
+        "eggYolks": "Egg yolks",
+        "fortifiedDairy": "Fortified dairy or plant milks",
+        "mushrooms": "Sun-exposed mushrooms"
+      }
     }
   },
   "vitamin_e_antioxidant_support": {
@@ -74,6 +83,16 @@
     "description": "Vitamin C is a water-soluble vitamin found in fruits and vegetables. It is a powerful antioxidant that supports the immune system and protects cells from oxidative stress.",
     "areas": {
       "immuneSupport": "Vitamin C strengthens immune defense by supporting white blood cells and increasing the body's resistance to infections."
+    },
+    "nutritionFoods": {
+      "title": "Vitamin C-rich foods",
+      "items": {
+        "citrusFruits": "Citrus fruits (oranges, grapefruit, lemon)",
+        "berries": "Berries (strawberries, blackcurrants)",
+        "bellPeppers": "Bell peppers",
+        "kiwi": "Kiwi fruit",
+        "fermentedCabbage": "Fermented cabbage (sauerkraut, kimchi)"
+      }
     }
   },
   "echinacea_herbs": {
@@ -292,6 +311,16 @@
     "areas": {
       "digestiveHealth": "Probiotics restore and maintain healthy gut bacteria balance, improving digestion, reducing bloating, and supporting intestinal barrier function.",
       "immuneSupport": "About 70% of the immune system resides in the gut. Probiotics strengthen immune function, reduce inflammation, and protect against pathogens."
+    },
+    "nutritionFoods": {
+      "title": "Probiotic foods",
+      "items": {
+        "yogurt": "Yogurt with live cultures",
+        "kefir": "Kefir",
+        "sauerkraut": "Sauerkraut",
+        "kimchi": "Kimchi",
+        "miso": "Miso"
+      }
     }
   },
   "fiber_microbiome": {
@@ -300,6 +329,16 @@
     "areas": {
       "digestiveHealth": "Fiber promotes regular bowel movements, feeds beneficial bacteria, and supports gut barrier integrity by producing short-chain fatty acids.",
       "immuneSupport": "A fiber-rich diet strengthens the gut microbiome, which produces metabolites that regulate immune function and reduce systemic inflammation."
+    },
+    "nutritionFoods": {
+      "title": "High-fiber foods",
+      "items": {
+        "oats": "Oats and barley",
+        "legumes": "Legumes (lentils, chickpeas, beans)",
+        "chiaSeeds": "Chia or flax seeds",
+        "berries": "Berries",
+        "cruciferousVeg": "Cruciferous vegetables (broccoli, Brussels sprouts)"
+      }
     }
   },
   "milk_thistle_liver": {

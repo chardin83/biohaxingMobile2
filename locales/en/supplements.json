@@ -5,6 +5,7 @@
         { "id": "vitaminE", "name": "Vitamin E", "quantity": "200", "unit": "IU", "description": "Baseline alpha-tocopherol support for antioxidant and cardiovascular health." },
         { "id": "vitaminEMixedTocopherols", "name": "Vitamin E Mixed Tocopherols", "quantity": "200", "unit": "IU", "description": "Blend of alpha, beta, gamma, and delta tocopherols that offsets the imbalance from isolated alpha doses." },
         { "id": "vitaminETocotrienols", "name": "Vitamin E Tocotrienols", "quantity": "125", "unit": "mg", "description": "Tocotrienol-rich complex that is gentler than high-dose alpha-tocopherol while supporting lipid balance and cellular resilience." },
+        { "id": "codLiverOil", "name": "Cod Liver Oil", "quantity": "1000", "unit": "mg", "description": "Classic D- and A-rich marine oil supporting bone, immune, and anti-inflammatory balance." },
         { "id": "vitaminC", "name": "Vitamin C", "quantity": "500", "unit": "mg" },
         { "id": "omega3", "name": "Omega-3", "quantity": "1000", "unit": "mg" },
         { "id": "magnesium", "name": "Magnesium", "quantity": "200", "unit": "mg", "description": "Broad spectrum magnesium for general support.", "getInspired": ["https://www.youtube.com/watch?v=oMGdj5PtEwA&t=77s"] },

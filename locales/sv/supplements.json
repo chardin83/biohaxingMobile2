@@ -5,6 +5,7 @@
         { "id": "vitaminE", "name": "Vitamin E", "quantity": "200", "unit": "IU", "description": "Basnivå av alfa-tokoferol som stödjer antioxidant- och hjärtkärlhälsa." },
         { "id": "vitaminEMixedTocopherols", "name": "Vitamin E blandade tokoferoler", "quantity": "200", "unit": "IU", "description": "Blandning av alfa-, beta-, gamma- och delta-tokoferoler som balanserar effekten av isolerat alfa." },
         { "id": "vitaminETocotrienols", "name": "Vitamin E tokotrienoler", "quantity": "125", "unit": "mg", "description": "Tokotrienolrikt komplex som är skonsammare än höga doser alfa-tokoferol men stödjer lipidbalans och cellresiliens." },
+        { "id": "codLiverOil", "name": "Torskleverolja", "quantity": "1000", "unit": "mg", "description": "Klassisk marin olja rik på vitamin D och A som stödjer skelett, immunförsvar och inflammationsbalans." },
         { "id": "vitaminC", "name": "Vitamin C", "quantity": "500", "unit": "mg" },
         { "id": "omega3", "name": "Omega-3", "quantity": "1000", "unit": "mg" },
         { "id": "magnesium", "name": "Magnesium", "quantity": "200", "unit": "mg", "description": "Brett magnesiumstöd för allmän balans." },

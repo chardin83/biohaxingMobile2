@@ -76,11 +76,23 @@ export const tips: Tip[] = [
     ],
     title: "vitamin_d.title",
     descriptionKey: "vitamin_d.description",
-    supplements: [{ id: "vitaminD" }, { id: "vitaminDWithK2" }, { id: "vitaminK2" }, { id: "magnesiumGlycinate" }],
+    supplements: [
+      { id: "vitaminD" },
+      { id: "vitaminDWithK2" },
+      { id: "codLiverOil" },
+      { id: "vitaminK2" },
+      { id: "magnesiumGlycinate" }
+    ],
     startPrompt: "vitamin_d.startPrompt",
     trainingRelation: "anytime",
     preferredDayParts: ["morning"],
     timeRule: "anytime",
+    nutritionFoods: [
+      "fattyFish",
+      "eggYolks",
+      "fortifiedDairy",
+      "mushrooms",
+    ],
   },
   {
     id: "vitamin_e_antioxidant_support",
@@ -97,6 +109,7 @@ export const tips: Tip[] = [
       { id: "vitaminE" },
       { id: "vitaminEMixedTocopherols" },
       { id: "vitaminETocotrienols" },
+      { id: "codLiverOil" },
       { id: "astaxanthin" }
     ],
     trainingRelation: "anytime",
@@ -258,6 +271,13 @@ export const tips: Tip[] = [
     trainingRelation: "anytime",
     preferredDayParts: ["midday", "afternoon"],
     timeRule: "anytime",
+    nutritionFoods: [
+      "citrusFruits",
+      "berries",
+      "bellPeppers",
+      "kiwi",
+      "fermentedCabbage",
+    ],
   },
   {
     id: "echinacea_herbs",
@@ -650,6 +670,13 @@ export const tips: Tip[] = [
     preferredDayParts: ["afternoon"],
     timeRule: "anytime",
     planCategory: "nutrition",
+    nutritionFoods: [
+      "yogurt",
+      "kefir",
+      "sauerkraut",
+      "kimchi",
+      "miso",
+    ],
   },
   {
     id: "fiber_microbiome",
@@ -665,6 +692,13 @@ export const tips: Tip[] = [
     preferredDayParts: ["afternoon", "evening"],
     timeRule: "anytime",
     planCategory: "nutrition",
+    nutritionFoods: [
+      "oats",
+      "legumes",
+      "chiaSeeds",
+      "berries",
+      "cruciferousVeg",
+    ],
   },
   {
     id: "milk_thistle_liver",
