@@ -43,6 +43,7 @@ type ActiveGoal = {
   mainGoalId: string;
   startedAt: string;
   tipId: string;
+  planCategory?: "supplement" | "training" | "nutrition";
 };
 
 type FinishedGoal = {

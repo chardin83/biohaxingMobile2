@@ -271,12 +271,23 @@
     }
   },
   "magnesium": {
-    "title": "Magnesium för sömn och återhämtning",
+    "title": "Magnesium",
     "description": "Magnesium är ett essentiellt mineral som spelar en viktig roll för muskelavslappning, nervsystemets funktion och sömnkvalitet. Det hjälper kroppen att reglera stresshormoner och främjar djupare, mer återställande sömn.",
     "areas": {
       "sleepQuality": "Magnesium förbättrar sömnkvalitet genom att reglera melatonin och främja muskelavslappning.",
       "nervousSystem": "Magnesium stödjer nervsystemet genom att reglera neurotransmittorer och minska stress.",
       "energy": "Magnesium är nödvändigt för energiproduktion och minskar trötthet genom att stödja ATP-syntes."
+    },
+    "nutritionFoods": {
+      "title": "Magnesiumrika livsmedel",
+      "items": {
+        "leafyGreens": "Mörkgröna blad (spenat, mangold, grönkål)",
+        "pumpkinSeeds": "Pumpa- eller solrosfrön",
+        "almonds": "Mandlar och andra nötter",
+        "darkChocolate": "Mörk choklad (70–85 % kakao)",
+        "blackBeans": "Svarta bönor, kikärtor eller linser",
+        "avocado": "Avokado"
+      }
     }
   },
   "zinc_comprehensive_support": {

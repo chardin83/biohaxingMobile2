@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   StyleSheet,
   Modal,
@@ -28,7 +28,15 @@ import AppButton from "@/components/ui/AppButton";
 import { Colors } from "@/constants/Colors";
 import { defaultPlans } from "@/locales/defaultPlans";
 import { useLocalSearchParams } from "expo-router";
+import { areas } from "@/locales/areas";
+import { tips } from "@/locales/tips";
 // Removed unused CreatePlanModal import; using ThemedModal for create/edit
+
+const PLAN_CATEGORY_BY_TIP_ID = new Map(
+  tips
+    .filter((tip) => tip.planCategory)
+    .map((tip) => [tip.id, tip.planCategory!])
+);
 
 export default function Plans() {
   const params = useLocalSearchParams<{ openCreate?: string }>();
@@ -46,14 +54,52 @@ export default function Plans() {
   const [supplement, setSupplement] = useState<Supplement | null>(null);
   const [showTimePicker, setShowTimePicker] = useState(Platform.OS === "ios");
 
-  const { plans, setPlans, errorMessage } = useStorage();
+  const { plans, setPlans, errorMessage, activeGoals } = useStorage();
 
-  const { t } = useTranslation();
+  const { t } = useTranslation(["common", "areas", "tips"]);
+
+  const resolvePlanCategory = (tipId?: string, goalCategory?: string) => {
+    if (goalCategory === "training" || goalCategory === "nutrition") {
+      return goalCategory;
+    }
+    if (tipId) {
+      return PLAN_CATEGORY_BY_TIP_ID.get(tipId);
+    }
+    return undefined;
+  };
+
+  const trainingGoals = useMemo(
+    () =>
+      activeGoals.filter((goal) =>
+        resolvePlanCategory(goal.tipId, goal.planCategory) === "training"
+      ),
+    [activeGoals]
+  );
+
+  const nutritionGoals = useMemo(
+    () =>
+      activeGoals.filter((goal) =>
+        resolvePlanCategory(goal.tipId, goal.planCategory) === "nutrition"
+      ),
+    [activeGoals]
+  );
+
+  const nutritionGroups = useMemo(() => {
+    const tipIds = new Set<string>();
+
+    nutritionGoals.forEach((goal) => {
+      if (goal.tipId) {
+        tipIds.add(goal.tipId);
+      }
+    });
+
+    return Array.from(tipIds).map((tipId) => ({ tipId }));
+  }, [nutritionGoals]);
 
   useEffect(() => {
     if (plans.length === 0) {
       const translatedDefaults = defaultPlans.map((plan) => ({
-        name: t(`defaultPlan.${plan.key}`),
+        name: t(`plan.defaultPlan.${plan.key}`),
         supplements: [],
         prefferedTime: plan.time,
         notify: false,
@@ -211,12 +257,129 @@ export default function Plans() {
     />
   );
 
+  const formatDate = (isoDate: string) => {
+    const date = new Date(isoDate);
+    if (Number.isNaN(date.getTime())) {
+      return isoDate;
+    }
+
+    return date.toLocaleDateString();
+  };
+
+  const renderTrainingGoals = () => {
+    if (!trainingGoals.length) {
+      return (
+        <ThemedText type="default" style={styles.placeholderText}>
+          {t("plan.noActiveTraining")}
+        </ThemedText>
+      );
+    }
+
+    return trainingGoals.map((goal) => {
+      const areaMeta = areas.find((area) => area.id === goal.mainGoalId);
+      const areaTitle = areaMeta
+        ? t(`areas:${areaMeta.id}.title`)
+        : goal.mainGoalId;
+      const tipTitle = goal.tipId
+        ? t(`tips:${goal.tipId}.title`, { defaultValue: goal.tipId })
+        : null;
+
+      return (
+        <View key={`${goal.mainGoalId}-${goal.tipId}`} style={styles.trainingItem}>
+          <ThemedText type="defaultSemiBold">{areaTitle}</ThemedText>
+          {!!tipTitle && (
+            <ThemedText type="default" style={styles.trainingTip}>
+              {tipTitle}
+            </ThemedText>
+          )}
+          <ThemedText type="default" style={styles.trainingMeta}>
+            {t("plan.trainingActiveSince", {
+              date: formatDate(goal.startedAt),
+            })}
+          </ThemedText>
+        </View>
+      );
+    });
+  };
+
+  const renderNutritionGoals = () => {
+    if (!nutritionGroups.length) {
+      return null;
+    }
+
+    return nutritionGroups.map(({ tipId }) => {
+      const tip = tips.find((candidate) => candidate.id === tipId);
+      const tipTitle = t(`tips:${tipId}.title`, {
+        defaultValue: tip?.title ?? tipId,
+      });
+      const foodLabels = (tip?.nutritionFoods ?? []).map((foodKey) =>
+        t(`tips:${tipId}.nutritionFoods.items.${foodKey}`, {
+          defaultValue: foodKey,
+        })
+      );
+      const areaBadges = (tip?.areas ?? []).map((area) => {
+        const areaMeta = areas.find((candidate) => candidate.id === area.id);
+        const label = areaMeta
+          ? t(`areas:${areaMeta.id}.title`)
+          : t(`areas:${area.id}.title`, { defaultValue: area.id });
+        return { id: area.id, label };
+      });
+
+      return (
+        <View key={tipId} style={styles.nutritionTipBlock}>
+          <ThemedText type="defaultSemiBold" style={styles.nutritionTipTitle}>
+            {tipTitle}
+          </ThemedText>
+          {!!foodLabels.length && (
+            <View style={[styles.badgeRow, styles.foodBadgeRow]}>
+              {foodLabels.map((label) => (
+                <View key={`food-${tipId}-${label}`} style={[styles.badge, styles.foodBadge]}>
+                  <ThemedText type="default" style={styles.badgeLabel}>
+                    {label}
+                  </ThemedText>
+                </View>
+              ))}
+            </View>
+          )}
+          {!!areaBadges.length && (
+            <View style={styles.badgeRow}>
+              {areaBadges.map((area) => (
+                <View key={`area-${tipId}-${area.id}`} style={[styles.badge, styles.areaBadge]}>
+                  <ThemedText type="default" style={styles.badgeLabel}>
+                    {area.label}
+                  </ThemedText>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
+      );
+    });
+  };
+
   return (
     <View style={styles.container}>
       <FlatList
         data={plans}
         keyExtractor={(item, index) => `${item.name}-${index}`}
         renderItem={renderPlanItem}
+        ListHeaderComponent={
+          <View style={styles.sectionsContainer}>
+            <View style={styles.sectionBlock}>
+              <Collapsible title={t("plan.trainingHeader")}>
+                {renderTrainingGoals()}
+              </Collapsible>
+            </View>
+            <View style={styles.sectionBlock}>
+              <Collapsible title={t("plan.nutritionHeader")}>
+                {renderNutritionGoals()}
+              </Collapsible>
+            </View>
+            <ThemedText type="subtitle" style={styles.sectionTitle}>
+              {t("plan.supplementSectionTitle")}
+            </ThemedText>
+          </View>
+        }
         ListFooterComponent={
           <View
             style={{
@@ -227,7 +390,7 @@ export default function Plans() {
             }}
           >
             <AppButton
-              title={t("plan.createPlan")}
+              title={t("plan.addTimeSlot")}
               onPress={() => {
                 // Rensa allt för att garantera rätt modal visas
                 setIsEditingPlan(false);
@@ -240,11 +403,12 @@ export default function Plans() {
             />
           </View>
         }
+        contentContainerStyle={styles.flatListContent}
       />
       <Portal>
         <ThemedModal
           visible={modalVisible}
-          title={isEditingPlan ? t("plan.editPlan") : t("plan.createPlan")}
+          title={isEditingPlan ? t("plan.editPlan") : t("plan.addTimeSlot")}
           onSave={handleSavePlan}
           onClose={() => setModalVisible(false)}
           okLabel={t("general.save")}
@@ -347,6 +511,20 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.dark.background,
     paddingTop: 140,
   },
+  sectionsContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 24,
+  },
+  sectionBlock: {
+    marginBottom: 18,
+  },
+  sectionTitle: {
+    marginTop: 12,
+    marginBottom: 4,
+  },
+  flatListContent: {
+    paddingBottom: 80,
+  },
   timePickerText: {
     fontSize: 16,
     color: Colors.dark.text,
@@ -382,5 +560,57 @@ const styles = StyleSheet.create({
   },
   collapsibleContainer: {
     width: "100%",
+  },
+  trainingItem: {
+    paddingVertical: 10,
+    borderBottomColor: Colors.dark.border,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  trainingTip: {
+    marginTop: 4,
+  },
+  trainingMeta: {
+    marginTop: 2,
+    color: Colors.dark.textMuted,
+  },
+  placeholderText: {
+    color: Colors.dark.textMuted,
+  },
+  nutritionTipBlock: {
+    paddingVertical: 12,
+    borderBottomColor: Colors.dark.border,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  nutritionTipTitle: {
+    marginBottom: 8,
+  },
+  badgeRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: 4,
+  },
+  foodBadgeRow: {
+    marginBottom: 8,
+  },
+  badge: {
+    borderRadius: 16,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    marginRight: 8,
+    marginBottom: 8,
+    backgroundColor: Colors.dark.secondary,
+    borderColor: Colors.dark.borderLight,
+  },
+  foodBadge: {
+    backgroundColor: Colors.dark.accentWeak,
+    borderColor: Colors.dark.accentDefault,
+  },
+  areaBadge: {
+    backgroundColor: Colors.dark.infoWeak,
+    borderColor: Colors.dark.infoDefault,
+  },
+  badgeLabel: {
+    color: Colors.dark.text,
   },
 });

@@ -335,12 +335,23 @@
     }
   },
   "magnesium": {
-    "title": "Magnesium for sleep and recovery",
+    "title": "Magnesium",
     "description": "Magnesium is an essential mineral that plays a vital role in muscle relaxation, nervous system function, and sleep quality. It helps the body regulate stress hormones and promotes deeper, more restorative sleep.",
     "areas": {
       "sleepQuality": "Magnesium improves sleep quality by regulating melatonin and promoting muscle relaxation.",
       "nervousSystem": "Magnesium supports the nervous system by regulating neurotransmitters and reducing stress.",
       "energy": "Magnesium is necessary for energy production and reduces fatigue by supporting ATP synthesis."
+    },
+    "nutritionFoods": {
+      "title": "Magnesium-rich foods",
+      "items": {
+        "leafyGreens": "Leafy greens (spinach, Swiss chard, kale)",
+        "pumpkinSeeds": "Pumpkin or sunflower seeds",
+        "almonds": "Almonds and other nuts",
+        "darkChocolate": "Dark chocolate (70–85% cocoa)",
+        "blackBeans": "Black beans, chickpeas, or lentils",
+        "avocado": "Avocado"
+      }
     }
   },
   "zinc_comprehensive_support": {

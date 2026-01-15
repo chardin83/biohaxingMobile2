@@ -21,7 +21,7 @@
   "selectedSupplementList": { "choosenFor": "Supplements taken" },
   "plan": {
     "chosePlanToEdit": "Choose plan to edit",
-    "createPlan": "Create new plan",
+    "addTimeSlot": "New time slot",
     "editPlan": "Edit plan",
     "planName": "Name of the plan",
     "addSupplement": "Add supplement",
@@ -34,7 +34,18 @@
       "dinner": "Dinner"
     },
     "supplements": [],
-    "supplementExists": "The supplement \"{{supplementName}}\" already exists in the selected plan."
+    "supplementExists": "The supplement \"{{supplementName}}\" already exists in the selected plan.",
+    "trainingHeader": "Training plan",
+    "noActiveTraining": "No active training goals yet.",
+    "trainingActiveSince": "Active since {{date}}",
+    "nutritionHeader": "Diet plan",
+    "supplementSectionTitle": "Supplement schedule",
+    "addTrainingGoal": "Add to training plan",
+    "addNutritionGoal": "Add to diet plan",
+    "alreadyInPlan": "Already in plan",
+    "alreadyInPlanTraining": "Already in plan (training)",
+    "alreadyInPlanNutrition": "Already in plan (diet)",
+    "alreadyInPlanSupplement": "Already in plan (supplement)"
   },
   "supplementForm": {
     "dosage": "dosage",

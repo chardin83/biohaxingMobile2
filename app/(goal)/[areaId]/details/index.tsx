@@ -30,7 +30,15 @@ export default function AreaDetailScreen() {
     tipId?: string;
   }>();
   const supplements = useSupplements();
-  const { addTipView, incrementTipChat, viewedTips, setTipVerdict, plans } = useStorage();
+  const {
+    addTipView,
+    incrementTipChat,
+    viewedTips,
+    setTipVerdict,
+    plans,
+    activeGoals,
+    setActiveGoals,
+  } = useStorage();
   const { saveSupplementToPlan } = useSupplementSaver();
 
     // Ge XP när tips öppnas (första gången)
@@ -65,6 +73,53 @@ export default function AreaDetailScreen() {
   const descriptionKey = tip?.descriptionKey;
   const titleKey = tip?.title;
 
+  const planCategory = tip?.planCategory;
+  const availablePlanCategories = React.useMemo(() => {
+    const options = tip?.planCategoryOptions ?? [];
+    if (planCategory && !options.includes(planCategory)) {
+      return [planCategory, ...options];
+    }
+    return options;
+  }, [planCategory, tip?.planCategoryOptions]);
+
+  const isTrainingTip = availablePlanCategories.includes("training");
+  const isNutritionTip = availablePlanCategories.includes("nutrition");
+  const effectiveTipId = tipId ?? tip?.id ?? null;
+
+  const getDefaultPlanCategory = React.useCallback(() => {
+    if (planCategory === "training" || planCategory === "nutrition") {
+      return planCategory;
+    }
+
+    const fallbackOption = availablePlanCategories.find((option) =>
+      option === "training" || option === "nutrition"
+    );
+
+    return fallbackOption;
+  }, [planCategory, availablePlanCategories]);
+
+  const isTipInPlanCategory = React.useCallback(
+    (target: "training" | "nutrition") => {
+      if (!effectiveTipId) return false;
+      const fallback = getDefaultPlanCategory() === target ? target : undefined;
+
+      return activeGoals?.some(
+        (goal) =>
+          goal.tipId === effectiveTipId &&
+          (goal.planCategory ?? fallback) === target
+      );
+    },
+    [activeGoals, effectiveTipId, getDefaultPlanCategory]
+  );
+
+  const isTipInTrainingPlan = React.useMemo(
+    () => isTipInPlanCategory("training"),
+    [isTipInPlanCategory]
+  );
+  const isTipInNutritionPlan = React.useMemo(
+    () => isTipInPlanCategory("nutrition"),
+    [isTipInPlanCategory]
+  );
 
   // Hitta vilka frågor som redan ställts
   const currentTip = viewedTips?.find(
@@ -79,18 +134,6 @@ export default function AreaDetailScreen() {
     return positiveVerdicts.has(currentVerdict as any);
   }, [currentVerdict, positiveVerdicts]);
 
-  const plannedSupplements = React.useMemo(() => {
-    const ids = new Set<string>();
-    const names = new Set<string>();
-    plans.forEach((plan) => {
-      plan.supplements?.forEach((supplement) => {
-        if (supplement.id) ids.add(supplement.id);
-        if (supplement.name) names.add(supplement.name);
-      });
-    });
-    return { ids, names };
-  }, [plans]);
-
   const trainingRelationLabel = tip?.trainingRelation
     ? t(`common:goalDetails.trainingRelation.${tip.trainingRelation}`)
     : null;
@@ -103,6 +146,21 @@ export default function AreaDetailScreen() {
   const timeRuleLabel = tip?.timeRule
     ? t(`common:goalDetails.timeRules.${tip.timeRule}`)
     : null;
+  const nutritionFoodsTitle = React.useMemo(() => {
+    if (!tip?.id || !tip.nutritionFoods?.length) return null;
+    return t(`tips:${tip.id}.nutritionFoods.title`, {
+      defaultValue: t("plan.nutritionHeader"),
+    });
+  }, [tip?.id, tip?.nutritionFoods, t]);
+
+  const nutritionFoodLabels = React.useMemo(() => {
+    if (!tip?.nutritionFoods?.length || !tip.id) return [] as string[];
+    return tip.nutritionFoods.map((foodKey) =>
+      t(`tips:${tip.id}.nutritionFoods.items.${foodKey}`, {
+        defaultValue: foodKey,
+      })
+    );
+  }, [tip?.nutritionFoods, tip?.id, t]);
 
   // Lös upp tip.supplements (id-referenser) till fulla supplement-objekt från översättningarna
   const resolvedSupplements = React.useMemo(() => {
@@ -111,6 +169,105 @@ export default function AreaDetailScreen() {
       .map((ref) => supplements?.find((s) => s.id === ref.id))
       .filter(Boolean) as any[]);
   }, [tip?.supplements, supplements]);
+
+  const plannedSupplements = React.useMemo(() => {
+    const ids = new Set<string>();
+    const names = new Set<string>();
+    plans.forEach((plan) => {
+      plan.supplements?.forEach((supplement) => {
+        if (supplement.id) ids.add(supplement.id);
+        if (supplement.name) names.add(supplement.name);
+      });
+    });
+    return { ids, names };
+  }, [plans]);
+
+  const isTipSupplementScheduled = React.useMemo(() => {
+    if (!resolvedSupplements.length) return false;
+    return resolvedSupplements.some((supplement: any) => {
+      const supplementId = supplement.id;
+      const supplementName = supplement.name;
+      return (
+        (typeof supplementId === "string" && plannedSupplements.ids.has(supplementId)) ||
+        (typeof supplementName === "string" && plannedSupplements.names.has(supplementName))
+      );
+    });
+  }, [plannedSupplements, resolvedSupplements]);
+
+  const planBadgeLabel = React.useMemo(() => {
+    if (isNutritionTip && isTipInNutritionPlan) {
+      return t("plan.alreadyInPlanNutrition");
+    }
+
+    if (isTrainingTip && isTipInTrainingPlan) {
+      return t("plan.alreadyInPlanTraining");
+    }
+
+    if (isTipSupplementScheduled) {
+      return t("plan.alreadyInPlanSupplement");
+    }
+
+    return t("plan.alreadyInPlan");
+  }, [
+    isNutritionTip,
+    isTipInNutritionPlan,
+    isTrainingTip,
+    isTipInTrainingPlan,
+    isTipSupplementScheduled,
+    t,
+  ]);
+
+  const isTipInPlan = React.useMemo(() => {
+    if (isTrainingTip && isTipInTrainingPlan) return true;
+    if (isNutritionTip && isTipInNutritionPlan) return true;
+    if (isTipSupplementScheduled) return true;
+    return false;
+  }, [
+    isTrainingTip,
+    isNutritionTip,
+    isTipInTrainingPlan,
+    isTipInNutritionPlan,
+    isTipSupplementScheduled,
+  ]);
+
+  const showTopPlanAction = React.useMemo(() => {
+    if (isTrainingTip) return true;
+    if (!isNutritionTip && isTipInPlan) return true;
+    return false;
+  }, [isTrainingTip, isNutritionTip, isTipInPlan]);
+
+  const handleAddTipPlanEntry = () => {
+    if (!areaId || !effectiveTipId) return;
+
+    const targetCategory = getDefaultPlanCategory();
+    if (!targetCategory) {
+      // Future: surface category picker when multiple plan options exist without a default
+      return;
+    }
+
+    setActiveGoals((prev) => {
+      const fallbackCategory = getDefaultPlanCategory();
+      const exists = prev.some(
+        (goal) =>
+          goal.tipId === effectiveTipId &&
+          (goal.planCategory ?? fallbackCategory) === targetCategory
+      );
+
+      if (exists) {
+        return prev;
+      }
+
+      return [
+        ...prev,
+        {
+          mainGoalId: areaId,
+          tipId: effectiveTipId,
+          startedAt: new Date().toISOString(),
+          planCategory: targetCategory,
+        },
+      ];
+    });
+  };
 
   // Hantera verdict-klick
   const handleVerdictPress = (verdict: "interested" | "startNow" | "wantMore" | "alreadyWorks" | "notInterested" | "noResearch" | "testedFailed") => {
@@ -234,6 +391,30 @@ export default function AreaDetailScreen() {
               progress={progress}
               label={progressLabel}
             />
+
+            {showTopPlanAction && (
+              <View style={styles.planActionContainer}>
+                {isTipInPlan ? (
+                  <View style={styles.planActionAdded}>
+                    <Icon source="check" size={18} color={Colors.dark.primary} />
+                    <Text style={styles.planActionAddedText}>
+                      {planBadgeLabel}
+                    </Text>
+                  </View>
+                ) : (
+                  <AppButton
+                    title={
+                      isTrainingTip
+                        ? t("plan.addTrainingGoal")
+                        : t("plan.addNutritionGoal")
+                    }
+                    onPress={handleAddTipPlanEntry}
+                    variant="primary"
+                    style={styles.planActionButton}
+                  />
+                )}
+              </View>
+            )}
           </View>
 
           {descriptionKey && (
@@ -263,6 +444,31 @@ export default function AreaDetailScreen() {
           {timeRuleLabel && (
             <AppBox title={t("common:goalDetails.timeRules.title")}>
               <Text style={styles.metaText}>{timeRuleLabel}</Text>
+            </AppBox>
+          )}
+
+          {isNutritionTip && nutritionFoodLabels.length > 0 && nutritionFoodsTitle && (
+            <AppBox title={nutritionFoodsTitle}>
+              {nutritionFoodLabels.map((label) => (
+                <Text key={label} style={styles.metaText}>
+                  • {label}
+                </Text>
+              ))}
+              <View style={[styles.planActionContainer, styles.nutritionPlanAction]}>
+                {isTipInPlan ? (
+                  <View style={styles.planActionAdded}>
+                    <Icon source="check" size={18} color={Colors.dark.primary} />
+                    <Text style={styles.planActionAddedText}>{planBadgeLabel}</Text>
+                  </View>
+                ) : (
+                  <AppButton
+                    title={t("plan.addNutritionGoal")}
+                    onPress={handleAddTipPlanEntry}
+                    variant="primary"
+                    style={styles.planActionButton}
+                  />
+                )}
+              </View>
             </AppBox>
           )}
 
@@ -431,7 +637,7 @@ export default function AreaDetailScreen() {
               ))}
               <View style={{ marginTop: 12 }}>
                 <AppButton
-                  title={t("plan.createPlan")}
+                  title={t("plan.addTimeSlot")}
                   onPress={() => {
                     // Stäng denna modal innan vi öppnar skapa-plan modal
                     setAddToPlanVisible(false);
@@ -482,6 +688,33 @@ const styles = StyleSheet.create({
   topSection: {
     alignItems: "center",
     marginBottom: 16,
+  },
+  planActionContainer: {
+    width: "100%",
+    marginTop: 16,
+    alignSelf: "stretch",
+  },
+  nutritionPlanAction: {
+    marginTop: 12,
+  },
+  planActionButton: {
+    alignSelf: "stretch",
+  },
+  planActionAdded: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "stretch",
+    justifyContent: "center",
+    backgroundColor: Colors.dark.accentVeryWeak,
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+  },
+  planActionAddedText: {
+    color: Colors.dark.primary,
+    fontWeight: "600",
+    fontSize: 14,
+    marginLeft: 6,
   },
   iconWrapper: {
     width: 90,

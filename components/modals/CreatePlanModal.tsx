@@ -35,7 +35,7 @@ const CreatePlanModal: React.FC<CreatePlanModalProps> = ({ visible, onClose, onC
   return (
     <ThemedModal
       visible={visible}
-      title={t("plan.createPlan")}
+      title={t("plan.addTimeSlot")}
       onClose={() => {
         onClose();
         setPlanName("");

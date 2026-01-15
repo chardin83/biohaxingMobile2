@@ -25,7 +25,7 @@
  
     "plan": {
       "chosePlanToEdit": "Välj plan att redigera",
-      "createPlan": "Skapa ny plan",
+      "addTimeSlot": "Ny tidpunkt",
       "editPlan": "Redigera plan",
       "planName": "Namn på planen",
       "addSupplement": "Lägg till tillskott",
@@ -37,7 +37,18 @@
           "lunch": "Lunch",
           "dinner": "Middag"
         },
-       "supplementExists": "Tillskottet \"{{supplementName}}\" finns redan i vald plan."
+       "supplementExists": "Tillskottet \"{{supplementName}}\" finns redan i vald plan.",
+       "trainingHeader": "Träningsplan",
+       "noActiveTraining": "Inga aktiva träningsmål ännu.",
+       "trainingActiveSince": "Aktiv sedan {{date}}",
+       "nutritionHeader": "Kostplan",
+         "supplementSectionTitle": "Kosttillskott",
+         "addTrainingGoal": "Lägg till i träningsplan",
+         "addNutritionGoal": "Lägg till i kostplan",
+          "alreadyInPlan": "Finns redan i planen",
+          "alreadyInPlanTraining": "Finns redan i planen (träning)",
+          "alreadyInPlanNutrition": "Finns redan i planen (kost)",
+          "alreadyInPlanSupplement": "Finns redan i planen (tillskott)"
     },
     "supplementForm":{
       "dosage": "dos", 

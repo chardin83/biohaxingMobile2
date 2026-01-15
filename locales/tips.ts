@@ -24,6 +24,8 @@ export type TimeOfDayRule =
   | "avoidLateEvening" // koffein
   | "avoidNight"; // ännu striktare om du vill
 
+export type TipPlanCategory = "supplement" | "training" | "nutrition";
+
 export type Tip = {
   id: string;
   level?: number;
@@ -40,6 +42,9 @@ export type Tip = {
   trainingRelation?: TrainingRelation; // (kopplat till workout)
   preferredDayParts?: DayPart[]; // (när på dagen det passar)
   timeRule?: TimeOfDayRule; // (tidsrestriktioner)
+  planCategory?: TipPlanCategory; // Markerar övergripande plan-kategori
+  planCategoryOptions?: TipPlanCategory[]; // Tillåt användarval mellan kategorier
+  nutritionFoods?: string[]; // Rekommenderade livsmedel för nutritionstips
 };
 
 export const tips: Tip[] = [
@@ -171,6 +176,15 @@ export const tips: Tip[] = [
     trainingRelation: "anytime",
     preferredDayParts: ["evening", "night"],
     timeRule: "anytime",
+    planCategoryOptions: ["nutrition"],
+    nutritionFoods: [
+      "leafyGreens",
+      "pumpkinSeeds",
+      "almonds",
+      "darkChocolate",
+      "blackBeans",
+      "avocado",
+    ],
   },
   {
     id: "zinc_comprehensive_support",
@@ -231,6 +245,7 @@ export const tips: Tip[] = [
     trainingRelation: "anytime",
     preferredDayParts: ["morning", "midday", "afternoon", "evening"],
     timeRule: "anytime",
+    planCategory: "nutrition",
   },
   {
     id: "vitamin_c_immunity",
@@ -526,6 +541,7 @@ export const tips: Tip[] = [
     trainingRelation: "anytime",
     preferredDayParts: ["afternoon", "evening"],
     timeRule: "anytime",
+    planCategory: "nutrition",
   },
   {
     id: "calming_music_waves",
@@ -569,6 +585,7 @@ export const tips: Tip[] = [
     trainingRelation: "anytime",
     preferredDayParts: ["morning", "midday"],
     timeRule: "anytime",
+    planCategory: "training",
   },
   {
     id: "creatine_atp_strength",
@@ -632,6 +649,7 @@ export const tips: Tip[] = [
     trainingRelation: "anytime",
     preferredDayParts: ["afternoon"],
     timeRule: "anytime",
+    planCategory: "nutrition",
   },
   {
     id: "fiber_microbiome",
@@ -646,6 +664,7 @@ export const tips: Tip[] = [
     trainingRelation: "anytime",
     preferredDayParts: ["afternoon", "evening"],
     timeRule: "anytime",
+    planCategory: "nutrition",
   },
   {
     id: "milk_thistle_liver",
@@ -675,6 +694,7 @@ export const tips: Tip[] = [
     analyzePrompt: "hiit_vo2max.analyzePrompt",
     preferredDayParts: ["morning", "midday"],
     timeRule: "anytime",
+    planCategory: "training",
   },
   {
     id: "running_volume_aerobic",
@@ -689,6 +709,7 @@ export const tips: Tip[] = [
     analyzePrompt: "running_volume_aerobic.analyzePrompt",
     preferredDayParts: ["morning", "midday", "afternoon"],
     timeRule: "anytime",
+    planCategory: "training",
   },
   {
     id: "ashwagandha_adaptogen",
@@ -772,6 +793,7 @@ export const tips: Tip[] = [
     analyzePrompt: "zone2_mitochondrial_base.analyzePrompt",
     preferredDayParts: ["morning", "midday", "afternoon"],
     timeRule: "anytime",
+    planCategory: "training",
   },
   {
     id: "fasted_aerobic_training",
@@ -785,6 +807,7 @@ export const tips: Tip[] = [
     descriptionKey: "fasted_aerobic_training.description",
     preferredDayParts: ["morning"],
     timeRule: "anytime",
+    planCategory: "training",
   },
   {
     id: "lactate_threshold_training",
@@ -799,6 +822,7 @@ export const tips: Tip[] = [
     analyzePrompt: "lactate_threshold_training.analyzePrompt",
     preferredDayParts: ["morning", "midday"],
     timeRule: "anytime",
+    planCategory: "training",
   },
   {
     id: "running_economy_drills",
@@ -813,6 +837,7 @@ export const tips: Tip[] = [
     descriptionKey: "running_economy_drills.description",
     preferredDayParts: ["morning", "midday"],
     timeRule: "anytime",
+    planCategory: "training",
   },
   {
     id: "stride_frequency_optimization",
@@ -827,6 +852,7 @@ export const tips: Tip[] = [
     descriptionKey: "stride_frequency_optimization.description",
     preferredDayParts: ["morning", "midday"],
     timeRule: "anytime",
+    planCategory: "training",
   },
   {
     id: "caffeine_endurance_performance",
