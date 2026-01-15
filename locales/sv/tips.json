@@ -372,5 +372,108 @@
       "sleepQuality": "En korrekt nedvarvningsrutin hjälper till att övergå nervsystemet från vaksamhet till sömn, vilket främjar snabbare sömnbörjan och djupare sömn.",
       "nervousSystem": "Avslappningsteknik före sänggåendet aktiverar det parasympatiska nervsystemet och förbereder kroppen för återställande sömn."
     }
+  },
+  "zone2_mitochondrial_base": {
+    "title": "Zon 2 för mitokondriell bas",
+    "description": "Zon 2-träning bygger den aeroba grunden genom att öka mitokondriell densitet, kapillärisering och fettförbränning. Målet är ett lugnt, jämnt tempo där du kan prata i hela meningar och hålla intensiteten stabil över tid.",
+    "areas": {
+      "cardioFitness": "Zon 2 förbättrar aerob kapacitet genom ökad slagvolym, kapillär täthet och effektivare syreleverans till arbetande muskler.",
+      "energy": "Regelbunden Zon 2 ökar mitokondriell biogenes och förbättrar energiomsättning, vilket ger mer hållbar energi under både träning och vardag."
+    },
+    "analyzePrompt": "Analysera användarens träningsmönster och avgör om de får tillräckligt med lågintensiv aerob volym (Zon 2) för mitokondriell utveckling."
+  },
+  "fasted_aerobic_training": {
+    "title": "Nüchtern aerob träning",
+    "description": "Lågintensiv träning med låg glykogentillgång (t.ex. före frukost) kan stimulera fettmetabolism och mitokondriell anpassning. Bör användas selektivt och främst i Zon 2 — inte på hårda intervaller.",
+    "areas": {
+      "energy": "Träning med låg glykogentillgång kan förbättra fettoxidation och stimulera mitokondriella signalvägar kopplade till uthållighetsanpassning.",
+      "cardioFitness": "Utfört i låg intensitet kan detta förbättra aerob robusthet utan att kompromissa kvaliteten i högintensiva pass när det periodiseras rätt."
+    }
+  },
+  "lactate_threshold_training": {
+    "title": "Tröskelträning för 10 km–1 mil",
+    "description": "Tröskelträning (tempo strax under mjölksyratröskeln) gör dig snabbare utan att du ‘surnar’ lika tidigt. Det är en nyckel för 10 km och 1 mil eftersom du kan hålla hög fart med kontrollerad ansträngning.",
+    "areas": {
+      "cardioFitness": "Tröskelpass höjer den fart du kan hålla innan laktat ackumuleras för snabbt, vilket förbättrar tävlingskapaciteten på 5–10 km.",
+      "energy": "Genom förbättrad laktat-clearance och effektivare energisystem kan du producera mer arbete med mindre upplevd trötthet vid högre fart."
+    },
+    "analyzePrompt": "Analysera användarens träningsnivå och föreslå en tröskelstruktur (t.ex. 20–40 minuter sammanhängande eller intervallblock) som matchar deras kapacitet."
+  },
+  "running_economy_drills": {
+    "title": "Löpekonomi: teknik, drills och strides",
+    "description": "Löpekonomi handlar om hur lite energi du behöver för en viss fart. Korta teknikövningar, drills och strides (korta fartökningar) förbättrar neuromuskulär effektivitet och gör att du kan springa snabbare med samma ansträngning.",
+    "areas": {
+      "musclePerformance": "Strides och teknikdrills förbättrar kraftutveckling och elastisk återfjädring, vilket gör steget mer effektivt och ‘lätt’.",
+      "nervousSystem": "Korta fartinslag tränar nervsystemets koordination och rekrytering av muskelfibrer, vilket förbättrar rörelseeffektivitet.",
+      "cardioFitness": "Bättre löpekonomi sänker syrekostnaden vid given fart, vilket förbättrar prestation i uthållighetslöpning."
+    }
+  },
+  "stride_frequency_optimization": {
+    "title": "Kadens och stegfrekvens",
+    "description": "Att optimera stegfrekvens (kadens) kan minska bromsande krafter och förbättra löpekonomi. För många ligger en effektiv kadens ofta runt 170–185 steg/min i moderata till högre farter, men optimal kadens är individuell.",
+    "areas": {
+      "musclePerformance": "En mer effektiv kadens kan minska överbelastning genom lägre stötar per steg och förbättrad steglängd-kontroll.",
+      "nervousSystem": "Kadensarbete förbättrar rytm, koordination och timing i löpsteget, vilket ökar rörelseeffektivitet.",
+      "energy": "Bättre stegmönster kan minska energiläckage och göra att du håller fart med lägre total energikostnad."
+    }
+  },
+  "caffeine_endurance_performance": {
+    "title": "Koffein för uthållighet och fart",
+    "description": "Koffein kan förbättra prestation genom ökad vakenhet, minskad upplevd ansträngning och bättre kraftutveckling under hårda pass. Det är särskilt användbart inför intervaller, tröskelpass och tävling.",
+    "areas": {
+      "energy": "Koffein kan öka prestationsförmåga genom att påverka adenosinreceptorer och förbättra arbetskapacitet vid ansträngning.",
+      "focus": "Ökar vakenhet och mental skärpa, vilket kan förbättra pacing och tolerans för obehag under hårda intervaller.",
+      "cardioFitness": "Genom förbättrad ansträngningstolerans kan du hålla högre intensitet längre, vilket stärker träningsstimulus för VO2 och tröskel."
+    }
+  },
+  "nitrate_no_efficiency": {
+    "title": "Nitrat (rödbeta) för syreeffektivitet",
+    "description": "Nitrat från rödbeta kan öka kväveoxid (NO), vilket förbättrar blodflöde och musklernas syreanvändning. Det används ofta som prestationsstöd inför intensiva pass eller tävling.",
+    "areas": {
+      "cardioFitness": "Ökat NO kan förbättra blodflöde och sänka syrekostnaden vid given intensitet, vilket kan gynna 5–10 km-prestation.",
+      "energy": "Förbättrad mitokondriell och muskulär effektivitet kan öka ‘output’ per liter syre och minska energiläckage vid hårdare arbete."
+    }
+  },
+  "l_carnitine_fat_transport": {
+    "title": "L-karnitin och fetttransport",
+    "description": "L-karnitin är involverat i transport av fettsyror in i mitokondrierna. Effekter på uthållighet varierar mellan individer och ses oftast över längre tids användning, i kombination med rätt kost- och träningsupplägg.",
+    "areas": {
+      "energy": "Stödjer processer kopplade till fettsyrametabolism och kan bidra till effektivare energiförsörjning vid låg–måttlig intensitet.",
+      "cardioFitness": "Kan i vissa fall stödja uthållighetsprofilen genom förbättrad fettomsättning och minskad glykogenstress vid längre pass."
+    }
+  },
+  "sauna_mitochondrial_adaptation": {
+    "title": "Bastu för återhämtning och uthållighetsadaptation",
+    "description": "Värmeexponering som bastu kan fungera som hormetisk stress och stödja värmeanpassning, cirkulation och återhämtning. Många uthållighetsutövare använder bastu för att komplettera träning, särskilt under perioder med hög volym.",
+    "areas": {
+      "energy": "Värme kan stimulera stressrespons och celladaptation, vilket kan stödja robusthet och återhämtning när det doseras rätt.",
+      "cardioFitness": "Värmeanpassning kan förbättra plasmavolym och cirkulatorisk effektivitet, vilket kan gynna uthållighet och värmetolerans."
+    }
+  },
+  "cold_exposure_timing": {
+    "title": "Köld: rätt timing för prestation",
+    "description": "Köldexponering kan öka vakenhet och stressresiliens, men direkt efter hård träning kan den i vissa fall störa träningssignaler kopplade till anpassning. Strategin är att tajma kölden så att den stödjer återhämtning utan att ‘stjäla’ adaptation.",
+    "areas": {
+      "musclePerformance": "Genom smart timing kan du använda kyla för upplevd återhämtning utan att kompromissa styrke- och hypertrofisignaler i onödan.",
+      "cardioFitness": "Köld kan användas som nervsystem- och stressreglering, men bör periodiseras runt nyckelpass för att bibehålla träningskvalitet."
+    }
+  },
+  "co2_tolerance_breathing": {
+    "title": "CO₂-tolerans och andning för löpning",
+    "description": "CO₂-tolerans påverkar andningsdriv och hur effektivt du kan ventilera vid hög intensitet. Träning av kontrollerad andning och gradvis CO₂-exponering kan förbättra upplevd andningsstress och löpekonomi hos vissa individer.",
+    "areas": {
+      "cardioFitness": "Bättre andningskontroll kan förbättra ventilationsmönster och minska ‘panikandning’ vid hård intensitet, vilket stödjer uthållighet.",
+      "energy": "Effektivare andningsarbete kan minska energikostnaden för ventilation och frigöra mer kapacitet till arbetande muskler."
+    }
+  },
+  "astaxanthin_recovery_antioxidant": {
+    "title": "Astaxantin för återhämtning",
+    "description": "Astaxantin är en kraftfull fettlöslig antioxidant som skyddar cell- och mitokondriemembran från oxidativ stress. Den kan förbättra återhämtning, minska träningsinducerad muskelskada och stödja uthållighet när den används med rätt timing.",
+    "areas": {
+      "musclePerformance": "Astaxantin kan minska oxidativ muskelskada och träningsvärk, vilket stödjer snabbare återhämtning mellan träningspass.",
+      "energy": "Genom att skydda mitokondrier från oxidativ stress kan astaxantin bidra till stabilare energiproduktion över tid.",
+      "cardioFitness": "Astaxantin kan stödja uthållighet genom förbättrad fettmetabolism och minskad oxidativ belastning vid längre aeroba pass."
+    },
+    "analyzePrompt": "Analysera användarens träningsintensitet och återhämtningsbehov för att avgöra om astaxantin bör användas, och när i förhållande till hårda träningspass."
   }
 }

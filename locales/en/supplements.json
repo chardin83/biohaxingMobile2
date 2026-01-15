@@ -66,6 +66,8 @@
         { "id": "psyllium", "name": "Psylliumhusk", "quantity": "1", "unit": "tsk" },
         { "id": "tmg", "name": "TMG (Trimetylglycin)", "quantity": "500", "unit": "mg" },
         { "id": "holyBasil", "name": "Holy Basil (Tulsi)", "quantity": "", "unit": "" },
-        { "id": "cordyceps", "name": "Cordyceps", "quantity": "", "unit": "" }
+        { "id": "cordyceps", "name": "Cordyceps", "quantity": "", "unit": "" },
+        { "id": "caffeine", "name": "Caffeine", "quantity": "200", "unit": "mg" },
+        { "id": "beetrootExtract", "name": "Beetroot extract (nitrates)", "quantity": "500", "unit": "mg" }
       ]
 }

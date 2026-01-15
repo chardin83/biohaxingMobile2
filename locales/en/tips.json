@@ -372,5 +372,108 @@
       "cardioFitness": "Cordyceps improves oxygen utilization and cardiovascular endurance during physical activity.",
       "immuneSupport": "Cordyceps has immune-modulating effects that support overall immune health."
     }
+  },
+  "zone2_mitochondrial_base": {
+    "title": "Zone 2 for a mitochondrial base",
+    "description": "Zone 2 training builds your aerobic foundation by increasing mitochondrial density, capillarization, and fat oxidation. The goal is a steady, conversational pace where you can speak in full sentences and keep intensity stable over time.",
+    "areas": {
+      "cardioFitness": "Zone 2 improves aerobic capacity through increased stroke volume, higher capillary density, and more efficient oxygen delivery to working muscles.",
+      "energy": "Consistent Zone 2 supports mitochondrial biogenesis and improves energy metabolism, leading to more sustainable energy during training and daily life."
+    },
+    "analyzePrompt": "Analyze the user's training pattern and determine whether they have enough low-intensity aerobic volume (Zone 2) to support mitochondrial development."
+  },
+  "fasted_aerobic_training": {
+    "title": "Fasted aerobic training",
+    "description": "Low-intensity training with low glycogen availability (e.g., before breakfast) can stimulate fat metabolism and mitochondrial adaptations. Use selectively and primarily in Zone 2 — not for hard intervals.",
+    "areas": {
+      "energy": "Training with low glycogen availability may improve fat oxidation and stimulate mitochondrial signaling pathways linked to endurance adaptation.",
+      "cardioFitness": "When kept low intensity, this can improve aerobic robustness without compromising quality in high-intensity sessions when periodized correctly."
+    }
+  },
+  "lactate_threshold_training": {
+    "title": "Threshold training for 10K–10 miles",
+    "description": "Threshold training (tempo just below lactate threshold) makes you faster without accumulating fatigue as quickly. It’s a key driver for 10K and longer races because you can sustain a high pace with controlled effort.",
+    "areas": {
+      "cardioFitness": "Threshold sessions raise the pace you can sustain before lactate accumulates too quickly, improving race performance over 5–10K distances.",
+      "energy": "Improved lactate clearance and more efficient energy systems let you produce more work with less perceived fatigue at higher speeds."
+    },
+    "analyzePrompt": "Analyze the user's current fitness and recommend a threshold structure (e.g., 20–40 minutes continuous or broken into blocks) that matches their capacity."
+  },
+  "running_economy_drills": {
+    "title": "Running economy: technique, drills, and strides",
+    "description": "Running economy is how little energy you need for a given pace. Short technique drills and strides (brief controlled accelerations) improve neuromuscular efficiency so you can run faster at the same effort.",
+    "areas": {
+      "musclePerformance": "Strides and drills improve force application and elastic recoil, making your stride more efficient and feel ‘lighter’.",
+      "nervousSystem": "Short speed exposures train coordination and muscle fiber recruitment, improving movement efficiency.",
+      "cardioFitness": "Better running economy lowers the oxygen cost at a given pace, improving endurance performance."
+    }
+  },
+  "stride_frequency_optimization": {
+    "title": "Cadence and stride frequency",
+    "description": "Optimizing cadence (stride frequency) can reduce braking forces and improve running economy. For many runners, an efficient cadence often falls around 170–185 steps/min at moderate to higher speeds, but the optimal cadence is individual.",
+    "areas": {
+      "musclePerformance": "A more efficient cadence can reduce overload by lowering impact per step and improving control of stride length.",
+      "nervousSystem": "Cadence work improves rhythm, coordination, and timing, increasing movement efficiency.",
+      "energy": "Improved mechanics can reduce energy ‘leaks’ and help you hold pace at a lower overall energy cost."
+    }
+  },
+  "caffeine_endurance_performance": {
+    "title": "Caffeine for endurance and speed",
+    "description": "Caffeine can improve performance by increasing alertness, lowering perceived effort, and supporting higher output during hard sessions. It’s especially useful before intervals, threshold runs, and races.",
+    "areas": {
+      "energy": "Caffeine can increase performance by influencing adenosine receptors and improving work capacity under effort.",
+      "focus": "Boosts alertness and mental sharpness, which can improve pacing and discomfort tolerance during tough intervals.",
+      "cardioFitness": "By improving effort tolerance, you can sustain higher intensity longer, strengthening the training stimulus for VO2 and threshold."
+    }
+  },
+  "nitrate_no_efficiency": {
+    "title": "Nitrates (beetroot) for oxygen efficiency",
+    "description": "Dietary nitrates from beetroot can increase nitric oxide (NO), improving blood flow and muscular oxygen efficiency. Often used as a performance aid before hard sessions or races.",
+    "areas": {
+      "cardioFitness": "Higher NO availability can improve blood flow and reduce oxygen cost at a given intensity, potentially benefiting 5–10K performance.",
+      "energy": "Improved muscular efficiency can increase output per liter of oxygen and reduce energy loss at higher workloads."
+    }
+  },
+  "l_carnitine_fat_transport": {
+    "title": "L-carnitine and fat transport",
+    "description": "L-carnitine is involved in transporting fatty acids into mitochondria. Effects on endurance vary between individuals and are more likely to appear with longer-term use alongside a well-structured training and nutrition plan.",
+    "areas": {
+      "energy": "Supports pathways involved in fat metabolism and may contribute to more efficient energy supply at low-to-moderate intensity.",
+      "cardioFitness": "In some cases, it may support endurance by improving fat utilization and reducing glycogen stress during longer sessions."
+    }
+  },
+  "sauna_mitochondrial_adaptation": {
+    "title": "Sauna for recovery and endurance adaptation",
+    "description": "Heat exposure (such as sauna) can act as a hormetic stressor and support heat adaptation, circulation, and recovery. Many endurance athletes use sauna as a training adjunct, especially during higher-volume phases.",
+    "areas": {
+      "energy": "Heat can stimulate stress-response pathways and cellular adaptation, supporting resilience and recovery when dosed appropriately.",
+      "cardioFitness": "Heat acclimation can improve plasma volume and circulatory efficiency, potentially supporting endurance and heat tolerance."
+    }
+  },
+  "cold_exposure_timing": {
+    "title": "Cold exposure: timing for performance",
+    "description": "Cold exposure can increase alertness and stress resilience, but doing it immediately after hard training may interfere with adaptation signals in some cases. The strategy is to time cold exposure to support recovery without ‘stealing’ training gains.",
+    "areas": {
+      "musclePerformance": "Smart timing can let you use cold for perceived recovery without unnecessarily blunting strength and growth signaling.",
+      "cardioFitness": "Cold can be used for nervous system regulation and resilience, but should be periodized around key workouts to preserve training quality."
+    }
+  },
+  "co2_tolerance_breathing": {
+    "title": "CO₂ tolerance and breathing for running",
+    "description": "CO₂ tolerance influences breathing drive and how efficiently you ventilate at higher intensities. Breathing control and gradual CO₂ exposure can reduce perceived breath stress and improve running economy for some people.",
+    "areas": {
+      "cardioFitness": "Better breathing control can improve ventilation patterns and reduce ‘panic breathing’ at high intensity, supporting endurance performance.",
+      "energy": "More efficient breathing work can reduce the energy cost of ventilation and free capacity for working muscles."
+    }
+  },
+  "astaxanthin_recovery_antioxidant": {
+    "title": "Astaxanthin for recovery",
+    "description": "Astaxanthin is a powerful fat-soluble antioxidant that protects cell and mitochondrial membranes from oxidative stress. When used with proper timing, it can improve recovery, reduce exercise-induced muscle damage, and support endurance performance.",
+    "areas": {
+      "musclePerformance": "Astaxanthin may reduce oxidative muscle damage and delayed onset muscle soreness (DOMS), supporting faster recovery between training sessions.",
+      "energy": "By protecting mitochondria from oxidative stress, astaxanthin can help maintain more stable cellular energy production over time.",
+      "cardioFitness": "Astaxanthin may support endurance by improving fat metabolism and reducing oxidative load during longer aerobic efforts."
+    },
+    "analyzePrompt": "Analyze the user's training intensity and recovery demands to determine whether astaxanthin is appropriate, and when it should be used relative to hard training sessions."
   }
 }

@@ -561,4 +561,112 @@ export const tips: Tip[] = [
     descriptionKey: "cordyceps_adaptogen.description",
     supplements: [{ id: "cordyceps" }],
   },
+  {
+  id: "zone2_mitochondrial_base",
+  level: 2,
+  xp: 500,
+  areas: [
+    { id: "cardioFitness", descriptionKey: "zone2_mitochondrial_base.areas.cardioFitness" },
+    { id: "energy", descriptionKey: "zone2_mitochondrial_base.areas.energy" }
+  ],
+  title: "zone2_mitochondrial_base.title",
+  descriptionKey: "zone2_mitochondrial_base.description",
+  analyzePrompt: "zone2_mitochondrial_base.analyzePrompt",
+},
+{
+  id: "fasted_aerobic_training",
+  level: 3,
+  xp: 700,
+  areas: [
+    { id: "energy", descriptionKey: "fasted_aerobic_training.areas.energy" },
+    { id: "cardioFitness", descriptionKey: "fasted_aerobic_training.areas.cardioFitness" }
+  ],
+  title: "fasted_aerobic_training.title",
+  descriptionKey: "fasted_aerobic_training.description",
+},
+{
+  id: "lactate_threshold_training",
+  level: 3,
+  xp: 700,
+  areas: [
+    { id: "cardioFitness", descriptionKey: "lactate_threshold_training.areas.cardioFitness" },
+    { id: "energy", descriptionKey: "lactate_threshold_training.areas.energy" }
+  ],
+  title: "lactate_threshold_training.title",
+  descriptionKey: "lactate_threshold_training.description",
+  analyzePrompt: "lactate_threshold_training.analyzePrompt",
+},
+{
+  id: "running_economy_drills",
+  level: 2,
+  xp: 500,
+  areas: [
+    { id: "neuromuscular", descriptionKey: "running_economy_drills.areas.neuromuscular" },
+    { id: "cardioFitness", descriptionKey: "running_economy_drills.areas.cardioFitness" }
+  ],
+  title: "running_economy_drills.title",
+  descriptionKey: "running_economy_drills.description",
+},
+{
+  id: "stride_frequency_optimization",
+  level: 3,
+  xp: 700,
+  areas: [
+    { id: "neuromuscular", descriptionKey: "stride_frequency_optimization.areas.neuromuscular" },
+    { id: "energy", descriptionKey: "stride_frequency_optimization.areas.energy" }
+  ],
+  title: "stride_frequency_optimization.title",
+  descriptionKey: "stride_frequency_optimization.description",
+},
+{
+  id: "caffeine_endurance_performance",
+  level: 2,
+  xp: 500,
+  areas: [
+    { id: "energy", descriptionKey: "caffeine_endurance_performance.areas.energy" },
+    { id: "focus", descriptionKey: "caffeine_endurance_performance.areas.focus" },
+    { id: "cardioFitness", descriptionKey: "caffeine_endurance_performance.areas.cardioFitness" }
+  ],
+  title: "caffeine_endurance_performance.title",
+  descriptionKey: "caffeine_endurance_performance.description",
+  supplements: [{ id: "caffeine" }],
+},
+{
+  id: "nitrate_no_efficiency",
+  level: 3,
+  xp: 700,
+  areas: [
+    { id: "cardioFitness", descriptionKey: "nitrate_no_efficiency.areas.cardioFitness" },
+    { id: "energy", descriptionKey: "nitrate_no_efficiency.areas.energy" }
+  ],
+  title: "nitrate_no_efficiency.title",
+  descriptionKey: "nitrate_no_efficiency.description",
+  supplements: [{ id: "beetrootExtract" }],
+},
+{
+  id: "l_carnitine_fat_transport",
+  level: 3,
+  xp: 700,
+  areas: [
+    { id: "energy", descriptionKey: "l_carnitine_fat_transport.areas.energy" },
+    { id: "cardioFitness", descriptionKey: "l_carnitine_fat_transport.areas.cardioFitness" }
+  ],
+  title: "l_carnitine_fat_transport.title",
+  descriptionKey: "l_carnitine_fat_transport.description",
+  supplements: [{ id: "lCarnitine" }],
+},
+{
+  id: "astaxanthin_recovery_antioxidant",
+  level: 3,
+  xp: 700,
+  areas: [
+    { id: "musclePerformance", descriptionKey: "astaxanthin_recovery_antioxidant.areas.musclePerformance" },
+    { id: "energy", descriptionKey: "astaxanthin_recovery_antioxidant.areas.energy" },
+    { id: "cardioFitness", descriptionKey: "astaxanthin_recovery_antioxidant.areas.cardioFitness" }
+  ],
+  title: "astaxanthin_recovery_antioxidant.title",
+  descriptionKey: "astaxanthin_recovery_antioxidant.description",
+  supplements: [{ id: "astaxanthin" }],
+  analyzePrompt: "astaxanthin_recovery_antioxidant.analyzePrompt",
+}
 ];
