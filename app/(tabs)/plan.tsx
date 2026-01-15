@@ -27,8 +27,11 @@ import { Plan } from "../domain/Plan";
 import AppButton from "@/components/ui/AppButton";
 import { Colors } from "@/constants/Colors";
 import { defaultPlans } from "@/locales/defaultPlans";
+import { useLocalSearchParams } from "expo-router";
+// Removed unused CreatePlanModal import; using ThemedModal for create/edit
 
 export default function Plans() {
+  const params = useLocalSearchParams<{ openCreate?: string }>();
   const [modalVisible, setModalVisible] = useState(false);
   const [newPlanName, setNewPlanName] = useState("");
   const [newPlanTime, setNewPlanTime] = useState(new Date());
@@ -58,6 +61,15 @@ export default function Plans() {
       setPlans(translatedDefaults);
     }
   }, [plans.length, setPlans, t]);
+
+  // Öppna skapamodal om efterfrågat via route-param
+  useEffect(() => {
+    if (params.openCreate === "1") {
+      setIsEditingPlan(false);
+      setSelectedPlan(null);
+      setModalVisible(true);
+    }
+  }, [params.openCreate]);
 
   const savePlans = (updatedPlans: Plan[]) => {
     setPlans(updatedPlans);
@@ -89,11 +101,41 @@ export default function Plans() {
       savePlans(updatedPlans);
     }
 
-    setNewPlanName("");
-    setNewPlanTime(new Date());
+    // Close modal and reset state after saving
+    setModalVisible(false);
     setIsEditingPlan(false);
     setSelectedPlan(null);
-    setModalVisible(false);
+    setNewPlanName("");
+    setNewPlanTime(new Date());
+    setShowTimePicker(Platform.OS === "ios");
+  };
+
+  const handleRemovePlan = (planName: string) => {
+    console.log("Removing plan:", planName);
+    const updatedPlans = plans.filter((plan) => plan.name !== planName);
+    savePlans(updatedPlans);
+  };
+
+  const handleRemoveSupplement = (planName: string, supplementName: string) => {
+    const updatedPlans = plans.map((plan) =>
+      plan.name === planName
+        ? {
+            ...plan,
+            supplements: plan.supplements.filter(
+              (sup) => sup.name !== supplementName
+            ),
+          }
+        : plan
+    );
+    savePlans(updatedPlans);
+  };
+
+  const handleEditSupplement = (planName: string, supplementTitle: string) => {
+    const plan = plans.find((p) => p.name === planName) || null;
+    setPlanForSupplementEdit(plan);
+    const sup = plan?.supplements.find((s) => s.name === supplementTitle) || null;
+    setSupplement(sup || null);
+    setIsEditingSupplement(true);
   };
 
   const timeStringToDate = (timeString: string): Date => {
@@ -103,51 +145,12 @@ export default function Plans() {
     return now;
   };
 
-  const handleRemoveSupplement = (
-    planName: string,
-    supplementTitle: string
-  ) => {
-    const updatedPlans = plans.map((plan) => {
-      if (plan.name === planName) {
-        return {
-          ...plan,
-          supplements: plan.supplements.filter(
-            (supplement) => supplement.name !== supplementTitle
-          ),
-        };
-      }
-      return plan;
-    });
-    savePlans(updatedPlans);
-    setPlans(updatedPlans); // Update state
-  };
-
-  // Redigera ett supplement i vald plan
-  const handleEditSupplement = (planName: string, supplementTitle: string) => {
-    let plan = plans.find((plan) => plan.name === planName);
-    let supplement = plan?.supplements.find(
-      (supplement) => supplement.name === supplementTitle
-    );
-
-    if (plan && supplement) {
-      setIsEditingSupplement(true);
-      setPlanForSupplementEdit(plan);
-      setSupplement(supplement);
-    }
-  };
-
   const handleEditPlan = (plan: Plan) => {
     setNewPlanName(plan.name);
     setNewPlanTime(timeStringToDate(plan.prefferedTime));
     setSelectedPlan(plan);
     setIsEditingPlan(true); // Enter edit mode
     setModalVisible(true); // Open the modal
-  };
-
-  const handleRemovePlan = (planName: string) => {
-    console.log("Removing plan:", planName);
-    const updatedPlans = plans.filter((plan) => plan.name !== planName);
-    savePlans(updatedPlans);
   };
 
   const handleNotify = (plan: Plan) => {

@@ -119,7 +119,10 @@
     "showLess": "Show less",
     "whatAreTheRisks": "What are the risks?",
     "whatStudiesExist": "What studies exist?",
-    "whoAreTheExperts": "Who are the experts?"
+    "whoAreTheExperts": "Who are the experts?",
+    "supplements": "Supplements",
+    "addToPlan": "Add to plan",
+    "fullyExplored": "Fully explored!"
   },
   "chat": {
       "welcomeMessage": "Hi! I'm your personal health coach – specialized in biohacking and supplements. Ask me about daily routines or optimizing your health. 💪🌿",

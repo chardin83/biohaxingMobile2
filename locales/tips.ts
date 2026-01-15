@@ -1,4 +1,4 @@
-import { supplementIds } from "./supplementIds";
+// Removed unused supplementIds import
 
 type SupplementReference = {
   id: string;
@@ -49,7 +49,7 @@ export const tips: Tip[] = [
     ],
     title: "vitamin_d.title",
     descriptionKey: "vitamin_d.description",
-    supplements: [{ id: "vitamin_d" }],
+    supplements: [{ id: "vitaminD" }],
     startPrompt: "vitamin_d.startPrompt",
   },
   {
@@ -62,6 +62,7 @@ export const tips: Tip[] = [
     ],
     title: "mitochondrial_nutrients_coq10.title",
     descriptionKey: "mitochondrial_nutrients_coq10.description",
+    supplements: [{ id: "coenzymeQ10" }],
     analyzePrompt: "mitochondrial_nutrients_coq10.analyzePrompt",
   },
   {
@@ -75,6 +76,7 @@ export const tips: Tip[] = [
     ],
     title: "cellular_energy_nad.title",
     descriptionKey: "cellular_energy_nad.description",
+    supplements: [{ id: "nad" }],
   },
   {
     id: "sleep_timing_circadian",
@@ -108,7 +110,7 @@ export const tips: Tip[] = [
     areas: [{ id: "focus", descriptionKey: "calm_alertness_ltheanine.areas.focus" }],
     title: "calm_alertness_ltheanine.title",
     descriptionKey: "calm_alertness_ltheanine.description",
-    supplements: [{ id: "ltheanine" }],
+    supplements: [{ id: "lTheanine" }],
   },
   {
     id: "neurotransmitter_ltyrosine",
@@ -117,7 +119,7 @@ export const tips: Tip[] = [
     areas: [{ id: "focus", descriptionKey: "neurotransmitter_ltyrosine.areas.focus" }],
     title: "neurotransmitter_ltyrosine.title",
     descriptionKey: "neurotransmitter_ltyrosine.description",
-    supplements: [{ id: "ltyrosine" }],
+    supplements: [{ id: "lTyrosine" }],
   },
   {
     id: "maintain_hydration",
@@ -138,6 +140,7 @@ export const tips: Tip[] = [
     areas: [{ id: "immuneSupport", descriptionKey: "vitamin_c_immunity.areas.immuneSupport" }],
     title: "vitamin_c_immunity.title",
     descriptionKey: "vitamin_c_immunity.description",
+    supplements: [{ id: "vitaminC" }],
   },
   {
     id: "echinacea_herbs",
@@ -146,6 +149,7 @@ export const tips: Tip[] = [
     areas: [{ id: "immuneSupport", descriptionKey: "echinacea_herbs.areas.immuneSupport" }],
     title: "echinacea_herbs.title",
     descriptionKey: "echinacea_herbs.description",
+    supplements: [{ id: "echinacea" }],
   },
   {
     id: "calming_glycine",
@@ -158,7 +162,7 @@ export const tips: Tip[] = [
     ],
     title: "calming_glycine.title",
     descriptionKey: "calming_glycine.description",
-    supplements: [{ id: "glycine" }],
+    supplements: [{ id: "glycin" }],
   },
   {
     id: "breathwork_parasympathetic",
@@ -413,7 +417,7 @@ export const tips: Tip[] = [
     ],
     title: "creatine_atp_strength.title",
     descriptionKey: "creatine_atp_strength.description",
-    supplements: [{ id: "creatine_atp_strength" }],
+    supplements: [{ id: "creatine" }],
   },
   {
     id: "betaalanine_endurance",
@@ -425,7 +429,7 @@ export const tips: Tip[] = [
     ],
     title: "betaalanine_endurance.title",
     descriptionKey: "betaalanine_endurance.description",
-    supplements: [],
+    supplements: [{ id: "betaAlanine" }],
   },
   {
     id: "shilajit_performance",
@@ -438,7 +442,7 @@ export const tips: Tip[] = [
     ],
     title: "shilajit_performance.title",
     descriptionKey: "shilajit_performance.description",
-    supplements: [],
+    supplements: [{ id: "shilajit" }],
   },
   {
     id: "probiotics_microbiota",
@@ -450,7 +454,7 @@ export const tips: Tip[] = [
     ],
     title: "probiotics_microbiota.title",
     descriptionKey: "probiotics_microbiota.description",
-    supplements: [],
+    supplements: [{ id: "probiotics" }],
   },
   {
     id: "fiber_microbiome",
@@ -474,7 +478,7 @@ export const tips: Tip[] = [
     ],
     title: "milk_thistle_liver.title",
     descriptionKey: "milk_thistle_liver.description",
-    supplements: [],
+    supplements: [{ id: "milkThistle" }],
   },
   {
     id: "hiit_vo2max",
@@ -514,7 +518,7 @@ export const tips: Tip[] = [
     ],
     title: "ashwagandha_adaptogen.title",
     descriptionKey: "ashwagandha_adaptogen.description",
-    supplements: [],
+    supplements: [{ id: "ashwagandha" }],
   },
   {
     id: "rhodiola_adaptogen",
@@ -528,7 +532,7 @@ export const tips: Tip[] = [
     ],
     title: "rhodiola_adaptogen.title",
     descriptionKey: "rhodiola_adaptogen.description",
-    supplements: [],
+    supplements: [{ id: "rhodiolaRosea" }],
   },
   {
     id: "holy_basil_adaptogen",
@@ -541,7 +545,7 @@ export const tips: Tip[] = [
     ],
     title: "holy_basil_adaptogen.title",
     descriptionKey: "holy_basil_adaptogen.description",
-    supplements: [],
+    supplements: [{ id: "holyBasil" }],
   },
   {
     id: "cordyceps_adaptogen",
@@ -555,6 +559,6 @@ export const tips: Tip[] = [
     ],
     title: "cordyceps_adaptogen.title",
     descriptionKey: "cordyceps_adaptogen.description",
-    supplements: [],
+    supplements: [{ id: "cordyceps" }],
   },
 ];

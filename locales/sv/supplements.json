@@ -52,7 +52,7 @@
         { "id": "beetrootPowder", "name": "Rödbetspulver", "quantity": "1", "unit": "tsk" },
         { "id": "noopept", "name": "Noopept", "quantity": "", "unit": "" },
         { "id": "semax", "name": "Semax / Selank", "quantity": "", "unit": "" },
-        { "id": "glycine", "name": "Glycin", "quantity": "1000", "unit": "mg" },
+        { "id": "glycin", "name": "Glycin", "quantity": "1000", "unit": "mg" },
         { "id": "berberine", "name": "Berberin", "quantity": "500", "unit": "mg" },
         { "id": "nad", "name": "NAD+", "quantity": "300", "unit": "mg" },
         { "id": "creatine", "name": "Kreatin", "quantity": "5000", "unit": "mg" },
@@ -64,6 +64,8 @@
         { "id": "fadogia", "name": "Fadogia agrestis", "quantity": "300", "unit": "mg" },
         { "id": "shilajit", "name": "Shilajit", "quantity": "500", "unit": "mg" },
         { "id": "psyllium", "name": "Psylliumfröskal", "quantity": "1", "unit": "tsk" },
-        { "id": "tmg", "name": "TMG (Trimetylglycin)", "quantity": "500", "unit": "mg" }
+        { "id": "tmg", "name": "TMG (Trimetylglycin)", "quantity": "500", "unit": "mg" },
+        { "id": "holyBasil", "name": "Helig basilika (Tulsi)", "quantity": "", "unit": "" },
+        { "id": "cordyceps", "name": "Cordyceps", "quantity": "", "unit": "" }
       ]   
     }   

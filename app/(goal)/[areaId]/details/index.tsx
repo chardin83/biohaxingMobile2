@@ -7,6 +7,7 @@ import { useSupplements } from "@/locales/supplements";
 import { useTranslation } from "react-i18next";
 import { Icon } from "react-native-paper";
 import AppBox from "@/components/ui/AppBox";
+import AppButton from "@/components/ui/AppButton";
 import ProgressBarWithLabel from "@/components/ui/ProgressbarWithLabel";
 import { tips } from "@/locales/tips";
 import { useStorage } from "@/app/context/StorageContext";
@@ -16,6 +17,9 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { AIPrompts, AIPromptKey } from "@/constants/AIPrompts";
 import VerdictSelector from "@/components/VerdictSelector";
 import { POSITIVE_VERDICTS } from "@/types/verdict";
+import { ThemedModal } from "@/components/ThemedModal";
+import { useSupplementSaver } from "@/hooks/useSupplementSaver";
+import CreatePlanModal, { CreatePlanData } from "@/components/modals/CreatePlanModal";
 
 export default function AreaDetailScreen() {
   const { t } = useTranslation();
@@ -26,7 +30,8 @@ export default function AreaDetailScreen() {
     tipId?: string;
   }>();
   const supplements = useSupplements();
-  const { addTipView, incrementTipChat, viewedTips, setTipVerdict } = useStorage();
+  const { addTipView, incrementTipChat, viewedTips, setTipVerdict, plans } = useStorage();
+  const { saveSupplementToPlan } = useSupplementSaver();
 
     // Ge XP när tips öppnas (första gången)
   React.useEffect(() => {
@@ -48,18 +53,13 @@ export default function AreaDetailScreen() {
   const tip = findTip(tipId, areaId);
 
   const [showAllAreas, setShowAllAreas] = React.useState(false);
+  const [addToPlanVisible, setAddToPlanVisible] = React.useState(false);
+  const [pendingSupplement, setPendingSupplement] = React.useState<any | null>(null);
+  const [createPlanVisible, setCreatePlanVisible] = React.useState(false);
 
   const goalIcon = mainArea?.icon ?? "target";
-  const supplementId = tip?.supplements?.[0]?.id ?? undefined;
-  const supplementName = supplements?.find((s) => s.id === supplementId)?.name;
-
-  if (!mainArea || !tip) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.notFound}>Goal not found.</Text>
-      </View>
-    );
-  }
+  // Använd resolvedSupplements (nedan) för att hämta visningsnamn
+  const notFound = !mainArea || !tip;
 
   const descriptionKey = tip?.descriptionKey;
   const titleKey = tip?.title;
@@ -73,7 +73,18 @@ export default function AreaDetailScreen() {
   const totalXpEarned = currentTip?.xpEarned || 0;
   const currentVerdict = currentTip?.verdict;
   const positiveVerdicts = React.useMemo(() => new Set(POSITIVE_VERDICTS), []);
-  const isFavorite = currentVerdict ? positiveVerdicts.has(currentVerdict as any) : false;
+  const isFavorite = React.useMemo(() => {
+    if (!currentVerdict) return false;
+    return positiveVerdicts.has(currentVerdict as any);
+  }, [currentVerdict, positiveVerdicts]);
+
+  // Lös upp tip.supplements (id-referenser) till fulla supplement-objekt från översättningarna
+  const resolvedSupplements = React.useMemo(() => {
+    if (!tip?.supplements?.length) return [] as any[];
+    return (tip.supplements
+      .map((ref) => supplements?.find((s) => s.id === ref.id))
+      .filter(Boolean) as any[]);
+  }, [tip?.supplements, supplements]);
 
   // Hantera verdict-klick
   const handleVerdictPress = (verdict: "interested" | "startNow" | "wantMore" | "alreadyWorks" | "notInterested" | "noResearch" | "testedFailed") => {
@@ -131,6 +142,32 @@ export default function AreaDetailScreen() {
   // Kolla om en fråga redan är besvarad
   const isQuestionAsked = (questionType: string) => askedQuestions.includes(questionType);
 
+  const handleOpenAddToPlan = (supp: any) => {
+    setPendingSupplement(supp);
+    setAddToPlanVisible(true);
+  };
+
+  const handleAddSupplementToPlan = (plan: any) => {
+    if (!pendingSupplement) return;
+    // Använd nuvarande plan och supplement för att spara via hooken
+    saveSupplementToPlan(
+      { name: plan.name, prefferedTime: plan.prefferedTime, supplements: plan.supplements ?? [], notify: plan.notify },
+      pendingSupplement,
+      false
+    );
+    setAddToPlanVisible(false);
+    setPendingSupplement(null);
+  };
+
+  // Om mål eller tips saknas, rendera ett enkelt fallback-view (hooks ovanför är alltid anropade)
+  if (notFound) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.notFound}>Goal not found.</Text>
+      </View>
+    );
+  }
+
   return (
     <LinearGradient colors={["#071526", "#040B16"]} style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -147,7 +184,7 @@ export default function AreaDetailScreen() {
               <Icon source={goalIcon} size={50} color={Colors.dark.primary} />
             </View>
             <Text style={styles.subTitle}>
-              {supplementName ?? t(`tips:${titleKey}`)}
+              {resolvedSupplements[0]?.name ?? t(`tips:${titleKey}`)}
             </Text>
             {isFavorite && (
               <View style={styles.favoriteChip}>
@@ -252,6 +289,78 @@ export default function AreaDetailScreen() {
           <VerdictSelector 
             currentVerdict={currentVerdict}
             onVerdictPress={handleVerdictPress}
+          />
+
+          {/* Visa kosttillskott och knapp om det finns referenser */}
+          {resolvedSupplements.length > 0 && (
+            <AppBox title={t("common:goalDetails.supplements")}>
+              {resolvedSupplements.map((supplement: any) => (
+                <View key={supplement.id} style={styles.supplementRow}>
+                  <Text style={styles.supplementText}>{supplement.name}</Text>
+                  <AppButton
+                    title={t("common:goalDetails.addToPlan")}
+                    onPress={() => handleOpenAddToPlan(supplement)}
+                    variant="primary"
+                  />
+                </View>
+              ))}
+            </AppBox>
+          )}
+          {/* Modal: välj tidpunkt + lista planer */}
+          <ThemedModal
+            visible={addToPlanVisible}
+            title={t("plan.addSupplement")}
+            onClose={() => { setAddToPlanVisible(false); setPendingSupplement(null); }}
+            showCancelButton
+          >
+            <View style={{ width: "100%" }}>
+              <Text style={{ color: Colors.dark.textLight, marginBottom: 10 }}>
+                {t("dayEdit.chooseTime")}
+              </Text>
+              {plans.map((p) => (
+                <View key={p.name} style={{ marginBottom: 8 }}>
+                  <AppButton
+                    title={`${p.name} (${p.prefferedTime})`}
+                    onPress={() => handleAddSupplementToPlan(p)}
+                    variant="primary"
+                  />
+                </View>
+              ))}
+              <View style={{ marginTop: 12 }}>
+                <AppButton
+                  title={t("plan.createPlan")}
+                  onPress={() => {
+                    // Stäng denna modal innan vi öppnar skapa-plan modal
+                    setAddToPlanVisible(false);
+                    setCreatePlanVisible(true);
+                  }}
+                  variant="secondary"
+                />
+              </View>
+            </View>
+          </ThemedModal>
+
+          {/* Modal: skapa ny plan inline */}
+          <CreatePlanModal
+            visible={createPlanVisible}
+            onClose={() => {
+              // Återöppna AddToPlan även vid Avbryt
+              setCreatePlanVisible(false);
+              setAddToPlanVisible(true);
+            }}
+            onCreate={(newPlan: CreatePlanData) => {
+              if (pendingSupplement) {
+                saveSupplementToPlan(
+                  { name: newPlan.name, prefferedTime: newPlan.prefferedTime, supplements: [], notify: newPlan.notify },
+                  pendingSupplement,
+                  false
+                );
+              }
+              // Stäng skapa-plan och öppna AddToPlan igen så användaren ser listan
+              setCreatePlanVisible(false);
+              setAddToPlanVisible(true);
+              // Behåll pendingSupplement så man kan lägga till i fler planer om man vill
+            }}
           />
         </ScrollView>
       </SafeAreaView>
@@ -370,6 +479,24 @@ const styles = StyleSheet.create({
     color: Colors.dark.accentDefault,
     fontSize: 14,
     fontWeight: "600",
+  },
+  supplementRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.dark.border,
+    width: "100%",
+  },
+  supplementText: {
+    color: Colors.dark.textLight,
+    fontSize: 16,
+  },
+  addToCalendarText: {
+    color: Colors.dark.primary,
+    fontWeight: "bold",
+    fontSize: 14,
   },
 });
 
