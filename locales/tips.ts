@@ -27,8 +27,8 @@ export type TimeOfDayRule =
 export type TipPlanCategory = "supplement" | "training" | "nutrition";
 
 export type TipNutritionFood = {
-  name: string;
-  details: string;
+  key: string;
+  detailsKey?: string; // Optional override when detail uses a separate translation key
 };
 
 export type Tip = {
@@ -94,10 +94,10 @@ export const tips: Tip[] = [
     timeRule: "anytime",
     planCategoryOptions: ["nutrition"],
     nutritionFoods: [
-      { name: "fattyFish", details: "fattyFish" },
-      { name: "eggYolks", details: "eggYolks" },
-      { name: "fortifiedDairy", details: "fortifiedDairy" },
-      { name: "mushrooms", details: "mushrooms" },
+      { key: "fattyFish" },
+      { key: "eggYolks" },
+      { key: "fortifiedDairy" },
+      { key: "mushrooms" },
     ],
   },
   {
@@ -139,11 +139,11 @@ export const tips: Tip[] = [
     timeRule: "anytime",
     planCategoryOptions: ["nutrition"],
     nutritionFoods: [
-      { name: "organMeats", details: "organMeats" },
-      { name: "fattyFish", details: "fattyFish" },
-      { name: "beef", details: "beef" },
-      { name: "spinach", details: "spinach" },
-      { name: "broccoli", details: "broccoli" },
+      { key: "organMeats" },
+      { key: "fattyFish" },
+      { key: "beef" },
+      { key: "spinach" },
+      { key: "broccoli" },
     ],
   },
   {
@@ -205,12 +205,12 @@ export const tips: Tip[] = [
     timeRule: "anytime",
     planCategoryOptions: ["nutrition"],
     nutritionFoods: [
-      { name: "leafyGreens", details: "leafyGreens" },
-      { name: "pumpkinSeeds", details: "pumpkinSeeds" },
-      { name: "almonds", details: "almonds" },
-      { name: "darkChocolate", details: "darkChocolate" },
-      { name: "blackBeans", details: "blackBeans" },
-      { name: "avocado", details: "avocado" },
+      { key: "leafyGreens" },
+      { key: "pumpkinSeeds" },
+      { key: "almonds" },
+      { key: "darkChocolate" },
+      { key: "blackBeans" },
+      { key: "avocado" },
     ],
   },
   {
@@ -235,11 +235,11 @@ export const tips: Tip[] = [
     timeRule: "anytime",
     planCategoryOptions: ["nutrition"],
     nutritionFoods: [
-      { name: "oysters", details: "oysters" },
-      { name: "beef", details: "beef" },
-      { name: "pumpkinSeeds", details: "pumpkinSeeds" },
-      { name: "chickpeas", details: "chickpeas" },
-      { name: "cashews", details: "cashews" },
+      { key: "oysters" },
+      { key: "beef" },
+      { key: "pumpkinSeeds" },
+      { key: "chickpeas" },
+      { key: "cashews" },
     ],
   },
   {
@@ -259,11 +259,11 @@ export const tips: Tip[] = [
     timeRule: "anytime",
     planCategoryOptions: ["nutrition"],
     nutritionFoods: [
-      { name: "brazilNuts", details: "brazilNuts" },
-      { name: "sardines", details: "sardines" },
-      { name: "eggs", details: "eggs" },
-      { name: "shiitakeMushrooms", details: "shiitakeMushrooms" },
-      { name: "sunflowerSeeds", details: "sunflowerSeeds" },
+      { key: "brazilNuts" },
+      { key: "sardines" },
+      { key: "eggs" },
+      { key: "shiitakeMushrooms" },
+      { key: "sunflowerSeeds" },
     ],
   },
   {
@@ -283,11 +283,11 @@ export const tips: Tip[] = [
     timeRule: "anytime",
     planCategoryOptions: ["nutrition"],
     nutritionFoods: [
-      { name: "seaweed", details: "seaweed" },
-      { name: "iodizedSalt", details: "iodizedSalt" },
-      { name: "dairy", details: "dairy" },
-      { name: "eggs", details: "eggs" },
-      { name: "cod", details: "cod" },
+      { key: "seaweed" },
+      { key: "iodizedSalt" },
+      { key: "dairy" },
+      { key: "eggs" },
+      { key: "cod" },
     ],
   },
   {
@@ -342,11 +342,11 @@ export const tips: Tip[] = [
     preferredDayParts: ["midday", "afternoon"],
     timeRule: "anytime",
     nutritionFoods: [
-      { name: "citrusFruits", details: "citrusFruits" },
-      { name: "berries", details: "berries" },
-      { name: "bellPeppers", details: "bellPeppers" },
-      { name: "kiwi", details: "kiwi" },
-      { name: "fermentedCabbage", details: "fermentedCabbage" },
+      { key: "citrusFruits" },
+      { key: "berries" },
+      { key: "bellPeppers" },
+      { key: "kiwi" },
+      { key: "fermentedCabbage" },
     ],
   },
   {
@@ -378,11 +378,11 @@ export const tips: Tip[] = [
     timeRule: "anytime",
     planCategoryOptions: ["nutrition"],
     nutritionFoods: [
-      { name: "boneBroth", details: "boneBroth" },
-      { name: "collagenCuts", details: "collagenCuts" },
-      { name: "skinOnPoultry", details: "skinOnPoultry" },
-      { name: "porkRinds", details: "porkRinds" },
-      { name: "legumes", details: "legumes" },
+      { key: "boneBroth" },
+      { key: "collagenCuts" },
+      { key: "skinOnPoultry" },
+      { key: "porkRinds" },
+      { key: "legumes" },
     ],
   },
   {
@@ -749,11 +749,11 @@ export const tips: Tip[] = [
     timeRule: "anytime",
     planCategory: "nutrition",
     nutritionFoods: [
-      { name: "yogurt", details: "yogurt" },
-      { name: "kefir", details: "kefir" },
-      { name: "sauerkraut", details: "sauerkraut" },
-      { name: "kimchi", details: "kimchi" },
-      { name: "miso", details: "miso" },
+      { key: "yogurt" },
+      { key: "kefir" },
+      { key: "sauerkraut" },
+      { key: "kimchi" },
+      { key: "miso" },
     ],
   },
   {
@@ -771,11 +771,11 @@ export const tips: Tip[] = [
     timeRule: "anytime",
     planCategory: "nutrition",
     nutritionFoods: [
-      { name: "oats", details: "oats" },
-      { name: "legumes", details: "legumes" },
-      { name: "chiaSeeds", details: "chiaSeeds" },
-      { name: "berries", details: "berries" },
-      { name: "cruciferousVeg", details: "cruciferousVeg" },
+      { key: "oats" },
+      { key: "legumes" },
+      { key: "chiaSeeds" },
+      { key: "berries" },
+      { key: "cruciferousVeg" },
     ],
   },
   {

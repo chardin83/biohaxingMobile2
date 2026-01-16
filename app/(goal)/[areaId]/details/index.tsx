@@ -156,14 +156,16 @@ export default function AreaDetailScreen() {
   const nutritionFoodItems = React.useMemo(() => {
     if (!tip?.nutritionFoods?.length || !tip.id) return [] as { key: string; name: string; details: string }[];
     return tip.nutritionFoods.map((food) => {
-      const name = t(`tips:${tip.id}.nutritionFoods.items.${food.name}.name`, {
-        defaultValue: food.name,
+      const itemKey = food.key;
+      const detailKey = food.detailsKey ?? itemKey;
+      const name = t(`tips:${tip.id}.nutritionFoods.items.${itemKey}.name`, {
+        defaultValue: itemKey,
       });
-      const details = t(`tips:${tip.id}.nutritionFoods.items.${food.details}.details`, {
+      const details = t(`tips:${tip.id}.nutritionFoods.items.${detailKey}.details`, {
         defaultValue: "",
       });
       return {
-        key: `${food.name}:${food.details}`,
+        key: `${itemKey}:${detailKey}`,
         name,
         details,
       };

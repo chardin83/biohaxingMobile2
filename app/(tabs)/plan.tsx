@@ -335,17 +335,16 @@ export default function Plans() {
       });
       const recommendedDoseLabel = getRecommendedDoseLabel(tip);
       const foodItems = (tip?.nutritionFoods ?? []).map((food) => {
-        const name = t(`tips:${tipId}.nutritionFoods.items.${food.name}.name`, {
-          defaultValue: food.name,
+        const itemKey = food.key;
+        const detailKey = food.detailsKey ?? itemKey;
+        const name = t(`tips:${tipId}.nutritionFoods.items.${itemKey}.name`, {
+          defaultValue: itemKey,
         });
-        const details = t(
-          `tips:${tipId}.nutritionFoods.items.${food.details}.details`,
-          {
-            defaultValue: "",
-          }
-        );
+        const details = t(`tips:${tipId}.nutritionFoods.items.${detailKey}.details`, {
+          defaultValue: "",
+        });
         return {
-          key: `${tipId}-${food.name}-${food.details}`,
+          key: `${tipId}-${itemKey}-${detailKey}`,
           name,
           details,
         };
