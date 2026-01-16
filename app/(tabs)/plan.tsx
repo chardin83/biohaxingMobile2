@@ -25,12 +25,14 @@ import { ThemedModal } from "@/components/ThemedModal";
 import { Supplement } from "../domain/Supplement";
 import { Plan } from "../domain/Plan";
 import AppButton from "@/components/ui/AppButton";
+import Badge from "@/components/ui/Badge";
 import { Colors } from "@/constants/Colors";
 import { defaultPlans } from "@/locales/defaultPlans";
 import { useLocalSearchParams } from "expo-router";
 import { areas } from "@/locales/areas";
 import { tips, Tip } from "@/locales/tips";
 import { useSupplementMap } from "@/locales/supplements";
+import { useColorScheme } from "@/hooks/useColorScheme";
 // Removed unused CreatePlanModal import; using ThemedModal for create/edit
 
 const PLAN_CATEGORY_BY_TIP_ID = new Map(
@@ -49,6 +51,9 @@ export default function Plans() {
   const [isEditingSupplement, setIsEditingSupplement] = useState(false);
   const [planForSupplementEdit, setPlanForSupplementEdit] =
     useState<Plan | null>(null);
+  const [expandedNutritionTips, setExpandedNutritionTips] = useState<
+    Record<string, boolean>
+  >({});
 
   const { saveSupplementToPlan } = useSupplementSaver();
 
@@ -59,6 +64,9 @@ export default function Plans() {
 
   const { t } = useTranslation(["common", "areas", "tips"]);
   const supplementMap = useSupplementMap();
+  const colorScheme = useColorScheme();
+  const badgeIconColor =
+    colorScheme === "light" ? Colors.light.icon : Colors.dark.icon;
 
   const resolvePlanCategory = (tipId?: string, goalCategory?: string) => {
     if (goalCategory === "training" || goalCategory === "nutrition") {
@@ -116,6 +124,13 @@ export default function Plans() {
 
     return Array.from(tipIds).map((tipId) => ({ tipId }));
   }, [nutritionGoals]);
+
+  const toggleNutritionFoods = React.useCallback((tipId: string) => {
+    setExpandedNutritionTips((prev) => ({
+      ...prev,
+      [tipId]: !prev[tipId],
+    }));
+  }, []);
 
   useEffect(() => {
     if (plans.length === 0) {
@@ -349,13 +364,14 @@ export default function Plans() {
           details,
         };
       });
-      const areaBadges = (tip?.areas ?? []).map((area) => {
-        const areaMeta = areas.find((candidate) => candidate.id === area.id);
-        const label = areaMeta
-          ? t(`areas:${areaMeta.id}.title`)
-          : t(`areas:${area.id}.title`, { defaultValue: area.id });
-        return { id: area.id, label };
-      });
+      const maxVisibleFoods = 2;
+      const isExpanded = !!expandedNutritionTips[tipId];
+      const visibleFoodItems = isExpanded
+        ? foodItems
+        : foodItems.slice(0, maxVisibleFoods);
+      const hiddenCount = Math.max(foodItems.length - maxVisibleFoods, 0);
+      const hasExtraFoods = hiddenCount > 0;
+      const arrowRotation = isExpanded ? "90deg" : "0deg";
 
       return (
         <View key={tipId} style={styles.nutritionTipBlock}>
@@ -368,30 +384,47 @@ export default function Plans() {
             </ThemedText>
           )}
           {!!foodItems.length && (
-            <View style={[styles.badgeRow, styles.foodBadgeRow]}>
-              {foodItems.map(({ key, name, details }) => (
-                <View key={`food-${key}`} style={[styles.badge, styles.foodBadge]}>
-                  <ThemedText type="default" style={styles.badgeLabel}>
+            <View style={styles.badgeRow}>
+              {visibleFoodItems.map(({ key, name, details }) => (
+                <Badge key={`food-${key}`} variant="overlay">
+                  <ThemedText type="defaultSemiBold" style={styles.badgeLabel}>
                     {name}
                   </ThemedText>
-                  {!!details && (
+                  {!!details && isExpanded && (
                     <ThemedText type="default" style={styles.badgeDetail}>
                       {details}
                     </ThemedText>
                   )}
-                </View>
+                </Badge>
               ))}
-            </View>
-          )}
-          {!!areaBadges.length && (
-            <View style={styles.badgeRow}>
-              {areaBadges.map((area) => (
-                <View key={`area-${tipId}-${area.id}`} style={[styles.badge, styles.areaBadge]}>
+              {hasExtraFoods && (
+                <Badge
+                  key={`toggle-${tipId}`}
+                  variant="overlay"
+                  style={styles.toggleBadge}
+                  onPress={() => toggleNutritionFoods(tipId)}
+                >
                   <ThemedText type="default" style={styles.badgeLabel}>
-                    {area.label}
+                    {isExpanded
+                      ? t("plan.hideNutritionFoods", {
+                          defaultValue: "Visa färre",
+                        })
+                      : t("plan.showMoreNutritionFoods", {
+                          count: hiddenCount,
+                          defaultValue: `+${hiddenCount}`,
+                        })}
                   </ThemedText>
-                </View>
-              ))}
+                  <IconSymbol
+                    name="chevron.right"
+                    size={14}
+                    color={badgeIconColor}
+                    style={[
+                      styles.toggleBadgeIcon,
+                      { transform: [{ rotate: arrowRotation }] },
+                    ]}
+                  />
+                </Badge>
+              )}
             </View>
           )}
         </View>
@@ -600,9 +633,6 @@ const styles = StyleSheet.create({
     width: "100%",
     color: Colors.dark.text,
   },
-  collapsibleContainer: {
-    width: "100%",
-  },
   trainingItem: {
     paddingVertical: 10,
     borderBottomColor: Colors.dark.border,
@@ -633,28 +663,7 @@ const styles = StyleSheet.create({
   badgeRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginBottom: 4,
-  },
-  foodBadgeRow: {
     marginBottom: 8,
-  },
-  badge: {
-    borderRadius: 16,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    marginRight: 8,
-    marginBottom: 8,
-    backgroundColor: Colors.dark.secondary,
-    borderColor: Colors.dark.borderLight,
-  },
-  foodBadge: {
-    backgroundColor: Colors.dark.accentWeak,
-    borderColor: Colors.dark.accentDefault,
-  },
-  areaBadge: {
-    backgroundColor: Colors.dark.infoWeak,
-    borderColor: Colors.dark.infoDefault,
   },
   badgeLabel: {
     color: Colors.dark.text,
@@ -662,5 +671,13 @@ const styles = StyleSheet.create({
   badgeDetail: {
     color: Colors.dark.textLight,
     marginTop: 4,
+  },
+  toggleBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  toggleBadgeIcon: {
+    marginLeft: 6,
   },
 });

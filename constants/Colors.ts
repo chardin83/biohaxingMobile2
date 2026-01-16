@@ -60,6 +60,9 @@ export const Colors = {
     accentMedium: "rgba(120,255,220,0.4)",
     accentWeak: "rgba(120,255,220,0.18)",
     accentVeryWeak: "rgba(120,255,220,0.05)",
+
+    // Neutral overlays
+    overlayLight: "rgba(255,255,255,0.1)",
     
     // Warm/Red variants
     warmDefault: "rgba(255,100,100,0.5)",
