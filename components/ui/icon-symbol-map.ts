@@ -27,6 +27,10 @@ export const ICON_SYMBOLS = {
     sf: "calendar",
     material: "calendar-today",
   },
+  "clock": {
+    sf: "clock",
+    material: "schedule",
+  },
   "checklist": {
     sf: "checklist",
     material: "checklist",

@@ -26,6 +26,8 @@ import { Supplement } from "../domain/Supplement";
 import { Plan } from "../domain/Plan";
 import AppButton from "@/components/ui/AppButton";
 import Badge from "@/components/ui/Badge";
+import AppBox from "@/components/ui/AppBox";
+import TrainingSettingsModal from "@/components/modals/TrainingSettingsModal";
 import { Colors } from "@/constants/Colors";
 import { defaultPlans } from "@/locales/defaultPlans";
 import { useLocalSearchParams } from "expo-router";
@@ -54,13 +56,25 @@ export default function Plans() {
   const [expandedNutritionTips, setExpandedNutritionTips] = useState<
     Record<string, boolean>
   >({});
+  const [trainingSettingsVisible, setTrainingSettingsVisible] = useState(false);
+  const [trainingSettingsTipId, setTrainingSettingsTipId] = useState<string | null>(null);
+  const [trainingSettingsTitle, setTrainingSettingsTitle] = useState<string | null>(null);
+  const [trainingSessionsInput, setTrainingSessionsInput] = useState("");
+  const [trainingDurationInput, setTrainingDurationInput] = useState("");
 
   const { saveSupplementToPlan } = useSupplementSaver();
 
   const [supplement, setSupplement] = useState<Supplement | null>(null);
   const [showTimePicker, setShowTimePicker] = useState(Platform.OS === "ios");
 
-  const { plans, setPlans, errorMessage, activeGoals } = useStorage();
+  const {
+    plans,
+    setPlans,
+    errorMessage,
+    activeGoals,
+    trainingPlanSettings,
+    setTrainingPlanSettings,
+  } = useStorage();
 
   const { t } = useTranslation(["common", "areas", "tips"]);
   const supplementMap = useSupplementMap();
@@ -131,6 +145,61 @@ export default function Plans() {
       [tipId]: !prev[tipId],
     }));
   }, []);
+
+  const openTrainingSettingsModal = (tipId: string, trainingTitle?: string | null) => {
+    const existing = trainingPlanSettings[tipId];
+    setTrainingSessionsInput(
+      existing?.sessionsPerWeek != null ? existing.sessionsPerWeek.toString() : ""
+    );
+    setTrainingDurationInput(
+      existing?.sessionDurationMinutes != null
+        ? existing.sessionDurationMinutes.toString()
+        : ""
+    );
+    setTrainingSettingsTipId(tipId);
+    setTrainingSettingsTitle(trainingTitle ?? null);
+    setTrainingSettingsVisible(true);
+  };
+
+  const closeTrainingSettingsModal = () => {
+    setTrainingSettingsVisible(false);
+    setTrainingSettingsTipId(null);
+    setTrainingSettingsTitle(null);
+    setTrainingSessionsInput("");
+    setTrainingDurationInput("");
+  };
+
+  const handleSaveTrainingSettings = () => {
+    if (!trainingSettingsTipId) {
+      closeTrainingSettingsModal();
+      return;
+    }
+
+    const parseNumericInput = (value: string) => {
+      const trimmed = value.trim();
+      if (!trimmed) return undefined;
+      const parsed = Number.parseInt(trimmed, 10);
+      return Number.isNaN(parsed) ? undefined : parsed;
+    };
+
+    const sessionsValue = parseNumericInput(trainingSessionsInput);
+    const durationValue = parseNumericInput(trainingDurationInput);
+
+    setTrainingPlanSettings((prev) => {
+      const next = { ...prev };
+      if (sessionsValue === undefined && durationValue === undefined) {
+        delete next[trainingSettingsTipId];
+      } else {
+        next[trainingSettingsTipId] = {
+          sessionsPerWeek: sessionsValue,
+          sessionDurationMinutes: durationValue,
+        };
+      }
+      return next;
+    });
+
+    closeTrainingSettingsModal();
+  };
 
   useEffect(() => {
     if (plans.length === 0) {
@@ -312,28 +381,107 @@ export default function Plans() {
     }
 
     return trainingGoals.map((goal) => {
-      const areaMeta = areas.find((area) => area.id === goal.mainGoalId);
-      const areaTitle = areaMeta
-        ? t(`areas:${areaMeta.id}.title`)
-        : goal.mainGoalId;
       const tipTitle = goal.tipId
         ? t(`tips:${goal.tipId}.title`, { defaultValue: goal.tipId })
         : null;
+      const trainingSettingsKey = goal.tipId ?? goal.mainGoalId;
+      const userSettings = trainingPlanSettings[trainingSettingsKey] ?? {};
+      const trainingBadges: Array<{
+        key: string;
+        label: string;
+        icon: "calendar" | "clock";
+      }> = [];
+
+      if (
+        typeof userSettings.sessionsPerWeek === "number" &&
+        !Number.isNaN(userSettings.sessionsPerWeek)
+      ) {
+        trainingBadges.push({
+          key: `${trainingSettingsKey}-sessions`,
+          label: t("plan.trainingSessionsPerWeek", {
+            count: userSettings.sessionsPerWeek,
+            defaultValue: `${userSettings.sessionsPerWeek} pass/vecka`,
+          }),
+          icon: "calendar",
+        });
+      }
+
+      if (
+        typeof userSettings.sessionDurationMinutes === "number" &&
+        !Number.isNaN(userSettings.sessionDurationMinutes)
+      ) {
+        trainingBadges.push({
+          key: `${trainingSettingsKey}-duration`,
+          label: t("plan.trainingDurationMinutes", {
+            minutes: userSettings.sessionDurationMinutes,
+            defaultValue: `${userSettings.sessionDurationMinutes} min`,
+          }),
+          icon: "clock",
+        });
+      }
+
+      const editLabel = t("plan.editTrainingSettings", {
+        defaultValue: "Redigera",
+      });
+
+      const editAction = (
+        <TouchableOpacity
+          onPress={() =>
+            openTrainingSettingsModal(
+              trainingSettingsKey,
+              tipTitle ?? goal.mainGoalId
+            )
+          }
+          accessibilityRole="button"
+          accessibilityLabel={editLabel}
+          style={styles.trainingEditIcon}
+        >
+          <IconSymbol
+            name="pencil"
+            size={16}
+            color={Colors.dark.icon}
+          />
+        </TouchableOpacity>
+      );
 
       return (
-        <View key={`${goal.mainGoalId}-${goal.tipId}`} style={styles.trainingItem}>
-          <ThemedText type="defaultSemiBold">{areaTitle}</ThemedText>
-          {!!tipTitle && (
-            <ThemedText type="default" style={styles.trainingTip}>
-              {tipTitle}
-            </ThemedText>
-          )}
+        <AppBox
+          key={`${goal.mainGoalId}-${goal.tipId}`}
+          title={tipTitle ?? goal.mainGoalId}
+          headerRight={editAction}
+          style={styles.trainingBox}
+        >
           <ThemedText type="default" style={styles.trainingMeta}>
             {t("plan.trainingActiveSince", {
               date: formatDate(goal.startedAt),
             })}
           </ThemedText>
-        </View>
+          <View style={styles.trainingSettingsContainer}>
+            {trainingBadges.length ? (
+              <View style={styles.trainingBadgesRow}>
+                {trainingBadges.map(({ key, label, icon }) => (
+                  <Badge key={key} variant="overlay" style={styles.trainingBadge}>
+                    <IconSymbol
+                      name={icon}
+                      size={14}
+                      color={Colors.dark.icon}
+                      style={styles.trainingBadgeIcon}
+                    />
+                    <ThemedText type="caption" style={styles.trainingBadgeLabel}>
+                      {label}
+                    </ThemedText>
+                  </Badge>
+                ))}
+              </View>
+            ) : (
+              <ThemedText type="default" style={styles.trainingSettingsText}>
+                {t("plan.trainingSettingsUnset", {
+                  defaultValue: "Inga inställningar sparade",
+                })}
+              </ThemedText>
+            )}
+          </View>
+        </AppBox>
       );
     });
   };
@@ -411,12 +559,12 @@ export default function Plans() {
                         })
                       : t("plan.showMoreNutritionFoods", {
                           count: hiddenCount,
-                          defaultValue: `+${hiddenCount}`,
+                          defaultValue: `${hiddenCount}st`,
                         })}
                   </ThemedText>
                   <IconSymbol
                     name="chevron.right"
-                    size={14}
+                    size={18}
                     color={badgeIconColor}
                     style={[
                       styles.toggleBadgeIcon,
@@ -441,7 +589,10 @@ export default function Plans() {
         ListHeaderComponent={
           <View style={styles.sectionsContainer}>
             <View style={styles.sectionBlock}>
-              <Collapsible title={t("plan.trainingHeader")}>
+              <Collapsible
+                title={t("plan.trainingHeader")}
+                contentStyle={styles.collapsibleContentFlush}
+              >
                 {renderTrainingGoals()}
               </Collapsible>
             </View>
@@ -530,6 +681,31 @@ export default function Plans() {
             />
           )}
         </ThemedModal>
+        <TrainingSettingsModal
+          visible={trainingSettingsVisible}
+          title={t("plan.trainingSettingsTitle", { defaultValue: "Träningsinställningar" })}
+          trainingTitle={trainingSettingsTitle}
+          sessionsPlaceholder={t("plan.trainingSessionsPlaceholder", {
+            defaultValue: "Pass per vecka",
+          })}
+          durationPlaceholder={t("plan.trainingDurationPlaceholder", {
+            defaultValue: "Minuter per pass",
+          })}
+          sessionsLabel={t("plan.trainingSessionsPlaceholder", {
+            defaultValue: "Pass per vecka",
+          })}
+          durationLabel={t("plan.trainingDurationPlaceholder", {
+            defaultValue: "Minuter per pass",
+          })}
+          sessionsValue={trainingSessionsInput}
+          durationValue={trainingDurationInput}
+          onChangeSessions={setTrainingSessionsInput}
+          onChangeDuration={setTrainingDurationInput}
+          onSave={handleSaveTrainingSettings}
+          onClose={closeTrainingSettingsModal}
+          saveLabel={t("general.save")}
+          cancelLabel={t("general.cancel")}
+        />
       </Portal>
 
       {/* Modal för att lägga till supplement */}
@@ -590,6 +766,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
+  collapsibleContentFlush: {
+    marginLeft: 0,
+  },
+  trainingBox: {
+    marginBottom: 20,
+  },
   sectionBlock: {
     marginBottom: 18,
   },
@@ -633,17 +815,45 @@ const styles = StyleSheet.create({
     width: "100%",
     color: Colors.dark.text,
   },
-  trainingItem: {
-    paddingVertical: 10,
-    borderBottomColor: Colors.dark.border,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
   trainingTip: {
     marginTop: 4,
   },
   trainingMeta: {
     marginTop: 2,
     color: Colors.dark.textMuted,
+  },
+  trainingSettingsContainer: {
+    marginTop: 12,
+  },
+  trainingBadgesContainer: {
+    flex: 1,
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  trainingBadgesRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: 4,
+  },
+  trainingBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  trainingBadgeIcon: {
+    marginRight: 6,
+  },
+  trainingBadgeLabel: {
+    color: Colors.dark.text,
+    fontSize: 12,
+  },
+  trainingSettingsText: {
+    flex: 1,
+    color: Colors.dark.textLight,
+  },
+  trainingEditIcon: {
+    padding: 6,
   },
   placeholderText: {
     color: Colors.dark.textMuted,

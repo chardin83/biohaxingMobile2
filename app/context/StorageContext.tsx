@@ -52,6 +52,11 @@ type FinishedGoal = {
   tipId: string;
 };
 
+export type TrainingPlanSettings = {
+  sessionsPerWeek?: number;
+  sessionDurationMinutes?: number;
+};
+
 export interface ViewedTip {
   mainGoalId: string;
   tipId: string;
@@ -114,6 +119,12 @@ interface StorageContextType {
   incrementTipChat: (mainGoalId: string, tipId: string, questionType: string) => number;
   addChatMessageXP: (mainGoalId: string, tipId: string) => number;
   setTipVerdict: (mainGoalId: string, tipId: string, verdict: VerdictValue) => number;
+  trainingPlanSettings: Record<string, TrainingPlanSettings>;
+  setTrainingPlanSettings: (
+    updater:
+      | Record<string, TrainingPlanSettings>
+      | ((prev: Record<string, TrainingPlanSettings>) => Record<string, TrainingPlanSettings>)
+  ) => void;
 }
 
 const STORAGE_KEYS = {
@@ -130,6 +141,7 @@ const STORAGE_KEYS = {
   MY_LEVEL: "myLevel",
   DAILY_NUTRITION: "dailyNutritionSummary",
   VIEWED_TIPS: "viewedTips",
+  TRAINING_PLAN_SETTINGS: "trainingPlanSettings",
 };
 
 const StorageContext = createContext<StorageContextType | undefined>(undefined);
@@ -162,6 +174,8 @@ export const StorageProvider = ({
   const [dailyNutritionSummariesState, setDailyNutritionSummariesState] =
     useState<Record<string, DailyNutritionSummary>>({});
   const [viewedTipsState, setViewedTipsState] = useState<ViewedTip[]>([]);
+  const [trainingPlanSettingsState, setTrainingPlanSettingsState] =
+    useState<Record<string, TrainingPlanSettings>>({});
 
   useEffect(() => {
     const loadData = async () => {
@@ -180,6 +194,7 @@ export const StorageProvider = ({
           myLevelRaw,
           dailyNutritionRaw,
           viewedTipsRaw,
+          trainingSettingsRaw,
         ] = await Promise.all([
           AsyncStorage.getItem(STORAGE_KEYS.PLANS),
           AsyncStorage.getItem(STORAGE_KEYS.HAS_VISITED_CHAT),
@@ -194,6 +209,7 @@ export const StorageProvider = ({
           AsyncStorage.getItem(STORAGE_KEYS.MY_LEVEL),
           AsyncStorage.getItem(STORAGE_KEYS.DAILY_NUTRITION),
           AsyncStorage.getItem(STORAGE_KEYS.VIEWED_TIPS),
+          AsyncStorage.getItem(STORAGE_KEYS.TRAINING_PLAN_SETTINGS),
         ]);
 
         if (plansRaw) setPlansState(JSON.parse(plansRaw));
@@ -212,6 +228,8 @@ export const StorageProvider = ({
         if (dailyNutritionRaw)
           setDailyNutritionSummariesState(JSON.parse(dailyNutritionRaw));
         if (viewedTipsRaw) setViewedTipsState(JSON.parse(viewedTipsRaw));
+        if (trainingSettingsRaw)
+          setTrainingPlanSettingsState(JSON.parse(trainingSettingsRaw));
       } catch (err) {
         console.error("Kunde inte ladda från AsyncStorage:", err);
       } finally {
@@ -360,6 +378,21 @@ export const StorageProvider = ({
     });
   };
 
+  const setTrainingPlanSettings = (
+    updater:
+      | Record<string, TrainingPlanSettings>
+      | ((prev: Record<string, TrainingPlanSettings>) => Record<string, TrainingPlanSettings>)
+  ) => {
+    setTrainingPlanSettingsState((prev) => {
+      const updated = typeof updater === "function" ? updater(prev) : updater;
+      AsyncStorage.setItem(
+        STORAGE_KEYS.TRAINING_PLAN_SETTINGS,
+        JSON.stringify(updated)
+      );
+      return updated;
+    });
+  };
+
   const addTipView = (mainGoalId: string, tipId: string): number => {
     const existing = viewedTipsState.find(
       (v) => v.mainGoalId === mainGoalId && v.tipId === tipId
@@ -504,6 +537,8 @@ export const StorageProvider = ({
       incrementTipChat,
       addChatMessageXP,
       setTipVerdict,
+      trainingPlanSettings: trainingPlanSettingsState,
+      setTrainingPlanSettings,
     }),
     [
       plansState,
@@ -525,6 +560,7 @@ export const StorageProvider = ({
       dailyNutritionSummariesState,
       setDailyNutritionSummaries,
       viewedTipsState,
+      trainingPlanSettingsState,
     ]
   );
 
