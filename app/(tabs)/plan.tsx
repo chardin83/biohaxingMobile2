@@ -29,7 +29,8 @@ import { Colors } from "@/constants/Colors";
 import { defaultPlans } from "@/locales/defaultPlans";
 import { useLocalSearchParams } from "expo-router";
 import { areas } from "@/locales/areas";
-import { tips } from "@/locales/tips";
+import { tips, Tip } from "@/locales/tips";
+import { useSupplementMap } from "@/locales/supplements";
 // Removed unused CreatePlanModal import; using ThemedModal for create/edit
 
 const PLAN_CATEGORY_BY_TIP_ID = new Map(
@@ -57,6 +58,7 @@ export default function Plans() {
   const { plans, setPlans, errorMessage, activeGoals } = useStorage();
 
   const { t } = useTranslation(["common", "areas", "tips"]);
+  const supplementMap = useSupplementMap();
 
   const resolvePlanCategory = (tipId?: string, goalCategory?: string) => {
     if (goalCategory === "training" || goalCategory === "nutrition") {
@@ -82,6 +84,25 @@ export default function Plans() {
         resolvePlanCategory(goal.tipId, goal.planCategory) === "nutrition"
       ),
     [activeGoals]
+  );
+
+  const getRecommendedDoseLabel = React.useCallback(
+    (tip?: Tip) => {
+      if (!tip?.supplements?.length) return null;
+      for (const reference of tip.supplements) {
+        if (!reference.id) continue;
+        const supplement = supplementMap.get(reference.id);
+        if (supplement?.quantity) {
+          const unit = supplement.unit ? ` ${supplement.unit}` : "";
+          const dose = `${supplement.quantity}${unit}`.trim();
+          if (dose.length > 0) {
+            return t("plan.recommendedDose", { dose });
+          }
+        }
+      }
+      return null;
+    },
+    [supplementMap, t]
   );
 
   const nutritionGroups = useMemo(() => {
@@ -312,11 +333,23 @@ export default function Plans() {
       const tipTitle = t(`tips:${tipId}.title`, {
         defaultValue: tip?.title ?? tipId,
       });
-      const foodLabels = (tip?.nutritionFoods ?? []).map((foodKey) =>
-        t(`tips:${tipId}.nutritionFoods.items.${foodKey}`, {
-          defaultValue: foodKey,
-        })
-      );
+      const recommendedDoseLabel = getRecommendedDoseLabel(tip);
+      const foodItems = (tip?.nutritionFoods ?? []).map((food) => {
+        const name = t(`tips:${tipId}.nutritionFoods.items.${food.name}.name`, {
+          defaultValue: food.name,
+        });
+        const details = t(
+          `tips:${tipId}.nutritionFoods.items.${food.details}.details`,
+          {
+            defaultValue: "",
+          }
+        );
+        return {
+          key: `${tipId}-${food.name}-${food.details}`,
+          name,
+          details,
+        };
+      });
       const areaBadges = (tip?.areas ?? []).map((area) => {
         const areaMeta = areas.find((candidate) => candidate.id === area.id);
         const label = areaMeta
@@ -330,13 +363,23 @@ export default function Plans() {
           <ThemedText type="defaultSemiBold" style={styles.nutritionTipTitle}>
             {tipTitle}
           </ThemedText>
-          {!!foodLabels.length && (
+          {recommendedDoseLabel && (
+            <ThemedText type="default" style={styles.recommendedDose}>
+              {recommendedDoseLabel}
+            </ThemedText>
+          )}
+          {!!foodItems.length && (
             <View style={[styles.badgeRow, styles.foodBadgeRow]}>
-              {foodLabels.map((label) => (
-                <View key={`food-${tipId}-${label}`} style={[styles.badge, styles.foodBadge]}>
+              {foodItems.map(({ key, name, details }) => (
+                <View key={`food-${key}`} style={[styles.badge, styles.foodBadge]}>
                   <ThemedText type="default" style={styles.badgeLabel}>
-                    {label}
+                    {name}
                   </ThemedText>
+                  {!!details && (
+                    <ThemedText type="default" style={styles.badgeDetail}>
+                      {details}
+                    </ThemedText>
+                  )}
                 </View>
               ))}
             </View>
@@ -582,6 +625,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   nutritionTipTitle: {
+    marginBottom: 4,
+  },
+  recommendedDose: {
+    color: Colors.dark.textLight,
     marginBottom: 8,
   },
   badgeRow: {
@@ -596,7 +643,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: StyleSheet.hairlineWidth,
     paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingVertical: 6,
     marginRight: 8,
     marginBottom: 8,
     backgroundColor: Colors.dark.secondary,
@@ -612,5 +659,9 @@ const styles = StyleSheet.create({
   },
   badgeLabel: {
     color: Colors.dark.text,
+  },
+  badgeDetail: {
+    color: Colors.dark.textLight,
+    marginTop: 4,
   },
 });

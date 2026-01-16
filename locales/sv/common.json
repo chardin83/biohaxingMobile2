@@ -42,6 +42,7 @@
        "noActiveTraining": "Inga aktiva träningsmål ännu.",
        "trainingActiveSince": "Aktiv sedan {{date}}",
        "nutritionHeader": "Kostplan",
+        "recommendedDose": "Rekommenderad dagsdos: {{dose}}",
          "supplementSectionTitle": "Kosttillskott",
          "addTrainingGoal": "Lägg till i träningsplan",
          "addNutritionGoal": "Lägg till i kostplan",

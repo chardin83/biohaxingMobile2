@@ -11,10 +11,22 @@
     "nutritionFoods": {
       "title": "Livsmedel rika på D-vitamin",
       "items": {
-        "fattyFish": "Fet fisk (lax, makrill, sardiner)",
-        "eggYolks": "Äggulor",
-        "fortifiedDairy": "Berikade mejeri- eller växtdrycker",
-        "mushrooms": "Svamp som fått solljus"
+        "fattyFish": {
+          "name": "Fet fisk (lax, makrill, sardiner)",
+          "details": "Sikta på en portion 120 g lax eller makrill 2-3 gånger i veckan (~400-600 IE D-vitamin)."
+        },
+        "eggYolks": {
+          "name": "Äggulor",
+          "details": "Två äggulor ger cirka 80-100 IE D-vitamin."
+        },
+        "fortifiedDairy": {
+          "name": "Berikade mejeri- eller växtdrycker",
+          "details": "Ett glas 250 ml berikad mjölk eller växtdryck ger omkring 100-130 IE D-vitamin."
+        },
+        "mushrooms": {
+          "name": "Svamp som fått solljus",
+          "details": "100 g solljusbehandlad svamp kan ge ungefär 400 IE D-vitamin."
+        }
       }
     }
   },
@@ -38,11 +50,26 @@
     "nutritionFoods": {
       "title": "Livsmedel rika på CoQ10",
       "items": {
-        "organMeats": "Inälvsmat (hjärta, lever)",
-        "fattyFish": "Fet fisk (sardiner, makrill)",
-        "beef": "Nötkött och bison",
-        "spinach": "Spenat",
-        "broccoli": "Broccoli"
+        "organMeats": {
+          "name": "Inälvsmat (hjärta, lever)",
+          "details": "85 g nötlever eller hjärta ger omkring 10-15 mg CoQ10."
+        },
+        "fattyFish": {
+          "name": "Fet fisk (sardiner, makrill)",
+          "details": "120 g sardiner eller makrill ger cirka 6 mg CoQ10."
+        },
+        "beef": {
+          "name": "Nötkött och bison",
+          "details": "120 g magert nötkött ger ungefär 3 mg CoQ10."
+        },
+        "spinach": {
+          "name": "Spenat",
+          "details": "1 kopp kokt spenat (~180 g) ger cirka 2 mg CoQ10."
+        },
+        "broccoli": {
+          "name": "Broccoli",
+          "details": "1 kopp ångad broccoli (~150 g) ger runt 1 mg CoQ10."
+        }
       }
     }
   },
@@ -97,11 +124,26 @@
     "nutritionFoods": {
       "title": "Livsmedel rika på C-vitamin",
       "items": {
-        "citrusFruits": "Citrusfrukter (apelsin, grapefrukt, citron)",
-        "berries": "Bär (jordgubbar, svarta vinbär)",
-        "bellPeppers": "Paprika",
-        "kiwi": "Kiwi",
-        "fermentedCabbage": "Fermenterad kål (surkål, kimchi)"
+        "citrusFruits": {
+          "name": "Citrusfrukter (apelsin, grapefrukt, citron)",
+          "details": "En medelstor apelsin (~130 g) ger cirka 70 mg C-vitamin."
+        },
+        "berries": {
+          "name": "Bär (jordgubbar, svarta vinbär)",
+          "details": "1 kopp blandade bär (~150 g) ger runt 80 mg C-vitamin."
+        },
+        "bellPeppers": {
+          "name": "Paprika",
+          "details": "1/2 kopp rå röd paprika (~75 g) ger cirka 95 mg C-vitamin."
+        },
+        "kiwi": {
+          "name": "Kiwi",
+          "details": "En stor kiwi (~75 g) ger omkring 70 mg C-vitamin."
+        },
+        "fermentedCabbage": {
+          "name": "Fermenterad kål (surkål, kimchi)",
+          "details": "1/2 kopp surkål (~70 g) ger ungefär 20 mg C-vitamin."
+        }
       }
     }
   },
@@ -123,11 +165,26 @@
     "nutritionFoods": {
       "title": "Livsmedel rika på glycin",
       "items": {
-        "boneBroth": "Benbuljong",
-        "collagenCuts": "Collagenrika köttbitar (bringa, lägg)",
-        "skinOnPoultry": "Fågel med skinn",
-        "porkRinds": "Fläsksvålar",
-        "legumes": "Baljväxter (sojabönor, bönor, linser)"
+        "boneBroth": {
+          "name": "Benbuljong",
+          "details": "En 250 ml kopp långkokt benbuljong ger ca 2-3 g glycin."
+        },
+        "collagenCuts": {
+          "name": "Collagenrika köttbitar (bringa, lägg)",
+          "details": "120 g långkokt bringa eller lägg ger ungefär 3 g glycinrikt kollagen."
+        },
+        "skinOnPoultry": {
+          "name": "Fågel med skinn",
+          "details": "100 g ugnsstekt kyckling med skinn ger omkring 2 g glycin."
+        },
+        "porkRinds": {
+          "name": "Fläsksvålar",
+          "details": "30 g fläsksvålar innehåller runt 2,5 g glycin."
+        },
+        "legumes": {
+          "name": "Baljväxter (sojabönor, bönor, linser)",
+          "details": "1 kopp kokta sojabönor eller linser (~180 g) ger cirka 2 g glycin."
+        }
       }
     }
   },
@@ -271,11 +328,26 @@
     "nutritionFoods": {
       "title": "Probiotiska livsmedel",
       "items": {
-        "yogurt": "Yoghurt med levande kulturer",
-        "kefir": "Kefir",
-        "sauerkraut": "Surkål",
-        "kimchi": "Kimchi",
-        "miso": "Miso"
+        "yogurt": {
+          "name": "Yoghurt med levande kulturer",
+          "details": "200 ml yoghurt med levande kultur ger ungefär 5-10 miljarder CFU."
+        },
+        "kefir": {
+          "name": "Kefir",
+          "details": "200 ml kefir ger ca 10-20 miljarder CFU av olika stammar."
+        },
+        "sauerkraut": {
+          "name": "Surkål",
+          "details": "1/2 kopp rå surkål (~70 g) ger levande mjölksyrabakterier."
+        },
+        "kimchi": {
+          "name": "Kimchi",
+          "details": "1/2 kopp kimchi (~85 g) ger probiotika plus prebiotiska grönsaker."
+        },
+        "miso": {
+          "name": "Miso",
+          "details": "1 matsked miso i varm (inte kokande) buljong bevarar enzymerna."
+        }
       }
     }
   },
@@ -289,11 +361,26 @@
     "nutritionFoods": {
       "title": "Fiberrika livsmedel",
       "items": {
-        "oats": "Havre och korn",
-        "legumes": "Baljväxter (linser, kikärtor, bönor)",
-        "chiaSeeds": "Chia- eller linfrön",
-        "berries": "Bär",
-        "cruciferousVeg": "Korsblommiga grönsaker (broccoli, brysselkål)"
+        "oats": {
+          "name": "Havre och korn",
+          "details": "1/2 kopp havregryn (~40 g) ger omkring 4 g betaglukanfiber."
+        },
+        "legumes": {
+          "name": "Baljväxter (linser, kikärtor, bönor)",
+          "details": "1 kopp kokta bönor eller linser (~180 g) ger ca 15 g fiber."
+        },
+        "chiaSeeds": {
+          "name": "Chia- eller linfrön",
+          "details": "2 matskedar chiafrön (~28 g) ger ungefär 10 g fiber."
+        },
+        "berries": {
+          "name": "Bär",
+          "details": "1 kopp hallon (~120 g) ger omkring 8 g fiber."
+        },
+        "cruciferousVeg": {
+          "name": "Korsblommiga grönsaker (broccoli, brysselkål)",
+          "details": "1 kopp ångad broccoli eller blomkål (~150 g) ger ca 5 g fiber."
+        }
       }
     }
   },
@@ -340,12 +427,30 @@
     "nutritionFoods": {
       "title": "Magnesiumrika livsmedel",
       "items": {
-        "leafyGreens": "Mörkgröna blad (spenat, mangold, grönkål)",
-        "pumpkinSeeds": "Pumpa- eller solrosfrön",
-        "almonds": "Mandlar och andra nötter",
-        "darkChocolate": "Mörk choklad (70–85 % kakao)",
-        "blackBeans": "Svarta bönor, kikärtor eller linser",
-        "avocado": "Avokado"
+        "leafyGreens": {
+          "name": "Mörkgröna blad (spenat, mangold, grönkål)",
+          "details": "Ca 180 g kokt spenat (motsvarar 1 kopp) ger runt 150 mg magnesium."
+        },
+        "pumpkinSeeds": {
+          "name": "Pumpa- eller solrosfrön",
+          "details": "30 g rostade pumpafrön ger ungefär 150 mg magnesium."
+        },
+        "almonds": {
+          "name": "Mandlar och andra nötter",
+          "details": "30 g mandlar bidrar med cirka 80 mg magnesium."
+        },
+        "darkChocolate": {
+          "name": "Mörk choklad (70–85 % kakao)",
+          "details": "30 g mörk choklad (70-85 % kakao) ger omkring 65 mg magnesium."
+        },
+        "blackBeans": {
+          "name": "Svarta bönor, kikärtor eller linser",
+          "details": "1 kopp kokta svarta bönor (~170 g) ger ca 120 mg magnesium."
+        },
+        "avocado": {
+          "name": "Avokado",
+          "details": "1 medelstor avokado ger ungefär 60 mg magnesium."
+        }
       }
     }
   },
@@ -360,11 +465,26 @@
     "nutritionFoods": {
       "title": "Livsmedel rika på zink",
       "items": {
-        "oysters": "Ostron",
-        "beef": "Nötkött och lamm",
-        "pumpkinSeeds": "Pumpafrön",
-        "chickpeas": "Kikärtor och linser",
-        "cashews": "Cashewnötter"
+        "oysters": {
+          "name": "Ostron",
+          "details": "Tre medelstora ostron ger ungefär 30 mg zink."
+        },
+        "beef": {
+          "name": "Nötkött och lamm",
+          "details": "En portion 120 g nötkött ger runt 5 mg zink."
+        },
+        "pumpkinSeeds": {
+          "name": "Pumpafrön",
+          "details": "30 g pumpafrön ger cirka 2-3 mg zink."
+        },
+        "chickpeas": {
+          "name": "Kikärtor och linser",
+          "details": "1 kopp kokta kikärtor (~170 g) ger omkring 2,5 mg zink."
+        },
+        "cashews": {
+          "name": "Cashewnötter",
+          "details": "30 g cashewnötter ger ungefär 1,6 mg zink."
+        }
       }
     }
   },
@@ -379,11 +499,26 @@
     "nutritionFoods": {
       "title": "Livsmedel rika på selen",
       "items": {
-        "brazilNuts": "Paranötter",
-        "sardines": "Sardiner och lax",
-        "eggs": "Ägg",
-        "shiitakeMushrooms": "Shiitake-svamp",
-        "sunflowerSeeds": "Solrosfrön"
+        "brazilNuts": {
+          "name": "Paranötter",
+          "details": "En paranöt ger 60-90 mikrogram selen; begränsa intaget till 1-2 per dag."
+        },
+        "sardines": {
+          "name": "Sardiner och lax",
+          "details": "100 g sardiner ger cirka 45 mikrogram selen."
+        },
+        "eggs": {
+          "name": "Ägg",
+          "details": "Två ägg ger runt 28 mikrogram selen."
+        },
+        "shiitakeMushrooms": {
+          "name": "Shiitake-svamp",
+          "details": "100 g kokt shiitake ger ungefär 20 mikrogram selen."
+        },
+        "sunflowerSeeds": {
+          "name": "Solrosfrön",
+          "details": "30 g solrosfrön ger ca 18 mikrogram selen."
+        }
       }
     }
   },
@@ -398,11 +533,26 @@
     "nutritionFoods": {
       "title": "Jodrika livsmedel",
       "items": {
-        "seaweed": "Sjögräs (kombu, nori, wakame)",
-        "iodizedSalt": "Joderat salt",
-        "dairy": "Mejeriprodukter",
-        "eggs": "Ägg",
-        "cod": "Torsk och annan vit fisk"
+        "seaweed": {
+          "name": "Sjögräs (kombu, nori, wakame)",
+          "details": "Ett ark torkat sjögräs (ca 5 g) kan ge 150-300 mikrogram jod; använd sparsamt."
+        },
+        "iodizedSalt": {
+          "name": "Joderat salt",
+          "details": "1/2 tesked joderat salt ger nära 150 mikrogram jod."
+        },
+        "dairy": {
+          "name": "Mejeriprodukter",
+          "details": "Ett glas 250 ml mjölk eller yoghurt ger omkring 50 mikrogram jod."
+        },
+        "eggs": {
+          "name": "Ägg",
+          "details": "Två ägg ger ungefär 50 mikrogram jod."
+        },
+        "cod": {
+          "name": "Torsk och annan vit fisk",
+          "details": "En 120 g torskfilé ger ca 110 mikrogram jod."
+        }
       }
     }
   },

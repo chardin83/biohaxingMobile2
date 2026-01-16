@@ -39,6 +39,7 @@
     "noActiveTraining": "No active training goals yet.",
     "trainingActiveSince": "Active since {{date}}",
     "nutritionHeader": "Diet plan",
+    "recommendedDose": "Recommended daily dose: {{dose}}",
     "supplementSectionTitle": "Supplement schedule",
     "addTrainingGoal": "Add to training plan",
     "addNutritionGoal": "Add to diet plan",

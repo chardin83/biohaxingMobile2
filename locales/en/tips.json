@@ -11,10 +11,22 @@
     "nutritionFoods": {
       "title": "Vitamin D food sources",
       "items": {
-        "fattyFish": "Fatty fish (salmon, mackerel, sardines)",
-        "eggYolks": "Egg yolks",
-        "fortifiedDairy": "Fortified dairy or plant milks",
-        "mushrooms": "Sun-exposed mushrooms"
+        "fattyFish": {
+          "name": "Fatty fish (salmon, mackerel, sardines)",
+          "details": "Aim for a 120 g serving of salmon or mackerel 2-3 times per week (~400-600 IU vitamin D)."
+        },
+        "eggYolks": {
+          "name": "Egg yolks",
+          "details": "Two egg yolks supply roughly 80-100 IU vitamin D."
+        },
+        "fortifiedDairy": {
+          "name": "Fortified dairy or plant milks",
+          "details": "A 250 ml glass of fortified milk or plant milk delivers about 100-130 IU vitamin D."
+        },
+        "mushrooms": {
+          "name": "Sun-exposed mushrooms",
+          "details": "100 g sun-exposed mushrooms can provide roughly 400 IU vitamin D."
+        }
       }
     }
   },
@@ -38,11 +50,26 @@
     "nutritionFoods": {
       "title": "CoQ10-rich foods",
       "items": {
-        "organMeats": "Organ meats (heart, liver)",
-        "fattyFish": "Fatty fish (sardines, mackerel)",
-        "beef": "Beef and bison",
-        "spinach": "Spinach",
-        "broccoli": "Broccoli"
+        "organMeats": {
+          "name": "Organ meats (heart, liver)",
+          "details": "An 85 g serving of beef heart or liver supplies around 10-15 mg CoQ10."
+        },
+        "fattyFish": {
+          "name": "Fatty fish (sardines, mackerel)",
+          "details": "120 g sardines or mackerel delivers roughly 6 mg CoQ10."
+        },
+        "beef": {
+          "name": "Beef and bison",
+          "details": "120 g lean beef offers about 3 mg CoQ10."
+        },
+        "spinach": {
+          "name": "Spinach",
+          "details": "1 cup cooked spinach (~180 g) provides about 2 mg CoQ10."
+        },
+        "broccoli": {
+          "name": "Broccoli",
+          "details": "1 cup steamed broccoli (~150 g) yields roughly 1 mg CoQ10."
+        }
       }
     }
   },
@@ -97,11 +124,26 @@
     "nutritionFoods": {
       "title": "Vitamin C-rich foods",
       "items": {
-        "citrusFruits": "Citrus fruits (oranges, grapefruit, lemon)",
-        "berries": "Berries (strawberries, blackcurrants)",
-        "bellPeppers": "Bell peppers",
-        "kiwi": "Kiwi fruit",
-        "fermentedCabbage": "Fermented cabbage (sauerkraut, kimchi)"
+        "citrusFruits": {
+          "name": "Citrus fruits (oranges, grapefruit, lemon)",
+          "details": "One medium orange (~130 g) yields about 70 mg vitamin C."
+        },
+        "berries": {
+          "name": "Berries (strawberries, blackcurrants)",
+          "details": "1 cup mixed berries (~150 g) supplies roughly 80 mg vitamin C."
+        },
+        "bellPeppers": {
+          "name": "Bell peppers",
+          "details": "Half a cup raw red pepper (~75 g) gives about 95 mg vitamin C."
+        },
+        "kiwi": {
+          "name": "Kiwi fruit",
+          "details": "One large kiwi (~75 g) provides about 70 mg vitamin C."
+        },
+        "fermentedCabbage": {
+          "name": "Fermented cabbage (sauerkraut, kimchi)",
+          "details": "Half a cup sauerkraut (~70 g) offers around 20 mg vitamin C."
+        }
       }
     }
   },
@@ -123,11 +165,26 @@
     "nutritionFoods": {
       "title": "Glycine-rich foods",
       "items": {
-        "boneBroth": "Bone broth",
-        "collagenCuts": "Collagen-rich cuts (brisket, shank)",
-        "skinOnPoultry": "Skin-on poultry",
-        "porkRinds": "Pork rinds or cracklings",
-        "legumes": "Legumes (soy, beans, lentils)"
+        "boneBroth": {
+          "name": "Bone broth",
+          "details": "A 250 ml cup of long-simmered bone broth gives about 2-3 g glycine."
+        },
+        "collagenCuts": {
+          "name": "Collagen-rich cuts (brisket, shank)",
+          "details": "120 g braised brisket or shank supplies roughly 3 g glycine-rich collagen."
+        },
+        "skinOnPoultry": {
+          "name": "Skin-on poultry",
+          "details": "100 g roasted chicken with skin provides about 2 g glycine."
+        },
+        "porkRinds": {
+          "name": "Pork rinds or cracklings",
+          "details": "30 g pork rinds contain around 2.5 g glycine."
+        },
+        "legumes": {
+          "name": "Legumes (soy, beans, lentils)",
+          "details": "1 cup cooked soybeans or lentils (~180 g) offers about 2 g glycine."
+        }
       }
     }
   },
@@ -335,11 +392,26 @@
     "nutritionFoods": {
       "title": "Probiotic foods",
       "items": {
-        "yogurt": "Yogurt with live cultures",
-        "kefir": "Kefir",
-        "sauerkraut": "Sauerkraut",
-        "kimchi": "Kimchi",
-        "miso": "Miso"
+        "yogurt": {
+          "name": "Yogurt",
+          "details": "200 ml live-culture yogurt delivers roughly 5-10 billion CFU."
+        },
+        "kefir": {
+          "name": "Kefir",
+          "details": "200 ml kefir offers about 10-20 billion CFU with diverse strains."
+        },
+        "sauerkraut": {
+          "name": "Sauerkraut",
+          "details": "Half a cup raw sauerkraut (~70 g) supplies live lactic acid bacteria."
+        },
+        "kimchi": {
+          "name": "Kimchi",
+          "details": "Half a cup kimchi (~85 g) provides probiotics plus prebiotic vegetables."
+        },
+        "miso": {
+          "name": "Miso",
+          "details": "One tablespoon miso stirred into warm (not boiling) broth preserves enzymes."
+        }
       }
     }
   },
@@ -353,11 +425,26 @@
     "nutritionFoods": {
       "title": "High-fiber foods",
       "items": {
-        "oats": "Oats and barley",
-        "legumes": "Legumes (lentils, chickpeas, beans)",
-        "chiaSeeds": "Chia or flax seeds",
-        "berries": "Berries",
-        "cruciferousVeg": "Cruciferous vegetables (broccoli, Brussels sprouts)"
+        "oats": {
+          "name": "Oats and barley",
+          "details": "Half a cup dry rolled oats (~40 g) gives around 4 g beta-glucan fiber."
+        },
+        "legumes": {
+          "name": "Legumes (lentils, chickpeas, beans)",
+          "details": "1 cup cooked beans or lentils (~180 g) supplies about 15 g fiber."
+        },
+        "chiaSeeds": {
+          "name": "Chia or flax seeds",
+          "details": "Two tablespoons chia seeds (~28 g) deliver roughly 10 g fiber."
+        },
+        "berries": {
+          "name": "Berries",
+          "details": "1 cup raspberries (~120 g) provides about 8 g fiber."
+        },
+        "cruciferousVeg": {
+          "name": "Cruciferous vegetables (broccoli, Brussels sprouts)",
+          "details": "1 cup steamed broccoli or cauliflower (~150 g) offers around 5 g fiber."
+        }
       }
     }
   },
@@ -404,12 +491,30 @@
     "nutritionFoods": {
       "title": "Magnesium-rich foods",
       "items": {
-        "leafyGreens": "Leafy greens (spinach, Swiss chard, kale)",
-        "pumpkinSeeds": "Pumpkin or sunflower seeds",
-        "almonds": "Almonds and other nuts",
-        "darkChocolate": "Dark chocolate (70–85% cocoa)",
-        "blackBeans": "Black beans, chickpeas, or lentils",
-        "avocado": "Avocado"
+        "leafyGreens": {
+          "name": "Dark leafy greens (spinach, chard, kale)",
+          "details": "1 cup cooked spinach (~180 g) provides about 150 mg magnesium."
+        },
+        "pumpkinSeeds": {
+          "name": "Pumpkin or sunflower seeds",
+          "details": "30 g roasted pumpkin seeds give around 150 mg magnesium."
+        },
+        "almonds": {
+          "name": "Almonds and other nuts",
+          "details": "30 g almonds contribute roughly 80 mg magnesium."
+        },
+        "darkChocolate": {
+          "name": "Dark chocolate (70-85% cacao)",
+          "details": "30 g 70-85% cacao dark chocolate supplies about 65 mg magnesium."
+        },
+        "blackBeans": {
+          "name": "Black beans, chickpeas, or lentils",
+          "details": "1 cup cooked black beans (~170 g) yields about 120 mg magnesium."
+        },
+        "avocado": {
+          "name": "Avocado",
+          "details": "One medium avocado offers roughly 60 mg magnesium."
+        }
       }
     }
   },
@@ -424,11 +529,26 @@
     "nutritionFoods": {
       "title": "Zinc-rich foods",
       "items": {
-        "oysters": "Oysters",
-        "beef": "Beef and lamb",
-        "pumpkinSeeds": "Pumpkin seeds",
-        "chickpeas": "Chickpeas and lentils",
-        "cashews": "Cashews"
+        "oysters": {
+          "name": "Oysters",
+          "details": "Three medium oysters deliver about 30 mg zinc."
+        },
+        "beef": {
+          "name": "Beef and lamb",
+          "details": "A 120 g portion of beef provides roughly 5 mg zinc."
+        },
+        "pumpkinSeeds": {
+          "name": "Pumpkin seeds",
+          "details": "30 g pumpkin seeds add about 2-3 mg zinc."
+        },
+        "chickpeas": {
+          "name": "Chickpeas and lentils",
+          "details": "1 cup cooked chickpeas (~170 g) gives around 2.5 mg zinc."
+        },
+        "cashews": {
+          "name": "Cashews",
+          "details": "30 g cashews supply roughly 1.6 mg zinc."
+        }
       }
     }
   },
@@ -443,11 +563,26 @@
     "nutritionFoods": {
       "title": "Selenium-rich foods",
       "items": {
-        "brazilNuts": "Brazil nuts",
-        "sardines": "Sardines and salmon",
-        "eggs": "Eggs",
-        "shiitakeMushrooms": "Shiitake mushrooms",
-        "sunflowerSeeds": "Sunflower seeds"
+        "brazilNuts": {
+          "name": "Brazil nuts",
+          "details": "One Brazil nut delivers 60-90 mcg selenium; limit to 1-2 per day."
+        },
+        "sardines": {
+          "name": "Sardines and salmon",
+          "details": "100 g sardines provide about 45 mcg selenium."
+        },
+        "eggs": {
+          "name": "Eggs",
+          "details": "Two eggs supply roughly 28 mcg selenium."
+        },
+        "shiitakeMushrooms": {
+          "name": "Shiitake mushrooms",
+          "details": "100 g cooked shiitake mushrooms give around 20 mcg selenium."
+        },
+        "sunflowerSeeds": {
+          "name": "Sunflower seeds",
+          "details": "30 g sunflower seeds add about 18 mcg selenium."
+        }
       }
     }
   },
@@ -462,11 +597,26 @@
     "nutritionFoods": {
       "title": "Iodine-rich foods",
       "items": {
-        "seaweed": "Seaweed (kombu, nori, wakame)",
-        "iodizedSalt": "Iodized salt",
-        "dairy": "Dairy products",
-        "eggs": "Eggs",
-        "cod": "Cod and other white fish"
+        "seaweed": {
+          "name": "Seaweed (kombu, nori, wakame)",
+          "details": "One 5 g sheet of dried seaweed can supply 150-300 mcg iodine; use sparingly."
+        },
+        "iodizedSalt": {
+          "name": "Iodized salt",
+          "details": "Half a teaspoon of iodized salt provides close to 150 mcg iodine."
+        },
+        "dairy": {
+          "name": "Dairy products",
+          "details": "A 250 ml glass of milk or yogurt delivers about 50 mcg iodine."
+        },
+        "eggs": {
+          "name": "Eggs",
+          "details": "Two eggs provide roughly 50 mcg iodine."
+        },
+        "cod": {
+          "name": "Cod and other white fish",
+          "details": "A 120 g cod fillet offers about 110 mcg iodine."
+        }
       }
     }
   },

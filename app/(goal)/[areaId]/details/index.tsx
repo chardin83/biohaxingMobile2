@@ -153,13 +153,21 @@ export default function AreaDetailScreen() {
     });
   }, [tip?.id, tip?.nutritionFoods, t]);
 
-  const nutritionFoodLabels = React.useMemo(() => {
-    if (!tip?.nutritionFoods?.length || !tip.id) return [] as string[];
-    return tip.nutritionFoods.map((foodKey) =>
-      t(`tips:${tip.id}.nutritionFoods.items.${foodKey}`, {
-        defaultValue: foodKey,
-      })
-    );
+  const nutritionFoodItems = React.useMemo(() => {
+    if (!tip?.nutritionFoods?.length || !tip.id) return [] as { key: string; name: string; details: string }[];
+    return tip.nutritionFoods.map((food) => {
+      const name = t(`tips:${tip.id}.nutritionFoods.items.${food.name}.name`, {
+        defaultValue: food.name,
+      });
+      const details = t(`tips:${tip.id}.nutritionFoods.items.${food.details}.details`, {
+        defaultValue: "",
+      });
+      return {
+        key: `${food.name}:${food.details}`,
+        name,
+        details,
+      };
+    });
   }, [tip?.nutritionFoods, tip?.id, t]);
 
   // Lös upp tip.supplements (id-referenser) till fulla supplement-objekt från översättningarna
@@ -447,12 +455,15 @@ export default function AreaDetailScreen() {
             </AppBox>
           )}
 
-          {isNutritionTip && nutritionFoodLabels.length > 0 && nutritionFoodsTitle && (
+          {isNutritionTip && nutritionFoodItems.length > 0 && nutritionFoodsTitle && (
             <AppBox title={nutritionFoodsTitle}>
-              {nutritionFoodLabels.map((label) => (
-                <Text key={label} style={styles.metaText}>
-                  • {label}
-                </Text>
+              {nutritionFoodItems.map(({ key, name, details }) => (
+                <View key={key} style={styles.nutritionItem}>
+                  <Text style={styles.metaText}>• {name}</Text>
+                  {details ? (
+                    <Text style={styles.nutritionDetailText}>{details}</Text>
+                  ) : null}
+                </View>
               ))}
               <View style={[styles.planActionContainer, styles.nutritionPlanAction]}>
                 {isTipInPlan ? (
@@ -845,6 +856,17 @@ const styles = StyleSheet.create({
     color: Colors.dark.textLight,
     fontSize: 16,
     marginBottom: 4,
+  },
+  nutritionItem: {
+    alignSelf: "flex-start",
+    marginBottom: 8,
+  },
+  nutritionDetailText: {
+    color: Colors.dark.textLight,
+    opacity: 0.8,
+    fontSize: 14,
+    marginLeft: 18,
+    marginTop: -2,
   },
   supplementCheck: {
     paddingHorizontal: 12,
