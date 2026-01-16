@@ -34,7 +34,17 @@
       "energy": "CoQ10 spelar en kritisk roll i den mitokondriella elektrontransportkedjan, vilket är avgörande för cellulär energiproduktion.",
       "immuneSupport": "CoQ10 har antioxidantegenskaper som hjälper till att skydda celler från oxidativ stress och stödjer immunsystemets funktion."
     },
-    "analyzePrompt": "Analysera bilden och bestäm mitokondriens behov av stöd."
+    "analyzePrompt": "Analysera bilden och bestäm mitokondriens behov av stöd.",
+    "nutritionFoods": {
+      "title": "Livsmedel rika på CoQ10",
+      "items": {
+        "organMeats": "Inälvsmat (hjärta, lever)",
+        "fattyFish": "Fet fisk (sardiner, makrill)",
+        "beef": "Nötkött och bison",
+        "spinach": "Spenat",
+        "broccoli": "Broccoli"
+      }
+    }
   },
   "cellular_energy_nad": {
     "title": "NAD+",
@@ -109,6 +119,16 @@
       "nervousSystem": "Glycin fungerar som en hämmande neurotransmitter som hjälper till att lugna nervsystemet och minska stress.",
       "sleepQuality": "Glycin har visat sig förbättra sömnkvaliteten genom att främja avslappning och reglera kroppstemperaturen.",
       "immuneSupport": "Glycin stödjer immunfunktionen genom att minska inflammation och främja cellulär reparation."
+    },
+    "nutritionFoods": {
+      "title": "Livsmedel rika på glycin",
+      "items": {
+        "boneBroth": "Benbuljong",
+        "collagenCuts": "Collagenrika köttbitar (bringa, lägg)",
+        "skinOnPoultry": "Fågel med skinn",
+        "porkRinds": "Fläsksvålar",
+        "legumes": "Baljväxter (sojabönor, bönor, linser)"
+      }
     }
   },
   "breathwork_parasympathetic": {
@@ -336,6 +356,54 @@
       "immuneSupport": "Zink stödjer både det medfödda och adaptiva immunförsvaret genom att reglera cytokinsignalering och vita blodkroppars aktivitet.",
       "nervousSystem": "Tillräckligt med zink hjälper till att bibehålla signalsubstansbalans, vilket stödjer humör och stresstålighet.",
       "energy": "Zink krävs för hundratals enzymreaktioner kopplade till energimetabolism och återhämtning."
+    },
+    "nutritionFoods": {
+      "title": "Livsmedel rika på zink",
+      "items": {
+        "oysters": "Ostron",
+        "beef": "Nötkött och lamm",
+        "pumpkinSeeds": "Pumpafrön",
+        "chickpeas": "Kikärtor och linser",
+        "cashews": "Cashewnötter"
+      }
+    }
+  },
+  "selenium_thyroid_antioxidant": {
+    "title": "Selen för sköldkörtel och antioxidantförsvar",
+    "description": "Selen driver glutationbaserade antioxidantenzym och stödjer omvandlingen av sköldkörtelhormoner, vilket hjälper immunförsvar, energi och stresstålighet.",
+    "areas": {
+      "immuneSupport": "Selen stödjer antikroppsproduktion och reglerar inflammation, vilket stärker immunresiliensen.",
+      "energy": "Selenberoende enzymer aktiverar sköldkörtelhormoner som driver metabolism och energiproduktion.",
+      "nervousSystem": "Selen skyddar neuroner mot oxidativ stress och stöttar balanserat humör och stressrespons."
+    },
+    "nutritionFoods": {
+      "title": "Livsmedel rika på selen",
+      "items": {
+        "brazilNuts": "Paranötter",
+        "sardines": "Sardiner och lax",
+        "eggs": "Ägg",
+        "shiitakeMushrooms": "Shiitake-svamp",
+        "sunflowerSeeds": "Solrosfrön"
+      }
+    }
+  },
+  "iodine_thyroid_balance": {
+    "title": "Jod för sköldkörtelbalans",
+    "description": "Jod ger byggstenarna till sköldkörtelhormonerna och hjälper till att bevara ämnesomsättning, immunförsvar och mental klarhet.",
+    "areas": {
+      "energy": "Tillräckligt med jod håller T3- och T4-produktionen stabil och ger jämn energi under dagen.",
+      "immuneSupport": "Balanserade sköldkörtelhormoner reglerar immunförsvarets signalering och kroppens stressrespons.",
+      "nervousSystem": "Jod stöttar nervsystemets stabilitet genom att hålla hormonbalansen som påverkar humör, fokus och temperaturkontroll."
+    },
+    "nutritionFoods": {
+      "title": "Jodrika livsmedel",
+      "items": {
+        "seaweed": "Sjögräs (kombu, nori, wakame)",
+        "iodizedSalt": "Joderat salt",
+        "dairy": "Mejeriprodukter",
+        "eggs": "Ägg",
+        "cod": "Torsk och annan vit fisk"
+      }
     }
   },
   "betaine_cardiovascular": {

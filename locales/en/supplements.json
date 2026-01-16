@@ -17,6 +17,7 @@
         { "id": "zincPicolinate", "name": "Zinc Picolinate", "quantity": "15", "unit": "mg", "description": "Highly bioavailable form that supports immune signaling and skin repair." },
         { "id": "zincBisglycinate", "name": "Zinc Bisglycinate", "quantity": "15", "unit": "mg", "description": "Gentle chelated form designed for sensitive digestion while maintaining absorption." },
         { "id": "zincCitrate", "name": "Zinc Citrate", "quantity": "15", "unit": "mg", "description": "Citrate-bound zinc aimed at balancing stomach acidity and daily maintenance." },
+        { "id": "selenium", "name": "Selenium", "quantity": "200", "unit": "mcg", "description": "Supports thyroid hormone conversion, antioxidant defenses, and immune resilience." },
         { "id": "iron", "name": "Iron", "quantity": "18", "unit": "mg" },
         { "id": "calcium", "name": "Calcium", "quantity": "1000", "unit": "mg" },
         { "id": "probiotics", "name": "Probiotics", "quantity": "10 billion", "unit": "CFU" },

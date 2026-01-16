@@ -17,6 +17,7 @@
         { "id": "zincPicolinate", "name": "Zinkpikolinat", "quantity": "15", "unit": "mg", "description": "Mycket biotillgänglig form som stödjer immunrespons och hudläkning." },
         { "id": "zincBisglycinate", "name": "Zinkbisglycinat", "quantity": "15", "unit": "mg", "description": "Skonsam kelaterad form som är snäll mot magen men bibehåller upptag." },
         { "id": "zincCitrate", "name": "Zinkcitrat", "quantity": "15", "unit": "mg", "description": "Citratbunden zink som balanserar magsyra och ger dagligt underhåll." },
+        { "id": "selenium", "name": "Selen", "quantity": "200", "unit": "mcg", "description": "Stödjer omvandling av sköldkörtelhormoner, antioxidantförsvar och immunresiliens." },
         { "id": "iron", "name": "Järn", "quantity": "18", "unit": "mg" },
         { "id": "calcium", "name": "Kalcium", "quantity": "1000", "unit": "mg" },
         { "id": "probiotics", "name": "Probiotika", "quantity": "10 miljarder", "unit": "CFU" },

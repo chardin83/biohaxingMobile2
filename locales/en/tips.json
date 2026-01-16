@@ -34,7 +34,17 @@
       "energy": "CoQ10 spelar en kritisk roll i den mitokondriella elektrontransportkedjan, vilket är avgörande för cellulär energiproduktion.",
       "immuneSupport": "CoQ10 har antioxidantegenskaper som hjälper till att skydda celler från oxidativ stress och stödjer immunsystemets funktion."
     },
-    "analyzePrompt": "Analysera bilden och bestäm mitokondriens behov av stöd."
+    "analyzePrompt": "Analysera bilden och bestäm mitokondriens behov av stöd.",
+    "nutritionFoods": {
+      "title": "CoQ10-rich foods",
+      "items": {
+        "organMeats": "Organ meats (heart, liver)",
+        "fattyFish": "Fatty fish (sardines, mackerel)",
+        "beef": "Beef and bison",
+        "spinach": "Spinach",
+        "broccoli": "Broccoli"
+      }
+    }
   },
   "cellular_energy_nad": {
     "title": "NAD+",
@@ -109,6 +119,16 @@
       "nervousSystem": "Glycine acts as an inhibitory neurotransmitter, helping to calm the nervous system and reduce stress.",
       "sleepQuality": "Glycine has been shown to improve sleep quality by promoting relaxation and regulating body temperature.",
       "immuneSupport": "Glycine supports immune function by reducing inflammation and promoting cellular repair."
+    },
+    "nutritionFoods": {
+      "title": "Glycine-rich foods",
+      "items": {
+        "boneBroth": "Bone broth",
+        "collagenCuts": "Collagen-rich cuts (brisket, shank)",
+        "skinOnPoultry": "Skin-on poultry",
+        "porkRinds": "Pork rinds or cracklings",
+        "legumes": "Legumes (soy, beans, lentils)"
+      }
     }
   },
   "breathwork_parasympathetic": {
@@ -400,6 +420,54 @@
       "immuneSupport": "Zinc supports innate and adaptive immunity by regulating cytokine signaling and white blood cell activity.",
       "nervousSystem": "Adequate zinc helps maintain neurotransmitter balance, supporting mood and stress tolerance.",
       "energy": "Zinc is required for hundreds of enzymatic reactions linked to energy metabolism and recovery."
+    },
+    "nutritionFoods": {
+      "title": "Zinc-rich foods",
+      "items": {
+        "oysters": "Oysters",
+        "beef": "Beef and lamb",
+        "pumpkinSeeds": "Pumpkin seeds",
+        "chickpeas": "Chickpeas and lentils",
+        "cashews": "Cashews"
+      }
+    }
+  },
+  "selenium_thyroid_antioxidant": {
+    "title": "Selenium for thyroid and antioxidant defense",
+    "description": "Selenium powers glutathione-based antioxidant enzymes and supports the conversion of thyroid hormones, helping maintain immunity, energy, and stress tolerance.",
+    "areas": {
+      "immuneSupport": "Selenium supports antibody production and regulates inflammation, bolstering immune resilience.",
+      "energy": "Selenium-dependent enzymes activate thyroid hormones that drive metabolic energy and mitochondrial efficiency.",
+      "nervousSystem": "Selenium protects neurons from oxidative stress and supports balanced mood and stress responses."
+    },
+    "nutritionFoods": {
+      "title": "Selenium-rich foods",
+      "items": {
+        "brazilNuts": "Brazil nuts",
+        "sardines": "Sardines and salmon",
+        "eggs": "Eggs",
+        "shiitakeMushrooms": "Shiitake mushrooms",
+        "sunflowerSeeds": "Sunflower seeds"
+      }
+    }
+  },
+  "iodine_thyroid_balance": {
+    "title": "Iodine for thyroid balance",
+    "description": "Iodine supplies the raw material for thyroid hormones, helping maintain metabolic drive, immune resilience, and clear thinking.",
+    "areas": {
+      "energy": "Adequate iodine keeps T3 and T4 production robust, sustaining metabolic energy throughout the day.",
+      "immuneSupport": "Balanced thyroid hormones modulate immune signaling and help the body respond appropriately to stressors.",
+      "nervousSystem": "Iodine supports nervous system stability by maintaining hormone balance that affects mood, focus, and thermoregulation."
+    },
+    "nutritionFoods": {
+      "title": "Iodine-rich foods",
+      "items": {
+        "seaweed": "Seaweed (kombu, nori, wakame)",
+        "iodizedSalt": "Iodized salt",
+        "dairy": "Dairy products",
+        "eggs": "Eggs",
+        "cod": "Cod and other white fish"
+      }
     }
   },
   "betaine_cardiovascular": {
