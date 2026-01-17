@@ -47,29 +47,31 @@ export const ThemedModal = ({
 
           {children}
 
-          <View style={styles.buttonRow}>
-            {onSecondarySave && (
-              <AppButton
-                onPress={onSecondarySave}
-                title={ok2Label ?? t("general.secondary")}
-                variant="primary"
-              />
-            )}
-            {onSave && (
-              <AppButton
-                onPress={onSave}
-                title={okLabel ?? t("general.save")}
-                variant="primary"
-              />
-            )}
-            {showCancelButton && (
-              <AppButton
-                onPress={onClose}
-                title={cancelLabel ?? t("general.cancel")}
-                variant="secondary"
-              />
-            )}
-          </View>
+          {(onSecondarySave || onSave || showCancelButton) && (
+            <View style={styles.buttonRow}>
+              {onSecondarySave && (
+                <AppButton
+                  onPress={onSecondarySave}
+                  title={ok2Label ?? t("general.secondary")}
+                  variant="primary"
+                />
+              )}
+              {onSave && (
+                <AppButton
+                  onPress={onSave}
+                  title={okLabel ?? t("general.save")}
+                  variant="primary"
+                />
+              )}
+              {showCancelButton && (
+                <AppButton
+                  onPress={onClose}
+                  title={cancelLabel ?? t("general.cancel")}
+                  variant="secondary"
+                />
+              )}
+            </View>
+          )}
         </View>
       </View>
     </Modal>

@@ -19,7 +19,7 @@ import VerdictSelector from "@/components/VerdictSelector";
 import { POSITIVE_VERDICTS } from "@/types/verdict";
 import { ThemedModal } from "@/components/ThemedModal";
 import { useSupplementSaver } from "@/hooks/useSupplementSaver";
-import CreatePlanModal, { CreatePlanData } from "@/components/modals/CreatePlanModal";
+import CreateTimeSlotModal, { CreatePlanData } from "@/components/modals/CreateTimeSlotModal";
 
 export default function AreaDetailScreen() {
   const { t } = useTranslation();
@@ -663,7 +663,7 @@ export default function AreaDetailScreen() {
           </ThemedModal>
 
           {/* Modal: skapa ny plan inline */}
-          <CreatePlanModal
+          <CreateTimeSlotModal
             visible={createPlanVisible}
             onClose={() => {
               // Återöppna AddToPlan även vid Avbryt

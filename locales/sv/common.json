@@ -28,6 +28,7 @@
       "addTimeSlot": "Ny tidpunkt",
       "editPlan": "Redigera plan",
       "planName": "Namn på planen",
+      "timeSlotNameLabel": "Namn på tidpunkt",
       "addSupplement": "Lägg till tillskott",
       "addSupplementFor": "Lägg till tillskott för",
       "editSupplementFor": "Redigera tillskott för",
@@ -52,6 +53,11 @@
        "nutritionHeader": "Kostplan",
         "recommendedDose": "Rekommenderad dagsdos: {{dose}}",
          "supplementSectionTitle": "Kosttillskott",
+        "supplementCountLabel": "{{count}} tillskott",
+        "supplementCountLabel_plural": "{{count}} tillskott",
+        "toggleNotifications": "Växla notiser",
+        "toggleSupplements": "Visa eller dölj innehåll",
+         "noSupplementSlots": "Inga tider skapade ännu.",
          "addTrainingGoal": "Lägg till i träningsplan",
          "addNutritionGoal": "Lägg till i kostplan",
           "alreadyInPlan": "Finns redan i planen",
@@ -60,8 +66,8 @@
           "alreadyInPlanSupplement": "Finns redan i planen (tillskott)"
     },
     "supplementForm":{
-      "dosage": "dos", 
-      "unit": "enhet"
+      "dosage": "Dos", 
+      "unit": "Enhet"
     },
     "dayEdit": {
       "addSupplement": "Lägg till tillskott",

@@ -1,10 +1,11 @@
 import React from "react";
-import { View, Text, TextInput, StyleSheet, Platform } from "react-native";
+import { View, Text, StyleSheet, Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTranslation } from "react-i18next";
 import { ThemedModal } from "@/components/ThemedModal";
 import { Colors } from "@/constants/Colors";
 import AppButton from "@/components/ui/AppButton";
+import LabeledInput from "@/components/ui/LabeledInput";
 
 export type CreatePlanData = {
   name: string;
@@ -12,13 +13,13 @@ export type CreatePlanData = {
   notify: boolean;
 };
 
-interface CreatePlanModalProps {
+interface CreateTimeSlotModalProps {
   visible: boolean;
   onClose: () => void;
   onCreate: (plan: CreatePlanData) => void;
 }
 
-const CreatePlanModal: React.FC<CreatePlanModalProps> = ({ visible, onClose, onCreate }) => {
+const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({ visible, onClose, onCreate }) => {
   const { t } = useTranslation();
   const [planName, setPlanName] = React.useState("");
   const [time, setTime] = React.useState(new Date());
@@ -46,9 +47,8 @@ const CreatePlanModal: React.FC<CreatePlanModalProps> = ({ visible, onClose, onC
       cancelLabel={t("general.cancel")}
     >
       <View style={{ width: "100%" }}>
-        <TextInput
-          style={styles.input}
-          placeholder={t("plan.planName")}
+        <LabeledInput
+          label={t("plan.timeSlotNameLabel", { defaultValue: "Namn på tidpunkt" })}
           value={planName}
           onChangeText={setPlanName}
         />
@@ -86,16 +86,6 @@ const CreatePlanModal: React.FC<CreatePlanModalProps> = ({ visible, onClose, onC
 };
 
 const styles = StyleSheet.create({
-  input: {
-    borderWidth: 2,
-    borderColor: Colors.dark.border,
-    borderRadius: 5,
-    padding: 10,
-    marginTop: 10,
-    marginBottom: 10,
-    width: "100%",
-    color: Colors.dark.text,
-  },
   timePickerText: {
     fontSize: 16,
     color: Colors.dark.text,
@@ -106,4 +96,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreatePlanModal;
+export default CreateTimeSlotModal;

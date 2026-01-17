@@ -24,6 +24,7 @@
     "addTimeSlot": "New time slot",
     "editPlan": "Edit plan",
     "planName": "Name of the plan",
+    "timeSlotNameLabel": "Timeslot name",
     "addSupplement": "Add supplement",
     "addSupplementFor": "Add supplement for",
     "editSupplementFor": "Edit supplement for",
@@ -49,6 +50,11 @@
     "nutritionHeader": "Diet plan",
     "recommendedDose": "Recommended daily dose: {{dose}}",
     "supplementSectionTitle": "Supplement schedule",
+    "supplementCountLabel": "{{count}} supplement",
+    "supplementCountLabel_plural": "{{count}} supplements",
+    "toggleNotifications": "Toggle notifications",
+    "toggleSupplements": "Expand or collapse",
+    "noSupplementSlots": "No supplement slots yet.",
     "addTrainingGoal": "Add to training plan",
     "addNutritionGoal": "Add to diet plan",
     "alreadyInPlan": "Already in plan",
@@ -57,8 +63,8 @@
     "alreadyInPlanSupplement": "Already in plan (supplement)"
   },
   "supplementForm": {
-    "dosage": "dosage",
-    "unit": "unit"
+    "dosage": "Dosage",
+    "unit": "Unit"
   },
   "dayEdit": {
     "addSupplement": "Add supplement",

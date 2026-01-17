@@ -2,17 +2,16 @@ import React, { useState, useEffect, useMemo } from "react";
 import {
   StyleSheet,
   Modal,
-  TextInput,
+  // TextInput,
   View,
   TouchableOpacity,
   Text,
   Platform,
-  FlatList,
+  ScrollView,
 } from "react-native";
 import { Collapsible } from "@/components/Collapsible";
 import { ThemedText } from "@/components/ThemedText";
 import { useTranslation } from "react-i18next";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import SupplementItem from "@/components/SupplementItem";
 import SupplementForm from "@/components/SupplementForm";
@@ -22,6 +21,7 @@ import { useStorage } from "../context/StorageContext";
 import { useSupplementSaver } from "@/hooks/useSupplementSaver";
 import { SwipeableRow } from "@/components/ui/SwipeableRow";
 import { ThemedModal } from "@/components/ThemedModal";
+import CreateTimeSlotModal from "@/components/modals/CreateTimeSlotModal";
 import { Supplement } from "../domain/Supplement";
 import { Plan } from "../domain/Plan";
 import AppButton from "@/components/ui/AppButton";
@@ -31,11 +31,9 @@ import TrainingSettingsModal from "@/components/modals/TrainingSettingsModal";
 import { Colors } from "@/constants/Colors";
 import { defaultPlans } from "@/locales/defaultPlans";
 import { useLocalSearchParams } from "expo-router";
-import { areas } from "@/locales/areas";
 import { tips, Tip } from "@/locales/tips";
 import { useSupplementMap } from "@/locales/supplements";
 import { useColorScheme } from "@/hooks/useColorScheme";
-// Removed unused CreatePlanModal import; using ThemedModal for create/edit
 
 const PLAN_CATEGORY_BY_TIP_ID = new Map(
   tips
@@ -56,6 +54,7 @@ export default function Plans() {
   const [expandedNutritionTips, setExpandedNutritionTips] = useState<
     Record<string, boolean>
   >({});
+  const [expandedPlans, setExpandedPlans] = useState<Record<string, boolean>>({});
   const [trainingSettingsVisible, setTrainingSettingsVisible] = useState(false);
   const [trainingSettingsTipId, setTrainingSettingsTipId] = useState<string | null>(null);
   const [trainingSettingsTitle, setTrainingSettingsTitle] = useState<string | null>(null);
@@ -311,46 +310,108 @@ export default function Plans() {
     savePlans(updatedPlans);
   };
 
-  const renderPlanItem = ({ item: plan }: { item: Plan }) => (
-    <SwipeableRow
-      onEdit={() => handleEditPlan(plan)}
-      onDelete={() => handleRemovePlan(plan.name)}
-      containerStyle={styles.collapsibleContainer}
-    >
-      <Collapsible
-        title={`${plan.name} (${plan.prefferedTime})`}
-        rightContent={
-          <TouchableOpacity onPress={() => handleNotify(plan)}>
-            <IconSymbol
-              name={plan.notify ? "bell.fill" : "bell.slash"}
-              size={20}
-              color={plan.notify ? Colors.dark.primary : "gray"}
-              style={{ marginLeft: 8 }}
-            />
-          </TouchableOpacity>
-        }
-      >
-        {plan.supplements?.map((supplement) =>
-          renderSupplementItem(plan.name, supplement)
-        )}
-        {errorMessage && (
-          <Text style={{ color: Colors.dark.error, marginTop: 10 }}>
-            {errorMessage}
-          </Text>
-        )}
-        <View style={{ marginBottom: 10, marginTop: 15 }}>
-          <AppButton
-            title={t("plan.addSupplement")}
-            onPress={() => {
-              setIsEditingSupplement(false);
-              setPlanForSupplementEdit(plan);
-            }}
-            variant="primary"
+  const togglePlanExpanded = (planKey: string) => {
+    setExpandedPlans((prev) => ({
+      ...prev,
+      [planKey]: !prev[planKey],
+    }));
+  };
+
+  const renderPlanRow = (plan: Plan) => {
+    const planKey = `${plan.name}-${plan.prefferedTime}`;
+    const isExpanded = !!expandedPlans[planKey];
+    const supplements = plan.supplements ?? [];
+    const supplementCount = supplements.length;
+    const baseTitle = `${plan.name} (${plan.prefferedTime})`;
+    const displayTitle =
+      !isExpanded && supplementCount > 0
+        ? `${baseTitle} - ${t("plan.supplementCountLabel", {
+            count: supplementCount,
+            defaultValue: `${supplementCount} tillskott`,
+          })}`
+        : baseTitle;
+    const leadingIcon = (
+      <IconSymbol
+        name="chevron.right"
+        size={16}
+        color={Colors.dark.icon}
+        style={{ transform: [{ rotate: isExpanded ? "90deg" : "0deg" }] }}
+      />
+    );
+
+    const headerActions = (
+      <View style={styles.planHeaderActions}>
+        <TouchableOpacity
+          onPress={() => handleNotify(plan)}
+          accessibilityRole="button"
+          accessibilityLabel={t("plan.toggleNotifications", {
+            defaultValue: "Växla notiser",
+          })}
+          style={styles.planHeaderButton}
+        >
+          <IconSymbol
+            name={plan.notify ? "bell.fill" : "bell.slash"}
+            size={18}
+            color={plan.notify ? Colors.dark.primary : Colors.dark.icon}
           />
-        </View>
-      </Collapsible>
-    </SwipeableRow>
-  );
+        </TouchableOpacity>
+      </View>
+    );
+
+    return (
+      <SwipeableRow
+        onEdit={() => handleEditPlan(plan)}
+        onDelete={() => handleRemovePlan(plan.name)}
+        containerStyle={styles.planRowContainer}
+      >
+        <AppBox
+          title={displayTitle}
+          headerRight={headerActions}
+          style={styles.planBox}
+          onPressHeader={() => togglePlanExpanded(planKey)}
+          headerAccessibilityLabel={t("plan.toggleSupplements", {
+            defaultValue: "Visa eller dölj innehåll",
+          })}
+          leading={leadingIcon}
+        >
+          {isExpanded && (
+            <View>
+              {supplements.map((supplement) =>
+                renderSupplementItem(plan.name, supplement)
+              )}
+              {errorMessage && <Text style={styles.planErrorText}>{errorMessage}</Text>}
+              <View style={styles.planAddButtonWrapper}>
+                <AppButton
+                  title={t("plan.addSupplement")}
+                  onPress={() => {
+                    setIsEditingSupplement(false);
+                    setPlanForSupplementEdit(plan);
+                  }}
+                  variant="primary"
+                />
+              </View>
+            </View>
+          )}
+        </AppBox>
+      </SwipeableRow>
+    );
+  };
+
+  const renderSupplementPlans = () => {
+    if (!plans.length) {
+      return (
+        <ThemedText type="default" style={styles.placeholderText}>
+          {t("plan.noSupplementSlots", {
+            defaultValue: "Inga tider skapade ännu.",
+          })}
+        </ThemedText>
+      );
+    }
+
+    return plans.map((plan) => (
+      <View key={`${plan.name}-${plan.prefferedTime}`}>{renderPlanRow(plan)}</View>
+    ));
+  };
 
   const renderSupplementItem = (planName: string, supplement: Supplement) => (
     <SupplementItem
@@ -522,10 +583,7 @@ export default function Plans() {
       const arrowRotation = isExpanded ? "90deg" : "0deg";
 
       return (
-        <View key={tipId} style={styles.nutritionTipBlock}>
-          <ThemedText type="defaultSemiBold" style={styles.nutritionTipTitle}>
-            {tipTitle}
-          </ThemedText>
+        <AppBox key={tipId} title={tipTitle} style={styles.nutritionBox}>
           {recommendedDoseLabel && (
             <ThemedText type="default" style={styles.recommendedDose}>
               {recommendedDoseLabel}
@@ -575,112 +633,71 @@ export default function Plans() {
               )}
             </View>
           )}
-        </View>
+        </AppBox>
       );
     });
   };
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={plans}
-        keyExtractor={(item, index) => `${item.name}-${index}`}
-        renderItem={renderPlanItem}
-        ListHeaderComponent={
-          <View style={styles.sectionsContainer}>
-            <View style={styles.sectionBlock}>
-              <Collapsible
-                title={t("plan.trainingHeader")}
-                contentStyle={styles.collapsibleContentFlush}
-              >
-                {renderTrainingGoals()}
-              </Collapsible>
-            </View>
-            <View style={styles.sectionBlock}>
-              <Collapsible title={t("plan.nutritionHeader")}>
-                {renderNutritionGoals()}
-              </Collapsible>
-            </View>
-            <ThemedText type="subtitle" style={styles.sectionTitle}>
-              {t("plan.supplementSectionTitle")}
-            </ThemedText>
-          </View>
-        }
-        ListFooterComponent={
-          <View
-            style={{
-              marginTop: 20,
-              marginBottom: 50,
-              width: "80%",
-              alignSelf: "center",
-            }}
-          >
-            <AppButton
-              title={t("plan.addTimeSlot")}
-              onPress={() => {
-                // Rensa allt för att garantera rätt modal visas
-                setIsEditingPlan(false);
-                setSelectedPlan(null);
-                setPlanForSupplementEdit(null);
-                setSupplement(null);
-                setModalVisible(true);
-              }}
-              variant="primary"
-            />
-          </View>
-        }
-        contentContainerStyle={styles.flatListContent}
-      />
-      <Portal>
-        <ThemedModal
-          visible={modalVisible}
-          title={isEditingPlan ? t("plan.editPlan") : t("plan.addTimeSlot")}
-          onSave={handleSavePlan}
-          onClose={() => setModalVisible(false)}
-          okLabel={t("general.save")}
-          cancelLabel={t("general.cancel")}
-        >
-          <TextInput
-            style={styles.input}
-            placeholder={t("plan.planName")}
-            value={newPlanName}
-            onChangeText={setNewPlanName}
-          />
-
-          {Platform.OS === "android" && (
-            <TouchableOpacity
-              onPress={() => setShowTimePicker(true)}
-              style={styles.timePickerButton}
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+        <View style={styles.sectionsContainer}>
+          <View style={styles.sectionBlock}>
+            <Collapsible
+              title={t("plan.trainingHeader")}
+              contentStyle={styles.collapsibleContentFlush}
             >
-              <Text style={styles.timePickerText}>
-                {t("plan.prefferedTime")}:{" "}
-                {newPlanTime.toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </Text>
-            </TouchableOpacity>
-          )}
-
-          {Platform.OS === "ios" && (
-            <Text style={styles.timePickerText}>{t("plan.prefferedTime")}</Text>
-          )}
-
-          {showTimePicker && (
-            <DateTimePicker
-              value={newPlanTime}
-              mode="time"
-              is24Hour={true}
-              display="default"
-              onChange={(event, selectedTime) => {
-                setShowTimePicker(false);
-                if (event.type === "set" && selectedTime) {
-                  setNewPlanTime(selectedTime);
-                }
-              }}
-            />
-          )}
-        </ThemedModal>
+              {renderTrainingGoals()}
+            </Collapsible>
+          </View>
+          <View style={styles.sectionBlock}>
+            <Collapsible
+              title={t("plan.nutritionHeader")}
+              contentStyle={styles.collapsibleContentFlush}
+            >
+              {renderNutritionGoals()}
+            </Collapsible>
+          </View>
+          <View style={styles.sectionBlock}>
+            <Collapsible
+              title={t("plan.supplementSectionTitle")}
+              contentStyle={styles.collapsibleContentFlush}
+            >
+              <View>{renderSupplementPlans()}</View>
+              <View style={styles.addTimeSlotButtonWrapper}>
+                <AppButton
+                  title={t("plan.addTimeSlot")}
+                  onPress={() => {
+                    setIsEditingPlan(false);
+                    setSelectedPlan(null);
+                    setPlanForSupplementEdit(null);
+                    setSupplement(null);
+                    setModalVisible(true);
+                  }}
+                  variant="primary"
+                />
+              </View>
+            </Collapsible>
+          </View>
+        </View>
+      </ScrollView>
+      <Portal>
+        <CreateTimeSlotModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          onCreate={(planData) => {
+            // Hantera skapande av ny plan
+            const newPlan = {
+              name: planData.name,
+              supplements: [],
+              prefferedTime: planData.prefferedTime,
+              notify: planData.notify,
+            };
+            const updatedPlans = [...plans, newPlan];
+            savePlans(updatedPlans);
+            setModalVisible(false);
+          }}
+        />
         <TrainingSettingsModal
           visible={trainingSettingsVisible}
           title={t("plan.trainingSettingsTitle", { defaultValue: "Träningsinställningar" })}
@@ -710,47 +727,40 @@ export default function Plans() {
 
       {/* Modal för att lägga till supplement */}
       {planForSupplementEdit && (
-        <Modal
-          animationType="slide"
-          transparent={true}
+        <ThemedModal
           visible={!!planForSupplementEdit}
-          onRequestClose={() => setPlanForSupplementEdit(null)}
+          title={isEditingSupplement
+            ? `${t("plan.editSupplementFor")} ${planForSupplementEdit.name}`
+            : `${t("plan.addSupplementFor")} ${planForSupplementEdit.name}`}
+          onClose={() => {
+            setPlanForSupplementEdit(null);
+            setSupplement(null);
+          }}
+          okLabel={t("general.save")}
+          onSave={undefined} // SupplementForm hanterar save
+          showCancelButton={false}
         >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <ThemedText type="default" style={{ marginBottom: 20 }}>
-                {isEditingSupplement
-                  ? `${t("plan.editSupplementFor")} ${
-                      planForSupplementEdit.name
-                    }`
-                  : `${t("plan.addSupplementFor")} ${
-                      planForSupplementEdit.name
-                    }`}
-              </ThemedText>
-
-              <SupplementForm
-                selectedTime={timeStringToDate(
-                  planForSupplementEdit.prefferedTime || "00:00"
-                )}
-                isEditing={isEditingSupplement}
-                preselectedSupplement={supplement}
-                onSave={(savedSupplement) => {
-                  saveSupplementToPlan(
-                    planForSupplementEdit,
-                    savedSupplement,
-                    isEditingSupplement
-                  );
-                  setSupplement(null);
-                  setPlanForSupplementEdit(null);
-                }}
-                onCancel={() => {
-                  setPlanForSupplementEdit(null);
-                  setSupplement(null);
-                }}
-              />
-            </View>
-          </View>
-        </Modal>
+          <SupplementForm
+            selectedTime={timeStringToDate(
+              planForSupplementEdit.prefferedTime || "00:00"
+            )}
+            isEditing={isEditingSupplement}
+            preselectedSupplement={supplement}
+            onSave={(savedSupplement) => {
+              saveSupplementToPlan(
+                planForSupplementEdit,
+                savedSupplement,
+                isEditingSupplement
+              );
+              setSupplement(null);
+              setPlanForSupplementEdit(null);
+            }}
+            onCancel={() => {
+              setPlanForSupplementEdit(null);
+              setSupplement(null);
+            }}
+          />
+        </ThemedModal>
       )}
     </View>
   );
@@ -766,20 +776,40 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
+  scrollView: {
+    flex: 1,
+  },
   collapsibleContentFlush: {
     marginLeft: 0,
   },
   trainingBox: {
     marginBottom: 20,
   },
+  nutritionBox: {
+    marginBottom: 20,
+  },
+  planRowContainer: {
+    width: "100%",
+    paddingHorizontal: 0,
+  },
+  modalField: {
+    marginBottom: 16,
+  },
+  planBox: {
+    marginBottom: 20,
+  },
+  planHeaderActions: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  planHeaderButton: {
+    marginLeft: 12,
+    padding: 4,
+  },
   sectionBlock: {
     marginBottom: 18,
   },
-  sectionTitle: {
-    marginTop: 12,
-    marginBottom: 4,
-  },
-  flatListContent: {
+  scrollContent: {
     paddingBottom: 80,
   },
   timePickerText: {
@@ -804,16 +834,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     alignItems: "center",
-  },
-  input: {
-    borderWidth: 2,
-    borderColor: Colors.dark.border,
-    borderRadius: 5,
-    padding: 10,
-    marginTop: 10,
-    marginBottom: 10,
-    width: "100%",
-    color: Colors.dark.text,
   },
   trainingTip: {
     marginTop: 4,
@@ -855,16 +875,21 @@ const styles = StyleSheet.create({
   trainingEditIcon: {
     padding: 6,
   },
+  planAddButtonWrapper: {
+    marginTop: 15,
+  },
+  addTimeSlotButtonWrapper: {
+    marginTop: 20,
+    marginBottom: 50,
+    width: "80%",
+    alignSelf: "center",
+  },
+  planErrorText: {
+    color: Colors.dark.error,
+    marginTop: 10,
+  },
   placeholderText: {
     color: Colors.dark.textMuted,
-  },
-  nutritionTipBlock: {
-    paddingVertical: 12,
-    borderBottomColor: Colors.dark.border,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  nutritionTipTitle: {
-    marginBottom: 4,
   },
   recommendedDose: {
     color: Colors.dark.textLight,

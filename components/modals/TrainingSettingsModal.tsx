@@ -2,13 +2,13 @@ import React, { useEffect } from "react";
 import {
   Keyboard,
   StyleSheet,
-  TextInput,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { ThemedModal } from "@/components/ThemedModal";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
+import LabeledInput from "@/components/ui/LabeledInput";
 
 type TrainingSettingsModalProps = {
   visible: boolean;
@@ -67,38 +67,30 @@ const TrainingSettingsModal: React.FC<TrainingSettingsModalProps> = ({
               {trainingTitle}
             </ThemedText>
           ) : null}
-          <View style={styles.fieldBlock}>
-            <ThemedText type="caption" style={styles.label}>
-              {sessionsLabel}
-            </ThemedText>
-            <TextInput
-              style={styles.input}
-              keyboardType="number-pad"
-              placeholder={
-                sessionsPlaceholder === sessionsLabel ? undefined : sessionsPlaceholder
-              }
-              value={sessionsValue}
-              onChangeText={onChangeSessions}
-              returnKeyType="done"
-              blurOnSubmit
-            />
-          </View>
-          <View style={styles.fieldBlock}>
-            <ThemedText type="caption" style={styles.label}>
-              {durationLabel}
-            </ThemedText>
-            <TextInput
-              style={styles.input}
-              keyboardType="number-pad"
-              placeholder={
-                durationPlaceholder === durationLabel ? undefined : durationPlaceholder
-              }
-              value={durationValue}
-              onChangeText={onChangeDuration}
-              returnKeyType="done"
-              blurOnSubmit
-            />
-          </View>
+          <LabeledInput
+            label={sessionsLabel}
+            keyboardType="number-pad"
+            placeholder={
+              sessionsPlaceholder === sessionsLabel ? undefined : sessionsPlaceholder
+            }
+            value={sessionsValue}
+            onChangeText={onChangeSessions}
+            containerStyle={styles.fieldBlock}
+            returnKeyType="done"
+            blurOnSubmit
+          />
+          <LabeledInput
+            label={durationLabel}
+            keyboardType="number-pad"
+            placeholder={
+              durationPlaceholder === durationLabel ? undefined : durationPlaceholder
+            }
+            value={durationValue}
+            onChangeText={onChangeDuration}
+            containerStyle={styles.fieldBlock}
+            returnKeyType="done"
+            blurOnSubmit
+          />
         </View>
       </TouchableWithoutFeedback>
     </ThemedModal>
@@ -118,17 +110,5 @@ const styles = StyleSheet.create({
   fieldBlock: {
     width: "100%",
     marginTop: 10,
-  },
-  label: {
-    marginBottom: 6,
-    color: Colors.dark.textLight,
-  },
-  input: {
-    borderWidth: 2,
-    borderColor: Colors.dark.border,
-    borderRadius: 5,
-    padding: 10,
-    width: "100%",
-    color: Colors.dark.text,
   },
 });

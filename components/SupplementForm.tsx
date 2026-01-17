@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { View, TextInput, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import SupplementDropdown from "@/components/SupplementsDropdown";
 import { Supplement } from "@/app/domain/Supplement";
 import AppButton from "./ui/AppButton";
 import { Colors } from "@/constants/Colors";
+import LabeledInput from "@/components/ui/LabeledInput";
 
 interface SupplementFormProps {
   selectedTime: Date;
@@ -41,21 +42,23 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
       </View>
       {/* Dosage and Unit Inputs on the same row */}
       <View style={styles.row}>
-        <TextInput
-          style={[styles.input, styles.inputHalf]}
+        <LabeledInput
+          label={t("supplementForm.dosage")}
           placeholder={t("supplementForm.dosage")}
           value={supplement?.quantity}
           onChangeText={(text) =>
             setSupplement({ ...supplement, quantity: text } as Supplement)
           }
+          containerStyle={styles.inputHalf}
         />
-        <TextInput
-          style={[styles.input, styles.inputHalf]}
+        <LabeledInput
+          label={t("supplementForm.unit")}
           placeholder={t("supplementForm.unit")}
           value={supplement?.unit}
           onChangeText={(text) =>
             setSupplement({ ...supplement, unit: text } as Supplement)
           }
+          containerStyle={styles.inputHalf}
         />
       </View>
       <View style={styles.row}>
@@ -84,18 +87,9 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
 };
 
 const styles = StyleSheet.create({
-  input: {
-    borderWidth: 2,
-    borderColor: Colors.dark.border,
-    color: Colors.dark.text,
-    borderRadius: 5,
-    padding: 10,
-    marginTop: 10,
-    marginBottom: 10,
-  },
   inputHalf: {
-    flex: 1, // Take up half the row width
-    marginHorizontal: 5, // Add spacing between inputs
+    flex: 1,
+    marginHorizontal: 5,
   },
   dropdownWrapper: {
     width: "100%",
@@ -107,8 +101,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   button: {
-    flex: 1, // Each button takes equal space
-    marginHorizontal: 5, // Add spacing between buttons
+    flex: 1,
+    marginHorizontal: 5,
   },
 });
 
