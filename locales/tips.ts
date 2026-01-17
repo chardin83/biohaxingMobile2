@@ -53,7 +53,59 @@ export type Tip = {
 };
 
 export const tips: Tip[] = [
+    {
+    id: "eat_colorful_veggies",
+    level: 1,
+    xp: 300,
+    areas: [
+      { id: "digestiveHealth", descriptionKey: "eat_colorful_veggies.areas.digestiveHealth" },
+      { id: "immuneSupport", descriptionKey: "eat_colorful_veggies.areas.immuneSupport" }
+    ],
+    title: "eat_colorful_veggies.title",
+    descriptionKey: "eat_colorful_veggies.description",
+    trainingRelation: "anytime",
+    preferredDayParts: ["midday", "evening"],
+    timeRule: "anytime",
+    planCategory: "nutrition",
+    nutritionFoods: [
+      { key: "redVeggies" },
+      { key: "orangeVeggies" },
+      { key: "yellowVeggies" },
+      { key: "greenVeggies" },
+      { key: "bluePurpleVeggies" }
+    ],
+  },
   {
+    id: "intermittent_fasting_12h",
+    level: 1,
+    xp: 300,
+    areas: [
+      { id: "energy", descriptionKey: "intermittent_fasting_12h.areas.energy" },
+      { id: "digestiveHealth", descriptionKey: "intermittent_fasting_12h.areas.digestiveHealth" }
+    ],
+    title: "intermittent_fasting_12h.title",
+    descriptionKey: "intermittent_fasting_12h.description",
+    trainingRelation: "anytime",
+    preferredDayParts: ["evening", "night"],
+    timeRule: "anytime",
+    planCategory: "nutrition",
+  },
+  {
+    id: "intermittent_fasting_16_8",
+    level: 2,
+    xp: 500,
+    areas: [
+      { id: "energy", descriptionKey: "intermittent_fasting_16_8.areas.energy" },
+      { id: "digestiveHealth", descriptionKey: "intermittent_fasting_16_8.areas.digestiveHealth" }
+    ],
+    title: "intermittent_fasting_16_8.title",
+    descriptionKey: "intermittent_fasting_16_8.description",
+    trainingRelation: "anytime",
+    preferredDayParts: ["evening", "night"],
+    timeRule: "anytime",
+    planCategory: "nutrition",
+  },
+{
     id: "multivitamin_general",
     level: 1,
     xp: 300,
@@ -1033,5 +1085,19 @@ export const tips: Tip[] = [
     preferredDayParts: ["evening"],
     timeRule: "anytime",
     analyzePrompt: "astaxanthin_recovery_antioxidant.analyzePrompt",
+  },
+  {
+    id: "brown_fat_cool_home",
+    level: 1,
+    xp: 300,
+    areas: [
+      { id: "energy", descriptionKey: "brown_fat_cool_home.areas.energy" }
+    ],
+    title: "brown_fat_cool_home.title",
+    descriptionKey: "brown_fat_cool_home.description",
+    trainingRelation: "anytime",
+    preferredDayParts: ["morning", "evening"],
+    timeRule: "anytime",
+    planCategory: "nutrition"
   }
 ];

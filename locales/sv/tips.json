@@ -1,4 +1,18 @@
 {
+  "brown_fat_cool_home": {
+    "title": "Brunfett och sval inomhusmiljö",
+    "description": "Brunfett (brunt fett) hjälper kroppen att förbränna energi och producera värme. Att vistas i en sval inomhusmiljö, gärna under 21 grader, kan stimulera brunfettets aktivitet och bidra till ökad energiförbrukning. Sänk temperaturen hemma ibland för att stödja ämnesomsättning och metabol hälsa.",
+    "areas": {
+      "energy": "Aktivering av brunfett ökar energiförbrukningen och kan bidra till bättre ämnesomsättning."
+    }
+  },
+  "colorful_vegetables_anthocyanins": {
+    "title": "Ät olika färger på grönsaker",
+    "description": "Att äta grönsaker i olika färger, särskilt mörka och röda som innehåller antocyaniner, ger ett brett spektrum av antioxidanter och växtnäringsämnen. Antocyaniner, som finns i blåbär, rödkål och rödbetor, har visat sig stödja hjärthälsa, minska inflammation och skydda cellerna mot oxidativ stress. Variera färgerna på dina grönsaker för att maximera hälsofördelarna.",
+    "areas": {
+      "nutrition": "Färgglada grönsaker bidrar med olika vitaminer, mineraler och antioxidanter som stärker immunförsvaret och främjar allmän hälsa."
+    }
+  },
   "vitamin_d": {
     "title": "D-vitamin",
     "description": "D-vitaminhalterna kan variera beroende på faktorer som solexponering, diet och geografisk plats. Att kombinera D3 med komplementärt vitamin K2 hjälper kroppen att styra kalcium till skelettet och skydda mjukvävnad. Komplettera gärna med magnesiumbisglycinat för att stödja vitamin D-aktivering och effektivt kalciumupptag.",
@@ -249,7 +263,7 @@
     "title": "HRV och återhämtningsövervakning",
     "description": "Hjärtfrekvensvariabilitet (HRV) är ett nyckelmått för att spåra nervsystemets balans och återhämtningsstatus. Övervakning av HRV hjälper till att optimera träningsintensitet, förhindra överträning och säkerställa tillräcklig återhämtning mellan träningspass.",
     "areas": {
-      "nervousSystem": "HRV återspeglar balansen mellan sympatisk och parasympatisk nervsystemaktivitet, vilket indikerar stress- och återhämtningsnivåer.",
+      "nervousSystem": "HRV återspeglar balansen mellan sympatisk och parasympatisk nervsystemaktivitet, vilket indikerar stress- och återhämtningnivåer.",
       "immuneSupport": "Låg HRV kan indikera ökad inflammation och minskad immunfunktion, medan högre HRV tyder på bättre återhämtning och immunresiliens.",
       "energy": "HRV-spårning hjälper till att identifiera när kroppen behöver vila, vilket förhindrar trötthet och optimerar energihantering.",
       "cardioFitness": "Övervakning av HRV hjälper till att optimera kardiovaskulär träning genom att säkerställa tillräcklig återhämtning mellan högintensiva pass.",
@@ -761,5 +775,21 @@
       "cardioFitness": "Astaxantin kan stödja uthållighet genom förbättrad fettmetabolism och minskad oxidativ belastning vid längre aeroba pass."
     },
     "analyzePrompt": "Analysera användarens träningsintensitet och återhämtningsbehov för att avgöra om astaxantin bör användas, och när i förhållande till hårda träningspass."
+  },
+  "intermittent_fasting_12h": {
+    "title": "Intermittent fasta 12 timmar",
+    "description": "Att fasta i 12 timmar per dygn (t.ex. 19:00–07:00) är en mild form av intermittent fasta som kan stödja matsmältning, blodsockerbalans och energinivåer. Det är enkelt att införa och passar de flesta vuxna.",
+    "areas": {
+      "energy": "12-timmarsfasta kan bidra till stabilare energinivåer genom att ge kroppen tid att återhämta sig mellan måltider.",
+      "digestiveHealth": "En längre nattfasta ger matsmältningssystemet vila och kan förbättra tarmhälsa och metabolism."
+    }
+  },
+  "intermittent_fasting_16_8": {
+    "title": "Intermittent fasta 16:8",
+    "description": "16:8 innebär att du fastar i 16 timmar och äter under ett 8-timmarsfönster (t.ex. 12:00–20:00). Denna metod kan främja fettförbränning, insulinkänslighet och metabol hälsa. Passar dig som vill ta fasta ett steg längre.",
+    "areas": {
+      "energy": "16:8-fasta kan öka kroppens förmåga att använda fett som bränsle och ge jämnare energi under dagen.",
+      "digestiveHealth": "Ett längre fastefönster kan ge tarmen mer tid för återhämtning och stödja en sund tarmflora."
+    }
   }
 }

@@ -1,4 +1,18 @@
 {
+  "brown_fat_cool_home": {
+    "title": "Brown fat and a cool home environment",
+    "description": "Brown fat helps the body burn energy and generate heat. Spending time in a cool indoor environment, ideally below 21°C (70°F), can stimulate brown fat activity and increase energy expenditure. Lowering the temperature at home occasionally may support metabolism and metabolic health.",
+    "areas": {
+      "energy": "Activation of brown fat increases energy expenditure and may support better metabolic health."
+    }
+  },
+  "colorful_vegetables_anthocyanins": {
+    "title": "Eat a variety of colorful vegetables",
+    "description": "Eating vegetables in a variety of colors, especially dark and red ones rich in anthocyanins, provides a broad spectrum of antioxidants and phytonutrients. Anthocyanins, found in foods like blueberries, red cabbage, and beets, have been shown to support heart health, reduce inflammation, and protect cells from oxidative stress. Vary your vegetable colors to maximize health benefits.",
+    "areas": {
+      "nutrition": "Colorful vegetables provide different vitamins, minerals, and antioxidants that strengthen the immune system and promote overall health."
+    }
+  },
   "vitamin_d": {
     "title": "Vitamin D",
     "description": "Vitamin D levels can vary based on factors such as sun exposure, diet, and geographic location. Pairing D3 with complementary vitamin K2 helps route calcium to bones and protects soft tissues. Consider adding magnesium bisglycinate to support vitamin D activation and efficient calcium uptake.",
