@@ -7,34 +7,36 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   const sound = useRef<Audio.Sound | null>(null);
 
   const play = async () => {
-    if (!sound.current) {
+    // Om ljudet redan finns, ladda om det från början
+    if (sound.current) {
+      await sound.current.stopAsync();
+      await sound.current.setPositionAsync(0);
+      await sound.current.playAsync();
+    } else {
       const { sound: playback } = await Audio.Sound.createAsync(
         require('../assets/audio/cinematic-sci-fi-trailer-music-414667.mp3'),
-        { isLooping: false, volume: 0.5 } // <-- Ändra här!
+        { isLooping: false, volume: 0.5 }
       );
       sound.current = playback;
       await playback.playAsync();
-    } else {
-      await sound.current.playAsync();
+      // När ljudet spelats klart, nollställ referensen
+      playback.setOnPlaybackStatusUpdate(status => {
+        if (status.isLoaded && status.didJustFinish) {
+          sound.current = null;
+        }
+      });
     }
   };
 
   const stop = async () => {
     if (sound.current) {
-      console.log('Stopping and unloading sound');
       try {
         await sound.current.stopAsync();
-      } catch (e) {
-        // Ignorera om redan stoppad
-      }
+      } catch (e) {}
       try {
         await sound.current.unloadAsync();
-      } catch (e) {
-        // Ignorera om redan unloadad
-      }
+      } catch (e) {}
       sound.current = null;
-    } else {
-      console.log('No sound to stop');
     }
   };
 
