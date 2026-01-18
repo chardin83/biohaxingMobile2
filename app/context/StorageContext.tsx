@@ -109,6 +109,7 @@ interface StorageContextType {
   levelUpModalVisible: boolean;
   setLevelUpModalVisible: (v: boolean) => void;
   newLevelReached: number | null;
+  clearNewLevelReached: () => void;
   dailyNutritionSummaries: Record<string, DailyNutritionSummary>;
   setDailyNutritionSummaries: (
     updater:
@@ -240,7 +241,8 @@ export const StorageProvider = ({
         if (onboardingRaw === "true") setHasCompletedOnboardingState(true);
         if (onboardingStepRaw)
           setOnboardingStepState(parseInt(onboardingStepRaw));
-        if (myXPRaw) setMyXP(parseInt(myXPRaw));
+        // Ladda XP och level direkt utan att trigga level-up-logik vid initial laddning
+        if (myXPRaw) setMyXPState(parseInt(myXPRaw));
         if (myLevelRaw) setMyLevelState(parseInt(myLevelRaw));
         if (dailyNutritionRaw)
           setDailyNutritionSummariesState(JSON.parse(dailyNutritionRaw));
@@ -355,6 +357,10 @@ export const StorageProvider = ({
   const setMyLevel = (level: number) => {
     setMyLevelState(level);
     AsyncStorage.setItem(STORAGE_KEYS.MY_LEVEL, level.toString());
+  };
+
+  const clearNewLevelReached = () => {
+    setNewLevelReached(null);
   };
 
   const setDailyNutritionSummaries = (
@@ -535,6 +541,7 @@ export const StorageProvider = ({
       levelUpModalVisible,
       setLevelUpModalVisible,
       newLevelReached,
+      clearNewLevelReached,
       dailyNutritionSummaries: dailyNutritionSummariesState,
       setDailyNutritionSummaries,
       viewedTips: viewedTipsState,

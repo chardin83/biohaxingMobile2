@@ -5,17 +5,22 @@ import { useStorage } from "@/app/context/StorageContext";
 
 export default function GlobalLevelUpModal() {
   const { t } = useTranslation(["levels"]);
-  const { levelUpModalVisible, setLevelUpModalVisible, newLevelReached } =
+  const { levelUpModalVisible, setLevelUpModalVisible, newLevelReached, clearNewLevelReached } =
     useStorage();
 
   if (!levelUpModalVisible || !newLevelReached) return null;
+
+  const handleClose = () => {
+    setLevelUpModalVisible(false);
+    clearNewLevelReached();
+  };
 
   return (
     <ThemedModal
       visible={levelUpModalVisible}
       title={t("levelUp.title")}
       okLabel={t("common:ok")}
-      onSave={() => setLevelUpModalVisible(false)}
+      onSave={handleClose}
       showCancelButton={false}
     >
       <Text style={{ color: "white", textAlign: "center", fontSize: 18 }}>
