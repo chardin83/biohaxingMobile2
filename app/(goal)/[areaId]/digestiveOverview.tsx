@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -45,22 +44,22 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
 
   if (loading) {
     return (
-      <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
+      <View style={styles.bg}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="rgba(120,255,220,0.95)" />
           <Text style={styles.loadingText}>Loading digestive data...</Text>
         </View>
-      </LinearGradient>
+      </View>
     );
   }
 
   if (error) {
     return (
-      <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
+      <View style={styles.bg}>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Error: {error}</Text>
         </View>
-      </LinearGradient>
+      </View>
     );
   }
 
@@ -89,7 +88,7 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
   };
 
   return (
-    <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
+    <View style={styles.bg}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Digestion</Text>
         <Text style={styles.subtitle}>Factors influencing digestive health and gut function</Text>
@@ -201,7 +200,7 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="tips:digestive.levels.optimization.title" />
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 }
 

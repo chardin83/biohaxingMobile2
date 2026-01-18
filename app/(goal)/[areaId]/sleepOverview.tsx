@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -49,7 +48,7 @@ export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
   }, [adapter]);
 
   return (
-    <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
+    <View style={styles.bg}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Sleep</Text>
         <Text style={styles.subtitle}>Recovery, restoration, and circadian health</Text>
@@ -167,7 +166,7 @@ export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="sleepQuality.levels.sleepBy2230.tips.0.title" />
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 }
 

@@ -1,9 +1,10 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
-import React from 'react';
-import { SafeAreaView } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import BackButton from '@/components/BackButton';
+import { Colors } from '@/constants/Colors';
 
 import CardioOverview from './cardioOverview';
 import DigestiveOverview from './digestiveOverview';
@@ -17,8 +18,8 @@ export default function AreaRootScreen() {
   const { areaId } = useLocalSearchParams<{ areaId: string }>();
 
   return (
-    <LinearGradient colors={['#071526', '#040B16']} style={{ flex: 1 }}>
-      <SafeAreaView style={{ flex: 1 }}>
+    <LinearGradient colors={Colors.dark.gradients.sunrise.colors as any} style={styles.container}>
+      <SafeAreaView edges={['top']} style={styles.container}>
         <BackButton onPress={() => router.push('/(tabs)/dashboard')} />
 
         {areaId === 'nervousSystem' && <NervousSystemOverview mainGoalId={areaId} />}
@@ -32,3 +33,9 @@ export default function AreaRootScreen() {
     </LinearGradient>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

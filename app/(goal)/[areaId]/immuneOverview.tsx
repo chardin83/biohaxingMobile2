@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -51,22 +50,22 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
 
   if (loading) {
     return (
-      <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
+      <View style={styles.bg}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="rgba(120,255,220,0.95)" />
           <Text style={styles.loadingText}>Loading immune data...</Text>
         </View>
-      </LinearGradient>
+      </View>
     );
   }
 
   if (error) {
     return (
-      <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
+      <View style={styles.bg}>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Error: {error}</Text>
         </View>
-      </LinearGradient>
+      </View>
     );
   }
 
@@ -79,7 +78,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
   };
 
   return (
-    <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
+    <View style={styles.bg}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Immune Support</Text>
         <Text style={styles.subtitle}>Key metrics that influence immune system function and resilience</Text>
@@ -157,7 +156,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="tips:immune.levels.optimization.title" />
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 }
 

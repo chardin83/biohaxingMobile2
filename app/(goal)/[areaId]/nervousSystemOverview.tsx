@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -100,7 +99,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
   const recoveryStatus = getRecoveryStatus(hrv, sleepHours);
 
   return (
-    <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
+    <View style={styles.bg}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Nervous System</Text>
         <Text style={styles.subtitle}>Autonomic nervous system balance and recovery metrics</Text>
@@ -216,7 +215,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="tips:nervousSystem.levels.optimization.title" />
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 }
 

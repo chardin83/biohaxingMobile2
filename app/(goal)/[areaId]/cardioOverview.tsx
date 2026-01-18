@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -47,22 +46,22 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
 
   if (loading) {
     return (
-      <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
+      <View style={styles.bg}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="rgba(120,255,220,0.95)" />
           <Text style={styles.loadingText}>Loading cardio data...</Text>
         </View>
-      </LinearGradient>
+      </View>
     );
   }
 
   if (error) {
     return (
-      <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
+      <View style={styles.bg}>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Error: {error}</Text>
         </View>
-      </LinearGradient>
+      </View>
     );
   }
 
@@ -84,7 +83,7 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
   };
 
   return (
-    <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
+    <View style={styles.bg}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Cardio Fitness</Text>
         <Text style={styles.subtitle}>Cardiovascular endurance metrics and training insights</Text>
@@ -186,7 +185,7 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
         {/* Tips Card */}
         <TipsList areaId={mainGoalId} title="tips:cardio.levels.optimization.title" />
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 }
 

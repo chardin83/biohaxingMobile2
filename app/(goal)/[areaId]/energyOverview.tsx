@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -53,22 +52,22 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
 
   if (loading) {
     return (
-      <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
+      <View style={styles.bg}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="rgba(255,215,100,0.95)" />
           <Text style={styles.loadingText}>Loading energy data...</Text>
         </View>
-      </LinearGradient>
+      </View>
     );
   }
 
   if (error) {
     return (
-      <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
+      <View style={styles.bg}>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Error loading data: {error}</Text>
         </View>
-      </LinearGradient>
+      </View>
     );
   }
 
@@ -100,7 +99,7 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
   };
 
   return (
-    <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
+    <View style={styles.bg}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Energy Systems</Text>
         <Text style={styles.subtitle}>Mitochondrial function and cellular energy production</Text>
@@ -270,7 +269,7 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
           </Text>
         </View>
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 }
 

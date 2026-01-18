@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -48,22 +47,22 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
 
   if (loading) {
     return (
-      <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
+      <View style={styles.bg}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="rgba(255,120,100,0.95)" />
           <Text style={styles.loadingText}>Loading performance data...</Text>
         </View>
-      </LinearGradient>
+      </View>
     );
   }
 
   if (error) {
     return (
-      <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
+      <View style={styles.bg}>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Error: {error}</Text>
         </View>
-      </LinearGradient>
+      </View>
     );
   }
 
@@ -94,7 +93,7 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
   };
 
   return (
-    <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
+    <View style={styles.bg}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Muscle Performance</Text>
         <Text style={styles.subtitle}>Strength training readiness and recovery metrics</Text>
@@ -256,7 +255,7 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
         {/* Optimization Tips Card */}
         <TipsList areaId={mainGoalId} title="tips:muscle.levels.optimization.title" />
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 }
 
