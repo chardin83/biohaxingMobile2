@@ -331,12 +331,14 @@ export default function AreaDetailScreen() {
   }
 
   return (
-    <LinearGradient colors={['#071526', '#040B16']} style={{ flex: 1 }}>
-      <SafeAreaView style={{ flex: 1 }}>
+    <LinearGradient
+      colors={Colors.dark.gradients.sunrise.colors as any}
+      locations={[0, 0.7, 1]} // Flyttar ned det röda i gradienten
+      style={{ flex: 1 }}>
         <BackButton onPress={() => router.replace(`/(goal)/${areaId}`)} />
 
         <ScrollView
-          contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 140, flexGrow: 1 }]}
+          contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 340, flexGrow: 1 }]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -353,7 +355,7 @@ export default function AreaDetailScreen() {
             )}
             <Text style={styles.xpText}>{totalXpEarned} XP earned</Text>
 
-            {/* Progress bar baserad på chat count */}
+            {/* Progress bar baserat på chat count */}
             <ProgressBarWithLabel progress={progress} label={progressLabel} />
 
             {showTopPlanAction && (
@@ -623,18 +625,16 @@ export default function AreaDetailScreen() {
             }}
           />
         </ScrollView>
-      </SafeAreaView>
     </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.dark.background,
     alignItems: 'center',
     justifyContent: 'flex-start',
     padding: 20,
-    paddingTop: 40,
+    paddingTop: 100,
   },
   topSection: {
     alignItems: 'center',

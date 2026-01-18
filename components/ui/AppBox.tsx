@@ -2,6 +2,7 @@
 import React from 'react';
 import { StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 
+import { Card } from '@/components/ui/Card';
 import { Colors } from '@/constants/Colors';
 
 type Props = {
@@ -54,27 +55,18 @@ export default function AppBox({
   };
 
   return (
-    <View style={[styles.box, style]}>
+    <Card transparent={true}>
       {renderHeader()}
       {typeof children === 'string' || typeof children === 'number' ? (
         <Text style={styles.boxText}>{children}</Text>
       ) : (
         children
       )}
-    </View>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  box: {
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-    backgroundColor: Colors.dark.secondary,
-    borderRadius: 10,
-    padding: 16,
-    width: '100%',
-    marginBottom: 20,
-  },
   boxTitle: {
     color: Colors.dark.primary,
     fontWeight: 'bold',

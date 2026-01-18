@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { Card } from '@/components/ui/Card';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { DailyActivity, EnergySignal, SleepSummary, TimeRange } from '@/wearables/types';
@@ -96,9 +97,7 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
         <WearableStatus status={status} />
 
         {/* Overview card - Indirect metrics */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Gut health influencers</Text>
-
+        <Card title="Gut health influencers">
           <View style={styles.row}>
             {/* Stress */}
             <View style={[styles.col, styles.colWithDivider]}>
@@ -124,12 +123,10 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
               {latestActivity && <Text style={styles.source}>{latestActivity.source}</Text>}
             </View>
           </View>
-        </View>
+        </Card>
 
         {/* Manual tracking card */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Your tracking</Text>
-
+        <Card title="Your tracking" style={{ marginTop: 16 }}>
           <View style={styles.row}>
             {/* Hydration */}
             <View style={[styles.col, styles.colWithDivider]}>
@@ -152,18 +149,15 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
               <Text style={styles.accent}>Feeling good!</Text>
             </View>
           </View>
-
           <View style={styles.buttonRow}>
             <Text style={styles.actionButton}>+ Log meal</Text>
             <Text style={styles.actionButton}>+ Log symptom</Text>
             <Text style={styles.actionButton}>+ Log water</Text>
           </View>
-        </View>
+        </Card>
 
         {/* Information card */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>The gut-health connection</Text>
-
+        <Card title="The gut-health connection" style={{ marginTop: 16 }}>
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>😌 Stress & Gut-Brain Axis</Text>
             <Text style={styles.infoText}>
@@ -195,7 +189,7 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
               Aim for 2-3 liters daily.
             </Text>
           </View>
-        </View>
+        </Card>
 
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="tips:digestive.levels.optimization.title" />
@@ -221,19 +215,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 6,
     marginBottom: 16,
-  },
-  card: {
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    borderRadius: 22,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(120,255,220,0.18)',
-  },
-  cardTitle: {
-    color: 'rgba(255,255,255,0.85)',
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 14,
   },
   row: {
     flexDirection: 'row',

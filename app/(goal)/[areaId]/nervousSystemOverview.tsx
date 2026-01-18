@@ -6,6 +6,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useStorage } from '@/app/context/StorageContext';
 import { HRVMetric } from '@/components/metrics/HRVMetric';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
+import { Card } from '@/components/ui/Card';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { Colors } from '@/constants/Colors';
@@ -107,9 +108,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
         <WearableStatus status={status} />
 
         {/* Overview card - Main ANS metrics */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Autonomic nervous system</Text>
-
+        <Card title="Autonomic nervous system">
           {loading ? (
             <Text style={styles.muted}>Loading…</Text>
           ) : (
@@ -144,12 +143,10 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
               </View>
             </>
           )}
-        </View>
+        </Card>
 
         {/* ANS Balance visualization */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Sympathetic vs Parasympathetic</Text>
-
+        <Card title="Sympathetic vs Parasympathetic" style={{ marginTop: 16 }}>
           {loading ? (
             <Text style={styles.muted}>Loading…</Text>
           ) : (
@@ -159,22 +156,18 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
                   <View style={[styles.sympatheticBar, { flex: stressScore }]} />
                   <View style={[styles.parasympatheticBar, { flex: 100 - stressScore }]} />
                 </View>
-
                 <View style={styles.balanceLabels}>
                   <Text style={styles.balanceLabel}>⚡ Fight/Flight</Text>
                   <Text style={styles.balanceLabel}>😌 Rest/Digest</Text>
                 </View>
               </View>
-
               <Text style={styles.balanceText}>{getBalanceMessage(stressScore)}</Text>
             </>
           )}
-        </View>
+        </Card>
 
         {/* Information card */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Understanding your nervous system</Text>
-
+        <Card title="Understanding your nervous system" style={{ marginTop: 16 }}>
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>❤️ HRV (Heart Rate Variability)</Text>
             <Text style={styles.infoText}>
@@ -210,7 +203,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
               appropriately.
             </Text>
           </View>
-        </View>
+        </Card>
 
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="tips:nervousSystem.levels.optimization.title" />
@@ -236,19 +229,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 6,
     marginBottom: 16,
-  },
-  card: {
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    borderRadius: 22,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: Colors.dark.accentVeryWeak,
-  },
-  cardTitle: {
-    color: Colors.dark.textSecondary,
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 14,
   },
   row: {
     flexDirection: 'row',

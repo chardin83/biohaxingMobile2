@@ -85,5 +85,8 @@ export const Colors = {
         end: { x: 0.5, y: 1 },
       },
     },
+    cardBackground: 'rgba(255,255,255,0.06)', // Transparent card bakgrund
+    cardBorder: 'rgba(255,215,100,0.18)',    // Transparent card border
+    cardTitle: 'rgba(255,255,255,0.85)',     // Transparent card titel
   },
 };

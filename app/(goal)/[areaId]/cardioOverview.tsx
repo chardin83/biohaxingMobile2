@@ -3,6 +3,7 @@ import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-nat
 
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { VO2MaxMetric } from '@/components/metrics/VO2MaxMetric';
+import { Card } from '@/components/ui/Card';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { DailyActivity, EnergySignal, HRVSummary, TimeRange } from '@/wearables/types';
@@ -91,17 +92,10 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
         <WearableStatus status={status} />
 
         {/* Overview card */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Your cardio performance</Text>
-
+        <Card title="Your cardio performance">
           <View style={styles.row}>
-            {/* VO2 Max */}
             <VO2MaxMetric vo2max={cardio.vo2max} trend={cardio.vo2maxDelta} showDivider />
-
-            {/* Resting HR */}
             <RestingHRMetric hrvData={hrvData} showDivider />
-
-            {/* Training Load */}
             <View style={styles.col}>
               <Text style={styles.label}>Training Load</Text>
               <Text style={styles.valueSmall}>{cardio.trainingLoad}</Text>
@@ -109,30 +103,23 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
               {activityData.length > 0 && <Text style={styles.source}>7-day total</Text>}
             </View>
           </View>
-
-          {/* Second row */}
           <View style={[styles.row, { marginTop: 20 }]}>
-            {/* Recovery Time */}
             <View style={[styles.col, styles.colWithDivider]}>
               <Text style={styles.label}>Recovery time</Text>
               <Text style={styles.value}>{cardio.recoveryTime}h</Text>
               <Text style={styles.muted}>Until next hard effort</Text>
               {latestEnergy && <Text style={styles.source}>Based on battery: {latestEnergy.bodyBatteryLevel}%</Text>}
             </View>
-
-            {/* Fitness Age */}
             <View style={styles.col}>
               <Text style={styles.label}>Fitness age</Text>
               <Text style={styles.value}>{cardio.fitnessAge}</Text>
               <Text style={styles.accent}>{cardio.actualAge - cardio.fitnessAge} yrs younger</Text>
             </View>
           </View>
-        </View>
+        </Card>
 
         {/* VO2 Max explanation */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Understanding your metrics</Text>
-
+        <Card title="Understanding your metrics" style={{ marginTop: 16 }}>
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>🫁 VO₂ Max</Text>
             <Text style={styles.infoText}>
@@ -144,7 +131,6 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
               your age group.
             </Text>
           </View>
-
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>🫀 Resting Heart Rate</Text>
             <Text style={styles.infoText}>
@@ -153,7 +139,6 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
               stress.
             </Text>
           </View>
-
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>💪 Training Load</Text>
             <Text style={styles.infoText}>
@@ -162,7 +147,6 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
               insufficient stimulus for adaptation.
             </Text>
           </View>
-
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>⏱️ Recovery Time</Text>
             <Text style={styles.infoText}>
@@ -171,7 +155,6 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
               incomplete leads to diminished returns.
             </Text>
           </View>
-
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>🎂 Fitness Age</Text>
             <Text style={styles.infoText}>
@@ -180,7 +163,7 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
               sedentary peers.
             </Text>
           </View>
-        </View>
+        </Card>
 
         {/* Tips Card */}
         <TipsList areaId={mainGoalId} title="tips:cardio.levels.optimization.title" />
@@ -206,19 +189,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 6,
     marginBottom: 16,
-  },
-  card: {
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    borderRadius: 22,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(120,255,220,0.18)',
-  },
-  cardTitle: {
-    color: 'rgba(255,255,255,0.85)',
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 14,
   },
   row: {
     flexDirection: 'row',

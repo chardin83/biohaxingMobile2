@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { Card } from '@/components/ui/Card';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { DailyActivity, EnergySignal, HRVSummary, SleepSummary, TimeRange } from '@/wearables/types';
@@ -101,68 +102,56 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
         <WearableStatus status={status} />
 
         {/* Training Readiness Card */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Training Readiness</Text>
-
+        <Card title="Training Readiness">
           <View style={styles.centerMetric}>
             <Text style={styles.bigValue}>{performance.trainingReadiness}</Text>
             <Text style={styles.bigLabel}>Readiness Score</Text>
             <Text style={styles.statusGood}>{performance.readinessStatus}</Text>
             {latestEnergy && <Text style={styles.source}>Source: {latestEnergy.source}</Text>}
           </View>
-
           <View style={styles.row}>
             <View style={[styles.col, styles.colWithDivider]}>
               <Text style={styles.label}>Recovery time</Text>
               <Text style={styles.value}>{performance.recoveryTime}h</Text>
             </View>
-
             <View style={styles.col}>
               <Text style={styles.label}>Last workout</Text>
               <Text style={styles.valueSmall}>{performance.lastStrengthWorkout}</Text>
             </View>
           </View>
-        </View>
+        </Card>
 
         {/* Training Load Card */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Training Load Management</Text>
-
+        <Card title="Training Load Management" style={{ marginTop: 16 }}>
           <View style={styles.row}>
             <View style={[styles.col, styles.colWithDivider]}>
               <Text style={styles.label}>7-day load</Text>
               <Text style={styles.value}>{performance.trainingLoad.current}</Text>
               <Text style={styles.accent}>{performance.trainingLoad.status}</Text>
             </View>
-
             <View style={[styles.col, styles.colWithDivider]}>
               <Text style={styles.label}>Optimal range</Text>
               <Text style={styles.valueSmall}>{performance.trainingLoad.optimal}</Text>
             </View>
-
             <View style={styles.col}>
               <Text style={styles.label}>Anaerobic load</Text>
               <Text style={styles.value}>{performance.anaerobicLoad}</Text>
               <Text style={styles.muted}>High intensity</Text>
             </View>
           </View>
-
           {latestActivity && (
             <Text style={styles.source}>
               Source: {latestActivity.source} • {latestActivity.date}
             </Text>
           )}
-
           <View style={styles.loadBar}>
             <View style={[styles.loadFill, { width: `${(performance.trainingLoad.current / 350) * 100}%` }]} />
           </View>
           <Text style={styles.loadText}>Your training load is well-balanced. Continue with current intensity.</Text>
-        </View>
+        </Card>
 
         {/* Recovery Factors Card */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Recovery Factors</Text>
-
+        <Card title="Recovery Factors" style={{ marginTop: 16 }}>
           <View style={styles.row}>
             <View style={[styles.col, styles.colWithDivider]}>
               <Text style={styles.label}>Sleep quality</Text>
@@ -170,12 +159,10 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
               <Text style={styles.accent}>{performance.sleepHours.toFixed(1)}h</Text>
               {latestSleep && <Text style={styles.source}>{latestSleep.source}</Text>}
             </View>
-
             <View style={[styles.col, styles.colWithDivider]}>
               <Text style={styles.label}>Body Battery</Text>
               <Text style={styles.value}>{performance.bodyBattery}%</Text>
             </View>
-
             <View style={styles.col}>
               <Text style={styles.label}>HRV</Text>
               <Text style={styles.value}>{performance.hrv}</Text>
@@ -183,17 +170,14 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
               {latestHRV && <Text style={styles.source}>{latestHRV.source}</Text>}
             </View>
           </View>
-
           <Text style={styles.recoveryText}>
             🛌 Sleep and HRV are primary drivers of muscle recovery and protein synthesis. Deep sleep stages trigger
             growth hormone release for muscle repair.
           </Text>
-        </View>
+        </Card>
 
         {/* Protein Timing Card */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Anabolic Window</Text>
-
+        <Card title="Anabolic Window" style={{ marginTop: 16 }}>
           <View style={styles.proteinSection}>
             <Text style={styles.proteinStatus}>⏰ {performance.proteinWindow}</Text>
             <Text style={styles.proteinText}>
@@ -201,7 +185,6 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
               remains elevated for 24-48 hours after resistance training.
             </Text>
           </View>
-
           <View style={styles.proteinTips}>
             <Text style={styles.tipLabel}>Recommended:</Text>
             <Text style={styles.tipText}>• 20-40g protein within 2h post-workout</Text>
@@ -209,12 +192,10 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
             <Text style={styles.tipText}>• Leucine-rich sources (whey, eggs, meat)</Text>
             <Text style={styles.tipText}>• Distribute protein across 3-5 meals</Text>
           </View>
-        </View>
+        </Card>
 
         {/* Information Card */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Understanding muscle performance</Text>
-
+        <Card title="Understanding muscle performance" style={{ marginTop: 16 }}>
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>💪 Training Readiness</Text>
             <Text style={styles.infoText}>
@@ -223,7 +204,6 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
               overload.
             </Text>
           </View>
-
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>📊 Training Load</Text>
             <Text style={styles.infoText}>
@@ -232,7 +212,6 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
               progression.
             </Text>
           </View>
-
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>⏱️ Recovery Time</Text>
             <Text style={styles.infoText}>
@@ -241,7 +220,6 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
               adaptation.
             </Text>
           </View>
-
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>🛌 Sleep & Muscle Growth</Text>
             <Text style={styles.infoText}>
@@ -250,7 +228,7 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
               hypertrophy.
             </Text>
           </View>
-        </View>
+        </Card>
 
         {/* Optimization Tips Card */}
         <TipsList areaId={mainGoalId} title="tips:muscle.levels.optimization.title" />
@@ -276,19 +254,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 6,
     marginBottom: 16,
-  },
-  card: {
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    borderRadius: 22,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(255,120,100,0.18)',
-  },
-  cardTitle: {
-    color: 'rgba(255,255,255,0.85)',
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 14,
   },
   centerMetric: {
     alignItems: 'center',

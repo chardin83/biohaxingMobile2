@@ -2,6 +2,7 @@ import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { SleepMetric } from '@/components/metrics/SleepMetric';
+import { Card } from '@/components/ui/Card';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { SleepSummary } from '@/wearables/types';
@@ -55,9 +56,7 @@ export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
         <WearableStatus status={status} />
 
         {/* Overview card */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Your sleep overview</Text>
-
+        <Card title="Your sleep overview">
           {loading ? (
             <Text style={styles.muted}>Loading…</Text>
           ) : (
@@ -77,12 +76,10 @@ export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
               </View>
             </View>
           )}
-        </View>
+        </Card>
 
         {/* Sleep stages card */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Sleep architecture</Text>
-
+        <Card title="Sleep architecture" style={{ marginTop: 16 }}>
           {loading ? (
             <Text style={styles.muted}>Loading…</Text>
           ) : (
@@ -107,12 +104,10 @@ export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
               </Text>
             </>
           )}
-        </View>
+        </Card>
 
         {/* Information card */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Understanding sleep</Text>
-
+        <Card title="Understanding sleep" style={{ marginTop: 16 }}>
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>🌙 Sleep Stages</Text>
             <Text style={styles.infoText}>
@@ -161,7 +156,7 @@ export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
               efficiency may indicate sleep disorders, stress, or poor sleep hygiene.
             </Text>
           </View>
-        </View>
+        </Card>
 
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="sleepQuality.levels.sleepBy2230.tips.0.title" />

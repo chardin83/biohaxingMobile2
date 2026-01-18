@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
+import { Card } from '@/components/ui/Card';
 import { Colors } from '@/constants/Colors';
 import { tips } from '@/locales/tips';
 import { NEGATIVE_VERDICTS, POSITIVE_VERDICTS, VerdictValue } from '@/types/verdict';
@@ -100,9 +101,7 @@ export default function TipsList({ areaId, title }: Readonly<TipsListProps>) {
   };
 
   return (
-    <View style={styles.card}>
-      <Text style={styles.cardTitle}>{t(title)}</Text>
-
+    <Card title={t(title)} style={{ marginTop: 16 }}>
       {visibleTips.map((tip, index) => {
         const tipProgress = getTipProgress(tip.id);
 
@@ -118,25 +117,11 @@ export default function TipsList({ areaId, title }: Readonly<TipsListProps>) {
           </Text>
         </Pressable>
       )}
-    </View>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    borderRadius: 22,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: Colors.dark.accentVeryWeak,
-    marginTop: 16,
-  },
-  cardTitle: {
-    color: Colors.dark.textSecondary,
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 14,
-  },
   showAllButton: {
     marginTop: 12,
     paddingVertical: 12,

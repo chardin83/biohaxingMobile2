@@ -4,6 +4,7 @@ import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-nat
 import { HRVMetric } from '@/components/metrics/HRVMetric';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { VO2MaxMetric } from '@/components/metrics/VO2MaxMetric';
+import { Card } from '@/components/ui/Card';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { calculateHRVMetrics } from '@/utils/hrvCalculations';
@@ -106,47 +107,36 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
         <WearableStatus status={status} />
 
         {/* Body Battery - Main Energy Indicator */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Cellular Energy Reserves</Text>
-
+        <Card title="Cellular Energy Reserves">
           <View style={styles.centerMetric}>
             <Text style={styles.bigValue}>{energy.bodyBattery}</Text>
             <Text style={styles.bigLabel}>Body Battery</Text>
             <Text style={styles.statusGood}>{energy.bodyBatteryChange} since waking</Text>
           </View>
-
           <View style={styles.batteryBar}>
             <View style={[styles.batteryFill, { width: `${energy.bodyBattery}%` }]} />
           </View>
-
           <Text style={styles.batteryText}>
             Body Battery tracks your body's energy reserves by monitoring stress, activity, and recovery. It reflects
             your mitochondrial ATP production capacity.
           </Text>
-        </View>
+        </Card>
 
         {/* Energy Production Factors */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Energy Production Metrics</Text>
-
+        <Card title="Energy Production Metrics" style={{ marginTop: 16 }}>
           <View style={styles.row}>
             <VO2MaxMetric vo2max={energy.vo2max} status={energy.vo2maxStatus} showDivider />
-
             <RestingHRMetric hrvData={hrvData} showDivider />
-
             <HRVMetric hrvData={hrvData} />
           </View>
-
           <Text style={styles.metricExplainer}>
             VO₂ max indicates mitochondrial density and oxidative capacity. Higher values = more efficient ATP
             production from oxygen.
           </Text>
-        </View>
+        </Card>
 
         {/* Energy Drain vs Recharge */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Energy Balance</Text>
-
+        <Card title="Energy Balance" style={{ marginTop: 16 }}>
           <View style={styles.balanceSection}>
             <View style={styles.balanceItem}>
               <Text style={styles.balanceLabel}>⚡ Energy Drain</Text>
@@ -179,12 +169,10 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
             Deep sleep is when mitochondrial repair and autophagy (cellular cleanup) occur. Chronic stress increases
             cortisol, which impairs mitochondrial function.
           </Text>
-        </View>
+        </Card>
 
         {/* Mitochondrial Health Information */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Understanding Mitochondria</Text>
-
+        <Card title="Understanding Mitochondria" style={{ marginTop: 16 }}>
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>🔬 The Powerhouses of Your Cells</Text>
             <Text style={styles.infoText}>
@@ -237,15 +225,13 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
               ATP.
             </Text>
           </View>
-        </View>
+        </Card>
 
         {/* Tips Card */}
         <TipsList areaId={mainGoalId} title="tips:energy.levels.optimization.title" />
 
         {/* Activity Tracking */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Today's Activity</Text>
-
+        <Card title="Today's Activity" style={{ marginTop: 16 }}>
           <View style={styles.row}>
             <View style={[styles.col, styles.colWithDivider]}>
               <Text style={styles.label}>Active minutes</Text>
@@ -267,7 +253,7 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
             Regular movement throughout the day maintains mitochondrial health. Even light activity (walking) stimulates
             ATP production and reduces oxidative stress.
           </Text>
-        </View>
+        </Card>
       </ScrollView>
     </View>
   );
@@ -290,19 +276,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 6,
     marginBottom: 16,
-  },
-  card: {
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    borderRadius: 22,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(255,215,100,0.18)',
-  },
-  cardTitle: {
-    color: 'rgba(255,255,255,0.85)',
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 14,
   },
   centerMetric: {
     alignItems: 'center',

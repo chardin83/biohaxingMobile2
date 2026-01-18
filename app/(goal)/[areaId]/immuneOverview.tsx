@@ -5,6 +5,7 @@ import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-nat
 import { HRVMetric } from '@/components/metrics/HRVMetric';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { SleepMetric } from '@/components/metrics/SleepMetric';
+import { Card } from '@/components/ui/Card';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { Colors } from '@/constants/Colors';
@@ -86,9 +87,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
         <WearableStatus status={status} />
 
         {/* Overview card */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Your immune health indicators</Text>
-
+        <Card title="Your immune health indicators">
           <View style={styles.row}>
             {/* Sleep */}
             <SleepMetric sleepData={sleepData} showDivider />
@@ -117,12 +116,10 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
               <Text style={styles.muted}>{immune.bodyBattery > 70 ? 'Ready for activity' : 'Need recovery'}</Text>
             </View>
           </View>
-        </View>
+        </Card>
 
         {/* Information card */}
-        <View style={[styles.card, { marginTop: 16 }]}>
-          <Text style={styles.cardTitle}>Why these metrics matter</Text>
-
+        <Card title="Why these metrics matter" style={{ marginTop: 16 }}>
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>💤 Sleep</Text>
             <Text style={styles.infoText}>
@@ -151,7 +148,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
               An elevated resting heart rate can be an early sign of illness, inflammation, or inadequate recovery.
             </Text>
           </View>
-        </View>
+        </Card>
 
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="tips:immune.levels.optimization.title" />
@@ -177,19 +174,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 6,
     marginBottom: 16,
-  },
-  card: {
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    borderRadius: 22,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: Colors.dark.accentWeak,
-  },
-  cardTitle: {
-    color: Colors.dark.textSecondary,
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 14,
   },
   row: {
     flexDirection: 'row',

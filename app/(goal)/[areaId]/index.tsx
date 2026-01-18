@@ -18,7 +18,13 @@ export default function AreaRootScreen() {
   const { areaId } = useLocalSearchParams<{ areaId: string }>();
 
   return (
-    <LinearGradient colors={Colors.dark.gradients.sunrise.colors as any} style={styles.container}>
+    <LinearGradient
+      colors={Colors.dark.gradients.sunrise.colors as any}
+      locations={Colors.dark.gradients.sunrise.locations as any}
+      start={Colors.dark.gradients.sunrise.start}
+      end={Colors.dark.gradients.sunrise.end}
+      style={styles.gradient}
+    >
       <BackButton onPress={() => router.push('/(tabs)/dashboard')} />
       {areaId === 'nervousSystem' && <NervousSystemOverview mainGoalId={areaId} />}
       {areaId === 'sleepQuality' && <SleepOverview mainGoalId={areaId} />}
@@ -32,8 +38,8 @@ export default function AreaRootScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  gradient: {
     flex: 1,
+    minHeight: 300,
   },
-  // Removed safeArea style
 });
