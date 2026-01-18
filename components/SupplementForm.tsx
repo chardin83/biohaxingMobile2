@@ -5,7 +5,6 @@ import { StyleSheet,View } from "react-native";
 import { Supplement } from "@/app/domain/Supplement";
 import SupplementDropdown from "@/components/SupplementsDropdown";
 import LabeledInput from "@/components/ui/LabeledInput";
-import { Colors } from "@/constants/Colors";
 
 import AppButton from "./ui/AppButton";
 

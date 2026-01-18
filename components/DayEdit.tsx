@@ -25,14 +25,10 @@ import DropdownMenuButton from "./ui/DropDownMenuButton";
 
 interface DayeEditProps {
   selectedDate: string;
-  onSupplementSelect: (supplement: Supplement) => void;
-  selectedSupplement: string | null;
 }
 
 const DayEdit: React.FC<DayeEditProps> = ({
   selectedDate,
-  onSupplementSelect,
-  selectedSupplement,
 }) => {
   const [selectedTime, setSelectedTime] = useState<Date>(new Date());
   const [selectedSupplements, setSelectedSupplements] = useState<

@@ -5,26 +5,14 @@ import CalendarComponent from "@/components/CalendarComponent";
 import DayEdit from "@/components/DayEdit";
 import { Colors } from "@/constants/Colors";
 
-import { Supplement } from "../domain/Supplement";
 import { borders } from "../theme/styles";
 
 export default function Calendar() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [selectedSupplement, setSelectedSupplement] = useState<string | null>(
-    null
-  );
   const calendarRef = useRef<any>(null);
 
   const handleDayPress = (day: string) => {
     setSelectedDate(day);
-    setSelectedSupplement(null);
-  };
-
-  const handleSupplementSelect = (supplement: Supplement) => {
-    setSelectedSupplement(supplement.name);
-    if (calendarRef.current) {
-      calendarRef.current.addMarkForDate(selectedDate);
-    }
   };
 
   return (
@@ -35,8 +23,6 @@ export default function Calendar() {
           <View style={styles.dropdownContainer}>
             <DayEdit
               selectedDate={selectedDate}
-              selectedSupplement={selectedSupplement}
-              onSupplementSelect={handleSupplementSelect}
             />
           </View>
         )}

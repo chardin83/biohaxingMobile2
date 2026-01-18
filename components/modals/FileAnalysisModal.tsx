@@ -25,7 +25,6 @@ const AnalysisModal: React.FC<AnalysisModalProps> = ({
   visible,
   onClose,
   t,
-  prompt,
   onConfirm,
   description,
   supplement,

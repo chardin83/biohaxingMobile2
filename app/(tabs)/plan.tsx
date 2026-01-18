@@ -1,16 +1,7 @@
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo,useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Modal,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  // TextInput,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Portal } from "react-native-paper";
 
 import { Collapsible } from "@/components/Collapsible";
@@ -37,19 +28,15 @@ import { Plan } from "../domain/Plan";
 import { Supplement } from "../domain/Supplement";
 import { colors } from "../theme/styles";
 
-const PLAN_CATEGORY_BY_TIP_ID = new Map(
-  tips
-    .filter((tip) => tip.planCategory)
-    .map((tip) => [tip.id, tip.planCategory!])
-);
+// Plan category mapping not currently used; remove to avoid unused warnings
 
 export default function Plans() {
   const params = useLocalSearchParams<{ openCreate?: string }>();
   const [modalVisible, setModalVisible] = useState(false);
-  const [newPlanName, setNewPlanName] = useState("");
-  const [newPlanTime, setNewPlanTime] = useState(new Date());
-  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-  const [isEditingPlan, setIsEditingPlan] = useState(false);
+  const [_newPlanName, setNewPlanName] = useState("");
+  const [_newPlanTime, setNewPlanTime] = useState(new Date());
+  const [_selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [_isEditingPlan, setIsEditingPlan] = useState(false);
   const [isEditingSupplement, setIsEditingSupplement] = useState(false);
   const [planForSupplementEdit, setPlanForSupplementEdit] =
     useState<Plan | null>(null);
@@ -66,7 +53,7 @@ export default function Plans() {
   const { saveSupplementToPlan } = useSupplementSaver();
 
   const [supplement, setSupplement] = useState<Supplement | null>(null);
-  const [showTimePicker, setShowTimePicker] = useState(Platform.OS === "ios");
+  // Removed time picker state; handled within modal components if needed
 
   const {
     plans,
@@ -91,10 +78,10 @@ export default function Plans() {
       if (!tip?.supplements?.length) return null;
       for (const reference of tip.supplements) {
         if (!reference.id) continue;
-        const supplement = supplementMap.get(reference.id);
-        if (supplement?.quantity) {
-          const unit = supplement.unit ? ` ${supplement.unit}` : "";
-          const dose = `${supplement.quantity}${unit}`.trim();
+        const suppMeta = supplementMap.get(reference.id);
+        if (suppMeta?.quantity) {
+          const unit = suppMeta.unit ? ` ${suppMeta.unit}` : "";
+          const dose = `${suppMeta.quantity}${unit}`.trim();
           if (dose.length > 0) {
             return t("plan.recommendedDose", { dose });
           }
@@ -204,40 +191,7 @@ export default function Plans() {
     setPlans((prev) => ({ ...prev, supplements: updatedPlans }));
   };
 
-  const handleSavePlan = () => {
-    if (newPlanName.trim() === "") return;
-
-    if (isEditingPlan && selectedPlan) {
-      const updatedPlans = supplementPlans.map((plan) =>
-        plan.name === selectedPlan.name
-          ? {
-              ...plan,
-              name: newPlanName,
-              prefferedTime: newPlanTime.toTimeString().slice(0, 5),
-            }
-          : plan
-      );
-      savePlans(updatedPlans);
-    } else {
-      // Adding a new plan
-      const newPlan: Plan = {
-        name: newPlanName.trim(),
-        supplements: [],
-        prefferedTime: newPlanTime.toTimeString().slice(0, 5),
-        notify: false,
-      };
-      const updatedPlans = [...supplementPlans, newPlan];
-      savePlans(updatedPlans);
-    }
-
-    // Close modal and reset state after saving
-    setModalVisible(false);
-    setIsEditingPlan(false);
-    setSelectedPlan(null);
-    setNewPlanName("");
-    setNewPlanTime(new Date());
-    setShowTimePicker(Platform.OS === "ios");
-  };
+  // Removed unused handleSavePlan; CreateTimeSlotModal handles creation flow
 
   const handleRemovePlan = (planName: string) => {
     console.log("Removing plan:", planName);
@@ -355,8 +309,8 @@ export default function Plans() {
         >
           {isExpanded && (
             <View>
-              {supplements.map((supplement) =>
-                renderSupplementItem(plan.name, supplement)
+              {supplements.map((sup) =>
+                renderSupplementItem(plan.name, sup)
               )}
               {errorMessage && <Text style={styles.planErrorText}>{errorMessage}</Text>}
               <View style={styles.planAddButtonWrapper}>
@@ -392,11 +346,11 @@ export default function Plans() {
     ));
   };
 
-  const renderSupplementItem = (planName: string, supplement: Supplement) => (
+  const renderSupplementItem = (planName: string, suppItem: Supplement) => (
     <SupplementItem
-      key={`${planName}-${supplement.name}`}
+      key={`${planName}-${suppItem.name}`}
       planName={planName}
-      supplement={supplement}
+      supplement={suppItem}
       onRemoveSupplement={handleRemoveSupplement}
       onEditSupplement={handleEditSupplement}
     />
