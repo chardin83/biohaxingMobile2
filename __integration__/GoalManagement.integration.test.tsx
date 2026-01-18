@@ -116,20 +116,21 @@ describe('Goal Management Integration', () => {
     // Step 1: Start the goal manually (simulating the confirmStartGoal function)
     const goalToStart = {
       mainGoalId: 'main1',
-      goalId: 'goal1',
-      startedAt: new Date().toISOString()
+      tipId: 'goal1',
+      startedAt: new Date().toISOString(),
+      planCategory: 'training' as const,
     };
 
     act(() => {
-      contextValues.setActiveGoals([goalToStart]);
+      contextValues.setPlans({ supplements: [], training: [goalToStart], nutrition: [], other: [] });
     });
 
-    // Wait for active goal to be set
+    // Wait for active plan entry to be set
     await waitFor(() => {
-      expect(contextValues.activeGoals).toHaveLength(1);
-      expect(contextValues.activeGoals[0]).toMatchObject({
+      expect(contextValues.plans.training).toHaveLength(1);
+      expect(contextValues.plans.training[0]).toMatchObject({
         mainGoalId: 'main1',
-        goalId: 'goal1'
+        tipId: 'goal1'
       });
     });
 
@@ -137,53 +138,36 @@ describe('Goal Management Integration', () => {
     await new Promise(resolve => setTimeout(resolve, 100));
 
     // Verify persistence in AsyncStorage
-    const storedActiveGoals = await AsyncStorage.getItem('activeGoals');
-    const parsedActiveGoals = JSON.parse(storedActiveGoals || '[]');
-    expect(parsedActiveGoals).toHaveLength(1);
-    expect(parsedActiveGoals[0]).toMatchObject({
+    const storedPlans = await AsyncStorage.getItem('plans');
+    const parsedPlans = JSON.parse(storedPlans || '{}');
+    expect(parsedPlans.training).toHaveLength(1);
+    expect(parsedPlans.training[0]).toMatchObject({
       mainGoalId: 'main1',
-      goalId: 'goal1'
+      tipId: 'goal1'
     });
 
     // Step 2: Complete the goal (simulating handleFinishGoal function)
-    const finishedGoal = {
-      mainGoalId: 'main1',
-      goalId: 'goal1',
-      finished: new Date().toISOString()
-    };
-
     act(() => {
-      contextValues.setFinishedGoals([finishedGoal]);
-      contextValues.setActiveGoals([]); // Remove from active
+      contextValues.setPlans({ supplements: [], training: [], nutrition: [], other: [] }); // Remove from active plans
       contextValues.setMyXP((prev: number) => prev + 100); // Add XP
     });
 
     // Wait for goal completion to be processed
     await waitFor(() => {
-      expect(contextValues.finishedGoals).toHaveLength(1);
       expect(contextValues.myXP).toBe(100); // Should have gained XP
-      expect(contextValues.activeGoals).toHaveLength(0);
+      expect(contextValues.plans.training).toHaveLength(0);
     });
 
     // Wait for AsyncStorage operations
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    // Verify finished goal persistence
-    const storedFinishedGoals = await AsyncStorage.getItem('finishedGoals');
-    const parsedFinishedGoals = JSON.parse(storedFinishedGoals || '[]');
-    expect(parsedFinishedGoals).toHaveLength(1);
-    expect(parsedFinishedGoals[0]).toMatchObject({
-      mainGoalId: 'main1',
-      goalId: 'goal1'
-    });
-
     // Verify XP persistence
     const storedXP = await AsyncStorage.getItem('myXP');
     expect(storedXP).toBe('100');
 
-    // Verify active goal was removed
-    const storedActiveGoalsAfterCompletion = await AsyncStorage.getItem('activeGoals');
-    expect(JSON.parse(storedActiveGoalsAfterCompletion || '[]')).toHaveLength(0);
+    // Verify plan entry was removed
+    const storedPlansAfterCompletion = await AsyncStorage.getItem('plans');
+    expect(JSON.parse(storedPlansAfterCompletion || '{}').training).toHaveLength(0);
   });
 
   it('should handle multiple goals with proper state management', async () => {
@@ -214,37 +198,29 @@ describe('Goal Management Integration', () => {
     });
 
     // Start multiple goals
-    const activeGoals = [
-      { mainGoalId: 'main1', goalId: 'goal1', startedAt: new Date().toISOString() },
-      { mainGoalId: 'main1', goalId: 'goal2', startedAt: new Date().toISOString() }
+    const activePlanEntries = [
+      { mainGoalId: 'main1', tipId: 'goal1', startedAt: new Date().toISOString(), planCategory: 'training' as const },
+      { mainGoalId: 'main1', tipId: 'goal2', startedAt: new Date().toISOString(), planCategory: 'training' as const }
     ];
 
     act(() => {
-      contextValues.setActiveGoals(activeGoals);
+      contextValues.setPlans({ supplements: [], training: activePlanEntries, nutrition: [], other: [] });
     });
 
     await waitFor(() => {
-      expect(contextValues.activeGoals).toHaveLength(2);
+      expect(contextValues.plans.training).toHaveLength(2);
       expect(contextValues.myGoals).toEqual(userGoals);
     });
 
     // Complete one goal
-    const finishedGoal = {
-      mainGoalId: 'main1',
-      goalId: 'goal1',
-      finished: new Date().toISOString()
-    };
-
     act(() => {
-      contextValues.setFinishedGoals([finishedGoal]);
-      contextValues.setActiveGoals([activeGoals[1]]); // Remove completed goal
+      contextValues.setPlans({ supplements: [], training: [activePlanEntries[1]], nutrition: [], other: [] }); // Remove completed goal
       contextValues.setMyXP((prev: number) => prev + 100);
     });
 
     // Verify state after completion
     await waitFor(() => {
-      expect(contextValues.finishedGoals).toHaveLength(1);
-      expect(contextValues.activeGoals).toHaveLength(1);
+      expect(contextValues.plans.training).toHaveLength(1);
       expect(contextValues.myXP).toBe(100);
     });
 
@@ -252,12 +228,9 @@ describe('Goal Management Integration', () => {
     await new Promise(resolve => setTimeout(resolve, 100));
 
     // Verify persistence
-    const storedFinished = await AsyncStorage.getItem('finishedGoals');
-    const storedActive = await AsyncStorage.getItem('activeGoals');
+    const storedPlansMultiple = await AsyncStorage.getItem('plans');
     const storedXP = await AsyncStorage.getItem('myXP');
-
-    expect(JSON.parse(storedFinished || '[]')).toHaveLength(1);
-    expect(JSON.parse(storedActive || '[]')).toHaveLength(1);
+    expect(JSON.parse(storedPlansMultiple || '{}').training).toHaveLength(1);
     expect(storedXP).toBe('100');
   });
 
@@ -286,12 +259,13 @@ describe('Goal Management Integration', () => {
     const startDate = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000); // 3 days ago
     const activeGoal = {
       mainGoalId: 'main1',
-      goalId: 'goal1',
-      startedAt: startDate.toISOString()
+      tipId: 'goal1',
+      startedAt: startDate.toISOString(),
+      planCategory: 'training' as const,
     };
 
     act(() => {
-      contextValues.setActiveGoals([activeGoal]);
+      contextValues.setPlans({ supplements: [], training: [activeGoal], nutrition: [], other: [] });
     });
 
     // Verify progress tracking can access the data
@@ -300,7 +274,7 @@ describe('Goal Management Integration', () => {
     // The progress calculation would be done by goalUtils
     // Here we're testing that the data flows correctly through the integration
     const goalInProgress = contextValues.activeGoals.find(
-      (g: any) => g.mainGoalId === 'main1' && g.goalId === 'goal1'
+      (g: any) => g.mainGoalId === 'main1' && g.tipId === 'goal1'
     );
     expect(goalInProgress).toBeTruthy();
     expect(new Date(goalInProgress.startedAt)).toEqual(startDate);

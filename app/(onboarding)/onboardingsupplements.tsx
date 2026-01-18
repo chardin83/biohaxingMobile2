@@ -37,7 +37,7 @@ export default function OnboardingSupplements() {
       notify: true,
     };
 
-    setPlans([morningPlan]);
+    setPlans((prev) => ({ ...prev, supplements: [morningPlan] }));
     setOnboardingStep(1);
     router.push("/(onboarding)/onboardinggoals");
   };

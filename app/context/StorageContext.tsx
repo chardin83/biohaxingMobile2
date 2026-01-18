@@ -9,7 +9,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SupplementTime } from "../domain/SupplementTime";
 import { Plan } from "../domain/Plan";
 import { levels } from "@/locales/levels";
-import { VerdictValue, POSITIVE_VERDICTS, NEGATIVE_VERDICTS } from "@/types/verdict";
+import { PlanCategory } from "@/types/planCategory";
+import { VerdictValue } from "@/types/verdict";
 
 export type MealNutrition = {
   date: string; // YYYY-MM-DD
@@ -39,17 +40,27 @@ export type DailyNutritionSummary = {
   };
 };
 
-type ActiveGoal = {
+// PlanCategory is shared from types/planCategory.ts
+
+export type PlanTipEntry = {
   mainGoalId: string;
   startedAt: string;
   tipId: string;
-  planCategory?: "supplement" | "training" | "nutrition";
+  planCategory: Exclude<PlanCategory, "supplement">;
 };
 
-type FinishedGoal = {
-  mainGoalId: string;
-  finished: string;
-  tipId: string;
+export type PlansByCategory = {
+  supplements: Plan[];
+  training: PlanTipEntry[];
+  nutrition: PlanTipEntry[];
+  other: PlanTipEntry[];
+};
+
+const EMPTY_PLANS: PlansByCategory = {
+  supplements: [],
+  training: [],
+  nutrition: [],
+  other: [],
 };
 
 export type TrainingPlanSettings = {
@@ -67,8 +78,9 @@ export interface ViewedTip {
 }
 
 interface StorageContextType {
-  plans: Plan[];
-  setPlans: (plans: Plan[] | ((prev: Plan[]) => Plan[])) => void;
+  plans: PlansByCategory;
+  setPlans: (plans: PlansByCategory | ((prev: PlansByCategory) => PlansByCategory)) => void;
+  activeGoals: PlanTipEntry[];
   hasVisitedChat: boolean;
   setHasVisitedChat: (val: boolean) => void;
   shareHealthPlan: boolean;
@@ -83,14 +95,6 @@ interface StorageContextType {
   ) => void;
   myGoals: string[];
   setMyGoals: (goals: string[] | ((prev: string[]) => string[])) => void;
-  activeGoals: ActiveGoal[];
-  setActiveGoals: (
-    goals: ActiveGoal[] | ((prev: ActiveGoal[]) => ActiveGoal[])
-  ) => void;
-  finishedGoals: FinishedGoal[];
-  setFinishedGoals: (
-    goals: FinishedGoal[] | ((prev: FinishedGoal[]) => FinishedGoal[])
-  ) => void;
   errorMessage: string | null;
   setErrorMessage: (msg: string | null) => void;
   hasCompletedOnboarding: boolean;
@@ -133,8 +137,6 @@ const STORAGE_KEYS = {
   SHARE_HEALTH_PLAN: "shareHealthPlan",
   TAKEN_DATES: "takenDates",
   MY_GOALS: "myGoals",
-  ACTIVE_GOALS: "activeGoals",
-  FINISHED_GOALS: "finishedGoals",
   HAS_COMPLETED_ONBOARDING: "hasCompletedOnboarding",
   ONBOARDING_STEP: "onBoardingStep",
   MY_XP: "myXP",
@@ -151,7 +153,7 @@ export const StorageProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [plansState, setPlansState] = useState<Plan[]>([]);
+  const [plansState, setPlansState] = useState<PlansByCategory>(EMPTY_PLANS);
   const [hasVisitedChatState, setHasVisitedChatState] = useState(false);
   const [shareHealthPlanState, setShareHealthPlanState] = useState(false);
   const [takenDatesState, setTakenDatesState] = useState<
@@ -159,10 +161,6 @@ export const StorageProvider = ({
   >({});
   const [myGoalsState, setMyGoalsState] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [activeGoalsState, setActiveGoalsState] = useState<ActiveGoal[]>([]);
-  const [finishedGoalsState, setFinishedGoalsState] = useState<FinishedGoal[]>(
-    []
-  );
   const [hasCompletedOnboardingState, setHasCompletedOnboardingState] =
     useState(false);
   const [onboardingStepState, setOnboardingStepState] = useState(0);
@@ -186,8 +184,6 @@ export const StorageProvider = ({
           shareRaw,
           takenRaw,
           myGoalsRaw,
-          activeGoalsRaw,
-          finishedGoalsRaw,
           onboardingRaw,
           onboardingStepRaw,
           myXPRaw,
@@ -201,8 +197,6 @@ export const StorageProvider = ({
           AsyncStorage.getItem(STORAGE_KEYS.SHARE_HEALTH_PLAN),
           AsyncStorage.getItem(STORAGE_KEYS.TAKEN_DATES),
           AsyncStorage.getItem(STORAGE_KEYS.MY_GOALS),
-          AsyncStorage.getItem(STORAGE_KEYS.ACTIVE_GOALS),
-          AsyncStorage.getItem(STORAGE_KEYS.FINISHED_GOALS),
           AsyncStorage.getItem(STORAGE_KEYS.HAS_COMPLETED_ONBOARDING),
           AsyncStorage.getItem(STORAGE_KEYS.ONBOARDING_STEP),
           AsyncStorage.getItem(STORAGE_KEYS.MY_XP),
@@ -212,14 +206,37 @@ export const StorageProvider = ({
           AsyncStorage.getItem(STORAGE_KEYS.TRAINING_PLAN_SETTINGS),
         ]);
 
-        if (plansRaw) setPlansState(JSON.parse(plansRaw));
+        const normalizePlans = (raw: string | null): PlansByCategory => {
+          if (!raw) return EMPTY_PLANS;
+          try {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) {
+              return { ...EMPTY_PLANS, supplements: parsed };
+            }
+
+            const supplements = Array.isArray(parsed?.supplements)
+              ? parsed.supplements
+              : [];
+            const training = Array.isArray(parsed?.training)
+              ? parsed.training
+              : [];
+            const nutrition = Array.isArray(parsed?.nutrition)
+              ? parsed.nutrition
+              : [];
+            const other = Array.isArray(parsed?.other) ? parsed.other : [];
+
+            return { supplements, training, nutrition, other };
+          } catch (error) {
+            console.warn("Failed to parse plans", error);
+            return EMPTY_PLANS;
+          }
+        };
+
+        setPlansState(normalizePlans(plansRaw));
         if (visitedRaw === "true") setHasVisitedChatState(true);
         if (shareRaw === "true") setShareHealthPlanState(true);
         if (takenRaw) setTakenDatesState(JSON.parse(takenRaw));
         if (myGoalsRaw) setMyGoalsState(JSON.parse(myGoalsRaw));
-        if (activeGoalsRaw) setActiveGoalsState(JSON.parse(activeGoalsRaw));
-        if (finishedGoalsRaw)
-          setFinishedGoalsState(JSON.parse(finishedGoalsRaw));
         if (onboardingRaw === "true") setHasCompletedOnboardingState(true);
         if (onboardingStepRaw)
           setOnboardingStepState(parseInt(onboardingStepRaw));
@@ -239,11 +256,21 @@ export const StorageProvider = ({
     loadData();
   }, []);
 
-  const setPlans = (update: Plan[] | ((prev: Plan[]) => Plan[])) => {
+  const setPlans = (
+    update: PlansByCategory | ((prev: PlansByCategory) => PlansByCategory)
+  ) => {
     setPlansState((prev) => {
       const newPlans = typeof update === "function" ? update(prev) : update;
-      AsyncStorage.setItem(STORAGE_KEYS.PLANS, JSON.stringify(newPlans));
-      return newPlans;
+      const normalizedPlans: PlansByCategory = {
+        ...EMPTY_PLANS,
+        ...newPlans,
+        supplements: newPlans.supplements ?? [],
+        training: newPlans.training ?? [],
+        nutrition: newPlans.nutrition ?? [],
+        other: (newPlans as any).other ?? [],
+      };
+      AsyncStorage.setItem(STORAGE_KEYS.PLANS, JSON.stringify(normalizedPlans));
+      return normalizedPlans;
     });
   };
 
@@ -281,29 +308,6 @@ export const StorageProvider = ({
     setMyGoalsState((prev) => {
       const newGoals = typeof update === "function" ? update(prev) : update;
       AsyncStorage.setItem(STORAGE_KEYS.MY_GOALS, JSON.stringify(newGoals));
-      return newGoals;
-    });
-  };
-
-  const setActiveGoals = (
-    update: ActiveGoal[] | ((prev: ActiveGoal[]) => ActiveGoal[])
-  ) => {
-    setActiveGoalsState((prev) => {
-      const newGoals = typeof update === "function" ? update(prev) : update;
-      AsyncStorage.setItem(STORAGE_KEYS.ACTIVE_GOALS, JSON.stringify(newGoals));
-      return newGoals;
-    });
-  };
-
-  const setFinishedGoals = (
-    update: FinishedGoal[] | ((prev: FinishedGoal[]) => FinishedGoal[])
-  ) => {
-    setFinishedGoalsState((prev) => {
-      const newGoals = typeof update === "function" ? update(prev) : update;
-      AsyncStorage.setItem(
-        STORAGE_KEYS.FINISHED_GOALS,
-        JSON.stringify(newGoals)
-      );
       return newGoals;
     });
   };
@@ -499,10 +503,16 @@ export const StorageProvider = ({
     return xpForVerdict;
   };
 
+  const activeGoals = useMemo(
+    () => [...plansState.training, ...plansState.nutrition, ...plansState.other],
+    [plansState.nutrition, plansState.other, plansState.training]
+  );
+
   const value = useMemo(
     () => ({
       plans: plansState,
       setPlans,
+      activeGoals,
       hasVisitedChat: hasVisitedChatState,
       setHasVisitedChat,
       shareHealthPlan: shareHealthPlanState,
@@ -511,10 +521,6 @@ export const StorageProvider = ({
       setTakenDates,
       myGoals: myGoalsState,
       setMyGoals,
-      activeGoals: activeGoalsState,
-      setActiveGoals,
-      finishedGoals: finishedGoalsState,
-      setFinishedGoals,
       errorMessage,
       setErrorMessage,
       hasCompletedOnboarding: hasCompletedOnboardingState,
@@ -542,12 +548,11 @@ export const StorageProvider = ({
     }),
     [
       plansState,
+      activeGoals,
       hasVisitedChatState,
       shareHealthPlanState,
       takenDatesState,
       myGoalsState,
-      activeGoalsState,
-      finishedGoalsState,
       errorMessage,
       hasCompletedOnboardingState,
       onboardingStepState,

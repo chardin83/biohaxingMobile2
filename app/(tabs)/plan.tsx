@@ -70,7 +70,6 @@ export default function Plans() {
     plans,
     setPlans,
     errorMessage,
-    activeGoals,
     trainingPlanSettings,
     setTrainingPlanSettings,
   } = useStorage();
@@ -81,31 +80,9 @@ export default function Plans() {
   const badgeIconColor =
     colorScheme === "light" ? Colors.light.icon : Colors.dark.icon;
 
-  const resolvePlanCategory = (tipId?: string, goalCategory?: string) => {
-    if (goalCategory === "training" || goalCategory === "nutrition") {
-      return goalCategory;
-    }
-    if (tipId) {
-      return PLAN_CATEGORY_BY_TIP_ID.get(tipId);
-    }
-    return undefined;
-  };
-
-  const trainingGoals = useMemo(
-    () =>
-      activeGoals.filter((goal) =>
-        resolvePlanCategory(goal.tipId, goal.planCategory) === "training"
-      ),
-    [activeGoals]
-  );
-
-  const nutritionGoals = useMemo(
-    () =>
-      activeGoals.filter((goal) =>
-        resolvePlanCategory(goal.tipId, goal.planCategory) === "nutrition"
-      ),
-    [activeGoals]
-  );
+  const supplementPlans = plans.supplements;
+  const trainingGoals = useMemo(() => plans.training, [plans.training]);
+  const nutritionGoals = plans.nutrition;
 
   const getRecommendedDoseLabel = React.useCallback(
     (tip?: Tip) => {
@@ -201,16 +178,16 @@ export default function Plans() {
   };
 
   useEffect(() => {
-    if (plans.length === 0) {
+    if (supplementPlans.length === 0) {
       const translatedDefaults = defaultPlans.map((plan) => ({
         name: t(`plan.defaultPlan.${plan.key}`),
         supplements: [],
         prefferedTime: plan.time,
         notify: false,
       }));
-      setPlans(translatedDefaults);
+      setPlans((prev) => ({ ...prev, supplements: translatedDefaults }));
     }
-  }, [plans.length, setPlans, t]);
+  }, [supplementPlans.length, setPlans, t]);
 
   // Öppna skapamodal om efterfrågat via route-param
   useEffect(() => {
@@ -222,14 +199,14 @@ export default function Plans() {
   }, [params.openCreate]);
 
   const savePlans = (updatedPlans: Plan[]) => {
-    setPlans(updatedPlans);
+    setPlans((prev) => ({ ...prev, supplements: updatedPlans }));
   };
 
   const handleSavePlan = () => {
     if (newPlanName.trim() === "") return;
 
     if (isEditingPlan && selectedPlan) {
-      const updatedPlans = plans.map((plan) =>
+      const updatedPlans = supplementPlans.map((plan) =>
         plan.name === selectedPlan.name
           ? {
               ...plan,
@@ -247,7 +224,7 @@ export default function Plans() {
         prefferedTime: newPlanTime.toTimeString().slice(0, 5),
         notify: false,
       };
-      const updatedPlans = [...plans, newPlan];
+      const updatedPlans = [...supplementPlans, newPlan];
       savePlans(updatedPlans);
     }
 
@@ -262,12 +239,12 @@ export default function Plans() {
 
   const handleRemovePlan = (planName: string) => {
     console.log("Removing plan:", planName);
-    const updatedPlans = plans.filter((plan) => plan.name !== planName);
+    const updatedPlans = supplementPlans.filter((plan) => plan.name !== planName);
     savePlans(updatedPlans);
   };
 
   const handleRemoveSupplement = (planName: string, supplementName: string) => {
-    const updatedPlans = plans.map((plan) =>
+    const updatedPlans = supplementPlans.map((plan) =>
       plan.name === planName
         ? {
             ...plan,
@@ -281,7 +258,7 @@ export default function Plans() {
   };
 
   const handleEditSupplement = (planName: string, supplementTitle: string) => {
-    const plan = plans.find((p) => p.name === planName) || null;
+    const plan = supplementPlans.find((p) => p.name === planName) || null;
     setPlanForSupplementEdit(plan);
     const sup = plan?.supplements.find((s) => s.name === supplementTitle) || null;
     setSupplement(sup || null);
@@ -304,7 +281,7 @@ export default function Plans() {
   };
 
   const handleNotify = (plan: Plan) => {
-    const updatedPlans = plans.map((p) =>
+    const updatedPlans = supplementPlans.map((p) =>
       p.name === plan.name ? { ...p, notify: !p.notify } : p
     );
     savePlans(updatedPlans);
@@ -398,7 +375,7 @@ export default function Plans() {
   };
 
   const renderSupplementPlans = () => {
-    if (!plans.length) {
+    if (!supplementPlans.length) {
       return (
         <ThemedText type="default" style={styles.placeholderText}>
           {t("plan.noSupplementSlots", {
@@ -408,7 +385,7 @@ export default function Plans() {
       );
     }
 
-    return plans.map((plan) => (
+    return supplementPlans.map((plan) => (
       <View key={`${plan.name}-${plan.prefferedTime}`}>{renderPlanRow(plan)}</View>
     ));
   };

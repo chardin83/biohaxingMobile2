@@ -3,6 +3,7 @@ import { GPTResponse } from "@/app/domain/GPTResponse";
 import { Message } from "@/app/domain/Message";
 import { ENDPOINTS } from "@/config";
 import { t } from "i18next";
+import { PlansByCategory } from "@/app/context/StorageContext";
 
 export interface AnalysisResponse {
     type: string;
@@ -39,25 +40,30 @@ type AnalyseParams = {
   supplement?: string;
 };
 
-export const buildSystemPrompt = (plans: any[], shareHealthPlan: boolean): string => {
-  if (shareHealthPlan && plans.length > 0) {
-    const planSummary = plans
+export const buildSystemPrompt = (
+  plans: PlansByCategory,
+  shareHealthPlan: boolean
+): string => {
+  const supplementPlans = plans?.supplements ?? [];
+
+  if (shareHealthPlan && supplementPlans.length > 0) {
+    const planSummary = supplementPlans
       .map((plan) =>
         plan.supplements?.length
           ? `🕒 ${plan.prefferedTime}: ${plan.supplements
-              .map((s:any) => `${s.name} (${s.quantity}${s.unit})`)
+              .map((s: any) => `${s.name} (${s.quantity}${s.unit})`)
               .join(", ")}`
           : null
       )
       .filter(Boolean)
       .join("\n");
 
-      const prompt = t("prompts:system.withPlanTemplate", { plan: planSummary });
+    const prompt = t("prompts:system.withPlanTemplate", { plan: planSummary });
 
-      // ✅ Bekräfta via utskrift
-      console.log("[buildSystemPrompt] withPlanTemplate:", prompt);
-  
-      return prompt;
+    // ✅ Bekräfta via utskrift
+    console.log("[buildSystemPrompt] withPlanTemplate:", prompt);
+
+    return prompt;
   }
 
   return t("prompts:system.noPlan");

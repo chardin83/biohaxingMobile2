@@ -55,13 +55,12 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-const mockSetActiveGoals = jest.fn();
-const mockSetFinishedGoals = jest.fn();
 const mockSetMyXP = jest.fn();
+const mockSetPlans = jest.fn();
 
 const fullMockStorageContext = {
-  plans: [],
-  setPlans: jest.fn(),
+  plans: { supplements: [], training: [], nutrition: [], other: [] },
+  setPlans: mockSetPlans,
   hasVisitedChat: false,
   setHasVisitedChat: jest.fn(),
   shareHealthPlan: false,
@@ -71,9 +70,6 @@ const fullMockStorageContext = {
   myGoals: [],
   setMyGoals: jest.fn(),
   activeGoals: [],
-  setActiveGoals: mockSetActiveGoals,
-  finishedGoals: [],
-  setFinishedGoals: mockSetFinishedGoals,
   errorMessage: null,
   setErrorMessage: jest.fn(),
   hasCompletedOnboarding: false,
@@ -99,11 +95,8 @@ describe('GoalDetailScreen', () => {
     (useSupplementsModule.useSupplements as jest.Mock).mockReturnValue([{ id: 'supp1', name: 'Supp 1' }]);
     jest.spyOn(StorageContext, 'useStorage').mockReturnValue({
       ...fullMockStorageContext,
-      setActiveGoals: mockSetActiveGoals,
-      setFinishedGoals: mockSetFinishedGoals,
       setMyXP: mockSetMyXP,
       activeGoals: [],
-      finishedGoals: [],
     });
   });
 
@@ -131,24 +124,4 @@ describe('GoalDetailScreen', () => {
     expect(getByText(/Goal not found/i)).toBeTruthy();
   });
 
-  it('calls setFinishedGoals if no analyzeprompt and setMyXP on finish', () => {
-    jest.spyOn(StorageContext, 'useStorage').mockReturnValue({
-      ...fullMockStorageContext,
-      activeGoals: [
-        { mainGoalId: 'main1', goalId: 'goal1', startedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString() }
-      ],
-      setActiveGoals: mockSetActiveGoals,
-      setFinishedGoals: mockSetFinishedGoals,
-      setMyXP: mockSetMyXP,
-      finishedGoals: [],
-    });
-    const { getByText } = render(<GoalDetailScreen />);
-
-    const finishBtn = getByText(/finish/i);
-    expect(finishBtn).toBeTruthy();
-    fireEvent.press(finishBtn!);
-
-    expect(mockSetFinishedGoals).toHaveBeenCalled();
-    expect(mockSetMyXP).toHaveBeenCalledWith(expect.any(Function));
-  });
 });

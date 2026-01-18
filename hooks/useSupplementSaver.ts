@@ -1,7 +1,10 @@
 import { useStorage } from "@/app/context/StorageContext";
+import { Plan } from "@/app/domain/Plan";
+import { Supplement } from "@/app/domain/Supplement";
 
 export const useSupplementSaver = () => {
   const { plans, setPlans, setErrorMessage } = useStorage();
+  const supplementPlans = plans.supplements;
 
   const saveSupplementToPlan = (
     selectedPlan: Plan,
@@ -10,7 +13,7 @@ export const useSupplementSaver = () => {
     setSelectedPlan?: (plan: Plan | null) => void
   ) => {
     try {
-      const existingPlan = plans.find((plan) => plan.name === selectedPlan.name);
+      const existingPlan = supplementPlans.find((plan) => plan.name === selectedPlan.name);
       let updatedPlans: Plan[];
 
       if (!existingPlan) {
@@ -20,7 +23,7 @@ export const useSupplementSaver = () => {
           supplements: [supplement],
           notify: selectedPlan.notify,
         };
-        updatedPlans = [...plans, newPlan];
+        updatedPlans = [...supplementPlans, newPlan];
         setSelectedPlan?.(newPlan);
       } else if (isEditingSupplement) {
         const updatedPlan = {
@@ -29,7 +32,7 @@ export const useSupplementSaver = () => {
             existingSupplement.name === supplement.name ? supplement : existingSupplement
           ),
         };
-        updatedPlans = plans.map((plan) =>
+        updatedPlans = supplementPlans.map((plan) =>
           plan.name === existingPlan.name ? updatedPlan : plan
         );
         setSelectedPlan?.(updatedPlan);
@@ -47,13 +50,13 @@ export const useSupplementSaver = () => {
           ...existingPlan,
           supplements: [...existingPlan.supplements, supplement],
         };
-        updatedPlans = plans.map((plan) =>
+        updatedPlans = supplementPlans.map((plan) =>
           plan.name === existingPlan.name ? updatedPlan : plan
         );
         setSelectedPlan?.(updatedPlan);
       }
 
-      setPlans(updatedPlans);
+      setPlans((prev) => ({ ...prev, supplements: updatedPlans }));
     } catch (err) {
       console.error("Kunde inte spara tillskottet:", err);
     }

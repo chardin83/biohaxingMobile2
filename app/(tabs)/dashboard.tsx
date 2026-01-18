@@ -6,7 +6,6 @@ import { Colors } from "@/constants/Colors";
 import { useStorage } from "../context/StorageContext";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { useSupplements } from "@/locales/supplements";
 import AppCard from "@/components/ui/AppCard";
 import ProgressBarWithLabel from "@/components/ui/ProgressbarWithLabel";
 import { levels } from "@/locales/levels";
@@ -16,9 +15,8 @@ import { VerdictValue, POSITIVE_VERDICTS } from "@/types/verdict";
 
 export default function BiohackerDashboard() {
   const { t } = useTranslation(["common", "areas", "levels"]);
-  const { myGoals, activeGoals, myXP, myLevel, finishedGoals, viewedTips } = useStorage();
+  const { myGoals, myXP, myLevel, viewedTips, plans } = useStorage();
   const router = useRouter();
-  const supplements = useSupplements();
 
   const nextLevel = levels.find((l) => l.level === myLevel + 1);
   const xpMax =
@@ -51,8 +49,8 @@ export default function BiohackerDashboard() {
 
   return (
     <LinearGradient
-      colors={Colors.dark.gradients.sunrise.colors}
-      locations={Colors.dark.gradients.sunrise.locations}
+      colors={Colors.dark.gradients.sunrise.colors as any}
+      locations={Colors.dark.gradients.sunrise.locations as any}
       start={Colors.dark.gradients.sunrise.start}
       end={Colors.dark.gradients.sunrise.end}
       style={styles.gradient}
@@ -79,13 +77,26 @@ export default function BiohackerDashboard() {
               ? `${favoriteTipsList.join("\n")}`
               : t("common:dashboard.noFavorites");
 
+            // Calculate total XP for this area from viewedTips
+            const areaXP = viewedTips
+              ?.filter((tip) => tip.mainGoalId === areaId)
+              .reduce((sum, tip) => sum + (tip.xpEarned || 0), 0) || 0;
+
+
+            // Visa bock om man har något tip i arean i sin AKTIVA plan
+            const hasAnyTipInArea = [
+              ...plans.training,
+              ...plans.nutrition,
+            ].some((entry) => entry.mainGoalId === areaId);
+
             return (
               <AppCard
                 key={areaId}
                 icon={item.icon}
                 title={t(`areas:${item.id}.title`)}
                 description={description}
-                isActive={favoriteTipsList.length > 0}
+                isActive={hasAnyTipInArea}
+                xp={areaXP}
                 onPress={() =>
                   router.push({
                     pathname: "/(goal)/[areaId]",

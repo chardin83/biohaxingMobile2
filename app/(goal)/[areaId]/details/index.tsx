@@ -36,8 +36,7 @@ export default function AreaDetailScreen() {
     viewedTips,
     setTipVerdict,
     plans,
-    activeGoals,
-    setActiveGoals,
+    setPlans,
   } = useStorage();
   const { saveSupplementToPlan } = useSupplementSaver();
 
@@ -74,6 +73,9 @@ export default function AreaDetailScreen() {
   const titleKey = tip?.title;
 
   const planCategory = tip?.planCategory;
+  const supplementPlans = plans.supplements ?? [];
+  const trainingPlans = plans.training;
+  const nutritionPlans = plans.nutrition;
   const availablePlanCategories = React.useMemo(() => {
     const options = tip?.planCategoryOptions ?? [];
     if (planCategory && !options.includes(planCategory)) {
@@ -101,15 +103,10 @@ export default function AreaDetailScreen() {
   const isTipInPlanCategory = React.useCallback(
     (target: "training" | "nutrition") => {
       if (!effectiveTipId) return false;
-      const fallback = getDefaultPlanCategory() === target ? target : undefined;
-
-      return activeGoals?.some(
-        (goal) =>
-          goal.tipId === effectiveTipId &&
-          (goal.planCategory ?? fallback) === target
-      );
+      const list = target === "training" ? trainingPlans : nutritionPlans;
+      return list.some((entry) => entry.tipId === effectiveTipId);
     },
-    [activeGoals, effectiveTipId, getDefaultPlanCategory]
+    [effectiveTipId, nutritionPlans, trainingPlans]
   );
 
   const isTipInTrainingPlan = React.useMemo(
@@ -183,14 +180,14 @@ export default function AreaDetailScreen() {
   const plannedSupplements = React.useMemo(() => {
     const ids = new Set<string>();
     const names = new Set<string>();
-    plans.forEach((plan) => {
+    supplementPlans.forEach((plan) => {
       plan.supplements?.forEach((supplement) => {
         if (supplement.id) ids.add(supplement.id);
         if (supplement.name) names.add(supplement.name);
       });
     });
     return { ids, names };
-  }, [plans]);
+  }, [supplementPlans]);
 
   const isTipSupplementScheduled = React.useMemo(() => {
     if (!resolvedSupplements.length) return false;
@@ -255,27 +252,29 @@ export default function AreaDetailScreen() {
       return;
     }
 
-    setActiveGoals((prev) => {
-      const fallbackCategory = getDefaultPlanCategory();
-      const exists = prev.some(
-        (goal) =>
-          goal.tipId === effectiveTipId &&
-          (goal.planCategory ?? fallbackCategory) === targetCategory
+    const listKey = targetCategory === "training" ? "training" : "nutrition";
+
+    setPlans((prev) => {
+      const existingList = prev[listKey];
+      const exists = existingList.some(
+        (entry) => entry.tipId === effectiveTipId && entry.mainGoalId === areaId
       );
 
       if (exists) {
         return prev;
       }
 
-      return [
+      const nextEntry = {
+        mainGoalId: areaId,
+        tipId: effectiveTipId,
+        startedAt: new Date().toISOString(),
+        planCategory: targetCategory,
+      } as const;
+
+      return {
         ...prev,
-        {
-          mainGoalId: areaId,
-          tipId: effectiveTipId,
-          startedAt: new Date().toISOString(),
-          planCategory: targetCategory,
-        },
-      ];
+        [listKey]: [...existingList, nextEntry],
+      } as typeof prev;
     });
   };
 
@@ -639,7 +638,7 @@ export default function AreaDetailScreen() {
               <Text style={{ color: Colors.dark.textLight, marginBottom: 10 }}>
                 {t("dayEdit.chooseTime")}
               </Text>
-              {plans.map((p) => (
+              {supplementPlans.map((p) => (
                 <View key={p.name} style={{ marginBottom: 8 }}>
                   <AppButton
                     title={`${p.name} (${p.prefferedTime})`}

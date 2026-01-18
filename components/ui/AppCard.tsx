@@ -9,6 +9,7 @@ interface AppCardProps {
   title: string;
   description?: string;
   isActive?: boolean;
+  xp?: number;
   onPress: () => void;
 }
 
@@ -17,6 +18,7 @@ const AppCard: React.FC<AppCardProps> = ({
   title,
   description,
   isActive = false,
+  xp,
   onPress,
 }) => {
   return (
@@ -38,15 +40,20 @@ const AppCard: React.FC<AppCardProps> = ({
           )}
         </View>
 
-        {isActive && (
-          <View style={styles.checkIcon}>
-            <Icon
-              source="check-circle"
-              size={34}
-              color={Colors.dark.checkmarkSupplement}
-            />
-          </View>
-        )}
+          {typeof xp === 'number' && (
+            <View style={styles.xpBadge}>
+              <Text style={styles.xpText}>{xp} XP</Text>
+            </View>
+          )}
+          {isActive && (
+            <View style={styles.checkIcon}>
+              <Icon
+                source="check-circle"
+                size={34}
+                color={Colors.dark.checkmarkSupplement}
+              />
+            </View>
+          )}
       </View>
     </TouchableOpacity>
   );
@@ -93,9 +100,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 4,
   },
-  checkIcon: {
+  xpBadge: {
+    marginLeft: "auto",
+    backgroundColor: Colors.dark.checkmarkSupplement,
+    borderRadius: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    minWidth: 48,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+    checkIcon: {
     marginLeft: "auto",
   },
+    xpText: {
+      color: Colors.dark.textWhite,
+      fontWeight: "bold",
+      fontSize: 16,
+    },
 });
 
 export default AppCard;

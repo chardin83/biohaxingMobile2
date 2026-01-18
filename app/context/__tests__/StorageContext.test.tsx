@@ -20,13 +20,18 @@ describe('StorageContext', () => {
         <TestComponent callback={(ctx) => { contextValues = ctx; }} />
       </StorageProvider>
     );
-    expect(contextValues.plans).toEqual([]);
+    expect(contextValues.plans).toEqual({ supplements: [], training: [], nutrition: [], other: [] });
     act(() => {
-      contextValues.setPlans([{ id: 'plan1', name: 'Plan 1' }]);
+      contextValues.setPlans({
+        supplements: [{ name: 'Plan 1', supplements: [], prefferedTime: '08:00', notify: false }],
+        training: [],
+        nutrition: [],
+        other: [],
+      });
     });
     // Wait for the state update
     await waitFor(() => {
-      expect(contextValues.plans).toEqual([{ id: 'plan1', name: 'Plan 1' }]);
+      expect(contextValues.plans.supplements).toHaveLength(1);
     });
   });
 
@@ -46,32 +51,18 @@ describe('StorageContext', () => {
     });
   });
 
-  it('can set and get activeGoals', () => {
+  it('derives activeGoals from training and nutrition plans', () => {
     let contextValues: any = {};
     render(
       <StorageProvider>
         <TestComponent callback={(ctx) => { contextValues = ctx; }} />
       </StorageProvider>
     );
-    const activeGoal = { mainGoalId: 'main1', goalId: 'goal1', startedAt: new Date().toISOString() };
+    const entry = { mainGoalId: 'main1', tipId: 'tip1', startedAt: new Date().toISOString(), planCategory: 'training' as const };
     act(() => {
-      contextValues.setActiveGoals([activeGoal]);
+      contextValues.setPlans({ supplements: [], training: [entry], nutrition: [], other: [] });
     });
-    expect(contextValues.activeGoals).toEqual([activeGoal]);
-  });
-
-  it('can set and get finishedGoals', () => {
-    let contextValues: any = {};
-    render(
-      <StorageProvider>
-        <TestComponent callback={(ctx) => { contextValues = ctx; }} />
-      </StorageProvider>
-    );
-    const finishedGoal = { mainGoalId: 'main1', goalId: 'goal1', finished: new Date().toISOString() };
-    act(() => {
-      contextValues.setFinishedGoals([finishedGoal]);
-    });
-    expect(contextValues.finishedGoals).toEqual([finishedGoal]);
+    expect(contextValues.activeGoals).toEqual([entry]);
   });
 
   it('can set and get XP and level', () => {

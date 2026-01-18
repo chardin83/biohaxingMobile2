@@ -205,9 +205,12 @@ describe('Navigation Integration', () => {
   it('should handle navigation state restoration from AsyncStorage', async () => {
     // Setup complex initial state
     const initialData = {
-      plans: [{ id: 'plan1', name: 'Morning Plan', supplements: [], prefferedTime: 'morning' }],
+      plans: {
+        supplements: [{ name: 'Morning Plan', supplements: [], prefferedTime: 'morning', notify: false }],
+        training: [{ mainGoalId: 'main1', tipId: 'goal1', startedAt: new Date().toISOString(), planCategory: 'training' as const }],
+        nutrition: [],
+      },
       myGoals: ['goal1', 'goal2'],
-      activeGoals: [{ mainGoalId: 'main1', goalId: 'goal1', startedAt: new Date().toISOString() }],
       hasCompletedOnboarding: true,
       onboardingStep: 2,
       myXP: 250,
@@ -216,7 +219,6 @@ describe('Navigation Integration', () => {
 
     await AsyncStorage.setItem('plans', JSON.stringify(initialData.plans));
     await AsyncStorage.setItem('myGoals', JSON.stringify(initialData.myGoals));
-    await AsyncStorage.setItem('activeGoals', JSON.stringify(initialData.activeGoals));
     await AsyncStorage.setItem('hasCompletedOnboarding', 'true');
     await AsyncStorage.setItem('onBoardingStep', '2');
     await AsyncStorage.setItem('myXP', '250');
@@ -243,7 +245,6 @@ describe('Navigation Integration', () => {
       expect(contextValues.isInitialized).toBe(true);
       expect(contextValues.plans).toEqual(initialData.plans);
       expect(contextValues.myGoals).toEqual(initialData.myGoals);
-      expect(contextValues.activeGoals).toEqual(initialData.activeGoals);
       expect(contextValues.hasCompletedOnboarding).toBe(true);
       expect(contextValues.onboardingStep).toBe(2);
       expect(contextValues.myXP).toBe(250);

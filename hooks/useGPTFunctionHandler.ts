@@ -3,11 +3,14 @@ import { useCallback } from "react";
 import { useSupplementSaver } from "./useSupplementSaver";
 import { useSession } from "@/app/context/SessionStorage";
 import { t } from "i18next";
+import { Plan } from "@/app/domain/Plan";
+import { Supplement } from "@/app/domain/Supplement";
 
 export function useGPTFunctionHandler() {
   const { plans, setPlans, shareHealthPlan } = useStorage();
   const { saveSupplementToPlan } = useSupplementSaver();
   const { setForceOpenPopup } = useSession();
+  const supplementPlans = plans.supplements;
 
   const handleGPTFunctionCall = useCallback(
     async (
@@ -34,7 +37,7 @@ export function useGPTFunctionHandler() {
         return;
       }
 
-      let matchingPlan = plans.find((plan) => plan.prefferedTime === time);
+      let matchingPlan = supplementPlans.find((plan) => plan.prefferedTime === time);
 
       // Om planen inte finns, skapa den först
       if (!matchingPlan) {
@@ -44,7 +47,8 @@ export function useGPTFunctionHandler() {
           supplements: [],
           notify: false,
         };
-        setPlans((prev) => [...prev, matchingPlan!]);
+        const createdPlan: Plan = { ...matchingPlan } as Plan;
+        setPlans((prev) => ({ ...prev, supplements: [...prev.supplements, createdPlan] }));
       }
 
       const alreadyExists = matchingPlan.supplements.some(
@@ -84,7 +88,7 @@ export function useGPTFunctionHandler() {
         },
       ]);
     },
-    [plans, setPlans, shareHealthPlan]
+    [shareHealthPlan, setForceOpenPopup, setPlans, supplementPlans, saveSupplementToPlan]
   );
 
   return { handleGPTFunctionCall };

@@ -1,4 +1,4 @@
-// Removed unused supplementIds import
+import { PlanCategory } from "@/types/planCategory";
 
 type SupplementReference = {
   id: string;
@@ -24,7 +24,6 @@ export type TimeOfDayRule =
   | "avoidLateEvening" // koffein
   | "avoidNight"; // ännu striktare om du vill
 
-export type TipPlanCategory = "supplement" | "training" | "nutrition";
 
 export type TipNutritionFood = {
   key: string;
@@ -47,12 +46,12 @@ export type Tip = {
   trainingRelation?: TrainingRelation; // (kopplat till workout)
   preferredDayParts?: DayPart[]; // (när på dagen det passar)
   timeRule?: TimeOfDayRule; // (tidsrestriktioner)
-  planCategory?: TipPlanCategory; // Markerar övergripande plan-kategori
-  planCategoryOptions?: TipPlanCategory[]; // Tillåt användarval mellan kategorier
+  planCategory?: PlanCategory; // Markerar övergripande plan-kategori
+  planCategoryOptions?: PlanCategory[]; // Tillåt användarval mellan kategorier
   nutritionFoods?: TipNutritionFood[]; // Rekommenderade livsmedel för nutritionstips
 };
 
-export const tips: Tip[] = [
+const rawTips: Tip[] = [
     {
     id: "eat_colorful_veggies",
     level: 1,
@@ -1116,3 +1115,8 @@ export const tips: Tip[] = [
       planCategory: "training"
     }
 ];
+
+export const tips: Tip[] = rawTips.map((tip) => ({
+  ...tip,
+  planCategory: tip.planCategory ?? "other",
+}));

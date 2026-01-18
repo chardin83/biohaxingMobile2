@@ -102,7 +102,13 @@ jest.mock('@/components/ui/ProgressbarWithLabel', () => {
 });
 
 const mockStorageContext = {
-  plans: [],
+  plans: {
+    supplements: [],
+    training: [
+      { mainGoalId: 'improve_sleep', tipId: 'goal1', startedAt: new Date().toISOString(), planCategory: 'training' },
+    ],
+    nutrition: [],
+  },
   setPlans: jest.fn(),
   hasVisitedChat: false,
   setHasVisitedChat: jest.fn(),
@@ -113,11 +119,8 @@ const mockStorageContext = {
   myGoals: ['improve_sleep', 'boost_energy'],
   setMyGoals: jest.fn(),
   activeGoals: [
-    { mainGoalId: 'improve_sleep', goalId: 'goal1', startedAt: new Date().toISOString() }
+    { mainGoalId: 'improve_sleep', tipId: 'goal1', startedAt: new Date().toISOString(), planCategory: 'training' },
   ],
-  setActiveGoals: jest.fn(),
-  finishedGoals: [],
-  setFinishedGoals: jest.fn(),
   errorMessage: null,
   setErrorMessage: jest.fn(),
   hasCompletedOnboarding: true,
@@ -185,19 +188,6 @@ describe('BiohackerDashboard', () => {
 
     const { getByText } = render(<BiohackerDashboard />);
     expect(getByText('BIOHAXING')).toBeTruthy();
-  });
-
-  it('filters out completed main goals', () => {
-    jest.spyOn(StorageContext, 'useStorage').mockReturnValue({
-      ...mockStorageContext,
-      finishedGoals: [
-        { mainGoalId: 'boost_energy', goalId: 'goal2', finished: new Date().toISOString() }
-      ],
-    });
-
-    const { getAllByTestId } = render(<BiohackerDashboard />);
-    const cards = getAllByTestId('app-card');
-    expect(cards).toHaveLength(1); // Only improve_sleep should remain
   });
 
   it('calculates progress percentage correctly', () => {

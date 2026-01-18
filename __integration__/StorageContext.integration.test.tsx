@@ -28,7 +28,6 @@ describe('StorageContext Integration', () => {
     };
 
     const testPlan: Plan = {
-      id: 'test-plan-1',
       name: 'Test Health Plan',
       supplements: [
         {
@@ -38,7 +37,8 @@ describe('StorageContext Integration', () => {
           unit: 'IU'
         }
       ],
-      prefferedTime: 'morning'
+      prefferedTime: 'morning',
+      notify: false,
     };
 
     // Render the provider
@@ -54,13 +54,13 @@ describe('StorageContext Integration', () => {
     });
 
     // Add a plan
-    act(() => {
-      contextValues.setPlans([testPlan]);
-    });
+      act(() => {
+        contextValues.setPlans({ supplements: [testPlan], training: [], nutrition: [], other: [] });
+      });
 
     // Wait for the state to be updated
     await waitFor(() => {
-      expect(contextValues.plans).toEqual([testPlan]);
+        expect(contextValues.plans).toEqual({ supplements: [testPlan], training: [], nutrition: [], other: [] });
     });
 
     // Wait a bit more for AsyncStorage operation to complete
@@ -68,7 +68,7 @@ describe('StorageContext Integration', () => {
 
     // Verify the plan was persisted to AsyncStorage
     const storedPlans = await AsyncStorage.getItem('plans');
-    expect(JSON.parse(storedPlans || '[]')).toEqual([testPlan]);
+      expect(JSON.parse(storedPlans || '[]')).toEqual({ supplements: [testPlan], training: [], nutrition: [], other: [] });
   });
 
   it('should persist and load goals from real AsyncStorage', async () => {
@@ -93,22 +93,23 @@ describe('StorageContext Integration', () => {
     });
 
     const testGoals = ['goal1', 'goal2'];
-    const activeGoal = {
+    const planEntry = {
       mainGoalId: 'main1',
-      goalId: 'goal1',
-      startedAt: new Date().toISOString()
+      tipId: 'goal1',
+      startedAt: new Date().toISOString(),
+      planCategory: 'training' as const,
     };
 
-    // Set goals and active goals
-    act(() => {
-      contextValues.setMyGoals(testGoals);
-      contextValues.setActiveGoals([activeGoal]);
+    // Set goals and categorized plans
+      act(() => {
+        contextValues.setMyGoals(testGoals);
+        contextValues.setPlans({ supplements: [], training: [planEntry], nutrition: [], other: [] });
     });
 
     // Wait for state updates
     await waitFor(() => {
       expect(contextValues.myGoals).toEqual(testGoals);
-      expect(contextValues.activeGoals).toEqual([activeGoal]);
+      expect(contextValues.plans.training).toEqual([planEntry]);
     });
 
     // Wait for AsyncStorage operations
@@ -116,10 +117,10 @@ describe('StorageContext Integration', () => {
 
     // Verify persistence
     const storedGoals = await AsyncStorage.getItem('myGoals');
-    const storedActiveGoals = await AsyncStorage.getItem('activeGoals');
-    
+    const storedPlans = await AsyncStorage.getItem('plans');
+
     expect(JSON.parse(storedGoals || '[]')).toEqual(testGoals);
-    expect(JSON.parse(storedActiveGoals || '[]')).toEqual([activeGoal]);
+    expect(JSON.parse(storedPlans || '[]')).toEqual({ supplements: [], training: [planEntry], nutrition: [], other: [] });
   });
 
   it('should handle XP and level progression with real persistence', async () => {
@@ -167,7 +168,12 @@ describe('StorageContext Integration', () => {
 
   it('should load existing data on initialization', async () => {
     // Pre-populate AsyncStorage
-    const existingPlans = [{ id: 'existing-plan', name: 'Existing Plan', supplements: [], prefferedTime: 'evening' }];
+      const existingPlans = {
+        supplements: [{ id: 'existing-plan', name: 'Existing Plan', supplements: [], prefferedTime: 'evening' }],
+        training: [],
+        nutrition: [],
+        other: [],
+      };
     const existingGoals = ['existing-goal'];
     
     await AsyncStorage.setItem('plans', JSON.stringify(existingPlans));

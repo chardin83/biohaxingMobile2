@@ -59,18 +59,18 @@ describe('Services Integration', () => {
 
       // Create a realistic health plan
       const healthPlan: Plan = {
-        id: 'morning-routine',
         name: 'Morning Health Routine',
         supplements: [
           { id: 'vitamin-d', name: 'Vitamin D3', quantity: 2000, unit: 'IU' },
           { id: 'omega-3', name: 'Omega-3', quantity: 1000, unit: 'mg' }
         ],
-        prefferedTime: 'morning'
+        prefferedTime: 'morning',
+        notify: false,
       };
 
       // Set the plan in storage
       act(() => {
-        contextValues.setPlans([healthPlan]);
+        contextValues.setPlans({ supplements: [healthPlan], training: [], nutrition: [], other: [] });
         contextValues.setShareHealthPlan(true);
       });
 
@@ -104,14 +104,14 @@ describe('Services Integration', () => {
 
       // Set plan but disable sharing
       const healthPlan: Plan = {
-        id: 'test-plan',
         name: 'Test Plan',
         supplements: [{ id: 'vitamin-c', name: 'Vitamin C', quantity: 500, unit: 'mg' }],
-        prefferedTime: 'morning'
+        prefferedTime: 'morning',
+        notify: false,
       };
 
       act(() => {
-        contextValues.setPlans([healthPlan]);
+        contextValues.setPlans({ supplements: [healthPlan], training: [], nutrition: [], other: [] });
         contextValues.setShareHealthPlan(false);
       });
 
@@ -227,17 +227,17 @@ describe('Services Integration', () => {
 
       // Setup health plan
       const healthPlan: Plan = {
-        id: 'comprehensive-plan',
         name: 'Comprehensive Health Plan',
         supplements: [
           { id: 'multivitamin', name: 'Multivitamin', quantity: 1, unit: 'tablet' },
           { id: 'fish-oil', name: 'Fish Oil', quantity: 2, unit: 'capsules' }
         ],
-        prefferedTime: 'evening'
+        prefferedTime: 'evening',
+        notify: false,
       };
 
       act(() => {
-        contextValues.setPlans([healthPlan]);
+        contextValues.setPlans({ supplements: [healthPlan], training: [], nutrition: [], other: [] });
         contextValues.setShareHealthPlan(true);
         contextValues.setHasVisitedChat(false);
       });
@@ -297,15 +297,16 @@ describe('Services Integration', () => {
         expect(contextValues.isInitialized).toBe(true);
       });
 
-      // Setup active goal
-      const activeGoal = {
+      // Setup active plan entry (training placeholder)
+      const planEntry = {
         mainGoalId: 'energy-boost',
-        goalId: 'vitamin-d-routine',
-        startedAt: new Date().toISOString()
+        tipId: 'vitamin-d-routine',
+        startedAt: new Date().toISOString(),
+        planCategory: 'training' as const,
       };
 
       act(() => {
-        contextValues.setActiveGoals([activeGoal]);
+        contextValues.setPlans({ supplements: [], training: [planEntry], nutrition: [], other: [] });
       });
 
       // Mock supplement analysis response
