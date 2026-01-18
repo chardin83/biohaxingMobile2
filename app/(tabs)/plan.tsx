@@ -81,7 +81,7 @@ export default function Plans() {
     colorScheme === "light" ? Colors.light.icon : Colors.dark.icon;
 
   const supplementPlans = plans.supplements;
-  const trainingGoals = useMemo(() => plans.training, [plans.training]);
+  const trainingPlanGoals = useMemo(() => plans.training, [plans.training]);
   const nutritionGoals = plans.nutrition;
 
   const getRecommendedDoseLabel = React.useCallback(
@@ -410,7 +410,7 @@ export default function Plans() {
   };
 
   const renderTrainingGoals = () => {
-    if (!trainingGoals.length) {
+    if (!trainingPlanGoals.length) {
       return (
         <ThemedText type="default" style={styles.placeholderText}>
           {t("plan.noActiveTraining")}
@@ -418,7 +418,7 @@ export default function Plans() {
       );
     }
 
-    return trainingGoals.map((goal) => {
+    return trainingPlanGoals.map((goal) => {
       const tipTitle = goal.tipId
         ? t(`tips:${goal.tipId}.title`, { defaultValue: goal.tipId })
         : null;

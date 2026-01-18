@@ -510,7 +510,23 @@ export default function AreaDetailScreen() {
 
            {tip.areas.length > 1 && (
                 <Pressable
-                  onPress={() => setShowAllAreas((v) => !v)}
+                  onPress={() => {
+                    setShowAllAreas((v) => {
+                      const next = !v;
+                      // När vi visar alla areas, ge XP för dessa också (första gången)
+                      if (next && effectiveTipId && tip?.areas?.length) {
+                        tip.areas.forEach((a) => {
+                          if (a.id !== areaId) {
+                            const xpGained = addTipView(a.id, effectiveTipId);
+                            if (xpGained > 0) {
+                              console.log(`🎉 You gained ${xpGained} XP for viewing tip in area ${a.id} via Show All`);
+                            }
+                          }
+                        });
+                      }
+                      return next;
+                    });
+                  }}
                   style={styles.showAllButton}
                 >
                   <Text style={styles.showAllText}>

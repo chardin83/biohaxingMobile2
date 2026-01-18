@@ -8,9 +8,9 @@ import React, {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SupplementTime } from "../domain/SupplementTime";
 import { Plan } from "../domain/Plan";
-import { levels } from "@/locales/levels";
 import { PlanCategory } from "@/types/planCategory";
 import { VerdictValue } from "@/types/verdict";
+import { levels, XP_FOR_VIEW, XP_FOR_CHAT_QUESTION, XP_PER_CHAT_MESSAGE, XP_FOR_VERDICT } from "@/constants/XP";
 
 export type MealNutrition = {
   date: string; // YYYY-MM-DD
@@ -412,7 +412,7 @@ export const StorageProvider = ({
       return 0; // Redan sett, ingen XP
     }
 
-    const xpForView = 10;
+    const xpForView = XP_FOR_VIEW;
     const newView: ViewedTip = {
       mainGoalId,
       tipId,
@@ -436,7 +436,7 @@ export const StorageProvider = ({
       return 0;
     }
 
-    const xpForChat = 5;
+    const xpForChat = XP_FOR_CHAT_QUESTION;
     
     const updated = viewedTipsState.map((v) => {
       if (v.mainGoalId === mainGoalId && v.tipId === tipId) {
@@ -456,7 +456,7 @@ export const StorageProvider = ({
 
   // Lägg till ny funktion för att ge XP för varje chat-meddelande
   const addChatMessageXP = (mainGoalId: string, tipId: string): number => {
-    const xpPerMessage = 2; // 2 XP per meddelande
+    const xpPerMessage = XP_PER_CHAT_MESSAGE; // 2 XP per meddelande
     
     const updated = viewedTipsState.map((v) => {
       if (v.mainGoalId === mainGoalId && v.tipId === tipId) {
@@ -491,7 +491,7 @@ export const StorageProvider = ({
       return 0;
     }
 
-    const xpForVerdict = 5;
+    const xpForVerdict = XP_FOR_VERDICT;
     
     const updated = viewedTipsState.map((v) => {
       if (v.mainGoalId === mainGoalId && v.tipId === tipId) {

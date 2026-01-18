@@ -8,7 +8,7 @@ import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import AppCard from "@/components/ui/AppCard";
 import ProgressBarWithLabel from "@/components/ui/ProgressbarWithLabel";
-import { levels } from "@/locales/levels";
+import { levels } from "@/constants/XP";
 import { tips } from "@/locales/tips";
 import { areas } from "@/locales/areas";
 import { VerdictValue, POSITIVE_VERDICTS } from "@/types/verdict";

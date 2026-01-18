@@ -67,7 +67,7 @@ jest.mock('@/locales/areas', () => ({
   ],
 }));
 
-jest.mock('@/locales/levels', () => ({
+jest.mock('@/constants/XP', () => ({
   levels: [
     { level: 1, requiredXP: 0, titleKey: 'biohacker' },
     { level: 2, requiredXP: 500, titleKey: 'advanced_biohacker' },
