@@ -775,5 +775,13 @@
       "cardioFitness": "Astaxanthin may support endurance by improving fat metabolism and reducing oxidative load during longer aerobic efforts."
     },
     "analyzePrompt": "Analyze the user's training intensity and recovery demands to determine whether astaxanthin is appropriate, and when it should be used relative to hard training sessions."
+  },
+  "avoid_flat_hard_shoes": {
+    "title": "Avoid hard flat shoes on flat surfaces",
+    "description": "Wearing hard, flat shoes on flat ground can increase stress on the body, joints, muscles, and nervous system. Choose shoes with some cushioning or vary the surface to reduce overload risk and support more natural movement.",
+    "areas": {
+      "musclePerformance": "Avoiding hard flat shoes reduces unnecessary strain on muscles and tendons.",
+      "nervousSystem": "Varying surfaces and footwear supports nervous system adaptability."
+    }
   }
 }

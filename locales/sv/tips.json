@@ -261,7 +261,7 @@
   },
   "hrv_recovery_monitoring": {
     "title": "HRV och återhämtningsövervakning",
-    "description": "Hjärtfrekvensvariabilitet (HRV) är ett nyckelmått för att spåra nervsystemets balans och återhämtningsstatus. Övervakning av HRV hjälper till att optimera träningsintensitet, förhindra överträning och säkerställa tillräcklig återhämtning mellan träningspass.",
+    "description": "Hjärtfrekvensvariabilitet (HRV) är ett nyckelmått för att spåra nervsystemets balans och återhämtningstatus. Övervakning av HRV hjälper till att optimera träningsintensitet, förhindra överträning och säkerställa tillräcklig återhämtning mellan träningspass.",
     "areas": {
       "nervousSystem": "HRV återspeglar balansen mellan sympatisk och parasympatisk nervsystemaktivitet, vilket indikerar stress- och återhämtningnivåer.",
       "immuneSupport": "Låg HRV kan indikera ökad inflammation och minskad immunfunktion, medan högre HRV tyder på bättre återhämtning och immunresiliens.",
@@ -774,7 +774,7 @@
       "energy": "Genom att skydda mitokondrier från oxidativ stress kan astaxantin bidra till stabilare energiproduktion över tid.",
       "cardioFitness": "Astaxantin kan stödja uthållighet genom förbättrad fettmetabolism och minskad oxidativ belastning vid längre aeroba pass."
     },
-    "analyzePrompt": "Analysera användarens träningsintensitet och återhämtningsbehov för att avgöra om astaxantin bör användas, och när i förhållande till hårda träningspass."
+    "analyzePrompt": "Analysera användarens träningsintensitet och återhämtningbehov för att avgöra om astaxantin bör användas, och när i förhållande till hårda träningspass."
   },
   "intermittent_fasting_12h": {
     "title": "Intermittent fasta 12 timmar",
@@ -790,6 +790,14 @@
     "areas": {
       "energy": "16:8-fasta kan öka kroppens förmåga att använda fett som bränsle och ge jämnare energi under dagen.",
       "digestiveHealth": "Ett längre fastefönster kan ge tarmen mer tid för återhämtning och stödja en sund tarmflora."
+    }
+  },
+  "avoid_flat_hard_shoes": {
+    "title": "Undvik hårda platta skor på platt mark",
+    "description": "Att använda hårda, platta skor på platt underlag kan öka belastningen på kroppen och stressa leder, muskler och nervsystem. Välj skor med viss dämpning eller variera underlaget för att minska risken för överbelastning och stödja en mer naturlig rörelse.",
+    "areas": {
+      "musclePerformance": "Att undvika hårda platta skor minskar onödig belastning på muskler och senor.",
+      "nervousSystem": "Variation i underlag och skor stödjer nervsystemets anpassningsförmåga."
     }
   }
 }

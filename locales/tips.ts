@@ -1100,4 +1100,19 @@ export const tips: Tip[] = [
     timeRule: "anytime",
     planCategory: "nutrition"
   }
+    ,
+    {
+      id: "avoid_flat_hard_shoes",
+      level: 1,
+      xp: 200,
+      areas: [
+        { id: "musclePerformance", descriptionKey: "avoid_flat_hard_shoes.areas.musclePerformance" },
+        { id: "nervousSystem", descriptionKey: "avoid_flat_hard_shoes.areas.nervousSystem" }
+      ],
+      title: "avoid_flat_hard_shoes.title",
+      descriptionKey: "avoid_flat_hard_shoes.description",
+      trainingRelation: "anytime",
+      timeRule: "anytime",
+      planCategory: "training"
+    }
 ];
