@@ -1,9 +1,9 @@
 // components/ui/AppCard.tsx
-import React from "react";
-import { StyleSheet,Text, TouchableOpacity, View } from "react-native";
-import { Icon } from "react-native-paper";
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Icon } from 'react-native-paper';
 
-import { Colors } from "@/constants/Colors";
+import { Colors } from '@/constants/Colors';
 
 interface AppCardProps {
   icon?: string;
@@ -14,19 +14,9 @@ interface AppCardProps {
   onPress: () => void;
 }
 
-const AppCard: React.FC<AppCardProps> = ({
-  icon,
-  title,
-  description,
-  isActive = false,
-  xp,
-  onPress,
-}) => {
+const AppCard: React.FC<AppCardProps> = ({ icon, title, description, isActive = false, xp, onPress }) => {
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[styles.card, isActive && styles.cardActive]}
-    >
+    <TouchableOpacity onPress={onPress} style={[styles.card, isActive && styles.cardActive]}>
       <View style={styles.cardRow}>
         {icon && (
           <View style={styles.iconWrapper}>
@@ -36,25 +26,19 @@ const AppCard: React.FC<AppCardProps> = ({
 
         <View style={styles.textWrapper}>
           <Text style={styles.cardTitle}>{title}</Text>
-          {description && (
-            <Text style={styles.cardSubtitle}>{description}</Text>
-          )}
+          {description && <Text style={styles.cardSubtitle}>{description}</Text>}
         </View>
 
-          {typeof xp === 'number' && (
-            <View style={styles.xpBadge}>
-              <Text style={styles.xpText}>{xp} XP</Text>
-            </View>
-          )}
-          {isActive && (
-            <View style={styles.checkIcon}>
-              <Icon
-                source="check-circle"
-                size={34}
-                color={Colors.dark.checkmarkSupplement}
-              />
-            </View>
-          )}
+        {typeof xp === 'number' && (
+          <View style={styles.xpBadge}>
+            <Text style={styles.xpText}>{xp} XP</Text>
+          </View>
+        )}
+        {isActive && (
+          <View style={styles.checkIcon}>
+            <Icon source="check-circle" size={34} color={Colors.dark.checkmarkSupplement} />
+          </View>
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -63,7 +47,7 @@ const AppCard: React.FC<AppCardProps> = ({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.dark.secondary,
-    width: "90%",
+    width: '90%',
     padding: 15,
     borderRadius: 12,
     marginVertical: 8,
@@ -71,11 +55,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   cardActive: {
-    backgroundColor: "#223B50",
+    backgroundColor: '#223B50',
   },
   cardRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 16,
   },
   iconWrapper: {
@@ -84,8 +68,8 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderColor: Colors.dark.borderLight,
     borderWidth: 2,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   textWrapper: {
     flex: 1,
@@ -93,8 +77,8 @@ const styles = StyleSheet.create({
   cardTitle: {
     color: Colors.dark.primary,
     fontSize: 16,
-    fontWeight: "bold",
-    textTransform: "uppercase",
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
   },
   cardSubtitle: {
     color: Colors.dark.textLight,
@@ -102,23 +86,23 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   xpBadge: {
-    marginLeft: "auto",
+    marginLeft: 'auto',
     backgroundColor: Colors.dark.checkmarkSupplement,
     borderRadius: 16,
     paddingHorizontal: 12,
     paddingVertical: 4,
     minWidth: 48,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-    checkIcon: {
-    marginLeft: "auto",
+  checkIcon: {
+    marginLeft: 'auto',
   },
-    xpText: {
-      color: Colors.dark.textWhite,
-      fontWeight: "bold",
-      fontSize: 16,
-    },
+  xpText: {
+    color: Colors.dark.textWhite,
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
 });
 
 export default AppCard;

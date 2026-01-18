@@ -38,7 +38,7 @@ describe('Goals Screen', () => {
 
   it('has correct layout structure', () => {
     const { getByText, getByTestId } = render(<Goals />);
-    
+
     // Check that both title and selector are present
     expect(getByText('Select Goal')).toBeTruthy();
     expect(getByTestId('my-goals-selector')).toBeTruthy();
@@ -47,7 +47,7 @@ describe('Goals Screen', () => {
   it('applies correct styling to the container', () => {
     const { getByText } = render(<Goals />);
     const titleElement = getByText('Select Goal');
-    
+
     // Verify the title has the expected style properties
     expect(titleElement.props.style).toEqual(
       expect.objectContaining({

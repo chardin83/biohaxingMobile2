@@ -1,4 +1,4 @@
-import { fireEvent,render } from '@testing-library/react-native';
+import { fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
 
 import * as StorageContext from '../../app/context/StorageContext';
@@ -86,7 +86,7 @@ describe('MyGoalsSelector', () => {
 
   it('renders all goal cards', () => {
     const { getByText } = render(<MyGoalsSelector />);
-    
+
     expect(getByText('Improve Sleep')).toBeTruthy();
     expect(getByText('Boost Energy')).toBeTruthy();
     expect(getByText('Enhance Focus')).toBeTruthy();
@@ -94,7 +94,7 @@ describe('MyGoalsSelector', () => {
 
   it('displays goal descriptions correctly', () => {
     const { getByText } = render(<MyGoalsSelector />);
-    
+
     expect(getByText('Better sleep quality')).toBeTruthy();
     expect(getByText('Increase energy levels')).toBeTruthy();
     expect(getByText('Better concentration')).toBeTruthy();
@@ -102,7 +102,7 @@ describe('MyGoalsSelector', () => {
 
   it('shows active state for selected goals', () => {
     const { getAllByTestId } = render(<MyGoalsSelector />);
-    
+
     const activeStates = getAllByTestId('card-active');
     expect(activeStates[0].props.children).toBe('active'); // improve_sleep is selected
     expect(activeStates[1].props.children).toBe('inactive'); // boost_energy is not selected
@@ -111,29 +111,29 @@ describe('MyGoalsSelector', () => {
 
   it('calls setMyGoals when a goal is selected', () => {
     const { getByTestId } = render(<MyGoalsSelector />);
-    
+
     const energyCard = getByTestId('app-card-boost-energy');
     fireEvent.press(energyCard);
-    
+
     expect(mockSetMyGoals).toHaveBeenCalledWith(expect.any(Function));
   });
 
   it('calls setMyGoals when a goal is deselected', () => {
     const { getByTestId } = render(<MyGoalsSelector />);
-    
+
     const sleepCard = getByTestId('app-card-improve-sleep');
     fireEvent.press(sleepCard);
-    
+
     expect(mockSetMyGoals).toHaveBeenCalledWith(expect.any(Function));
   });
 
   it('calls onGoalSelected callback when provided', () => {
     const mockOnGoalSelected = jest.fn();
     const { getByTestId } = render(<MyGoalsSelector onGoalSelected={mockOnGoalSelected} />);
-    
+
     const focusCard = getByTestId('app-card-enhance-focus');
     fireEvent.press(focusCard);
-    
+
     expect(mockOnGoalSelected).toHaveBeenCalledWith({
       id: 'enhance_focus',
       icon: 'brain',
@@ -143,34 +143,34 @@ describe('MyGoalsSelector', () => {
 
   it('toggles goal selection correctly when adding new goal', () => {
     const { getByTestId } = render(<MyGoalsSelector />);
-    
+
     const energyCard = getByTestId('app-card-boost-energy');
     fireEvent.press(energyCard);
-    
+
     // Verify the function was called with a function that adds the goal
     expect(mockSetMyGoals).toHaveBeenCalledWith(expect.any(Function));
-    
+
     // Test the function logic by calling it with current state
     const setMyGoalsFunction = mockSetMyGoals.mock.calls[0][0];
     const currentGoals = ['improve_sleep'];
     const newGoals = setMyGoalsFunction(currentGoals);
-    
+
     expect(newGoals).toEqual(['improve_sleep', 'boost_energy']);
   });
 
   it('toggles goal selection correctly when removing existing goal', () => {
     const { getByTestId } = render(<MyGoalsSelector />);
-    
+
     const sleepCard = getByTestId('app-card-improve-sleep');
     fireEvent.press(sleepCard);
-    
+
     expect(mockSetMyGoals).toHaveBeenCalledWith(expect.any(Function));
-    
+
     // Test the function logic by calling it with current state
     const setMyGoalsFunction = mockSetMyGoals.mock.calls[0][0];
     const currentGoals = ['improve_sleep'];
     const newGoals = setMyGoalsFunction(currentGoals);
-    
+
     expect(newGoals).toEqual([]);
   });
 
@@ -181,12 +181,12 @@ describe('MyGoalsSelector', () => {
     });
 
     const { getByText, getAllByTestId } = render(<MyGoalsSelector />);
-    
+
     // All goals should be rendered
     expect(getByText('Improve Sleep')).toBeTruthy();
     expect(getByText('Boost Energy')).toBeTruthy();
     expect(getByText('Enhance Focus')).toBeTruthy();
-    
+
     // All should be inactive
     const activeStates = getAllByTestId('card-active');
     activeStates.forEach(state => {
@@ -196,9 +196,9 @@ describe('MyGoalsSelector', () => {
 
   it('works without onGoalSelected callback', () => {
     const { getByTestId } = render(<MyGoalsSelector />);
-    
+
     const focusCard = getByTestId('app-card-enhance-focus');
-    
+
     // Should not throw error when onGoalSelected is not provided
     expect(() => fireEvent.press(focusCard)).not.toThrow();
     expect(mockSetMyGoals).toHaveBeenCalled();

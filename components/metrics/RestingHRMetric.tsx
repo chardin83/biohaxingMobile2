@@ -1,8 +1,8 @@
-import React from "react";
-import { StyleSheet,Text, View } from "react-native";
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { calculateRestingHRMetrics } from "@/utils/restingHRCalculations";
-import { HRVSummary } from "@/wearables/types";
+import { calculateRestingHRMetrics } from '@/utils/restingHRCalculations';
+import { HRVSummary } from '@/wearables/types';
 
 interface RestingHRMetricProps {
   hrvData: HRVSummary[];
@@ -16,11 +16,12 @@ export function RestingHRMetric({ hrvData, showDivider = false }: RestingHRMetri
     <View style={[styles.col, showDivider && styles.colWithDivider]}>
       <Text style={styles.label}>Resting HR</Text>
       <View style={styles.valueContainer}>
-        <Text style={styles.value}>{restingHR ?? "—"}</Text>
+        <Text style={styles.value}>{restingHR ?? '—'}</Text>
         {restingHR && <Text style={styles.unit}> bpm</Text>}
       </View>
       <Text style={styles.accent}>
-        {restingHRDelta > 0 ? "+" : ""}{restingHRDelta} bpm
+        {restingHRDelta > 0 ? '+' : ''}
+        {restingHRDelta} bpm
       </Text>
     </View>
   );
@@ -33,32 +34,32 @@ const styles = StyleSheet.create({
   },
   colWithDivider: {
     borderRightWidth: 1,
-    borderRightColor: "rgba(255,255,255,0.10)",
+    borderRightColor: 'rgba(255,255,255,0.10)',
   },
   label: {
-    color: "rgba(255,255,255,0.65)",
+    color: 'rgba(255,255,255,0.65)',
     fontSize: 13,
   },
   valueContainer: {
-    flexDirection: "row",
-    alignItems: "baseline",
+    flexDirection: 'row',
+    alignItems: 'baseline',
     marginTop: 4,
   },
   value: {
-    color: "white",
+    color: 'white',
     fontSize: 26,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   unit: {
-    color: "white",
+    color: 'white',
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: '500',
     marginLeft: 2,
   },
   accent: {
-    color: "rgba(120,255,220,0.85)",
+    color: 'rgba(120,255,220,0.85)',
     fontSize: 12,
     marginTop: 6,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });

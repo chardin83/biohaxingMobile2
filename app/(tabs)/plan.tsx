@@ -1,73 +1,63 @@
-import { useLocalSearchParams } from "expo-router";
-import React, { useEffect, useMemo,useState } from "react";
-import { useTranslation } from "react-i18next";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Portal } from "react-native-paper";
+import { useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Portal } from 'react-native-paper';
 
-import { Collapsible } from "@/components/Collapsible";
-import CreateTimeSlotModal from "@/components/modals/CreateTimeSlotModal";
-import TrainingSettingsModal from "@/components/modals/TrainingSettingsModal";
-import SupplementForm from "@/components/SupplementForm";
-import SupplementItem from "@/components/SupplementItem";
-import { ThemedModal } from "@/components/ThemedModal";
-import { ThemedText } from "@/components/ThemedText";
-import AppBox from "@/components/ui/AppBox";
-import AppButton from "@/components/ui/AppButton";
-import Badge from "@/components/ui/Badge";
-import { IconSymbol } from "@/components/ui/IconSymbol";
-import { SwipeableRow } from "@/components/ui/SwipeableRow";
-import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import { useSupplementSaver } from "@/hooks/useSupplementSaver";
-import { defaultPlans } from "@/locales/defaultPlans";
-import { useSupplementMap } from "@/locales/supplements";
-import { Tip,tips } from "@/locales/tips";
+import { Collapsible } from '@/components/Collapsible';
+import CreateTimeSlotModal from '@/components/modals/CreateTimeSlotModal';
+import TrainingSettingsModal from '@/components/modals/TrainingSettingsModal';
+import SupplementForm from '@/components/SupplementForm';
+import SupplementItem from '@/components/SupplementItem';
+import { ThemedModal } from '@/components/ThemedModal';
+import { ThemedText } from '@/components/ThemedText';
+import AppBox from '@/components/ui/AppBox';
+import AppButton from '@/components/ui/AppButton';
+import Badge from '@/components/ui/Badge';
+import { IconSymbol } from '@/components/ui/IconSymbol';
+import { SwipeableRow } from '@/components/ui/SwipeableRow';
+import { Colors } from '@/constants/Colors';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { useSupplementSaver } from '@/hooks/useSupplementSaver';
+import { defaultPlans } from '@/locales/defaultPlans';
+import { useSupplementMap } from '@/locales/supplements';
+import { Tip, tips } from '@/locales/tips';
 
-import { useStorage } from "../context/StorageContext";
-import { Plan } from "../domain/Plan";
-import { Supplement } from "../domain/Supplement";
-import { colors } from "../theme/styles";
+import { useStorage } from '../context/StorageContext';
+import { Plan } from '../domain/Plan';
+import { Supplement } from '../domain/Supplement';
+import { colors } from '../theme/styles';
 
 // Plan category mapping not currently used; remove to avoid unused warnings
 
 export default function Plans() {
   const params = useLocalSearchParams<{ openCreate?: string }>();
   const [modalVisible, setModalVisible] = useState(false);
-  const [_newPlanName, setNewPlanName] = useState("");
+  const [_newPlanName, setNewPlanName] = useState('');
   const [_newPlanTime, setNewPlanTime] = useState(new Date());
   const [_selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [_isEditingPlan, setIsEditingPlan] = useState(false);
   const [isEditingSupplement, setIsEditingSupplement] = useState(false);
-  const [planForSupplementEdit, setPlanForSupplementEdit] =
-    useState<Plan | null>(null);
-  const [expandedNutritionTips, setExpandedNutritionTips] = useState<
-    Record<string, boolean>
-  >({});
+  const [planForSupplementEdit, setPlanForSupplementEdit] = useState<Plan | null>(null);
+  const [expandedNutritionTips, setExpandedNutritionTips] = useState<Record<string, boolean>>({});
   const [expandedPlans, setExpandedPlans] = useState<Record<string, boolean>>({});
   const [trainingSettingsVisible, setTrainingSettingsVisible] = useState(false);
   const [trainingSettingsTipId, setTrainingSettingsTipId] = useState<string | null>(null);
   const [trainingSettingsTitle, setTrainingSettingsTitle] = useState<string | null>(null);
-  const [trainingSessionsInput, setTrainingSessionsInput] = useState("");
-  const [trainingDurationInput, setTrainingDurationInput] = useState("");
+  const [trainingSessionsInput, setTrainingSessionsInput] = useState('');
+  const [trainingDurationInput, setTrainingDurationInput] = useState('');
 
   const { saveSupplementToPlan } = useSupplementSaver();
 
   const [supplement, setSupplement] = useState<Supplement | null>(null);
   // Removed time picker state; handled within modal components if needed
 
-  const {
-    plans,
-    setPlans,
-    errorMessage,
-    trainingPlanSettings,
-    setTrainingPlanSettings,
-  } = useStorage();
+  const { plans, setPlans, errorMessage, trainingPlanSettings, setTrainingPlanSettings } = useStorage();
 
-  const { t } = useTranslation(["common", "areas", "tips"]);
+  const { t } = useTranslation(['common', 'areas', 'tips']);
   const supplementMap = useSupplementMap();
   const colorScheme = useColorScheme();
-  const badgeIconColor =
-    colorScheme === "light" ? Colors.light.icon : Colors.dark.icon;
+  const badgeIconColor = colorScheme === 'light' ? Colors.light.icon : Colors.dark.icon;
 
   const supplementPlans = plans.supplements;
   const trainingPlanGoals = useMemo(() => plans.training, [plans.training]);
@@ -80,10 +70,10 @@ export default function Plans() {
         if (!reference.id) continue;
         const suppMeta = supplementMap.get(reference.id);
         if (suppMeta?.quantity) {
-          const unit = suppMeta.unit ? ` ${suppMeta.unit}` : "";
+          const unit = suppMeta.unit ? ` ${suppMeta.unit}` : '';
           const dose = `${suppMeta.quantity}${unit}`.trim();
           if (dose.length > 0) {
-            return t("plan.recommendedDose", { dose });
+            return t('plan.recommendedDose', { dose });
           }
         }
       }
@@ -95,17 +85,17 @@ export default function Plans() {
   const nutritionGroups = useMemo(() => {
     const tipIds = new Set<string>();
 
-    nutritionGoals.forEach((goal) => {
+    nutritionGoals.forEach(goal => {
       if (goal.tipId) {
         tipIds.add(goal.tipId);
       }
     });
 
-    return Array.from(tipIds).map((tipId) => ({ tipId }));
+    return Array.from(tipIds).map(tipId => ({ tipId }));
   }, [nutritionGoals]);
 
   const toggleNutritionFoods = React.useCallback((tipId: string) => {
-    setExpandedNutritionTips((prev) => ({
+    setExpandedNutritionTips(prev => ({
       ...prev,
       [tipId]: !prev[tipId],
     }));
@@ -113,13 +103,9 @@ export default function Plans() {
 
   const openTrainingSettingsModal = (tipId: string, trainingTitle?: string | null) => {
     const existing = trainingPlanSettings[tipId];
-    setTrainingSessionsInput(
-      existing?.sessionsPerWeek != null ? existing.sessionsPerWeek.toString() : ""
-    );
+    setTrainingSessionsInput(existing?.sessionsPerWeek != null ? existing.sessionsPerWeek.toString() : '');
     setTrainingDurationInput(
-      existing?.sessionDurationMinutes != null
-        ? existing.sessionDurationMinutes.toString()
-        : ""
+      existing?.sessionDurationMinutes != null ? existing.sessionDurationMinutes.toString() : ''
     );
     setTrainingSettingsTipId(tipId);
     setTrainingSettingsTitle(trainingTitle ?? null);
@@ -130,8 +116,8 @@ export default function Plans() {
     setTrainingSettingsVisible(false);
     setTrainingSettingsTipId(null);
     setTrainingSettingsTitle(null);
-    setTrainingSessionsInput("");
-    setTrainingDurationInput("");
+    setTrainingSessionsInput('');
+    setTrainingDurationInput('');
   };
 
   const handleSaveTrainingSettings = () => {
@@ -150,7 +136,7 @@ export default function Plans() {
     const sessionsValue = parseNumericInput(trainingSessionsInput);
     const durationValue = parseNumericInput(trainingDurationInput);
 
-    setTrainingPlanSettings((prev) => {
+    setTrainingPlanSettings(prev => {
       const next = { ...prev };
       if (sessionsValue === undefined && durationValue === undefined) {
         delete next[trainingSettingsTipId];
@@ -168,19 +154,19 @@ export default function Plans() {
 
   useEffect(() => {
     if (supplementPlans.length === 0) {
-      const translatedDefaults = defaultPlans.map((plan) => ({
+      const translatedDefaults = defaultPlans.map(plan => ({
         name: t(`plan.defaultPlan.${plan.key}`),
         supplements: [],
         prefferedTime: plan.time,
         notify: false,
       }));
-      setPlans((prev) => ({ ...prev, supplements: translatedDefaults }));
+      setPlans(prev => ({ ...prev, supplements: translatedDefaults }));
     }
   }, [supplementPlans.length, setPlans, t]);
 
   // Öppna skapamodal om efterfrågat via route-param
   useEffect(() => {
-    if (params.openCreate === "1") {
+    if (params.openCreate === '1') {
       setIsEditingPlan(false);
       setSelectedPlan(null);
       setModalVisible(true);
@@ -188,25 +174,23 @@ export default function Plans() {
   }, [params.openCreate]);
 
   const savePlans = (updatedPlans: Plan[]) => {
-    setPlans((prev) => ({ ...prev, supplements: updatedPlans }));
+    setPlans(prev => ({ ...prev, supplements: updatedPlans }));
   };
 
   // Removed unused handleSavePlan; CreateTimeSlotModal handles creation flow
 
   const handleRemovePlan = (planName: string) => {
-    console.log("Removing plan:", planName);
-    const updatedPlans = supplementPlans.filter((plan) => plan.name !== planName);
+    console.log('Removing plan:', planName);
+    const updatedPlans = supplementPlans.filter(plan => plan.name !== planName);
     savePlans(updatedPlans);
   };
 
   const handleRemoveSupplement = (planName: string, supplementName: string) => {
-    const updatedPlans = supplementPlans.map((plan) =>
+    const updatedPlans = supplementPlans.map(plan =>
       plan.name === planName
         ? {
             ...plan,
-            supplements: plan.supplements.filter(
-              (sup) => sup.name !== supplementName
-            ),
+            supplements: plan.supplements.filter(sup => sup.name !== supplementName),
           }
         : plan
     );
@@ -214,15 +198,15 @@ export default function Plans() {
   };
 
   const handleEditSupplement = (planName: string, supplementTitle: string) => {
-    const plan = supplementPlans.find((p) => p.name === planName) || null;
+    const plan = supplementPlans.find(p => p.name === planName) || null;
     setPlanForSupplementEdit(plan);
-    const sup = plan?.supplements.find((s) => s.name === supplementTitle) || null;
+    const sup = plan?.supplements.find(s => s.name === supplementTitle) || null;
     setSupplement(sup || null);
     setIsEditingSupplement(true);
   };
 
   const timeStringToDate = (timeString: string): Date => {
-    const [hours, minutes] = timeString.split(":").map(Number);
+    const [hours, minutes] = timeString.split(':').map(Number);
     const now = new Date();
     now.setHours(hours, minutes, 0, 0);
     return now;
@@ -237,14 +221,12 @@ export default function Plans() {
   };
 
   const handleNotify = (plan: Plan) => {
-    const updatedPlans = supplementPlans.map((p) =>
-      p.name === plan.name ? { ...p, notify: !p.notify } : p
-    );
+    const updatedPlans = supplementPlans.map(p => (p.name === plan.name ? { ...p, notify: !p.notify } : p));
     savePlans(updatedPlans);
   };
 
   const togglePlanExpanded = (planKey: string) => {
-    setExpandedPlans((prev) => ({
+    setExpandedPlans(prev => ({
       ...prev,
       [planKey]: !prev[planKey],
     }));
@@ -258,7 +240,7 @@ export default function Plans() {
     const baseTitle = `${plan.name} (${plan.prefferedTime})`;
     const displayTitle =
       !isExpanded && supplementCount > 0
-        ? `${baseTitle} - ${t("plan.supplementCountLabel", {
+        ? `${baseTitle} - ${t('plan.supplementCountLabel', {
             count: supplementCount,
             defaultValue: `${supplementCount} tillskott`,
           })}`
@@ -268,7 +250,7 @@ export default function Plans() {
         name="chevron.right"
         size={16}
         color={Colors.dark.icon}
-        style={{ transform: [{ rotate: isExpanded ? "90deg" : "0deg" }] }}
+        style={{ transform: [{ rotate: isExpanded ? '90deg' : '0deg' }] }}
       />
     );
 
@@ -277,13 +259,13 @@ export default function Plans() {
         <TouchableOpacity
           onPress={() => handleNotify(plan)}
           accessibilityRole="button"
-          accessibilityLabel={t("plan.toggleNotifications", {
-            defaultValue: "Växla notiser",
+          accessibilityLabel={t('plan.toggleNotifications', {
+            defaultValue: 'Växla notiser',
           })}
           style={styles.planHeaderButton}
         >
           <IconSymbol
-            name={plan.notify ? "bell.fill" : "bell.slash"}
+            name={plan.notify ? 'bell.fill' : 'bell.slash'}
             size={18}
             color={plan.notify ? Colors.dark.primary : Colors.dark.icon}
           />
@@ -302,20 +284,18 @@ export default function Plans() {
           headerRight={headerActions}
           style={styles.planBox}
           onPressHeader={() => togglePlanExpanded(planKey)}
-          headerAccessibilityLabel={t("plan.toggleSupplements", {
-            defaultValue: "Visa eller dölj innehåll",
+          headerAccessibilityLabel={t('plan.toggleSupplements', {
+            defaultValue: 'Visa eller dölj innehåll',
           })}
           leading={leadingIcon}
         >
           {isExpanded && (
             <View>
-              {supplements.map((sup) =>
-                renderSupplementItem(plan.name, sup)
-              )}
+              {supplements.map(sup => renderSupplementItem(plan.name, sup))}
               {errorMessage && <Text style={styles.planErrorText}>{errorMessage}</Text>}
               <View style={styles.planAddButtonWrapper}>
                 <AppButton
-                  title={t("plan.addSupplement")}
+                  title={t('plan.addSupplement')}
                   onPress={() => {
                     setIsEditingSupplement(false);
                     setPlanForSupplementEdit(plan);
@@ -334,16 +314,14 @@ export default function Plans() {
     if (!supplementPlans.length) {
       return (
         <ThemedText type="default" style={styles.placeholderText}>
-          {t("plan.noSupplementSlots", {
-            defaultValue: "Inga tider skapade ännu.",
+          {t('plan.noSupplementSlots', {
+            defaultValue: 'Inga tider skapade ännu.',
           })}
         </ThemedText>
       );
     }
 
-    return supplementPlans.map((plan) => (
-      <View key={`${plan.name}-${plan.prefferedTime}`}>{renderPlanRow(plan)}</View>
-    ));
+    return supplementPlans.map(plan => <View key={`${plan.name}-${plan.prefferedTime}`}>{renderPlanRow(plan)}</View>);
   };
 
   const renderSupplementItem = (planName: string, suppItem: Supplement) => (
@@ -369,72 +347,58 @@ export default function Plans() {
     if (!trainingPlanGoals.length) {
       return (
         <ThemedText type="default" style={styles.placeholderText}>
-          {t("plan.noActiveTraining")}
+          {t('plan.noActiveTraining')}
         </ThemedText>
       );
     }
 
-    return trainingPlanGoals.map((goal) => {
-      const tipTitle = goal.tipId
-        ? t(`tips:${goal.tipId}.title`, { defaultValue: goal.tipId })
-        : null;
+    return trainingPlanGoals.map(goal => {
+      const tipTitle = goal.tipId ? t(`tips:${goal.tipId}.title`, { defaultValue: goal.tipId }) : null;
       const trainingSettingsKey = goal.tipId ?? goal.mainGoalId;
       const userSettings = trainingPlanSettings[trainingSettingsKey] ?? {};
       const trainingBadges: Array<{
         key: string;
         label: string;
-        icon: "calendar" | "clock";
+        icon: 'calendar' | 'clock';
       }> = [];
 
-      if (
-        typeof userSettings.sessionsPerWeek === "number" &&
-        !Number.isNaN(userSettings.sessionsPerWeek)
-      ) {
+      if (typeof userSettings.sessionsPerWeek === 'number' && !Number.isNaN(userSettings.sessionsPerWeek)) {
         trainingBadges.push({
           key: `${trainingSettingsKey}-sessions`,
-          label: t("plan.trainingSessionsPerWeek", {
+          label: t('plan.trainingSessionsPerWeek', {
             count: userSettings.sessionsPerWeek,
             defaultValue: `${userSettings.sessionsPerWeek} pass/vecka`,
           }),
-          icon: "calendar",
+          icon: 'calendar',
         });
       }
 
       if (
-        typeof userSettings.sessionDurationMinutes === "number" &&
+        typeof userSettings.sessionDurationMinutes === 'number' &&
         !Number.isNaN(userSettings.sessionDurationMinutes)
       ) {
         trainingBadges.push({
           key: `${trainingSettingsKey}-duration`,
-          label: t("plan.trainingDurationMinutes", {
+          label: t('plan.trainingDurationMinutes', {
             minutes: userSettings.sessionDurationMinutes,
             defaultValue: `${userSettings.sessionDurationMinutes} min`,
           }),
-          icon: "clock",
+          icon: 'clock',
         });
       }
 
-      const editLabel = t("plan.editTrainingSettings", {
-        defaultValue: "Redigera",
+      const editLabel = t('plan.editTrainingSettings', {
+        defaultValue: 'Redigera',
       });
 
       const editAction = (
         <TouchableOpacity
-          onPress={() =>
-            openTrainingSettingsModal(
-              trainingSettingsKey,
-              tipTitle ?? goal.mainGoalId
-            )
-          }
+          onPress={() => openTrainingSettingsModal(trainingSettingsKey, tipTitle ?? goal.mainGoalId)}
           accessibilityRole="button"
           accessibilityLabel={editLabel}
           style={styles.trainingEditIcon}
         >
-          <IconSymbol
-            name="pencil"
-            size={16}
-            color={Colors.dark.icon}
-          />
+          <IconSymbol name="pencil" size={16} color={Colors.dark.icon} />
         </TouchableOpacity>
       );
 
@@ -446,7 +410,7 @@ export default function Plans() {
           style={styles.trainingBox}
         >
           <ThemedText type="default" style={styles.trainingMeta}>
-            {t("plan.trainingActiveSince", {
+            {t('plan.trainingActiveSince', {
               date: formatDate(goal.startedAt),
             })}
           </ThemedText>
@@ -455,12 +419,7 @@ export default function Plans() {
               <View style={styles.trainingBadgesRow}>
                 {trainingBadges.map(({ key, label, icon }) => (
                   <Badge key={key} variant="overlay" style={styles.trainingBadge}>
-                    <IconSymbol
-                      name={icon}
-                      size={14}
-                      color={Colors.dark.icon}
-                      style={styles.trainingBadgeIcon}
-                    />
+                    <IconSymbol name={icon} size={14} color={Colors.dark.icon} style={styles.trainingBadgeIcon} />
                     <ThemedText type="caption" style={styles.trainingBadgeLabel}>
                       {label}
                     </ThemedText>
@@ -469,8 +428,8 @@ export default function Plans() {
               </View>
             ) : (
               <ThemedText type="default" style={styles.trainingSettingsText}>
-                {t("plan.trainingSettingsUnset", {
-                  defaultValue: "Inga inställningar sparade",
+                {t('plan.trainingSettingsUnset', {
+                  defaultValue: 'Inga inställningar sparade',
                 })}
               </ThemedText>
             )}
@@ -486,19 +445,19 @@ export default function Plans() {
     }
 
     return nutritionGroups.map(({ tipId }) => {
-      const tip = tips.find((candidate) => candidate.id === tipId);
+      const tip = tips.find(candidate => candidate.id === tipId);
       const tipTitle = t(`tips:${tipId}.title`, {
         defaultValue: tip?.title ?? tipId,
       });
       const recommendedDoseLabel = getRecommendedDoseLabel(tip);
-      const foodItems = (tip?.nutritionFoods ?? []).map((food) => {
+      const foodItems = (tip?.nutritionFoods ?? []).map(food => {
         const itemKey = food.key;
         const detailKey = food.detailsKey ?? itemKey;
         const name = t(`tips:${tipId}.nutritionFoods.items.${itemKey}.name`, {
           defaultValue: itemKey,
         });
         const details = t(`tips:${tipId}.nutritionFoods.items.${detailKey}.details`, {
-          defaultValue: "",
+          defaultValue: '',
         });
         return {
           key: `${tipId}-${itemKey}-${detailKey}`,
@@ -508,12 +467,10 @@ export default function Plans() {
       });
       const maxVisibleFoods = 2;
       const isExpanded = !!expandedNutritionTips[tipId];
-      const visibleFoodItems = isExpanded
-        ? foodItems
-        : foodItems.slice(0, maxVisibleFoods);
+      const visibleFoodItems = isExpanded ? foodItems : foodItems.slice(0, maxVisibleFoods);
       const hiddenCount = Math.max(foodItems.length - maxVisibleFoods, 0);
       const hasExtraFoods = hiddenCount > 0;
-      const arrowRotation = isExpanded ? "90deg" : "0deg";
+      const arrowRotation = isExpanded ? '90deg' : '0deg';
 
       return (
         <AppBox key={tipId} title={tipTitle} style={styles.nutritionBox}>
@@ -545,10 +502,10 @@ export default function Plans() {
                 >
                   <ThemedText type="default" style={styles.badgeLabel}>
                     {isExpanded
-                      ? t("plan.hideNutritionFoods", {
-                          defaultValue: "Visa färre",
+                      ? t('plan.hideNutritionFoods', {
+                          defaultValue: 'Visa färre',
                         })
-                      : t("plan.showMoreNutritionFoods", {
+                      : t('plan.showMoreNutritionFoods', {
                           count: hiddenCount,
                           defaultValue: `${hiddenCount}st`,
                         })}
@@ -557,10 +514,7 @@ export default function Plans() {
                     name="chevron.right"
                     size={18}
                     color={badgeIconColor}
-                    style={[
-                      styles.toggleBadgeIcon,
-                      { transform: [{ rotate: arrowRotation }] },
-                    ]}
+                    style={[styles.toggleBadgeIcon, { transform: [{ rotate: arrowRotation }] }]}
                   />
                 </Badge>
               )}
@@ -576,30 +530,21 @@ export default function Plans() {
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <View style={styles.sectionsContainer}>
           <View style={styles.sectionBlock}>
-            <Collapsible
-              title={t("plan.trainingHeader")}
-              contentStyle={styles.collapsibleContentFlush}
-            >
+            <Collapsible title={t('plan.trainingHeader')} contentStyle={styles.collapsibleContentFlush}>
               {renderTrainingGoals()}
             </Collapsible>
           </View>
           <View style={styles.sectionBlock}>
-            <Collapsible
-              title={t("plan.nutritionHeader")}
-              contentStyle={styles.collapsibleContentFlush}
-            >
+            <Collapsible title={t('plan.nutritionHeader')} contentStyle={styles.collapsibleContentFlush}>
               {renderNutritionGoals()}
             </Collapsible>
           </View>
           <View style={styles.sectionBlock}>
-            <Collapsible
-              title={t("plan.supplementSectionTitle")}
-              contentStyle={styles.collapsibleContentFlush}
-            >
+            <Collapsible title={t('plan.supplementSectionTitle')} contentStyle={styles.collapsibleContentFlush}>
               <View>{renderSupplementPlans()}</View>
               <View style={styles.addTimeSlotButtonWrapper}>
                 <AppButton
-                  title={t("plan.addTimeSlot")}
+                  title={t('plan.addTimeSlot')}
                   onPress={() => {
                     setIsEditingPlan(false);
                     setSelectedPlan(null);
@@ -618,7 +563,7 @@ export default function Plans() {
         <CreateTimeSlotModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
-          onCreate={(planData) => {
+          onCreate={planData => {
             // Hantera skapande av ny plan
             const newPlan = {
               name: planData.name,
@@ -633,19 +578,19 @@ export default function Plans() {
         />
         <TrainingSettingsModal
           visible={trainingSettingsVisible}
-          title={t("plan.trainingSettingsTitle", { defaultValue: "Träningsinställningar" })}
+          title={t('plan.trainingSettingsTitle', { defaultValue: 'Träningsinställningar' })}
           trainingTitle={trainingSettingsTitle}
-          sessionsPlaceholder={t("plan.trainingSessionsPlaceholder", {
-            defaultValue: "Pass per vecka",
+          sessionsPlaceholder={t('plan.trainingSessionsPlaceholder', {
+            defaultValue: 'Pass per vecka',
           })}
-          durationPlaceholder={t("plan.trainingDurationPlaceholder", {
-            defaultValue: "Minuter per pass",
+          durationPlaceholder={t('plan.trainingDurationPlaceholder', {
+            defaultValue: 'Minuter per pass',
           })}
-          sessionsLabel={t("plan.trainingSessionsPlaceholder", {
-            defaultValue: "Pass per vecka",
+          sessionsLabel={t('plan.trainingSessionsPlaceholder', {
+            defaultValue: 'Pass per vecka',
           })}
-          durationLabel={t("plan.trainingDurationPlaceholder", {
-            defaultValue: "Minuter per pass",
+          durationLabel={t('plan.trainingDurationPlaceholder', {
+            defaultValue: 'Minuter per pass',
           })}
           sessionsValue={trainingSessionsInput}
           durationValue={trainingDurationInput}
@@ -653,8 +598,8 @@ export default function Plans() {
           onChangeDuration={setTrainingDurationInput}
           onSave={handleSaveTrainingSettings}
           onClose={closeTrainingSettingsModal}
-          saveLabel={t("general.save")}
-          cancelLabel={t("general.cancel")}
+          saveLabel={t('general.save')}
+          cancelLabel={t('general.cancel')}
         />
       </Portal>
 
@@ -662,29 +607,25 @@ export default function Plans() {
       {planForSupplementEdit && (
         <ThemedModal
           visible={!!planForSupplementEdit}
-          title={isEditingSupplement
-            ? `${t("plan.editSupplementFor")} ${planForSupplementEdit.name}`
-            : `${t("plan.addSupplementFor")} ${planForSupplementEdit.name}`}
+          title={
+            isEditingSupplement
+              ? `${t('plan.editSupplementFor')} ${planForSupplementEdit.name}`
+              : `${t('plan.addSupplementFor')} ${planForSupplementEdit.name}`
+          }
           onClose={() => {
             setPlanForSupplementEdit(null);
             setSupplement(null);
           }}
-          okLabel={t("general.save")}
+          okLabel={t('general.save')}
           onSave={undefined} // SupplementForm hanterar save
           showCancelButton={false}
         >
           <SupplementForm
-            selectedTime={timeStringToDate(
-              planForSupplementEdit.prefferedTime || "00:00"
-            )}
+            selectedTime={timeStringToDate(planForSupplementEdit.prefferedTime || '00:00')}
             isEditing={isEditingSupplement}
             preselectedSupplement={supplement}
-            onSave={(savedSupplement) => {
-              saveSupplementToPlan(
-                planForSupplementEdit,
-                savedSupplement,
-                isEditingSupplement
-              );
+            onSave={savedSupplement => {
+              saveSupplementToPlan(planForSupplementEdit, savedSupplement, isEditingSupplement);
               setSupplement(null);
               setPlanForSupplementEdit(null);
             }}
@@ -722,7 +663,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   planRowContainer: {
-    width: "100%",
+    width: '100%',
     paddingHorizontal: 0,
   },
   modalField: {
@@ -732,8 +673,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   planHeaderActions: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   planHeaderButton: {
     marginLeft: 12,
@@ -757,16 +698,16 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    height: "auto",
+    height: 'auto',
     backgroundColor: Colors.dark.background,
     borderRadius: 10,
     padding: 20,
-    alignItems: "center",
+    alignItems: 'center',
   },
   trainingTip: {
     marginTop: 4,
@@ -780,17 +721,17 @@ const styles = StyleSheet.create({
   },
   trainingBadgesContainer: {
     flex: 1,
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   trainingBadgesRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     marginTop: 4,
   },
   trainingBadge: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginRight: 8,
     marginBottom: 8,
   },
@@ -814,8 +755,8 @@ const styles = StyleSheet.create({
   addTimeSlotButtonWrapper: {
     marginTop: 20,
     marginBottom: 50,
-    width: "80%",
-    alignSelf: "center",
+    width: '80%',
+    alignSelf: 'center',
   },
   planErrorText: {
     color: Colors.dark.error,
@@ -829,8 +770,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   badgeRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     marginBottom: 8,
   },
   badgeLabel: {
@@ -841,9 +782,9 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   toggleBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   toggleBadgeIcon: {
     marginLeft: 6,

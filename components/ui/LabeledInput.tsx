@@ -1,16 +1,8 @@
-import React from "react";
-import {
-  StyleProp,
-  StyleSheet,
-  TextInput,
-  TextInputProps,
-  TextStyle,
-  View,
-  ViewStyle,
-} from "react-native";
+import React from 'react';
+import { StyleProp, StyleSheet, TextInput, TextInputProps, TextStyle, View, ViewStyle } from 'react-native';
 
-import { ThemedText } from "@/components/ThemedText";
-import { Colors } from "@/constants/Colors";
+import { ThemedText } from '@/components/ThemedText';
+import { Colors } from '@/constants/Colors';
 
 type Props = TextInputProps & {
   label: string;
@@ -18,12 +10,7 @@ type Props = TextInputProps & {
   inputStyle?: StyleProp<TextStyle>;
 };
 
-const LabeledInput: React.FC<Props> = ({
-  label,
-  containerStyle,
-  inputStyle,
-  ...textInputProps
-}) => {
+const LabeledInput: React.FC<Props> = ({ label, containerStyle, inputStyle, ...textInputProps }) => {
   const { placeholder, ...restProps } = textInputProps;
   const effectivePlaceholder = label ? undefined : placeholder;
 
@@ -46,7 +33,7 @@ export default LabeledInput;
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    width: '100%',
   },
   label: {
     marginBottom: 6,

@@ -1,23 +1,18 @@
-import React, {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from "react";
-import { useTranslation } from "react-i18next";
-import { Image, StyleSheet,View } from "react-native";
-import { Calendar,LocaleConfig } from "react-native-calendars";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Image, StyleSheet, View } from 'react-native';
+import { Calendar, LocaleConfig } from 'react-native-calendars';
 
-import { useStorage } from "@/app/context/StorageContext";
-import { Colors } from "@/constants/Colors";
+import { useStorage } from '@/app/context/StorageContext';
+import { Colors } from '@/constants/Colors';
 
 const configureCalendarLocale = (language: string, t: any) => {
   const localeConfig = {
-    monthNames: t("monthNames", { returnObjects: true }),
-    monthNamesShort: t("monthNamesShort", { returnObjects: true }),
-    dayNames: t("dayNames", { returnObjects: true }),
-    dayNamesShort: t("dayNamesShort", { returnObjects: true }),
-    today: t("today"),
+    monthNames: t('monthNames', { returnObjects: true }),
+    monthNamesShort: t('monthNamesShort', { returnObjects: true }),
+    dayNames: t('dayNames', { returnObjects: true }),
+    dayNamesShort: t('dayNamesShort', { returnObjects: true }),
+    today: t('today'),
   };
   LocaleConfig.locales[language] = localeConfig;
   LocaleConfig.defaultLocale = language;
@@ -32,10 +27,7 @@ interface CalendarComponentRef {
   removeMarkForDate: (date: string) => void;
 }
 
-const CalendarComponent = forwardRef<
-  CalendarComponentRef,
-  CalendarComponentProps
->(({ onDayPress }, ref) => {
+const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProps>(({ onDayPress }, ref) => {
   const { t, i18n } = useTranslation();
   const { takenDates, setTakenDates } = useStorage();
 
@@ -46,10 +38,10 @@ const CalendarComponent = forwardRef<
 
   useImperativeHandle(ref, () => ({
     addMarkForDate: (date: string) => {
-      setTakenDates((prev) => ({ ...prev, [date]: [] }));
+      setTakenDates(prev => ({ ...prev, [date]: [] }));
     },
     removeMarkForDate: (date: string) => {
-      setTakenDates((prev) => {
+      setTakenDates(prev => {
         const updated = { ...prev };
         delete updated[date];
         return updated;
@@ -70,37 +62,39 @@ const CalendarComponent = forwardRef<
 
   if (!isLocaleReady) return null;
 
-// Reducera logiken
-const dynamicMarkedDates = Object.keys({
-  ...dailyNutritionSummaries,
-  ...takenDates,
-}).reduce((acc, date) => {
-  const dots = [];
+  // Reducera logiken
+  const dynamicMarkedDates = Object.keys({
+    ...dailyNutritionSummaries,
+    ...takenDates,
+  }).reduce(
+    (acc, date) => {
+      const dots = [];
 
-  if (dailyNutritionSummaries[date]?.meals?.length > 0) {
-    dots.push({ key: "meal", color: Colors.dark.checkmarkMeal });
+      if (dailyNutritionSummaries[date]?.meals?.length > 0) {
+        dots.push({ key: 'meal', color: Colors.dark.checkmarkMeal });
+      }
+
+      if (takenDates[date]?.length > 0) {
+        dots.push({ key: 'supplement', color: Colors.dark.checkmarkSupplement });
+      }
+
+      acc[date] = {
+        dots,
+        marked: dots.length > 0,
+      };
+
+      return acc;
+    },
+    {} as { [date: string]: any }
+  );
+
+  if (selectedDate) {
+    dynamicMarkedDates[selectedDate] = {
+      ...(dynamicMarkedDates[selectedDate] || {}),
+      selected: true,
+      selectedColor: '#32D1A6',
+    };
   }
-
-  if (takenDates[date]?.length > 0) {
-    dots.push({ key: "supplement", color: Colors.dark.checkmarkSupplement });
-  }
-
-  acc[date] = {
-    dots,
-    marked: dots.length > 0,
-  };
-
-  return acc;
-}, {} as { [date: string]: any });
-
-if (selectedDate) {
-  dynamicMarkedDates[selectedDate] = {
-    ...(dynamicMarkedDates[selectedDate] || {}),
-    selected: true,
-    selectedColor: "#32D1A6",
-  };
-}
-
 
   return (
     <View style={styles.container}>
@@ -117,7 +111,7 @@ if (selectedDate) {
           selectedDayBackgroundColor: Colors.dark.primary,
           selectedDayTextColor: Colors.dark.background,
           textSectionTitleColor: Colors.dark.textLight,
-          textDisabledColor: "#555",
+          textDisabledColor: '#555',
           monthTextColor: Colors.dark.textWhite,
           arrowColor: Colors.dark.primary,
         }}
@@ -142,11 +136,11 @@ const styles = StyleSheet.create({
   },
   reactLogo: {
     height: 211,
-    width: "100%",
+    width: '100%',
   },
   calendar: {
     borderRadius: 16,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
 });
 

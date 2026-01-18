@@ -1,7 +1,7 @@
-import React from "react";
-import { StyleSheet,Text, View } from "react-native";
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { AdapterStatus } from "@/wearables/types";
+import { AdapterStatus } from '@/wearables/types';
 
 interface WearableStatusProps {
   status: AdapterStatus;
@@ -11,27 +11,27 @@ interface WearableStatusProps {
 export function WearableStatus({ status, style }: WearableStatusProps) {
   const getStatusColor = () => {
     switch (status.state) {
-      case "connected":
-        return "rgba(100,255,150,0.9)";
-      case "disconnected":
-        return "rgba(255,200,100,0.8)";
-      case "error":
-        return "rgba(255,100,100,0.9)";
+      case 'connected':
+        return 'rgba(100,255,150,0.9)';
+      case 'disconnected':
+        return 'rgba(255,200,100,0.8)';
+      case 'error':
+        return 'rgba(255,100,100,0.9)';
       default:
-        return "rgba(255,255,255,0.5)";
+        return 'rgba(255,255,255,0.5)';
     }
   };
 
   const getStatusIcon = () => {
     switch (status.state) {
-      case "connected":
-        return "✓";
-      case "disconnected":
-        return "○";
-      case "error":
-        return "✗";
+      case 'connected':
+        return '✓';
+      case 'disconnected':
+        return '○';
+      case 'error':
+        return '✗';
       default:
-        return "•";
+        return '•';
     }
   };
 
@@ -40,26 +40,24 @@ export function WearableStatus({ status, style }: WearableStatusProps) {
       <Text style={[styles.statusText, { color: getStatusColor() }]}>
         {getStatusIcon()} {status.state}
       </Text>
-      {status.state === "connected" && status.source && (
-        <Text style={styles.sourceText}> • {status.source}</Text>
-      )}
+      {status.state === 'connected' && status.source && <Text style={styles.sourceText}> • {status.source}</Text>}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginVertical: 8,
   },
   statusText: {
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   sourceText: {
-    color: "rgba(255,255,255,0.6)",
+    color: 'rgba(255,255,255,0.6)',
     fontSize: 12,
   },
 });

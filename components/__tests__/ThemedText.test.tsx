@@ -22,7 +22,7 @@ describe('ThemedText', () => {
   it('applies default style for default type', () => {
     const { getByText } = render(<ThemedText>Default Text</ThemedText>);
     const textElement = getByText('Default Text');
-    
+
     expect(textElement.props.style).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -36,7 +36,7 @@ describe('ThemedText', () => {
   it('applies title style when type is title', () => {
     const { getByText } = render(<ThemedText type="title">Title Text</ThemedText>);
     const textElement = getByText('Title Text');
-    
+
     expect(textElement.props.style).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -51,7 +51,7 @@ describe('ThemedText', () => {
   it('applies subtitle style when type is subtitle', () => {
     const { getByText } = render(<ThemedText type="subtitle">Subtitle Text</ThemedText>);
     const textElement = getByText('Subtitle Text');
-    
+
     expect(textElement.props.style).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -65,7 +65,7 @@ describe('ThemedText', () => {
   it('applies defaultSemiBold style when type is defaultSemiBold', () => {
     const { getByText } = render(<ThemedText type="defaultSemiBold">Semi Bold Text</ThemedText>);
     const textElement = getByText('Semi Bold Text');
-    
+
     expect(textElement.props.style).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -80,7 +80,7 @@ describe('ThemedText', () => {
   it('applies link style when type is link', () => {
     const { getByText } = render(<ThemedText type="link">Link Text</ThemedText>);
     const textElement = getByText('Link Text');
-    
+
     expect(textElement.props.style).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -95,7 +95,7 @@ describe('ThemedText', () => {
   it('uses theme color from useThemeColor hook', () => {
     const { getByText } = render(<ThemedText>Themed Text</ThemedText>);
     const textElement = getByText('Themed Text');
-    
+
     expect(textElement.props.style).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -112,7 +112,7 @@ describe('ThemedText', () => {
       </ThemedText>
     );
     const textElement = getByText('Custom Color Text');
-    
+
     // The color should come from the mocked useThemeColor
     expect(textElement.props.style).toEqual(
       expect.arrayContaining([
@@ -125,16 +125,10 @@ describe('ThemedText', () => {
 
   it('merges custom styles with theme styles', () => {
     const customStyle = { fontWeight: 'bold', marginTop: 10 };
-    const { getByText } = render(
-      <ThemedText style={customStyle}>Custom Style Text</ThemedText>
-    );
+    const { getByText } = render(<ThemedText style={customStyle}>Custom Style Text</ThemedText>);
     const textElement = getByText('Custom Style Text');
-    
-    expect(textElement.props.style).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining(customStyle),
-      ])
-    );
+
+    expect(textElement.props.style).toEqual(expect.arrayContaining([expect.objectContaining(customStyle)]));
   });
 
   it('passes through other Text props', () => {
@@ -144,7 +138,7 @@ describe('ThemedText', () => {
       </ThemedText>
     );
     const textElement = getByText('Long text that should be truncated');
-    
+
     expect(textElement.props.numberOfLines).toBe(2);
     expect(textElement.props.ellipsizeMode).toBe('tail');
   });
@@ -152,7 +146,7 @@ describe('ThemedText', () => {
   it('handles undefined type gracefully', () => {
     const { getByText } = render(<ThemedText type={undefined}>Undefined Type</ThemedText>);
     const textElement = getByText('Undefined Type');
-    
+
     // Should apply default style
     expect(textElement.props.style).toEqual(
       expect.arrayContaining([

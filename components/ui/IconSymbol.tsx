@@ -1,6 +1,6 @@
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons } from '@expo/vector-icons';
 
-import { ICON_SYMBOLS, IconSymbolName } from "./icon-symbol-map";
+import { ICON_SYMBOLS, IconSymbolName } from './icon-symbol-map';
 
 export function IconSymbol({
   name,
@@ -13,14 +13,7 @@ export function IconSymbol({
   color: string;
   style?: any;
 }) {
-  const iconName = ICON_SYMBOLS[name] ?? "help";
+  const iconName = ICON_SYMBOLS[name] ?? 'help';
 
-  return (
-    <MaterialIcons
-      name={iconName.material}
-      size={size}
-      color={color}
-      style={style}
-    />
-  );
+  return <MaterialIcons name={iconName.material} size={size} color={color} style={style} />;
 }

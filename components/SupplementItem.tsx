@@ -1,10 +1,10 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { Supplement } from "@/app/domain/Supplement";
-import { Colors } from "@/constants/Colors";
+import { Supplement } from '@/app/domain/Supplement';
+import { Colors } from '@/constants/Colors';
 
-import { SwipeableRow } from "./ui/SwipeableRow";
+import { SwipeableRow } from './ui/SwipeableRow';
 
 interface RenderSupplementItemProps {
   planName: string;
@@ -26,9 +26,7 @@ const SupplementItem: React.FC<RenderSupplementItemProps> = ({
       containerStyle={styles.swipeableContent}
     >
       <View style={styles.row}>
-        <Text style={styles.text}>
-          {`${supplement.name} (${supplement.quantity} ${supplement.unit})`}
-        </Text>
+        <Text style={styles.text}>{`${supplement.name} (${supplement.quantity} ${supplement.unit})`}</Text>
         <Text style={styles.icon}>⋮</Text>
       </View>
     </SwipeableRow>
@@ -38,16 +36,16 @@ const SupplementItem: React.FC<RenderSupplementItemProps> = ({
 const styles = StyleSheet.create({
   swipeableContent: {
     height: 50,
-    justifyContent: "center",
-    width: "100%",
+    justifyContent: 'center',
+    width: '100%',
     borderRadius: 0,
-    overflow: "hidden",
+    overflow: 'hidden',
     color: Colors.dark.text,
   },
   row: {
-    flexDirection: "row",         // <-- viktigt!
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row', // <-- viktigt!
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   text: {
     fontSize: 16,
@@ -55,7 +53,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 18,
-    color: "#888",
+    color: '#888',
     opacity: 0.6,
     marginLeft: 12,
   },

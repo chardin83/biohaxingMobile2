@@ -1,14 +1,13 @@
-import { TFunction } from "i18next";
-import React, { useState } from "react";
-import { ActivityIndicator, Image,ScrollView, Text, View } from "react-native";
-import Markdown from "react-native-markdown-display";
+import { TFunction } from 'i18next';
+import React, { useState } from 'react';
+import { ActivityIndicator, Image, ScrollView, Text, View } from 'react-native';
+import Markdown from 'react-native-markdown-display';
 
-import ImagePickerButton from "@/components/ImagePickerButton";
-import { ThemedModal } from "@/components/ThemedModal";
-import { ThemedText } from "@/components/ThemedText";
-import AppBox from "@/components/ui/AppBox";
-import { Colors } from "@/constants/Colors";
-
+import ImagePickerButton from '@/components/ImagePickerButton';
+import { ThemedModal } from '@/components/ThemedModal';
+import { ThemedText } from '@/components/ThemedText';
+import AppBox from '@/components/ui/AppBox';
+import { Colors } from '@/constants/Colors';
 
 interface AnalysisModalProps {
   visible: boolean;
@@ -18,7 +17,13 @@ interface AnalysisModalProps {
   onConfirm?: () => void;
   description?: string;
   supplement?: string;
-  analyzeFn: (file: { uri?: string; name?: string; type?: string; file_base64?: string; mime?: string }) => Promise<any>;
+  analyzeFn: (file: {
+    uri?: string;
+    name?: string;
+    type?: string;
+    file_base64?: string;
+    mime?: string;
+  }) => Promise<any>;
 }
 
 const AnalysisModal: React.FC<AnalysisModalProps> = ({
@@ -28,13 +33,19 @@ const AnalysisModal: React.FC<AnalysisModalProps> = ({
   onConfirm,
   description,
   supplement,
-  analyzeFn
+  analyzeFn,
 }) => {
   const [gptAnalysis, setGptAnalysis] = useState<string | null>(null);
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
   const [imageUri, setImageUri] = useState<string | null>(null);
 
-  const handleAnalysis = async (file: { uri: string; name?: string; type?: string; file_base64?: string; mime?: string }) => {
+  const handleAnalysis = async (file: {
+    uri: string;
+    name?: string;
+    type?: string;
+    file_base64?: string;
+    mime?: string;
+  }) => {
     try {
       setLoadingAnalysis(true);
       setGptAnalysis(null);
@@ -49,14 +60,14 @@ const AnalysisModal: React.FC<AnalysisModalProps> = ({
         mime: (file as any).mime,
       });
 
-      console.log("[FileAnalysisModal] analyzeFn returned:", result);
+      console.log('[FileAnalysisModal] analyzeFn returned:', result);
 
       if (!result) {
-        setGptAnalysis(t("common:goalDetails.noAnswer"));
+        setGptAnalysis(t('common:goalDetails.noAnswer'));
         return;
       }
 
-      if (typeof result === "string") {
+      if (typeof result === 'string') {
         setGptAnalysis(result);
         return;
       }
@@ -69,10 +80,10 @@ const AnalysisModal: React.FC<AnalysisModalProps> = ({
       }
 
       // fallback
-      setGptAnalysis(typeof result === "object" ? JSON.stringify(result, null, 2) : String(result));
+      setGptAnalysis(typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result));
     } catch (err) {
-      console.error("❌ Analysis failed:", err);
-      setGptAnalysis(t("common:goalDetails.analysisError"));
+      console.error('❌ Analysis failed:', err);
+      setGptAnalysis(t('common:goalDetails.analysisError'));
     } finally {
       setLoadingAnalysis(false);
     }
@@ -81,15 +92,15 @@ const AnalysisModal: React.FC<AnalysisModalProps> = ({
   return (
     <ThemedModal
       visible={visible}
-      title={`${t("common:goalDetails.analysisTitle")} ${supplement ?? t("common:goalDetails.defaultTitle")}`}
+      title={`${t('common:goalDetails.analysisTitle')} ${supplement ?? t('common:goalDetails.defaultTitle')}`}
       onClose={() => {
         setGptAnalysis(null);
         setImageUri(null);
         onClose();
       }}
-      onSave={gptAnalysis?.includes("✅") ? onConfirm : undefined}
+      onSave={gptAnalysis?.includes('✅') ? onConfirm : undefined}
       onSecondarySave={undefined}
-      okLabel={gptAnalysis?.includes("✅") ? t("common:goalDetails.start") : ""}
+      okLabel={gptAnalysis?.includes('✅') ? t('common:goalDetails.start') : ''}
       ok2Label={undefined}
     >
       {imageUri && (
@@ -98,7 +109,7 @@ const AnalysisModal: React.FC<AnalysisModalProps> = ({
           style={{
             width: 200,
             height: 200,
-            alignSelf: "center",
+            alignSelf: 'center',
             marginBottom: 10,
             borderRadius: 10,
           }}
@@ -106,9 +117,9 @@ const AnalysisModal: React.FC<AnalysisModalProps> = ({
       )}
 
       {loadingAnalysis ? (
-        <View style={{ alignItems: "center", padding: 20 }}>
+        <View style={{ alignItems: 'center', padding: 20 }}>
           <ActivityIndicator size="large" color={Colors.dark.primary} />
-          <Text style={{ color: Colors.dark.textLight, marginTop: 10 }}>{t("common:goalDetails.loading")}</Text>
+          <Text style={{ color: Colors.dark.textLight, marginTop: 10 }}>{t('common:goalDetails.loading')}</Text>
         </View>
       ) : gptAnalysis ? (
         <AppBox title="🧠 Analys">
@@ -126,11 +137,15 @@ const AnalysisModal: React.FC<AnalysisModalProps> = ({
         </AppBox>
       ) : (
         <>
-          <ThemedText style={{ textAlign: "center", color: Colors.dark.textLight, marginBottom: 12 }}>
-            {description ?? t("common:goalDetails.selectFileBody")}
+          <ThemedText style={{ textAlign: 'center', color: Colors.dark.textLight, marginBottom: 12 }}>
+            {description ?? t('common:goalDetails.selectFileBody')}
           </ThemedText>
 
-          <ImagePickerButton onImageSelected={handleAnalysis} isLoading={loadingAnalysis} label={t("common:imagePicker.title")} />
+          <ImagePickerButton
+            onImageSelected={handleAnalysis}
+            isLoading={loadingAnalysis}
+            label={t('common:imagePicker.title')}
+          />
         </>
       )}
     </ThemedModal>

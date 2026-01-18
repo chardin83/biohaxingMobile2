@@ -18,17 +18,15 @@ jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: jest.fn(() => ({ bottom: 0 })),
 }));
 
-jest.mock('@/locales/supplements', () => ({ 
+jest.mock('@/locales/supplements', () => ({
   useSupplements: jest.fn(() => [
     { id: 'supp1', name: 'Vitamin D' },
-    { id: 'supp2', name: 'Omega-3' }
-  ])
+    { id: 'supp2', name: 'Omega-3' },
+  ]),
 }));
 
-jest.mock('@/locales/focuses', () => ({ 
-  focuses: [
-    { id: 'main1', icon: 'target', title: 'Energy Boost' }
-  ]
+jest.mock('@/locales/focuses', () => ({
+  focuses: [{ id: 'main1', icon: 'target', title: 'Energy Boost' }],
 }));
 
 jest.mock('@/locales/goals', () => ({
@@ -39,9 +37,9 @@ jest.mock('@/locales/goals', () => ({
       title: 'Morning Energy',
       xp: 100,
       supplements: [{ id: 'supp1' }],
-      taskInfo: { 
-        instructions: 'Take vitamin D every morning', 
-        duration: { amount: 7, unit: 'days' } 
+      taskInfo: {
+        instructions: 'Take vitamin D every morning',
+        duration: { amount: 7, unit: 'days' },
       },
       information: { text: 'info.text', author: 'info.author' },
       startPrompt: 'Start taking your vitamin D supplement',
@@ -82,9 +80,9 @@ describe('Goal Management Integration', () => {
   beforeEach(async () => {
     await AsyncStorage.clear();
     jest.clearAllMocks();
-    (useLocalSearchParams as jest.Mock).mockReturnValue({ 
-      mainGoalId: 'main1', 
-      goalId: 'goal1' 
+    (useLocalSearchParams as jest.Mock).mockReturnValue({
+      mainGoalId: 'main1',
+      goalId: 'goal1',
     });
   });
 
@@ -94,7 +92,7 @@ describe('Goal Management Integration', () => {
 
   it('should handle complete goal workflow with real storage persistence', async () => {
     let contextValues: any = {};
-    
+
     // Create a test component that exposes context values
     const TestWrapper = () => {
       const ctx = useStorage();
@@ -132,7 +130,7 @@ describe('Goal Management Integration', () => {
       expect(contextValues.plans.training).toHaveLength(1);
       expect(contextValues.plans.training[0]).toMatchObject({
         mainGoalId: 'main1',
-        tipId: 'goal1'
+        tipId: 'goal1',
       });
     });
 
@@ -145,7 +143,7 @@ describe('Goal Management Integration', () => {
     expect(parsedPlans.training).toHaveLength(1);
     expect(parsedPlans.training[0]).toMatchObject({
       mainGoalId: 'main1',
-      tipId: 'goal1'
+      tipId: 'goal1',
     });
 
     // Step 2: Complete the goal (simulating handleFinishGoal function)
@@ -174,7 +172,7 @@ describe('Goal Management Integration', () => {
 
   it('should handle multiple goals with proper state management', async () => {
     let contextValues: any = {};
-    
+
     const TestWrapper = () => {
       const ctx = useStorage();
       React.useEffect(() => {
@@ -202,7 +200,7 @@ describe('Goal Management Integration', () => {
     // Start multiple goals
     const activePlanEntries = [
       { mainGoalId: 'main1', tipId: 'goal1', startedAt: new Date().toISOString(), planCategory: 'training' as const },
-      { mainGoalId: 'main1', tipId: 'goal2', startedAt: new Date().toISOString(), planCategory: 'training' as const }
+      { mainGoalId: 'main1', tipId: 'goal2', startedAt: new Date().toISOString(), planCategory: 'training' as const },
     ];
 
     act(() => {
@@ -238,7 +236,7 @@ describe('Goal Management Integration', () => {
 
   it('should handle goal progress tracking integration', async () => {
     let contextValues: any = {};
-    
+
     const TestWrapper = () => {
       const ctx = useStorage();
       React.useEffect(() => {
@@ -272,12 +270,10 @@ describe('Goal Management Integration', () => {
 
     // Verify progress tracking can access the data
     expect(contextValues.activeGoals[0].startedAt).toBe(startDate.toISOString());
-    
+
     // The progress calculation would be done by goalUtils
     // Here we're testing that the data flows correctly through the integration
-    const goalInProgress = contextValues.activeGoals.find(
-      (g: any) => g.mainGoalId === 'main1' && g.tipId === 'goal1'
-    );
+    const goalInProgress = contextValues.activeGoals.find((g: any) => g.mainGoalId === 'main1' && g.tipId === 'goal1');
     expect(goalInProgress).toBeTruthy();
     expect(new Date(goalInProgress.startedAt)).toEqual(startDate);
   });

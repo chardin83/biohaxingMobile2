@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
+import React, { createContext, useContext, useMemo, useState } from 'react';
 
 interface SessionContextType {
   forceOpenPopup: boolean;
@@ -7,11 +7,7 @@ interface SessionContextType {
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
-export const SessionProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const SessionProvider = ({ children }: { children: React.ReactNode }) => {
   const [forceOpenPopup, setForceOpenPopup] = useState(false);
 
   const value = useMemo(
@@ -22,14 +18,11 @@ export const SessionProvider = ({
     [forceOpenPopup]
   );
 
-  return (
-    <SessionContext.Provider value={value}>{children}</SessionContext.Provider>
-  );
+  return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 };
 
 export const useSession = (): SessionContextType => {
   const context = useContext(SessionContext);
-  if (!context)
-    throw new Error("useSession måste användas inom en <SessionProvider>");
+  if (!context) throw new Error('useSession måste användas inom en <SessionProvider>');
   return context;
 };

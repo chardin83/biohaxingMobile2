@@ -1,12 +1,12 @@
-import DateTimePicker from "@react-native-community/datetimepicker";
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { Platform,StyleSheet, Text, View } from "react-native";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 
-import { ThemedModal } from "@/components/ThemedModal";
-import AppButton from "@/components/ui/AppButton";
-import LabeledInput from "@/components/ui/LabeledInput";
-import { Colors } from "@/constants/Colors";
+import { ThemedModal } from '@/components/ThemedModal';
+import AppButton from '@/components/ui/AppButton';
+import LabeledInput from '@/components/ui/LabeledInput';
+import { Colors } from '@/constants/Colors';
 
 export type CreatePlanData = {
   name: string;
@@ -22,50 +22,48 @@ interface CreateTimeSlotModalProps {
 
 const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({ visible, onClose, onCreate }) => {
   const { t } = useTranslation();
-  const [planName, setPlanName] = React.useState("");
+  const [planName, setPlanName] = React.useState('');
   const [time, setTime] = React.useState(new Date());
-  const [showTimePicker, setShowTimePicker] = React.useState(Platform.OS === "ios");
+  const [showTimePicker, setShowTimePicker] = React.useState(Platform.OS === 'ios');
 
   const handleSave = () => {
     if (!planName.trim()) return;
     const prefferedTime = time.toTimeString().slice(0, 5);
     onCreate({ name: planName.trim(), prefferedTime, notify: false });
-    setPlanName("");
+    setPlanName('');
     setTime(new Date());
   };
 
   return (
     <ThemedModal
       visible={visible}
-      title={t("plan.addTimeSlot")}
+      title={t('plan.addTimeSlot')}
       onClose={() => {
         onClose();
-        setPlanName("");
+        setPlanName('');
         setTime(new Date());
       }}
       onSave={handleSave}
-      okLabel={t("general.save")}
-      cancelLabel={t("general.cancel")}
+      okLabel={t('general.save')}
+      cancelLabel={t('general.cancel')}
     >
-      <View style={{ width: "100%" }}>
+      <View style={{ width: '100%' }}>
         <LabeledInput
-          label={t("plan.timeSlotNameLabel", { defaultValue: "Namn på tidpunkt" })}
+          label={t('plan.timeSlotNameLabel', { defaultValue: 'Namn på tidpunkt' })}
           value={planName}
           onChangeText={setPlanName}
         />
 
-        {Platform.OS === "android" && (
+        {Platform.OS === 'android' && (
           <AppButton
-            title={`${t("plan.prefferedTime")}: ${time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`}
+            title={`${t('plan.prefferedTime')}: ${time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
             onPress={() => setShowTimePicker(true)}
             variant="secondary"
             style={styles.timePickerButton}
           />
         )}
 
-        {Platform.OS === "ios" && (
-          <Text style={styles.timePickerText}>{t("plan.prefferedTime")}</Text>
-        )}
+        {Platform.OS === 'ios' && <Text style={styles.timePickerText}>{t('plan.prefferedTime')}</Text>}
 
         {showTimePicker && (
           <DateTimePicker
@@ -74,8 +72,8 @@ const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({ visible, onCl
             is24Hour
             display="default"
             onChange={(event, selectedTime) => {
-              if (Platform.OS === "android") setShowTimePicker(false);
-              if (event.type === "set" && selectedTime) {
+              if (Platform.OS === 'android') setShowTimePicker(false);
+              if (event.type === 'set' && selectedTime) {
                 setTime(selectedTime);
               }
             }}

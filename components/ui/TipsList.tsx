@@ -1,18 +1,14 @@
-import { useRouter } from "expo-router";
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { Pressable,StyleSheet, Text, View } from "react-native";
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { useStorage } from "@/app/context/StorageContext";
-import { Colors } from "@/constants/Colors";
-import { tips } from "@/locales/tips";
-import {
-  NEGATIVE_VERDICTS,
-  POSITIVE_VERDICTS,
-  VerdictValue,
-} from "@/types/verdict";
+import { useStorage } from '@/app/context/StorageContext';
+import { Colors } from '@/constants/Colors';
+import { tips } from '@/locales/tips';
+import { NEGATIVE_VERDICTS, POSITIVE_VERDICTS, VerdictValue } from '@/types/verdict';
 
-import TipCard from "./TipCard";
+import TipCard from './TipCard';
 
 interface TipsListProps {
   areaId: string;
@@ -46,12 +42,8 @@ export default function TipsList({ areaId, title }: Readonly<TipsListProps>) {
   // Sortera tips: positiva → neutrala → negativa
   const sortedTips = React.useMemo(() => {
     return [...tipsRaw].sort((a, b) => {
-      const aViewed = viewedTips?.find(
-        (v) => v.mainGoalId === areaId && v.tipId === a.id
-      );
-      const bViewed = viewedTips?.find(
-        (v) => v.mainGoalId === areaId && v.tipId === b.id
-      );
+      const aViewed = viewedTips?.find(v => v.mainGoalId === areaId && v.tipId === a.id);
+      const bViewed = viewedTips?.find(v => v.mainGoalId === areaId && v.tipId === b.id);
 
       const aVerdict = aViewed?.verdict;
       const bVerdict = bViewed?.verdict;
@@ -68,34 +60,23 @@ export default function TipsList({ areaId, title }: Readonly<TipsListProps>) {
     if (showAllTips) {
       return sortedTips;
     }
-    return sortedTips.filter((tip) => {
-      const viewedTip = viewedTips?.find(
-        (v) => v.mainGoalId === areaId && v.tipId === tip.id
-      );
-      return viewedTip?.verdict
-        ? !negativeVerdicts.has(viewedTip.verdict as VerdictValue)
-        : true;
+    return sortedTips.filter(tip => {
+      const viewedTip = viewedTips?.find(v => v.mainGoalId === areaId && v.tipId === tip.id);
+      return viewedTip?.verdict ? !negativeVerdicts.has(viewedTip.verdict as VerdictValue) : true;
     });
   }, [sortedTips, showAllTips, viewedTips, areaId]);
 
   const hiddenTipsCount = sortedTips.length - visibleTips.length;
 
   const getTipProgress = (tipId: string) => {
-    const viewedTip = viewedTips?.find(
-      v =>
-        v.mainGoalId === areaId &&
-        v.tipId === tipId
-    );
+    const viewedTip = viewedTips?.find(v => v.mainGoalId === areaId && v.tipId === tipId);
 
     if (!viewedTip) {
       return { xp: 0, progress: 0, askedQuestions: 0, verdict: undefined };
     }
 
     const maxQuestions = 3;
-    const progress = Math.min(
-      viewedTip.askedQuestions.length / maxQuestions,
-      1
-    );
+    const progress = Math.min(viewedTip.askedQuestions.length / maxQuestions, 1);
 
     return {
       xp: viewedTip.xpEarned,
@@ -110,7 +91,7 @@ export default function TipsList({ areaId, title }: Readonly<TipsListProps>) {
 
     if (tip) {
       router.push({
-          pathname: `/(goal)/${areaId}/details` as any,
+        pathname: `/(goal)/${areaId}/details` as any,
         params: {
           tipId: tip.id,
         },
@@ -125,25 +106,15 @@ export default function TipsList({ areaId, title }: Readonly<TipsListProps>) {
       {visibleTips.map((tip, index) => {
         const tipProgress = getTipProgress(tip.id);
 
-        return (
-          <TipCard
-            key={tip.id}
-            tip={tip}
-            tipProgress={tipProgress}
-            onPress={() => handleTipPress(index)}
-          />
-        );
+        return <TipCard key={tip.id} tip={tip} tipProgress={tipProgress} onPress={() => handleTipPress(index)} />;
       })}
 
       {hiddenTipsCount > 0 && (
-        <Pressable
-          style={styles.showAllButton}
-          onPress={() => setShowAllTips(!showAllTips)}
-        >
+        <Pressable style={styles.showAllButton} onPress={() => setShowAllTips(!showAllTips)}>
           <Text style={styles.showAllText}>
             {showAllTips
-              ? t("common:tips.hideNotInterested", "Hide not interested")
-              : t("common:tips.showAll", { defaultValue: "Show all ({{count}} hidden)", count: hiddenTipsCount })}
+              ? t('common:tips.hideNotInterested', 'Hide not interested')
+              : t('common:tips.showAll', { defaultValue: 'Show all ({{count}} hidden)', count: hiddenTipsCount })}
           </Text>
         </Pressable>
       )}
@@ -153,7 +124,7 @@ export default function TipsList({ areaId, title }: Readonly<TipsListProps>) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "rgba(255,255,255,0.06)",
+    backgroundColor: 'rgba(255,255,255,0.06)',
     borderRadius: 22,
     padding: 16,
     borderWidth: 1,
@@ -163,19 +134,19 @@ const styles = StyleSheet.create({
   cardTitle: {
     color: Colors.dark.textSecondary,
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '600',
     marginBottom: 14,
   },
   showAllButton: {
     marginTop: 12,
     paddingVertical: 12,
-    alignItems: "center",
+    alignItems: 'center',
     borderTopWidth: 1,
     borderTopColor: Colors.dark.textWeak,
   },
   showAllText: {
     color: Colors.dark.accentDefault,
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });

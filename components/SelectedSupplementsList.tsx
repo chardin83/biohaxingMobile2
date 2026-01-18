@@ -1,12 +1,12 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { StyleSheet, Text,View } from "react-native";
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { Supplement } from "@/app/domain/Supplement";
-import { SupplementTime } from "@/app/domain/SupplementTime";
-import { Colors } from "@/constants/Colors";
+import { Supplement } from '@/app/domain/Supplement';
+import { SupplementTime } from '@/app/domain/SupplementTime';
+import { Colors } from '@/constants/Colors';
 
-import SupplementItem from "./SupplementItem";
+import SupplementItem from './SupplementItem';
 
 interface SelectedSupplementsListProps {
   supplements: SupplementTime[];
@@ -26,33 +26,30 @@ const SelectedSupplementsList: React.FC<SelectedSupplementsListProps> = ({
   return (
     <View style={styles.selectedItemsContainer}>
       <Text style={styles.subLabel}>
-        {t("selectedSupplementList.choosenFor")} {""}
+        {t('selectedSupplementList.choosenFor')} {''}
         {selectedDate}:
       </Text>
 
       {Object.entries(
-        supplements.reduce(
-          (grouped: Record<string, Supplement[]>, supplement) => {
-            const { time } = supplement;
-            if (!grouped[time]) {
-              grouped[time] = [];
-            }
-            grouped[time].push(supplement);
-            return grouped;
-          },
-          {}
-        )
+        supplements.reduce((grouped: Record<string, Supplement[]>, supplement) => {
+          const { time } = supplement;
+          if (!grouped[time]) {
+            grouped[time] = [];
+          }
+          grouped[time].push(supplement);
+          return grouped;
+        }, {})
       )
         // Sort times in ascending order
         .sort(([timeA], [timeB]) => {
-          const [hoursA, minutesA] = timeA.split(":").map(Number);
-          const [hoursB, minutesB] = timeB.split(":").map(Number);
+          const [hoursA, minutesA] = timeA.split(':').map(Number);
+          const [hoursB, minutesB] = timeB.split(':').map(Number);
           return hoursA - hoursB || minutesA - minutesB;
         })
         .map(([time, supplementNames]) => (
           <View key={time} style={{ paddingBottom: 20 }}>
             <Text style={styles.timeLabel}>{time}:</Text>
-            {supplementNames.map((supplement) => (
+            {supplementNames.map(supplement => (
               <SupplementItem
                 key={`${time}-${supplement.name}`}
                 planName={`${time}`}
@@ -76,12 +73,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 20,
     marginBottom: 10,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: Colors.dark.textWhite,
   },
   timeLabel: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 10,
     color: Colors.dark.primary, // Darker color for better contrast
   },

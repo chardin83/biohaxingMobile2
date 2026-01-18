@@ -1,4 +1,4 @@
-import { Supplement } from "./Supplement";
+import { Supplement } from './Supplement';
 
 export interface Plan {
   name: string;

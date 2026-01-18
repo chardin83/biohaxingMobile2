@@ -1,12 +1,12 @@
-import { t } from "i18next";
-import { useCallback } from "react";
+import { t } from 'i18next';
+import { useCallback } from 'react';
 
-import { useSession } from "@/app/context/SessionStorage";
-import { useStorage } from "@/app/context/StorageContext";
-import { Plan } from "@/app/domain/Plan";
-import { Supplement } from "@/app/domain/Supplement";
+import { useSession } from '@/app/context/SessionStorage';
+import { useStorage } from '@/app/context/StorageContext';
+import { Plan } from '@/app/domain/Plan';
+import { Supplement } from '@/app/domain/Supplement';
 
-import { useSupplementSaver } from "./useSupplementSaver";
+import { useSupplementSaver } from './useSupplementSaver';
 
 export function useGPTFunctionHandler() {
   const { plans, setPlans, shareHealthPlan } = useStorage();
@@ -28,18 +28,21 @@ export function useGPTFunctionHandler() {
       const { supplement, time, name, quantity, unit } = gptArguments;
 
       if (!shareHealthPlan) {
-        setMessages?.((prev) => [
+        setMessages?.(prev => [
           ...prev,
           {
-            role: "assistant",
-            content: t("chat.sharePlanWarning", "⚠️ Du har inte delat din plan, så jag kan inte lägga till kosttillskottet. Vill du dela din plan först?"),
+            role: 'assistant',
+            content: t(
+              'chat.sharePlanWarning',
+              '⚠️ Du har inte delat din plan, så jag kan inte lägga till kosttillskottet. Vill du dela din plan först?'
+            ),
           },
         ]);
         setForceOpenPopup(true);
         return;
       }
 
-      let matchingPlan = supplementPlans.find((plan) => plan.prefferedTime === time);
+      let matchingPlan = supplementPlans.find(plan => plan.prefferedTime === time);
 
       // Om planen inte finns, skapa den först
       if (!matchingPlan) {
@@ -50,22 +53,17 @@ export function useGPTFunctionHandler() {
           notify: false,
         };
         const createdPlan: Plan = { ...matchingPlan } as Plan;
-        setPlans((prev) => ({ ...prev, supplements: [...prev.supplements, createdPlan] }));
+        setPlans(prev => ({ ...prev, supplements: [...prev.supplements, createdPlan] }));
       }
 
-      const alreadyExists = matchingPlan.supplements.some(
-        (s) => s.name.toLowerCase() === supplement.toLowerCase()
-      );
+      const alreadyExists = matchingPlan.supplements.some(s => s.name.toLowerCase() === supplement.toLowerCase());
 
       if (alreadyExists) {
-        setMessages?.((prev) => [
+        setMessages?.(prev => [
           ...prev,
           {
-            role: "assistant",
-            content: t(
-              "chat.supplementAlreadyExists",
-              `⚠️ ${supplement} finns redan i planen för kl. ${time}.`
-            ),
+            role: 'assistant',
+            content: t('chat.supplementAlreadyExists', `⚠️ ${supplement} finns redan i planen för kl. ${time}.`),
           },
         ]);
         return;
@@ -79,12 +77,12 @@ export function useGPTFunctionHandler() {
 
       saveSupplementToPlan(matchingPlan, newSupplement, false);
 
-      setMessages?.((prev) => [
+      setMessages?.(prev => [
         ...prev,
         {
-          role: "assistant",
+          role: 'assistant',
           content: t(
-            "chat.supplementAdded",
+            'chat.supplementAdded',
             `✅ Jag har lagt till ${supplement} ${quantity}${unit} kl. ${time} i ditt schema.`
           ),
         },

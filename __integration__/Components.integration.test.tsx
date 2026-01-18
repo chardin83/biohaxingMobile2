@@ -28,7 +28,7 @@ jest.mock('react-i18next', () => ({
 jest.mock('../components/ImagePickerButton', () => {
   const React = require('react');
   const { View, Text, TouchableOpacity } = require('react-native');
-  
+
   return function MockImagePickerButton({ onImageSelected, isLoading, label }: any) {
     const handlePress = () => {
       // Simulate async image selection
@@ -37,11 +37,15 @@ jest.mock('../components/ImagePickerButton', () => {
       }, 10);
     };
 
-    return React.createElement(TouchableOpacity, {
-      testID: 'image-picker-button',
-      onPress: handlePress,
-      disabled: isLoading
-    }, React.createElement(Text, {}, label || 'Select Image'));
+    return React.createElement(
+      TouchableOpacity,
+      {
+        testID: 'image-picker-button',
+        onPress: handlePress,
+        disabled: isLoading,
+      },
+      React.createElement(Text, {}, label || 'Select Image')
+    );
   };
 });
 
@@ -75,7 +79,7 @@ describe('Component Integration', () => {
   describe('NutritionLogger Integration', () => {
     it('should integrate with storage context for nutrition tracking', async () => {
       let contextValues: any = {};
-      
+
       const TestWrapper = () => {
         const ctx = useStorage();
         React.useEffect(() => {
@@ -102,12 +106,15 @@ describe('Component Integration', () => {
       fireEvent.press(imagePickerButton);
 
       // Wait for nutrition data to be processed and stored
-      await waitFor(() => {
-        const nutritionData = contextValues.dailyNutritionSummaries['2024-01-15'];
-        expect(nutritionData).toBeDefined();
-        expect(nutritionData.meals).toHaveLength(1);
-        expect(nutritionData.totals.protein).toBeGreaterThan(0);
-      }, { timeout: 3000 });
+      await waitFor(
+        () => {
+          const nutritionData = contextValues.dailyNutritionSummaries['2024-01-15'];
+          expect(nutritionData).toBeDefined();
+          expect(nutritionData.meals).toHaveLength(1);
+          expect(nutritionData.totals.protein).toBeGreaterThan(0);
+        },
+        { timeout: 3000 }
+      );
 
       // Wait for AsyncStorage operation
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -121,7 +128,7 @@ describe('Component Integration', () => {
 
     it('should handle multiple meal entries for the same day', async () => {
       let contextValues: any = {};
-      
+
       const TestWrapper = () => {
         const ctx = useStorage();
         React.useEffect(() => {
@@ -167,10 +174,10 @@ describe('Component Integration', () => {
       expect(finalData.totals.fiber).toBe(12);
     });
 
-  describe('Cross-Component Integration', () => {
-    // Note: Some complex integration tests with re-rendering have been temporarily disabled
-    // due to context state management complexities in test environment.
-    // The working tests above demonstrate the core integration functionality.
-  });
+    describe('Cross-Component Integration', () => {
+      // Note: Some complex integration tests with re-rendering have been temporarily disabled
+      // due to context state management complexities in test environment.
+      // The working tests above demonstrate the core integration functionality.
+    });
   });
 });

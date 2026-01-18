@@ -1,15 +1,9 @@
-import React, { ReactNode } from "react";
-import {
-  StyleProp,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from "react-native";
+import React, { ReactNode } from 'react';
+import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
-import { Colors } from "@/constants/Colors";
+import { Colors } from '@/constants/Colors';
 
-export type BadgeVariant = "default" | "overlay";
+export type BadgeVariant = 'default' | 'overlay';
 
 type BadgeProps = {
   children: ReactNode;
@@ -23,12 +17,12 @@ type BadgeProps = {
 const Badge: React.FC<BadgeProps> = ({
   children,
   style,
-  variant = "default",
+  variant = 'default',
   onPress,
   disabled,
   activeOpacity = 0.8,
 }) => {
-  const variantStyle = variant === "overlay" ? styles.overlay : styles.default;
+  const variantStyle = variant === 'overlay' ? styles.overlay : styles.default;
 
   if (onPress) {
     return (

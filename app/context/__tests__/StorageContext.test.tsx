@@ -8,7 +8,6 @@ const TestComponent = ({ callback }: { callback: (ctx: ReturnType<typeof useStor
   const ctx = useStorage();
   React.useEffect(() => {
     callback(ctx);
-     
   }, [ctx]);
   return null;
 };
@@ -18,7 +17,11 @@ describe('StorageContext', () => {
     let contextValues: any = {};
     render(
       <StorageProvider>
-        <TestComponent callback={(ctx) => { contextValues = ctx; }} />
+        <TestComponent
+          callback={ctx => {
+            contextValues = ctx;
+          }}
+        />
       </StorageProvider>
     );
     expect(contextValues.plans).toEqual({ supplements: [], training: [], nutrition: [], other: [] });
@@ -40,7 +43,11 @@ describe('StorageContext', () => {
     let contextValues: any = {};
     render(
       <StorageProvider>
-        <TestComponent callback={(ctx) => { contextValues = ctx; }} />
+        <TestComponent
+          callback={ctx => {
+            contextValues = ctx;
+          }}
+        />
       </StorageProvider>
     );
     act(() => {
@@ -56,10 +63,19 @@ describe('StorageContext', () => {
     let contextValues: any = {};
     render(
       <StorageProvider>
-        <TestComponent callback={(ctx) => { contextValues = ctx; }} />
+        <TestComponent
+          callback={ctx => {
+            contextValues = ctx;
+          }}
+        />
       </StorageProvider>
     );
-    const entry = { mainGoalId: 'main1', tipId: 'tip1', startedAt: new Date().toISOString(), planCategory: 'training' as const };
+    const entry = {
+      mainGoalId: 'main1',
+      tipId: 'tip1',
+      startedAt: new Date().toISOString(),
+      planCategory: 'training' as const,
+    };
     act(() => {
       contextValues.setPlans({ supplements: [], training: [entry], nutrition: [], other: [] });
     });
@@ -70,7 +86,11 @@ describe('StorageContext', () => {
     let contextValues: any = {};
     render(
       <StorageProvider>
-        <TestComponent callback={(ctx) => { contextValues = ctx; }} />
+        <TestComponent
+          callback={ctx => {
+            contextValues = ctx;
+          }}
+        />
       </StorageProvider>
     );
     act(() => {

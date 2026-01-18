@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
+import React, { createContext, useContext, useMemo, useState } from 'react';
 
-import { MockAdapter } from "./mockAdapter";
-import { AdapterStatus,WearableAdapter } from "./types";
+import { MockAdapter } from './mockAdapter';
+import { AdapterStatus, WearableAdapter } from './types';
 
 type WearableContextValue = {
   adapter: WearableAdapter;
@@ -14,7 +14,7 @@ const WearableContext = createContext<WearableContextValue | null>(null);
 
 export function WearableProvider({ children }: { children: React.ReactNode }) {
   const [adapter, setAdapterState] = useState<WearableAdapter>(() => new MockAdapter());
-  const [status, setStatus] = useState<AdapterStatus>({ state: "disconnected" });
+  const [status, setStatus] = useState<AdapterStatus>({ state: 'disconnected' });
 
   const refreshStatus = async () => {
     const s = await adapter.getStatus();
@@ -29,20 +29,17 @@ export function WearableProvider({ children }: { children: React.ReactNode }) {
 
   // load initial status once adapter exists
   React.useEffect(() => {
-    refreshStatus().catch(() => setStatus({ state: "error", message: "Failed to load adapter status" }));
+    refreshStatus().catch(() => setStatus({ state: 'error', message: 'Failed to load adapter status' }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [adapter]);
 
-  const value = useMemo(
-    () => ({ adapter, status, setAdapter, refreshStatus }),
-    [adapter, status]
-  );
+  const value = useMemo(() => ({ adapter, status, setAdapter, refreshStatus }), [adapter, status]);
 
   return <WearableContext.Provider value={value}>{children}</WearableContext.Provider>;
 }
 
 export function useWearable() {
   const ctx = useContext(WearableContext);
-  if (!ctx) throw new Error("useWearable must be used inside WearableProvider");
+  if (!ctx) throw new Error('useWearable must be used inside WearableProvider');
   return ctx;
 }

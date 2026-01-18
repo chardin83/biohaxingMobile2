@@ -1,15 +1,10 @@
-import React, { useEffect } from "react";
-import {
-  Keyboard,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+import React, { useEffect } from 'react';
+import { Keyboard, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 
-import { ThemedModal } from "@/components/ThemedModal";
-import { ThemedText } from "@/components/ThemedText";
-import LabeledInput from "@/components/ui/LabeledInput";
-import { Colors } from "@/constants/Colors";
+import { ThemedModal } from '@/components/ThemedModal';
+import { ThemedText } from '@/components/ThemedText';
+import LabeledInput from '@/components/ui/LabeledInput';
+import { Colors } from '@/constants/Colors';
 
 type TrainingSettingsModalProps = {
   visible: boolean;
@@ -71,9 +66,7 @@ const TrainingSettingsModal: React.FC<TrainingSettingsModalProps> = ({
           <LabeledInput
             label={sessionsLabel}
             keyboardType="number-pad"
-            placeholder={
-              sessionsPlaceholder === sessionsLabel ? undefined : sessionsPlaceholder
-            }
+            placeholder={sessionsPlaceholder === sessionsLabel ? undefined : sessionsPlaceholder}
             value={sessionsValue}
             onChangeText={onChangeSessions}
             containerStyle={styles.fieldBlock}
@@ -83,9 +76,7 @@ const TrainingSettingsModal: React.FC<TrainingSettingsModalProps> = ({
           <LabeledInput
             label={durationLabel}
             keyboardType="number-pad"
-            placeholder={
-              durationPlaceholder === durationLabel ? undefined : durationPlaceholder
-            }
+            placeholder={durationPlaceholder === durationLabel ? undefined : durationPlaceholder}
             value={durationValue}
             onChangeText={onChangeDuration}
             containerStyle={styles.fieldBlock}
@@ -106,10 +97,10 @@ const styles = StyleSheet.create({
     color: Colors.dark.text,
   },
   content: {
-    width: "100%",
+    width: '100%',
   },
   fieldBlock: {
-    width: "100%",
+    width: '100%',
     marginTop: 10,
   },
 });

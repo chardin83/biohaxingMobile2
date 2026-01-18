@@ -1,6 +1,6 @@
-import { useStorage } from "@/app/context/StorageContext";
-import { Plan } from "@/app/domain/Plan";
-import { Supplement } from "@/app/domain/Supplement";
+import { useStorage } from '@/app/context/StorageContext';
+import { Plan } from '@/app/domain/Plan';
+import { Supplement } from '@/app/domain/Supplement';
 
 export const useSupplementSaver = () => {
   const { plans, setPlans, setErrorMessage } = useStorage();
@@ -13,7 +13,7 @@ export const useSupplementSaver = () => {
     setSelectedPlan?: (plan: Plan | null) => void
   ) => {
     try {
-      const existingPlan = supplementPlans.find((plan) => plan.name === selectedPlan.name);
+      const existingPlan = supplementPlans.find(plan => plan.name === selectedPlan.name);
       let updatedPlans: Plan[];
 
       if (!existingPlan) {
@@ -28,17 +28,15 @@ export const useSupplementSaver = () => {
       } else if (isEditingSupplement) {
         const updatedPlan = {
           ...existingPlan,
-          supplements: existingPlan.supplements.map((existingSupplement) =>
+          supplements: existingPlan.supplements.map(existingSupplement =>
             existingSupplement.name === supplement.name ? supplement : existingSupplement
           ),
         };
-        updatedPlans = supplementPlans.map((plan) =>
-          plan.name === existingPlan.name ? updatedPlan : plan
-        );
+        updatedPlans = supplementPlans.map(plan => (plan.name === existingPlan.name ? updatedPlan : plan));
         setSelectedPlan?.(updatedPlan);
       } else {
         const supplementExists = existingPlan.supplements.some(
-          (existingSupplement) => existingSupplement.name === supplement.name
+          existingSupplement => existingSupplement.name === supplement.name
         );
         if (supplementExists) {
           setErrorMessage?.(`Tillskottet "${supplement.name}" finns redan i planen.`);
@@ -50,15 +48,13 @@ export const useSupplementSaver = () => {
           ...existingPlan,
           supplements: [...existingPlan.supplements, supplement],
         };
-        updatedPlans = supplementPlans.map((plan) =>
-          plan.name === existingPlan.name ? updatedPlan : plan
-        );
+        updatedPlans = supplementPlans.map(plan => (plan.name === existingPlan.name ? updatedPlan : plan));
         setSelectedPlan?.(updatedPlan);
       }
 
-      setPlans((prev) => ({ ...prev, supplements: updatedPlans }));
+      setPlans(prev => ({ ...prev, supplements: updatedPlans }));
     } catch (err) {
-      console.error("Kunde inte spara tillskottet:", err);
+      console.error('Kunde inte spara tillskottet:', err);
     }
   };
 

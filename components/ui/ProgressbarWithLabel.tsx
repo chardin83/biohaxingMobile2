@@ -1,9 +1,9 @@
 // components/ProgressBarWithLabel.tsx
-import React from "react";
-import { StyleSheet,Text, View } from "react-native";
-import * as Progress from "react-native-progress";
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import * as Progress from 'react-native-progress';
 
-import { Colors } from "@/constants/Colors";
+import { Colors } from '@/constants/Colors';
 
 interface Props {
   readonly progress: number; // 0 to 1
@@ -11,11 +11,7 @@ interface Props {
   readonly width?: number;
 }
 
-export default function ProgressBarWithLabel({
-  progress,
-  label,
-  width = 200,
-}: Props) {
+export default function ProgressBarWithLabel({ progress, label, width = 200 }: Props) {
   return (
     <View style={styles.container}>
       <Progress.Bar
@@ -33,12 +29,12 @@ export default function ProgressBarWithLabel({
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: 20,
   },
   label: {
     marginTop: 4,
-    textAlign: "center",
+    textAlign: 'center',
     color: Colors.dark.textLight,
     fontSize: 12,
   },

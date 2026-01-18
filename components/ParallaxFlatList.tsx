@@ -1,34 +1,20 @@
-import React from "react";
-import {
-  FlatListProps,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  StyleSheet,
-} from "react-native";
-import Animated, {
-  interpolate,
-  useAnimatedRef,
-  useAnimatedStyle,
-  useSharedValue,
-} from "react-native-reanimated";
+import React from 'react';
+import { FlatListProps, NativeScrollEvent, NativeSyntheticEvent, StyleSheet } from 'react-native';
+import Animated, { interpolate, useAnimatedRef, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
-import { ThemedView } from "@/components/ThemedView";
-import { useBottomTabOverflow } from "@/components/ui/TabBarBackground.andorid";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { ThemedView } from '@/components/ThemedView';
+import { useBottomTabOverflow } from '@/components/ui/TabBarBackground.andorid';
+import { useColorScheme } from '@/hooks/useColorScheme';
 
 const HEADER_HEIGHT = 250;
 
-type Props<T> = Omit<FlatListProps<T>, "CellRendererComponent"> & {
+type Props<T> = Omit<FlatListProps<T>, 'CellRendererComponent'> & {
   headerImage: React.ReactElement;
   headerBackgroundColor: { dark: string; light: string };
 };
 
-export default function ParallaxFlatList<T>({
-  headerImage,
-  headerBackgroundColor,
-  ...flatListProps
-}: Props<T>) {
-  const colorScheme = useColorScheme() ?? "light";
+export default function ParallaxFlatList<T>({ headerImage, headerBackgroundColor, ...flatListProps }: Props<T>) {
+  const colorScheme = useColorScheme() ?? 'light';
   const scrollRef = useAnimatedRef<Animated.FlatList<T>>();
   const scrollOffset = useSharedValue(0); // Manually track scroll offset
   const bottom = useBottomTabOverflow();
@@ -48,11 +34,7 @@ export default function ParallaxFlatList<T>({
           ),
         },
         {
-          scale: interpolate(
-            scrollOffset.value,
-            [-HEADER_HEIGHT, 0, HEADER_HEIGHT],
-            [2, 1, 1]
-          ),
+          scale: interpolate(scrollOffset.value, [-HEADER_HEIGHT, 0, HEADER_HEIGHT], [2, 1, 1]),
         },
       ],
     };
@@ -68,11 +50,7 @@ export default function ParallaxFlatList<T>({
         contentContainerStyle={{ paddingBottom: bottom }}
         ListHeaderComponent={
           <Animated.View
-            style={[
-              styles.header,
-              { backgroundColor: headerBackgroundColor[colorScheme] },
-              headerAnimatedStyle,
-            ]}
+            style={[styles.header, { backgroundColor: headerBackgroundColor[colorScheme] }, headerAnimatedStyle]}
           >
             {headerImage}
           </Animated.View>
@@ -89,6 +67,6 @@ const styles = StyleSheet.create({
   },
   header: {
     height: HEADER_HEIGHT,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
 });

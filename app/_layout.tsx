@@ -1,34 +1,30 @@
-import "react-native-reanimated";
+import 'react-native-reanimated';
 
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
-import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import { StatusBar } from "expo-status-bar";
-import { t } from "i18next";
-import { useEffect } from "react";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { PaperProvider } from "react-native-paper";
-import { MenuProvider } from "react-native-popup-menu";
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
+import { t } from 'i18next';
+import { useEffect } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { PaperProvider } from 'react-native-paper';
+import { MenuProvider } from 'react-native-popup-menu';
 
-import GlobalLevelUpModal from "@/components/GlobalLevelUpModal";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import { WearableProvider } from "@/wearables/wearableProvider";
+import GlobalLevelUpModal from '@/components/GlobalLevelUpModal';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { WearableProvider } from '@/wearables/wearableProvider';
 
-import { SessionProvider } from "./context/SessionStorage";
-import { StorageProvider } from "./context/StorageContext";
-import { colors } from "./theme/styles";
+import { SessionProvider } from './context/SessionStorage';
+import { StorageProvider } from './context/StorageContext';
+import { colors } from './theme/styles';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
   useEffect(() => {
@@ -55,75 +51,73 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <WearableProvider>
-      <SessionProvider>
-        <StorageProvider>
-          <PaperProvider>
-            <ThemeProvider
-              value={colorScheme === "dark" ? MyDarkTheme : DefaultTheme}
-            >
-              <MenuProvider>
-              <GlobalLevelUpModal />
-              <Stack
-                screenOptions={{
-                  headerTransparent: true,
-                  headerStyle: {
-                    backgroundColor: "transparent",
-                  },
-                  headerTintColor: "#fff",
-                  headerTitleStyle: {
-                    fontWeight: "bold",
-                  },
-                }}
-              >
-                 <Stack.Screen
-                  name="(goal)"
-                  options={{
-                    headerShown: false,
-                    title: "",
-                    headerBackTitle: t("back"),
-                  }}
-                />
-                <Stack.Screen
-                  name="(tabs)"
-                  options={{
-                    headerShown: false,
-                    title: "",
-                    headerBackTitle: t("back"),
-                  }}
-                />
+        <SessionProvider>
+          <StorageProvider>
+            <PaperProvider>
+              <ThemeProvider value={colorScheme === 'dark' ? MyDarkTheme : DefaultTheme}>
+                <MenuProvider>
+                  <GlobalLevelUpModal />
+                  <Stack
+                    screenOptions={{
+                      headerTransparent: true,
+                      headerStyle: {
+                        backgroundColor: 'transparent',
+                      },
+                      headerTintColor: '#fff',
+                      headerTitleStyle: {
+                        fontWeight: 'bold',
+                      },
+                    }}
+                  >
+                    <Stack.Screen
+                      name="(goal)"
+                      options={{
+                        headerShown: false,
+                        title: '',
+                        headerBackTitle: t('back'),
+                      }}
+                    />
+                    <Stack.Screen
+                      name="(tabs)"
+                      options={{
+                        headerShown: false,
+                        title: '',
+                        headerBackTitle: t('back'),
+                      }}
+                    />
 
-                <Stack.Screen
-                  name="(manage)"
-                  options={{
-                    headerShown: false,
-                    title: "",
-                    headerBackTitle: t("back"),
-                  }}
-                />
+                    <Stack.Screen
+                      name="(manage)"
+                      options={{
+                        headerShown: false,
+                        title: '',
+                        headerBackTitle: t('back'),
+                      }}
+                    />
 
-                <Stack.Screen
-                  name="(onboarding)/onboardingsupplements"
-                  options={{
-                    headerShown: false,
-                    title: "",
-                    headerBackTitle: t("back"),
-                  }}
-                />
-                <Stack.Screen
-                  name="(onboarding)/onboardinggoals"
-                  options={{
-                    headerShown: true,
-                    title: "",
-                    headerBackTitle: t("back"),
-                  }}
-                />
-              </Stack>
-              <StatusBar style="auto" />
-              </MenuProvider>
-            </ThemeProvider>
-          </PaperProvider>
-        </StorageProvider>
-      </SessionProvider>
+                    <Stack.Screen
+                      name="(onboarding)/onboardingsupplements"
+                      options={{
+                        headerShown: false,
+                        title: '',
+                        headerBackTitle: t('back'),
+                      }}
+                    />
+                    <Stack.Screen
+                      name="(onboarding)/onboardinggoals"
+                      options={{
+                        headerShown: true,
+                        title: '',
+                        headerBackTitle: t('back'),
+                      }}
+                    />
+                  </Stack>
+                  <StatusBar style="auto" />
+                </MenuProvider>
+              </ThemeProvider>
+            </PaperProvider>
+          </StorageProvider>
+        </SessionProvider>
       </WearableProvider>
     </GestureHandlerRootView>
   );

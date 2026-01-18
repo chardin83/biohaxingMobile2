@@ -1,1 +1,1 @@
-export type PlanCategory = "supplement" | "training" | "nutrition" | "other";
+export type PlanCategory = 'supplement' | 'training' | 'nutrition' | 'other';

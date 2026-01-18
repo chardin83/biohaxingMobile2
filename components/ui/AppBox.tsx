@@ -1,15 +1,8 @@
 // components/ui/AppBox.tsx
-import React from "react";
-import {
-  StyleProp,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from "react-native";
+import React from 'react';
+import { StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 
-import { Colors } from "@/constants/Colors";
+import { Colors } from '@/constants/Colors';
 
 type Props = {
   title: string;
@@ -63,7 +56,7 @@ export default function AppBox({
   return (
     <View style={[styles.box, style]}>
       {renderHeader()}
-      {typeof children === "string" || typeof children === "number" ? (
+      {typeof children === 'string' || typeof children === 'number' ? (
         <Text style={styles.boxText}>{children}</Text>
       ) : (
         children
@@ -79,28 +72,28 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.dark.secondary,
     borderRadius: 10,
     padding: 16,
-    width: "100%",
+    width: '100%',
     marginBottom: 20,
   },
   boxTitle: {
     color: Colors.dark.primary,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 6,
-    textTransform: "uppercase",
+    textTransform: 'uppercase',
   },
   boxText: {
     color: Colors.dark.textLight,
     fontSize: 14,
   },
   headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 6,
   },
   headerMain: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     flex: 1,
   },
   headerMainInteractive: {
@@ -111,7 +104,7 @@ const styles = StyleSheet.create({
   },
   headerRight: {
     marginLeft: 12,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

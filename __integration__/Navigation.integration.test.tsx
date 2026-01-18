@@ -12,7 +12,7 @@ jest.mock('expo-router', () => ({
   useRouter: jest.fn(() => ({
     replace: mockReplace,
     push: jest.fn(),
-    back: jest.fn()
+    back: jest.fn(),
   })),
 }));
 
@@ -26,9 +26,9 @@ jest.mock('@/constants/Colors', () => ({
   Colors: {
     dark: {
       background: '#000000',
-      primary: '#ff6b6b'
-    }
-  }
+      primary: '#ff6b6b',
+    },
+  },
 }));
 
 describe('Navigation Integration', () => {
@@ -44,7 +44,7 @@ describe('Navigation Integration', () => {
 
   it('should redirect to onboarding when user has not completed onboarding', async () => {
     let contextValues: any = {};
-    
+
     const TestWrapper = () => {
       const ctx = useStorage();
       React.useEffect(() => {
@@ -75,7 +75,7 @@ describe('Navigation Integration', () => {
     await AsyncStorage.setItem('hasCompletedOnboarding', 'true');
 
     let contextValues: any = {};
-    
+
     const TestWrapper = () => {
       const ctx = useStorage();
       React.useEffect(() => {
@@ -108,7 +108,7 @@ describe('Navigation Integration', () => {
     await AsyncStorage.setItem('hasCompletedOnboarding', 'false');
 
     let contextValues: any = {};
-    
+
     const TestWrapper = () => {
       const ctx = useStorage();
       React.useEffect(() => {
@@ -148,7 +148,7 @@ describe('Navigation Integration', () => {
 
   it('should handle complete onboarding flow integration', async () => {
     let contextValues: any = {};
-    
+
     const TestWrapper = () => {
       const ctx = useStorage();
       React.useEffect(() => {
@@ -182,7 +182,7 @@ describe('Navigation Integration', () => {
     });
 
     expect(contextValues.onboardingStep).toBe(1);
-    
+
     // Verify persistence
     await waitFor(async () => {
       const storedStep = await AsyncStorage.getItem('onBoardingStep');
@@ -208,14 +208,21 @@ describe('Navigation Integration', () => {
     const initialData = {
       plans: {
         supplements: [{ name: 'Morning Plan', supplements: [], prefferedTime: 'morning', notify: false }],
-        training: [{ mainGoalId: 'main1', tipId: 'goal1', startedAt: new Date().toISOString(), planCategory: 'training' as const }],
+        training: [
+          {
+            mainGoalId: 'main1',
+            tipId: 'goal1',
+            startedAt: new Date().toISOString(),
+            planCategory: 'training' as const,
+          },
+        ],
         nutrition: [],
       },
       myGoals: ['goal1', 'goal2'],
       hasCompletedOnboarding: true,
       onboardingStep: 2,
       myXP: 250,
-      myLevel: 3
+      myLevel: 3,
     };
 
     await AsyncStorage.setItem('plans', JSON.stringify(initialData.plans));
@@ -226,7 +233,7 @@ describe('Navigation Integration', () => {
     await AsyncStorage.setItem('myLevel', '3');
 
     let contextValues: any = {};
-    
+
     const TestWrapper = () => {
       const ctx = useStorage();
       React.useEffect(() => {
@@ -264,7 +271,7 @@ describe('Navigation Integration', () => {
     AsyncStorage.getItem = jest.fn().mockRejectedValue(new Error('Storage error'));
 
     let contextValues: any = {};
-    
+
     const TestWrapper = () => {
       const ctx = useStorage();
       React.useEffect(() => {

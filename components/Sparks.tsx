@@ -1,13 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  Animated,
-  Dimensions,
-  StyleSheet,
-  View,
-  ViewStyle,
-} from "react-native";
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Dimensions, StyleSheet, View, ViewStyle } from 'react-native';
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = Dimensions.get('window');
 
 type SparkProps = {
   id: number;
@@ -75,19 +69,19 @@ const Sparks: React.FC = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setSparkList((prev) => [...prev, Date.now() + Math.random()]);
+      setSparkList(prev => [...prev, Date.now() + Math.random()]);
     }, 600);
 
     return () => clearInterval(interval);
   }, []);
 
   const removeSpark = (idToRemove: number) => {
-    setSparkList((prev) => prev.filter((id) => id !== idToRemove));
+    setSparkList(prev => prev.filter(id => id !== idToRemove));
   };
 
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="none">
-      {sparkList.map((id) => (
+      {sparkList.map(id => (
         <Spark key={id} id={id} onComplete={removeSpark} />
       ))}
     </View>
@@ -96,12 +90,12 @@ const Sparks: React.FC = () => {
 
 const styles = StyleSheet.create({
   spark: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 80, // 👈 flyger från allra längst ner
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "white",
+    backgroundColor: 'white',
   } as ViewStyle,
 });
 

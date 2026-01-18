@@ -1,21 +1,11 @@
-import React from "react";
-import {
-  StyleProp,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from "react-native";
-import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
-import Reanimated, {
-  useAnimatedStyle,
-  useSharedValue,
-} from "react-native-reanimated";
+import React from 'react';
+import { StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Reanimated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
-import { colors } from "@/app/theme/styles";
-import { IconSymbol } from "@/components/ui/IconSymbol";
-import { Colors } from "@/constants/Colors";
+import { colors } from '@/app/theme/styles';
+import { IconSymbol } from '@/components/ui/IconSymbol';
+import { Colors } from '@/constants/Colors';
 
 interface SwipeableRowProps {
   children: React.ReactNode;
@@ -24,12 +14,7 @@ interface SwipeableRowProps {
   containerStyle?: StyleProp<ViewStyle>;
 }
 
-export const SwipeableRow = ({
-  children,
-  onEdit,
-  onDelete,
-  containerStyle,
-}: SwipeableRowProps) => {
+export const SwipeableRow = ({ children, onEdit, onDelete, containerStyle }: SwipeableRowProps) => {
   const ACTION_WIDTH = 160;
 
   const renderRightActions = (progress: any, drag: any) => {
@@ -40,18 +25,12 @@ export const SwipeableRow = ({
     return (
       <Reanimated.View style={[styles.rightActionContainer, animatedStyle]}>
         {onEdit && (
-          <TouchableOpacity
-            style={[styles.actionButton, styles.edit]}
-            onPress={onEdit}
-          >
+          <TouchableOpacity style={[styles.actionButton, styles.edit]} onPress={onEdit}>
             <IconSymbol name="pencil" color="white" size={24} />
           </TouchableOpacity>
         )}
         {onDelete && (
-          <TouchableOpacity
-            style={[styles.actionButton, styles.delete]}
-            onPress={onDelete}
-          >
+          <TouchableOpacity style={[styles.actionButton, styles.delete]} onPress={onDelete}>
             <IconSymbol name="trash" color="white" size={24} />
           </TouchableOpacity>
         )}
@@ -76,18 +55,18 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 20,
     minHeight: 64,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   rightActionContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    height: "100%",
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: '100%',
   },
   actionButton: {
     width: 80,
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100%",
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
     padding: 10,
   },
   edit: {
@@ -97,7 +76,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.dark.delete,
   },
   actionText: {
-    color: "white",
+    color: 'white',
     fontSize: 10,
     marginTop: 4,
   },

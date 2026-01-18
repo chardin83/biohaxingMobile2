@@ -6,10 +6,10 @@ import BiohackerDashboard from '../dashboard';
 
 // Mock expo-router
 jest.mock('expo-router', () => ({
-  useRouter: jest.fn(() => ({ 
+  useRouter: jest.fn(() => ({
     push: jest.fn(),
-    replace: jest.fn(), 
-    back: jest.fn() 
+    replace: jest.fn(),
+    back: jest.fn(),
   })),
 }));
 
@@ -51,7 +51,7 @@ jest.mock('@/locales/goals', () => ({
       supplements: [{ id: 'supp1' }],
     },
     {
-      id: 'goal2', 
+      id: 'goal2',
       mainGoalIds: ['boost_energy'],
       title: 'Energy Boost',
       level: 1,

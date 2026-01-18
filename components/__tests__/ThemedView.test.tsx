@@ -31,7 +31,7 @@ describe('ThemedView', () => {
       </ThemedView>
     );
     const viewElement = getByTestId('themed-view');
-    
+
     expect(viewElement.props.style).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -48,7 +48,7 @@ describe('ThemedView', () => {
       </ThemedView>
     );
     const viewElement = getByTestId('themed-view');
-    
+
     // The color should come from the mocked useThemeColor
     expect(viewElement.props.style).toEqual(
       expect.arrayContaining([
@@ -67,12 +67,8 @@ describe('ThemedView', () => {
       </ThemedView>
     );
     const viewElement = getByTestId('themed-view');
-    
-    expect(viewElement.props.style).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining(customStyle),
-      ])
-    );
+
+    expect(viewElement.props.style).toEqual(expect.arrayContaining([expect.objectContaining(customStyle)]));
   });
 
   it('passes through other View props', () => {
@@ -82,7 +78,7 @@ describe('ThemedView', () => {
       </ThemedView>
     );
     const viewElement = getByTestId('themed-view');
-    
+
     expect(viewElement.props.accessible).toBe(true);
     expect(viewElement.props.accessibilityLabel).toBe('Test View');
   });
@@ -97,9 +93,7 @@ describe('ThemedView', () => {
   });
 
   it('handles no children gracefully', () => {
-    const { getByTestId } = render(
-      <ThemedView testID="empty-view" />
-    );
+    const { getByTestId } = render(<ThemedView testID="empty-view" />);
     expect(getByTestId('empty-view')).toBeTruthy();
   });
 
@@ -111,7 +105,7 @@ describe('ThemedView', () => {
       </ThemedView>
     );
     const viewElement = getByTestId('themed-view');
-    
+
     // Custom style should override the theme background
     expect(viewElement.props.style).toEqual([
       { backgroundColor: '#000000' }, // Theme color first

@@ -1,19 +1,13 @@
-import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 
-import { useStorage } from "@/app/context/StorageContext";
-import { colors } from "@/app/theme/styles";
-import { Colors } from "@/constants/Colors";
-import { NutritionAnalyze } from "@/services/gptServices";
+import { useStorage } from '@/app/context/StorageContext';
+import { colors } from '@/app/theme/styles';
+import { Colors } from '@/constants/Colors';
+import { NutritionAnalyze } from '@/services/gptServices';
 
-import ImagePickerButton from "./ImagePickerButton";
+import ImagePickerButton from './ImagePickerButton';
 
 interface NutritionLoggerProps {
   selectedDate: string;
@@ -35,7 +29,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
         uri: file.uri,
         name: file.name,
         type: file.type,
-        prompt: "nutrition_analysis", // valfri prompt, kan anpassas
+        prompt: 'nutrition_analysis', // valfri prompt, kan anpassas
       });
 
       // Försök plocka ut strukturerad nutrition-data från responsen
@@ -47,7 +41,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
         fiber: number;
       } | null = null;
 
-      if (data?.nutrition && typeof data.nutrition === "object") {
+      if (data?.nutrition && typeof data.nutrition === 'object') {
         analysis = {
           protein: Number(data.nutrition.protein ?? 0),
           calories: Number(data.nutrition.calories ?? 0),
@@ -55,7 +49,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
           fat: Number(data.nutrition.fat ?? 0),
           fiber: Number(data.nutrition.fiber ?? 0),
         };
-      } else if (data?.raw && typeof data.raw === "object") {
+      } else if (data?.raw && typeof data.raw === 'object') {
         // fallback if server returns macros under raw
         const raw = data.raw;
         analysis = {
@@ -85,13 +79,14 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
 
       if (!analysis) {
         // Om vi inte fick strukturerad data, visa textinnehåll eller generellt meddelande
-        const text = data?.content ?? t("dayEdit.analysisNoStructuredData") ?? "Ingen strukturerad näringsdata hittades.";
-        setAnalysisResult(typeof text === "string" ? text : JSON.stringify(text));
+        const text =
+          data?.content ?? t('dayEdit.analysisNoStructuredData') ?? 'Ingen strukturerad näringsdata hittades.';
+        setAnalysisResult(typeof text === 'string' ? text : JSON.stringify(text));
         return;
       }
 
       // Uppdatera storage med verklig analys
-      setDailyNutritionSummaries((prev) => {
+      setDailyNutritionSummaries(prev => {
         const existing = prev[selectedDate]?.meals ?? [];
         const newMeal = { date: selectedDate, ...analysis };
         const updatedMeals = [...existing, newMeal];
@@ -124,10 +119,10 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
         };
       });
 
-      setAnalysisResult("✅ Måltid loggad och analyserad!");
+      setAnalysisResult('✅ Måltid loggad och analyserad!');
     } catch (err) {
-      console.error("Error analyzing image:", err);
-      setAnalysisResult(t("dayEdit.analysisFailed") ?? "❌ Misslyckades med att analysera bilden.");
+      console.error('Error analyzing image:', err);
+      setAnalysisResult(t('dayEdit.analysisFailed') ?? '❌ Misslyckades med att analysera bilden.');
     } finally {
       setIsAnalyzing(false);
     }
@@ -136,37 +131,24 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
   const summary = dailyNutritionSummaries[selectedDate];
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.container}>
         <ImagePickerButton
           onImageSelected={handleImageSelected}
           isLoading={isAnalyzing}
-          label={t("dayEdit.pickImage")}
+          label={t('dayEdit.pickImage')}
         />
         {analysisResult && <Text style={styles.result}>{analysisResult}</Text>}
 
-        <Text style={styles.label}>{t("dayEdit.logMeal")}</Text>
+        <Text style={styles.label}>{t('dayEdit.logMeal')}</Text>
         {summary && (
           <View style={styles.summaryContainer}>
-            <Text style={styles.label}>{t("dayEdit.nutritionSummary")}</Text>
-            <Text style={styles.summaryText}>
-              🍗 Protein: {summary.totals.protein} g
-            </Text>
-            <Text style={styles.summaryText}>
-              🔥 Kalorier: {summary.totals.calories} kcal
-            </Text>
-            <Text style={styles.summaryText}>
-              🍞 Kolhydrater: {summary.totals.carbohydrates} g
-            </Text>
-            <Text style={styles.summaryText}>
-              🥑 Fett: {summary.totals.fat} g
-            </Text>
-            <Text style={styles.summaryText}>
-              🌾 Fibrer: {summary.totals.fiber} g
-            </Text>
+            <Text style={styles.label}>{t('dayEdit.nutritionSummary')}</Text>
+            <Text style={styles.summaryText}>🍗 Protein: {summary.totals.protein} g</Text>
+            <Text style={styles.summaryText}>🔥 Kalorier: {summary.totals.calories} kcal</Text>
+            <Text style={styles.summaryText}>🍞 Kolhydrater: {summary.totals.carbohydrates} g</Text>
+            <Text style={styles.summaryText}>🥑 Fett: {summary.totals.fat} g</Text>
+            <Text style={styles.summaryText}>🌾 Fibrer: {summary.totals.fiber} g</Text>
           </View>
         )}
       </View>
@@ -182,7 +164,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginTop: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: colors.text,
   },
   result: {

@@ -1,9 +1,9 @@
-import { useRouter } from "expo-router";
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { Pressable, StyleSheet,Text } from "react-native";
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Pressable, StyleSheet, Text } from 'react-native';
 
-import { Colors } from "@/constants/Colors";
+import { Colors } from '@/constants/Colors';
 
 interface BackButtonProps {
   onPress?: () => void;
@@ -25,7 +25,7 @@ export default function BackButton({ onPress, style }: BackButtonProps) {
   return (
     <Pressable onPress={handlePress} style={[styles.backButton, style]}>
       <Text style={styles.backText}>
-        <Text style={styles.arrowText}>{"‹"}</Text> {t("back")}
+        <Text style={styles.arrowText}>{'‹'}</Text> {t('back')}
       </Text>
     </Pressable>
   );
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingLeft: 18,
     paddingBottom: 10,
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
   },
   backText: {
     color: Colors.dark.textPrimary,

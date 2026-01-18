@@ -39,7 +39,7 @@ describe('Services Integration', () => {
   describe('GPT Service Integration with Storage Context', () => {
     it('should build system prompt with real plan data from storage', async () => {
       let contextValues: any = {};
-      
+
       const TestComponent = () => {
         const ctx = useStorage();
         React.useEffect(() => {
@@ -63,7 +63,7 @@ describe('Services Integration', () => {
         name: 'Morning Health Routine',
         supplements: [
           { id: 'vitamin-d', name: 'Vitamin D3', quantity: 2000, unit: 'IU' },
-          { id: 'omega-3', name: 'Omega-3', quantity: 1000, unit: 'mg' }
+          { id: 'omega-3', name: 'Omega-3', quantity: 1000, unit: 'mg' },
         ],
         prefferedTime: 'morning',
         notify: false,
@@ -77,14 +77,14 @@ describe('Services Integration', () => {
 
       // Test system prompt building with real data
       const systemPrompt = buildSystemPrompt(contextValues.plans, contextValues.shareHealthPlan);
-      
+
       expect(systemPrompt).toContain('You are a health assistant');
       expect(systemPrompt).toContain('morning: Vitamin D3 (2000IU), Omega-3 (1000mg)');
     });
 
     it('should build system prompt without plan when sharing is disabled', async () => {
       let contextValues: any = {};
-      
+
       const TestComponent = () => {
         const ctx = useStorage();
         React.useEffect(() => {
@@ -117,7 +117,7 @@ describe('Services Integration', () => {
       });
 
       const systemPrompt = buildSystemPrompt(contextValues.plans, contextValues.shareHealthPlan);
-      
+
       expect(systemPrompt).toBe('You are a health assistant. No current plan.');
       expect(systemPrompt).not.toContain('Vitamin C');
     });
@@ -125,23 +125,23 @@ describe('Services Integration', () => {
     it('should handle GPT API integration with real message flow', async () => {
       const mockResponse = {
         content: 'This is a helpful response about your health plan.',
-        usage: { prompt_tokens: 50, completion_tokens: 30, total_tokens: 80 }
+        usage: { prompt_tokens: 50, completion_tokens: 30, total_tokens: 80 },
       };
 
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        text: () => Promise.resolve(JSON.stringify(mockResponse))
+        text: () => Promise.resolve(JSON.stringify(mockResponse)),
       });
 
       const messages: Message[] = [
         {
           role: 'system',
-          content: 'You are a health assistant.'
+          content: 'You are a health assistant.',
         },
         {
           role: 'user',
-          content: 'How should I take my vitamins?'
-        }
+          content: 'How should I take my vitamins?',
+        },
       ];
 
       const response = await askGPT(messages);
@@ -149,7 +149,7 @@ describe('Services Integration', () => {
       expect(fetch).toHaveBeenCalledWith('http://test-server:7071/api/askAIv2', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages })
+        body: JSON.stringify({ messages }),
       });
 
       expect(response).toEqual(mockResponse);
@@ -160,12 +160,12 @@ describe('Services Integration', () => {
         type: 'supplement_detection',
         content: 'Detected Vitamin D supplement',
         confidence: 0.95,
-        match: true
+        match: true,
       };
 
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve(mockAnalysisResponse)
+        json: () => Promise.resolve(mockAnalysisResponse),
       });
 
       const fileData = {
@@ -173,14 +173,14 @@ describe('Services Integration', () => {
         name: 'supplement_photo.jpg',
         type: 'image/jpeg',
         prompt: 'Analyze this supplement image',
-        supplement: 'Vitamin D'
+        supplement: 'Vitamin D',
       };
 
       const response = await sendFileToAIAnalysis(fileData);
 
       expect(fetch).toHaveBeenCalledWith('http://test-server:7071/api/handleSupplementCheck', {
         method: 'POST',
-        body: expect.any(FormData)
+        body: expect.any(FormData),
       });
 
       expect(response).toEqual(mockAnalysisResponse);
@@ -190,14 +190,14 @@ describe('Services Integration', () => {
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         status: 500,
-        statusText: 'Internal Server Error'
+        statusText: 'Internal Server Error',
       });
 
       const fileData = {
         uri: 'file://test-image.jpg',
         name: 'supplement_photo.jpg',
         type: 'image/jpeg',
-        prompt: 'Analyze this supplement image'
+        prompt: 'Analyze this supplement image',
       };
 
       await expect(sendFileToAIAnalysis(fileData)).rejects.toThrow('AI-analys misslyckades: 500');
@@ -207,7 +207,7 @@ describe('Services Integration', () => {
   describe('Full Service Integration Workflow', () => {
     it('should handle complete chat workflow with storage integration', async () => {
       let contextValues: any = {};
-      
+
       const TestComponent = () => {
         const ctx = useStorage();
         React.useEffect(() => {
@@ -231,7 +231,7 @@ describe('Services Integration', () => {
         name: 'Comprehensive Health Plan',
         supplements: [
           { id: 'multivitamin', name: 'Multivitamin', quantity: 1, unit: 'tablet' },
-          { id: 'fish-oil', name: 'Fish Oil', quantity: 2, unit: 'capsules' }
+          { id: 'fish-oil', name: 'Fish Oil', quantity: 2, unit: 'capsules' },
         ],
         prefferedTime: 'evening',
         notify: false,
@@ -249,23 +249,24 @@ describe('Services Integration', () => {
 
       // Mock GPT response
       const mockGPTResponse = {
-        content: 'Based on your evening routine with Multivitamin and Fish Oil, I recommend taking them with a meal for better absorption.',
-        usage: { prompt_tokens: 75, completion_tokens: 40, total_tokens: 115 }
+        content:
+          'Based on your evening routine with Multivitamin and Fish Oil, I recommend taking them with a meal for better absorption.',
+        usage: { prompt_tokens: 75, completion_tokens: 40, total_tokens: 115 },
       };
 
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        text: () => Promise.resolve(JSON.stringify(mockGPTResponse))
+        text: () => Promise.resolve(JSON.stringify(mockGPTResponse)),
       });
 
       // Simulate user asking about their plan
       const messages: Message[] = [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: 'When is the best time to take my supplements?' }
+        { role: 'user', content: 'When is the best time to take my supplements?' },
       ];
 
       const response = await askGPT(messages);
-      
+
       expect(response.content).toContain('evening routine');
       expect(response.content).toContain('better absorption');
 
@@ -279,7 +280,7 @@ describe('Services Integration', () => {
 
     it('should integrate supplement analysis with goal tracking', async () => {
       let contextValues: any = {};
-      
+
       const TestComponent = () => {
         const ctx = useStorage();
         React.useEffect(() => {
@@ -315,12 +316,12 @@ describe('Services Integration', () => {
         type: 'supplement_verification',
         content: 'Confirmed: This is Vitamin D3 2000 IU',
         confidence: 0.92,
-        match: true
+        match: true,
       };
 
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve(mockAnalysisResponse)
+        json: () => Promise.resolve(mockAnalysisResponse),
       });
 
       // Analyze supplement photo for active goal
@@ -329,7 +330,7 @@ describe('Services Integration', () => {
         name: 'vitamin_d_verification.jpg',
         type: 'image/jpeg',
         prompt: 'Verify this is the correct Vitamin D supplement for my goal',
-        supplement: 'Vitamin D3'
+        supplement: 'Vitamin D3',
       });
 
       expect(analysisResult.match).toBe(true);

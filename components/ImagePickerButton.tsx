@@ -1,9 +1,9 @@
-import * as ImagePicker from "expo-image-picker";
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { Alert } from "react-native";
+import * as ImagePicker from 'expo-image-picker';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Alert } from 'react-native';
 
-import AppButton from "./ui/AppButton";
+import AppButton from './ui/AppButton';
 
 interface ImagePickerButtonProps {
   // now returns a local file descriptor instead of base64
@@ -16,7 +16,7 @@ interface ImagePickerButtonProps {
 const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({
   onImageSelected,
   isLoading = false,
-  label = "Välj bild",
+  label = 'Välj bild',
 }) => {
   const { t } = useTranslation();
 
@@ -25,9 +25,9 @@ const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({
       ? await ImagePicker.requestCameraPermissionsAsync()
       : await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    const granted = (permission as any).granted ?? (permission as any).status === "granted";
+    const granted = (permission as any).granted ?? (permission as any).status === 'granted';
     if (!granted) {
-      Alert.alert(t("permissions.title"), t("permissions.message"));
+      Alert.alert(t('permissions.title'), t('permissions.message'));
       return;
     }
 
@@ -47,43 +47,41 @@ const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({
       const name =
         (image as any).fileName ??
         (image as any).name ??
-        (uri ? uri.split("/").pop() : undefined) ??
+        (uri ? uri.split('/').pop() : undefined) ??
         `photo_${Date.now()}.jpg`;
       const type =
-        (image as any).mimeType ??
-        (image as any).type === "image"
-          ? "image/jpeg"
-          : (image as any).type ??
-        "image/jpeg";
+        ((image as any).mimeType ?? (image as any).type === 'image')
+          ? 'image/jpeg'
+          : ((image as any).type ?? 'image/jpeg');
 
       onImageSelected({ uri, name, type });
     }
   };
 
   const showOptions = () => {
-    Alert.alert(t("imagePicker.title"), undefined, [
+    Alert.alert(t('imagePicker.title'), undefined, [
       {
-        text: t("imagePicker.takePhoto"),
+        text: t('imagePicker.takePhoto'),
         onPress: () => {
           handlePick(true).catch(console.error);
         },
       },
       {
-        text: t("imagePicker.chooseFromLibrary"),
+        text: t('imagePicker.chooseFromLibrary'),
         onPress: () => {
           handlePick(false).catch(console.error);
         },
       },
       {
-        text: t("general.cancel"),
-        style: "cancel",
+        text: t('general.cancel'),
+        style: 'cancel',
       },
     ]);
   };
 
   return (
     <AppButton
-      title={isLoading ? t("dayEdit.analyzing") : label}
+      title={isLoading ? t('dayEdit.analyzing') : label}
       onPress={showOptions}
       disabled={isLoading}
       variant="secondary"

@@ -1,8 +1,8 @@
-export type SourceId = "mock" | "garmin" | "fitbit" | "healthkit" | "healthconnect";
+export type SourceId = 'mock' | 'garmin' | 'fitbit' | 'healthkit' | 'healthconnect';
 
 export type TimeRange = {
   start: string; // ISO
-  end: string;   // ISO
+  end: string; // ISO
 };
 
 export type SleepSummary = {
@@ -10,7 +10,7 @@ export type SleepSummary = {
   date: string; // YYYY-MM-DD (local)
   durationMinutes: number;
   startTime?: string; // ISO
-  endTime?: string;   // ISO
+  endTime?: string; // ISO
   efficiencyPct?: number; // 0..100 optional
   stages?: {
     deepMinutes?: number;
@@ -23,8 +23,8 @@ export type SleepSummary = {
 export type HRVSummary = {
   source: SourceId;
   date: string; // YYYY-MM-DD
-  rmssdMs?: number;     // common HRV metric
-  sdnnMs?: number;      // optional
+  rmssdMs?: number; // common HRV metric
+  sdnnMs?: number; // optional
   avgRestingHrBpm?: number;
 };
 
@@ -43,10 +43,10 @@ export type EnergySignal = {
 };
 
 export type AdapterStatus =
-  | { state: "disconnected" }
-  | { state: "connecting" }
-  | { state: "connected"; source: SourceId }
-  | { state: "error"; message: string };
+  | { state: 'disconnected' }
+  | { state: 'connecting' }
+  | { state: 'connected'; source: SourceId }
+  | { state: 'error'; message: string };
 
 export interface WearableAdapter {
   source: SourceId;

@@ -1,18 +1,12 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
-import { levels, XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT,XP_FOR_VIEW, XP_PER_CHAT_MESSAGE } from "@/constants/XP";
-import { PlanCategory } from "@/types/planCategory";
-import { VerdictValue } from "@/types/verdict";
+import { levels, XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW, XP_PER_CHAT_MESSAGE } from '@/constants/XP';
+import { PlanCategory } from '@/types/planCategory';
+import { VerdictValue } from '@/types/verdict';
 
-import { Plan } from "../domain/Plan";
-import { SupplementTime } from "../domain/SupplementTime";
+import { Plan } from '../domain/Plan';
+import { SupplementTime } from '../domain/SupplementTime';
 
 export type MealNutrition = {
   date: string; // YYYY-MM-DD
@@ -48,7 +42,7 @@ export type PlanTipEntry = {
   mainGoalId: string;
   startedAt: string;
   tipId: string;
-  planCategory: Exclude<PlanCategory, "supplement">;
+  planCategory: Exclude<PlanCategory, 'supplement'>;
 };
 
 export type PlansByCategory = {
@@ -91,9 +85,7 @@ interface StorageContextType {
   setTakenDates: (
     update:
       | Record<string, SupplementTime[]>
-      | ((
-          prev: Record<string, SupplementTime[]>
-        ) => Record<string, SupplementTime[]>)
+      | ((prev: Record<string, SupplementTime[]>) => Record<string, SupplementTime[]>)
   ) => void;
   myGoals: string[];
   setMyGoals: (goals: string[] | ((prev: string[]) => string[])) => void;
@@ -116,9 +108,7 @@ interface StorageContextType {
   setDailyNutritionSummaries: (
     updater:
       | Record<string, DailyNutritionSummary>
-      | ((
-          prev: Record<string, DailyNutritionSummary>
-        ) => Record<string, DailyNutritionSummary>)
+      | ((prev: Record<string, DailyNutritionSummary>) => Record<string, DailyNutritionSummary>)
   ) => void;
   viewedTips: ViewedTip[];
   setViewedTips: (tips: ViewedTip[] | ((prev: ViewedTip[]) => ViewedTip[])) => void;
@@ -135,48 +125,41 @@ interface StorageContextType {
 }
 
 const STORAGE_KEYS = {
-  PLANS: "plans",
-  HAS_VISITED_CHAT: "hasVisitedChat",
-  SHARE_HEALTH_PLAN: "shareHealthPlan",
-  TAKEN_DATES: "takenDates",
-  MY_GOALS: "myGoals",
-  HAS_COMPLETED_ONBOARDING: "hasCompletedOnboarding",
-  ONBOARDING_STEP: "onBoardingStep",
-  MY_XP: "myXP",
-  MY_LEVEL: "myLevel",
-  DAILY_NUTRITION: "dailyNutritionSummary",
-  VIEWED_TIPS: "viewedTips",
-  TRAINING_PLAN_SETTINGS: "trainingPlanSettings",
+  PLANS: 'plans',
+  HAS_VISITED_CHAT: 'hasVisitedChat',
+  SHARE_HEALTH_PLAN: 'shareHealthPlan',
+  TAKEN_DATES: 'takenDates',
+  MY_GOALS: 'myGoals',
+  HAS_COMPLETED_ONBOARDING: 'hasCompletedOnboarding',
+  ONBOARDING_STEP: 'onBoardingStep',
+  MY_XP: 'myXP',
+  MY_LEVEL: 'myLevel',
+  DAILY_NUTRITION: 'dailyNutritionSummary',
+  VIEWED_TIPS: 'viewedTips',
+  TRAINING_PLAN_SETTINGS: 'trainingPlanSettings',
 };
 
 const StorageContext = createContext<StorageContextType | undefined>(undefined);
 
-export const StorageProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const StorageProvider = ({ children }: { children: React.ReactNode }) => {
   const [plansState, setPlansState] = useState<PlansByCategory>(EMPTY_PLANS);
   const [hasVisitedChatState, setHasVisitedChatState] = useState(false);
   const [shareHealthPlanState, setShareHealthPlanState] = useState(false);
-  const [takenDatesState, setTakenDatesState] = useState<
-    Record<string, SupplementTime[]>
-  >({});
+  const [takenDatesState, setTakenDatesState] = useState<Record<string, SupplementTime[]>>({});
   const [myGoalsState, setMyGoalsState] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [hasCompletedOnboardingState, setHasCompletedOnboardingState] =
-    useState(false);
+  const [hasCompletedOnboardingState, setHasCompletedOnboardingState] = useState(false);
   const [onboardingStepState, setOnboardingStepState] = useState(0);
   const [myXPState, setMyXPState] = useState(0);
   const [myLevelState, setMyLevelState] = useState(1);
   const [isInitialized, setIsInitialized] = useState(false);
   const [levelUpModalVisible, setLevelUpModalVisible] = useState(false);
   const [newLevelReached, setNewLevelReached] = useState<number | null>(null);
-  const [dailyNutritionSummariesState, setDailyNutritionSummariesState] =
-    useState<Record<string, DailyNutritionSummary>>({});
+  const [dailyNutritionSummariesState, setDailyNutritionSummariesState] = useState<
+    Record<string, DailyNutritionSummary>
+  >({});
   const [viewedTipsState, setViewedTipsState] = useState<ViewedTip[]>([]);
-  const [trainingPlanSettingsState, setTrainingPlanSettingsState] =
-    useState<Record<string, TrainingPlanSettings>>({});
+  const [trainingPlanSettingsState, setTrainingPlanSettingsState] = useState<Record<string, TrainingPlanSettings>>({});
 
   useEffect(() => {
     const loadData = async () => {
@@ -217,42 +200,33 @@ export const StorageProvider = ({
               return { ...EMPTY_PLANS, supplements: parsed };
             }
 
-            const supplements = Array.isArray(parsed?.supplements)
-              ? parsed.supplements
-              : [];
-            const training = Array.isArray(parsed?.training)
-              ? parsed.training
-              : [];
-            const nutrition = Array.isArray(parsed?.nutrition)
-              ? parsed.nutrition
-              : [];
+            const supplements = Array.isArray(parsed?.supplements) ? parsed.supplements : [];
+            const training = Array.isArray(parsed?.training) ? parsed.training : [];
+            const nutrition = Array.isArray(parsed?.nutrition) ? parsed.nutrition : [];
             const other = Array.isArray(parsed?.other) ? parsed.other : [];
 
             return { supplements, training, nutrition, other };
           } catch (error) {
-            console.warn("Failed to parse plans", error);
+            console.warn('Failed to parse plans', error);
             return EMPTY_PLANS;
           }
         };
 
         setPlansState(normalizePlans(plansRaw));
-        if (visitedRaw === "true") setHasVisitedChatState(true);
-        if (shareRaw === "true") setShareHealthPlanState(true);
+        if (visitedRaw === 'true') setHasVisitedChatState(true);
+        if (shareRaw === 'true') setShareHealthPlanState(true);
         if (takenRaw) setTakenDatesState(JSON.parse(takenRaw));
         if (myGoalsRaw) setMyGoalsState(JSON.parse(myGoalsRaw));
-        if (onboardingRaw === "true") setHasCompletedOnboardingState(true);
-        if (onboardingStepRaw)
-          setOnboardingStepState(parseInt(onboardingStepRaw));
+        if (onboardingRaw === 'true') setHasCompletedOnboardingState(true);
+        if (onboardingStepRaw) setOnboardingStepState(parseInt(onboardingStepRaw));
         // Ladda XP och level direkt utan att trigga level-up-logik vid initial laddning
         if (myXPRaw) setMyXPState(parseInt(myXPRaw));
         if (myLevelRaw) setMyLevelState(parseInt(myLevelRaw));
-        if (dailyNutritionRaw)
-          setDailyNutritionSummariesState(JSON.parse(dailyNutritionRaw));
+        if (dailyNutritionRaw) setDailyNutritionSummariesState(JSON.parse(dailyNutritionRaw));
         if (viewedTipsRaw) setViewedTipsState(JSON.parse(viewedTipsRaw));
-        if (trainingSettingsRaw)
-          setTrainingPlanSettingsState(JSON.parse(trainingSettingsRaw));
+        if (trainingSettingsRaw) setTrainingPlanSettingsState(JSON.parse(trainingSettingsRaw));
       } catch (err) {
-        console.error("Kunde inte ladda från AsyncStorage:", err);
+        console.error('Kunde inte ladda från AsyncStorage:', err);
       } finally {
         setIsInitialized(true); // ✅ sätt när allt är laddat
       }
@@ -260,11 +234,9 @@ export const StorageProvider = ({
     loadData();
   }, []);
 
-  const setPlans = (
-    update: PlansByCategory | ((prev: PlansByCategory) => PlansByCategory)
-  ) => {
-    setPlansState((prev) => {
-      const newPlans = typeof update === "function" ? update(prev) : update;
+  const setPlans = (update: PlansByCategory | ((prev: PlansByCategory) => PlansByCategory)) => {
+    setPlansState(prev => {
+      const newPlans = typeof update === 'function' ? update(prev) : update;
       const normalizedPlans: PlansByCategory = {
         ...EMPTY_PLANS,
         ...newPlans,
@@ -281,12 +253,10 @@ export const StorageProvider = ({
   const setTakenDates = (
     update:
       | Record<string, SupplementTime[]>
-      | ((
-          prev: Record<string, SupplementTime[]>
-        ) => Record<string, SupplementTime[]>)
+      | ((prev: Record<string, SupplementTime[]>) => Record<string, SupplementTime[]>)
   ) => {
-    setTakenDatesState((prev) => {
-      const newDates = typeof update === "function" ? update(prev) : update;
+    setTakenDatesState(prev => {
+      const newDates = typeof update === 'function' ? update(prev) : update;
       AsyncStorage.setItem(STORAGE_KEYS.TAKEN_DATES, JSON.stringify(newDates));
       return newDates;
     });
@@ -294,23 +264,17 @@ export const StorageProvider = ({
 
   const setHasVisitedChat = async (val: boolean) => {
     setHasVisitedChatState(val);
-    await AsyncStorage.setItem(
-      STORAGE_KEYS.HAS_VISITED_CHAT,
-      val ? "true" : "false"
-    );
+    await AsyncStorage.setItem(STORAGE_KEYS.HAS_VISITED_CHAT, val ? 'true' : 'false');
   };
 
   const setShareHealthPlan = async (val: boolean) => {
     setShareHealthPlanState(val);
-    await AsyncStorage.setItem(
-      STORAGE_KEYS.SHARE_HEALTH_PLAN,
-      val ? "true" : "false"
-    );
+    await AsyncStorage.setItem(STORAGE_KEYS.SHARE_HEALTH_PLAN, val ? 'true' : 'false');
   };
 
   const setMyGoals = (update: string[] | ((prev: string[]) => string[])) => {
-    setMyGoalsState((prev) => {
-      const newGoals = typeof update === "function" ? update(prev) : update;
+    setMyGoalsState(prev => {
+      const newGoals = typeof update === 'function' ? update(prev) : update;
       AsyncStorage.setItem(STORAGE_KEYS.MY_GOALS, JSON.stringify(newGoals));
       return newGoals;
     });
@@ -318,10 +282,7 @@ export const StorageProvider = ({
 
   const setHasCompletedOnboarding = (val: boolean) => {
     setHasCompletedOnboardingState(val);
-    AsyncStorage.setItem(
-      STORAGE_KEYS.HAS_COMPLETED_ONBOARDING,
-      val ? "true" : "false"
-    );
+    AsyncStorage.setItem(STORAGE_KEYS.HAS_COMPLETED_ONBOARDING, val ? 'true' : 'false');
   };
 
   const setOnboardingStep = (val: number) => {
@@ -330,11 +291,11 @@ export const StorageProvider = ({
   };
 
   const setMyXP = (update: number | ((prev: number) => number)) => {
-    setMyXPState((prevXP) => {
-      const newXP = typeof update === "function" ? update(prevXP) : update;
+    setMyXPState(prevXP => {
+      const newXP = typeof update === 'function' ? update(prevXP) : update;
 
-      const oldLevelObj = levels.findLast((l) => l.requiredXP <= prevXP);
-      const newLevelObj = levels.findLast((l) => l.requiredXP <= newXP);
+      const oldLevelObj = levels.findLast(l => l.requiredXP <= prevXP);
+      const newLevelObj = levels.findLast(l => l.requiredXP <= newXP);
 
       const oldLevel = oldLevelObj?.level ?? 1;
       const newLevel = newLevelObj?.level ?? 1;
@@ -368,23 +329,18 @@ export const StorageProvider = ({
   const setDailyNutritionSummaries = (
     updater:
       | Record<string, DailyNutritionSummary>
-      | ((
-          prev: Record<string, DailyNutritionSummary>
-        ) => Record<string, DailyNutritionSummary>)
+      | ((prev: Record<string, DailyNutritionSummary>) => Record<string, DailyNutritionSummary>)
   ) => {
-    setDailyNutritionSummariesState((prev) => {
-      const updated = typeof updater === "function" ? updater(prev) : updater;
-      AsyncStorage.setItem(
-        STORAGE_KEYS.DAILY_NUTRITION,
-        JSON.stringify(updated)
-      );
+    setDailyNutritionSummariesState(prev => {
+      const updated = typeof updater === 'function' ? updater(prev) : updater;
+      AsyncStorage.setItem(STORAGE_KEYS.DAILY_NUTRITION, JSON.stringify(updated));
       return updated;
     });
   };
 
   const setViewedTips = (update: ViewedTip[] | ((prev: ViewedTip[]) => ViewedTip[])) => {
-    setViewedTipsState((prev) => {
-      const newTips = typeof update === "function" ? update(prev) : update;
+    setViewedTipsState(prev => {
+      const newTips = typeof update === 'function' ? update(prev) : update;
       AsyncStorage.setItem(STORAGE_KEYS.VIEWED_TIPS, JSON.stringify(newTips));
       return newTips;
     });
@@ -395,20 +351,15 @@ export const StorageProvider = ({
       | Record<string, TrainingPlanSettings>
       | ((prev: Record<string, TrainingPlanSettings>) => Record<string, TrainingPlanSettings>)
   ) => {
-    setTrainingPlanSettingsState((prev) => {
-      const updated = typeof updater === "function" ? updater(prev) : updater;
-      AsyncStorage.setItem(
-        STORAGE_KEYS.TRAINING_PLAN_SETTINGS,
-        JSON.stringify(updated)
-      );
+    setTrainingPlanSettingsState(prev => {
+      const updated = typeof updater === 'function' ? updater(prev) : updater;
+      AsyncStorage.setItem(STORAGE_KEYS.TRAINING_PLAN_SETTINGS, JSON.stringify(updated));
       return updated;
     });
   };
 
   const addTipView = (mainGoalId: string, tipId: string): number => {
-    const existing = viewedTipsState.find(
-      (v) => v.mainGoalId === mainGoalId && v.tipId === tipId
-    );
+    const existing = viewedTipsState.find(v => v.mainGoalId === mainGoalId && v.tipId === tipId);
 
     if (existing) {
       return 0; // Redan sett, ingen XP
@@ -424,14 +375,12 @@ export const StorageProvider = ({
     };
 
     setViewedTips([...viewedTipsState, newView]);
-    setMyXP((prev) => prev + xpForView);
+    setMyXP(prev => prev + xpForView);
     return xpForView;
   };
 
   const incrementTipChat = (mainGoalId: string, tipId: string, questionType: string): number => {
-    const existing = viewedTipsState.find(
-      (v) => v.mainGoalId === mainGoalId && v.tipId === tipId
-    );
+    const existing = viewedTipsState.find(v => v.mainGoalId === mainGoalId && v.tipId === tipId);
 
     // Om frågan redan ställts, ingen XP
     if (existing?.askedQuestions.includes(questionType)) {
@@ -439,11 +388,11 @@ export const StorageProvider = ({
     }
 
     const xpForChat = XP_FOR_CHAT_QUESTION;
-    
-    const updated = viewedTipsState.map((v) => {
+
+    const updated = viewedTipsState.map(v => {
       if (v.mainGoalId === mainGoalId && v.tipId === tipId) {
-        return { 
-          ...v, 
+        return {
+          ...v,
           askedQuestions: [...v.askedQuestions, questionType],
           xpEarned: v.xpEarned + xpForChat,
         };
@@ -452,18 +401,18 @@ export const StorageProvider = ({
     });
 
     setViewedTips(updated);
-    setMyXP((prev) => prev + xpForChat);
+    setMyXP(prev => prev + xpForChat);
     return xpForChat;
   };
 
   // Lägg till ny funktion för att ge XP för varje chat-meddelande
   const addChatMessageXP = (mainGoalId: string, tipId: string): number => {
     const xpPerMessage = XP_PER_CHAT_MESSAGE; // 2 XP per meddelande
-    
-    const updated = viewedTipsState.map((v) => {
+
+    const updated = viewedTipsState.map(v => {
       if (v.mainGoalId === mainGoalId && v.tipId === tipId) {
-        return { 
-          ...v, 
+        return {
+          ...v,
           xpEarned: v.xpEarned + xpPerMessage,
         };
       }
@@ -471,19 +420,17 @@ export const StorageProvider = ({
     });
 
     setViewedTips(updated);
-    setMyXP((prev) => prev + xpPerMessage);
+    setMyXP(prev => prev + xpPerMessage);
     return xpPerMessage;
   };
 
   const setTipVerdict = (mainGoalId: string, tipId: string, verdict: VerdictValue): number => {
-    const existing = viewedTipsState.find(
-      (v) => v.mainGoalId === mainGoalId && v.tipId === tipId
-    );
+    const existing = viewedTipsState.find(v => v.mainGoalId === mainGoalId && v.tipId === tipId);
 
     // Om verdict redan satt, ingen XP
     if (existing?.verdict) {
       // Uppdatera bara verdict, ingen XP
-      const updated = viewedTipsState.map((v) => {
+      const updated = viewedTipsState.map(v => {
         if (v.mainGoalId === mainGoalId && v.tipId === tipId) {
           return { ...v, verdict };
         }
@@ -494,11 +441,11 @@ export const StorageProvider = ({
     }
 
     const xpForVerdict = XP_FOR_VERDICT;
-    
-    const updated = viewedTipsState.map((v) => {
+
+    const updated = viewedTipsState.map(v => {
       if (v.mainGoalId === mainGoalId && v.tipId === tipId) {
-        return { 
-          ...v, 
+        return {
+          ...v,
           verdict,
           xpEarned: v.xpEarned + xpForVerdict,
         };
@@ -507,7 +454,7 @@ export const StorageProvider = ({
     });
 
     setViewedTips(updated);
-    setMyXP((prev) => prev + xpForVerdict);
+    setMyXP(prev => prev + xpForVerdict);
     return xpForVerdict;
   };
 
@@ -578,15 +525,13 @@ export const StorageProvider = ({
     ]
   );
 
-  return (
-    <StorageContext.Provider value={value}>{children}</StorageContext.Provider>
-  );
+  return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;
 };
 
 export const useStorage = (): StorageContextType => {
   const context = useContext(StorageContext);
   if (!context) {
-    throw new Error("useStorage måste användas inom en <StorageProvider>");
+    throw new Error('useStorage måste användas inom en <StorageProvider>');
   }
   return context;
 };

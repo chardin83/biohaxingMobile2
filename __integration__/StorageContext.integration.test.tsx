@@ -19,7 +19,7 @@ describe('StorageContext Integration', () => {
 
   it('should persist and load plans from real AsyncStorage', async () => {
     let contextValues: any = {};
-    
+
     const TestComponent = () => {
       const ctx = useStorage();
       React.useEffect(() => {
@@ -35,8 +35,8 @@ describe('StorageContext Integration', () => {
           id: 'vitamin-d',
           name: 'Vitamin D',
           quantity: 1000,
-          unit: 'IU'
-        }
+          unit: 'IU',
+        },
       ],
       prefferedTime: 'morning',
       notify: false,
@@ -55,13 +55,13 @@ describe('StorageContext Integration', () => {
     });
 
     // Add a plan
-      act(() => {
-        contextValues.setPlans({ supplements: [testPlan], training: [], nutrition: [], other: [] });
-      });
+    act(() => {
+      contextValues.setPlans({ supplements: [testPlan], training: [], nutrition: [], other: [] });
+    });
 
     // Wait for the state to be updated
     await waitFor(() => {
-        expect(contextValues.plans).toEqual({ supplements: [testPlan], training: [], nutrition: [], other: [] });
+      expect(contextValues.plans).toEqual({ supplements: [testPlan], training: [], nutrition: [], other: [] });
     });
 
     // Wait a bit more for AsyncStorage operation to complete
@@ -69,12 +69,17 @@ describe('StorageContext Integration', () => {
 
     // Verify the plan was persisted to AsyncStorage
     const storedPlans = await AsyncStorage.getItem('plans');
-      expect(JSON.parse(storedPlans || '[]')).toEqual({ supplements: [testPlan], training: [], nutrition: [], other: [] });
+    expect(JSON.parse(storedPlans || '[]')).toEqual({
+      supplements: [testPlan],
+      training: [],
+      nutrition: [],
+      other: [],
+    });
   });
 
   it('should persist and load goals from real AsyncStorage', async () => {
     let contextValues: any = {};
-    
+
     const TestComponent = () => {
       const ctx = useStorage();
       React.useEffect(() => {
@@ -102,9 +107,9 @@ describe('StorageContext Integration', () => {
     };
 
     // Set goals and categorized plans
-      act(() => {
-        contextValues.setMyGoals(testGoals);
-        contextValues.setPlans({ supplements: [], training: [planEntry], nutrition: [], other: [] });
+    act(() => {
+      contextValues.setMyGoals(testGoals);
+      contextValues.setPlans({ supplements: [], training: [planEntry], nutrition: [], other: [] });
     });
 
     // Wait for state updates
@@ -121,12 +126,17 @@ describe('StorageContext Integration', () => {
     const storedPlans = await AsyncStorage.getItem('plans');
 
     expect(JSON.parse(storedGoals || '[]')).toEqual(testGoals);
-    expect(JSON.parse(storedPlans || '[]')).toEqual({ supplements: [], training: [planEntry], nutrition: [], other: [] });
+    expect(JSON.parse(storedPlans || '[]')).toEqual({
+      supplements: [],
+      training: [planEntry],
+      nutrition: [],
+      other: [],
+    });
   });
 
   it('should handle XP and level progression with real persistence', async () => {
     let contextValues: any = {};
-    
+
     const TestComponent = () => {
       const ctx = useStorage();
       React.useEffect(() => {
@@ -162,27 +172,27 @@ describe('StorageContext Integration', () => {
     // Verify persistence
     const storedXP = await AsyncStorage.getItem('myXP');
     const storedLevel = await AsyncStorage.getItem('myLevel');
-    
+
     expect(storedXP).toBe('150');
     expect(storedLevel).toBe('2');
   });
 
   it('should load existing data on initialization', async () => {
     // Pre-populate AsyncStorage
-      const existingPlans = {
-        supplements: [{ id: 'existing-plan', name: 'Existing Plan', supplements: [], prefferedTime: 'evening' }],
-        training: [],
-        nutrition: [],
-        other: [],
-      };
+    const existingPlans = {
+      supplements: [{ id: 'existing-plan', name: 'Existing Plan', supplements: [], prefferedTime: 'evening' }],
+      training: [],
+      nutrition: [],
+      other: [],
+    };
     const existingGoals = ['existing-goal'];
-    
+
     await AsyncStorage.setItem('plans', JSON.stringify(existingPlans));
     await AsyncStorage.setItem('myGoals', JSON.stringify(existingGoals));
     await AsyncStorage.setItem('myXP', '50');
 
     let contextValues: any = {};
-    
+
     const TestComponent = () => {
       const ctx = useStorage();
       React.useEffect(() => {
@@ -208,7 +218,7 @@ describe('StorageContext Integration', () => {
 
   it('should handle nutrition summaries persistence', async () => {
     let contextValues: any = {};
-    
+
     const TestComponent = () => {
       const ctx = useStorage();
       React.useEffect(() => {
@@ -232,8 +242,8 @@ describe('StorageContext Integration', () => {
         date: '2024-01-01',
         meals: [],
         totals: { protein: 50, calories: 1500, carbohydrates: 200, fat: 50, fiber: 25 },
-        goalsMet: { protein: true, calories: true, carbohydrates: true, fat: true, fiber: true }
-      }
+        goalsMet: { protein: true, calories: true, carbohydrates: true, fat: true, fiber: true },
+      },
     };
 
     act(() => {

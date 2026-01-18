@@ -1,14 +1,9 @@
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity,View } from "react-native";
-import {
-  Menu,
-  MenuOption,
-  MenuOptions,
-  MenuTrigger,
-} from "react-native-popup-menu";
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu';
 
-import { IconSymbol } from "@/components/ui/IconSymbol";
-import { Colors } from "@/constants/Colors";
+import { IconSymbol } from '@/components/ui/IconSymbol';
+import { Colors } from '@/constants/Colors';
 
 interface MenuItem {
   text: string;
@@ -21,10 +16,7 @@ interface DropdownMenuButtonProps {
   items: MenuItem[];
 }
 
-const DropdownMenuButton: React.FC<DropdownMenuButtonProps> = ({
-  title,
-  items,
-}) => {
+const DropdownMenuButton: React.FC<DropdownMenuButtonProps> = ({ title, items }) => {
   return (
     <Menu>
       <MenuTrigger
@@ -54,20 +46,20 @@ const DropdownMenuButton: React.FC<DropdownMenuButtonProps> = ({
 
 const styles = StyleSheet.create({
   triggerButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 14,
     paddingHorizontal: 18,
     borderRadius: 16,
     borderWidth: 1.5,
     borderColor: Colors.dark.borderLight,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
   },
   buttonText: {
     color: Colors.dark.textLight,
-    fontWeight: "bold",
-    textTransform: "uppercase",
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
     letterSpacing: 1,
     marginRight: 6,
   },
@@ -77,8 +69,8 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   menuItem: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 16,
   },

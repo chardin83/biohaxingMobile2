@@ -1,31 +1,30 @@
-import { useRouter } from "expo-router";
-import { useEffect } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { useRouter } from 'expo-router';
+import { useEffect } from 'react';
+import { ActivityIndicator, View } from 'react-native';
 
-import { Colors } from "@/constants/Colors";
+import { Colors } from '@/constants/Colors';
 
-import { useStorage } from "../context/StorageContext";
+import { useStorage } from '../context/StorageContext';
 
 export default function IndexRedirector() {
-  const { hasCompletedOnboarding, isInitialized, onboardingStep } =
-    useStorage();
+  const { hasCompletedOnboarding, isInitialized, onboardingStep } = useStorage();
   const router = useRouter();
 
   useEffect(() => {
     if (!isInitialized) return;
 
     if (hasCompletedOnboarding) {
-      router.replace("/dashboard");
+      router.replace('/dashboard');
     } else {
       switch (onboardingStep) {
         case 0:
-          router.replace("/(onboarding)/onboardingsupplements");
+          router.replace('/(onboarding)/onboardingsupplements');
           break;
         case 1:
-          router.replace("/(onboarding)/onboardinggoals");
+          router.replace('/(onboarding)/onboardinggoals');
           break;
         default:
-          router.replace("/(onboarding)/onboardingsupplements");
+          router.replace('/(onboarding)/onboardingsupplements');
           break;
       }
     }
@@ -36,8 +35,8 @@ export default function IndexRedirector() {
       <View
         style={{
           flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
+          justifyContent: 'center',
+          alignItems: 'center',
           backgroundColor: Colors.dark.background,
         }}
       >

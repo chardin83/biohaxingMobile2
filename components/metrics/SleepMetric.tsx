@@ -1,7 +1,7 @@
-import React from "react";
-import { StyleSheet,Text, View } from "react-native";
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { SleepSummary } from "@/wearables/types";
+import { SleepSummary } from '@/wearables/types';
 
 interface SleepMetricProps {
   sleepData: SleepSummary[];
@@ -25,17 +25,13 @@ export function SleepMetric({ sleepData, showDivider = false }: Readonly<SleepMe
           <>
             <Text style={styles.value}>{sleepHours}</Text>
             <Text style={styles.unit}>h </Text>
-            <Text style={styles.value}>{String(sleepMins).padStart(2, "0")}</Text>
+            <Text style={styles.value}>{String(sleepMins).padStart(2, '0')}</Text>
             <Text style={styles.unit}>m</Text>
           </>
         )}
       </View>
-      {efficiency !== null && (
-        <Text style={styles.accent}>{efficiency}% efficiency</Text>
-      )}
-      {latestSleep && (
-        <Text style={styles.source}>{latestSleep.source}</Text>
-      )}
+      {efficiency !== null && <Text style={styles.accent}>{efficiency}% efficiency</Text>}
+      {latestSleep && <Text style={styles.source}>{latestSleep.source}</Text>}
     </View>
   );
 }
@@ -47,36 +43,36 @@ const styles = StyleSheet.create({
   },
   colWithDivider: {
     borderRightWidth: 1,
-    borderRightColor: "rgba(255,255,255,0.10)",
+    borderRightColor: 'rgba(255,255,255,0.10)',
   },
   label: {
-    color: "rgba(255,255,255,0.65)",
+    color: 'rgba(255,255,255,0.65)',
     fontSize: 13,
   },
   valueContainer: {
-    flexDirection: "row",
-    alignItems: "baseline",
+    flexDirection: 'row',
+    alignItems: 'baseline',
     marginTop: 4,
   },
   value: {
-    color: "white",
+    color: 'white',
     fontSize: 26,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   unit: {
-    color: "white",
+    color: 'white',
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: '500',
     marginLeft: 2,
   },
   accent: {
-    color: "rgba(120,255,220,0.85)",
+    color: 'rgba(120,255,220,0.85)',
     fontSize: 12,
     marginTop: 6,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   source: {
-    color: "rgba(255,255,255,0.4)",
+    color: 'rgba(255,255,255,0.4)',
     fontSize: 10,
     marginTop: 4,
   },

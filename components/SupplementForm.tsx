@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { StyleSheet,View } from "react-native";
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { StyleSheet, View } from 'react-native';
 
-import { Supplement } from "@/app/domain/Supplement";
-import SupplementDropdown from "@/components/SupplementsDropdown";
-import LabeledInput from "@/components/ui/LabeledInput";
+import { Supplement } from '@/app/domain/Supplement';
+import SupplementDropdown from '@/components/SupplementsDropdown';
+import LabeledInput from '@/components/ui/LabeledInput';
 
-import AppButton from "./ui/AppButton";
+import AppButton from './ui/AppButton';
 
 interface SupplementFormProps {
   selectedTime: Date;
@@ -24,9 +24,7 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
   onCancel,
 }) => {
   const { t } = useTranslation();
-  const [supplement, setSupplement] = useState<Supplement | null>(
-    preselectedSupplement
-  );
+  const [supplement, setSupplement] = useState<Supplement | null>(preselectedSupplement);
 
   return (
     <View>
@@ -34,9 +32,7 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
       <View style={[styles.dropdownWrapper, styles.row]}>
         <SupplementDropdown
           selectedTime={selectedTime}
-          onSupplementSelect={(selectedSupplement: Supplement) =>
-            setSupplement(selectedSupplement)
-          }
+          onSupplementSelect={(selectedSupplement: Supplement) => setSupplement(selectedSupplement)}
           preselectedSupplement={supplement?.name ?? null}
           disabled={isEditing}
         />
@@ -44,21 +40,17 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
       {/* Dosage and Unit Inputs on the same row */}
       <View style={styles.row}>
         <LabeledInput
-          label={t("supplementForm.dosage")}
-          placeholder={t("supplementForm.dosage")}
+          label={t('supplementForm.dosage')}
+          placeholder={t('supplementForm.dosage')}
           value={supplement?.quantity}
-          onChangeText={(text) =>
-            setSupplement({ ...supplement, quantity: text } as Supplement)
-          }
+          onChangeText={text => setSupplement({ ...supplement, quantity: text } as Supplement)}
           containerStyle={styles.inputHalf}
         />
         <LabeledInput
-          label={t("supplementForm.unit")}
-          placeholder={t("supplementForm.unit")}
+          label={t('supplementForm.unit')}
+          placeholder={t('supplementForm.unit')}
           value={supplement?.unit}
-          onChangeText={(text) =>
-            setSupplement({ ...supplement, unit: text } as Supplement)
-          }
+          onChangeText={text => setSupplement({ ...supplement, unit: text } as Supplement)}
           containerStyle={styles.inputHalf}
         />
       </View>
@@ -66,21 +58,17 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
         {/* Save Button */}
         <View style={styles.button}>
           <AppButton
-            title={isEditing ? t("general.save") : t("general.add")}
+            title={isEditing ? t('general.save') : t('general.add')}
             variant="primary"
             onPress={() => {
-              if (supplement?.name && supplement?.quantity.trim() !== "") {
+              if (supplement?.name && supplement?.quantity.trim() !== '') {
                 onSave(supplement);
               }
             }}
           />
         </View>
         <View style={styles.button}>
-          <AppButton
-            title={t("general.cancel")}
-            variant="secondary"
-            onPress={onCancel}
-          />
+          <AppButton title={t('general.cancel')} variant="secondary" onPress={onCancel} />
         </View>
       </View>
     </View>
@@ -93,12 +81,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   dropdownWrapper: {
-    width: "100%",
+    width: '100%',
     marginBottom: 20,
   },
   row: {
-    flexDirection: "row", // Arrange inputs in a row
-    justifyContent: "space-between",
+    flexDirection: 'row', // Arrange inputs in a row
+    justifyContent: 'space-between',
     marginBottom: 10,
   },
   button: {

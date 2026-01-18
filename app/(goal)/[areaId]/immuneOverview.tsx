@@ -1,16 +1,16 @@
-import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { ActivityIndicator,ScrollView, StyleSheet, Text, View } from "react-native";
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { HRVMetric } from "@/components/metrics/HRVMetric";
-import { RestingHRMetric } from "@/components/metrics/RestingHRMetric";
-import { SleepMetric } from "@/components/metrics/SleepMetric";
-import TipsList from "@/components/ui/TipsList";
-import { WearableStatus } from "@/components/WearableStatus";
-import { Colors } from "@/constants/Colors";
-import { EnergySignal,HRVSummary, SleepSummary, TimeRange } from "@/wearables/types";
-import { useWearable } from "@/wearables/wearableProvider";
+import { HRVMetric } from '@/components/metrics/HRVMetric';
+import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
+import { SleepMetric } from '@/components/metrics/SleepMetric';
+import TipsList from '@/components/ui/TipsList';
+import { WearableStatus } from '@/components/WearableStatus';
+import { Colors } from '@/constants/Colors';
+import { EnergySignal, HRVSummary, SleepSummary, TimeRange } from '@/wearables/types';
+import { useWearable } from '@/wearables/wearableProvider';
 
 export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();
@@ -40,7 +40,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
         setHrvData(hrv);
         setEnergyData(energy);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load data");
+        setError(err instanceof Error ? err.message : 'Failed to load data');
       } finally {
         setLoading(false);
       }
@@ -51,7 +51,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
 
   if (loading) {
     return (
-      <LinearGradient colors={["#071526", "#040B16"]} style={styles.bg}>
+      <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="rgba(120,255,220,0.95)" />
           <Text style={styles.loadingText}>Loading immune data...</Text>
@@ -62,7 +62,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
 
   if (error) {
     return (
-      <LinearGradient colors={["#071526", "#040B16"]} style={styles.bg}>
+      <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Error: {error}</Text>
         </View>
@@ -74,17 +74,15 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
   const latestEnergy = energyData[0];
 
   const immune = {
-    stressLevel: (latestEnergy?.bodyBatteryLevel ?? 78) > 70 ? "Low" : "Moderate",
+    stressLevel: (latestEnergy?.bodyBatteryLevel ?? 78) > 70 ? 'Low' : 'Moderate',
     bodyBattery: latestEnergy?.bodyBatteryLevel ?? 78,
   };
 
   return (
-    <LinearGradient colors={["#071526", "#040B16"]} style={styles.bg}>
+    <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Immune Support</Text>
-        <Text style={styles.subtitle}>
-          Key metrics that influence immune system function and resilience
-        </Text>
+        <Text style={styles.subtitle}>Key metrics that influence immune system function and resilience</Text>
 
         <WearableStatus status={status} />
 
@@ -101,9 +99,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
               <Text style={styles.label}>Stress level</Text>
               <Text style={styles.valueSmall}>{immune.stressLevel}</Text>
               <Text style={styles.muted}>Battery: {immune.bodyBattery}%</Text>
-              {latestEnergy && (
-                <Text style={styles.source}>{latestEnergy.source}</Text>
-              )}
+              {latestEnergy && <Text style={styles.source}>{latestEnergy.source}</Text>}
             </View>
 
             {/* HRV */}
@@ -118,12 +114,8 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
             {/* Recovery Status */}
             <View style={styles.col}>
               <Text style={styles.label}>Recovery status</Text>
-              <Text style={styles.valueSmall}>
-                {immune.bodyBattery > 70 ? "Good" : "Moderate"}
-              </Text>
-              <Text style={styles.muted}>
-                {immune.bodyBattery > 70 ? "Ready for activity" : "Need recovery"}
-              </Text>
+              <Text style={styles.valueSmall}>{immune.bodyBattery > 70 ? 'Good' : 'Moderate'}</Text>
+              <Text style={styles.muted}>{immune.bodyBattery > 70 ? 'Ready for activity' : 'Need recovery'}</Text>
             </View>
           </View>
         </View>
@@ -131,11 +123,12 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
         {/* Information card */}
         <View style={[styles.card, { marginTop: 16 }]}>
           <Text style={styles.cardTitle}>Why these metrics matter</Text>
-          
+
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>💤 Sleep</Text>
             <Text style={styles.infoText}>
-              Adequate sleep is crucial for immune function. During sleep, the body produces cytokines that help fight infection and inflammation.
+              Adequate sleep is crucial for immune function. During sleep, the body produces cytokines that help fight
+              infection and inflammation.
             </Text>
           </View>
 
@@ -162,10 +155,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
         </View>
 
         {/* Tips card */}
-        <TipsList
-          areaId={mainGoalId}
-          title="tips:immune.levels.optimization.title"
-        />
+        <TipsList areaId={mainGoalId} title="tips:immune.levels.optimization.title" />
       </ScrollView>
     </LinearGradient>
   );
@@ -179,7 +169,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 44,
-    fontWeight: "700",
+    fontWeight: '700',
     color: Colors.dark.accentStrong,
   },
   subtitle: {
@@ -189,7 +179,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   card: {
-    backgroundColor: "rgba(255,255,255,0.06)",
+    backgroundColor: 'rgba(255,255,255,0.06)',
     borderRadius: 22,
     padding: 16,
     borderWidth: 1,
@@ -198,12 +188,12 @@ const styles = StyleSheet.create({
   cardTitle: {
     color: Colors.dark.textSecondary,
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '600',
     marginBottom: 14,
   },
   row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   col: {
     flex: 1,
@@ -211,7 +201,7 @@ const styles = StyleSheet.create({
   },
   colWithDivider: {
     borderRightWidth: 1,
-    borderRightColor: "rgba(255,255,255,0.10)",
+    borderRightColor: 'rgba(255,255,255,0.10)',
   },
   label: {
     color: Colors.dark.textTertiary,
@@ -220,7 +210,7 @@ const styles = StyleSheet.create({
   valueSmall: {
     color: Colors.dark.textPrimary,
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: '700',
     marginTop: 4,
   },
   muted: {
@@ -239,7 +229,7 @@ const styles = StyleSheet.create({
   infoLabel: {
     color: Colors.dark.textSecondary,
     fontSize: 15,
-    fontWeight: "600",
+    fontWeight: '600',
     marginBottom: 6,
   },
   infoText: {
@@ -249,8 +239,8 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   loadingText: {
     color: Colors.dark.textTertiary,
@@ -259,8 +249,8 @@ const styles = StyleSheet.create({
   },
   errorContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   errorText: {
     color: Colors.dark.warmDefault,

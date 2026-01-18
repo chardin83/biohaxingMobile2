@@ -1,22 +1,22 @@
-import { SymbolView } from "expo-symbols";
-import { StyleProp, ViewStyle } from "react-native";
+import { SymbolView } from 'expo-symbols';
+import { StyleProp, ViewStyle } from 'react-native';
 
-import { ICON_SYMBOLS, IconSymbolName } from "./icon-symbol-map";
+import { ICON_SYMBOLS, IconSymbolName } from './icon-symbol-map';
 
 export function IconSymbol({
   name,
   size = 24,
   color,
   style,
-  weight = "regular",
+  weight = 'regular',
 }: {
   name: IconSymbolName;
   size?: number;
   color: string;
   style?: StyleProp<ViewStyle>;
-  weight?: "regular" | "bold";
+  weight?: 'regular' | 'bold';
 }) {
-  const sfName = ICON_SYMBOLS[name]?.sf ?? "questionmark.circle";
+  const sfName = ICON_SYMBOLS[name]?.sf ?? 'questionmark.circle';
 
   return (
     <SymbolView

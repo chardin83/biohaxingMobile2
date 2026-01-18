@@ -1,4 +1,4 @@
-import { fireEvent,render } from '@testing-library/react-native';
+import { fireEvent, render } from '@testing-library/react-native';
 import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 
@@ -125,5 +125,4 @@ describe('GoalDetailScreen', () => {
     const { getByText } = render(<GoalDetailScreen />);
     expect(getByText(/Goal not found/i)).toBeTruthy();
   });
-
 });

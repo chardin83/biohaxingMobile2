@@ -1,4 +1,4 @@
-import { fireEvent,render } from '@testing-library/react-native';
+import { fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
 
 import * as StorageContext from '../../context/StorageContext';
@@ -9,10 +9,10 @@ const mockRouterPush = jest.fn();
 
 // Mock expo-router
 jest.mock('expo-router', () => ({
-  useRouter: jest.fn(() => ({ 
+  useRouter: jest.fn(() => ({
     push: mockRouterPush,
-    replace: jest.fn(), 
-    back: jest.fn() 
+    replace: jest.fn(),
+    back: jest.fn(),
   })),
 }));
 
@@ -107,16 +107,16 @@ describe('OnboardingGoals', () => {
   it('calls setHasCompletedOnboarding and navigates when continue is pressed', () => {
     const { getByText } = render(<OnboardingGoals />);
     const continueButton = getByText('Continue');
-    
+
     fireEvent.press(continueButton);
-    
+
     expect(mockSetHasCompletedOnboarding).toHaveBeenCalledWith(true);
     expect(mockRouterPush).toHaveBeenCalledWith('/dashboard');
   });
 
   it('has proper layout structure', () => {
     const { getByText, getByTestId } = render(<OnboardingGoals />);
-    
+
     // Check that all elements are present
     expect(getByText('Select Goal')).toBeTruthy();
     expect(getByTestId('my-goals-selector')).toBeTruthy();
@@ -126,7 +126,7 @@ describe('OnboardingGoals', () => {
   it('applies correct styling to the title', () => {
     const { getByText } = render(<OnboardingGoals />);
     const titleElement = getByText('Select Goal');
-    
+
     expect(titleElement.props.style).toEqual(
       expect.objectContaining({
         fontSize: 22,
@@ -139,9 +139,9 @@ describe('OnboardingGoals', () => {
   it('handles button press correctly', () => {
     const { getByTestId } = render(<OnboardingGoals />);
     const button = getByTestId('app-button');
-    
+
     fireEvent.press(button);
-    
+
     expect(mockSetHasCompletedOnboarding).toHaveBeenCalledTimes(1);
     expect(mockRouterPush).toHaveBeenCalledTimes(1);
   });

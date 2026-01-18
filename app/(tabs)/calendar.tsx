@@ -1,11 +1,11 @@
-import React, { useRef, useState } from "react";
-import { SafeAreaView, ScrollView,StyleSheet, View } from "react-native";
+import React, { useRef, useState } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 
-import CalendarComponent from "@/components/CalendarComponent";
-import DayEdit from "@/components/DayEdit";
-import { Colors } from "@/constants/Colors";
+import CalendarComponent from '@/components/CalendarComponent';
+import DayEdit from '@/components/DayEdit';
+import { Colors } from '@/constants/Colors';
 
-import { borders } from "../theme/styles";
+import { borders } from '../theme/styles';
 
 export default function Calendar() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -21,9 +21,7 @@ export default function Calendar() {
         <CalendarComponent onDayPress={handleDayPress} ref={calendarRef} />
         {selectedDate && (
           <View style={styles.dropdownContainer}>
-            <DayEdit
-              selectedDate={selectedDate}
-            />
+            <DayEdit selectedDate={selectedDate} />
           </View>
         )}
       </ScrollView>

@@ -1,13 +1,12 @@
 export const AIPrompts = {
   insights: {
     studies: (tipInfo: string, t: (key: string) => string) =>
-      `${t("prompts:assistant.whatStudiesExist")}\n\n${tipInfo}`,
+      `${t('prompts:assistant.whatStudiesExist')}\n\n${tipInfo}`,
 
     experts: (tipInfo: string, t: (key: string) => string) =>
-      `${t("prompts:assistant.whoAreTheExperts")}\n\n${tipInfo}`,
+      `${t('prompts:assistant.whoAreTheExperts')}\n\n${tipInfo}`,
 
-    risks: (tipInfo: string, t: (key: string) => string) =>
-      `${t("prompts:assistant.whatAreTheRisks")}\n\n${tipInfo}`,
+    risks: (tipInfo: string, t: (key: string) => string) => `${t('prompts:assistant.whatAreTheRisks')}\n\n${tipInfo}`,
   },
 } as const;
 
@@ -20,9 +19,9 @@ export const AIPrompts = {
 // export type AIPromptKey = NestedKeyOf<typeof AIPrompts>;
 
 export type AIPromptKey =
-  | "insights.studies"
-  | "insights.experts"
-  | "insights.risks"
-  | "chat.welcome"
-  | "chat.introPrompt"
-  | "analysis.fileAnalysis";
+  | 'insights.studies'
+  | 'insights.experts'
+  | 'insights.risks'
+  | 'chat.welcome'
+  | 'chat.introPrompt'
+  | 'analysis.fileAnalysis';

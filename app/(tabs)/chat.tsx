@@ -1,32 +1,23 @@
-import { MaterialIcons } from "@expo/vector-icons";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { useLocalSearchParams , useRouter } from "expo-router";
-import { t } from "i18next";
-import React, { JSX, useEffect, useRef, useState } from "react";
-import {
-  Animated,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { MaterialIcons } from '@expo/vector-icons';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { t } from 'i18next';
+import React, { JSX, useEffect, useRef, useState } from 'react';
+import { Animated, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import AIInfoPopup from "@/components/AllInfoPopup";
-import BackButton from "@/components/BackButton";
-import { Colors } from "@/constants/Colors";
-import { useGPTFunctionHandler } from "@/hooks/useGPTFunctionHandler";
-import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
-import { askGPT, buildSystemPrompt } from "@/services/gptServices";
+import AIInfoPopup from '@/components/AllInfoPopup';
+import BackButton from '@/components/BackButton';
+import { Colors } from '@/constants/Colors';
+import { useGPTFunctionHandler } from '@/hooks/useGPTFunctionHandler';
+import { useKeyboardVisible } from '@/hooks/useKeyboardVisible';
+import { askGPT, buildSystemPrompt } from '@/services/gptServices';
 
-import { useStorage } from "../context/StorageContext";
-import { Message } from "../domain/Message";
+import { useStorage } from '../context/StorageContext';
+import { Message } from '../domain/Message';
 
 export default function ChatWithGPT4o(): JSX.Element {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState<string>("");
+  const [input, setInput] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const { handleGPTFunctionCall } = useGPTFunctionHandler();
   const router = useRouter();
@@ -43,9 +34,7 @@ export default function ChatWithGPT4o(): JSX.Element {
   const dot2Anim = useRef(new Animated.Value(0.4)).current;
   const dot3Anim = useRef(new Animated.Value(0.4)).current;
 
-  const parsedSupplements = supplements
-    ? (JSON.parse(supplements) as string[])
-    : [];
+  const parsedSupplements = supplements ? (JSON.parse(supplements) as string[]) : [];
 
   const tabBarHeight = useBottomTabBarHeight();
   const isKeyboardVisible = useKeyboardVisible();
@@ -114,8 +103,8 @@ export default function ChatWithGPT4o(): JSX.Element {
   useEffect(() => {
     setMessages([
       {
-        role: "assistant",
-        content: t("chat.welcomeMessage"),
+        role: 'assistant',
+        content: t('chat.welcomeMessage'),
       },
     ]);
   }, []);
@@ -123,9 +112,9 @@ export default function ChatWithGPT4o(): JSX.Element {
   useEffect(() => {
     if (initialPrompt) {
       const sendInitialPrompt = async () => {
-        const userMessage: Message = { role: "user", content: initialPrompt };
+        const userMessage: Message = { role: 'user', content: initialPrompt };
         const planOverviewMessage: Message = {
-          role: "system",
+          role: 'system',
           content: fullSystemPrompt(),
         };
 
@@ -137,15 +126,12 @@ export default function ChatWithGPT4o(): JSX.Element {
 
         try {
           const data = await askGPT(messagesToSend);
-          if (data.type === "text") {
-            const content = data.content ?? "🤖 Inget svar tillgängligt.";
-            setMessages((prev) => [...prev, { role: "assistant", content }]);
+          if (data.type === 'text') {
+            const content = data.content ?? '🤖 Inget svar tillgängligt.';
+            setMessages(prev => [...prev, { role: 'assistant', content }]);
           }
         } catch (error) {
-          setMessages((prev) => [
-            ...prev,
-            { role: "assistant", content: "Något gick fel. 😕 " + error },
-          ]);
+          setMessages(prev => [...prev, { role: 'assistant', content: 'Något gick fel. 😕 ' + error }]);
         } finally {
           setLoading(false);
         }
@@ -157,15 +143,15 @@ export default function ChatWithGPT4o(): JSX.Element {
 
   useEffect(() => {
     if (parsedSupplements.length > 0) {
-      const suppList = parsedSupplements.join(", ");
-      const introPrompt = t("chat.introPrompt", {
+      const suppList = parsedSupplements.join(', ');
+      const introPrompt = t('chat.introPrompt', {
         goal,
         supplements: suppList,
       });
 
-      const userMessage: Message = { role: "user", content: introPrompt };
+      const userMessage: Message = { role: 'user', content: introPrompt };
       const planOverviewMessage: Message = {
-        role: "system",
+        role: 'system',
         content: fullSystemPrompt(),
       };
 
@@ -176,21 +162,18 @@ export default function ChatWithGPT4o(): JSX.Element {
       const ask = async () => {
         try {
           const data = await askGPT(messagesToSend);
-          const gptReply = data.content ?? "🤖 Inget svar.";
+          const gptReply = data.content ?? '🤖 Inget svar.';
 
-          setMessages((prev) => [
+          setMessages(prev => [
             ...prev,
-            { role: "assistant", content: gptReply },
+            { role: 'assistant', content: gptReply },
             {
-              role: "assistant",
-              content: t("chat.askToAddSupplements"),
+              role: 'assistant',
+              content: t('chat.askToAddSupplements'),
             },
           ]);
         } catch (e) {
-          setMessages((prev) => [
-            ...prev,
-            { role: "assistant", content: "Fel: " + e },
-          ]);
+          setMessages(prev => [...prev, { role: 'assistant', content: 'Fel: ' + e }]);
         } finally {
           setLoading(false);
         }
@@ -212,9 +195,9 @@ export default function ChatWithGPT4o(): JSX.Element {
   const sendMessage = async (): Promise<void> => {
     if (!input.trim()) return;
 
-    const userMessage: Message = { role: "user", content: input };
+    const userMessage: Message = { role: 'user', content: input };
     const planOverviewMessage: Message = {
-      role: "system",
+      role: 'system',
       content: fullSystemPrompt(),
     };
 
@@ -222,62 +205,50 @@ export default function ChatWithGPT4o(): JSX.Element {
     const messagesToSend: Message[] = [planOverviewMessage, ...visibleMessages];
 
     setMessages(visibleMessages);
-    setInput("");
+    setInput('');
     setLoading(true);
 
     // Ge XP för meddelandet om vi har tip-kontext
     if (tipContext?.mainGoalId && tipContext?.tipId) {
-      const xpGained = addChatMessageXP(
-        tipContext.mainGoalId, 
-        tipContext.tipId
-      );
+      const xpGained = addChatMessageXP(tipContext.mainGoalId, tipContext.tipId);
       console.log(`💬 +${xpGained} XP for chatting!`);
     }
 
     try {
       const data = await askGPT(messagesToSend);
 
-      if (data.type === "text") {
-        const content = data.content ?? "🤖 Inget svar tillgängligt.";
-        setMessages((prev) => [...prev, { role: "assistant", content }]);
-      } else if (data.type === "function_call" && data.arguments) {
+      if (data.type === 'text') {
+        const content = data.content ?? '🤖 Inget svar tillgängligt.';
+        setMessages(prev => [...prev, { role: 'assistant', content }]);
+      } else if (data.type === 'function_call' && data.arguments) {
         handleGPTFunctionCall(data.arguments, setMessages);
       } else {
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: "Inget användbart svar." },
-        ]);
+        setMessages(prev => [...prev, { role: 'assistant', content: 'Inget användbart svar.' }]);
       }
     } catch (error) {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: "Något gick fel. 😕 " + error },
-      ]);
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Något gick fel. 😕 ' + error }]);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View style={{ flex: 1 }}>
         {showBackButton && <BackButton onPress={handleBack} />}
-        
+
         {/* Visa XP-indikator om vi har tip-kontext */}
         {tipContext && (
           <View style={styles.xpIndicator}>
             <Text style={styles.xpIndicatorText}>💬 +2 XP per message</Text>
           </View>
         )}
-        
+
         <ScrollView
           ref={scrollRef}
           style={{ flex: 1 }}
           keyboardShouldPersistTaps="handled"
-          onScroll={(event) => {
+          onScroll={event => {
             const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
             const distanceFromBottom = contentSize.height - layoutMeasurement.height - contentOffset.y;
             // Anses vara nära botten om mindre än 100 pixlar från botten
@@ -285,79 +256,63 @@ export default function ChatWithGPT4o(): JSX.Element {
           }}
           scrollEventThrottle={400}
           contentContainerStyle={{
-              flexGrow: 1,
-              justifyContent: "flex-end",
-              paddingBottom: tabBarHeight + 80,
-              paddingTop: showBackButton ? (tipContext ? 40 : 0) : 10,
-            }}
-          >
-            {messages.map((msg, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.messageBubble,
-                  msg.role === "user"
-                    ? styles.userBubble
-                    : styles.assistantBubble,
-                ]}
-              >
-                <Text style={styles.sender}>
-                  {msg.role === "user" ? "Du" : "GPT"}:
-                </Text>
-                <Text style={styles.messageText}>{msg.content}</Text>
-              </View>
-            ))}
-            
-            {loading && (
-              <View style={[styles.messageBubble, styles.assistantBubble]}>
-                <Text style={styles.sender}>GPT:</Text>
-                <View style={styles.typingIndicator}>
-                  <Animated.View style={[styles.typingDot, { opacity: dot1Anim }]} />
-                  <Animated.View style={[styles.typingDot, { opacity: dot2Anim }]} />
-                  <Animated.View style={[styles.typingDot, { opacity: dot3Anim }]} />
-                </View>
-              </View>
-            )}
-          </ScrollView>
-          <View
-            style={[
-              styles.inputContainer,
-              { bottom: isKeyboardVisible ? 0 : tabBarHeight },
-            ]}
-          >
-            <View style={styles.inputRow}>
-              <View style={styles.iconWrapperAdjusted}>
-                <AIInfoPopup />
-              </View>
-              <TextInput
-                value={input}
-                onChangeText={setInput}
-                placeholder="Skriv en fråga..."
-                placeholderTextColor={Colors.dark.textMuted}
-                style={styles.input}
-                onFocus={() => {
-                  // Scrolla till botten när användaren fokuserar på input
-                  setTimeout(() => {
-                    scrollRef.current?.scrollToEnd({ animated: true });
-                    isNearBottom.current = true;
-                  }, 300);
-                }}
-              />
-              <MaterialIcons
-                name="send"
-                size={32}
-                color={
-                  loading || !input.trim() ? Colors.dark.textMuted : Colors.dark.primary
-                }
-                onPress={loading || !input.trim() ? undefined : sendMessage}
-                style={styles.sendIcon}
-              />
+            flexGrow: 1,
+            justifyContent: 'flex-end',
+            paddingBottom: tabBarHeight + 80,
+            paddingTop: showBackButton ? (tipContext ? 40 : 0) : 10,
+          }}
+        >
+          {messages.map((msg, index) => (
+            <View
+              key={index}
+              style={[styles.messageBubble, msg.role === 'user' ? styles.userBubble : styles.assistantBubble]}
+            >
+              <Text style={styles.sender}>{msg.role === 'user' ? 'Du' : 'GPT'}:</Text>
+              <Text style={styles.messageText}>{msg.content}</Text>
             </View>
-            {!!errorMessage && (
-              <Text style={styles.errorText}>{errorMessage}</Text>
-            )}
+          ))}
+
+          {loading && (
+            <View style={[styles.messageBubble, styles.assistantBubble]}>
+              <Text style={styles.sender}>GPT:</Text>
+              <View style={styles.typingIndicator}>
+                <Animated.View style={[styles.typingDot, { opacity: dot1Anim }]} />
+                <Animated.View style={[styles.typingDot, { opacity: dot2Anim }]} />
+                <Animated.View style={[styles.typingDot, { opacity: dot3Anim }]} />
+              </View>
+            </View>
+          )}
+        </ScrollView>
+        <View style={[styles.inputContainer, { bottom: isKeyboardVisible ? 0 : tabBarHeight }]}>
+          <View style={styles.inputRow}>
+            <View style={styles.iconWrapperAdjusted}>
+              <AIInfoPopup />
+            </View>
+            <TextInput
+              value={input}
+              onChangeText={setInput}
+              placeholder="Skriv en fråga..."
+              placeholderTextColor={Colors.dark.textMuted}
+              style={styles.input}
+              onFocus={() => {
+                // Scrolla till botten när användaren fokuserar på input
+                setTimeout(() => {
+                  scrollRef.current?.scrollToEnd({ animated: true });
+                  isNearBottom.current = true;
+                }, 300);
+              }}
+            />
+            <MaterialIcons
+              name="send"
+              size={32}
+              color={loading || !input.trim() ? Colors.dark.textMuted : Colors.dark.primary}
+              onPress={loading || !input.trim() ? undefined : sendMessage}
+              style={styles.sendIcon}
+            />
           </View>
+          {!!errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
         </View>
+      </View>
     </KeyboardAvoidingView>
   );
 }
@@ -366,21 +321,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: Platform.OS === "ios" ? 50 : 20,
+    paddingTop: Platform.OS === 'ios' ? 50 : 20,
     backgroundColor: Colors.dark.background,
   },
   messageBubble: {
     borderRadius: 16,
     padding: 10,
     marginVertical: 5,
-    maxWidth: "80%",
+    maxWidth: '80%',
   },
   userBubble: {
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
     backgroundColor: Colors.dark.progressBar,
   },
   assistantBubble: {
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
     backgroundColor: Colors.dark.secondary,
   },
   messageText: {
@@ -388,18 +343,18 @@ const styles = StyleSheet.create({
     color: Colors.dark.text,
   },
   sender: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 5,
     color: Colors.dark.textLight,
   },
   inputContainer: {
-    position: "absolute",
+    position: 'absolute',
     left: 0,
     right: 0,
     padding: 10,
     borderTopWidth: 1,
     borderColor: Colors.dark.border,
-    backgroundColor: "rgba(0, 19, 38, 0.9)",
+    backgroundColor: 'rgba(0, 19, 38, 0.9)',
   },
   input: {
     borderWidth: 1,
@@ -415,8 +370,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   inputRow: {
-    flexDirection: "row",
-    alignItems: "flex-end",
+    flexDirection: 'row',
+    alignItems: 'flex-end',
     borderWidth: 1,
     borderColor: Colors.dark.border,
     borderRadius: 12,
@@ -427,8 +382,8 @@ const styles = StyleSheet.create({
   iconWrapperAdjusted: {
     width: 32,
     height: 40,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     marginRight: 4,
   },
   sendIcon: {
@@ -441,7 +396,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
   },
   xpIndicator: {
-    position: "absolute",
+    position: 'absolute',
     top: 50,
     right: 20,
     backgroundColor: Colors.dark.accentVeryWeak,
@@ -455,11 +410,11 @@ const styles = StyleSheet.create({
   xpIndicatorText: {
     color: Colors.dark.primary,
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   typingIndicator: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 5,
   },
   typingDot: {
@@ -470,4 +425,3 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
   },
 });
-

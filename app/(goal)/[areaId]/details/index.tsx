@@ -1,26 +1,26 @@
-import { LinearGradient } from "expo-linear-gradient";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { Pressable, ScrollView,StyleSheet, Text, View } from "react-native";
-import { Icon } from "react-native-paper";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { LinearGradient } from 'expo-linear-gradient';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Icon } from 'react-native-paper';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useStorage } from "@/app/context/StorageContext";
-import BackButton from "@/components/BackButton";
-import CreateTimeSlotModal, { CreatePlanData } from "@/components/modals/CreateTimeSlotModal";
-import { ThemedModal } from "@/components/ThemedModal";
-import AppBox from "@/components/ui/AppBox";
-import AppButton from "@/components/ui/AppButton";
-import ProgressBarWithLabel from "@/components/ui/ProgressbarWithLabel";
-import VerdictSelector from "@/components/VerdictSelector";
-import { AIPromptKey,AIPrompts } from "@/constants/AIPrompts";
-import { Colors } from "@/constants/Colors";
-import { useSupplementSaver } from "@/hooks/useSupplementSaver";
-import { areas } from "@/locales/areas";
-import { useSupplements } from "@/locales/supplements";
-import { tips } from "@/locales/tips";
-import { POSITIVE_VERDICTS } from "@/types/verdict";
+import { useStorage } from '@/app/context/StorageContext';
+import BackButton from '@/components/BackButton';
+import CreateTimeSlotModal, { CreatePlanData } from '@/components/modals/CreateTimeSlotModal';
+import { ThemedModal } from '@/components/ThemedModal';
+import AppBox from '@/components/ui/AppBox';
+import AppButton from '@/components/ui/AppButton';
+import ProgressBarWithLabel from '@/components/ui/ProgressbarWithLabel';
+import VerdictSelector from '@/components/VerdictSelector';
+import { AIPromptKey, AIPrompts } from '@/constants/AIPrompts';
+import { Colors } from '@/constants/Colors';
+import { useSupplementSaver } from '@/hooks/useSupplementSaver';
+import { areas } from '@/locales/areas';
+import { useSupplements } from '@/locales/supplements';
+import { tips } from '@/locales/tips';
+import { POSITIVE_VERDICTS } from '@/types/verdict';
 
 export default function AreaDetailScreen() {
   const { t } = useTranslation();
@@ -31,17 +31,10 @@ export default function AreaDetailScreen() {
     tipId?: string;
   }>();
   const supplements = useSupplements();
-  const {
-    addTipView,
-    incrementTipChat,
-    viewedTips,
-    setTipVerdict,
-    plans,
-    setPlans,
-  } = useStorage();
+  const { addTipView, incrementTipChat, viewedTips, setTipVerdict, plans, setPlans } = useStorage();
   const { saveSupplementToPlan } = useSupplementSaver();
 
-    // Ge XP när tips öppnas (första gången)
+  // Ge XP när tips öppnas (första gången)
   React.useEffect(() => {
     if (areaId && tipId) {
       const xpGained = addTipView(areaId, tipId);
@@ -50,12 +43,10 @@ export default function AreaDetailScreen() {
       }
     }
   }, [areaId, tipId]);
-  
-  const mainArea = areas.find((g) => g.id === areaId);
+
+  const mainArea = areas.find(g => g.id === areaId);
   const findTip = (tipId: string | undefined, areaId: string) => {
-    return tipId
-      ? tips.find((t) => t.id === tipId)
-      : tips.find((t) => t.areas.some((a) => a.id === areaId));
+    return tipId ? tips.find(t => t.id === tipId) : tips.find(t => t.areas.some(a => a.id === areaId));
   };
 
   const tip = findTip(tipId, areaId);
@@ -66,7 +57,7 @@ export default function AreaDetailScreen() {
   const [createPlanVisible, setCreatePlanVisible] = React.useState(false);
   const [expandedSupplements, setExpandedSupplements] = React.useState<string[]>([]);
 
-  const goalIcon = mainArea?.icon ?? "target";
+  const goalIcon = mainArea?.icon ?? 'target';
   // Använd resolvedSupplements (nedan) för att hämta visningsnamn
   const notFound = !mainArea || !tip;
 
@@ -85,44 +76,34 @@ export default function AreaDetailScreen() {
     return options;
   }, [planCategory, tip?.planCategoryOptions]);
 
-  const isTrainingTip = availablePlanCategories.includes("training");
-  const isNutritionTip = availablePlanCategories.includes("nutrition");
+  const isTrainingTip = availablePlanCategories.includes('training');
+  const isNutritionTip = availablePlanCategories.includes('nutrition');
   const effectiveTipId = tipId ?? tip?.id ?? null;
 
   const getDefaultPlanCategory = React.useCallback(() => {
-    if (planCategory === "training" || planCategory === "nutrition") {
+    if (planCategory === 'training' || planCategory === 'nutrition') {
       return planCategory;
     }
 
-    const fallbackOption = availablePlanCategories.find((option) =>
-      option === "training" || option === "nutrition"
-    );
+    const fallbackOption = availablePlanCategories.find(option => option === 'training' || option === 'nutrition');
 
     return fallbackOption;
   }, [planCategory, availablePlanCategories]);
 
   const isTipInPlanCategory = React.useCallback(
-    (target: "training" | "nutrition") => {
+    (target: 'training' | 'nutrition') => {
       if (!effectiveTipId) return false;
-      const list = target === "training" ? trainingPlans : nutritionPlans;
-      return list.some((entry) => entry.tipId === effectiveTipId);
+      const list = target === 'training' ? trainingPlans : nutritionPlans;
+      return list.some(entry => entry.tipId === effectiveTipId);
     },
     [effectiveTipId, nutritionPlans, trainingPlans]
   );
 
-  const isTipInTrainingPlan = React.useMemo(
-    () => isTipInPlanCategory("training"),
-    [isTipInPlanCategory]
-  );
-  const isTipInNutritionPlan = React.useMemo(
-    () => isTipInPlanCategory("nutrition"),
-    [isTipInPlanCategory]
-  );
+  const isTipInTrainingPlan = React.useMemo(() => isTipInPlanCategory('training'), [isTipInPlanCategory]);
+  const isTipInNutritionPlan = React.useMemo(() => isTipInPlanCategory('nutrition'), [isTipInPlanCategory]);
 
   // Hitta vilka frågor som redan ställts
-  const currentTip = viewedTips?.find(
-    (v) => v.mainGoalId === areaId && v.tipId === tipId
-  );
+  const currentTip = viewedTips?.find(v => v.mainGoalId === areaId && v.tipId === tipId);
   const askedQuestions = currentTip?.askedQuestions || [];
   const totalXpEarned = currentTip?.xpEarned || 0;
   const currentVerdict = currentTip?.verdict;
@@ -137,30 +118,26 @@ export default function AreaDetailScreen() {
     : null;
   const preferredDayPartLabels = React.useMemo(() => {
     if (!tip?.preferredDayParts?.length) return [] as string[];
-    return tip.preferredDayParts.map((part) =>
-      t(`common:goalDetails.preferredDayParts.${part}`)
-    );
+    return tip.preferredDayParts.map(part => t(`common:goalDetails.preferredDayParts.${part}`));
   }, [tip?.preferredDayParts, t]);
-  const timeRuleLabel = tip?.timeRule
-    ? t(`common:goalDetails.timeRules.${tip.timeRule}`)
-    : null;
+  const timeRuleLabel = tip?.timeRule ? t(`common:goalDetails.timeRules.${tip.timeRule}`) : null;
   const nutritionFoodsTitle = React.useMemo(() => {
     if (!tip?.id || !tip.nutritionFoods?.length) return null;
     return t(`tips:${tip.id}.nutritionFoods.title`, {
-      defaultValue: t("plan.nutritionHeader"),
+      defaultValue: t('plan.nutritionHeader'),
     });
   }, [tip?.id, tip?.nutritionFoods, t]);
 
   const nutritionFoodItems = React.useMemo(() => {
     if (!tip?.nutritionFoods?.length || !tip.id) return [] as { key: string; name: string; details: string }[];
-    return tip.nutritionFoods.map((food) => {
+    return tip.nutritionFoods.map(food => {
       const itemKey = food.key;
       const detailKey = food.detailsKey ?? itemKey;
       const name = t(`tips:${tip.id}.nutritionFoods.items.${itemKey}.name`, {
         defaultValue: itemKey,
       });
       const details = t(`tips:${tip.id}.nutritionFoods.items.${detailKey}.details`, {
-        defaultValue: "",
+        defaultValue: '',
       });
       return {
         key: `${itemKey}:${detailKey}`,
@@ -173,16 +150,14 @@ export default function AreaDetailScreen() {
   // Lös upp tip.supplements (id-referenser) till fulla supplement-objekt från översättningarna
   const resolvedSupplements = React.useMemo(() => {
     if (!tip?.supplements?.length) return [] as any[];
-    return (tip.supplements
-      .map((ref) => supplements?.find((s) => s.id === ref.id))
-      .filter(Boolean) as any[]);
+    return tip.supplements.map(ref => supplements?.find(s => s.id === ref.id)).filter(Boolean) as any[];
   }, [tip?.supplements, supplements]);
 
   const plannedSupplements = React.useMemo(() => {
     const ids = new Set<string>();
     const names = new Set<string>();
-    supplementPlans.forEach((plan) => {
-      plan.supplements?.forEach((supplement) => {
+    supplementPlans.forEach(plan => {
+      plan.supplements?.forEach(supplement => {
         if (supplement.id) ids.add(supplement.id);
         if (supplement.name) names.add(supplement.name);
       });
@@ -196,47 +171,34 @@ export default function AreaDetailScreen() {
       const supplementId = supplement.id;
       const supplementName = supplement.name;
       return (
-        (typeof supplementId === "string" && plannedSupplements.ids.has(supplementId)) ||
-        (typeof supplementName === "string" && plannedSupplements.names.has(supplementName))
+        (typeof supplementId === 'string' && plannedSupplements.ids.has(supplementId)) ||
+        (typeof supplementName === 'string' && plannedSupplements.names.has(supplementName))
       );
     });
   }, [plannedSupplements, resolvedSupplements]);
 
   const planBadgeLabel = React.useMemo(() => {
     if (isNutritionTip && isTipInNutritionPlan) {
-      return t("plan.alreadyInPlanNutrition");
+      return t('plan.alreadyInPlanNutrition');
     }
 
     if (isTrainingTip && isTipInTrainingPlan) {
-      return t("plan.alreadyInPlanTraining");
+      return t('plan.alreadyInPlanTraining');
     }
 
     if (isTipSupplementScheduled) {
-      return t("plan.alreadyInPlanSupplement");
+      return t('plan.alreadyInPlanSupplement');
     }
 
-    return t("plan.alreadyInPlan");
-  }, [
-    isNutritionTip,
-    isTipInNutritionPlan,
-    isTrainingTip,
-    isTipInTrainingPlan,
-    isTipSupplementScheduled,
-    t,
-  ]);
+    return t('plan.alreadyInPlan');
+  }, [isNutritionTip, isTipInNutritionPlan, isTrainingTip, isTipInTrainingPlan, isTipSupplementScheduled, t]);
 
   const isTipInPlan = React.useMemo(() => {
     if (isTrainingTip && isTipInTrainingPlan) return true;
     if (isNutritionTip && isTipInNutritionPlan) return true;
     if (isTipSupplementScheduled) return true;
     return false;
-  }, [
-    isTrainingTip,
-    isNutritionTip,
-    isTipInTrainingPlan,
-    isTipInNutritionPlan,
-    isTipSupplementScheduled,
-  ]);
+  }, [isTrainingTip, isNutritionTip, isTipInTrainingPlan, isTipInNutritionPlan, isTipSupplementScheduled]);
 
   const showTopPlanAction = React.useMemo(() => {
     if (isTrainingTip) return true;
@@ -253,13 +215,11 @@ export default function AreaDetailScreen() {
       return;
     }
 
-    const listKey = targetCategory === "training" ? "training" : "nutrition";
+    const listKey = targetCategory === 'training' ? 'training' : 'nutrition';
 
-    setPlans((prev) => {
+    setPlans(prev => {
       const existingList = prev[listKey];
-      const exists = existingList.some(
-        (entry) => entry.tipId === effectiveTipId && entry.mainGoalId === areaId
-      );
+      const exists = existingList.some(entry => entry.tipId === effectiveTipId && entry.mainGoalId === areaId);
 
       if (exists) {
         return prev;
@@ -280,7 +240,9 @@ export default function AreaDetailScreen() {
   };
 
   // Hantera verdict-klick
-  const handleVerdictPress = (verdict: "interested" | "startNow" | "wantMore" | "alreadyWorks" | "notInterested" | "noResearch" | "testedFailed") => {
+  const handleVerdictPress = (
+    verdict: 'interested' | 'startNow' | 'wantMore' | 'alreadyWorks' | 'notInterested' | 'noResearch' | 'testedFailed'
+  ) => {
     if (areaId && tipId) {
       const xpGained = setTipVerdict(areaId, tipId, verdict as any);
       if (xpGained > 0) {
@@ -292,29 +254,30 @@ export default function AreaDetailScreen() {
   // Beräkna progress baserat på unika frågor
   const maxChats = 3;
   const progress = Math.min(askedQuestions.length / maxChats, 1);
-  const progressLabel = askedQuestions.length >= maxChats 
-    ? t("common:goalDetails.fullyExplored") || "Fully Explored! 🎉"
-    : `${askedQuestions.length}/${maxChats} questions explored`;
+  const progressLabel =
+    askedQuestions.length >= maxChats
+      ? t('common:goalDetails.fullyExplored') || 'Fully Explored! 🎉'
+      : `${askedQuestions.length}/${maxChats} questions explored`;
 
   const handleAIInsightPress = (questionKey: AIPromptKey) => {
     const tipTranslation = t(`tips:${titleKey}`);
     const informationTranslation = t(`tips:${descriptionKey}`) || '';
     const tipInfo = `Tip: ${tipTranslation}\nInformation: ${informationTranslation}`;
-    
+
     let fullPrompt = '';
 
     // Använd AIPromptKey för att välja rätt prompt
-    if (questionKey === "insights.studies") {
+    if (questionKey === 'insights.studies') {
       fullPrompt = AIPrompts.insights.studies(tipInfo, t);
-    } else if (questionKey === "insights.experts") {
+    } else if (questionKey === 'insights.experts') {
       fullPrompt = AIPrompts.insights.experts(tipInfo, t);
-    } else if (questionKey === "insights.risks") {
+    } else if (questionKey === 'insights.risks') {
       fullPrompt = AIPrompts.insights.risks(tipInfo, t);
     }
 
     // Ge XP för att chatta om tipset (om det är första gången för denna fråga)
     if (areaId && tipId) {
-      const xpGained = incrementTipChat(areaId, tipId, questionKey.split(".")[1]); // Skicka bara "studies", "experts", eller "risks"
+      const xpGained = incrementTipChat(areaId, tipId, questionKey.split('.')[1]); // Skicka bara "studies", "experts", eller "risks"
       if (xpGained > 0) {
         console.log(`🎉 You gained ${xpGained} XP for exploring this question!`);
       } else {
@@ -323,7 +286,7 @@ export default function AreaDetailScreen() {
     }
 
     router.push({
-      pathname: "/(tabs)/chat",
+      pathname: '/(tabs)/chat',
       params: {
         initialPrompt: fullPrompt,
         returnPath: `/(goal)/${areaId}/details`,
@@ -353,10 +316,8 @@ export default function AreaDetailScreen() {
   };
 
   const toggleSupplementInfo = (supplementId: string) => {
-    setExpandedSupplements((prev) =>
-      prev.includes(supplementId)
-        ? prev.filter((id) => id !== supplementId)
-        : [...prev, supplementId]
+    setExpandedSupplements(prev =>
+      prev.includes(supplementId) ? prev.filter(id => id !== supplementId) : [...prev, supplementId]
     );
   };
 
@@ -370,10 +331,10 @@ export default function AreaDetailScreen() {
   }
 
   return (
-    <LinearGradient colors={["#071526", "#040B16"]} style={{ flex: 1 }}>
+    <LinearGradient colors={['#071526', '#040B16']} style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
         <BackButton onPress={() => router.replace(`/(goal)/${areaId}`)} />
-        
+
         <ScrollView
           contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 140, flexGrow: 1 }]}
           keyboardShouldPersistTaps="handled"
@@ -384,40 +345,27 @@ export default function AreaDetailScreen() {
             <View style={styles.iconWrapper}>
               <Icon source={goalIcon} size={50} color={Colors.dark.primary} />
             </View>
-            <Text style={styles.subTitle}>
-              {resolvedSupplements[0]?.name ?? t(`tips:${titleKey}`)}
-            </Text>
+            <Text style={styles.subTitle}>{resolvedSupplements[0]?.name ?? t(`tips:${titleKey}`)}</Text>
             {isFavorite && (
               <View style={styles.favoriteChip}>
-                <Text style={styles.favoriteChipText}>★ {t("common:dashboard.favorite", "Favorite")}</Text>
+                <Text style={styles.favoriteChipText}>★ {t('common:dashboard.favorite', 'Favorite')}</Text>
               </View>
             )}
-            <Text style={styles.xpText}>
-              {totalXpEarned} XP earned
-            </Text>
-            
+            <Text style={styles.xpText}>{totalXpEarned} XP earned</Text>
+
             {/* Progress bar baserad på chat count */}
-            <ProgressBarWithLabel
-              progress={progress}
-              label={progressLabel}
-            />
+            <ProgressBarWithLabel progress={progress} label={progressLabel} />
 
             {showTopPlanAction && (
               <View style={styles.planActionContainer}>
                 {isTipInPlan ? (
                   <View style={styles.planActionAdded}>
                     <Icon source="check" size={18} color={Colors.dark.primary} />
-                    <Text style={styles.planActionAddedText}>
-                      {planBadgeLabel}
-                    </Text>
+                    <Text style={styles.planActionAddedText}>{planBadgeLabel}</Text>
                   </View>
                 ) : (
                   <AppButton
-                    title={
-                      isTrainingTip
-                        ? t("plan.addTrainingGoal")
-                        : t("plan.addNutritionGoal")
-                    }
+                    title={isTrainingTip ? t('plan.addTrainingGoal') : t('plan.addNutritionGoal')}
                     onPress={handleAddTipPlanEntry}
                     variant="primary"
                     style={styles.planActionButton}
@@ -428,22 +376,20 @@ export default function AreaDetailScreen() {
           </View>
 
           {descriptionKey && (
-            <AppBox title={t("common:goalDetails.information")}>
-              <Text style={{ color: Colors.dark.textLight, marginBottom: 8 }}>
-                {t(`tips:${descriptionKey}`)}
-              </Text>
+            <AppBox title={t('common:goalDetails.information')}>
+              <Text style={{ color: Colors.dark.textLight, marginBottom: 8 }}>{t(`tips:${descriptionKey}`)}</Text>
             </AppBox>
           )}
 
           {trainingRelationLabel && (
-            <AppBox title={t("common:goalDetails.trainingRelation.title")}>
+            <AppBox title={t('common:goalDetails.trainingRelation.title')}>
               <Text style={styles.metaText}>{trainingRelationLabel}</Text>
             </AppBox>
           )}
 
           {preferredDayPartLabels.length > 0 && (
-            <AppBox title={t("common:goalDetails.preferredDayParts.title")}>
-              {preferredDayPartLabels.map((label) => (
+            <AppBox title={t('common:goalDetails.preferredDayParts.title')}>
+              {preferredDayPartLabels.map(label => (
                 <Text key={label} style={styles.metaText}>
                   • {label}
                 </Text>
@@ -452,7 +398,7 @@ export default function AreaDetailScreen() {
           )}
 
           {timeRuleLabel && (
-            <AppBox title={t("common:goalDetails.timeRules.title")}>
+            <AppBox title={t('common:goalDetails.timeRules.title')}>
               <Text style={styles.metaText}>{timeRuleLabel}</Text>
             </AppBox>
           )}
@@ -462,9 +408,7 @@ export default function AreaDetailScreen() {
               {nutritionFoodItems.map(({ key, name, details }) => (
                 <View key={key} style={styles.nutritionItem}>
                   <Text style={styles.metaText}>• {name}</Text>
-                  {details ? (
-                    <Text style={styles.nutritionDetailText}>{details}</Text>
-                  ) : null}
+                  {details ? <Text style={styles.nutritionDetailText}>{details}</Text> : null}
                 </View>
               ))}
               <View style={[styles.planActionContainer, styles.nutritionPlanAction]}>
@@ -475,7 +419,7 @@ export default function AreaDetailScreen() {
                   </View>
                 ) : (
                   <AppButton
-                    title={t("plan.addNutritionGoal")}
+                    title={t('plan.addNutritionGoal')}
                     onPress={handleAddTipPlanEntry}
                     variant="primary"
                     style={styles.planActionButton}
@@ -487,19 +431,12 @@ export default function AreaDetailScreen() {
 
           {tip?.areas.length ? (
             <>
-              <Text style={styles.relevanceHeading}>
-                {t("common:goalDetails.relevance")}
-              </Text>
+              <Text style={styles.relevanceHeading}>{t('common:goalDetails.relevance')}</Text>
 
-             
-
-              {(showAllAreas ? tip.areas : tip.areas.filter((a) => a.id === areaId)).map((a) => {
+              {(showAllAreas ? tip.areas : tip.areas.filter(a => a.id === areaId)).map(a => {
                 const areaTitle = t(`areas:${a.id}.title`);
                 return (
-                  <AppBox
-                    key={a.id}
-                    title={areaTitle}
-                  >
+                  <AppBox key={a.id} title={areaTitle}>
                     <Text style={{ color: Colors.dark.textLight, marginBottom: 8 }}>
                       {t(`tips:${a.descriptionKey}`)}
                     </Text>
@@ -509,89 +446,75 @@ export default function AreaDetailScreen() {
             </>
           ) : null}
 
-           {tip.areas.length > 1 && (
-                <Pressable
-                  onPress={() => {
-                    setShowAllAreas((v) => {
-                      const next = !v;
-                      // När vi visar alla areas, ge XP för dessa också (första gången)
-                      if (next && effectiveTipId && tip?.areas?.length) {
-                        tip.areas.forEach((a) => {
-                          if (a.id !== areaId) {
-                            const xpGained = addTipView(a.id, effectiveTipId);
-                            if (xpGained > 0) {
-                              console.log(`🎉 You gained ${xpGained} XP for viewing tip in area ${a.id} via Show All`);
-                            }
-                          }
-                        });
+          {tip.areas.length > 1 && (
+            <Pressable
+              onPress={() => {
+                setShowAllAreas(v => {
+                  const next = !v;
+                  // När vi visar alla areas, ge XP för dessa också (första gången)
+                  if (next && effectiveTipId && tip?.areas?.length) {
+                    tip.areas.forEach(a => {
+                      if (a.id !== areaId) {
+                        const xpGained = addTipView(a.id, effectiveTipId);
+                        if (xpGained > 0) {
+                          console.log(`🎉 You gained ${xpGained} XP for viewing tip in area ${a.id} via Show All`);
+                        }
                       }
-                      return next;
                     });
-                  }}
-                  style={styles.showAllButton}
-                >
-                  <Text style={styles.showAllText}>
-                    {showAllAreas ? t("common:goalDetails.showLess") : t("common:goalDetails.showAll")}
-                  </Text>
-                </Pressable>
-              )}
+                  }
+                  return next;
+                });
+              }}
+              style={styles.showAllButton}
+            >
+              <Text style={styles.showAllText}>
+                {showAllAreas ? t('common:goalDetails.showLess') : t('common:goalDetails.showAll')}
+              </Text>
+            </Pressable>
+          )}
 
           <AppBox title={t(`common:goalDetails.aiInsights`)}>
-            <Pressable 
-              onPress={() => handleAIInsightPress("insights.studies")}
-              style={[
-                styles.insightButton,
-                isQuestionAsked("studies") && styles.insightButtonAsked
-              ]}
+            <Pressable
+              onPress={() => handleAIInsightPress('insights.studies')}
+              style={[styles.insightButton, isQuestionAsked('studies') && styles.insightButtonAsked]}
             >
               <Text style={styles.insightText}>
-                {isQuestionAsked("studies") ? "✅" : "📚"} {t("common:goalDetails.whatStudiesExist")}
-                {!isQuestionAsked("studies") && " (+5 XP)"}
+                {isQuestionAsked('studies') ? '✅' : '📚'} {t('common:goalDetails.whatStudiesExist')}
+                {!isQuestionAsked('studies') && ' (+5 XP)'}
               </Text>
             </Pressable>
-            
-            <Pressable 
-              onPress={() => handleAIInsightPress("insights.experts")}
-              style={[
-                styles.insightButton,
-                isQuestionAsked("experts") && styles.insightButtonAsked
-              ]}
+
+            <Pressable
+              onPress={() => handleAIInsightPress('insights.experts')}
+              style={[styles.insightButton, isQuestionAsked('experts') && styles.insightButtonAsked]}
             >
               <Text style={styles.insightText}>
-                {isQuestionAsked("experts") ? "✅" : "👥"} {t("common:goalDetails.whoAreTheExperts")}
-                {!isQuestionAsked("experts") && " (+5 XP)"}
+                {isQuestionAsked('experts') ? '✅' : '👥'} {t('common:goalDetails.whoAreTheExperts')}
+                {!isQuestionAsked('experts') && ' (+5 XP)'}
               </Text>
             </Pressable>
-            
-            <Pressable 
-              onPress={() => handleAIInsightPress("insights.risks")}
-              style={[
-                styles.insightButton,
-                isQuestionAsked("risks") && styles.insightButtonAsked
-              ]}
+
+            <Pressable
+              onPress={() => handleAIInsightPress('insights.risks')}
+              style={[styles.insightButton, isQuestionAsked('risks') && styles.insightButtonAsked]}
             >
               <Text style={styles.insightText}>
-                {isQuestionAsked("risks") ? "✅" : "⚠️"} {t("common:goalDetails.whatAreTheRisks")}
-                {!isQuestionAsked("risks") && " (+5 XP)"}
+                {isQuestionAsked('risks') ? '✅' : '⚠️'} {t('common:goalDetails.whatAreTheRisks')}
+                {!isQuestionAsked('risks') && ' (+5 XP)'}
               </Text>
             </Pressable>
           </AppBox>
 
-          <VerdictSelector 
-            currentVerdict={currentVerdict}
-            onVerdictPress={handleVerdictPress}
-          />
+          <VerdictSelector currentVerdict={currentVerdict} onVerdictPress={handleVerdictPress} />
 
           {/* Visa kosttillskott och knapp om det finns referenser */}
           {resolvedSupplements.length > 0 && (
-            <AppBox title={t("common:goalDetails.supplements")}>
+            <AppBox title={t('common:goalDetails.supplements')}>
               {resolvedSupplements.map((supplement: any) => {
                 const supplementId = supplement.id || supplement.name;
                 const alreadyPlanned =
-                  plannedSupplements.ids.has(supplement.id) ||
-                  plannedSupplements.names.has(supplement.name);
-                const isExpanded =
-                  !!supplement.description && expandedSupplements.includes(supplementId);
+                  plannedSupplements.ids.has(supplement.id) || plannedSupplements.names.has(supplement.name);
+                const isExpanded = !!supplement.description && expandedSupplements.includes(supplementId);
 
                 return (
                   <View key={supplementId} style={styles.supplementContainer}>
@@ -611,18 +534,16 @@ export default function AreaDetailScreen() {
                             style={styles.supplementInfoRow}
                           >
                             <Icon
-                              source={isExpanded ? "information" : "information-outline"}
+                              source={isExpanded ? 'information' : 'information-outline'}
                               size={14}
                               color={Colors.dark.primary}
                             />
                             <Text style={styles.supplementInfoText}>
-                              {isExpanded
-                                ? t("common:goalDetails.lessInfo")
-                                : t("common:goalDetails.moreInfo")}
+                              {isExpanded ? t('common:goalDetails.lessInfo') : t('common:goalDetails.moreInfo')}
                             </Text>
                           </Pressable>
                         ) : null}
-                        </View>
+                      </View>
                       {alreadyPlanned ? (
                         <View style={styles.supplementCheck}>
                           <Icon source="check" size={22} color={Colors.dark.primary} />
@@ -630,7 +551,7 @@ export default function AreaDetailScreen() {
                       ) : (
                         <AppButton
                           title="+"
-                          accessibilityLabel={t("common:goalDetails.addToPlan")}
+                          accessibilityLabel={t('common:goalDetails.addToPlan')}
                           onPress={() => handleOpenAddToPlan(supplement)}
                           variant="primary"
                         />
@@ -647,15 +568,16 @@ export default function AreaDetailScreen() {
           {/* Modal: välj tidpunkt + lista planer */}
           <ThemedModal
             visible={addToPlanVisible}
-            title={t("plan.addSupplement")}
-            onClose={() => { setAddToPlanVisible(false); setPendingSupplement(null); }}
+            title={t('plan.addSupplement')}
+            onClose={() => {
+              setAddToPlanVisible(false);
+              setPendingSupplement(null);
+            }}
             showCancelButton
           >
-            <View style={{ width: "100%" }}>
-              <Text style={{ color: Colors.dark.textLight, marginBottom: 10 }}>
-                {t("dayEdit.chooseTime")}
-              </Text>
-              {supplementPlans.map((p) => (
+            <View style={{ width: '100%' }}>
+              <Text style={{ color: Colors.dark.textLight, marginBottom: 10 }}>{t('dayEdit.chooseTime')}</Text>
+              {supplementPlans.map(p => (
                 <View key={p.name} style={{ marginBottom: 8 }}>
                   <AppButton
                     title={`${p.name} (${p.prefferedTime})`}
@@ -666,7 +588,7 @@ export default function AreaDetailScreen() {
               ))}
               <View style={{ marginTop: 12 }}>
                 <AppButton
-                  title={t("plan.addTimeSlot")}
+                  title={t('plan.addTimeSlot')}
                   onPress={() => {
                     // Stäng denna modal innan vi öppnar skapa-plan modal
                     setAddToPlanVisible(false);
@@ -709,31 +631,31 @@ export default function AreaDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.dark.background,
-    alignItems: "center",
-    justifyContent: "flex-start",
+    alignItems: 'center',
+    justifyContent: 'flex-start',
     padding: 20,
     paddingTop: 10,
   },
   topSection: {
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: 16,
   },
   planActionContainer: {
-    width: "100%",
+    width: '100%',
     marginTop: 16,
-    alignSelf: "stretch",
+    alignSelf: 'stretch',
   },
   nutritionPlanAction: {
     marginTop: 12,
   },
   planActionButton: {
-    alignSelf: "stretch",
+    alignSelf: 'stretch',
   },
   planActionAdded: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "stretch",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    justifyContent: 'center',
     backgroundColor: Colors.dark.accentVeryWeak,
     borderRadius: 12,
     paddingVertical: 10,
@@ -741,7 +663,7 @@ const styles = StyleSheet.create({
   },
   planActionAddedText: {
     color: Colors.dark.primary,
-    fontWeight: "600",
+    fontWeight: '600',
     fontSize: 14,
     marginLeft: 6,
   },
@@ -751,13 +673,13 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     borderColor: Colors.dark.borderLight,
     borderWidth: 2,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 10,
   },
   favoriteChip: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 6,
     backgroundColor: Colors.dark.accentWeak,
@@ -766,20 +688,20 @@ const styles = StyleSheet.create({
   },
   favoriteChipText: {
     color: Colors.dark.primary,
-    fontWeight: "700",
+    fontWeight: '700',
     fontSize: 13,
   },
   notFound: {
     fontSize: 18,
-    color: "white",
-    textAlign: "center",
+    color: 'white',
+    textAlign: 'center',
     marginTop: 20,
   },
   goalTitle: {
     fontSize: 22,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: Colors.dark.primary,
-    textTransform: "uppercase",
+    textTransform: 'uppercase',
     marginBottom: 10,
     marginTop: 20,
   },
@@ -794,20 +716,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   buttonRow: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 16,
-    marginTop: "auto",
+    marginTop: 'auto',
   },
   analyzeWrapper: {
-    alignItems: "center",
-    flexDirection: "column",
+    alignItems: 'center',
+    flexDirection: 'column',
     maxWidth: 180,
   },
   disabledHint: {
     fontSize: 12,
     color: Colors.dark.textLight,
     marginTop: 6,
-    textAlign: "center",
+    textAlign: 'center',
   },
   insightButton: {
     paddingVertical: 12,
@@ -828,14 +750,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   relevanceHeading: {
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
     color: Colors.dark.textPrimary,
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: '700',
     marginBottom: 6,
   },
   showAllButton: {
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
     paddingHorizontal: 10,
     marginTop: -10,
     marginBottom: 40,
@@ -843,19 +765,19 @@ const styles = StyleSheet.create({
   showAllText: {
     color: Colors.dark.accentDefault,
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   supplementContainer: {
-    width: "100%",
+    width: '100%',
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: Colors.dark.border,
   },
   supplementRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
   },
   supplementNameColumn: {
     flex: 1,
@@ -867,7 +789,7 @@ const styles = StyleSheet.create({
   },
   addToCalendarText: {
     color: Colors.dark.primary,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     fontSize: 14,
   },
   metaText: {
@@ -876,7 +798,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   nutritionItem: {
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
     marginBottom: 8,
   },
   nutritionDetailText: {
@@ -891,8 +813,8 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   supplementInfoRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 2,
   },
   supplementInfoText: {
@@ -906,4 +828,3 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
 });
-

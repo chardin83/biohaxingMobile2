@@ -1,4 +1,4 @@
-import { act,fireEvent, render, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import { MenuProvider } from 'react-native-popup-menu';
 
@@ -19,16 +19,21 @@ jest.mock('react-i18next', () => ({
     t: (key: string, options?: any) => {
       const translations: { [key: string]: any } = {
         'monthNames': [
-          'January', 'February', 'March', 'April', 'May', 'June',
-          'July', 'August', 'September', 'October', 'November', 'December'
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
         ],
-        'monthNamesShort': [
-          'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-        ],
-        'dayNames': [
-          'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
-        ],
+        'monthNamesShort': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        'dayNames': ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
         'dayNamesShort': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
         'today': 'Today',
         'general.add': 'Add',
@@ -39,7 +44,7 @@ jest.mock('react-i18next', () => ({
         'dayEdit.choosePlan': 'Choose Plan',
         'general.cancel': 'Cancel',
       };
-      
+
       if (options?.returnObjects) {
         return translations[key] || key;
       }
@@ -69,23 +74,18 @@ jest.mock('react-native-calendars', () => ({
     return (
       <View testID="real-calendar">
         <Text>Calendar Component</Text>
-        <TouchableOpacity 
-          testID="calendar-day-2024-01-15" 
-          onPress={() => onDayPress({ dateString: '2024-01-15' })}
-        >
+        <TouchableOpacity testID="calendar-day-2024-01-15" onPress={() => onDayPress({ dateString: '2024-01-15' })}>
           <Text>Jan 15</Text>
         </TouchableOpacity>
-        <TouchableOpacity 
-          testID="calendar-day-2024-01-16" 
-          onPress={() => onDayPress({ dateString: '2024-01-16' })}
-        >
+        <TouchableOpacity testID="calendar-day-2024-01-16" onPress={() => onDayPress({ dateString: '2024-01-16' })}>
           <Text>Jan 16</Text>
         </TouchableOpacity>
-        {markedDates && Object.keys(markedDates).map(date => (
-          <Text key={date} testID={`marked-${date}`}>
-            Marked: {date}
-          </Text>
-        ))}
+        {markedDates &&
+          Object.keys(markedDates).map(date => (
+            <Text key={date} testID={`marked-${date}`}>
+              Marked: {date}
+            </Text>
+          ))}
       </View>
     );
   },
@@ -102,10 +102,7 @@ jest.mock('@react-native-community/datetimepicker', () => {
     return (
       <View testID="time-picker">
         <Text>Time: {value.toTimeString().slice(0, 5)}</Text>
-        <TouchableOpacity
-          testID="time-picker-change"
-          onPress={() => onChange(null, new Date('2024-01-15T14:30:00'))}
-        >
+        <TouchableOpacity testID="time-picker-change" onPress={() => onChange(null, new Date('2024-01-15T14:30:00'))}>
           <Text>Change Time</Text>
         </TouchableOpacity>
       </View>
@@ -156,9 +153,7 @@ jest.mock('@/components/NutritionLogger', () => {
 const renderWithStorageProvider = (children: React.ReactNode) => {
   return render(
     <MenuProvider>
-      <StorageProvider>
-        {children}
-      </StorageProvider>
+      <StorageProvider>{children}</StorageProvider>
     </MenuProvider>
   );
 };
@@ -170,7 +165,7 @@ describe('Calendar Integration Tests', () => {
 
   it('renders calendar with real CalendarComponent integration', async () => {
     const { getByTestId } = renderWithStorageProvider(<Calendar />);
-    
+
     await waitFor(() => {
       expect(getByTestId('real-calendar')).toBeTruthy();
     });
@@ -178,15 +173,15 @@ describe('Calendar Integration Tests', () => {
 
   it('integrates calendar day selection with DayEdit component', async () => {
     const { getByTestId, queryByText } = renderWithStorageProvider(<Calendar />);
-    
+
     // Initially no DayEdit should be visible with supplements tab
     expect(queryByText('TILLSKOTT')).toBeNull();
-    
+
     // Select a day on the calendar
     await act(async () => {
       fireEvent.press(getByTestId('calendar-day-2024-01-15'));
     });
-    
+
     // DayEdit should now be visible with tabs
     await waitFor(() => {
       expect(queryByText('TILLSKOTT')).toBeTruthy();
@@ -196,22 +191,22 @@ describe('Calendar Integration Tests', () => {
 
   it('allows adding supplements through the full workflow', async () => {
     const { getByTestId, getByText, queryByText } = renderWithStorageProvider(<Calendar />);
-    
+
     // Select a day
     await act(async () => {
       fireEvent.press(getByTestId('calendar-day-2024-01-15'));
     });
-    
+
     // Wait for DayEdit to appear
     await waitFor(() => {
       expect(queryByText('TILLSKOTT')).toBeTruthy();
     });
-    
+
     // Click add supplement through dropdown menu
     await act(async () => {
       fireEvent.press(getByText('Add'));
     });
-    
+
     // Verify the add functionality is available
     await waitFor(() => {
       expect(queryByText('Add')).toBeTruthy();
@@ -220,26 +215,26 @@ describe('Calendar Integration Tests', () => {
 
   it('manages supplement state through storage context', async () => {
     const { getByTestId, queryByText } = renderWithStorageProvider(<Calendar />);
-    
+
     // Select a day and verify DayEdit appears
     await act(async () => {
       fireEvent.press(getByTestId('calendar-day-2024-01-15'));
     });
-    
+
     await waitFor(() => {
       expect(queryByText('TILLSKOTT')).toBeTruthy();
     });
-    
+
     // Switch to another day
     await act(async () => {
       fireEvent.press(getByTestId('calendar-day-2024-01-16'));
     });
-    
+
     // Go back to the first day
     await act(async () => {
       fireEvent.press(getByTestId('calendar-day-2024-01-15'));
     });
-    
+
     // The DayEdit should still appear (showing state persistence)
     await waitFor(() => {
       expect(queryByText('TILLSKOTT')).toBeTruthy();
@@ -248,41 +243,41 @@ describe('Calendar Integration Tests', () => {
 
   it('integrates calendar marking with supplement data', async () => {
     const { getByTestId, queryByTestId } = renderWithStorageProvider(<Calendar />);
-    
+
     // Select a day
     await act(async () => {
       fireEvent.press(getByTestId('calendar-day-2024-01-15'));
     });
-    
+
     // Verify DayEdit appears, indicating successful integration
     await waitFor(() => {
       expect(queryByTestId('marked-2024-01-15')).toBeTruthy();
     });
-    
+
     // The calendar should show integration with storage context
     // by displaying marked dates when supplements are added
   });
 
   it('switches between supplement and meal tabs', async () => {
     const { getByTestId, getByText, queryByTestId } = renderWithStorageProvider(<Calendar />);
-    
+
     // Select a day
     await act(async () => {
       fireEvent.press(getByTestId('calendar-day-2024-01-15'));
     });
-    
+
     await waitFor(() => {
       expect(getByText('TILLSKOTT')).toBeTruthy();
     });
-    
+
     // Initially should be on supplements tab
     expect(queryByTestId('nutrition-logger')).toBeNull();
-    
+
     // Switch to meal tab
     await act(async () => {
       fireEvent.press(getByText('MÅLTID'));
     });
-    
+
     // Should now show nutrition logger
     await waitFor(() => {
       expect(getByTestId('nutrition-logger')).toBeTruthy();
@@ -291,16 +286,16 @@ describe('Calendar Integration Tests', () => {
 
   it('handles time changes in supplement workflow', async () => {
     const { getByTestId, getByText } = renderWithStorageProvider(<Calendar />);
-    
+
     // Select a day
     await act(async () => {
       fireEvent.press(getByTestId('calendar-day-2024-01-15'));
     });
-    
+
     await waitFor(() => {
       expect(getByText('TILLSKOTT')).toBeTruthy();
     });
-    
+
     // Verify the DayEdit component is working with date selection
     await waitFor(() => {
       expect(getByText('Add')).toBeTruthy();
@@ -309,16 +304,16 @@ describe('Calendar Integration Tests', () => {
 
   it('handles supplement editing workflow', async () => {
     const { getByTestId, getByText } = renderWithStorageProvider(<Calendar />);
-    
+
     // Select a day
     await act(async () => {
       fireEvent.press(getByTestId('calendar-day-2024-01-15'));
     });
-    
+
     await waitFor(() => {
       expect(getByText('TILLSKOTT')).toBeTruthy();
     });
-    
+
     // Verify the supplement management interface is available
     await waitFor(() => {
       expect(getByText('Add')).toBeTruthy();

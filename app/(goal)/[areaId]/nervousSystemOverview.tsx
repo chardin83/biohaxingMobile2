@@ -1,19 +1,18 @@
-import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { ScrollView,StyleSheet, Text, View } from "react-native";
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { useStorage } from "@/app/context/StorageContext";
-import { HRVMetric } from "@/components/metrics/HRVMetric";
-import { RestingHRMetric } from "@/components/metrics/RestingHRMetric";
-import TipsList from "@/components/ui/TipsList";
-import { WearableStatus } from "@/components/WearableStatus";
-import { Colors } from "@/constants/Colors";
-import { calculateHRVMetrics } from "@/utils/hrvCalculations";
-import { HRVSummary } from "@/wearables/types";
-import { useWearable } from "@/wearables/wearableProvider";
-
+import { useStorage } from '@/app/context/StorageContext';
+import { HRVMetric } from '@/components/metrics/HRVMetric';
+import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
+import TipsList from '@/components/ui/TipsList';
+import { WearableStatus } from '@/components/WearableStatus';
+import { Colors } from '@/constants/Colors';
+import { calculateHRVMetrics } from '@/utils/hrvCalculations';
+import { HRVSummary } from '@/wearables/types';
+import { useWearable } from '@/wearables/wearableProvider';
 
 function daysAgo(n: number) {
   const d = new Date();
@@ -23,31 +22,31 @@ function daysAgo(n: number) {
 
 function getBalanceMessage(stressScore: number): string {
   if (stressScore < 40) {
-    return "Your nervous system is currently in a parasympathetic-dominant state, indicating good recovery and relaxation.";
+    return 'Your nervous system is currently in a parasympathetic-dominant state, indicating good recovery and relaxation.';
   } else if (stressScore < 70) {
-    return "Your nervous system shows balanced activity between sympathetic and parasympathetic states.";
+    return 'Your nervous system shows balanced activity between sympathetic and parasympathetic states.';
   } else {
-    return "Your nervous system shows elevated sympathetic activity. Consider rest and recovery practices.";
+    return 'Your nervous system shows elevated sympathetic activity. Consider rest and recovery practices.';
   }
 }
 
 function getStressLevel(stressScore: number): string {
   if (stressScore < 30) {
-    return "Low";
+    return 'Low';
   } else if (stressScore < 60) {
-    return "Moderate";
+    return 'Moderate';
   } else {
-    return "High";
+    return 'High';
   }
 }
 
 function getRecoveryStatus(hrv: number | null, sleepHours: number | null): string {
   if (hrv && hrv >= 65 && sleepHours && sleepHours >= 7.5) {
-    return "Fully Recovered";
+    return 'Fully Recovered';
   } else if (hrv && hrv >= 50 && sleepHours && sleepHours >= 6.5) {
-    return "Good Recovery";
+    return 'Good Recovery';
   } else {
-    return "Needs Recovery";
+    return 'Needs Recovery';
   }
 }
 
@@ -56,8 +55,8 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
   const { t } = useTranslation();
   const { viewedTips } = useStorage();
 
-  console.log("=== NERVOUS SYSTEM MOUNTED ===");
-  console.log("mainGoalId from props:", mainGoalId);
+  console.log('=== NERVOUS SYSTEM MOUNTED ===');
+  console.log('mainGoalId from props:', mainGoalId);
 
   const [loading, setLoading] = React.useState(true);
   const [hrvData, setHrvData] = React.useState<HRVSummary[]>([]);
@@ -73,7 +72,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
       // Hämta HRV data
       const data = await adapter.getHRV(range);
       setHrvData(data);
-      
+
       const hrvMetrics = calculateHRVMetrics(data);
       setHrv(hrvMetrics.hrv);
 
@@ -101,12 +100,10 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
   const recoveryStatus = getRecoveryStatus(hrv, sleepHours);
 
   return (
-    <LinearGradient colors={["#071526", "#040B16"]} style={styles.bg}>
+    <LinearGradient colors={['#071526', '#040B16']} style={styles.bg}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Nervous System</Text>
-        <Text style={styles.subtitle}>
-          Autonomic nervous system balance and recovery metrics
-        </Text>
+        <Text style={styles.subtitle}>Autonomic nervous system balance and recovery metrics</Text>
 
         <WearableStatus status={status} />
 
@@ -131,7 +128,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
                 {/* Body Battery */}
                 <View style={styles.col}>
                   <Text style={styles.label}>Body Battery</Text>
-                  <Text style={styles.valueSmall}>{bodyBattery ?? "—"}%</Text>
+                  <Text style={styles.valueSmall}>{bodyBattery ?? '—'}%</Text>
                 </View>
               </View>
 
@@ -143,9 +140,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
                 <View style={styles.col}>
                   <Text style={styles.label}>Recovery status</Text>
                   <Text style={styles.valueSmall}>{recoveryStatus}</Text>
-                  <Text style={styles.muted}>
-                    {sleepHours ? `${sleepHours.toFixed(1)}h sleep` : "No sleep data"}
-                  </Text>
+                  <Text style={styles.muted}>{sleepHours ? `${sleepHours.toFixed(1)}h sleep` : 'No sleep data'}</Text>
                 </View>
               </View>
             </>
@@ -155,7 +150,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
         {/* ANS Balance visualization */}
         <View style={[styles.card, { marginTop: 16 }]}>
           <Text style={styles.cardTitle}>Sympathetic vs Parasympathetic</Text>
-          
+
           {loading ? (
             <Text style={styles.muted}>Loading…</Text>
           ) : (
@@ -165,16 +160,14 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
                   <View style={[styles.sympatheticBar, { flex: stressScore }]} />
                   <View style={[styles.parasympatheticBar, { flex: 100 - stressScore }]} />
                 </View>
-                
+
                 <View style={styles.balanceLabels}>
                   <Text style={styles.balanceLabel}>⚡ Fight/Flight</Text>
                   <Text style={styles.balanceLabel}>😌 Rest/Digest</Text>
                 </View>
               </View>
 
-              <Text style={styles.balanceText}>
-                {getBalanceMessage(stressScore)}
-              </Text>
+              <Text style={styles.balanceText}>{getBalanceMessage(stressScore)}</Text>
             </>
           )}
         </View>
@@ -182,49 +175,46 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
         {/* Information card */}
         <View style={[styles.card, { marginTop: 16 }]}>
           <Text style={styles.cardTitle}>Understanding your nervous system</Text>
-          
+
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>❤️ HRV (Heart Rate Variability)</Text>
             <Text style={styles.infoText}>
-              HRV measures the variation in time between heartbeats. Higher HRV indicates 
-              better autonomic nervous system function, resilience, and recovery capacity. 
-              It's influenced by stress, sleep, fitness, and overall health.
+              HRV measures the variation in time between heartbeats. Higher HRV indicates better autonomic nervous
+              system function, resilience, and recovery capacity. It's influenced by stress, sleep, fitness, and overall
+              health.
             </Text>
           </View>
 
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>😰 Stress Score</Text>
             <Text style={styles.infoText}>
-              Based on HRV, activity, and sleep data. Lower scores (0-25) indicate low stress, 
-              while higher scores (75-100) show significant sympathetic nervous system activation. 
-              Chronic high stress can lead to burnout and health issues.
+              Based on HRV, activity, and sleep data. Lower scores (0-25) indicate low stress, while higher scores
+              (75-100) show significant sympathetic nervous system activation. Chronic high stress can lead to burnout
+              and health issues.
             </Text>
           </View>
 
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>🔋 Body Battery</Text>
             <Text style={styles.infoText}>
-              Tracks your body's energy reserves throughout the day. Charged during rest and sleep 
-              (parasympathetic activity), depleted by stress and activity (sympathetic activity). 
-              Optimize recharge by prioritizing sleep and recovery.
+              Tracks your body's energy reserves throughout the day. Charged during rest and sleep (parasympathetic
+              activity), depleted by stress and activity (sympathetic activity). Optimize recharge by prioritizing sleep
+              and recovery.
             </Text>
           </View>
 
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>⚖️ ANS Balance</Text>
             <Text style={styles.infoText}>
-              The autonomic nervous system has two branches: sympathetic (fight/flight) and 
-              parasympathetic (rest/digest). Optimal health requires good balance and the ability 
-              to switch between states appropriately.
+              The autonomic nervous system has two branches: sympathetic (fight/flight) and parasympathetic
+              (rest/digest). Optimal health requires good balance and the ability to switch between states
+              appropriately.
             </Text>
           </View>
         </View>
 
         {/* Tips card */}
-        <TipsList
-          areaId={mainGoalId}
-          title="tips:nervousSystem.levels.optimization.title"
-        />
+        <TipsList areaId={mainGoalId} title="tips:nervousSystem.levels.optimization.title" />
       </ScrollView>
     </LinearGradient>
   );
@@ -238,7 +228,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 44,
-    fontWeight: "700",
+    fontWeight: '700',
     color: Colors.dark.accentStrong,
   },
   subtitle: {
@@ -248,7 +238,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   card: {
-    backgroundColor: "rgba(255,255,255,0.06)",
+    backgroundColor: 'rgba(255,255,255,0.06)',
     borderRadius: 22,
     padding: 16,
     borderWidth: 1,
@@ -257,12 +247,12 @@ const styles = StyleSheet.create({
   cardTitle: {
     color: Colors.dark.textSecondary,
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '600',
     marginBottom: 14,
   },
   row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   col: {
     flex: 1,
@@ -270,7 +260,7 @@ const styles = StyleSheet.create({
   },
   colWithDivider: {
     borderRightWidth: 1,
-    borderRightColor: "rgba(255,255,255,0.10)",
+    borderRightColor: 'rgba(255,255,255,0.10)',
   },
   label: {
     color: Colors.dark.textTertiary,
@@ -279,13 +269,13 @@ const styles = StyleSheet.create({
   value: {
     color: Colors.dark.textPrimary,
     fontSize: 26,
-    fontWeight: "700",
+    fontWeight: '700',
     marginTop: 4,
   },
   valueSmall: {
     color: Colors.dark.textPrimary,
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: '700',
     marginTop: 4,
   },
   muted: {
@@ -297,16 +287,16 @@ const styles = StyleSheet.create({
     color: Colors.dark.accentDefault,
     fontSize: 12,
     marginTop: 6,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   balanceContainer: {
     marginVertical: 12,
   },
   balanceBar: {
-    flexDirection: "row",
+    flexDirection: 'row',
     height: 32,
     borderRadius: 16,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   sympatheticBar: {
     backgroundColor: Colors.dark.warmDefault,
@@ -315,14 +305,14 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.dark.accentDefault,
   },
   balanceLabels: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 8,
   },
   balanceLabel: {
     color: Colors.dark.textPrimary,
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   balanceText: {
     color: Colors.dark.textTertiary,
@@ -336,7 +326,7 @@ const styles = StyleSheet.create({
   infoLabel: {
     color: Colors.dark.textSecondary,
     fontSize: 15,
-    fontWeight: "600",
+    fontWeight: '600',
     marginBottom: 6,
   },
   infoText: {

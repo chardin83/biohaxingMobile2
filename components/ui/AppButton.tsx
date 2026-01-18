@@ -1,15 +1,9 @@
-import React from "react";
-import {
-  StyleProp,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  ViewStyle,
-} from "react-native";
+import React from 'react';
+import { StyleProp, StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-native';
 
-import { Colors } from "@/constants/Colors";
+import { Colors } from '@/constants/Colors';
 
-type Variant = "primary" | "secondary";
+type Variant = 'primary' | 'secondary';
 
 interface AppButtonProps {
   title: string;
@@ -24,13 +18,13 @@ interface AppButtonProps {
 const AppButton: React.FC<AppButtonProps> = ({
   title,
   onPress,
-  variant = "primary",
+  variant = 'primary',
   style,
   disabled = false,
   glow = false,
   accessibilityLabel,
 }) => {
-  const isPrimary = variant === "primary";
+  const isPrimary = variant === 'primary';
 
   return (
     <TouchableOpacity
@@ -62,8 +56,8 @@ const baseStyle: ViewStyle = {
   paddingVertical: 14,
   paddingHorizontal: 18,
   borderRadius: 16,
-  alignItems: "center",
-  justifyContent: "center",
+  alignItems: 'center',
+  justifyContent: 'center',
 };
 
 const styles = StyleSheet.create({
@@ -83,15 +77,15 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   secondary: {
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
     borderColor: Colors.dark.borderLight,
   },
   disabled: {
     opacity: 0.5,
   },
   text: {
-    fontWeight: "bold",
-    textTransform: "uppercase",
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
     letterSpacing: 1,
   },
   primaryText: {
