@@ -634,7 +634,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     padding: 20,
-    paddingTop: 10,
+    paddingTop: 40,
   },
   topSection: {
     alignItems: 'center',

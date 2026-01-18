@@ -1,8 +1,8 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
-import { StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, View } from 'react-native';
 
+// Removed SafeAreaView import
 import BackButton from '@/components/BackButton';
 import { Colors } from '@/constants/Colors';
 
@@ -19,17 +19,14 @@ export default function AreaRootScreen() {
 
   return (
     <LinearGradient colors={Colors.dark.gradients.sunrise.colors as any} style={styles.container}>
-      <SafeAreaView edges={['top']} style={styles.container}>
-        <BackButton onPress={() => router.push('/(tabs)/dashboard')} />
-
-        {areaId === 'nervousSystem' && <NervousSystemOverview mainGoalId={areaId} />}
-        {areaId === 'sleepQuality' && <SleepOverview mainGoalId={areaId} />}
-        {areaId === 'energy' && <EnergyOverview mainGoalId={areaId} />}
-        {areaId === 'musclePerformance' && <MusclePerformanceOverview mainGoalId={areaId} />}
-        {areaId === 'cardioFitness' && <CardioOverview mainGoalId={areaId} />}
-        {areaId === 'digestiveHealth' && <DigestiveOverview mainGoalId={areaId} />}
-        {areaId === 'immuneSupport' && <ImmuneOverview mainGoalId={areaId} />}
-      </SafeAreaView>
+      <BackButton onPress={() => router.push('/(tabs)/dashboard')} />
+      {areaId === 'nervousSystem' && <NervousSystemOverview mainGoalId={areaId} />}
+      {areaId === 'sleepQuality' && <SleepOverview mainGoalId={areaId} />}
+      {areaId === 'energy' && <EnergyOverview mainGoalId={areaId} />}
+      {areaId === 'musclePerformance' && <MusclePerformanceOverview mainGoalId={areaId} />}
+      {areaId === 'cardioFitness' && <CardioOverview mainGoalId={areaId} />}
+      {areaId === 'digestiveHealth' && <DigestiveOverview mainGoalId={areaId} />}
+      {areaId === 'immuneSupport' && <ImmuneOverview mainGoalId={areaId} />}
     </LinearGradient>
   );
 }
@@ -38,4 +35,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  // Removed safeArea style
 });
