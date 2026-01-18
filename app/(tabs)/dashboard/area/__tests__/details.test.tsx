@@ -4,7 +4,7 @@ import React from 'react';
 
 import * as useSupplementsModule from '@/locales/supplements';
 
-import * as StorageContext from '../../context/StorageContext';
+import * as StorageContext from '../../../../context/StorageContext';
 import GoalDetailScreen from '../[areaId]/details';
 
 jest.mock('expo-router', () => ({

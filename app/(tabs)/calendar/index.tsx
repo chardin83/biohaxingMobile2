@@ -5,7 +5,7 @@ import CalendarComponent from '@/components/CalendarComponent';
 import DayEdit from '@/components/DayEdit';
 import { Colors } from '@/constants/Colors';
 
-import { borders } from '../theme/styles';
+import { borders } from '../../theme/styles';
 
 export default function Calendar() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);

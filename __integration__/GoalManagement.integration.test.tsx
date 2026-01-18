@@ -5,7 +5,7 @@ import React from 'react';
 
 import * as useSupplementsModule from '@/locales/supplements';
 
-import GoalDetailScreen from '../app/(goal)/[mainGoalId]/details';
+import GoalDetailScreen from '../app/(tabs)/dashboard/area/[mainGoalId]/details';
 import { StorageProvider, useStorage } from '../app/context/StorageContext';
 
 // Mock external dependencies

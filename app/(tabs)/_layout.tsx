@@ -32,45 +32,42 @@ export default function TabLayout() {
 
   return (
     <Tabs
-      initialRouteName="dashboard"
+      // initialRouteName="dashboard" // kan lämnas bort om du vill att dashboard ska vara först
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
+          ios: { position: 'absolute' },
           default: {},
         }),
       }}
     >
       <Tabs.Screen name="index" options={{ href: null }} />
       <Tabs.Screen
-        name="dashboard"
+        name="dashboard/index"
         options={{
           title: t('layout.dashboard'),
           tabBarIcon: ({ color }) => <IconSymbol size={28} name={'dashboard' as IconSymbolName} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="calendar"
+        name="calendar/index" 
         options={{
           title: t('layout.calendar'),
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="plan"
+        name="plan/index"
         options={{
           title: 'Plan',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="checklist" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="chat"
+        name="chat/index"
         options={{
           title: 'AI',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="chat" color={color} />,

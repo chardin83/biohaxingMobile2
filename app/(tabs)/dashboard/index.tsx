@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -13,12 +13,16 @@ import { areas } from '@/locales/areas';
 import { tips } from '@/locales/tips';
 import { POSITIVE_VERDICTS, VerdictValue } from '@/types/verdict';
 
-import { useStorage } from '../context/StorageContext';
+import { useStorage } from '../../context/StorageContext';
 
-export default function BiohackerDashboard() {
+export default function DashboardScreen() {
   const { t } = useTranslation(['common', 'areas', 'levels']);
   const { myGoals, myXP, myLevel, viewedTips, plans } = useStorage();
   const router = useRouter();
+
+//   useEffect(() => {
+//   setMyXP(445);
+// }, [setMyXP]);
 
   const nextLevel = levels.find(l => l.level === myLevel + 1);
   const xpMax = nextLevel?.requiredXP ?? levels.find(l => l.level === myLevel)?.requiredXP ?? 0;
@@ -91,7 +95,7 @@ export default function BiohackerDashboard() {
                 xp={areaXP}
                 onPress={() =>
                   router.push({
-                    pathname: '/(goal)/[areaId]',
+                    pathname: '/dashboard/area/[areaId]',
                     params: { areaId },
                   })
                 }

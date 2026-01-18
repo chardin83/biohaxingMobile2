@@ -335,7 +335,7 @@ export default function AreaDetailScreen() {
       colors={Colors.dark.gradients.sunrise.colors as any}
       locations={[0, 0.7, 1]} // Flyttar ned det röda i gradienten
       style={{ flex: 1 }}>
-        <BackButton onPress={() => router.replace(`/(goal)/${areaId}`)} />
+        <BackButton onPress={() => router.replace(`/dashboard/area/${areaId}`)} />
 
         <ScrollView
           contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 340, flexGrow: 1 }]}

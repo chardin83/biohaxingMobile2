@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { Card } from '@/components/ui/Card';
@@ -27,18 +27,21 @@ export default function TipsList({ areaId, title }: Readonly<TipsListProps>) {
   const positiveVerdicts = React.useMemo(() => new Set(POSITIVE_VERDICTS), []);
   const negativeVerdicts = React.useMemo(() => new Set(NEGATIVE_VERDICTS), []);
 
-  const getVerdictScore = (verdict: string | undefined): number => {
-    if (!verdict) {
+  const getVerdictScore = React.useCallback(
+    (verdict: string | undefined): number => {
+      if (!verdict) {
+        return 1;
+      }
+      if (positiveVerdicts.has(verdict as VerdictValue)) {
+        return 2;
+      }
+      if (negativeVerdicts.has(verdict as VerdictValue)) {
+        return 0;
+      }
       return 1;
-    }
-    if (positiveVerdicts.has(verdict as VerdictValue)) {
-      return 2;
-    }
-    if (negativeVerdicts.has(verdict as VerdictValue)) {
-      return 0;
-    }
-    return 1;
-  };
+    },
+    [positiveVerdicts, negativeVerdicts]
+  );
 
   // Sortera tips: positiva → neutrala → negativa
   const sortedTips = React.useMemo(() => {
@@ -54,7 +57,7 @@ export default function TipsList({ areaId, title }: Readonly<TipsListProps>) {
 
       return bScore - aScore;
     });
-  }, [tipsRaw, viewedTips, areaId]);
+  }, [tipsRaw, viewedTips, getVerdictScore, areaId]);
 
   // Filtrera tips: dölj "not interested"-liknande om inte "show all"
   const visibleTips = React.useMemo(() => {
@@ -65,7 +68,7 @@ export default function TipsList({ areaId, title }: Readonly<TipsListProps>) {
       const viewedTip = viewedTips?.find(v => v.mainGoalId === areaId && v.tipId === tip.id);
       return viewedTip?.verdict ? !negativeVerdicts.has(viewedTip.verdict as VerdictValue) : true;
     });
-  }, [sortedTips, showAllTips, viewedTips, areaId]);
+  }, [showAllTips, sortedTips, viewedTips, negativeVerdicts, areaId]);
 
   const hiddenTipsCount = sortedTips.length - visibleTips.length;
 
@@ -92,7 +95,7 @@ export default function TipsList({ areaId, title }: Readonly<TipsListProps>) {
 
     if (tip) {
       router.push({
-        pathname: `/(goal)/${areaId}/details` as any,
+        pathname: `/dashboard/area/${areaId}/details` as any,
         params: {
           tipId: tip.id,
         },

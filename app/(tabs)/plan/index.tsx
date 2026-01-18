@@ -23,10 +23,10 @@ import { defaultPlans } from '@/locales/defaultPlans';
 import { useSupplementMap } from '@/locales/supplements';
 import { Tip, tips } from '@/locales/tips';
 
-import { useStorage } from '../context/StorageContext';
-import { Plan } from '../domain/Plan';
-import { Supplement } from '../domain/Supplement';
-import { colors } from '../theme/styles';
+import { useStorage } from '../../context/StorageContext';
+import { Plan } from '../../domain/Plan';
+import { Supplement } from '../../domain/Supplement';
+import { colors } from '../../theme/styles';
 
 // Plan category mapping not currently used; remove to avoid unused warnings
 

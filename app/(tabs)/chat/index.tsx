@@ -12,8 +12,8 @@ import { useGPTFunctionHandler } from '@/hooks/useGPTFunctionHandler';
 import { useKeyboardVisible } from '@/hooks/useKeyboardVisible';
 import { askGPT, buildSystemPrompt } from '@/services/gptServices';
 
-import { useStorage } from '../context/StorageContext';
-import { Message } from '../domain/Message';
+import { useStorage } from '../../context/StorageContext';
+import { Message } from '../../domain/Message';
 
 export default function ChatWithGPT4o(): JSX.Element {
   const [messages, setMessages] = useState<Message[]>([]);
