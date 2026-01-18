@@ -122,6 +122,8 @@ interface StorageContextType {
       | Record<string, TrainingPlanSettings>
       | ((prev: Record<string, TrainingPlanSettings>) => Record<string, TrainingPlanSettings>)
   ) => void;
+  showMusic: boolean;
+  setShowMusic: (val: boolean) => void;
 }
 
 const STORAGE_KEYS = {
@@ -137,6 +139,7 @@ const STORAGE_KEYS = {
   DAILY_NUTRITION: 'dailyNutritionSummary',
   VIEWED_TIPS: 'viewedTips',
   TRAINING_PLAN_SETTINGS: 'trainingPlanSettings',
+  SHOW_MUSIC: 'showMusic',
 };
 
 const StorageContext = createContext<StorageContextType | undefined>(undefined);
@@ -160,6 +163,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   >({});
   const [viewedTipsState, setViewedTipsState] = useState<ViewedTip[]>([]);
   const [trainingPlanSettingsState, setTrainingPlanSettingsState] = useState<Record<string, TrainingPlanSettings>>({});
+  const [showMusic, setShowMusicState] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
@@ -358,6 +362,11 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     });
   };
 
+  const setShowMusic = (val: boolean) => {
+  setShowMusicState(val);
+  AsyncStorage.setItem(STORAGE_KEYS.SHOW_MUSIC, val ? 'true' : 'false');
+};
+
   const addTipView = (mainGoalId: string, tipId: string): number => {
     const existing = viewedTipsState.find(v => v.mainGoalId === mainGoalId && v.tipId === tipId);
 
@@ -501,28 +510,10 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       setTipVerdict,
       trainingPlanSettings: trainingPlanSettingsState,
       setTrainingPlanSettings,
+      showMusic,
+      setShowMusic,
     }),
-    [
-      plansState,
-      activeGoals,
-      hasVisitedChatState,
-      shareHealthPlanState,
-      takenDatesState,
-      myGoalsState,
-      errorMessage,
-      hasCompletedOnboardingState,
-      onboardingStepState,
-      myXPState,
-      myLevelState,
-      isInitialized,
-      levelUpModalVisible,
-      setLevelUpModalVisible,
-      newLevelReached,
-      dailyNutritionSummariesState,
-      setDailyNutritionSummaries,
-      viewedTipsState,
-      trainingPlanSettingsState,
-    ]
+    [plansState, activeGoals, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, trainingPlanSettingsState, showMusic]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;
@@ -535,3 +526,5 @@ export const useStorage = (): StorageContextType => {
   }
   return context;
 };
+
+

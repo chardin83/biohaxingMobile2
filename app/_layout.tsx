@@ -12,6 +12,9 @@ import { PaperProvider } from 'react-native-paper';
 import { MenuProvider } from 'react-native-popup-menu';
 
 import GlobalLevelUpModal from '@/components/GlobalLevelUpModal';
+import { MusicProvider } from '@/components/MusicContext';
+import Sparks from '@/components/Sparks';
+import { SparksProvider, useSparks } from '@/components/SparksContext';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { WearableProvider } from '@/wearables/wearableProvider';
 
@@ -20,6 +23,11 @@ import { StorageProvider } from './context/StorageContext';
 import { colors } from './theme/styles';
 
 SplashScreen.preventAutoHideAsync();
+
+function SparksOverlay() {
+  const { showSparks } = useSparks();
+  return showSparks ? <Sparks /> : null;
+}
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -50,75 +58,80 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <WearableProvider>
-        <SessionProvider>
-          <StorageProvider>
-            <PaperProvider>
-              <ThemeProvider value={colorScheme === 'dark' ? MyDarkTheme : DefaultTheme}>
-                <MenuProvider>
-                  <GlobalLevelUpModal />
-                  <Stack
-                    screenOptions={{
-                      headerTransparent: true,
-                      headerStyle: {
-                        backgroundColor: 'transparent',
-                      },
-                      headerTintColor: '#fff',
-                      headerTitleStyle: {
-                        fontWeight: 'bold',
-                      },
-                    }}
-                  >
-                    <Stack.Screen
-                      name="(goal)"
-                      options={{
-                        headerShown: false,
-                        title: '',
-                        headerBackTitle: t('back'),
-                      }}
-                    />
-                    <Stack.Screen
-                      name="(tabs)"
-                      options={{
-                        headerShown: false,
-                        title: '',
-                        headerBackTitle: t('back'),
-                      }}
-                    />
+      <SparksProvider>
+        <SparksOverlay />
+        <MusicProvider>
+          <WearableProvider>
+            <SessionProvider>
+              <StorageProvider>
+                <PaperProvider>
+                  <ThemeProvider value={colorScheme === 'dark' ? MyDarkTheme : DefaultTheme}>
+                    <MenuProvider>
+                      <GlobalLevelUpModal />
+                      <Stack
+                        screenOptions={{
+                          headerTransparent: true,
+                          headerStyle: {
+                            backgroundColor: 'transparent',
+                          },
+                          headerTintColor: '#fff',
+                          headerTitleStyle: {
+                            fontWeight: 'bold',
+                          },
+                        }}
+                      >
+                        <Stack.Screen
+                          name="(goal)"
+                          options={{
+                            headerShown: false,
+                            title: '',
+                            headerBackTitle: t('back'),
+                          }}
+                        />
+                        <Stack.Screen
+                          name="(tabs)"
+                          options={{
+                            headerShown: false,
+                            title: '',
+                            headerBackTitle: t('back'),
+                          }}
+                        />
 
-                    <Stack.Screen
-                      name="(manage)"
-                      options={{
-                        headerShown: false,
-                        title: '',
-                        headerBackTitle: t('back'),
-                      }}
-                    />
+                        <Stack.Screen
+                          name="(manage)"
+                          options={{
+                            headerShown: false,
+                            title: '',
+                            headerBackTitle: t('back'),
+                          }}
+                        />
 
-                    <Stack.Screen
-                      name="(onboarding)/onboardingsupplements"
-                      options={{
-                        headerShown: false,
-                        title: '',
-                        headerBackTitle: t('back'),
-                      }}
-                    />
-                    <Stack.Screen
-                      name="(onboarding)/onboardinggoals"
-                      options={{
-                        headerShown: true,
-                        title: '',
-                        headerBackTitle: t('back'),
-                      }}
-                    />
-                  </Stack>
-                  <StatusBar style="auto" />
-                </MenuProvider>
-              </ThemeProvider>
-            </PaperProvider>
-          </StorageProvider>
-        </SessionProvider>
-      </WearableProvider>
+                        <Stack.Screen
+                          name="(onboarding)/onboardingsupplements"
+                          options={{
+                            headerShown: false,
+                            title: '',
+                            headerBackTitle: t('back'),
+                          }}
+                        />
+                        <Stack.Screen
+                          name="(onboarding)/onboardinggoals"
+                          options={{
+                            headerShown: true,
+                            title: '',
+                            headerBackTitle: t('back'),
+                          }}
+                        />
+                      </Stack>
+                      <StatusBar style="auto" />
+                    </MenuProvider>
+                  </ThemeProvider>
+                </PaperProvider>
+              </StorageProvider>
+            </SessionProvider>
+          </WearableProvider>
+        </MusicProvider>
+      </SparksProvider>
     </GestureHandlerRootView>
   );
 }

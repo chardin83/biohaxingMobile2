@@ -16,6 +16,7 @@ const Spark: React.FC<SparkProps> = ({ id, onComplete }) => {
   const offsetX = useRef(new Animated.Value(0)).current;
   const amplitude = Math.random() * 20 + 5;
   const upwardDuration = 6000 + Math.random() * 2000;
+  const scale = Math.random() * 0.5 + 0.5;
 
   useEffect(() => {
     Animated.parallel([
@@ -29,7 +30,7 @@ const Spark: React.FC<SparkProps> = ({ id, onComplete }) => {
         duration: upwardDuration,
         useNativeDriver: true,
       }),
-    ]).start(() => onComplete(id)); // 👈 Ta bort gnistan efter animation
+    ]).start(() => onComplete(id));
 
     Animated.loop(
       Animated.sequence([
@@ -56,7 +57,7 @@ const Spark: React.FC<SparkProps> = ({ id, onComplete }) => {
           transform: [
             { translateY: positionY },
             { translateX: Animated.add(offsetX, new Animated.Value(baseX)) },
-            { scale: Math.random() * 0.5 + 0.5 },
+            { scale },
           ],
         },
       ]}
@@ -68,6 +69,7 @@ const Sparks: React.FC = () => {
   const [sparkList, setSparkList] = useState<number[]>([]);
 
   useEffect(() => {
+    // Skapa en ny gnista var 600ms
     const interval = setInterval(() => {
       setSparkList(prev => [...prev, Date.now() + Math.random()]);
     }, 600);
@@ -80,7 +82,7 @@ const Sparks: React.FC = () => {
   };
 
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+    <View style={[StyleSheet.absoluteFill, { zIndex: 9999, pointerEvents: 'none' }]}>
       {sparkList.map(id => (
         <Spark key={id} id={id} onComplete={removeSpark} />
       ))}
@@ -91,7 +93,7 @@ const Sparks: React.FC = () => {
 const styles = StyleSheet.create({
   spark: {
     position: 'absolute',
-    bottom: 80, // 👈 flyger från allra längst ner
+    top: height - 80, // Starta nära botten
     width: 6,
     height: 6,
     borderRadius: 3,
