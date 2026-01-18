@@ -1,11 +1,13 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { useStorage } from "../context/StorageContext";
 import { useRouter } from "expo-router";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import { StyleSheet,Text, View } from "react-native";
+
+import MyGoalsSelector from "@/components/MyGoalsSelector";
 import AppButton from "@/components/ui/AppButton";
 import { Colors } from "@/constants/Colors";
-import MyGoalsSelector from "@/components/MyGoalsSelector";
+
+import { useStorage } from "../context/StorageContext";
 
 export default function OnboardingGoals() {
   const { t } = useTranslation(["goals", "common", "supplements"]);

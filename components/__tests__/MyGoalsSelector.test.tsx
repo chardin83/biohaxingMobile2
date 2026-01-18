@@ -1,7 +1,8 @@
+import { fireEvent,render } from '@testing-library/react-native';
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
-import MyGoalsSelector from '../MyGoalsSelector';
+
 import * as StorageContext from '../../app/context/StorageContext';
+import MyGoalsSelector from '../MyGoalsSelector';
 
 // Mock react-i18next
 jest.mock('react-i18next', () => ({

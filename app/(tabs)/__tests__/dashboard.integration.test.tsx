@@ -1,7 +1,9 @@
+import { act,fireEvent, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
-import Dashboard from '../dashboard';
+
 import { StorageProvider } from '@/app/context/StorageContext';
+
+import Dashboard from '../dashboard';
 
 // Mock external dependencies
 jest.mock('expo-router', () => ({

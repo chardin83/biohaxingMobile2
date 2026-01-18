@@ -5,10 +5,11 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+
 import { ThemedModal } from "@/components/ThemedModal";
 import { ThemedText } from "@/components/ThemedText";
-import { Colors } from "@/constants/Colors";
 import LabeledInput from "@/components/ui/LabeledInput";
+import { Colors } from "@/constants/Colors";
 
 type TrainingSettingsModalProps = {
   visible: boolean;

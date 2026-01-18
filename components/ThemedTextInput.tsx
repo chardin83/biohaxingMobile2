@@ -1,6 +1,7 @@
 import React from "react";
-import { TextInput, TextInputProps, StyleSheet } from "react-native";
-import { colors, borders } from "@/app/theme/styles";
+import { StyleSheet,TextInput, TextInputProps } from "react-native";
+
+import { borders,colors } from "@/app/theme/styles";
 
 export const ThemedTextInput = (props: TextInputProps) => {
   return (

@@ -1,11 +1,12 @@
 import React from "react";
 import {
+  StyleProp,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  StyleProp,
   ViewStyle,
 } from "react-native";
+
 import { Colors } from "@/constants/Colors";
 
 type Variant = "primary" | "secondary";

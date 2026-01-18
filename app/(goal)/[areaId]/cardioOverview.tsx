@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useWearable } from "@/wearables/wearableProvider";
-import { TimeRange, HRVSummary, DailyActivity, EnergySignal } from "@/wearables/types";
-import { WearableStatus } from "@/components/WearableStatus";
-import { VO2MaxMetric } from "@/components/metrics/VO2MaxMetric";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator,ScrollView, StyleSheet, Text, View } from "react-native";
+
 import { RestingHRMetric } from "@/components/metrics/RestingHRMetric";
+import { VO2MaxMetric } from "@/components/metrics/VO2MaxMetric";
 import TipsList from "@/components/ui/TipsList";
+import { WearableStatus } from "@/components/WearableStatus";
+import { DailyActivity, EnergySignal,HRVSummary, TimeRange } from "@/wearables/types";
+import { useWearable } from "@/wearables/wearableProvider";
 
 export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();

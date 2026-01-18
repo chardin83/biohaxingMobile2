@@ -1,17 +1,19 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import Smart from "@/assets/images/level1_small.png";
-import { Colors } from "@/constants/Colors";
-import { useStorage } from "../context/StorageContext";
 import { useRouter } from "expo-router";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity,View } from "react-native";
+
+import Smart from "@/assets/images/level1_small.png";
 import AppCard from "@/components/ui/AppCard";
 import ProgressBarWithLabel from "@/components/ui/ProgressbarWithLabel";
+import { Colors } from "@/constants/Colors";
 import { levels } from "@/constants/XP";
-import { tips } from "@/locales/tips";
 import { areas } from "@/locales/areas";
-import { VerdictValue, POSITIVE_VERDICTS } from "@/types/verdict";
+import { tips } from "@/locales/tips";
+import { POSITIVE_VERDICTS,VerdictValue } from "@/types/verdict";
+
+import { useStorage } from "../context/StorageContext";
 
 export default function BiohackerDashboard() {
   const { t } = useTranslation(["common", "areas", "levels"]);

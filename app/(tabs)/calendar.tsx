@@ -1,8 +1,10 @@
-import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
-import CalendarComponent from "@/components/CalendarComponent";
 import React, { useRef, useState } from "react";
+import { SafeAreaView, ScrollView,StyleSheet, View } from "react-native";
+
+import CalendarComponent from "@/components/CalendarComponent";
 import DayEdit from "@/components/DayEdit";
 import { Colors } from "@/constants/Colors";
+
 import { Supplement } from "../domain/Supplement";
 import { borders } from "../theme/styles";
 

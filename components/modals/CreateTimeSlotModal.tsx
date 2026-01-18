@@ -1,11 +1,12 @@
-import React from "react";
-import { View, Text, StyleSheet, Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import { Platform,StyleSheet, Text, View } from "react-native";
+
 import { ThemedModal } from "@/components/ThemedModal";
-import { Colors } from "@/constants/Colors";
 import AppButton from "@/components/ui/AppButton";
 import LabeledInput from "@/components/ui/LabeledInput";
+import { Colors } from "@/constants/Colors";
 
 export type CreatePlanData = {
   name: string;

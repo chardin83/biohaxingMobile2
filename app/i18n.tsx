@@ -1,18 +1,19 @@
+import * as Localization from "expo-localization"; // Use expo-localization
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
-import * as Localization from "expo-localization"; // Use expo-localization
-import enCommon from "../locales/en/common.json";
-import enTips from "../locales/en/tips.json";
-import enSupplements from "../locales/en/supplements.json";
+
 import enAreas from "../locales/en/areas.json";
-import svCommon from "../locales/sv/common.json";
-import svTips from "../locales/sv/tips.json";
-import svSupplements from "../locales/sv/supplements.json";
-import svAreas from "../locales/sv/areas.json";
-import svLevels from "../locales/sv/levels.json";
+import enCommon from "../locales/en/common.json";
 import enLevels from "../locales/en/levels.json";
 import enPrompts from "../locales/en/prompts.json";
+import enSupplements from "../locales/en/supplements.json";
+import enTips from "../locales/en/tips.json";
+import svAreas from "../locales/sv/areas.json";
+import svCommon from "../locales/sv/common.json";
+import svLevels from "../locales/sv/levels.json";
 import svPrompts from "../locales/sv/prompts.json";
+import svSupplements from "../locales/sv/supplements.json";
+import svTips from "../locales/sv/tips.json";
 
 // Define resources for i18n
 const resources = {
@@ -64,5 +65,5 @@ i18next
     },
   });
 
-// eslint-disable-next-line import/no-default-export
+ 
 export default i18next;

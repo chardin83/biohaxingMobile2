@@ -1,13 +1,14 @@
 import React from "react";
 import {
+  StyleProp,
   StyleSheet,
+  TextInput,
+  TextInputProps,
   TextStyle,
   View,
   ViewStyle,
-  TextInput,
-  TextInputProps,
-  StyleProp,
 } from "react-native";
+
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 

@@ -1,7 +1,8 @@
+import { fireEvent,render } from '@testing-library/react-native';
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
-import OnboardingGoals from '../onboardinggoals';
+
 import * as StorageContext from '../../context/StorageContext';
+import OnboardingGoals from '../onboardinggoals';
 
 const mockSetHasCompletedOnboarding = jest.fn();
 const mockRouterPush = jest.fn();

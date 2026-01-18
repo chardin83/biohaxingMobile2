@@ -1,11 +1,12 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useWearable } from "@/wearables/wearableProvider";
-import { WearableStatus } from "@/components/WearableStatus";
+import React from "react";
+import { ScrollView,StyleSheet, Text, View } from "react-native";
+
 import { SleepMetric } from "@/components/metrics/SleepMetric";
-import { SleepSummary } from "@/wearables/types";
 import TipsList from "@/components/ui/TipsList";
+import { WearableStatus } from "@/components/WearableStatus";
+import { SleepSummary } from "@/wearables/types";
+import { useWearable } from "@/wearables/wearableProvider";
 
 function daysAgo(n: number) {
   const d = new Date();

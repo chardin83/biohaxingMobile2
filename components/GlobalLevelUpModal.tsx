@@ -1,7 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { ThemedModal } from "./ThemedModal";
 import { Text } from "react-native";
+
 import { useStorage } from "@/app/context/StorageContext";
+
+import { ThemedModal } from "./ThemedModal";
 
 export default function GlobalLevelUpModal() {
   const { t } = useTranslation(["levels"]);

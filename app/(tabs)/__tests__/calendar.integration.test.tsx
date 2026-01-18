@@ -1,8 +1,10 @@
+import { act,fireEvent, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
-import Calendar from '../calendar';
-import { StorageProvider } from '@/app/context/StorageContext';
 import { MenuProvider } from 'react-native-popup-menu';
+
+import { StorageProvider } from '@/app/context/StorageContext';
+
+import Calendar from '../calendar';
 
 // Mock only external dependencies, not internal components
 jest.mock('expo-router', () => ({

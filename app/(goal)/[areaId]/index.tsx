@@ -1,15 +1,17 @@
-import React from "react";
-import { SafeAreaView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
+import React from "react";
+import { SafeAreaView } from "react-native";
+
 import BackButton from "@/components/BackButton";
-import NervousSystemOverview from "./nervousSystemOverview";
-import SleepOverview from "./sleepOverview";
-import EnergyOverview from "./energyOverview";
-import MusclePerformanceOverview from "./musclePerformanceOverview";
+
 import CardioOverview from "./cardioOverview";
 import DigestiveOverview from "./digestiveOverview";
+import EnergyOverview from "./energyOverview";
 import ImmuneOverview from "./immuneOverview";
+import MusclePerformanceOverview from "./musclePerformanceOverview";
+import NervousSystemOverview from "./nervousSystemOverview";
+import SleepOverview from "./sleepOverview";
 
 export default function AreaRootScreen() {
   const { areaId } = useLocalSearchParams<{ areaId: string }>();

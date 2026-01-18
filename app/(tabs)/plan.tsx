@@ -1,39 +1,41 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useLocalSearchParams } from "expo-router";
+import React, { useEffect, useMemo,useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
-  StyleSheet,
   Modal,
-  // TextInput,
-  View,
-  TouchableOpacity,
-  Text,
   Platform,
   ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  // TextInput,
+  View,
 } from "react-native";
-import { Collapsible } from "@/components/Collapsible";
-import { ThemedText } from "@/components/ThemedText";
-import { useTranslation } from "react-i18next";
-import { IconSymbol } from "@/components/ui/IconSymbol";
-import SupplementItem from "@/components/SupplementItem";
-import SupplementForm from "@/components/SupplementForm";
 import { Portal } from "react-native-paper";
-import { colors } from "../theme/styles";
-import { useStorage } from "../context/StorageContext";
-import { useSupplementSaver } from "@/hooks/useSupplementSaver";
-import { SwipeableRow } from "@/components/ui/SwipeableRow";
-import { ThemedModal } from "@/components/ThemedModal";
+
+import { Collapsible } from "@/components/Collapsible";
 import CreateTimeSlotModal from "@/components/modals/CreateTimeSlotModal";
-import { Supplement } from "../domain/Supplement";
-import { Plan } from "../domain/Plan";
+import TrainingSettingsModal from "@/components/modals/TrainingSettingsModal";
+import SupplementForm from "@/components/SupplementForm";
+import SupplementItem from "@/components/SupplementItem";
+import { ThemedModal } from "@/components/ThemedModal";
+import { ThemedText } from "@/components/ThemedText";
+import AppBox from "@/components/ui/AppBox";
 import AppButton from "@/components/ui/AppButton";
 import Badge from "@/components/ui/Badge";
-import AppBox from "@/components/ui/AppBox";
-import TrainingSettingsModal from "@/components/modals/TrainingSettingsModal";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import { SwipeableRow } from "@/components/ui/SwipeableRow";
 import { Colors } from "@/constants/Colors";
-import { defaultPlans } from "@/locales/defaultPlans";
-import { useLocalSearchParams } from "expo-router";
-import { tips, Tip } from "@/locales/tips";
-import { useSupplementMap } from "@/locales/supplements";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useSupplementSaver } from "@/hooks/useSupplementSaver";
+import { defaultPlans } from "@/locales/defaultPlans";
+import { useSupplementMap } from "@/locales/supplements";
+import { Tip,tips } from "@/locales/tips";
+
+import { useStorage } from "../context/StorageContext";
+import { Plan } from "../domain/Plan";
+import { Supplement } from "../domain/Supplement";
+import { colors } from "../theme/styles";
 
 const PLAN_CATEGORY_BY_TIP_ID = new Map(
   tips

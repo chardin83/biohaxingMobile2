@@ -1,13 +1,15 @@
-import React, { useState } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
-import AppCard from "@/components/ui/AppCard";
-import { useSupplements } from "@/locales/supplements";
-import { Colors } from "@/constants/Colors";
-import AppButton from "@/components/ui/AppButton";
 import { useRouter } from "expo-router";
-import { useStorage } from "../context/StorageContext";
 import { t } from "i18next";
+import React, { useState } from "react";
+import { FlatList, StyleSheet,Text, View } from "react-native";
+
+import AppButton from "@/components/ui/AppButton";
+import AppCard from "@/components/ui/AppCard";
+import { Colors } from "@/constants/Colors";
 import { defaultPlans } from "@/locales/defaultPlans";
+import { useSupplements } from "@/locales/supplements";
+
+import { useStorage } from "../context/StorageContext";
 
 export default function OnboardingSupplements() {
   const supplements = useSupplements()

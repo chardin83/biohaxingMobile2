@@ -1,13 +1,14 @@
 // components/ui/AppBox.tsx
 import React from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
   StyleProp,
-  ViewStyle,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
+  ViewStyle,
 } from "react-native";
+
 import { Colors } from "@/constants/Colors";
 
 type Props = {

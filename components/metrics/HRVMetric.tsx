@@ -1,7 +1,8 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { HRVSummary } from "@/wearables/types";
+import { StyleSheet,Text, View } from "react-native";
+
 import { calculateHRVMetrics } from "@/utils/hrvCalculations";
+import { HRVSummary } from "@/wearables/types";
 
 interface HRVMetricProps {
   readonly hrvData: HRVSummary[];

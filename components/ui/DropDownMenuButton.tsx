@@ -1,13 +1,14 @@
 import React from "react";
-import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, TouchableOpacity,View } from "react-native";
 import {
   Menu,
-  MenuTrigger,
-  MenuOptions,
   MenuOption,
+  MenuOptions,
+  MenuTrigger,
 } from "react-native-popup-menu";
-import { Colors } from "@/constants/Colors";
+
 import { IconSymbol } from "@/components/ui/IconSymbol";
+import { Colors } from "@/constants/Colors";
 
 interface MenuItem {
   text: string;

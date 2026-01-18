@@ -1,16 +1,18 @@
-import React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
-import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { Pressable,StyleSheet, Text, View } from "react-native";
+
 import { useStorage } from "@/app/context/StorageContext";
-import { tips } from "@/locales/tips";
 import { Colors } from "@/constants/Colors";
-import TipCard from "./TipCard";
+import { tips } from "@/locales/tips";
 import {
-  VerdictValue,
-  POSITIVE_VERDICTS,
   NEGATIVE_VERDICTS,
+  POSITIVE_VERDICTS,
+  VerdictValue,
 } from "@/types/verdict";
+
+import TipCard from "./TipCard";
 
 interface TipsListProps {
   areaId: string;

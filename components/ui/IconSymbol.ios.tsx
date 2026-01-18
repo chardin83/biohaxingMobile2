@@ -1,6 +1,7 @@
 import { SymbolView } from "expo-symbols";
-import { ICON_SYMBOLS, IconSymbolName } from "./icon-symbol-map";
 import { StyleProp, ViewStyle } from "react-native";
+
+import { ICON_SYMBOLS, IconSymbolName } from "./icon-symbol-map";
 
 export function IconSymbol({
   name,

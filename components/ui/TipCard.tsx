@@ -1,18 +1,19 @@
 import React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
 import { useTranslation } from "react-i18next";
-import { Colors } from "@/constants/Colors";
-import PlayIcon from "@/assets/icons/play.svg";
-import SearchIcon from "@/assets/icons/search.svg";
+import { Pressable,StyleSheet, Text, View } from "react-native";
+
 import CheckIcon from "@/assets/icons/check.svg";
-import StarIcon from "@/assets/icons/star.svg";
+import PlayIcon from "@/assets/icons/play.svg";
 import ProhibitionIcon from "@/assets/icons/prohibition.svg";
-import {
-  VerdictValue,
-  isPositiveVerdict,
-  isNegativeVerdict,
-} from "@/types/verdict";
+import SearchIcon from "@/assets/icons/search.svg";
+import StarIcon from "@/assets/icons/star.svg";
+import { Colors } from "@/constants/Colors";
 import { Tip } from "@/locales/tips";
+import {
+  isNegativeVerdict,
+  isPositiveVerdict,
+  VerdictValue,
+} from "@/types/verdict";
 
 type TipVerdict = VerdictValue;
 

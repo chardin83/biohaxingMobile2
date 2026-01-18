@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
-  View,
-  StyleSheet,
   Dimensions,
+  StyleSheet,
+  View,
   ViewStyle,
 } from "react-native";
 

@@ -1,25 +1,26 @@
-import React from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { areas } from "@/locales/areas";
-import { Colors } from "@/constants/Colors";
-import { useSupplements } from "@/locales/supplements";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import { Pressable, ScrollView,StyleSheet, Text, View } from "react-native";
 import { Icon } from "react-native-paper";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { useStorage } from "@/app/context/StorageContext";
+import BackButton from "@/components/BackButton";
+import CreateTimeSlotModal, { CreatePlanData } from "@/components/modals/CreateTimeSlotModal";
+import { ThemedModal } from "@/components/ThemedModal";
 import AppBox from "@/components/ui/AppBox";
 import AppButton from "@/components/ui/AppButton";
 import ProgressBarWithLabel from "@/components/ui/ProgressbarWithLabel";
-import { tips } from "@/locales/tips";
-import { useStorage } from "@/app/context/StorageContext";
-import BackButton from "@/components/BackButton";
-import { LinearGradient } from "expo-linear-gradient";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { AIPrompts, AIPromptKey } from "@/constants/AIPrompts";
 import VerdictSelector from "@/components/VerdictSelector";
-import { POSITIVE_VERDICTS } from "@/types/verdict";
-import { ThemedModal } from "@/components/ThemedModal";
+import { AIPromptKey,AIPrompts } from "@/constants/AIPrompts";
+import { Colors } from "@/constants/Colors";
 import { useSupplementSaver } from "@/hooks/useSupplementSaver";
-import CreateTimeSlotModal, { CreatePlanData } from "@/components/modals/CreateTimeSlotModal";
+import { areas } from "@/locales/areas";
+import { useSupplements } from "@/locales/supplements";
+import { tips } from "@/locales/tips";
+import { POSITIVE_VERDICTS } from "@/types/verdict";
 
 export default function AreaDetailScreen() {
   const { t } = useTranslation();

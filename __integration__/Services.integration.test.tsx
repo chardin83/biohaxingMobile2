@@ -1,9 +1,10 @@
+import { act, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import { render, act, waitFor } from '@testing-library/react-native';
+
 import { StorageProvider, useStorage } from '../app/context/StorageContext';
-import { buildSystemPrompt, askGPT, sendFileToAIAnalysis } from '../services/gptServices';
-import { Plan } from '../app/domain/Plan';
 import { Message } from '../app/domain/Message';
+import { Plan } from '../app/domain/Plan';
+import { askGPT, buildSystemPrompt, sendFileToAIAnalysis } from '../services/gptServices';
 
 // Mock fetch for testing service integration
 global.fetch = jest.fn();

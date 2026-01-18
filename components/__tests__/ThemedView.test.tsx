@@ -1,6 +1,7 @@
-import React from 'react';
 import { render } from '@testing-library/react-native';
+import React from 'react';
 import { Text } from 'react-native';
+
 import { ThemedView } from '../ThemedView';
 
 // Mock the useThemeColor hook

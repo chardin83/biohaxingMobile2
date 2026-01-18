@@ -1,16 +1,18 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, {
   createContext,
   useContext,
   useEffect,
-  useState,
   useMemo,
+  useState,
 } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SupplementTime } from "../domain/SupplementTime";
-import { Plan } from "../domain/Plan";
+
+import { levels, XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT,XP_FOR_VIEW, XP_PER_CHAT_MESSAGE } from "@/constants/XP";
 import { PlanCategory } from "@/types/planCategory";
 import { VerdictValue } from "@/types/verdict";
-import { levels, XP_FOR_VIEW, XP_FOR_CHAT_QUESTION, XP_PER_CHAT_MESSAGE, XP_FOR_VERDICT } from "@/constants/XP";
+
+import { Plan } from "../domain/Plan";
+import { SupplementTime } from "../domain/SupplementTime";
 
 export type MealNutrition = {
   date: string; // YYYY-MM-DD

@@ -1,8 +1,9 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import { render, fireEvent, act, waitFor } from '@testing-library/react-native';
+
 import { StorageProvider, useStorage } from '../app/context/StorageContext';
 import NutritionLogger from '../components/NutritionLogger';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Mock react-i18next
 jest.mock('react-i18next', () => ({

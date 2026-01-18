@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useWearable } from "@/wearables/wearableProvider";
-import { TimeRange, SleepSummary, HRVSummary, EnergySignal } from "@/wearables/types";
-import { WearableStatus } from "@/components/WearableStatus";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { ActivityIndicator,ScrollView, StyleSheet, Text, View } from "react-native";
+
 import { HRVMetric } from "@/components/metrics/HRVMetric";
 import { RestingHRMetric } from "@/components/metrics/RestingHRMetric";
 import { SleepMetric } from "@/components/metrics/SleepMetric";
-import { useTranslation } from "react-i18next";
-import { Colors } from "@/constants/Colors";
 import TipsList from "@/components/ui/TipsList";
+import { WearableStatus } from "@/components/WearableStatus";
+import { Colors } from "@/constants/Colors";
+import { EnergySignal,HRVSummary, SleepSummary, TimeRange } from "@/wearables/types";
+import { useWearable } from "@/wearables/wearableProvider";
 
 export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();

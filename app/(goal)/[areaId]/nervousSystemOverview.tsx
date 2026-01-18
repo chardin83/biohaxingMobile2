@@ -1,17 +1,18 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useWearable } from "@/wearables/wearableProvider";
-import { WearableStatus } from "@/components/WearableStatus";
+import { useRouter } from "expo-router";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { ScrollView,StyleSheet, Text, View } from "react-native";
+
+import { useStorage } from "@/app/context/StorageContext";
 import { HRVMetric } from "@/components/metrics/HRVMetric";
 import { RestingHRMetric } from "@/components/metrics/RestingHRMetric";
+import TipsList from "@/components/ui/TipsList";
+import { WearableStatus } from "@/components/WearableStatus";
+import { Colors } from "@/constants/Colors";
 import { calculateHRVMetrics } from "@/utils/hrvCalculations";
 import { HRVSummary } from "@/wearables/types";
-import { useTranslation } from "react-i18next";
-import { Colors } from "@/constants/Colors";
-import { useRouter } from "expo-router";
-import { useStorage } from "@/app/context/StorageContext";
-import TipsList from "@/components/ui/TipsList";
+import { useWearable } from "@/wearables/wearableProvider";
 
 
 function daysAgo(n: number) {

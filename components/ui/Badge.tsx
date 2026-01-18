@@ -1,11 +1,12 @@
 import React, { ReactNode } from "react";
 import {
-  StyleSheet,
   StyleProp,
+  StyleSheet,
+  TouchableOpacity,
   View,
   ViewStyle,
-  TouchableOpacity,
 } from "react-native";
+
 import { Colors } from "@/constants/Colors";
 
 export type BadgeVariant = "default" | "overlay";

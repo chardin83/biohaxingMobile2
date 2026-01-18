@@ -1,26 +1,27 @@
+import "react-native-reanimated";
+
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
+import { t } from "i18next";
 import { useEffect } from "react";
-import "react-native-reanimated";
-
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PaperProvider } from "react-native-paper";
-
-import { colors } from "./theme/styles";
-import { StorageProvider } from "./context/StorageContext";
-import { SessionProvider } from "./context/SessionStorage";
-import { Stack } from "expo-router";
-import { t } from "i18next";
-import GlobalLevelUpModal from "@/components/GlobalLevelUpModal";
 import { MenuProvider } from "react-native-popup-menu";
+
+import GlobalLevelUpModal from "@/components/GlobalLevelUpModal";
+import { useColorScheme } from "@/hooks/useColorScheme";
 import { WearableProvider } from "@/wearables/wearableProvider";
+
+import { SessionProvider } from "./context/SessionStorage";
+import { StorageProvider } from "./context/StorageContext";
+import { colors } from "./theme/styles";
 
 SplashScreen.preventAutoHideAsync();
 

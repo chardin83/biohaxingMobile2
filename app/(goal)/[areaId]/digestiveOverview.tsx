@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useWearable } from "@/wearables/wearableProvider";
-import { TimeRange, SleepSummary, DailyActivity, EnergySignal } from "@/wearables/types";
-import { WearableStatus } from "@/components/WearableStatus";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator,ScrollView, StyleSheet, Text, View } from "react-native";
+
 import TipsList from "@/components/ui/TipsList";
+import { WearableStatus } from "@/components/WearableStatus";
+import { DailyActivity, EnergySignal,SleepSummary, TimeRange } from "@/wearables/types";
+import { useWearable } from "@/wearables/wearableProvider";
 
 export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();

@@ -1,9 +1,11 @@
-import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
-import GoalDetailScreen from '../[areaId]/details';
-import * as StorageContext from '../../context/StorageContext';
-import * as useSupplementsModule from '@/locales/supplements';
+import { fireEvent,render } from '@testing-library/react-native';
 import { useLocalSearchParams } from 'expo-router';
+import React from 'react';
+
+import * as useSupplementsModule from '@/locales/supplements';
+
+import * as StorageContext from '../../context/StorageContext';
+import GoalDetailScreen from '../[areaId]/details';
 
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(() => ({ replace: jest.fn(), back: jest.fn() })),

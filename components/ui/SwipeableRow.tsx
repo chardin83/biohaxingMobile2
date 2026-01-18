@@ -1,19 +1,20 @@
 import React from "react";
 import {
-  View,
+  StyleProp,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
+  View,
   ViewStyle,
-  StyleProp,
 } from "react-native";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import Reanimated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
-import { IconSymbol } from "@/components/ui/IconSymbol";
+
 import { colors } from "@/app/theme/styles";
+import { IconSymbol } from "@/components/ui/IconSymbol";
 import { Colors } from "@/constants/Colors";
 
 interface SwipeableRowProps {

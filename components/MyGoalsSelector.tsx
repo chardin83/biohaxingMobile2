@@ -1,9 +1,10 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { FlatList } from "react-native";
+
+import { useStorage } from "@/app/context/StorageContext";
 import AppCard from "@/components/ui/AppCard";
 import { Area, areas } from "@/locales/areas";
-import { useTranslation } from "react-i18next";
-import { useStorage } from "@/app/context/StorageContext";
 
 interface Props {
   readonly onGoalSelected?: (area: Area) => void;

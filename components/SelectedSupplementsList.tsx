@@ -1,10 +1,12 @@
 import React from "react";
-import { View, StyleSheet, Text } from "react-native";
 import { useTranslation } from "react-i18next";
-import SupplementItem from "./SupplementItem";
+import { StyleSheet, Text,View } from "react-native";
+
 import { Supplement } from "@/app/domain/Supplement";
 import { SupplementTime } from "@/app/domain/SupplementTime";
 import { Colors } from "@/constants/Colors";
+
+import SupplementItem from "./SupplementItem";
 
 interface SelectedSupplementsListProps {
   supplements: SupplementTime[];

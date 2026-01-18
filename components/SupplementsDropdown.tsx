@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect,useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
-  View,
-  StyleSheet,
-  Text,
   KeyboardAvoidingView,
   Platform,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import { useTranslation } from "react-i18next";
-import { useSupplements } from "@/locales/supplements";
+
 import { Supplement } from "@/app/domain/Supplement";
 import { Colors } from "@/constants/Colors";
+import { useSupplements } from "@/locales/supplements";
 
 interface SupplementDropdownProps {
   selectedTime: Date;

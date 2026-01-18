@@ -1,17 +1,19 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
-  View,
-  StyleSheet,
-  Text,
   KeyboardAvoidingView,
   Platform,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
-import { useTranslation } from "react-i18next";
+
 import { useStorage } from "@/app/context/StorageContext";
 import { colors } from "@/app/theme/styles";
 import { Colors } from "@/constants/Colors";
-import ImagePickerButton from "./ImagePickerButton";
 import { NutritionAnalyze } from "@/services/gptServices";
+
+import ImagePickerButton from "./ImagePickerButton";
 
 interface NutritionLoggerProps {
   selectedDate: string;

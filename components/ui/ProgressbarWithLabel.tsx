@@ -1,7 +1,8 @@
 // components/ProgressBarWithLabel.tsx
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { StyleSheet,Text, View } from "react-native";
 import * as Progress from "react-native-progress";
+
 import { Colors } from "@/constants/Colors";
 
 interface Props {

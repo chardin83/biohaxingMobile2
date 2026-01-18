@@ -1,5 +1,6 @@
+import { act, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import { render, act, waitFor } from '@testing-library/react-native';
+
 import { SessionProvider, useSession } from '../SessionStorage';
 
 describe('SessionStorage', () => {

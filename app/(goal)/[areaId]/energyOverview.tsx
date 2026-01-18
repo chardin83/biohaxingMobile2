@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useWearable } from "@/wearables/wearableProvider";
-import { TimeRange, SleepSummary, HRVSummary, DailyActivity, EnergySignal } from "@/wearables/types";
-import { WearableStatus } from "@/components/WearableStatus";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator,ScrollView, StyleSheet, Text, View } from "react-native";
+
 import { HRVMetric } from "@/components/metrics/HRVMetric";
 import { RestingHRMetric } from "@/components/metrics/RestingHRMetric";
 import { VO2MaxMetric } from "@/components/metrics/VO2MaxMetric";
+import TipsList from "@/components/ui/TipsList";
+import { WearableStatus } from "@/components/WearableStatus";
 import { calculateHRVMetrics } from "@/utils/hrvCalculations";
 import { calculateRestingHRMetrics } from "@/utils/restingHRCalculations";
-import TipsList from "@/components/ui/TipsList";
+import { DailyActivity, EnergySignal,HRVSummary, SleepSummary, TimeRange } from "@/wearables/types";
+import { useWearable } from "@/wearables/wearableProvider";
 
 export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();

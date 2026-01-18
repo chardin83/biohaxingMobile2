@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
-import { WearableAdapter, AdapterStatus } from "./types";
+
 import { MockAdapter } from "./mockAdapter";
+import { AdapterStatus,WearableAdapter } from "./types";
 
 type WearableContextValue = {
   adapter: WearableAdapter;

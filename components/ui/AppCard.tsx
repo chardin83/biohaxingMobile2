@@ -1,7 +1,8 @@
 // components/ui/AppCard.tsx
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { StyleSheet,Text, TouchableOpacity, View } from "react-native";
 import { Icon } from "react-native-paper";
+
 import { Colors } from "@/constants/Colors";
 
 interface AppCardProps {

@@ -1,7 +1,8 @@
-import React from "react";
-import { Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import { Alert } from "react-native";
+
 import AppButton from "./ui/AppButton";
 
 interface ImagePickerButtonProps {

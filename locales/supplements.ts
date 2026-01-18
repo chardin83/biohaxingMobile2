@@ -1,7 +1,8 @@
 
-import { Supplement } from "@/app/domain/Supplement";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+
+import { Supplement } from "@/app/domain/Supplement";
 
 export function useSupplements(): Supplement[] {
     const { t } = useTranslation("supplements");

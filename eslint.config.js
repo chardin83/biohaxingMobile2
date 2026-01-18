@@ -1,12 +1,12 @@
-// ESLint v9 flat config
-import js from '@eslint/js';
-import tsParser from '@typescript-eslint/parser';
-import tsPlugin from '@typescript-eslint/eslint-plugin';
-import importPlugin from 'eslint-plugin-import';
-import simpleImportSort from 'eslint-plugin-simple-import-sort';
-import prettier from 'eslint-config-prettier';
+// ESLint v9 flat config (CommonJS)
+const js = require('@eslint/js');
+const tsParser = require('@typescript-eslint/parser');
+const tsPlugin = require('@typescript-eslint/eslint-plugin');
+const importPlugin = require('eslint-plugin-import');
+const simpleImportSort = require('eslint-plugin-simple-import-sort');
+const prettierConfig = require('eslint-config-prettier');
 
-export default [
+module.exports = [
   js.configs.recommended,
   {
     files: ['**/*.ts', '**/*.tsx'],
@@ -16,7 +16,6 @@ export default [
         ecmaVersion: 2020,
         sourceType: 'module',
         project: './tsconfig.json',
-        tsconfigRootDir: import.meta.dirname,
       },
     },
     plugins: {
@@ -41,8 +40,8 @@ export default [
     },
   },
   // Apply Prettier compatibility (turns off rules that conflict with Prettier)
-  prettier,
+  prettierConfig,
   {
-    ignores: ['node_modules/**', 'android/**', 'ios/**', 'build/**', 'dist/**']
-  }
+    ignores: ['node_modules/**', 'android/**', 'ios/**', 'build/**', 'dist/**'],
+  },
 ];

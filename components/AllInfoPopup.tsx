@@ -1,18 +1,18 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
   Modal,
-  View,
-  Text,
   Pressable,
   StyleSheet,
   Switch,
+  Text,
   TouchableOpacity,
+  View,
 } from "react-native";
-import { borders } from "@/app/theme/styles";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useStorage } from "@/app/context/StorageContext";
 import { useSession } from "@/app/context/SessionStorage";
+import { useStorage } from "@/app/context/StorageContext";
+import { borders } from "@/app/theme/styles";
 import { Colors } from "@/constants/Colors";
 
 const AIInfoPopup: React.FC = () => {

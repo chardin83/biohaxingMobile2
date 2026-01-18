@@ -1,9 +1,10 @@
 // services/gptService.ts
+import { t } from "i18next";
+
+import { PlansByCategory } from "@/app/context/StorageContext";
 import { GPTResponse } from "@/app/domain/GPTResponse";
 import { Message } from "@/app/domain/Message";
 import { ENDPOINTS } from "@/config";
-import { t } from "i18next";
-import { PlansByCategory } from "@/app/context/StorageContext";
 
 export interface AnalysisResponse {
     type: string;

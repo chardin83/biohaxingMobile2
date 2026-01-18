@@ -1,8 +1,10 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { SwipeableRow } from "./ui/SwipeableRow";
-import { Colors } from "@/constants/Colors";
+
 import { Supplement } from "@/app/domain/Supplement";
+import { Colors } from "@/constants/Colors";
+
+import { SwipeableRow } from "./ui/SwipeableRow";
 
 interface RenderSupplementItemProps {
   planName: string;

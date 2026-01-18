@@ -1,9 +1,9 @@
 import React from "react";
 import {
-  StyleSheet,
   FlatListProps,
-  NativeSyntheticEvent,
   NativeScrollEvent,
+  NativeSyntheticEvent,
+  StyleSheet,
 } from "react-native";
 import Animated, {
   interpolate,

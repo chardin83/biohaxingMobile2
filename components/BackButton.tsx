@@ -1,7 +1,8 @@
-import React from "react";
-import { Pressable, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import { Pressable, StyleSheet,Text } from "react-native";
+
 import { Colors } from "@/constants/Colors";
 
 interface BackButtonProps {

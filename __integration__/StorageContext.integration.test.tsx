@@ -1,7 +1,8 @@
-import React from 'react';
-import { render, act, waitFor } from '@testing-library/react-native';
-import { StorageProvider, useStorage } from '../app/context/StorageContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { act, render, waitFor } from '@testing-library/react-native';
+import React from 'react';
+
+import { StorageProvider, useStorage } from '../app/context/StorageContext';
 import { Plan } from '../app/domain/Plan';
 
 // This is an integration test that uses real AsyncStorage and real context

@@ -1,4 +1,5 @@
 import { MaterialIcons } from "@expo/vector-icons";
+
 import { ICON_SYMBOLS, IconSymbolName } from "./icon-symbol-map";
 
 export function IconSymbol({

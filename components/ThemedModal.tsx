@@ -1,9 +1,11 @@
 import React from "react";
-import { Modal, View, StyleSheet, ViewStyle, StyleProp } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
 import { useTranslation } from "react-i18next";
-import { Colors } from "@/constants/Colors";
+import { Modal, StyleProp,StyleSheet, View, ViewStyle } from "react-native";
+
 import { borders } from "@/app/theme/styles";
+import { ThemedText } from "@/components/ThemedText";
+import { Colors } from "@/constants/Colors";
+
 import AppButton from "./ui/AppButton";
 
 interface ThemedModalProps {

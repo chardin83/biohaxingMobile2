@@ -1,9 +1,10 @@
-import React from 'react';
-import { render, fireEvent, act, waitFor } from '@testing-library/react-native';
-import { StorageProvider, useStorage } from '../app/context/StorageContext';
-import IndexRedirector from '../app/(tabs)/index';
-import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
+import { useRouter } from 'expo-router';
+import React from 'react';
+
+import IndexRedirector from '../app/(tabs)/index';
+import { StorageProvider, useStorage } from '../app/context/StorageContext';
 
 // Mock expo-router
 const mockReplace = jest.fn();

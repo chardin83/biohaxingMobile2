@@ -1,12 +1,13 @@
+import { TFunction } from "i18next";
 import React, { useState } from "react";
-import { View, Text, ScrollView, ActivityIndicator, Image } from "react-native";
+import { ActivityIndicator, Image,ScrollView, Text, View } from "react-native";
+import Markdown from "react-native-markdown-display";
+
+import ImagePickerButton from "@/components/ImagePickerButton";
 import { ThemedModal } from "@/components/ThemedModal";
 import { ThemedText } from "@/components/ThemedText";
 import AppBox from "@/components/ui/AppBox";
-import Markdown from "react-native-markdown-display";
 import { Colors } from "@/constants/Colors";
-import { TFunction } from "i18next";
-import ImagePickerButton from "@/components/ImagePickerButton";
 
 
 interface AnalysisModalProps {

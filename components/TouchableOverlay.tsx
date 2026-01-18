@@ -1,9 +1,9 @@
 import React from "react";
 import {
+  GestureResponderEvent,
   Pressable,
   StyleSheet,
   View,
-  GestureResponderEvent,
 } from "react-native";
 
 type TouchOverlayProps = {

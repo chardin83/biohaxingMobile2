@@ -1,8 +1,10 @@
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
-import { useStorage } from "../context/StorageContext";
 import { ActivityIndicator, View } from "react-native";
+
 import { Colors } from "@/constants/Colors";
+
+import { useStorage } from "../context/StorageContext";
 
 export default function IndexRedirector() {
   const { hasCompletedOnboarding, isInitialized, onboardingStep } =

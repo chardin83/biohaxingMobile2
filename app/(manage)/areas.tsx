@@ -1,10 +1,10 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
 import { t } from "i18next";
+import React from "react";
+import { StyleSheet,Text, View } from "react-native";
 
+import BackButton from "@/components/BackButton";
 import MyGoalsSelector from "@/components/MyGoalsSelector";
 import { Colors } from "@/constants/Colors";
-import BackButton from "@/components/BackButton";
 
 export default function Areas() {
   return (

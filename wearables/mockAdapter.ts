@@ -1,4 +1,4 @@
-import { WearableAdapter, TimeRange, SleepSummary, HRVSummary, DailyActivity, EnergySignal, AdapterStatus } from "./types";
+import { AdapterStatus,DailyActivity, EnergySignal, HRVSummary, SleepSummary, TimeRange, WearableAdapter } from "./types";
 
 function dateKeysBetween(startISO: string, endISO: string) {
   const start = new Date(startISO);

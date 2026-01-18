@@ -4,11 +4,12 @@ import React, {
   useImperativeHandle,
   useState,
 } from "react";
-import { Image, View, StyleSheet } from "react-native";
-import { LocaleConfig, Calendar } from "react-native-calendars";
 import { useTranslation } from "react-i18next";
-import { Colors } from "@/constants/Colors";
+import { Image, StyleSheet,View } from "react-native";
+import { Calendar,LocaleConfig } from "react-native-calendars";
+
 import { useStorage } from "@/app/context/StorageContext";
+import { Colors } from "@/constants/Colors";
 
 const configureCalendarLocale = (language: string, t: any) => {
   const localeConfig = {

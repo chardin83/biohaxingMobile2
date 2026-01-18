@@ -1,27 +1,28 @@
+import { MaterialIcons } from "@expo/vector-icons";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useLocalSearchParams , useRouter } from "expo-router";
+import { t } from "i18next";
 import React, { JSX, useEffect, useRef, useState } from "react";
 import {
-  View,
-  Text,
-  TextInput,
-  ScrollView,
-  StyleSheet,
+  Animated,
   KeyboardAvoidingView,
   Platform,
-  Animated,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
+
 import AIInfoPopup from "@/components/AllInfoPopup";
-import { useStorage } from "../context/StorageContext";
-import { useGPTFunctionHandler } from "@/hooks/useGPTFunctionHandler";
-import { useLocalSearchParams } from "expo-router";
-import { t } from "i18next";
-import { Colors } from "@/constants/Colors";
-import { Message } from "../domain/Message";
-import { askGPT, buildSystemPrompt } from "@/services/gptServices";
 import BackButton from "@/components/BackButton";
-import { useRouter } from "expo-router";
+import { Colors } from "@/constants/Colors";
+import { useGPTFunctionHandler } from "@/hooks/useGPTFunctionHandler";
+import { useKeyboardVisible } from "@/hooks/useKeyboardVisible";
+import { askGPT, buildSystemPrompt } from "@/services/gptServices";
+
+import { useStorage } from "../context/StorageContext";
+import { Message } from "../domain/Message";
 
 export default function ChatWithGPT4o(): JSX.Element {
   const [messages, setMessages] = useState<Message[]>([]);
