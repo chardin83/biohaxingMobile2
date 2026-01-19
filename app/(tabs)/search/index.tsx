@@ -14,22 +14,26 @@ export default function TipsSearchScreen() {
     const [query, setQuery] = useState('');
     const [selectedArea, setSelectedArea] = useState<string | null>(null);
     const [showFilter, setShowFilter] = useState(false);
+    const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
 
     const filteredTips = useMemo(() => {
         const q = query.trim().toLowerCase();
         return tips.filter(tip =>
             (!selectedArea || tip.areas.some(a => a.id === selectedArea)) &&
+            (!selectedLevel || (tip.level ?? 1) === selectedLevel) &&
             (
                 !q ||
                 t('tips:' + tip.title).toLowerCase().includes(q) ||
                 t('tips:' + tip.descriptionKey).toLowerCase().includes(q)
             )
         );
-    }, [query, t, selectedArea]);
+    }, [query, t, selectedArea, selectedLevel]);
 
     const matchCount = filteredTips.length;
 
-    const activeFilterCount = selectedArea ? 1 : 0;
+    const activeFilterCount = (selectedArea ? 1 : 0) + (selectedLevel ? 1 : 0);
+
+    const allLevels = [...new Set(tips.map(tip => tip.level ?? 1))].sort((a, b) => a - b);
 
     return (
         <LinearGradient
@@ -46,23 +50,42 @@ export default function TipsSearchScreen() {
                 containerStyle={styles.inputMargin}
             />
             {showFilter && (
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 16 }}>
-                    {[...new Set(tips.flatMap(tip => tip.areas.map(a => a.id)))].map(areaId => (
-                        <Badge
-                            key={areaId}
-                            variant="overlay"
-                            style={[
-                                styles.toggleBadge,
-                                selectedArea === areaId && { backgroundColor: Colors.dark.accentDefault },
-                            ]}
-                            onPress={() => setSelectedArea(selectedArea === areaId ? null : areaId)}
-                        >
-                            <Text style={styles.badgeLabel}>
-                                {t('areas:' + areaId + '.title')}
-                            </Text>
-                        </Badge>
-                    ))}
-                </View>
+                <>
+                    {/* Area-filter */}
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 }}>
+                        {[...new Set(tips.flatMap(tip => tip.areas.map(a => a.id)))].map(areaId => (
+                            <Badge
+                                key={areaId}
+                                variant="overlay"
+                                style={[
+                                    styles.toggleBadge,
+                                    selectedArea === areaId && { backgroundColor: Colors.dark.accentDefault },
+                                ]}
+                                onPress={() => setSelectedArea(selectedArea === areaId ? null : areaId)}
+                            >
+                                <Text style={styles.badgeLabel}>
+                                    {t('areas:' + areaId + '.title')}
+                                </Text>
+                            </Badge>
+                        ))}
+                    </View>
+                    {/* Level-filter */}
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 16 }}>
+                        {allLevels.map(level => (
+                            <Badge
+                                key={level}
+                                variant="overlay"
+                                style={[
+                                    styles.toggleBadge,
+                                    selectedLevel === level && { backgroundColor: Colors.dark.accentDefault },
+                                ]}
+                                onPress={() => setSelectedLevel(selectedLevel === level ? null : level)}
+                            >
+                                <Text style={styles.badgeLabel}>{`Level ${level}`}</Text>
+                            </Badge>
+                        ))}
+                    </View>
+                </>
             )}
             <TouchableOpacity onPress={() => setShowFilter(v => !v)} style={{ marginBottom: 8 }}>
                 <Text style={{ color: Colors.dark.accentDefault, fontWeight: 'bold', fontSize: 16 }}>
@@ -76,14 +99,21 @@ export default function TipsSearchScreen() {
                 data={filteredTips}
                 keyExtractor={item => item.id}
                 renderItem={({ item }) => (
-                    <Card title={t('tips:' + item.title)}>
-                        <Text style={styles.desc}>{t('tips:' + item.descriptionKey)}</Text>
-                        <View style={styles.badgeRow}>
+                    <Card>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                            <Text style={styles.title}>{t('tips:' + item.title)}</Text>
+                            <Badge variant="overlay" style={[styles.toggleBadge, { backgroundColor: Colors.dark.accentDefault, marginLeft: 8 }]}>
+                                <Text style={[styles.badgeLabel, { fontWeight: 'bold' }]}>
+                                    {`Level ${item.level ?? 1}`}
+                                </Text>
+                            </Badge>
+                        </View>
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 4 }}>
                             {item.areas.map(a => (
                                 <Badge
                                     key={a.id}
                                     variant="overlay"
-                                    style={styles.toggleBadge} // eller styles.trainingBadge om du vill ha exakt samma
+                                    style={styles.toggleBadge}
                                 >
                                     <Text style={styles.badgeLabel}>
                                         {t('areas:' + a.id + '.title')}
@@ -91,10 +121,26 @@ export default function TipsSearchScreen() {
                                 </Badge>
                             ))}
                         </View>
+                        <Text style={styles.desc}>{t('tips:' + item.descriptionKey)}</Text>
                     </Card>
                 )}
                 ListEmptyComponent={<Text style={styles.empty}>Inga tips hittades.</Text>}
             />
+            <View style={styles.levelFilter}>
+                <Text style={styles.levelLabel}>Nivå:</Text>
+                {allLevels.map(level => (
+                    <Badge
+                        key={level}
+                        variant="overlay"
+                        style={styles.levelBadge}
+                        onPress={() => setSelectedLevel(selectedLevel === level ? null : level)}
+                    >
+                        <Text style={styles.levelLabel}>
+                            {level}
+                        </Text>
+                    </Badge>
+                ))}
+            </View>
         </LinearGradient>
     );
 }
@@ -144,5 +190,18 @@ const styles = StyleSheet.create({
         padding: 10,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    levelFilter: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        marginBottom: 16,
+    },
+    levelLabel: { color: Colors.dark.textSecondary, fontSize: 12 },
+    levelBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 8,
+        marginBottom: 8,
     },
 });
