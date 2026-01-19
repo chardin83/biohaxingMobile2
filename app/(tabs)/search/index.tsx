@@ -22,8 +22,7 @@ export default function TipsSearchScreen() {
             (
                 !q ||
                 t('tips:' + tip.title).toLowerCase().includes(q) ||
-                t('tips:' + tip.descriptionKey).toLowerCase().includes(q) ||
-                tip.areas.some(area => t('areas:' + area.id + '.title').toLowerCase().includes(q))
+                t('tips:' + tip.descriptionKey).toLowerCase().includes(q)
             )
         );
     }, [query, t, selectedArea]);
@@ -104,7 +103,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        paddingTop: 120,
+        paddingTop: 80,
         // Bakgrundsfärg sätts av LinearGradient
     },
     title: { fontWeight: 'bold', fontSize: 16, marginBottom: 4, color: Colors.dark.textPrimary },
@@ -135,7 +134,7 @@ const styles = StyleSheet.create({
     },
     areas: { color: Colors.dark.textSecondary, fontSize: 12 },
     empty: { textAlign: 'center', color: Colors.dark.textSecondary, marginTop: 40 },
-    inputMargin: { marginBottom: 40 },
+    inputMargin: { marginBottom: 20 },
     filterButton: {
         position: 'absolute',
         top: 10,
