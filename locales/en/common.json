@@ -200,5 +200,10 @@
   },
    "search": {
       "label": "Search tips"
-    }
+    },
+  "planCategory": {
+    "nutrition": "Nutrition",
+    "training": "Training",
+    "other": "Other"
+  }
 }

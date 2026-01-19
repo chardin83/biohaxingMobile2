@@ -210,5 +210,10 @@
     },
     "search": {
       "label": "Sök tips"
+    },
+    "planCategory": {
+      "nutrition": "Kost",
+      "training": "Träning",
+      "other": "Övrigt"
     }
   }

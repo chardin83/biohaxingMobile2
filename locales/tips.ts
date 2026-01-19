@@ -52,28 +52,6 @@ export type Tip = {
 
 const rawTips: Tip[] = [
   {
-    id: 'eat_colorful_veggies',
-    level: 1,
-    xp: 300,
-    areas: [
-      { id: 'digestiveHealth', descriptionKey: 'eat_colorful_veggies.areas.digestiveHealth' },
-      { id: 'immuneSupport', descriptionKey: 'eat_colorful_veggies.areas.immuneSupport' },
-    ],
-    title: 'eat_colorful_veggies.title',
-    descriptionKey: 'eat_colorful_veggies.description',
-    trainingRelation: 'anytime',
-    preferredDayParts: ['midday', 'evening'],
-    timeRule: 'anytime',
-    planCategory: 'nutrition',
-    nutritionFoods: [
-      { key: 'redVeggies' },
-      { key: 'orangeVeggies' },
-      { key: 'yellowVeggies' },
-      { key: 'greenVeggies' },
-      { key: 'bluePurpleVeggies' },
-    ],
-  },
-  {
     id: 'intermittent_fasting_12h',
     level: 1,
     xp: 300,
@@ -1082,6 +1060,28 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     timeRule: 'anytime',
     planCategory: 'training',
+  },
+  {
+    id: 'eat_colorful_veggies',
+    level: 1,
+    xp: 300,
+    areas: [
+      { id: 'digestiveHealth', descriptionKey: 'eat_colorful_veggies.areas.digestiveHealth' },
+      { id: 'immuneSupport', descriptionKey: 'eat_colorful_veggies.areas.immuneSupport' },
+    ],
+    title: 'eat_colorful_veggies.title',
+    descriptionKey: 'eat_colorful_veggies.description',
+    trainingRelation: 'anytime',
+    preferredDayParts: ['midday', 'evening'],
+    timeRule: 'anytime',
+    planCategory: 'nutrition',
+    nutritionFoods: [
+      { key: 'redVeggies' },
+      { key: 'orangeVeggies' },
+      { key: 'yellowVeggies' },
+      { key: 'greenVeggies' },
+      { key: 'bluePurpleVeggies' },
+    ],
   },
 ];
 

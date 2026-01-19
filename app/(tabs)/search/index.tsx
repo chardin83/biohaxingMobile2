@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, FlatList, StyleSheet, Text, TextInput, TouchableOpacity,View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity,View } from 'react-native';
 
 import Badge from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
@@ -15,23 +15,39 @@ export default function TipsSearchScreen() {
     const [selectedArea, setSelectedArea] = useState<string | null>(null);
     const [showFilter, setShowFilter] = useState(false);
     const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
+    const [selectedPlanCategory, setSelectedPlanCategory] = useState<string | null>(null);
+
+    const allPlanCategories = useMemo(
+        () =>
+            [...new Set(tips.map(tip => tip.planCategory ?? 'other'))]
+                .sort((a, b) => t('common:planCategory.' + a).localeCompare(t('common:planCategory.' + b))),
+        [tips, t]
+    );
 
     const filteredTips = useMemo(() => {
         const q = query.trim().toLowerCase();
-        return tips.filter(tip =>
-            (!selectedArea || tip.areas.some(a => a.id === selectedArea)) &&
-            (!selectedLevel || (tip.level ?? 1) === selectedLevel) &&
-            (
-                !q ||
-                t('tips:' + tip.title).toLowerCase().includes(q) ||
-                t('tips:' + tip.descriptionKey).toLowerCase().includes(q)
+        return tips
+            .filter(tip =>
+                (!selectedArea || tip.areas.some(a => a.id === selectedArea)) &&
+                (!selectedLevel || (tip.level ?? 1) === selectedLevel) &&
+                (!selectedPlanCategory || (tip.planCategory ?? 'other') === selectedPlanCategory) &&
+                (
+                    !q ||
+                    t('tips:' + tip.title).toLowerCase().includes(q) ||
+                    t('tips:' + tip.descriptionKey).toLowerCase().includes(q)
+                )
             )
-        );
-    }, [query, t, selectedArea, selectedLevel]);
+            .sort((a, b) =>
+                t('tips:' + a.title).localeCompare(t('tips:' + b.title))
+            );
+    }, [query, t, selectedArea, selectedLevel, selectedPlanCategory]);
 
     const matchCount = filteredTips.length;
 
-    const activeFilterCount = (selectedArea ? 1 : 0) + (selectedLevel ? 1 : 0);
+    const activeFilterCount =
+        (selectedArea ? 1 : 0) +
+        (selectedLevel ? 1 : 0) +
+        (selectedPlanCategory ? 1 : 0);
 
     const allLevels = [...new Set(tips.map(tip => tip.level ?? 1))].sort((a, b) => a - b);
 
@@ -70,7 +86,7 @@ export default function TipsSearchScreen() {
                         ))}
                     </View>
                     {/* Level-filter */}
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 16 }}>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 }}>
                         {allLevels.map(level => (
                             <Badge
                                 key={level}
@@ -82,6 +98,22 @@ export default function TipsSearchScreen() {
                                 onPress={() => setSelectedLevel(selectedLevel === level ? null : level)}
                             >
                                 <Text style={styles.badgeLabel}>{`Level ${level}`}</Text>
+                            </Badge>
+                        ))}
+                    </View>
+                    {/* PlanCategory-filter */}
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 16 }}>
+                        {allPlanCategories.map(cat => (
+                            <Badge
+                                key={cat}
+                                variant="overlay"
+                                style={[
+                                    styles.toggleBadge,
+                                    selectedPlanCategory === cat && { backgroundColor: Colors.dark.accentDefault },
+                                ]}
+                                onPress={() => setSelectedPlanCategory(selectedPlanCategory === cat ? null : cat)}
+                            >
+                                <Text style={styles.badgeLabel}>{t('common:planCategory.' + cat)}</Text>
                             </Badge>
                         ))}
                     </View>
