@@ -2,7 +2,7 @@
 {
     "typescript.tsserver.exclude": ["**/node_modules"],
     "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
+        "source.fixAll.eslint": "explicit"
     },
     "eslint.validate": [
         "javascript",

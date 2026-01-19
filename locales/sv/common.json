@@ -207,5 +207,8 @@
       "level": "NIVÅ",
       "noFavorites": "Inga favoriter än",
       "editAreas": "Redigera Områden"
+    },
+    "search": {
+      "label": "Sök tips"
     }
   }

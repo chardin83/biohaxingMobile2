@@ -59,6 +59,10 @@ export const ICON_SYMBOLS = {
     sf: 'chevron.down', // valfritt SF-symbolnamn
     material: 'expand-more',
   },
+  'search': {
+    sf: 'magnifyingglass',
+    material: 'search',
+  },
 } as const;
 
 export type IconSymbolName = keyof typeof ICON_SYMBOLS;

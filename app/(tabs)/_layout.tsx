@@ -45,7 +45,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen name="index" options={{ href: null }} />
-    <Tabs.Screen name="dashboard/area/[areaId]" options={{ href: null }} />
+      <Tabs.Screen name="dashboard/area/[areaId]" options={{ href: null }} />
       <Tabs.Screen
         name="dashboard/index"
         options={{
@@ -54,7 +54,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="calendar/index" 
+        name="calendar/index"
         options={{
           title: t('layout.calendar'),
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
@@ -72,6 +72,13 @@ export default function TabLayout() {
         options={{
           title: 'AI',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="chat" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="search/index"
+        options={{
+          title: t('layout.search', { defaultValue: 'Sök' }),
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="search" color={color} />,
         }}
       />
     </Tabs>
