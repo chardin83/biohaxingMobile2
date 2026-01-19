@@ -1,5 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, usePathname,useSegments } from 'expo-router';
+import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 // Removed SafeAreaView import
@@ -16,6 +17,14 @@ import SleepOverview from './sleepOverview';
 
 export default function AreaRootScreen() {
   const { areaId } = useLocalSearchParams<{ areaId: string }>();
+  const segments = useSegments();
+  const pathname = usePathname?.() ?? '';
+
+  useEffect(() => {
+    console.log('route segments:', segments);
+    console.log('pathname:', pathname);
+    console.log('areaId:', areaId);
+  }, [segments, pathname, areaId]);
 
   return (
     <LinearGradient

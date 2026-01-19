@@ -1,13 +1,11 @@
 import { Stack } from 'expo-router';
 
-export default function GoalLayout() {
+export default function AreaLayout() {
   return (
     <Stack
       screenOptions={{
         headerShown: false,
       }}
-    >
-      <Stack.Screen name="[areaId]" />
-    </Stack>
+     />
   );
 }
