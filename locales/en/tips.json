@@ -13,6 +13,14 @@
       "nutrition": "Colorful vegetables provide different vitamins, minerals, and antioxidants that strengthen the immune system and promote overall health."
     }
   },
+  "eat_colorful_veggies": {
+    "title": "Eat colorful vegetables",
+    "description": "Eating vegetables in a variety of colors provides a broad spectrum of antioxidants and nutrients. Vary the colors on your plate to support digestion and immune function.",
+    "areas": {
+      "digestiveHealth": "Colorful vegetables support gut health and digestion.",
+      "immuneSupport": "Different colors provide different antioxidants that strengthen the immune system."
+    }
+  },
   "vitamin_d": {
     "title": "Vitamin D",
     "description": "Vitamin D levels can vary based on factors such as sun exposure, diet, and geographic location. Pairing D3 with complementary vitamin K2 helps route calcium to bones and protects soft tissues. Consider adding magnesium bisglycinate to support vitamin D activation and efficient calcium uptake.",

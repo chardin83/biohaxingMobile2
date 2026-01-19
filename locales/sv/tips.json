@@ -260,7 +260,7 @@
     }
   },
   "hrv_recovery_monitoring": {
-    "title": "HRV och återhämtningsövervakning",
+    "title": "HRV och återhämtningsovervakning",
     "description": "Hjärtfrekvensvariabilitet (HRV) är ett nyckelmått för att spåra nervsystemets balans och återhämtningstatus. Övervakning av HRV hjälper till att optimera träningsintensitet, förhindra överträning och säkerställa tillräcklig återhämtning mellan träningspass.",
     "areas": {
       "nervousSystem": "HRV återspeglar balansen mellan sympatisk och parasympatisk nervsystemaktivitet, vilket indikerar stress- och återhämtningnivåer.",
@@ -798,6 +798,14 @@
     "areas": {
       "musclePerformance": "Att undvika hårda platta skor minskar onödig belastning på muskler och senor.",
       "nervousSystem": "Variation i underlag och skor stödjer nervsystemets anpassningsförmåga."
+    }
+  },
+  "eat_colorful_veggies": {
+    "title": "Ät färgglada grönsaker",
+    "description": "Att äta grönsaker i olika färger ger ett brett spektrum av antioxidanter och näringsämnen. Variera färgerna på tallriken för att stödja matsmältning och immunförsvar.",
+    "areas": {
+      "digestiveHealth": "Färgglada grönsaker stödjer tarmhälsa och matsmältning.",
+      "immuneSupport": "Olika färger ger olika antioxidanter som stärker immunförsvaret."
     }
   }
 }
