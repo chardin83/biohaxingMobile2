@@ -7,9 +7,8 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   const sound = useRef<Audio.Sound | null>(null);
 
   const play = async () => {
-    // Om ljudet redan finns, ladda om det från början
+    //await stop();
     if (sound.current) {
-      await sound.current.stopAsync();
       await sound.current.setPositionAsync(0);
       await sound.current.playAsync();
     } else {
@@ -19,7 +18,6 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
       );
       sound.current = playback;
       await playback.playAsync();
-      // När ljudet spelats klart, nollställ referensen
       playback.setOnPlaybackStatusUpdate(status => {
         if (status.isLoaded && status.didJustFinish) {
           sound.current = null;
@@ -29,13 +27,11 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   };
 
   const stop = async () => {
+    await Audio.setIsEnabledAsync(false);
+    await Audio.setIsEnabledAsync(true);
     if (sound.current) {
-      try {
-        await sound.current.stopAsync();
-      } catch (e) {}
-      try {
-        await sound.current.unloadAsync();
-      } catch (e) {}
+      try { await sound.current.stopAsync(); } catch {}
+      try { await sound.current.unloadAsync(); } catch {}
       sound.current = null;
     }
   };

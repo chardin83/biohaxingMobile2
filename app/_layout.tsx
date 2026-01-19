@@ -81,14 +81,6 @@ export default function RootLayout() {
                         }}
                       >
                         <Stack.Screen
-                          name="(goal)"
-                          options={{
-                            headerShown: false,
-                            title: '',
-                            headerBackTitle: t('back'),
-                          }}
-                        />
-                        <Stack.Screen
                           name="(tabs)"
                           options={{
                             headerShown: false,
