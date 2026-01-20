@@ -19,7 +19,7 @@ export default function TipsSearchScreen() {
 
     const allPlanCategories = useMemo(
         () =>
-            [...new Set(tips.map(tip => tip.planCategory ?? 'other'))]
+            [...new Set(tips.flatMap(tip => tip.planCategory ?? ['other']))]
                 .sort((a, b) => t('common:planCategory.' + a).localeCompare(t('common:planCategory.' + b))),
         [tips, t]
     );
@@ -30,7 +30,7 @@ export default function TipsSearchScreen() {
             .filter(tip =>
                 (!selectedArea || tip.areas.some(a => a.id === selectedArea)) &&
                 (!selectedLevel || (tip.level ?? 1) === selectedLevel) &&
-                (!selectedPlanCategory || (tip.planCategory ?? 'other') === selectedPlanCategory) &&
+                (!selectedPlanCategory || (tip.planCategory ?? ['other']).includes(selectedPlanCategory)) &&
                 (
                     !q ||
                     t('tips:' + tip.title).toLowerCase().includes(q) ||
@@ -68,6 +68,9 @@ export default function TipsSearchScreen() {
             {showFilter && (
                 <>
                     {/* Area-filter */}
+                    <Text style={{ color: Colors.dark.textSecondary, marginBottom: 2, fontSize: 13, fontWeight: 'bold' }}>
+                        {t('common:filter.area')}
+                    </Text>
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 }}>
                         {[...new Set(tips.flatMap(tip => tip.areas.map(a => a.id)))].map(areaId => (
                             <Badge
@@ -86,6 +89,9 @@ export default function TipsSearchScreen() {
                         ))}
                     </View>
                     {/* Level-filter */}
+                    <Text style={{ color: Colors.dark.textSecondary, marginBottom: 2, fontSize: 13, fontWeight: 'bold' }}>
+                        {t('common:filter.level')}
+                    </Text>
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 }}>
                         {allLevels.map(level => (
                             <Badge
@@ -102,6 +108,9 @@ export default function TipsSearchScreen() {
                         ))}
                     </View>
                     {/* PlanCategory-filter */}
+                    <Text style={{ color: Colors.dark.textSecondary, marginBottom: 2, fontSize: 13, fontWeight: 'bold' }}>
+                        {t('common:filter.planCategory')}
+                    </Text>
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 16 }}>
                         {allPlanCategories.map(cat => (
                             <Badge

@@ -670,7 +670,7 @@
     "description": "En strukturerad nedvarvningsrutin 30-60 minuter före sänggåendet signalerar till din kropp att det är dags att sova. Detta kan inkludera avslappningsteknik, lätt läsning, meditation eller mild stretching.",
     "areas": {
       "sleepQuality": "En korrekt nedvarvningsrutin hjälper till att övergå nervsystemet från vaksamhet till sömn, vilket främjar snabbare sömnbörjan och djupare sömn.",
-      "nervousSystem": "Avslappningsteknik före sänggåendet aktiverar det parasympatiska nervsystemet och förbereder kroppen för återställande sömn."
+      "nervousSystem": "Avslappningsteknik före sänggåendet aktiverar det parasympatiska nervsystemet och förbereder kroppen för återhämtning."
     }
   },
   "zone2_mitochondrial_base": {
@@ -806,6 +806,22 @@
     "areas": {
       "digestiveHealth": "Färgglada grönsaker stödjer tarmhälsa och matsmältning.",
       "immuneSupport": "Olika färger ger olika antioxidanter som stärker immunförsvaret."
+    }
+  },
+  "near_infrared_red_light": {
+    "title": "Near Infrared / Rött ljus",
+    "description": "Near Infrared och rött ljus används för återhämtning, energistöd och muskelhälsa.",
+    "areas": {
+      "energy": "Stödjer energiproduktion och återhämtning.",
+      "musclePerformance": "Kan förbättra muskelhälsa och återhämtning."
+    }
+  },
+  "far_infrared_light": {
+    "title": "Far Infrared",
+    "description": "Far infrared används för djupvävnadsuppvärmning och återhämtning.",
+    "areas": {
+      "energy": "Främjar djupvärme och energistöd.",
+      "musclePerformance": "Stödjer återhämtning och muskelavslappning."
     }
   }
 }

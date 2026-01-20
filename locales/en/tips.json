@@ -791,5 +791,21 @@
       "musclePerformance": "Avoiding hard flat shoes reduces unnecessary strain on muscles and tendons.",
       "nervousSystem": "Varying surfaces and footwear supports nervous system adaptability."
     }
+  },
+  "near_infrared_red_light": {
+    "title": "Near Infrared / Red Light",
+    "description": "Near infrared and red light are used for recovery, energy support, and muscle health.",
+    "areas": {
+      "energy": "Supports energy production and recovery.",
+      "musclePerformance": "May improve muscle health and recovery."
+    }
+  },
+  "far_infrared_light": {
+    "title": "Far Infrared",
+    "description": "Far infrared is used for deep tissue warming and recovery.",
+    "areas": {
+      "energy": "Promotes deep warming and energy support.",
+      "musclePerformance": "Supports recovery and muscle relaxation."
+    }
   }
 }

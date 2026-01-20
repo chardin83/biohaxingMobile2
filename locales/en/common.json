@@ -204,6 +204,12 @@
   "planCategory": {
     "nutrition": "Nutrition",
     "training": "Training",
-    "other": "Other"
+    "other": "Other",
+    "supplement": "Supplement"
+  },
+  "filter": {
+    "area": "Area",
+    "level": "Level",
+    "planCategory": "Plan category"
   }
 }

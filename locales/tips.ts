@@ -45,8 +45,7 @@ export type Tip = {
   trainingRelation?: TrainingRelation; // (kopplat till workout)
   preferredDayParts?: DayPart[]; // (när på dagen det passar)
   timeRule?: TimeOfDayRule; // (tidsrestriktioner)
-  planCategory?: PlanCategory; // Markerar övergripande plan-kategori
-  planCategoryOptions?: PlanCategory[]; // Tillåt användarval mellan kategorier
+  planCategory?: PlanCategory[]; // Markerar övergripande plan-kategori
   nutritionFoods?: TipNutritionFood[]; // Rekommenderade livsmedel för nutritionstips
 };
 
@@ -64,7 +63,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
-    planCategory: 'nutrition',
+    planCategory: ['nutrition'],
   },
   {
     id: 'intermittent_fasting_16_8',
@@ -79,7 +78,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
-    planCategory: 'nutrition',
+    planCategory: ['nutrition'],
   },
   {
     id: 'multivitamin_general',
@@ -96,6 +95,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
+    planCategory: ['nutrition'],
   },
   {
     id: 'vitamin_d',
@@ -120,7 +120,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
-    planCategoryOptions: ['nutrition'],
+    planCategory: ['nutrition'],
     nutritionFoods: [{ key: 'fattyFish' }, { key: 'eggYolks' }, { key: 'fortifiedDairy' }, { key: 'mushrooms' }],
   },
   {
@@ -144,6 +144,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'evening'],
     timeRule: 'anytime',
+    planCategory: ['supplement'],   
   },
   {
     id: 'coq10',
@@ -160,7 +161,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
-    planCategoryOptions: ['nutrition'],
+    planCategory: ['nutrition', 'supplement'],
     nutritionFoods: [
       { key: 'organMeats' },
       { key: 'fattyFish' },
@@ -184,6 +185,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
+    planCategory: ['supplement'],
   },
   {
     id: 'sleep_timing_circadian',
@@ -199,6 +201,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening'],
     timeRule: 'anytime',
+    planCategory: ['other'],
   },
   {
     id: 'magnesium',
@@ -221,7 +224,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
-    planCategoryOptions: ['nutrition'],
+    planCategory: ['nutrition','supplement'],
     nutritionFoods: [
       { key: 'leafyGreens' },
       { key: 'pumpkinSeeds' },
@@ -246,7 +249,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening'],
     timeRule: 'anytime',
-    planCategoryOptions: ['nutrition'],
+    planCategory: ['nutrition','supplement'],
     nutritionFoods: [
       { key: 'oysters' },
       { key: 'beef' },
@@ -270,7 +273,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
-    planCategoryOptions: ['nutrition'],
+    planCategory: ['nutrition','supplement'],
     nutritionFoods: [
       { key: 'brazilNuts' },
       { key: 'sardines' },
@@ -294,7 +297,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
-    planCategoryOptions: ['nutrition'],
+    planCategory: ['nutrition','supplement'],
     nutritionFoods: [{ key: 'seaweed' }, { key: 'iodizedSalt' }, { key: 'dairy' }, { key: 'eggs' }, { key: 'cod' }],
   },
   {
@@ -308,6 +311,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
+    planCategory: ['supplement'],
   },
   {
     id: 'neurotransmitter_ltyrosine',
@@ -320,6 +324,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
+    planCategory: ['supplement'],
   },
   {
     id: 'maintain_hydration',
@@ -335,7 +340,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday', 'afternoon', 'evening'],
     timeRule: 'anytime',
-    planCategory: 'nutrition',
+    planCategory: ['nutrition'],
   },
   {
     id: 'vitamin_c_immunity',
@@ -355,6 +360,7 @@ const rawTips: Tip[] = [
       { key: 'kiwi' },
       { key: 'fermentedCabbage' },
     ],
+    planCategory: ['nutrition','supplement'],
   },
   {
     id: 'echinacea_herbs',
@@ -367,6 +373,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['midday', 'afternoon'],
     timeRule: 'anytime',
+    planCategory: ['supplement'],
   },
   {
     id: 'calming_glycine',
@@ -383,7 +390,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
-    planCategoryOptions: ['nutrition'],
+    planCategory: ['nutrition','supplement'],
     nutritionFoods: [
       { key: 'boneBroth' },
       { key: 'collagenCuts' },
@@ -646,7 +653,6 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['afternoon', 'evening'],
     timeRule: 'anytime',
-    planCategory: 'nutrition',
   },
   {
     id: 'calming_music_waves',
@@ -674,6 +680,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
+    planCategory: ['supplement'],
   },
   {
     id: 'neuromuscular_training',
@@ -690,7 +697,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
-    planCategory: 'training',
+    planCategory: ['training'],
   },
   {
     id: 'creatine_atp_strength',
@@ -708,6 +715,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['midday', 'afternoon'],
     timeRule: 'anytime',
+    planCategory: ['supplement'],
   },
   {
     id: 'betaalanine_endurance',
@@ -723,6 +731,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
+    planCategory: ['supplement'],
   },
   {
     id: 'shilajit_performance',
@@ -739,6 +748,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
+    planCategory: ['supplement'],
   },
   {
     id: 'probiotics_microbiota',
@@ -754,7 +764,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['afternoon'],
     timeRule: 'anytime',
-    planCategory: 'nutrition',
+    planCategory: ['nutrition'],
     nutritionFoods: [{ key: 'yogurt' }, { key: 'kefir' }, { key: 'sauerkraut' }, { key: 'kimchi' }, { key: 'miso' }],
   },
   {
@@ -770,7 +780,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['afternoon', 'evening'],
     timeRule: 'anytime',
-    planCategory: 'nutrition',
+    planCategory: ['nutrition'],
     nutritionFoods: [
       { key: 'oats' },
       { key: 'legumes' },
@@ -793,6 +803,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['afternoon'],
     timeRule: 'anytime',
+    planCategory: ['supplement'],
   },
   {
     id: 'hiit_vo2max',
@@ -807,7 +818,7 @@ const rawTips: Tip[] = [
     analyzePrompt: 'hiit_vo2max.analyzePrompt',
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
-    planCategory: 'training',
+    planCategory: ['training'],
   },
   {
     id: 'running_volume_aerobic',
@@ -822,7 +833,7 @@ const rawTips: Tip[] = [
     analyzePrompt: 'running_volume_aerobic.analyzePrompt',
     preferredDayParts: ['morning', 'midday', 'afternoon'],
     timeRule: 'anytime',
-    planCategory: 'training',
+    planCategory: ['training'],
   },
   {
     id: 'ashwagandha_adaptogen',
@@ -840,6 +851,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening'],
     timeRule: 'anytime',
+    planCategory: ['supplement'],
   },
   {
     id: 'rhodiola_adaptogen',
@@ -857,6 +869,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
+    planCategory: ['supplement'],
   },
   {
     id: 'holy_basil_adaptogen',
@@ -873,6 +886,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening'],
     timeRule: 'anytime',
+    planCategory: ['supplement'],
   },
   {
     id: 'cordyceps_adaptogen',
@@ -890,6 +904,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
+    planCategory: ['supplement'],
   },
 
   // --- Running / performance tips (added) ---
@@ -906,7 +921,7 @@ const rawTips: Tip[] = [
     analyzePrompt: 'zone2_mitochondrial_base.analyzePrompt',
     preferredDayParts: ['morning', 'midday', 'afternoon'],
     timeRule: 'anytime',
-    planCategory: 'training',
+    planCategory: ['training'],
   },
   {
     id: 'fasted_aerobic_training',
@@ -920,7 +935,7 @@ const rawTips: Tip[] = [
     descriptionKey: 'fasted_aerobic_training.description',
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
-    planCategory: 'training',
+    planCategory: ['training'],
   },
   {
     id: 'lactate_threshold_training',
@@ -935,7 +950,7 @@ const rawTips: Tip[] = [
     analyzePrompt: 'lactate_threshold_training.analyzePrompt',
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
-    planCategory: 'training',
+    planCategory: ['training'],
   },
   {
     id: 'running_economy_drills',
@@ -950,7 +965,7 @@ const rawTips: Tip[] = [
     descriptionKey: 'running_economy_drills.description',
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
-    planCategory: 'training',
+    planCategory: ['training'],
   },
   {
     id: 'stride_frequency_optimization',
@@ -965,7 +980,7 @@ const rawTips: Tip[] = [
     descriptionKey: 'stride_frequency_optimization.description',
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
-    planCategory: 'training',
+    planCategory: ['training'],
   },
   {
     id: 'caffeine_endurance_performance',
@@ -982,6 +997,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'preWorkout',
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'avoidLateEvening',
+    planCategory: ['supplement'],
   },
   {
     id: 'nitrate_no_efficiency',
@@ -997,6 +1013,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'preWorkout',
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
+    planCategory: ['supplement'],
   },
   {
     id: 'l_carnitine_fat_transport',
@@ -1012,6 +1029,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday', 'afternoon'],
     timeRule: 'anytime',
+    planCategory: ['supplement'],
   },
   {
     id: 'astaxanthin_recovery_antioxidant',
@@ -1034,6 +1052,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['evening'],
     timeRule: 'anytime',
     analyzePrompt: 'astaxanthin_recovery_antioxidant.analyzePrompt',
+    planCategory: ['supplement'],
   },
   {
     id: 'brown_fat_cool_home',
@@ -1045,7 +1064,6 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'evening'],
     timeRule: 'anytime',
-    planCategory: 'nutrition',
   },
   {
     id: 'avoid_flat_hard_shoes',
@@ -1059,7 +1077,6 @@ const rawTips: Tip[] = [
     descriptionKey: 'avoid_flat_hard_shoes.description',
     trainingRelation: 'anytime',
     timeRule: 'anytime',
-    planCategory: 'training',
   },
   {
     id: 'eat_colorful_veggies',
@@ -1074,7 +1091,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['midday', 'evening'],
     timeRule: 'anytime',
-    planCategory: 'nutrition',
+    planCategory: ['nutrition'],
     nutritionFoods: [
       { key: 'redVeggies' },
       { key: 'orangeVeggies' },
@@ -1083,9 +1100,79 @@ const rawTips: Tip[] = [
       { key: 'bluePurpleVeggies' },
     ],
   },
+  {
+    id: 'red_light_therapy',
+    level: 2,
+    xp: 500,
+    areas: [
+      { id: 'energy', descriptionKey: 'red_light_therapy.areas.energy' },
+      { id: 'musclePerformance', descriptionKey: 'red_light_therapy.areas.musclePerformance' }
+    ],
+    title: 'red_light_therapy.title',
+    descriptionKey: 'red_light_therapy.description',
+    trainingRelation: 'anytime',
+    preferredDayParts: ['morning', 'evening'],
+    timeRule: 'anytime',
+  },
+  {
+    id: 'nr_fr_supplement',
+    level: 3,
+    xp: 700,
+    areas: [
+      { id: 'energy', descriptionKey: 'nr_fr_supplement.areas.energy' },
+      { id: 'nervousSystem', descriptionKey: 'nr_fr_supplement.areas.nervousSystem' }
+    ],
+    title: 'nr_fr_supplement.title',
+    descriptionKey: 'nr_fr_supplement.description',
+    supplements: [{ id: 'nr' }, { id: 'fr' }],
+    trainingRelation: 'anytime',
+    preferredDayParts: ['morning'],
+    timeRule: 'anytime',
+    planCategory: ['supplement']
+  },
+  {
+    id: 'near_infrared_red_light',
+    level: 2,
+    xp: 500,
+    areas: [
+      { id: 'energy', descriptionKey: 'near_infrared_red_light.areas.energy' },
+      { id: 'musclePerformance', descriptionKey: 'near_infrared_red_light.areas.musclePerformance' }
+    ],
+    title: 'near_infrared_red_light.title',
+    descriptionKey: 'near_infrared_red_light.description',
+    trainingRelation: 'anytime',
+    preferredDayParts: ['morning', 'evening'],
+    timeRule: 'anytime',
+    planCategory: ['other']
+  },
+  {
+    id: 'far_infrared_light',
+    level: 2,
+    xp: 500,
+    areas: [
+      { id: 'energy', descriptionKey: 'far_infrared_light.areas.energy' },
+      { id: 'musclePerformance', descriptionKey: 'far_infrared_light.areas.musclePerformance' }
+    ],
+    title: 'far_infrared_light.title',
+    descriptionKey: 'far_infrared_light.description',
+    trainingRelation: 'anytime',
+    preferredDayParts: ['morning', 'evening'],
+    timeRule: 'anytime',
+    planCategory: ['other']
+  },
 ];
 
-export const tips: Tip[] = rawTips.map(tip => ({
-  ...tip,
-  planCategory: tip.planCategory ?? 'other',
-}));
+export const tips: Tip[] = rawTips.map(tip => {
+  // Om planCategory saknas, default till ['other']
+  let planCategory: PlanCategory[] = tip.planCategory ?? ['other'];
+
+  // Om tip har supplements och saknar 'supplement' i planCategory, lägg till det
+  if (tip.supplements && tip.supplements.length > 0 && !planCategory.includes('supplement')) {
+    planCategory = [...planCategory, 'supplement'];
+  }
+
+  return {
+    ...tip,
+    planCategory,
+  };
+});
