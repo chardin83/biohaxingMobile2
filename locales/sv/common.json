@@ -220,6 +220,32 @@
     "filter": {
       "area": "Område",
       "level": "Nivå",
-      "planCategory": "Plankategori"
+      "planCategory": "Plankategori",
+      "bodyPart": "Kroppsdel"
+    },
+    "bodyParts": {
+      "nervousSystem": "Nervsystem",
+      "eye": "Öga",
+      "muscles": "Muskler",
+      "digestiveSystem": "Matsmältningssystem",
+      "heart": "Hjärta",
+      "brain": "Hjärna",
+      "lungs": "Lungor",
+      "skin": "Hud",
+      "bones": "Skelett",
+      "joints": "Leder",
+      "immuneSystem": "Immunsystem",
+      "liver": "Lever",
+      "kidneys": "Njurar",
+      "reproductiveSystem": "Fortplantningssystem",
+      "circulatorySystem": "Blodomlopp",
+      "endocrineSystem": "Endokrina systemet",
+      "lymphaticSystem": "Lymfsystem",
+      "nails": "Naglar",
+      "hair": "Hår",
+      "teeth": "Tänder",
+      "feet": "Fötter",
+      "fattyTissue": "Fettvävnad",
+      "bloodVessels": "Blodkärl"
     }
   }

@@ -47,6 +47,7 @@ export type Tip = {
   timeRule?: TimeOfDayRule; // (tidsrestriktioner)
   planCategory?: PlanCategory[]; // Markerar övergripande plan-kategori
   nutritionFoods?: TipNutritionFood[]; // Rekommenderade livsmedel för nutritionstips
+  bodyParts?: string[]; // Rekommenderade delar av kroppen för detta tip
 };
 
 const rawTips: Tip[] = [
@@ -64,6 +65,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
     planCategory: ['nutrition'],
+    bodyParts: ['digestiveSystem'],
   },
   {
     id: 'intermittent_fasting_16_8',
@@ -79,6 +81,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
     planCategory: ['nutrition'],
+    bodyParts: ['digestiveSystem'],
   },
   {
     id: 'multivitamin_general',
@@ -96,6 +99,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
     planCategory: ['nutrition'],
+    bodyParts: ['immuneSystem'],
   },
   {
     id: 'vitamin_d',
@@ -104,8 +108,8 @@ const rawTips: Tip[] = [
     areas: [
       { id: 'energy', descriptionKey: 'vitamin_d.areas.energy' },
       { id: 'immuneSupport', descriptionKey: 'vitamin_d.areas.immuneSupport' },
-      { id: 'musclePerformance', descriptionKey: 'vitamin_d.areas.musclePerformance' },
-      { id: 'nervousSystem', descriptionKey: 'vitamin_d.areas.nervousSystem' },
+      { id: 'strength', descriptionKey: 'vitamin_d.areas.strength' },
+      { id: 'stressReduction', descriptionKey: 'vitamin_d.areas.stressReduction' },
     ],
     title: 'vitamin_d.title',
     descriptionKey: 'vitamin_d.description',
@@ -122,6 +126,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition'],
     nutritionFoods: [{ key: 'fattyFish' }, { key: 'eggYolks' }, { key: 'fortifiedDairy' }, { key: 'mushrooms' }],
+    bodyParts: ['immuneSystem', 'muscles', 'nervousSystem'],
   },
   {
     id: 'vitamin_e_antioxidant_support',
@@ -145,6 +150,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'evening'],
     timeRule: 'anytime',
     planCategory: ['supplement'],   
+    bodyParts: ['immuneSystem', 'skin'],
   },
   {
     id: 'coq10',
@@ -169,6 +175,7 @@ const rawTips: Tip[] = [
       { key: 'spinach' },
       { key: 'broccoli' },
     ],
+    bodyParts: ['heart', 'muscles'],
   },
   {
     id: 'cellular_energy_nad',
@@ -177,7 +184,7 @@ const rawTips: Tip[] = [
     areas: [
       { id: 'energy', descriptionKey: 'cellular_energy_nad.areas.energy' },
       { id: 'immuneSupport', descriptionKey: 'cellular_energy_nad.areas.immuneSupport' },
-      { id: 'nervousSystem', descriptionKey: 'cellular_energy_nad.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'cellular_energy_nad.areas.stressReduction' },
     ],
     title: 'cellular_energy_nad.title',
     descriptionKey: 'cellular_energy_nad.description',
@@ -186,6 +193,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
     planCategory: ['supplement'],
+    bodyParts: ['nervousSystem', 'muscles'],
   },
   {
     id: 'sleep_timing_circadian',
@@ -202,6 +210,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['evening'],
     timeRule: 'anytime',
     planCategory: ['other'],
+    bodyParts: ['nervousSystem'],
   },
   {
     id: 'magnesium',
@@ -209,7 +218,7 @@ const rawTips: Tip[] = [
     xp: 700,
     areas: [
       { id: 'sleepQuality', descriptionKey: 'magnesium.areas.sleepQuality' },
-      { id: 'nervousSystem', descriptionKey: 'magnesium.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'magnesium.areas.stressReduction' },
       { id: 'energy', descriptionKey: 'magnesium.areas.energy' },
     ],
     title: 'magnesium.title',
@@ -233,6 +242,7 @@ const rawTips: Tip[] = [
       { key: 'blackBeans' },
       { key: 'avocado' },
     ],
+    bodyParts: ['muscles', 'nervousSystem'],
   },
   {
     id: 'zinc_comprehensive_support',
@@ -240,7 +250,7 @@ const rawTips: Tip[] = [
     xp: 700,
     areas: [
       { id: 'immuneSupport', descriptionKey: 'zinc_comprehensive_support.areas.immuneSupport' },
-      { id: 'nervousSystem', descriptionKey: 'zinc_comprehensive_support.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'zinc_comprehensive_support.areas.stressReduction' },
       { id: 'energy', descriptionKey: 'zinc_comprehensive_support.areas.energy' },
     ],
     title: 'zinc_comprehensive_support.title',
@@ -257,6 +267,7 @@ const rawTips: Tip[] = [
       { key: 'chickpeas' },
       { key: 'cashews' },
     ],
+    bodyParts: ['immuneSystem', 'skin'],
   },
   {
     id: 'selenium_thyroid_antioxidant',
@@ -265,7 +276,7 @@ const rawTips: Tip[] = [
     areas: [
       { id: 'immuneSupport', descriptionKey: 'selenium_thyroid_antioxidant.areas.immuneSupport' },
       { id: 'energy', descriptionKey: 'selenium_thyroid_antioxidant.areas.energy' },
-      { id: 'nervousSystem', descriptionKey: 'selenium_thyroid_antioxidant.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'selenium_thyroid_antioxidant.areas.stressReduction' },
     ],
     title: 'selenium_thyroid_antioxidant.title',
     descriptionKey: 'selenium_thyroid_antioxidant.description',
@@ -281,6 +292,7 @@ const rawTips: Tip[] = [
       { key: 'shiitakeMushrooms' },
       { key: 'sunflowerSeeds' },
     ],
+    bodyParts: ['thyroid', 'immuneSystem'],
   },
   {
     id: 'iodine_thyroid_balance',
@@ -289,7 +301,7 @@ const rawTips: Tip[] = [
     areas: [
       { id: 'energy', descriptionKey: 'iodine_thyroid_balance.areas.energy' },
       { id: 'immuneSupport', descriptionKey: 'iodine_thyroid_balance.areas.immuneSupport' },
-      { id: 'nervousSystem', descriptionKey: 'iodine_thyroid_balance.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'iodine_thyroid_balance.areas.stressReduction' },
     ],
     title: 'iodine_thyroid_balance.title',
     descriptionKey: 'iodine_thyroid_balance.description',
@@ -299,12 +311,13 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition','supplement'],
     nutritionFoods: [{ key: 'seaweed' }, { key: 'iodizedSalt' }, { key: 'dairy' }, { key: 'eggs' }, { key: 'cod' }],
+    bodyParts: ['thyroid'],
   },
   {
     id: 'calm_alertness_ltheanine',
     level: 2,
     xp: 500,
-    areas: [{ id: 'focus', descriptionKey: 'calm_alertness_ltheanine.areas.focus' }],
+    areas: [{ id: 'mind', descriptionKey: 'calm_alertness_ltheanine.areas.mind' }],
     title: 'calm_alertness_ltheanine.title',
     descriptionKey: 'calm_alertness_ltheanine.description',
     supplements: [{ id: 'lTheanine' }],
@@ -312,12 +325,13 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
     planCategory: ['supplement'],
+    bodyParts: ['nervousSystem'],
   },
   {
     id: 'neurotransmitter_ltyrosine',
     level: 3,
     xp: 700,
-    areas: [{ id: 'focus', descriptionKey: 'neurotransmitter_ltyrosine.areas.focus' }],
+    areas: [{ id: 'mind', descriptionKey: 'neurotransmitter_ltyrosine.areas.mind' }],
     title: 'neurotransmitter_ltyrosine.title',
     descriptionKey: 'neurotransmitter_ltyrosine.description',
     supplements: [{ id: 'lTyrosine' }],
@@ -325,6 +339,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
     planCategory: ['supplement'],
+    bodyParts: ['nervousSystem'],
   },
   {
     id: 'maintain_hydration',
@@ -341,6 +356,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday', 'afternoon', 'evening'],
     timeRule: 'anytime',
     planCategory: ['nutrition'],
+    bodyParts: ['kidneys'],
   },
   {
     id: 'vitamin_c_immunity',
@@ -361,6 +377,7 @@ const rawTips: Tip[] = [
       { key: 'fermentedCabbage' },
     ],
     planCategory: ['nutrition','supplement'],
+    bodyParts: ['immuneSystem', 'skin'],
   },
   {
     id: 'echinacea_herbs',
@@ -374,13 +391,14 @@ const rawTips: Tip[] = [
     preferredDayParts: ['midday', 'afternoon'],
     timeRule: 'anytime',
     planCategory: ['supplement'],
+    bodyParts: ['immuneSystem'],
   },
   {
     id: 'calming_glycine',
     level: 2,
     xp: 500,
     areas: [
-      { id: 'nervousSystem', descriptionKey: 'calming_glycine.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'calming_glycine.areas.stressReduction' },
       { id: 'sleepQuality', descriptionKey: 'calming_glycine.areas.sleepQuality' },
       { id: 'immuneSupport', descriptionKey: 'calming_glycine.areas.immuneSupport' },
     ],
@@ -398,13 +416,14 @@ const rawTips: Tip[] = [
       { key: 'porkRinds' },
       { key: 'legumes' },
     ],
+    bodyParts: ['nervousSystem', 'bloodVessels' ],
   },
   {
     id: 'breathwork_parasympathetic',
     level: 1,
     xp: 0,
     areas: [
-      { id: 'nervousSystem', descriptionKey: 'breathwork_parasympathetic.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'breathwork_parasympathetic.areas.stressReduction' },
       { id: 'immuneSupport', descriptionKey: 'breathwork_parasympathetic.areas.immuneSupport' },
       { id: 'energy', descriptionKey: 'breathwork_parasympathetic.areas.energy' },
     ],
@@ -414,6 +433,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday', 'afternoon', 'evening'],
     timeRule: 'anytime',
+    bodyParts: ['nervousSystem', 'lungs'],
   },
   {
     id: 'box_breathing',
@@ -421,7 +441,7 @@ const rawTips: Tip[] = [
     xp: 0,
     parentId: 'breathwork_parasympathetic',
     areas: [
-      { id: 'nervousSystem', descriptionKey: 'box_breathing.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'box_breathing.areas.stressReduction' },
       { id: 'immuneSupport', descriptionKey: 'box_breathing.areas.immuneSupport' },
     ],
     title: 'box_breathing.title',
@@ -430,6 +450,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday', 'afternoon'],
     timeRule: 'anytime',
+    bodyParts: ['nervousSystem', 'lungs'],
   },
   {
     id: '4_7_8_breathing',
@@ -437,7 +458,7 @@ const rawTips: Tip[] = [
     xp: 0,
     parentId: 'breathwork_parasympathetic',
     areas: [
-      { id: 'nervousSystem', descriptionKey: '4_7_8_breathing.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: '4_7_8_breathing.areas.stressReduction' },
       { id: 'sleepQuality', descriptionKey: '4_7_8_breathing.areas.sleepQuality' },
     ],
     title: '4_7_8_breathing.title',
@@ -446,6 +467,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
+    bodyParts: ['nervousSystem', 'lungs'],
   },
   {
     id: 'alternate_nostril_breathing',
@@ -453,8 +475,8 @@ const rawTips: Tip[] = [
     xp: 0,
     parentId: 'breathwork_parasympathetic',
     areas: [
-      { id: 'nervousSystem', descriptionKey: 'alternate_nostril_breathing.areas.nervousSystem' },
-      { id: 'focus', descriptionKey: 'alternate_nostril_breathing.areas.focus' },
+      { id: 'stressReduction', descriptionKey: 'alternate_nostril_breathing.areas.stressReduction' },
+      { id: 'mind', descriptionKey: 'alternate_nostril_breathing.areas.mind' },
     ],
     title: 'alternate_nostril_breathing.title',
     descriptionKey: 'alternate_nostril_breathing.description',
@@ -462,6 +484,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
+    bodyParts: ['nervousSystem', 'lungs'],
   },
   {
     id: 'diaphragmatic_breathing',
@@ -469,7 +492,7 @@ const rawTips: Tip[] = [
     xp: 0,
     parentId: 'breathwork_parasympathetic',
     areas: [
-      { id: 'nervousSystem', descriptionKey: 'diaphragmatic_breathing.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'diaphragmatic_breathing.areas.stressReduction' },
       { id: 'energy', descriptionKey: 'diaphragmatic_breathing.areas.energy' },
     ],
     title: 'diaphragmatic_breathing.title',
@@ -478,13 +501,14 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday', 'afternoon'],
     timeRule: 'anytime',
+    bodyParts: ['nervousSystem', 'lungs'],
   },
   {
     id: 'sleep_optimization_recovery',
     level: 1,
     xp: 0,
     areas: [
-      { id: 'nervousSystem', descriptionKey: 'sleep_optimization_recovery.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'sleep_optimization_recovery.areas.stressReduction' },
       { id: 'immuneSupport', descriptionKey: 'sleep_optimization_recovery.areas.immuneSupport' },
       { id: 'energy', descriptionKey: 'sleep_optimization_recovery.areas.energy' },
       { id: 'cardioFitness', descriptionKey: 'sleep_optimization_recovery.areas.cardioFitness' },
@@ -496,6 +520,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening'],
     timeRule: 'anytime',
+    bodyParts: ['nervousSystem'],
   },
   {
     id: 'sleep_duration_consistency',
@@ -512,6 +537,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
+    bodyParts: ['nervousSystem'],
   },
   {
     id: 'sleep_environment_optimization',
@@ -520,7 +546,7 @@ const rawTips: Tip[] = [
     parentId: 'sleep_optimization_recovery',
     areas: [
       { id: 'sleepQuality', descriptionKey: 'sleep_environment_optimization.areas.sleepQuality' },
-      { id: 'nervousSystem', descriptionKey: 'sleep_environment_optimization.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'sleep_environment_optimization.areas.stressReduction' },
     ],
     title: 'sleep_environment_optimization.title',
     descriptionKey: 'sleep_environment_optimization.description',
@@ -528,6 +554,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
+    bodyParts: ['nervousSystem'],
   },
   {
     id: 'sleep_hygiene_practices',
@@ -544,6 +571,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening'],
     timeRule: 'anytime',
+    bodyParts: ['nervousSystem'],
   },
   {
     id: 'pre_sleep_wind_down',
@@ -552,7 +580,7 @@ const rawTips: Tip[] = [
     parentId: 'sleep_optimization_recovery',
     areas: [
       { id: 'sleepQuality', descriptionKey: 'pre_sleep_wind_down.areas.sleepQuality' },
-      { id: 'nervousSystem', descriptionKey: 'pre_sleep_wind_down.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'pre_sleep_wind_down.areas.stressReduction' },
     ],
     title: 'pre_sleep_wind_down.title',
     descriptionKey: 'pre_sleep_wind_down.description',
@@ -560,6 +588,7 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
+    bodyParts: ['nervousSystem'],
   },
   {
     id: 'sunlight_circadian',
@@ -567,7 +596,7 @@ const rawTips: Tip[] = [
     xp: 0,
     areas: [
       { id: 'sleepQuality', descriptionKey: 'sunlight_circadian.areas.sleepQuality' },
-      { id: 'nervousSystem', descriptionKey: 'sunlight_circadian.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'sunlight_circadian.areas.stressReduction' },
       { id: 'energy', descriptionKey: 'sunlight_circadian.areas.energy' },
       { id: 'immuneSupport', descriptionKey: 'sunlight_circadian.areas.immuneSupport' },
     ],
@@ -576,13 +605,14 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
+    bodyParts: ['nervousSystem'],
   },
   {
     id: 'cold_exposure_ans',
     level: 2,
     xp: 0,
     areas: [
-      { id: 'nervousSystem', descriptionKey: 'cold_exposure_ans.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'cold_exposure_ans.areas.stressReduction' },
       { id: 'immuneSupport', descriptionKey: 'cold_exposure_ans.areas.immuneSupport' },
       { id: 'energy', descriptionKey: 'cold_exposure_ans.areas.energy' },
     ],
@@ -591,28 +621,30 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
+    bodyParts: ['nervousSystem', 'skin', 'fattyTissue' ],
   },
   {
     id: 'meditation_mindfulness',
     level: 2,
     xp: 0,
     areas: [
-      { id: 'nervousSystem', descriptionKey: 'meditation_mindfulness.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'meditation_mindfulness.areas.stressReduction' },
       { id: 'immuneSupport', descriptionKey: 'meditation_mindfulness.areas.immuneSupport' },
-      { id: 'focus', descriptionKey: 'meditation_mindfulness.areas.focus' },
+      { id: 'mind', descriptionKey: 'meditation_mindfulness.areas.mind' },
     ],
     title: 'meditation_mindfulness.title',
     descriptionKey: 'meditation_mindfulness.description',
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday', 'evening'],
     timeRule: 'anytime',
+    bodyParts: ['nervousSystem'],
   },
   {
     id: 'nature_parasympathetic',
     level: 2,
     xp: 0,
     areas: [
-      { id: 'nervousSystem', descriptionKey: 'nature_parasympathetic.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'nature_parasympathetic.areas.stressReduction' },
       { id: 'immuneSupport', descriptionKey: 'nature_parasympathetic.areas.immuneSupport' },
       { id: 'energy', descriptionKey: 'nature_parasympathetic.areas.energy' },
     ],
@@ -621,30 +653,32 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['midday', 'afternoon'],
     timeRule: 'anytime',
+    bodyParts: ['heart','nervousSystem'],
   },
   {
     id: 'hrv_recovery_monitoring',
     level: 3,
     xp: 0,
     areas: [
-      { id: 'nervousSystem', descriptionKey: 'hrv_recovery_monitoring.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'hrv_recovery_monitoring.areas.stressReduction' },
       { id: 'immuneSupport', descriptionKey: 'hrv_recovery_monitoring.areas.immuneSupport' },
       { id: 'energy', descriptionKey: 'hrv_recovery_monitoring.areas.energy' },
       { id: 'cardioFitness', descriptionKey: 'hrv_recovery_monitoring.areas.cardioFitness' },
-      { id: 'musclePerformance', descriptionKey: 'hrv_recovery_monitoring.areas.musclePerformance' },
+      { id: 'strength', descriptionKey: 'hrv_recovery_monitoring.areas.strength' },
     ],
     title: 'hrv_recovery_monitoring.title',
     descriptionKey: 'hrv_recovery_monitoring.description',
     trainingRelation: 'anytime',
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
+    bodyParts: ['heart','nervousSystem'],
   },
   {
     id: 'social_connection_vagal',
     level: 2,
     xp: 0,
     areas: [
-      { id: 'nervousSystem', descriptionKey: 'social_connection_vagal.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'social_connection_vagal.areas.stressReduction' },
       { id: 'immuneSupport', descriptionKey: 'social_connection_vagal.areas.immuneSupport' },
       { id: 'energy', descriptionKey: 'social_connection_vagal.areas.energy' },
     ],
@@ -653,27 +687,29 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['afternoon', 'evening'],
     timeRule: 'anytime',
+    bodyParts: ['nervousSystem'],
   },
   {
     id: 'calming_music_waves',
     level: 1,
     xp: 0,
     areas: [
-      { id: 'nervousSystem', descriptionKey: 'calming_music_waves.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'calming_music_waves.areas.stressReduction' },
       { id: 'sleepQuality', descriptionKey: 'calming_music_waves.areas.sleepQuality' },
-      { id: 'focus', descriptionKey: 'calming_music_waves.areas.focus' },
+      { id: 'mind', descriptionKey: 'calming_music_waves.areas.mind' },
     ],
     title: 'calming_music_waves.title',
     descriptionKey: 'calming_music_waves.description',
     trainingRelation: 'anytime',
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
+    bodyParts: ['nervousSystem'], 
   },
   {
     id: 'adaptogenic_herbs',
     level: 3,
     xp: 0,
-    areas: [{ id: 'nervousSystem', descriptionKey: 'adaptogenic_herbs.areas.nervousSystem' }],
+    areas: [{ id: 'stressReduction', descriptionKey: 'adaptogenic_herbs.areas.stressReduction' }],
     title: 'adaptogenic_herbs.title',
     descriptionKey: 'adaptogenic_herbs.description',
     isParent: true,
@@ -681,15 +717,16 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
     planCategory: ['supplement'],
+    bodyParts: ['nervousSystem'],
   },
   {
     id: 'neuromuscular_training',
     level: 1,
     xp: 0,
     areas: [
-      { id: 'musclePerformance', descriptionKey: 'neuromuscular_training.areas.musclePerformance' },
+      { id: 'strength', descriptionKey: 'neuromuscular_training.areas.strength' },
       { id: 'cardioFitness', descriptionKey: 'neuromuscular_training.areas.cardioFitness' },
-      { id: 'nervousSystem', descriptionKey: 'neuromuscular_training.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'neuromuscular_training.areas.stressReduction' },
     ],
     title: 'neuromuscular_training.title',
     descriptionKey: 'neuromuscular_training.description',
@@ -698,16 +735,17 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
     planCategory: ['training'],
+    bodyParts: ['muscles','nervousSystem'],
   },
   {
     id: 'creatine_atp_strength',
     level: 2,
     xp: 500,
     areas: [
-      { id: 'musclePerformance', descriptionKey: 'creatine_atp_strength.areas.musclePerformance' },
+      { id: 'strength', descriptionKey: 'creatine_atp_strength.areas.strength' },
       { id: 'energy', descriptionKey: 'creatine_atp_strength.areas.energy' },
       { id: 'cardioFitness', descriptionKey: 'creatine_atp_strength.areas.cardioFitness' },
-      { id: 'focus', descriptionKey: 'creatine_atp_strength.areas.focus' },
+      { id: 'mind', descriptionKey: 'creatine_atp_strength.areas.mind' },
     ],
     title: 'creatine_atp_strength.title',
     descriptionKey: 'creatine_atp_strength.description',
@@ -716,13 +754,14 @@ const rawTips: Tip[] = [
     preferredDayParts: ['midday', 'afternoon'],
     timeRule: 'anytime',
     planCategory: ['supplement'],
+    bodyParts: ['muscles','brain'],
   },
   {
     id: 'betaalanine_endurance',
     level: 3,
     xp: 700,
     areas: [
-      { id: 'musclePerformance', descriptionKey: 'betaalanine_endurance.areas.musclePerformance' },
+      { id: 'strength', descriptionKey: 'betaalanine_endurance.areas.strength' },
       { id: 'cardioFitness', descriptionKey: 'betaalanine_endurance.areas.cardioFitness' },
     ],
     title: 'betaalanine_endurance.title',
@@ -732,13 +771,14 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
     planCategory: ['supplement'],
+    bodyParts: ['muscles'],
   },
   {
     id: 'shilajit_performance',
     level: 4,
     xp: 900,
     areas: [
-      { id: 'musclePerformance', descriptionKey: 'shilajit_performance.areas.musclePerformance' },
+      { id: 'strength', descriptionKey: 'shilajit_performance.areas.strength' },
       { id: 'energy', descriptionKey: 'shilajit_performance.areas.energy' },
       { id: 'cardioFitness', descriptionKey: 'shilajit_performance.areas.cardioFitness' },
     ],
@@ -749,6 +789,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
     planCategory: ['supplement'],
+    bodyParts: ['muscles'],
   },
   {
     id: 'probiotics_microbiota',
@@ -766,6 +807,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition'],
     nutritionFoods: [{ key: 'yogurt' }, { key: 'kefir' }, { key: 'sauerkraut' }, { key: 'kimchi' }, { key: 'miso' }],
+    bodyParts: ['digestiveSystem'],
   },
   {
     id: 'fiber_microbiome',
@@ -788,6 +830,7 @@ const rawTips: Tip[] = [
       { key: 'berries' },
       { key: 'cruciferousVeg' },
     ],
+    bodyParts: ['digestiveSystem'],
   },
   {
     id: 'milk_thistle_liver',
@@ -804,6 +847,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['afternoon'],
     timeRule: 'anytime',
     planCategory: ['supplement'],
+    bodyParts: ['liver'],
   },
   {
     id: 'hiit_vo2max',
@@ -819,6 +863,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
     planCategory: ['training'],
+    bodyParts: ['heart','lungs','muscles'],
   },
   {
     id: 'running_volume_aerobic',
@@ -834,6 +879,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday', 'afternoon'],
     timeRule: 'anytime',
     planCategory: ['training'],
+    bodyParts: ['heart','lungs','muscles'],
   },
   {
     id: 'ashwagandha_adaptogen',
@@ -841,7 +887,7 @@ const rawTips: Tip[] = [
     xp: 0,
     parentId: 'adaptogenic_herbs',
     areas: [
-      { id: 'nervousSystem', descriptionKey: 'ashwagandha_adaptogen.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'ashwagandha_adaptogen.areas.stressReduction' },
       { id: 'energy', descriptionKey: 'ashwagandha_adaptogen.areas.energy' },
       { id: 'immuneSupport', descriptionKey: 'ashwagandha_adaptogen.areas.immuneSupport' },
     ],
@@ -852,6 +898,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['evening'],
     timeRule: 'anytime',
     planCategory: ['supplement'],
+    bodyParts: ['nervousSystem'],
   },
   {
     id: 'rhodiola_adaptogen',
@@ -859,9 +906,9 @@ const rawTips: Tip[] = [
     xp: 0,
     parentId: 'adaptogenic_herbs',
     areas: [
-      { id: 'nervousSystem', descriptionKey: 'rhodiola_adaptogen.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'rhodiola_adaptogen.areas.stressReduction' },
       { id: 'energy', descriptionKey: 'rhodiola_adaptogen.areas.energy' },
-      { id: 'focus', descriptionKey: 'rhodiola_adaptogen.areas.focus' },
+      { id: 'mind', descriptionKey: 'rhodiola_adaptogen.areas.mind' },
     ],
     title: 'rhodiola_adaptogen.title',
     descriptionKey: 'rhodiola_adaptogen.description',
@@ -870,6 +917,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
     planCategory: ['supplement'],
+    bodyParts: ['nervousSystem'],
   },
   {
     id: 'holy_basil_adaptogen',
@@ -877,7 +925,7 @@ const rawTips: Tip[] = [
     xp: 0,
     parentId: 'adaptogenic_herbs',
     areas: [
-      { id: 'nervousSystem', descriptionKey: 'holy_basil_adaptogen.areas.nervousSystem' },
+      { id: 'stressReduction', descriptionKey: 'holy_basil_adaptogen.areas.stressReduction' },
       { id: 'immuneSupport', descriptionKey: 'holy_basil_adaptogen.areas.immuneSupport' },
     ],
     title: 'holy_basil_adaptogen.title',
@@ -887,6 +935,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['evening'],
     timeRule: 'anytime',
     planCategory: ['supplement'],
+    bodyParts: ['nervousSystem'],
   },
   {
     id: 'cordyceps_adaptogen',
@@ -905,6 +954,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
     planCategory: ['supplement'],
+    bodyParts: ['nervousSystem'],
   },
 
   // --- Running / performance tips (added) ---
@@ -922,6 +972,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday', 'afternoon'],
     timeRule: 'anytime',
     planCategory: ['training'],
+    bodyParts: ['heart','lungs','muscles'],
   },
   {
     id: 'fasted_aerobic_training',
@@ -936,6 +987,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
     planCategory: ['training'],
+    bodyParts: ['heart','lungs','muscles'],
   },
   {
     id: 'lactate_threshold_training',
@@ -951,14 +1003,15 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
     planCategory: ['training'],
+    bodyParts: ['heart','muscles'],
   },
   {
     id: 'running_economy_drills',
     level: 2,
     xp: 500,
     areas: [
-      { id: 'musclePerformance', descriptionKey: 'running_economy_drills.areas.musclePerformance' },
-      { id: 'nervousSystem', descriptionKey: 'running_economy_drills.areas.nervousSystem' },
+      { id: 'strength', descriptionKey: 'running_economy_drills.areas.strength' },
+      { id: 'stressReduction', descriptionKey: 'running_economy_drills.areas.stressReduction' },
       { id: 'cardioFitness', descriptionKey: 'running_economy_drills.areas.cardioFitness' },
     ],
     title: 'running_economy_drills.title',
@@ -966,14 +1019,15 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
     planCategory: ['training'],
+    bodyParts: ['heart','muscles'],
   },
   {
     id: 'stride_frequency_optimization',
     level: 3,
     xp: 700,
     areas: [
-      { id: 'musclePerformance', descriptionKey: 'stride_frequency_optimization.areas.musclePerformance' },
-      { id: 'nervousSystem', descriptionKey: 'stride_frequency_optimization.areas.nervousSystem' },
+      { id: 'strength', descriptionKey: 'stride_frequency_optimization.areas.strength' },
+      { id: 'stressReduction', descriptionKey: 'stride_frequency_optimization.areas.stressReduction' },
       { id: 'energy', descriptionKey: 'stride_frequency_optimization.areas.energy' },
     ],
     title: 'stride_frequency_optimization.title',
@@ -981,6 +1035,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
     planCategory: ['training'],
+    bodyParts: ['heart','muscles'],
   },
   {
     id: 'caffeine_endurance_performance',
@@ -988,7 +1043,7 @@ const rawTips: Tip[] = [
     xp: 500,
     areas: [
       { id: 'energy', descriptionKey: 'caffeine_endurance_performance.areas.energy' },
-      { id: 'focus', descriptionKey: 'caffeine_endurance_performance.areas.focus' },
+      { id: 'mind', descriptionKey: 'caffeine_endurance_performance.areas.mind' },
       { id: 'cardioFitness', descriptionKey: 'caffeine_endurance_performance.areas.cardioFitness' },
     ],
     title: 'caffeine_endurance_performance.title',
@@ -998,6 +1053,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'avoidLateEvening',
     planCategory: ['supplement'],
+    bodyParts: ['nervousSystem','muscles'],
   },
   {
     id: 'nitrate_no_efficiency',
@@ -1014,6 +1070,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
     planCategory: ['supplement'],
+    bodyParts: ['heart','muscles'],
   },
   {
     id: 'l_carnitine_fat_transport',
@@ -1030,13 +1087,14 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday', 'afternoon'],
     timeRule: 'anytime',
     planCategory: ['supplement'],
+    bodyParts: ['heart','muscles'], 
   },
   {
     id: 'astaxanthin_recovery_antioxidant',
     level: 3,
     xp: 700,
     areas: [
-      { id: 'musclePerformance', descriptionKey: 'astaxanthin_recovery_antioxidant.areas.musclePerformance' },
+      { id: 'strength', descriptionKey: 'astaxanthin_recovery_antioxidant.areas.strength' },
       { id: 'energy', descriptionKey: 'astaxanthin_recovery_antioxidant.areas.energy' },
       { id: 'cardioFitness', descriptionKey: 'astaxanthin_recovery_antioxidant.areas.cardioFitness' },
     ],
@@ -1053,6 +1111,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     analyzePrompt: 'astaxanthin_recovery_antioxidant.analyzePrompt',
     planCategory: ['supplement'],
+    bodyParts: ['skin','muscles','eye'],     
   },
   {
     id: 'brown_fat_cool_home',
@@ -1064,19 +1123,21 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'evening'],
     timeRule: 'anytime',
+    bodyParts: ['fattyTissue' ], 
   },
   {
     id: 'avoid_flat_hard_shoes',
     level: 1,
     xp: 200,
     areas: [
-      { id: 'musclePerformance', descriptionKey: 'avoid_flat_hard_shoes.areas.musclePerformance' },
-      { id: 'nervousSystem', descriptionKey: 'avoid_flat_hard_shoes.areas.nervousSystem' },
+      { id: 'strength', descriptionKey: 'avoid_flat_hard_shoes.areas.strength' },
+      { id: 'stressReduction', descriptionKey: 'avoid_flat_hard_shoes.areas.stressReduction' },
     ],
     title: 'avoid_flat_hard_shoes.title',
     descriptionKey: 'avoid_flat_hard_shoes.description',
     trainingRelation: 'anytime',
     timeRule: 'anytime',
+    bodyParts: ['feet', 'nervousSystem', 'joints' ],
   },
   {
     id: 'eat_colorful_veggies',
@@ -1099,6 +1160,7 @@ const rawTips: Tip[] = [
       { key: 'greenVeggies' },
       { key: 'bluePurpleVeggies' },
     ],
+    bodyParts: ['digestiveSystem' ],
   },
   {
     id: 'red_light_therapy',
@@ -1106,29 +1168,14 @@ const rawTips: Tip[] = [
     xp: 500,
     areas: [
       { id: 'energy', descriptionKey: 'red_light_therapy.areas.energy' },
-      { id: 'musclePerformance', descriptionKey: 'red_light_therapy.areas.musclePerformance' }
+      { id: 'strength', descriptionKey: 'red_light_therapy.areas.strength' }
     ],
     title: 'red_light_therapy.title',
     descriptionKey: 'red_light_therapy.description',
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'evening'],
     timeRule: 'anytime',
-  },
-  {
-    id: 'nr_fr_supplement',
-    level: 3,
-    xp: 700,
-    areas: [
-      { id: 'energy', descriptionKey: 'nr_fr_supplement.areas.energy' },
-      { id: 'nervousSystem', descriptionKey: 'nr_fr_supplement.areas.nervousSystem' }
-    ],
-    title: 'nr_fr_supplement.title',
-    descriptionKey: 'nr_fr_supplement.description',
-    supplements: [{ id: 'nr' }, { id: 'fr' }],
-    trainingRelation: 'anytime',
-    preferredDayParts: ['morning'],
-    timeRule: 'anytime',
-    planCategory: ['supplement']
+    bodyParts: ['skin','muscles' ],
   },
   {
     id: 'near_infrared_red_light',
@@ -1136,14 +1183,14 @@ const rawTips: Tip[] = [
     xp: 500,
     areas: [
       { id: 'energy', descriptionKey: 'near_infrared_red_light.areas.energy' },
-      { id: 'musclePerformance', descriptionKey: 'near_infrared_red_light.areas.musclePerformance' }
+      { id: 'strength', descriptionKey: 'near_infrared_red_light.areas.strength' }
     ],
     title: 'near_infrared_red_light.title',
     descriptionKey: 'near_infrared_red_light.description',
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'evening'],
     timeRule: 'anytime',
-    planCategory: ['other']
+    bodyParts: ['skin','eye' ],
   },
   {
     id: 'far_infrared_light',
@@ -1151,14 +1198,62 @@ const rawTips: Tip[] = [
     xp: 500,
     areas: [
       { id: 'energy', descriptionKey: 'far_infrared_light.areas.energy' },
-      { id: 'musclePerformance', descriptionKey: 'far_infrared_light.areas.musclePerformance' }
+      { id: 'strength', descriptionKey: 'far_infrared_light.areas.strength' }
     ],
     title: 'far_infrared_light.title',
     descriptionKey: 'far_infrared_light.description',
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'evening'],
     timeRule: 'anytime',
-    planCategory: ['other']
+    bodyParts: ['skin','muscles' ],
+  },
+  {
+    id: 'nasal_breathing_nitric_oxide',
+    level: 1,
+    xp: 300,
+    areas: [
+      { id: 'energy', descriptionKey: 'nasal_breathing_nitric_oxide.areas.energy' },
+      { id: 'cardioFitness', descriptionKey: 'nasal_breathing_nitric_oxide.areas.cardioFitness' }
+    ],
+    title: 'nasal_breathing_nitric_oxide.title',
+    descriptionKey: 'nasal_breathing_nitric_oxide.description',
+    trainingRelation: 'anytime',
+    preferredDayParts: ['any'],
+    timeRule: 'anytime',
+    planCategory: ['other'],
+    bodyParts: ['bloodVessels'],
+  },
+  {
+    id: 'lutein_zeaxanthin_eye_health',
+    level: 2,
+    xp: 500,
+    areas: [
+      { id: 'energy', descriptionKey: 'lutein_zeaxanthin_eye_health.areas.energy' }
+    ],
+    title: 'lutein_zeaxanthin_eye_health.title',
+    descriptionKey: 'lutein_zeaxanthin_eye_health.description',
+    supplements: [{ id: 'lutein' }, { id: 'zeaxanthin' }],
+    trainingRelation: 'anytime',
+    timeRule: 'anytime',
+    planCategory: ['supplement'],
+    bodyParts: ['eye'],
+  },
+  {
+    id: 'msm_joint_health',
+    level: 2,
+    xp: 500,
+    areas: [
+      { id: 'strength', descriptionKey: 'msm_joint_health.areas.strength' },
+      { id: 'immuneSupport', descriptionKey: 'msm_joint_health.areas.recovery' },
+
+    ],
+    title: 'msm_joint_health.title',
+    descriptionKey: 'msm_joint_health.description',
+    supplements: [{ id: 'msm' }],
+    trainingRelation: 'anytime',
+    timeRule: 'anytime',
+    planCategory: ['supplement'],
+    bodyParts: ['joints', 'digestiveSystem', 'hair' ],
   },
 ];
 

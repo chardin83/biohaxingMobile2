@@ -210,6 +210,32 @@
   "filter": {
     "area": "Area",
     "level": "Level",
-    "planCategory": "Plan category"
+    "planCategory": "Plan category",
+    "bodyPart": "Body part"
+  },
+  "bodyParts": {
+    "nervousSystem": "Nervous System",
+    "eye": "Eye",
+    "muscles": "Muscles",
+    "digestiveSystem": "Digestive System",
+    "heart": "Heart",
+    "brain": "Brain",
+    "lungs": "Lungs",
+    "skin": "Skin",
+    "bones": "Bones",
+    "joints": "Joints",
+    "immuneSystem": "Immune System",
+    "liver": "Liver",
+    "kidneys": "Kidneys",
+    "reproductiveSystem": "Reproductive System",
+    "circulatorySystem": "Circulatory System",
+    "endocrineSystem": "Endocrine System",
+    "lymphaticSystem": "Lymphatic System",
+    "nails": "Nails",
+    "hair": "Hair",
+    "teeth": "Teeth",
+    "feet": "Feet",
+    "fattyTissue": "Fatty Tissue",
+    "bloodVessels": "Blood Vessels"
   }
 }
