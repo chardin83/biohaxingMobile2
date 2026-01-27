@@ -41,6 +41,7 @@ export const Colors = {
     assistantBubble: '#2C2C2C',
     delete: '#FF3B30',
     error: '#FF3B30',
+    readinessRed: 'rgba(255,120,100,0.95)', // Lägg till denna rad
     // Core colors
     accentColor: 'rgba(120,255,220,1)', // Cyan - primary accent
     warmColor: 'rgba(255,100,100,1)', // Red - sympathetic/stress

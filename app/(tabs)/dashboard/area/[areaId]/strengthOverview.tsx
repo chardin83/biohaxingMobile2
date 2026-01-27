@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { HRVMetric } from '@/components/metrics/HRVMetric';
+import { SleepConsistencyMetric } from '@/components/metrics/SleepConsistencyMetric';
+import { SleepMetric } from '@/components/metrics/SleepMetric';
 import { Card } from '@/components/ui/Card';
+import { Error } from '@/components/ui/Error';
+import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
+import { Colors } from '@/constants/Colors';
 import { DailyActivity, EnergySignal, HRVSummary, SleepSummary, TimeRange } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
-export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: string }) {
+export default function StrengthScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,23 +54,12 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
 
   if (loading) {
     return (
-      <View style={styles.bg}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="rgba(255,120,100,0.95)" />
-          <Text style={styles.loadingText}>Loading performance data...</Text>
-        </View>
-      </View>
+      <Loading />
     );
   }
 
   if (error) {
-    return (
-      <View style={styles.bg}>
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Error: {error}</Text>
-        </View>
-      </View>
-    );
+    return <Error error={error} />;
   }
 
   // Transform wearable data to performance metrics
@@ -94,7 +89,6 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
   };
 
   return (
-    <View style={styles.bg}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Muscle Performance</Text>
         <Text style={styles.subtitle}>Strength training readiness and recovery metrics</Text>
@@ -102,7 +96,7 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
         <WearableStatus status={status} />
 
         {/* Training Readiness Card */}
-        <Card title="Training Readiness">
+        {/* <Card title="Training Readiness">
           <View style={styles.centerMetric}>
             <Text style={styles.bigValue}>{performance.trainingReadiness}</Text>
             <Text style={styles.bigLabel}>Readiness Score</Text>
@@ -119,10 +113,10 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
               <Text style={styles.valueSmall}>{performance.lastStrengthWorkout}</Text>
             </View>
           </View>
-        </Card>
+        </Card>*/}
 
         {/* Training Load Card */}
-        <Card title="Training Load Management" style={{ marginTop: 16 }}>
+        {/*<Card title="Training Load Management" style={{ marginTop: 16 }}>
           <View style={styles.row}>
             <View style={[styles.col, styles.colWithDivider]}>
               <Text style={styles.label}>7-day load</Text>
@@ -148,27 +142,14 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
             <View style={[styles.loadFill, { width: `${(performance.trainingLoad.current / 350) * 100}%` }]} />
           </View>
           <Text style={styles.loadText}>Your training load is well-balanced. Continue with current intensity.</Text>
-        </Card>
+        </Card> */}
 
         {/* Recovery Factors Card */}
         <Card title="Recovery Factors" style={{ marginTop: 16 }}>
           <View style={styles.row}>
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>Sleep quality</Text>
-              <Text style={styles.value}>{performance.sleepQuality}%</Text>
-              <Text style={styles.accent}>{performance.sleepHours.toFixed(1)}h</Text>
-              {latestSleep && <Text style={styles.source}>{latestSleep.source}</Text>}
-            </View>
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>Body Battery</Text>
-              <Text style={styles.value}>{performance.bodyBattery}%</Text>
-            </View>
-            <View style={styles.col}>
-              <Text style={styles.label}>HRV</Text>
-              <Text style={styles.value}>{performance.hrv}</Text>
-              <Text style={styles.muted}>ms</Text>
-              {latestHRV && <Text style={styles.source}>{latestHRV.source}</Text>}
-            </View>
+            <SleepMetric sleepData={sleepData} showDivider/>
+            <SleepConsistencyMetric sleepData={{ ...sleepData[0], targetBedtime: '22:30' }} showDivider />
+            <HRVMetric hrvData={hrvData} showDivider={false} />
           </View>
           <Text style={styles.recoveryText}>
             🛌 Sleep and HRV are primary drivers of muscle recovery and protein synthesis. Deep sleep stages trigger
@@ -233,12 +214,10 @@ export default function MusclePerformanceScreen({ mainGoalId }: { mainGoalId: st
         {/* Optimization Tips Card */}
         <TipsList areaId={mainGoalId} title="tips:muscle.levels.optimization.title" />
       </ScrollView>
-    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  bg: { flex: 1 },
   container: {
     paddingHorizontal: 18,
     paddingBottom: 32,
@@ -247,10 +226,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 44,
     fontWeight: '700',
-    color: 'rgba(255,120,100,0.95)',
+    color: Colors.dark.readinessRed, // Använd för rubrik
   },
   subtitle: {
-    color: 'rgba(255,255,255,0.7)',
+    color: Colors.dark.textTertiary,
     fontSize: 16,
     marginTop: 6,
     marginBottom: 16,
@@ -262,21 +241,21 @@ const styles = StyleSheet.create({
   bigValue: {
     fontSize: 56,
     fontWeight: '800',
-    color: 'rgba(255,120,100,0.95)',
+    color: Colors.dark.readinessRed, // Använd för readiness score
   },
   bigLabel: {
-    color: 'rgba(255,255,255,0.65)',
+    color: Colors.dark.textMuted,
     fontSize: 15,
     marginTop: 4,
   },
   statusGood: {
-    color: 'rgba(100,255,150,0.9)',
+    color: Colors.dark.successColor,
     fontSize: 18,
     fontWeight: '700',
     marginTop: 8,
   },
   source: {
-    color: 'rgba(255,255,255,0.4)',
+    color: Colors.dark.textWeak,
     fontSize: 11,
     marginTop: 8,
   },
@@ -290,72 +269,72 @@ const styles = StyleSheet.create({
   },
   colWithDivider: {
     borderRightWidth: 1,
-    borderRightColor: 'rgba(255,255,255,0.10)',
+    borderRightColor: Colors.dark.textWeak,
   },
   label: {
-    color: 'rgba(255,255,255,0.65)',
+    color: Colors.dark.textMuted,
     fontSize: 13,
   },
   value: {
-    color: 'white',
+    color: Colors.dark.textWhite,
     fontSize: 26,
     fontWeight: '700',
     marginTop: 4,
   },
   valueSmall: {
-    color: 'white',
+    color: Colors.dark.textWhite,
     fontSize: 18,
     fontWeight: '700',
     marginTop: 4,
   },
   muted: {
-    color: 'rgba(255,255,255,0.5)',
+    color: Colors.dark.textMuted,
     fontSize: 12,
     marginTop: 6,
   },
   accent: {
-    color: 'rgba(255,120,100,0.85)',
+    color: Colors.dark.accentDefault,
     fontSize: 12,
     marginTop: 6,
     fontWeight: '600',
   },
   loadBar: {
     height: 12,
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: Colors.dark.overlayLight,
     borderRadius: 6,
     marginTop: 12,
     overflow: 'hidden',
   },
   loadFill: {
     height: '100%',
-    backgroundColor: 'rgba(255,120,100,0.7)',
+    backgroundColor: Colors.dark.accentMedium,
   },
   loadText: {
-    color: 'rgba(255,255,255,0.65)',
+    color: Colors.dark.textMuted,
     fontSize: 13,
     marginTop: 8,
     fontStyle: 'italic',
   },
   recoveryText: {
-    color: 'rgba(255,255,255,0.65)',
+    color: Colors.dark.textMuted,
     fontSize: 14,
     lineHeight: 20,
     marginTop: 16,
     paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.1)',
+    borderTopColor: Colors.dark.textWeak,
   },
   proteinSection: {
     marginBottom: 16,
   },
   proteinStatus: {
-    color: 'rgba(255,200,100,0.95)',
+    color: Colors.dark.successColor,
     fontSize: 18,
     fontWeight: '700',
     marginBottom: 8,
   },
   proteinText: {
-    color: 'rgba(255,255,255,0.65)',
+    color: Colors.dark.textMuted,
     fontSize: 14,
     lineHeight: 20,
   },
@@ -363,10 +342,10 @@ const styles = StyleSheet.create({
     marginTop: 12,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.1)',
+    borderTopColor: Colors.dark.textWeak,
   },
   tipLabel: {
-    color: 'rgba(255,255,255,0.85)',
+    color: Colors.dark.textSecondary,
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 8,
@@ -375,18 +354,18 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   infoLabel: {
-    color: 'rgba(255,255,255,0.85)',
+    color: Colors.dark.textSecondary,
     fontSize: 15,
     fontWeight: '600',
     marginBottom: 6,
   },
   infoText: {
-    color: 'rgba(255,255,255,0.65)',
+    color: Colors.dark.textMuted,
     fontSize: 14,
     lineHeight: 20,
   },
   tipText: {
-    color: 'rgba(255,255,255,0.75)',
+    color: Colors.dark.textTertiary,
     fontSize: 14,
     lineHeight: 24,
     marginBottom: 4,
@@ -397,7 +376,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    color: 'rgba(255,255,255,0.75)',
+    color: Colors.dark.textSecondary,
     fontSize: 16,
     marginTop: 12,
   },
@@ -407,7 +386,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   errorText: {
-    color: 'rgba(255,100,100,0.9)',
+    color: Colors.dark.error,
     fontSize: 16,
   },
 });

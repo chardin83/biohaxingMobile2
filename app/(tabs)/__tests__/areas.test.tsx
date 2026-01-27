@@ -7,7 +7,7 @@ import Goals from '../goals';
 jest.mock('i18next', () => ({
   t: (key: string) => {
     const translations: { [key: string]: string } = {
-      'common:goals.selectGoal': 'Select Goal',
+      'common:areas.selectAreas': 'Select Areas',
     };
     return translations[key] || key;
   },

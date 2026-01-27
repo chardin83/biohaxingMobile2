@@ -4,6 +4,8 @@ import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-nat
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { VO2MaxMetric } from '@/components/metrics/VO2MaxMetric';
 import { Card } from '@/components/ui/Card';
+import { Error } from '@/components/ui/Error';
+import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { DailyActivity, EnergySignal, HRVSummary, TimeRange } from '@/wearables/types';
@@ -47,23 +49,12 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
 
   if (loading) {
     return (
-      <View style={styles.bg}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="rgba(120,255,220,0.95)" />
-          <Text style={styles.loadingText}>Loading cardio data...</Text>
-        </View>
-      </View>
+        <Loading />
     );
   }
 
   if (error) {
-    return (
-      <View style={styles.bg}>
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Error: {error}</Text>
-        </View>
-      </View>
-    );
+    return <Error error={error} />;
   }
 
   // Transform wearable data to cardio metrics

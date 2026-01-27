@@ -83,7 +83,7 @@
     "day": "day"
   },
   "areas": {
-    "selectArea": "Select what areas you want to focus on",
+    "selectAreas": "Select what areas you want to focus on",
     "editArea": "Edit area",
     "addArea": "Add area",
     "confirmAddSupplements": "Do you want to add supplements for this area?"

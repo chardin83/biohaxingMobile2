@@ -20,6 +20,8 @@ export type SleepSummary = {
   };
 };
 
+export type SleepSummaryWithTarget = SleepSummary & { targetBedtime: string };
+
 export type HRVSummary = {
   source: SourceId;
   date: string; // YYYY-MM-DD

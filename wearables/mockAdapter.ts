@@ -37,6 +37,7 @@ export class MockAdapter implements WearableAdapter {
       date,
       durationMinutes: 390 + (i % 3) * 25, // 6h30..7h20
       efficiencyPct: 80 + (i % 5),
+      startTime: `23:38`,
       stages: { deepMinutes: 70, remMinutes: 90, lightMinutes: 210, awakeMinutes: 20 },
     }));
   }

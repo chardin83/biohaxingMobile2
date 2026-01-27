@@ -20,6 +20,10 @@ export default function DashboardScreen() {
   const { myGoals, myXP, myLevel, viewedTips, plans } = useStorage();
   const router = useRouter();
 
+  useEffect(() => {
+  debugger;
+}, []);
+
 //   useEffect(() => {
 //   setMyXP(445);
 // }, [setMyXP]);

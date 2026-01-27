@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { HRVMetric } from '@/components/metrics/HRVMetric';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { SleepMetric } from '@/components/metrics/SleepMetric';
 import { Card } from '@/components/ui/Card';
+import { Error } from '@/components/ui/Error';
+import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { Colors } from '@/constants/Colors';
@@ -49,25 +51,15 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
     loadData();
   }, [adapter]);
 
+
   if (loading) {
     return (
-      <View style={styles.bg}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="rgba(120,255,220,0.95)" />
-          <Text style={styles.loadingText}>Loading immune data...</Text>
-        </View>
-      </View>
+        <Loading />
     );
   }
 
   if (error) {
-    return (
-      <View style={styles.bg}>
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Error: {error}</Text>
-        </View>
-      </View>
-    );
+    return <Error error={error} />;
   }
 
   // Transform wearable data to immune metrics

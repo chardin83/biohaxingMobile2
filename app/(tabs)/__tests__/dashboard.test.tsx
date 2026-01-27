@@ -21,10 +21,10 @@ jest.mock('react-i18next', () => ({
         'levels:biohacker': 'Biohacker',
         'levels:advanced_biohacker': 'Advanced Biohacker',
         'levels:master_biohacker': 'Master Biohacker',
-        'goals:improve_sleep.title': 'Improve Sleep',
-        'goals:boost_energy.title': 'Boost Energy',
-        'goals:enhance_focus.title': 'Enhance Focus',
-        'common:goals.selectGoal': 'Select Goal',
+        'areas:improve_sleep.title': 'Improve Sleep',
+        'areas:boost_energy.title': 'Boost Energy',
+        'areas:enhance_focus.title': 'Enhance Focus',
+        'common:areas.selectAreas': 'Select Areas',
       };
       return translations[key] || key;
     },

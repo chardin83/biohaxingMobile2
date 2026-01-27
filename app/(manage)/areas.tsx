@@ -10,7 +10,7 @@ export default function Areas() {
   return (
     <View style={styles.container}>
       <BackButton style={styles.backButton} />
-      <Text style={styles.title}>{t('common:areas.selectArea')}</Text>
+      <Text style={styles.title}>{t('common:areas.selectAreas')}</Text>
       <MyGoalsSelector />
     </View>
   );

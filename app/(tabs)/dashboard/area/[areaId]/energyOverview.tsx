@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { HRVMetric } from '@/components/metrics/HRVMetric';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { VO2MaxMetric } from '@/components/metrics/VO2MaxMetric';
 import { Card } from '@/components/ui/Card';
+import { Error } from '@/components/ui/Error';
+import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { calculateHRVMetrics } from '@/utils/hrvCalculations';
@@ -50,26 +52,15 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
 
     loadData();
   }, [adapter]);
-
+  
   if (loading) {
     return (
-      <View style={styles.bg}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="rgba(255,215,100,0.95)" />
-          <Text style={styles.loadingText}>Loading energy data...</Text>
-        </View>
-      </View>
-    );
-  }
-
+         <Loading />
+        );
+    }
+  
   if (error) {
-    return (
-      <View style={styles.bg}>
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Error loading data: {error}</Text>
-        </View>
-      </View>
-    );
+    return <Error error={error} />;
   }
 
   // Transform wearable data to energy metrics

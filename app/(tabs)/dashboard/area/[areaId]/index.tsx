@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams, usePathname,useSegments } from 'expo-router';
 import { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 // Removed SafeAreaView import
 import BackButton from '@/components/BackButton';
@@ -11,9 +11,9 @@ import CardioOverview from './cardioOverview';
 import DigestiveOverview from './digestiveOverview';
 import EnergyOverview from './energyOverview';
 import ImmuneOverview from './immuneOverview';
-import MusclePerformanceOverview from './musclePerformanceOverview';
 import NervousSystemOverview from './nervousSystemOverview';
 import SleepOverview from './sleepOverview';
+import StrengthOverview from './strengthOverview';
 
 export default function AreaRootScreen() {
   const { areaId } = useLocalSearchParams<{ areaId: string }>();
@@ -38,7 +38,7 @@ export default function AreaRootScreen() {
       {areaId === 'nervousSystem' && <NervousSystemOverview mainGoalId={areaId} />}
       {areaId === 'sleepQuality' && <SleepOverview mainGoalId={areaId} />}
       {areaId === 'energy' && <EnergyOverview mainGoalId={areaId} />}
-      {areaId === 'musclePerformance' && <MusclePerformanceOverview mainGoalId={areaId} />}
+      {areaId === 'strength' && <StrengthOverview mainGoalId={areaId} />}
       {areaId === 'cardioFitness' && <CardioOverview mainGoalId={areaId} />}
       {areaId === 'digestiveHealth' && <DigestiveOverview mainGoalId={areaId} />}
       {areaId === 'immuneSupport' && <ImmuneOverview mainGoalId={areaId} />}

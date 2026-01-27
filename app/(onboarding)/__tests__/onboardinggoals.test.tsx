@@ -21,7 +21,7 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
       const translations: { [key: string]: string } = {
-        'common:goals.selectGoal': 'Select Goal',
+        'common:areas.selectAreas': 'Select Areas',
         'common:onboarding.continue': 'Continue',
       };
       return translations[key] || key;

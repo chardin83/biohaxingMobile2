@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Card } from '@/components/ui/Card';
+import { Error } from '@/components/ui/Error';
+import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { DailyActivity, EnergySignal, SleepSummary, TimeRange } from '@/wearables/types';
@@ -45,23 +47,12 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
 
   if (loading) {
     return (
-      <View style={styles.bg}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="rgba(120,255,220,0.95)" />
-          <Text style={styles.loadingText}>Loading digestive data...</Text>
-        </View>
-      </View>
+        <Loading />
     );
   }
 
   if (error) {
-    return (
-      <View style={styles.bg}>
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Error: {error}</Text>
-        </View>
-      </View>
-    );
+    return <Error error={error} />;
   }
 
   // Transform wearable data to digestive metrics

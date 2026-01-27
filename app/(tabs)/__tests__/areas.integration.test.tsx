@@ -17,22 +17,22 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
       const translations: { [key: string]: string } = {
-        'common:goals.selectGoal': 'Select Your Goals',
-        'common:goals.save': 'Save',
-        'common:goals.cancel': 'Cancel',
-        'goals:improve-energy.title': 'Improve Energy',
-        'goals:improve-energy.description': 'Boost your daily energy levels',
-        'goals:better-sleep.title': 'Better Sleep',
-        'goals:better-sleep.description': 'Improve sleep quality and duration',
-        'goals:muscle-gain.title': 'Muscle Gain',
-        'goals:muscle-gain.description': 'Build lean muscle mass',
+        'common:areas.selectAreas': 'Select Your Areas',
+        'common:areas.save': 'Save',
+        'common:areas.cancel': 'Cancel',
+        'areas:improve-energy.title': 'Improve Energy',
+        'areas:improve-energy.description': 'Boost your daily energy levels',
+        'areas:better-sleep.title': 'Better Sleep',
+        'areas:better-sleep.description': 'Improve sleep quality and duration',
+        'areas:muscle-gain.title': 'Muscle Gain',
+        'areas:muscle-gain.description': 'Build lean muscle mass',
       };
       return translations[key] || key;
     },
   }),
   t: (key: string) => {
     const translations: { [key: string]: string } = {
-      'common:goals.selectGoal': 'Select Your Goals',
+      'common:areas.selectAreas': 'Select Your Areas',
     };
     return translations[key] || key;
   },

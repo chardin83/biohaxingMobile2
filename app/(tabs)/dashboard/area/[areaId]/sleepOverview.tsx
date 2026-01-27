@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { SleepConsistencyMetric } from '@/components/metrics/SleepConsistencyMetric';
 import { SleepMetric } from '@/components/metrics/SleepMetric';
 import { Card } from '@/components/ui/Card';
 import TipsList from '@/components/ui/TipsList';
@@ -20,7 +21,6 @@ export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
   const [loading, setLoading] = React.useState(true);
   const [sleepData, setSleepData] = React.useState<SleepSummary[]>([]);
   const [consistencyLabel, setConsistencyLabel] = React.useState<'High' | 'Moderate' | 'Low'>('Moderate');
-  const [qualityScore, setQualityScore] = React.useState<number>(6.6);
   const [deepSleepMinutes, setDeepSleepMinutes] = React.useState<number | null>(null);
   const [remSleepMinutes, setRemSleepMinutes] = React.useState<number | null>(null);
 
@@ -41,8 +41,6 @@ export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
       // här bara en placeholder som du kan byta senare
       setConsistencyLabel(sleeps.length >= 6 ? 'Moderate' : 'Low');
 
-      // "quality" kan också vara placeholder i V1
-      setQualityScore(latest?.efficiencyPct ? Math.round((latest.efficiencyPct / 100) * 10 * 10) / 10 : 6.6);
 
       setLoading(false);
     })().catch(() => setLoading(false));
@@ -70,9 +68,7 @@ export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
               </View>
 
               <View style={styles.col}>
-                <Text style={styles.label}>Sleep quality</Text>
-                <Text style={styles.valueSmall}>{qualityScore.toFixed(1)}</Text>
-                <Text style={styles.muted}>out of 10</Text>
+                <SleepConsistencyMetric sleepData={{ ...sleepData[0], targetBedtime: '22:30' }} />
               </View>
             </View>
           )}

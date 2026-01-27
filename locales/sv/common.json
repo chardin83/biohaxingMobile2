@@ -87,7 +87,7 @@
       
     },
     "areas": {
-      "selectArea": "Välj vilka områden du vill arbeta med",
+      "selectAreas": "Välj vilka områden du vill arbeta med",
       "editArea": "Redigera område",
       "addArea": "Lägg till område",
       "confirmAddSupplements": "Vill du undersöka kosttillskott för detta område?"

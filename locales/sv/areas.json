@@ -19,9 +19,9 @@
     "title": "Nervsystem",
     "description": "Balansera ditt autonoma nervsystem för bättre stressresiliens"
   },
-  "musclePerformance": {
-    "title": "Muskelprestation",
-    "description": "Bygga styrka och förbättra atletisk prestanda"
+  "strength": {
+    "title": "Styrka",
+    "description": "Bygga styrka"
   },
   "digestiveHealth": {
     "title": "Matsmältningshälsa",
