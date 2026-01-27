@@ -182,6 +182,55 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
           </View>
         </Card>
 
+        {/* DNA & Gener som påverkar matsmältning */}
+        <Card title="DNA & Gener som påverkar matsmältning" style={{ marginTop: 16 }}>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>🧬 Viktiga gener för matsmältning och tarmhälsa</Text>
+            <Text style={styles.infoText}>
+              Flera gener påverkar matsmältning, näringsupptag och tarmens immunförsvar:
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>• FUT2</Text>
+            <Text style={styles.infoText}>
+              Påverkar sammansättningen av tarmfloran och produktion av prebiotiska ämnen. Vissa varianter kan ge ökad risk för magproblem.
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>• LCT (Laktas)</Text>
+            <Text style={styles.infoText}>
+              Styr kroppens förmåga att bryta ner laktos (mjölksocker). Laktosintolerans beror på variationer i denna gen.
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>• HLA-DQ2/DQ8</Text>
+            <Text style={styles.infoText}>
+              Associerade med glutenintolerans (celiaki). Närvaro av dessa gener ökar risken för autoimmun reaktion mot gluten.
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>• MUC2</Text>
+            <Text style={styles.infoText}>
+              Kodar för mucin, ett protein som skyddar tarmväggen. Variationer kan påverka slemhinnans skydd mot inflammation.
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>• ALDH2</Text>
+            <Text style={styles.infoText}>
+              Påverkar nedbrytning av alkohol. Vissa varianter ger ökad känslighet för alkohol och magbesvär.
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>• MTHFR</Text>
+            <Text style={styles.infoText}>
+              Påverkar omsättning av folat och homocystein. Variationer kan påverka näringsupptag, tarmhälsa och avgiftning.
+            </Text>
+          </View>
+          <Text style={styles.muted}>
+            Genetiska tester kan ge insikt om din matsmältningsprofil, men kost, stress och livsstil har alltid stor påverkan!
+          </Text>
+        </Card>
+
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="tips:digestive.levels.optimization.title" />
       </ScrollView>

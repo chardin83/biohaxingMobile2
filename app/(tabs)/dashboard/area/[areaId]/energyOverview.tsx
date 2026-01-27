@@ -113,6 +113,54 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
           </Text>
         </Card>
 
+        {/* DNA & Mitochondria Genetics */}
+        <Card title="DNA & Genes Affecting Energy" style={{ marginTop: 16 }}>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>🧬 Key Genes for Mitochondrial Function</Text>
+            <Text style={styles.infoText}>
+              Vissa gener påverkar direkt din energiproduktion, uthållighet och mitokondriernas hälsa:
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>• PGC-1α (PPARGC1A)</Text>
+            <Text style={styles.infoText}>
+              "Master regulator" för mitokondriell biogenes. Variationer kan påverka VO₂ max och träningsrespons.
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>• SIRT1/SIRT3</Text>
+            <Text style={styles.infoText}>
+              Reglerar mitokondriell funktion, fettförbränning och cellens stressrespons. Påverkar åldrande och energinivåer.
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>• NRF1/NRF2</Text>
+            <Text style={styles.infoText}>
+              Styr gener för mitokondriell andningskedja och antioxidantförsvar.
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>• UCP2/UCP3</Text>
+            <Text style={styles.infoText}>
+              Påverkar energiförbrukning och värmeproduktion i mitokondrierna.
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>• MT-ND1, MT-CO1 (mtDNA)</Text>
+            <Text style={styles.infoText}>
+              Mitokondriellt DNA kodar för viktiga delar av andningskedjan. Mutationer kan ge sänkt energiproduktion.
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>• MTHFR</Text>
+            <Text style={styles.infoText}>
+              Påverkar omsättning av folat och homocystein. Variationer kan ge trötthet, sämre återhämtning och påverka ATP-produktionen.
+            </Text>
+          </View>
+          <Text style={styles.muted}>
+            Genetiska tester kan ge insikt om din unika energimetabolism och träningsrespons. Livsstil, kost och träning påverkar dock alltid mer än generna!
+          </Text>
+        </Card>
         {/* Energy Production Factors */}
         <Card title="Energy Production Metrics" style={{ marginTop: 16 }}>
           <View style={styles.row}>

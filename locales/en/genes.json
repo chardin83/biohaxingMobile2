@@ -1,0 +1,128 @@
+{
+  "MTHFR": {
+    "title": "MTHFR",
+    "description": "Affects folate and homocysteine metabolism. Variants may cause fatigue, impaired recovery, and impact ATP production, cardiovascular health, digestion, and cell repair.",
+    "areas": {
+      "energy": "Important for cellular energy production and mitochondrial function. Variants may cause fatigue and impaired recovery.",
+      "cardioFitness": "Affects folate and homocysteine metabolism, linked to cardiovascular health and blood vessel function.",
+      "strength": "Contributes to cell repair and recovery after strength training. Folate deficiency can impair muscle growth.",
+      "digestiveHealth": "Affects nutrient absorption and detoxification in the gut. Variants may cause digestive issues."
+    }
+  },
+  "PGC1A": {
+    "title": "PGC-1α (PPARGC1A)",
+    "description": "Master regulator of mitochondrial biogenesis, muscle growth, and endurance. Variants affect VO₂ max, training response, and recovery.",
+    "areas": {
+      "energy": "Regulates mitochondrial biogenesis and increases cellular energy capacity.",
+      "cardioFitness": "Affects VO₂ max and endurance during cardio training.",
+      "strength": "Contributes to muscle growth and recovery after strength training."
+    }
+  },
+  "SIRT1_SIRT3": {
+    "title": "SIRT1/SIRT3",
+    "description": "Regulate mitochondrial function, fat burning, and cellular stress response. Affect aging and energy levels.",
+    "areas": {
+      "energy": "Regulate mitochondrial function and fat burning. Affect energy levels and aging."
+    }
+  },
+  "NRF1_NRF2": {
+    "title": "NRF1/NRF2",
+    "description": "Control genes for mitochondrial respiratory chain and antioxidant defense.",
+    "areas": {
+      "energy": "Control genes for mitochondrial respiratory chain and antioxidant defense."
+    }
+  },
+  "UCP2_UCP3": {
+    "title": "UCP2/UCP3",
+    "description": "Affect energy expenditure and heat production in mitochondria.",
+    "areas": {
+      "energy": "Affect energy expenditure and heat production in mitochondria."
+    }
+  },
+  "MT_ND1_MT_CO1": {
+    "title": "MT-ND1, MT-CO1 (mtDNA)",
+    "description": "Mitochondrial DNA encodes key parts of the respiratory chain. Mutations can reduce energy production.",
+    "areas": {
+      "energy": "Mitochondrial DNA encodes key parts of the respiratory chain. Mutations can reduce energy production."
+    }
+  },
+  "ACE": {
+    "title": "ACE (Angiotensin-Converting Enzyme)",
+    "description": "Affects blood pressure and oxygen uptake. Some variants are linked to better endurance or explosive strength.",
+    "areas": {
+      "cardioFitness": "Affects blood pressure and oxygen uptake. Some variants are linked to better endurance.",
+      "strength": "May affect explosive strength and recovery in strength training."
+    }
+  },
+  "ACTN3": {
+    "title": "ACTN3",
+    "description": "Fast muscle protein. Some variants favor explosive strength, others endurance. Influences training response and muscle fiber distribution.",
+    "areas": {
+      "cardioFitness": "Affects muscle type and training response in cardio training.",
+      "strength": "Some variants favor explosive strength, others endurance. Influences muscle fiber distribution."
+    }
+  },
+  "NOS3": {
+    "title": "NOS3",
+    "description": "Regulates nitric oxide production and blood vessel dilation. Affects blood flow and oxygenation during exercise.",
+    "areas": {
+      "cardioFitness": "Regulates nitric oxide production and blood vessel dilation. Affects blood flow during exercise."
+    }
+  },
+  "ADRB2": {
+    "title": "ADRB2",
+    "description": "Affects heart's response to adrenaline, pulse, and oxygen transport during exertion.",
+    "areas": {
+      "cardioFitness": "Affects heart's response to adrenaline, pulse, and oxygen transport during exertion."
+    }
+  },
+  "MSTN": {
+    "title": "MSTN (Myostatin)",
+    "description": "Regulates muscle growth. Mutations can increase muscle mass and strength.",
+    "areas": {
+      "strength": "Regulates muscle growth. Mutations can increase muscle mass and strength."
+    }
+  },
+  "IGF1": {
+    "title": "IGF1",
+    "description": "Affects muscle building and recovery. Variants can result in different training responses.",
+    "areas": {
+      "strength": "Affects muscle building and recovery. Variants can result in different training responses."
+    }
+  },
+  "FUT2": {
+    "title": "FUT2",
+    "description": "Affects gut flora composition and prebiotic production. Some variants increase risk of digestive issues.",
+    "areas": {
+      "digestiveHealth": "Affects gut flora composition and prebiotic production. Some variants increase risk of digestive issues."
+    }
+  },
+  "LCT": {
+    "title": "LCT (Lactase)",
+    "description": "Controls ability to break down lactose (milk sugar). Lactose intolerance is due to variants in this gene.",
+    "areas": {
+      "digestiveHealth": "Controls ability to break down lactose (milk sugar). Lactose intolerance is due to variants in this gene."
+    }
+  },
+  "HLA_DQ2_DQ8": {
+    "title": "HLA-DQ2/DQ8",
+    "description": "Associated with gluten intolerance (celiac disease). Presence increases risk of autoimmune reaction to gluten.",
+    "areas": {
+      "digestiveHealth": "Associated with gluten intolerance (celiac disease). Presence increases risk of autoimmune reaction to gluten."
+    }
+  },
+  "MUC2": {
+    "title": "MUC2",
+    "description": "Encodes mucin, a protein protecting the gut wall. Variants can affect mucosal protection against inflammation.",
+    "areas": {
+      "digestiveHealth": "Encodes mucin, a protein protecting the gut wall. Variants can affect mucosal protection against inflammation."
+    }
+  },
+  "ALDH2": {
+    "title": "ALDH2",
+    "description": "Affects alcohol breakdown. Some variants increase sensitivity to alcohol and digestive discomfort.",
+    "areas": {
+      "digestiveHealth": "Affects alcohol breakdown. Some variants increase sensitivity to alcohol and digestive discomfort."
+    }
+  }
+}

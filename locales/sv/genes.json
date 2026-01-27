@@ -1,0 +1,128 @@
+{
+  "MTHFR": {
+    "title": "MTHFR",
+    "description": "Påverkar omsättning av folat och homocystein. Variationer kan ge trötthet, sämre återhämtning och påverka ATP-produktionen, hjärt-kärlhälsa, matsmältning och cellreparation.",
+    "areas": {
+      "energy": "Viktig för cellernas energiproduktion och mitokondriernas funktion. Variationer kan ge trötthet och sämre återhämtning.",
+      "cardioFitness": "Påverkar omsättning av folat och homocystein, vilket är kopplat till hjärt-kärlhälsa och blodkärlens funktion.",
+      "strength": "Bidrar till cellreparation och återhämtning efter styrketräning. Folatbrist kan hämma muskeluppbyggnad.",
+      "digestiveHealth": "Påverkar näringsupptag och avgiftning i tarmen. Variationer kan ge magbesvär och påverka matsmältningen."
+    }
+  },
+  "PGC1A": {
+    "title": "PGC-1α (PPARGC1A)",
+    "description": "Master regulator för mitokondriell biogenes, muskeltillväxt och uthållighet. Variationer påverkar VO₂ max, träningsrespons och återhämtning.",
+    "areas": {
+      "energy": "Styr mitokondriell biogenes och ökar cellernas energikapacitet.",
+      "cardioFitness": "Påverkar VO₂ max och uthållighet vid konditionsträning.",
+      "strength": "Bidrar till muskeltillväxt och återhämtning efter styrketräning."
+    }
+  },
+  "SIRT1_SIRT3": {
+    "title": "SIRT1/SIRT3",
+    "description": "Reglerar mitokondriell funktion, fettförbränning och cellens stressrespons. Påverkar åldrande och energinivåer.",
+    "areas": {
+      "energy": "Reglerar mitokondriell funktion och fettförbränning. Påverkar energinivåer och åldrande."
+    }
+  },
+  "NRF1_NRF2": {
+    "title": "NRF1/NRF2",
+    "description": "Styr gener för mitokondriell andningskedja och antioxidantförsvar.",
+    "areas": {
+      "energy": "Styr gener för mitokondriell andningskedja och antioxidantförsvar."
+    }
+  },
+  "UCP2_UCP3": {
+    "title": "UCP2/UCP3",
+    "description": "Påverkar energiförbrukning och värmeproduktion i mitokondrierna.",
+    "areas": {
+      "energy": "Påverkar energiförbrukning och värmeproduktion i mitokondrierna."
+    }
+  },
+  "MT_ND1_MT_CO1": {
+    "title": "MT-ND1, MT-CO1 (mtDNA)",
+    "description": "Mitokondriellt DNA kodar för viktiga delar av andningskedjan. Mutationer kan ge sänkt energiproduktion.",
+    "areas": {
+      "energy": "Mitokondriellt DNA kodar för viktiga delar av andningskedjan. Mutationer kan ge sänkt energiproduktion."
+    }
+  },
+  "ACE": {
+    "title": "ACE (Angiotensin-Converting Enzyme)",
+    "description": "Påverkar blodtryck och syreupptagningsförmåga. Vissa varianter är kopplade till bättre uthållighet eller explosiv styrka.",
+    "areas": {
+      "cardioFitness": "Påverkar blodtryck och syreupptagningsförmåga. Vissa varianter är kopplade till bättre uthållighet.",
+      "strength": "Kan påverka explosiv styrka och återhämtning vid styrketräning."
+    }
+  },
+  "ACTN3": {
+    "title": "ACTN3",
+    "description": "Snabbt muskelprotein. Vissa varianter gynnar explosiv styrka, andra uthållighet. Påverkar träningsrespons och muskelfiberfördelning.",
+    "areas": {
+      "cardioFitness": "Påverkar muskeltyp och träningsrespons vid konditionsträning.",
+      "strength": "Vissa varianter gynnar explosiv styrka, andra uthållighet. Påverkar muskelfiberfördelning."
+    }
+  },
+  "NOS3": {
+    "title": "NOS3",
+    "description": "Reglerar kväveoxidproduktion och blodkärlens förmåga att vidgas. Påverkar blodflöde och syresättning vid träning.",
+    "areas": {
+      "cardioFitness": "Reglerar kväveoxidproduktion och blodkärlens förmåga att vidgas. Påverkar blodflöde vid träning."
+    }
+  },
+  "ADRB2": {
+    "title": "ADRB2",
+    "description": "Påverkar hjärtats svar på adrenalin och därmed puls och syretransport vid ansträngning.",
+    "areas": {
+      "cardioFitness": "Påverkar hjärtats svar på adrenalin och därmed puls och syretransport vid ansträngning."
+    }
+  },
+  "MSTN": {
+    "title": "MSTN (Myostatin)",
+    "description": "Reglerar muskelväxt. Mutationer kan ge ökad muskelmassa och styrka.",
+    "areas": {
+      "strength": "Reglerar muskelväxt. Mutationer kan ge ökad muskelmassa och styrka."
+    }
+  },
+  "IGF1": {
+    "title": "IGF1",
+    "description": "Påverkar muskeluppbyggnad och återhämtning. Variationer kan ge olika träningsrespons.",
+    "areas": {
+      "strength": "Påverkar muskeluppbyggnad och återhämtning. Variationer kan ge olika träningsrespons."
+    }
+  },
+  "FUT2": {
+    "title": "FUT2",
+    "description": "Påverkar sammansättningen av tarmfloran och produktion av prebiotiska ämnen. Vissa varianter kan ge ökad risk för magproblem.",
+    "areas": {
+      "digestiveHealth": "Påverkar sammansättningen av tarmfloran och produktion av prebiotiska ämnen. Vissa varianter kan ge ökad risk för magproblem."
+    }
+  },
+  "LCT": {
+    "title": "LCT (Laktas)",
+    "description": "Styr kroppens förmåga att bryta ner laktos (mjölksocker). Laktosintolerans beror på variationer i denna gen.",
+    "areas": {
+      "digestiveHealth": "Styr kroppens förmåga att bryta ner laktos (mjölksocker). Laktosintolerans beror på variationer i denna gen."
+    }
+  },
+  "HLA_DQ2_DQ8": {
+    "title": "HLA-DQ2/DQ8",
+    "description": "Associerade med glutenintolerans (celiaki). Närvaro av dessa gener ökar risken för autoimmun reaktion mot gluten.",
+    "areas": {
+      "digestiveHealth": "Associerade med glutenintolerans (celiaki). Närvaro av dessa gener ökar risken för autoimmun reaktion mot gluten."
+    }
+  },
+  "MUC2": {
+    "title": "MUC2",
+    "description": "Kodar för mucin, ett protein som skyddar tarmväggen. Variationer kan påverka slemhinnans skydd mot inflammation.",
+    "areas": {
+      "digestiveHealth": "Kodar för mucin, ett protein som skyddar tarmväggen. Variationer kan påverka slemhinnans skydd mot inflammation."
+    }
+  },
+  "ALDH2": {
+    "title": "ALDH2",
+    "description": "Påverkar nedbrytning av alkohol. Vissa varianter ger ökad känslighet för alkohol och magbesvär.",
+    "areas": {
+      "digestiveHealth": "Påverkar nedbrytning av alkohol. Vissa varianter ger ökad känslighet för alkohol och magbesvär."
+    }
+  }
+}

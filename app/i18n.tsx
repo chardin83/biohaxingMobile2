@@ -4,12 +4,14 @@ import { initReactI18next } from 'react-i18next';
 
 import enAreas from '../locales/en/areas.json';
 import enCommon from '../locales/en/common.json';
+import enGenes from '../locales/en/genes.json';
 import enLevels from '../locales/en/levels.json';
 import enPrompts from '../locales/en/prompts.json';
 import enSupplements from '../locales/en/supplements.json';
 import enTips from '../locales/en/tips.json';
 import svAreas from '../locales/sv/areas.json';
 import svCommon from '../locales/sv/common.json';
+import svGenes from '../locales/sv/genes.json';
 import svLevels from '../locales/sv/levels.json';
 import svPrompts from '../locales/sv/prompts.json';
 import svSupplements from '../locales/sv/supplements.json';
@@ -24,6 +26,7 @@ const resources = {
     areas: enAreas,
     levels: enLevels,
     prompts: enPrompts,
+    genes: enGenes,
   },
   sv: {
     common: svCommon,
@@ -32,6 +35,7 @@ const resources = {
     areas: svAreas,
     levels: svLevels,
     prompts: svPrompts,
+    genes: svGenes,
   },
 };
 
@@ -59,7 +63,7 @@ i18next
     fallbackLng: 'en',
     debug: false,
     defaultNS: 'common', // Default namespace
-    ns: ['common', 'tips', 'supplements', 'areas', 'levels', 'prompts'], // Available namespaces
+    ns: ['common', 'tips', 'supplements', 'areas', 'levels', 'prompts', 'genes'], // Available namespaces
     interpolation: {
       escapeValue: false, // Not needed for React
     },

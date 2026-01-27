@@ -1,9 +1,6 @@
-import { useRouter } from 'expo-router';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { useStorage } from '@/app/context/StorageContext';
 import { HRVMetric } from '@/components/metrics/HRVMetric';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { Card } from '@/components/ui/Card';
@@ -52,8 +49,6 @@ function getRecoveryStatus(hrv: number | null, sleepHours: number | null): strin
 
 export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();
-  const { t } = useTranslation();
-  const { viewedTips } = useStorage();
 
   console.log('=== NERVOUS SYSTEM MOUNTED ===');
   console.log('mainGoalId from props:', mainGoalId);

@@ -156,6 +156,54 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
           </View>
         </Card>
 
+        {/* DNA & Gener som påverkar kondition */}
+        <Card title="DNA & Gener som påverkar kondition" style={{ marginTop: 16 }}>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>🧬 Viktiga gener för hjärta och kondition</Text>
+            <Text style={styles.infoText}>
+              Flera gener påverkar din syreupptagningsförmåga, uthållighet och hjärthälsa:
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>• ACE (Angiotensin-Converting Enzyme)</Text>
+            <Text style={styles.infoText}>
+              Påverkar blodtryck och syreupptagningsförmåga. Vissa varianter är kopplade till bättre uthållighet eller explosiv styrka.
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>• ACTN3</Text>
+            <Text style={styles.infoText}>
+              "Snabbt muskelprotein". Vissa varianter gynnar explosivitet, andra uthållighet. Påverkar träningsrespons.
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>• NOS3</Text>
+            <Text style={styles.infoText}>
+              Reglerar kväveoxidproduktion och blodkärlens förmåga att vidgas. Påverkar blodflöde och syresättning vid träning.
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>• ADRB2</Text>
+            <Text style={styles.infoText}>
+              Påverkar hjärtats svar på adrenalin och därmed puls och syretransport vid ansträngning.
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>• PPARGC1A (PGC-1α)</Text>
+            <Text style={styles.infoText}>
+              "Master regulator" för mitokondriell biogenes och uthållighet. Variationer påverkar VO₂ max och träningsrespons.
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>• MTHFR</Text>
+            <Text style={styles.infoText}>
+              Påverkar omsättning av folat och homocystein. Variationer kan ge ökad risk för hjärt-kärlsjukdom och påverka återhämtning.
+            </Text>
+          </View>
+          <Text style={styles.muted}>
+            Genetiska tester kan ge insikt om din konditionsprofil, men träning, kost och återhämtning har alltid störst påverkan!
+          </Text>
+        </Card>
         {/* Tips Card */}
         <TipsList areaId={mainGoalId} title="tips:cardio.levels.optimization.title" />
       </ScrollView>
