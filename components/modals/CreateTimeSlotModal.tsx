@@ -18,13 +18,30 @@ interface CreateTimeSlotModalProps {
   visible: boolean;
   onClose: () => void;
   onCreate: (plan: CreatePlanData) => void;
+  initialName?: string;
+  initialTime?: Date;
 }
 
-const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({ visible, onClose, onCreate }) => {
+const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({
+  visible,
+  onClose,
+  onCreate,
+  initialName = '',
+  initialTime = new Date(),
+}) => {
   const { t } = useTranslation();
-  const [planName, setPlanName] = React.useState('');
-  const [time, setTime] = React.useState(new Date());
-  const [showTimePicker, setShowTimePicker] = React.useState(Platform.OS === 'ios');
+  const [planName, setPlanName] = React.useState(initialName);
+  const [time, setTime] = React.useState(initialTime);
+  const [showTimePicker, setShowTimePicker] = React.useState(false); 
+
+  const isEditing = !!initialName;
+
+  React.useEffect(() => {
+    if (visible) {
+      setPlanName(initialName);
+      setTime(initialTime);
+    }
+  }, [visible, initialName, initialTime]);
 
   const handleSave = () => {
     if (!planName.trim()) return;
@@ -37,7 +54,7 @@ const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({ visible, onCl
   return (
     <ThemedModal
       visible={visible}
-      title={t('plan.addTimeSlot')}
+      title={isEditing ? t('plan.editTimeSlot') : t('plan.addTimeSlot')}
       onClose={() => {
         onClose();
         setPlanName('');
@@ -47,7 +64,7 @@ const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({ visible, onCl
       okLabel={t('general.save')}
       cancelLabel={t('general.cancel')}
     >
-      <View style={{ width: '100%' }}>
+      <View style={styles.fullWidth}>
         <LabeledInput
           label={t('plan.timeSlotNameLabel', { defaultValue: 'Namn på tidpunkt' })}
           value={planName}
@@ -63,16 +80,32 @@ const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({ visible, onCl
           />
         )}
 
-        {Platform.OS === 'ios' && <Text style={styles.timePickerText}>{t('plan.prefferedTime')}</Text>}
+        {Platform.OS === 'ios' && (
+          <View>
+            <Text style={styles.timePickerText}>
+              {`${t('plan.prefferedTime')}:`}
+            </Text>
+            <DateTimePicker
+              value={time}
+              mode="time"
+              is24Hour
+              display="spinner"
+              onChange={(_, selectedTime) => {
+                if (selectedTime) setTime(selectedTime);
+              }}
+              style={styles.fullWidth}
+            />
+          </View>
+        )}
 
-        {showTimePicker && (
+        {showTimePicker && Platform.OS === 'android' && (
           <DateTimePicker
             value={time}
             mode="time"
             is24Hour
             display="default"
             onChange={(event, selectedTime) => {
-              if (Platform.OS === 'android') setShowTimePicker(false);
+              setShowTimePicker(false);
               if (event.type === 'set' && selectedTime) {
                 setTime(selectedTime);
               }
@@ -92,6 +125,9 @@ const styles = StyleSheet.create({
   },
   timePickerButton: {
     marginTop: 8,
+  },
+  fullWidth: {
+    width: '100%',
   },
 });
 

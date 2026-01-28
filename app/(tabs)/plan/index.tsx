@@ -33,10 +33,8 @@ import { colors } from '../../theme/styles';
 export default function Plans() {
   const params = useLocalSearchParams<{ openCreate?: string }>();
   const [modalVisible, setModalVisible] = useState(false);
-  const [_newPlanName, setNewPlanName] = useState('');
-  const [_newPlanTime, setNewPlanTime] = useState(new Date());
-  const [_selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-  const [_isEditingPlan, setIsEditingPlan] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [isEditingPlan, setIsEditingPlan] = useState(false);
   const [isEditingSupplement, setIsEditingSupplement] = useState(false);
   const [planForSupplementEdit, setPlanForSupplementEdit] = useState<Plan | null>(null);
   const [expandedNutritionTips, setExpandedNutritionTips] = useState<Record<string, boolean>>({});
@@ -103,9 +101,9 @@ export default function Plans() {
 
   const openTrainingSettingsModal = (tipId: string, trainingTitle?: string | null) => {
     const existing = trainingPlanSettings[tipId];
-    setTrainingSessionsInput(existing?.sessionsPerWeek != null ? existing.sessionsPerWeek.toString() : '');
+    setTrainingSessionsInput(existing?.sessionsPerWeek === undefined ? '' : existing.sessionsPerWeek.toString());
     setTrainingDurationInput(
-      existing?.sessionDurationMinutes != null ? existing.sessionDurationMinutes.toString() : ''
+      typeof existing?.sessionDurationMinutes === 'number' ? existing.sessionDurationMinutes.toString() : ''
     );
     setTrainingSettingsTipId(tipId);
     setTrainingSettingsTitle(trainingTitle ?? null);
@@ -213,8 +211,6 @@ export default function Plans() {
   };
 
   const handleEditPlan = (plan: Plan) => {
-    setNewPlanName(plan.name);
-    setNewPlanTime(timeStringToDate(plan.prefferedTime));
     setSelectedPlan(plan);
     setIsEditingPlan(true); // Enter edit mode
     setModalVisible(true); // Open the modal
@@ -563,17 +559,31 @@ export default function Plans() {
         <CreateTimeSlotModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
+          initialName={isEditingPlan && selectedPlan ? selectedPlan.name : ''}
+          initialTime={isEditingPlan && selectedPlan ? timeStringToDate(selectedPlan.prefferedTime) : new Date()}
           onCreate={planData => {
-            // Hantera skapande av ny plan
-            const newPlan = {
-              name: planData.name,
-              supplements: [],
-              prefferedTime: planData.prefferedTime,
-              notify: planData.notify,
-            };
-            const updatedPlans = [...plans, newPlan];
-            savePlans(updatedPlans);
+            if (isEditingPlan && selectedPlan) {
+              // Uppdatera befintlig plan
+              const updatedPlans = supplementPlans.map(plan =>
+                plan.name === selectedPlan.name && plan.prefferedTime === selectedPlan.prefferedTime
+                  ? { ...plan, name: planData.name, prefferedTime: planData.prefferedTime }
+                  : plan
+              );
+              savePlans(updatedPlans);
+            } else {
+              // Skapa ny plan
+              const newPlan = {
+                name: planData.name,
+                supplements: [],
+                prefferedTime: planData.prefferedTime,
+                notify: planData.notify,
+              };
+              const updatedPlans = [...supplementPlans, newPlan];
+              savePlans(updatedPlans);
+            }
             setModalVisible(false);
+            setIsEditingPlan(false);
+            setSelectedPlan(null);
           }}
         />
         <TrainingSettingsModal
