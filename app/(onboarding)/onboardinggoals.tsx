@@ -3,10 +3,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
-import MyGoalsSelector from '@/components/MyGoalsSelector';
 import AppButton from '@/components/ui/AppButton';
 import { Colors } from '@/constants/Colors';
 
+import Areas from '../(manage)/areas';
 import { useStorage } from '../context/StorageContext';
 
 export default function OnboardingGoals() {
@@ -22,7 +22,7 @@ export default function OnboardingGoals() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{t('common:areas.selectAreas')}</Text>
-      <MyGoalsSelector />
+      <Areas />
 
       <AppButton title={t('common:onboarding.continue')} onPress={handleNext} variant="primary" />
     </View>

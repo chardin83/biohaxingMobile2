@@ -10,10 +10,10 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npm install
    ```
 
-2. Start the app
+2. Start the app with local mobile for debugging
 
    ```bash
-    npx expo start
+    REACT_NATIVE_PACKAGER_HOSTNAME=192.168.68.74 npx expo start --lan -c
    ```
 
 In the output, you'll find options to open the app in a

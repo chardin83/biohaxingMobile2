@@ -39,7 +39,8 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
         setActivityData(activity);
         setEnergyData(energy);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load data');
+        console.error('Failed to load data:', err);
+        setError('Failed to load data');
       } finally {
         setLoading(false);
       }
@@ -65,11 +66,20 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
   const weeklyActiveMinutes = activityData.reduce((sum, day) => sum + (day.activeMinutes || 0), 0);
   const trainingLoad = weeklyActiveMinutes * 2; // Simple calculation
 
+  let trainingLoadStatus: string;
+  if (trainingLoad > 400) {
+    trainingLoadStatus = 'High';
+  } else if (trainingLoad > 200) {
+    trainingLoadStatus = 'Optimal';
+  } else {
+    trainingLoadStatus = 'Low';
+  }
+
   const cardio = {
     vo2max: 48, // Would need fitness data from wearable
     vo2maxDelta: 3,
     trainingLoad: trainingLoad || 285,
-    trainingLoadStatus: trainingLoad > 400 ? 'High' : trainingLoad > 200 ? 'Optimal' : 'Low',
+    trainingLoadStatus,
     recoveryTime: (latestEnergy?.bodyBatteryLevel ?? 0) > 80 ? 12 : 18,
     fitnessAge: 32, // Would be calculated from VO2max and other factors
     actualAge: 38,
@@ -94,7 +104,7 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
               {activityData.length > 0 && <Text style={styles.source}>7-day total</Text>}
             </View>
           </View>
-          <View style={[styles.row, { marginTop: 20 }]}>
+          <View style={[styles.row, styles.marginTop8]}>
             <View style={[styles.col, styles.colWithDivider]}>
               <Text style={styles.label}>Recovery time</Text>
               <Text style={styles.value}>{cardio.recoveryTime}h</Text>
@@ -110,14 +120,14 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
         </Card>
 
         {/* VO2 Max explanation */}
-        <Card title="Understanding your metrics" style={{ marginTop: 16 }}>
+        <Card title="Understanding your metrics">
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>🫁 VO₂ Max</Text>
             <Text style={styles.infoText}>
               VO₂ max measures the maximum amount of oxygen your body can use during intense exercise. It's the gold
               standard for cardiovascular fitness. Higher values indicate better endurance capacity.
             </Text>
-            <Text style={[styles.infoText, { marginTop: 8, fontStyle: 'italic' }]}>
+            <Text style={[styles.infoText, styles.infoTextItalic]}>
               Your level ({cardio.vo2max}) is considered {cardio.vo2max > 45 ? 'Good to Excellent' : 'Fair to Good'} for
               your age group.
             </Text>
@@ -240,6 +250,10 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     marginBottom: 4,
   },
+  infoTextItalic: {
+    marginTop: 8,
+    fontStyle: 'italic',
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -258,5 +272,8 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'rgba(255,100,100,0.9)',
     fontSize: 16,
+  },
+  marginTop8: {
+    marginTop: 8,
   },
 });

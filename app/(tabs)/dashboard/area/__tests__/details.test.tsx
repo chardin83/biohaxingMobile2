@@ -1,5 +1,5 @@
 // Mock VerdictSelector to avoid invalid element type error
-import { fireEvent, render } from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
 import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 
@@ -135,7 +135,7 @@ describe('GoalDetailScreen', () => {
   });
 
   it('renders goal details', () => {
-    const { getAllByText, getByText } = render(<GoalDetailScreen />);
+    const { getAllByText } = render(<GoalDetailScreen />);
     // There may be multiple 'Main Goal' elements, so check that at least one exists
     expect(getAllByText(/Main Goal/i).length).toBeGreaterThan(0);
     expect(getAllByText(/Supp 1/i).length).toBeGreaterThan(0);

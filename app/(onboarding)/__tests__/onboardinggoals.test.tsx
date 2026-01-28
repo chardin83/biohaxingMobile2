@@ -29,21 +29,9 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-// Mock MyGoalsSelector component
-jest.mock('@/components/MyGoalsSelector', () => {
-  return function MockMyGoalsSelector() {
-    const { Text, View } = require('react-native');
-    return (
-      <View testID="my-goals-selector">
-        <Text>Mock Goals Selector</Text>
-      </View>
-    );
-  };
-});
-
 // Mock AppButton component
 jest.mock('@/components/ui/AppButton', () => {
-  return function MockAppButton({ title, onPress, variant, testID }: any) {
+  return function MockAppButton({ title, onPress, testID }: any) {
     const { TouchableOpacity, Text } = require('react-native');
     return (
       <TouchableOpacity onPress={onPress} testID={testID || 'app-button'}>
@@ -54,7 +42,12 @@ jest.mock('@/components/ui/AppButton', () => {
 });
 
 const mockStorageContext = {
-  plans: [],
+  plans: {
+    supplements: [],
+    training: [],
+    nutrition: [],
+    other: [],
+  },
   setPlans: jest.fn(),
   hasVisitedChat: false,
   setHasVisitedChat: jest.fn(),
@@ -81,6 +74,31 @@ const mockStorageContext = {
   newLevelReached: null,
   dailyNutritionSummaries: {},
   setDailyNutritionSummaries: jest.fn(),
+
+  clearNewLevelReached: jest.fn(),
+  viewedTips: [],
+  setViewedTips: jest.fn(),
+  addTipView: jest.fn(),
+  completedGoals: [],
+  setCompletedGoals: jest.fn(),
+  completedGoalDates: {},
+  setCompletedGoalDates: jest.fn(),
+  completedGoalXP: {},
+  setCompletedGoalXP: jest.fn(),
+  completedGoalStreaks: {},
+  setCompletedGoalStreaks: jest.fn(),
+  completedGoalStreakDates: {},
+  setCompletedGoalStreakDates: jest.fn(),
+  showMusic: false,
+  setShowMusic: jest.fn(),
+
+  // Add mocks for missing properties required by StorageContextType
+  incrementTipChat: jest.fn(),
+  addChatMessageXP: jest.fn(),
+  setTipVerdict: jest.fn(),
+  trainingPlanSettings: {},
+  setTrainingPlanSettings: jest.fn(),
+  tipVerdicts: {},
 };
 
 describe('OnboardingGoals', () => {
@@ -91,12 +109,7 @@ describe('OnboardingGoals', () => {
 
   it('renders the screen title correctly', () => {
     const { getByText } = render(<OnboardingGoals />);
-    expect(getByText('Select Goal')).toBeTruthy();
-  });
-
-  it('renders MyGoalsSelector component', () => {
-    const { getByTestId } = render(<OnboardingGoals />);
-    expect(getByTestId('my-goals-selector')).toBeTruthy();
+    expect(getByText('Select Areas')).toBeTruthy();
   });
 
   it('renders the continue button', () => {
@@ -115,17 +128,16 @@ describe('OnboardingGoals', () => {
   });
 
   it('has proper layout structure', () => {
-    const { getByText, getByTestId } = render(<OnboardingGoals />);
+    const { getByText } = render(<OnboardingGoals />);
 
     // Check that all elements are present
-    expect(getByText('Select Goal')).toBeTruthy();
-    expect(getByTestId('my-goals-selector')).toBeTruthy();
+    expect(getByText('Select Areas')).toBeTruthy();
     expect(getByText('Continue')).toBeTruthy();
   });
 
   it('applies correct styling to the title', () => {
     const { getByText } = render(<OnboardingGoals />);
-    const titleElement = getByText('Select Goal');
+    const titleElement = getByText('Select Areas');
 
     expect(titleElement.props.style).toEqual(
       expect.objectContaining({

@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Smart from '@/assets/images/level1_small.png';
 import AppCard from '@/components/ui/AppCard';
@@ -20,14 +20,6 @@ export default function DashboardScreen() {
   const { myGoals, myXP, myLevel, viewedTips, plans } = useStorage();
   const router = useRouter();
 
-  useEffect(() => {
-  debugger;
-}, []);
-
-//   useEffect(() => {
-//   setMyXP(445);
-// }, [setMyXP]);
-
   const nextLevel = levels.find(l => l.level === myLevel + 1);
   const xpMax = nextLevel?.requiredXP ?? levels.find(l => l.level === myLevel)?.requiredXP ?? 0;
   const progressText = `${myXP} / ${xpMax} XP`;
@@ -43,7 +35,7 @@ export default function DashboardScreen() {
           tip => tip.mainGoalId === areaId && tip.verdict && positiveVerdictsSet.has(tip.verdict as VerdictValue)
         )
         .map(tip => {
-          const tipDetails = tips.find(t => t.id === tip.tipId);
+          const tipDetails = tips.find(tipObj => tipObj.id === tip.tipId);
           return tipDetails ? t(`tips:${tipDetails.title}`) : null;
         })
         .filter(Boolean) || []
@@ -56,7 +48,7 @@ export default function DashboardScreen() {
         <Text style={styles.appTitle}>{t('common:dashboard.appTitle')}</Text>
 
         <View style={styles.imageWrapper}>
-          <Image source={Smart} style={styles.image} resizeMo de="cover" />
+          <Image source={Smart} style={styles.image} resizeMode="cover" />
           <Text style={styles.levelOverlay}>
             {t('common:dashboard.level')} {myLevel}
           </Text>

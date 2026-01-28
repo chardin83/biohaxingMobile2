@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { SleepConsistencyMetric } from '@/components/metrics/SleepConsistencyMetric';
 import { SleepMetric } from '@/components/metrics/SleepMetric';
@@ -75,7 +75,7 @@ export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
         </Card>
 
         {/* Sleep stages card */}
-        <Card title="Sleep architecture" style={{ marginTop: 16 }}>
+        <Card title="Sleep architecture">
           {loading ? (
             <Text style={styles.muted}>Loading…</Text>
           ) : (
@@ -103,7 +103,7 @@ export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
         </Card>
 
         {/* Information card */}
-        <Card title="Understanding sleep" style={{ marginTop: 16 }}>
+        <Card title="Understanding sleep">
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>🌙 Sleep Stages</Text>
             <Text style={styles.infoText}>

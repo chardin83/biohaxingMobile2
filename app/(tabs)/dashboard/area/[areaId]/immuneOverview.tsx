@@ -42,7 +42,8 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
         setHrvData(hrv);
         setEnergyData(energy);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load data');
+        console.error('Failed to load data:', err);
+        setError('Failed to load data');
       } finally {
         setLoading(false);
       }
@@ -96,7 +97,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
         </View>
 
         {/* Second row */}
-        <View style={[styles.row, { marginTop: 20 }]}>
+        <View style={[styles.row, styles.marginTop8]}>
           {/* Resting Heart Rate */}
           <RestingHRMetric hrvData={hrvData} showDivider />
 
@@ -110,7 +111,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
       </Card>
 
       {/* Information card */}
-      <Card title="Why these metrics matter" style={{ marginTop: 16 }}>
+      <Card title="Why these metrics matter">
         <View style={styles.infoSection}>
           <Text style={styles.infoLabel}>💤 Sleep</Text>
           <Text style={styles.infoText}>
@@ -165,6 +166,9 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  marginTop8: {
+    marginTop: 8,
   },
   col: {
     flex: 1,

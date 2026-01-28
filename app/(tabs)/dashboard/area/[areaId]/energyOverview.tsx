@@ -45,7 +45,8 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
         setActivityData(activity);
         setEnergyData(energy);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load data');
+        console.error('Failed to load data:', err);
+        setError('Failed to load data');
       } finally {
         setLoading(false);
       }
@@ -117,7 +118,7 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
         <GenesListCard areaId="energy" />
 
         {/* Energy Production Factors */}
-        <Card title="Energy Production Metrics" style={{ marginTop: 16 }}>
+        <Card title="Energy Production Metrics">
           <View style={styles.row}>
             <VO2MaxMetric vo2max={energy.vo2max} status={energy.vo2maxStatus} showDivider />
             <RestingHRMetric hrvData={hrvData} showDivider />
@@ -130,7 +131,7 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
         </Card>
 
         {/* Energy Drain vs Recharge */}
-        <Card title="Energy Balance" style={{ marginTop: 16 }}>
+        <Card title="Energy Balance">
           <View style={styles.balanceSection}>
             <View style={styles.balanceItem}>
               <Text style={styles.balanceLabel}>⚡ Energy Drain</Text>
@@ -139,7 +140,7 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
                 <Text style={styles.drainLabel}>Stress score</Text>
                 <Text style={styles.drainText}>{energy.stressLevel}</Text>
               </View>
-              <View style={[styles.drainCard, { marginTop: 8 }]}>
+              <View style={[styles.drainCard, styles.marginTop8]}>
                 <Text style={styles.drainValue}>{energy.intensityMinutes}</Text>
                 <Text style={styles.drainLabel}>Intensity minutes</Text>
               </View>
@@ -152,7 +153,7 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
                 <Text style={styles.rechargeLabel}>Sleep duration</Text>
                 <Text style={styles.rechargeText}>{energy.sleepQuality}% quality</Text>
               </View>
-              <View style={[styles.rechargeCard, { marginTop: 8 }]}>
+              <View style={[styles.rechargeCard, styles.marginTop8]}>
                 <Text style={styles.rechargeValue}>{energy.deepSleepMinutes}min</Text>
                 <Text style={styles.rechargeLabel}>Deep sleep</Text>
               </View>
@@ -166,7 +167,7 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
         </Card>
 
         {/* Mitochondrial Health Information */}
-        <Card title="Understanding Mitochondria" style={{ marginTop: 16 }}>
+        <Card title="Understanding Mitochondria">
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>🔬 The Powerhouses of Your Cells</Text>
             <Text style={styles.infoText}>
@@ -225,7 +226,7 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
         <TipsList areaId={mainGoalId} title="tips:energy.levels.optimization.title" />
 
         {/* Activity Tracking */}
-        <Card title="Today's Activity" style={{ marginTop: 16 }}>
+        <Card title="Today's Activity">
           <View style={styles.row}>
             <View style={[styles.col, styles.colWithDivider]}>
               <Text style={styles.label}>Active minutes</Text>
@@ -443,6 +444,9 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     borderTopWidth: 1,
     borderTopColor: 'rgba(255,255,255,0.1)',
+  },
+  marginTop8: {
+    marginTop: 8,
   },
   loadingContainer: {
     flex: 1,

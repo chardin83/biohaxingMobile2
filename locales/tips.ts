@@ -1218,7 +1218,6 @@ const rawTips: Tip[] = [
     title: 'nasal_breathing_nitric_oxide.title',
     descriptionKey: 'nasal_breathing_nitric_oxide.description',
     trainingRelation: 'anytime',
-    preferredDayParts: ['any'],
     timeRule: 'anytime',
     planCategory: ['other'],
     bodyParts: ['bloodVessels'],

@@ -1,38 +1,34 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
-import {  useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import SupplementList from '@/app/components/SupplementList';
 import { useStorage } from '@/app/context/StorageContext';
-import BackButton from '@/components/BackButton';
-import CreateTimeSlotModal, { CreatePlanData } from '@/components/modals/CreateTimeSlotModal';
-import { ThemedModal } from '@/components/ThemedModal';
 import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
 import Container from '@/components/ui/Container';
+import { NotFound } from '@/components/ui/NotFound';
 import ProgressBarWithLabel from '@/components/ui/ProgressbarWithLabel';
 import VerdictSelector from '@/components/VerdictSelector';
 import { AIPromptKey, AIPrompts } from '@/constants/AIPrompts';
 import { Colors } from '@/constants/Colors';
-import { useSupplementSaver } from '@/hooks/useSupplementSaver';
 import { areas } from '@/locales/areas';
 import { useSupplements } from '@/locales/supplements';
 import { tips } from '@/locales/tips';
+import { PlanCategory } from '@/types/planCategory';
 import { POSITIVE_VERDICTS } from '@/types/verdict';
 
 export default function AreaDetailScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { areaId, tipId } = useLocalSearchParams<{
     areaId: string;
     tipId?: string;
   }>();
   const supplements = useSupplements();
   const { addTipView, incrementTipChat, viewedTips, setTipVerdict, plans, setPlans } = useStorage();
-  const { saveSupplementToPlan } = useSupplementSaver();
 
   // Ge XP när tips öppnas (första gången)
   React.useEffect(() => {
@@ -42,20 +38,18 @@ export default function AreaDetailScreen() {
         console.log(`🎉 You gained ${xpGained} XP for viewing this tip!`);
       }
     }
-  }, [areaId, tipId]);
+  }, [addTipView, areaId, tipId]);
 
   const mainArea = areas.find(g => g.id === areaId);
-  const findTip = (tipId: string | undefined, areaId: string) => {
-    return tipId ? tips.find(t => t.id === tipId) : tips.find(t => t.areas.some(a => a.id === areaId));
+  const findTip = (localTipId: string | undefined, searchAreaId: string) => {
+    return localTipId
+      ? tips.find(tipItem => tipItem.id === localTipId)
+      : tips.find(tipItem => tipItem.areas.some(a => a.id === searchAreaId));
   };
 
   const tip = findTip(tipId, areaId);
 
   const [showAllAreas, setShowAllAreas] = React.useState(false);
-  const [addToPlanVisible, setAddToPlanVisible] = React.useState(false);
-  const [pendingSupplement, setPendingSupplement] = React.useState<any | null>(null);
-  const [createPlanVisible, setCreatePlanVisible] = React.useState(false);
-  const [expandedSupplements, setExpandedSupplements] = React.useState<string[]>([]);
 
   const goalIcon = mainArea?.icon ?? 'target';
   // Använd resolvedSupplements (nedan) för att hämta visningsnamn
@@ -65,23 +59,35 @@ export default function AreaDetailScreen() {
   const titleKey = tip?.title;
 
   const planCategory = tip?.planCategory;
-  const supplementPlans = plans.supplements ?? [];
+  const getPlanCategories = (category: PlanCategory | PlanCategory[] | undefined): PlanCategory[] => {
+    if (Array.isArray(category)) {
+      return category;
+    }
+    if (category) {
+      return [category];
+    }
+    return [];
+  };
+
+  const planCategories: PlanCategory[] = React.useMemo(
+    () => getPlanCategories(tip?.planCategory),
+    [tip?.planCategory]
+  );
+
+  const supplementPlans = React.useMemo(() => plans.supplements ?? [], [plans.supplements]);
   const trainingPlans = plans.training;
   const nutritionPlans = plans.nutrition;
   const availablePlanCategories = React.useMemo(() => {
-    const options = tip?.planCategoryOptions ?? [];
-    if (planCategory && !options.includes(planCategory)) {
-      return [planCategory, ...options];
-    }
+    const options = planCategories;
     return options;
-  }, [planCategory, tip?.planCategoryOptions]);
+  }, [planCategories]);
 
   const isTrainingTip = availablePlanCategories.includes('training');
   const isNutritionTip = availablePlanCategories.includes('nutrition');
   const effectiveTipId = tipId ?? tip?.id ?? null;
 
   const getDefaultPlanCategory = React.useCallback(() => {
-    if (planCategory === 'training' || planCategory === 'nutrition') {
+    if (typeof planCategory === 'string' && (planCategory === 'training' || planCategory === 'nutrition')) {
       return planCategory;
     }
 
@@ -298,35 +304,10 @@ export default function AreaDetailScreen() {
   // Kolla om en fråga redan är besvarad
   const isQuestionAsked = (questionType: string) => askedQuestions.includes(questionType);
 
-  const handleOpenAddToPlan = (supp: any) => {
-    setPendingSupplement(supp);
-    setAddToPlanVisible(true);
-  };
-
-  const handleAddSupplementToPlan = (plan: any) => {
-    if (!pendingSupplement) return;
-    // Använd nuvarande plan och supplement för att spara via hooken
-    saveSupplementToPlan(
-      { name: plan.name, prefferedTime: plan.prefferedTime, supplements: plan.supplements ?? [], notify: plan.notify },
-      pendingSupplement,
-      false
-    );
-    setAddToPlanVisible(false);
-    setPendingSupplement(null);
-  };
-
-  const toggleSupplementInfo = (supplementId: string) => {
-    setExpandedSupplements(prev =>
-      prev.includes(supplementId) ? prev.filter(id => id !== supplementId) : [...prev, supplementId]
-    );
-  };
-
   // Om mål eller tips saknas, rendera ett enkelt fallback-view (hooks ovanför är alltid anropade)
   if (notFound) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.notFound}>Goal not found.</Text>
-      </View>
+      <NotFound text="Goal not found." />
     );
   }
 
@@ -337,305 +318,90 @@ export default function AreaDetailScreen() {
       onBackPress={() => router.replace(`/dashboard/area/${areaId}`)}
       showBackButton
     >
-        <ScrollView
-          contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 340, flexGrow: 1 }]}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          <Text style={styles.goalTitle}>{t(`areas:${areaId}.title`)}</Text>
-          <View style={styles.topSection}>
-            <View style={styles.iconWrapper}>
-              <Icon source={goalIcon} size={50} color={Colors.dark.primary} />
-            </View>
-            <Text style={styles.subTitle}>{resolvedSupplements[0]?.name ?? t(`tips:${titleKey}`)}</Text>
-            {isFavorite && (
-              <View style={styles.favoriteChip}>
-                <Text style={styles.favoriteChipText}>★ {t('common:dashboard.favorite', 'Favorite')}</Text>
-              </View>
-            )}
-            <Text style={styles.xpText}>{totalXpEarned} XP earned</Text>
-
-            {/* Progress bar baserat på chat count */}
-            <ProgressBarWithLabel progress={progress} label={progressLabel} />
-
-            {showTopPlanAction && (
-              <View style={styles.planActionContainer}>
-                {isTipInPlan ? (
-                  <View style={styles.planActionAdded}>
-                    <Icon source="check" size={18} color={Colors.dark.primary} />
-                    <Text style={styles.planActionAddedText}>{planBadgeLabel}</Text>
-                  </View>
-                ) : (
-                  <AppButton
-                    title={isTrainingTip ? t('plan.addTrainingGoal') : t('plan.addNutritionGoal')}
-                    onPress={handleAddTipPlanEntry}
-                    variant="primary"
-                    style={styles.planActionButton}
-                  />
-                )}
-              </View>
-            )}
+      <View style={styles.topSection}>
+        <Text style={styles.goalTitle}>{t(`areas:${areaId}.title`)}</Text>
+        <View style={styles.iconWrapper}>
+          <Icon source={goalIcon} size={50} color={Colors.dark.primary} />
+        </View>
+        <Text style={styles.subTitle}>{resolvedSupplements[0]?.name ?? t(`tips:${titleKey}`)}</Text>
+        {isFavorite && (
+          <View style={styles.favoriteChip}>
+            <Text style={styles.favoriteChipText}>★ {t('common:dashboard.favorite', 'Favorite')}</Text>
           </View>
-
-          {descriptionKey && (
-            <AppBox title={t('common:goalDetails.information')}>
-              <Text style={{ color: Colors.dark.textLight, marginBottom: 8 }}>{t(`tips:${descriptionKey}`)}</Text>
-            </AppBox>
-          )}
-
-          {trainingRelationLabel && (
-            <AppBox title={t('common:goalDetails.trainingRelation.title')}>
-              <Text style={styles.metaText}>{trainingRelationLabel}</Text>
-            </AppBox>
-          )}
-
-          {preferredDayPartLabels.length > 0 && (
-            <AppBox title={t('common:goalDetails.preferredDayParts.title')}>
-              {preferredDayPartLabels.map(label => (
-                <Text key={label} style={styles.metaText}>
-                  • {label}
-                </Text>
-              ))}
-            </AppBox>
-          )}
-
-          {timeRuleLabel && (
-            <AppBox title={t('common:goalDetails.timeRules.title')}>
-              <Text style={styles.metaText}>{timeRuleLabel}</Text>
-            </AppBox>
-          )}
-
-          {isNutritionTip && nutritionFoodItems.length > 0 && nutritionFoodsTitle && (
-            <AppBox title={nutritionFoodsTitle}>
-              {nutritionFoodItems.map(({ key, name, details }) => (
-                <View key={key} style={styles.nutritionItem}>
-                  <Text style={styles.metaText}>• {name}</Text>
-                  {details ? <Text style={styles.nutritionDetailText}>{details}</Text> : null}
-                </View>
-              ))}
-              <View style={[styles.planActionContainer, styles.nutritionPlanAction]}>
-                {isTipInPlan ? (
-                  <View style={styles.planActionAdded}>
-                    <Icon source="check" size={18} color={Colors.dark.primary} />
-                    <Text style={styles.planActionAddedText}>{planBadgeLabel}</Text>
-                  </View>
-                ) : (
-                  <AppButton
-                    title={t('plan.addNutritionGoal')}
-                    onPress={handleAddTipPlanEntry}
-                    variant="primary"
-                    style={styles.planActionButton}
-                  />
-                )}
-              </View>
-            </AppBox>
-          )}
-
-          {tip?.areas.length ? (
-            <>
-              <Text style={styles.relevanceHeading}>{t('common:goalDetails.relevance')}</Text>
-
-              {(showAllAreas ? tip.areas : tip.areas.filter(a => a.id === areaId)).map(a => {
-                const areaTitle = t(`areas:${a.id}.title`);
-                return (
-                  <AppBox key={a.id} title={areaTitle}>
-                    <Text style={{ color: Colors.dark.textLight, marginBottom: 8 }}>
-                      {t(`tips:${a.descriptionKey}`)}
-                    </Text>
-                  </AppBox>
-                );
-              })}
-            </>
-          ) : null}
-
-          {tip.areas.length > 1 && (
-            <Pressable
-              onPress={() => {
-                setShowAllAreas(v => {
-                  const next = !v;
-                  // När vi visar alla areas, ge XP för dessa också (första gången)
-                  if (next && effectiveTipId && tip?.areas?.length) {
-                    tip.areas.forEach(a => {
-                      if (a.id !== areaId) {
-                        const xpGained = addTipView(a.id, effectiveTipId);
-                        if (xpGained > 0) {
-                          console.log(`🎉 You gained ${xpGained} XP for viewing tip in area ${a.id} via Show All`);
-                        }
-                      }
-                    });
-                  }
-                  return next;
-                });
-              }}
-              style={styles.showAllButton}
-            >
-              <Text style={styles.showAllText}>
-                {showAllAreas ? t('common:goalDetails.showLess') : t('common:goalDetails.showAll')}
-              </Text>
-            </Pressable>
-          )}
-
-          <AppBox title={t(`common:goalDetails.aiInsights`)}>
-            <Pressable
-              onPress={() => handleAIInsightPress('insights.studies')}
-              style={[styles.insightButton, isQuestionAsked('studies') && styles.insightButtonAsked]}
-            >
-              <Text style={styles.insightText}>
-                {isQuestionAsked('studies') ? '✅' : '📚'} {t('common:goalDetails.whatStudiesExist')}
-                {!isQuestionAsked('studies') && ' (+5 XP)'}
-              </Text>
-            </Pressable>
-
-            <Pressable
-              onPress={() => handleAIInsightPress('insights.experts')}
-              style={[styles.insightButton, isQuestionAsked('experts') && styles.insightButtonAsked]}
-            >
-              <Text style={styles.insightText}>
-                {isQuestionAsked('experts') ? '✅' : '👥'} {t('common:goalDetails.whoAreTheExperts')}
-                {!isQuestionAsked('experts') && ' (+5 XP)'}
-              </Text>
-            </Pressable>
-
-            <Pressable
-              onPress={() => handleAIInsightPress('insights.risks')}
-              style={[styles.insightButton, isQuestionAsked('risks') && styles.insightButtonAsked]}
-            >
-              <Text style={styles.insightText}>
-                {isQuestionAsked('risks') ? '✅' : '⚠️'} {t('common:goalDetails.whatAreTheRisks')}
-                {!isQuestionAsked('risks') && ' (+5 XP)'}
-              </Text>
-            </Pressable>
-          </AppBox>
-
-          <VerdictSelector currentVerdict={currentVerdict} onVerdictPress={handleVerdictPress} />
-
-          {/* Visa kosttillskott och knapp om det finns referenser */}
-          {resolvedSupplements.length > 0 && (
-            <AppBox title={t('common:goalDetails.supplements')}>
-              {resolvedSupplements.map((supplement: any) => {
-                const supplementId = supplement.id || supplement.name;
-                const alreadyPlanned =
-                  plannedSupplements.ids.has(supplement.id) || plannedSupplements.names.has(supplement.name);
-                const isExpanded = !!supplement.description && expandedSupplements.includes(supplementId);
-
-                return (
-                  <View key={supplementId} style={styles.supplementContainer}>
-                    <View style={styles.supplementRow}>
-                      <View style={styles.supplementNameColumn}>
-                        <Text
-                          style={styles.supplementText}
-                          numberOfLines={isExpanded ? undefined : 1}
-                          ellipsizeMode="tail"
-                        >
-                          {supplement.name}
-                        </Text>
-                        {supplement.description ? (
-                          <Pressable
-                            accessibilityRole="button"
-                            onPress={() => toggleSupplementInfo(supplementId)}
-                            style={styles.supplementInfoRow}
-                          >
-                            <Icon
-                              source={isExpanded ? 'information' : 'information-outline'}
-                              size={14}
-                              color={Colors.dark.primary}
-                            />
-                            <Text style={styles.supplementInfoText}>
-                              {isExpanded ? t('common:goalDetails.lessInfo') : t('common:goalDetails.moreInfo')}
-                            </Text>
-                          </Pressable>
-                        ) : null}
-                      </View>
-                      {alreadyPlanned ? (
-                        <View style={styles.supplementCheck}>
-                          <Icon source="check" size={22} color={Colors.dark.primary} />
-                        </View>
-                      ) : (
-                        <AppButton
-                          title="+"
-                          accessibilityLabel={t('common:goalDetails.addToPlan')}
-                          onPress={() => handleOpenAddToPlan(supplement)}
-                          variant="primary"
-                        />
-                      )}
-                    </View>
-                    {supplement.description && isExpanded && (
-                      <Text style={styles.supplementDescription}>{supplement.description}</Text>
-                    )}
-                  </View>
-                );
-              })}
-            </AppBox>
-          )}
-          {/* Modal: välj tidpunkt + lista planer */}
-          <ThemedModal
-            visible={addToPlanVisible}
-            title={t('plan.addSupplement')}
-            onClose={() => {
-              setAddToPlanVisible(false);
-              setPendingSupplement(null);
-            }}
-            showCancelButton
-          >
-            <View style={{ width: '100%' }}>
-              <Text style={{ color: Colors.dark.textLight, marginBottom: 10 }}>{t('dayEdit.chooseTime')}</Text>
-              {supplementPlans.map(p => (
-                <View key={p.name} style={{ marginBottom: 8 }}>
-                  <AppButton
-                    title={`${p.name} (${p.prefferedTime})`}
-                    onPress={() => handleAddSupplementToPlan(p)}
-                    variant="primary"
-                  />
-                </View>
-              ))}
-              <View style={{ marginTop: 12 }}>
-                <AppButton
-                  title={t('plan.addTimeSlot')}
-                  onPress={() => {
-                    // Stäng denna modal innan vi öppnar skapa-plan modal
-                    setAddToPlanVisible(false);
-                    setCreatePlanVisible(true);
-                  }}
-                  variant="secondary"
-                />
-              </View>
-            </View>
-          </ThemedModal>
-
-          {/* Modal: skapa ny plan inline */}
-          <CreateTimeSlotModal
-            visible={createPlanVisible}
-            onClose={() => {
-              // Återöppna AddToPlan även vid Avbryt
-              setCreatePlanVisible(false);
-              setAddToPlanVisible(true);
-            }}
-            onCreate={(newPlan: CreatePlanData) => {
-              if (pendingSupplement) {
-                saveSupplementToPlan(
-                  { name: newPlan.name, prefferedTime: newPlan.prefferedTime, supplements: [], notify: newPlan.notify },
-                  pendingSupplement,
-                  false
-                );
-              }
-              // Stäng skapa-plan och öppna AddToPlan igen så användaren ser listan
-              setCreatePlanVisible(false);
-              setAddToPlanVisible(true);
-              // Behåll pendingSupplement så man kan lägga till i fler planer om man vill
-            }}
+        )}
+        <Text style={styles.xpText}>{totalXpEarned} XP earned</Text>
+        <ProgressBarWithLabel progress={progress} label={progressLabel} />
+        <PlanActionSection
+          showTopPlanAction={showTopPlanAction}
+          isTipInPlan={isTipInPlan}
+          planBadgeLabel={planBadgeLabel}
+          isTrainingTip={isTrainingTip}
+          handleAddTipPlanEntry={handleAddTipPlanEntry}
+          styles={styles}
+        />
+      </View>
+      {descriptionKey && (
+        <AppBox title={t('common:goalDetails.information')}>
+          <Text style={styles.descriptionText}>{t(`tips:${descriptionKey}`)}</Text>
+        </AppBox>
+      )}
+      {trainingRelationLabel && (
+        <AppBox title={t('common:goalDetails.trainingRelation.title')}>
+          <Text style={styles.metaText}>{trainingRelationLabel}</Text>
+        </AppBox>
+      )}
+      {preferredDayPartLabels.length > 0 && (
+        <AppBox title={t('common:goalDetails.preferredDayParts.title')}>
+          {preferredDayPartLabels.map(label => (
+            <Text key={label} style={styles.metaText}>
+              • {label}
+            </Text>
+          ))}
+        </AppBox>
+      )}
+      {timeRuleLabel && (
+        <AppBox title={t('common:goalDetails.timeRules.title')}>
+          <Text style={styles.metaText}>{timeRuleLabel}</Text>
+        </AppBox>
+      )}
+      <NutritionFoodsSection
+        tip={tip}
+        nutritionFoodItems={nutritionFoodItems}
+        nutritionFoodsTitle={nutritionFoodsTitle}
+        isTipInPlan={isTipInPlan}
+        planBadgeLabel={planBadgeLabel}
+        handleAddTipPlanEntry={handleAddTipPlanEntry}
+        styles={styles}
+      />
+      <AreaRelevanceSection
+        tip={tip}
+        areaId={areaId}
+        showAllAreas={showAllAreas}
+        setShowAllAreas={setShowAllAreas}
+        effectiveTipId={effectiveTipId}
+        addTipView={addTipView}
+        styles={styles}
+      />
+      <AIInsightsSection
+        handleAIInsightPress={handleAIInsightPress}
+        isQuestionAsked={isQuestionAsked}
+        styles={styles}
+      />
+      <VerdictSelector currentVerdict={currentVerdict} onVerdictPress={handleVerdictPress} />
+      {resolvedSupplements.length > 0 && (
+        <AppBox title={t('common:goalDetails.supplements')}>
+          <SupplementList
+            supplements={resolvedSupplements}
+            plannedSupplements={plannedSupplements}
+            supplementPlans={supplementPlans}
           />
-        </ScrollView>
+        </AppBox>
+      )}
     </Container>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    padding: 20,
-    paddingTop: 100,
-  },
   topSection: {
     alignItems: 'center',
     marginBottom: 16,
@@ -690,12 +456,6 @@ const styles = StyleSheet.create({
     color: Colors.dark.primary,
     fontWeight: '700',
     fontSize: 13,
-  },
-  notFound: {
-    fontSize: 18,
-    color: 'white',
-    textAlign: 'center',
-    marginTop: 20,
   },
   goalTitle: {
     fontSize: 22,
@@ -767,26 +527,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
-  supplementContainer: {
-    width: '100%',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.dark.border,
-  },
-  supplementRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-  },
-  supplementNameColumn: {
-    flex: 1,
-    marginRight: 12,
-  },
-  supplementText: {
-    color: Colors.dark.textLight,
-    fontSize: 16,
-  },
   addToCalendarText: {
     color: Colors.dark.primary,
     fontWeight: 'bold',
@@ -808,23 +548,200 @@ const styles = StyleSheet.create({
     marginLeft: 18,
     marginTop: -2,
   },
-  supplementCheck: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  supplementInfoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 2,
-  },
-  supplementInfoText: {
-    color: Colors.dark.primary,
-    fontSize: 12,
-    marginLeft: 4,
-  },
-  supplementDescription: {
+  descriptionText: {
     color: Colors.dark.textLight,
-    fontSize: 14,
-    marginTop: 6,
+    marginBottom: 8,
   },
 });
+
+function NutritionFoodsSection({
+  tip,
+  nutritionFoodItems,
+  nutritionFoodsTitle,
+  isTipInPlan,
+  planBadgeLabel,
+  handleAddTipPlanEntry,
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  styles,
+}: {
+  tip: typeof tips[number] | undefined;
+  nutritionFoodItems: { key: string; name: string; details: string }[];
+  nutritionFoodsTitle: string | null;
+  isTipInPlan: boolean;
+  planBadgeLabel: string;
+  handleAddTipPlanEntry: () => void;
+  styles: { [key: string]: any };
+}) {
+  const { t } = useTranslation();
+  if (!tip?.nutritionFoods?.length || !nutritionFoodsTitle) return null;
+  return (
+    <AppBox title={nutritionFoodsTitle}>
+      {nutritionFoodItems.map(({ key, name, details }) => (
+        <View key={key} style={styles.nutritionItem}>
+          <Text style={styles.metaText}>• {name}</Text>
+          {details ? <Text style={styles.nutritionDetailText}>{details}</Text> : null}
+        </View>
+      ))}
+      <View style={[styles.planActionContainer, styles.nutritionPlanAction]}>
+        {isTipInPlan ? (
+          <View style={styles.planActionAdded}>
+            <Icon source="check" size={18} color={Colors.dark.primary} />
+            <Text style={styles.planActionAddedText}>{planBadgeLabel}</Text>
+          </View>
+        ) : (
+          <AppButton
+            title={t('plan.addNutritionGoal')}
+            onPress={handleAddTipPlanEntry}
+            variant="primary"
+            style={styles.planActionButton}
+          />
+        )}
+      </View>
+    </AppBox>
+  );
+}
+
+type PlanActionSectionProps = {
+  showTopPlanAction: boolean;
+  isTipInPlan: boolean;
+  planBadgeLabel: string;
+  isTrainingTip: boolean;
+  handleAddTipPlanEntry: () => void;
+  styles: { [key: string]: any };
+};
+
+function PlanActionSection({
+  showTopPlanAction,
+  isTipInPlan,
+  planBadgeLabel,
+  isTrainingTip,
+  handleAddTipPlanEntry,
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  styles,
+}: PlanActionSectionProps) {
+  const { t } = useTranslation();
+  if (!showTopPlanAction) return null;
+  return (
+    <View style={styles.planActionContainer}>
+      {isTipInPlan ? (
+        <View style={styles.planActionAdded}>
+          <Icon source="check" size={18} color={Colors.dark.primary} />
+          <Text style={styles.planActionAddedText}>{planBadgeLabel}</Text>
+        </View>
+      ) : (
+        <AppButton
+          title={isTrainingTip ? t('plan.addTrainingGoal') : t('plan.addNutritionGoal')}
+          onPress={handleAddTipPlanEntry}
+          variant="primary"
+          style={styles.planActionButton}
+        />
+      )}
+    </View>
+  );
+}
+
+type AreaRelevanceSectionProps = {
+  tip: typeof tips[number] | undefined;
+  areaId: string;
+  showAllAreas: boolean;
+  setShowAllAreas: React.Dispatch<React.SetStateAction<boolean>>;
+  effectiveTipId: string | null;
+  addTipView: (areaId: string, tipId: string) => number;
+  styles: { [key: string]: any };
+};
+
+function AreaRelevanceSection({
+  tip,
+  areaId,
+  showAllAreas,
+  setShowAllAreas,
+  effectiveTipId,
+  addTipView,
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  styles,
+}: AreaRelevanceSectionProps) {
+   const { t } = useTranslation();
+  if (!tip?.areas?.length) return null;
+  return (
+    <>
+      <Text style={styles.relevanceHeading}>{t('common:goalDetails.relevance')}</Text>
+      {(showAllAreas ? tip.areas : tip.areas.filter(a => a.id === areaId)).map(a => {
+        const areaTitle = t(`areas:${a.id}.title`);
+        return (
+          <AppBox key={a.id} title={areaTitle}>
+            <Text style={styles.descriptionText}>{t(`tips:${a.descriptionKey}`)}</Text>
+          </AppBox>
+        );
+      })}
+      {tip.areas.length > 1 && (
+        <Pressable
+          onPress={() => {
+            setShowAllAreas(v => {
+              const next = !v;
+              if (next && effectiveTipId && tip?.areas?.length) {
+                tip.areas.forEach(a => {
+                  if (a.id !== areaId) {
+                    const xpGained = addTipView(a.id, effectiveTipId);
+                    if (xpGained > 0) {
+                      console.log(`🎉 You gained ${xpGained} XP for viewing tip in area ${a.id} via Show All`);
+                    }
+                  }
+                });
+              }
+              return next;
+            });
+          }}
+          style={styles.showAllButton}
+        >
+          <Text style={styles.showAllText}>
+            {showAllAreas ? t('common:goalDetails.showLess') : t('common:goalDetails.showAll')}
+          </Text>
+        </Pressable>
+      )}
+    </>
+  );
+}
+
+function AIInsightsSection({
+  handleAIInsightPress,
+  isQuestionAsked,
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  styles,
+}: {
+  handleAIInsightPress: (questionKey: AIPromptKey) => void;
+  isQuestionAsked: (questionType: string) => boolean;
+  styles: { [key: string]: any };
+}) {
+  const { t } = useTranslation();
+  return (
+    <AppBox title={t(`common:goalDetails.aiInsights`)}>
+      <Pressable
+        onPress={() => handleAIInsightPress('insights.studies')}
+        style={[styles.insightButton, isQuestionAsked('studies') && styles.insightButtonAsked]}
+      >
+        <Text style={styles.insightText}>
+          {isQuestionAsked('studies') ? '✅' : '📚'} {t('common:goalDetails.whatStudiesExist')}
+          {!isQuestionAsked('studies') && ' (+5 XP)'}
+        </Text>
+      </Pressable>
+      <Pressable
+        onPress={() => handleAIInsightPress('insights.experts')}
+        style={[styles.insightButton, isQuestionAsked('experts') && styles.insightButtonAsked]}
+      >
+        <Text style={styles.insightText}>
+          {isQuestionAsked('experts') ? '✅' : '👥'} {t('common:goalDetails.whoAreTheExperts')}
+          {!isQuestionAsked('experts') && ' (+5 XP)'}
+        </Text>
+      </Pressable>
+      <Pressable
+        onPress={() => handleAIInsightPress('insights.risks')}
+        style={[styles.insightButton, isQuestionAsked('risks') && styles.insightButtonAsked]}
+      >
+        <Text style={styles.insightText}>
+          {isQuestionAsked('risks') ? '✅' : '⚠️'} {t('common:goalDetails.whatAreTheRisks')}
+          {!isQuestionAsked('risks') && ' (+5 XP)'}
+        </Text>
+      </Pressable>
+    </AppBox>
+  );
+}

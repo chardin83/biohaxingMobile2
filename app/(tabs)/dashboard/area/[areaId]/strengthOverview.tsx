@@ -44,7 +44,8 @@ export default function StrengthScreen({ mainGoalId }: { mainGoalId: string }) {
         setActivityData(activity);
         setEnergyData(energy);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load data');
+        console.error('Failed to load data:', err);
+        setError('Failed to load data');
       } finally {
         setLoading(false);
       }
@@ -146,7 +147,7 @@ export default function StrengthScreen({ mainGoalId }: { mainGoalId: string }) {
         </Card> */}
 
         {/* Recovery Factors Card */}
-        <Card title="Recovery Factors" style={{ marginTop: 16 }}>
+        <Card title="Recovery Factors">
           <View style={styles.row}>
             <SleepMetric sleepData={sleepData} showDivider/>
             <SleepConsistencyMetric sleepData={{ ...sleepData[0], targetBedtime: '22:30' }} showDivider />
@@ -159,7 +160,7 @@ export default function StrengthScreen({ mainGoalId }: { mainGoalId: string }) {
         </Card>
 
         {/* Protein Timing Card */}
-        <Card title="Anabolic Window" style={{ marginTop: 16 }}>
+        <Card title="Anabolic Window">
           <View style={styles.proteinSection}>
             <Text style={styles.proteinStatus}>⏰ {performance.proteinWindow}</Text>
             <Text style={styles.proteinText}>
@@ -177,7 +178,7 @@ export default function StrengthScreen({ mainGoalId }: { mainGoalId: string }) {
         </Card>
 
         {/* Information Card */}
-        <Card title="Understanding muscle performance" style={{ marginTop: 16 }}>
+        <Card title="Understanding muscle performance"  >
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>💪 Training Readiness</Text>
             <Text style={styles.infoText}>

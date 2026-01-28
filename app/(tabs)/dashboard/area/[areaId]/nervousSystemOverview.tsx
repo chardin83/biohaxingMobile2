@@ -1,6 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { G } from 'react-native-svg';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { HRVMetric } from '@/components/metrics/HRVMetric';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
@@ -127,7 +126,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
               </View>
 
               {/* Second row */}
-              <View style={[styles.row, { marginTop: 20 }]}>
+              <View style={[styles.row, styles.rowMarginTop]}>
                 <RestingHRMetric hrvData={hrvData} showDivider />
 
                 {/* Recovery Status */}
@@ -142,7 +141,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
         </Card>
 
         {/* ANS Balance visualization */}
-        <Card title="Sympathetic vs Parasympathetic" style={{ marginTop: 16 }}>
+        <Card title="Sympathetic vs Parasympathetic">
           {loading ? (
             <Text style={styles.muted}>Loading…</Text>
           ) : (
@@ -163,7 +162,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
         </Card>
 
         {/* Information card */}
-        <Card title="Understanding your nervous system" style={{ marginTop: 16 }}>
+        <Card title="Understanding your nervous system">
           <View style={styles.infoSection}>
             <Text style={styles.infoLabel}>❤️ HRV (Heart Rate Variability)</Text>
             <Text style={styles.infoText}>
@@ -232,6 +231,9 @@ const styles = StyleSheet.create({
   colWithDivider: {
     borderRightWidth: 1,
     borderRightColor: 'rgba(255,255,255,0.10)',
+  },
+  rowMarginTop: {
+    marginTop: 20,
   },
   label: {
     color: Colors.dark.textTertiary,
