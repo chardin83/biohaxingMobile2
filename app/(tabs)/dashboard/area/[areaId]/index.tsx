@@ -1,10 +1,8 @@
-import { LinearGradient } from 'expo-linear-gradient';
-import { router, useLocalSearchParams, usePathname,useSegments } from 'expo-router';
-import { useEffect } from 'react';
-import { StyleSheet } from 'react-native';
 
-// Removed SafeAreaView import
-import BackButton from '@/components/BackButton';
+import { router, useLocalSearchParams, usePathname, useSegments } from 'expo-router';
+import { useEffect } from 'react';
+
+import Container from '@/components/ui/Container';
 import { Colors } from '@/constants/Colors';
 
 import CardioOverview from './cardioOverview';
@@ -27,14 +25,7 @@ export default function AreaRootScreen() {
   }, [segments, pathname, areaId]);
 
   return (
-    <LinearGradient
-      colors={Colors.dark.gradients.sunrise.colors as any}
-      locations={Colors.dark.gradients.sunrise.locations as any}
-      start={Colors.dark.gradients.sunrise.start}
-      end={Colors.dark.gradients.sunrise.end}
-      style={styles.gradient}
-    >
-      <BackButton onPress={() => router.push({ pathname: '/dashboard' })} />
+    <Container background="gradient" gradientLocations={Colors.dark.gradients.sunrise.locations2 as any} onBackPress={() => router.push({ pathname: '/dashboard' })} showBackButton>
       {areaId === 'stressReduction' && <NervousSystemOverview mainGoalId={areaId} />}
       {areaId === 'sleepQuality' && <SleepOverview mainGoalId={areaId} />}
       {areaId === 'energy' && <EnergyOverview mainGoalId={areaId} />}
@@ -42,13 +33,6 @@ export default function AreaRootScreen() {
       {areaId === 'cardioFitness' && <CardioOverview mainGoalId={areaId} />}
       {areaId === 'digestiveHealth' && <DigestiveOverview mainGoalId={areaId} />}
       {areaId === 'immuneSupport' && <ImmuneOverview mainGoalId={areaId} />}
-    </LinearGradient>
+    </Container>
   );
 }
-
-const styles = StyleSheet.create({
-  gradient: {
-    flex: 1,
-    minHeight: 300,
-  },
-});

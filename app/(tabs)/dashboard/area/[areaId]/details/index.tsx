@@ -1,10 +1,9 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import {  useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useStorage } from '@/app/context/StorageContext';
 import BackButton from '@/components/BackButton';
@@ -12,6 +11,7 @@ import CreateTimeSlotModal, { CreatePlanData } from '@/components/modals/CreateT
 import { ThemedModal } from '@/components/ThemedModal';
 import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
+import Container from '@/components/ui/Container';
 import ProgressBarWithLabel from '@/components/ui/ProgressbarWithLabel';
 import VerdictSelector from '@/components/VerdictSelector';
 import { AIPromptKey, AIPrompts } from '@/constants/AIPrompts';
@@ -331,12 +331,12 @@ export default function AreaDetailScreen() {
   }
 
   return (
-    <LinearGradient
-      colors={Colors.dark.gradients.sunrise.colors as any}
-      locations={[0, 0.7, 1]} // Flyttar ned det röda i gradienten
-      style={{ flex: 1 }}>
-        <BackButton onPress={() => router.replace(`/dashboard/area/${areaId}`)} />
-
+    <Container
+      background="gradient"
+      gradientLocations={Colors.dark.gradients.sunrise.locations3 as any}
+      onBackPress={() => router.replace(`/dashboard/area/${areaId}`)}
+      showBackButton
+    >
         <ScrollView
           contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 340, flexGrow: 1 }]}
           keyboardShouldPersistTaps="handled"
@@ -625,7 +625,7 @@ export default function AreaDetailScreen() {
             }}
           />
         </ScrollView>
-    </LinearGradient>
+    </Container>
   );
 }
 

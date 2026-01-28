@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +5,7 @@ import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 
 import Smart from '@/assets/images/level1_small.png';
 import AppCard from '@/components/ui/AppCard';
+import Container from '@/components/ui/Container';
 import ProgressBarWithLabel from '@/components/ui/ProgressbarWithLabel';
 import { Colors } from '@/constants/Colors';
 import { levels } from '@/constants/XP';
@@ -51,18 +51,12 @@ export default function DashboardScreen() {
   };
 
   return (
-    <LinearGradient
-      colors={Colors.dark.gradients.sunrise.colors as any}
-      locations={Colors.dark.gradients.sunrise.locations as any}
-      start={Colors.dark.gradients.sunrise.start}
-      end={Colors.dark.gradients.sunrise.end}
-      style={styles.gradient}
-    >
-      <ScrollView contentContainerStyle={styles.container}>
+    <Container background="gradient" gradientKey="sunrise" gradientLocations={Colors.dark.gradients.sunrise.locations1 as any} centerContent>  
+
         <Text style={styles.appTitle}>{t('common:dashboard.appTitle')}</Text>
 
         <View style={styles.imageWrapper}>
-          <Image source={Smart} style={styles.image} resizeMode="cover" />
+          <Image source={Smart} style={styles.image} resizeMo de="cover" />
           <Text style={styles.levelOverlay}>
             {t('common:dashboard.level')} {myLevel}
           </Text>
@@ -115,23 +109,11 @@ export default function DashboardScreen() {
             <Text style={styles.editButtonText}>{t('common:dashboard.editAreas')}</Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
-    </LinearGradient>
+    </Container>
   );
 }
 
 const styles = StyleSheet.create({
-  gradient: {
-    flex: 1,
-  },
-  container: {
-    backgroundColor: 'transparent',
-    flexGrow: 1,
-    alignItems: 'center',
-    padding: 10,
-    paddingBottom: 150,
-    paddingTop: 40,
-  },
   appTitle: {
     fontSize: 24,
     color: Colors.dark.accentStrong,

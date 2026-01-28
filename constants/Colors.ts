@@ -81,9 +81,17 @@ export const Colors = {
     gradients: {
       sunrise: {
         colors: ['#0B1021', '#1F3150', '#FF8E53'],
-        locations: [0, 0.7, 1],
+        locations1: [0, 0.7, 1],
+        locations2: [0, 0.5, 1],
+        locations3: [0, 0.3, 1],
         start: { x: 0.5, y: 0.35 },
         end: { x: 0.5, y: 1 },
+      },
+      sunriseUp: {
+        colors: ['#FF8E53', '#FFD580', '#FFF5E1'],
+        locations: [0, 0.6, 1],
+        start: { x: 0.3, y: 1 },
+        end: { x: 0.5, y: 0.2 },
       },
     },
     cardBackground: 'rgba(255,255,255,0.06)', // Transparent card bakgrund

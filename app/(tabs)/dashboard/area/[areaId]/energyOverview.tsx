@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { HRVMetric } from '@/components/metrics/HRVMetric';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
@@ -92,8 +92,7 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
   };
 
   return (
-    <View style={styles.bg}>
-      <ScrollView contentContainerStyle={styles.container}>
+    <>
         <Text style={styles.title}>Energy Systems</Text>
         <Text style={styles.subtitle}>Mitochondrial function and cellular energy production</Text>
         <WearableStatus status={status} />
@@ -249,8 +248,7 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
             ATP production and reduces oxidative stress.
           </Text>
         </Card>
-      </ScrollView>
-    </View>
+   </>
   );
 }
 

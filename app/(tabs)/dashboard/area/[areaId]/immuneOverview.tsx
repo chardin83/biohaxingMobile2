@@ -5,7 +5,7 @@ import { HRVMetric } from '@/components/metrics/HRVMetric';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { SleepMetric } from '@/components/metrics/SleepMetric';
 import { Card } from '@/components/ui/Card';
-import Container from '@/components/ui/Container';
+// Removed Container import
 import { Error } from '@/components/ui/Error';
 import GenesListCard from '@/components/ui/GenesListCard';
 import { Loading } from '@/components/ui/Loading';
@@ -71,82 +71,82 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
   };
 
   return (
-      <Container>
-        <Text style={styles.title}>Immune Support</Text>
-        <Text style={styles.subtitle}>Key metrics that influence immune system function and resilience</Text>
+    <>
+      <Text style={styles.title}>Immune Support</Text>
+      <Text style={styles.subtitle}>Key metrics that influence immune system function and resilience</Text>
 
-        <WearableStatus status={status} />
+      <WearableStatus status={status} />
 
-        {/* Overview card */}
-        <Card title="Your immune health indicators">
-          <View style={styles.row}>
-            {/* Sleep */}
-            <SleepMetric sleepData={sleepData} showDivider />
+      {/* Overview card */}
+      <Card title="Your immune health indicators">
+        <View style={styles.row}>
+          {/* Sleep */}
+          <SleepMetric sleepData={sleepData} showDivider />
 
-            {/* Stress/Body Battery */}
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>Stress level</Text>
-              <Text style={styles.valueSmall}>{immune.stressLevel}</Text>
-              <Text style={styles.muted}>Battery: {immune.bodyBattery}%</Text>
-              {latestEnergy && <Text style={styles.source}>{latestEnergy.source}</Text>}
-            </View>
-
-            {/* HRV */}
-            <HRVMetric hrvData={hrvData} />
+          {/* Stress/Body Battery */}
+          <View style={[styles.col, styles.colWithDivider]}>
+            <Text style={styles.label}>Stress level</Text>
+            <Text style={styles.valueSmall}>{immune.stressLevel}</Text>
+            <Text style={styles.muted}>Battery: {immune.bodyBattery}%</Text>
+            {latestEnergy && <Text style={styles.source}>{latestEnergy.source}</Text>}
           </View>
 
-          {/* Second row */}
-          <View style={[styles.row, { marginTop: 20 }]}>
-            {/* Resting Heart Rate */}
-            <RestingHRMetric hrvData={hrvData} showDivider />
+          {/* HRV */}
+          <HRVMetric hrvData={hrvData} />
+        </View>
 
-            {/* Recovery Status */}
-            <View style={styles.col}>
-              <Text style={styles.label}>Recovery status</Text>
-              <Text style={styles.valueSmall}>{immune.bodyBattery > 70 ? 'Good' : 'Moderate'}</Text>
-              <Text style={styles.muted}>{immune.bodyBattery > 70 ? 'Ready for activity' : 'Need recovery'}</Text>
-            </View>
+        {/* Second row */}
+        <View style={[styles.row, { marginTop: 20 }]}>
+          {/* Resting Heart Rate */}
+          <RestingHRMetric hrvData={hrvData} showDivider />
+
+          {/* Recovery Status */}
+          <View style={styles.col}>
+            <Text style={styles.label}>Recovery status</Text>
+            <Text style={styles.valueSmall}>{immune.bodyBattery > 70 ? 'Good' : 'Moderate'}</Text>
+            <Text style={styles.muted}>{immune.bodyBattery > 70 ? 'Ready for activity' : 'Need recovery'}</Text>
           </View>
-        </Card>
+        </View>
+      </Card>
 
-        {/* Information card */}
-        <Card title="Why these metrics matter" style={{ marginTop: 16 }}>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>💤 Sleep</Text>
-            <Text style={styles.infoText}>
-              Adequate sleep is crucial for immune function. During sleep, the body produces cytokines that help fight
-              infection and inflammation.
-            </Text>
-          </View>
+      {/* Information card */}
+      <Card title="Why these metrics matter" style={{ marginTop: 16 }}>
+        <View style={styles.infoSection}>
+          <Text style={styles.infoLabel}>💤 Sleep</Text>
+          <Text style={styles.infoText}>
+            Adequate sleep is crucial for immune function. During sleep, the body produces cytokines that help fight
+            infection and inflammation.
+          </Text>
+        </View>
 
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>😌 Stress & Body Battery</Text>
-            <Text style={styles.infoText}>
-              Chronic stress suppresses immune function. Body Battery reflects your energy reserves and recovery status.
-            </Text>
-          </View>
+        <View style={styles.infoSection}>
+          <Text style={styles.infoLabel}>😌 Stress & Body Battery</Text>
+          <Text style={styles.infoText}>
+            Chronic stress suppresses immune function. Body Battery reflects your energy reserves and recovery status.
+          </Text>
+        </View>
 
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>❤️ HRV (Heart Rate Variability)</Text>
-            <Text style={styles.infoText}>
-              Higher HRV indicates better recovery and resilience. Low HRV may signal stress, fatigue, or illness.
-            </Text>
-          </View>
+        <View style={styles.infoSection}>
+          <Text style={styles.infoLabel}>❤️ HRV (Heart Rate Variability)</Text>
+          <Text style={styles.infoText}>
+            Higher HRV indicates better recovery and resilience. Low HRV may signal stress, fatigue, or illness.
+          </Text>
+        </View>
 
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>🫀 Resting Heart Rate</Text>
-            <Text style={styles.infoText}>
-              An elevated resting heart rate can be an early sign of illness, inflammation, or inadequate recovery.
-            </Text>
-          </View>
-        </Card>
+        <View style={styles.infoSection}>
+          <Text style={styles.infoLabel}>🫀 Resting Heart Rate</Text>
+          <Text style={styles.infoText}>
+            An elevated resting heart rate can be an early sign of illness, inflammation, or inadequate recovery.
+          </Text>
+        </View>
+      </Card>
 
-        {/* DNA & Immunförsvar Genetics */}
-        <GenesListCard areaId="immune"/>
+      {/* DNA & Immunförsvar Genetics */}
+      <GenesListCard areaId="immune"/>
 
-        {/* Tips card */}
-        <TipsList areaId={mainGoalId} title="tips:immune.levels.optimization.title" />
-      </Container>
+      {/* Tips card */}
+      <TipsList areaId={mainGoalId} title="tips:immune.levels.optimization.title" />
+    </>
   );
 }
 

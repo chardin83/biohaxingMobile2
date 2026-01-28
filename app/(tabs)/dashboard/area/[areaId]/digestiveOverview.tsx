@@ -81,8 +81,7 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
   };
 
   return (
-    <View style={styles.bg}>
-      <ScrollView contentContainerStyle={styles.container}>
+    <>
         <Text style={styles.title}>Digestion</Text>
         <Text style={styles.subtitle}>Factors influencing digestive health and gut function</Text>
 
@@ -122,18 +121,11 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
 
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="tips:digestive.levels.optimization.title" />
-      </ScrollView>
-    </View>
+      </>
   );
 }
 
 const styles = StyleSheet.create({
-  bg: { flex: 1 },
-  container: {
-    paddingHorizontal: 18,
-    paddingBottom: 32,
-    paddingTop: 100,
-  },
   title: {
     fontSize: 44,
     fontWeight: '700',

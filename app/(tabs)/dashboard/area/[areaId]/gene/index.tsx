@@ -15,7 +15,8 @@ export default function GeneDetailsScreen() {
   const gene = genes.find(g => g.id === geneId);
   if (!gene) {
     return (
-      <Container>
+      <Container background="gradient" gradientKey="sunriseUp" gradientLocations={Colors.dark.gradients.sunriseUp.locations as any}     onBackPress={() => router.replace(`/dashboard/area/${areaId}`)}
+      showBackButton>
         <Text style={styles.error}>Gene not found</Text>
       </Container>
     );
@@ -27,7 +28,8 @@ export default function GeneDetailsScreen() {
     : gene.areas[0];
 
   return (
-    <Container>
+    <Container background="gradient" gradientKey="sunrise" gradientLocations={Colors.dark.gradients.sunrise.locations3 as any}     onBackPress={() => router.replace(`/dashboard/area/${areaId}`)}
+      showBackButton>
       <Card title={gene.id}>
         <Text style={styles.geneTitle}>{t(`genes:${gene.titleKey}`)}</Text>
         <Text style={styles.geneDescription}>{t(`genes:${area?.descriptionKey}`)}</Text>

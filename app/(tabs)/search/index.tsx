@@ -5,6 +5,7 @@ import { FlatList, ScrollView,StyleSheet, Text, TouchableOpacity,View } from 're
 
 import Badge from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
+import Container from '@/components/ui/Container';
 import LabeledInput from '@/components/ui/LabeledInput';
 import { Colors } from '@/constants/Colors';
 import { bodyParts as allBodyParts } from '@/locales/bodyParts';
@@ -58,13 +59,8 @@ export default function TipsSearchScreen() {
     //const bodyParts = [...new Set(tips.flatMap(tip => tip.bodyParts.map(a => a.id)))].sort((a, b) => a - b);
 
     return (
-        <LinearGradient
-            colors={Colors.dark.gradients.sunrise.colors as any}
-            locations={Colors.dark.gradients.sunrise.locations as any}
-            start={Colors.dark.gradients.sunrise.start}
-            end={Colors.dark.gradients.sunrise.end}
-            style={styles.container}
-        >
+        <Container background="gradient" gradientKey='sunrise' gradientLocations={Colors.dark.gradients.sunrise.locations1 as any}>
+        
             <LabeledInput
                 label={t('search.label')}
                 value={query}
@@ -113,7 +109,7 @@ export default function TipsSearchScreen() {
                                 ]}
                                 onPress={() => setSelectedLevel(selectedLevel === level ? null : level)}
                             >
-                                <Text style={styles.badgeLabel}>{`Level ${level}`}</Text>
+                                <Text style={styles.badgeLabel}>{`${level}`}</Text>
                             </Badge>
                         ))}
                     </View>
@@ -174,7 +170,7 @@ export default function TipsSearchScreen() {
                             <Text style={styles.title}>{t('tips:' + item.title)}</Text>
                             <Badge variant="overlay" style={[styles.toggleBadge, { backgroundColor: Colors.dark.accentDefault, marginLeft: 8 }]}>
                                 <Text style={[styles.badgeLabel, { fontWeight: 'bold' }]}>
-                                    {`Level ${item.level ?? 1}`}
+                                    {`${t('common:filter.level')} ${item.level ?? 1}`}
                                 </Text>
                             </Badge>
                         </View>
@@ -196,22 +192,7 @@ export default function TipsSearchScreen() {
                 )}
                 ListEmptyComponent={<Text style={styles.empty}>Inga tips hittades.</Text>}
             />
-            <View style={styles.levelFilter}>
-                <Text style={styles.levelLabel}>Nivå:</Text>
-                {allLevels.map(level => (
-                    <Badge
-                        key={level}
-                        variant="overlay"
-                        style={styles.levelBadge}
-                        onPress={() => setSelectedLevel(selectedLevel === level ? null : level)}
-                    >
-                        <Text style={styles.levelLabel}>
-                            {level}
-                        </Text>
-                    </Badge>
-                ))}
-            </View>
-        </LinearGradient>
+            </Container>
     );
 }
 
@@ -260,18 +241,5 @@ const styles = StyleSheet.create({
         padding: 10,
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    levelFilter: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        marginBottom: 16,
-    },
-    levelLabel: { color: Colors.dark.textSecondary, fontSize: 12 },
-    levelBadge: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: 8,
-        marginBottom: 8,
     },
 });

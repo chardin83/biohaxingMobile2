@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { VO2MaxMetric } from '@/components/metrics/VO2MaxMetric';
@@ -76,8 +76,7 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
   };
 
   return (
-    <View style={styles.bg}>
-      <ScrollView contentContainerStyle={styles.container}>
+   <>
         <Text style={styles.title}>Cardio Fitness</Text>
         <Text style={styles.subtitle}>Cardiovascular endurance metrics and training insights</Text>
 
@@ -161,18 +160,11 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
 
         {/* Tips Card */}
         <TipsList areaId={mainGoalId} title="tips:cardio.levels.optimization.title" />
-      </ScrollView>
-    </View>
+  </>
   );
 }
 
 const styles = StyleSheet.create({
-  bg: { flex: 1 },
-  container: {
-    paddingHorizontal: 18,
-    paddingBottom: 32,
-    paddingTop: 100,
-  },
   title: {
     fontSize: 44,
     fontWeight: '700',

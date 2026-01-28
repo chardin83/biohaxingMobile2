@@ -48,8 +48,7 @@ export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
   }, [adapter]);
 
   return (
-    <View style={styles.bg}>
-      <ScrollView contentContainerStyle={styles.container}>
+    <>
         <Text style={styles.title}>Sleep</Text>
         <Text style={styles.subtitle}>Recovery, restoration, and circadian health</Text>
         <WearableStatus status={status} />
@@ -160,18 +159,11 @@ export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
 
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="sleepQuality.levels.sleepBy2230.tips.0.title" />
-      </ScrollView>
-    </View>
+      </>
   );
 }
 
 const styles = StyleSheet.create({
-  bg: { flex: 1 },
-  container: {
-    paddingHorizontal: 18,
-    paddingBottom: 32,
-    paddingTop: 100,
-  },
   title: {
     fontSize: 44,
     fontWeight: '700',

@@ -1,32 +1,35 @@
 import { t } from 'i18next';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
-import BackButton from '@/components/BackButton';
-import MyGoalsSelector from '@/components/MyGoalsSelector';
+import { useStorage } from '@/app/context/StorageContext';
+import AppCard from '@/components/ui/AppCard';
+import Container from '@/components/ui/Container';
 import { Colors } from '@/constants/Colors';
+import { Area, areas } from '@/locales/areas';
 
 export default function Areas() {
+  const { myGoals, setMyGoals } = useStorage();
+  const handlePress = (area: Area) => {
+    setMyGoals(prev => (prev.includes(area.id) ? prev.filter(id => id !== area.id) : [...prev, area.id]));
+  };
   return (
-    <View style={styles.container}>
-      <BackButton style={styles.backButton} />
+    <Container background="default" centerContent showBackButton>
       <Text style={styles.title}>{t('common:areas.selectAreas')}</Text>
-      <MyGoalsSelector />
-    </View>
+      {areas.map(item => (
+        <AppCard
+          key={item.id}
+          title={t(`areas:${item.id}.title`)}
+          description={t(`areas:${item.id}.description`)}
+          isActive={myGoals.includes(item.id)}
+          onPress={() => handlePress(item)}
+        />
+      ))}
+    </Container>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.dark.background,
-    paddingBottom: 100,
-    paddingTop: 40,
-    padding: 20,
-  },
-  backButton: {
-    marginBottom: 10,
-  },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
