@@ -1,9 +1,11 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { G } from 'react-native-svg';
 
 import { HRVMetric } from '@/components/metrics/HRVMetric';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { Card } from '@/components/ui/Card';
+import { GenesCard } from '@/components/ui/GenesCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { Colors } from '@/constants/Colors';
@@ -199,6 +201,8 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
             </Text>
           </View>
         </Card>
+
+        <GenesCard areaId="stressReduction"/>
 
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="tips:nervousSystem.levels.optimization.title" />

@@ -122,7 +122,57 @@ export const genes: Gene[] = [
     id: "HLA_DQ2_DQ8",
     titleKey: "HLA_DQ2_DQ8.title",
     areas: [
-      { id: "digestiveHealth", descriptionKey: "HLA_DQ2_DQ8.areas.digestiveHealth" }
+      { id: "digestiveHealth", descriptionKey: "HLA_DQ2_DQ8.areas.digestiveHealth" },
+      { id: "immune", descriptionKey: "HLA_DQ2_DQ8.areas.immune" }
+    ]
+  },
+  {
+    id: "IFNG",
+    titleKey: "IFNG.title",
+    areas: [
+      { id: "immune", descriptionKey: "IFNG.areas.immune" }
+    ]
+  },
+  {
+    id: "IL6",
+    titleKey: "IL6.title",
+    areas: [
+      { id: "immune", descriptionKey: "IL6.areas.immune" }
+    ]
+  },
+  {
+    id: "IL10",
+    titleKey: "IL10.title",
+    areas: [
+      { id: "immune", descriptionKey: "IL10.areas.immune" }
+    ]
+  },
+  {
+    id: "TNF",
+    titleKey: "TNF.title",
+    areas: [
+      { id: "immune", descriptionKey: "TNF.areas.immune" }
+    ]
+  },
+  {
+    id: "TLR2",
+    titleKey: "TLR2.title",
+    areas: [
+      { id: "immune", descriptionKey: "TLR2.areas.immune" }
+    ]
+  },
+  {
+    id: "TLR4",
+    titleKey: "TLR4.title",
+    areas: [
+      { id: "immune", descriptionKey: "TLR4.areas.immune" }
+    ]
+  },
+  {
+    id: "MBL2",
+    titleKey: "MBL2.title",
+    areas: [
+      { id: "immune", descriptionKey: "MBL2.areas.immune" }
     ]
   },
   {
@@ -137,6 +187,59 @@ export const genes: Gene[] = [
     titleKey: "ALDH2.title",
     areas: [
       { id: "digestiveHealth", descriptionKey: "ALDH2.areas.digestiveHealth" }
+    ]
+  }
+  ,
+  {
+    id: "PER1",
+    titleKey: "PER1.title",
+    areas: [
+      { id: "sleepQuality", descriptionKey: "PER1.areas.sleepQuality" }
+    ]
+  },
+  {
+    id: "PER2",
+    titleKey: "PER2.title",
+    areas: [
+      { id: "sleepQuality", descriptionKey: "PER2.areas.sleepQuality" }
+    ]
+  },
+  {
+    id: "CLOCK",
+    titleKey: "CLOCK.title",
+    areas: [
+      { id: "sleepQuality", descriptionKey: "CLOCK.areas.sleepQuality" }
+    ]
+  },
+  {
+    id: "ADA",
+    titleKey: "ADA.title",
+    areas: [
+      { id: "sleepQuality", descriptionKey: "ADA.areas.sleepQuality" }
+    ]
+  },
+  {
+    id: "MTNR1B",
+    titleKey: "MTNR1B.title",
+    areas: [
+      { id: "sleepQuality", descriptionKey: "MTNR1B.areas.sleepQuality" }
+    ]
+  },
+  {
+    id: "BDNF",
+    titleKey: "BDNF.title",
+    areas: [
+      { id: "sleepQuality", descriptionKey: "BDNF.areas.sleepQuality" },
+      { id: "strength", descriptionKey: "BDNF.areas.strength" },
+      { id: "stressReduction", descriptionKey: "BDNF.areas.stressReduction" }
+    ]
+  },
+  {
+    id: "COMT",
+    titleKey: "COMT.title",
+    areas: [
+      { id: "sleepQuality", descriptionKey: "COMT.areas.sleepQuality" },
+      { id: "stressReduction", descriptionKey: "COMT.areas.stressReduction" }
     ]
   }
 ];

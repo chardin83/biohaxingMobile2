@@ -6,6 +6,7 @@ import { SleepConsistencyMetric } from '@/components/metrics/SleepConsistencyMet
 import { SleepMetric } from '@/components/metrics/SleepMetric';
 import { Card } from '@/components/ui/Card';
 import { Error } from '@/components/ui/Error';
+import { GenesCard } from '@/components/ui/GenesCard';
 import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
@@ -212,53 +213,7 @@ export default function StrengthScreen({ mainGoalId }: { mainGoalId: string }) {
           </Card>
 
           {/* DNA & Gener som påverkar styrka */}
-          <Card title="DNA & Gener som påverkar styrka" style={{ marginTop: 16 }}>
-            <View style={styles.infoSection}>
-              <Text style={styles.infoLabel}>🧬 Viktiga gener för styrka och muskeltillväxt</Text>
-              <Text style={styles.infoText}>
-                Flera gener påverkar din muskelmassa, styrka och träningsrespons:
-              </Text>
-            </View>
-            <View style={styles.infoSection}>
-              <Text style={styles.infoLabel}>• ACTN3</Text>
-              <Text style={styles.infoText}>
-                "Snabbt muskelprotein". Vissa varianter gynnar explosiv styrka, andra uthållighet. Påverkar träningsrespons och muskelfiberfördelning.
-              </Text>
-            </View>
-            <View style={styles.infoSection}>
-              <Text style={styles.infoLabel}>• MSTN (Myostatin)</Text>
-              <Text style={styles.infoText}>
-                Reglerar muskelväxt. Mutationer kan ge ökad muskelmassa och styrka.
-              </Text>
-            </View>
-            <View style={styles.infoSection}>
-              <Text style={styles.infoLabel}>• IGF1</Text>
-              <Text style={styles.infoText}>
-                Påverkar muskeluppbyggnad och återhämtning. Variationer kan ge olika träningsrespons.
-              </Text>
-            </View>
-            <View style={styles.infoSection}>
-              <Text style={styles.infoLabel}>• ACE</Text>
-              <Text style={styles.infoText}>
-                Påverkar blodtryck och syreupptagningsförmåga. Vissa varianter är kopplade till explosiv styrka eller uthållighet.
-              </Text>
-            </View>
-            <View style={styles.infoSection}>
-              <Text style={styles.infoLabel}>• PPARGC1A (PGC-1α)</Text>
-              <Text style={styles.infoText}>
-                "Master regulator" för mitokondriell biogenes och muskeltillväxt. Variationer påverkar träningsrespons och återhämtning.
-              </Text>
-            </View>
-            <View style={styles.infoSection}>
-              <Text style={styles.infoLabel}>• MTHFR</Text>
-              <Text style={styles.infoText}>
-                Påverkar omsättning av folat och homocystein. Variationer kan påverka återhämtning, cellreparation och muskeluppbyggnad.
-              </Text>
-            </View>
-            <Text style={styles.muted}>
-              Genetiska tester kan ge insikt om din styrkeprofil, men träning, kost och återhämtning har alltid störst påverkan!
-            </Text>
-          </Card>
+          <GenesCard areaId="strength" />
 
         {/* Optimization Tips Card */}
         <TipsList areaId={mainGoalId} title="tips:muscle.levels.optimization.title" />

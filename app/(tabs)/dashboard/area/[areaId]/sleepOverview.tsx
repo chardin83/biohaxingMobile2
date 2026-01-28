@@ -4,6 +4,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SleepConsistencyMetric } from '@/components/metrics/SleepConsistencyMetric';
 import { SleepMetric } from '@/components/metrics/SleepMetric';
 import { Card } from '@/components/ui/Card';
+import { GenesCard } from '@/components/ui/GenesCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { SleepSummary } from '@/wearables/types';
@@ -155,47 +156,7 @@ export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
         </Card>
 
         {/* DNA & Gener som påverkar sömn */}
-        <Card title="DNA & Gener som påverkar sömn" style={{ marginTop: 16 }}>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>🧬 Viktiga gener för sömn</Text>
-            <Text style={styles.infoText}>
-              Flera gener påverkar din sömnkvalitet, dygnsrytm och benägenhet för sömnstörningar:
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>• PER1, PER2, CLOCK</Text>
-            <Text style={styles.infoText}>
-              Styr kroppens inre klocka (circadian rhythm). Variationer kan påverka om du är morgon- eller kvällsmänniska.
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>• ADA (Adenosine Deaminase)</Text>
-            <Text style={styles.infoText}>
-              Påverkar sömnbehov och djupsömn. Vissa varianter ger ökat sömnbehov och mer djupsömn.
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>• MTNR1B (Melatoninreceptor)</Text>
-            <Text style={styles.infoText}>
-              Reglerar känslighet för melatonin och påverkar insomningstid och dygnsrytm.
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>• BDNF</Text>
-            <Text style={styles.infoText}>
-              Påverkar REM-sömn och hjärnans återhämtning. Vissa varianter kan ge lättare störd sömn.
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>• COMT</Text>
-            <Text style={styles.infoText}>
-              Påverkar stresskänslighet och därmed insomning och sömnkvalitet.
-            </Text>
-          </View>
-          <Text style={styles.muted}>
-            Genetiska tester kan ge insikt om din sömnprofil, men rutiner, ljus och stress har alltid stor påverkan!
-          </Text>
-        </Card>
+        <GenesCard areaId="sleepQuality" />
 
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="sleepQuality.levels.sleepBy2230.tips.0.title" />

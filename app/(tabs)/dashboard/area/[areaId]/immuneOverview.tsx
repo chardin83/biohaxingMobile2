@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { HRVMetric } from '@/components/metrics/HRVMetric';
@@ -7,6 +6,7 @@ import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { SleepMetric } from '@/components/metrics/SleepMetric';
 import { Card } from '@/components/ui/Card';
 import { Error } from '@/components/ui/Error';
+import { GenesCard } from '@/components/ui/GenesCard';
 import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
@@ -142,47 +142,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
         </Card>
 
         {/* DNA & Immunförsvar Genetics */}
-        <Card title="DNA & Gener som påverkar immunförsvaret" style={{ marginTop: 16 }}>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>🧬 Viktiga gener för immunfunktion</Text>
-            <Text style={styles.infoText}>
-              Flera gener påverkar hur effektivt ditt immunförsvar fungerar och hur du svarar på infektioner:
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>• HLA (Human Leukocyte Antigen)</Text>
-            <Text style={styles.infoText}>
-              Avgör hur väl immunsystemet känner igen och bekämpar virus, bakterier och cancerceller. Variationer påverkar autoimmunitet och infektionskänslighet.
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>• IFNG (Interferon-gamma)</Text>
-            <Text style={styles.infoText}>
-              Styr produktionen av viktiga signalmolekyler vid virusinfektioner och inflammation.
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>• IL6, IL10, TNF</Text>
-            <Text style={styles.infoText}>
-              Cytokiner som reglerar inflammation och immunrespons. Genvarianter kan påverka risken för kronisk inflammation.
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>• TLR2/TLR4 (Toll-like receptors)</Text>
-            <Text style={styles.infoText}>
-              Känner igen patogener och aktiverar det medfödda immunförsvaret. Mutationer kan ge ökad infektionsrisk.
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>• MBL2 (Mannose-binding lectin)</Text>
-            <Text style={styles.infoText}>
-              Påverkar kroppens förmåga att snabbt bekämpa bakterier och virus i tidiga skedet av infektion.
-            </Text>
-          </View>
-          <Text style={styles.muted}>
-            Genetiska tester kan ge insikt om din immunförsvarsprofil, men livsstil, sömn, kost och stress har alltid stor påverkan!
-          </Text>
-        </Card>
+        <GenesCard areaId="immune" style={{ marginTop: 16 }} />
 
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="tips:immune.levels.optimization.title" />

@@ -35,7 +35,7 @@ export default function AreaRootScreen() {
       style={styles.gradient}
     >
       <BackButton onPress={() => router.push({ pathname: '/dashboard' })} />
-      {areaId === 'nervousSystem' && <NervousSystemOverview mainGoalId={areaId} />}
+      {areaId === 'stressReduction' && <NervousSystemOverview mainGoalId={areaId} />}
       {areaId === 'sleepQuality' && <SleepOverview mainGoalId={areaId} />}
       {areaId === 'energy' && <EnergyOverview mainGoalId={areaId} />}
       {areaId === 'strength' && <StrengthOverview mainGoalId={areaId} />}

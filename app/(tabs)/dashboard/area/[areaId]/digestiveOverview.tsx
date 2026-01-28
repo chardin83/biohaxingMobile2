@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Card } from '@/components/ui/Card';
 import { Error } from '@/components/ui/Error';
+import { GenesCard } from '@/components/ui/GenesCard';
 import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
@@ -117,119 +118,7 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
         </Card>
 
         {/* Manual tracking card */}
-        <Card title="Your tracking" style={{ marginTop: 16 }}>
-          <View style={styles.row}>
-            {/* Hydration */}
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>Hydration today</Text>
-              <Text style={styles.value}>{digestive.hydration}L</Text>
-              <Text style={styles.muted}>Target: 2.5L</Text>
-            </View>
-
-            {/* Last meal */}
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>Last meal</Text>
-              <Text style={styles.valueSmall}>{digestive.lastMealLogged}</Text>
-              <Text style={styles.muted}>Log your meals</Text>
-            </View>
-
-            {/* Symptoms */}
-            <View style={styles.col}>
-              <Text style={styles.label}>Symptoms today</Text>
-              <Text style={styles.value}>{digestive.symptomsToday}</Text>
-              <Text style={styles.accent}>Feeling good!</Text>
-            </View>
-          </View>
-          <View style={styles.buttonRow}>
-            <Text style={styles.actionButton}>+ Log meal</Text>
-            <Text style={styles.actionButton}>+ Log symptom</Text>
-            <Text style={styles.actionButton}>+ Log water</Text>
-          </View>
-        </Card>
-
-        {/* Information card */}
-        <Card title="The gut-health connection" style={{ marginTop: 16 }}>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>😌 Stress & Gut-Brain Axis</Text>
-            <Text style={styles.infoText}>
-              The gut and brain communicate constantly through the vagus nerve. Chronic stress can disrupt gut motility,
-              alter microbiome composition, and increase inflammation.
-            </Text>
-          </View>
-
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>💤 Sleep Quality</Text>
-            <Text style={styles.infoText}>
-              Poor sleep affects gut bacteria diversity and can lead to digestive issues. The gut microbiome follows
-              circadian rhythms and needs consistent sleep patterns.
-            </Text>
-          </View>
-
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>🚶 Physical Activity</Text>
-            <Text style={styles.infoText}>
-              Regular movement stimulates intestinal contractions and promotes healthy gut motility. Exercise also
-              increases beneficial gut bacteria diversity.
-            </Text>
-          </View>
-
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>💧 Hydration</Text>
-            <Text style={styles.infoText}>
-              Adequate water intake is crucial for digestive function, nutrient absorption, and preventing constipation.
-              Aim for 2-3 liters daily.
-            </Text>
-          </View>
-        </Card>
-
-        {/* DNA & Gener som påverkar matsmältning */}
-        <Card title="DNA & Gener som påverkar matsmältning" style={{ marginTop: 16 }}>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>🧬 Viktiga gener för matsmältning och tarmhälsa</Text>
-            <Text style={styles.infoText}>
-              Flera gener påverkar matsmältning, näringsupptag och tarmens immunförsvar:
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>• FUT2</Text>
-            <Text style={styles.infoText}>
-              Påverkar sammansättningen av tarmfloran och produktion av prebiotiska ämnen. Vissa varianter kan ge ökad risk för magproblem.
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>• LCT (Laktas)</Text>
-            <Text style={styles.infoText}>
-              Styr kroppens förmåga att bryta ner laktos (mjölksocker). Laktosintolerans beror på variationer i denna gen.
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>• HLA-DQ2/DQ8</Text>
-            <Text style={styles.infoText}>
-              Associerade med glutenintolerans (celiaki). Närvaro av dessa gener ökar risken för autoimmun reaktion mot gluten.
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>• MUC2</Text>
-            <Text style={styles.infoText}>
-              Kodar för mucin, ett protein som skyddar tarmväggen. Variationer kan påverka slemhinnans skydd mot inflammation.
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>• ALDH2</Text>
-            <Text style={styles.infoText}>
-              Påverkar nedbrytning av alkohol. Vissa varianter ger ökad känslighet för alkohol och magbesvär.
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>• MTHFR</Text>
-            <Text style={styles.infoText}>
-              Påverkar omsättning av folat och homocystein. Variationer kan påverka näringsupptag, tarmhälsa och avgiftning.
-            </Text>
-          </View>
-          <Text style={styles.muted}>
-            Genetiska tester kan ge insikt om din matsmältningsprofil, men kost, stress och livsstil har alltid stor påverkan!
-          </Text>
-        </Card>
+        <GenesCard areaId="digestiveHealth"  />
 
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="tips:digestive.levels.optimization.title" />

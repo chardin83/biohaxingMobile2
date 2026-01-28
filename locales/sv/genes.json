@@ -108,7 +108,57 @@
     "title": "HLA-DQ2/DQ8",
     "description": "Associerade med glutenintolerans (celiaki). Närvaro av dessa gener ökar risken för autoimmun reaktion mot gluten.",
     "areas": {
-      "digestiveHealth": "Associerade med glutenintolerans (celiaki). Närvaro av dessa gener ökar risken för autoimmun reaktion mot gluten."
+      "digestiveHealth": "Associerade med glutenintolerans (celiaki). Närvaro av dessa gener ökar risken för autoimmun reaktion mot gluten.",
+      "immune": "Påverkar hur immunsystemet känner igen och bekämpar virus, bakterier och cancerceller. Variationer påverkar autoimmunitet och infektionskänslighet."
+    }
+  },
+  "IFNG": {
+    "title": "IFNG (Interferon-gamma)",
+    "description": "Styr produktionen av viktiga signalmolekyler vid virusinfektioner och inflammation.",
+    "areas": {
+      "immune": "Styr produktionen av viktiga signalmolekyler vid virusinfektioner och inflammation."
+    }
+  },
+  "IL6": {
+    "title": "IL6",
+    "description": "Cytokin som reglerar inflammation och immunrespons.",
+    "areas": {
+      "immune": "Reglerar inflammation och immunrespons. Genvarianter kan påverka risken för kronisk inflammation."
+    }
+  },
+  "IL10": {
+    "title": "IL10",
+    "description": "Cytokin som dämpar inflammation och reglerar immunförsvaret.",
+    "areas": {
+      "immune": "Dämpar inflammation och reglerar immunförsvaret. Variationer kan påverka infektionskänslighet."
+    }
+  },
+  "TNF": {
+    "title": "TNF",
+    "description": "Tumor Necrosis Factor – cytokin som styr inflammation och immunförsvar.",
+    "areas": {
+      "immune": "Styr inflammation och immunförsvar. Genvarianter kan påverka risken för autoimmuna sjukdomar."
+    }
+  },
+  "TLR2": {
+    "title": "TLR2 (Toll-like receptor 2)",
+    "description": "Känner igen patogener och aktiverar det medfödda immunförsvaret.",
+    "areas": {
+      "immune": "Känner igen patogener och aktiverar det medfödda immunförsvaret. Mutationer kan ge ökad infektionsrisk."
+    }
+  },
+  "TLR4": {
+    "title": "TLR4 (Toll-like receptor 4)",
+    "description": "Känner igen patogener och aktiverar immunförsvaret.",
+    "areas": {
+      "immune": "Känner igen patogener och aktiverar immunförsvaret. Mutationer kan ge ökad infektionsrisk."
+    }
+  },
+  "MBL2": {
+    "title": "MBL2 (Mannose-binding lectin)",
+    "description": "Påverkar kroppens förmåga att snabbt bekämpa bakterier och virus i tidiga skedet av infektion.",
+    "areas": {
+      "immune": "Påverkar kroppens förmåga att snabbt bekämpa bakterier och virus i tidiga skedet av infektion."
     }
   },
   "MUC2": {
@@ -123,6 +173,59 @@
     "description": "Påverkar nedbrytning av alkohol. Vissa varianter ger ökad känslighet för alkohol och magbesvär.",
     "areas": {
       "digestiveHealth": "Påverkar nedbrytning av alkohol. Vissa varianter ger ökad känslighet för alkohol och magbesvär."
+    }
+  }
+  ,
+  "PER1": {
+    "title": "PER1",
+    "description": "Reglerar dygnsrytm och sömn-vaken-cykler. Varianter kan påverka sömntid och sömnkvalitet.",
+    "areas": {
+      "sleepQuality": "Reglerar dygnsrytm och sömn-vaken-cykler. Varianter kan påverka sömntid och sömnkvalitet."
+    }
+  },
+  "PER2": {
+    "title": "PER2",
+    "description": "Samarbetar med PER1 för att styra kroppens inre klocka. Varianter kan påverka sömnfas och anpassning till tidsskiften.",
+    "areas": {
+      "sleepQuality": "Samarbetar med PER1 för att styra kroppens inre klocka. Varianter kan påverka sömnfas och anpassning till tidsskiften."
+    }
+  },
+  "CLOCK": {
+    "title": "CLOCK",
+    "description": "Centralt klockgen. Varianter kan påverka sömntid, sömnlängd och risk för sömnstörningar.",
+    "areas": {
+      "sleepQuality": "Centralt klockgen. Varianter kan påverka sömntid, sömnlängd och risk för sömnstörningar."
+    }
+  },
+  "ADA": {
+    "title": "ADA",
+    "description": "Involverad i adenosinomsättning som reglerar sömntryck. Varianter kan påverka sömnbehov och djupsömn.",
+    "areas": {
+      "sleepQuality": "Involverad i adenosinomsättning som reglerar sömntryck. Varianter kan påverka sömnbehov och djupsömn."
+    }
+  },
+  "MTNR1B": {
+    "title": "MTNR1B",
+    "description": "Melatoninreceptorgen. Varianter kan påverka melatoninsignalering, insomning och risk för metabola problem.",
+    "areas": {
+      "sleepQuality": "Melatoninreceptorgen. Varianter kan påverka melatoninsignalering, insomning och risk för metabola problem."
+    }
+  },
+  "BDNF": {
+    "title": "BDNF",
+    "description": "Stödjer hjärnans plasticitet och återhämtning under sömn. Varianter kan påverka sömnkvalitet och kognitiv funktion.",
+    "areas": {
+      "sleepQuality": "Stödjer hjärnans plasticitet och återhämtning under sömn. Varianter kan påverka sömnkvalitet och kognitiv funktion.",
+      "strength": "Påverkar muskeltillväxt, återhämtning och anpassning till styrketräning. Vissa varianter kan ge bättre muskelreparation och styrkeökning.",
+      "stressReduction": "Påverkar stresskänslighet, återhämtning och nervsystemets plasticitet. Vissa varianter kan ge bättre motståndskraft mot stress och snabbare återhämtning."
+    }
+  },
+  "COMT": {
+    "title": "COMT",
+    "description": "Involverad i nedbrytning av dopamin. Varianter kan påverka sömnarkitektur, stressrespons och kognitiv prestation.",
+    "areas": {
+      "sleepQuality": "Involverad i nedbrytning av dopamin. Varianter kan påverka sömnarkitektur, stressrespons och kognitiv prestation.",
+      "stressReduction": "Reglerar nedbrytning av stresshormoner och dopamin. Vissa varianter kan ge ökad stresskänslighet eller bättre stresshantering."
     }
   }
 }

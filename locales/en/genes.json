@@ -108,7 +108,57 @@
     "title": "HLA-DQ2/DQ8",
     "description": "Associated with gluten intolerance (celiac disease). Presence increases risk of autoimmune reaction to gluten.",
     "areas": {
-      "digestiveHealth": "Associated with gluten intolerance (celiac disease). Presence increases risk of autoimmune reaction to gluten."
+      "digestiveHealth": "Associated with gluten intolerance (celiac disease). Presence increases risk of autoimmune reaction to gluten.",
+      "immune": "Determines how well the immune system recognizes and fights viruses, bacteria, and cancer cells. Variants affect autoimmunity and infection susceptibility."
+    }
+  },
+  "IFNG": {
+    "title": "IFNG (Interferon-gamma)",
+    "description": "Regulates production of key signaling molecules during viral infections and inflammation.",
+    "areas": {
+      "immune": "Regulates production of key signaling molecules during viral infections and inflammation."
+    }
+  },
+  "IL6": {
+    "title": "IL6",
+    "description": "Cytokine that regulates inflammation and immune response.",
+    "areas": {
+      "immune": "Regulates inflammation and immune response. Gene variants may affect risk of chronic inflammation."
+    }
+  },
+  "IL10": {
+    "title": "IL10",
+    "description": "Cytokine that dampens inflammation and regulates immune defense.",
+    "areas": {
+      "immune": "Dampens inflammation and regulates immune defense. Variants may affect infection susceptibility."
+    }
+  },
+  "TNF": {
+    "title": "TNF",
+    "description": "Tumor Necrosis Factor – cytokine that controls inflammation and immune defense.",
+    "areas": {
+      "immune": "Controls inflammation and immune defense. Gene variants may affect risk of autoimmune diseases."
+    }
+  },
+  "TLR2": {
+    "title": "TLR2 (Toll-like receptor 2)",
+    "description": "Recognizes pathogens and activates the innate immune system.",
+    "areas": {
+      "immune": "Recognizes pathogens and activates the innate immune system. Mutations may increase infection risk."
+    }
+  },
+  "TLR4": {
+    "title": "TLR4 (Toll-like receptor 4)",
+    "description": "Recognizes pathogens and activates immune defense.",
+    "areas": {
+      "immune": "Recognizes pathogens and activates immune defense. Mutations may increase infection risk."
+    }
+  },
+  "MBL2": {
+    "title": "MBL2 (Mannose-binding lectin)",
+    "description": "Affects the body's ability to quickly fight bacteria and viruses in the early stages of infection.",
+    "areas": {
+      "immune": "Affects the body's ability to quickly fight bacteria and viruses in the early stages of infection."
     }
   },
   "MUC2": {
@@ -123,6 +173,59 @@
     "description": "Affects alcohol breakdown. Some variants increase sensitivity to alcohol and digestive discomfort.",
     "areas": {
       "digestiveHealth": "Affects alcohol breakdown. Some variants increase sensitivity to alcohol and digestive discomfort."
+    }
+  }
+  ,
+  "PER1": {
+    "title": "PER1",
+    "description": "Regulates circadian rhythms and sleep-wake cycles. Variants may affect sleep timing and quality.",
+    "areas": {
+      "sleepQuality": "Regulates circadian rhythms and sleep-wake cycles. Variants may affect sleep timing and quality."
+    }
+  },
+  "PER2": {
+    "title": "PER2",
+    "description": "Works with PER1 to control the body's internal clock. Variants can influence sleep phase and adaptation to time changes.",
+    "areas": {
+      "sleepQuality": "Works with PER1 to control the body's internal clock. Variants can influence sleep phase and adaptation to time changes."
+    }
+  },
+  "CLOCK": {
+    "title": "CLOCK",
+    "description": "Core circadian clock gene. Variants may affect sleep duration, timing, and risk of sleep disorders.",
+    "areas": {
+      "sleepQuality": "Core circadian clock gene. Variants may affect sleep duration, timing, and risk of sleep disorders."
+    }
+  },
+  "ADA": {
+    "title": "ADA",
+    "description": "Involved in adenosine metabolism, which regulates sleep pressure. Variants may affect sleep need and depth.",
+    "areas": {
+      "sleepQuality": "Involved in adenosine metabolism, which regulates sleep pressure. Variants may affect sleep need and depth."
+    }
+  },
+  "MTNR1B": {
+    "title": "MTNR1B",
+    "description": "Melatonin receptor gene. Variants can influence melatonin signaling, sleep onset, and risk of metabolic issues.",
+    "areas": {
+      "sleepQuality": "Melatonin receptor gene. Variants can influence melatonin signaling, sleep onset, and risk of metabolic issues."
+    }
+  },
+  "BDNF": {
+    "title": "BDNF",
+    "description": "Supports brain plasticity and recovery during sleep. Variants may affect sleep quality and cognitive function.",
+    "areas": {
+      "sleepQuality": "Supports brain plasticity and recovery during sleep. Variants may affect sleep quality and cognitive function.",
+      "strength": "Influences muscle growth, recovery, and adaptation to strength training. Some variants may improve muscle repair and strength gains.",
+      "stressReduction": "Affects stress sensitivity, recovery, and nervous system plasticity. Some variants may provide better resilience to stress and faster recovery."
+    }
+  },
+  "COMT": {
+    "title": "COMT",
+    "description": "Involved in dopamine breakdown. Variants can influence sleep architecture, stress response, and cognitive performance.",
+    "areas": {
+      "sleepQuality": "Involved in dopamine breakdown. Variants can influence sleep architecture, stress response, and cognitive performance.",
+      "stressReduction": "Regulates breakdown of stress hormones and dopamine. Some variants may increase stress sensitivity or improve stress management."
     }
   }
 }
