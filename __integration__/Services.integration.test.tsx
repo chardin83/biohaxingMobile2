@@ -62,8 +62,8 @@ describe('Services Integration', () => {
       const healthPlan: Plan = {
         name: 'Morning Health Routine',
         supplements: [
-          { id: 'vitamin-d', name: 'Vitamin D3', quantity: 2000, unit: 'IU' },
-          { id: 'omega-3', name: 'Omega-3', quantity: 1000, unit: 'mg' },
+          { id: 'vitamin-d', name: 'Vitamin D3', quantity: '2000', unit: 'IU' },
+          { id: 'omega-3', name: 'Omega-3', quantity: '1000', unit: 'mg' },
         ],
         prefferedTime: 'morning',
         notify: false,
@@ -106,7 +106,7 @@ describe('Services Integration', () => {
       // Set plan but disable sharing
       const healthPlan: Plan = {
         name: 'Test Plan',
-        supplements: [{ id: 'vitamin-c', name: 'Vitamin C', quantity: 500, unit: 'mg' }],
+        supplements: [{ id: 'vitamin-c', name: 'Vitamin C', quantity: '500', unit: 'mg' }],
         prefferedTime: 'morning',
         notify: false,
       };
@@ -235,8 +235,8 @@ describe('Services Integration', () => {
       const healthPlan: Plan = {
         name: 'Comprehensive Health Plan',
         supplements: [
-          { id: 'multivitamin', name: 'Multivitamin', quantity: 1, unit: 'tablet' },
-          { id: 'fish-oil', name: 'Fish Oil', quantity: 2, unit: 'capsules' },
+          { id: 'multivitamin', name: 'Multivitamin', quantity: '1', unit: 'tablet' },
+          { id: 'fish-oil', name: 'Fish Oil', quantity: '2', unit: 'capsules' },
         ],
         prefferedTime: 'evening',
         notify: false,
