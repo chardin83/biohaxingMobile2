@@ -163,8 +163,11 @@ describe('Services Integration', () => {
         match: true,
       };
 
+
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
+        status: 200,
+        text: () => Promise.resolve(JSON.stringify(mockAnalysisResponse)),
         json: () => Promise.resolve(mockAnalysisResponse),
       });
 
@@ -187,10 +190,12 @@ describe('Services Integration', () => {
     });
 
     it('should handle API errors gracefully', async () => {
+
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         status: 500,
         statusText: 'Internal Server Error',
+        text: () => Promise.resolve('AI-analys misslyckades: 500'),
       });
 
       const fileData = {
@@ -321,6 +326,8 @@ describe('Services Integration', () => {
 
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
+        status: 200,
+        text: () => Promise.resolve(JSON.stringify(mockAnalysisResponse)),
         json: () => Promise.resolve(mockAnalysisResponse),
       });
 

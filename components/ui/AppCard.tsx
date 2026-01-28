@@ -5,6 +5,7 @@ import { Icon } from 'react-native-paper';
 
 import { Colors } from '@/constants/Colors';
 
+
 interface AppCardProps {
   icon?: string;
   title: string;
@@ -12,11 +13,12 @@ interface AppCardProps {
   isActive?: boolean;
   xp?: number;
   onPress: () => void;
+  testID?: string;
 }
 
-const AppCard: React.FC<AppCardProps> = ({ icon, title, description, isActive = false, xp, onPress }) => {
+const AppCard: React.FC<AppCardProps> = ({ icon, title, description, isActive = false, xp, onPress, testID }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.card, isActive && styles.cardActive]}>
+    <TouchableOpacity onPress={onPress} style={[styles.card, isActive && styles.cardActive]} testID={testID}>
       <View style={styles.cardRow}>
         {icon && (
           <View style={styles.iconWrapper}>

@@ -88,6 +88,32 @@ const fullMockStorageContext = {
   newLevelReached: null,
   dailyNutritionSummaries: {},
   setDailyNutritionSummaries: jest.fn(),
+
+  // Add missing StorageContextType properties (mock implementations)
+  clearNewLevelReached: jest.fn(),
+  viewedTips: [],
+  setViewedTips: jest.fn(),
+  addTipView: jest.fn(),
+  completedGoals: [],
+  setCompletedGoals: jest.fn(),
+  completedGoalDates: {},
+  setCompletedGoalDates: jest.fn(),
+  completedGoalXP: {},
+  setCompletedGoalXP: jest.fn(),
+  completedGoalStreaks: {},
+  setCompletedGoalStreaks: jest.fn(),
+  completedGoalStreakDates: {},
+  setCompletedGoalStreakDates: jest.fn(),
+  showMusic: false,
+  setShowMusic: jest.fn(),
+
+  // Add mocks for missing properties required by StorageContextType
+  incrementTipChat: jest.fn(),
+  addChatMessageXP: jest.fn(),
+  setTipVerdict: jest.fn(),
+  trainingPlanSettings: {},
+  setTrainingPlanSettings: jest.fn(),
+  tipVerdicts: {},
 };
 
 describe('GoalDetailScreen', () => {

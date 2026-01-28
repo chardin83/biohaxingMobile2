@@ -198,7 +198,7 @@ export async function sendFileToAIAnalysis({
 
   // Välj endpoint: supplement-specifik eller generell
   //const endpoint = supplement ? ENDPOINTS.handleSupplementCheck : ENDPOINTS.askAIv2;
-  const endpoint = ENDPOINTS.handleAnalyze;
+  const endpoint = ENDPOINTS.handleSupplementCheck;
 
   // innan fetch
   console.log('[sendFileToAIAnalysis] sending to endpoint:', endpoint, {

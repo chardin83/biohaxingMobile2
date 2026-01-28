@@ -19,6 +19,7 @@ export default function Areas() {
       {areas.map(item => (
         <AppCard
           key={item.id}
+          testID={`area-card-${item.id}`}
           title={t(`areas:${item.id}.title`)}
           description={t(`areas:${item.id}.description`)}
           isActive={myGoals.includes(item.id)}
