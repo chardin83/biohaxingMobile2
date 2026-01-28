@@ -4,7 +4,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SleepConsistencyMetric } from '@/components/metrics/SleepConsistencyMetric';
 import { SleepMetric } from '@/components/metrics/SleepMetric';
 import { Card } from '@/components/ui/Card';
-import { GenesCard } from '@/components/ui/GenesCard';
+import GenesListCard from '@/components/ui/GenesListCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { SleepSummary } from '@/wearables/types';
@@ -156,7 +156,7 @@ export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
         </Card>
 
         {/* DNA & Gener som påverkar sömn */}
-        <GenesCard areaId="sleepQuality" />
+        <GenesListCard areaId="sleepQuality" />
 
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="sleepQuality.levels.sleepBy2230.tips.0.title" />

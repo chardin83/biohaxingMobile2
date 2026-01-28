@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Card } from '@/components/ui/Card';
 import { Error } from '@/components/ui/Error';
-import { GenesCard } from '@/components/ui/GenesCard';
+import GenesListCard from '@/components/ui/GenesListCard';
 import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
@@ -118,7 +118,7 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
         </Card>
 
         {/* Manual tracking card */}
-        <GenesCard areaId="digestiveHealth"  />
+        <GenesListCard areaId="digestiveHealth"  />
 
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="tips:digestive.levels.optimization.title" />

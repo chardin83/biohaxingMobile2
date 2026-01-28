@@ -1,25 +1,34 @@
+
+import { useRouter } from 'expo-router';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { StyleSheet,Text, View } from 'react-native';
 
 import { Colors } from '@/constants/Colors';
 import { genes } from '@/locales/genes';
 
 import { Card } from './Card';
+import GeneCard from './GeneCard';
 
-interface GenesCardProps {
+interface GenesListCardProps {
   areaId: string;
   title?: string;
   style?: any;
 }
 
-export const GenesCard: React.FC<GenesCardProps> = ({ areaId, title = 'DNA & Gener', style }) => {
-  const { t } = useTranslation();
+const GenesListCard: React.FC<GenesListCardProps> = ({ areaId, title = 'DNA & Gener', style }) => {
+  const router = useRouter();
   const filteredGenes = genes.filter(gene =>
     gene.areas.some(area => area.id === areaId)
   );
 
   if (filteredGenes.length === 0) return null;
+
+  const handleGenePress = (geneId: string) => {
+    router.push({
+      pathname: "/dashboard/area/[areaId]/gene",
+      params: { areaId, geneId },
+    });
+  };
 
   return (
     <Card title={title} style={style}>
@@ -31,13 +40,9 @@ export const GenesCard: React.FC<GenesCardProps> = ({ areaId, title = 'DNA & Gen
       </View>
       {filteredGenes.map(gene => {
         const area = gene.areas.find(a => a.id === areaId);
+        if (!area) return null;
         return (
-          <View style={styles.infoSection} key={gene.id}>
-            <Text style={styles.infoLabel}>{gene.id}</Text>
-            <Text style={styles.infoText}>
-              {t(`genes:${area?.descriptionKey}`) || ''}
-            </Text>
-          </View>
+          <GeneCard key={gene.id} gene={gene} area={area} onPress={() => handleGenePress(gene.id)} />
         );
       })}
       <Text style={styles.muted}>
@@ -68,3 +73,5 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
 });
+
+export default GenesListCard;

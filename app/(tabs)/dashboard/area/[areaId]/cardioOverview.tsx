@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { VO2MaxMetric } from '@/components/metrics/VO2MaxMetric';
 import { Card } from '@/components/ui/Card';
 import { Error } from '@/components/ui/Error';
-import { GenesCard } from '@/components/ui/GenesCard';
+import GenesListCard from '@/components/ui/GenesListCard';
 import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
@@ -158,7 +157,7 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
           </View>
         </Card>
 
-        <GenesCard areaId="cardioFitness" />
+        <GenesListCard areaId="cardioFitness" />
 
         {/* Tips Card */}
         <TipsList areaId={mainGoalId} title="tips:cardio.levels.optimization.title" />

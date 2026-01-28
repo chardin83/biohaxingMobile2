@@ -6,7 +6,7 @@ import { SleepConsistencyMetric } from '@/components/metrics/SleepConsistencyMet
 import { SleepMetric } from '@/components/metrics/SleepMetric';
 import { Card } from '@/components/ui/Card';
 import { Error } from '@/components/ui/Error';
-import { GenesCard } from '@/components/ui/GenesCard';
+import GenesListCard from '@/components/ui/GenesListCard';
 import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
@@ -213,7 +213,7 @@ export default function StrengthScreen({ mainGoalId }: { mainGoalId: string }) {
           </Card>
 
           {/* DNA & Gener som påverkar styrka */}
-          <GenesCard areaId="strength" />
+          <GenesListCard areaId="strength" />
 
         {/* Optimization Tips Card */}
         <TipsList areaId={mainGoalId} title="tips:muscle.levels.optimization.title" />

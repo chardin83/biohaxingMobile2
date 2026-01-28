@@ -5,7 +5,7 @@ import { G } from 'react-native-svg';
 import { HRVMetric } from '@/components/metrics/HRVMetric';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { Card } from '@/components/ui/Card';
-import { GenesCard } from '@/components/ui/GenesCard';
+import GenesListCard from '@/components/ui/GenesListCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { Colors } from '@/constants/Colors';
@@ -202,7 +202,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
           </View>
         </Card>
 
-        <GenesCard areaId="stressReduction"/>
+        <GenesListCard areaId="stressReduction"/>
 
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="tips:nervousSystem.levels.optimization.title" />

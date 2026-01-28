@@ -6,7 +6,7 @@ import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { VO2MaxMetric } from '@/components/metrics/VO2MaxMetric';
 import { Card } from '@/components/ui/Card';
 import { Error } from '@/components/ui/Error';
-import { GenesCard } from '@/components/ui/GenesCard';
+import GenesListCard from '@/components/ui/GenesListCard';
 import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
@@ -115,7 +115,7 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
         </Card>
 
         {/* DNA & Mitochondria Genetics */}
-        <GenesCard areaId="energy" />
+        <GenesListCard areaId="energy" />
 
         {/* Energy Production Factors */}
         <Card title="Energy Production Metrics" style={{ marginTop: 16 }}>

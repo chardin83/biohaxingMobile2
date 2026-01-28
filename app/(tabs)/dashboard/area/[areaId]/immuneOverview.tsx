@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { HRVMetric } from '@/components/metrics/HRVMetric';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { SleepMetric } from '@/components/metrics/SleepMetric';
 import { Card } from '@/components/ui/Card';
+import Container from '@/components/ui/Container';
 import { Error } from '@/components/ui/Error';
-import { GenesCard } from '@/components/ui/GenesCard';
+import GenesListCard from '@/components/ui/GenesListCard';
 import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
@@ -70,8 +71,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
   };
 
   return (
-    <View style={styles.bg}>
-      <ScrollView contentContainerStyle={styles.container}>
+      <Container>
         <Text style={styles.title}>Immune Support</Text>
         <Text style={styles.subtitle}>Key metrics that influence immune system function and resilience</Text>
 
@@ -142,22 +142,15 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
         </Card>
 
         {/* DNA & Immunförsvar Genetics */}
-        <GenesCard areaId="immune" style={{ marginTop: 16 }} />
+        <GenesListCard areaId="immune"/>
 
         {/* Tips card */}
         <TipsList areaId={mainGoalId} title="tips:immune.levels.optimization.title" />
-      </ScrollView>
-    </View>
+      </Container>
   );
 }
 
 const styles = StyleSheet.create({
-  bg: { flex: 1 },
-  container: {
-    paddingHorizontal: 18,
-    paddingBottom: 32,
-    paddingTop: 100,
-  },
   title: {
     fontSize: 44,
     fontWeight: '700',
