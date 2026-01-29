@@ -13,6 +13,7 @@ export default function Calendar() {
 
   const handleDayPress = (day: string) => {
     setSelectedDate(day);
+    //calendarRef.current?.addMarkForDate?.(day); // <-- Lägg till denna rad
   };
 
   return (

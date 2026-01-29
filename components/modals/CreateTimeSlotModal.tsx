@@ -20,6 +20,7 @@ interface CreateTimeSlotModalProps {
   onCreate: (plan: CreatePlanData) => void;
   initialName?: string;
   initialTime?: Date;
+  onDelete?: () => void; // <-- Lägg till denna rad
 }
 
 const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({
@@ -28,6 +29,7 @@ const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({
   onCreate,
   initialName = '',
   initialTime = new Date(),
+  onDelete, // <-- Lägg till denna rad
 }) => {
   const { t } = useTranslation();
   const [planName, setPlanName] = React.useState(initialName);
@@ -112,6 +114,15 @@ const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({
             }}
           />
         )}
+
+        {isEditing && onDelete && (
+          <AppButton
+            title={t('general.delete', { defaultValue: 'Ta bort' })}
+            onPress={onDelete}
+            variant="danger"
+            style={styles.deleteButton}
+          />
+        )}
       </View>
     </ThemedModal>
   );
@@ -128,6 +139,9 @@ const styles = StyleSheet.create({
   },
   fullWidth: {
     width: '100%',
+  },
+  deleteButton: {
+    marginTop: 30,
   },
 });
 

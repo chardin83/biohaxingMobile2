@@ -69,14 +69,14 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate }) => {
 
     if (supplementExists && !isEditing) return;
 
-    if (!isEditing) {
-      updatedSupplements = [...selectedSupplements, { ...supplement, time } as SupplementTime];
-    } else {
+    if (isEditing) {
       updatedSupplements = selectedSupplements.map(existingSupplement =>
         existingSupplement.name === supplement.name && existingSupplement.time === editingSupplement?.time
           ? { ...existingSupplement, ...supplement, time }
           : existingSupplement
       );
+    } else {
+      updatedSupplements = [...selectedSupplements, { ...supplement, time } as SupplementTime];
     }
 
     saveToStorage(updatedSupplements);

@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import { MenuProvider } from 'react-native-popup-menu';
@@ -317,6 +318,27 @@ describe('Calendar Integration Tests', () => {
     // Verify the supplement management interface is available
     await waitFor(() => {
       expect(getByText('Add')).toBeTruthy();
+    });
+  });
+
+  it('shows date is marked if storage contains supplements for that date', async () => {
+    // Mocka getItem så att just "takenDates" returnerar markerat datum
+    (AsyncStorage.getItem as jest.Mock).mockImplementation((key: string) => {
+      if (key === 'takenDates') {
+        return Promise.resolve(
+          JSON.stringify({
+            '2024-01-15': [{ id: 'vit-d3', name: 'Vitamin D3', category: 'vitamins' }],
+          })
+        );
+      }
+      return Promise.resolve(null);
+    });
+
+    const { getByTestId } = renderWithStorageProvider(<Calendar />);
+
+    // Kalendern ska visa markering för 2024-01-15
+    await waitFor(() => {
+      expect(getByTestId('marked-2024-01-15')).toBeTruthy();
     });
   });
 });

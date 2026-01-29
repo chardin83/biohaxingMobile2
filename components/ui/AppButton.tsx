@@ -3,7 +3,7 @@ import { StyleProp, StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-
 
 import { Colors } from '@/constants/Colors';
 
-type Variant = 'primary' | 'secondary';
+type Variant = 'primary' | 'secondary' | 'danger';
 
 interface AppButtonProps {
   title: string;
@@ -11,7 +11,7 @@ interface AppButtonProps {
   variant?: Variant;
   style?: StyleProp<ViewStyle>;
   disabled?: boolean;
-  glow?: boolean; // 🔸 Ny prop
+  glow?: boolean;
   accessibilityLabel?: string;
 }
 
@@ -25,13 +25,33 @@ const AppButton: React.FC<AppButtonProps> = ({
   accessibilityLabel,
 }) => {
   const isPrimary = variant === 'primary';
+  const isDanger = variant === 'danger';
+
+  let buttonVariantStyle;
+  if (isPrimary) {
+    buttonVariantStyle = styles.primary;
+  } else if (isDanger) {
+    buttonVariantStyle = styles.danger;
+  } else {
+    buttonVariantStyle = styles.secondary;
+  }
+
+  // Determine the text color style based on variant
+  let textColorStyle;
+  if (isPrimary) {
+    textColorStyle = styles.primaryText;
+  } else if (isDanger) {
+    textColorStyle = styles.dangerText;
+  } else {
+    textColorStyle = styles.secondaryText;
+  }
 
   return (
     <TouchableOpacity
       onPress={onPress}
       style={[
         styles.button,
-        isPrimary ? styles.primary : styles.secondary,
+        buttonVariantStyle,
         isPrimary && glow && styles.primaryGlow,
         disabled && styles.disabled,
         style,
@@ -39,10 +59,11 @@ const AppButton: React.FC<AppButtonProps> = ({
       disabled={disabled}
       accessibilityLabel={accessibilityLabel || title}
     >
+      {/* Determine the text color style based on variant */}
       <Text
         style={[
           styles.text,
-          isPrimary ? styles.primaryText : styles.secondaryText,
+          textColorStyle,
           isPrimary && glow && styles.primaryTextGlow,
         ]}
       >
@@ -80,6 +101,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderColor: Colors.dark.borderLight,
   },
+  danger: {
+    backgroundColor: 'transparent',
+    borderColor: Colors.dark.error,
+  },
   disabled: {
     opacity: 0.5,
   },
@@ -98,6 +123,9 @@ const styles = StyleSheet.create({
   },
   secondaryText: {
     color: Colors.dark.textLight,
+  },
+  dangerText: {
+    color: Colors.dark.error,
   },
 });
 

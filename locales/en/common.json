@@ -22,7 +22,7 @@
   "plan": {
     "chosePlanToEdit": "Choose plan to edit",
     "addTimeSlot": "New time slot",
-    "editPlan": "Edit plan",
+    "editTimeSlot": "Edit time slot",
     "planName": "Name of the plan",
     "timeSlotNameLabel": "Timeslot name",
     "addSupplement": "Add supplement",

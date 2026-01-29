@@ -26,7 +26,7 @@
     "plan": {
       "chosePlanToEdit": "Välj plan att redigera",
       "addTimeSlot": "Ny tidpunkt",
-      "editPlan": "Redigera plan",
+      "editTimeSlot": "Redigera tidpunkt",
       "planName": "Namn på planen",
       "timeSlotNameLabel": "Namn på tidpunkt",
       "addSupplement": "Lägg till tillskott",

@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 
 import { useStorage } from '@/app/context/StorageContext';
@@ -53,7 +53,7 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
     configureCalendarLocale(i18n.language, t);
     setCalendarKey(i18n.language);
     setIsLocaleReady(true);
-  }, [i18n.language]);
+  }, [i18n.language, t]);
 
   const handleDayPress = (day: { dateString: string }) => {
     setSelectedDate(day.dateString);
@@ -90,7 +90,7 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
 
   if (selectedDate) {
     dynamicMarkedDates[selectedDate] = {
-      ...(dynamicMarkedDates[selectedDate] || {}),
+      ...dynamicMarkedDates[selectedDate],
       selected: true,
       selectedColor: '#32D1A6',
     };

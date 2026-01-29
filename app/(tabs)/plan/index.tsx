@@ -1,7 +1,7 @@
 import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
 import { Collapsible } from '@/components/Collapsible';
@@ -14,8 +14,8 @@ import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
 import Badge from '@/components/ui/Badge';
+import Container from '@/components/ui/Container';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { SwipeableRow } from '@/components/ui/SwipeableRow';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSupplementSaver } from '@/hooks/useSupplementSaver';
@@ -241,17 +241,18 @@ export default function Plans() {
             defaultValue: `${supplementCount} tillskott`,
           })}`
         : baseTitle;
-    const leadingIcon = (
-      <IconSymbol
-        name="chevron.right"
-        size={16}
-        color={Colors.dark.icon}
-        style={{ transform: [{ rotate: isExpanded ? '90deg' : '0deg' }] }}
-      />
-    );
 
+    const editLabel = t('plan.editTimeSlot', { defaultValue: 'Redigera' });
     const headerActions = (
       <View style={styles.planHeaderActions}>
+        <TouchableOpacity
+          onPress={() => handleEditPlan(plan)}
+          accessibilityRole="button"
+          accessibilityLabel={editLabel}
+          style={styles.planHeaderButton}
+        >
+          <IconSymbol name="pencil" size={18} color={Colors.dark.icon} />
+        </TouchableOpacity>
         <TouchableOpacity
           onPress={() => handleNotify(plan)}
           accessibilityRole="button"
@@ -270,11 +271,6 @@ export default function Plans() {
     );
 
     return (
-      <SwipeableRow
-        onEdit={() => handleEditPlan(plan)}
-        onDelete={() => handleRemovePlan(plan.name)}
-        containerStyle={styles.planRowContainer}
-      >
         <AppBox
           title={displayTitle}
           headerRight={headerActions}
@@ -283,7 +279,14 @@ export default function Plans() {
           headerAccessibilityLabel={t('plan.toggleSupplements', {
             defaultValue: 'Visa eller dölj innehåll',
           })}
-          leading={leadingIcon}
+          leading={
+            <IconSymbol
+              name="chevron.right"
+              size={16}
+              color={Colors.dark.icon}
+              style={{ transform: [{ rotate: isExpanded ? '90deg' : '0deg' }] }}
+            />
+          }
         >
           {isExpanded && (
             <View>
@@ -302,7 +305,6 @@ export default function Plans() {
             </View>
           )}
         </AppBox>
-      </SwipeableRow>
     );
   };
 
@@ -522,11 +524,13 @@ export default function Plans() {
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+    <Container background="gradient">
         <View style={styles.sectionsContainer}>
           <View style={styles.sectionBlock}>
-            <Collapsible title={t('plan.trainingHeader')} contentStyle={styles.collapsibleContentFlush}>
+            <Collapsible
+              title={t('plan.trainingHeader')}
+              contentStyle={styles.collapsibleContentFlush}
+            >
               {renderTrainingGoals()}
             </Collapsible>
           </View>
@@ -554,7 +558,6 @@ export default function Plans() {
             </Collapsible>
           </View>
         </View>
-      </ScrollView>
       <Portal>
         <CreateTimeSlotModal
           visible={modalVisible}
@@ -585,6 +588,16 @@ export default function Plans() {
             setIsEditingPlan(false);
             setSelectedPlan(null);
           }}
+          onDelete={
+            isEditingPlan && selectedPlan
+              ? () => {
+                  handleRemovePlan(selectedPlan.name);
+                  setModalVisible(false);
+                  setIsEditingPlan(false);
+                  setSelectedPlan(null);
+                }
+              : undefined
+          }
         />
         <TrainingSettingsModal
           visible={trainingSettingsVisible}
@@ -646,17 +659,13 @@ export default function Plans() {
           />
         </ThemedModal>
       )}
-    </View>
+    </Container>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.dark.background,
-    paddingTop: 140,
-  },
   sectionsContainer: {
+    paddingTop: 100,
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
@@ -671,10 +680,6 @@ const styles = StyleSheet.create({
   },
   nutritionBox: {
     marginBottom: 20,
-  },
-  planRowContainer: {
-    width: '100%',
-    paddingHorizontal: 0,
   },
   modalField: {
     marginBottom: 16,
