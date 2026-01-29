@@ -57,7 +57,7 @@ export default function TipsSearchScreen() {
     const allLevels = [...new Set(tips.map(tip => tip.level ?? 1))].sort((a, b) => a - b);
 
     return (
-        <Container background="gradient" gradientKey='sunrise' gradientLocations={Colors.dark.gradients.sunrise.locations1 as any}>
+        <Container background="gradient" gradientKey='sunrise' gradientLocations={Colors.dark.gradients.sunrise.locations1 as any} scrollable={false} style={styles.container} >
         
             <LabeledInput
                 label={t('search.label')}
@@ -67,15 +67,15 @@ export default function TipsSearchScreen() {
             />
             {showFilter && (
                 <ScrollView
-                    style={{ maxHeight: 420, marginBottom: 8 }}
-                    contentContainerStyle={{ paddingBottom: 8 }}
+                    style={styles.filterScrollView}
+                    contentContainerStyle={styles.filterContentContainer}
                     showsVerticalScrollIndicator={false}
                 >
                     {/* Area-filter */}
-                    <Text style={{ color: Colors.dark.textSecondary, marginBottom: 2, fontSize: 13, fontWeight: 'bold' }}>
+                    <Text style={styles.filterLabel}>
                         {t('common:filter.area')}
                     </Text>
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 }}>
+                    <View style={styles.filterView}>
                         {[...new Set(tips.flatMap(tip => tip.areas.map(a => a.id)))].map(areaId => (
                             <Badge
                                 key={areaId}
@@ -93,10 +93,10 @@ export default function TipsSearchScreen() {
                         ))}
                     </View>
                     {/* Level-filter */}
-                    <Text style={{ color: Colors.dark.textSecondary, marginBottom: 2, fontSize: 13, fontWeight: 'bold' }}>
+                    <Text style={styles.filterLabel}>
                         {t('common:filter.level')}
                     </Text>
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 }}>
+                    <View style={styles.filterView}>
                         {allLevels.map(level => (
                             <Badge
                                 key={level}
@@ -112,10 +112,10 @@ export default function TipsSearchScreen() {
                         ))}
                     </View>
                     {/* PlanCategory-filter */}
-                    <Text style={{ color: Colors.dark.textSecondary, marginBottom: 2, fontSize: 13, fontWeight: 'bold' }}>
+                    <Text style={styles.filterLabel}>
                         {t('common:filter.planCategory')}
                     </Text>
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 16 }}>
+                    <View style={styles.filterView}>
                         {allPlanCategories.map(cat => (
                             <Badge
                                 key={cat}
@@ -131,10 +131,10 @@ export default function TipsSearchScreen() {
                         ))}
                     </View>
                     {/* BodyPart-filter */}
-                    <Text style={{ color: Colors.dark.textSecondary, marginBottom: 2, fontSize: 13, fontWeight: 'bold' }}>
+                    <Text style={styles.filterLabel}>
                         {t('common:filter.bodyPart')}
                     </Text>
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 }}>
+                    <View style={styles.filterView}>
                         {allBodyParts.map(bp => (
                             <Badge
                                 key={bp.id}
@@ -151,12 +151,12 @@ export default function TipsSearchScreen() {
                     </View>
                 </ScrollView>
             )}
-            <TouchableOpacity onPress={() => setShowFilter(v => !v)} style={{ marginBottom: 8 }}>
-                <Text style={{ color: Colors.dark.accentDefault, fontWeight: 'bold', fontSize: 16 }}>
+            <TouchableOpacity onPress={() => setShowFilter(v => !v)}>
+                <Text style={[styles.filterButtonLabel, { color: Colors.dark.accentDefault }]}>
                     {`Filter (${activeFilterCount}st)`}
                 </Text>
             </TouchableOpacity>
-            <Text style={{ color: Colors.dark.textSecondary, fontSize: 16, marginBottom: 12 }}>
+            <Text style={styles.resultCount}>
                 {`Resultat: (${matchCount}st)`}
             </Text>
             <FlatList
@@ -164,15 +164,15 @@ export default function TipsSearchScreen() {
                 keyExtractor={item => item.id}
                 renderItem={({ item }) => (
                     <Card>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                        <View style={styles.titleRow}>
                             <Text style={styles.title}>{t('tips:' + item.title)}</Text>
-                            <Badge variant="overlay" style={[styles.toggleBadge, { backgroundColor: Colors.dark.accentDefault, marginLeft: 8 }]}>
-                                <Text style={[styles.badgeLabel, { fontWeight: 'bold' }]}>
+                            <Badge variant="overlay" style={[styles.toggleBadge, styles.levelBadge, { backgroundColor: Colors.dark.accentDefault }]}>
+                                <Text style={[styles.badgeLabel, styles.bold]}>
                                     {`${t('common:filter.level')} ${item.level ?? 1}`}
                                 </Text>
                             </Badge>
                         </View>
-                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 4 }}>
+                        <View style={styles.areaBadgeRow}>
                             {item.areas.map(a => (
                                 <Badge
                                     key={a.id}
@@ -201,9 +201,15 @@ const styles = StyleSheet.create({
         paddingTop: 80,
         // Bakgrundsfärg sätts av LinearGradient
     },
+    titleRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 4,
+    },
     title: { fontWeight: 'bold', fontSize: 16, marginBottom: 4, color: Colors.dark.textPrimary },
     desc: { color: Colors.dark.textSecondary, marginBottom: 4 },
-    badgeRow: {
+    areaBadgeRow: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         marginTop: 4,
@@ -220,6 +226,9 @@ const styles = StyleSheet.create({
         color: Colors.dark.text,
         fontSize: 12,
     },
+    bold: {
+        fontWeight: 'bold',
+    },
     toggleBadge: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -227,9 +236,13 @@ const styles = StyleSheet.create({
         marginRight: 8,
         marginBottom: 8,
     },
+    levelBadge: {
+        marginLeft: 8,
+    },
     areas: { color: Colors.dark.textSecondary, fontSize: 12 },
     empty: { textAlign: 'center', color: Colors.dark.textSecondary, marginTop: 40 },
     inputMargin: { marginBottom: 20 },
+    resultCount: { color: Colors.dark.textSecondary, fontSize: 16, marginBottom: 12 },
     filterButton: {
         position: 'absolute',
         top: 10,
@@ -239,5 +252,28 @@ const styles = StyleSheet.create({
         padding: 10,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    filterScrollView: {
+        maxHeight: 420,
+        marginBottom: 8,
+    },
+    filterContentContainer: {
+        paddingBottom: 8,
+    },
+    filterLabel: {
+        color: Colors.dark.textSecondary,
+        marginBottom: 2,
+        fontSize: 13,
+        fontWeight: 'bold',
+    },
+    filterView: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        marginBottom: 8,
+    },
+    filterButtonLabel: {
+        fontWeight: 'bold',
+        fontSize: 16,
+        paddingVertical: 8,
     },
 });

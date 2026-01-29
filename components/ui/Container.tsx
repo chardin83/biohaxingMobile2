@@ -15,9 +15,23 @@ type ContainerProps = ViewProps & {
   showBackButton?: boolean;
   onBackPress?: () => void;
   centerContent?: boolean;
+  contentContainerStyle?: any;
+  scrollable?: boolean; // <-- Lägg till denna rad
 };
 
-const Container: React.FC<ContainerProps> = ({ children, style, background = 'default', gradientKey = 'sunrise', gradientLocations, showBackButton = false, onBackPress, centerContent = false, contentContainerStyle, ...rest }) => {
+const Container: React.FC<ContainerProps> = ({
+  children,
+  style,
+  background = 'default',
+  gradientKey = 'sunrise',
+  gradientLocations,
+  showBackButton = false,
+  onBackPress,
+  centerContent = false,
+  contentContainerStyle,
+  scrollable = true, // <-- Default true
+  ...rest
+}) => {
   // Dynamic paddingTop based on backbutton
   const defaultPaddingTop = showBackButton ? 100 : 35;
   // Merge user contentContainerStyle with centerContent and default paddings
@@ -26,6 +40,7 @@ const Container: React.FC<ContainerProps> = ({ children, style, background = 'de
     contentContainerStyle,
     centerContent ? styles.centerContent : null
   ];
+
   const content = (
     <>
       {showBackButton && (
@@ -33,13 +48,19 @@ const Container: React.FC<ContainerProps> = ({ children, style, background = 'de
           <BackButton onPress={onBackPress} />
         </View>
       )}
-      <ScrollView
-        style={style}
-        contentContainerStyle={mergedContentContainerStyle}
-        {...rest}
-      >
-        {children}
-      </ScrollView>
+      {scrollable ? (
+        <ScrollView
+          style={style}
+          contentContainerStyle={mergedContentContainerStyle}
+          {...rest}
+        >
+          {children}
+        </ScrollView>
+      ) : (
+        <View style={[style, ...mergedContentContainerStyle]} {...rest}>
+          {children}
+        </View>
+      )}
     </>
   );
   if (background === 'gradient') {
@@ -47,19 +68,22 @@ const Container: React.FC<ContainerProps> = ({ children, style, background = 'de
     return (
       <LinearGradient
         colors={gradient.colors as any}
-        locations={gradientLocations as [number, number, ...number[]] || gradient.locations}
+        locations={gradientLocations as [number, number, ...number[]] | undefined }
         start={gradient.start}
         end={gradient.end}
-        style={{ flex: 1 }}
+        style={styles.flex1}
       >
         {content}
       </LinearGradient>
     );
   }
-  return <View style={{ flex: 1, backgroundColor: Colors.dark.background }}>{content}</View>;
+  return <View style={[styles.flex1, { backgroundColor: Colors.dark.background }]}>{content}</View>;
 };
 
 const styles = StyleSheet.create({
+  flex1: {
+    flex: 1,
+  },
   backButtonWrapper: {
     zIndex: 10,
     position: 'absolute',
