@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, ScrollView,StyleSheet, Text, TouchableOpacity,View } from 'react-native';
@@ -10,6 +9,7 @@ import LabeledInput from '@/components/ui/LabeledInput';
 import { Colors } from '@/constants/Colors';
 import { bodyParts as allBodyParts } from '@/locales/bodyParts';
 import { tips } from '@/locales/tips';
+import { PlanCategory } from '@/types/planCategory';
 
 export default function TipsSearchScreen() {
     const { t } = useTranslation();
@@ -24,7 +24,7 @@ export default function TipsSearchScreen() {
         () =>
             [...new Set(tips.flatMap(tip => tip.planCategory ?? ['other']))]
                 .sort((a, b) => t('common:planCategory.' + a).localeCompare(t('common:planCategory.' + b))),
-        [tips, t]
+        [t]
     );
 
     const filteredTips = useMemo(() => {
@@ -33,7 +33,7 @@ export default function TipsSearchScreen() {
             .filter(tip =>
                 (!selectedArea || tip.areas.some(a => a.id === selectedArea)) &&
                 (!selectedLevel || (tip.level ?? 1) === selectedLevel) &&
-                (!selectedPlanCategory || (tip.planCategory ?? ['other']).includes(selectedPlanCategory)) &&
+                (!selectedPlanCategory || (tip.planCategory ?? ['other' as PlanCategory]).includes(selectedPlanCategory as PlanCategory)) &&
                 (!selectedBodyPart || (tip.bodyParts ?? []).includes(selectedBodyPart)) &&
                 (
                     !q ||
@@ -55,8 +55,6 @@ export default function TipsSearchScreen() {
         (selectedBodyPart ? 1 : 0);
 
     const allLevels = [...new Set(tips.map(tip => tip.level ?? 1))].sort((a, b) => a - b);
-
-    //const bodyParts = [...new Set(tips.flatMap(tip => tip.bodyParts.map(a => a.id)))].sort((a, b) => a - b);
 
     return (
         <Container background="gradient" gradientKey='sunrise' gradientLocations={Colors.dark.gradients.sunrise.locations1 as any}>
