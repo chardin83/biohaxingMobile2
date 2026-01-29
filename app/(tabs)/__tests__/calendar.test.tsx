@@ -9,14 +9,11 @@ export const addMarkForDateMock = jest.fn();
 // Mock CalendarComponent
 jest.mock('@/components/CalendarComponent', () => {
   const mockReact = require('react');
-  const { forwardRef, useImperativeHandle } = mockReact;
+  const { forwardRef } = mockReact;
   const { View, Text, TouchableOpacity } = require('react-native');
 
-  return forwardRef(function MockCalendarComponent({ onDayPress }: any, ref: any) {
-    useImperativeHandle(ref, () => ({
-      addMarkForDate: addMarkForDateMock,
-    }));
 
+  return forwardRef(function MockCalendarComponent({ onDayPress }: any) {
     return (
       <View testID="calendar-component">
         <Text>Mock Calendar</Text>

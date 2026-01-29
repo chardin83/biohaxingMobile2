@@ -37,7 +37,7 @@ const SupplementDropdown: React.FC<SupplementDropdownProps> = ({
         }))
       : [];
     setItems(formattedItems);
-  }, [i18n.language]);
+  }, [i18n.language, supplements, t]);
 
   useEffect(() => {
     setValue(preselectedSupplement);

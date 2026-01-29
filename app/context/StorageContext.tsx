@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { levels, XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW, XP_PER_CHAT_MESSAGE } from '@/constants/XP';
 import { PlanCategory } from '@/types/planCategory';
@@ -163,7 +163,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   >({});
   const [viewedTipsState, setViewedTipsState] = useState<ViewedTip[]>([]);
   const [trainingPlanSettingsState, setTrainingPlanSettingsState] = useState<Record<string, TrainingPlanSettings>>({});
-  const [showMusic, setShowMusicState] = useState(true);
+  const [showMusicState, setShowMusicState] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
@@ -222,10 +222,10 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
         if (takenRaw) setTakenDatesState(JSON.parse(takenRaw));
         if (myGoalsRaw) setMyGoalsState(JSON.parse(myGoalsRaw));
         if (onboardingRaw === 'true') setHasCompletedOnboardingState(true);
-        if (onboardingStepRaw) setOnboardingStepState(parseInt(onboardingStepRaw));
+        if (onboardingStepRaw) setOnboardingStepState(Number.parseInt(onboardingStepRaw, 10));
         // Ladda XP och level direkt utan att trigga level-up-logik vid initial laddning
-        if (myXPRaw) setMyXPState(parseInt(myXPRaw));
-        if (myLevelRaw) setMyLevelState(parseInt(myLevelRaw));
+        if (myXPRaw) setMyXPState(Number.parseInt(myXPRaw, 10));
+        if (myLevelRaw) setMyLevelState(Number.parseInt(myLevelRaw, 10));
         if (dailyNutritionRaw) setDailyNutritionSummariesState(JSON.parse(dailyNutritionRaw));
         if (viewedTipsRaw) setViewedTipsState(JSON.parse(viewedTipsRaw));
         if (trainingSettingsRaw) setTrainingPlanSettingsState(JSON.parse(trainingSettingsRaw));
@@ -294,7 +294,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     AsyncStorage.setItem(STORAGE_KEYS.ONBOARDING_STEP, val.toString());
   };
 
-  const setMyXP = (update: number | ((prev: number) => number)) => {
+  const setMyXP = useCallback((update: number | ((prev: number) => number)) => {
     setMyXPState(prevXP => {
       const newXP = typeof update === 'function' ? update(prevXP) : update;
 
@@ -319,7 +319,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       AsyncStorage.setItem(STORAGE_KEYS.MY_XP, newXP.toString());
       return newXP;
     });
-  };
+  }, [myLevelState]);
 
   const setMyLevel = (level: number) => {
     setMyLevelState(level);
@@ -342,13 +342,13 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     });
   };
 
-  const setViewedTips = (update: ViewedTip[] | ((prev: ViewedTip[]) => ViewedTip[])) => {
+  const setViewedTips = useCallback((update: ViewedTip[] | ((prev: ViewedTip[]) => ViewedTip[])) => {
     setViewedTipsState(prev => {
       const newTips = typeof update === 'function' ? update(prev) : update;
       AsyncStorage.setItem(STORAGE_KEYS.VIEWED_TIPS, JSON.stringify(newTips));
       return newTips;
     });
-  };
+  }, []);
 
   const setTrainingPlanSettings = (
     updater:
@@ -367,7 +367,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   AsyncStorage.setItem(STORAGE_KEYS.SHOW_MUSIC, val ? 'true' : 'false');
 };
 
-  const addTipView = (mainGoalId: string, tipId: string): number => {
+  const addTipView = useCallback((mainGoalId: string, tipId: string): number => {
     const existing = viewedTipsState.find(v => v.mainGoalId === mainGoalId && v.tipId === tipId);
 
     if (existing) {
@@ -386,36 +386,39 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     setViewedTips([...viewedTipsState, newView]);
     setMyXP(prev => prev + xpForView);
     return xpForView;
-  };
+  }, [viewedTipsState, setViewedTips, setMyXP]);
 
-  const incrementTipChat = (mainGoalId: string, tipId: string, questionType: string): number => {
-    const existing = viewedTipsState.find(v => v.mainGoalId === mainGoalId && v.tipId === tipId);
+  const incrementTipChat = useCallback(
+    (mainGoalId: string, tipId: string, questionType: string): number => {
+      const existing = viewedTipsState.find(v => v.mainGoalId === mainGoalId && v.tipId === tipId);
 
-    // Om frågan redan ställts, ingen XP
-    if (existing?.askedQuestions.includes(questionType)) {
-      return 0;
-    }
-
-    const xpForChat = XP_FOR_CHAT_QUESTION;
-
-    const updated = viewedTipsState.map(v => {
-      if (v.mainGoalId === mainGoalId && v.tipId === tipId) {
-        return {
-          ...v,
-          askedQuestions: [...v.askedQuestions, questionType],
-          xpEarned: v.xpEarned + xpForChat,
-        };
+      // Om frågan redan ställts, ingen XP
+      if (existing?.askedQuestions.includes(questionType)) {
+        return 0;
       }
-      return v;
-    });
 
-    setViewedTips(updated);
-    setMyXP(prev => prev + xpForChat);
-    return xpForChat;
-  };
+      const xpForChat = XP_FOR_CHAT_QUESTION;
+
+      const updated = viewedTipsState.map(v => {
+        if (v.mainGoalId === mainGoalId && v.tipId === tipId) {
+          return {
+            ...v,
+            askedQuestions: [...v.askedQuestions, questionType],
+            xpEarned: v.xpEarned + xpForChat,
+          };
+        }
+        return v;
+      });
+
+      setViewedTips(updated);
+      setMyXP(prev => prev + xpForChat);
+      return xpForChat;
+    },
+    [viewedTipsState, setViewedTips, setMyXP]
+  );
 
   // Lägg till ny funktion för att ge XP för varje chat-meddelande
-  const addChatMessageXP = (mainGoalId: string, tipId: string): number => {
+  const addChatMessageXP = useCallback((mainGoalId: string, tipId: string): number => {
     const xpPerMessage = XP_PER_CHAT_MESSAGE; // 2 XP per meddelande
 
     const updated = viewedTipsState.map(v => {
@@ -431,41 +434,44 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     setViewedTips(updated);
     setMyXP(prev => prev + xpPerMessage);
     return xpPerMessage;
-  };
+  }, [viewedTipsState, setViewedTips, setMyXP]);
 
-  const setTipVerdict = (mainGoalId: string, tipId: string, verdict: VerdictValue): number => {
-    const existing = viewedTipsState.find(v => v.mainGoalId === mainGoalId && v.tipId === tipId);
+  const setTipVerdict = useCallback(
+    (mainGoalId: string, tipId: string, verdict: VerdictValue): number => {
+      const existing = viewedTipsState.find(v => v.mainGoalId === mainGoalId && v.tipId === tipId);
 
-    // Om verdict redan satt, ingen XP
-    if (existing?.verdict) {
-      // Uppdatera bara verdict, ingen XP
+      // Om verdict redan satt, ingen XP
+      if (existing?.verdict) {
+        // Uppdatera bara verdict, ingen XP
+        const updated = viewedTipsState.map(v => {
+          if (v.mainGoalId === mainGoalId && v.tipId === tipId) {
+            return { ...v, verdict };
+          }
+          return v;
+        });
+        setViewedTips(updated);
+        return 0;
+      }
+
+      const xpForVerdict = XP_FOR_VERDICT;
+
       const updated = viewedTipsState.map(v => {
         if (v.mainGoalId === mainGoalId && v.tipId === tipId) {
-          return { ...v, verdict };
+          return {
+            ...v,
+            verdict,
+            xpEarned: v.xpEarned + xpForVerdict,
+          };
         }
         return v;
       });
+
       setViewedTips(updated);
-      return 0;
-    }
-
-    const xpForVerdict = XP_FOR_VERDICT;
-
-    const updated = viewedTipsState.map(v => {
-      if (v.mainGoalId === mainGoalId && v.tipId === tipId) {
-        return {
-          ...v,
-          verdict,
-          xpEarned: v.xpEarned + xpForVerdict,
-        };
-      }
-      return v;
-    });
-
-    setViewedTips(updated);
-    setMyXP(prev => prev + xpForVerdict);
-    return xpForVerdict;
-  };
+      setMyXP(prev => prev + xpForVerdict);
+      return xpForVerdict;
+    },
+    [viewedTipsState, setViewedTips, setMyXP]
+  );
 
   const activeGoals = useMemo(
     () => [...plansState.training, ...plansState.nutrition, ...plansState.other],
@@ -510,10 +516,10 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       setTipVerdict,
       trainingPlanSettings: trainingPlanSettingsState,
       setTrainingPlanSettings,
-      showMusic,
+      showMusic: showMusicState,
       setShowMusic,
     }),
-    [plansState, activeGoals, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, trainingPlanSettingsState, showMusic]
+    [plansState, activeGoals, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, trainingPlanSettingsState, showMusicState]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

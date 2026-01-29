@@ -104,7 +104,7 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate }) => {
   };
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.container}>
         <View style={styles.tabContainer}>
           <TouchableOpacity
@@ -163,8 +163,8 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate }) => {
                 <Text style={styles.label}>
                   {t('dayEdit.editSupplement')} {selectedDate}:
                 </Text>
-                <View style={{ marginVertical: 10 }}>
-                  <Text style={[styles.label, { marginBottom: 5 }]}>{t('dayEdit.chooseTime')}</Text>
+                <View style={styles.timePickerContainer}>
+                  <Text style={[styles.label, styles.chooseTimeLabel]}>{t('dayEdit.chooseTime')}</Text>
                   <DateTimePicker
                     value={selectedTime}
                     mode="time"
@@ -194,13 +194,13 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate }) => {
             {isPlanPickerVisible && (
               <View style={styles.planPickerContainer}>
                 <Text style={styles.modalTitle}>{t('dayEdit.choosePlan')}</Text>
-                {plans.map(plan => (
+                {plans.supplements.map(plan => (
                   <AppButton
                     key={plan.name}
                     title={plan.name}
                     onPress={() => addSupplementsFromPlan(plan)}
                     variant="primary"
-                    style={{ marginVertical: 6, width: '100%' }}
+                    style={styles.planButton}
                   />
                 ))}
 
@@ -208,7 +208,7 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate }) => {
                   title={t('general.cancel')}
                   onPress={() => setIsPlanPickerVisible(false)}
                   variant="secondary"
-                  style={{ marginTop: 20 }}
+                  style={styles.cancelButton}
                 />
               </View>
             )}
@@ -230,6 +230,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 10,
     color: colors.text,
+  },
+  chooseTimeLabel: {
+    marginBottom: 5,
+  },
+  timePickerContainer: {
+    marginVertical: 40,
   },
   planPickerContainer: {
     flex: 1,
@@ -253,6 +259,10 @@ const styles = StyleSheet.create({
   planName: {
     fontSize: 16,
     color: colors.text,
+  },
+  planButton: {
+    marginVertical: 6,
+    width: '100%',
   },
 
   tabContainer: {
@@ -293,6 +303,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontSize: 16,
     color: Colors.dark.textWhite,
+  },
+  cancelButton: {
+    marginTop: 20,
   },
 });
 

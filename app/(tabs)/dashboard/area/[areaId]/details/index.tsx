@@ -295,7 +295,7 @@ export default function AreaDetailScreen() {
       pathname: '/(tabs)/chat',
       params: {
         initialPrompt: fullPrompt,
-        returnPath: `/(goal)/${areaId}/details`,
+        returnPath: `(tabs)/dashboard/area/${areaId}/details`,
         returnParams: JSON.stringify({ areaId, tipId }),
       },
     });

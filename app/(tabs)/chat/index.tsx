@@ -2,7 +2,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { t } from 'i18next';
-import React, { JSX, useEffect, useRef, useState } from 'react';
+import React, { JSX, useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import AIInfoPopup from '@/components/AllInfoPopup';
@@ -14,6 +14,14 @@ import { askGPT, buildSystemPrompt } from '@/services/gptServices';
 
 import { useStorage } from '../../context/StorageContext';
 import { Message } from '../../domain/Message';
+
+// Ensure each message has a unique id
+function createMessage(message: Omit<Message, 'id'> & { id?: string }): Message & { id: string } {
+  return {
+    ...message,
+    id: message.id ?? `${message.role}-${Math.random().toString(36).substr(2, 9)}-${Date.now()}`,
+  };
+}
 
 export default function ChatWithGPT4o(): JSX.Element {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -34,7 +42,10 @@ export default function ChatWithGPT4o(): JSX.Element {
   const dot2Anim = useRef(new Animated.Value(0.4)).current;
   const dot3Anim = useRef(new Animated.Value(0.4)).current;
 
-  const parsedSupplements = supplements ? (JSON.parse(supplements) as string[]) : [];
+  const parsedSupplements = React.useMemo(
+    () => (supplements ? (JSON.parse(supplements) as string[]) : []),
+    [supplements]
+  );
 
   const tabBarHeight = useBottomTabBarHeight();
   const isKeyboardVisible = useKeyboardVisible();
@@ -61,7 +72,7 @@ export default function ChatWithGPT4o(): JSX.Element {
     }
   };
 
-  const fullSystemPrompt = () => buildSystemPrompt(plans, shareHealthPlan);
+  const fullSystemPrompt = useCallback(() => buildSystemPrompt(plans, shareHealthPlan), [plans, shareHealthPlan]);
 
   // Animera typing indicator
   useEffect(() => {
@@ -98,28 +109,28 @@ export default function ChatWithGPT4o(): JSX.Element {
       dot2Anim.setValue(0.4);
       dot3Anim.setValue(0.4);
     }
-  }, [loading]);
+  }, [dot1Anim, dot2Anim, dot3Anim, loading]);
 
   useEffect(() => {
     setMessages([
-      {
+      createMessage({
         role: 'assistant',
         content: t('chat.welcomeMessage'),
-      },
+      }),
     ]);
   }, []);
 
   useEffect(() => {
     if (initialPrompt) {
       const sendInitialPrompt = async () => {
-        const userMessage: Message = { role: 'user', content: initialPrompt };
-        const planOverviewMessage: Message = {
+        const userMessage = createMessage({ role: 'user', content: initialPrompt });
+        const planOverviewMessage = createMessage({
           role: 'system',
           content: fullSystemPrompt(),
-        };
+        });
 
-        const visibleMessages: Message[] = [userMessage];
-        const messagesToSend: Message[] = [planOverviewMessage, ...visibleMessages];
+        const visibleMessages = [userMessage];
+        const messagesToSend = [planOverviewMessage, ...visibleMessages];
 
         setMessages(visibleMessages);
         setLoading(true);
@@ -128,10 +139,10 @@ export default function ChatWithGPT4o(): JSX.Element {
           const data = await askGPT(messagesToSend);
           if (data.type === 'text') {
             const content = data.content ?? '🤖 Inget svar tillgängligt.';
-            setMessages(prev => [...prev, { role: 'assistant', content }]);
+            setMessages(prev => [...prev, createMessage({ role: 'assistant', content })]);
           }
         } catch (error) {
-          setMessages(prev => [...prev, { role: 'assistant', content: 'Något gick fel. 😕 ' + error }]);
+          setMessages(prev => [...prev, createMessage({ role: 'assistant', content: 'Något gick fel. 😕 ' + error })]);
         } finally {
           setLoading(false);
         }
@@ -139,7 +150,7 @@ export default function ChatWithGPT4o(): JSX.Element {
 
       sendInitialPrompt();
     }
-  }, [initialPrompt]);
+  }, [fullSystemPrompt, initialPrompt]);
 
   useEffect(() => {
     if (parsedSupplements.length > 0) {
@@ -149,13 +160,13 @@ export default function ChatWithGPT4o(): JSX.Element {
         supplements: suppList,
       });
 
-      const userMessage: Message = { role: 'user', content: introPrompt };
-      const planOverviewMessage: Message = {
+      const userMessage = createMessage({ role: 'user', content: introPrompt });
+      const planOverviewMessage = createMessage({
         role: 'system',
         content: fullSystemPrompt(),
-      };
+      });
 
-      const messagesToSend: Message[] = [planOverviewMessage, userMessage];
+      const messagesToSend = [planOverviewMessage, userMessage];
       setMessages([userMessage]);
       setLoading(true);
 
@@ -166,14 +177,14 @@ export default function ChatWithGPT4o(): JSX.Element {
 
           setMessages(prev => [
             ...prev,
-            { role: 'assistant', content: gptReply },
-            {
+            createMessage({ role: 'assistant', content: gptReply }),
+            createMessage({
               role: 'assistant',
               content: t('chat.askToAddSupplements'),
-            },
+            }),
           ]);
         } catch (e) {
-          setMessages(prev => [...prev, { role: 'assistant', content: 'Fel: ' + e }]);
+          setMessages(prev => [...prev, createMessage({ role: 'assistant', content: 'Fel: ' + e })]);
         } finally {
           setLoading(false);
         }
@@ -181,7 +192,7 @@ export default function ChatWithGPT4o(): JSX.Element {
 
       ask();
     }
-  }, [parsedSupplements.length]);
+  }, [fullSystemPrompt, goal, parsedSupplements, parsedSupplements.length]);
 
   useEffect(() => {
     // Scrolla endast om användaren redan är nära botten
@@ -195,21 +206,21 @@ export default function ChatWithGPT4o(): JSX.Element {
   const sendMessage = async (): Promise<void> => {
     if (!input.trim()) return;
 
-    const userMessage: Message = { role: 'user', content: input };
-    const planOverviewMessage: Message = {
+    const userMessage = createMessage({ role: 'user', content: input });
+    const planOverviewMessage = createMessage({
       role: 'system',
       content: fullSystemPrompt(),
-    };
+    });
 
-    const visibleMessages: Message[] = [...messages, userMessage];
-    const messagesToSend: Message[] = [planOverviewMessage, ...visibleMessages];
+    const visibleMessages = [...messages, userMessage];
+    const messagesToSend = [planOverviewMessage, ...visibleMessages];
 
     setMessages(visibleMessages);
     setInput('');
     setLoading(true);
 
     // Ge XP för meddelandet om vi har tip-kontext
-    if (tipContext?.mainGoalId && tipContext?.tipId) {
+    if (tipContext?.areaId && tipContext?.tipId) {
       const xpGained = addChatMessageXP(tipContext.mainGoalId, tipContext.tipId);
       console.log(`💬 +${xpGained} XP for chatting!`);
     }
@@ -219,34 +230,48 @@ export default function ChatWithGPT4o(): JSX.Element {
 
       if (data.type === 'text') {
         const content = data.content ?? '🤖 Inget svar tillgängligt.';
-        setMessages(prev => [...prev, { role: 'assistant', content }]);
+        setMessages(prev => [...prev, createMessage({ role: 'assistant', content })]);
       } else if (data.type === 'function_call' && data.arguments) {
         handleGPTFunctionCall(data.arguments, setMessages);
       } else {
-        setMessages(prev => [...prev, { role: 'assistant', content: 'Inget användbart svar.' }]);
+        setMessages(prev => [...prev, createMessage({ role: 'assistant', content: 'Inget användbart svar.' })]);
       }
     } catch (error) {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Något gick fel. 😕 ' + error }]);
+      setMessages(prev => [...prev, createMessage({ role: 'assistant', content: 'Något gick fel. 😕 ' + error })]);
     } finally {
       setLoading(false);
     }
   };
 
+  // Calculate paddingTop outside of JSX to avoid nested ternary in style
+  let paddingTopValue = 10;
+  if (showBackButton) {
+    paddingTopValue = tipContext ? 10 : 0;
+  }
+
+  // Calculate bottom value for inputContainer outside of JSX to avoid nested ternary and inline style warning
+  let inputContainerBottom = 0;
+  if (!isKeyboardVisible) {
+    inputContainerBottom = typeof tabBarHeight === 'number' ? tabBarHeight : 0;
+  }
+
   return (
+    <>
+    {showBackButton && <BackButton onPress={handleBack} />}
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <View style={{ flex: 1 }}>
-        {showBackButton && <BackButton onPress={handleBack} />}
+      <View style={styles.flex1}>
+       
 
         {/* Visa XP-indikator om vi har tip-kontext */}
         {tipContext && (
           <View style={styles.xpIndicator}>
-            <Text style={styles.xpIndicatorText}>💬 +2 XP per message</Text>
+            <Text style={styles.xpIndicatorText}>💬 +2 XP</Text>
           </View>
         )}
 
         <ScrollView
           ref={scrollRef}
-          style={{ flex: 1 }}
+          style={styles.flex1}
           keyboardShouldPersistTaps="handled"
           onScroll={event => {
             const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
@@ -255,16 +280,14 @@ export default function ChatWithGPT4o(): JSX.Element {
             isNearBottom.current = distanceFromBottom < 100;
           }}
           scrollEventThrottle={400}
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: 'flex-end',
-            paddingBottom: tabBarHeight + 80,
-            paddingTop: showBackButton ? (tipContext ? 40 : 0) : 10,
-          }}
+          contentContainerStyle={[
+            styles.scrollContentContainer,
+            { paddingBottom: tabBarHeight + 80, paddingTop: paddingTopValue }
+          ]}
         >
           {messages.map((msg, index) => (
             <View
-              key={index}
+              key={`${msg.role}-${index}`}
               style={[styles.messageBubble, msg.role === 'user' ? styles.userBubble : styles.assistantBubble]}
             >
               <Text style={styles.sender}>{msg.role === 'user' ? 'Du' : 'GPT'}:</Text>
@@ -283,7 +306,7 @@ export default function ChatWithGPT4o(): JSX.Element {
             </View>
           )}
         </ScrollView>
-        <View style={[styles.inputContainer, { bottom: isKeyboardVisible ? 0 : tabBarHeight }]}>
+        <View style={[styles.inputContainer, { bottom: inputContainerBottom }]}>
           <View style={styles.inputRow}>
             <View style={styles.iconWrapperAdjusted}>
               <AIInfoPopup />
@@ -314,15 +337,23 @@ export default function ChatWithGPT4o(): JSX.Element {
         </View>
       </View>
     </KeyboardAvoidingView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  flex1: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: Platform.OS === 'ios' ? 50 : 20,
+    paddingTop: Platform.OS === 'ios' ? 40 : 20,
     backgroundColor: Colors.dark.background,
+  },
+  scrollContentContainer: {
+    flexGrow: 1,
+    justifyContent: 'flex-end',
   },
   messageBubble: {
     borderRadius: 16,
@@ -397,9 +428,9 @@ const styles = StyleSheet.create({
   },
   xpIndicator: {
     position: 'absolute',
-    top: 50,
-    right: 20,
-    backgroundColor: Colors.dark.accentVeryWeak,
+    top: 10,
+    right: 0,
+    backgroundColor: Colors.dark.accentWeak,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
