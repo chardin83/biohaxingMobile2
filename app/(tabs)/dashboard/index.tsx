@@ -3,11 +3,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import { Colors } from '@/app/theme/Colors';
 import Smart from '@/assets/images/level1_small.png';
 import AppCard from '@/components/ui/AppCard';
 import Container from '@/components/ui/Container';
 import ProgressBarWithLabel from '@/components/ui/ProgressbarWithLabel';
-import { Colors } from '@/constants/Colors';
 import { levels } from '@/constants/XP';
 import { areas } from '@/locales/areas';
 import { tips } from '@/locales/tips';

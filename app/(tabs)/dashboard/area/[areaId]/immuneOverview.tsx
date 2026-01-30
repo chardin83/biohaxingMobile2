@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { Colors } from '@/app/theme/Colors';
+import { globalStyles } from '@/app/theme/globalStyles';
 import { HRVMetric } from '@/components/metrics/HRVMetric';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { SleepMetric } from '@/components/metrics/SleepMetric';
@@ -11,7 +13,6 @@ import GenesListCard from '@/components/ui/GenesListCard';
 import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
-import { Colors } from '@/constants/Colors';
 import { EnergySignal, HRVSummary, SleepSummary, TimeRange } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
@@ -97,7 +98,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
         </View>
 
         {/* Second row */}
-        <View style={[styles.row, styles.marginTop8]}>
+        <View style={[styles.row, globalStyles.marginTop8]}>
           {/* Resting Heart Rate */}
           <RestingHRMetric hrvData={hrvData} showDivider />
 
@@ -166,9 +167,6 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  marginTop8: {
-    marginTop: 8,
   },
   col: {
     flex: 1,

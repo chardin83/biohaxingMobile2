@@ -4,8 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
+import { Colors } from '@/app/theme/Colors';
+import { globalStyles } from '@/app/theme/globalStyles';
 import { Card } from '@/components/ui/Card';
-import { Colors } from '@/constants/Colors';
 import { tips } from '@/locales/tips';
 import { NEGATIVE_VERDICTS, POSITIVE_VERDICTS, VerdictValue } from '@/types/verdict';
 
@@ -66,7 +67,7 @@ export default function TipsList({ areaId, title }: Readonly<TipsListProps>) {
     }
     return sortedTips.filter(tip => {
       const viewedTip = viewedTips?.find(v => v.mainGoalId === areaId && v.tipId === tip.id);
-      return viewedTip?.verdict ? !negativeVerdicts.has(viewedTip.verdict as VerdictValue) : true;
+      return viewedTip?.verdict ? !negativeVerdicts.has(viewedTip.verdict) : true;
     });
   }, [showAllTips, sortedTips, viewedTips, negativeVerdicts, areaId]);
 
@@ -104,7 +105,7 @@ export default function TipsList({ areaId, title }: Readonly<TipsListProps>) {
   };
 
   return (
-    <Card title={t(title)} style={{ marginTop: 16 }}>
+    <Card title={t(title)} style={globalStyles.marginTop16}>
       {visibleTips.map((tip, index) => {
         const tipProgress = getTipProgress(tip.id);
 

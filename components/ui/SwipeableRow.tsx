@@ -1,11 +1,10 @@
 import React from 'react';
-import { StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-import Reanimated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import Reanimated, { useAnimatedStyle } from 'react-native-reanimated';
 
-import { colors } from '@/app/theme/styles';
+import { Colors } from '@/app/theme/Colors';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { Colors } from '@/constants/Colors';
 
 interface SwipeableRowProps {
   children: React.ReactNode;
@@ -14,28 +13,38 @@ interface SwipeableRowProps {
   containerStyle?: StyleProp<ViewStyle>;
 }
 
+const ACTION_WIDTH = 160;
+
+interface RightActionsProps {
+  drag: any;
+  onEdit?: () => void;
+  onDelete?: () => void;
+}
+
+const RightActions = ({ drag, onEdit, onDelete }: RightActionsProps) => {
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: drag.value + ACTION_WIDTH }],
+  }));
+
+  return (
+    <Reanimated.View style={[styles.rightActionContainer, animatedStyle]}>
+      {onEdit && (
+        <TouchableOpacity style={[styles.actionButton, styles.edit]} onPress={onEdit}>
+          <IconSymbol name="pencil" color="white" size={24} />
+        </TouchableOpacity>
+      )}
+      {onDelete && (
+        <TouchableOpacity style={[styles.actionButton, styles.delete]} onPress={onDelete}>
+          <IconSymbol name="trash" color="white" size={24} />
+        </TouchableOpacity>
+      )}
+    </Reanimated.View>
+  );
+};
+
 export const SwipeableRow = ({ children, onEdit, onDelete, containerStyle }: SwipeableRowProps) => {
-  const ACTION_WIDTH = 160;
-
   const renderRightActions = (progress: any, drag: any) => {
-    const animatedStyle = useAnimatedStyle(() => ({
-      transform: [{ translateX: drag.value + ACTION_WIDTH }],
-    }));
-
-    return (
-      <Reanimated.View style={[styles.rightActionContainer, animatedStyle]}>
-        {onEdit && (
-          <TouchableOpacity style={[styles.actionButton, styles.edit]} onPress={onEdit}>
-            <IconSymbol name="pencil" color="white" size={24} />
-          </TouchableOpacity>
-        )}
-        {onDelete && (
-          <TouchableOpacity style={[styles.actionButton, styles.delete]} onPress={onDelete}>
-            <IconSymbol name="trash" color="white" size={24} />
-          </TouchableOpacity>
-        )}
-      </Reanimated.View>
-    );
+    return <RightActions drag={drag} onEdit={onEdit} onDelete={onDelete} />;
   };
 
   return (

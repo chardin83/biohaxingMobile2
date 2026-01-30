@@ -2,11 +2,11 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, ScrollView,StyleSheet, Text, TouchableOpacity,View } from 'react-native';
 
+import { Colors } from '@/app/theme/Colors';
 import Badge from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
 import LabeledInput from '@/components/ui/LabeledInput';
-import { Colors } from '@/constants/Colors';
 import { bodyParts as allBodyParts } from '@/locales/bodyParts';
 import { tips } from '@/locales/tips';
 import { PlanCategory } from '@/types/planCategory';

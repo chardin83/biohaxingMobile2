@@ -5,7 +5,7 @@ import ProgressBarWithLabel from '../ProgressbarWithLabel';
 
 // Mock react-native-progress
 jest.mock('react-native-progress', () => ({
-  Bar: ({ progress, width, color, unfilledColor, borderRadius, borderWidth, testID }: any) => {
+  Bar: ({ progress, width, unfilledColor, borderRadius, borderWidth, testID }: any) => {
     const { View } = require('react-native');
     return (
       <View
@@ -24,7 +24,7 @@ jest.mock('react-native-progress', () => ({
 }));
 
 // Mock Colors
-jest.mock('@/constants/Colors', () => ({
+jest.mock('@/app/theme/Colors', () => ({
   Colors: {
     dark: {
       progressBar: '#00FF00',

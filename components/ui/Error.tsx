@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet,Text, View } from 'react-native';
 
-import { Colors } from '@/constants/Colors';
+import { Colors } from '@/app/theme/Colors';
 
 export const Error = ({ error }: { error: string }) => (
   <View style={styles.bg}>

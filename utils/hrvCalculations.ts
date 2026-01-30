@@ -10,7 +10,7 @@ export function calculateHRVMetrics(hrvData: HRVSummary[]): HRVMetrics {
     return { hrv: null, hrvDelta: 0 };
   }
 
-  const latest = hrvData[hrvData.length - 1];
+  const latest = hrvData.at(-1)!;
   const hrv = latest.rmssdMs ?? null;
 
   let hrvDelta = 0;

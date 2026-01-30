@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
-import { Colors } from '@/constants/Colors';
+import { Colors } from '@/app/theme/Colors';
 import { Gene, GeneArea } from '@/locales/genes';
 
 interface GeneCardProps {

@@ -7,8 +7,8 @@ import { useStorage } from '@/app/context/StorageContext';
 import { Plan } from '@/app/domain/Plan';
 import { Supplement } from '@/app/domain/Supplement';
 import { SupplementTime } from '@/app/domain/SupplementTime';
+import { Colors } from '@/app/theme/Colors';
 import { colors } from '@/app/theme/styles';
-import { Colors } from '@/constants/Colors';
 
 import NutritionLogger from './NutritionLogger';
 import SelectedSupplementsList from './SelectedSupplementsList';

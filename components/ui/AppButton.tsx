@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleProp, StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-native';
 
-import { Colors } from '@/constants/Colors';
+import { Colors } from '@/app/theme/Colors';
 
 type Variant = 'primary' | 'secondary' | 'danger';
 

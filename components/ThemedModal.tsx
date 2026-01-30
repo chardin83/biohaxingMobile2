@@ -2,9 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
+import { Colors } from '@/app/theme/Colors';
 import { borders } from '@/app/theme/styles';
 import { ThemedText } from '@/components/ThemedText';
-import { Colors } from '@/constants/Colors';
 
 import AppButton from './ui/AppButton';
 

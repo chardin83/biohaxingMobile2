@@ -2,8 +2,8 @@
 import { router, useLocalSearchParams, usePathname, useSegments } from 'expo-router';
 import { useEffect } from 'react';
 
+import { Colors } from '@/app/theme/Colors';
 import Container from '@/components/ui/Container';
-import { Colors } from '@/constants/Colors';
 
 import CardioOverview from './cardioOverview';
 import DigestiveOverview from './digestiveOverview';

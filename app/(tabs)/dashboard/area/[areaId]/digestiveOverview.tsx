@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { Card } from '@/components/ui/Card';
 import { Error } from '@/components/ui/Error';
@@ -36,8 +36,9 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
         setSleepData(sleep);
         setActivityData(activity);
         setEnergyData(energy);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load data');
+       } catch (err) {
+        console.error('Failed to load data:', err);
+        setError('Failed to load data');
       } finally {
         setLoading(false);
       }

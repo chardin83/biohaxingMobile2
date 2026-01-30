@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 
+import { Colors } from '@/app/theme/Colors';
 import CalendarComponent from '@/components/CalendarComponent';
 import DayEdit from '@/components/DayEdit';
-import { Colors } from '@/constants/Colors';
 
 import { borders } from '../../theme/styles';
 

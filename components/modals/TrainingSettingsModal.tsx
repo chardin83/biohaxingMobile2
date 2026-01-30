@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { Keyboard, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 
+import { Colors } from '@/app/theme/Colors';
 import { ThemedModal } from '@/components/ThemedModal';
 import { ThemedText } from '@/components/ThemedText';
 import LabeledInput from '@/components/ui/LabeledInput';
-import { Colors } from '@/constants/Colors';
 
 type TrainingSettingsModalProps = {
   visible: boolean;

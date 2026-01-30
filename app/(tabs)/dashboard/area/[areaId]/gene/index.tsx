@@ -3,9 +3,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text } from 'react-native';
 
+import { Colors } from '@/app/theme/Colors';
 import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
-import { Colors } from '@/constants/Colors';
 import { genes } from '@/locales/genes';
 
 export default function GeneDetailsScreen() {

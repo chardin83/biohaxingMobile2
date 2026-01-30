@@ -3,8 +3,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { Colors } from '@/app/theme/Colors';
 import AppButton from '@/components/ui/AppButton';
-import { Colors } from '@/constants/Colors';
 
 import Areas from '../(manage)/areas';
 import { useStorage } from '../context/StorageContext';

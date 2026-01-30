@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { Colors } from '@/app/theme/Colors';
 import CheckIcon from '@/assets/icons/check.svg';
 import PlayIcon from '@/assets/icons/play.svg';
 import ProhibitionIcon from '@/assets/icons/prohibition.svg';
 import SearchIcon from '@/assets/icons/search.svg';
 import StarIcon from '@/assets/icons/star.svg';
 import AppBox from '@/components/ui/AppBox';
-import { Colors } from '@/constants/Colors';
 import { VerdictValue } from '@/types/verdict';
 
 const ICON_SIZE = 40;

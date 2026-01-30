@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet,Text, View } from 'react-native';
 
-import { Colors } from '@/constants/Colors';
+import { Colors } from '@/app/theme/Colors';
 import { genes } from '@/locales/genes';
 
 import { Card } from './Card';

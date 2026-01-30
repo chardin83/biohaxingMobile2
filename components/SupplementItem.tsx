@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Supplement } from '@/app/domain/Supplement';
-import { Colors } from '@/constants/Colors';
+import { Colors } from '@/app/theme/Colors';
 
 import { SwipeableRow } from './ui/SwipeableRow';
 

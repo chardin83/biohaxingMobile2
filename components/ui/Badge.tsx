@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
-import { Colors } from '@/constants/Colors';
+import { Colors } from '@/app/theme/Colors';
 
 export type BadgeVariant = 'default' | 'overlay';
 

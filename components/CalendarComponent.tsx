@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 
 import { useStorage } from '@/app/context/StorageContext';
-import { Colors } from '@/constants/Colors';
+import { Colors } from '@/app/theme/Colors';
 
 const configureCalendarLocale = (language: string, t: any) => {
   const localeConfig = {

@@ -6,6 +6,8 @@ import { Icon } from 'react-native-paper';
 
 import SupplementList from '@/app/components/SupplementList';
 import { useStorage } from '@/app/context/StorageContext';
+import { Supplement } from '@/app/domain/Supplement';
+import { Colors } from '@/app/theme/Colors';
 import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
 import Container from '@/components/ui/Container';
@@ -13,7 +15,6 @@ import { NotFound } from '@/components/ui/NotFound';
 import ProgressBarWithLabel from '@/components/ui/ProgressbarWithLabel';
 import VerdictSelector from '@/components/VerdictSelector';
 import { AIPromptKey, AIPrompts } from '@/constants/AIPrompts';
-import { Colors } from '@/constants/Colors';
 import { areas } from '@/locales/areas';
 import { useSupplements } from '@/locales/supplements';
 import { tips } from '@/locales/tips';
@@ -154,7 +155,7 @@ export default function AreaDetailScreen() {
   }, [tip?.nutritionFoods, tip?.id, t]);
 
   // Lös upp tip.supplements (id-referenser) till fulla supplement-objekt från översättningarna
-  const resolvedSupplements = React.useMemo(() => {
+  const resolvedSupplements: Supplement[] = React.useMemo(() => {
     if (!tip?.supplements?.length) return [] as any[];
     return tip.supplements.map(ref => supplements?.find(s => s.id === ref.id)).filter(Boolean) as any[];
   }, [tip?.supplements, supplements]);

@@ -1,15 +1,14 @@
 // components/ui/AppBox.tsx
 import React from 'react';
-import { StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import { Colors } from '@/app/theme/Colors';
 import { Card } from '@/components/ui/Card';
-import { Colors } from '@/constants/Colors';
 
 type Props = {
   title: string;
   children: React.ReactNode;
   headerRight?: React.ReactNode;
-  style?: StyleProp<ViewStyle>;
   onPressHeader?: () => void;
   headerAccessibilityLabel?: string;
   leading?: React.ReactNode;
@@ -19,7 +18,6 @@ export default function AppBox({
   title,
   children,
   headerRight,
-  style,
   onPressHeader,
   headerAccessibilityLabel,
   leading,

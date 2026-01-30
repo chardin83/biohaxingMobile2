@@ -1,13 +1,13 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { Colors } from '@/app/theme/Colors';
 import { HRVMetric } from '@/components/metrics/HRVMetric';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { Card } from '@/components/ui/Card';
 import GenesListCard from '@/components/ui/GenesListCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
-import { Colors } from '@/constants/Colors';
 import { calculateHRVMetrics } from '@/utils/hrvCalculations';
 import { HRVSummary } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';

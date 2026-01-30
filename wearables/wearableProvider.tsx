@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
 import { MockAdapter } from './mockAdapter';
 import { AdapterStatus, WearableAdapter } from './types';
@@ -12,14 +12,14 @@ type WearableContextValue = {
 
 const WearableContext = createContext<WearableContextValue | null>(null);
 
-export function WearableProvider({ children }: { children: React.ReactNode }) {
-  const [adapter, setAdapterState] = useState<WearableAdapter>(() => new MockAdapter());
+export function WearableProvider({ children }: { readonly children: React.ReactNode }) {
+  const [adapterState, setAdapterState] = useState<WearableAdapter>(() => new MockAdapter());
   const [status, setStatus] = useState<AdapterStatus>({ state: 'disconnected' });
 
-  const refreshStatus = async () => {
-    const s = await adapter.getStatus();
+  const refreshStatus = useCallback(async () => {
+    const s = await adapterState.getStatus();
     setStatus(s);
-  };
+  }, [adapterState]);
 
   const setAdapter = async (next: WearableAdapter) => {
     setAdapterState(next);
@@ -31,9 +31,9 @@ export function WearableProvider({ children }: { children: React.ReactNode }) {
   React.useEffect(() => {
     refreshStatus().catch(() => setStatus({ state: 'error', message: 'Failed to load adapter status' }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [adapter]);
+  }, [adapterState]);
 
-  const value = useMemo(() => ({ adapter, status, setAdapter, refreshStatus }), [adapter, status]);
+  const value = useMemo(() => ({ adapter: adapterState, status, setAdapter, refreshStatus }), [adapterState, refreshStatus, status]);
 
   return <WearableContext.Provider value={value}>{children}</WearableContext.Provider>;
 }

@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
 
+import { Colors } from '@/app/theme/Colors';
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbolName } from '@/components/ui/icon-symbol-map';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 import i18n from '../i18n';

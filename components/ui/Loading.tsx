@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet,Text, View } from 'react-native';
 
-import { Colors } from '@/constants/Colors';
+import { Colors } from '@/app/theme/Colors';
 
 export const Loading = () => (
   <View style={styles.bg}>

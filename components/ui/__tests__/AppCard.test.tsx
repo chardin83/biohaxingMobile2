@@ -16,7 +16,7 @@ jest.mock('react-native-paper', () => ({
 }));
 
 // Mock Colors
-jest.mock('@/constants/Colors', () => ({
+jest.mock('@/app/theme/Colors', () => ({
   Colors: {
     dark: {
       primary: '#00FF00',
@@ -101,7 +101,7 @@ describe('AppCard', () => {
   });
 
   it('renders with all props together', () => {
-    const { getByText, getByTestId } = render(
+    const { getByText } = render(
       <AppCard {...defaultProps} icon="star" description="Full card test" isActive={true} />
     );
 

@@ -4,11 +4,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Colors } from '@/constants/Colors';
+import { Colors } from '@/app/theme/Colors';
 
 interface BackButtonProps {
-  onPress?: () => void;
-  style?: any;
+  readonly onPress?: () => void;
+  readonly style?: any;
 }
 
 export default function BackButton({ onPress, style }: BackButtonProps) {

@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { Supplement } from '@/app/domain/Supplement';
 import { SupplementTime } from '@/app/domain/SupplementTime';
-import { Colors } from '@/constants/Colors';
+import { Colors } from '@/app/theme/Colors';
 
 import SupplementItem from './SupplementItem';
 

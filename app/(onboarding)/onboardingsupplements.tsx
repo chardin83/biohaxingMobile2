@@ -3,9 +3,9 @@ import { t } from 'i18next';
 import React, { useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
+import { Colors } from '@/app/theme/Colors';
 import AppButton from '@/components/ui/AppButton';
 import AppCard from '@/components/ui/AppCard';
-import { Colors } from '@/constants/Colors';
 import { defaultPlans } from '@/locales/defaultPlans';
 import { useSupplements } from '@/locales/supplements';
 

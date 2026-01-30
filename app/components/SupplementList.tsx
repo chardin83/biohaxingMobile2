@@ -3,14 +3,16 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 
+import { Colors } from '@/app/theme/Colors';
 import CreateTimeSlotModal, { CreatePlanData } from '@/components/modals/CreateTimeSlotModal';
 import { ThemedModal } from '@/components/ThemedModal';
 import AppButton from '@/components/ui/AppButton';
-import { Colors } from '@/constants/Colors';
 import { useSupplementSaver } from '@/hooks/useSupplementSaver';
 
+import { Supplement } from '../domain/Supplement';
+
 interface SupplementListProps {
-  supplements: any[];
+  supplements: Supplement[];
   plannedSupplements: { ids: Set<string>; names: Set<string> };
   supplementPlans: any[];
 }
@@ -24,7 +26,7 @@ const SupplementList: React.FC<SupplementListProps> = ({
   const { saveSupplementToPlan } = useSupplementSaver();
   const [expandedSupplements, setExpandedSupplements] = React.useState<string[]>([]);
   const [addToPlanVisible, setAddToPlanVisible] = React.useState(false);
-  const [pendingSupplement, setPendingSupplement] = React.useState<any | null>(null);
+  const [pendingSupplement, setPendingSupplement] = React.useState<Supplement | null>(null);
   const [createPlanVisible, setCreatePlanVisible] = React.useState(false);
 
   const toggleSupplementInfo = (supplementId: string) => {
@@ -33,7 +35,7 @@ const SupplementList: React.FC<SupplementListProps> = ({
     );
   };
 
-  const handleOpenAddToPlan = (supp: any) => {
+  const handleOpenAddToPlan = (supp: Supplement) => {
     setPendingSupplement(supp);
     setAddToPlanVisible(true);
   };
@@ -52,7 +54,7 @@ const SupplementList: React.FC<SupplementListProps> = ({
   if (!supplements.length) return null;
   return (
     <>
-      {supplements.map((supplement: any) => {
+      {supplements.map((supplement: Supplement) => {
         const supplementId = supplement.id || supplement.name;
         const alreadyPlanned =
           plannedSupplements.ids.has(supplement.id) || plannedSupplements.names.has(supplement.name);

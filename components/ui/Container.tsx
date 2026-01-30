@@ -3,8 +3,9 @@ import React from 'react';
 import { StyleSheet, View, ViewProps } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
+import { Colors } from '@/app/theme/Colors';
+import { globalStyles } from '@/app/theme/globalStyles';
 import BackButton from '@/components/BackButton';
-import { Colors } from '@/constants/Colors';
 
 type GradientKey = keyof typeof Colors.dark.gradients;
 type ContainerProps = ViewProps & {
@@ -71,19 +72,16 @@ const Container: React.FC<ContainerProps> = ({
         locations={gradientLocations as [number, number, ...number[]] | undefined }
         start={gradient.start}
         end={gradient.end}
-        style={styles.flex1}
+        style={globalStyles.flex1}
       >
         {content}
       </LinearGradient>
     );
   }
-  return <View style={[styles.flex1, { backgroundColor: Colors.dark.background }]}>{content}</View>;
+  return <View style={[globalStyles.flex1, { backgroundColor: Colors.dark.background }]}>{content}</View>;
 };
 
 const styles = StyleSheet.create({
-  flex1: {
-    flex: 1,
-  },
   backButtonWrapper: {
     zIndex: 10,
     position: 'absolute',

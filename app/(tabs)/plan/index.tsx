@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
+import { Colors } from '@/app/theme/Colors';
 import { Collapsible } from '@/components/Collapsible';
 import CreateTimeSlotModal from '@/components/modals/CreateTimeSlotModal';
 import TrainingSettingsModal from '@/components/modals/TrainingSettingsModal';
@@ -16,7 +17,6 @@ import AppButton from '@/components/ui/AppButton';
 import Badge from '@/components/ui/Badge';
 import Container from '@/components/ui/Container';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSupplementSaver } from '@/hooks/useSupplementSaver';
 import { defaultPlans } from '@/locales/defaultPlans';
@@ -274,7 +274,6 @@ export default function Plans() {
         <AppBox
           title={displayTitle}
           headerRight={headerActions}
-          style={styles.planBox}
           onPressHeader={() => togglePlanExpanded(planKey)}
           headerAccessibilityLabel={t('plan.toggleSupplements', {
             defaultValue: 'Visa eller dölj innehåll',
@@ -405,7 +404,6 @@ export default function Plans() {
           key={`${goal.mainGoalId}-${goal.tipId}`}
           title={tipTitle ?? goal.mainGoalId}
           headerRight={editAction}
-          style={styles.trainingBox}
         >
           <ThemedText type="default" style={styles.trainingMeta}>
             {t('plan.trainingActiveSince', {
@@ -471,7 +469,7 @@ export default function Plans() {
       const arrowRotation = isExpanded ? '90deg' : '0deg';
 
       return (
-        <AppBox key={tipId} title={tipTitle} style={styles.nutritionBox}>
+        <AppBox key={tipId} title={tipTitle}>
           {recommendedDoseLabel && (
             <ThemedText type="default" style={styles.recommendedDose}>
               {recommendedDoseLabel}
@@ -675,17 +673,8 @@ const styles = StyleSheet.create({
   collapsibleContentFlush: {
     marginLeft: 0,
   },
-  trainingBox: {
-    marginBottom: 20,
-  },
-  nutritionBox: {
-    marginBottom: 20,
-  },
   modalField: {
     marginBottom: 16,
-  },
-  planBox: {
-    marginBottom: 20,
   },
   planHeaderActions: {
     flexDirection: 'row',

@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
+import { Colors } from '@/app/theme/Colors';
 import { colors } from '@/app/theme/styles';
-import { Colors } from '@/constants/Colors';
 import { NutritionAnalyze } from '@/services/gptServices';
 
 import ImagePickerButton from './ImagePickerButton';

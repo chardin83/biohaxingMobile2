@@ -4,8 +4,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { AdapterStatus } from '@/wearables/types';
 
 interface WearableStatusProps {
-  status: AdapterStatus;
-  style?: any;
+  readonly status: AdapterStatus;
+  readonly style?: any;
 }
 
 export function WearableStatus({ status, style }: WearableStatusProps) {

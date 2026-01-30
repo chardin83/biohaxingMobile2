@@ -20,6 +20,7 @@ import { WearableProvider } from '@/wearables/wearableProvider';
 
 import { SessionProvider } from './context/SessionStorage';
 import { StorageProvider } from './context/StorageContext';
+import { globalStyles } from './theme/globalStyles';
 import { colors } from './theme/styles';
 
 SplashScreen.preventAutoHideAsync();
@@ -57,7 +58,7 @@ export default function RootLayout() {
   if (!loaded) return null;
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={globalStyles.flex1}>
       <SparksProvider>
         <SparksOverlay />
         <MusicProvider>

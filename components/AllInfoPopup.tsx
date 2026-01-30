@@ -4,8 +4,8 @@ import { Modal, Pressable, StyleSheet, Switch, Text, TouchableOpacity, View } fr
 
 import { useSession } from '@/app/context/SessionStorage';
 import { useStorage } from '@/app/context/StorageContext';
+import { Colors } from '@/app/theme/Colors';
 import { borders } from '@/app/theme/styles';
-import { Colors } from '@/constants/Colors';
 
 const AIInfoPopup: React.FC = () => {
   const { hasVisitedChat, setHasVisitedChat, shareHealthPlan, setShareHealthPlan } = useStorage();
@@ -18,7 +18,7 @@ const AIInfoPopup: React.FC = () => {
       setVisible(true);
       setForceOpenPopup(false);
     }
-  }, [forceOpenPopup]);
+  }, [forceOpenPopup, setForceOpenPopup]);
 
   // Kontrollera om popup ska visas första gången
   useEffect(() => {
@@ -29,7 +29,7 @@ const AIInfoPopup: React.FC = () => {
       }
     };
     checkFirstVisit();
-  }, []);
+  }, [hasVisitedChat, setHasVisitedChat]);
 
   useEffect(() => {
     const loadStoredPrefs = async () => {
@@ -38,14 +38,14 @@ const AIInfoPopup: React.FC = () => {
       }
     };
     loadStoredPrefs();
-  }, []);
+  }, [shareHealthPlan]);
 
   useEffect(() => {
     const savePrefs = async () => {
       setShareHealthPlan(!!healthPlanEnabled);
     };
     savePrefs();
-  }, [healthPlanEnabled]);
+  }, [healthPlanEnabled, setShareHealthPlan]);
 
   const handleClose = () => {
     setVisible(false);

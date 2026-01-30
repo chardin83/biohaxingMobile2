@@ -5,9 +5,10 @@ import { t } from 'i18next';
 import React, { JSX, useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { Colors } from '@/app/theme/Colors';
+import { globalStyles } from '@/app/theme/globalStyles';
 import AIInfoPopup from '@/components/AllInfoPopup';
 import BackButton from '@/components/BackButton';
-import { Colors } from '@/constants/Colors';
 import { useGPTFunctionHandler } from '@/hooks/useGPTFunctionHandler';
 import { useKeyboardVisible } from '@/hooks/useKeyboardVisible';
 import { askGPT, buildSystemPrompt } from '@/services/gptServices';
@@ -259,7 +260,7 @@ export default function ChatWithGPT4o(): JSX.Element {
     <>
     {showBackButton && <BackButton onPress={handleBack} />}
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <View style={styles.flex1}>
+      <View style={globalStyles.flex1}>
        
 
         {/* Visa XP-indikator om vi har tip-kontext */}
@@ -271,7 +272,7 @@ export default function ChatWithGPT4o(): JSX.Element {
 
         <ScrollView
           ref={scrollRef}
-          style={styles.flex1}
+          style={globalStyles.flex1}
           keyboardShouldPersistTaps="handled"
           onScroll={event => {
             const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
@@ -342,9 +343,6 @@ export default function ChatWithGPT4o(): JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  flex1: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     paddingHorizontal: 20,

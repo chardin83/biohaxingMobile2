@@ -10,7 +10,7 @@ export function calculateRestingHRMetrics(hrvData: HRVSummary[]): RestingHRMetri
     return { restingHR: null, restingHRDelta: 0 };
   }
 
-  const latest = hrvData[hrvData.length - 1];
+  const latest = hrvData.at(-1)!;
   const restingHR = latest.avgRestingHrBpm ?? null;
 
   let restingHRDelta = 0;

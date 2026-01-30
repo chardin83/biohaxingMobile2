@@ -3,9 +3,9 @@ import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
+import { Colors } from '@/app/theme/Colors';
 import AppCard from '@/components/ui/AppCard';
 import Container from '@/components/ui/Container';
-import { Colors } from '@/constants/Colors';
 import { Area, areas } from '@/locales/areas';
 
 export default function Areas() {

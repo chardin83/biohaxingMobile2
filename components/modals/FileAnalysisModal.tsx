@@ -3,11 +3,11 @@ import React, { useState } from 'react';
 import { ActivityIndicator, Image, ScrollView, Text, View } from 'react-native';
 import Markdown from 'react-native-markdown-display';
 
+import { Colors } from '@/app/theme/Colors';
 import ImagePickerButton from '@/components/ImagePickerButton';
 import { ThemedModal } from '@/components/ThemedModal';
 import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
-import { Colors } from '@/constants/Colors';
 
 interface AnalysisModalProps {
   visible: boolean;

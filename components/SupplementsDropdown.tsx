@@ -4,7 +4,7 @@ import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-na
 import DropDownPicker from 'react-native-dropdown-picker';
 
 import { Supplement } from '@/app/domain/Supplement';
-import { Colors } from '@/constants/Colors';
+import { Colors } from '@/app/theme/Colors';
 import { useSupplements } from '@/locales/supplements';
 
 interface SupplementDropdownProps {
