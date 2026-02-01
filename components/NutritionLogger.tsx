@@ -1,10 +1,10 @@
+import { useTheme } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
-import { Colors } from '@/app/theme/Colors';
-import { colors } from '@/app/theme/styles';
+import { globalStyles } from '@/app/theme/globalStyles';
 import { NutritionAnalyze } from '@/services/gptServices';
 
 import ImagePickerButton from './ImagePickerButton';
@@ -15,6 +15,9 @@ interface NutritionLoggerProps {
 
 const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  
+    
   const { dailyNutritionSummaries, setDailyNutritionSummaries } = useStorage();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
@@ -131,24 +134,24 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
   const summary = dailyNutritionSummaries[selectedDate];
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView style={globalStyles.flex1} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.container}>
         <ImagePickerButton
           onImageSelected={handleImageSelected}
           isLoading={isAnalyzing}
           label={t('dayEdit.pickImage')}
         />
-        {analysisResult && <Text style={styles.result}>{analysisResult}</Text>}
+        {analysisResult && <Text style={[styles.result, { color: colors.text }  ]}>{analysisResult}</Text>}
 
-        <Text style={styles.label}>{t('dayEdit.logMeal')}</Text>
+        <Text style={[styles.label, { color: colors.text }]}>{t('dayEdit.logMeal')}</Text>
         {summary && (
-          <View style={styles.summaryContainer}>
-            <Text style={styles.label}>{t('dayEdit.nutritionSummary')}</Text>
-            <Text style={styles.summaryText}>🍗 Protein: {summary.totals.protein} g</Text>
-            <Text style={styles.summaryText}>🔥 Kalorier: {summary.totals.calories} kcal</Text>
-            <Text style={styles.summaryText}>🍞 Kolhydrater: {summary.totals.carbohydrates} g</Text>
-            <Text style={styles.summaryText}>🥑 Fett: {summary.totals.fat} g</Text>
-            <Text style={styles.summaryText}>🌾 Fibrer: {summary.totals.fiber} g</Text>
+          <View style={[styles.summaryContainer, { backgroundColor: colors.secondary }]}>
+            <Text style={[styles.label, { color: colors.text }]}>{t('dayEdit.nutritionSummary')}</Text>
+            <Text style={[styles.summaryText, { color: colors.text }]}>🍗 Protein: {summary.totals.protein} g</Text>
+            <Text style={[styles.summaryText, { color: colors.text }]}>🔥 Kalorier: {summary.totals.calories} kcal</Text>
+            <Text style={[styles.summaryText, { color: colors.text }]}>🍞 Kolhydrater: {summary.totals.carbohydrates} g</Text>
+            <Text style={[styles.summaryText, { color: colors.text }]}>🥑 Fett: {summary.totals.fat} g</Text>
+            <Text style={[styles.summaryText, { color: colors.text }]}>🌾 Fibrer: {summary.totals.fiber} g</Text>
           </View>
         )}
       </View>
@@ -165,21 +168,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 20,
     fontWeight: 'bold',
-    color: colors.text,
   },
   result: {
     marginTop: 20,
     fontSize: 16,
-    color: Colors.dark.text,
   },
   summaryContainer: {
     padding: 15,
-    backgroundColor: Colors.dark.secondary,
     borderRadius: 8,
   },
   summaryText: {
     fontSize: 15,
-    color: Colors.dark.text,
     marginBottom: 6,
   },
 });

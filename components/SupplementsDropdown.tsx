@@ -1,10 +1,12 @@
+import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 import { Supplement } from '@/app/domain/Supplement';
-import { Colors } from '@/app/theme/Colors';
+import { globalStyles } from '@/app/theme/globalStyles';
+import { ThemedText } from '@/components/ThemedText';
 import { useSupplements } from '@/locales/supplements';
 
 interface SupplementDropdownProps {
@@ -21,6 +23,7 @@ const SupplementDropdown: React.FC<SupplementDropdownProps> = ({
   disabled,
 }) => {
   const { t, i18n } = useTranslation();
+  const { colors } = useTheme();
   const [items, setItems] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState<string | null>(preselectedSupplement);
@@ -52,7 +55,9 @@ const SupplementDropdown: React.FC<SupplementDropdownProps> = ({
       <View style={styles.container}>
         {selectedTime && (
           <>
-            <Text style={styles.label}>{t('supplementDropdown.chooseSupplement')}</Text>
+            <ThemedText type="label">
+              {t('supplementDropdown.chooseSupplement')}
+            </ThemedText>
             <DropDownPicker
               open={open}
               value={value}
@@ -73,13 +78,26 @@ const SupplementDropdown: React.FC<SupplementDropdownProps> = ({
                   }
                 }
               }}
-              style={styles.dropdown}
-              dropDownContainerStyle={styles.dropdownContainer}
-              textStyle={styles.dropdownText}
-              placeholderStyle={styles.placeholder}
-              listItemLabelStyle={styles.listItem}
-              searchContainerStyle={styles.searchContainer}
-              searchTextInputStyle={styles.searchInput}
+              style={[
+                styles.dropdown,
+                {
+                  borderColor: colors.borderLight
+                },
+              ]}
+              dropDownContainerStyle={[
+                styles.dropdownContainer,
+                {
+                  backgroundColor: colors.secondary,
+                  borderColor: colors.borderLight,
+                },
+              ]}
+              textStyle={{ color: colors.textWhite }}
+              placeholderStyle={[styles.placeholder, { color: colors.textLight }]}
+              listItemLabelStyle={{ color: colors.textWhite }}
+              searchContainerStyle={{ borderBottomColor: colors.borderLight }}
+              searchTextInputStyle={[
+                { backgroundColor: colors.background, color: colors.textWhite },
+              ]}
               zIndex={3000}
               listMode="SCROLLVIEW"
               autoScroll
@@ -101,39 +119,17 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     zIndex: 1000,
   },
-  label: {
-    fontSize: 16,
-    color: Colors.dark.textLight,
-    marginBottom: 8,
-  },
   dropdown: {
-    backgroundColor: 'transparent',
-    borderColor: Colors.dark.borderLight,
     borderWidth: 1.5,
-    borderRadius: 12,
+    borderRadius: globalStyles.borders.borderRadius,
+    backgroundColor: 'transparent'
   },
   dropdownContainer: {
-    backgroundColor: Colors.dark.secondary,
-    borderColor: Colors.dark.borderLight,
-    borderRadius: 12,
+    borderRadius: globalStyles.borders.borderRadius,
     maxHeight: 200,
   },
-  dropdownText: {
-    color: Colors.dark.textWhite,
-  },
   placeholder: {
-    color: Colors.dark.textLight,
     fontStyle: 'italic',
-  },
-  listItem: {
-    color: Colors.dark.textWhite,
-  },
-  searchContainer: {
-    borderBottomColor: Colors.dark.borderLight,
-  },
-  searchInput: {
-    backgroundColor: Colors.dark.background,
-    color: Colors.dark.textWhite,
   },
 });
 

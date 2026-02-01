@@ -1,4 +1,5 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -7,8 +8,6 @@ import { useStorage } from '@/app/context/StorageContext';
 import { Plan } from '@/app/domain/Plan';
 import { Supplement } from '@/app/domain/Supplement';
 import { SupplementTime } from '@/app/domain/SupplementTime';
-import { Colors } from '@/app/theme/Colors';
-import { colors } from '@/app/theme/styles';
 
 import NutritionLogger from './NutritionLogger';
 import SelectedSupplementsList from './SelectedSupplementsList';
@@ -33,6 +32,8 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate }) => {
   const hasSupplementsToday = takenDates[selectedDate]?.length > 0;
   const hasMealsToday = useStorage().dailyNutritionSummaries[selectedDate]?.meals?.length > 0;
 
+    const { colors } = useTheme();
+    
   useEffect(() => {
     setSelectedSupplements(takenDates[selectedDate] ?? []);
   }, [selectedDate, takenDates]);
@@ -112,20 +113,20 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate }) => {
             onPress={() => setActiveTab('supplements')}
           >
             <View style={styles.tabContent}>
-              <Text style={styles.tab}>TILLSKOTT</Text>
+              <Text style={[styles.tab, { color: colors.text }] }>TILLSKOTT</Text>
               {hasSupplementsToday && (
-                <View style={[styles.badge, { backgroundColor: Colors.dark.checkmarkSupplement }]} />
+                <View style={[styles.badge, { backgroundColor: colors.checkmarkSupplement }]} />
               )}
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.tabWrapper, activeTab === 'meal' && styles.activeTabWrapper]}
+            style={[styles.tabWrapper, activeTab === 'meal' && styles.activeTabWrapper && { borderBottomColor: colors.primary }]}
             onPress={() => setActiveTab('meal')}
           >
             <View style={styles.tabContent}>
               <Text style={styles.tab}>MÅLTID</Text>
-              {hasMealsToday && <View style={[styles.badge, { backgroundColor: Colors.dark.checkmarkMeal }]} />}
+              {hasMealsToday && <View style={[styles.badge, { backgroundColor: colors.checkmarkMeal }]} />}
             </View>
           </TouchableOpacity>
         </View>
@@ -160,7 +161,7 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate }) => {
 
             {(isFormVisible || isPlanPickerVisible) && (
               <>
-                <Text style={styles.label}>
+                <Text style={[styles.label, { color: colors.text }]}>
                   {t('dayEdit.editSupplement')} {selectedDate}:
                 </Text>
                 <View style={styles.timePickerContainer}>
@@ -193,7 +194,7 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate }) => {
 
             {isPlanPickerVisible && (
               <View style={styles.planPickerContainer}>
-                <Text style={styles.modalTitle}>{t('dayEdit.choosePlan')}</Text>
+                <Text style={[styles.modalTitle, { color: colors.text }]}>{t('dayEdit.choosePlan')}</Text>
                 {plans.supplements.map(plan => (
                   <AppButton
                     key={plan.name}
@@ -229,7 +230,6 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 10,
-    color: colors.text,
   },
   chooseTimeLabel: {
     marginBottom: 5,
@@ -247,18 +247,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: colors.text,
-  },
-  planItem: {
-    padding: 15,
-    marginVertical: 5,
-    width: '100%',
-    backgroundColor: Colors.dark.assistantBubble,
-    borderRadius: 5,
-  },
-  planName: {
-    fontSize: 16,
-    color: colors.text,
   },
   planButton: {
     marginVertical: 6,
@@ -278,7 +266,6 @@ const styles = StyleSheet.create({
     borderBottomColor: 'transparent',
   },
   activeTabWrapper: {
-    borderBottomColor: Colors.dark.primary,
   },
   tabContent: {
     position: 'relative',
@@ -288,7 +275,6 @@ const styles = StyleSheet.create({
   tab: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: Colors.dark.text,
   },
   badge: {
     position: 'absolute',
@@ -297,12 +283,6 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-  },
-  menuItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    color: Colors.dark.textWhite,
   },
   cancelButton: {
     marginTop: 20,

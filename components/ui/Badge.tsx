@@ -1,7 +1,8 @@
+import { useTheme } from '@react-navigation/native';
 import React, { ReactNode } from 'react';
-import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { StyleProp, TouchableOpacity, View, ViewStyle } from 'react-native';
 
-import { Colors } from '@/app/theme/Colors';
+import { globalStyles } from '@/app/theme/globalStyles';
 
 export type BadgeVariant = 'default' | 'overlay';
 
@@ -22,7 +23,18 @@ const Badge: React.FC<BadgeProps> = ({
   disabled,
   activeOpacity = 0.8,
 }) => {
-  const variantStyle = variant === 'overlay' ? styles.overlay : styles.default;
+  const { colors } = useTheme();
+
+  const variantStyle =
+    variant === 'overlay'
+      ? {
+          backgroundColor: colors.overlayLight,
+          borderColor: colors.borderLight,
+        }
+      : {
+          backgroundColor: colors.secondary,
+          borderColor: colors.borderLight,
+        };
 
   if (onPress) {
     return (
@@ -30,33 +42,14 @@ const Badge: React.FC<BadgeProps> = ({
         onPress={onPress}
         disabled={disabled}
         activeOpacity={activeOpacity}
-        style={[styles.base, variantStyle, style]}
+        style={[globalStyles.badge, variantStyle, style]}
       >
         {children}
       </TouchableOpacity>
     );
   }
 
-  return <View style={[styles.base, variantStyle, style]}>{children}</View>;
+  return <View style={[globalStyles.badge, variantStyle, style]}>{children}</View>;
 };
-
-const styles = StyleSheet.create({
-  base: {
-    borderRadius: 16,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    marginRight: 8,
-    marginBottom: 8,
-  },
-  default: {
-    backgroundColor: Colors.dark.secondary,
-    borderColor: Colors.dark.borderLight,
-  },
-  overlay: {
-    backgroundColor: Colors.dark.overlayLight,
-    borderColor: Colors.dark.borderLight,
-  },
-});
 
 export default Badge;

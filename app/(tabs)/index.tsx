@@ -1,14 +1,14 @@
+import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
-import { ActivityIndicator, View } from 'react-native';
-
-import { Colors } from '@/app/theme/Colors';
+import { ActivityIndicator, StyleSheet,View } from 'react-native';
 
 import { useStorage } from '../context/StorageContext';
 
 export default function IndexRedirector() {
   const { hasCompletedOnboarding, isInitialized, onboardingStep } = useStorage();
   const router = useRouter();
+  const { colors } = useTheme();
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -28,22 +28,25 @@ export default function IndexRedirector() {
           break;
       }
     }
-  }, [isInitialized, hasCompletedOnboarding, onboardingStep]);
+  }, [isInitialized, hasCompletedOnboarding, onboardingStep, router]);
 
   if (!isInitialized) {
     return (
       <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: Colors.dark.background,
-        }}
+        style={[styles.container, { backgroundColor: colors.background }]}
       >
-        <ActivityIndicator size="large" color={Colors.dark.primary} />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
 
   return null;
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

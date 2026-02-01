@@ -1,6 +1,9 @@
+import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 
+import { globalStyles } from '@/app/theme/globalStyles';
+import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { Error } from '@/components/ui/Error';
 import GenesListCard from '@/components/ui/GenesListCard';
@@ -12,6 +15,7 @@ import { useWearable } from '@/wearables/wearableProvider';
 
 export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();
+  const { colors } = useTheme();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sleepData, setSleepData] = useState<SleepSummary[]>([]);
@@ -48,9 +52,7 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
   }, [adapter]);
 
   if (loading) {
-    return (
-        <Loading />
-    );
+    return <Loading />;
   }
 
   if (error) {
@@ -83,161 +85,47 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
 
   return (
     <>
-        <Text style={styles.title}>Digestion</Text>
-        <Text style={styles.subtitle}>Factors influencing digestive health and gut function</Text>
+      <ThemedText type="title" style={{ color: colors.accentStrong }}>Digestion</ThemedText>
+      <ThemedText type="subtitle" style={{ color: colors.textTertiary }}>
+        Factors influencing digestive health and gut function
+      </ThemedText>
 
-        <WearableStatus status={status} />
+      <WearableStatus status={status} />
 
-        {/* Overview card - Indirect metrics */}
-        <Card title="Gut health influencers">
-          <View style={styles.row}>
-            {/* Stress */}
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>Stress level</Text>
-              <Text style={styles.valueSmall}>{digestive.stressLevel}</Text>
-              <Text style={styles.muted}>Battery: {digestive.bodyBattery}%</Text>
-              {latestEnergy && <Text style={styles.source}>{latestEnergy.source}</Text>}
-            </View>
-
-            {/* Sleep */}
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>Sleep</Text>
-              <Text style={styles.value}>{digestive.sleepHours.toFixed(1)}h</Text>
-              <Text style={styles.accent}>{digestive.sleepQuality}</Text>
-              {latestSleep && <Text style={styles.source}>{latestSleep.source}</Text>}
-            </View>
-
-            {/* Activity */}
-            <View style={styles.col}>
-              <Text style={styles.label}>Activity</Text>
-              <Text style={styles.valueSmall}>{digestive.activityMinutes}m</Text>
-              <Text style={styles.muted}>{digestive.stepCount.toLocaleString()} steps</Text>
-              {latestActivity && <Text style={styles.source}>{latestActivity.source}</Text>}
-            </View>
+      {/* Overview card - Indirect metrics */}
+      <Card title="Gut health influencers">
+        <View style={globalStyles.row}>
+          {/* Stress */}
+          <View style={[globalStyles.col, globalStyles.colWithDivider, { borderRightColor: colors.borderLight ?? colors.border }]}>
+            <ThemedText type="label">Stress level</ThemedText>
+            <ThemedText type="title3">{digestive.stressLevel}</ThemedText>
+            <ThemedText type="caption">Battery: {digestive.bodyBattery}%</ThemedText>
+            {latestEnergy && <ThemedText type="caption">{latestEnergy.source}</ThemedText>}
           </View>
-        </Card>
 
-        {/* Manual tracking card */}
-        <GenesListCard areaId="digestiveHealth"  />
+          {/* Sleep */}
+          <View style={[globalStyles.col, globalStyles.colWithDivider, { borderRightColor: colors.borderLight ?? colors.border }]}>
+            <ThemedText type="label">Sleep</ThemedText>
+            <ThemedText type="title3">{digestive.sleepHours.toFixed(1)}h</ThemedText>
+            <ThemedText type="caption">{digestive.sleepQuality}</ThemedText>
+            {latestSleep && <ThemedText type="caption">{latestSleep.source}</ThemedText>}
+          </View>
 
-        {/* Tips card */}
-        <TipsList areaId={mainGoalId} title="tips:digestive.levels.optimization.title" />
-      </>
+          {/* Activity */}
+          <View style={globalStyles.col}>
+            <ThemedText type="label">Activity</ThemedText>
+            <ThemedText type="title3">{digestive.activityMinutes}m</ThemedText>
+            <ThemedText type="caption">{digestive.stepCount.toLocaleString()} steps</ThemedText>
+            {latestActivity && <ThemedText type="caption">{latestActivity.source}</ThemedText>}
+          </View>
+        </View>
+      </Card>
+
+      {/* DNA & Digestive Genetics */}
+      <GenesListCard areaId="digestiveHealth"  />
+
+      {/* Tips card */}
+      <TipsList areaId={mainGoalId} title="tips:digestive.levels.optimization.title" />
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 44,
-    fontWeight: '700',
-    color: 'rgba(120,255,220,0.95)',
-  },
-  subtitle: {
-    color: 'rgba(255,255,255,0.7)',
-    fontSize: 16,
-    marginTop: 6,
-    marginBottom: 16,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  col: {
-    flex: 1,
-    paddingHorizontal: 8,
-  },
-  colWithDivider: {
-    borderRightWidth: 1,
-    borderRightColor: 'rgba(255,255,255,0.10)',
-  },
-  label: {
-    color: 'rgba(255,255,255,0.65)',
-    fontSize: 13,
-  },
-  value: {
-    color: 'white',
-    fontSize: 26,
-    fontWeight: '700',
-    marginTop: 4,
-  },
-  valueSmall: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: '700',
-    marginTop: 4,
-  },
-  muted: {
-    color: 'rgba(255,255,255,0.5)',
-    fontSize: 12,
-    marginTop: 6,
-  },
-  accent: {
-    color: 'rgba(120,255,220,0.85)',
-    fontSize: 12,
-    marginTop: 6,
-    fontWeight: '600',
-  },
-  source: {
-    color: 'rgba(255,255,255,0.4)',
-    fontSize: 10,
-    marginTop: 4,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 16,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.10)',
-  },
-  actionButton: {
-    color: 'rgba(120,255,220,0.95)',
-    fontSize: 14,
-    fontWeight: '600',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: 'rgba(120,255,220,0.08)',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(120,255,220,0.25)',
-  },
-  infoSection: {
-    marginBottom: 16,
-  },
-  infoLabel: {
-    color: 'rgba(255,255,255,0.85)',
-    fontSize: 15,
-    fontWeight: '600',
-    marginBottom: 6,
-  },
-  infoText: {
-    color: 'rgba(255,255,255,0.65)',
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  tipText: {
-    color: 'rgba(255,255,255,0.75)',
-    fontSize: 14,
-    lineHeight: 24,
-    marginBottom: 4,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    color: 'rgba(255,255,255,0.75)',
-    fontSize: 16,
-    marginTop: 12,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorText: {
-    color: 'rgba(255,100,100,0.9)',
-    fontSize: 16,
-  },
-});

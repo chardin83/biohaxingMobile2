@@ -5,7 +5,7 @@ import { Modal, Pressable, StyleSheet, Switch, Text, TouchableOpacity, View } fr
 import { useSession } from '@/app/context/SessionStorage';
 import { useStorage } from '@/app/context/StorageContext';
 import { Colors } from '@/app/theme/Colors';
-import { borders } from '@/app/theme/styles';
+import { globalStyles } from '@/app/theme/globalStyles';
 
 const AIInfoPopup: React.FC = () => {
   const { hasVisitedChat, setHasVisitedChat, shareHealthPlan, setShareHealthPlan } = useStorage();
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   },
   modal: {
     backgroundColor: Colors.dark.secondary,
-    borderRadius: borders.radius,
+    borderRadius: globalStyles.borders.borderRadius,
     padding: 24,
     width: '100%',
     maxWidth: 340,
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   planBox: {
     backgroundColor: Colors.dark.secondary,
     padding: 10,
-    borderRadius: borders.radius,
+    borderRadius: globalStyles.borders.borderRadius,
     marginBottom: 10,
   },
   planInfoTitle: {

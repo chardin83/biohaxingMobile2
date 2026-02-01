@@ -1,8 +1,9 @@
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { Supplement } from '@/app/domain/Supplement';
-import { Colors } from '@/app/theme/Colors';
+import { ThemedText } from '@/components/ThemedText';
 
 import { SwipeableRow } from './ui/SwipeableRow';
 
@@ -19,6 +20,8 @@ const SupplementItem: React.FC<RenderSupplementItemProps> = ({
   onRemoveSupplement,
   onEditSupplement,
 }) => {
+  const { colors } = useTheme();
+
   return (
     <SwipeableRow
       onEdit={() => onEditSupplement(planName, supplement.name)}
@@ -26,8 +29,12 @@ const SupplementItem: React.FC<RenderSupplementItemProps> = ({
       containerStyle={styles.swipeableContent}
     >
       <View style={styles.row}>
-        <Text style={styles.text}>{`${supplement.name} (${supplement.quantity} ${supplement.unit})`}</Text>
-        <Text style={styles.icon}>⋮</Text>
+        <ThemedText type="default" style={[styles.text, { color: colors.text }]}>
+          {`${supplement.name} (${supplement.quantity} ${supplement.unit})`}
+        </ThemedText>
+        <ThemedText type="default" style={[styles.icon, { color: colors.textLight || '#888' }]}>
+          ⋮
+        </ThemedText>
       </View>
     </SwipeableRow>
   );
@@ -40,20 +47,17 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 0,
     overflow: 'hidden',
-    color: Colors.dark.text,
   },
   row: {
-    flexDirection: 'row', // <-- viktigt!
+    flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   text: {
     fontSize: 16,
-    color: Colors.dark.textWhite,
   },
   icon: {
     fontSize: 18,
-    color: '#888',
     opacity: 0.6,
     marginLeft: 12,
   },

@@ -3,7 +3,7 @@
 import { render, waitFor } from '@testing-library/react-native';
 import React from 'react';
 
-import { StorageProvider } from '@/app/context/StorageContext';
+import { AllProviders } from '@/test-utils/Providers';
 
 import Dashboard from '../dashboard';
 
@@ -32,9 +32,8 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-function renderWithStorageProvider(ui: React.ReactElement) {
-  return render(<StorageProvider>{ui}</StorageProvider>);
-}
+ const renderWithProviders = (ui: React.ReactElement) =>
+    render(ui, { wrapper: AllProviders });
 
 // Mock external dependencies
 jest.mock('expo-router', () => ({
@@ -49,7 +48,7 @@ describe('Dashboard Integration Tests', () => {
   });
 
   it('renders dashboard with StorageProvider and displays main dashboard elements', async () => {
-    const { getByText } = renderWithStorageProvider(<Dashboard />);
+    const { getByText } = renderWithProviders(<Dashboard />);
     await waitFor(() => {
       expect(getByText('BIOHAXING')).toBeTruthy();
       expect(getByText(/Level\s*1/)).toBeTruthy();
@@ -58,7 +57,7 @@ describe('Dashboard Integration Tests', () => {
   });
 
   it('updates when storage context changes', async () => {
-    const { getByText } = renderWithStorageProvider(<Dashboard />);
+    const { getByText } = renderWithProviders(<Dashboard />);
     await waitFor(() => {
       expect(getByText(/Level\s*1/)).toBeTruthy();
       });

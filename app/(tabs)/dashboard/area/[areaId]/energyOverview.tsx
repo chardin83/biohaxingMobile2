@@ -1,9 +1,12 @@
+import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
+import { globalStyles } from '@/app/theme/globalStyles';
 import { HRVMetric } from '@/components/metrics/HRVMetric';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { VO2MaxMetric } from '@/components/metrics/VO2MaxMetric';
+import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { Error } from '@/components/ui/Error';
 import GenesListCard from '@/components/ui/GenesListCard';
@@ -23,6 +26,10 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
   const [hrvData, setHrvData] = useState<HRVSummary[]>([]);
   const [activityData, setActivityData] = useState<DailyActivity[]>([]);
   const [energyData, setEnergyData] = useState<EnergySignal[]>([]);
+
+
+
+const { colors } = useTheme();
 
   useEffect(() => {
     const loadData = async () => {
@@ -56,10 +63,8 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
   }, [adapter]);
   
   if (loading) {
-    return (
-         <Loading />
-        );
-    }
+    return <Loading />;
+  }
   
   if (error) {
     return <Error error={error} />;
@@ -94,385 +99,223 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
 
   return (
     <>
-        <Text style={styles.title}>Energy Systems</Text>
-        <Text style={styles.subtitle}>Mitochondrial function and cellular energy production</Text>
-        <WearableStatus status={status} />
+      <ThemedText type="title" style={{ color: colors.gold }}>Energy Systems</ThemedText>
+      <ThemedText type="subtitle">Mitochondrial function and cellular energy production</ThemedText>
+      <WearableStatus status={status} />
 
-        {/* Body Battery - Main Energy Indicator */}
-        <Card title="Cellular Energy Reserves">
-          <View style={styles.centerMetric}>
-            <Text style={styles.bigValue}>{energy.bodyBattery}</Text>
-            <Text style={styles.bigLabel}>Body Battery</Text>
-            <Text style={styles.statusGood}>{energy.bodyBatteryChange} since waking</Text>
-          </View>
-          <View style={styles.batteryBar}>
-            <View style={[styles.batteryFill, { width: `${energy.bodyBattery}%` }]} />
-          </View>
-          <Text style={styles.batteryText}>
-            Body Battery tracks your body's energy reserves by monitoring stress, activity, and recovery. It reflects
-            your mitochondrial ATP production capacity.
-          </Text>
-        </Card>
+      {/* Body Battery - Main Energy Indicator */}
+      <Card title="Cellular Energy Reserves">
+        <View style={styles.centerMetric}>
+          <ThemedText type="title2">{energy.bodyBattery}</ThemedText>
+          <ThemedText type="label">Body Battery</ThemedText>
+          <ThemedText type="caption">{energy.bodyBatteryChange} since waking</ThemedText>
+        </View>
+        <View style={[styles.batteryBar, { backgroundColor: colors.overlayLight }]}>
+          <View
+            style={[
+              styles.batteryFill,
+              {
+                width: `${energy.bodyBattery}%`,
+                backgroundColor: colors.goldSoft,
+              }
+            ]}
+          />
+        </View>
+        <ThemedText type="explainer" >
+          Body Battery tracks your body's energy reserves by monitoring stress, activity, and recovery. It reflects
+          your mitochondrial ATP production capacity.
+        </ThemedText>
+      </Card>
 
-        {/* DNA & Mitochondria Genetics */}
-        <GenesListCard areaId="energy" />
+      {/* DNA & Mitochondria Genetics */}
+      <GenesListCard areaId="energy" />
 
-        {/* Energy Production Factors */}
-        <Card title="Energy Production Metrics">
-          <View style={styles.row}>
-            <VO2MaxMetric vo2max={energy.vo2max} status={energy.vo2maxStatus} showDivider />
-            <RestingHRMetric hrvData={hrvData} showDivider />
-            <HRVMetric hrvData={hrvData} />
-          </View>
-          <Text style={styles.metricExplainer}>
-            VO₂ max indicates mitochondrial density and oxidative capacity. Higher values = more efficient ATP
-            production from oxygen.
-          </Text>
-        </Card>
+      {/* Energy Production Factors */}
+      <Card title="Energy Production Metrics">
+        <View style={globalStyles.row}>
+          <VO2MaxMetric vo2max={energy.vo2max} status={energy.vo2maxStatus} showDivider />
+          <RestingHRMetric hrvData={hrvData} showDivider />
+          <HRVMetric hrvData={hrvData} />
+        </View>
+        <ThemedText type="explainer" style ={[globalStyles.explainer, { borderColor: colors.borderLight }]}>
+          VO₂ max indicates mitochondrial density and oxidative capacity. Higher values = more efficient ATP
+          production from oxygen.
+        </ThemedText>
+      </Card>
 
-        {/* Energy Drain vs Recharge */}
-        <Card title="Energy Balance">
-          <View style={styles.balanceSection}>
-            <View style={styles.balanceItem}>
-              <Text style={styles.balanceLabel}>⚡ Energy Drain</Text>
-              <View style={styles.drainCard}>
-                <Text style={styles.drainValue}>{energy.stressScore}</Text>
-                <Text style={styles.drainLabel}>Stress score</Text>
-                <Text style={styles.drainText}>{energy.stressLevel}</Text>
-              </View>
-              <View style={[styles.drainCard, styles.marginTop8]}>
-                <Text style={styles.drainValue}>{energy.intensityMinutes}</Text>
-                <Text style={styles.drainLabel}>Intensity minutes</Text>
-              </View>
+      {/* Energy Drain vs Recharge */}
+      <Card title="Energy Balance">
+        <View style={styles.balanceSection}>
+          <View style={globalStyles.flex1}>
+            <ThemedText type="title3">⚡ Energy Drain</ThemedText>
+            <View
+              style={[
+                globalStyles.card,
+                {
+                  borderColor: colors.surfaceRedBorder,
+                  backgroundColor: colors.surfaceRed,
+                },
+              ]}
+            >
+              <ThemedText type="value">{energy.stressScore}</ThemedText>
+              <ThemedText type="label">Stress score</ThemedText>
+              <ThemedText type="caption">{energy.stressLevel}</ThemedText>
             </View>
-
-            <View style={styles.balanceItem}>
-              <Text style={styles.balanceLabel}>🔋 Energy Recharge</Text>
-              <View style={styles.rechargeCard}>
-                <Text style={styles.rechargeValue}>{energy.sleepHours}h</Text>
-                <Text style={styles.rechargeLabel}>Sleep duration</Text>
-                <Text style={styles.rechargeText}>{energy.sleepQuality}% quality</Text>
-              </View>
-              <View style={[styles.rechargeCard, styles.marginTop8]}>
-                <Text style={styles.rechargeValue}>{energy.deepSleepMinutes}min</Text>
-                <Text style={styles.rechargeLabel}>Deep sleep</Text>
-              </View>
-            </View>
-          </View>
-
-          <Text style={styles.balanceNote}>
-            Deep sleep is when mitochondrial repair and autophagy (cellular cleanup) occur. Chronic stress increases
-            cortisol, which impairs mitochondrial function.
-          </Text>
-        </Card>
-
-        {/* Mitochondrial Health Information */}
-        <Card title="Understanding Mitochondria">
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>🔬 The Powerhouses of Your Cells</Text>
-            <Text style={styles.infoText}>
-              Mitochondria are organelles that produce ATP (adenosine triphosphate), the energy currency of all cells.
-              Each cell contains hundreds to thousands of mitochondria. They convert nutrients and oxygen into ~90% of
-              your body's energy.
-            </Text>
-          </View>
-
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>⚡ ATP Production</Text>
-            <Text style={styles.infoText}>
-              Through oxidative phosphorylation, mitochondria produce 30-32 ATP molecules per glucose molecule (vs only
-              2 ATP from glycolysis). This process requires oxygen, which is why VO₂ max correlates with energy
-              capacity.
-            </Text>
-          </View>
-
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>🧬 Mitochondrial Biogenesis</Text>
-            <Text style={styles.infoText}>
-              Exercise (especially Zone 2 cardio) triggers PGC-1α activation, which increases mitochondrial density.
-              More mitochondria = more energy production capacity. This is why trained athletes have higher VO₂ max.
-            </Text>
-          </View>
-
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>🛡️ Oxidative Stress</Text>
-            <Text style={styles.infoText}>
-              Mitochondria produce reactive oxygen species (ROS) as byproducts of ATP production. Excessive ROS causes
-              oxidative damage to mitochondrial DNA. Antioxidants (Vitamin C, E, CoQ10, glutathione) help neutralize ROS
-              and protect mitochondrial function.
-            </Text>
-          </View>
-
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>⏰ NAD+ and Energy Decline</Text>
-            <Text style={styles.infoText}>
-              NAD+ (nicotinamide adenine dinucleotide) is essential for mitochondrial function. NAD+ levels decline ~50%
-              between ages 20-80, reducing ATP production efficiency. NAD+ precursors (NR, NMN) and sirtuins activators
-              may support mitochondrial health.
-            </Text>
-          </View>
-
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>🔄 Mitophagy & Cellular Cleanup</Text>
-            <Text style={styles.infoText}>
-              Mitophagy is the selective autophagy of damaged mitochondria. Occurs during fasting and deep sleep.
-              Regular mitophagy prevents accumulation of dysfunctional mitochondria that produce excess ROS and less
-              ATP.
-            </Text>
-          </View>
-        </Card>
-
-        {/* Tips Card */}
-        <TipsList areaId={mainGoalId} title="tips:energy.levels.optimization.title" />
-
-        {/* Activity Tracking */}
-        <Card title="Today's Activity">
-          <View style={styles.row}>
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>Active minutes</Text>
-              <Text style={styles.value}>{energy.activityMinutes}</Text>
-            </View>
-
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>Steps</Text>
-              <Text style={styles.value}>{energy.steps.toLocaleString()}</Text>
-            </View>
-
-            <View style={styles.col}>
-              <Text style={styles.label}>Intensity min</Text>
-              <Text style={styles.value}>{energy.intensityMinutes}</Text>
+            <View style={[globalStyles.card, globalStyles.marginTop8,  {
+                  borderColor: colors.surfaceRedBorder,
+                  backgroundColor: colors.surfaceRed,
+                },]}>
+              <ThemedText type="value">{energy.intensityMinutes}</ThemedText>
+              <ThemedText type="label">Intensity minutes</ThemedText>
             </View>
           </View>
 
-          <Text style={styles.activityNote}>
-            Regular movement throughout the day maintains mitochondrial health. Even light activity (walking) stimulates
-            ATP production and reduces oxidative stress.
-          </Text>
-        </Card>
+          <View style={globalStyles.flex1}>
+            <ThemedText type="title3">🔋 Energy Recharge</ThemedText>
+            <View
+              style={[
+                globalStyles.card,
+                {
+                  borderColor: colors.surfaceGreenBorder,
+                  backgroundColor: colors.surfaceGreen,
+                },
+              ]}
+            >
+              <ThemedText type="value">{energy.sleepHours}h</ThemedText>
+              <ThemedText type="label">Sleep duration</ThemedText>
+              <ThemedText type="caption">{energy.sleepQuality}% quality</ThemedText>
+            </View>
+            <View style={[globalStyles.card, globalStyles.marginTop8, {
+                  borderColor: colors.surfaceGreenBorder,
+                  backgroundColor: colors.surfaceGreen,
+                },]}>
+              <ThemedText type="value">{energy.deepSleepMinutes}min</ThemedText>
+              <ThemedText type="label">Deep sleep</ThemedText>
+            </View>
+          </View>
+        </View>
+
+        <ThemedText
+          type="explainer"
+          style={[
+            globalStyles.explainer,
+            {  borderTopColor: colors.borderLight }
+          ]}
+        >
+          Deep sleep is when mitochondrial repair and autophagy (cellular cleanup) occur. Chronic stress increases
+          cortisol, which impairs mitochondrial function.
+        </ThemedText>
+      </Card>
+
+      {/* Mitochondrial Health Information */}
+      <Card title="Understanding Mitochondria">
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🔬 The Powerhouses of Your Cells</ThemedText>
+          <ThemedText type="default">
+            Mitochondria are organelles that produce ATP (adenosine triphosphate), the energy currency of all cells.
+            Each cell contains hundreds to thousands of mitochondria. They convert nutrients and oxygen into ~90% of
+            your body's energy.
+          </ThemedText>
+        </View>
+
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">⚡ ATP Production</ThemedText>
+          <ThemedText type="default">
+            Through oxidative phosphorylation, mitochondria produce 30-32 ATP molecules per glucose molecule (vs only
+            2 ATP from glycolysis). This process requires oxygen, which is why VO₂ max correlates with energy
+            capacity.
+          </ThemedText>
+        </View>
+
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🧬 Mitochondrial Biogenesis</ThemedText>
+          <ThemedText type="default">
+            Exercise (especially Zone 2 cardio) triggers PGC-1α activation, which increases mitochondrial density.
+            More mitochondria = more energy production capacity. This is why trained athletes have higher VO₂ max.
+          </ThemedText>
+        </View>
+
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🛡️ Oxidative Stress</ThemedText>
+          <ThemedText type="default">
+            Mitochondria produce reactive oxygen species (ROS) as byproducts of ATP production. Excessive ROS causes
+            oxidative damage to mitochondrial DNA. Antioxidants (Vitamin C, E, CoQ10, glutathione) help neutralize ROS
+            and protect mitochondrial function.
+          </ThemedText>
+        </View>
+
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">⏰ NAD+ and Energy Decline</ThemedText>
+          <ThemedText type="default">
+            NAD+ (nicotinamide adenine dinucleotide) is essential for mitochondrial function. NAD+ levels decline ~50%
+            between ages 20-80, reducing ATP production efficiency. NAD+ precursors (NR, NMN) and sirtuins activators
+            may support mitochondrial health.
+          </ThemedText>
+        </View>
+
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🔄 Mitophagy & Cellular Cleanup</ThemedText>
+          <ThemedText type="default">
+            Mitophagy is the selective autophagy of damaged mitochondria. Occurs during fasting and deep sleep.
+            Regular mitophagy prevents accumulation of dysfunctional mitochondria that produce excess ROS and less
+            ATP.
+          </ThemedText>
+        </View>
+      </Card>
+
+      {/* Tips Card */}
+      <TipsList areaId={mainGoalId} title="tips:energy.levels.optimization.title" />
+
+      {/* Activity Tracking */}
+      <Card title="Today's Activity">
+        <View style={globalStyles.row}>
+          <View style={[globalStyles.col, globalStyles.colWithDivider]}>
+            <ThemedText type="label">Active minutes</ThemedText>
+            <ThemedText type="value">{energy.activityMinutes}</ThemedText>
+          </View>
+
+          <View style={[globalStyles.col, globalStyles.colWithDivider]}>
+            <ThemedText type="label">Steps</ThemedText>
+            <ThemedText type="value">{energy.steps.toLocaleString()}</ThemedText>
+          </View>
+
+          <View style={globalStyles.col}>
+            <ThemedText type="label">Intensity min</ThemedText>
+            <ThemedText type="value">{energy.intensityMinutes}</ThemedText>
+          </View>
+        </View>
+
+        <ThemedText
+          type="explainer"
+          style={[
+            globalStyles.explainer,
+            { borderTopColor: colors.borderLight }
+          ]}
+        >
+          Regular movement throughout the day maintains mitochondrial health. Even light activity (walking) stimulates
+          ATP production and reduces oxidative stress.
+        </ThemedText>
+      </Card>
    </>
   );
 }
 
 const styles = StyleSheet.create({
-  bg: { flex: 1 },
-  container: {
-    paddingTop: 100,
-    paddingHorizontal: 18,
-    paddingBottom: 32,
-  },
-  title: {
-    fontSize: 44,
-    fontWeight: '700',
-    color: 'rgba(255,215,100,0.95)',
-  },
-  subtitle: {
-    color: 'rgba(255,255,255,0.7)',
-    fontSize: 16,
-    marginTop: 6,
-    marginBottom: 16,
-  },
   centerMetric: {
     alignItems: 'center',
     marginBottom: 16,
   },
-  bigValue: {
-    fontSize: 56,
-    fontWeight: '800',
-    color: 'rgba(255,215,100,0.95)',
-  },
-  bigLabel: {
-    color: 'rgba(255,255,255,0.65)',
-    fontSize: 15,
-    marginTop: 4,
-  },
-  statusGood: {
-    color: 'rgba(100,255,150,0.9)',
-    fontSize: 16,
-    fontWeight: '600',
-    marginTop: 8,
-  },
   batteryBar: {
     height: 16,
-    backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 8,
     marginVertical: 12,
     overflow: 'hidden',
   },
   batteryFill: {
     height: '100%',
-    backgroundColor: 'rgba(255,215,100,0.75)',
-  },
-  batteryText: {
-    color: 'rgba(255,255,255,0.65)',
-    fontSize: 14,
-    lineHeight: 20,
-    marginTop: 8,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  col: {
-    flex: 1,
-    paddingHorizontal: 8,
-  },
-  colWithDivider: {
-    borderRightWidth: 1,
-    borderRightColor: 'rgba(255,255,255,0.10)',
-  },
-  label: {
-    color: 'rgba(255,255,255,0.65)',
-    fontSize: 13,
-  },
-  value: {
-    color: 'white',
-    fontSize: 26,
-    fontWeight: '700',
-    marginTop: 4,
-  },
-  muted: {
-    color: 'rgba(255,255,255,0.5)',
-    fontSize: 12,
-    marginTop: 6,
-  },
-  accent: {
-    color: 'rgba(255,215,100,0.85)',
-    fontSize: 12,
-    marginTop: 6,
-    fontWeight: '600',
-  },
-  metricExplainer: {
-    color: 'rgba(255,255,255,0.65)',
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 16,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.1)',
   },
   balanceSection: {
     flexDirection: 'row',
     gap: 12,
-  },
-  balanceItem: {
-    flex: 1,
-  },
-  balanceLabel: {
-    color: 'rgba(255,255,255,0.85)',
-    fontSize: 15,
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  drainCard: {
-    backgroundColor: 'rgba(255,100,100,0.12)',
-    borderRadius: 12,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(255,100,100,0.3)',
-  },
-  drainValue: {
-    color: 'rgba(255,150,150,0.95)',
-    fontSize: 24,
-    fontWeight: '700',
-  },
-  drainLabel: {
-    color: 'rgba(255,255,255,0.6)',
-    fontSize: 12,
-    marginTop: 2,
-  },
-  drainText: {
-    color: 'rgba(255,150,150,0.8)',
-    fontSize: 13,
-    marginTop: 4,
-  },
-  rechargeCard: {
-    backgroundColor: 'rgba(100,255,150,0.12)',
-    borderRadius: 12,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(100,255,150,0.3)',
-  },
-  rechargeValue: {
-    color: 'rgba(100,255,150,0.95)',
-    fontSize: 24,
-    fontWeight: '700',
-  },
-  rechargeLabel: {
-    color: 'rgba(255,255,255,0.6)',
-    fontSize: 12,
-    marginTop: 2,
-  },
-  rechargeText: {
-    color: 'rgba(100,255,150,0.8)',
-    fontSize: 13,
-    marginTop: 4,
-  },
-  balanceNote: {
-    color: 'rgba(255,255,255,0.65)',
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 16,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.1)',
-  },
-  infoSection: {
-    marginBottom: 16,
-  },
-  infoLabel: {
-    color: 'rgba(255,255,255,0.85)',
-    fontSize: 15,
-    fontWeight: '600',
-    marginBottom: 6,
-  },
-  infoText: {
-    color: 'rgba(255,255,255,0.65)',
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  tipText: {
-    color: 'rgba(255,255,255,0.75)',
-    fontSize: 14,
-    lineHeight: 24,
-    marginBottom: 4,
-  },
-  activityNote: {
-    color: 'rgba(255,255,255,0.65)',
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 16,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.1)',
-  },
-  marginTop8: {
-    marginTop: 8,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    color: 'rgba(255,255,255,0.75)',
-    fontSize: 16,
-    marginTop: 12,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorText: {
-    color: 'rgba(255,0,0,0.85)',
-    fontSize: 16,
-    marginTop: 12,
-  },
-  dataSource: {
-    color: 'rgba(255,255,255,0.5)',
-    fontSize: 12,
-    marginTop: 4,
-    marginBottom: 16,
-    textAlign: 'center',
   },
 });

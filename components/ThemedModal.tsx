@@ -1,9 +1,9 @@
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
-import { Colors } from '@/app/theme/Colors';
-import { borders } from '@/app/theme/styles';
+import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
 
 import AppButton from './ui/AppButton';
@@ -38,12 +38,22 @@ export const ThemedModal = ({
   style,
 }: ThemedModalProps) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
 
   return (
     <Modal animationType="slide" transparent visible={visible}>
       <View style={styles.overlay}>
-        <View style={[styles.modal, style]}>
-          <ThemedText type="title" style={styles.title}>
+        <View
+          style={[
+            styles.modal,
+            {
+              backgroundColor: colors.secondary,
+              borderColor: colors.border,
+            },
+            style,
+          ]}
+        >
+          <ThemedText type="title2" style={[styles.title, { color: colors.primary }]}>
             {title}
           </ThemedText>
 
@@ -69,33 +79,27 @@ export const ThemedModal = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modal: {
-    backgroundColor: Colors.dark.secondary,
-    borderRadius: borders.radius,
+    borderRadius: globalStyles.borders.borderRadius,
     padding: 24,
     width: '90%',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.dark.border,
     maxHeight: '90%',
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: Colors.dark.primary,
     marginBottom: 20,
     textAlign: 'center',
   },
   buttonRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // För att sprida ut knapparna
+    justifyContent: 'space-between',
     alignItems: 'center',
-    width: '100%', // så de radas upp i hela bredden
+    width: '100%',
     marginTop: 24,
-    gap: 3, // valfritt
+    gap: 3,
   },
 });

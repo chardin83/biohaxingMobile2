@@ -1,9 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
-import { MenuProvider } from 'react-native-popup-menu';
 
-import { StorageProvider } from '@/app/context/StorageContext';
+import { AllProviders } from '@/test-utils/Providers';
 
 import Calendar from '../calendar';
 
@@ -151,12 +150,8 @@ jest.mock('@/components/NutritionLogger', () => {
   };
 });
 
-const renderWithStorageProvider = (children: React.ReactNode) => {
-  return render(
-    <MenuProvider>
-      <StorageProvider>{children}</StorageProvider>
-    </MenuProvider>
-  );
+const renderWithProviders = (children: React.ReactNode) => {
+  return render(<>{children}</>, { wrapper: AllProviders });
 };
 
 describe('Calendar Integration Tests', () => {
@@ -165,7 +160,7 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('renders calendar with real CalendarComponent integration', async () => {
-    const { getByTestId } = renderWithStorageProvider(<Calendar />);
+    const { getByTestId } = renderWithProviders(<Calendar />);
 
     await waitFor(() => {
       expect(getByTestId('real-calendar')).toBeTruthy();
@@ -173,7 +168,7 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('integrates calendar day selection with DayEdit component', async () => {
-    const { getByTestId, queryByText } = renderWithStorageProvider(<Calendar />);
+    const { getByTestId, queryByText } = renderWithProviders(<Calendar />);
 
     // Initially no DayEdit should be visible with supplements tab
     expect(queryByText('TILLSKOTT')).toBeNull();
@@ -191,7 +186,7 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('allows adding supplements through the full workflow', async () => {
-    const { getByTestId, getByText, queryByText } = renderWithStorageProvider(<Calendar />);
+    const { getByTestId, getByText, queryByText } = renderWithProviders(<Calendar />);
 
     // Select a day
     await act(async () => {
@@ -215,7 +210,7 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('manages supplement state through storage context', async () => {
-    const { getByTestId, queryByText } = renderWithStorageProvider(<Calendar />);
+    const { getByTestId, queryByText } = renderWithProviders(<Calendar />);
 
     // Select a day and verify DayEdit appears
     await act(async () => {
@@ -243,7 +238,7 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('integrates calendar marking with supplement data', async () => {
-    const { getByTestId, queryByTestId } = renderWithStorageProvider(<Calendar />);
+    const { getByTestId, queryByTestId } = renderWithProviders(<Calendar />);
 
     // Select a day
     await act(async () => {
@@ -260,7 +255,7 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('switches between supplement and meal tabs', async () => {
-    const { getByTestId, getByText, queryByTestId } = renderWithStorageProvider(<Calendar />);
+    const { getByTestId, getByText, queryByTestId } = renderWithProviders(<Calendar />);
 
     // Select a day
     await act(async () => {
@@ -286,7 +281,7 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('handles time changes in supplement workflow', async () => {
-    const { getByTestId, getByText } = renderWithStorageProvider(<Calendar />);
+    const { getByTestId, getByText } = renderWithProviders(<Calendar />);
 
     // Select a day
     await act(async () => {
@@ -304,7 +299,7 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('handles supplement editing workflow', async () => {
-    const { getByTestId, getByText } = renderWithStorageProvider(<Calendar />);
+    const { getByTestId, getByText } = renderWithProviders(<Calendar />);
 
     // Select a day
     await act(async () => {
@@ -334,7 +329,7 @@ describe('Calendar Integration Tests', () => {
       return Promise.resolve(null);
     });
 
-    const { getByTestId } = renderWithStorageProvider(<Calendar />);
+    const { getByTestId } = renderWithProviders(<Calendar />);
 
     // Kalendern ska visa markering för 2024-01-15
     await waitFor(() => {

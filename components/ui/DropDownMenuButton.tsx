@@ -1,8 +1,10 @@
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu';
 
-import { Colors } from '@/app/theme/Colors';
+import { globalStyles } from '@/app/theme/globalStyles';
+import { ThemedText } from '@/components/ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
 interface MenuItem {
@@ -17,6 +19,8 @@ interface DropdownMenuButtonProps {
 }
 
 const DropdownMenuButton: React.FC<DropdownMenuButtonProps> = ({ title, items }) => {
+  const { colors } = useTheme();
+
   return (
     <Menu>
       <MenuTrigger
@@ -24,18 +28,42 @@ const DropdownMenuButton: React.FC<DropdownMenuButtonProps> = ({ title, items })
           TriggerTouchableComponent: TouchableOpacity,
         }}
       >
-        <View style={styles.triggerButton}>
-          <Text style={styles.buttonText}>{title}</Text>
-          <IconSymbol name="expandMore" size={20} color={Colors.dark.textLight} />
+        <View
+          style={[
+            styles.triggerButton,
+            {
+              borderColor: colors.borderLight,
+            },
+          ]}
+        >
+          <ThemedText
+            type="defaultSemiBold"
+            style={[
+              styles.buttonText,
+              { color: colors.textLight },
+            ]}
+          >
+            {title}
+          </ThemedText>
+          <IconSymbol name="expandMore" size={20} color={colors.textLight} />
         </View>
       </MenuTrigger>
 
-      <MenuOptions customStyles={{ optionsContainer: styles.menuOptions }}>
+      <MenuOptions
+        customStyles={{
+          optionsContainer: [
+            styles.menuOptions,
+            { backgroundColor: colors.secondary },
+          ],
+        }}
+      >
         {items.map((item, index) => (
           <MenuOption key={index} onSelect={item.onSelect}>
             <View style={styles.menuItem}>
               {item.icon && <View style={styles.icon}>{item.icon}</View>}
-              <Text style={styles.menuItemText}>{item.text}</Text>
+              <ThemedText style={[styles.menuItemText, { color: colors.textWhite }]}>
+                {item.text}
+              </ThemedText>
             </View>
           </MenuOption>
         ))}
@@ -51,21 +79,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 14,
     paddingHorizontal: 18,
-    borderRadius: 16,
+    borderRadius: globalStyles.borders.borderRadius,
     borderWidth: 1.5,
-    borderColor: Colors.dark.borderLight,
     backgroundColor: 'transparent',
   },
   buttonText: {
-    color: Colors.dark.textLight,
     fontWeight: 'bold',
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginRight: 6,
   },
   menuOptions: {
-    backgroundColor: Colors.dark.secondary,
-    borderRadius: 8,
+    borderRadius: globalStyles.borders.borderRadius,
     paddingVertical: 4,
   },
   menuItem: {
@@ -76,7 +101,6 @@ const styles = StyleSheet.create({
   },
   menuItemText: {
     fontSize: 16,
-    color: Colors.dark.textWhite,
   },
   icon: {
     marginRight: 8,

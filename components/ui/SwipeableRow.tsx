@@ -1,9 +1,9 @@
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, { useAnimatedStyle } from 'react-native-reanimated';
 
-import { Colors } from '@/app/theme/Colors';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
 interface SwipeableRowProps {
@@ -22,6 +22,7 @@ interface RightActionsProps {
 }
 
 const RightActions = ({ drag, onEdit, onDelete }: RightActionsProps) => {
+  const { colors } = useTheme();
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: drag.value + ACTION_WIDTH }],
   }));
@@ -29,12 +30,24 @@ const RightActions = ({ drag, onEdit, onDelete }: RightActionsProps) => {
   return (
     <Reanimated.View style={[styles.rightActionContainer, animatedStyle]}>
       {onEdit && (
-        <TouchableOpacity style={[styles.actionButton, styles.edit]} onPress={onEdit}>
+        <TouchableOpacity
+          style={[
+            styles.actionButton,
+            { backgroundColor: colors.secondary },
+          ]}
+          onPress={onEdit}
+        >
           <IconSymbol name="pencil" color="white" size={24} />
         </TouchableOpacity>
       )}
       {onDelete && (
-        <TouchableOpacity style={[styles.actionButton, styles.delete]} onPress={onDelete}>
+        <TouchableOpacity
+          style={[
+            styles.actionButton,
+            { backgroundColor: colors.delete },
+          ]}
+          onPress={onDelete}
+        >
           <IconSymbol name="trash" color="white" size={24} />
         </TouchableOpacity>
       )}
@@ -77,16 +90,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: '100%',
     padding: 10,
-  },
-  edit: {
-    backgroundColor: Colors.dark.secondary,
-  },
-  delete: {
-    backgroundColor: Colors.dark.delete,
-  },
-  actionText: {
-    color: 'white',
-    fontSize: 10,
-    marginTop: 4,
   },
 });

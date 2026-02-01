@@ -1,10 +1,10 @@
+import { useTheme } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
-import { Colors } from '@/app/theme/Colors';
 import { Collapsible } from '@/components/Collapsible';
 import CreateTimeSlotModal from '@/components/modals/CreateTimeSlotModal';
 import TrainingSettingsModal from '@/components/modals/TrainingSettingsModal';
@@ -17,7 +17,6 @@ import AppButton from '@/components/ui/AppButton';
 import Badge from '@/components/ui/Badge';
 import Container from '@/components/ui/Container';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSupplementSaver } from '@/hooks/useSupplementSaver';
 import { defaultPlans } from '@/locales/defaultPlans';
 import { useSupplementMap } from '@/locales/supplements';
@@ -26,12 +25,14 @@ import { Tip, tips } from '@/locales/tips';
 import { useStorage } from '../../context/StorageContext';
 import { Plan } from '../../domain/Plan';
 import { Supplement } from '../../domain/Supplement';
-import { colors } from '../../theme/styles';
 
 // Plan category mapping not currently used; remove to avoid unused warnings
 
 export default function Plans() {
   const params = useLocalSearchParams<{ openCreate?: string }>();
+  const { colors } = useTheme();
+  
+
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [isEditingPlan, setIsEditingPlan] = useState(false);
@@ -54,8 +55,6 @@ export default function Plans() {
 
   const { t } = useTranslation(['common', 'areas', 'tips']);
   const supplementMap = useSupplementMap();
-  const colorScheme = useColorScheme();
-  const badgeIconColor = colorScheme === 'light' ? Colors.light.icon : Colors.dark.icon;
 
   const supplementPlans = plans.supplements;
   const trainingPlanGoals = useMemo(() => plans.training, [plans.training]);
@@ -251,7 +250,7 @@ export default function Plans() {
           accessibilityLabel={editLabel}
           style={styles.planHeaderButton}
         >
-          <IconSymbol name="pencil" size={18} color={Colors.dark.icon} />
+          <IconSymbol name="pencil" size={18} color={colors.icon} />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => handleNotify(plan)}
@@ -264,7 +263,7 @@ export default function Plans() {
           <IconSymbol
             name={plan.notify ? 'bell.fill' : 'bell.slash'}
             size={18}
-            color={plan.notify ? Colors.dark.primary : Colors.dark.icon}
+            color={plan.notify ? colors.primary : colors.icon}
           />
         </TouchableOpacity>
       </View>
@@ -282,7 +281,7 @@ export default function Plans() {
             <IconSymbol
               name="chevron.right"
               size={16}
-              color={Colors.dark.icon}
+              color={colors.icon}
               style={{ transform: [{ rotate: isExpanded ? '90deg' : '0deg' }] }}
             />
           }
@@ -290,7 +289,7 @@ export default function Plans() {
           {isExpanded && (
             <View>
               {supplements.map(sup => renderSupplementItem(plan.name, sup))}
-              {errorMessage && <Text style={styles.planErrorText}>{errorMessage}</Text>}
+              {errorMessage && <ThemedText type="caption" style={{ color: colors.error }}>{errorMessage}</ThemedText>}
               <View style={styles.planAddButtonWrapper}>
                 <AppButton
                   title={t('plan.addSupplement')}
@@ -310,7 +309,7 @@ export default function Plans() {
   const renderSupplementPlans = () => {
     if (!supplementPlans.length) {
       return (
-        <ThemedText type="default" style={styles.placeholderText}>
+        <ThemedText type="default">
           {t('plan.noSupplementSlots', {
             defaultValue: 'Inga tider skapade ännu.',
           })}
@@ -343,7 +342,7 @@ export default function Plans() {
   const renderTrainingGoals = () => {
     if (!trainingPlanGoals.length) {
       return (
-        <ThemedText type="default" style={styles.placeholderText}>
+        <ThemedText type="default">
           {t('plan.noActiveTraining')}
         </ThemedText>
       );
@@ -395,7 +394,7 @@ export default function Plans() {
           accessibilityLabel={editLabel}
           style={styles.trainingEditIcon}
         >
-          <IconSymbol name="pencil" size={16} color={Colors.dark.icon} />
+          <IconSymbol name="pencil" size={16} color={colors.icon} />
         </TouchableOpacity>
       );
 
@@ -415,8 +414,8 @@ export default function Plans() {
               <View style={styles.trainingBadgesRow}>
                 {trainingBadges.map(({ key, label, icon }) => (
                   <Badge key={key} variant="overlay" style={styles.trainingBadge}>
-                    <IconSymbol name={icon} size={14} color={Colors.dark.icon} style={styles.trainingBadgeIcon} />
-                    <ThemedText type="caption" style={styles.trainingBadgeLabel}>
+                    <IconSymbol name={icon} size={14} color={colors.icon} style={styles.trainingBadgeIcon} />
+                    <ThemedText type="caption">
                       {label}
                     </ThemedText>
                   </Badge>
@@ -479,7 +478,7 @@ export default function Plans() {
             <View style={styles.badgeRow}>
               {visibleFoodItems.map(({ key, name, details }) => (
                 <Badge key={`food-${key}`} variant="overlay">
-                  <ThemedText type="defaultSemiBold" style={styles.badgeLabel}>
+                  <ThemedText type="defaultSemiBold">
                     {name}
                   </ThemedText>
                   {!!details && isExpanded && (
@@ -496,7 +495,7 @@ export default function Plans() {
                   style={styles.toggleBadge}
                   onPress={() => toggleNutritionFoods(tipId)}
                 >
-                  <ThemedText type="default" style={styles.badgeLabel}>
+                  <ThemedText type="default">
                     {isExpanded
                       ? t('plan.hideNutritionFoods', {
                           defaultValue: 'Visa färre',
@@ -509,7 +508,7 @@ export default function Plans() {
                   <IconSymbol
                     name="chevron.right"
                     size={18}
-                    color={badgeIconColor}
+                    color={colors.icon }
                     style={[styles.toggleBadgeIcon, { transform: [{ rotate: arrowRotation }] }]}
                   />
                 </Badge>
@@ -667,14 +666,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
-  scrollView: {
-    flex: 1,
-  },
   collapsibleContentFlush: {
     marginLeft: 0,
-  },
-  modalField: {
-    marginBottom: 16,
   },
   planHeaderActions: {
     flexDirection: 'row',
@@ -690,43 +683,11 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 80,
   },
-  timePickerText: {
-    fontSize: 16,
-    color: Colors.dark.text,
-    padding: 10,
-  },
-  timePickerButton: {
-    backgroundColor: colors.secondary,
-    padding: 10,
-    borderRadius: 5,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    height: 'auto',
-    backgroundColor: Colors.dark.background,
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-  },
-  trainingTip: {
-    marginTop: 4,
-  },
   trainingMeta: {
     marginTop: 2,
-    color: Colors.dark.textMuted,
   },
   trainingSettingsContainer: {
     marginTop: 12,
-  },
-  trainingBadgesContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
   },
   trainingBadgesRow: {
     flexDirection: 'row',
@@ -742,13 +703,8 @@ const styles = StyleSheet.create({
   trainingBadgeIcon: {
     marginRight: 6,
   },
-  trainingBadgeLabel: {
-    color: Colors.dark.text,
-    fontSize: 12,
-  },
   trainingSettingsText: {
     flex: 1,
-    color: Colors.dark.textLight,
   },
   trainingEditIcon: {
     padding: 6,
@@ -762,15 +718,7 @@ const styles = StyleSheet.create({
     width: '80%',
     alignSelf: 'center',
   },
-  planErrorText: {
-    color: Colors.dark.error,
-    marginTop: 10,
-  },
-  placeholderText: {
-    color: Colors.dark.textMuted,
-  },
   recommendedDose: {
-    color: Colors.dark.textLight,
     marginBottom: 8,
   },
   badgeRow: {
@@ -778,11 +726,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     marginBottom: 8,
   },
-  badgeLabel: {
-    color: Colors.dark.text,
-  },
   badgeDetail: {
-    color: Colors.dark.textLight,
     marginTop: 4,
   },
   toggleBadge: {

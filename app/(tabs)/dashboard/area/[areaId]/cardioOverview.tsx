@@ -1,8 +1,11 @@
+import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
+import { globalStyles } from '@/app/theme/globalStyles';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { VO2MaxMetric } from '@/components/metrics/VO2MaxMetric';
+import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { Error } from '@/components/ui/Error';
 import GenesListCard from '@/components/ui/GenesListCard';
@@ -14,6 +17,7 @@ import { useWearable } from '@/wearables/wearableProvider';
 
 export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();
+  const { colors } = useTheme();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hrvData, setHrvData] = useState<HRVSummary[]>([]);
@@ -50,9 +54,7 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
   }, [adapter]);
 
   if (loading) {
-    return (
-        <Loading />
-    );
+    return <Loading />;
   }
 
   if (error) {
@@ -86,194 +88,99 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
   };
 
   return (
-   <>
-        <Text style={styles.title}>Cardio Fitness</Text>
-        <Text style={styles.subtitle}>Cardiovascular endurance metrics and training insights</Text>
+    <>
+      <ThemedText type="title">Cardio Fitness</ThemedText>
+      <ThemedText type="subtitle">Cardiovascular endurance metrics and training insights</ThemedText>
 
-        <WearableStatus status={status} />
+      <WearableStatus status={status} />
 
-        {/* Overview card */}
-        <Card title="Your cardio performance">
-          <View style={styles.row}>
-            <VO2MaxMetric vo2max={cardio.vo2max} trend={cardio.vo2maxDelta} showDivider />
-            <RestingHRMetric hrvData={hrvData} showDivider />
-            <View style={styles.col}>
-              <Text style={styles.label}>Training Load</Text>
-              <Text style={styles.valueSmall}>{cardio.trainingLoad}</Text>
-              <Text style={styles.muted}>{cardio.trainingLoadStatus}</Text>
-              {activityData.length > 0 && <Text style={styles.source}>7-day total</Text>}
-            </View>
+      {/* Overview card */}
+      <Card title="Your cardio performance">
+        <View style={globalStyles.row}>
+          <VO2MaxMetric vo2max={cardio.vo2max} trend={cardio.vo2maxDelta} showDivider />
+          <RestingHRMetric hrvData={hrvData} showDivider />
+          <View style={globalStyles.col}>
+            <ThemedText type="label">Training Load</ThemedText>
+            <ThemedText type="title2">{cardio.trainingLoad}</ThemedText>
+            <ThemedText type="caption">{cardio.trainingLoadStatus}</ThemedText>
+            {activityData.length > 0 && <ThemedText type="caption">7-day total</ThemedText>}
           </View>
-          <View style={[styles.row, styles.marginTop8]}>
-            <View style={[styles.col, styles.colWithDivider]}>
-              <Text style={styles.label}>Recovery time</Text>
-              <Text style={styles.value}>{cardio.recoveryTime}h</Text>
-              <Text style={styles.muted}>Until next hard effort</Text>
-              {latestEnergy && <Text style={styles.source}>Based on battery: {latestEnergy.bodyBatteryLevel}%</Text>}
-            </View>
-            <View style={styles.col}>
-              <Text style={styles.label}>Fitness age</Text>
-              <Text style={styles.value}>{cardio.fitnessAge}</Text>
-              <Text style={styles.accent}>{cardio.actualAge - cardio.fitnessAge} yrs younger</Text>
-            </View>
+        </View>
+        <View style={[globalStyles.row, globalStyles.marginTop8]}>
+          <View style={[globalStyles.col, globalStyles.colWithDivider, { borderRightColor: colors.borderLight ?? colors.border }]}>
+            <ThemedText type="label">Recovery time</ThemedText>
+            <ThemedText type="title2">{cardio.recoveryTime}h</ThemedText>
+            <ThemedText type="caption">Until next hard effort</ThemedText>
+            {latestEnergy && (
+              <ThemedText type="caption">Based on battery: {latestEnergy.bodyBatteryLevel}%</ThemedText>
+            )}
           </View>
-        </Card>
+          <View style={globalStyles.col}>
+            <ThemedText type="label">Fitness age</ThemedText>
+            <ThemedText type="title2">{cardio.fitnessAge}</ThemedText>
+            <ThemedText type="caption">{cardio.actualAge - cardio.fitnessAge} yrs younger</ThemedText>
+          </View>
+        </View>
+      </Card>
 
-        {/* VO2 Max explanation */}
-        <Card title="Understanding your metrics">
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>🫁 VO₂ Max</Text>
-            <Text style={styles.infoText}>
-              VO₂ max measures the maximum amount of oxygen your body can use during intense exercise. It's the gold
-              standard for cardiovascular fitness. Higher values indicate better endurance capacity.
-            </Text>
-            <Text style={[styles.infoText, styles.infoTextItalic]}>
-              Your level ({cardio.vo2max}) is considered {cardio.vo2max > 45 ? 'Good to Excellent' : 'Fair to Good'} for
-              your age group.
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>🫀 Resting Heart Rate</Text>
-            <Text style={styles.infoText}>
-              Lower resting heart rate typically indicates better cardiovascular fitness. Athletes often have resting
-              heart rates below 60 bpm. Monitor trends over time. A sudden increase may signal overtraining, illness, or
-              stress.
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>💪 Training Load</Text>
-            <Text style={styles.infoText}>
-              Training Load tracks the cumulative intensity and volume of your workouts over 7 days. Optimal load means
-              you're training effectively without overtraining. Too high = risk of injury/burnout. Too low =
-              insufficient stimulus for adaptation.
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>⏱️ Recovery Time</Text>
-            <Text style={styles.infoText}>
-              Time needed before your body is ready for another hard training session. Based on HRV, sleep quality, and
-              body battery. Respecting recovery prevents injury and improves performance. Training hard when recovery is
-              incomplete leads to diminished returns.
-            </Text>
-          </View>
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>🎂 Fitness Age</Text>
-            <Text style={styles.infoText}>
-              Based on your VO₂ max, resting heart rate, and other factors. A lower fitness age indicates superior
-              cardiovascular health. Regular aerobic training can reduce your fitness age by 10-20 years compared to
-              sedentary peers.
-            </Text>
-          </View>
-        </Card>
+      {/* VO2 Max explanation */}
+      <Card title="Understanding your metrics">
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🫁 VO₂ Max</ThemedText>
+          <ThemedText type="default">
+            VO₂ max measures the maximum amount of oxygen your body can use during intense exercise. It's the gold
+            standard for cardiovascular fitness. Higher values indicate better endurance capacity.
+          </ThemedText>
+          <ThemedText type="default" style={styles.infoTextItalic}>
+            Your level ({cardio.vo2max}) is considered {cardio.vo2max > 45 ? 'Good to Excellent' : 'Fair to Good'} for
+            your age group.
+          </ThemedText>
+        </View>
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🫀 Resting Heart Rate</ThemedText>
+          <ThemedText type="default">
+            Lower resting heart rate typically indicates better cardiovascular fitness. Athletes often have resting
+            heart rates below 60 bpm. Monitor trends over time. A sudden increase may signal overtraining, illness, or
+            stress.
+          </ThemedText>
+        </View>
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">💪 Training Load</ThemedText>
+          <ThemedText type="default">
+            Training Load tracks the cumulative intensity and volume of your workouts over 7 days. Optimal load means
+            you're training effectively without overtraining. Too high = risk of injury/burnout. Too low =
+            insufficient stimulus for adaptation.
+          </ThemedText>
+        </View>
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">⏱️ Recovery Time</ThemedText>
+          <ThemedText type="default">
+            Time needed before your body is ready for another hard training session. Based on HRV, sleep quality, and
+            body battery. Respecting recovery prevents injury and improves performance. Training hard when recovery is
+            incomplete leads to diminished returns.
+          </ThemedText>
+        </View>
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🎂 Fitness Age</ThemedText>
+          <ThemedText type="default">
+            Based on your VO₂ max, resting heart rate, and other factors. A lower fitness age indicates superior
+            cardiovascular health. Regular aerobic training can reduce your fitness age by 10-20 years compared to
+            sedentary peers.
+          </ThemedText>
+        </View>
+      </Card>
 
-        <GenesListCard areaId="cardioFitness" />
+      <GenesListCard areaId="cardioFitness" />
 
-        {/* Tips Card */}
-        <TipsList areaId={mainGoalId} title="tips:cardio.levels.optimization.title" />
-  </>
+      {/* Tips Card */}
+      <TipsList areaId={mainGoalId} title="tips:cardio.levels.optimization.title" />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 44,
-    fontWeight: '700',
-    color: 'rgba(120,255,220,0.95)',
-  },
-  subtitle: {
-    color: 'rgba(255,255,255,0.7)',
-    fontSize: 16,
-    marginTop: 6,
-    marginBottom: 16,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  col: {
-    flex: 1,
-    paddingHorizontal: 8,
-  },
-  colWithDivider: {
-    borderRightWidth: 1,
-    borderRightColor: 'rgba(255,255,255,0.10)',
-  },
-  label: {
-    color: 'rgba(255,255,255,0.65)',
-    fontSize: 13,
-  },
-  value: {
-    color: 'white',
-    fontSize: 26,
-    fontWeight: '700',
-    marginTop: 4,
-  },
-  valueSmall: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: '700',
-    marginTop: 4,
-  },
-  muted: {
-    color: 'rgba(255,255,255,0.5)',
-    fontSize: 12,
-    marginTop: 6,
-  },
-  accent: {
-    color: 'rgba(120,255,220,0.85)',
-    fontSize: 12,
-    marginTop: 6,
-    fontWeight: '600',
-  },
-  source: {
-    color: 'rgba(255,255,255,0.4)',
-    fontSize: 10,
-    marginTop: 4,
-  },
-  infoSection: {
-    marginBottom: 16,
-  },
-  infoLabel: {
-    color: 'rgba(255,255,255,0.85)',
-    fontSize: 15,
-    fontWeight: '600',
-    marginBottom: 6,
-  },
-  infoText: {
-    color: 'rgba(255,255,255,0.65)',
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  tipText: {
-    color: 'rgba(255,255,255,0.75)',
-    fontSize: 14,
-    lineHeight: 24,
-    marginBottom: 4,
-  },
   infoTextItalic: {
     marginTop: 8,
     fontStyle: 'italic',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    color: 'rgba(255,255,255,0.75)',
-    fontSize: 16,
-    marginTop: 12,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorText: {
-    color: 'rgba(255,100,100,0.9)',
-    fontSize: 16,
-  },
-  marginTop8: {
-    marginTop: 8,
   },
 });

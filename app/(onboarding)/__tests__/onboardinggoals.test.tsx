@@ -1,6 +1,8 @@
 import { fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
 
+import { AllProviders } from '@/test-utils/Providers';
+
 import * as StorageContext from '../../context/StorageContext';
 import OnboardingGoals from '../onboardinggoals';
 
@@ -107,18 +109,21 @@ describe('OnboardingGoals', () => {
     jest.spyOn(StorageContext, 'useStorage').mockReturnValue(mockStorageContext);
   });
 
+  const renderWithProviders = (ui: React.ReactElement) =>
+    render(ui, { wrapper: AllProviders });
+
   it('renders the screen title correctly', () => {
-    const { getByText } = render(<OnboardingGoals />);
+    const { getByText } = renderWithProviders(<OnboardingGoals />);
     expect(getByText('Select Areas')).toBeTruthy();
   });
 
   it('renders the continue button', () => {
-    const { getByText } = render(<OnboardingGoals />);
+    const { getByText } = renderWithProviders(<OnboardingGoals />);
     expect(getByText('Continue')).toBeTruthy();
   });
 
   it('calls setHasCompletedOnboarding and navigates when continue is pressed', () => {
-    const { getByText } = render(<OnboardingGoals />);
+    const { getByText } = renderWithProviders(<OnboardingGoals />);
     const continueButton = getByText('Continue');
 
     fireEvent.press(continueButton);
@@ -128,7 +133,7 @@ describe('OnboardingGoals', () => {
   });
 
   it('has proper layout structure', () => {
-    const { getByText } = render(<OnboardingGoals />);
+    const { getByText } = renderWithProviders(<OnboardingGoals />);
 
     // Check that all elements are present
     expect(getByText('Select Areas')).toBeTruthy();
@@ -136,10 +141,15 @@ describe('OnboardingGoals', () => {
   });
 
   it('applies correct styling to the title', () => {
-    const { getByText } = render(<OnboardingGoals />);
+    const { getByText } = renderWithProviders(<OnboardingGoals />);
     const titleElement = getByText('Select Areas');
 
-    expect(titleElement.props.style).toEqual(
+    // Slå ihop alla style-objekt i arrayen
+    const mergedStyle = Array.isArray(titleElement.props.style)
+      ? Object.assign({}, ...titleElement.props.style)
+      : titleElement.props.style;
+
+    expect(mergedStyle).toEqual(
       expect.objectContaining({
         fontSize: 22,
         fontWeight: 'bold',
@@ -149,7 +159,7 @@ describe('OnboardingGoals', () => {
   });
 
   it('handles button press correctly', () => {
-    const { getByTestId } = render(<OnboardingGoals />);
+    const { getByTestId } = renderWithProviders(<OnboardingGoals />);
     const button = getByTestId('app-button');
 
     fireEvent.press(button);

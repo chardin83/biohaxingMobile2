@@ -1,7 +1,9 @@
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { StyleProp, StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-native';
+import { Platform, StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 
-import { Colors } from '@/app/theme/Colors';
+import { globalStyles } from '@/app/theme/globalStyles';
+import { ThemedText } from '@/components/ThemedText';
 
 type Variant = 'primary' | 'secondary' | 'danger';
 
@@ -24,26 +26,28 @@ const AppButton: React.FC<AppButtonProps> = ({
   glow = false,
   accessibilityLabel,
 }) => {
+  const { colors } = useTheme();
+
   const isPrimary = variant === 'primary';
   const isDanger = variant === 'danger';
 
   let buttonVariantStyle;
   if (isPrimary) {
-    buttonVariantStyle = styles.primary;
+    buttonVariantStyle = { borderColor: colors.primary };
   } else if (isDanger) {
-    buttonVariantStyle = styles.danger;
+    buttonVariantStyle = { backgroundColor: 'transparent', borderColor: colors.error };
   } else {
-    buttonVariantStyle = styles.secondary;
+    buttonVariantStyle = { backgroundColor: 'transparent', borderColor: colors.borderLight };
   }
 
   // Determine the text color style based on variant
   let textColorStyle;
   if (isPrimary) {
-    textColorStyle = styles.primaryText;
+    textColorStyle = { color: colors.primary };
   } else if (isDanger) {
-    textColorStyle = styles.dangerText;
+    textColorStyle = { color: colors.error };
   } else {
-    textColorStyle = styles.secondaryText;
+    textColorStyle = { color: colors.textLight };
   }
 
   return (
@@ -52,23 +56,41 @@ const AppButton: React.FC<AppButtonProps> = ({
       style={[
         styles.button,
         buttonVariantStyle,
-        isPrimary && glow && styles.primaryGlow,
+        isPrimary && glow && {
+          backgroundColor: colors.background,
+          ...(Platform.OS === 'ios'
+            ? {
+                shadowColor: colors.buttonGlow,
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.7,
+                shadowRadius: 8,
+              }
+            : {
+                elevation: 6,
+              }),
+        },
         disabled && styles.disabled,
         style,
       ]}
       disabled={disabled}
       accessibilityLabel={accessibilityLabel || title}
     >
-      {/* Determine the text color style based on variant */}
-      <Text
+      <ThemedText
+        type="defaultSemiBold"
         style={[
           styles.text,
           textColorStyle,
-          isPrimary && glow && styles.primaryTextGlow,
+          isPrimary &&
+            glow &&
+            (Platform.OS === 'ios' || Platform.OS === 'android') &&
+            [
+              styles.textShadow,
+              { textShadowColor: colors.buttonTextGlow },
+            ],
         ]}
       >
         {title}
-      </Text>
+      </ThemedText>
     </TouchableOpacity>
   );
 };
@@ -76,7 +98,7 @@ const AppButton: React.FC<AppButtonProps> = ({
 const baseStyle: ViewStyle = {
   paddingVertical: 14,
   paddingHorizontal: 18,
-  borderRadius: 16,
+  borderRadius: globalStyles.borders.borderRadius,
   alignItems: 'center',
   justifyContent: 'center',
 };
@@ -86,25 +108,6 @@ const styles = StyleSheet.create({
     ...baseStyle,
     borderWidth: 1.5,
   },
-  primary: {
-    borderColor: Colors.dark.primary,
-  },
-  primaryGlow: {
-    backgroundColor: Colors.dark.background,
-    shadowColor: Colors.dark.buttonGlow,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.7,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  secondary: {
-    backgroundColor: 'transparent',
-    borderColor: Colors.dark.borderLight,
-  },
-  danger: {
-    backgroundColor: 'transparent',
-    borderColor: Colors.dark.error,
-  },
   disabled: {
     opacity: 0.5,
   },
@@ -113,19 +116,9 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
-  primaryText: {
-    color: Colors.dark.primary,
-  },
-  primaryTextGlow: {
-    textShadowColor: Colors.dark.buttonTextGlow,
+  textShadow: {
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 2,
-  },
-  secondaryText: {
-    color: Colors.dark.textLight,
-  },
-  dangerText: {
-    color: Colors.dark.error,
   },
 });
 

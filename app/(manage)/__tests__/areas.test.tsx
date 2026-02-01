@@ -1,7 +1,8 @@
 import { fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
 
-import { StorageProvider } from '../../context/StorageContext';
+import { AllProviders } from '@/test-utils/Providers';
+
 import Areas from '../areas';
 
 // Mock react-i18next
@@ -41,37 +42,40 @@ jest.mock('@/locales/areas', () => ({
 }));
 
 describe('Areas Screen', () => {
-  const renderWithProvider = (ui: React.ReactNode) => (
-    <StorageProvider>{ui}</StorageProvider>
-  );
+  const renderWithProviders = (ui: React.ReactNode) =>
+    render(ui, { wrapper: AllProviders });
 
   it('renders the screen title correctly', () => {
-    const { getByText } = render(renderWithProvider(<Areas />));
+    const { getByText } = renderWithProviders(<Areas />);
     expect(getByText('Select Areas')).toBeTruthy();
   });
 
   it('renders all AppCards', () => {
-    const { getAllByTestId } = render(renderWithProvider(<Areas />));
+    const { getAllByTestId } = renderWithProviders(<Areas />);
     expect(getAllByTestId(/app-card-/).length).toBe(2);
   });
 
   it('toggles goal active state on press', () => {
-    const { getByTestId, getAllByTestId } = render(renderWithProvider(<Areas />));
+    const { getByTestId, getAllByTestId } = renderWithProviders(<Areas />);
     const card = getByTestId('app-card-cardio');
     fireEvent.press(card);
-    // Should update active state (mocked, so just check if rendered)
     expect(getAllByTestId('card-active')[0].props.children).toMatch(/active|inactive/);
   });
 
   it('applies correct styling to the container', () => {
-    const { getByText } = render(renderWithProvider(<Areas />));
-    const titleElement = getByText('Select Areas');
-    expect(titleElement.props.style).toEqual(
-      expect.objectContaining({
-        fontSize: 22,
-        fontWeight: 'bold',
-        marginBottom: 20,
-      })
-    );
-  });
+  const { getByText } = renderWithProviders(<Areas />);
+  const titleElement = getByText('Select Areas');
+  // Slå ihop alla style-objekt i arrayen
+  const mergedStyle = Array.isArray(titleElement.props.style)
+    ? Object.assign({}, ...titleElement.props.style)
+    : titleElement.props.style;
+
+  expect(mergedStyle).toEqual(
+    expect.objectContaining({
+      fontSize: 22,
+      fontWeight: 'bold',
+      marginBottom: 20,
+    })
+  );
+}); 
 });

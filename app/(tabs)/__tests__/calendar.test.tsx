@@ -1,5 +1,7 @@
-import { fireEvent, render } from '@testing-library/react-native';
+import { fireEvent,render } from '@testing-library/react-native';
 import React from 'react';
+
+import { AllProviders } from '@/test-utils/Providers';
 
 import Calendar from '../calendar';
 
@@ -41,23 +43,26 @@ jest.mock('@/components/DayEdit', () => {
   };
 });
 
+  const renderWithProviders = (ui: React.ReactElement) =>
+    render(ui, { wrapper: AllProviders });
+
 describe('Calendar', () => {
   beforeEach(() => {
     addMarkForDateMock.mockClear();
   });
 
   it('renders calendar component', () => {
-    const { getByTestId } = render(<Calendar />);
+    const { getByTestId } = renderWithProviders(<Calendar />);
     expect(getByTestId('calendar-component')).toBeTruthy();
   });
 
   it('does not show DayEdit initially', () => {
-    const { queryByTestId } = render(<Calendar />);
+    const { queryByTestId } = renderWithProviders(<Calendar />);
     expect(queryByTestId('day-edit')).toBeNull();
   });
 
   it('shows DayEdit when a date is selected', () => {
-    const { getByTestId } = render(<Calendar />);
+    const { getByTestId } = renderWithProviders(<Calendar />);
 
     const dayButton = getByTestId('day-2024-01-15');
     fireEvent.press(dayButton);
@@ -66,8 +71,7 @@ describe('Calendar', () => {
   });
 
   it('displays selected date in DayEdit', () => {
-    const { getByTestId } = render(<Calendar />);
-
+    const { getByTestId } = renderWithProviders(<Calendar />);    
     const dayButton = getByTestId('day-2024-01-15');
     fireEvent.press(dayButton);
 
@@ -76,7 +80,7 @@ describe('Calendar', () => {
   });
 
   it('initially shows no supplement selected', () => {
-    const { getByTestId } = render(<Calendar />);
+    const { getByTestId } = renderWithProviders(<Calendar />);
 
     const dayButton = getByTestId('day-2024-01-15');
     fireEvent.press(dayButton);
@@ -86,7 +90,7 @@ describe('Calendar', () => {
   });
 
   it('renders with proper safe area and scroll view structure', () => {
-    const { getByTestId } = render(<Calendar />);
+    const { getByTestId } = renderWithProviders(<Calendar />);
 
     // Verify main components are rendered
     expect(getByTestId('calendar-component')).toBeTruthy();

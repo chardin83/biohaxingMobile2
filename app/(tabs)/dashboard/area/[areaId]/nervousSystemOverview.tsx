@@ -1,9 +1,11 @@
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { Colors } from '@/app/theme/Colors';
+import { globalStyles } from '@/app/theme/globalStyles';
 import { HRVMetric } from '@/components/metrics/HRVMetric';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
+import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import GenesListCard from '@/components/ui/GenesListCard';
 import TipsList from '@/components/ui/TipsList';
@@ -50,9 +52,7 @@ function getRecoveryStatus(hrv: number | null, sleepHours: number | null): strin
 
 export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();
-
-  console.log('=== NERVOUS SYSTEM MOUNTED ===');
-  console.log('mainGoalId from props:', mainGoalId);
+  const { colors } = useTheme();
 
   const [loading, setLoading] = React.useState(true);
   const [hrvData, setHrvData] = React.useState<HRVSummary[]>([]);
@@ -97,171 +97,124 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
 
   return (
     <>
-        <Text style={styles.title}>Nervous System</Text>
-        <Text style={styles.subtitle}>Autonomic nervous system balance and recovery metrics</Text>
+      <ThemedText type="title" style={{ color: colors.accentStrong }}>Nervous System</ThemedText>
+      <ThemedText type="subtitle" style={{ color: colors.textTertiary }}>
+        Autonomic nervous system balance and recovery metrics
+      </ThemedText>
 
-        <WearableStatus status={status} />
+      <WearableStatus status={status} />
 
-        {/* Overview card - Main ANS metrics */}
-        <Card title="Autonomic nervous system">
-          {loading ? (
-            <Text style={styles.muted}>Loading…</Text>
-          ) : (
-            <>
-              <View style={styles.row}>
-                <HRVMetric hrvData={hrvData} showDivider />
+      {/* Overview card - Main ANS metrics */}
+      <Card title="Autonomic nervous system">
+        {loading ? (
+          <ThemedText type="caption">Loading…</ThemedText>
+        ) : (
+          <>
+            <View style={globalStyles.row}>
+              <HRVMetric hrvData={hrvData} showDivider />
 
-                {/* Stress Score */}
-                <View style={[styles.col, styles.colWithDivider]}>
-                  <Text style={styles.label}>Stress score</Text>
-                  <Text style={styles.value}>{Math.round(stressScore)}</Text>
-                  <Text style={styles.accent}>{stressLevel}</Text>
-                </View>
-
-                {/* Body Battery */}
-                <View style={styles.col}>
-                  <Text style={styles.label}>Body Battery</Text>
-                  <Text style={styles.valueSmall}>{bodyBattery ?? '—'}%</Text>
-                </View>
+              {/* Stress Score */}
+              <View style={[
+                globalStyles.col,
+                globalStyles.colWithDivider,
+                { borderRightColor: colors.borderLight ?? colors.border }
+              ]}>
+                <ThemedText type="label">Stress score</ThemedText>
+                <ThemedText type="value">{Math.round(stressScore)}</ThemedText>
+                <ThemedText type="caption" style={{ color: colors.accentDefault }}>{stressLevel}</ThemedText>
               </View>
 
-              {/* Second row */}
-              <View style={[styles.row, styles.rowMarginTop]}>
-                <RestingHRMetric hrvData={hrvData} showDivider />
-
-                {/* Recovery Status */}
-                <View style={styles.col}>
-                  <Text style={styles.label}>Recovery status</Text>
-                  <Text style={styles.valueSmall}>{recoveryStatus}</Text>
-                  <Text style={styles.muted}>{sleepHours ? `${sleepHours.toFixed(1)}h sleep` : 'No sleep data'}</Text>
-                </View>
+              {/* Body Battery */}
+              <View style={globalStyles.col}>
+                <ThemedText type="label">Body Battery</ThemedText>
+                <ThemedText type="caption">{bodyBattery ?? '—'}%</ThemedText>
               </View>
-            </>
-          )}
-        </Card>
+            </View>
 
-        {/* ANS Balance visualization */}
-        <Card title="Sympathetic vs Parasympathetic">
-          {loading ? (
-            <Text style={styles.muted}>Loading…</Text>
-          ) : (
-            <>
-              <View style={styles.balanceContainer}>
-                <View style={styles.balanceBar}>
-                  <View style={[styles.sympatheticBar, { flex: stressScore }]} />
-                  <View style={[styles.parasympatheticBar, { flex: 100 - stressScore }]} />
-                </View>
-                <View style={styles.balanceLabels}>
-                  <Text style={styles.balanceLabel}>⚡ Fight/Flight</Text>
-                  <Text style={styles.balanceLabel}>😌 Rest/Digest</Text>
-                </View>
+            {/* Second row */}
+            <View style={[globalStyles.row, globalStyles.marginTop16]}>
+              <RestingHRMetric hrvData={hrvData} showDivider />
+
+              {/* Recovery Status */}
+              <View style={globalStyles.col}>
+                <ThemedText type="label">Recovery status</ThemedText>
+                <ThemedText type="caption">{recoveryStatus}</ThemedText>
+                <ThemedText type="caption">{sleepHours ? `${sleepHours.toFixed(1)}h sleep` : 'No sleep data'}</ThemedText>
               </View>
-              <Text style={styles.balanceText}>{getBalanceMessage(stressScore)}</Text>
-            </>
-          )}
-        </Card>
+            </View>
+          </>
+        )}
+      </Card>
 
-        {/* Information card */}
-        <Card title="Understanding your nervous system">
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>❤️ HRV (Heart Rate Variability)</Text>
-            <Text style={styles.infoText}>
-              HRV measures the variation in time between heartbeats. Higher HRV indicates better autonomic nervous
-              system function, resilience, and recovery capacity. It's influenced by stress, sleep, fitness, and overall
-              health.
-            </Text>
-          </View>
+      {/* ANS Balance visualization */}
+      <Card title="Sympathetic vs Parasympathetic">
+        {loading ? (
+          <ThemedText type="caption">Loading…</ThemedText>
+        ) : (
+          <>
+            <View style={styles.balanceContainer}>
+              <View style={styles.balanceBar}>
+                <View style={[{ flex: stressScore, backgroundColor: colors.warmDefault }]} />
+                <View style={[{ flex: 100 - stressScore, backgroundColor: colors.accentDefault }]} />
+              </View>
+              <View style={styles.balanceLabels}>
+                <ThemedText type="caption">⚡ Fight/Flight</ThemedText>
+                <ThemedText type="caption">😌 Rest/Digest</ThemedText>
+              </View>
+            </View>
+            <ThemedText type="default">{getBalanceMessage(stressScore)}</ThemedText>
+          </>
+        )}
+      </Card>
 
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>😰 Stress Score</Text>
-            <Text style={styles.infoText}>
-              Based on HRV, activity, and sleep data. Lower scores (0-25) indicate low stress, while higher scores
-              (75-100) show significant sympathetic nervous system activation. Chronic high stress can lead to burnout
-              and health issues.
-            </Text>
-          </View>
+      {/* Information card */}
+      <Card title="Understanding your nervous system">
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">❤️ HRV (Heart Rate Variability)</ThemedText>
+          <ThemedText type="default">
+            HRV measures the variation in time between heartbeats. Higher HRV indicates better autonomic nervous
+            system function, resilience, and recovery capacity. It's influenced by stress, sleep, fitness, and overall
+            health.
+          </ThemedText>
+        </View>
 
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>🔋 Body Battery</Text>
-            <Text style={styles.infoText}>
-              Tracks your body's energy reserves throughout the day. Charged during rest and sleep (parasympathetic
-              activity), depleted by stress and activity (sympathetic activity). Optimize recharge by prioritizing sleep
-              and recovery.
-            </Text>
-          </View>
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">😰 Stress Score</ThemedText>
+          <ThemedText type="default">
+            Based on HRV, activity, and sleep data. Lower scores (0-25) indicate low stress, while higher scores
+            (75-100) show significant sympathetic nervous system activation. Chronic high stress can lead to burnout
+            and health issues.
+          </ThemedText>
+        </View>
 
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>⚖️ ANS Balance</Text>
-            <Text style={styles.infoText}>
-              The autonomic nervous system has two branches: sympathetic (fight/flight) and parasympathetic
-              (rest/digest). Optimal health requires good balance and the ability to switch between states
-              appropriately.
-            </Text>
-          </View>
-        </Card>
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🔋 Body Battery</ThemedText>
+          <ThemedText type="default">
+            Tracks your body's energy reserves throughout the day. Charged during rest and sleep (parasympathetic
+            activity), depleted by stress and activity (sympathetic activity). Optimize recharge by prioritizing sleep
+            and recovery.
+          </ThemedText>
+        </View>
 
-        <GenesListCard areaId="stressReduction"/>
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">⚖️ ANS Balance</ThemedText>
+          <ThemedText type="default">
+            The autonomic nervous system has two branches: sympathetic (fight/flight) and parasympathetic
+            (rest/digest). Optimal health requires good balance and the ability to switch between states
+            appropriately.
+          </ThemedText>
+        </View>
+      </Card>
 
-        {/* Tips card */}
-        <TipsList areaId={mainGoalId} title="tips:nervousSystem.levels.optimization.title" />
-      </>
+      <GenesListCard areaId="stressReduction"/>
+
+      {/* Tips card */}
+      <TipsList areaId={mainGoalId} title="tips:nervousSystem.levels.optimization.title" />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 44,
-    fontWeight: '700',
-    color: Colors.dark.accentStrong,
-  },
-  subtitle: {
-    color: Colors.dark.textTertiary,
-    fontSize: 16,
-    marginTop: 6,
-    marginBottom: 16,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  col: {
-    flex: 1,
-    paddingHorizontal: 8,
-  },
-  colWithDivider: {
-    borderRightWidth: 1,
-    borderRightColor: 'rgba(255,255,255,0.10)',
-  },
-  rowMarginTop: {
-    marginTop: 20,
-  },
-  label: {
-    color: Colors.dark.textTertiary,
-    fontSize: 13,
-  },
-  value: {
-    color: Colors.dark.textPrimary,
-    fontSize: 26,
-    fontWeight: '700',
-    marginTop: 4,
-  },
-  valueSmall: {
-    color: Colors.dark.textPrimary,
-    fontSize: 18,
-    fontWeight: '700',
-    marginTop: 4,
-  },
-  muted: {
-    color: Colors.dark.textMuted,
-    fontSize: 12,
-    marginTop: 6,
-  },
-  accent: {
-    color: Colors.dark.accentDefault,
-    fontSize: 12,
-    marginTop: 6,
-    fontWeight: '600',
-  },
   balanceContainer: {
     marginVertical: 12,
   },
@@ -271,40 +224,18 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: 'hidden',
   },
-  sympatheticBar: {
-    backgroundColor: Colors.dark.warmDefault,
-  },
-  parasympatheticBar: {
-    backgroundColor: Colors.dark.accentDefault,
-  },
   balanceLabels: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 8,
   },
   balanceLabel: {
-    color: Colors.dark.textPrimary,
     fontSize: 13,
     fontWeight: '600',
   },
   balanceText: {
-    color: Colors.dark.textTertiary,
     fontSize: 14,
     lineHeight: 20,
     marginTop: 8,
-  },
-  infoSection: {
-    marginBottom: 16,
-  },
-  infoLabel: {
-    color: Colors.dark.textSecondary,
-    fontSize: 15,
-    fontWeight: '600',
-    marginBottom: 6,
-  },
-  infoText: {
-    color: Colors.dark.textTertiary,
-    fontSize: 14,
-    lineHeight: 20,
   },
 });

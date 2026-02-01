@@ -1,22 +1,19 @@
+import { useTheme } from '@react-navigation/native';
 import { Tabs } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
 
-import { Colors } from '@/app/theme/Colors';
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbolName } from '@/components/ui/icon-symbol-map';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
-import { useColorScheme } from '@/hooks/useColorScheme';
 
 import i18n from '../i18n';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
   const { t } = useTranslation();
-
-  console.log('🤖 TabBarBackground loaded:', TabBarBackground?.name);
+  const { colors } = useTheme();
 
   const [ready, setReady] = useState(i18n.isInitialized);
 
@@ -34,12 +31,12 @@ export default function TabLayout() {
     <Tabs
       // initialRouteName="dashboard" // kan lämnas bort om du vill att dashboard ska vara först
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: colors.primary,
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
-          ios: { position: 'absolute' },
+          ios: { position: 'absolute', backgroundColor: 'transparent' },
           default: {},
         }),
       }}

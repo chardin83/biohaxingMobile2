@@ -1,8 +1,9 @@
+import { useTheme } from '@react-navigation/native';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, ScrollView,StyleSheet, Text, TouchableOpacity,View } from 'react-native';
+import { FlatList, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { Colors } from '@/app/theme/Colors';
+import { ThemedText } from '@/components/ThemedText';
 import Badge from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
@@ -19,6 +20,7 @@ export default function TipsSearchScreen() {
     const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
     const [selectedPlanCategory, setSelectedPlanCategory] = useState<string | null>(null);
     const [selectedBodyPart, setSelectedBodyPart] = useState<string | null>(null);
+    const { colors } = useTheme();
 
     const allPlanCategories = useMemo(
         () =>
@@ -57,8 +59,7 @@ export default function TipsSearchScreen() {
     const allLevels = [...new Set(tips.map(tip => tip.level ?? 1))].sort((a, b) => a - b);
 
     return (
-        <Container background="gradient" gradientKey='sunrise' gradientLocations={Colors.dark.gradients.sunrise.locations1 as any} scrollable={false} style={styles.container} >
-        
+        <Container background="gradient" gradientKey='sunrise' gradientLocations={colors.gradients.sunrise.locations1 as any} scrollable={false} style={styles.container} >
             <LabeledInput
                 label={t('search.label')}
                 value={query}
@@ -72,9 +73,9 @@ export default function TipsSearchScreen() {
                     showsVerticalScrollIndicator={false}
                 >
                     {/* Area-filter */}
-                    <Text style={styles.filterLabel}>
+                    <ThemedText type="label" style={styles.filterLabel}>
                         {t('common:filter.area')}
-                    </Text>
+                    </ThemedText>
                     <View style={styles.filterView}>
                         {[...new Set(tips.flatMap(tip => tip.areas.map(a => a.id)))].map(areaId => (
                             <Badge
@@ -82,20 +83,20 @@ export default function TipsSearchScreen() {
                                 variant="overlay"
                                 style={[
                                     styles.toggleBadge,
-                                    selectedArea === areaId && { backgroundColor: Colors.dark.accentDefault },
+                                    selectedArea === areaId && { backgroundColor: colors.accentDefault },
                                 ]}
                                 onPress={() => setSelectedArea(selectedArea === areaId ? null : areaId)}
                             >
-                                <Text style={styles.badgeLabel}>
+                                <ThemedText type="caption" style={styles.badgeLabel}>
                                     {t('areas:' + areaId + '.title')}
-                                </Text>
+                                </ThemedText>
                             </Badge>
                         ))}
                     </View>
                     {/* Level-filter */}
-                    <Text style={styles.filterLabel}>
+                    <ThemedText type="label" style={styles.filterLabel}>
                         {t('common:filter.level')}
-                    </Text>
+                    </ThemedText>
                     <View style={styles.filterView}>
                         {allLevels.map(level => (
                             <Badge
@@ -103,18 +104,18 @@ export default function TipsSearchScreen() {
                                 variant="overlay"
                                 style={[
                                     styles.toggleBadge,
-                                    selectedLevel === level && { backgroundColor: Colors.dark.accentDefault },
+                                    selectedLevel === level && { backgroundColor: colors.accentDefault },
                                 ]}
                                 onPress={() => setSelectedLevel(selectedLevel === level ? null : level)}
                             >
-                                <Text style={styles.badgeLabel}>{`${level}`}</Text>
+                                <ThemedText type="caption" style={styles.badgeLabel}>{`${level}`}</ThemedText>
                             </Badge>
                         ))}
                     </View>
                     {/* PlanCategory-filter */}
-                    <Text style={styles.filterLabel}>
+                    <ThemedText type="label" style={styles.filterLabel}>
                         {t('common:filter.planCategory')}
-                    </Text>
+                    </ThemedText>
                     <View style={styles.filterView}>
                         {allPlanCategories.map(cat => (
                             <Badge
@@ -122,54 +123,54 @@ export default function TipsSearchScreen() {
                                 variant="overlay"
                                 style={[
                                     styles.toggleBadge,
-                                    selectedPlanCategory === cat && { backgroundColor: Colors.dark.accentDefault },
+                                    selectedPlanCategory === cat && { backgroundColor: colors.accentDefault },
                                 ]}
                                 onPress={() => setSelectedPlanCategory(selectedPlanCategory === cat ? null : cat)}
                             >
-                                <Text style={styles.badgeLabel}>{t('common:planCategory.' + cat)}</Text>
+                                <ThemedText type="caption" style={styles.badgeLabel}>{t('common:planCategory.' + cat)}</ThemedText>
                             </Badge>
                         ))}
                     </View>
                     {/* BodyPart-filter */}
-                    <Text style={styles.filterLabel}>
+                    <ThemedText type="label" style={styles.filterLabel}>
                         {t('common:filter.bodyPart')}
-                    </Text>
+                    </ThemedText>
                     <View style={styles.filterView}>
                         {allBodyParts.map(bp => (
                             <Badge
                                 key={bp.id}
                                 variant="overlay"
                                 style={[
-                                styles.toggleBadge,
-                                selectedBodyPart === bp.id && { backgroundColor: Colors.dark.accentDefault },
+                                    styles.toggleBadge,
+                                    selectedBodyPart === bp.id && { backgroundColor: colors.accentDefault },
                                 ]}
                                 onPress={() => setSelectedBodyPart(selectedBodyPart === bp.id ? null : bp.id)}
                             >
-                                <Text style={styles.badgeLabel}>{t('bodyParts.' + bp.id)}</Text>
+                                <ThemedText type="caption" style={styles.badgeLabel}>{t('bodyParts.' + bp.id)}</ThemedText>
                             </Badge>
-                            ))}
+                        ))}
                     </View>
                 </ScrollView>
             )}
             <TouchableOpacity onPress={() => setShowFilter(v => !v)}>
-                <Text style={[styles.filterButtonLabel, { color: Colors.dark.accentDefault }]}>
+                <ThemedText type="default" style={[styles.filterButtonLabel, { color: colors.accentDefault }]}>
                     {`Filter (${activeFilterCount}st)`}
-                </Text>
+                </ThemedText>
             </TouchableOpacity>
-            <Text style={styles.resultCount}>
+            <ThemedText type="default" style={styles.resultCount}>
                 {`Resultat: (${matchCount}st)`}
-            </Text>
+            </ThemedText>
             <FlatList
                 data={filteredTips}
                 keyExtractor={item => item.id}
                 renderItem={({ item }) => (
                     <Card>
                         <View style={styles.titleRow}>
-                            <Text style={styles.title}>{t('tips:' + item.title)}</Text>
-                            <Badge variant="overlay" style={[styles.toggleBadge, styles.levelBadge, { backgroundColor: Colors.dark.accentDefault }]}>
-                                <Text style={[styles.badgeLabel, styles.bold]}>
+                            <ThemedText type="title3" style={styles.title}>{t('tips:' + item.title)}</ThemedText>
+                            <Badge variant="overlay" style={[styles.toggleBadge, styles.levelBadge, { backgroundColor: colors.accentDefault }]}>
+                                <ThemedText type="caption" style={[styles.badgeLabel, styles.bold]}>
                                     {`${t('common:filter.level')} ${item.level ?? 1}`}
-                                </Text>
+                                </ThemedText>
                             </Badge>
                         </View>
                         <View style={styles.areaBadgeRow}>
@@ -179,18 +180,18 @@ export default function TipsSearchScreen() {
                                     variant="overlay"
                                     style={styles.toggleBadge}
                                 >
-                                    <Text style={styles.badgeLabel}>
+                                    <ThemedText type="caption" style={styles.badgeLabel}>
                                         {t('areas:' + a.id + '.title')}
-                                    </Text>
+                                    </ThemedText>
                                 </Badge>
                             ))}
                         </View>
-                        <Text style={styles.desc}>{t('tips:' + item.descriptionKey)}</Text>
+                        <ThemedText type="default" style={styles.desc}>{t('tips:' + item.descriptionKey)}</ThemedText>
                     </Card>
                 )}
-                ListEmptyComponent={<Text style={styles.empty}>Inga tips hittades.</Text>}
+                ListEmptyComponent={<ThemedText type="default" style={styles.empty}>Inga tips hittades.</ThemedText>}
             />
-            </Container>
+        </Container>
     );
 }
 
@@ -199,7 +200,6 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 16,
         paddingTop: 80,
-        // Bakgrundsfärg sätts av LinearGradient
     },
     titleRow: {
         flexDirection: 'row',
@@ -207,8 +207,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginBottom: 4,
     },
-    title: { fontWeight: 'bold', fontSize: 16, marginBottom: 4, color: Colors.dark.textPrimary },
-    desc: { color: Colors.dark.textSecondary, marginBottom: 4 },
+    title: { fontWeight: 'bold', fontSize: 16, marginBottom: 4 },
+    desc: { marginBottom: 4 },
     areaBadgeRow: {
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -223,7 +223,6 @@ const styles = StyleSheet.create({
         borderRadius: 12,
     },
     badgeLabel: {
-        color: Colors.dark.text,
         fontSize: 12,
     },
     bold: {
@@ -239,15 +238,14 @@ const styles = StyleSheet.create({
     levelBadge: {
         marginLeft: 8,
     },
-    areas: { color: Colors.dark.textSecondary, fontSize: 12 },
-    empty: { textAlign: 'center', color: Colors.dark.textSecondary, marginTop: 40 },
+    areas: { fontSize: 12 },
+    empty: { textAlign: 'center', marginTop: 40 },
     inputMargin: { marginBottom: 20 },
-    resultCount: { color: Colors.dark.textSecondary, fontSize: 16, marginBottom: 12 },
+    resultCount: { fontSize: 16, marginBottom: 12 },
     filterButton: {
         position: 'absolute',
         top: 10,
         right: 10,
-        backgroundColor: Colors.dark.accentDefault,
         borderRadius: 12,
         padding: 10,
         alignItems: 'center',
@@ -261,7 +259,6 @@ const styles = StyleSheet.create({
         paddingBottom: 8,
     },
     filterLabel: {
-        color: Colors.dark.textSecondary,
         marginBottom: 2,
         fontSize: 13,
         fontWeight: 'bold',

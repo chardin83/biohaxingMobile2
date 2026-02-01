@@ -1,9 +1,9 @@
+import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { t } from 'i18next';
 import React, { useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
-import { Colors } from '@/app/theme/Colors';
 import AppButton from '@/components/ui/AppButton';
 import AppCard from '@/components/ui/AppCard';
 import { defaultPlans } from '@/locales/defaultPlans';
@@ -12,6 +12,7 @@ import { useSupplements } from '@/locales/supplements';
 import { useStorage } from '../context/StorageContext';
 
 export default function OnboardingSupplements() {
+  const { colors } = useTheme();
   const supplements = useSupplements()
     .slice()
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -41,8 +42,8 @@ export default function OnboardingSupplements() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}> {t('common:onboarding.whatSupplementDoYouTakeAlready')}</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.title, { color: colors.primary }]}> {t('common:onboarding.whatSupplementDoYouTakeAlready')}</Text>
 
       <FlatList
         data={supplements}
@@ -66,7 +67,6 @@ export default function OnboardingSupplements() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.dark.background,
     padding: 20,
     paddingBottom: 40,
     paddingTop: 70,
@@ -74,7 +74,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: Colors.dark.primary,
     marginBottom: 20,
   },
   list: {

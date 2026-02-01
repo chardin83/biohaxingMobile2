@@ -1,7 +1,12 @@
 import { fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
 
+import { AllProviders } from '@/test-utils/Providers';
+
 import AppCard from '../AppCard';
+
+  const renderWithProviders = (ui: React.ReactElement) =>
+    render(ui, { wrapper: AllProviders });
 
 // Mock react-native-paper Icon
 jest.mock('react-native-paper', () => ({
@@ -40,68 +45,68 @@ describe('AppCard', () => {
   });
 
   it('renders title correctly', () => {
-    const { getByText } = render(<AppCard {...defaultProps} />);
+    const { getByText } = renderWithProviders(<AppCard {...defaultProps} />);
     expect(getByText('Test Card')).toBeTruthy();
   });
 
   it('renders description when provided', () => {
-    const { getByText } = render(<AppCard {...defaultProps} description="Test description" />);
+    const { getByText } = renderWithProviders(<AppCard {...defaultProps} description="Test description" />);
     expect(getByText('Test description')).toBeTruthy();
   });
 
   it('does not render description when not provided', () => {
-    const { queryByText } = render(<AppCard {...defaultProps} />);
+    const { queryByText } = renderWithProviders(<AppCard {...defaultProps} />);
     expect(queryByText('Test description')).toBeNull();
   });
 
   it('renders icon when provided', () => {
-    const { getByTestId } = render(<AppCard {...defaultProps} icon="home" />);
+    const { getByTestId } = renderWithProviders(<AppCard {...defaultProps} icon="home" />);
     const iconElement = getByTestId('icon');
     expect(iconElement).toBeTruthy();
     expect(iconElement.props.children).toBe('home');
   });
 
   it('does not render icon when not provided', () => {
-    const { queryByTestId } = render(<AppCard {...defaultProps} />);
+    const { queryByTestId } = renderWithProviders(<AppCard {...defaultProps} />);
     expect(queryByTestId('icon')).toBeNull();
   });
 
   it('calls onPress when pressed', () => {
     const mockOnPress = jest.fn();
-    const { getByText } = render(<AppCard {...defaultProps} onPress={mockOnPress} />);
+    const { getByText } = renderWithProviders(<AppCard {...defaultProps} onPress={mockOnPress} />);
 
     fireEvent.press(getByText('Test Card'));
     expect(mockOnPress).toHaveBeenCalledTimes(1);
   });
 
   it('applies active styling when isActive is true', () => {
-    const { getByText } = render(<AppCard {...defaultProps} isActive={true} />);
+    const { getByText } = renderWithProviders(<AppCard {...defaultProps} isActive={true} />);
 
     // Just verify that the card renders with active state
     expect(getByText('Test Card')).toBeTruthy();
   });
 
   it('does not apply active styling when isActive is false', () => {
-    const { getByText } = render(<AppCard {...defaultProps} isActive={false} />);
+    const { getByText } = renderWithProviders(<AppCard {...defaultProps} isActive={false} />);
 
     // Just verify that the card renders in inactive state
     expect(getByText('Test Card')).toBeTruthy();
   });
 
   it('shows check icon when isActive is true', () => {
-    const { getByText } = render(<AppCard {...defaultProps} isActive={true} />);
+    const { getByText } = renderWithProviders(<AppCard {...defaultProps} isActive={true} />);
 
     expect(getByText('check-circle')).toBeTruthy();
   });
 
   it('does not show check icon when isActive is false', () => {
-    const { queryByText } = render(<AppCard {...defaultProps} isActive={false} />);
+    const { queryByText } = renderWithProviders(<AppCard {...defaultProps} isActive={false} />);
 
     expect(queryByText('check-circle')).toBeNull();
   });
 
   it('renders with all props together', () => {
-    const { getByText } = render(
+    const { getByText } = renderWithProviders(
       <AppCard {...defaultProps} icon="star" description="Full card test" isActive={true} />
     );
 
@@ -112,7 +117,7 @@ describe('AppCard', () => {
   });
 
   it('has proper accessibility structure', () => {
-    const { getByText } = render(<AppCard {...defaultProps} description="Accessible card" />);
+    const { getByText } = renderWithProviders(<AppCard {...defaultProps} description="Accessible card" />);
 
     // Verify the card renders and is accessible
     expect(getByText('Test Card')).toBeTruthy();
@@ -120,7 +125,7 @@ describe('AppCard', () => {
   });
 
   it('maintains consistent layout with icon and text wrapper', () => {
-    const { getByText } = render(<AppCard {...defaultProps} icon="home" description="Layout test" />);
+    const { getByText } = renderWithProviders(<AppCard {...defaultProps} icon="home" description="Layout test" />);
 
     // Check that title and description are rendered together
     expect(getByText('Test Card')).toBeTruthy();

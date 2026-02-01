@@ -1,10 +1,11 @@
+import { useTheme } from '@react-navigation/native';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
-import { Colors } from '@/app/theme/Colors';
+import { ThemedText } from '@/components/ThemedText';
 
 interface BackButtonProps {
   readonly onPress?: () => void;
@@ -14,6 +15,7 @@ interface BackButtonProps {
 export default function BackButton({ onPress, style }: BackButtonProps) {
   const router = useRouter();
   const { t } = useTranslation();
+  const { colors } = useTheme();
 
   const handlePress = () => {
     if (onPress) {
@@ -23,8 +25,18 @@ export default function BackButton({ onPress, style }: BackButtonProps) {
     }
   };
 
+  const backgroundColor =
+    Platform.OS === 'ios' ? 'transparent' : colors.overlayLight;
+
   return (
-    <Pressable onPress={handlePress} style={[styles.backButton, style]}>
+    <Pressable
+      onPress={handlePress}
+      style={[
+        styles.backButton,
+        style,
+        { backgroundColor },
+      ]}
+    >
       {Platform.OS === 'ios' && (
         <BlurView
           tint="systemChromeMaterial"
@@ -33,9 +45,12 @@ export default function BackButton({ onPress, style }: BackButtonProps) {
         />
       )}
       <View style={styles.buttonContent} pointerEvents="box-none">
-        <Text style={styles.backText}>
-          <Text style={styles.arrowText}>{'‹'}</Text> {t('back')}
-        </Text>
+        <ThemedText type="defaultSemiBold">
+          <ThemedText type="title2" style={[{ color: colors.primary }]}>
+            {'‹'}
+          </ThemedText>{' '}
+          {t('back')}
+        </ThemedText>
       </View>
     </Pressable>
   );
@@ -58,11 +73,9 @@ const styles = StyleSheet.create({
     maxWidth: 120,
     minHeight: 36,
     elevation: 2,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
-    backgroundColor: Platform.OS === 'ios' ? 'transparent' : Colors.dark.overlayLight,
   },
   buttonContent: {
     flexDirection: 'row',
@@ -70,13 +83,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     height: '100%',
-  },
-  backText: {
-    color: Colors.dark.textPrimary,
-    fontSize: 17,
-  },
-  arrowText: {
-    color: Colors.dark.accentStrong,
-    fontSize: 24,
   },
 });

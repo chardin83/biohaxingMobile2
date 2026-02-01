@@ -1,10 +1,11 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
-import { Colors } from '@/app/theme/Colors';
+import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedModal } from '@/components/ThemedModal';
+import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
 import LabeledInput from '@/components/ui/LabeledInput';
 
@@ -20,7 +21,7 @@ interface CreateTimeSlotModalProps {
   onCreate: (plan: CreatePlanData) => void;
   initialName?: string;
   initialTime?: Date;
-  onDelete?: () => void; // <-- Lägg till denna rad
+  onDelete?: () => void;
 }
 
 const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({
@@ -29,12 +30,12 @@ const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({
   onCreate,
   initialName = '',
   initialTime = new Date(),
-  onDelete, // <-- Lägg till denna rad
+  onDelete,
 }) => {
   const { t } = useTranslation();
   const [planName, setPlanName] = React.useState(initialName);
   const [time, setTime] = React.useState(initialTime);
-  const [showTimePicker, setShowTimePicker] = React.useState(false); 
+  const [showTimePicker, setShowTimePicker] = React.useState(false);
 
   const isEditing = !!initialName;
 
@@ -78,15 +79,15 @@ const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({
             title={`${t('plan.prefferedTime')}: ${time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
             onPress={() => setShowTimePicker(true)}
             variant="secondary"
-            style={styles.timePickerButton}
+            style={globalStyles.marginTop8}
           />
         )}
 
         {Platform.OS === 'ios' && (
           <View>
-            <Text style={styles.timePickerText}>
+            <ThemedText type="label">
               {`${t('plan.prefferedTime')}:`}
-            </Text>
+            </ThemedText>
             <DateTimePicker
               value={time}
               mode="time"
@@ -120,7 +121,7 @@ const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({
             title={t('general.delete', { defaultValue: 'Ta bort' })}
             onPress={onDelete}
             variant="danger"
-            style={styles.deleteButton}
+            style={globalStyles.marginTop16}
           />
         )}
       </View>
@@ -129,19 +130,8 @@ const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({
 };
 
 const styles = StyleSheet.create({
-  timePickerText: {
-    fontSize: 16,
-    color: Colors.dark.text,
-    padding: 10,
-  },
-  timePickerButton: {
-    marginTop: 8,
-  },
   fullWidth: {
     width: '100%',
-  },
-  deleteButton: {
-    marginTop: 30,
   },
 });
 

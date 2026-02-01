@@ -1,8 +1,9 @@
 // components/ui/AppBox.tsx
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { Colors } from '@/app/theme/Colors';
+import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 
 type Props = {
@@ -22,6 +23,8 @@ export default function AppBox({
   headerAccessibilityLabel,
   leading,
 }: Readonly<Props>) {
+  const { colors } = useTheme();
+
   const renderHeader = () => {
     if (onPressHeader) {
       return (
@@ -34,7 +37,9 @@ export default function AppBox({
             accessibilityLabel={headerAccessibilityLabel}
           >
             {leading ? <View style={styles.leading}>{leading}</View> : null}
-            <Text style={styles.boxTitle}>{title}</Text>
+            <ThemedText type="title3" style={[styles.boxTitle, { color: colors.primary }]}>
+              {title}
+            </ThemedText>
           </TouchableOpacity>
           {headerRight ? <View style={styles.headerRight}>{headerRight}</View> : null}
         </View>
@@ -45,7 +50,9 @@ export default function AppBox({
       <View style={styles.headerRow}>
         <View style={styles.headerMain}>
           {leading ? <View style={styles.leading}>{leading}</View> : null}
-          <Text style={styles.boxTitle}>{title}</Text>
+          <ThemedText type="title3" style={[styles.boxTitle, { color: colors.primary }]}>
+            {title}
+          </ThemedText>
         </View>
         {headerRight ? <View style={styles.headerRight}>{headerRight}</View> : null}
       </View>
@@ -56,7 +63,9 @@ export default function AppBox({
     <Card transparent={true}>
       {renderHeader()}
       {typeof children === 'string' || typeof children === 'number' ? (
-        <Text style={styles.boxText}>{children}</Text>
+        <ThemedText type="default" style={[styles.boxText, { color: colors.textLight }]}>
+          {children}
+        </ThemedText>
       ) : (
         children
       )}
@@ -66,13 +75,11 @@ export default function AppBox({
 
 const styles = StyleSheet.create({
   boxTitle: {
-    color: Colors.dark.primary,
     fontWeight: 'bold',
     marginBottom: 6,
     textTransform: 'uppercase',
   },
   boxText: {
-    color: Colors.dark.textLight,
     fontSize: 14,
   },
   headerRow: {

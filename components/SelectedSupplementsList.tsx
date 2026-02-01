@@ -1,10 +1,11 @@
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Supplement } from '@/app/domain/Supplement';
 import { SupplementTime } from '@/app/domain/SupplementTime';
-import { Colors } from '@/app/theme/Colors';
+import { globalStyles } from '@/app/theme/globalStyles';
 
 import SupplementItem from './SupplementItem';
 
@@ -22,10 +23,11 @@ const SelectedSupplementsList: React.FC<SelectedSupplementsListProps> = ({
   editSupplement,
 }) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
 
   return (
     <View style={styles.selectedItemsContainer}>
-      <Text style={styles.subLabel}>
+      <Text style={[styles.subLabel, { color: colors.textLight }]}>
         {t('selectedSupplementList.choosenFor')} {''}
         {selectedDate}:
       </Text>
@@ -47,8 +49,8 @@ const SelectedSupplementsList: React.FC<SelectedSupplementsListProps> = ({
           return hoursA - hoursB || minutesA - minutesB;
         })
         .map(([time, supplementNames]) => (
-          <View key={time} style={{ paddingBottom: 20 }}>
-            <Text style={styles.timeLabel}>{time}:</Text>
+          <View key={time} style={globalStyles.marginTop16}>
+            <Text style={[styles.timeLabel, { color: colors.primary }]}>{time}:</Text>
             {supplementNames.map(supplement => (
               <SupplementItem
                 key={`${time}-${supplement.name}`}
@@ -74,13 +76,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
     fontWeight: 'bold',
-    color: Colors.dark.textWhite,
   },
   timeLabel: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: Colors.dark.primary, // Darker color for better contrast
   },
 });
 

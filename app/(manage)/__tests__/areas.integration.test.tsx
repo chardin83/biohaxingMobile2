@@ -2,6 +2,7 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
 
 import { StorageProvider } from '@/app/context/StorageContext';
+import { AllProviders } from '@/test-utils/Providers';
 
 import Areas from '../areas';
 
@@ -96,9 +97,8 @@ jest.mock('@/locales/areas', () => ({
     { id: 'stressReduction', title: 'stressReduction.title', description: 'stressReduction.description', icon: 'emoticon-neutral' },
   ],
 }));
-
-const renderWithStorageProvider = (children: React.ReactNode) => {
-  return render(<StorageProvider>{children}</StorageProvider>);
+const renderWithProviders = (children: React.ReactNode) => {
+  return render(<>{children}</>, { wrapper: AllProviders });
 };
 
 describe('Goals Integration Tests', () => {
@@ -113,7 +113,7 @@ describe('Goals Integration Tests', () => {
   // Removed redundant test: allows goal selection through MyGoalsSelector
 
   it('persists selected goals in storage context', async () => {
-    const { getByTestId, rerender } = renderWithStorageProvider(<Areas />);
+    const { getByTestId, rerender } = renderWithProviders(<Areas />);
     await waitFor(() => {
       expect(getByTestId('area-card-energy')).toBeTruthy();
     });
@@ -131,7 +131,7 @@ describe('Goals Integration Tests', () => {
   });
 
   it('handles goal deselection through real component interactions', async () => {
-    const { getByTestId } = renderWithStorageProvider(<Areas />);
+    const { getByTestId } = renderWithProviders(<Areas />);
     await waitFor(() => {
       expect(getByTestId('area-card-energy')).toBeTruthy();
     });
@@ -144,7 +144,7 @@ describe('Goals Integration Tests', () => {
   });
 
   it('updates storage when goals are modified', async () => {
-    const { getByTestId } = renderWithStorageProvider(<Areas />);
+    const { getByTestId } = renderWithProviders(<Areas />);
     await waitFor(() => {
       expect(getByTestId('area-card-strength')).toBeTruthy();
     });
@@ -154,7 +154,7 @@ describe('Goals Integration Tests', () => {
   });
 
   it('displays area options from real data sources', async () => {
-    const { getByTestId } = renderWithStorageProvider(<Areas />);
+    const { getByTestId } = renderWithProviders(<Areas />);
     await waitFor(() => {
       expect(getByTestId('area-card-energy')).toBeTruthy();
       expect(getByTestId('area-card-sleepQuality')).toBeTruthy();
@@ -163,19 +163,19 @@ describe('Goals Integration Tests', () => {
   });
 
   it('maintains goal state across component remounts', async () => {
-    const { getByTestId, unmount } = renderWithStorageProvider(<Areas />);
+    const { getByTestId, unmount } = renderWithProviders(<Areas />);
     await waitFor(() => {
       expect(getByTestId('area-card-energy')).toBeTruthy();
     });
     unmount();
-    const { getByTestId: getByTestIdRemount } = renderWithStorageProvider(<Areas />);
+    const { getByTestId: getByTestIdRemount } = renderWithProviders(<Areas />);
     await waitFor(() => {
       expect(getByTestIdRemount('area-card-energy')).toBeTruthy();
     });
   });
 
   it('integrates correctly with the app theme and styling', async () => {
-    const { getByTestId } = renderWithStorageProvider(<Areas />);
+    const { getByTestId } = renderWithProviders(<Areas />);
     await waitFor(() => {
       const goalElement = getByTestId('area-card-energy');
       expect(goalElement).toBeTruthy();
@@ -184,7 +184,7 @@ describe('Goals Integration Tests', () => {
   });
 
   it('debug: list all rendered text nodes', async () => {
-    const { getAllByText } = renderWithStorageProvider(<Areas />);
+    const { getAllByText } = renderWithProviders(<Areas />);
     await waitFor(() => {
       // Find all text nodes (any text)
       const allTextNodes = getAllByText(/.*/);

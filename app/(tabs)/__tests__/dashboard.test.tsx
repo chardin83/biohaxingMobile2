@@ -1,5 +1,7 @@
-import { render } from '@testing-library/react-native';
+import { render, waitFor } from '@testing-library/react-native';
 import React from 'react';
+
+import { AllProviders } from '@/test-utils/Providers';
 
 import * as StorageContext from '../../context/StorageContext';
 import BiohackerDashboard from '../dashboard';
@@ -181,31 +183,41 @@ describe('BiohackerDashboard', () => {
     jest.spyOn(StorageContext, 'useStorage').mockReturnValue(mockStorageContext);
   });
 
+   const renderWithProviders = (ui: React.ReactElement) =>
+      render(ui, { wrapper: AllProviders });
 
-  it('renders dashboard title correctly', () => {
-    const { getByText } = render(<BiohackerDashboard />);
-    expect(getByText('BIOHAXING')).toBeTruthy();
+
+  it('renders dashboard title correctly', async () => {
+    const { getByText } = renderWithProviders(<BiohackerDashboard />);
+    await waitFor(() => {
+      expect(getByText('BIOHAXING')).toBeTruthy();
+    });
   });
 
-  it('displays current level correctly', () => {
-    const { getByText } = render(<BiohackerDashboard />);
-    // Use regex to match 'Level 1' with possible whitespace
-    expect(getByText(/Level\s*1/)).toBeTruthy();
-    expect(getByText('Biohacker')).toBeTruthy();
+  it('displays current level correctly', async () => {
+    const { getByText } = renderWithProviders(<BiohackerDashboard />);
+    await waitFor(() => {
+      // Use regex to match 'Level 1' with possible whitespace
+      expect(getByText(/Level\s*1/)).toBeTruthy();
+      expect(getByText('Biohacker')).toBeTruthy();
+    });
   });
 
-  it('shows XP progress correctly', () => {
-    const { getByTestId } = render(<BiohackerDashboard />);
+  it('shows XP progress correctly', async () => {
+    const { getByTestId } = renderWithProviders(<BiohackerDashboard />);
     const progressLabel = getByTestId('progress-label');
-    expect(progressLabel.props.children).toBe('250 / 500 XP');
+    await waitFor(() => {
+      expect(progressLabel.props.children).toBe('250 / 500 XP');
+    });
   });
 
-  it('shows goal titles correctly', () => {
-    const { getByText } = render(<BiohackerDashboard />);
-    expect(getByText('Improve Sleep')).toBeTruthy();
-    expect(getByText('Boost Energy')).toBeTruthy();
+  it('shows goal titles correctly', async () => {
+    const { getByText } = renderWithProviders(<BiohackerDashboard />);
+    await waitFor(() => {
+      expect(getByText('Improve Sleep')).toBeTruthy();
+      expect(getByText('Boost Energy')).toBeTruthy();
+    });
   });
-
   // Remove this test if supplement names are not rendered directly in the description
   // it('displays supplement names in goal descriptions', () => {
   //   const { getByText } = render(<BiohackerDashboard />);
@@ -213,20 +225,23 @@ describe('BiohackerDashboard', () => {
   //   expect(getByText('Vitamin D3')).toBeTruthy();
   // });
 
-  it('handles empty supplements gracefully', () => {
+  it('handles empty supplements gracefully', async () => {
     jest.spyOn(StorageContext, 'useStorage').mockReturnValue({
       ...mockStorageContext,
       activeGoals: [] as typeof mockStorageContext.activeGoals,
     });
-
-    const { getByText } = render(<BiohackerDashboard />);
-    expect(getByText('BIOHAXING')).toBeTruthy();
+    await waitFor(() => {
+      const { getByText } = renderWithProviders(<BiohackerDashboard />);
+      expect(getByText('BIOHAXING')).toBeTruthy();
+     });
   });
 
-  it('calculates progress percentage correctly', () => {
-    const { getByTestId } = render(<BiohackerDashboard />);
+  it('calculates progress percentage correctly', async () => {
+    const { getByTestId } = renderWithProviders(<BiohackerDashboard />);
     const progressValue = getByTestId('progress-value');
     // 250 XP out of 500 XP = 50%
-    expect(progressValue.props.children).toEqual([50, '%']);
+    await waitFor(() => {
+      expect(progressValue.props.children).toEqual([50, '%']);
+    });
   });
 });

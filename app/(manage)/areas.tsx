@@ -1,21 +1,24 @@
+import { useTheme } from '@react-navigation/native';
 import { t } from 'i18next';
 import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
-import { Colors } from '@/app/theme/Colors';
 import AppCard from '@/components/ui/AppCard';
 import Container from '@/components/ui/Container';
 import { Area, areas } from '@/locales/areas';
 
+
 export default function Areas() {
   const { myGoals, setMyGoals } = useStorage();
+  const { colors } = useTheme();
+
   const handlePress = (area: Area) => {
     setMyGoals(prev => (prev.includes(area.id) ? prev.filter(id => id !== area.id) : [...prev, area.id]));
   };
   return (
     <Container background="default" centerContent showBackButton>
-      <Text style={styles.title}>{t('common:areas.selectAreas')}</Text>
+      <Text style={[styles.title, { color: colors.primary }]}>{t('common:areas.selectAreas')}</Text>
       {areas.map(item => (
         <AppCard
           key={item.id}
@@ -34,7 +37,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: Colors.dark.primary,
     marginBottom: 20,
   },
 });

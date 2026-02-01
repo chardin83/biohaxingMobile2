@@ -1,11 +1,12 @@
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 
-import { Colors } from '@/app/theme/Colors';
 import CreateTimeSlotModal, { CreatePlanData } from '@/components/modals/CreateTimeSlotModal';
 import { ThemedModal } from '@/components/ThemedModal';
+import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
 import { useSupplementSaver } from '@/hooks/useSupplementSaver';
 
@@ -24,6 +25,7 @@ const SupplementList: React.FC<SupplementListProps> = ({
 }) => {
   const { t } = useTranslation();
   const { saveSupplementToPlan } = useSupplementSaver();
+  const { colors } = useTheme();
   const [expandedSupplements, setExpandedSupplements] = React.useState<string[]>([]);
   const [addToPlanVisible, setAddToPlanVisible] = React.useState(false);
   const [pendingSupplement, setPendingSupplement] = React.useState<Supplement | null>(null);
@@ -61,16 +63,17 @@ const SupplementList: React.FC<SupplementListProps> = ({
         const isExpanded = !!supplement.description && expandedSupplements.includes(supplementId);
 
         return (
-          <View key={supplementId} style={styles.supplementContainer}>
+          <View key={supplementId} style={[styles.supplementContainer, { borderBottomColor: colors.borderLight }]}>
             <View style={styles.supplementRow}>
               <View style={styles.supplementNameColumn}>
-                <Text
-                  style={styles.supplementText}
+                <ThemedText
+                  type="default"
+                  style={[{ color: colors.textLight }]}
                   numberOfLines={isExpanded ? undefined : 1}
                   ellipsizeMode="tail"
                 >
                   {supplement.name}
-                </Text>
+                </ThemedText>
                 {supplement.description ? (
                   <Pressable
                     accessibilityRole="button"
@@ -80,17 +83,17 @@ const SupplementList: React.FC<SupplementListProps> = ({
                     <Icon
                       source={isExpanded ? 'information' : 'information-outline'}
                       size={14}
-                      color={Colors.dark.primary}
+                      color={colors.primary}
                     />
-                    <Text style={styles.supplementInfoText}>
+                    <ThemedText type="caption" style={[styles.supplementInfoText, { color: colors.primary }]}>
                       {isExpanded ? t('common:goalDetails.lessInfo') : t('common:goalDetails.moreInfo')}
-                    </Text>
+                    </ThemedText>
                   </Pressable>
                 ) : null}
               </View>
               {alreadyPlanned ? (
                 <View style={styles.supplementCheck}>
-                  <Icon source="check" size={22} color={Colors.dark.primary} />
+                  <Icon source="check" size={22} color={colors.primary} />
                 </View>
               ) : (
                 <AppButton
@@ -102,7 +105,9 @@ const SupplementList: React.FC<SupplementListProps> = ({
               )}
             </View>
             {supplement.description && isExpanded && (
-              <Text style={styles.supplementDescription}>{supplement.description}</Text>
+              <ThemedText type="default">
+                {supplement.description}
+              </ThemedText>
             )}
           </View>
         );
@@ -119,7 +124,9 @@ const SupplementList: React.FC<SupplementListProps> = ({
         showCancelButton
       >
         <View>
-          <Text style={styles.supplementDescription}>{t('dayEdit.chooseTime')}</Text>
+          <ThemedText type="default">
+            {t('dayEdit.chooseTime')}
+          </ThemedText>
           {supplementPlans.map(p => (
             <View key={p.name} style={styles.supplementPlanItem}>
               <AppButton
@@ -170,7 +177,6 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.dark.border,
   },
   supplementRow: {
     flexDirection: 'row',
@@ -182,10 +188,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 12,
   },
-  supplementText: {
-    color: Colors.dark.textLight,
-    fontSize: 16,
-  },
   supplementCheck: {
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -196,16 +198,8 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   supplementInfoText: {
-    color: Colors.dark.primary,
-    fontSize: 12,
     marginLeft: 4,
   },
-  supplementDescription: {
-    color: Colors.dark.textLight,
-    fontSize: 14,
-    marginTop: 6,
-  },
-
   supplementPlanItem: {
     marginBottom: 8,
   },

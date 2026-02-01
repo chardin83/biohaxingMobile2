@@ -1,11 +1,11 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { useTheme } from '@react-navigation/native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { t } from 'i18next';
 import React, { JSX, useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { Colors } from '@/app/theme/Colors';
 import { globalStyles } from '@/app/theme/globalStyles';
 import AIInfoPopup from '@/components/AllInfoPopup';
 import BackButton from '@/components/BackButton';
@@ -30,6 +30,7 @@ export default function ChatWithGPT4o(): JSX.Element {
   const [loading, setLoading] = useState<boolean>(false);
   const { handleGPTFunctionCall } = useGPTFunctionHandler();
   const router = useRouter();
+  const { colors } = useTheme();
   const { supplements, goal, initialPrompt, returnPath, returnParams } = useLocalSearchParams<{
     supplements?: string;
     goal?: string;
@@ -259,14 +260,14 @@ export default function ChatWithGPT4o(): JSX.Element {
   return (
     <>
     {showBackButton && <BackButton onPress={handleBack} />}
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <KeyboardAvoidingView style={[styles.container, { backgroundColor: colors.background }]} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View style={globalStyles.flex1}>
        
 
         {/* Visa XP-indikator om vi har tip-kontext */}
         {tipContext && (
-          <View style={styles.xpIndicator}>
-            <Text style={styles.xpIndicatorText}>💬 +2 XP</Text>
+          <View style={[styles.xpIndicator, { borderColor: colors.accentWeak, backgroundColor: colors.accentWeak }]}>
+            <Text style={[styles.xpIndicatorText, { color: colors.primary }]}>💬 +2 XP</Text>
           </View>
         )}
 
@@ -289,26 +290,31 @@ export default function ChatWithGPT4o(): JSX.Element {
           {messages.map((msg, index) => (
             <View
               key={`${msg.role}-${index}`}
-              style={[styles.messageBubble, msg.role === 'user' ? styles.userBubble : styles.assistantBubble]}
+              style={[
+                styles.messageBubble,
+                msg.role === 'user'
+                  ? [styles.userBubble, { backgroundColor: colors.progressBar }]
+                  : [styles.assistantBubble, { backgroundColor: colors.assistantBubble }],
+              ]}
             >
-              <Text style={styles.sender}>{msg.role === 'user' ? 'Du' : 'GPT'}:</Text>
-              <Text style={styles.messageText}>{msg.content}</Text>
+              <Text style={[styles.sender, { color: colors.textLight }]}>{msg.role === 'user' ? 'Du' : 'GPT'}:</Text>
+              <Text style={[styles.messageText, { color: colors.text }]}>{msg.content}</Text>
             </View>
           ))}
 
           {loading && (
-            <View style={[styles.messageBubble, styles.assistantBubble]}>
-              <Text style={styles.sender}>GPT:</Text>
+            <View style={[styles.messageBubble, styles.assistantBubble, { backgroundColor: colors.secondary }]}>
+              <Text style={[styles.sender, { color: colors.textLight }]}>GPT:</Text>
               <View style={styles.typingIndicator}>
-                <Animated.View style={[styles.typingDot, { opacity: dot1Anim }]} />
-                <Animated.View style={[styles.typingDot, { opacity: dot2Anim }]} />
-                <Animated.View style={[styles.typingDot, { opacity: dot3Anim }]} />
+                <Animated.View style={[styles.typingDot, { opacity: dot1Anim, backgroundColor: colors.primary }]} />
+                <Animated.View style={[styles.typingDot, { opacity: dot2Anim, backgroundColor: colors.primary }]} />
+                <Animated.View style={[styles.typingDot, { opacity: dot3Anim, backgroundColor: colors.primary }]} />
               </View>
             </View>
           )}
         </ScrollView>
-        <View style={[styles.inputContainer, { bottom: inputContainerBottom }]}>
-          <View style={styles.inputRow}>
+        <View style={[styles.inputContainer, { bottom: inputContainerBottom, borderColor: colors.border }]}>
+          <View style={[styles.inputRow, { borderColor: colors.border, backgroundColor: colors.secondary }]}>
             <View style={styles.iconWrapperAdjusted}>
               <AIInfoPopup />
             </View>
@@ -316,8 +322,15 @@ export default function ChatWithGPT4o(): JSX.Element {
               value={input}
               onChangeText={setInput}
               placeholder="Skriv en fråga..."
-              placeholderTextColor={Colors.dark.textMuted}
-              style={styles.input}
+              placeholderTextColor={colors.textMuted}
+              style={[
+                styles.input,
+                {
+                  borderColor: colors.border,
+                  color: colors.text,
+                  backgroundColor: colors.background,
+                },
+              ]}
               onFocus={() => {
                 // Scrolla till botten när användaren fokuserar på input
                 setTimeout(() => {
@@ -329,12 +342,18 @@ export default function ChatWithGPT4o(): JSX.Element {
             <MaterialIcons
               name="send"
               size={32}
-              color={loading || !input.trim() ? Colors.dark.textMuted : Colors.dark.primary}
+              color={loading || !input.trim() ? colors.textMuted : colors.primary}
               onPress={loading || !input.trim() ? undefined : sendMessage}
-              style={styles.sendIcon}
+              style={[
+                styles.sendIcon,
+                {
+                  color: colors.primary,
+                  shadowColor: colors.buttonGlow,
+                },
+              ]}
             />
           </View>
-          {!!errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+          {!!errorMessage && <Text style={[styles.errorText, { color: colors.error }]}>{errorMessage}</Text>}
         </View>
       </View>
     </KeyboardAvoidingView>
@@ -347,7 +366,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: Platform.OS === 'ios' ? 40 : 20,
-    backgroundColor: Colors.dark.background,
   },
   scrollContentContainer: {
     flexGrow: 1,
@@ -361,20 +379,16 @@ const styles = StyleSheet.create({
   },
   userBubble: {
     alignSelf: 'flex-end',
-    backgroundColor: Colors.dark.progressBar,
   },
   assistantBubble: {
     alignSelf: 'flex-start',
-    backgroundColor: Colors.dark.secondary,
   },
   messageText: {
     fontSize: 16,
-    color: Colors.dark.text,
   },
   sender: {
     fontWeight: 'bold',
     marginBottom: 5,
-    color: Colors.dark.textLight,
   },
   inputContainer: {
     position: 'absolute',
@@ -382,29 +396,22 @@ const styles = StyleSheet.create({
     right: 0,
     padding: 10,
     borderTopWidth: 1,
-    borderColor: Colors.dark.border,
     backgroundColor: 'rgba(0, 19, 38, 0.9)',
   },
   input: {
     borderWidth: 1,
-    borderColor: Colors.dark.border,
-    color: Colors.dark.text,
     flex: 1,
     borderRadius: 5,
     padding: 10,
-    backgroundColor: Colors.dark.background,
   },
   errorText: {
-    color: Colors.dark.error,
     marginTop: 10,
   },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     borderWidth: 1,
-    borderColor: Colors.dark.border,
     borderRadius: 12,
-    backgroundColor: Colors.dark.secondary,
     paddingHorizontal: 10,
     paddingVertical: 6,
   },
@@ -418,8 +425,6 @@ const styles = StyleSheet.create({
   sendIcon: {
     padding: 6,
     marginLeft: 6,
-    color: Colors.dark.primary,
-    shadowColor: Colors.dark.buttonGlow,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 6,
@@ -428,16 +433,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     right: 0,
-    backgroundColor: Colors.dark.accentWeak,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: Colors.dark.accentWeak,
     zIndex: 10,
   },
   xpIndicatorText: {
-    color: Colors.dark.primary,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -450,7 +452,6 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: Colors.dark.primary,
     marginHorizontal: 2,
   },
 });

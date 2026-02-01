@@ -1,27 +1,35 @@
+import { useTheme } from '@react-navigation/native';
 import React, { useRef, useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 
-import { Colors } from '@/app/theme/Colors';
+import { globalStyles } from '@/app/theme/globalStyles';
 import CalendarComponent from '@/components/CalendarComponent';
 import DayEdit from '@/components/DayEdit';
-
-import { borders } from '../../theme/styles';
 
 export default function Calendar() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const calendarRef = useRef<any>(null);
+  const { colors } = useTheme();
 
   const handleDayPress = (day: string) => {
     setSelectedDate(day);
-    //calendarRef.current?.addMarkForDate?.(day); // <-- Lägg till denna rad
+    //calendarRef.current?.addMarkForDate?.(day);
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <CalendarComponent onDayPress={handleDayPress} ref={calendarRef} />
         {selectedDate && (
-          <View style={styles.dropdownContainer}>
+          <View
+            style={[
+              styles.dropdownContainer,
+              {
+                backgroundColor: colors.secondary,
+                shadowColor: colors.buttonGlow,
+              },
+            ]}
+          >
             <DayEdit selectedDate={selectedDate} />
           </View>
         )}
@@ -33,7 +41,7 @@ export default function Calendar() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Colors.dark.background,
+    // backgroundColor tas bort här!
   },
   scrollContainer: {
     paddingBottom: 40,
@@ -43,9 +51,9 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginHorizontal: 16,
     padding: 12,
-    backgroundColor: Colors.dark.secondary,
-    borderRadius: borders.radius,
-    shadowColor: Colors.dark.buttonGlow,
+    // backgroundColor tas bort här!
+    // shadowColor tas bort här!
+    borderRadius: globalStyles.borders.borderRadius,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 6,

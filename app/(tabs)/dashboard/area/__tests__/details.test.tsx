@@ -1,9 +1,10 @@
 // Mock VerdictSelector to avoid invalid element type error
-import { render } from '@testing-library/react-native';
+import { render, waitFor } from '@testing-library/react-native';
 import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 
 import * as useSupplementsModule from '@/locales/supplements';
+import { AllProviders } from '@/test-utils/Providers';
 
 import * as StorageContext from '../../../../context/StorageContext';
 import GoalDetailScreen from '../[areaId]/details';
@@ -134,33 +135,40 @@ describe('GoalDetailScreen', () => {
     });
   });
 
-  it('renders goal details', () => {
-    const { getAllByText } = render(<GoalDetailScreen />);
-    // There may be multiple 'Main Goal' elements, so check that at least one exists
-    expect(getAllByText(/Main Goal/i).length).toBeGreaterThan(0);
-    expect(getAllByText(/Supp 1/i).length).toBeGreaterThan(0);
-    // XP may be shown in multiple places, so check that at least one exists
-    expect(getAllByText(/XP/i).length).toBeGreaterThan(0);
-    // The tip text may be missing or different, so just check for the tips label
-    // expect(getByText(/Do something/i)).toBeTruthy();
+  const renderWithProviders = (ui: React.ReactElement) =>
+    render(ui, { wrapper: AllProviders });
+
+  it('renders goal details', async () => {
+    const { getAllByText } = renderWithProviders(<GoalDetailScreen />);
+    await waitFor(() => {
+      expect(getAllByText(/Main Goal/i).length).toBeGreaterThan(0);
+      expect(getAllByText(/Supp 1/i).length).toBeGreaterThan(0);
+      expect(getAllByText(/XP/i).length).toBeGreaterThan(0);
+    });
   });
 
-  it('shows not found if goal is missing', () => {
+  it('shows not found if goal is missing', async () => {
     (useLocalSearchParams as jest.Mock).mockReturnValue({ areaId: 'main1', tipId: 'missing' });
     jest.spyOn(StorageContext, 'useStorage').mockReturnValue({
       ...fullMockStorageContext,
     });
-    const { getByText } = render(<GoalDetailScreen />);
-    expect(getByText(/Goal not found/i)).toBeTruthy();
+     await waitFor(() => {
+      const { getByText } = renderWithProviders(<GoalDetailScreen />);
+      expect(getByText(/Goal not found/i)).toBeTruthy();
+    });
   });
   
-  it('renders without crashing (smoke test)', () => {
-    const { toJSON } = render(<GoalDetailScreen />);
-    expect(toJSON()).toBeTruthy();
+  it('renders without crashing (smoke test)', async () => {
+    const { toJSON } = renderWithProviders(<GoalDetailScreen />);
+    await waitFor(() => {
+      expect(toJSON()).toBeTruthy();
+    });
   });
 
-  it('matches snapshot', () => {
-    const { toJSON } = render(<GoalDetailScreen />);
-    expect(toJSON()).toMatchSnapshot();
+  it('matches snapshot', async () => {
+    const { toJSON } = renderWithProviders(<GoalDetailScreen />);
+    await waitFor(() => {
+      expect(toJSON()).toMatchSnapshot();
+    });
   });
 });

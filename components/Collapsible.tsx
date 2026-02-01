@@ -1,10 +1,9 @@
+import { useTheme } from '@react-navigation/native';
 import { PropsWithChildren, useState } from 'react';
 import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
-import { Colors } from '@/app/theme/Colors';
 import { ThemedText } from '@/components/ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { useColorScheme } from '@/hooks/useColorScheme';
 
 export function Collapsible({
   children,
@@ -17,7 +16,7 @@ export function Collapsible({
   contentStyle?: StyleProp<ViewStyle>;
 }) {
   const [isOpen, setIsOpen] = useState(true);
-  const theme = useColorScheme() ?? 'light';
+  const { colors } = useTheme();
 
   return (
     <>
@@ -25,7 +24,7 @@ export function Collapsible({
         <IconSymbol
           name="chevron.right"
           size={18}
-          color={theme === 'light' ? Colors.light.icon : Colors.dark.icon}
+          color={colors.icon}
           style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}
         />
         <ThemedText type="defaultSemiBold">
