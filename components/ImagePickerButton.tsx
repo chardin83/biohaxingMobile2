@@ -84,7 +84,7 @@ const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({
       title={isLoading ? t('dayEdit.analyzing') : label}
       onPress={showOptions}
       disabled={isLoading}
-      variant="secondary"
+      variant="primary"
     />
   );
 };

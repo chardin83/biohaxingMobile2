@@ -1,28 +1,47 @@
 // components/ProgressBarWithLabel.tsx
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import * as Progress from 'react-native-progress';
 
-import { Colors } from '@/app/theme/Colors';
-
 interface Props {
-  readonly progress: number; // 0 to 1
-  readonly label?: string;
-  readonly width?: number;
+  progress: number; // 0 to 1
+  label?: string;
+  width?: number; // Endast numerisk width
+  height?: number;
+  style?: any;
+  color?: string;
+  unfilledColor?: string;
 }
 
-export default function ProgressBarWithLabel({ progress, label, width = 200 }: Props) {
+export default function ProgressBarWithLabel({
+  progress,
+  label,
+  width = 200, // Default numerisk width
+  height = 8,
+  style,
+  color,
+  unfilledColor,
+}: Readonly<Props>) {
+  const { colors } = useTheme();
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <Progress.Bar
         progress={progress}
         width={width}
-        color={Colors.dark.progressBar}
-        unfilledColor="#122033"
+        height={height}
+        color={color || colors.progressBar}
+        unfilledColor={unfilledColor || colors.secondaryBackground}
         borderRadius={5}
         borderWidth={0}
+        testID="progress-bar"
       />
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && (
+        <Text style={[styles.label, { color: colors.textLight }]}>
+          {label}
+        </Text>
+      )}
     </View>
   );
 }
@@ -30,12 +49,11 @@ export default function ProgressBarWithLabel({ progress, label, width = 200 }: P
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    marginBottom: 20,
+    width: '100%',
   },
   label: {
     marginTop: 4,
     textAlign: 'center',
-    color: Colors.dark.textLight,
     fontSize: 12,
   },
 });

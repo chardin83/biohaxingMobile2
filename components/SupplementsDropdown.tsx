@@ -81,22 +81,22 @@ const SupplementDropdown: React.FC<SupplementDropdownProps> = ({
               style={[
                 styles.dropdown,
                 {
-                  borderColor: colors.borderLight
+                  borderColor: colors.border
                 },
               ]}
               dropDownContainerStyle={[
                 styles.dropdownContainer,
                 {
-                  backgroundColor: colors.secondary,
+                  backgroundColor: colors.modalBackground,
                   borderColor: colors.borderLight,
                 },
               ]}
-              textStyle={{ color: colors.textWhite }}
+              textStyle={{ color: colors.text }}
               placeholderStyle={[styles.placeholder, { color: colors.textLight }]}
-              listItemLabelStyle={{ color: colors.textWhite }}
-              searchContainerStyle={{ borderBottomColor: colors.borderLight }}
+              listItemLabelStyle={{ color: colors.text }}
+              searchContainerStyle={{ borderBottomColor: colors.border }}
               searchTextInputStyle={[
-                { backgroundColor: colors.background, color: colors.textWhite },
+                { backgroundColor: colors.cardBackground, color: colors.text, borderColor: colors.border},
               ]}
               zIndex={3000}
               listMode="SCROLLVIEW"

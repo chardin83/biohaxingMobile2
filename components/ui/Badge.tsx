@@ -32,7 +32,7 @@ const Badge: React.FC<BadgeProps> = ({
           borderColor: colors.borderLight,
         }
       : {
-          backgroundColor: colors.secondary,
+          backgroundColor: colors.secondaryBackground,
           borderColor: colors.borderLight,
         };
 

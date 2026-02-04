@@ -1,9 +1,9 @@
-
+import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { StyleSheet,Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { Colors } from '@/app/theme/Colors';
+import { ThemedText } from '@/components/ThemedText';
 import { genes } from '@/locales/genes';
 
 import { Card } from './Card';
@@ -17,6 +17,7 @@ interface GenesListCardProps {
 
 const GenesListCard: React.FC<GenesListCardProps> = ({ areaId, title = 'DNA & Gener', style }) => {
   const router = useRouter();
+  const { colors } = useTheme();
   const filteredGenes = genes.filter(gene =>
     gene.areas.some(area => area.id === areaId)
   );
@@ -33,10 +34,10 @@ const GenesListCard: React.FC<GenesListCardProps> = ({ areaId, title = 'DNA & Ge
   return (
     <Card title={title} style={style}>
       <View style={styles.infoSection}>
-        <Text style={styles.infoLabel}>🧬 Gener kopplade till området</Text>
-        <Text style={styles.infoText}>
+        <ThemedText style={[styles.infoLabel, { color: colors.textSecondary }]}>🧬 Gener kopplade till området</ThemedText>
+        <ThemedText style={[styles.infoText, { color: colors.textTertiary }]}>
           Flera gener påverkar din hälsa och funktion inom detta område:
-        </Text>
+        </ThemedText>
       </View>
       {filteredGenes.map(gene => {
         const area = gene.areas.find(a => a.id === areaId);
@@ -45,9 +46,9 @@ const GenesListCard: React.FC<GenesListCardProps> = ({ areaId, title = 'DNA & Ge
           <GeneCard key={gene.id} gene={gene} area={area} onPress={() => handleGenePress(gene.id)} />
         );
       })}
-      <Text style={styles.muted}>
+      <ThemedText style={[styles.muted, { color: colors.textMuted }]}>
         Genetiska tester kan ge insikt om din profil, men livsstil har alltid störst påverkan!
-      </Text>
+      </ThemedText>
     </Card>
   );
 };
@@ -57,18 +58,15 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   infoLabel: {
-    color: Colors.dark.textSecondary,
     fontWeight: '600',
     fontSize: 15,
     marginBottom: 6,
   },
   infoText: {
-    color: Colors.dark.textTertiary,
     fontSize: 14,
     lineHeight: 20,
   },
   muted: {
-    color: Colors.dark.textMuted,
     fontSize: 12,
     marginTop: 6,
   },

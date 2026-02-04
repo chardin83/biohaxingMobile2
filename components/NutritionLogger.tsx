@@ -8,6 +8,8 @@ import { globalStyles } from '@/app/theme/globalStyles';
 import { NutritionAnalyze } from '@/services/gptServices';
 
 import ImagePickerButton from './ImagePickerButton';
+import { ThemedText } from './ThemedText';
+import { Card } from './ui/Card';
 
 interface NutritionLoggerProps {
   selectedDate: string;
@@ -141,18 +143,18 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
           isLoading={isAnalyzing}
           label={t('dayEdit.pickImage')}
         />
-        {analysisResult && <Text style={[styles.result, { color: colors.text }  ]}>{analysisResult}</Text>}
+        {analysisResult && <ThemedText type="defaultSemiBold">{analysisResult}</ThemedText>}
 
-        <Text style={[styles.label, { color: colors.text }]}>{t('dayEdit.logMeal')}</Text>
+        <ThemedText style={[styles.label, { color: colors.text }]}>{t('dayEdit.logMeal')}</ThemedText>
         {summary && (
-          <View style={[styles.summaryContainer, { backgroundColor: colors.secondary }]}>
-            <Text style={[styles.label, { color: colors.text }]}>{t('dayEdit.nutritionSummary')}</Text>
-            <Text style={[styles.summaryText, { color: colors.text }]}>🍗 Protein: {summary.totals.protein} g</Text>
-            <Text style={[styles.summaryText, { color: colors.text }]}>🔥 Kalorier: {summary.totals.calories} kcal</Text>
-            <Text style={[styles.summaryText, { color: colors.text }]}>🍞 Kolhydrater: {summary.totals.carbohydrates} g</Text>
-            <Text style={[styles.summaryText, { color: colors.text }]}>🥑 Fett: {summary.totals.fat} g</Text>
-            <Text style={[styles.summaryText, { color: colors.text }]}>🌾 Fibrer: {summary.totals.fiber} g</Text>
-          </View>
+          <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
+            <ThemedText type="title3">{t('dayEdit.nutritionSummary')}</ThemedText>
+            <ThemedText type="default">🍗 Protein: {summary.totals.protein} g</ThemedText>
+            <ThemedText type="default">🍞 Kolhydrater: {summary.totals.carbohydrates} g</ThemedText>
+            <ThemedText type="default">🥑 Fett: {summary.totals.fat} g</ThemedText>
+            <ThemedText type="default">🌾 Fibrer: {summary.totals.fiber} g</ThemedText>
+            <ThemedText type="default">🔥 Kalorier: {summary.totals.calories} kcal</ThemedText>
+          </Card>
         )}
       </View>
     </KeyboardAvoidingView>
@@ -162,7 +164,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 10,
   },
   label: {
     fontSize: 16,
@@ -172,14 +174,6 @@ const styles = StyleSheet.create({
   result: {
     marginTop: 20,
     fontSize: 16,
-  },
-  summaryContainer: {
-    padding: 15,
-    borderRadius: 8,
-  },
-  summaryText: {
-    fontSize: 15,
-    marginBottom: 6,
   },
 });
 

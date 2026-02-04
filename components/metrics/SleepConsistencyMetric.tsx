@@ -1,9 +1,10 @@
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 
+import { globalStyles } from '@/app/theme/globalStyles';
+import { ThemedText } from '@/components/ThemedText';
 import { SleepSummaryWithTarget } from '@/wearables/types';
-
-
 
 interface SleepConsistencyMetricProps {
   sleepData: SleepSummaryWithTarget;
@@ -20,6 +21,7 @@ export function SleepConsistencyMetric({
   sleepData,
   showDivider = false,
 }: Readonly<SleepConsistencyMetricProps>) {
+  const { colors } = useTheme();
   const { targetBedtime, startTime } = sleepData;
 
   const targetMinutes = typeof targetBedtime === 'string' ? timeStringToMinutes(targetBedtime) : 0;
@@ -28,85 +30,37 @@ export function SleepConsistencyMetric({
   const isPerfect = Math.abs(differenceMinutes) <= 5;
   const isGood = Math.abs(differenceMinutes) <= 30;
 
+  let accentType = 'explainer' as const;
+  let accentColor;
+  if (isPerfect) {
+    accentColor = colors.accentStrong;
+  } else if (isGood) {
+    accentColor = colors.goldSoft;
+  } else {
+    accentColor = colors.warmColor;
+  }
+
+  let differenceLabel: string;
+  if (isPerfect) {
+    differenceLabel = 'Perfect!';
+  } else {
+    differenceLabel = `Δ ${Math.abs(differenceMinutes)} min ${differenceMinutes > 0 ? 'earlier' : 'late'}`;
+  }
+
   return (
-    <View style={[styles.col, showDivider && styles.colWithDivider]}>
-      <Text style={styles.label}>Bedtime </Text>
-      <View style={styles.valueContainer}>
-        <Text style={styles.value}>{startTime}</Text>
+    <View
+      style={[
+        globalStyles.col,
+        showDivider && [globalStyles.colWithDivider, { borderRightColor: colors.textWeak }],
+      ]}
+    >
+      <ThemedText type="label">Bedtime</ThemedText>
+      <View style={globalStyles.metricValueContainer}>
+        <ThemedText type="title2">{startTime}</ThemedText>
       </View>
-      <Text
-        style={[
-          styles.accent,
-          isPerfect ? styles.perfect : isGood ? styles.good : styles.bad,
-        ]}
-      >
-        {isPerfect
-          ? 'Perfect!'
-          : `Δ ${Math.abs(differenceMinutes)} min ${differenceMinutes > 0 ? 'earlier' : 'late'}`}
-      </Text>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  col: {
-    flex: 1,
-    paddingHorizontal: 8,
-  },
-  colWithDivider: {
-    borderRightWidth: 1,
-    borderRightColor: 'rgba(255,255,255,0.10)',
-  },
-  label: {
-    color: 'rgba(255,255,255,0.65)',
-    fontSize: 13,
-  },
-  valueContainer: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    marginTop: 4,
-  },
-  value: {
-    color: 'white',
-    fontSize: 26,
-    fontWeight: '700',
-  },
-  unit: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: '500',
-    marginLeft: 4,
-    marginRight: 4,
-  },
-  accent: {
-    fontSize: 12,
-    marginTop: 6,
-    fontWeight: '600',
-  },
-  perfect: {
-    color: 'rgba(120,255,220,0.85)',
-  },
-  good: {
-    color: 'rgba(255,220,120,0.85)',
-  },
-  bad: {
-    color: 'rgba(255,120,100,0.95)',
-  },
-});
-
-export function SleepSummaryMetric({
-  sleepData,
-}: { sleepData: SleepSummaryWithTarget }) {
-  // Exempel: räkna ut skillnad i minuter
-  const actual = sleepData.startTime?.slice(11, 16) ?? '';
-  const target = sleepData.targetBedtime;
-  // ...beräkna differenceMinutes här...
-
-  return (
-    <View>
-      <Text>{`Your bedtime: ${actual}`}</Text>
-      <Text>{`Target: ${target}`}</Text>
-      {/* ... */}
+      <ThemedText type={accentType} style={{ color: accentColor }}>
+        {differenceLabel}
+      </ThemedText>
     </View>
   );
 }

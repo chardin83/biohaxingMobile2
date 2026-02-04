@@ -1,7 +1,7 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import CheckIcon from '@/assets/icons/check.svg';
 import PlayIcon from '@/assets/icons/play.svg';
@@ -10,6 +10,8 @@ import SearchIcon from '@/assets/icons/search.svg';
 import StarIcon from '@/assets/icons/star.svg';
 import { ThemedText } from '@/components/ThemedText';
 import Badge from '@/components/ui/Badge';
+import { PressableCard } from '@/components/ui/PressableCard';
+import ProgressBarWithLabel from '@/components/ui/ProgressbarWithLabel';
 import { Tip } from '@/locales/tips';
 import { isNegativeVerdict, isPositiveVerdict, VerdictValue } from '@/types/verdict';
 
@@ -53,34 +55,40 @@ export default function TipCard({ tip, tipProgress, onPress }: Readonly<TipCardP
   };
   const verdictIcon = verdict ? verdictIconMap[verdict] : undefined;
 
+  // Dynamisk border/background beroende på status
+  let cardStyle = {};
+  if (isCompleted) {
+    cardStyle = {
+      borderColor: colors.accentMedium,
+      backgroundColor: colors.accentVeryWeak,
+    };
+  }
+  if (isPositive) {
+    cardStyle = {
+      borderColor: colors.successDefault,
+      backgroundColor: colors.successWeak,
+      borderWidth: 2,
+    };
+  }
+  if (isNegative) {
+    cardStyle = {
+      borderColor: colors.warmDefault,
+      backgroundColor: colors.warmWeak,
+      borderWidth: 2,
+    };
+  }
+
   return (
-    <Pressable
-      style={({ pressed }) => [
+    <PressableCard
+      onPress={onPress}
+      style={[
         styles.tipSection,
         {
           backgroundColor: colors.cardBackground,
-          borderColor: colors.accentVeryWeak,
+          borderColor: colors.cardBorder,
         },
-        pressed && {
-          backgroundColor: colors.overlayLight,
-          borderColor: colors.accentMedium,
-        },
-        isCompleted && {
-          borderColor: colors.accentMedium,
-          backgroundColor: colors.accentVeryWeak,
-        },
-        isPositive && {
-          borderColor: colors.successDefault,
-          backgroundColor: colors.successWeak,
-          borderWidth: 2,
-        },
-        isNegative && {
-          borderColor: colors.warmDefault,
-          backgroundColor: colors.warmWeak,
-          borderWidth: 2,
-        },
+        cardStyle,
       ]}
-      onPress={onPress}
     >
       <View style={styles.tipHeader}>
         <View style={styles.tipHeaderLeft}>
@@ -111,22 +119,20 @@ export default function TipCard({ tip, tipProgress, onPress }: Readonly<TipCardP
 
       {/* Progress bar */}
       {isStarted && (
-        <View style={styles.progressContainer}>
-          <View style={[styles.progressBar, { backgroundColor: colors.textWeak }]}>
-            <View
-              style={[styles.progressFill, { width: `${tipProgress.progress * 100}%`, backgroundColor: colors.accentDefault }]}
-            />
-          </View>
-          <ThemedText style={[styles.progressText, { color: colors.textMuted }]}>
-            {tipProgress.askedQuestions}/3 {t('common:goalDetails.questionsExplored')}
-          </ThemedText>
-        </View>
+        <ProgressBarWithLabel
+          progress={tipProgress.progress}
+          label={`${tipProgress.askedQuestions}/3 ${t('common:goalDetails.questionsExplored')}`}
+          height={6}
+          style={styles.progressContainer}
+          color={colors.accentDefault}
+          unfilledColor={colors.textWeak}
+        />
       )}
 
-      <ThemedText style={[styles.tapHint, { color: colors.accentDefault }]}>
+      <ThemedText type="caption" style={[styles.tapHint, { color: colors.accentStrong }]}>
         {isStarted ? t('common:goalDetails.continueExploring') : t('common:goalDetails.startExploring')}
       </ThemedText>
-    </Pressable>
+    </PressableCard>
   );
 }
 
@@ -163,21 +169,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 4,
   },
-  progressBar: {
-    height: 6,
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-  },
-  progressText: {
-    fontSize: 11,
-    marginTop: 4,
-  },
   tapHint: {
-    fontSize: 12,
-    marginTop: 6,
     fontStyle: 'italic',
+    fontWeight: '600',
   },
 });

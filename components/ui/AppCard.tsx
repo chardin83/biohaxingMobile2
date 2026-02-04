@@ -26,15 +26,15 @@ const AppCard: React.FC<AppCardProps> = ({ icon, title, description, isActive = 
       style={[
         globalStyles.card,
         styles.card,
-        { backgroundColor: colors.secondary, borderColor: colors.border },
+        { backgroundColor: colors.secondaryBackground, borderColor: colors.border },
         isActive && { backgroundColor: colors.cardActive },
       ]}
       testID={testID}
     >
       <View style={styles.cardRow}>
         {icon && (
-          <View style={[styles.iconWrapper, { borderColor: colors.borderLight }]}>
-            <Icon source={icon} size={24} color={colors.primary} />
+          <View style={[styles.iconWrapper, { borderColor: colors.iconBorder, backgroundColor: colors.iconBackground }]}>
+            <Icon source={icon} size={24} color={colors.icon} />
           </View>
         )}
 
@@ -52,15 +52,21 @@ const AppCard: React.FC<AppCardProps> = ({ icon, title, description, isActive = 
         {/* Badge och checkIcon i kolumn */}
         <View style={styles.statusColumn}>
           {typeof xp === 'number' && (
-            <View style={[globalStyles.badge, { backgroundColor: colors.checkmarkSupplement }]}>
-              <ThemedText type="defaultSemiBold" style={{ color: colors.secondary }}>
+            <View
+              style={[
+                globalStyles.badge,
+                { backgroundColor: colors.xp },
+                xp === 0 ? styles.badgeLowOpacity : styles.badgeFullOpacity,
+              ]}
+            >
+              <ThemedText type="defaultSemiBold" style={{ color: colors.secondaryBackground }}>
                 {xp} XP
               </ThemedText>
             </View>
           )}
           {isActive && (
             <View style={styles.checkIcon}>
-              <Icon source="check-circle" size={34} color={colors.checkmarkSupplement} />
+              <Icon source="check-circle" size={34} color={colors.xp} />
             </View>
           )}
         </View>
@@ -70,6 +76,12 @@ const AppCard: React.FC<AppCardProps> = ({ icon, title, description, isActive = 
 };
 
 const styles = StyleSheet.create({
+  badgeLowOpacity: {
+    opacity: 0.5,
+  },
+  badgeFullOpacity: {
+    opacity: 1,
+  },
   card: {
     width: '90%',
     borderRadius: globalStyles.borders.borderRadius,

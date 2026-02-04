@@ -1,5 +1,9 @@
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
+
+import { globalStyles } from '@/app/theme/globalStyles';
+import { ThemedText } from '@/components/ThemedText';
 
 interface VO2MaxMetricProps {
   vo2max: number | null;
@@ -8,50 +12,25 @@ interface VO2MaxMetricProps {
   showDivider?: boolean;
 }
 
-export function VO2MaxMetric({ vo2max, status, trend, showDivider = false }: VO2MaxMetricProps) {
+export function VO2MaxMetric({ vo2max, status, trend, showDivider = false }: Readonly<VO2MaxMetricProps>) {
+  const { colors } = useTheme();
+
   return (
-    <View style={[styles.col, showDivider && styles.colWithDivider]}>
-      <Text style={styles.label}>VO₂ Max</Text>
-      <Text style={styles.value}>{vo2max ?? '—'}</Text>
+    <View
+      style={[
+        globalStyles.col,
+        showDivider && [globalStyles.colWithDivider, { borderRightColor: colors.borderLight }],
+      ]}
+    >
+      <ThemedText type="label">VO₂ Max</ThemedText>
+      <ThemedText type="title2">{vo2max ?? '—'}</ThemedText>
       {trend !== undefined && (
-        <Text style={styles.accent}>
+        <ThemedText type="explainer">
           {trend > 0 ? '+' : ''}
           {trend}% trend
-        </Text>
+        </ThemedText>
       )}
-      {status && <Text style={styles.muted}>{status}</Text>}
+      {status && <ThemedText type="explainer">{status}</ThemedText>}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  col: {
-    flex: 1,
-    paddingHorizontal: 8,
-  },
-  colWithDivider: {
-    borderRightWidth: 1,
-    borderRightColor: 'rgba(255,255,255,0.10)',
-  },
-  label: {
-    color: 'rgba(255,255,255,0.65)',
-    fontSize: 13,
-  },
-  value: {
-    color: 'white',
-    fontSize: 26,
-    fontWeight: '700',
-    marginTop: 4,
-  },
-  accent: {
-    color: 'rgba(120,255,220,0.85)',
-    fontSize: 12,
-    marginTop: 6,
-    fontWeight: '600',
-  },
-  muted: {
-    color: 'rgba(255,255,255,0.5)',
-    fontSize: 12,
-    marginTop: 4,
-  },
-});

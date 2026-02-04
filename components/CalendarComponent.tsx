@@ -5,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 
 import { useStorage } from '@/app/context/StorageContext';
+import { globalStyles } from '@/app/theme/globalStyles';
 
 const configureCalendarLocale = (language: string, t: any) => {
   const localeConfig = {
@@ -32,7 +33,7 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
   const { colors } = useTheme();
   const { takenDates, setTakenDates } = useStorage();
 
-  const [calendarKey, setCalendarKey] = useState(i18n.language);
+  const [calendarKey, setCalendarKey] = useState(i18n.language + colors.background);
   const [isLocaleReady, setIsLocaleReady] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const { dailyNutritionSummaries } = useStorage();
@@ -52,9 +53,9 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
 
   useEffect(() => {
     configureCalendarLocale(i18n.language, t);
-    setCalendarKey(i18n.language);
+    setCalendarKey(i18n.language + colors.background); // Uppdatera key när språk eller tema ändras
     setIsLocaleReady(true);
-  }, [i18n.language, t]);
+  }, [i18n.language, t, colors.background]);
 
   const handleDayPress = (day: { dateString: string }) => {
     setSelectedDate(day.dateString);
@@ -93,12 +94,12 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
     dynamicMarkedDates[selectedDate] = {
       ...dynamicMarkedDates[selectedDate],
       selected: true,
-      selectedColor: colors.successColor,
+      //selectedColor: colors.successColor,
     };
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background, shadowColor: colors.buttonGlow }]}>
+    <View style={[styles.container, { backgroundColor: colors.cardBackground, shadowColor: colors.buttonGlow }]}>
       {/* Exempel på rubrik med ThemedText */}
       {/* <ThemedText type="title3" style={{ marginBottom: 8 }}>{t('calendar.title')}</ThemedText> */}
       <Calendar
@@ -107,8 +108,8 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
         markingType="multi-dot"
         markedDates={dynamicMarkedDates}
         theme={{
-          backgroundColor: colors.secondary,
-          calendarBackground: colors.secondary,
+          backgroundColor: colors.cardBackground,
+          calendarBackground: colors.cardBackground,
           dayTextColor: colors.text,
           todayTextColor: colors.primary,
           selectedDayBackgroundColor: colors.primary,
@@ -127,8 +128,7 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
 const styles = StyleSheet.create({
   container: {
     padding: 10,
-    borderRadius: 20,
-    marginHorizontal: 16,
+    borderRadius: globalStyles.card.borderRadius,
     marginTop: 12,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.4,
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   calendar: {
-    borderRadius: 16,
+    borderRadius: globalStyles.borders.borderRadius,
     overflow: 'hidden',
   },
 });

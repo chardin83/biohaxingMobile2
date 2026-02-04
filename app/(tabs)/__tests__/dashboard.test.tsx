@@ -186,14 +186,6 @@ describe('BiohackerDashboard', () => {
    const renderWithProviders = (ui: React.ReactElement) =>
       render(ui, { wrapper: AllProviders });
 
-
-  it('renders dashboard title correctly', async () => {
-    const { getByText } = renderWithProviders(<BiohackerDashboard />);
-    await waitFor(() => {
-      expect(getByText('BIOHAXING')).toBeTruthy();
-    });
-  });
-
   it('displays current level correctly', async () => {
     const { getByText } = renderWithProviders(<BiohackerDashboard />);
     await waitFor(() => {
@@ -231,8 +223,10 @@ describe('BiohackerDashboard', () => {
       activeGoals: [] as typeof mockStorageContext.activeGoals,
     });
     await waitFor(() => {
-      const { getByText } = renderWithProviders(<BiohackerDashboard />);
-      expect(getByText('BIOHAXING')).toBeTruthy();
+      const { getByTestId, getByText } = renderWithProviders(<BiohackerDashboard />);
+      expect(getByTestId('dashboard-image')).toBeTruthy();
+      expect(getByText(/Level\s*1/)).toBeTruthy();
+      expect(getByText('Biohacker')).toBeTruthy();
      });
   });
 
@@ -242,6 +236,13 @@ describe('BiohackerDashboard', () => {
     // 250 XP out of 500 XP = 50%
     await waitFor(() => {
       expect(progressValue.props.children).toEqual([50, '%']);
+    });
+  });
+
+  it('renders dashboard image correctly', async () => {
+    const { getByTestId } = renderWithProviders(<BiohackerDashboard />);
+    await waitFor(() => {
+      expect(getByTestId('dashboard-image')).toBeTruthy();
     });
   });
 });

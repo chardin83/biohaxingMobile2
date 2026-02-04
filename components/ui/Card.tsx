@@ -20,7 +20,7 @@ export const Card: React.FC<CardProps> = ({ title, children, style, transparent 
       style={[
         transparent
           ? [globalStyles.card, { backgroundColor: colors.cardBackground, borderColor: colors.cardBorder }]
-          : [styles.box, { backgroundColor: colors.secondary, borderColor: colors.border }],
+          : [styles.box, { backgroundColor: colors.secondaryBackground, borderColor: colors.border }],
         style,
       ]}
     >

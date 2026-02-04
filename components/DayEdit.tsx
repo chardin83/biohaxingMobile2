@@ -12,6 +12,7 @@ import { SupplementTime } from '@/app/domain/SupplementTime';
 import NutritionLogger from './NutritionLogger';
 import SelectedSupplementsList from './SelectedSupplementsList';
 import SupplementForm from './SupplementForm';
+import { ThemedText } from './ThemedText';
 import AppButton from './ui/AppButton';
 import DropdownMenuButton from './ui/DropDownMenuButton';
 
@@ -109,11 +110,20 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate }) => {
       <View style={styles.container}>
         <View style={styles.tabContainer}>
           <TouchableOpacity
-            style={[styles.tabWrapper, activeTab === 'supplements' && styles.activeTabWrapper]}
+            style={[
+              styles.tabWrapper,
+              activeTab === 'supplements' && { borderBottomColor: colors.primary }
+            ]}
             onPress={() => setActiveTab('supplements')}
           >
             <View style={styles.tabContent}>
-              <Text style={[styles.tab, { color: colors.text }] }>TILLSKOTT</Text>
+              <ThemedText
+                type="title3"
+                uppercase
+                style={{ color: activeTab === 'supplements' ? colors.text : colors.textTertiary }}
+              >
+                Tillskott
+              </ThemedText>
               {hasSupplementsToday && (
                 <View style={[styles.badge, { backgroundColor: colors.checkmarkSupplement }]} />
               )}
@@ -121,11 +131,20 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate }) => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.tabWrapper, activeTab === 'meal' && styles.activeTabWrapper && { borderBottomColor: colors.primary }]}
+            style={[
+              styles.tabWrapper,
+              activeTab === 'meal' && { borderBottomColor: colors.primary }
+            ]}
             onPress={() => setActiveTab('meal')}
           >
             <View style={styles.tabContent}>
-              <Text style={styles.tab}>MÅLTID</Text>
+              <ThemedText
+                type="title3"
+                uppercase
+                style={{ color: activeTab === 'meal' ? colors.text : colors.textTertiary }}
+              >
+                Måltid
+              </ThemedText>
               {hasMealsToday && <View style={[styles.badge, { backgroundColor: colors.checkmarkMeal }]} />}
             </View>
           </TouchableOpacity>
@@ -271,10 +290,6 @@ const styles = StyleSheet.create({
     position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  tab: {
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   badge: {
     position: 'absolute',

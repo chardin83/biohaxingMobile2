@@ -45,8 +45,8 @@ export type EnergySignal = {
 };
 
 export type AdapterStatus =
-  | { state: 'disconnected' }
-  | { state: 'connecting' }
+  | { state: 'disconnected', source: SourceId }
+  | { state: 'connecting', source: SourceId }
   | { state: 'connected'; source: SourceId }
   | { state: 'error'; message: string };
 

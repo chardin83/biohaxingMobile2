@@ -24,9 +24,11 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
     <ViewManagerAdapter_ExpoLinearGradient
       colors={
         [
-          4278915105,
-          4280234320,
-          4294938195,
+          4294965744,
+          4294961607,
+          4294955146,
+          4294960053,
+          4294964965,
         ]
       }
       endPoint={
@@ -38,7 +40,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
       startPoint={
         [
           0.5,
-          0.35,
+          0,
         ]
       }
       style={
@@ -175,6 +177,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                     "fontWeight": "600",
                     "lineHeight": 24,
                   },
+                  false,
                   undefined,
                 ]
               }
@@ -188,9 +191,10 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                     {
                       "fontSize": 24,
                       "fontWeight": "700",
-                      "lineHeight": 26,
+                      "lineHeight": 32,
                       "marginBottom": 4,
                     },
+                    false,
                     [
                       {
                         "color": "rgb(0, 122, 255)",
@@ -246,6 +250,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                     "lineHeight": 32,
                     "marginBottom": 8,
                   },
+                  false,
                   {
                     "color": "rgb(0, 122, 255)",
                   },
@@ -319,6 +324,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                     "fontSize": 20,
                     "fontWeight": "bold",
                   },
+                  false,
                   {
                     "color": "rgb(0, 122, 255)",
                   },
@@ -337,6 +343,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                     "fontSize": 12,
                     "lineHeight": 20,
                   },
+                  false,
                   undefined,
                 ]
               }
@@ -346,10 +353,13 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
             </Text>
             <View
               style={
-                {
-                  "alignItems": "center",
-                  "marginBottom": 20,
-                }
+                [
+                  {
+                    "alignItems": "center",
+                    "width": "100%",
+                  },
+                  undefined,
+                ]
               }
             >
               <View
@@ -367,8 +377,8 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                 style={
                   [
                     {
-                      "backgroundColor": "#122033",
-                      "borderColor": "#0269B0",
+                      "backgroundColor": undefined,
+                      "borderColor": "rgba(0, 122, 255, 1)",
                       "borderRadius": 5,
                       "borderWidth": 0,
                       "overflow": "hidden",
@@ -377,14 +387,15 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                     undefined,
                   ]
                 }
+                testID="progress-bar"
                 useNativeDriver={false}
               >
                 <View
                   collapsable={false}
                   style={
                     {
-                      "backgroundColor": "#0269B0",
-                      "height": 6,
+                      "backgroundColor": "rgba(0, 122, 255, 1)",
+                      "height": 8,
                       "transform": [
                         {
                           "translateX": -7.105427357601002e-15,
@@ -402,12 +413,16 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
               </View>
               <Text
                 style={
-                  {
-                    "color": "#ccc",
-                    "fontSize": 12,
-                    "marginTop": 4,
-                    "textAlign": "center",
-                  }
+                  [
+                    {
+                      "fontSize": 12,
+                      "marginTop": 4,
+                      "textAlign": "center",
+                    },
+                    {
+                      "color": undefined,
+                    },
+                  ]
                 }
               >
                 0/3 questions explored
@@ -424,6 +439,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                   "fontSize": 20,
                   "fontWeight": "bold",
                 },
+                false,
                 [
                   {
                     "alignSelf": "flex-start",
@@ -443,15 +459,18 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
           <View
             style={
               [
-                {
-                  "backgroundColor": "rgba(255,255,255,0.06)",
-                  "borderColor": "rgba(255,215,100,0.18)",
-                  "borderRadius": 22,
-                  "borderWidth": 1,
-                  "marginBottom": 20,
-                  "padding": 16,
-                  "width": "100%",
-                },
+                [
+                  {
+                    "borderRadius": 22,
+                    "borderWidth": 2,
+                    "marginVertical": 8,
+                    "padding": 15,
+                  },
+                  {
+                    "backgroundColor": undefined,
+                    "borderColor": undefined,
+                  },
+                ],
                 undefined,
               ]
             }
@@ -477,12 +496,28 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
               >
                 <Text
                   style={
-                    {
-                      "color": "#32D1A6",
-                      "fontWeight": "bold",
-                      "marginBottom": 6,
-                      "textTransform": "uppercase",
-                    }
+                    [
+                      {
+                        "color": "rgb(28, 28, 30)",
+                      },
+                      {
+                        "fontSize": 16,
+                        "fontWeight": "700",
+                        "lineHeight": 20,
+                        "marginBottom": 4,
+                      },
+                      false,
+                      [
+                        {
+                          "fontWeight": "bold",
+                          "marginBottom": 6,
+                          "textTransform": "uppercase",
+                        },
+                        {
+                          "color": "rgb(0, 122, 255)",
+                        },
+                      ],
+                    ]
                   }
                 >
                   Main Goal
@@ -499,6 +534,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                     "fontSize": 12,
                     "lineHeight": 16,
                   },
+                  false,
                   {
                     "marginBottom": 8,
                   },
@@ -511,15 +547,18 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
           <View
             style={
               [
-                {
-                  "backgroundColor": "rgba(255,255,255,0.06)",
-                  "borderColor": "rgba(255,215,100,0.18)",
-                  "borderRadius": 22,
-                  "borderWidth": 1,
-                  "marginBottom": 20,
-                  "padding": 16,
-                  "width": "100%",
-                },
+                [
+                  {
+                    "borderRadius": 22,
+                    "borderWidth": 2,
+                    "marginVertical": 8,
+                    "padding": 15,
+                  },
+                  {
+                    "backgroundColor": undefined,
+                    "borderColor": undefined,
+                  },
+                ],
                 undefined,
               ]
             }
@@ -545,12 +584,28 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
               >
                 <Text
                   style={
-                    {
-                      "color": "#32D1A6",
-                      "fontWeight": "bold",
-                      "marginBottom": 6,
-                      "textTransform": "uppercase",
-                    }
+                    [
+                      {
+                        "color": "rgb(28, 28, 30)",
+                      },
+                      {
+                        "fontSize": 16,
+                        "fontWeight": "700",
+                        "lineHeight": 20,
+                        "marginBottom": 4,
+                      },
+                      false,
+                      [
+                        {
+                          "fontWeight": "bold",
+                          "marginBottom": 6,
+                          "textTransform": "uppercase",
+                        },
+                        {
+                          "color": "rgb(0, 122, 255)",
+                        },
+                      ],
+                    ]
                   }
                 >
                   aiInsights
@@ -614,6 +669,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                       "fontSize": 12,
                       "lineHeight": 20,
                     },
+                    false,
                     [
                       {
                         "fontSize": 16,
@@ -688,6 +744,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                       "fontSize": 12,
                       "lineHeight": 20,
                     },
+                    false,
                     [
                       {
                         "fontSize": 16,
@@ -762,6 +819,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                       "fontSize": 12,
                       "lineHeight": 20,
                     },
+                    false,
                     [
                       {
                         "fontSize": 16,
@@ -786,15 +844,18 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
           <View
             style={
               [
-                {
-                  "backgroundColor": "rgba(255,255,255,0.06)",
-                  "borderColor": "rgba(255,215,100,0.18)",
-                  "borderRadius": 22,
-                  "borderWidth": 1,
-                  "marginBottom": 20,
-                  "padding": 16,
-                  "width": "100%",
-                },
+                [
+                  {
+                    "borderRadius": 22,
+                    "borderWidth": 2,
+                    "marginVertical": 8,
+                    "padding": 15,
+                  },
+                  {
+                    "backgroundColor": undefined,
+                    "borderColor": undefined,
+                  },
+                ],
                 undefined,
               ]
             }
@@ -820,12 +881,28 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
               >
                 <Text
                   style={
-                    {
-                      "color": "#32D1A6",
-                      "fontWeight": "bold",
-                      "marginBottom": 6,
-                      "textTransform": "uppercase",
-                    }
+                    [
+                      {
+                        "color": "rgb(28, 28, 30)",
+                      },
+                      {
+                        "fontSize": 16,
+                        "fontWeight": "700",
+                        "lineHeight": 20,
+                        "marginBottom": 4,
+                      },
+                      false,
+                      [
+                        {
+                          "fontWeight": "bold",
+                          "marginBottom": 6,
+                          "textTransform": "uppercase",
+                        },
+                        {
+                          "color": "rgb(0, 122, 255)",
+                        },
+                      ],
+                    ]
                   }
                 >
                   common:goalDetails.supplements
@@ -876,6 +953,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                           "fontSize": 14,
                           "lineHeight": 18,
                         },
+                        false,
                         [
                           {
                             "color": undefined,
@@ -919,8 +997,8 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                   style={
                     {
                       "alignItems": "center",
-                      "borderColor": "#32D1A6",
-                      "borderRadius": 16,
+                      "borderColor": "rgb(0, 122, 255)",
+                      "borderRadius": 12,
                       "borderWidth": 1.5,
                       "justifyContent": "center",
                       "opacity": 1,
@@ -933,14 +1011,25 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                     style={
                       [
                         {
-                          "fontWeight": "bold",
-                          "letterSpacing": 1,
-                          "textTransform": "uppercase",
+                          "color": "rgb(28, 28, 30)",
                         },
                         {
-                          "color": "#32D1A6",
+                          "fontSize": 16,
+                          "fontWeight": "600",
+                          "lineHeight": 24,
                         },
                         false,
+                        [
+                          {
+                            "fontWeight": "bold",
+                            "letterSpacing": 1,
+                            "textTransform": "uppercase",
+                          },
+                          {
+                            "color": "rgb(0, 122, 255)",
+                          },
+                          false,
+                        ],
                       ]
                     }
                   >

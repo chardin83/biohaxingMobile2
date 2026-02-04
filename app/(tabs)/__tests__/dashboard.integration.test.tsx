@@ -50,7 +50,6 @@ describe('Dashboard Integration Tests', () => {
   it('renders dashboard with StorageProvider and displays main dashboard elements', async () => {
     const { getByText } = renderWithProviders(<Dashboard />);
     await waitFor(() => {
-      expect(getByText('BIOHAXING')).toBeTruthy();
       expect(getByText(/Level\s*1/)).toBeTruthy();
       expect(getByText(/\d+ \/ \d+ XP/)).toBeTruthy();
     });

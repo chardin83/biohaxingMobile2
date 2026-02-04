@@ -37,7 +37,7 @@ const AppButton: React.FC<AppButtonProps> = ({
   } else if (isDanger) {
     buttonVariantStyle = { backgroundColor: 'transparent', borderColor: colors.error };
   } else {
-    buttonVariantStyle = { backgroundColor: 'transparent', borderColor: colors.borderLight };
+    buttonVariantStyle = { backgroundColor: 'transparent', borderColor: colors.secondary };
   }
 
   // Determine the text color style based on variant

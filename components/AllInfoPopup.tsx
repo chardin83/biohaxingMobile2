@@ -1,26 +1,31 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useTheme } from '@react-navigation/native';
+import { t } from 'i18next';
 import React, { useEffect, useState } from 'react';
-import { Modal, Pressable, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Switch, Text, View } from 'react-native';
 
 import { useSession } from '@/app/context/SessionStorage';
 import { useStorage } from '@/app/context/StorageContext';
-import { Colors } from '@/app/theme/Colors';
-import { globalStyles } from '@/app/theme/globalStyles';
 
-const AIInfoPopup: React.FC = () => {
+import { ThemedModal } from './ThemedModal';
+
+interface AIInfoPopupProps {
+  visible: boolean;
+  setVisible: (v: boolean) => void;
+}
+
+const AIInfoPopup: React.FC<AIInfoPopupProps> = ({ visible, setVisible }) => {
   const { hasVisitedChat, setHasVisitedChat, shareHealthPlan, setShareHealthPlan } = useStorage();
-  const [visible, setVisible] = useState(false);
   const [healthPlanEnabled, setHealthPlanEnabled] = useState(false);
   const { forceOpenPopup, setForceOpenPopup } = useSession();
+  const { colors } = useTheme();
 
   useEffect(() => {
     if (forceOpenPopup) {
       setVisible(true);
       setForceOpenPopup(false);
     }
-  }, [forceOpenPopup, setForceOpenPopup]);
+  }, [forceOpenPopup, setForceOpenPopup, setVisible]);
 
-  // Kontrollera om popup ska visas första gången
   useEffect(() => {
     const checkFirstVisit = async () => {
       if (!hasVisitedChat) {
@@ -29,7 +34,7 @@ const AIInfoPopup: React.FC = () => {
       }
     };
     checkFirstVisit();
-  }, [hasVisitedChat, setHasVisitedChat]);
+  }, [hasVisitedChat, setHasVisitedChat, setVisible]);
 
   useEffect(() => {
     const loadStoredPrefs = async () => {
@@ -47,63 +52,47 @@ const AIInfoPopup: React.FC = () => {
     savePrefs();
   }, [healthPlanEnabled, setShareHealthPlan]);
 
-  const handleClose = () => {
-    setVisible(false);
-  };
+  const handleClose = () => setVisible(false);
 
   return (
-    <>
-      <TouchableOpacity onPress={() => setVisible(true)} style={styles.iconButton}>
-        <MaterialCommunityIcons name="shield-check-outline" size={24} color={Colors.dark.text} />
-      </TouchableOpacity>
+    
+      <ThemedModal
+        visible={visible}
+        title="🤖 Dina AI-delningar"
+        onClose={handleClose}
+        showCancelButton={true}
+        cancelLabel={t('general.close')}
+      >
+        <Text style={[styles.desc, { color: colors.textLight }]}>
+          Välj vilken information AI:n får använda för att ge dig personliga hälsoråd:
+        </Text>
 
-      {visible && (
-        <Modal visible transparent animationType="slide" onRequestClose={handleClose}>
-          <View style={styles.backdrop}>
-            <View style={styles.modal}>
-              <Text style={styles.title}>🤖 Dina AI-delningar</Text>
+        <View style={styles.row}>
+          <Text style={[styles.label, { color: colors.textLight }]}>Hälsoplan och tillskott</Text>
+          <Switch
+            value={healthPlanEnabled}
+            onValueChange={setHealthPlanEnabled}
+            trackColor={{
+              false: colors.secondary,
+              true: colors.progressBar,
+            }}
+          />
+        </View>
 
-              <Text style={styles.desc}>
-                Välj vilken information AI:n får använda för att ge dig personliga hälsoråd:
-              </Text>
+        <View style={styles.row}>
+          <Text style={[styles.label, { color: colors.textLight }]}>Kalender (delas inte)</Text>
+          <Switch value={false} disabled />
+        </View>
 
-              <View style={styles.row}>
-                <Text style={styles.label}>Hälsoplan och tillskott</Text>
-                <Switch
-                  value={healthPlanEnabled}
-                  onValueChange={setHealthPlanEnabled}
-                  trackColor={{
-                    false: Colors.dark.secondary,
-                    true: Colors.dark.progressBar,
-                  }}
-                  thumbColor={
-                    healthPlanEnabled
-                      ? Colors.dark.textWhite // "#C3FF00" – stark, konsekvent accent
-                      : '#999999' // mörkgrå för av
-                  }
-                />
-              </View>
+        <View style={styles.row}>
+          <Text style={[styles.label, { color: colors.textLight }]}>Chatt-historik (sparas inte)</Text>
+          <Switch value={false} disabled />
+        </View>
 
-              <View style={styles.row}>
-                <Text style={styles.label}>Kalender (delas inte)</Text>
-                <Switch value={false} disabled />
-              </View>
-
-              <View style={styles.row}>
-                <Text style={styles.label}>Chatt-historik (sparas inte)</Text>
-                <Switch value={false} disabled />
-              </View>
-
-              <Text style={styles.disclaimer}>Vi delar aldrig din identitet (som namn eller e-post) med AI:n.</Text>
-
-              <Pressable onPress={handleClose} style={styles.closeButton}>
-                <Text style={styles.closeText}>Stäng</Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
-      )}
-    </>
+        <Text style={[styles.disclaimer, { color: colors.text }]}>
+          Vi delar aldrig din identitet (som namn eller e-post) med AI:n.
+        </Text>
+      </ThemedModal>
   );
 };
 
@@ -113,84 +102,36 @@ const styles = StyleSheet.create({
   iconButton: {
     marginRight: 12,
     marginBottom: 3,
-  },
-  backdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
+    width: 40, // eller valfri storlek
+    height: 40,
+    borderRadius: 20,
     alignItems: 'center',
-    padding: 20,
+    justifyContent: 'center',
   },
-  modal: {
-    backgroundColor: Colors.dark.secondary,
-    borderRadius: globalStyles.borders.borderRadius,
-    padding: 24,
-    width: '100%',
-    maxWidth: 340,
-    elevation: 8,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    color: Colors.dark.primary, // Gör titeln mer framträdande
-    textTransform: 'uppercase',
+  iconWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
   desc: {
     fontSize: 14,
     marginBottom: 16,
-    color: Colors.dark.textLight,
+    textAlign: 'center',
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 12,
+    width: '100%',
   },
-
   label: {
     fontSize: 14,
-    color: Colors.dark.textLight,
   },
   disclaimer: {
     fontSize: 12,
-    color: Colors.dark.text,
     marginTop: 8,
     marginBottom: 16,
     textAlign: 'center',
-  },
-  closeButton: {
-    marginTop: 24,
-    backgroundColor: Colors.dark.background,
-    paddingVertical: 12,
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: Colors.dark.primary,
-  },
-  closeText: {
-    color: Colors.dark.primary,
-    textAlign: 'center',
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    textShadowColor: Colors.dark.buttonTextGlow,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 6,
-  },
-
-  planBox: {
-    backgroundColor: Colors.dark.secondary,
-    padding: 10,
-    borderRadius: globalStyles.borders.borderRadius,
-    marginBottom: 10,
-  },
-  planInfoTitle: {
-    color: Colors.dark.text,
-    fontWeight: '600',
-    marginBottom: 5,
-  },
-  planText: {
-    color: Colors.dark.text,
-    fontSize: 14,
   },
 });

@@ -33,11 +33,11 @@ const RightActions = ({ drag, onEdit, onDelete }: RightActionsProps) => {
         <TouchableOpacity
           style={[
             styles.actionButton,
-            { backgroundColor: colors.secondary },
+            { backgroundColor: colors.secondaryBackground },
           ]}
           onPress={onEdit}
         >
-          <IconSymbol name="pencil" color="white" size={24} />
+          <IconSymbol name="pencil" color={colors.text} size={24} />
         </TouchableOpacity>
       )}
       {onDelete && (

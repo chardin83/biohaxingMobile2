@@ -1,3 +1,4 @@
+import { useTheme } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { StyleSheet, View, ViewProps } from 'react-native';
@@ -17,7 +18,7 @@ type ContainerProps = ViewProps & {
   onBackPress?: () => void;
   centerContent?: boolean;
   contentContainerStyle?: any;
-  scrollable?: boolean; // <-- Lägg till denna rad
+  scrollable?: boolean;
 };
 
 const Container: React.FC<ContainerProps> = ({
@@ -30,9 +31,11 @@ const Container: React.FC<ContainerProps> = ({
   onBackPress,
   centerContent = false,
   contentContainerStyle,
-  scrollable = true, // <-- Default true
+  scrollable = true,
   ...rest
 }) => {
+  const { dark, colors } = useTheme();
+
   // Dynamic paddingTop based on backbutton
   const defaultPaddingTop = showBackButton ? 100 : 35;
   // Merge user contentContainerStyle with centerContent and default paddings
@@ -64,8 +67,13 @@ const Container: React.FC<ContainerProps> = ({
       )}
     </>
   );
+
+  // Use theme-aware gradients and background
+  const themeGradients = dark ? Colors.dark.gradients : Colors.light.gradients;
+  const themeBackground = colors.background;
+
   if (background === 'gradient') {
-    const gradient = Colors.dark.gradients[gradientKey] || Colors.dark.gradients.sunrise;
+    const gradient = themeGradients[gradientKey] || themeGradients.sunrise;
     return (
       <LinearGradient
         colors={gradient.colors as any}
@@ -78,7 +86,7 @@ const Container: React.FC<ContainerProps> = ({
       </LinearGradient>
     );
   }
-  return <View style={[globalStyles.flex1, { backgroundColor: Colors.dark.background }]}>{content}</View>;
+  return <View style={[globalStyles.flex1, { backgroundColor: themeBackground }]}>{content}</View>;
 };
 
 const styles = StyleSheet.create({

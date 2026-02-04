@@ -23,6 +23,10 @@ export const globalStyles = StyleSheet.create({
    colWithDivider: {
     borderRightWidth: 1,
   },
+  metricValueContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',

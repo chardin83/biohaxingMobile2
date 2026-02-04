@@ -1,3 +1,4 @@
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -9,16 +10,18 @@ interface WearableStatusProps {
 }
 
 export function WearableStatus({ status, style }: WearableStatusProps) {
+  const { colors } = useTheme();
+
   const getStatusColor = () => {
     switch (status.state) {
       case 'connected':
-        return 'rgba(100,255,150,0.9)';
+        return colors.surfaceGreenBorder || 'rgba(100,255,150,0.9)';
       case 'disconnected':
-        return 'rgba(255,200,100,0.8)';
+        return colors.gold;
       case 'error':
-        return 'rgba(255,100,100,0.9)';
+        return colors.error || 'rgba(255,100,100,0.9)';
       default:
-        return 'rgba(255,255,255,0.5)';
+        return colors.textMuted || 'rgba(255,255,255,0.5)';
     }
   };
 
@@ -40,7 +43,9 @@ export function WearableStatus({ status, style }: WearableStatusProps) {
       <Text style={[styles.statusText, { color: getStatusColor() }]}>
         {getStatusIcon()} {status.state}
       </Text>
-      {status.state === 'connected' && status.source && <Text style={styles.sourceText}> • {status.source}</Text>}
+      {status.state === 'connected' && status.source && (
+        <Text style={[styles.sourceText, { color: colors.textMuted }]}> • {status.source}</Text>
+      )}
     </View>
   );
 }
@@ -57,7 +62,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   sourceText: {
-    color: 'rgba(255,255,255,0.6)',
     fontSize: 12,
   },
 });

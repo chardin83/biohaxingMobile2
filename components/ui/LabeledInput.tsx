@@ -1,28 +1,53 @@
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { StyleProp, StyleSheet, TextInput, TextInputProps, TextStyle, View, ViewStyle } from 'react-native';
 
-import { Colors } from '@/app/theme/Colors';
 import { ThemedText } from '@/components/ThemedText';
 
 type Props = TextInputProps & {
   label: string;
   containerStyle?: StyleProp<ViewStyle>;
   inputStyle?: StyleProp<TextStyle>;
+  multilineInput?: boolean; // <-- ny prop
 };
 
-const LabeledInput: React.FC<Props> = ({ label, containerStyle, inputStyle, ...textInputProps }) => {
+const LabeledInput: React.FC<Props> = ({
+  label,
+  containerStyle,
+  inputStyle,
+  multilineInput = false,
+  ...textInputProps
+}) => {
+  const { colors } = useTheme();
   const { placeholder, ...restProps } = textInputProps;
   const effectivePlaceholder = label ? undefined : placeholder;
+  const [inputHeight, setInputHeight] = React.useState(40);
+
+  const height = multilineInput ? inputHeight : 40;
 
   return (
     <View style={[styles.container, containerStyle]}>
-      <ThemedText type="caption" style={styles.label}>
+      <ThemedText type="label">
         {label}
       </ThemedText>
       <TextInput
-        style={[styles.input, inputStyle]}
-        placeholderTextColor={Colors.dark.textMuted}
+        style={[
+          styles.input,
+          {
+            borderColor: colors.border,
+            color: colors.text,
+            height: height,
+          },
+          inputStyle,
+        ]}
+        placeholderTextColor={colors.textMuted}
         placeholder={effectivePlaceholder}
+        multiline={multilineInput}
+        onContentSizeChange={
+          multilineInput
+            ? e => setInputHeight(Math.max(40, e.nativeEvent.contentSize.height))
+            : undefined
+        }
         {...restProps}
       />
     </View>
@@ -35,15 +60,11 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
   },
-  label: {
-    marginBottom: 6,
-    color: Colors.dark.textLight,
-  },
   input: {
     borderWidth: 2,
-    borderColor: Colors.dark.border,
-    borderRadius: 5,
+    borderRadius: 8,
     padding: 10,
-    color: Colors.dark.text,
+    minHeight: 40,
+    textAlignVertical: 'top',
   },
 });

@@ -1,5 +1,5 @@
 import { useTheme } from '@react-navigation/native';
-import { StyleSheet, Text, type TextProps, useColorScheme } from 'react-native';
+import { StyleSheet, Text, type TextProps } from 'react-native';
 
 import { AppTheme } from '@/app/theme/AppTheme';
 
@@ -7,17 +7,18 @@ export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
   type?: 'default' | 'title' | 'title2' | 'title3' | 'defaultSemiBold' | 'subtitle' | 'link' | 'caption' | 'value' | 'label' | 'explainer';
+  uppercase?: boolean;
 };
 
 function getTextColor(
   colors: AppTheme['colors'],
-  colorScheme: ReturnType<typeof useColorScheme>,
+  dark: boolean,
   type: ThemedTextProps['type'],
   lightColor?: string,
   darkColor?: string
 ) {
-  if (colorScheme === 'dark' && darkColor) return darkColor;
-  if (colorScheme !== 'dark' && lightColor) return lightColor;
+  if (dark && darkColor) return darkColor;
+  if (!dark && lightColor) return lightColor;
   if (type === 'label') return colors.textTertiary ?? colors.text;
   if (type === 'explainer') return colors.textMuted ?? colors.text;
   return colors.text;
@@ -50,11 +51,10 @@ function getTextStyle(type: ThemedTextProps['type'], colors: AppTheme['colors'])
   }
 }
 
-export function ThemedText({ style, lightColor, darkColor, type = 'default', ...rest }: ThemedTextProps) {
-  const { colors } = useTheme();
-  const colorScheme = useColorScheme();
+export function ThemedText({ style, lightColor, darkColor, type = 'default', uppercase = false, ...rest }: ThemedTextProps) {
+  const { colors, dark } = useTheme();
 
-  const color = getTextColor(colors, colorScheme, type, lightColor, darkColor);
+  const color = getTextColor(colors, dark, type, lightColor, darkColor);
   const textStyle = getTextStyle(type, colors);
 
   return (
@@ -62,6 +62,7 @@ export function ThemedText({ style, lightColor, darkColor, type = 'default', ...
       style={[
         { color },
         textStyle,
+        uppercase && styles.uppercase,
         style,
       ]}
       {...rest}
@@ -88,13 +89,13 @@ const styles = StyleSheet.create({
   title2: {
     fontSize: 24,
     fontWeight: '700',
-    lineHeight: 26,
+    lineHeight: 32,
     marginBottom: 4,
   },
   title3: {
     fontSize: 16,
     fontWeight: '700',
-    lineHeight: 18,
+    lineHeight: 20,
     marginBottom: 4,
   },
   subtitle: {
@@ -118,5 +119,8 @@ const styles = StyleSheet.create({
   explainer: {
     fontSize: 12,
     lineHeight: 16,
+  },
+  uppercase: {
+    textTransform: 'uppercase',
   },
 });

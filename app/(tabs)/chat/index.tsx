@@ -1,14 +1,16 @@
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useTheme } from '@react-navigation/native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { t } from 'i18next';
 import React, { JSX, useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Animated, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
 import AIInfoPopup from '@/components/AllInfoPopup';
 import BackButton from '@/components/BackButton';
+import { ThemedText } from '@/components/ThemedText';
+import LabeledInput from '@/components/ui/LabeledInput';
 import { useGPTFunctionHandler } from '@/hooks/useGPTFunctionHandler';
 import { useKeyboardVisible } from '@/hooks/useKeyboardVisible';
 import { askGPT, buildSystemPrompt } from '@/services/gptServices';
@@ -257,106 +259,106 @@ export default function ChatWithGPT4o(): JSX.Element {
     inputContainerBottom = typeof tabBarHeight === 'number' ? tabBarHeight : 0;
   }
 
+  const [showAIPopup, setShowAIPopup] = useState(false);
+
   return (
     <>
-    {showBackButton && <BackButton onPress={handleBack} />}
-    <KeyboardAvoidingView style={[styles.container, { backgroundColor: colors.background }]} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <View style={globalStyles.flex1}>
-       
+      {showBackButton && <BackButton onPress={handleBack} />}
+      <KeyboardAvoidingView style={[styles.container, { backgroundColor: colors.background }]} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <View style={globalStyles.flex1}>
 
-        {/* Visa XP-indikator om vi har tip-kontext */}
-        {tipContext && (
-          <View style={[styles.xpIndicator, { borderColor: colors.accentWeak, backgroundColor: colors.accentWeak }]}>
-            <Text style={[styles.xpIndicatorText, { color: colors.primary }]}>💬 +2 XP</Text>
-          </View>
-        )}
 
-        <ScrollView
-          ref={scrollRef}
-          style={globalStyles.flex1}
-          keyboardShouldPersistTaps="handled"
-          onScroll={event => {
-            const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-            const distanceFromBottom = contentSize.height - layoutMeasurement.height - contentOffset.y;
-            // Anses vara nära botten om mindre än 100 pixlar från botten
-            isNearBottom.current = distanceFromBottom < 100;
-          }}
-          scrollEventThrottle={400}
-          contentContainerStyle={[
-            styles.scrollContentContainer,
-            { paddingBottom: tabBarHeight + 80, paddingTop: paddingTopValue }
-          ]}
-        >
-          {messages.map((msg, index) => (
-            <View
-              key={`${msg.role}-${index}`}
-              style={[
-                styles.messageBubble,
-                msg.role === 'user'
-                  ? [styles.userBubble, { backgroundColor: colors.progressBar }]
-                  : [styles.assistantBubble, { backgroundColor: colors.assistantBubble }],
-              ]}
-            >
-              <Text style={[styles.sender, { color: colors.textLight }]}>{msg.role === 'user' ? 'Du' : 'GPT'}:</Text>
-              <Text style={[styles.messageText, { color: colors.text }]}>{msg.content}</Text>
-            </View>
-          ))}
-
-          {loading && (
-            <View style={[styles.messageBubble, styles.assistantBubble, { backgroundColor: colors.secondary }]}>
-              <Text style={[styles.sender, { color: colors.textLight }]}>GPT:</Text>
-              <View style={styles.typingIndicator}>
-                <Animated.View style={[styles.typingDot, { opacity: dot1Anim, backgroundColor: colors.primary }]} />
-                <Animated.View style={[styles.typingDot, { opacity: dot2Anim, backgroundColor: colors.primary }]} />
-                <Animated.View style={[styles.typingDot, { opacity: dot3Anim, backgroundColor: colors.primary }]} />
-              </View>
+          {/* Visa XP-indikator om vi har tip-kontext */}
+          {tipContext && (
+            <View style={[styles.xpIndicator, { borderColor: colors.accentWeak, backgroundColor: colors.accentWeak }]}>
+              <Text style={[styles.xpIndicatorText, { color: colors.primary }]}>💬 +2 XP</Text>
             </View>
           )}
-        </ScrollView>
-        <View style={[styles.inputContainer, { bottom: inputContainerBottom, borderColor: colors.border }]}>
-          <View style={[styles.inputRow, { borderColor: colors.border, backgroundColor: colors.secondary }]}>
-            <View style={styles.iconWrapperAdjusted}>
-              <AIInfoPopup />
+
+          <ScrollView
+            ref={scrollRef}
+            style={globalStyles.flex1}
+            keyboardShouldPersistTaps="handled"
+            onScroll={event => {
+              const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+              const distanceFromBottom = contentSize.height - layoutMeasurement.height - contentOffset.y;
+              // Anses vara nära botten om mindre än 100 pixlar från botten
+              isNearBottom.current = distanceFromBottom < 100;
+            }}
+            scrollEventThrottle={400}
+            contentContainerStyle={[
+              styles.scrollContentContainer,
+              { paddingBottom: tabBarHeight + 80, paddingTop: paddingTopValue }
+            ]}
+          >
+            {messages.map((msg, index) => (
+              <View
+                key={`${msg.role}-${index}`}
+                style={[
+                  styles.messageBubble,
+                  msg.role === 'user'
+                    ? [styles.userBubble, { backgroundColor: colors.userBubble }]
+                    : [styles.assistantBubble, { backgroundColor: colors.assistantBubble }],
+                ]}
+              >
+                <ThemedText type="label" uppercase style={{ color: colors.textLight }}>
+                  {msg.role === 'user' ? 'Du' : 'GPT'}:
+                </ThemedText>
+                <ThemedText type="default">
+                  {msg.content}
+                </ThemedText>
+              </View>
+            ))}
+
+            {loading && (
+              <View style={[styles.messageBubble, styles.assistantBubble, { backgroundColor: colors.assistantBubble }]}>
+                <ThemedText type="label" uppercase style={{ color: colors.textLight }}>GPT:</ThemedText>
+                <View style={styles.typingIndicator}>
+                  <Animated.View style={[styles.typingDot, { opacity: dot1Anim, backgroundColor: colors.primary }]} />
+                  <Animated.View style={[styles.typingDot, { opacity: dot2Anim, backgroundColor: colors.primary }]} />
+                  <Animated.View style={[styles.typingDot, { opacity: dot3Anim, backgroundColor: colors.primary }]} />
+                </View>
+              </View>
+            )}
+          </ScrollView>
+          <View style={[styles.inputContainer, { bottom: inputContainerBottom, borderColor: colors.border, backgroundColor: colors.background }]}>
+            <View style={[styles.inputRow]}>
+              <TouchableOpacity onPress={() => setShowAIPopup(true)} style={styles.iconButton}>
+                <MaterialCommunityIcons name="shield-check-outline" size={24} color={colors.secondary} />
+              </TouchableOpacity>
+              <LabeledInput
+                label=""
+                value={input}
+                onChangeText={setInput}
+                placeholder="Skriv en fråga..."
+                containerStyle={styles.input}
+                multilineInput 
+                onFocus={() => {
+                  setTimeout(() => {
+                    scrollRef.current?.scrollToEnd({ animated: true });
+                    isNearBottom.current = true;
+                  }, 300);
+                }}
+              />
+              <MaterialIcons
+                name="send"
+                size={32}
+                color={loading || !input.trim() ? colors.textMuted : colors.primary}
+                onPress={loading || !input.trim() ? undefined : sendMessage}
+                style={[
+                  styles.sendIcon,
+                  {
+                    color: colors.primary,
+                    shadowColor: colors.buttonGlow,
+                  },
+                ]}
+              />
             </View>
-            <TextInput
-              value={input}
-              onChangeText={setInput}
-              placeholder="Skriv en fråga..."
-              placeholderTextColor={colors.textMuted}
-              style={[
-                styles.input,
-                {
-                  borderColor: colors.border,
-                  color: colors.text,
-                  backgroundColor: colors.background,
-                },
-              ]}
-              onFocus={() => {
-                // Scrolla till botten när användaren fokuserar på input
-                setTimeout(() => {
-                  scrollRef.current?.scrollToEnd({ animated: true });
-                  isNearBottom.current = true;
-                }, 300);
-              }}
-            />
-            <MaterialIcons
-              name="send"
-              size={32}
-              color={loading || !input.trim() ? colors.textMuted : colors.primary}
-              onPress={loading || !input.trim() ? undefined : sendMessage}
-              style={[
-                styles.sendIcon,
-                {
-                  color: colors.primary,
-                  shadowColor: colors.buttonGlow,
-                },
-              ]}
-            />
+            {!!errorMessage && <Text style={[styles.errorText, { color: colors.error }]}>{errorMessage}</Text>}
           </View>
-          {!!errorMessage && <Text style={[styles.errorText, { color: colors.error }]}>{errorMessage}</Text>}
         </View>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+      <AIInfoPopup visible={showAIPopup} setVisible={setShowAIPopup} />
     </>
   );
 }
@@ -375,7 +377,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 10,
     marginVertical: 5,
-    maxWidth: '80%',
+    maxWidth: '85%',
   },
   userBubble: {
     alignSelf: 'flex-end',
@@ -383,26 +385,15 @@ const styles = StyleSheet.create({
   assistantBubble: {
     alignSelf: 'flex-start',
   },
-  messageText: {
-    fontSize: 16,
-  },
-  sender: {
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
   inputContainer: {
     position: 'absolute',
     left: 0,
     right: 0,
-    padding: 10,
+    paddingBottom: 8,
     borderTopWidth: 1,
-    backgroundColor: 'rgba(0, 19, 38, 0.9)',
   },
   input: {
-    borderWidth: 1,
     flex: 1,
-    borderRadius: 5,
-    padding: 10,
   },
   errorText: {
     marginTop: 10,
@@ -410,21 +401,18 @@ const styles = StyleSheet.create({
   inputRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingVertical: 1,
   },
   iconWrapperAdjusted: {
-    width: 32,
+    width: 36,
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 4,
+    backgroundColor: '#000',
   },
   sendIcon: {
     padding: 6,
-    marginLeft: 6,
+    marginLeft: 1,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 6,
@@ -453,5 +441,9 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     marginHorizontal: 2,
+  },
+  iconButton: {
+    padding: 6,
+    borderRadius: 20,
   },
 });

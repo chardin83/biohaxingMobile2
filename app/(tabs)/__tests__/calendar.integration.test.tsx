@@ -171,7 +171,7 @@ describe('Calendar Integration Tests', () => {
     const { getByTestId, queryByText } = renderWithProviders(<Calendar />);
 
     // Initially no DayEdit should be visible with supplements tab
-    expect(queryByText('TILLSKOTT')).toBeNull();
+    expect(queryByText('Tillskott')).toBeNull();
 
     // Select a day on the calendar
     await act(async () => {
@@ -180,8 +180,8 @@ describe('Calendar Integration Tests', () => {
 
     // DayEdit should now be visible with tabs
     await waitFor(() => {
-      expect(queryByText('TILLSKOTT')).toBeTruthy();
-      expect(queryByText('MÅLTID')).toBeTruthy();
+      expect(queryByText('Måltid')).toBeTruthy();
+      expect(queryByText('Tillskott')).toBeTruthy();
     });
   });
 
@@ -195,7 +195,7 @@ describe('Calendar Integration Tests', () => {
 
     // Wait for DayEdit to appear
     await waitFor(() => {
-      expect(queryByText('TILLSKOTT')).toBeTruthy();
+      expect(queryByText('Tillskott')).toBeTruthy();
     });
 
     // Click add supplement through dropdown menu
@@ -218,7 +218,7 @@ describe('Calendar Integration Tests', () => {
     });
 
     await waitFor(() => {
-      expect(queryByText('TILLSKOTT')).toBeTruthy();
+      expect(queryByText('Tillskott')).toBeTruthy();
     });
 
     // Switch to another day
@@ -233,7 +233,7 @@ describe('Calendar Integration Tests', () => {
 
     // The DayEdit should still appear (showing state persistence)
     await waitFor(() => {
-      expect(queryByText('TILLSKOTT')).toBeTruthy();
+      expect(queryByText('Tillskott')).toBeTruthy();
     });
   });
 
@@ -263,7 +263,7 @@ describe('Calendar Integration Tests', () => {
     });
 
     await waitFor(() => {
-      expect(getByText('TILLSKOTT')).toBeTruthy();
+      expect(getByText('Tillskott')).toBeTruthy();
     });
 
     // Initially should be on supplements tab
@@ -271,7 +271,7 @@ describe('Calendar Integration Tests', () => {
 
     // Switch to meal tab
     await act(async () => {
-      fireEvent.press(getByText('MÅLTID'));
+      fireEvent.press(getByText('Måltid'));
     });
 
     // Should now show nutrition logger
@@ -289,7 +289,7 @@ describe('Calendar Integration Tests', () => {
     });
 
     await waitFor(() => {
-      expect(getByText('TILLSKOTT')).toBeTruthy();
+      expect(getByText('Tillskott')).toBeTruthy();
     });
 
     // Verify the DayEdit component is working with date selection
@@ -307,7 +307,7 @@ describe('Calendar Integration Tests', () => {
     });
 
     await waitFor(() => {
-      expect(getByText('TILLSKOTT')).toBeTruthy();
+      expect(getByText('Tillskott')).toBeTruthy();
     });
 
     // Verify the supplement management interface is available

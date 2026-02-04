@@ -1,6 +1,9 @@
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 
+import { globalStyles } from '@/app/theme/globalStyles';
+import { ThemedText } from '@/components/ThemedText';
 import { SleepSummary } from '@/wearables/types';
 
 interface SleepMetricProps {
@@ -9,6 +12,7 @@ interface SleepMetricProps {
 }
 
 export function SleepMetric({ sleepData, showDivider = false }: Readonly<SleepMetricProps>) {
+  const { colors } = useTheme();
   const latestSleep = sleepData[0];
   const sleepMinutes = latestSleep?.durationMinutes ?? null;
   const sleepHours = sleepMinutes ? Math.floor(sleepMinutes / 60) : null;
@@ -16,64 +20,35 @@ export function SleepMetric({ sleepData, showDivider = false }: Readonly<SleepMe
   const efficiency = latestSleep?.efficiencyPct ?? null;
 
   return (
-    <View style={[styles.col, showDivider && styles.colWithDivider]}>
-      <Text style={styles.label}>Sleep duration</Text>
-      <View style={styles.valueContainer}>
+    <View
+      style={[
+        globalStyles.col,
+        showDivider && [globalStyles.colWithDivider, { borderRightColor: colors.textWeak }],
+      ]}
+    >
+      <ThemedText type="label">Sleep duration</ThemedText>
+      <View style={globalStyles.metricValueContainer}>
         {sleepMinutes === null ? (
-          <Text style={styles.value}>—</Text>
+          <ThemedText type="title2">—</ThemedText>
         ) : (
           <>
-            <Text style={styles.value}>{sleepHours}</Text>
-            <Text style={styles.unit}>h </Text>
-            <Text style={styles.value}>{String(sleepMins).padStart(2, '0')}</Text>
-            <Text style={styles.unit}>m</Text>
+            <ThemedText type="title2">{sleepHours}</ThemedText>
+            <ThemedText type="caption">h </ThemedText>
+            <ThemedText type="title2">{String(sleepMins).padStart(2, '0')}</ThemedText>
+            <ThemedText type="caption">m</ThemedText>
           </>
         )}
       </View>
-      {efficiency !== null && <Text style={styles.accent}>{efficiency}% efficiency</Text>}
-      {latestSleep && <Text style={styles.source}>{latestSleep.source}</Text>}
+      {efficiency !== null && (
+        <ThemedText type="explainer" style={{ color: colors.accentStrong }}>
+          {efficiency}% efficiency
+        </ThemedText>
+      )}
+      {latestSleep && (
+        <ThemedText type="explainer">
+          {latestSleep.source}
+        </ThemedText>
+      )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  col: {
-    flex: 1,
-    paddingHorizontal: 8,
-  },
-  colWithDivider: {
-    borderRightWidth: 1,
-    borderRightColor: 'rgba(255,255,255,0.10)',
-  },
-  label: {
-    color: 'rgba(255,255,255,0.65)',
-    fontSize: 13,
-  },
-  valueContainer: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    marginTop: 4,
-  },
-  value: {
-    color: 'white',
-    fontSize: 26,
-    fontWeight: '700',
-  },
-  unit: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: '500',
-    marginLeft: 2,
-  },
-  accent: {
-    color: 'rgba(120,255,220,0.85)',
-    fontSize: 12,
-    marginTop: 6,
-    fontWeight: '600',
-  },
-  source: {
-    color: 'rgba(255,255,255,0.4)',
-    fontSize: 10,
-    marginTop: 4,
-  },
-});

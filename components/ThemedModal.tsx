@@ -1,4 +1,5 @@
 import { useTheme } from '@react-navigation/native';
+import { BlurView } from 'expo-blur';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
@@ -38,16 +39,20 @@ export const ThemedModal = ({
   style,
 }: ThemedModalProps) => {
   const { t } = useTranslation();
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
 
   return (
     <Modal animationType="slide" transparent visible={visible}>
-      <View style={styles.overlay}>
+      <BlurView
+        intensity={25}
+        tint={dark ? 'dark' : 'light'}
+        style={styles.overlay}
+      >
         <View
           style={[
             styles.modal,
             {
-              backgroundColor: colors.secondary,
+              backgroundColor: colors.modalBackground,
               borderColor: colors.border,
             },
             style,
@@ -71,7 +76,7 @@ export const ThemedModal = ({
             </View>
           )}
         </View>
-      </View>
+      </BlurView>
     </Modal>
   );
 };
@@ -84,10 +89,10 @@ const styles = StyleSheet.create({
   },
   modal: {
     borderRadius: globalStyles.borders.borderRadius,
+    borderWidth: 2,
     padding: 24,
     width: '90%',
     alignItems: 'center',
-    borderWidth: 1,
     maxHeight: '90%',
   },
   title: {

@@ -4,7 +4,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import Smart from '@/assets/images/level1_small.png';
+import DarkSmart from '@/assets/images/dark_orange.png';
+import LightSmart from '@/assets/images/light_teal2.png';
 import AppCard from '@/components/ui/AppCard';
 import Container from '@/components/ui/Container';
 import ProgressBarWithLabel from '@/components/ui/ProgressbarWithLabel';
@@ -19,7 +20,9 @@ export default function DashboardScreen() {
   const { t } = useTranslation(['common', 'areas', 'levels']);
   const { myGoals, myXP, myLevel, viewedTips, plans } = useStorage();
   const router = useRouter();
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
+
+  const Smart = dark ? DarkSmart : LightSmart;
 
   const nextLevel = levels.find(l => l.level === myLevel + 1);
   const xpMax = nextLevel?.requiredXP ?? levels.find(l => l.level === myLevel)?.requiredXP ?? 0;
@@ -50,10 +53,9 @@ export default function DashboardScreen() {
       gradientLocations={colors.gradients?.sunrise?.locations1 as any}
       centerContent
     >
-      <Text style={[styles.appTitle, { color: colors.accentStrong }]}>{t('common:dashboard.appTitle')}</Text>
 
       <View style={styles.imageWrapper}>
-        <Image source={Smart} style={styles.image} resizeMode="cover" />
+       <Image source={Smart} style={styles.image} resizeMode="cover" testID="dashboard-image"/>
         <Text
           style={[
             styles.levelOverlay,
@@ -68,7 +70,7 @@ export default function DashboardScreen() {
       </View>
 
       <Text style={[styles.title, { color: colors.accentStrong }]}>{t(`levels:${levelTitle}`)}</Text>
-      <ProgressBarWithLabel progress={myXP / xpMax} label={progressText} />
+      <ProgressBarWithLabel progress={myXP / xpMax} label={progressText} height={12} />
 
       {areas
         .filter(item => myGoals.includes(item.id))
@@ -115,18 +117,18 @@ export default function DashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-  appTitle: {
-    fontSize: 24,
-    marginVertical: 10,
-  },
   imageWrapper: {
     position: 'relative',
     width: '100%',
     height: 300,
     alignItems: 'center',
     justifyContent: 'flex-end',
+    overflow: 'hidden', // Lägg till denna rad!
   },
   image: {
+    position: 'absolute', // Lägg till denna rad!
+    top: 0,
+    left: 0,
     width: '100%',
     height: '100%',
   },

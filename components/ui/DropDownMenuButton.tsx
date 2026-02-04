@@ -32,7 +32,7 @@ const DropdownMenuButton: React.FC<DropdownMenuButtonProps> = ({ title, items })
           style={[
             styles.triggerButton,
             {
-              borderColor: colors.borderLight,
+              borderColor: colors.primary,
             },
           ]}
         >
@@ -40,12 +40,12 @@ const DropdownMenuButton: React.FC<DropdownMenuButtonProps> = ({ title, items })
             type="defaultSemiBold"
             style={[
               styles.buttonText,
-              { color: colors.textLight },
+              { color: colors.primary },
             ]}
           >
             {title}
           </ThemedText>
-          <IconSymbol name="expandMore" size={20} color={colors.textLight} />
+          <IconSymbol name="expandMore" size={20} color={colors.primary} />
         </View>
       </MenuTrigger>
 
@@ -61,7 +61,7 @@ const DropdownMenuButton: React.FC<DropdownMenuButtonProps> = ({ title, items })
           <MenuOption key={index} onSelect={item.onSelect}>
             <View style={styles.menuItem}>
               {item.icon && <View style={styles.icon}>{item.icon}</View>}
-              <ThemedText style={[styles.menuItemText, { color: colors.textWhite }]}>
+              <ThemedText type="default">
                 {item.text}
               </ThemedText>
             </View>
@@ -98,9 +98,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 16,
-  },
-  menuItemText: {
-    fontSize: 16,
   },
   icon: {
     marginRight: 8,
