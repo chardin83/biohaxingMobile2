@@ -1254,6 +1254,21 @@ const rawTips: Tip[] = [
     planCategory: ['supplement'],
     bodyParts: ['joints', 'digestiveSystem', 'hair' ],
   },
+  {
+    id: 'blue_light_evening',
+    level: 1,
+    xp: 200,
+    areas: [
+      { id: 'sleepQuality', descriptionKey: 'blue_light_evening.areas.sleepQuality' }
+    ],
+    title: 'blue_light_evening.title',
+    descriptionKey: 'blue_light_evening.description',
+    trainingRelation: 'anytime',
+    preferredDayParts: ['evening', 'night'],
+    timeRule: 'anytime',
+    planCategory: ['other'],
+    bodyParts: ['nervousSystem'],
+  },
 ];
 
 export const tips: Tip[] = rawTips.map(tip => {

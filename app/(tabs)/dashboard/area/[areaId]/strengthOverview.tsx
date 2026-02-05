@@ -1,5 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
@@ -19,6 +20,8 @@ import { useWearable } from '@/wearables/wearableProvider';
 export default function StrengthScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();
   const { colors } = useTheme();
+  const { t } = useTranslation();
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sleepData, setSleepData] = useState<SleepSummary[]>([]);
@@ -73,7 +76,7 @@ export default function StrengthScreen({ mainGoalId }: { mainGoalId: string }) {
 
   const performance = {
     trainingReadiness: latestEnergy?.bodyBatteryLevel ?? 82,
-    readinessStatus: (latestEnergy?.bodyBatteryLevel ?? 82) > 75 ? 'Optimal' : 'Moderate',
+    readinessStatus: (latestEnergy?.bodyBatteryLevel ?? 82) > 75 ? t('general.optimal') : t('general.moderate'),
     recoveryTime: 12, // Would need workout tracking data
     trainingLoad: {
       current: latestActivity?.activeMinutes ? latestActivity.activeMinutes * 2 : 245,
@@ -93,24 +96,23 @@ export default function StrengthScreen({ mainGoalId }: { mainGoalId: string }) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <ThemedText type="title" style={{ color: colors.readinessRed }}>Muscle Performance</ThemedText>
+      <ThemedText type="title" style={{ color: colors.readinessRed }}>{t('strengthOverview.title')}</ThemedText>
       <ThemedText type="subtitle" style={{ color: colors.textTertiary }}>
-        Strength training readiness and recovery metrics
+        {t('strengthOverview.description')}
       </ThemedText>
 
       <WearableStatus status={status} />
 
       {/* Recovery Factors Card */}
-      <Card title="Recovery Factors">
+      <Card title={t('strengthOverview.recoveryFactors.title')}>
         <View style={globalStyles.row}>
           <SleepMetric sleepData={sleepData} showDivider />
           <SleepConsistencyMetric sleepData={{ ...sleepData[0], targetBedtime: '22:30' }} showDivider />
           <HRVMetric hrvData={hrvData} showDivider={false} />
         </View>
         <View style={globalStyles.infoSection}> 
-          <ThemedText type='default'>
-            🛌 Sleep and HRV are primary drivers of muscle recovery and protein synthesis. Deep sleep stages trigger
-            growth hormone release for muscle repair.
+          <ThemedText type='explainer' style={[globalStyles.topBorder, { borderColor: colors.borderLight}]}>
+            {t('strengthOverview.recoveryFactors.explainer')}
           </ThemedText>
         </View>
       </Card>
@@ -138,37 +140,29 @@ export default function StrengthScreen({ mainGoalId }: { mainGoalId: string }) {
       </Card>
 
       {/* Information Card */}
-      <Card title="Understanding muscle performance">
+      <Card title={t('strengthOverview.information.title')}>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">💪 Training Readiness</ThemedText>
+          <ThemedText type="title3">💪 {t('strengthOverview.information.trainingReadiness.title')}</ThemedText>
           <ThemedText type="default">
-            Combines HRV, sleep quality, recovery time, and recent training load to predict your body's preparedness
-            for high-intensity strength training. Scores above 75 indicate optimal conditions for progressive
-            overload.
+            {t('strengthOverview.information.trainingReadiness.description')}
           </ThemedText>
         </View>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">📊 Training Load</ThemedText>
+          <ThemedText type="title3">📊 {t('strengthOverview.information.trainingLoad.title')}</ThemedText>
           <ThemedText type="default">
-            Quantifies training stress from the past 7 days. Anaerobic load specifically measures high-intensity work
-            (heavy lifting, HIIT). Maintaining load within your optimal range prevents overtraining while ensuring
-            progression.
+            {t('strengthOverview.information.trainingLoad.description')}
           </ThemedText>
         </View>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">⏱️ Recovery Time</ThemedText>
+          <ThemedText type="title3">⏱️ {t('strengthOverview.information.recoveryTime.title')}</ThemedText>
           <ThemedText type="default">
-            Estimated hours until full muscular and CNS recovery. Heavy compound lifts (squats, deadlifts) require
-            48-72h for complete recovery. Training the same muscle groups before recovery is complete impairs
-            adaptation.
+            {t('strengthOverview.information.recoveryTime.description')}
           </ThemedText>
         </View>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🛌 Sleep & Muscle Growth</ThemedText>
+          <ThemedText type="title3">🛌 {t('strengthOverview.information.sleepMuscleGrowth.title')}</ThemedText>
           <ThemedText type="default">
-            80% of growth hormone is released during deep sleep. Sleep deprivation reduces protein synthesis by ~20%
-            and increases cortisol (catabolic). Aim for 7-9 hours with sleep quality above 80% for optimal
-            hypertrophy.
+            {t('strengthOverview.information.sleepMuscleGrowth.description')}
           </ThemedText>
         </View>
       </Card>
@@ -177,7 +171,7 @@ export default function StrengthScreen({ mainGoalId }: { mainGoalId: string }) {
       <GenesListCard areaId="strength" />
 
       {/* Optimization Tips Card */}
-      <TipsList areaId={mainGoalId} title="tips:muscle.levels.optimization.title" />
+      <TipsList areaId={mainGoalId}/>
     </ScrollView>
   );
 }

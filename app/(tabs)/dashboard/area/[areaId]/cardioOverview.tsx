@@ -1,5 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
@@ -18,6 +19,7 @@ import { useWearable } from '@/wearables/wearableProvider';
 export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hrvData, setHrvData] = useState<HRVSummary[]>([]);
@@ -89,83 +91,67 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
 
   return (
     <>
-      <ThemedText type="title">Cardio Fitness</ThemedText>
-      <ThemedText type="subtitle">Cardiovascular endurance metrics and training insights</ThemedText>
+      <ThemedText type="title">{t("cardioOverview.title")}</ThemedText>
+      <ThemedText type="subtitle">{t("cardioOverview.description")}</ThemedText>
 
       <WearableStatus status={status} />
 
       {/* Overview card */}
-      <Card title="Your cardio performance">
+      <Card title={t("cardioOverview.yourCardioPerformance")}>
         <View style={globalStyles.row}>
           <VO2MaxMetric vo2max={cardio.vo2max} trend={cardio.vo2maxDelta} showDivider />
           <RestingHRMetric hrvData={hrvData} showDivider />
           <View style={globalStyles.col}>
-            <ThemedText type="label">Training Load</ThemedText>
+            <ThemedText type="label">{t("cardioOverview.trainingLoad")}</ThemedText>
             <ThemedText type="title2">{cardio.trainingLoad}</ThemedText>
             <ThemedText type="caption">{cardio.trainingLoadStatus}</ThemedText>
-            {activityData.length > 0 && <ThemedText type="caption">7-day total</ThemedText>}
+            {activityData.length > 0 && <ThemedText type="caption">{t("cardioOverview.sevenDayTotal")}</ThemedText>}
           </View>
         </View>
         <View style={[globalStyles.row, globalStyles.marginTop8]}>
           <View style={[globalStyles.col, globalStyles.colWithDivider, { borderRightColor: colors.borderLight ?? colors.border }]}>
-            <ThemedText type="label">Recovery time</ThemedText>
+            <ThemedText type="label">{t("cardioOverview.recoveryTime")}</ThemedText>
             <ThemedText type="title2">{cardio.recoveryTime}h</ThemedText>
-            <ThemedText type="caption">Until next hard effort</ThemedText>
-            {latestEnergy && (
-              <ThemedText type="caption">Based on battery: {latestEnergy.bodyBatteryLevel}%</ThemedText>
-            )}
+            <ThemedText type="caption">{t("cardioOverview.untilNextHardEffort")}</ThemedText>
           </View>
           <View style={globalStyles.col}>
-            <ThemedText type="label">Fitness age</ThemedText>
+            <ThemedText type="label">{t("cardioOverview.fitnessAge")}</ThemedText>
             <ThemedText type="title2">{cardio.fitnessAge}</ThemedText>
-            <ThemedText type="caption">{cardio.actualAge - cardio.fitnessAge} yrs younger</ThemedText>
+            <ThemedText type="caption">{cardio.actualAge - cardio.fitnessAge} {t("cardioOverview.yearsYounger")}</ThemedText>
           </View>
         </View>
       </Card>
 
       {/* VO2 Max explanation */}
-      <Card title="Understanding your metrics">
+      <Card title={t("cardioOverview.understandingYourMetrics.title")}>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🫁 VO₂ Max</ThemedText>
+          <ThemedText type="title3">🫁 {t("cardioOverview.understandingYourMetrics.vo2Max.title")}</ThemedText>
           <ThemedText type="default">
-            VO₂ max measures the maximum amount of oxygen your body can use during intense exercise. It's the gold
-            standard for cardiovascular fitness. Higher values indicate better endurance capacity.
-          </ThemedText>
-          <ThemedText type="default" style={styles.infoTextItalic}>
-            Your level ({cardio.vo2max}) is considered {cardio.vo2max > 45 ? 'Good to Excellent' : 'Fair to Good'} for
-            your age group.
+            {t("cardioOverview.understandingYourMetrics.vo2Max.description")}
           </ThemedText>
         </View>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🫀 Resting Heart Rate</ThemedText>
+          <ThemedText type="title3">🫀 {t("cardioOverview.understandingYourMetrics.restingHeartRate.title")}</ThemedText>
           <ThemedText type="default">
-            Lower resting heart rate typically indicates better cardiovascular fitness. Athletes often have resting
-            heart rates below 60 bpm. Monitor trends over time. A sudden increase may signal overtraining, illness, or
-            stress.
+            {t("cardioOverview.understandingYourMetrics.restingHeartRate.description")}
           </ThemedText>
         </View>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">💪 Training Load</ThemedText>
+          <ThemedText type="title3">💪 {t("cardioOverview.understandingYourMetrics.trainingLoad.title")}</ThemedText>
           <ThemedText type="default">
-            Training Load tracks the cumulative intensity and volume of your workouts over 7 days. Optimal load means
-            you're training effectively without overtraining. Too high = risk of injury/burnout. Too low =
-            insufficient stimulus for adaptation.
+            {t("cardioOverview.understandingYourMetrics.trainingLoad.description")}
           </ThemedText>
         </View>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">⏱️ Recovery Time</ThemedText>
+          <ThemedText type="title3">⏱️ {t("cardioOverview.understandingYourMetrics.recoveryTime.title")}</ThemedText>
           <ThemedText type="default">
-            Time needed before your body is ready for another hard training session. Based on HRV, sleep quality, and
-            body battery. Respecting recovery prevents injury and improves performance. Training hard when recovery is
-            incomplete leads to diminished returns.
+            {t("cardioOverview.understandingYourMetrics.recoveryTime.description")}
           </ThemedText>
         </View>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🎂 Fitness Age</ThemedText>
+          <ThemedText type="title3">🎂 {t("cardioOverview.understandingYourMetrics.fitnessAge.title")}</ThemedText>
           <ThemedText type="default">
-            Based on your VO₂ max, resting heart rate, and other factors. A lower fitness age indicates superior
-            cardiovascular health. Regular aerobic training can reduce your fitness age by 10-20 years compared to
-            sedentary peers.
+            {t("cardioOverview.understandingYourMetrics.fitnessAge.description")}
           </ThemedText>
         </View>
       </Card>

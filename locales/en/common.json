@@ -1,16 +1,63 @@
 {
   "back": "Back",
-  "monthNames": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-  "monthNamesShort": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-  "dayNames": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-  "dayNamesShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+  "monthNames": [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ],
+  "monthNamesShort": [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"
+  ],
+  "dayNames": [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+  ],
+  "dayNamesShort": [
+    "Sun",
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat"
+  ],
   "today": "Today",
   "general": {
     "areYouSure": "Are you sure?",
     "add": "Add",
     "cancel": "Cancel",
     "close": "Close",
-    "save": "Save"
+    "save": "Save",
+    "countSuffix": "pcs",
+    "low": "Low",
+    "moderate": "Moderate",
+    "good": "Good",
+    "optimal": "Optimal"
   },
   "layout": {
     "dashboard": "Dashboard",
@@ -18,7 +65,9 @@
     "plan": "Plan",
     "areas": "Areas"
   },
-  "selectedSupplementList": { "choosenFor": "Supplements taken" },
+  "selectedSupplementList": {
+    "choosenFor": "Supplements taken"
+  },
   "plan": {
     "chosePlanToEdit": "Choose plan to edit",
     "addTimeSlot": "New time slot",
@@ -89,15 +138,15 @@
     "confirmAddSupplements": "Do you want to add supplements for this area?"
   },
   "selectArea": {
-      "description": "Different tips and supplements can help you achieve your health goals. Select one for more information"
+    "description": "Different tips and supplements can help you achieve your health goals. Select one for more information"
   },
   "goalDetails": {
     "taskInfo": "Task",
     "information": "Information",
     "aiInsights": "AI Insights",
-    "questionsExplored":"questions explored",
-    "startExploring":"Start exploring",
-    "continueExploring":"Continue exploring",
+    "questionsExplored": "questions explored",
+    "startExploring": "Start exploring",
+    "continueExploring": "Continue exploring",
     "skip": "Skip",
     "start": "Start",
     "analyze": "Analyze",
@@ -178,11 +227,222 @@
     "moreInfo": "More info",
     "lessInfo": "Hide info"
   },
-  "chat": {
-      "welcomeMessage": "Hi! I'm your personal health coach – specialized in biohacking and supplements. Ask me about daily routines or optimizing your health. 💪🌿",
-      "introPrompt": "I just added a new health goal ({{goal}}). It includes these supplements: {{supplements}}. Do you have any tips or warnings?",
-      "askToAddSupplements": "Do you want me to add these supplements to your plan? Reply 'yes' or 'no'."
+  "cardioOverview": {
+    "title": "Cardiovascular Health",
+    "description": "Heart, blood vessels, and overall cardiovascular function",
+    "yourCardioPerformance": "Your cardio performance",
+    "trainingLoad": "Training load",
+    "sevenDayTotal": "7-day total",
+    "recoveryTime": "Recovery time",
+    "untilNextHardEffort": "Until next hard effort",
+    "fitnessAge": "Fitness age",
+    "yearsYounger": "years younger",
+    "understandingYourMetrics": {
+      "title": "Understanding your metrics",
+      "vo2Max": {
+        "title": "VO₂ Max",
+        "description": "VO₂ max measures the maximum amount of oxygen your body can use during intense exercise. It's the gold standard for cardiovascular fitness. Higher values indicate better endurance capacity."
+      },
+      "restingHeartRate": {
+        "title": "Resting Heart Rate",
+        "description": "Lower resting heart rate typically indicates better cardiovascular fitness. Athletes often have resting heart rates below 60 bpm. Monitor trends over time. A sudden increase may signal overtraining, illness, or stress."
+      },
+      "trainingLoad": {
+        "title": "Training Load",
+        "description": "Training Load tracks the cumulative intensity and volume of your workouts over 7 days. Optimal load means you're training effectively without overtraining. Too high = risk of injury/burnout. Too low = insufficient stimulus for adaptation."
+      },
+      "recoveryTime": {
+        "title": "Recovery Time",
+        "description": "Time needed before your body is ready for another hard training session. Based on HRV, sleep quality, and body battery. Respecting recovery prevents injury and improves performance. Training hard when recovery is incomplete leads to diminished returns."
+      },
+      "fitnessAge": {
+        "title": "Fitness Age",
+        "description": "Based on your VO₂ max, resting heart rate, and other factors. A lower fitness age indicates superior cardiovascular health. Regular aerobic training can reduce your fitness age by 10-20 years compared to sedentary peers."
+      }
+    }
+  },
+  "digestiveOverview": {
+    "title": "Digestive Health",
+    "description": "Gut function, microbiome, and digestive wellness",
+    "gutHealthInfluencers": {
+      "title": "Gut health influencers",
+      "stressLevel": "Stress level",
+      "sleep": "Sleep",
+      "activity": "Activity",
+      "steps": "steps"
+    }
+  },
+  "energyOverview": {
+    "title": "Energy Systems",
+    "description": "Mitochondrial function and cellular energy production",
+    "cellularEnergyReserves": {
+      "title": "Cellular Energy Reserves",
+      "bodyBattery": "Body Battery",
+      "sinceWaking": "since waking",
+      "explainer": "Body Battery tracks your body's energy reserves by monitoring stress, activity, and recovery. It reflects your mitochondrial ATP production capacity."
     },
+    "energyProductionMetrics": {
+      "title": "Energy Production Metrics",
+      "explainer": "VO₂ max indicates mitochondrial density and oxidative capacity. Higher values = more efficient ATP production from oxygen."
+    },
+    "energyBalance": {
+      "title": "Energy Balance",
+      "energyDrain": "Energy Drain",
+      "energyRecharge": "Energy Recharge",
+      "stressScore": "Stress score",
+      "intensityMinutes": "Intensity minutes",
+      "sleepDuration": "Sleep duration",
+      "sleepQuality": "sleep quality",
+      "deepSleep": "Deep sleep",
+      "explainer": "Deep sleep is when mitochondrial repair and autophagy (cellular cleanup) occur. Chronic stress increases cortisol, which impairs mitochondrial function."
+    },
+    "mitochondrialHealth": {
+      "title": "Mitochondrial Health",
+      "powerhouses": {
+        "title": "The Powerhouses of Your Cells",
+        "description": "Mitochondria are organelles that produce ATP (adenosine triphosphate), the energy currency of all cells. Each cell contains hundreds to thousands of mitochondria. They convert nutrients and oxygen into ~90% of your body's energy."
+      },
+      "atpProduction": {
+        "title": "ATP Production",
+        "description": "Through oxidative phosphorylation, mitochondria produce 30-32 ATP molecules per glucose molecule (vs only 2 ATP from glycolysis). This process requires oxygen, which is why VO₂ max correlates with energy capacity."
+      },
+      "mitochondrialBiogenesis": {
+        "title": "Mitochondrial Biogenesis",
+        "description": "Exercise (especially Zone 2 cardio) triggers PGC-1α activation, which increases mitochondrial density. More mitochondria = more energy production capacity. This is why trained athletes have higher VO₂ max."
+      },
+      "oxidativeStress": {
+        "title": "Oxidative Stress",
+        "description": "Mitochondria produce reactive oxygen species (ROS) as byproducts of ATP production. Excessive ROS causes oxidative damage to mitochondrial DNA. Antioxidants (Vitamin C, E, CoQ10, glutathione) help neutralize ROS and protect mitochondrial function."
+      },
+      "nadDecline": {
+        "title": "NAD+ and Energy Decline",
+        "description": "NAD+ (nicotinamide adenine dinucleotide) is essential for mitochondrial function. NAD+ levels decline ~50% between ages 20-80, reducing ATP production efficiency. NAD+ precursors (NR, NMN) and sirtuins activators may support mitochondrial health."
+      },
+      "mitophagy": {
+        "title": "Mitophagy & Cellular Cleanup",
+        "description": "Mitophagy is the selective autophagy of damaged mitochondria. Occurs during fasting and deep sleep. Regular mitophagy prevents accumulation of dysfunctional mitochondria that produce excess ROS and less ATP."
+      }
+    },
+    "todaysActivity": {
+      "title": "Today's activity",
+      "activeMinutes": "Active minutes",
+      "steps": "Steps",
+      "intensityMinutes": "Intensity minutes"
+    }
+  },
+  "immuneOverview": {
+    "title": "Immune System",
+    "description": "Defense against pathogens and immune regulation",
+    "immuneStatus": {
+      "title": "Immune status",
+      "stressLevel": "Stress level",
+      "bodyBattery": "Body Battery",
+      "recoveryStatus": "Recovery status",
+      "readyForActivity": "Ready for activity",
+      "needRecovery": "Need recovery"
+    },
+    "whyTheseMetricsMatter": {
+      "title": "Why these metrics matter",
+      "sleep": {
+        "title": "Sleep",
+        "description": "Adequate sleep is crucial for immune function. During sleep, the body produces cytokines that help fight infection and inflammation."
+      },
+      "stress": {
+        "title": "Stress & Body Battery",
+        "description": "Chronic stress suppresses immune function. Body Battery reflects your energy reserves and recovery status."
+      },
+      "hrv": {
+        "title": "HRV (Heart Rate Variability)",
+        "description": "Higher HRV indicates better recovery and resilience. Low HRV may signal stress, fatigue, or illness."
+      },
+      "restingHeartRate": {
+        "title": "Resting Heart Rate",
+        "description": "An elevated resting heart rate can be an early sign of illness, inflammation, or inadequate recovery."
+      }
+    }
+  },
+  "sleepOverview": {
+    "title": "Sleep",
+    "description": "Recovery, restoration, and circadian health",
+    "overview": {
+      "title": "Overview",
+      "consistency": {
+        "title": "Sleep consistency",
+        "pattern": "7 day pattern",
+        "moderate": "Moderate",
+        "low": "Low",
+        "high": "High"
+      }
+    },
+    "sleepStages": {
+      "title": "Sleep stages",
+      "deepSleep": {
+        "title": "Deep sleep",
+        "minutes": "minutes"
+      },
+      "remSleep": {
+        "title": "REM sleep",
+        "minutes": "minutes"
+      },
+      "explainer": "Deep sleep is crucial for physical recovery and immune function. REM sleep supports memory consolidation and emotional regulation."
+    },
+    "understandingSleep": {
+      "title": "Understanding sleep",
+      "stages": {
+        "title": "Stages",
+        "description": "Sleep cycles through 4 stages: Light (N1, N2), Deep (N3), and REM. Each stage has unique benefits. Adults need 7-9 hours with balanced stage distribution for optimal recovery."
+      },
+      "deepSleep": {
+        "title": "Deep Sleep",
+        "description": "Deep sleep (slow-wave sleep) is when your body repairs tissues, builds muscle, strengthens immune system, and consolidates memories. Growth hormone peaks during this stage. Aim for 15-25% of total sleep time."
+      },
+      "remSleep": {
+        "title": "REM Sleep",
+        "description": "REM (Rapid Eye Movement) sleep processes emotions, consolidates learning, and supports creativity. Most vivid dreams occur here. REM should be 20-25% of total sleep and increases in later cycles."
+      },
+      "circadianRhythm": {
+        "title": "Circadian Rhythm",
+        "description": "Your internal 24-hour clock regulates sleep-wake cycles, hormone release, and body temperature. Consistent sleep/wake times strengthen circadian rhythm and improve sleep quality."
+      }
+    }
+  },
+  "strengthOverview": {
+    "title": "Strength & Muscle Health",
+    "description": "Muscle function, strength training, and recovery",
+    "recoveryFactors": {
+      "title": "Recovery factors",
+      "explainer": "Sleep and HRV are primary drivers of muscle recovery and protein synthesis. Deep sleep stages trigger growth hormone release for muscle repair. Respecting recovery prevents injury and promotes strength gains. Training hard when recovery is incomplete leads to diminished returns and increased injury risk."
+    },
+    "information": {
+      "title": "Information",
+      "trainingReadiness": {
+        "title": "Training Readiness",
+        "description": "Combines HRV, sleep quality, recovery time, and recent training load to predict your body's preparedness for high-intensity strength training. Scores above 75 indicate optimal conditions for progressive overload."
+      },
+      "trainingLoad": {
+        "title": "Training Load",
+        "description": "Quantifies training stress from the past 7 days. Anaerobic load specifically measures high-intensity work (heavy lifting, HIIT). Maintaining load within your optimal range prevents overtraining while ensuring progression."
+      },
+      "recoveryTime": {
+        "title": "Recovery Time",
+        "description": "Estimated hours until full muscular and CNS recovery. Heavy compound lifts (squats, deadlifts) require 48-72h for complete recovery. Training the same muscle groups before recovery is complete impairs adaptation."
+      },
+      "sleepMuscleGrowth": {
+        "title": "Sleep & Muscle Growth",
+        "description": "80% of growth hormone is released during deep sleep. Sleep deprivation reduces protein synthesis by ~20% and increases cortisol (catabolic). Aim for 7-9 hours with sleep quality above 80% for optimal hypertrophy."
+      }
+    }
+  },
+  "tipsList": {
+    "title": "Tips for optimization",
+    "showAll": "Show all ({{count}} hidden)",
+    "hideNotInterested": "Hide not interested"
+  },
+  "chat": {
+    "welcomeMessage": "Hi! I'm your personal health coach – specialized in biohacking and supplements. Ask me about daily routines or optimizing your health. 💪🌿",
+    "introPrompt": "I just added a new health goal ({{goal}}). It includes these supplements: {{supplements}}. Do you have any tips or warnings?",
+    "askToAddSupplements": "Do you want me to add these supplements to your plan? Reply 'yes' or 'no'."
+  },
   "onboarding": {
     "whatSupplementDoYouTakeAlready": "What supplements do you take already?",
     "continue": "Continue"
@@ -198,9 +458,9 @@
     "noFavorites": "No favorites yet",
     "editAreas": "Edit Areas"
   },
-   "search": {
-      "label": "Search tips"
-    },
+  "search": {
+    "label": "Search tips"
+  },
   "planCategory": {
     "nutrition": "Nutrition",
     "training": "Training",

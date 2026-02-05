@@ -1,5 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
@@ -20,16 +21,15 @@ import { useWearable } from '@/wearables/wearableProvider';
 
 export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sleepData, setSleepData] = useState<SleepSummary[]>([]);
   const [hrvData, setHrvData] = useState<HRVSummary[]>([]);
   const [activityData, setActivityData] = useState<DailyActivity[]>([]);
   const [energyData, setEnergyData] = useState<EnergySignal[]>([]);
-
-
-
-const { colors } = useTheme();
 
   useEffect(() => {
     const loadData = async () => {
@@ -99,16 +99,16 @@ const { colors } = useTheme();
 
   return (
     <>
-      <ThemedText type="title" style={{ color: colors.gold }}>Energy Systems</ThemedText>
-      <ThemedText type="subtitle">Mitochondrial function and cellular energy production</ThemedText>
+      <ThemedText type="title" style={{ color: colors.gold }}>{t('energyOverview.title')}</ThemedText>
+      <ThemedText type="subtitle">{t('energyOverview.description')}</ThemedText>
       <WearableStatus status={status} />
 
       {/* Body Battery - Main Energy Indicator */}
-      <Card title="Cellular Energy Reserves">
+      <Card title={t('energyOverview.cellularEnergyReserves.title')}>
         <View style={styles.centerMetric}>
           <ThemedText type="title2">{energy.bodyBattery}</ThemedText>
-          <ThemedText type="label">Body Battery</ThemedText>
-          <ThemedText type="caption">{energy.bodyBatteryChange} since waking</ThemedText>
+          <ThemedText type="label">{t('energyOverview.cellularEnergyReserves.bodyBattery')}</ThemedText>
+          <ThemedText type="caption">{energy.bodyBatteryChange} {t('energyOverview.cellularEnergyReserves.sinceWaking')}</ThemedText>
         </View>
         <View style={[styles.batteryBar, { backgroundColor: colors.overlayLight }]}>
           <View
@@ -122,8 +122,7 @@ const { colors } = useTheme();
           />
         </View>
         <ThemedText type="explainer" >
-          Body Battery tracks your body's energy reserves by monitoring stress, activity, and recovery. It reflects
-          your mitochondrial ATP production capacity.
+          {t('energyOverview.cellularEnergyReserves.explainer')}
         </ThemedText>
       </Card>
 
@@ -131,23 +130,22 @@ const { colors } = useTheme();
       <GenesListCard areaId="energy" />
 
       {/* Energy Production Factors */}
-      <Card title="Energy Production Metrics">
+      <Card title={t('energyOverview.energyProductionMetrics.title')}>
         <View style={globalStyles.row}>
           <VO2MaxMetric vo2max={energy.vo2max} status={energy.vo2maxStatus} showDivider />
           <RestingHRMetric hrvData={hrvData} showDivider />
           <HRVMetric hrvData={hrvData} />
         </View>
         <ThemedText type="explainer" style ={[globalStyles.explainer, { borderColor: colors.borderLight }]}>
-          VO₂ max indicates mitochondrial density and oxidative capacity. Higher values = more efficient ATP
-          production from oxygen.
+          {t('energyOverview.energyProductionMetrics.explainer')}
         </ThemedText>
       </Card>
 
       {/* Energy Drain vs Recharge */}
-      <Card title="Energy Balance">
+      <Card title={t('energyOverview.energyBalance.title')}>
         <View style={styles.balanceSection}>
           <View style={globalStyles.flex1}>
-            <ThemedText type="title3">⚡ Energy Drain</ThemedText>
+            <ThemedText type="title3">⚡{t('energyOverview.energyBalance.energyDrain')}</ThemedText>
             <View
               style={[
                 globalStyles.card,
@@ -158,7 +156,7 @@ const { colors } = useTheme();
               ]}
             >
               <ThemedText type="value">{energy.stressScore}</ThemedText>
-              <ThemedText type="label">Stress score</ThemedText>
+              <ThemedText type="label">{t('energyOverview.energyBalance.stressScore')}</ThemedText>
               <ThemedText type="caption">{energy.stressLevel}</ThemedText>
             </View>
             <View style={[globalStyles.card, globalStyles.marginTop8,  {
@@ -166,12 +164,12 @@ const { colors } = useTheme();
                   backgroundColor: colors.surfaceRed,
                 },]}>
               <ThemedText type="value">{energy.intensityMinutes}</ThemedText>
-              <ThemedText type="label">Intensity minutes</ThemedText>
+              <ThemedText type="label">{t('energyOverview.energyBalance.intensityMinutes')}</ThemedText>
             </View>
           </View>
 
           <View style={globalStyles.flex1}>
-            <ThemedText type="title3">🔋 Energy Recharge</ThemedText>
+            <ThemedText type="title3">🔋 {t('energyOverview.energyBalance.energyRecharge')}</ThemedText>
             <View
               style={[
                 globalStyles.card,
@@ -182,15 +180,15 @@ const { colors } = useTheme();
               ]}
             >
               <ThemedText type="value">{energy.sleepHours}h</ThemedText>
-              <ThemedText type="label">Sleep duration</ThemedText>
-              <ThemedText type="caption">{energy.sleepQuality}% quality</ThemedText>
+              <ThemedText type="label">{t('energyOverview.energyBalance.sleepDuration')}</ThemedText>
+              <ThemedText type="caption">{energy.sleepQuality}% {t('energyOverview.energyBalance.sleepQuality')}</ThemedText>
             </View>
             <View style={[globalStyles.card, globalStyles.marginTop8, {
                   borderColor: colors.surfaceGreenBorder,
                   backgroundColor: colors.surfaceGreen,
                 },]}>
               <ThemedText type="value">{energy.deepSleepMinutes}min</ThemedText>
-              <ThemedText type="label">Deep sleep</ThemedText>
+              <ThemedText type="label">{t('energyOverview.energyBalance.deepSleep')}</ThemedText>
             </View>
           </View>
         </View>
@@ -202,85 +200,73 @@ const { colors } = useTheme();
             {  borderTopColor: colors.borderLight }
           ]}
         >
-          Deep sleep is when mitochondrial repair and autophagy (cellular cleanup) occur. Chronic stress increases
-          cortisol, which impairs mitochondrial function.
+          {t('energyOverview.energyBalance.explainer')}
         </ThemedText>
       </Card>
 
       {/* Mitochondrial Health Information */}
-      <Card title="Understanding Mitochondria">
+      <Card title={t('energyOverview.mitochondrialHealth.title')}>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🔬 The Powerhouses of Your Cells</ThemedText>
+          <ThemedText type="title3">🔬 {t('energyOverview.mitochondrialHealth.powerhouses.title')}</ThemedText>
           <ThemedText type="default">
-            Mitochondria are organelles that produce ATP (adenosine triphosphate), the energy currency of all cells.
-            Each cell contains hundreds to thousands of mitochondria. They convert nutrients and oxygen into ~90% of
-            your body's energy.
+            {t('energyOverview.mitochondrialHealth.powerhouses.description')}
           </ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">⚡ ATP Production</ThemedText>
+          <ThemedText type="title3">⚡ {t('energyOverview.mitochondrialHealth.atpProduction.title')}</ThemedText>
           <ThemedText type="default">
-            Through oxidative phosphorylation, mitochondria produce 30-32 ATP molecules per glucose molecule (vs only
-            2 ATP from glycolysis). This process requires oxygen, which is why VO₂ max correlates with energy
-            capacity.
+            {t('energyOverview.mitochondrialHealth.atpProduction.description')}
           </ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🧬 Mitochondrial Biogenesis</ThemedText>
+          <ThemedText type="title3">🧬 {t('energyOverview.mitochondrialHealth.mitochondrialBiogenesis.title')}</ThemedText>
           <ThemedText type="default">
-            Exercise (especially Zone 2 cardio) triggers PGC-1α activation, which increases mitochondrial density.
-            More mitochondria = more energy production capacity. This is why trained athletes have higher VO₂ max.
+            {t('energyOverview.mitochondrialHealth.mitochondrialBiogenesis.description')}
           </ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🛡️ Oxidative Stress</ThemedText>
+          <ThemedText type="title3">🛡️ {t('energyOverview.mitochondrialHealth.oxidativeStress.title')}</ThemedText>
           <ThemedText type="default">
-            Mitochondria produce reactive oxygen species (ROS) as byproducts of ATP production. Excessive ROS causes
-            oxidative damage to mitochondrial DNA. Antioxidants (Vitamin C, E, CoQ10, glutathione) help neutralize ROS
-            and protect mitochondrial function.
+            {t('energyOverview.mitochondrialHealth.oxidativeStress.description')}
           </ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">⏰ NAD+ and Energy Decline</ThemedText>
+          <ThemedText type="title3">⏰ {t('energyOverview.mitochondrialHealth.nadDecline.title')}</ThemedText>
           <ThemedText type="default">
-            NAD+ (nicotinamide adenine dinucleotide) is essential for mitochondrial function. NAD+ levels decline ~50%
-            between ages 20-80, reducing ATP production efficiency. NAD+ precursors (NR, NMN) and sirtuins activators
-            may support mitochondrial health.
+            {t('energyOverview.mitochondrialHealth.nadDecline.description')}
           </ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🔄 Mitophagy & Cellular Cleanup</ThemedText>
+          <ThemedText type="title3">🔄 {t('energyOverview.mitochondrialHealth.mitophagy.title')}</ThemedText>
           <ThemedText type="default">
-            Mitophagy is the selective autophagy of damaged mitochondria. Occurs during fasting and deep sleep.
-            Regular mitophagy prevents accumulation of dysfunctional mitochondria that produce excess ROS and less
-            ATP.
+            {t('energyOverview.mitochondrialHealth.mitophagy.description')}
           </ThemedText>
         </View>
       </Card>
 
       {/* Tips Card */}
-      <TipsList areaId={mainGoalId} title="tips:energy.levels.optimization.title" />
+      <TipsList areaId={mainGoalId} />
 
       {/* Activity Tracking */}
-      <Card title="Today's Activity">
+      <Card title={t("energyOverview.todaysActivity.title")}>
         <View style={globalStyles.row}>
           <View style={[globalStyles.col, globalStyles.colWithDivider]}>
-            <ThemedText type="label">Active minutes</ThemedText>
+            <ThemedText type="label">{t("energyOverview.todaysActivity.activeMinutes")}</ThemedText>
             <ThemedText type="value">{energy.activityMinutes}</ThemedText>
           </View>
 
           <View style={[globalStyles.col, globalStyles.colWithDivider]}>
-            <ThemedText type="label">Steps</ThemedText>
+            <ThemedText type="label">{t("energyOverview.todaysActivity.steps")}</ThemedText>
             <ThemedText type="value">{energy.steps.toLocaleString()}</ThemedText>
           </View>
 
           <View style={globalStyles.col}>
-            <ThemedText type="label">Intensity min</ThemedText>
+            <ThemedText type="label">{t("energyOverview.todaysActivity.intensityMinutes")}</ThemedText>
             <ThemedText type="value">{energy.intensityMinutes}</ThemedText>
           </View>
         </View>

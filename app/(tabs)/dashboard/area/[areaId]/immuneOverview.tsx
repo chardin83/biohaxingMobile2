@@ -1,5 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
@@ -19,6 +20,8 @@ import { useWearable } from '@/wearables/wearableProvider';
 export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
   const { colors } = useTheme();
   const { adapter, status } = useWearable();
+  const { t } = useTranslation();
+    
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sleepData, setSleepData] = useState<SleepSummary[]>([]);
@@ -69,21 +72,23 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
   const latestEnergy = energyData[0];
 
   const immune = {
-    stressLevel: (latestEnergy?.bodyBatteryLevel ?? 78) > 70 ? 'Low' : 'Moderate',
+    stressLevel: (latestEnergy?.bodyBatteryLevel ?? 78) > 70 ? t("general.low") : t("general.moderate"),
     bodyBattery: latestEnergy?.bodyBatteryLevel ?? 78,
   };
 
+
+
   return (
     <>
-      <ThemedText type="title" style={{ color: colors.accentStrong }}>Immune Support</ThemedText>
+      <ThemedText type="title" style={{ color: colors.accentStrong }}>{t("immuneOverview.title")}</ThemedText>
       <ThemedText type="subtitle" style={{ color: colors.textTertiary }}>
-        Key metrics that influence immune system function and resilience
+        {t("immuneOverview.description")}
       </ThemedText>
 
       <WearableStatus status={status} />
 
       {/* Overview card */}
-      <Card title="Your immune health indicators">
+      <Card title={t("immuneOverview.immuneStatus.title")} >
         <View style={globalStyles.row}>
           {/* Sleep */}
           <SleepMetric sleepData={sleepData} showDivider />
@@ -96,9 +101,9 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
               { borderRightColor: colors.borderLight ?? colors.border },
             ]}
           >
-            <ThemedText type="label">Stress level</ThemedText>
+            <ThemedText type="label">{t("immuneOverview.immuneStatus.stressLevel")}</ThemedText>
             <ThemedText type="title3">{immune.stressLevel}</ThemedText>
-            <ThemedText type="caption">Battery: {immune.bodyBattery}%</ThemedText>
+            <ThemedText type="caption">{t("immuneOverview.immuneStatus.bodyBattery")}: {immune.bodyBattery}%</ThemedText>
             {latestEnergy && <ThemedText type="caption">{latestEnergy.source}</ThemedText>}
           </View>
 
@@ -113,41 +118,42 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
 
           {/* Recovery Status */}
           <View style={globalStyles.col}>
-            <ThemedText type="label">Recovery status</ThemedText>
-            <ThemedText type="title3">{immune.bodyBattery > 70 ? 'Good' : 'Moderate'}</ThemedText>
-            <ThemedText type="caption">{immune.bodyBattery > 70 ? 'Ready for activity' : 'Need recovery'}</ThemedText>
+            <ThemedText type="label">{t("immuneOverview.immuneStatus.recoveryStatus")}</ThemedText>
+            <ThemedText type="title3">{immune.bodyBattery > 70 ? t("general.good") : t("general.moderate")}</ThemedText>
+            <ThemedText type="caption">{immune.bodyBattery > 70 ? t("immuneOverview.immuneStatus.readyForActivity") : t("immuneOverview.immuneStatus.needRecovery")}</ThemedText>
           </View>
         </View>
       </Card>
 
       {/* Information card */}
-      <Card title="Why these metrics matter">
+      <Card title={t("immuneOverview.whyTheseMetricsMatter.title")}>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">💤 Sleep</ThemedText>
+          <ThemedText type="title3">💤 {t("immuneOverview.whyTheseMetricsMatter.sleep.title")}</ThemedText>
           <ThemedText type="default">
+            {t("immuneOverview.whyTheseMetricsMatter.sleep.description")}
             Adequate sleep is crucial for immune function. During sleep, the body produces cytokines that help fight
             infection and inflammation.
           </ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">😌 Stress & Body Battery</ThemedText>
+          <ThemedText type="title3">😌 {t("immuneOverview.whyTheseMetricsMatter.stress.title")}</ThemedText>
           <ThemedText type="default">
-            Chronic stress suppresses immune function. Body Battery reflects your energy reserves and recovery status.
+            {t("immuneOverview.whyTheseMetricsMatter.stress.description")}
           </ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">❤️ HRV (Heart Rate Variability)</ThemedText>
+          <ThemedText type="title3">❤️ {t("immuneOverview.whyTheseMetricsMatter.hrv.title")}</ThemedText>
           <ThemedText type="default">
-            Higher HRV indicates better recovery and resilience. Low HRV may signal stress, fatigue, or illness.
+            {t("immuneOverview.whyTheseMetricsMatter.hrv.description")}
           </ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🫀 Resting Heart Rate</ThemedText>
+          <ThemedText type="title3">🫀 {t("immuneOverview.whyTheseMetricsMatter.restingHeartRate.title")}</ThemedText>
           <ThemedText type="default">
-            An elevated resting heart rate can be an early sign of illness, inflammation, or inadequate recovery.
+            {t("immuneOverview.whyTheseMetricsMatter.restingHeartRate.description")}
           </ThemedText>
         </View>
       </Card>

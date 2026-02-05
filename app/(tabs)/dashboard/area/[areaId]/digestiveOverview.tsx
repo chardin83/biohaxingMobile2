@@ -1,5 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
@@ -16,6 +17,8 @@ import { useWearable } from '@/wearables/wearableProvider';
 export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) {
   const { adapter, status } = useWearable();
   const { colors } = useTheme();
+  const { t } = useTranslation();
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sleepData, setSleepData] = useState<SleepSummary[]>([]);
@@ -85,19 +88,19 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
 
   return (
     <>
-      <ThemedText type="title" style={{ color: colors.accentStrong }}>Digestion</ThemedText>
+      <ThemedText type="title" style={{ color: colors.accentStrong }}>{t('digestiveOverview.title')}</ThemedText>
       <ThemedText type="subtitle" style={{ color: colors.textTertiary }}>
-        Factors influencing digestive health and gut function
+        {t('digestiveOverview.description')}
       </ThemedText>
 
       <WearableStatus status={status} />
 
       {/* Overview card - Indirect metrics */}
-      <Card title="Gut health influencers">
+      <Card title={t('digestiveOverview.gutHealthInfluencers.title')}>
         <View style={globalStyles.row}>
           {/* Stress */}
           <View style={[globalStyles.col, globalStyles.colWithDivider, { borderRightColor: colors.borderLight ?? colors.border }]}>
-            <ThemedText type="label">Stress level</ThemedText>
+            <ThemedText type="label">{t('digestiveOverview.gutHealthInfluencers.stressLevel')}</ThemedText>
             <ThemedText type="title3">{digestive.stressLevel}</ThemedText>
             <ThemedText type="caption">Battery: {digestive.bodyBattery}%</ThemedText>
             {latestEnergy && <ThemedText type="caption">{latestEnergy.source}</ThemedText>}
@@ -105,7 +108,7 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
 
           {/* Sleep */}
           <View style={[globalStyles.col, globalStyles.colWithDivider, { borderRightColor: colors.borderLight ?? colors.border }]}>
-            <ThemedText type="label">Sleep</ThemedText>
+            <ThemedText type="label">{t('digestiveOverview.gutHealthInfluencers.sleep')}</ThemedText>
             <ThemedText type="title3">{digestive.sleepHours.toFixed(1)}h</ThemedText>
             <ThemedText type="caption">{digestive.sleepQuality}</ThemedText>
             {latestSleep && <ThemedText type="caption">{latestSleep.source}</ThemedText>}
@@ -113,9 +116,9 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
 
           {/* Activity */}
           <View style={globalStyles.col}>
-            <ThemedText type="label">Activity</ThemedText>
-            <ThemedText type="title3">{digestive.activityMinutes}m</ThemedText>
-            <ThemedText type="caption">{digestive.stepCount.toLocaleString()} steps</ThemedText>
+            <ThemedText type="label">{t('digestiveOverview.gutHealthInfluencers.activity')}</ThemedText>
+            <ThemedText type="title3">{digestive.activityMinutes}min</ThemedText>
+            <ThemedText type="caption">{digestive.stepCount.toLocaleString()} {t('digestiveOverview.gutHealthInfluencers.steps')}</ThemedText>
             {latestActivity && <ThemedText type="caption">{latestActivity.source}</ThemedText>}
           </View>
         </View>

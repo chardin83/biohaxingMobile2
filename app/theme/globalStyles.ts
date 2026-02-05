@@ -19,6 +19,7 @@ export const globalStyles = StyleSheet.create({
   topBorder: {
     borderTopWidth: 1,
     paddingTop: 16,
+    marginTop: 16,
   },
    colWithDivider: {
     borderRightWidth: 1,

@@ -1,251 +1,507 @@
 {
-    "back": "Tillbaka",
-    "monthNames": [
-      "Januari", "Februari", "Mars", "April", "Maj", "Juni",
-      "Juli", "Augusti", "September", "Oktober", "November", "December"
-    ],
-    "monthNamesShort": ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"],
-    "dayNames": ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
-    "dayNamesShort": ["Sön", "Mån", "Tis", "Ons", "Tor", "Fre", "Lör"],
-    "today": "Idag",
-    "general": {
-      "areYouSure": "Är du säker?",
-      "add": "Lägg till",
-      "cancel": "Avbryt",
-      "close": "Stäng",
-      "save": "Spara"
+  "back": "Tillbaka",
+  "monthNames": [
+    "Januari",
+    "Februari",
+    "Mars",
+    "April",
+    "Maj",
+    "Juni",
+    "Juli",
+    "Augusti",
+    "September",
+    "Oktober",
+    "November",
+    "December"
+  ],
+  "monthNamesShort": [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "Maj",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Okt",
+    "Nov",
+    "Dec"
+  ],
+  "dayNames": [
+    "Söndag",
+    "Måndag",
+    "Tisdag",
+    "Onsdag",
+    "Torsdag",
+    "Fredag",
+    "Lördag"
+  ],
+  "dayNamesShort": [
+    "Sön",
+    "Mån",
+    "Tis",
+    "Ons",
+    "Tor",
+    "Fre",
+    "Lör"
+  ],
+  "today": "Idag",
+  "general": {
+    "areYouSure": "Är du säker?",
+    "add": "Lägg till",
+    "cancel": "Avbryt",
+    "close": "Stäng",
+    "save": "Spara",
+    "countSuffix": "st",
+    "low": "Låg",
+    "moderate": "Måttlig",
+    "good": "Bra",
+    "optimal": "Optimal"
+  },
+  "layout": {
+    "dashboard": "Dashboard",
+    "calendar": "Kalender",
+    "plan": "Plan",
+    "areas": "Områden"
+  },
+  "selectedSupplementList": {
+    "choosenFor": "Tagna kosttillskott"
+  },
+  "plan": {
+    "chosePlanToEdit": "Välj plan att redigera",
+    "addTimeSlot": "Ny tidpunkt",
+    "editTimeSlot": "Redigera tidpunkt",
+    "planName": "Namn på planen",
+    "timeSlotNameLabel": "Namn på tidpunkt",
+    "addSupplement": "Lägg till tillskott",
+    "addSupplementFor": "Lägg till tillskott för",
+    "editSupplementFor": "Redigera tillskott för",
+    "prefferedTime": "Föredragen tid",
+    "defaultPlan": {
+      "morning": "Morgon",
+      "lunch": "Lunch",
+      "dinner": "Middag"
     },
-    "layout": {
-      "dashboard": "Dashboard",
-      "calendar": "Kalender",
-      "plan": "Plan",
-      "areas": "Områden"
+    "supplementExists": "Tillskottet \"{{supplementName}}\" finns redan i vald plan.",
+    "trainingHeader": "Träningsplan",
+    "noActiveTraining": "Inga aktiva träningsmål ännu.",
+    "trainingActiveSince": "Aktiv sedan {{date}}",
+    "trainingSettingsTitle": "Träningsinställningar",
+    "trainingSessionsPlaceholder": "Pass per vecka",
+    "trainingDurationPlaceholder": "Minuter per pass",
+    "trainingSessionsPerWeek": "{{count}} pass/vecka",
+    "trainingSessionsPerWeek_plural": "{{count}} pass/vecka",
+    "trainingDurationMinutes": "{{minutes}} min per pass",
+    "trainingSettingsUnset": "Inga inställningar sparade",
+    "editTrainingSettings": "Redigera",
+    "nutritionHeader": "Kostplan",
+    "recommendedDose": "Rekommenderad dagsdos: {{dose}}",
+    "supplementSectionTitle": "Kosttillskott",
+    "supplementCountLabel": "{{count}} tillskott",
+    "supplementCountLabel_plural": "{{count}} tillskott",
+    "toggleNotifications": "Växla notiser",
+    "toggleSupplements": "Visa eller dölj innehåll",
+    "noSupplementSlots": "Inga tider skapade ännu.",
+    "addTrainingGoal": "Lägg till i träningsplan",
+    "addNutritionGoal": "Lägg till i kostplan",
+    "alreadyInPlan": "Finns redan i planen",
+    "alreadyInPlanTraining": "Finns redan i planen (träning)",
+    "alreadyInPlanNutrition": "Finns redan i planen (kost)",
+    "alreadyInPlanSupplement": "Finns redan i planen (tillskott)"
+  },
+  "supplementForm": {
+    "dosage": "Dos",
+    "unit": "Enhet"
+  },
+  "dayEdit": {
+    "addSupplement": "Lägg till tillskott",
+    "addFromPlan": "Lägg till från plan",
+    "choosePlan": "Välj plan",
+    "editSupplement": "Redigera tillskott för",
+    "chooseTime": "Välj tid",
+    "logMeal": "Loggade måltider",
+    "pickImage": "Analysera måltid",
+    "nutritionSummary": "Näringsöversikt"
+  },
+  "supplementDropdown": {
+    "chooseSupplement": "Välj tillskott",
+    "searchAndAdd": "Sök eller välj...",
+    "search": "Sök...",
+    "day": "dag"
+  },
+  "areas": {
+    "selectAreas": "Välj vilka områden du vill arbeta med",
+    "editArea": "Redigera område",
+    "addArea": "Lägg till område",
+    "confirmAddSupplements": "Vill du undersöka kosttillskott för detta område?"
+  },
+  "selectArea": {
+    "description": "Olika tips och tillskott kan hjälpa dig nå dina hälsomål. Välj ett för mer information"
+  },
+  "goalDetails": {
+    "taskInfo": "Uppgift",
+    "information": "Information",
+    "aiInsights": "AI-insikter",
+    "questionsExplored": "frågor utforskade",
+    "startExploring": "Börja utforska",
+    "continueExploring": "Fortsätt utforska",
+    "skip": "Skippa",
+    "start": "Starta",
+    "analyze": "Analysera",
+    "finish": "Slutför",
+    "analyzeHint": "Du kan analysera när tidsperioden är slut.",
+    "analysisTitle": "Analysera",
+    "takePhoto": "Ta foto",
+    "selectFileBody": "Välj fil att analysera",
+    "loading": "Analyseras av AI",
+    "selectFileConfirm": "Välj fil",
+    "defaultTitle": "AI-analys",
+    "analysisMatch": "✅ Tillskottet matchar målet med {{confidence}}% säkerhet.",
+    "analysisNoMatch": "❌ Inget matchande tillskott identifierat (säkerhet {{confidence}}%).",
+    "noAnswer": "🤖 Inget svar tillgängligt.",
+    "analysisError": "Något gick fel vid analys. Försök igen.",
+    "permissionTitle": "Behörighet krävs",
+    "permissionDenied": "Kameratillstånd krävs för att ta ett foto.",
+    "durationUnits": {
+      "days": "dagar",
+      "weeks": "veckor",
+      "months": "månader",
+      "time": "gång"
     },
-    "selectedSupplementList": { "choosenFor":"Tagna kosttillskott"},
- 
-    "plan": {
-      "chosePlanToEdit": "Välj plan att redigera",
-      "addTimeSlot": "Ny tidpunkt",
-      "editTimeSlot": "Redigera tidpunkt",
-      "planName": "Namn på planen",
-      "timeSlotNameLabel": "Namn på tidpunkt",
-      "addSupplement": "Lägg till tillskott",
-      "addSupplementFor": "Lägg till tillskott för",
-      "editSupplementFor": "Redigera tillskott för",
-      "prefferedTime": "Föredragen tid",
-      "defaultPlan": {
-          "morning": "Morgon",
-          "lunch": "Lunch",
-          "dinner": "Middag"
-        },
-       "supplementExists": "Tillskottet \"{{supplementName}}\" finns redan i vald plan.",
-       "trainingHeader": "Träningsplan",
-       "noActiveTraining": "Inga aktiva träningsmål ännu.",
-       "trainingActiveSince": "Aktiv sedan {{date}}",
-      "trainingSettingsTitle": "Träningsinställningar",
-      "trainingSessionsPlaceholder": "Pass per vecka",
-      "trainingDurationPlaceholder": "Minuter per pass",
-      "trainingSessionsPerWeek": "{{count}} pass/vecka",
-      "trainingSessionsPerWeek_plural": "{{count}} pass/vecka",
-      "trainingDurationMinutes": "{{minutes}} min per pass",
-      "trainingSettingsUnset": "Inga inställningar sparade",
-      "editTrainingSettings": "Redigera",
-       "nutritionHeader": "Kostplan",
-        "recommendedDose": "Rekommenderad dagsdos: {{dose}}",
-         "supplementSectionTitle": "Kosttillskott",
-        "supplementCountLabel": "{{count}} tillskott",
-        "supplementCountLabel_plural": "{{count}} tillskott",
-        "toggleNotifications": "Växla notiser",
-        "toggleSupplements": "Visa eller dölj innehåll",
-         "noSupplementSlots": "Inga tider skapade ännu.",
-         "addTrainingGoal": "Lägg till i träningsplan",
-         "addNutritionGoal": "Lägg till i kostplan",
-          "alreadyInPlan": "Finns redan i planen",
-          "alreadyInPlanTraining": "Finns redan i planen (träning)",
-          "alreadyInPlanNutrition": "Finns redan i planen (kost)",
-          "alreadyInPlanSupplement": "Finns redan i planen (tillskott)"
+    "completed": "Målet är klart",
+    "timeLeft": {
+      "days": "{{count}} dag kvar",
+      "days_plural": "{{count}} dagar kvar",
+      "weeks": "{{count}} vecka kvar",
+      "weeks_plural": "{{count}} veckor kvar",
+      "months": "{{count}} månad kvar",
+      "months_plural": "{{count}} månader kvar"
     },
-    "supplementForm":{
-      "dosage": "Dos", 
-      "unit": "Enhet"
+    "skipConfirmBody": "Om du hoppar över nu måste du börja om från början.",
+    "skipConfirmYes": "Ja, hoppa över",
+    "verdict": "Vad tycker du?",
+    "verdictRelevant": "Relevant för mig",
+    "verdictRelevantDesc": "Jag tycker detta verkar intressant.",
+    "verdictFollowResearch": "Intressant",
+    "verdictFollowResearchDesc": "Men jag vill ha mer forskning först.",
+    "verdictInterested": "Intresserad",
+    "verdictNotInterested": "Inte intresserad",
+    "verdictStartNow": "Börja nu",
+    "verdictWantMore": "Vill veta mer",
+    "verdictAlreadyWorks": "Redan testad - funkar",
+    "verdictNoResearch": "Inte stöd i forskning",
+    "verdictTestedFailed": "Redan testad - funkade inte",
+    "relevance": "Varför detta är viktigt",
+    "showAll": "Visa alla",
+    "showLess": "Visa mindre",
+    "whatAreTheRisks": "Vilka risker finns?",
+    "whatStudiesExist": "Vilka studier finns?",
+    "whoAreTheExperts": "Vilka experter finns?",
+    "supplements": "Tillskott",
+    "addToPlan": "Lägg till i plan",
+    "fullyExplored": "Fullt utforskat!",
+    "trainingRelation": {
+      "title": "Relation till träning",
+      "anytime": "Kan tas oavsett träning",
+      "preWorkout": "Ta före pass",
+      "postWorkout": "Ta efter pass",
+      "avoidPreWorkout": "Undvik strax före pass",
+      "avoidPostWorkout": "Undvik direkt efter pass",
+      "avoidNearWorkout": "Undvik nära träningspass"
     },
-    "dayEdit": {
-      "addSupplement": "Lägg till tillskott",
-      "addFromPlan": "Lägg till från plan",
-      "choosePlan": "Välj plan",
-      "editSupplement": "Redigera tillskott för",
-      "chooseTime": "Välj tid",
-      "logMeal": "Loggade måltider",
-      "pickImage": "Analysera måltid",
-      "nutritionSummary": "Näringsöversikt"
+    "preferredDayParts": {
+      "title": "Rekommenderade tider på dagen",
+      "morning": "Morgon",
+      "midday": "Lunch",
+      "afternoon": "Eftermiddag",
+      "evening": "Kväll",
+      "night": "Natt"
     },
-    "supplementDropdown": {
-      "chooseSupplement": "Välj tillskott",
-      "searchAndAdd": "Sök eller välj...",
-      "search": "Sök...",
-      "day": "dag"
-      
+    "timeRules": {
+      "title": "Undvik tid",
+      "anytime": "Kan tas när som helst",
+      "avoidLateEvening": "Undvik sena kvällar",
+      "avoidEvening": "Undvik kvällstid",
+      "avoidAfternoon": "Undvik eftermiddag",
+      "avoidMorning": "Undvik morgon",
+      "avoidNight": "Undvik nattetid"
     },
-    "areas": {
-      "selectAreas": "Välj vilka områden du vill arbeta med",
-      "editArea": "Redigera område",
-      "addArea": "Lägg till område",
-      "confirmAddSupplements": "Vill du undersöka kosttillskott för detta område?"
-    },
-    "selectArea": {
-      "description": "Olika tips och tillskott kan hjälpa dig nå dina hälsomål. Välj ett för mer information"
-    },
-    "goalDetails": {
-      "taskInfo": "Uppgift",
-      "information": "Information",
-      "aiInsights": "AI-insikter",
-      "questionsExplored":"frågor utforskade",
-      "startExploring":"Börja utforska",
-      "continueExploring":"Fortsätt utforska",
-      "skip": "Skippa",
-      "start": "Starta",
-      "analyze": "Analysera",
-      "finish": "Slutför",
-      "analyzeHint": "Du kan analysera när tidsperioden är slut.",
-      "analysisTitle": "Analysera",
-      "takePhoto": "Ta foto",
-      "selectFileBody": "Välj fil att analysera",
-      "loading": "Analyseras av AI",
-      "selectFileConfirm": "Välj fil",
-      "defaultTitle": "AI-analys",
-      "analysisMatch": "✅ Tillskottet matchar målet med {{confidence}}% säkerhet.",
-      "analysisNoMatch": "❌ Inget matchande tillskott identifierat (säkerhet {{confidence}}%).",
-      "noAnswer": "🤖 Inget svar tillgängligt.",
-      "analysisError": "Något gick fel vid analys. Försök igen.",
-      "permissionTitle": "Behörighet krävs",
-      "permissionDenied": "Kameratillstånd krävs för att ta ett foto.",
-      "durationUnits": {
-        "days": "dagar",
-        "weeks": "veckor",
-        "months": "månader",
-        "time": "gång"
+    "moreInfo": "Mer info",
+    "lessInfo": "Dölj info"
+  },
+  "cardioOverview": {
+    "title": "Kardiovaskulär hälsa",
+    "description": "Hjärta, blodkärl och övergripande kardiovaskulär funktion",
+    "yourCardioPerformance": "Din konditionsprestanda",
+    "trainingLoad": "Träningsbelastning",
+    "sevenDayTotal": "7-dagars total",
+    "recoveryTime": "Återhämtningstid",
+    "untilNextHardEffort": "till nästa hårda ansträngning",
+    "fitnessAge": "Konditionsålder",
+    "yearsYounger": "år yngre",
+    "understandingYourMetrics": {
+      "title": "Förstå dina metrik",
+      "vo2Max": {
+        "title": "VO₂ Max",
+        "description": "VO₂ max mäter den maximala mängden syre din kropp kan använda under intensiv träning. Det är guldstandarden för kondition. Högre värden indikerar bättre uthållighetskapacitet."
       },
-      "completed": "Målet är klart",
-      "timeLeft": {
-        "days": "{{count}} dag kvar",
-        "days_plural": "{{count}} dagar kvar",
-        "weeks": "{{count}} vecka kvar",
-        "weeks_plural": "{{count}} veckor kvar",
-        "months": "{{count}} månad kvar",
-        "months_plural": "{{count}} månader kvar"
+      "restingHeartRate": {
+        "title": "Vilopuls",
+        "description": "Lägre vilopuls indikerar vanligtvis bättre kardiovaskulär kondition. Idrottare har ofta vilopulser under 60 bpm. Övervaka trender över tid. En plötslig ökning kan signalera överträning, sjukdom eller stress."
       },
-      "skipConfirmBody": "Om du hoppar över nu måste du börja om från början.",
-      "skipConfirmYes": "Ja, hoppa över",
-      "verdict": "Vad tycker du?",
-      "verdictRelevant": "Relevant för mig",
-      "verdictRelevantDesc": "Jag tycker detta verkar intressant.",
-      "verdictFollowResearch": "Intressant",
-      "verdictFollowResearchDesc": "Men jag vill ha mer forskning först.",
-      "verdictInterested": "Intresserad",
-      "verdictNotInterested": "Inte intresserad",
-      "verdictStartNow": "Börja nu",
-      "verdictWantMore": "Vill veta mer",
-      "verdictAlreadyWorks": "Redan testad - funkar",
-      "verdictNoResearch": "Inte stöd i forskning",
-      "verdictTestedFailed": "Redan testad - funkade inte",
-      "relevance": "Varför detta är viktigt",
-      "showAll": "Visa alla",
-      "showLess": "Visa mindre",
-      "whatAreTheRisks": "Vilka risker finns?",
-      "whatStudiesExist": "Vilka studier finns?",
-      "whoAreTheExperts": "Vilka experter finns?",
-      "supplements": "Tillskott",
-      "addToPlan": "Lägg till i plan",
-      "fullyExplored": "Fullt utforskat!",
-      "trainingRelation": {
-        "title": "Relation till träning",
-        "anytime": "Kan tas oavsett träning",
-        "preWorkout": "Ta före pass",
-        "postWorkout": "Ta efter pass",
-        "avoidPreWorkout": "Undvik strax före pass",
-        "avoidPostWorkout": "Undvik direkt efter pass",
-        "avoidNearWorkout": "Undvik nära träningspass"
+      "trainingLoad": {
+        "title": "Träningsbelastning",
+        "description": "Träningsbelastning spårar den kumulativa intensiteten och volymen av dina träningspass över 7 dagar. Optimal belastning innebär att du tränar effektivt utan överträning. För hög = risk för skada/utmattning. För låg = otillräcklig stimulans för anpassning."
       },
-      "preferredDayParts": {
-        "title": "Rekommenderade tider på dagen",
-        "morning": "Morgon",
-        "midday": "Lunch",
-        "afternoon": "Eftermiddag",
-        "evening": "Kväll",
-        "night": "Natt"
+      "recoveryTime": {
+        "title": "Återhämtningstid",
+        "description": "Tid som behövs innan din kropp är redo för en annan hård träningssession. Baserat på HRV, sömnkvalitet och body battery. Att respektera återhämtning förhindrar skador och förbättrar prestation. Att träna hårt när återhämtningen är ofullständig leder till minskade resultat."
       },
-      "timeRules": {
-        "title": "Undvik tid",
-        "anytime": "Kan tas när som helst",
-        "avoidLateEvening": "Undvik sena kvällar",
-        "avoidEvening": "Undvik kvällstid",
-        "avoidAfternoon": "Undvik eftermiddag",
-        "avoidMorning": "Undvik morgon",
-        "avoidNight": "Undvik nattetid"
-      },
-      "moreInfo": "Mer info",
-      "lessInfo": "Dölj info"
-    },
-   "chat": {
-      "welcomeMessage": "Hej! Jag är din personliga hälsocoach – specialiserad på biohacking och kosttillskott. Ställ gärna en fråga om tillskott, dagliga rutiner eller hur du optimerar din hälsa. 💪🌿",
-      "introPrompt": "Jag har precis lagt till ett nytt hälsomål: {{goal}}. Det innehåller dessa tillskott: {{supplements}}. Kan du gå igenom varje tillskott, ge råd om fördelar, tidpunkt att ta det, och varningar om det behövs?",
-      "askToAddSupplements": "Vill du att jag lägger till dessa tillskott i din plan?",
-      "systemPromptWithPlan": "📝 Användaren har följande plan:\n{{plan}}\n\nDu är en professionell hälsocoach med expertis inom biohacking och kosttillskott. När du svarar:\n\n1. Ange fördelar med varje tillskott.\n2. Ange lämplig tidpunkt på dagen att ta varje tillskott.\n3. Ange eventuella varningar.\n4. Om användaren har en plan: föreslå endast tillskott som passar tider som ännu inte är upptagna.\n5. Avsluta med en fråga om du ska lägga till tillskotten i användarens plan.\n\nSvara tydligt på svenska, gärna i punktform.",
-      "systemPromptNoPlan": "⚠️ Användaren har inte delat sin plan.\n\nDu är en professionell hälsocoach inom biohacking. När du svarar:\n\n1. Ange fördelar med varje tillskott.\n2. Ange lämplig tidpunkt att ta varje tillskott.\n3. Ange eventuella varningar.\n\nSvara på svenska, gärna i punktform."
-    },
-    "onboarding": {
-      "whatSupplementDoYouTakeAlready": "Vilka tillskott tar du redan?",
-      "continue": "Fortsätt"
-    },
-    "imagePicker": {
-      "title": "Välj en bild",
-      "takePhoto": "Ta foto",
-      "chooseFromLibrary": "Välj från biblioteket"
-    },
-    "dashboard": {
-      "appTitle": "BIOHAXING",
-      "level": "NIVÅ",
-      "noFavorites": "Inga favoriter än",
-      "editAreas": "Redigera Områden"
-    },
-    "search": {
-      "label": "Sök tips"
-    },
-    "planCategory": {
-      "nutrition": "Kost",
-      "training": "Träning",
-      "other": "Övrigt",
-      "supplement": "Tillskott  "
-    },
-    "filter": {
-      "area": "Område",
-      "level": "Nivå",
-      "planCategory": "Plankategori",
-      "bodyPart": "Kroppsdel"
-    },
-    "bodyParts": {
-      "nervousSystem": "Nervsystem",
-      "eye": "Öga",
-      "muscles": "Muskler",
-      "digestiveSystem": "Matsmältningssystem",
-      "heart": "Hjärta",
-      "brain": "Hjärna",
-      "lungs": "Lungor",
-      "skin": "Hud",
-      "bones": "Skelett",
-      "joints": "Leder",
-      "immuneSystem": "Immunsystem",
-      "liver": "Lever",
-      "kidneys": "Njurar",
-      "reproductiveSystem": "Fortplantningssystem",
-      "circulatorySystem": "Blodomlopp",
-      "endocrineSystem": "Endokrina systemet",
-      "lymphaticSystem": "Lymfsystem",
-      "nails": "Naglar",
-      "hair": "Hår",
-      "teeth": "Tänder",
-      "feet": "Fötter",
-      "fattyTissue": "Fettvävnad",
-      "bloodVessels": "Blodkärl"
+      "fitnessAge": {
+        "title": "Konditionsålder",
+        "description": "Baserat på din VO₂ max, vilopuls och andra faktorer. En lägre konditionsålder indikerar överlägsen kardiovaskulär hälsa. Regelbunden aerob träning kan minska din konditionsålder med 10-20 år jämfört med stillasittande jämnåriga."
+      }
     }
+  },
+  "digestiveOverview": {
+    "title": "Matsmältning",
+    "description": "Faktorer som påverkar matsmältningshälsa och tarmfunktion",
+    "gutHealthInfluencers": {
+      "title": "Påverkare av tarmhälsa",
+      "stressLevel": "Stressnivå",
+      "sleep": "Sömn",
+      "activity": "Aktivitet",
+      "steps": "steg"
+    }
+  },
+  "energyOverview": {
+    "title": "Energi system",
+    "description": "Mitokondriell funktion och cellulär energiproduktion",
+    "cellularEnergyReserves": {
+      "title": "Cellulära energireserver",
+      "bodyBattery": "Body Battery",
+      "sinceWaking": "sedan uppvaknande",
+      "explainer": "Body Battery spårar kroppens energireserver genom att övervaka stress, aktivitet och återhämtning. Det speglar din mitokondriella ATP-produktionskapacitet."
+    },
+    "energyProductionMetrics": {
+      "title": "Energi produktionsmetrik",
+      "explainer": "VO₂ max indikerar mitokondriell densitet och oxidativ kapacitet. Högre värden = mer effektiv ATP-produktion från syre."
+    },
+    "energyBalance": {
+      "title": "Energibalans",
+      "energyDrain": "Energiutarmning",
+      "energyRecharge": "Energiladdning",
+      "stressScore": "Stresspoäng",
+      "stressLevel": "Stressnivå",
+      "intensityMinutes": "Intensiva minuter",
+      "sleepDuration": "Sömnvaraktighet",
+      "sleepQuality": "Sömnkvalitet",
+      "deepSleep": "Djupsömn",
+      "explainer": "Mitokondrier skadas av kronisk stress och återhämtas under djupsömn. Att minska stress och förbättra sömn är avgörande för att optimera energiproduktionen."
+    },
+    "mitochondrialHealth": {
+      "title": "Mitokondriell hälsa",
+      "powerhouses": {
+        "title": "Cellernas kraftverk",
+        "description": "Mitokondrier är organeller som producerar ATP (adenosintrifosfat), cellernas energivaluta. Varje cell innehåller hundratals till tusentals mitokondrier. De omvandlar näringsämnen och syre till ~90% av kroppens energi."
+      },
+      "atpProduction": {
+        "title": "ATP-produktion",
+        "description": "Genom oxidativ fosforylering producerar mitokondrier 30-32 ATP-molekyler per glukosmolekyl (jämfört med endast 2 ATP från glykolys). Denna process kräver syre, vilket är anledningen till att VO₂ max korrelerar med energikapacitet."
+      },
+      "mitochondrialBiogenesis": {
+        "title": "Mitokondriell biogenes",
+        "description": "Träning (särskilt zon 2-konditionsträning) aktiverar PGC-1α, vilket ökar mitokondrietätheten. Fler mitokondrier = större kapacitet för energiproduktion. Detta är anledningen till att vältränade idrottare har högre VO₂ max."
+      },
+      "oxidativeStress": {
+        "title": "Oxidativ stress",
+        "description": "Mitokondrier producerar reaktiva syreföreningar (ROS) som biprodukter vid ATP-produktion. Överskott av ROS orsakar oxidativ skada på mitokondriellt DNA. Antioxidanter (vitamin C, E, CoQ10, glutation) hjälper till att neutralisera ROS och skydda mitokondriell funktion."
+      },
+      "nadDecline": {
+        "title": "NAD+ och energinedgång",
+        "description": "NAD+ (nikotinamidadenindinukleotid) är avgörande för mitokondriell funktion. NAD+-nivåer minskar med ~50% mellan 20-80 års ålder, vilket minskar effektiviteten i ATP-produktionen. NAD+-prekursorer (NR, NMN) och sirtuinaktivatorer kan stödja mitokondriell hälsa."
+      },
+      "mitophagy": {
+        "title": "Mitofagi och cellulär rengöring",
+        "description": "Mitofagi är selektiv autofagi av skadade mitokondrier. Det sker under fasta och djupsömn. Regelbunden mitofagi förhindrar ackumulering av dysfunktionella mitokondrier som producerar överskott av ROS och mindre ATP."
+      }
+    },
+    "todaysActivity": {
+      "title": "Dagens aktivitet",
+      "activeMinutes": "Aktiva minuter",
+      "steps": "Steg",
+      "intensityMinutes": "Intensiva minuter"
+    }
+  },
+  "immuneOverview": {
+    "title": "Immunsystemet",
+    "description": "Försvar mot patogener och immunreglering",
+    "immuneStatus": {
+      "title": "Immuntillstånd",
+      "stressLevel": "Stressnivå",
+      "bodyBattery": "Body Battery",
+      "recoveryStatus": "Återhämtningsstatus",
+      "readyForActivity": "Redo för aktivitet",
+      "needRecovery": "Behöver återhämtning"
+    },
+    "whyTheseMetricsMatter": {
+      "title": "Varför dessa metrik är viktiga",
+      "sleep": {
+        "title": "Sömn",
+        "description": "Tillräcklig sömn är avgörande för immunfunktionen. Under sömnen producerar kroppen cytokiner som hjälper till att bekämpa infektioner och inflammation."
+      },
+      "stress": {
+        "title": "Stress & Body Battery",
+        "description": "Kronisk stress undertrycker immunfunktionen. Body Battery speglar dina energireserver och återhämtningsstatus."
+      },
+      "hrv": {
+        "title": "HRV (Heart Rate Variability)",
+        "description": "Högre HRV indikerar bättre återhämtning och resiliens. Låg HRV kan signalera stress, trötthet eller sjukdom."
+      },
+      "restingHeartRate": {
+        "title": "Vilopuls",
+        "description": "En förhöjd vilopuls kan vara ett tidigt tecken på sjukdom, inflammation eller otillräcklig återhämtning."
+      }
+    }
+  },
+  "sleepOverview": {
+    "title": "Sömn",
+    "description": "Återhämtning, reparation och cirkadisk hälsa",
+    "overview": {
+      "title": "Översikt",
+      "consistency": {
+        "title": "Sömnkonsistens",
+        "pattern": "7 dagars mönster",
+        "moderate": "Måttlig",
+        "low": "Låg",
+        "high": "Hög"
+      }
+    },
+    "sleepStages": {
+      "title": "Sömnfaser",
+      "deepSleep": {
+        "title": "Djup sömn",
+        "minutes": "minuter"
+      },
+      "remSleep": {
+        "title": "REM-sömn",
+        "minutes": "minuter"
+      },
+      "explainer": "Djup sömn är avgörande för fysisk återhämtning och immunfunktion. REM-sömn stödjer minneskonsolidering och emotionell reglering."
+    },
+    "understandingSleep": {
+      "title": "Förstå sömn",
+      "stages": {
+        "title": "Faser",
+        "description": "Sömn cyklas genom 4 faser: Lätt (N1, N2), Djup (N3) och REM. Varje fas har unika fördelar. Vuxna behöver 7-9 timmar med balanserad fasfördelning för optimal återhämtning."
+      },
+      "deepSleep": {
+        "title": "Djup sömn",
+        "description": "Djup sömn (långsamvågssömn) är när din kropp reparerar vävnader, bygger muskler, stärker immunförsvaret och konsoliderar minnen. Tillväxthormon når sin topp under denna fas. Sikta på 15-25% av den totala sömntiden."
+      },
+      "remSleep": {
+        "title": "REM-sömn",
+        "description": "REM (Rapid Eye Movement)-sömn bearbetar känslor, konsoliderar lärande och stödjer kreativitet. De flesta livliga drömmar sker här. REM bör vara 20-25% av den totala sömnen och ökar i senare cykler."
+      },
+      "circadianRhythm": {
+        "title": "Cirkadisk rytm",
+        "description": "Din interna 24-timmarsklocka reglerar sömn-vaken-cykler, hormonfrisättning och kroppstemperatur. Konsekventa sömn/vaken-tider stärker den cirkadiska rytmen och förbättrar sömnkvaliteten."
+      }
+    }
+  },
+  "strengthOverview": {
+    "title": "Styrka & muskelhälsa",
+    "description": "Muskelprestanda, styrketräning och återhämtning",
+    "recoveryFactors": {
+      "title": "Återhämtningsfaktorer",
+      "explainer": "Sömn och HRV är primära drivkrafter för muskelåterhämtning och proteinsyntes. Djupsömn utlöser tillväxthormonfrisättning för muskelreparation. Att respektera återhämtning förhindrar skador och främjar styrkeökningar. Att träna hårt när återhämtningen är ofullständig leder till minskade resultat och ökad skaderisk."
+    },
+    "information": {
+      "title": "Information",
+      "trainingReadiness": {
+        "title": "Träningsberedskap",
+        "description": "HRV och Body Battery indikerar din träningsberedskap. Hög HRV och full Body Battery tyder på att du är redo för en intensiv styrketräningssession. Låg HRV eller låg Body Battery kan signalera behov av lättare träning eller vila."
+      },
+      "trainingLoad": {
+        "title": "Träningsbelastning",
+        "description": "Kvantiﬁerar träningsstress från de senaste 7 dagarna. Anaerob belastning mäter specifikt högintensivt arbete (tung styrketräning, HIIT). Att hålla belastningen inom ditt optimala intervall förhindrar överträning samtidigt som progression säkerställs."
+      },
+      "recoveryTime": {
+        "title": "Återhämtningstid",
+        "description": "Uppskattade timmar tills full muskulär och CNS-återhämtning. Tunga sammansatta lyft (knäböj, marklyft) kräver 48-72 timmar för fullständig återhämtning. Att träna samma muskelgrupper innan återhämtningen är klar försämrar anpassningen."
+      },
+      "sleepMuscleGrowth": {
+        "title": "Sömn & muskelväxt",
+        "description": "80% av tillväxthormonet frisätts under djupsömn. Sömnbrist minskar proteinsyntesen med ~20% och ökar kortisol (katabolt). Sikta på 7-9 timmar med sömnkvalitet över 80% för optimal hypertrofi."
+      }
+    }
+  },
+  "tipsList": {
+    "title": "Optimeringstips",
+    "showAll": "Visa alla ({{count}} dolda)",
+    "hideNotInterested": "Dölj inte intresserad"
+  },
+  "chat": {
+    "welcomeMessage": "Hej! Jag är din personliga hälsocoach – specialiserad på biohacking och kosttillskott. Ställ gärna en fråga om tillskott, dagliga rutiner eller hur du optimerar din hälsa. 💪🌿",
+    "introPrompt": "Jag har precis lagt till ett nytt hälsomål: {{goal}}. Det innehåller dessa tillskott: {{supplements}}. Kan du gå igenom varje tillskott, ge råd om fördelar, tidpunkt att ta det, och varningar om det behövs?",
+    "askToAddSupplements": "Vill du att jag lägger till dessa tillskott i din plan?",
+    "systemPromptWithPlan": "📝 Användaren har följande plan:\n{{plan}}\n\nDu är en professionell hälsocoach med expertis inom biohacking och kosttillskott. När du svarar:\n\n1. Ange fördelar med varje tillskott.\n2. Ange lämplig tidpunkt på dagen att ta varje tillskott.\n3. Ange eventuella varningar.\n4. Om användaren har en plan: föreslå endast tillskott som passar tider som ännu inte är upptagna.\n5. Avsluta med en fråga om du ska lägga till tillskotten i användarens plan.\n\nSvara tydligt på svenska, gärna i punktform.",
+    "systemPromptNoPlan": "⚠️ Användaren har inte delat sin plan.\n\nDu är en professionell hälsocoach inom biohacking. När du svarar:\n\n1. Ange fördelar med varje tillskott.\n2. Ange lämplig tidpunkt att ta varje tillskott.\n3. Ange eventuella varningar.\n\nSvara på svenska, gärna i punktform."
+  },
+  "onboarding": {
+    "whatSupplementDoYouTakeAlready": "Vilka tillskott tar du redan?",
+    "continue": "Fortsätt"
+  },
+  "imagePicker": {
+    "title": "Välj en bild",
+    "takePhoto": "Ta foto",
+    "chooseFromLibrary": "Välj från biblioteket"
+  },
+  "dashboard": {
+    "appTitle": "BIOHAXING",
+    "level": "NIVÅ",
+    "noFavorites": "Inga favoriter än",
+    "editAreas": "Redigera Områden"
+  },
+  "search": {
+    "label": "Sök tips"
+  },
+  "planCategory": {
+    "nutrition": "Kost",
+    "training": "Träning",
+    "other": "Övrigt",
+    "supplement": "Tillskott  "
+  },
+  "filter": {
+    "area": "Område",
+    "level": "Nivå",
+    "planCategory": "Plankategori",
+    "bodyPart": "Kroppsdel"
+  },
+  "bodyParts": {
+    "nervousSystem": "Nervsystem",
+    "eye": "Öga",
+    "muscles": "Muskler",
+    "digestiveSystem": "Matsmältningssystem",
+    "heart": "Hjärta",
+    "brain": "Hjärna",
+    "lungs": "Lungor",
+    "skin": "Hud",
+    "bones": "Skelett",
+    "joints": "Leder",
+    "immuneSystem": "Immunsystem",
+    "liver": "Lever",
+    "kidneys": "Njurar",
+    "reproductiveSystem": "Fortplantningssystem",
+    "circulatorySystem": "Blodomlopp",
+    "endocrineSystem": "Endokrina systemet",
+    "lymphaticSystem": "Lymfsystem",
+    "nails": "Naglar",
+    "hair": "Hår",
+    "teeth": "Tänder",
+    "feet": "Fötter",
+    "fattyTissue": "Fettvävnad",
+    "bloodVessels": "Blodkärl"
   }
+}

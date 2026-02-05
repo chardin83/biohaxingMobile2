@@ -847,5 +847,12 @@
       "recovery": "Kan bidra till snabbare återhämtning vid ledproblem.",
       "immuneSupport": "Har antiinflammatoriska egenskaper som stödjer immunhälsan."
     }
+  },
+  "blue_light_evening": {
+    "title": "Blått och rött ljus på kvällen",
+    "description": "Blått ljus (450–480 nm) från skärmar och starka taklampor hämmar melatoninproduktionen i 2–3 timmar. Efter solnedgången, byt till dämpad varm belysning (bärnstens-/rödspektrum) för att bevara den naturliga melatoninökningen. Rött ljus (630–700 nm) påverkar dygnsrytmen minimalt och kan användas säkert på kvällen.",
+    "areas": {
+      "sleepQuality": "Att minska exponeringen för blått ljus på kvällen stödjer naturlig melatoninproduktion och god sömn."
+    }
   }
 }

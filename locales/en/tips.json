@@ -831,5 +831,12 @@
       "recovery": "May help speed up recovery from joint issues.",
       "immuneSupport": "Has anti-inflammatory properties that support immune health."
     }
+  },
+  "blue_light_evening": {
+    "title": "Blue and red light in the evening",
+    "description": "Blue light (450-480nm) from screens and bright overhead lights suppresses melatonin production for 2-3 hours. After sunset, switch to dim warm lighting (amber/red spectrum) to preserve natural melatonin rise. Red light (630-700nm) has minimal impact on circadian rhythm and can be used safely in the evening.",
+    "areas": {
+      "sleepQuality": "Reducing blue light exposure in the evening supports natural melatonin production and healthy sleep."
+    }
   }
 }
