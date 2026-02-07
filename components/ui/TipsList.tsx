@@ -108,7 +108,7 @@ export default function TipsList({ areaId }: Readonly<TipsListProps>) {
       {visibleTips.map((tip, index) => {
         const tipProgress = getTipProgress(tip.id);
 
-        return <TipCard key={tip.id} tip={tip} tipProgress={tipProgress} onPress={() => handleTipPress(index)} />;
+        return <TipCard key={tip.id} tip={tip} tipProgress={tipProgress} onPress={() => handleTipPress(index)} areaId={areaId} />;
       })}
 
       {sortedTips.some(tip => {

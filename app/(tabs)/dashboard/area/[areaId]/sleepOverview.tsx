@@ -45,7 +45,7 @@ export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
       setRemSleepMinutes(latest?.stages?.remMinutes ?? null);
 
       // "consistency" i V1 kan vara väldigt enkel:
-      setConsistencyLabel(sleeps.length >= 6 ? t('general.moderate') : t('general.low'));
+      setConsistencyLabel(sleeps.length >= 6 ? t('metrics.moderate') : t('metrics.low'));
 
       setLoading(false);
     })().catch(() => setLoading(false));

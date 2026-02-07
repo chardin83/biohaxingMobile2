@@ -5,7 +5,9 @@ import { StyleSheet, View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
 import { HRVMetric } from '@/components/metrics/HRVMetric';
+import { IntensityMinutesMetric } from '@/components/metrics/IntensityMinutesMetric';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
+import { StepsMetric } from '@/components/metrics/StepsMetric';
 import { VO2MaxMetric } from '@/components/metrics/VO2MaxMetric';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
@@ -87,14 +89,13 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
     stressLevel: 'Moderate',
     sleepHours: latestSleep ? latestSleep.durationMinutes / 60 : 7.5,
     sleepQuality: latestSleep?.efficiencyPct ?? 82,
-    deepSleepMinutes: latestSleep?.stages?.deepMinutes ?? 98,
+    deepSleepMinutes: latestSleep?.stages?.deepMinutes ?? 0,
     vo2max: 46,
     vo2maxStatus: 'Good',
     restingHR: restingHR ?? 56,
     hrv: hrv ?? 64,
-    activityMinutes: latestActivity?.activeMinutes ?? 128,
-    steps: latestActivity?.steps ?? 8900,
-    intensityMinutes: 45,
+    activityMinutes: latestActivity?.activeMinutes ?? 0,
+    intensityMinutes: latestActivity?.intensityMinutes ?? 0,
   };
 
   return (
@@ -260,15 +261,9 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
             <ThemedText type="value">{energy.activityMinutes}</ThemedText>
           </View>
 
-          <View style={[globalStyles.col, globalStyles.colWithDivider]}>
-            <ThemedText type="label">{t("energyOverview.todaysActivity.steps")}</ThemedText>
-            <ThemedText type="value">{energy.steps.toLocaleString()}</ThemedText>
-          </View>
+          <StepsMetric activityData={activityData} showDivider />
 
-          <View style={globalStyles.col}>
-            <ThemedText type="label">{t("energyOverview.todaysActivity.intensityMinutes")}</ThemedText>
-            <ThemedText type="value">{energy.intensityMinutes}</ThemedText>
-          </View>
+          <IntensityMinutesMetric activityData={activityData} />
         </View>
 
         <ThemedText
@@ -278,8 +273,7 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
             { borderTopColor: colors.borderLight }
           ]}
         >
-          Regular movement throughout the day maintains mitochondrial health. Even light activity (walking) stimulates
-          ATP production and reduces oxidative stress.
+          {t("energyOverview.todaysActivity.explainer")}
         </ThemedText>
       </Card>
    </>

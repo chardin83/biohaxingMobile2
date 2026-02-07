@@ -1,7 +1,7 @@
 import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
@@ -159,14 +159,7 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
       <GenesListCard areaId="cardioFitness" />
 
       {/* Tips Card */}
-      <TipsList areaId={mainGoalId} title="tips:cardio.levels.optimization.title" />
+      <TipsList areaId={mainGoalId}/>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  infoTextItalic: {
-    marginTop: 8,
-    fontStyle: 'italic',
-  },
-});

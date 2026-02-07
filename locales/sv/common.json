@@ -48,16 +48,14 @@
   ],
   "today": "Idag",
   "general": {
+    "loading": "Laddar...",
     "areYouSure": "Är du säker?",
     "add": "Lägg till",
     "cancel": "Avbryt",
     "close": "Stäng",
     "save": "Spara",
     "countSuffix": "st",
-    "low": "Låg",
-    "moderate": "Måttlig",
-    "good": "Bra",
-    "optimal": "Optimal"
+    "sleep": "sömn"
   },
   "layout": {
     "dashboard": "Dashboard",
@@ -330,8 +328,7 @@
     "todaysActivity": {
       "title": "Dagens aktivitet",
       "activeMinutes": "Aktiva minuter",
-      "steps": "Steg",
-      "intensityMinutes": "Intensiva minuter"
+      "explainer": "Regelbunden rörelse under dagen upprätthåller mitokondriell hälsa. Även lätt aktivitet (promenader) stimulerar ATP-produktion och minskar oxidativ stress."
     }
   },
   "immuneOverview": {
@@ -362,6 +359,74 @@
       "restingHeartRate": {
         "title": "Vilopuls",
         "description": "En förhöjd vilopuls kan vara ett tidigt tecken på sjukdom, inflammation eller otillräcklig återhämtning."
+      }
+    }
+  },
+  "nervousSystemOverview": {
+    "title": "Nervsystemet",
+    "description": "Autonom nervsystembalans och återhämtningsmetrik",
+    "autonomicNervousSystem": {
+      "title": "Autonoma nervsystemet"
+    },
+    "ansBalance": {
+      "title": "Sympatisk vs Parasympatisk balans",
+      "fightFlight": "Kamp/Flight",
+      "restDigest": "Vila/Smälta",
+      "parasympathetic": "Ditt nervsystem är för närvarande i ett parasympatiskt dominerande tillstånd, vilket indikerar god återhämtning och avslappning.",
+      "balanced": "Ditt nervsystem visar en balanserad aktivitet mellan sympatisk och parasympatisk, vilket tyder på att du hanterar stress väl och har en god återhämtningsförmåga.",
+      "sympathetic": "Ditt nervsystem är för närvarande i ett sympatisk dominerande tillstånd, vilket kan indikera stress eller otillräcklig återhämtning. Överväg att prioritera vila, djupandning eller avkopplande aktiviteter."
+    },
+    "informationCard": {
+      "title": "Förstå ditt nervsystem",
+      "hrv":{
+        "title": "HRV (Heart Rate Variability)",
+        "description": "HRV mäter variationen i tid mellan hjärtslag. Hög HRV indikerar en stark parasympatisk aktivitet och god återhämtning. Låg HRV kan signalera stress, trötthet eller sjukdom."
+      },
+      "stressScore": {
+        "title": "Stresspoäng",
+        "description": "Baserat på HRV, vilopuls och andra faktorer. Högre poäng indikerar högre stressnivåer och behov av återhämtning."
+      },
+      "bodyBattery": {
+        "title": "Body Battery",
+        "description": "Spårar kroppens energireserver genom att övervaka stress, aktivitet och återhämtning. Det speglar din autonoma nervsystemsbalans och återhämtningsstatus."
+      },
+      "ansBalance": {
+        "title": "ANS-balans",
+        "description": "Balansen mellan sympatisk (stressrespons) och parasympatisk (återhämtningsrespons) aktivitet. En övervägande parasympatisk aktivitet indikerar god återhämtning, medan en övervägande sympatisk aktivitet kan signalera stress eller otillräcklig återhämtning."
+      }
+    }
+  },
+  "mindOverview": {
+    "title": "Hjärna & Kognition",
+    "description": "Kognitiv funktion, mental prestation och hjärnhälsa",
+    "mindMetrics": {
+      "title": "Kognitiva mått"
+    },
+    "informationCard": {
+      "title": "Varför dessa metrik är viktiga",
+      "focus": {
+        "title": "Fokus & Mental Klarhet",
+        "description": "Hög stress och låg energi (body battery) försämrar prefrontala cortex funktion, vilket leder till minskat fokus, mental klarhet och beslutsförmåga."
+      },
+      "stress": {
+        "title": "Stress & Body Battery",
+        "description": "Kronisk stress försämrar kognitiv funktion och mental prestation. Body Battery speglar dina energireserver och återhämtningsstatus, vilket är avgörande för optimal hjärnfunktion."
+      },
+      "mood": {
+        "title": "Humör & Emotionell Reglering",
+        "description": "Kronisk stress och dålig återhämtning kan leda till humörstörningar, ångest och depression. Att prioritera återhämtning och stresshantering stödjer emotionellt välbefinnande."
+      },
+      "sleepQuality": {
+        "title": "Sömnkvalitet",
+        "description": "Dålig sömnkvalitet påverkar negativt minne, uppmärksamhet och exekutiva funktioner. Att prioritera god sömn är avgörande för att upprätthålla kognitiv hälsa."
+      },
+       "steps": {
+        "title": "🚶‍♂️ Steg och hjärnhälsa",
+        "description": "Fysisk aktivitet och dagliga steg ökar blodflödet till hjärnan, förbättrar minne och koncentration samt minskar stress och risken för psykisk ohälsa."
+      },
+      "bdnf": {
+        "title": "🧬 BDNF och hjärnans utveckling",
+        "description": "BDNF (Brain-Derived Neurotrophic Factor) är ett protein som spelar en avgörande roll för hjärnans plasticitet, inlärning och minne. Fysisk aktivitet, särskilt intensiv träning, ökar nivåerna av BDNF och bidrar till bättre kognitiv funktion och skydd mot psykisk ohälsa."
       }
     }
   },
@@ -441,6 +506,38 @@
     "title": "Optimeringstips",
     "showAll": "Visa alla ({{count}} dolda)",
     "hideNotInterested": "Dölj inte intresserad"
+  },
+  "genesList": {
+    "title": "Gener & DNA",
+    "genesLinkedToArea": "Gener kopplade till {{area}}",
+    "noGenes": "Inga gener kopplade till detta område ännu.",
+    "genesAffectHealth": "Gener kan påverka hur du svarar på kost, träning och tillskott. Genom att förstå dina genetiska predispositioner kan du anpassa din hälsoplan för att optimera resultat.",
+    "explainer": "Genetisk testning kan ge insikter om din profil, men livsstilen har alltid störst påverkan!"
+  },
+  "metrics":{
+    "low": "Låg",
+    "moderate": "Måttlig",
+    "good": "Bra",
+    "optimal": "Optimal",
+    "readyForActivity": "Redo för aktivitet",
+    "needRecovery": "Behöver återhämtning",
+    "sleep": "Sömn",
+    "noSleepData": "Ingen sömndata",
+    "bodyBattery":{
+      "title": "Body Battery"
+    },
+    "stressScore":{
+      "title": "Stressnivå"
+    },
+    "recoveryStatus":{
+      "title": "Återhämtningsstatus"
+    },
+    "todaysSteps":{
+      "title": "Dagens steg"
+    },
+    "intensityMinutes":{
+      "title": "Intensiva min"
+    }
   },
   "chat": {
     "welcomeMessage": "Hej! Jag är din personliga hälsocoach – specialiserad på biohacking och kosttillskott. Ställ gärna en fråga om tillskott, dagliga rutiner eller hur du optimerar din hälsa. 💪🌿",

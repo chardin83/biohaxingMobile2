@@ -9,6 +9,7 @@ import CardioOverview from './cardioOverview';
 import DigestiveOverview from './digestiveOverview';
 import EnergyOverview from './energyOverview';
 import ImmuneOverview from './immuneOverview';
+import MindOverview from './mindOverview';
 import NervousSystemOverview from './nervousSystemOverview';
 import SleepOverview from './sleepOverview';
 import StrengthOverview from './strengthOverview';
@@ -26,13 +27,14 @@ export default function AreaRootScreen() {
 
   return (
     <Container background="gradient" gradientLocations={Colors.dark.gradients.sunrise.locations2 as any} onBackPress={() => router.push({ pathname: '/dashboard' })} showBackButton>
-      {areaId === 'stressReduction' && <NervousSystemOverview mainGoalId={areaId} />}
+      {areaId === 'nervousSystem' && <NervousSystemOverview mainGoalId={areaId} />}
       {areaId === 'sleepQuality' && <SleepOverview mainGoalId={areaId} />}
       {areaId === 'energy' && <EnergyOverview mainGoalId={areaId} />}
       {areaId === 'strength' && <StrengthOverview mainGoalId={areaId} />}
       {areaId === 'cardioFitness' && <CardioOverview mainGoalId={areaId} />}
       {areaId === 'digestiveHealth' && <DigestiveOverview mainGoalId={areaId} />}
       {areaId === 'immuneSupport' && <ImmuneOverview mainGoalId={areaId} />}
+      {areaId === 'mind' && <MindOverview mainGoalId={areaId} />}
     </Container>
   );
 }

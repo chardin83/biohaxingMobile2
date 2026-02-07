@@ -35,8 +35,8 @@ jest.mock('react-i18next', () => ({
         'areas:digestiveHealth.description': 'Support healthy digestion and gut microbiome',
         'areas:strength.title': 'Strength',
         'areas:strength.description': 'Build strength',
-        'areas:stressReduction.title': 'Nervous System',
-        'areas:stressReduction.description': 'Balance your autonomic nervous system for better stress resilience',
+        'areas:nervousSystem.title': 'Nervous System',
+        'areas:nervousSystem.description': 'Balance your autonomic nervous system for better stress resilience',
       };
       return translations[key] || key;
     },
@@ -63,8 +63,8 @@ jest.mock('i18next', () => ({
       'areas:digestiveHealth.description': 'Support healthy digestion and gut microbiome',
       'areas:strength.title': 'Strength',
       'areas:strength.description': 'Build strength',
-      'areas:stressReduction.title': 'Nervous System',
-      'areas:stressReduction.description': 'Balance your autonomic nervous system for better stress resilience',
+      'areas:nervousSystem.title': 'Nervous System',
+      'areas:nervousSystem  .description': 'Balance your autonomic nervous system for better stress resilience',
     };
     return translations[key] || key;
   },
@@ -94,7 +94,7 @@ jest.mock('@/locales/areas', () => ({
     { id: 'cardioFitness', title: 'cardioFitness.title', description: 'cardioFitness.description', icon: 'heart-pulse' },
     { id: 'digestiveHealth', title: 'digestiveHealth.title', description: 'digestiveHealth.description', icon: 'food-apple' },
     { id: 'strength', title: 'strength.title', description: 'strength.description', icon: 'arm-flex' },
-    { id: 'stressReduction', title: 'stressReduction.title', description: 'stressReduction.description', icon: 'emoticon-neutral' },
+    { id: 'nervousSystem', title: 'nervousSystem.title', description: 'nervousSystem.description', icon: 'emoticon-neutral' },
   ],
 }));
 const renderWithProviders = (children: React.ReactNode) => {

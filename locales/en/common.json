@@ -48,16 +48,13 @@
   ],
   "today": "Today",
   "general": {
+    "loading": "Loading...",
     "areYouSure": "Are you sure?",
     "add": "Add",
     "cancel": "Cancel",
     "close": "Close",
     "save": "Save",
-    "countSuffix": "pcs",
-    "low": "Low",
-    "moderate": "Moderate",
-    "good": "Good",
-    "optimal": "Optimal"
+    "countSuffix": "pcs"
   },
   "layout": {
     "dashboard": "Dashboard",
@@ -326,8 +323,7 @@
     "todaysActivity": {
       "title": "Today's activity",
       "activeMinutes": "Active minutes",
-      "steps": "Steps",
-      "intensityMinutes": "Intensity minutes"
+      "explainer": "Regular movement throughout the day maintains mitochondrial health. Even light activity (walking) stimulates ATP production and reduces oxidative stress."
     }
   },
   "immuneOverview": {
@@ -336,10 +332,7 @@
     "immuneStatus": {
       "title": "Immune status",
       "stressLevel": "Stress level",
-      "bodyBattery": "Body Battery",
-      "recoveryStatus": "Recovery status",
-      "readyForActivity": "Ready for activity",
-      "needRecovery": "Need recovery"
+      "bodyBattery": "Body Battery"
     },
     "whyTheseMetricsMatter": {
       "title": "Why these metrics matter",
@@ -358,6 +351,74 @@
       "restingHeartRate": {
         "title": "Resting Heart Rate",
         "description": "An elevated resting heart rate can be an early sign of illness, inflammation, or inadequate recovery."
+      }
+    }
+  },
+  "nervousSystemOverview": {
+    "title": "Nervous System",
+    "description": "Autonomic nervous system balance and recovery metrics",
+    "autonomicNervousSystem": {
+      "title": "Autonomic Nervous System"
+    },
+    "ansBalance": {
+      "title": "Sympathetic vs Parasympathetic",
+      "fightFlight": "Fight/Flight",
+      "restDigest": "Rest/Digest",
+      "parasympathetic": "Your nervous system is currently in a parasympathetic-dominant state, indicating good recovery and relaxation.",
+      "balanced": "Your nervous system shows balanced activity between sympathetic and parasympathetic, suggesting you are managing stress well and have good recovery capacity.",
+      "sympathetic": "Your nervous system is currently in a sympathetic-dominant state, which may indicate stress or inadequate recovery. Consider prioritizing rest, deep breathing, or relaxing activities."
+    },
+    "informationCard": {
+      "title": "Understanding your nervous system",
+      "hrv": {
+        "title": "HRV (Heart Rate Variability)",
+        "description": "HRV measures the variation in time between heartbeats. Higher HRV indicates better autonomic nervous system function, resilience, and recovery capacity. It's influenced by stress, sleep, fitness, and overall health."
+      },
+      "stressScore": {
+        "title": "Stress Score",
+        "description": "Based on HRV, activity, and sleep data. Lower scores (0-25) indicate low stress, while higher scores (75-100) show significant sympathetic nervous system activation. Chronic high stress can lead to burnout and health issues."
+      },
+      "bodyBattery": {
+        "title": "Body Battery",
+        "description": "Tracks your body's energy reserves by monitoring stress, activity, and recovery. It reflects your autonomic nervous system balance and recovery status."
+      },
+      "ansBalance": {
+        "title": "ANS Balance",
+        "description": "The balance between sympathetic (stress response) and parasympathetic (recovery response) activity. Predominant parasympathetic activity indicates good recovery, while predominant sympathetic activity may signal stress or inadequate recovery."
+      }
+    }
+  },
+  "mindOverview": {
+    "title": "Mind & Cognition",
+    "description": "Cognitive function, mental performance, and brain health",
+    "mindMetrics": {
+      "title": "Cognitive metrics"
+    },
+    "informationCard": {
+      "title": "Why these metrics matter",
+      "focus": {
+        "title": "Focus & Mental Clarity",
+        "description": "High stress and low energy (body battery) impair prefrontal cortex function, leading to reduced focus, mental clarity, and decision-making ability."
+      },
+      "stress": {
+        "title": "Stress & Body Battery",
+        "description": "Chronic stress impairs cognitive function and mental performance. Body Battery reflects your energy reserves and recovery status, which are crucial for optimal brain function."
+      },
+      "mood": {
+        "title": "Mood & Emotional Regulation",
+        "description": "Chronic stress and poor recovery can lead to mood disturbances, anxiety, and depression. Prioritizing recovery and stress management supports emotional well-being."
+      },
+      "sleepQuality": {
+        "title": "Sleep Quality",
+        "description": "Poor sleep quality negatively impacts memory, attention, and executive function. Prioritizing good sleep is essential for maintaining cognitive health."
+      },
+      "steps": {
+        "title": "🚶‍♂️ Steps & Brain Health",
+        "description": "Physical activity and daily steps increase blood flow to the brain, improving memory and concentration while reducing stress and risk of mental health issues."
+      },
+      "bdnf": {
+        "title": "🧬 BDNF and Brain Development",
+        "description": "BDNF (Brain-Derived Neurotrophic Factor) is a protein that plays a crucial role in brain plasticity, learning, and memory. Physical activity, especially intense exercise, increases BDNF levels, contributing to better cognitive function and protection against mental health issues."
       }
     }
   },
@@ -437,6 +498,38 @@
     "title": "Tips for optimization",
     "showAll": "Show all ({{count}} hidden)",
     "hideNotInterested": "Hide not interested"
+  },
+   "genesList": {
+    "title": "Genes & DNA",
+    "genesLinkedToArea": "Genes linked to {{area}}",
+    "noGenes": "No genes linked to this area yet.",
+    "genesAffectHealth": "Multiple genes influence your health and function in this area. Understanding your genetic predispositions can help you tailor your health plan to optimize results.",
+    "explainer": "Genetic testing can provide insights into your profile, but lifestyle always has the biggest impact!"
+  },
+   "metrics":{
+    "low": "Low",
+    "moderate": "Moderate",
+    "good": "Good",
+    "optimal": "Optimal",
+    "readyForActivity": "Ready for activity",
+    "needRecovery": "Need recovery",
+    "sleep": "Sleep",
+    "noSleepData": "No sleep data",
+    "bodyBattery":{
+      "title": "Body Battery"
+    },
+    "stressScore":{
+      "title": "Stress Score"
+    },
+    "recoveryStatus":{
+      "title": "Recovery Status"
+    },
+    "todaysSteps":{
+      "title": "Today's steps"
+    },
+    "intensityMinutes": {
+      "title": "Intensity min"
+    }
   },
   "chat": {
     "welcomeMessage": "Hi! I'm your personal health coach – specialized in biohacking and supplements. Ask me about daily routines or optimizing your health. 💪🌿",

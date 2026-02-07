@@ -217,7 +217,7 @@
     "areas": {
       "sleepQuality": "Supports brain plasticity and recovery during sleep. Variants may affect sleep quality and cognitive function.",
       "strength": "Influences muscle growth, recovery, and adaptation to strength training. Some variants may improve muscle repair and strength gains.",
-      "stressReduction": "Affects stress sensitivity, recovery, and nervous system plasticity. Some variants may provide better resilience to stress and faster recovery."
+      "nervousSystem": "Affects stress sensitivity, recovery, and nervous system plasticity. Some variants may provide better resilience to stress and faster recovery."
     }
   },
   "COMT": {
@@ -225,7 +225,7 @@
     "description": "Involved in dopamine breakdown. Variants can influence sleep architecture, stress response, and cognitive performance.",
     "areas": {
       "sleepQuality": "Involved in dopamine breakdown. Variants can influence sleep architecture, stress response, and cognitive performance.",
-      "stressReduction": "Regulates breakdown of stress hormones and dopamine. Some variants may increase stress sensitivity or improve stress management."
+      "nervousSystem": "Regulates breakdown of stress hormones and dopamine. Some variants may increase stress sensitivity or improve stress management."
     }
   }
 }

@@ -35,6 +35,7 @@ export type DailyActivity = {
   date: string; // YYYY-MM-DD
   steps?: number;
   activeMinutes?: number;
+  intensityMinutes?: number;
 };
 
 export type EnergySignal = {

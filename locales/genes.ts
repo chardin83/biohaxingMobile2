@@ -231,7 +231,7 @@ export const genes: Gene[] = [
     areas: [
       { id: "sleepQuality", descriptionKey: "BDNF.areas.sleepQuality" },
       { id: "strength", descriptionKey: "BDNF.areas.strength" },
-      { id: "stressReduction", descriptionKey: "BDNF.areas.stressReduction" }
+      { id: "nervousSystem", descriptionKey: "BDNF.areas.nervousSystem" }
     ]
   },
   {
@@ -239,7 +239,7 @@ export const genes: Gene[] = [
     titleKey: "COMT.title",
     areas: [
       { id: "sleepQuality", descriptionKey: "COMT.areas.sleepQuality" },
-      { id: "stressReduction", descriptionKey: "COMT.areas.stressReduction" }
+      { id: "nervousSystem", descriptionKey: "COMT.areas.nervousSystem" }
     ]
   }
 ];

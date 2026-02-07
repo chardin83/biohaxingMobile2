@@ -217,7 +217,7 @@
     "areas": {
       "sleepQuality": "Stödjer hjärnans plasticitet och återhämtning under sömn. Varianter kan påverka sömnkvalitet och kognitiv funktion.",
       "strength": "Påverkar muskeltillväxt, återhämtning och anpassning till styrketräning. Vissa varianter kan ge bättre muskelreparation och styrkeökning.",
-      "stressReduction": "Påverkar stresskänslighet, återhämtning och nervsystemets plasticitet. Vissa varianter kan ge bättre motståndskraft mot stress och snabbare återhämtning."
+      "nervousSystem": "Påverkar stresskänslighet, återhämtning och nervsystemets plasticitet. Vissa varianter kan ge bättre motståndskraft mot stress och snabbare återhämtning."
     }
   },
   "COMT": {
@@ -225,7 +225,7 @@
     "description": "Involverad i nedbrytning av dopamin. Varianter kan påverka sömnarkitektur, stressrespons och kognitiv prestation.",
     "areas": {
       "sleepQuality": "Involverad i nedbrytning av dopamin. Varianter kan påverka sömnarkitektur, stressrespons och kognitiv prestation.",
-      "stressReduction": "Reglerar nedbrytning av stresshormoner och dopamin. Vissa varianter kan ge ökad stresskänslighet eller bättre stresshantering."
+      "nervousSystem": "Reglerar nedbrytning av stresshormoner och dopamin. Vissa varianter kan ge ökad stresskänslighet eller bättre stresshantering."
     }
   }
 }

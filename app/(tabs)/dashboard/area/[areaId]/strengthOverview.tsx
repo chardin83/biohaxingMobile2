@@ -76,7 +76,7 @@ export default function StrengthScreen({ mainGoalId }: { mainGoalId: string }) {
 
   const performance = {
     trainingReadiness: latestEnergy?.bodyBatteryLevel ?? 82,
-    readinessStatus: (latestEnergy?.bodyBatteryLevel ?? 82) > 75 ? t('general.optimal') : t('general.moderate'),
+    readinessStatus: (latestEnergy?.bodyBatteryLevel ?? 82) > 75 ? t('general.optimal') : t('metrics.moderate'),
     recoveryTime: 12, // Would need workout tracking data
     trainingLoad: {
       current: latestActivity?.activeMinutes ? latestActivity.activeMinutes * 2 : 245,

@@ -5,6 +5,7 @@ import { View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
 import { HRVMetric } from '@/components/metrics/HRVMetric';
+import { RecoveryStatusMetric } from '@/components/metrics/RecoveryStatusMetric';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { SleepMetric } from '@/components/metrics/SleepMetric';
 import { ThemedText } from '@/components/ThemedText';
@@ -27,6 +28,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
   const [sleepData, setSleepData] = useState<SleepSummary[]>([]);
   const [hrvData, setHrvData] = useState<HRVSummary[]>([]);
   const [energyData, setEnergyData] = useState<EnergySignal[]>([]);
+  const [sleepHours, setSleepHours] = useState<number | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -46,6 +48,17 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
         setSleepData(sleep);
         setHrvData(hrv);
         setEnergyData(energy);
+
+        // Sätt sleepHours
+        if (sleep.length > 0) {
+          const latest = sleep[sleep.length - 1];
+          setSleepHours(latest.durationMinutes ? latest.durationMinutes / 60 : null);
+        }
+
+        // Sätt hrv
+        if (hrv.length > 0) {
+          setHrvData(hrv);
+        }
       } catch (err) {
         console.error('Failed to load data:', err);
         setError('Failed to load data');
@@ -72,11 +85,9 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
   const latestEnergy = energyData[0];
 
   const immune = {
-    stressLevel: (latestEnergy?.bodyBatteryLevel ?? 78) > 70 ? t("general.low") : t("general.moderate"),
+    stressLevel: (latestEnergy?.bodyBatteryLevel ?? 78) > 70 ? t("metrics.low") : t("metrics.moderate"),
     bodyBattery: latestEnergy?.bodyBatteryLevel ?? 78,
   };
-
-
 
   return (
     <>
@@ -117,10 +128,16 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
           <RestingHRMetric hrvData={hrvData} showDivider />
 
           {/* Recovery Status */}
+          <RecoveryStatusMetric
+            hrvData={hrvData}
+            sleepHours={sleepHours}
+          />
+
+           {/* Immune Recovery Status */}
           <View style={globalStyles.col}>
             <ThemedText type="label">{t("immuneOverview.immuneStatus.recoveryStatus")}</ThemedText>
-            <ThemedText type="title3">{immune.bodyBattery > 70 ? t("general.good") : t("general.moderate")}</ThemedText>
-            <ThemedText type="caption">{immune.bodyBattery > 70 ? t("immuneOverview.immuneStatus.readyForActivity") : t("immuneOverview.immuneStatus.needRecovery")}</ThemedText>
+            <ThemedText type="title3">{immune.bodyBattery > 70 ? t("metrics.good") : t("metrics.moderate")}</ThemedText>
+            <ThemedText type="caption">{immune.bodyBattery > 70 ? t("metrics.readyForActivity") : t("metrics.needRecovery")}</ThemedText>
           </View>
         </View>
       </Card>
@@ -162,7 +179,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
       <GenesListCard areaId="immune"/>
 
       {/* Tips card */}
-      <TipsList areaId={mainGoalId} title="tips:immune.levels.optimization.title" />
+      <TipsList areaId={mainGoalId}/>
     </>
   );
 }

@@ -30,11 +30,13 @@ interface TipCardProps {
   tip: Tip;
   tipProgress: TipProgress;
   onPress: () => void;
+  areaId: string;
 }
 
-export default function TipCard({ tip, tipProgress, onPress }: Readonly<TipCardProps>) {
+export default function TipCard({ tip, tipProgress, onPress, areaId }: Readonly<TipCardProps>) {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const area = tip.areas.find(a => a.id === areaId) ?? tip.areas[0];
 
   const isStarted = tipProgress.xp > 0;
   const isCompleted = tipProgress.progress >= 1;
@@ -102,7 +104,7 @@ export default function TipCard({ tip, tipProgress, onPress }: Readonly<TipCardP
             </ThemedText>
           </View>
           <ThemedText type="default">
-            {t(`tips:${tip.descriptionKey}`)}
+            {t(`tips:${area.descriptionKey}`)}
           </ThemedText>
         </View>
 

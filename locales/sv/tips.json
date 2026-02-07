@@ -20,7 +20,7 @@
       "energy": "D-vitamin stödjer mitokondriell funktion och cellulär energiproduktion genom att reglera kalciumhomeostas.",
       "immuneSupport": "D-vitamin modulerar både medfött och adaptivt immunsvar, och låga nivåer är associerade med ökad infektionskänslighet.",
       "strength": "D-vitamin är avgörande för muskelstyrka och funktion genom kalciumreglering och muskelproteinsyntesvägar.",
-      "stressReduction": "D-vitamin påverkar neurotransmittorproduktion och har neuroprotektiva effekter i det centrala nervsystemet."
+      "nervousSystem": "D-vitamin påverkar neurotransmittorproduktion och har neuroprotektiva effekter i det centrala nervsystemet."
     },
     "nutritionFoods": {
       "title": "Livsmedel rika på D-vitamin",
@@ -92,7 +92,7 @@
     "description": "NAD+ (Nikotinamidadenindinukleotid) är ett viktigt koenzym som finns i varje cell i kroppen. Det spelar en nyckelroll i cellulär energimetabolism, DNA-reparation och upprätthållande av övergripande cellulär hälsa. Prekursorer som NMN, NR eller grundläggande niacin kan stödja NAD+-nivåerna när direkt tillskott inte är aktuellt.",
     "areas": {
       "energy": "NAD+ är avgörande för de mitokondriella processer som genererar ATP, cellens primära energivaluta.",
-      "stressReduction": "NAD+ stödjer nervsystemet genom att hjälpa till med cellulär reparation och skydda neuroner från oxidativ stress.",
+      "nervousSystem": "NAD+ stödjer nervsystemet genom att hjälpa till med cellulär reparation och skydda neuroner från oxidativ stress.",
       "immuneSupport": "NAD+ bidrar till immunfunktionen genom att stödja cellulär metabolism och reparationsmekanismer som är viktiga för immunceller."
     },
     "analyzePrompt": "Analysera användarens NAD+-nivåer och föreslå strategier för att optimera cellulär energimetabolism."
@@ -172,7 +172,7 @@
     "title": "Lugna aminosyror",
     "description": "Glycin är en aminosyra som fungerar som en neurotransmitter i det centrala nervsystemet. Den har studerats för sina lugnande effekter och sin roll i att främja avslappning och bättre sömn.",
     "areas": {
-      "stressReduction": "Glycin fungerar som en hämmande neurotransmitter som hjälper till att lugna nervsystemet och minska stress.",
+      "nervousSystem": "Glycin fungerar som en hämmande neurotransmitter som hjälper till att lugna nervsystemet och minska stress.",
       "sleepQuality": "Glycin har visat sig förbättra sömnkvaliteten genom att främja avslappning och reglera kroppstemperaturen.",
       "immuneSupport": "Glycin stödjer immunfunktionen genom att minska inflammation och främja cellulär reparation."
     },
@@ -206,7 +206,7 @@
     "title": "Andningsövningar",
     "description": "Andningsarbete är ett kraftfullt verktyg för att aktivera det parasympatiska nervsystemet, minska stress och främja avslappning. Olika andningsteknik kan användas för specifika resultat såsom lugn, fokus eller bättre sömn.",
     "areas": {
-      "stressReduction": "Kontrollerad andning aktiverar direkt det parasympatiska nervsystemet, vilket minskar stresshormoner och främjar avslappning.",
+      "nervousSystem": "Kontrollerad andning aktiverar direkt det parasympatiska nervsystemet, vilket minskar stresshormoner och främjar avslappning.",
       "immuneSupport": "Regelbundet andningsarbete kan förbättra immunfunktionen genom att minska kronisk stress och främja bättre sömn och återhämtning.",
       "energy": "Korrekta andningsteknik förbättrar syrenanvändning och energinivåer under dagen."
     }
@@ -215,7 +215,7 @@
     "title": "Sömnoptimering för återhämtning",
     "description": "Högkvalitativ sömn är grundläggande för fysisk återhämtning, immunfunktion, mental klarhet och övergripande hälsa. Sömnoptimering omfattar flera faktorer inklusive varaktighet, konsistens, miljö och sömnförberedelser.",
     "areas": {
-      "stressReduction": "Kvalitetssömn stödjer nervsystemets återhämtning och balans mellan sympatiska och parasympatiska systemet.",
+      "nervousSystem": "Kvalitetssömn stödjer nervsystemets återhämtning och balans mellan sympatiska och parasympatiska systemet.",
       "immuneSupport": "Sömn är avgörande för immunfunktionen och kroppens förmåga att bekämpa infektioner och läka.",
       "energy": "Tillräcklig sömn återställer energinivåer och optimerar kroppens metaboliska processer.",
       "cardioFitness": "Sömn stödjer kardiovaskulär hälsa genom att reglera blodtryck och hjärtfrekvens.",
@@ -227,7 +227,7 @@
     "description": "Exponering för naturligt solljus, särskilt inom 30-60 minuter efter uppvaknande, är avgörande för att reglera cirkadisk rytm och optimera sömn-vaken-cykler. Morgonljus undertrycker melatonin och signalerar början av dagen.",
     "areas": {
       "sleepQuality": "Morgonsolljus exponering hjälper till att ställa din cirkadiska klocka, vilket förbättrar sömnkvaliteten och gör det lättare att somna på kvällen.",
-      "stressReduction": "Naturlig ljusexponering reglerar nervsystemet genom att synkronisera cirkadiska rytmer och stödja balanserad kortisolproduktion.",
+      "nervousSystem": "Naturlig ljusexponering reglerar nervsystemet genom att synkronisera cirkadiska rytmer och stödja balanserad kortisolproduktion.",
       "energy": "Morgonsolljus ökar vaksamhet och energinivåer under dagen genom att signalera till din kropp att det är dags att vara vaken.",
       "immuneSupport": "Regelbunden cirkadisk rytm från solljusexponering stödjer immunfunktionen och övergripande hälsa."
     }
@@ -236,7 +236,7 @@
     "title": "Köldexponering",
     "description": "Avsiktlig köldexponering, såsom kalla duschar, isbad eller kallbad, aktiverar det sympatiska nervsystemet och bygger stressresiliens. Regelbunden köldexponering förbättrar immunfunktionen, ökar energin och förbättrar mental klarhet.",
     "areas": {
-      "stressReduction": "Köldexponering tränar nervsystemet att hantera stress genom att aktivera och sedan balansera de sympatiska och parasympatiska responsen.",
+      "nervousSystem": "Köldexponering tränar nervsystemet att hantera stress genom att aktivera och sedan balansera de sympatiska och parasympatiska responsen.",
       "immuneSupport": "Regelbunden köldexponering har visat sig öka antalet vita blodkroppar och stärka immunfunktionen.",
       "energy": "Köldexponering ökar dopamin- och norepinefrinnivåer, vilket leder till ökad vaksamhet, energi och förbättrat humör."
     }
@@ -245,7 +245,7 @@
     "title": "Meditation och mindfulness",
     "description": "Regelbunden meditation och mindfulness-övningar tränar sinnet att stanna närvarande och minska stress. Dessa övningar aktiverar det parasympatiska nervsystemet, förbättrar emotionell reglering och förbättrar kognitiv funktion.",
     "areas": {
-      "stressReduction": "Meditation aktiverar det parasympatiska nervsystemet, vilket minskar stresshormoner som kortisol och främjar djup avslappning och återhämtning av nervsystemet.",
+      "nervousSystem": "Meditation aktiverar det parasympatiska nervsystemet, vilket minskar stresshormoner som kortisol och främjar djup avslappning och återhämtning av nervsystemet.",
       "immuneSupport": "Regelbunden meditation har visat sig minska inflammation, stärka immunresponsen och förbättra övergripande hälsomarkörer.",
       "mind": "Mindfulness-övningar förbättrar uppmärksamhetsspann, arbetsminne och kognitiv flexibilitet genom att stärka neurala vägar kopplade till fokus och medvetenhet."
     }
@@ -254,7 +254,7 @@
     "title": "Tid i naturen",
     "description": "Att tillbringa tid i naturliga miljöer aktiverar det parasympatiska nervsystemet och minskar stress. Skogsbad (Shinrin-yoku) och exponering för naturliga miljöer har visat sig sänka kortisol, minska blodtryck och förbättra det övergripande välbefinnandet.",
     "areas": {
-      "stressReduction": "Naturexponering aktiverar det parasympatiska nervsystemet, vilket minskar stresshormoner och främjar avslappning och återhämtning.",
+      "nervousSystem": "Naturexponering aktiverar det parasympatiska nervsystemet, vilket minskar stresshormoner och främjar avslappning och återhämtning.",
       "immuneSupport": "Tid i naturen har visat sig öka aktiviteten hos naturliga mördarceller och stärka immunfunktionen.",
       "energy": "Naturliga miljöer återställer mental energi, minskar trötthet och förbättrar humöret genom exponering för naturligt ljus och frisk luft."
     }
@@ -263,7 +263,7 @@
     "title": "HRV och återhämtningsovervakning",
     "description": "Hjärtfrekvensvariabilitet (HRV) är ett nyckelmått för att spåra nervsystemets balans och återhämtningstatus. Övervakning av HRV hjälper till att optimera träningsintensitet, förhindra överträning och säkerställa tillräcklig återhämtning mellan träningspass.",
     "areas": {
-      "stressReduction": "HRV återspeglar balansen mellan sympatisk och parasympatisk nervsystemaktivitet, vilket indikerar stress- och återhämtningnivåer.",
+      "nervousSystem": "HRV återspeglar balansen mellan sympatisk och parasympatisk nervsystemaktivitet, vilket indikerar stress- och återhämtningnivåer.",
       "immuneSupport": "Låg HRV kan indikera ökad inflammation och minskad immunfunktion, medan högre HRV tyder på bättre återhämtning och immunresiliens.",
       "energy": "HRV-spårning hjälper till att identifiera när kroppen behöver vila, vilket förhindrar trötthet och optimerar energihantering.",
       "cardioFitness": "Övervakning av HRV hjälper till att optimera kardiovaskulär träning genom att säkerställa tillräcklig återhämtning mellan högintensiva pass.",
@@ -274,7 +274,7 @@
     "title": "Social kontakt och vagal ton",
     "description": "Positiva sociala interaktioner och meningsfulla relationer aktiverar vagusnerven och stärker parasympatisk ton. Social kontakt är avgörande för nervsystemets reglering, emotionellt välbefinnande och övergripande hälsa.",
     "areas": {
-      "stressReduction": "Positiva sociala interaktioner aktiverar vagusnerven, vilket förbättrar hjärtfrekvensvariabilitet och främjar parasympatisk nervsystemaktivering.",
+      "nervousSystem": "Positiva sociala interaktioner aktiverar vagusnerven, vilket förbättrar hjärtfrekvensvariabilitet och främjar parasympatisk nervsystemaktivering.",
       "immuneSupport": "Starka sociala kontakter har visat sig minska inflammation, stärka immunfunktionen och öka livslängden.",
       "energy": "Meningsfulla relationer och socialt stöd minskar stress och förbättrar energinivåer genom att sänka kortisol och förbättra emotionell resiliens."
     }
@@ -283,7 +283,7 @@
     "title": "Lugnande musik och ljudterapi",
     "description": "Att lyssna på lugnande musik, binaurala beats eller naturljud kan minska stress, sänka hjärtfrekvens och aktivera det parasympatiska nervsystemet. Ljudterapi har använts i århundraden för att främja avslappning och läkning.",
     "areas": {
-      "stressReduction": "Lugnande musik och ljudterapi aktiverar det parasympatiska nervsystemet, vilket minskar stresshormoner och främjar djup avslappning.",
+      "nervousSystem": "Lugnande musik och ljudterapi aktiverar det parasympatiska nervsystemet, vilket minskar stresshormoner och främjar djup avslappning.",
       "sleepQuality": "Att lyssna på lugnande ljud före sänggåendet kan förbättra insomningstiden, öka djupsömnens varaktighet och förbättra den övergripande sömnkvaliteten.",
       "mind": "Vissa frekvenser som binaurala beats och naturljud kan förbättra koncentrationen, minska mental trötthet och förbättra kognitiv prestanda."
     }
@@ -292,7 +292,7 @@
     "title": "Adaptogena örter",
     "description": "Adaptogener är örter och svampar som hjälper kroppen att anpassa sig till stress och främja balans. De stödjer energi, uthållighet och övergripande välbefinnande.",
     "areas": {
-      "stressReduction": "Adaptogena örter stödjer nervsystemet genom att modulera stressresponsen och främja mental och fysisk resiliens."
+      "nervousSystem": "Adaptogena örter stödjer nervsystemet genom att modulera stressresponsen och främja mental och fysisk resiliens."
     }
   },
   "neuromuscular_training": {
@@ -301,7 +301,7 @@
     "areas": {
       "strength": "Neuromuskulär träning förbättrar muskelstyrka och koordination, vilket ökar fysisk prestation.",
       "cardioFitness": "Denna träning stödjer kardiovaskulär kondition genom att förbättra uthållighet och syreanvändning under fysisk aktivitet.",
-      "stressReduction": "Neuromuskulär träning stärker kommunikationen mellan nervsystemet och musklerna, vilket optimerar rörelseeffektiviteten."
+      "nervousSystem": "Neuromuskulär träning stärker kommunikationen mellan nervsystemet och musklerna, vilket optimerar rörelseeffektiviteten."
     }
   },
   "creatine_atp_strength": {
@@ -435,7 +435,7 @@
     "description": "Magnesium är ett essentiellt mineral som spelar en viktig roll för muskelavslappning, nervsystemets funktion och sömnkvalitet. Det hjälper kroppen att reglera stresshormoner och främjar djupare, mer återställande sömn.",
     "areas": {
       "sleepQuality": "Magnesium förbättrar sömnkvalitet genom att reglera melatonin och främja muskelavslappning.",
-      "stressReduction": "Magnesium stödjer nervsystemet genom att reglera neurotransmittorer och minska stress.",
+      "nervousSystem": "Magnesium stödjer nervsystemet genom att reglera neurotransmittorer och minska stress.",
       "energy": "Magnesium är nödvändigt för energiproduktion och minskar trötthet genom att stödja ATP-syntes."
     },
     "nutritionFoods": {
@@ -473,7 +473,7 @@
     "description": "Zink är ett spårämne som är avgörande för immunförsvaret, vävnadsläkning och hormonbalans. Biotillgängliga former kan hjälpa kroppen att behålla motståndskraft vid stress och hård träning.",
     "areas": {
       "immuneSupport": "Zink stödjer både det medfödda och adaptiva immunförsvaret genom att reglera cytokinsignalering och vita blodkroppars aktivitet.",
-      "stressReduction": "Tillräckligt med zink hjälper till att bibehålla signalsubstansbalans, vilket stödjer humör och stresstålighet.",
+      "nervousSystem": "Tillräckligt med zink hjälper till att bibehålla signalsubstansbalans, vilket stödjer humör och stresstålighet.",
       "energy": "Zink krävs för hundratals enzymreaktioner kopplade till energimetabolism och återhämtning."
     },
     "nutritionFoods": {
@@ -508,7 +508,7 @@
     "areas": {
       "immuneSupport": "Selen stödjer antikroppsproduktion och reglerar inflammation, vilket stärker immunresiliensen.",
       "energy": "Selenberoende enzymer aktiverar sköldkörtelhormoner som driver metabolism och energiproduktion.",
-      "stressReduction": "Selen skyddar neuroner mot oxidativ stress och stöttar balanserat humör och stressrespons."
+      "nervousSystem": "Selen skyddar neuroner mot oxidativ stress och stöttar balanserat humör och stressrespons."
     },
     "nutritionFoods": {
       "title": "Livsmedel rika på selen",
@@ -542,7 +542,7 @@
     "areas": {
       "energy": "Tillräckligt med jod håller T3- och T4-produktionen stabil och ger jämn energi under dagen.",
       "immuneSupport": "Balanserade sköldkörtelhormoner reglerar immunförsvarets signalering och kroppens stressrespons.",
-      "stressReduction": "Jod stöttar nervsystemets stabilitet genom att hålla hormonbalansen som påverkar humör, fokus och temperaturkontroll."
+      "nervousSystem": "Jod stöttar nervsystemets stabilitet genom att hålla hormonbalansen som påverkar humör, fokus och temperaturkontroll."
     },
     "nutritionFoods": {
       "title": "Jodrika livsmedel",
@@ -578,7 +578,7 @@
     "title": "Ashwagandha",
     "description": "Ashwagandha är en adaptogen växt som traditionellt används i ayurvedisk medicin. Den hjälper kroppen att hantera stress genom att stödja kortisolbalans och främja avslappning.",
     "areas": {
-      "stressReduction": "Ashwagandha stödjer nervsystemet genom att minska stress och främja lugn via kortisolreglering.",
+      "nervousSystem": "Ashwagandha stödjer nervsystemet genom att minska stress och främja lugn via kortisolreglering.",
       "energy": "Ashwagandha hjälper till att bekämpa trötthet och stödjer varaktiga energinivåer under dagen.",
       "immuneSupport": "Ashwagandha har immunmodulerande egenskaper som stödjer den övergripande immunhälsan."
     }
@@ -587,7 +587,7 @@
     "title": "Rhodiola",
     "description": "Rhodiola är en adaptogen växt känd för att förbättra mental och fysisk prestation. Den hjälper kroppen att anpassa sig till stress och stödjer kognitiv funktion.",
     "areas": {
-      "stressReduction": "Rhodiola stödjer nervsystemet genom att minska mental trötthet och förbättra stressresiliens.",
+      "nervousSystem": "Rhodiola stödjer nervsystemet genom att minska mental trötthet och förbättra stressresiliens.",
       "energy": "Rhodiola förbättrar fysisk uthållighet och minskar trötthet under krävande aktiviteter.",
       "mind": "Rhodiola förbättrar kognitiv funktion, fokus och mental klarhet, särskilt under stress."
     }
@@ -596,7 +596,7 @@
     "title": "Helig basilika (Tulsi)",
     "description": "Helig basilika, även känd som Tulsi, är en adaptogen växt som vördas i traditionell medicin för sina stressreducerande och immunstödjande egenskaper.",
     "areas": {
-      "stressReduction": "Helig basilika hjälper till att lugna nervsystemet och minska stress genom sina adaptogena effekter.",
+      "nervousSystem": "Helig basilika hjälper till att lugna nervsystemet och minska stress genom sina adaptogena effekter.",
       "immuneSupport": "Helig basilika stödjer immunfunktionen med sina antimikrobiella och antiinflammatoriska egenskaper."
     }
   },
@@ -613,7 +613,7 @@
     "title": "Låda-andning",
     "description": "Låda-andning (även kallad fyrkantig andning) är en teknik där du andas in, håller, andas ut och håller igen i samma räkning (typiskt 4-4-4-4). Det är utmärkt för snabb stresslindring och fokus.",
     "areas": {
-      "stressReduction": "Låda-andning skapar en balanserad rytm som snabbt aktiverar det parasympatiska nervsystemet.",
+      "nervousSystem": "Låda-andning skapar en balanserad rytm som snabbt aktiverar det parasympatiska nervsystemet.",
       "immuneSupport": "Regelbunden övning hjälper till att minska kortisolnivåerna och stödjer immunresiliens."
     }
   },
@@ -621,7 +621,7 @@
     "title": "4-7-8-andning",
     "description": "4-7-8-tekniken innebär att andas in i 4 slag, hålla i 7 slag och andas ut i 8 slag. Det är särskilt effektivt för avslappning och sömnförberedelse.",
     "areas": {
-      "stressReduction": "Det förlängda utandningen aktiverar vagusnerven, vilket främjar djup avslappning och minskar ångest.",
+      "nervousSystem": "Det förlängda utandningen aktiverar vagusnerven, vilket främjar djup avslappning och minskar ångest.",
       "sleepQuality": "Denna teknik är mycket effektiv för att förbereda kropp och sinne för sömn, vilket förbättrar sömnkvaliteten."
     }
   },
@@ -629,7 +629,7 @@
     "title": "Växlande näsborrs-andning",
     "description": "Nadi Shodhana (växlande näsborrs-andning) innebär att andas genom en näsborr i taget i ett kontrollerat mönster. Det balanserar nervsystemet och förbättrar mental klarhet.",
     "areas": {
-      "stressReduction": "Denna teknik balanserar vänster och höger sida av nervsystemet, vilket främjar harmoni och lugn.",
+      "nervousSystem": "Denna teknik balanserar vänster och höger sida av nervsystemet, vilket främjar harmoni och lugn.",
       "mind": "Växlande näsborrs-andning förbättrar mental klarhet och koncentration genom att balansera hjärnhalvorna."
     }
   },
@@ -637,7 +637,7 @@
     "title": "Diafragmal andning",
     "description": "Också kallad bukandning eller djup andning, denna teknik fokuserar på att andas djupt in i buken snarare än bröstet. Det är grundläggande för alla andningsövningar.",
     "areas": {
-      "stressReduction": "Djup diafragmal andning minskar kraftigt stress och ångest genom att aktivera avslappningsresponsen.",
+      "nervousSystem": "Djup diafragmal andning minskar kraftigt stress och ångest genom att aktivera avslappningsresponsen.",
       "energy": "Korrekt syrenation genom diafragmal andning förbättrar energinivåerna och mental klarhet."
     }
   },
@@ -654,7 +654,7 @@
     "description": "Att skapa en optimal sömnmiljö är väsentligt för högkvalitativ sömn. Detta inkluderar mörker, cool temperatur, tysta förhållanden och bekväm säng som stödjer återställande sömn.",
     "areas": {
       "sleepQuality": "En mörk, cool (15-19°C), tyst miljö främjar melatoninproduktion och djupare sömnkyclar.",
-      "stressReduction": "En optimerad sömnmiljö minskar externa stressorer och tillåter nervsystemet att helt och hållet vila och återhämta sig."
+      "nervousSystem": "En optimerad sömnmiljö minskar externa stressorer och tillåter nervsystemet att helt och hållet vila och återhämta sig."
     }
   },
   "sleep_hygiene_practices": {
@@ -670,7 +670,7 @@
     "description": "En strukturerad nedvarvningsrutin 30-60 minuter före sänggåendet signalerar till din kropp att det är dags att sova. Detta kan inkludera avslappningsteknik, lätt läsning, meditation eller mild stretching.",
     "areas": {
       "sleepQuality": "En korrekt nedvarvningsrutin hjälper till att övergå nervsystemet från vaksamhet till sömn, vilket främjar snabbare sömnbörjan och djupare sömn.",
-      "stressReduction": "Avslappningsteknik före sänggåendet aktiverar det parasympatiska nervsystemet och förbereder kroppen för återhämtning."
+      "nervousSystem": "Avslappningsteknik före sänggåendet aktiverar det parasympatiska nervsystemet och förbereder kroppen för återhämtning."
     }
   },
   "zone2_mitochondrial_base": {
@@ -704,7 +704,7 @@
     "description": "Löpekonomi handlar om hur lite energi du behöver för en viss fart. Korta teknikövningar, drills och strides (korta fartökningar) förbättrar neuromuskulär effektivitet och gör att du kan springa snabbare med samma ansträngning.",
     "areas": {
       "strength": "Strides och teknikdrills förbättrar kraftutveckling och elastisk återfjädring, vilket gör steget mer effektivt och ‘lätt’.",
-      "stressReduction": "Korta fartinslag tränar nervsystemets koordination och rekrytering av muskelfibrer, vilket förbättrar rörelseeffektivitet.",
+      "nervousSystem": "Korta fartinslag tränar nervsystemets koordination och rekrytering av muskelfibrer, vilket förbättrar rörelseeffektivitet.",
       "cardioFitness": "Bättre löpekonomi sänker syrekostnaden vid given fart, vilket förbättrar prestation i uthållighetslöpning."
     }
   },
@@ -713,16 +713,16 @@
     "description": "Att optimera stegfrekvens (kadens) kan minska bromsande krafter och förbättra löpekonomi. För många ligger en effektiv kadens ofta runt 170–185 steg/min i moderata till högre farter, men optimal kadens är individuell.",
     "areas": {
       "strength": "En mer effektiv kadens kan minska överbelastning genom lägre stötar per steg och förbättrad steglängd-kontroll.",
-      "stressReduction": "Kadensarbete förbättrar rytm, koordination och timing i löpsteget, vilket ökar rörelseeffektivitet.",
+      "nervousSystem": "Kadensarbete förbättrar rytm, koordination och timing i löpsteget, vilket ökar rörelseeffektivitet.",
       "energy": "Bättre stegmönster kan minska energiläckage och göra att du håller fart med lägre total energikostnad."
     }
   },
-  "caffeine_endurance_performance": {
-    "title": "Koffein för uthållighet och fart",
+  "caffeine": {
+    "title": "Koffein",
     "description": "Koffein kan förbättra prestation genom ökad vakenhet, minskad upplevd ansträngning och bättre kraftutveckling under hårda pass. Det är särskilt användbart inför intervaller, tröskelpass och tävling.",
     "areas": {
       "energy": "Koffein kan öka prestationsförmåga genom att påverka adenosinreceptorer och förbättra arbetskapacitet vid ansträngning.",
-      "mind": "Ökar vakenhet och mental skärpa, vilket kan förbättra pacing och tolerans för obehag under hårda intervaller.",
+      "mind": "Koffein ökar vakenhet och mental skärpa, vilket kan förbättra koncentration, reaktionsförmåga och fokus under krävande mentala uppgifter.",
       "cardioFitness": "Genom förbättrad ansträngningstolerans kan du hålla högre intensitet längre, vilket stärker träningsstimulus för VO2 och tröskel."
     }
   },
@@ -797,7 +797,7 @@
     "description": "Att använda hårda, platta skor på platt underlag kan öka belastningen på kroppen och stressa leder, muskler och nervsystem. Välj skor med viss dämpning eller variera underlaget för att minska risken för överbelastning och stödja en mer naturlig rörelse.",
     "areas": {
       "strength": "Att undvika hårda platta skor minskar onödig belastning på muskler och senor.",
-      "stressReduction": "Variation i underlag och skor stödjer nervsystemets anpassningsförmåga."
+      "nervousSystem": "Variation i underlag och skor stödjer nervsystemets anpassningsförmåga."
     }
   },
   "eat_colorful_veggies": {

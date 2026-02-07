@@ -109,7 +109,7 @@ const rawTips: Tip[] = [
       { id: 'energy', descriptionKey: 'vitamin_d.areas.energy' },
       { id: 'immuneSupport', descriptionKey: 'vitamin_d.areas.immuneSupport' },
       { id: 'strength', descriptionKey: 'vitamin_d.areas.strength' },
-      { id: 'stressReduction', descriptionKey: 'vitamin_d.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'vitamin_d.areas.nervousSystem' },
     ],
     title: 'vitamin_d.title',
     descriptionKey: 'vitamin_d.description',
@@ -184,7 +184,7 @@ const rawTips: Tip[] = [
     areas: [
       { id: 'energy', descriptionKey: 'cellular_energy_nad.areas.energy' },
       { id: 'immuneSupport', descriptionKey: 'cellular_energy_nad.areas.immuneSupport' },
-      { id: 'stressReduction', descriptionKey: 'cellular_energy_nad.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'cellular_energy_nad.areas.nervousSystem' },
     ],
     title: 'cellular_energy_nad.title',
     descriptionKey: 'cellular_energy_nad.description',
@@ -218,7 +218,7 @@ const rawTips: Tip[] = [
     xp: 700,
     areas: [
       { id: 'sleepQuality', descriptionKey: 'magnesium.areas.sleepQuality' },
-      { id: 'stressReduction', descriptionKey: 'magnesium.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'magnesium.areas.nervousSystem' },
       { id: 'energy', descriptionKey: 'magnesium.areas.energy' },
     ],
     title: 'magnesium.title',
@@ -250,7 +250,7 @@ const rawTips: Tip[] = [
     xp: 700,
     areas: [
       { id: 'immuneSupport', descriptionKey: 'zinc_comprehensive_support.areas.immuneSupport' },
-      { id: 'stressReduction', descriptionKey: 'zinc_comprehensive_support.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'zinc_comprehensive_support.areas.nervousSystem' },
       { id: 'energy', descriptionKey: 'zinc_comprehensive_support.areas.energy' },
     ],
     title: 'zinc_comprehensive_support.title',
@@ -276,7 +276,7 @@ const rawTips: Tip[] = [
     areas: [
       { id: 'immuneSupport', descriptionKey: 'selenium_thyroid_antioxidant.areas.immuneSupport' },
       { id: 'energy', descriptionKey: 'selenium_thyroid_antioxidant.areas.energy' },
-      { id: 'stressReduction', descriptionKey: 'selenium_thyroid_antioxidant.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'selenium_thyroid_antioxidant.areas.nervousSystem' },
     ],
     title: 'selenium_thyroid_antioxidant.title',
     descriptionKey: 'selenium_thyroid_antioxidant.description',
@@ -301,7 +301,7 @@ const rawTips: Tip[] = [
     areas: [
       { id: 'energy', descriptionKey: 'iodine_thyroid_balance.areas.energy' },
       { id: 'immuneSupport', descriptionKey: 'iodine_thyroid_balance.areas.immuneSupport' },
-      { id: 'stressReduction', descriptionKey: 'iodine_thyroid_balance.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'iodine_thyroid_balance.areas.nervousSystem' },
     ],
     title: 'iodine_thyroid_balance.title',
     descriptionKey: 'iodine_thyroid_balance.description',
@@ -398,7 +398,7 @@ const rawTips: Tip[] = [
     level: 2,
     xp: 500,
     areas: [
-      { id: 'stressReduction', descriptionKey: 'calming_glycine.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'calming_glycine.areas.nervousSystem' },
       { id: 'sleepQuality', descriptionKey: 'calming_glycine.areas.sleepQuality' },
       { id: 'immuneSupport', descriptionKey: 'calming_glycine.areas.immuneSupport' },
     ],
@@ -423,7 +423,7 @@ const rawTips: Tip[] = [
     level: 1,
     xp: 0,
     areas: [
-      { id: 'stressReduction', descriptionKey: 'breathwork_parasympathetic.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'breathwork_parasympathetic.areas.nervousSystem' },
       { id: 'immuneSupport', descriptionKey: 'breathwork_parasympathetic.areas.immuneSupport' },
       { id: 'energy', descriptionKey: 'breathwork_parasympathetic.areas.energy' },
     ],
@@ -441,7 +441,7 @@ const rawTips: Tip[] = [
     xp: 0,
     parentId: 'breathwork_parasympathetic',
     areas: [
-      { id: 'stressReduction', descriptionKey: 'box_breathing.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'box_breathing.areas.nervousSystem' },
       { id: 'immuneSupport', descriptionKey: 'box_breathing.areas.immuneSupport' },
     ],
     title: 'box_breathing.title',
@@ -458,7 +458,7 @@ const rawTips: Tip[] = [
     xp: 0,
     parentId: 'breathwork_parasympathetic',
     areas: [
-      { id: 'stressReduction', descriptionKey: '4_7_8_breathing.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: '4_7_8_breathing.areas.nervousSystem' },
       { id: 'sleepQuality', descriptionKey: '4_7_8_breathing.areas.sleepQuality' },
     ],
     title: '4_7_8_breathing.title',
@@ -475,7 +475,7 @@ const rawTips: Tip[] = [
     xp: 0,
     parentId: 'breathwork_parasympathetic',
     areas: [
-      { id: 'stressReduction', descriptionKey: 'alternate_nostril_breathing.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'alternate_nostril_breathing.areas.nervousSystem' },
       { id: 'mind', descriptionKey: 'alternate_nostril_breathing.areas.mind' },
     ],
     title: 'alternate_nostril_breathing.title',
@@ -492,7 +492,7 @@ const rawTips: Tip[] = [
     xp: 0,
     parentId: 'breathwork_parasympathetic',
     areas: [
-      { id: 'stressReduction', descriptionKey: 'diaphragmatic_breathing.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'diaphragmatic_breathing.areas.nervousSystem' },
       { id: 'energy', descriptionKey: 'diaphragmatic_breathing.areas.energy' },
     ],
     title: 'diaphragmatic_breathing.title',
@@ -508,7 +508,7 @@ const rawTips: Tip[] = [
     level: 1,
     xp: 0,
     areas: [
-      { id: 'stressReduction', descriptionKey: 'sleep_optimization_recovery.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'sleep_optimization_recovery.areas.nervousSystem' },
       { id: 'immuneSupport', descriptionKey: 'sleep_optimization_recovery.areas.immuneSupport' },
       { id: 'energy', descriptionKey: 'sleep_optimization_recovery.areas.energy' },
       { id: 'cardioFitness', descriptionKey: 'sleep_optimization_recovery.areas.cardioFitness' },
@@ -546,7 +546,7 @@ const rawTips: Tip[] = [
     parentId: 'sleep_optimization_recovery',
     areas: [
       { id: 'sleepQuality', descriptionKey: 'sleep_environment_optimization.areas.sleepQuality' },
-      { id: 'stressReduction', descriptionKey: 'sleep_environment_optimization.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'sleep_environment_optimization.areas.nervousSystem' },
     ],
     title: 'sleep_environment_optimization.title',
     descriptionKey: 'sleep_environment_optimization.description',
@@ -580,7 +580,7 @@ const rawTips: Tip[] = [
     parentId: 'sleep_optimization_recovery',
     areas: [
       { id: 'sleepQuality', descriptionKey: 'pre_sleep_wind_down.areas.sleepQuality' },
-      { id: 'stressReduction', descriptionKey: 'pre_sleep_wind_down.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'pre_sleep_wind_down.areas.nervousSystem' },
     ],
     title: 'pre_sleep_wind_down.title',
     descriptionKey: 'pre_sleep_wind_down.description',
@@ -596,7 +596,7 @@ const rawTips: Tip[] = [
     xp: 0,
     areas: [
       { id: 'sleepQuality', descriptionKey: 'sunlight_circadian.areas.sleepQuality' },
-      { id: 'stressReduction', descriptionKey: 'sunlight_circadian.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'sunlight_circadian.areas.nervousSystem' },
       { id: 'energy', descriptionKey: 'sunlight_circadian.areas.energy' },
       { id: 'immuneSupport', descriptionKey: 'sunlight_circadian.areas.immuneSupport' },
     ],
@@ -612,7 +612,7 @@ const rawTips: Tip[] = [
     level: 2,
     xp: 0,
     areas: [
-      { id: 'stressReduction', descriptionKey: 'cold_exposure_ans.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'cold_exposure_ans.areas.nervousSystem' },
       { id: 'immuneSupport', descriptionKey: 'cold_exposure_ans.areas.immuneSupport' },
       { id: 'energy', descriptionKey: 'cold_exposure_ans.areas.energy' },
     ],
@@ -628,7 +628,7 @@ const rawTips: Tip[] = [
     level: 2,
     xp: 0,
     areas: [
-      { id: 'stressReduction', descriptionKey: 'meditation_mindfulness.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'meditation_mindfulness.areas.nervousSystem' },
       { id: 'immuneSupport', descriptionKey: 'meditation_mindfulness.areas.immuneSupport' },
       { id: 'mind', descriptionKey: 'meditation_mindfulness.areas.mind' },
     ],
@@ -644,7 +644,7 @@ const rawTips: Tip[] = [
     level: 2,
     xp: 0,
     areas: [
-      { id: 'stressReduction', descriptionKey: 'nature_parasympathetic.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'nature_parasympathetic.areas.nervousSystem' },
       { id: 'immuneSupport', descriptionKey: 'nature_parasympathetic.areas.immuneSupport' },
       { id: 'energy', descriptionKey: 'nature_parasympathetic.areas.energy' },
     ],
@@ -660,7 +660,7 @@ const rawTips: Tip[] = [
     level: 3,
     xp: 0,
     areas: [
-      { id: 'stressReduction', descriptionKey: 'hrv_recovery_monitoring.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'hrv_recovery_monitoring.areas.nervousSystem' },
       { id: 'immuneSupport', descriptionKey: 'hrv_recovery_monitoring.areas.immuneSupport' },
       { id: 'energy', descriptionKey: 'hrv_recovery_monitoring.areas.energy' },
       { id: 'cardioFitness', descriptionKey: 'hrv_recovery_monitoring.areas.cardioFitness' },
@@ -678,7 +678,7 @@ const rawTips: Tip[] = [
     level: 2,
     xp: 0,
     areas: [
-      { id: 'stressReduction', descriptionKey: 'social_connection_vagal.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'social_connection_vagal.areas.nervousSystem' },
       { id: 'immuneSupport', descriptionKey: 'social_connection_vagal.areas.immuneSupport' },
       { id: 'energy', descriptionKey: 'social_connection_vagal.areas.energy' },
     ],
@@ -694,7 +694,7 @@ const rawTips: Tip[] = [
     level: 1,
     xp: 0,
     areas: [
-      { id: 'stressReduction', descriptionKey: 'calming_music_waves.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'calming_music_waves.areas.nervousSystem' },
       { id: 'sleepQuality', descriptionKey: 'calming_music_waves.areas.sleepQuality' },
       { id: 'mind', descriptionKey: 'calming_music_waves.areas.mind' },
     ],
@@ -709,7 +709,7 @@ const rawTips: Tip[] = [
     id: 'adaptogenic_herbs',
     level: 3,
     xp: 0,
-    areas: [{ id: 'stressReduction', descriptionKey: 'adaptogenic_herbs.areas.stressReduction' }],
+    areas: [{ id: 'nervousSystem', descriptionKey: 'adaptogenic_herbs.areas.nervousSystem' }],
     title: 'adaptogenic_herbs.title',
     descriptionKey: 'adaptogenic_herbs.description',
     isParent: true,
@@ -726,7 +726,7 @@ const rawTips: Tip[] = [
     areas: [
       { id: 'strength', descriptionKey: 'neuromuscular_training.areas.strength' },
       { id: 'cardioFitness', descriptionKey: 'neuromuscular_training.areas.cardioFitness' },
-      { id: 'stressReduction', descriptionKey: 'neuromuscular_training.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'neuromuscular_training.areas.nervousSystem' },
     ],
     title: 'neuromuscular_training.title',
     descriptionKey: 'neuromuscular_training.description',
@@ -887,7 +887,7 @@ const rawTips: Tip[] = [
     xp: 0,
     parentId: 'adaptogenic_herbs',
     areas: [
-      { id: 'stressReduction', descriptionKey: 'ashwagandha_adaptogen.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'ashwagandha_adaptogen.areas.nervousSystem' },
       { id: 'energy', descriptionKey: 'ashwagandha_adaptogen.areas.energy' },
       { id: 'immuneSupport', descriptionKey: 'ashwagandha_adaptogen.areas.immuneSupport' },
     ],
@@ -906,7 +906,7 @@ const rawTips: Tip[] = [
     xp: 0,
     parentId: 'adaptogenic_herbs',
     areas: [
-      { id: 'stressReduction', descriptionKey: 'rhodiola_adaptogen.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'rhodiola_adaptogen.areas.nervousSystem' },
       { id: 'energy', descriptionKey: 'rhodiola_adaptogen.areas.energy' },
       { id: 'mind', descriptionKey: 'rhodiola_adaptogen.areas.mind' },
     ],
@@ -925,7 +925,7 @@ const rawTips: Tip[] = [
     xp: 0,
     parentId: 'adaptogenic_herbs',
     areas: [
-      { id: 'stressReduction', descriptionKey: 'holy_basil_adaptogen.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'holy_basil_adaptogen.areas.nervousSystem' },
       { id: 'immuneSupport', descriptionKey: 'holy_basil_adaptogen.areas.immuneSupport' },
     ],
     title: 'holy_basil_adaptogen.title',
@@ -1011,7 +1011,7 @@ const rawTips: Tip[] = [
     xp: 500,
     areas: [
       { id: 'strength', descriptionKey: 'running_economy_drills.areas.strength' },
-      { id: 'stressReduction', descriptionKey: 'running_economy_drills.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'running_economy_drills.areas.nervousSystem' },
       { id: 'cardioFitness', descriptionKey: 'running_economy_drills.areas.cardioFitness' },
     ],
     title: 'running_economy_drills.title',
@@ -1027,7 +1027,7 @@ const rawTips: Tip[] = [
     xp: 700,
     areas: [
       { id: 'strength', descriptionKey: 'stride_frequency_optimization.areas.strength' },
-      { id: 'stressReduction', descriptionKey: 'stride_frequency_optimization.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'stride_frequency_optimization.areas.nervousSystem' },
       { id: 'energy', descriptionKey: 'stride_frequency_optimization.areas.energy' },
     ],
     title: 'stride_frequency_optimization.title',
@@ -1038,16 +1038,16 @@ const rawTips: Tip[] = [
     bodyParts: ['heart','muscles'],
   },
   {
-    id: 'caffeine_endurance_performance',
+    id: 'caffeine',
     level: 2,
     xp: 500,
     areas: [
-      { id: 'energy', descriptionKey: 'caffeine_endurance_performance.areas.energy' },
-      { id: 'mind', descriptionKey: 'caffeine_endurance_performance.areas.mind' },
-      { id: 'cardioFitness', descriptionKey: 'caffeine_endurance_performance.areas.cardioFitness' },
+      { id: 'energy', descriptionKey: 'caffeine.areas.energy' },
+      { id: 'mind', descriptionKey: 'caffeine.areas.mind' },
+      { id: 'cardioFitness', descriptionKey: 'caffeine.areas.cardioFitness' },
     ],
-    title: 'caffeine_endurance_performance.title',
-    descriptionKey: 'caffeine_endurance_performance.description',
+    title: 'caffeine.title',
+    descriptionKey: 'caffeine.description',
     supplements: [{ id: 'caffeine' }],
     trainingRelation: 'preWorkout',
     preferredDayParts: ['morning', 'midday'],
@@ -1131,7 +1131,7 @@ const rawTips: Tip[] = [
     xp: 200,
     areas: [
       { id: 'strength', descriptionKey: 'avoid_flat_hard_shoes.areas.strength' },
-      { id: 'stressReduction', descriptionKey: 'avoid_flat_hard_shoes.areas.stressReduction' },
+      { id: 'nervousSystem', descriptionKey: 'avoid_flat_hard_shoes.areas.nervousSystem' },
     ],
     title: 'avoid_flat_hard_shoes.title',
     descriptionKey: 'avoid_flat_hard_shoes.description',

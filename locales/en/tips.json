@@ -28,7 +28,7 @@
       "energy": "Vitamin D supports mitochondrial function and cellular energy production by regulating calcium homeostasis.",
       "immuneSupport": "Vitamin D modulates both innate and adaptive immune responses, with low levels associated with increased infection susceptibility.",
       "strength": "Vitamin D is critical for muscle strength and function through calcium regulation and muscle protein synthesis pathways.",
-      "stressReduction": "Vitamin D influences neurotransmitter production and has neuroprotective effects in the central nervous system."
+      "nervousSystem": "Vitamin D influences neurotransmitter production and has neuroprotective effects in the central nervous system."
     },
     "nutritionFoods": {
       "title": "Vitamin D food sources",
@@ -100,7 +100,7 @@
     "description": "NAD+ (Nicotinamide Adenine Dinucleotide) is a critical coenzyme found in every cell of the body. It plays a key role in cellular energy metabolism, DNA repair, and maintaining overall cellular health. Precursors such as NMN, NR, or foundational niacin can sustain NAD+ levels when direct supplementation is not preferred.",
     "areas": {
       "energy": "NAD+ is essential for the mitochondrial processes that generate ATP, the primary energy currency of the cell.",
-      "stressReduction": "NAD+ supports the nervous system by aiding in cellular repair and protecting neurons from oxidative stress.",
+      "nervousSystem": "NAD+ supports the nervous system by aiding in cellular repair and protecting neurons from oxidative stress.",
       "immuneSupport": "NAD+ contributes to immune function by supporting cellular metabolism and repair mechanisms vital for immune cells."
     },
     "analyzePrompt": "Analyze the user's NAD+ levels and suggest strategies to optimize cellular energy metabolism."
@@ -180,7 +180,7 @@
     "title": "Calming amino acids",
     "description": "Glycine is an amino acid that acts as a neurotransmitter in the central nervous system. It has been studied for its calming effects and its role in promoting relaxation and better sleep.",
     "areas": {
-      "stressReduction": "Glycine acts as an inhibitory neurotransmitter, helping to calm the nervous system and reduce stress.",
+      "nervousSystem": "Glycine acts as an inhibitory neurotransmitter, helping to calm the nervous system and reduce stress.",
       "sleepQuality": "Glycine has been shown to improve sleep quality by promoting relaxation and regulating body temperature.",
       "immuneSupport": "Glycine supports immune function by reducing inflammation and promoting cellular repair."
     },
@@ -214,7 +214,7 @@
     "title": "Breathwork techniques",
     "description": "Breathwork is a powerful tool for activating the parasympathetic nervous system, reducing stress, and promoting relaxation. Different breathing techniques can be used for specific outcomes such as calm, focus, or better sleep.",
     "areas": {
-      "stressReduction": "Controlled breathing directly activates the parasympathetic nervous system, reducing stress hormones and promoting relaxation.",
+      "nervousSystem": "Controlled breathing directly activates the parasympathetic nervous system, reducing stress hormones and promoting relaxation.",
       "immuneSupport": "Regular breathwork can improve immune function by reducing chronic stress and promoting better sleep and recovery.",
       "energy": "Proper breathing techniques enhance oxygen utilization and energy levels throughout the day."
     }
@@ -223,7 +223,7 @@
     "title": "Box breathing",
     "description": "Box breathing (also called square breathing) is a technique where you inhale, hold, exhale, and hold again for equal counts (typically 4-4-4-4). It's excellent for rapid stress relief and focus.",
     "areas": {
-      "stressReduction": "Box breathing creates a balanced rhythm that quickly activates the parasympathetic nervous system.",
+      "nervousSystem": "Box breathing creates a balanced rhythm that quickly activates the parasympathetic nervous system.",
       "immuneSupport": "Regular practice helps reduce cortisol levels and supports immune resilience."
     }
   },
@@ -231,7 +231,7 @@
     "title": "4-7-8 breathing",
     "description": "The 4-7-8 technique involves inhaling for 4 counts, holding for 7 counts, and exhaling for 8 counts. It's particularly effective for relaxation and sleep preparation.",
     "areas": {
-      "stressReduction": "The extended exhale activates the vagus nerve, promoting deep relaxation and reducing anxiety.",
+      "nervousSystem": "The extended exhale activates the vagus nerve, promoting deep relaxation and reducing anxiety.",
       "sleepQuality": "This technique is highly effective for preparing the body and mind for sleep, improving sleep quality."
     }
   },
@@ -239,7 +239,7 @@
     "title": "Alternate nostril breathing",
     "description": "Nadi Shodhana (alternate nostril breathing) involves breathing through one nostril at a time in a controlled pattern. It balances the nervous system and enhances mental clarity.",
     "areas": {
-      "stressReduction": "This technique balances the left and right sides of the nervous system, promoting harmony and calm.",
+      "nervousSystem": "This technique balances the left and right sides of the nervous system, promoting harmony and calm.",
       "mind": "Alternate nostril breathing enhances mental clarity and concentration by balancing brain hemispheres."
     }
   },
@@ -247,7 +247,7 @@
     "title": "Diaphragmatic breathing",
     "description": "Also called belly breathing or deep breathing, this technique focuses on breathing deeply into the abdomen rather than the chest. It's fundamental to all breathwork practices.",
     "areas": {
-      "stressReduction": "Deep diaphragmatic breathing significantly reduces stress and anxiety by activating the relaxation response.",
+      "nervousSystem": "Deep diaphragmatic breathing significantly reduces stress and anxiety by activating the relaxation response.",
       "energy": "Proper oxygenation through diaphragmatic breathing improves energy levels and mental clarity."
     }
   },
@@ -255,7 +255,7 @@
     "title": "Sleep optimization for recovery",
     "description": "Quality sleep is fundamental for physical recovery, immune function, mental clarity, and overall health. Sleep optimization involves multiple factors including duration, consistency, environment, and pre-sleep routines.",
     "areas": {
-      "stressReduction": "Quality sleep supports nervous system recovery and balance between sympathetic and parasympathetic systems.",
+      "nervousSystem": "Quality sleep supports nervous system recovery and balance between sympathetic and parasympathetic systems.",
       "immuneSupport": "Sleep is crucial for immune function and the body's ability to fight infections and heal.",
       "energy": "Adequate sleep restores energy levels and optimizes the body's metabolic processes.",
       "cardioFitness": "Sleep supports cardiovascular health by regulating blood pressure and heart rate.",
@@ -275,7 +275,7 @@
     "description": "Creating an optimal sleep environment is essential for quality sleep. This includes darkness, cool temperature, quiet conditions, and comfortable bedding that support restorative sleep.",
     "areas": {
       "sleepQuality": "A dark, cool (60-67°F), quiet environment promotes melatonin production and deeper sleep cycles.",
-      "stressReduction": "An optimized sleep environment reduces external stressors and allows the nervous system to fully relax and recover."
+      "nervousSystem": "An optimized sleep environment reduces external stressors and allows the nervous system to fully relax and recover."
     }
   },
   "sleep_hygiene_practices": {
@@ -291,7 +291,7 @@
     "description": "A structured wind-down routine 30-60 minutes before bed signals to your body that it's time to sleep. This can include relaxation techniques, light reading, meditation, or gentle stretching.",
     "areas": {
       "sleepQuality": "A proper wind-down routine helps transition the nervous system from wakefulness to sleep, promoting faster sleep onset and deeper sleep.",
-      "stressReduction": "Pre-sleep relaxation techniques activate the parasympathetic nervous system, preparing the body for restorative sleep."
+      "nervousSystem": "Pre-sleep relaxation techniques activate the parasympathetic nervous system, preparing the body for restorative sleep."
     }
   },
   "sunlight_circadian": {
@@ -299,7 +299,7 @@
     "description": "Exposure to natural sunlight, especially within 30-60 minutes of waking, is crucial for regulating circadian rhythm and optimizing sleep-wake cycles. Morning light suppresses melatonin and signals the start of the day.",
     "areas": {
       "sleepQuality": "Morning sunlight exposure helps set your circadian clock, improving sleep quality and making it easier to fall asleep at night.",
-      "stressReduction": "Natural light exposure regulates the nervous system by synchronizing circadian rhythms and supporting balanced cortisol production.",
+      "nervousSystem": "Natural light exposure regulates the nervous system by synchronizing circadian rhythms and supporting balanced cortisol production.",
       "energy": "Morning sunlight boosts alertness and energy levels throughout the day by signaling to your body that it's time to be awake.",
       "immuneSupport": "Regular circadian rhythm from sunlight exposure supports immune function and overall health."
     }
@@ -308,7 +308,7 @@
     "title": "Cold exposure therapy",
     "description": "Deliberate cold exposure, such as cold showers, ice baths, or cold plunges, activates the sympathetic nervous system and builds stress resilience. Regular cold exposure improves immune function, increases energy, and enhances mental clarity.",
     "areas": {
-      "stressReduction": "Cold exposure trains the nervous system to handle stress by activating and then balancing the sympathetic and parasympathetic responses.",
+      "nervousSystem": "Cold exposure trains the nervous system to handle stress by activating and then balancing the sympathetic and parasympathetic responses.",
       "immuneSupport": "Regular cold exposure has been shown to increase white blood cell count and strengthen immune function.",
       "energy": "Cold exposure boosts dopamine and norepinephrine levels, leading to increased alertness, energy, and mood elevation."
     }
@@ -317,7 +317,7 @@
     "title": "Meditation and mindfulness",
     "description": "Regular meditation and mindfulness practices train the mind to stay present and reduce stress. These practices activate the parasympathetic nervous system, improve emotional regulation, and enhance cognitive function.",
     "areas": {
-      "stressReduction": "Meditation activates the parasympathetic nervous system, reducing stress hormones like cortisol and promoting deep relaxation and nervous system recovery.",
+      "nervousSystem": "Meditation activates the parasympathetic nervous system, reducing stress hormones like cortisol and promoting deep relaxation and nervous system recovery.",
       "immuneSupport": "Regular meditation has been shown to reduce inflammation, strengthen immune response, and improve overall health markers.",
       "mind": "Mindfulness practices improve attention span, working memory, and cognitive flexibility by strengthening neural pathways associated with focus and awareness."
     }
@@ -326,7 +326,7 @@
     "title": "Time in nature",
     "description": "Spending time in natural environments activates the parasympathetic nervous system and reduces stress. Forest bathing (Shinrin-yoku) and exposure to natural settings have been shown to lower cortisol, reduce blood pressure, and improve overall well-being.",
     "areas": {
-      "stressReduction": "Nature exposure activates the parasympathetic nervous system, reducing stress hormones and promoting relaxation and recovery.",
+      "nervousSystem": "Nature exposure activates the parasympathetic nervous system, reducing stress hormones and promoting relaxation and recovery.",
       "immuneSupport": "Time in nature has been shown to boost natural killer cell activity and strengthen immune function.",
       "energy": "Natural environments restore mental energy, reduce fatigue, and improve mood through exposure to natural light and fresh air."
     }
@@ -335,7 +335,7 @@
     "title": "HRV and recovery monitoring",
     "description": "Heart Rate Variability (HRV) is a key metric for tracking nervous system balance and recovery status. Monitoring HRV helps optimize training intensity, prevent overtraining, and ensure adequate recovery between workouts.",
     "areas": {
-      "stressReduction": "HRV reflects the balance between sympathetic and parasympathetic nervous system activity, indicating stress and recovery levels.",
+      "nervousSystem": "HRV reflects the balance between sympathetic and parasympathetic nervous system activity, indicating stress and recovery levels.",
       "immuneSupport": "Low HRV can indicate increased inflammation and reduced immune function, while higher HRV suggests better recovery and immune resilience.",
       "energy": "HRV tracking helps identify when the body needs rest, preventing fatigue and optimizing energy management.",
       "cardioFitness": "Monitoring HRV helps optimize cardiovascular training by ensuring adequate recovery between high-intensity sessions.",
@@ -346,7 +346,7 @@
     "title": "Social connection and vagal tone",
     "description": "Positive social interactions and meaningful relationships activate the vagus nerve and strengthen parasympathetic tone. Social connection is essential for nervous system regulation, emotional well-being, and overall health.",
     "areas": {
-      "stressReduction": "Positive social interactions activate the vagus nerve, improving heart rate variability and promoting parasympathetic nervous system activation.",
+      "nervousSystem": "Positive social interactions activate the vagus nerve, improving heart rate variability and promoting parasympathetic nervous system activation.",
       "immuneSupport": "Strong social connections have been shown to reduce inflammation, strengthen immune function, and increase longevity.",
       "energy": "Meaningful relationships and social support reduce stress and improve energy levels by lowering cortisol and enhancing emotional resilience."
     }
@@ -355,7 +355,7 @@
     "title": "Calming music and sound therapy",
     "description": "Listening to calming music, binaural beats, or nature sounds can reduce stress, lower heart rate, and activate the parasympathetic nervous system. Sound therapy has been used for centuries to promote relaxation and healing.",
     "areas": {
-      "stressReduction": "Calming music and sound therapy activate the parasympathetic nervous system, reducing stress hormones and promoting deep relaxation.",
+      "nervousSystem": "Calming music and sound therapy activate the parasympathetic nervous system, reducing stress hormones and promoting deep relaxation.",
       "sleepQuality": "Listening to calming sounds before bed can improve sleep onset, increase deep sleep duration, and enhance overall sleep quality.",
       "mind": "Certain frequencies like binaural beats and nature sounds can enhance concentration, reduce mental fatigue, and improve cognitive performance."
     }
@@ -364,7 +364,7 @@
     "title": "Adaptogenic herbs",
     "description": "Adaptogens are herbs and mushrooms that help the body adapt to stress and promote balance. They support energy, endurance, and overall wellbeing.",
     "areas": {
-      "stressReduction": "Adaptogenic herbs support the nervous system by modulating the stress response and promoting mental and physical resilience."
+      "nervousSystem": "Adaptogenic herbs support the nervous system by modulating the stress response and promoting mental and physical resilience."
     }
   },
   "neuromuscular_training": {
@@ -373,7 +373,7 @@
     "areas": {
       "strength": "Neuromuscular training enhances muscle strength and coordination, improving physical performance.",
       "cardioFitness": "This training supports cardiovascular fitness by improving endurance and oxygen utilization during physical activity.",
-      "stressReduction": "Neuromuscular training strengthens the communication between the nervous system and muscles, optimizing movement efficiency."
+      "nervousSystem": "Neuromuscular training strengthens the communication between the nervous system and muscles, optimizing movement efficiency."
     }
   },
   "creatine_atp_strength": {
@@ -507,7 +507,7 @@
     "description": "Magnesium is an essential mineral that plays a vital role in muscle relaxation, nervous system function, and sleep quality. It helps the body regulate stress hormones and promotes deeper, more restorative sleep.",
     "areas": {
       "sleepQuality": "Magnesium improves sleep quality by regulating melatonin and promoting muscle relaxation.",
-      "stressReduction": "Magnesium supports the nervous system by regulating neurotransmitters and reducing stress.",
+      "nervousSystem": "Magnesium supports the nervous system by regulating neurotransmitters and reducing stress.",
       "energy": "Magnesium is necessary for energy production and reduces fatigue by supporting ATP synthesis."
     },
     "nutritionFoods": {
@@ -545,7 +545,7 @@
     "description": "Zinc is a trace mineral critical for immune defense, tissue repair, and hormone balance. Highly absorbable forms can help maintain resilience during stress and intense training.",
     "areas": {
       "immuneSupport": "Zinc supports innate and adaptive immunity by regulating cytokine signaling and white blood cell activity.",
-      "stressReduction": "Adequate zinc helps maintain neurotransmitter balance, supporting mood and stress tolerance.",
+      "nervousSystem": "Adequate zinc helps maintain neurotransmitter balance, supporting mood and stress tolerance.",
       "energy": "Zinc is required for hundreds of enzymatic reactions linked to energy metabolism and recovery."
     },
     "nutritionFoods": {
@@ -580,7 +580,7 @@
     "areas": {
       "immuneSupport": "Selenium supports antibody production and regulates inflammation, bolstering immune resilience.",
       "energy": "Selenium-dependent enzymes activate thyroid hormones that drive metabolic energy and mitochondrial efficiency.",
-      "stressReduction": "Selenium protects neurons from oxidative stress and supports balanced mood and stress responses."
+      "nervousSystem": "Selenium protects neurons from oxidative stress and supports balanced mood and stress responses."
     },
     "nutritionFoods": {
       "title": "Selenium-rich foods",
@@ -614,7 +614,7 @@
     "areas": {
       "energy": "Adequate iodine keeps T3 and T4 production robust, sustaining metabolic energy throughout the day.",
       "immuneSupport": "Balanced thyroid hormones modulate immune signaling and help the body respond appropriately to stressors.",
-      "stressReduction": "Iodine supports nervous system stability by maintaining hormone balance that affects mood, focus, and thermoregulation."
+      "nervousSystem": "Iodine supports nervous system stability by maintaining hormone balance that affects mood, focus, and thermoregulation."
     },
     "nutritionFoods": {
       "title": "Iodine-rich foods",
@@ -650,7 +650,7 @@
     "title": "Ashwagandha",
     "description": "Ashwagandha is an adaptogenic herb traditionally used in Ayurvedic medicine. It helps the body manage stress by supporting cortisol balance and promoting relaxation.",
     "areas": {
-      "stressReduction": "Ashwagandha supports the nervous system by reducing stress and promoting calm through cortisol regulation.",
+      "nervousSystem": "Ashwagandha supports the nervous system by reducing stress and promoting calm through cortisol regulation.",
       "energy": "Ashwagandha helps combat fatigue and supports sustained energy levels throughout the day.",
       "immuneSupport": "Ashwagandha has immune-modulating properties that support overall immune health."
     }
@@ -659,7 +659,7 @@
     "title": "Rhodiola",
     "description": "Rhodiola is an adaptogenic herb known for enhancing mental and physical performance. It helps the body adapt to stress and supports cognitive function.",
     "areas": {
-      "stressReduction": "Rhodiola supports the nervous system by reducing mental fatigue and improving stress resilience.",
+      "nervousSystem": "Rhodiola supports the nervous system by reducing mental fatigue and improving stress resilience.",
       "energy": "Rhodiola enhances physical endurance and reduces fatigue during demanding activities.",
       "mind": "Rhodiola improves cognitive function, focus, and mental clarity, especially under stress."
     }
@@ -668,7 +668,7 @@
     "title": "Holy Basil (Tulsi)",
     "description": "Holy Basil, also known as Tulsi, is an adaptogenic herb revered in traditional medicine for its stress-reducing and immune-supporting properties.",
     "areas": {
-      "stressReduction": "Holy Basil helps calm the nervous system and reduce stress through its adaptogenic effects.",
+      "nervousSystem": "Holy Basil helps calm the nervous system and reduce stress through its adaptogenic effects.",
       "immuneSupport": "Holy Basil supports immune function with its antimicrobial and anti-inflammatory properties."
     }
   },
@@ -712,7 +712,7 @@
     "description": "Running economy is how little energy you need for a given pace. Short technique drills and strides (brief controlled accelerations) improve neuromuscular efficiency so you can run faster at the same effort.",
     "areas": {
       "strength": "Strides and drills improve force application and elastic recoil, making your stride more efficient and feel ‘lighter’.",
-      "stressReduction": "Short speed exposures train coordination and muscle fiber recruitment, improving movement efficiency.",
+      "nervousSystem": "Short speed exposures train coordination and muscle fiber recruitment, improving movement efficiency.",
       "cardioFitness": "Better running economy lowers the oxygen cost at a given pace, improving endurance performance."
     }
   },
@@ -721,16 +721,16 @@
     "description": "Optimizing cadence (stride frequency) can reduce braking forces and improve running economy. For many runners, an efficient cadence often falls around 170–185 steps/min at moderate to higher speeds, but the optimal cadence is individual.",
     "areas": {
       "strength": "A more efficient cadence can reduce overload by lowering impact per step and improving control of stride length.",
-      "stressReduction": "Cadence work improves rhythm, coordination, and timing, increasing movement efficiency.",
+      "nervousSystem": "Cadence work improves rhythm, coordination, and timing, increasing movement efficiency.",
       "energy": "Improved mechanics can reduce energy ‘leaks’ and help you hold pace at a lower overall energy cost."
     }
   },
-  "caffeine_endurance_performance": {
-    "title": "Caffeine for endurance and speed",
+  "caffeine": {
+    "title": "Caffeine",
     "description": "Caffeine can improve performance by increasing alertness, lowering perceived effort, and supporting higher output during hard sessions. It’s especially useful before intervals, threshold runs, and races.",
     "areas": {
       "energy": "Caffeine can increase performance by influencing adenosine receptors and improving work capacity under effort.",
-      "mind": "Boosts alertness and mental sharpness, which can improve pacing and discomfort tolerance during tough intervals.",
+      "mind": "Koffein ökar vakenhet och mental skärpa, vilket kan förbättra koncentration, reaktionsförmåga och fokus under krävande mentala uppgifter.",
       "cardioFitness": "By improving effort tolerance, you can sustain higher intensity longer, strengthening the training stimulus for VO2 and threshold."
     }
   },
@@ -789,7 +789,7 @@
     "description": "Wearing hard, flat shoes on flat ground can increase stress on the body, joints, muscles, and nervous system. Choose shoes with some cushioning or vary the surface to reduce overload risk and support more natural movement.",
     "areas": {
       "strength": "Avoiding hard flat shoes reduces unnecessary strain on muscles and tendons.",
-      "stressReduction": "Varying surfaces and footwear supports nervous system adaptability."
+      "nervousSystem": "Varying surfaces and footwear supports nervous system adaptability."
     }
   },
   "near_infrared_red_light": {
