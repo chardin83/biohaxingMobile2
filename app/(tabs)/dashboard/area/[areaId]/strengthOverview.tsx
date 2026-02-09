@@ -96,7 +96,7 @@ export default function StrengthScreen({ mainGoalId }: { mainGoalId: string }) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <ThemedText type="title" style={{ color: colors.readinessRed }}>{t('strengthOverview.title')}</ThemedText>
+      <ThemedText type="title" style={{ color: colors.area.strength }}>{t('strengthOverview.title')}</ThemedText>
       <ThemedText type="subtitle" style={{ color: colors.textTertiary }}>
         {t('strengthOverview.description')}
       </ThemedText>

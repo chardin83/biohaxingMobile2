@@ -84,7 +84,7 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
   const energy = {
     bodyBattery: latestEnergy?.bodyBatteryLevel ?? 0,
     bodyBatteryChange: '+18',
-    bodyBatteryStatus: (latestEnergy?.bodyBatteryLevel ?? 72) > 60 ? 'Good' : 'Low',
+    //bodyBatteryStatus: (latestEnergy?.bodyBatteryLevel ?? 72) > 60 ? 'Good' : 'Low',
     stressScore: 32,
     stressLevel: 'Moderate',
     sleepHours: latestSleep ? latestSleep.durationMinutes / 60 : 7.5,
@@ -100,7 +100,7 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
 
   return (
     <>
-      <ThemedText type="title" style={{ color: colors.gold }}>{t('energyOverview.title')}</ThemedText>
+      <ThemedText type="title" style={{ color: colors.area.energy }}>{t('energyOverview.title')}</ThemedText>
       <ThemedText type="subtitle">{t('energyOverview.description')}</ThemedText>
       <WearableStatus status={status} />
 

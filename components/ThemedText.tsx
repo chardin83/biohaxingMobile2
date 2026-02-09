@@ -8,6 +8,7 @@ export type ThemedTextProps = TextProps & {
   darkColor?: string;
   type?: 'default' | 'title' | 'title2' | 'title3' | 'defaultSemiBold' | 'subtitle' | 'link' | 'caption' | 'value' | 'label' | 'explainer';
   uppercase?: boolean;
+  numberOfLines?: number; // Lägg till denna rad
 };
 
 function getTextColor(
@@ -51,7 +52,7 @@ function getTextStyle(type: ThemedTextProps['type'], colors: AppTheme['colors'])
   }
 }
 
-export function ThemedText({ style, lightColor, darkColor, type = 'default', uppercase = false, ...rest }: ThemedTextProps) {
+export function ThemedText({ style, lightColor, darkColor, type = 'default', uppercase = false, numberOfLines, ...rest }: ThemedTextProps) {
   const { colors, dark } = useTheme();
 
   const color = getTextColor(colors, dark, type, lightColor, darkColor);
@@ -65,6 +66,7 @@ export function ThemedText({ style, lightColor, darkColor, type = 'default', upp
         uppercase && styles.uppercase,
         style,
       ]}
+      numberOfLines={numberOfLines} // Lägg till denna rad
       {...rest}
     />
   );
@@ -83,7 +85,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    lineHeight: 32,
+    lineHeight: 40,
     marginBottom: 8,
   },
   title2: {

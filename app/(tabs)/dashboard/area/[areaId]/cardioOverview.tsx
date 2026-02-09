@@ -91,9 +91,8 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
 
   return (
     <>
-      <ThemedText type="title">{t("cardioOverview.title")}</ThemedText>
+      <ThemedText type="title" style={{ color: colors.area.cardio }}>{t("cardioOverview.title")}</ThemedText>
       <ThemedText type="subtitle">{t("cardioOverview.description")}</ThemedText>
-
       <WearableStatus status={status} />
 
       {/* Overview card */}

@@ -91,7 +91,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
 
   return (
     <>
-      <ThemedText type="title" style={{ color: colors.accentStrong }}>{t("immuneOverview.title")}</ThemedText>
+      <ThemedText type="title" style={{ color: colors.area.immuneSystem }}>{t("immuneOverview.title")}</ThemedText>
       <ThemedText type="subtitle" style={{ color: colors.textTertiary }}>
         {t("immuneOverview.description")}
       </ThemedText>

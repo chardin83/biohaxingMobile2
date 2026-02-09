@@ -76,7 +76,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
 
   return (
     <>
-      <ThemedText type="title" style={{ color: colors.accentStrong }}>{t("nervousSystemOverview.title")}</ThemedText>
+      <ThemedText type="title" style={{ color: colors.area.nervousSystem }}>{t("nervousSystemOverview.title")}</ThemedText>
       <ThemedText type="subtitle" style={{ color: colors.textTertiary }}>
         {t("nervousSystemOverview.description")}
       </ThemedText>

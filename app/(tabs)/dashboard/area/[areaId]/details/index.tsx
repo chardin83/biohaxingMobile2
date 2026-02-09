@@ -12,6 +12,7 @@ import { Supplement } from '@/app/domain/Supplement';
 import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
+import Badge from '@/components/ui/Badge';
 import Container from '@/components/ui/Container';
 import { NotFound } from '@/components/ui/NotFound';
 import ProgressBarWithLabel from '@/components/ui/ProgressbarWithLabel';
@@ -23,6 +24,31 @@ import { tips } from '@/locales/tips';
 import { PlanCategory } from '@/types/planCategory';
 import { POSITIVE_VERDICTS } from '@/types/verdict';
 
+
+  function getAreaIconColor(areaId: string, colors: any) {
+  switch (areaId) {
+    case 'energy':
+      return colors.area.energy;
+    case 'mind':
+      return colors.area.mind;
+    case 'sleepQuality':
+      return colors.area.sleep;
+    case 'nervousSystem':
+      return colors.area.nervousSystem;
+    case 'strength':
+      return colors.area.strength;
+    case 'digestiveHealth':
+      return colors.area.digestiveHealth;
+    case 'cardioFitness':
+      return colors.area.cardio;
+    case 'immuneSystem':
+      return colors.area.immuneSystem;
+    // Lägg till fler områden vid behov
+    default:
+      return colors.primary;
+  }
+}
+
 export default function AreaDetailScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -32,7 +58,7 @@ export default function AreaDetailScreen() {
     tipId?: string;
   }>();
   const supplements = useSupplements();
-  const { addTipView, incrementTipChat, viewedTips, setTipVerdict, plans, setPlans } = useStorage();
+  const { addTipView, incrementTipChat, viewedTips, setTipVerdict, plans, setPlans, myLevel } = useStorage();
 
   React.useEffect(() => {
     if (areaId && tipId) {
@@ -297,7 +323,21 @@ export default function AreaDetailScreen() {
           {t(`areas:${areaId}.title`)}
         </ThemedText>
         <View style={[styles.iconWrapper, { borderColor: colors.borderLight }]}>
-          <Icon source={goalIcon} size={50} color={colors.primary} />
+          <Icon source={goalIcon} size={50} color={getAreaIconColor(areaId, colors)} />
+          {tip?.level && (
+            <Badge
+              style={[
+                styles.levelBadge,
+                myLevel < tip.level ? styles.levelBadgeLocked : styles.levelBadgeUnlocked,
+                { backgroundColor: colors.modalBackground }
+              ]}
+            >
+              <ThemedText type="title3" style={{ color: colors.textLight }} uppercase numberOfLines={1}>
+                {myLevel < tip.level ? '🔒 ' : ''}
+                {t('general.level')} {tip.level}
+              </ThemedText>
+          </Badge>
+          )}
         </View>
         <ThemedText type="subtitle" style={{ color: colors.primary }}>
           {resolvedSupplements[0]?.name ?? t(`tips:${titleKey}`)}
@@ -393,6 +433,19 @@ const styles = StyleSheet.create({
   topSection: {
     alignItems: 'center',
     marginBottom: 16,
+  },
+  levelBadge: {
+  position: 'absolute',
+  bottom: -20,
+  zIndex: 2,
+  },
+  levelBadgeLocked: {
+    minWidth: 120, // bredare för lås
+    right: -88,
+  },
+  levelBadgeUnlocked: {
+    minWidth: 90, // smalare utan lås
+    right: -55,
   },
   planActionContainer: {
     width: '100%',

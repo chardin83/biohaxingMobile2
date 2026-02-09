@@ -19,7 +19,7 @@ interface TipsListProps {
 export default function TipsList({ areaId }: Readonly<TipsListProps>) {
   const { t } = useTranslation();
   const router = useRouter();
-  const { viewedTips } = useStorage();
+  const { viewedTips, myLevel } = useStorage();
   const [showAllTips, setShowAllTips] = React.useState(false);
 
   const tipsRaw = tips.filter(tip => tip.areas.some(area => area.id === areaId));
@@ -107,8 +107,18 @@ export default function TipsList({ areaId }: Readonly<TipsListProps>) {
     <Card title={`${t('tipsList.title')} (${sortedTips.length} ${t('general.countSuffix')})`} style={globalStyles.marginTop16}>
       {visibleTips.map((tip, index) => {
         const tipProgress = getTipProgress(tip.id);
+        const locked = myLevel < (tip?.level ?? 0);
 
-        return <TipCard key={tip.id} tip={tip} tipProgress={tipProgress} onPress={() => handleTipPress(index)} areaId={areaId} />;
+        return (
+          <TipCard
+            key={tip.id}
+            tip={tip}
+            tipProgress={tipProgress}
+            onPress={() => handleTipPress(index)}
+            areaId={areaId}
+            locked={locked}
+          />
+        );
       })}
 
       {sortedTips.some(tip => {

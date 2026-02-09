@@ -53,7 +53,7 @@ export default function SleepScreen({ mainGoalId }: { mainGoalId: string }) {
 
   return (
     <>
-      <ThemedText type="title">{t('sleepOverview.title')}</ThemedText>
+      <ThemedText type="title" style={{ color: colors.area.sleep }}>{t('sleepOverview.title')}</ThemedText>
       <ThemedText type="subtitle">{t('sleepOverview.description')}</ThemedText>
       <WearableStatus status={status} />
 

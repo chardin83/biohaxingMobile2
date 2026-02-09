@@ -65,7 +65,7 @@ export default function DashboardScreen() {
             },
           ]}
         >
-          {t('common:dashboard.level')} {myLevel}
+          {t('general.level').toUpperCase()} {myLevel}
         </Text>
       </View>
 
@@ -123,14 +123,14 @@ const styles = StyleSheet.create({
     height: 300,
     alignItems: 'center',
     justifyContent: 'flex-end',
-    overflow: 'hidden', // Lägg till denna rad!
+    //overflow: 'hidden', // Lägg till denna rad!
   },
   image: {
-    position: 'absolute', // Lägg till denna rad!
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
+     position: 'absolute', // Lägg till denna rad!
+     top: 0,
+     left: 0,
+     width: '100%',
+     height: '100%',
   },
   levelOverlay: {
     position: 'absolute',

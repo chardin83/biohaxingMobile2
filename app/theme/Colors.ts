@@ -97,8 +97,30 @@ export const Colors = {
     surfaceRedBorder: 'rgba(217, 83, 79, 0.9)',
     surfaceGreen: 'rgba(60, 179, 113, 0.12)',
     surfaceGreenBorder: 'rgba(60, 179, 113, 0.95)',
+
+     area: {
+      energy: 'rgba(255,191,0, 0.95)', // gold
+      mind: 'rgba(0,191,174,0.95)',     // accentStrong
+      sleep: '#32D1A6',                 // primary
+      nervousSystem: 'rgba(120,170,255,0.95)',    // lugn blå (tidigare röd)
+      strength: 'rgba(255,120,100,0.95)',   // tomato
+      digestiveHealth: 'rgba(170,220,120,0.95)',  // grön (unik)
+      cardio: 'rgba(255,140,180,0.95)',           // rosa (unik)
+      immuneSystem: 'rgba(120,220,220,0.95)',     // turkos (unik)
+      // Lägg till fler områden vid behov
+    },
   },
   dark: {
+     area: {
+      energy: 'rgba(255,215,100,0.95)', // gold
+      mind: 'rgba(0,191,174,0.95)',     // accentStrong
+      sleep: '#1FAE9E',                 // primary
+      nervousSystem: 'rgba(120,170,255,0.95)', // lugn blå
+      strength: 'rgba(255,120,100,0.95)',   // tomato
+      digestiveHealth: 'rgba(170,220,120,0.95)',  // grön (unik)
+      cardio: 'rgba(255,140,180,0.95)',           // rosa (unik)
+      immuneSystem: 'rgba(120,220,220,0.95)',     // turkos (unik)
+    },
     text: '#ECEDEE',
     background: '#001326',
     modalBackground: '#122033',

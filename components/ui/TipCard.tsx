@@ -31,9 +31,10 @@ interface TipCardProps {
   tipProgress: TipProgress;
   onPress: () => void;
   areaId: string;
+  locked: boolean;
 }
 
-export default function TipCard({ tip, tipProgress, onPress, areaId }: Readonly<TipCardProps>) {
+export default function TipCard({ tip, tipProgress, onPress, areaId, locked=false }: Readonly<TipCardProps>) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const area = tip.areas.find(a => a.id === areaId) ?? tip.areas[0];
@@ -99,7 +100,8 @@ export default function TipCard({ tip, tipProgress, onPress, areaId }: Readonly<
             {!verdictIcon && isCompleted && (
               <ThemedText style={styles.fallbackIcon}>✅</ThemedText>
             )}
-            <ThemedText type="title3">
+            <ThemedText type="title3" uppercase numberOfLines={1}>
+              {locked ? '🔒 ' : ''}
               {t(`tips:${tip.title}`)}
             </ThemedText>
           </View>

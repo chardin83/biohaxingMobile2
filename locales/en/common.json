@@ -54,7 +54,8 @@
     "cancel": "Cancel",
     "close": "Close",
     "save": "Save",
-    "countSuffix": "pcs"
+    "countSuffix": "pcs",
+    "level": "level"
   },
   "layout": {
     "dashboard": "Dashboard",

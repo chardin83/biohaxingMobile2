@@ -55,7 +55,8 @@
     "close": "Stäng",
     "save": "Spara",
     "countSuffix": "st",
-    "sleep": "sömn"
+    "sleep": "sömn",
+    "level": "level"
   },
   "layout": {
     "dashboard": "Dashboard",
@@ -557,7 +558,7 @@
   },
   "dashboard": {
     "appTitle": "BIOHAXING",
-    "level": "NIVÅ",
+    "level": "LEVEL",
     "noFavorites": "Inga favoriter än",
     "editAreas": "Redigera Områden"
   },
@@ -572,7 +573,7 @@
   },
   "filter": {
     "area": "Område",
-    "level": "Nivå",
+    "level": "Level",
     "planCategory": "Plankategori",
     "bodyPart": "Kroppsdel"
   },
