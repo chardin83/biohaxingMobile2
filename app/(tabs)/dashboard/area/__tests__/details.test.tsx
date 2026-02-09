@@ -85,7 +85,7 @@ const fullMockStorageContext = {
   isInitialized: true,
   onboardingStep: 0,
   setOnboardingStep: jest.fn(),
-  myXP: 0,
+  myXP: 100,
   setMyXP: mockSetMyXP,
   myLevel: 1,
   setMyLevel: jest.fn(),

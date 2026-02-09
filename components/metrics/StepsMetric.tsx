@@ -12,7 +12,7 @@ interface StepsMetricProps {
   showDivider?: boolean;
 }
 
-export function StepsMetric({ activityData, showDivider = false }: StepsMetricProps) {
+export function StepsMetric({ activityData, showDivider = false }: Readonly<StepsMetricProps>) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 

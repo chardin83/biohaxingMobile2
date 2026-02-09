@@ -189,8 +189,8 @@ describe('BiohackerDashboard', () => {
   it('displays current level correctly', async () => {
     const { getByText } = renderWithProviders(<BiohackerDashboard />);
     await waitFor(() => {
-      // Use regex to match 'Level 1' with possible whitespace
-      expect(getByText(/Level\s*1/)).toBeTruthy();
+      // Use regex to match 'LEVEL 1' with possible whitespace
+      expect(getByText(/LEVEL\s*1/)).toBeTruthy();
       expect(getByText('Biohacker')).toBeTruthy();
     });
   });
@@ -225,7 +225,7 @@ describe('BiohackerDashboard', () => {
     await waitFor(() => {
       const { getByTestId, getByText } = renderWithProviders(<BiohackerDashboard />);
       expect(getByTestId('dashboard-image')).toBeTruthy();
-      expect(getByText(/Level\s*1/)).toBeTruthy();
+      expect(getByText(/LEVEL\s*1/)).toBeTruthy();
       expect(getByText('Biohacker')).toBeTruthy();
      });
   });

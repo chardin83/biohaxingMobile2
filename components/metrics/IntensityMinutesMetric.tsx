@@ -11,7 +11,7 @@ interface IntensityMinutesMetricProps {
   showDivider?: boolean;
 }
 
-export function IntensityMinutesMetric({ activityData, showDivider = false }: IntensityMinutesMetricProps) {
+export function IntensityMinutesMetric({ activityData, showDivider = false }: Readonly<IntensityMinutesMetricProps>) {
   const { t } = useTranslation();
 
   // Plocka ut dagens intensiva minuter (justera logik om du vill summera eller filtrera på datum)

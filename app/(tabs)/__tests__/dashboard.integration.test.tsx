@@ -50,7 +50,7 @@ describe('Dashboard Integration Tests', () => {
   it('renders dashboard with StorageProvider and displays main dashboard elements', async () => {
     const { getByText } = renderWithProviders(<Dashboard />);
     await waitFor(() => {
-      expect(getByText(/Level\s*1/)).toBeTruthy();
+      expect(getByText(/LEVEL\s*1/)).toBeTruthy();
       expect(getByText(/\d+ \/ \d+ XP/)).toBeTruthy();
     });
   });
@@ -58,7 +58,7 @@ describe('Dashboard Integration Tests', () => {
   it('updates when storage context changes', async () => {
     const { getByText } = renderWithProviders(<Dashboard />);
     await waitFor(() => {
-      expect(getByText(/Level\s*1/)).toBeTruthy();
+      expect(getByText(/LEVEL\s*1/)).toBeTruthy();
       });
     });
   });

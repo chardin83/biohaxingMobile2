@@ -22,7 +22,7 @@ function getRecoveryStatus(hrv: number | null, sleepHours: number | null, t: (ke
   }
 }
 
-export function RecoveryStatusMetric({ hrvData, sleepHours }: RecoveryStatusMetricProps) {
+export function RecoveryStatusMetric({ hrvData, sleepHours }: Readonly<RecoveryStatusMetricProps>) {
   const { t } = useTranslation();
   const hrv = hrvData.length > 0 ? calculateHRVMetrics(hrvData).hrv : null;
   const recoveryStatus = getRecoveryStatus(hrv, sleepHours, t);

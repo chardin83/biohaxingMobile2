@@ -71,7 +71,7 @@ describe('ThemedText', () => {
         expect.objectContaining({
           fontSize: 32,
           fontWeight: 'bold',
-          lineHeight: 32,
+          lineHeight: 40,
           marginBottom: 8,
         }),
       ])
