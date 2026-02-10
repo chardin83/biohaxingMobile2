@@ -1,4 +1,6 @@
-export const BASE_IP = '192.168.68.74';
+import { createPlan } from "./services/gptServices";
+
+export const BASE_IP = '192.168.68.59';
 export const API_PORT = '7071';
 
 export const BASE_URL = `http://${BASE_IP}:${API_PORT}`;
@@ -8,4 +10,5 @@ export const ENDPOINTS = {
   handleSupplementCheck: `${BASE_URL}/api/handleSupplementCheck`,
   handleNutritionCheck: `${BASE_URL}/api/handleNutritionCheck`,
   handleAnalyze: `${BASE_URL}/api/handleAnalyze`,
+  createPlan: `${BASE_URL}/api/createPlan`,
 };

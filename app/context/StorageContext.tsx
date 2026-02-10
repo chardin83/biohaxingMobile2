@@ -39,7 +39,6 @@ export type DailyNutritionSummary = {
 // PlanCategory is shared from types/planCategory.ts
 
 export type PlanTipEntry = {
-  mainGoalId: string;
   startedAt: string;
   tipId: string;
   planCategory: Exclude<PlanCategory, 'supplement'>;

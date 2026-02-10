@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
+import { useStorage } from '@/app/context/StorageContext';
 import { Collapsible } from '@/components/Collapsible';
 import CreateTimeSlotModal from '@/components/modals/CreateTimeSlotModal';
 import TrainingSettingsModal from '@/components/modals/TrainingSettingsModal';
@@ -16,13 +17,14 @@ import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
 import Badge from '@/components/ui/Badge';
 import Container from '@/components/ui/Container';
+import { GoldenGlowButton } from '@/components/ui/GoldenGlowButton';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useSupplementSaver } from '@/hooks/useSupplementSaver';
 import { defaultPlans } from '@/locales/defaultPlans';
 import { useSupplementMap } from '@/locales/supplements';
 import { Tip, tips } from '@/locales/tips';
+import { createPlan } from '@/services/gptServices';
 
-import { useStorage } from '../../context/StorageContext';
 import { Plan } from '../../domain/Plan';
 import { Supplement } from '../../domain/Supplement';
 
@@ -31,7 +33,6 @@ import { Supplement } from '../../domain/Supplement';
 export default function Plans() {
   const params = useLocalSearchParams<{ openCreate?: string }>();
   const { colors } = useTheme();
-  
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
@@ -49,16 +50,21 @@ export default function Plans() {
   const { saveSupplementToPlan } = useSupplementSaver();
 
   const [supplement, setSupplement] = useState<Supplement | null>(null);
-  // Removed time picker state; handled within modal components if needed
 
-  const { plans, setPlans, errorMessage, trainingPlanSettings, setTrainingPlanSettings } = useStorage();
+  const { plans, setPlans, errorMessage, trainingPlanSettings, setTrainingPlanSettings, myGoals, myLevel } = useStorage();
+    const handleCreatePlan = async () => {
+    const locale = i18n.language?.startsWith('sv') ? 'sv' : 'en';
+    const res = await createPlan(plans, myGoals, myLevel, locale);
+    setPlans(res.plans);
+  };
 
-  const { t } = useTranslation(['common', 'areas', 'tips']);
+  const { t, i18n } = useTranslation(['common', 'areas', 'tips']);
   const supplementMap = useSupplementMap();
 
   const supplementPlans = plans.supplements;
   const trainingPlanGoals = useMemo(() => plans.training, [plans.training]);
   const nutritionGoals = plans.nutrition;
+  const otherGoals = useMemo(() => plans.other, [plans.other]);
 
   const getRecommendedDoseLabel = React.useCallback(
     (tip?: Tip) => {
@@ -350,8 +356,9 @@ export default function Plans() {
 
     return trainingPlanGoals.map(goal => {
       const tipTitle = goal.tipId ? t(`tips:${goal.tipId}.title`, { defaultValue: goal.tipId }) : null;
-      const trainingSettingsKey = goal.tipId ?? goal.mainGoalId;
+      const trainingSettingsKey = goal.tipId ?? 'unknown';
       const userSettings = trainingPlanSettings[trainingSettingsKey] ?? {};
+
       const trainingBadges: Array<{
         key: string;
         label: string;
@@ -383,15 +390,13 @@ export default function Plans() {
         });
       }
 
-      const editLabel = t('plan.editTrainingSettings', {
-        defaultValue: 'Redigera',
-      });
-
       const editAction = (
         <TouchableOpacity
-          onPress={() => openTrainingSettingsModal(trainingSettingsKey, tipTitle ?? goal.mainGoalId)}
+          onPress={() => openTrainingSettingsModal(trainingSettingsKey, tipTitle)}
           accessibilityRole="button"
-          accessibilityLabel={editLabel}
+          accessibilityLabel={t('plan.editTrainingSettings', {
+            defaultValue: 'Redigera',
+          })}
           style={styles.trainingEditIcon}
         >
           <IconSymbol name="pencil" size={16} color={colors.icon} />
@@ -400,8 +405,8 @@ export default function Plans() {
 
       return (
         <AppBox
-          key={`${goal.mainGoalId}-${goal.tipId}`}
-          title={tipTitle ?? goal.mainGoalId}
+          key={goal.tipId}
+          title={tipTitle ?? t('plan.untitled', { defaultValue: 'Utan titel' })}
           headerRight={editAction}
         >
           <ThemedText type="default" style={styles.trainingMeta}>
@@ -433,6 +438,7 @@ export default function Plans() {
       );
     });
   };
+
 
   const renderNutritionGoals = () => {
     if (!nutritionGroups.length) {
@@ -520,8 +526,34 @@ export default function Plans() {
     });
   };
 
+  const renderOtherGoals = () => {
+    if (!otherGoals.length) {
+      return (
+        <ThemedText type="default">
+          {t('plan.noActiveOther', { defaultValue: 'Inga övriga planer ännu.' })}
+        </ThemedText>
+      );
+    }
+
+    return otherGoals.map((goal, index) => {
+      const tipTitle = goal.tipId
+        ? t(`tips:${goal.tipId}.title`, { defaultValue: goal.tipId })
+        : t('plan.untitled', { defaultValue: 'Utan titel' });
+
+      return (
+        <AppBox
+          key={goal.tipId ?? `other-${index}`}
+          title={tipTitle}
+        >
+          {tipTitle}
+        </AppBox>
+      );
+    });
+  };
+
   return (
     <Container background="gradient">
+      <GoldenGlowButton style={styles.glowCard} title="✨ Skapa plan med AI" onPress={handleCreatePlan} />
         <View style={styles.sectionsContainer}>
           <View style={styles.sectionBlock}>
             <Collapsible
@@ -552,6 +584,11 @@ export default function Plans() {
                   variant="primary"
                 />
               </View>
+            </Collapsible>
+          </View>
+          <View style={styles.sectionBlock}>
+            <Collapsible title={t('plan.otherHeader', { defaultValue: 'Övrigt' })} contentStyle={styles.collapsibleContentFlush}>
+              {renderOtherGoals()}
             </Collapsible>
           </View>
         </View>
@@ -661,6 +698,13 @@ export default function Plans() {
 }
 
 const styles = StyleSheet.create({
+  glowCard: {
+    marginTop: 60,
+  },
+  glowCardText: {
+    textAlign: 'center',
+    paddingHorizontal: 16,
+  },
   sectionsContainer: {
     paddingTop: 100,
     paddingHorizontal: 20,

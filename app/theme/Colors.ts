@@ -91,6 +91,10 @@ export const Colors = {
     cardTitle: 'rgba(17,24,28,0.85)',
     //checkmark: '#C3FF00',
 
+    goldenGlowButtonText: '#2e2a26',
+    goldenGlowButtonBackground: 'rgba(255, 246, 231, 0.92)',
+    goldenGlowButtonGlow: 'rgba(255, 170, 60, 0.9)',
+
     gold: 'rgba(255,215,100,0.95)',
     goldSoft: 'rgba(255,215,100,0.75)',
     surfaceRed: 'rgba(217, 83, 79, 0.12)',
@@ -208,6 +212,9 @@ export const Colors = {
     cardBorder: 'rgba(255,215,100,0.18)', // Transparent card border
     cardTitle: 'rgba(255,255,255,0.85)',
     //checkmark: '',
+    goldenGlowButtonText: '#fff7e6',
+    goldenGlowButtonBackground: 'rgba(11, 16, 33, 0.9)',
+    goldenGlowButtonGlow: 'rgba(255, 180, 80, 0.8)',
     
     gold: 'rgba(255,215,100,0.95)',
     goldSoft: 'rgba(255,215,100,0.75)',

@@ -4,7 +4,9 @@ import { t } from 'i18next';
 import { PlansByCategory } from '@/app/context/StorageContext';
 import { GPTResponse } from '@/app/domain/GPTResponse';
 import { Message } from '@/app/domain/Message';
+import i18n from '@/app/i18n';
 import { ENDPOINTS } from '@/config';
+import { tips } from '@/locales/tips';
 
 export interface AnalysisResponse {
   type: string;
@@ -279,4 +281,82 @@ export async function NutritionAnalyze(params: AnalyseParams): Promise<Nutrition
   }
 
   return json!;
+}
+
+type PlanTipPayload = {
+  id: string;
+  title: string;
+  areas: string[];
+};
+
+export interface CreatePlanResponse {
+  plans: PlansByCategory;
+}
+
+function extractPlansFromResponse(raw: any): PlansByCategory | null {
+  // Om server redan returnerar { plans }
+  if (raw?.plans) return raw.plans;
+
+  // Om server returnerar hela OpenAI-svaret
+  const args = raw?.choices?.[0]?.message?.function_call?.arguments;
+  if (!args) return null;
+
+  const parsed = JSON.parse(args);
+  return parsed?.plans ?? null;
+}
+
+function normalizePlanTips(
+  items: Array<{ id: string } | { tipId: string }> | undefined,
+  category: 'training' | 'nutrition' | 'other'
+) {
+  const now = new Date().toISOString();
+  return (items ?? []).map((item: any) => ({
+    tipId: item.tipId ?? item.id,
+    startedAt: now,
+    planCategory: category,
+  }));
+}
+
+export async function createPlan(
+  plans: PlansByCategory,
+  userAreas: string[],
+  myLevel: number,
+  locale: 'sv' | 'en',
+): Promise<CreatePlanResponse> {
+  const filteredTips = tips.filter(tip => (tip.level ?? 1) <= myLevel);
+
+  const translatedTips: PlanTipPayload[] = filteredTips.map(tip => ({
+    id: tip.id,
+    title: i18n.t(`tips:${tip.title}`),
+    areas: tip.areas.map(a => a.id),
+    planCategory: tip.planCategory,
+    supplements: tip.supplements,
+  }));
+
+  console.log('[createPlan] tips (first 3):', translatedTips.slice(0, 3));
+  console.log('[createPlan] userAreas:', userAreas);
+  console.log('[createPlan] myLevel:', myLevel);
+
+  const response = await fetch(ENDPOINTS.createPlan, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ tips: translatedTips, plans, userAreas, locale }),
+  });
+
+  const text = await response.text();
+  if (!response.ok) throw new Error(`createPlan failed: ${response.status} ${text}`);
+
+  const raw = JSON.parse(text);
+  const newPlans = extractPlansFromResponse(raw);
+
+  if (!newPlans) throw new Error('createPlan: invalid response format');
+
+  return {
+    plans: {
+      ...newPlans,
+      training: normalizePlanTips(newPlans.training as any, 'training'),
+      nutrition: normalizePlanTips(newPlans.nutrition as any, 'nutrition'),
+      other: normalizePlanTips(newPlans.other as any, 'other'),
+    },
+  };
 }
