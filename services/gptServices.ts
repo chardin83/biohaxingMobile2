@@ -306,7 +306,7 @@ function extractPlansFromResponse(raw: any): PlansByCategory | null {
 }
 
 function normalizePlanTips(
-  items: Array<{ id: string } | { tipId: string }> | undefined,
+  items: Array<{ id: string } | { tipId: string; }> | undefined,
   category: 'training' | 'nutrition' | 'other'
 ) {
   const now = new Date().toISOString();

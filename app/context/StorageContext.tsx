@@ -49,6 +49,7 @@ export type PlansByCategory = {
   training: PlanTipEntry[];
   nutrition: PlanTipEntry[];
   other: PlanTipEntry[];
+  reasonSummary: string;
 };
 
 const EMPTY_PLANS: PlansByCategory = {
@@ -56,6 +57,7 @@ const EMPTY_PLANS: PlansByCategory = {
   training: [],
   nutrition: [],
   other: [],
+  reasonSummary: '',
 };
 
 export type TrainingPlanSettings = {
@@ -123,6 +125,8 @@ interface StorageContextType {
   ) => void;
   showMusic: boolean;
   setShowMusic: (val: boolean) => void;
+  tempPlans: PlansByCategory | null;
+  setTempPlans: React.Dispatch<React.SetStateAction<PlansByCategory | null>>;
 }
 
 const STORAGE_KEYS = {
@@ -163,6 +167,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const [viewedTipsState, setViewedTipsState] = useState<ViewedTip[]>([]);
   const [trainingPlanSettingsState, setTrainingPlanSettingsState] = useState<Record<string, TrainingPlanSettings>>({});
   const [showMusicState, setShowMusicState] = useState(true);
+  const [tempPlans, setTempPlans] = useState<PlansByCategory | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -517,8 +522,10 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       setTrainingPlanSettings,
       showMusic: showMusicState,
       setShowMusic,
+      tempPlans,
+      setTempPlans,
     }),
-    [plansState, activeGoals, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, trainingPlanSettingsState, showMusicState]
+    [plansState, activeGoals, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, trainingPlanSettingsState, showMusicState, tempPlans, setTempPlans]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

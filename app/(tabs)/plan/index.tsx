@@ -1,5 +1,5 @@
 import { useTheme } from '@react-navigation/native';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -19,11 +19,11 @@ import Badge from '@/components/ui/Badge';
 import Container from '@/components/ui/Container';
 import { GoldenGlowButton } from '@/components/ui/GoldenGlowButton';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { PressableCard } from '@/components/ui/PressableCard';
 import { useSupplementSaver } from '@/hooks/useSupplementSaver';
 import { defaultPlans } from '@/locales/defaultPlans';
 import { useSupplementMap } from '@/locales/supplements';
 import { Tip, tips } from '@/locales/tips';
-import { createPlan } from '@/services/gptServices';
 
 import { Plan } from '../../domain/Plan';
 import { Supplement } from '../../domain/Supplement';
@@ -51,14 +51,13 @@ export default function Plans() {
 
   const [supplement, setSupplement] = useState<Supplement | null>(null);
 
-  const { plans, setPlans, errorMessage, trainingPlanSettings, setTrainingPlanSettings, myGoals, myLevel } = useStorage();
-    const handleCreatePlan = async () => {
-    const locale = i18n.language?.startsWith('sv') ? 'sv' : 'en';
-    const res = await createPlan(plans, myGoals, myLevel, locale);
-    setPlans(res.plans);
+  const { plans, setPlans, errorMessage, trainingPlanSettings, setTrainingPlanSettings } = useStorage();
+
+  const handleGoToCreatePlan = () => {
+    router.push('/(tabs)/plan/create');
   };
 
-  const { t, i18n } = useTranslation(['common', 'areas', 'tips']);
+  const { t } = useTranslation(['common', 'areas', 'tips']);
   const supplementMap = useSupplementMap();
 
   const supplementPlans = plans.supplements;
@@ -192,9 +191,9 @@ export default function Plans() {
     const updatedPlans = supplementPlans.map(plan =>
       plan.name === planName
         ? {
-            ...plan,
-            supplements: plan.supplements.filter(sup => sup.name !== supplementName),
-          }
+          ...plan,
+          supplements: plan.supplements.filter(sup => sup.name !== supplementName),
+        }
         : plan
     );
     savePlans(updatedPlans);
@@ -242,9 +241,9 @@ export default function Plans() {
     const displayTitle =
       !isExpanded && supplementCount > 0
         ? `${baseTitle} - ${t('plan.supplementCountLabel', {
-            count: supplementCount,
-            defaultValue: `${supplementCount} tillskott`,
-          })}`
+          count: supplementCount,
+          defaultValue: `${supplementCount} tillskott`,
+        })}`
         : baseTitle;
 
     const editLabel = t('plan.editTimeSlot', { defaultValue: 'Redigera' });
@@ -276,39 +275,44 @@ export default function Plans() {
     );
 
     return (
-        <AppBox
-          title={displayTitle}
-          headerRight={headerActions}
-          onPressHeader={() => togglePlanExpanded(planKey)}
-          headerAccessibilityLabel={t('plan.toggleSupplements', {
-            defaultValue: 'Visa eller dölj innehåll',
-          })}
-          leading={
-            <IconSymbol
-              name="chevron.right"
-              size={16}
-              color={colors.icon}
-              style={{ transform: [{ rotate: isExpanded ? '90deg' : '0deg' }] }}
-            />
-          }
-        >
-          {isExpanded && (
-            <View>
-              {supplements.map(sup => renderSupplementItem(plan.name, sup))}
-              {errorMessage && <ThemedText type="caption" style={{ color: colors.error }}>{errorMessage}</ThemedText>}
-              <View style={styles.planAddButtonWrapper}>
-                <AppButton
-                  title={t('plan.addSupplement')}
-                  onPress={() => {
-                    setIsEditingSupplement(false);
-                    setPlanForSupplementEdit(plan);
-                  }}
-                  variant="primary"
-                />
-              </View>
+      <AppBox
+        title={displayTitle}
+        headerRight={headerActions}
+        onPressHeader={() => togglePlanExpanded(planKey)}
+        headerAccessibilityLabel={t('plan.toggleSupplements', {
+          defaultValue: 'Visa eller dölj innehåll',
+        })}
+        leading={
+          <IconSymbol
+            name="chevron.right"
+            size={16}
+            color={colors.icon}
+            style={{ transform: [{ rotate: isExpanded ? '90deg' : '0deg' }] }}
+          />
+        }
+      >
+        {!!plan.reason && (
+          <ThemedText type="caption" style={styles.reasonText}>
+            {plan.reason}
+          </ThemedText>
+        )}
+        {isExpanded && (
+          <View>
+            {supplements.map(sup => renderSupplementItem(plan.name, sup))}
+            {errorMessage && <ThemedText type="caption" style={{ color: colors.error }}>{errorMessage}</ThemedText>}
+            <View style={styles.planAddButtonWrapper}>
+              <AppButton
+                title={t('plan.addSupplement')}
+                onPress={() => {
+                  setIsEditingSupplement(false);
+                  setPlanForSupplementEdit(plan);
+                }}
+                variant="primary"
+              />
             </View>
-          )}
-        </AppBox>
+          </View>
+        )}
+      </AppBox>
     );
   };
 
@@ -409,6 +413,11 @@ export default function Plans() {
           title={tipTitle ?? t('plan.untitled', { defaultValue: 'Utan titel' })}
           headerRight={editAction}
         >
+          {!!goal.reason && (
+            <ThemedText type="caption" style={styles.reasonText}>
+              {goal.reason}
+            </ThemedText>
+          )}
           <ThemedText type="default" style={styles.trainingMeta}>
             {t('plan.trainingActiveSince', {
               date: formatDate(goal.startedAt),
@@ -438,7 +447,6 @@ export default function Plans() {
       );
     });
   };
-
 
   const renderNutritionGoals = () => {
     if (!nutritionGroups.length) {
@@ -473,8 +481,15 @@ export default function Plans() {
       const hasExtraFoods = hiddenCount > 0;
       const arrowRotation = isExpanded ? '90deg' : '0deg';
 
+      const reason = nutritionGoals.find(g => g.tipId === tipId)?.reason;
+
       return (
         <AppBox key={tipId} title={tipTitle}>
+          {!!reason && (
+            <ThemedText type="caption" style={styles.reasonText}>
+              {reason}
+            </ThemedText>
+          )}
           {recommendedDoseLabel && (
             <ThemedText type="default" style={styles.recommendedDose}>
               {recommendedDoseLabel}
@@ -504,17 +519,17 @@ export default function Plans() {
                   <ThemedText type="default">
                     {isExpanded
                       ? t('plan.hideNutritionFoods', {
-                          defaultValue: 'Visa färre',
-                        })
+                        defaultValue: 'Visa färre',
+                      })
                       : t('plan.showMoreNutritionFoods', {
-                          count: hiddenCount,
-                          defaultValue: `${hiddenCount}st`,
-                        })}
+                        count: hiddenCount,
+                        defaultValue: `${hiddenCount}st`,
+                      })}
                   </ThemedText>
                   <IconSymbol
                     name="chevron.right"
                     size={18}
-                    color={colors.icon }
+                    color={colors.icon}
                     style={[styles.toggleBadgeIcon, { transform: [{ rotate: arrowRotation }] }]}
                   />
                 </Badge>
@@ -536,6 +551,7 @@ export default function Plans() {
     }
 
     return otherGoals.map((goal, index) => {
+      console.log('[plan] other goal:', goal);
       const tipTitle = goal.tipId
         ? t(`tips:${goal.tipId}.title`, { defaultValue: goal.tipId })
         : t('plan.untitled', { defaultValue: 'Utan titel' });
@@ -545,7 +561,11 @@ export default function Plans() {
           key={goal.tipId ?? `other-${index}`}
           title={tipTitle}
         >
-          {tipTitle}
+          {!!goal.reason && (
+            <ThemedText type="caption" style={styles.reasonText}>
+              {goal.reason}
+            </ThemedText>
+          )}
         </AppBox>
       );
     });
@@ -553,45 +573,50 @@ export default function Plans() {
 
   return (
     <Container background="gradient">
-      <GoldenGlowButton style={styles.glowCard} title="✨ Skapa plan med AI" onPress={handleCreatePlan} />
-        <View style={styles.sectionsContainer}>
-          <View style={styles.sectionBlock}>
-            <Collapsible
-              title={t('plan.trainingHeader')}
-              contentStyle={styles.collapsibleContentFlush}
-            >
-              {renderTrainingGoals()}
-            </Collapsible>
-          </View>
-          <View style={styles.sectionBlock}>
-            <Collapsible title={t('plan.nutritionHeader')} contentStyle={styles.collapsibleContentFlush}>
-              {renderNutritionGoals()}
-            </Collapsible>
-          </View>
-          <View style={styles.sectionBlock}>
-            <Collapsible title={t('plan.supplementSectionTitle')} contentStyle={styles.collapsibleContentFlush}>
-              <View>{renderSupplementPlans()}</View>
-              <View style={styles.addTimeSlotButtonWrapper}>
-                <AppButton
-                  title={t('plan.addTimeSlot')}
-                  onPress={() => {
-                    setIsEditingPlan(false);
-                    setSelectedPlan(null);
-                    setPlanForSupplementEdit(null);
-                    setSupplement(null);
-                    setModalVisible(true);
-                  }}
-                  variant="primary"
-                />
-              </View>
-            </Collapsible>
-          </View>
-          <View style={styles.sectionBlock}>
-            <Collapsible title={t('plan.otherHeader', { defaultValue: 'Övrigt' })} contentStyle={styles.collapsibleContentFlush}>
-              {renderOtherGoals()}
-            </Collapsible>
-          </View>
+      <PressableCard style={styles.aiCard} onPress={handleGoToCreatePlan}>
+        <ThemedText type="title3" style={styles.aiCardText}>✨ Skapa plan med AI</ThemedText>
+        <ThemedText type="default" style={styles.aiCardDescription}>
+          Låt AI skapa ett personligt förslag
+        </ThemedText>
+      </PressableCard>
+      <View style={styles.sectionsContainer}>
+        <View style={styles.sectionBlock}>
+          <Collapsible
+            title={t('plan.trainingHeader')}
+            contentStyle={styles.collapsibleContentFlush}
+          >
+            {renderTrainingGoals()}
+          </Collapsible>
         </View>
+        <View style={styles.sectionBlock}>
+          <Collapsible title={t('plan.nutritionHeader')} contentStyle={styles.collapsibleContentFlush}>
+            {renderNutritionGoals()}
+          </Collapsible>
+        </View>
+        <View style={styles.sectionBlock}>
+          <Collapsible title={t('plan.supplementSectionTitle')} contentStyle={styles.collapsibleContentFlush}>
+            <View>{renderSupplementPlans()}</View>
+            <View style={styles.addTimeSlotButtonWrapper}>
+              <AppButton
+                title={t('plan.addTimeSlot')}
+                onPress={() => {
+                  setIsEditingPlan(false);
+                  setSelectedPlan(null);
+                  setPlanForSupplementEdit(null);
+                  setSupplement(null);
+                  setModalVisible(true);
+                }}
+                variant="primary"
+              />
+            </View>
+          </Collapsible>
+        </View>
+        <View style={styles.sectionBlock}>
+          <Collapsible title={t('plan.otherHeader', { defaultValue: 'Övrigt' })} contentStyle={styles.collapsibleContentFlush}>
+            {renderOtherGoals()}
+          </Collapsible>
+        </View>
+      </View>
       <Portal>
         <CreateTimeSlotModal
           visible={modalVisible}
@@ -625,11 +650,11 @@ export default function Plans() {
           onDelete={
             isEditingPlan && selectedPlan
               ? () => {
-                  handleRemovePlan(selectedPlan.name);
-                  setModalVisible(false);
-                  setIsEditingPlan(false);
-                  setSelectedPlan(null);
-                }
+                handleRemovePlan(selectedPlan.name);
+                setModalVisible(false);
+                setIsEditingPlan(false);
+                setSelectedPlan(null);
+              }
               : undefined
           }
         />
@@ -698,13 +723,6 @@ export default function Plans() {
 }
 
 const styles = StyleSheet.create({
-  glowCard: {
-    marginTop: 60,
-  },
-  glowCardText: {
-    textAlign: 'center',
-    paddingHorizontal: 16,
-  },
   sectionsContainer: {
     paddingTop: 100,
     paddingHorizontal: 20,
@@ -780,5 +798,20 @@ const styles = StyleSheet.create({
   },
   toggleBadgeIcon: {
     marginLeft: 6,
+  },
+  reasonText: {
+    marginBottom: 6,
+  },
+  aiCard: {
+    marginTop: 60,
+  },
+  aiCardText: {
+    textAlign: 'center',
+    paddingHorizontal: 16,
+  },
+  aiCardDescription: {
+    textAlign: 'center',
+    opacity: 0.7,
+    marginTop: 4,
   },
 });
