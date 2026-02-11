@@ -59,7 +59,7 @@ const AppButton: React.FC<AppButtonProps> = ({
         styles.button,
         buttonVariantStyle,
         isPrimary && glow && {
-          backgroundColor: colors.background,
+          backgroundColor: colors.buttonGlowBackground,
           ...(Platform.OS === 'ios'
             ? {
                 shadowColor: colors.buttonGlow,
@@ -68,7 +68,7 @@ const AppButton: React.FC<AppButtonProps> = ({
                 shadowRadius: 8,
               }
             : {
-                elevation: 6,
+                elevation: 14,
               }),
         },
         disabled && styles.disabled,
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   },
   textShadow: {
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 2,
+    textShadowRadius: 1,
   },
 });
 

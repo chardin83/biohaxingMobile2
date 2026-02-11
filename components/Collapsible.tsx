@@ -10,14 +10,16 @@ export function Collapsible({
   title,
   rightContent,
   contentStyle,
-  accessibilityLabel, // Lägg till denna prop
+  accessibilityLabel,
+  initialCollapsed = false, // ny prop
 }: PropsWithChildren & {
   title: string;
   rightContent?: React.ReactNode;
   contentStyle?: StyleProp<ViewStyle>;
-  accessibilityLabel?: string; // Lägg till denna rad
+  accessibilityLabel?: string;
+  initialCollapsed?: boolean; // ny prop
 }) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(!initialCollapsed);
   const { colors } = useTheme();
 
   return (

@@ -23,6 +23,8 @@ export const Colors = {
     checkmarkMeal: '#2EC4B6',//'#00FFC8',
     checkmarkSupplement: '#8EDB6D',//'#CBEA3C',
     xp:'#CBEA3C',
+
+    buttonGlowBackground: 'rgba(4,26,34,0.1)',
     buttonGlow: '#00bfaecc',
     buttonTextGlow: '#00bfae88',
     assistantBubble: '#73CEC0',
@@ -145,6 +147,7 @@ export const Colors = {
     checkmarkMeal: '#00FFC8',
     checkmarkSupplement: '#C3FF00',
     xp:'#B6F000',
+    buttonGlowBackground: 'rgba(4,26,34,0.2)',
     buttonGlow: '#00ffffcc',
     buttonTextGlow: '#00ffff88',
     assistantBubble: '#2C2C2C',
