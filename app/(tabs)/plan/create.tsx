@@ -2,16 +2,17 @@ import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator,StyleSheet, View  } from 'react-native';
 
+import ShowAllButton from '@/app/(tabs)/dashboard/area/[areaId]/details/ShowAllButton';
 import { useStorage } from '@/app/context/StorageContext';
 import { Collapsible } from '@/components/Collapsible';
+import { GradientText } from '@/components/GradientText';
 import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
 import { GoldenGlowButton } from '@/components/ui/GoldenGlowButton';
-import { Loading } from '@/components/ui/Loading';
 import { tips } from '@/locales/tips';
 import { createPlan } from '@/services/gptServices';
 
@@ -22,15 +23,14 @@ export default function CreatePlanScreen() {
     const { plans, tempPlans, setTempPlans, setPlans, myGoals, myLevel } = useStorage();
 
     const [loading, setLoading] = React.useState(false);
+    const [showAllReason, setShowAllReason] = React.useState(false);
+    const reasonSummary = tempPlans?.reasonSummary ?? '';
+    const reasonTooLong = reasonSummary.length > 300; // Justera om du vill, eller mät rader
 
     const newSupplementCount = useMemo(
         () => (tempPlans?.supplements ?? []).reduce((acc, p) => acc + (p.supplements?.length ?? 0), 0),
         [tempPlans]
     );
-
-    if (loading) {
-        return <Loading />;
-    }
     const newTrainingCount = tempPlans?.training?.length ?? 0;
     const newNutritionCount = tempPlans?.nutrition?.length ?? 0;
     const newOtherCount = tempPlans?.other?.length ?? 0;
@@ -119,11 +119,13 @@ export default function CreatePlanScreen() {
     };
 
     return (
-        <Container background="gradient">
+        <Container background="gradient" showBackButton onBackPress={() => router.replace('/(tabs)/plan')  }>
             <Card style={styles.card}>
-                <ThemedText type="title" style={[styles.title, { color: colors.goldSoft }]}>
-                    {t('createPlan.title')}
-                </ThemedText>
+                <View style={styles.title}>
+                    <GradientText>
+                        {t('createPlan.title')}
+                    </GradientText>
+                </View>
                 <GoldenGlowButton
                     style={styles.noMarginBottom}
                     title={t('createPlan.createAIPlan')}
@@ -137,13 +139,22 @@ export default function CreatePlanScreen() {
                     }
                     disabled={!!tempPlans || loading}
                 />
-                {loading && <Loading />}
+                {loading && (
+                    <View style={styles.loadingWrapper}>
+                        <View style={styles.loadingRow}>
+                            <ActivityIndicator size="large" color={colors.gold} />
+                            <ThemedText type="caption" style={styles.loadingText}>
+                                {t('createPlan.creatingAIPlan')}
+                            </ThemedText>
+                        </View>
+                    </View>
+                )}
                 {tempPlans && (
                     <ThemedText type="caption" style={styles.captionInfo}>
                         {t('createPlan.createAIPlanHint')}
                     </ThemedText>
                 )}
-                {!tempPlans && (
+                {!tempPlans && !loading && (
                     <ThemedText type="default" style={styles.introInfo}>
                         {t('createPlan.intro')}
                     </ThemedText>
@@ -155,9 +166,19 @@ export default function CreatePlanScreen() {
                             type="default"
                             style={styles.reasonText}
                             accessibilityLabel={`AI-planens sammanfattning: ${tempPlans.reasonSummary}`}
+                            numberOfLines={showAllReason ? undefined : 5}
                         >
                             {tempPlans.reasonSummary}
                         </ThemedText>
+                        {reasonTooLong && (
+                            <ShowAllButton
+                                showAll={showAllReason}
+                                onPress={() => setShowAllReason(v => !v)}
+                                accentColor={colors.gold}
+                                style={styles.showAllButton}
+                                showAllText={t('createPlan.showAll')}
+                            />
+                        )}
                     </>
                 )}
 
@@ -238,7 +259,7 @@ export default function CreatePlanScreen() {
 
 const styles = StyleSheet.create({
     card: {
-        marginTop: 60,
+        marginTop: 30,
         marginHorizontal: 16,
         padding: 16,
     },
@@ -246,7 +267,6 @@ const styles = StyleSheet.create({
         marginBottom: 0,
     },
     title: {
-        textAlign: 'center',
         marginBottom: 30,
     },
     collapsibleContent: {
@@ -276,11 +296,12 @@ const styles = StyleSheet.create({
         marginBottom: 12,
     },
     introInfo: {
-        marginTop: 40,
-        marginBottom: 40,
+        marginTop: 80,      // Mer utrymme över
+        marginBottom: 80,   // Mer utrymme under
         textAlign: 'center',
         opacity: 0.7,
-        maxWidth: "90%"
+        maxWidth: "90%",
+        alignSelf: 'center', // Centrerar i Card
     },
     sectionHeaderRow: {
         flexDirection: 'row',
@@ -296,6 +317,27 @@ const styles = StyleSheet.create({
     sectionHeaderText: {
         fontWeight: 'bold',
         letterSpacing: 1,
+    },
+    showAllButton: {
+        alignSelf: 'flex-end',
+        marginBottom: 8,
+    },
+    loadingRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 16,
+        gap: 12,
+    },
+    loadingText: {
+        fontSize: 16,
+        opacity: 0.7,
+    },
+    loadingWrapper: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 80,
+        marginBottom: 80,
     },
 });
 

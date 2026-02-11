@@ -24,6 +24,8 @@ import { tips } from '@/locales/tips';
 import { PlanCategory } from '@/types/planCategory';
 import { POSITIVE_VERDICTS } from '@/types/verdict';
 
+import ShowAllButton from './ShowAllButton';
+
 
   function getAreaIconColor(areaId: string, colors: any) {
   switch (areaId) {
@@ -701,7 +703,8 @@ function AreaRelevanceSection({
         );
       })}
       {tip.areas.length > 1 && (
-        <Pressable
+        <ShowAllButton
+          showAll={showAllAreas}
           onPress={() => {
             setShowAllAreas(v => {
               const next = !v;
@@ -719,11 +722,9 @@ function AreaRelevanceSection({
             });
           }}
           style={styles.showAllButton}
-        >
-          <ThemedText type="caption" style={[styles.showAllText, { color: colors.accentDefault }]}>
-            {showAllAreas ? t('common:goalDetails.showLess') : t('common:goalDetails.showAll')}
-          </ThemedText>
-        </Pressable>
+          textStyle={styles.showAllText}
+          accentColor={colors.accentDefault}
+        />
       )}
     </>
   );

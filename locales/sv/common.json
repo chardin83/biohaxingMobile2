@@ -56,7 +56,9 @@
     "save": "Spara",
     "countSuffix": "st",
     "sleep": "sömn",
-    "level": "level"
+    "level": "level",
+    "showAll": "Visa alla",
+    "showLess": "Visa mindre"
   },
   "layout": {
     "dashboard": "Dashboard",
@@ -127,7 +129,9 @@
     "existing": "Befintliga",
     "none": "Inget",
     "acceptAIPlan": "Godkänn AI‑plan",
-    "untitled": "Utan titel"
+    "untitled": "Utan titel",
+    "showAll": "Visa allt",
+    "creatingAIPlan": "Skapar AI-plan"
   },
   "supplementForm": {
     "dosage": "Dos",
@@ -212,8 +216,6 @@
     "verdictNoResearch": "Inte stöd i forskning",
     "verdictTestedFailed": "Redan testad - funkade inte",
     "relevance": "Varför detta är viktigt",
-    "showAll": "Visa alla",
-    "showLess": "Visa mindre",
     "whatAreTheRisks": "Vilka risker finns?",
     "whatStudiesExist": "Vilka studier finns?",
     "whoAreTheExperts": "Vilka experter finns?",

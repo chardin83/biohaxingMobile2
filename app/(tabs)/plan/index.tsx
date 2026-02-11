@@ -551,7 +551,6 @@ export default function Plans() {
     }
 
     return otherGoals.map((goal, index) => {
-      console.log('[plan] other goal:', goal);
       const tipTitle = goal.tipId
         ? t(`tips:${goal.tipId}.title`, { defaultValue: goal.tipId })
         : t('plan.untitled', { defaultValue: 'Utan titel' });
@@ -560,13 +559,7 @@ export default function Plans() {
         <AppBox
           key={goal.tipId ?? `other-${index}`}
           title={tipTitle}
-        >
-          {!!goal.reason && (
-            <ThemedText type="caption" style={styles.reasonText}>
-              {goal.reason}
-            </ThemedText>
-          )}
-        </AppBox>
+        >-</AppBox>
       );
     });
   };

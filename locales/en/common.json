@@ -55,7 +55,9 @@
     "close": "Close",
     "save": "Save",
     "countSuffix": "pcs",
-    "level": "level"
+    "level": "level",
+    "showAll": "Show all",
+    "showLess": "Show less"
   },
   "layout": {
     "dashboard": "Dashboard",
@@ -127,7 +129,9 @@
     "existing": "Existing",
     "none": "None",
     "acceptAIPlan": "Accept AI plan",
-    "untitled": "Untitled"
+    "untitled": "Untitled",
+    "showAll": "Show all",
+    "creatingAIPlan": "Creating AI plan"
   },
   "supplementForm": {
     "dosage": "Dosage",
@@ -208,8 +212,6 @@
     "verdictNoResearch": "No research support",
     "verdictTestedFailed": "Already tested - didn't work",
     "relevance": "Why this matters",
-    "showAll": "Show all",
-    "showLess": "Show less",
     "whatAreTheRisks": "What are the risks?",
     "whatStudiesExist": "What studies exist?",
     "whoAreTheExperts": "Who are the experts?",
