@@ -33,16 +33,16 @@ export default function CreatePlanScreen() {
   const newNutritionCount = tempPlans?.nutrition?.length ?? 0;
   const newOtherCount = tempPlans?.other?.length ?? 0;
 
-  const renderList = (items: string[]) =>
+  const renderList = (items: string[], emoji: string = '✨') =>
     items.length ? (
       items.map((item, idx) => (
         <ThemedText key={`${item}-${idx}`} type="default" style={styles.listItem}>
-          • {item}
+          {emoji} {item}
         </ThemedText>
       ))
     ) : (
       <ThemedText type="default" style={styles.muted}>
-        {t('plan.none', { defaultValue: 'Inget' })}
+        {t('createPlan.none')}
       </ThemedText>
     );
 
@@ -56,7 +56,7 @@ export default function CreatePlanScreen() {
   );
 
   const tipTitleById = (id?: string) => {
-    if (!id) return t('plan.untitled', { defaultValue: 'Utan titel' });
+    if (!id) return t('createPlan.untitled');
     const tip = tips.find(candidate => candidate.id === id);
     return t(`tips:${id}.title`, { defaultValue: tip?.title ?? id });
   };
@@ -94,77 +94,95 @@ export default function CreatePlanScreen() {
   return (
     <Container background="gradient">
       <Card style={styles.card}>
-        {tempPlans == null ? (
-          <GoldenGlowButton
-            style={{ marginBottom: 24 }}
-            title="✨ Skapa AI-plan"
-            onPress={handleCreatePlan}
-          />
-        ) : (
+        <GoldenGlowButton
+          style={styles.noMarginBottom}
+          title={t('createPlan.createAIPlan')}
+          onPress={handleCreatePlan}
+          accessibilityLabel={t('createPlan.createAIPlanLabel')}
+          accessibilityRole="button"
+          accessibilityHint={
+            tempPlans
+              ? t('createPlan.createAIPlanHint')
+              : undefined
+          }
+          disabled={!!tempPlans || loading}
+        />
+        {loading && <Loading />}
+        {tempPlans && (
+          <ThemedText type="caption" style={styles.captionInfo}>
+            {t('createPlan.createAIPlanHint')}
+          </ThemedText>
+        )}
+        {tempPlans && (
           <>
-            {/* Visa reason överst */}
             {tempPlans.reasonSummary && (
-              <ThemedText type="default" style={styles.reasonText}>
+              <ThemedText
+                type="default"
+                style={styles.reasonText}
+                accessibilityLabel={`AI-planens sammanfattning: ${tempPlans.reasonSummary}`}
+              >
                 {tempPlans.reasonSummary}
               </ThemedText>
             )}
-            {/* Collapsible-sektioner och godkänn/avbryt-knappar */}
             <Collapsible
-              title={t('plan.aiSupplements', {
-                defaultValue: `${newSupplementCount} nya kosttillskott`,
-              })}
+              title={t('createPlan.aiSupplements', { count: newSupplementCount })}
               contentStyle={styles.collapsibleContent}
+              accessibilityLabel={t('createPlan.aiSupplementsLabel')}
             >
-              <ThemedText type="defaultSemiBold">{t('plan.new', { defaultValue: 'Nya' })}</ThemedText>
-              {renderList(newSupplementItems)}
+              <ThemedText type="defaultSemiBold">{t('createPlan.new')}</ThemedText>
+              {renderList(newSupplementItems, '✨')}
               <ThemedText type="defaultSemiBold" style={styles.sectionSpacer}>
-                {t('plan.existing', { defaultValue: 'Befintliga' })}
+                {t('createPlan.existing')}
               </ThemedText>
-              {renderList(existingSupplementItems)}
+              {renderList(existingSupplementItems, '•')}
             </Collapsible>
             <Collapsible
-              title={t('plan.aiTraining', {
-                defaultValue: `${newTrainingCount} träningsplaner`,
-              })}
+              title={t('createPlan.aiTraining', { count: newTrainingCount })}
               contentStyle={styles.collapsibleContent}
+              accessibilityLabel={t('createPlan.aiTrainingLabel')}
             >
-              <ThemedText type="defaultSemiBold">{t('plan.new', { defaultValue: 'Nya' })}</ThemedText>
+              <ThemedText type="defaultSemiBold">{t('createPlan.new')}</ThemedText>
               {renderList(newTrainingItems)}
               <ThemedText type="defaultSemiBold" style={styles.sectionSpacer}>
-                {t('plan.existing', { defaultValue: 'Befintliga' })}
+                {t('createPlan.existing')}
               </ThemedText>
-              {renderList(existingTrainingItems)}
+              {renderList(existingTrainingItems, '•')}
             </Collapsible>
             <Collapsible
-              title={t('plan.aiNutrition', {
-                defaultValue: `${newNutritionCount} nutritionstips`,
-              })}
+              title={t('createPlan.aiNutrition', { count: newNutritionCount })}
               contentStyle={styles.collapsibleContent}
+              accessibilityLabel={t('createPlan.aiNutritionLabel')}
             >
-              <ThemedText type="defaultSemiBold">{t('plan.new', { defaultValue: 'Nya' })}</ThemedText>
+              <ThemedText type="defaultSemiBold">{t('createPlan.new')}</ThemedText>
               {renderList(newNutritionItems)}
               <ThemedText type="defaultSemiBold" style={styles.sectionSpacer}>
-                {t('plan.existing', { defaultValue: 'Befintliga' })}
+                {t('createPlan.existing')}
               </ThemedText>
-              {renderList(existingNutritionItems)}
+              {renderList(existingNutritionItems, '•')}
             </Collapsible>
             <Collapsible
-              title={t('plan.aiOther', {
-                defaultValue: `${newOtherCount} övriga tips`,
-              })}
+              title={t('createPlan.aiOther', { count: newOtherCount })}
               contentStyle={styles.collapsibleContent}
+              accessibilityLabel={t('createPlan.aiOtherLabel')}
             >
-              <ThemedText type="defaultSemiBold">{t('plan.new', { defaultValue: 'Nya' })}</ThemedText>
+              <ThemedText type="defaultSemiBold">{t('createPlan.new')}</ThemedText>
               {renderList(newOtherItems)}
               <ThemedText type="defaultSemiBold" style={styles.sectionSpacer}>
-                {t('plan.existing', { defaultValue: 'Befintliga' })}
+                {t('createPlan.existing')}
               </ThemedText>
-              {renderList(existingOtherItems)}
+              {renderList(existingOtherItems, '•')}
             </Collapsible>
 
             <View style={styles.buttonRow}>
-              <AppButton title={t('plan.acceptAIPlan', { defaultValue: 'Godkänn AI‑plan' })} onPress={handleAccept} />
-              <AppButton title={t('general.cancel', { defaultValue: 'Avbryt' })} onPress={handleCancel} variant="secondary" />
+              <AppButton
+                title={t('createPlan.acceptAIPlan')}
+                onPress={handleAccept}
+              />
+              <AppButton
+                title={t('general.cancel')}
+                onPress={handleCancel}
+                variant="secondary"
+              />
             </View>
           </>
         )}
@@ -178,6 +196,9 @@ const styles = StyleSheet.create({
     marginTop: 60,
     marginHorizontal: 16,
     padding: 16,
+  },
+  noMarginBottom: {
+    marginBottom: 0,
   },
   title: {
     textAlign: 'center',
@@ -205,5 +226,10 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     textAlign: 'center',
     opacity: 0.85,
+  },
+  captionInfo: {
+    textAlign: 'center',
+    opacity: 0.7,
+    marginBottom: 12,
   },
 });

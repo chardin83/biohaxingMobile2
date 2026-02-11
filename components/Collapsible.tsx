@@ -10,17 +10,26 @@ export function Collapsible({
   title,
   rightContent,
   contentStyle,
+  accessibilityLabel, // Lägg till denna prop
 }: PropsWithChildren & {
   title: string;
   rightContent?: React.ReactNode;
   contentStyle?: StyleProp<ViewStyle>;
+  accessibilityLabel?: string; // Lägg till denna rad
 }) {
   const [isOpen, setIsOpen] = useState(true);
   const { colors } = useTheme();
 
   return (
     <>
-      <TouchableOpacity style={styles.heading} onPress={() => setIsOpen(value => !value)} activeOpacity={0.8}>
+      <TouchableOpacity
+        style={styles.heading}
+        onPress={() => setIsOpen(value => !value)}
+        activeOpacity={0.8}
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel ?? title}
+        accessibilityState={{ expanded: isOpen }}
+      >
         <IconSymbol
           name="chevron.right"
           size={18}

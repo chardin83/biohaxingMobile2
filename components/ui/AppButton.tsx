@@ -15,6 +15,7 @@ interface AppButtonProps {
   disabled?: boolean;
   glow?: boolean;
   accessibilityLabel?: string;
+  accessibilityHint?: string; // Lägg till denna rad
 }
 
 const AppButton: React.FC<AppButtonProps> = ({
@@ -25,6 +26,7 @@ const AppButton: React.FC<AppButtonProps> = ({
   disabled = false,
   glow = false,
   accessibilityLabel,
+  accessibilityHint, // Lägg till denna rad
 }) => {
   const { colors } = useTheme();
 
@@ -74,6 +76,10 @@ const AppButton: React.FC<AppButtonProps> = ({
       ]}
       disabled={disabled}
       accessibilityLabel={accessibilityLabel || title}
+      accessibilityRole="button"
+      accessibilityState={{ disabled }}
+      accessibilityHint={accessibilityHint}
+      accessible={true}
     >
       <ThemedText
         type="defaultSemiBold"

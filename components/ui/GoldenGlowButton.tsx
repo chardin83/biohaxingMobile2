@@ -7,20 +7,26 @@ import { Platform, Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'rea
 import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
 
-interface CardProps {
+interface GoldenGlowButtonProps {
   title?: string;
   onPress?: () => void;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
   transparent?: boolean;
+  accessibilityLabel?: string;
+  accessibilityRole?: 'button' | 'link';
+  accessibilityHint?: string; // Lägg till denna rad
 }
 
-export const GoldenGlowButton: React.FC<CardProps> = ({
+export const GoldenGlowButton: React.FC<GoldenGlowButtonProps> = ({
   title,
   onPress,
   disabled = false,
   style,
   transparent = true,
+  accessibilityLabel,
+  accessibilityRole = 'button',
+  accessibilityHint, // Lägg till denna rad
 }) => {
   const { colors, dark } = useTheme();
   const borderRadius = globalStyles.borders?.borderRadius ?? 12;
@@ -34,8 +40,12 @@ export const GoldenGlowButton: React.FC<CardProps> = ({
     <Pressable
       onPress={onPress}
       disabled={disabled}
-      accessibilityRole="button"
       style={[styles.wrap, style, disabled && styles.disabled]}
+      accessibilityLabel={accessibilityLabel ?? title}
+      accessibilityRole={accessibilityRole}
+      accessibilityState={{ disabled }}
+      accessibilityHint={accessibilityHint}
+      accessible={true}
     >
       <View
         style={[

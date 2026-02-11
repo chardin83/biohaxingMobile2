@@ -109,6 +109,24 @@
     "alreadyInPlanNutrition": "Already in plan (diet)",
     "alreadyInPlanSupplement": "Already in plan (supplement)"
   },
+  "createPlan": {
+    "createAIPlan": "✨ Create AI-plan",
+    "createAIPlanLabel": "Create AI-plan",
+    "createAIPlanHint": "You must approve or cancel the current AI plan before creating a new one.",
+    "aiSupplements": "{{count}} new supplements",
+    "aiSupplementsLabel": "New supplements",
+    "aiTraining": "{{count}} training plans",
+    "aiTrainingLabel": "New training plans",
+    "aiNutrition": "{{count}} nutrition tips",
+    "aiNutritionLabel": "New nutrition tips",
+    "aiOther": "{{count}} other tips",
+    "aiOtherLabel": "New other tips",
+    "new": "New",
+    "existing": "Existing",
+    "none": "None",
+    "acceptAIPlan": "Accept AI plan",
+    "untitled": "Untitled"
+  },
   "supplementForm": {
     "dosage": "Dosage",
     "unit": "Unit"

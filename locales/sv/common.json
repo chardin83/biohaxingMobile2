@@ -109,6 +109,24 @@
     "alreadyInPlanNutrition": "Finns redan i planen (kost)",
     "alreadyInPlanSupplement": "Finns redan i planen (tillskott)"
   },
+  "createPlan": {
+    "createAIPlan": "✨ Skapa AI-plan",
+    "createAIPlanLabel": "Skapa AI-plan",
+    "createAIPlanHint": "Du måste godkänna eller avbryta nuvarande AI-plan innan du kan skapa en ny.",
+    "aiSupplements": "{{count}} nya kosttillskott",
+    "aiSupplementsLabel": "Nya kosttillskott",
+    "aiTraining": "{{count}} träningsplaner",
+    "aiTrainingLabel": "Nya träningsplaner",
+    "aiNutrition": "{{count}} nutritionstips",
+    "aiNutritionLabel": "Nya nutritionstips",
+    "aiOther": "{{count}} övriga tips",
+    "aiOtherLabel": "Nya övriga tips",
+    "new": "Nya",
+    "existing": "Befintliga",
+    "none": "Inget",
+    "acceptAIPlan": "Godkänn AI‑plan",
+    "untitled": "Utan titel"
+  },
   "supplementForm": {
     "dosage": "Dos",
     "unit": "Enhet"
