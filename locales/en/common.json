@@ -109,7 +109,9 @@
     "alreadyInPlan": "Already in plan",
     "alreadyInPlanTraining": "Already in plan (training)",
     "alreadyInPlanNutrition": "Already in plan (diet)",
-    "alreadyInPlanSupplement": "Already in plan (supplement)"
+    "alreadyInPlanSupplement": "Already in plan (supplement)",
+    "aiCreateTitle": "Create a plan with AI",
+    "aiCreateDescription": "Let AI create a personalized suggestion"
   },
   "createPlan": {
     "title": "AI-plan",

@@ -24,9 +24,9 @@ export const Colors = {
     checkmarkSupplement: '#8EDB6D',//'#CBEA3C',
     xp:'#CBEA3C',
 
-    buttonGlowBackground: 'rgba(4,26,34,0.1)',
-    buttonGlow: '#00bfaecc',
-    buttonTextGlow: '#00bfae88',
+    buttonGlowBackground: 'rgba(31, 174, 158, 0.18)',
+    buttonGlow: 'rgba(31, 174, 158, 0.85)',
+    buttonTextGlow: 'rgba(31, 174, 158, 0.6)',
     assistantBubble: '#73CEC0',
     userBubble: '#EEE6DA',
     delete: '#FF3B30',
@@ -115,6 +115,12 @@ export const Colors = {
       immuneSystem: 'rgba(120,220,220,0.95)',     // turkos (unik)
       // Lägg till fler områden vid behov
     },
+    goldGradient: [
+      '#C99700', // mörk guld
+      '#FFD700', // klassisk guld
+      '#FFB300', // djupare guld
+    ],
+    showAllAccent: 'rgba(199, 121, 36, 0.95)',
   },
   dark: {
      area: {
@@ -225,5 +231,11 @@ export const Colors = {
     surfaceRedBorder: 'rgba(255,100,100,0.3)',
     surfaceGreen: 'rgba(100,255,150,0.12)',
     surfaceGreenBorder: 'rgba(100,255,150,0.3)',
+
+     goldGradient: [
+      'rgba(255, 180, 80, 0.8)', // mörk guld
+      '#C99700', // mörk guld (nederst)
+      '#FFFBEA', // nästan vit (överst)
+    ],
   },
 };

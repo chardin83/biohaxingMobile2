@@ -2,7 +2,7 @@ import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator,StyleSheet, View  } from 'react-native';
+import { ActivityIndicator, StyleSheet, TouchableOpacity,View } from 'react-native';
 
 import ShowAllButton from '@/app/(tabs)/dashboard/area/[areaId]/details/ShowAllButton';
 import { useStorage } from '@/app/context/StorageContext';
@@ -27,25 +27,145 @@ export default function CreatePlanScreen() {
     const reasonSummary = tempPlans?.reasonSummary ?? '';
     const reasonTooLong = reasonSummary.length > 300; // Justera om du vill, eller mät rader
 
-    const newSupplementCount = useMemo(
-        () => (tempPlans?.supplements ?? []).reduce((acc, p) => acc + (p.supplements?.length ?? 0), 0),
-        [tempPlans]
-    );
-    const newTrainingCount = tempPlans?.training?.length ?? 0;
-    const newNutritionCount = tempPlans?.nutrition?.length ?? 0;
-    const newOtherCount = tempPlans?.other?.length ?? 0;
+    type ApprovalsState = {
+        supplements: Record<string, boolean>;
+        training: Record<string, boolean>;
+        nutrition: Record<string, boolean>;
+        other: Record<string, boolean>;
+    };
 
-    const renderNewList = (items: string[]) =>
+    const buildSupplementKey = (planName: string, preferredTime: string, supName: string) =>
+        `supp:${planName}:${preferredTime}:${supName}`;
+
+    const [approvals, setApprovals] = React.useState<ApprovalsState>({
+        supplements: {},
+        training: {},
+        nutrition: {},
+        other: {},
+    });
+
+    const tipTitleById = React.useCallback(
+        (id?: string) => {
+            if (!id) return t('createPlan.untitled');
+            const tip = tips.find(candidate => candidate.id === id);
+            return t(`tips:${id}.title`, { defaultValue: tip?.title ?? id });
+        },
+        [t]
+    );
+
+    const newSupplementItems = useMemo(() => tempPlans
+        ? (tempPlans.supplements ?? []).flatMap(plan =>
+            (plan.supplements ?? []).map(sup => ({
+                key: buildSupplementKey(plan.name, plan.prefferedTime, sup.name),
+                label: `${sup.name} (${plan.name} ${plan.prefferedTime})`,
+            }))
+        )
+        : [], [tempPlans]);
+
+    const newTrainingItems = useMemo(() => tempPlans
+        ? (tempPlans.training ?? []).map(tip => ({
+            key: `training:${tip.tipId}`,
+            label: tipTitleById(tip.tipId),
+        }))
+        : [], [tempPlans, tipTitleById]);
+
+    const newNutritionItems = useMemo(() => tempPlans
+        ? (tempPlans.nutrition ?? []).map(tip => ({
+            key: `nutrition:${tip.tipId}`,
+            label: tipTitleById(tip.tipId),
+        }))
+        : [], [tempPlans, tipTitleById]);
+
+    const newOtherItems = useMemo(() => tempPlans
+        ? (tempPlans.other ?? []).map(tip => ({
+            key: `other:${tip.tipId}`,
+            label: tipTitleById(tip.tipId),
+        }))
+        : [], [tempPlans, tipTitleById]);
+
+    const existingSupplementItems = useMemo(() => plans
+        ? (plans.supplements ?? []).flatMap(plan =>
+            (plan.supplements ?? []).map(sup => `${sup.name} (${plan.name} ${plan.prefferedTime})`)
+        )
+        : [], [plans]);
+
+    const existingTrainingItems = useMemo(() => plans
+        ? (plans.training ?? []).map(tip => tipTitleById(tip.tipId))
+        : [], [plans, tipTitleById]);
+
+    const existingNutritionItems = useMemo(() => plans
+        ? (plans.nutrition ?? []).map(tip => tipTitleById(tip.tipId))
+        : [], [plans, tipTitleById]);
+
+    const existingOtherItems = useMemo(() => plans
+        ? (plans.other ?? []).map(tip => tipTitleById(tip.tipId))
+        : [], [plans, tipTitleById]);
+
+    const newSupplementCount = newSupplementItems.length;
+    const newTrainingCount = newTrainingItems.length;
+    const newNutritionCount = newNutritionItems.length;
+    const newOtherCount = newOtherItems.length;
+
+    React.useEffect(() => {
+        if (!tempPlans) {
+            setApprovals({
+                supplements: {},
+                training: {},
+                nutrition: {},
+                other: {},
+            });
+            return;
+        }
+
+        const toMap = (items: { key: string }[]) =>
+            items.reduce<Record<string, boolean>>((acc, item) => {
+                acc[item.key] = true;
+                return acc;
+            }, {});
+
+        setApprovals({
+            supplements: toMap(newSupplementItems),
+            training: toMap(newTrainingItems),
+            nutrition: toMap(newNutritionItems),
+            other: toMap(newOtherItems),
+        });
+    }, [tempPlans, newSupplementItems, newTrainingItems, newNutritionItems, newOtherItems]);
+
+    const toggleApproval = (category: keyof ApprovalsState, key: string) => {
+        setApprovals(prev => ({
+            ...prev,
+            [category]: {
+                ...prev[category],
+                [key]: !prev[category][key],
+            },
+        }));
+    };
+
+    const renderNewList = (
+        items: { key: string; label: string }[],
+        category: keyof ApprovalsState
+    ) =>
         items.length ? (
-            items.map((item, idx) => (
-                <ThemedText
-                    key={`${item}-${idx}`}
-                    type="default"
-                    style={styles.listItem}
-                >
-                    ✨ {item}
-                </ThemedText>
-            ))
+            items.map((item, idx) => {
+                const checked = approvals[category]?.[item.key] ?? true;
+                return (
+                    <View key={`${item.key}-${idx}`} style={styles.listRow}>
+                        <TouchableOpacity
+                            onPress={() => toggleApproval(category, item.key)}
+                            style={styles.checkbox}
+                            accessibilityRole="checkbox"
+                            accessibilityState={{ checked }}
+                        >
+                            <ThemedText type="default" style={styles.checkboxIcon}>
+                                {checked ? '☑' : '☐'}
+                            </ThemedText>
+                        </TouchableOpacity>
+                        <ThemedText type="default" style={styles.listItem}>
+                            ✨ {item.label}
+                        </ThemedText>
+                    </View>
+                );
+            })
         ) : (
             <ThemedText type="default" style={styles.listItem}>
                 {t('createPlan.none')}
@@ -73,33 +193,36 @@ export default function CreatePlanScreen() {
         );
     };
 
-    const newSupplementItems = tempPlans
-        ? (tempPlans.supplements ?? []).flatMap(plan =>
-            (plan.supplements ?? []).map(sup => `${sup.name} (${plan.name} ${plan.prefferedTime})`)
-        )
-        : [];
-    const existingSupplementItems = (plans.supplements ?? []).flatMap(plan =>
-        (plan.supplements ?? []).map(sup => `${sup.name} (${plan.name} ${plan.prefferedTime})`)
-    );
-
-    const tipTitleById = (id?: string) => {
-        if (!id) return t('createPlan.untitled');
-        const tip = tips.find(candidate => candidate.id === id);
-        return t(`tips:${id}.title`, { defaultValue: tip?.title ?? id });
-    };
-
-    const newTrainingItems = tempPlans ? (tempPlans.training ?? []).map(tip => tipTitleById(tip.tipId)) : [];
-    const existingTrainingItems = (plans.training ?? []).map(tip => tipTitleById(tip.tipId));
-
-    const newNutritionItems = tempPlans ? (tempPlans.nutrition ?? []).map(tip => tipTitleById(tip.tipId)) : [];
-    const existingNutritionItems = (plans.nutrition ?? []).map(tip => tipTitleById(tip.tipId));
-
-    const newOtherItems = tempPlans ? (tempPlans.other ?? []).map(tip => tipTitleById(tip.tipId)) : [];
-    const existingOtherItems = (plans.other ?? []).map(tip => tipTitleById(tip.tipId));
-
     const handleAccept = () => {
         if (tempPlans) {
-            setPlans(tempPlans);
+            const filteredPlans = {
+                ...tempPlans,
+                supplements: (tempPlans.supplements ?? []).map(plan => ({
+                    ...plan,
+                    supplements: (plan.supplements ?? []).filter(sup => {
+                        const key = buildSupplementKey(plan.name, plan.prefferedTime, sup.name);
+                        const approved = approvals.supplements[key];
+                        return approved !== false;
+                    }),
+                })),
+                training: (tempPlans.training ?? []).filter(tip => {
+                    const key = `training:${tip.tipId}`;
+                    const approved = approvals.training[key];
+                    return approved !== false;
+                }),
+                nutrition: (tempPlans.nutrition ?? []).filter(tip => {
+                    const key = `nutrition:${tip.tipId}`;
+                    const approved = approvals.nutrition[key];
+                    return approved !== false;
+                }),
+                other: (tempPlans.other ?? []).filter(tip => {
+                    const key = `other:${tip.tipId}`;
+                    const approved = approvals.other[key];
+                    return approved !== false;
+                }),
+            };
+
+            setPlans(filteredPlans);
         }
         setTempPlans(null);
         router.push('/(tabs)/plan');
@@ -174,7 +297,7 @@ export default function CreatePlanScreen() {
                             <ShowAllButton
                                 showAll={showAllReason}
                                 onPress={() => setShowAllReason(v => !v)}
-                                accentColor={colors.gold}
+                                accentColor={colors.showAllAccent}
                                 style={styles.showAllButton}
                                 showAllText={t('createPlan.showAll')}
                             />
@@ -192,7 +315,7 @@ export default function CreatePlanScreen() {
                                 initialCollapsed={newSupplementItems.length === 0}
                             >
                                 <SectionHeader variant="primary">{t('createPlan.new')}</SectionHeader>
-                                {renderNewList(newSupplementItems)}
+                                {renderNewList(newSupplementItems, 'supplements')}
                                 <SectionHeader variant="dimmed">{t('createPlan.existing')}</SectionHeader>
                                 {renderExistingList(existingSupplementItems)}
                             </Collapsible>
@@ -205,7 +328,7 @@ export default function CreatePlanScreen() {
                                 initialCollapsed={newTrainingItems.length === 0}
                             >
                                 <SectionHeader variant="primary">{t('createPlan.new')}</SectionHeader>
-                                {renderNewList(newTrainingItems)}
+                                {renderNewList(newTrainingItems, 'training')}
                                 <SectionHeader variant="dimmed">{t('createPlan.existing')}</SectionHeader>
                                 {renderExistingList(existingTrainingItems)}
                             </Collapsible>
@@ -218,7 +341,7 @@ export default function CreatePlanScreen() {
                                 initialCollapsed={newNutritionItems.length === 0}
                             >
                                 <SectionHeader variant="primary">{t('createPlan.new')}</SectionHeader>
-                                {renderNewList(newNutritionItems)}
+                                {renderNewList(newNutritionItems, 'nutrition')}
                                 <SectionHeader variant="dimmed">{t('createPlan.existing')}</SectionHeader>
                                 {renderExistingList(existingNutritionItems)}
                             </Collapsible>
@@ -231,7 +354,7 @@ export default function CreatePlanScreen() {
                                 initialCollapsed={newOtherItems.length === 0}
                             >
                                 <SectionHeader variant="primary">{t('createPlan.new')}</SectionHeader>
-                                {renderNewList(newOtherItems)}
+                                {renderNewList(newOtherItems, 'other')}
                                 <SectionHeader variant="dimmed">{t('createPlan.existing')}</SectionHeader>
                                 {renderExistingList(existingOtherItems)}
                             </Collapsible>
@@ -338,6 +461,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 80,
         marginBottom: 80,
+    },
+    listRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 4,
+        gap: 8,
+    },
+    checkbox: {
+        paddingVertical: 2,
+        paddingHorizontal: 4,
+    },
+    checkboxIcon: {
+        fontSize: 16,
     },
 });
 

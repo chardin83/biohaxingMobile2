@@ -64,6 +64,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="checklist" color={color} />,
         }}
       />
+      <Tabs.Screen name="plan/create" options={{ href: null }} />
       <Tabs.Screen
         name="chat/index"
         options={{

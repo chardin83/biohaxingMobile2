@@ -17,7 +17,6 @@ import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
 import Badge from '@/components/ui/Badge';
 import Container from '@/components/ui/Container';
-import { GoldenGlowButton } from '@/components/ui/GoldenGlowButton';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { PressableCard } from '@/components/ui/PressableCard';
 import { useSupplementSaver } from '@/hooks/useSupplementSaver';
@@ -413,11 +412,6 @@ export default function Plans() {
           title={tipTitle ?? t('plan.untitled', { defaultValue: 'Utan titel' })}
           headerRight={editAction}
         >
-          {!!goal.reason && (
-            <ThemedText type="caption" style={styles.reasonText}>
-              {goal.reason}
-            </ThemedText>
-          )}
           <ThemedText type="default" style={styles.trainingMeta}>
             {t('plan.trainingActiveSince', {
               date: formatDate(goal.startedAt),
@@ -481,15 +475,8 @@ export default function Plans() {
       const hasExtraFoods = hiddenCount > 0;
       const arrowRotation = isExpanded ? '90deg' : '0deg';
 
-      const reason = nutritionGoals.find(g => g.tipId === tipId)?.reason;
-
       return (
         <AppBox key={tipId} title={tipTitle}>
-          {!!reason && (
-            <ThemedText type="caption" style={styles.reasonText}>
-              {reason}
-            </ThemedText>
-          )}
           {recommendedDoseLabel && (
             <ThemedText type="default" style={styles.recommendedDose}>
               {recommendedDoseLabel}
@@ -567,9 +554,11 @@ export default function Plans() {
   return (
     <Container background="gradient">
       <PressableCard style={styles.aiCard} onPress={handleGoToCreatePlan}>
-        <ThemedText type="title3" style={styles.aiCardText}>✨ Skapa plan med AI</ThemedText>
+        <ThemedText type="title3" style={styles.aiCardText}>
+          ✨ {t('plan.aiCreateTitle')}
+        </ThemedText>
         <ThemedText type="default" style={styles.aiCardDescription}>
-          Låt AI skapa ett personligt förslag
+          {t('plan.aiCreateDescription')}
         </ThemedText>
       </PressableCard>
       <View style={styles.sectionsContainer}>
@@ -717,7 +706,7 @@ export default function Plans() {
 
 const styles = StyleSheet.create({
   sectionsContainer: {
-    paddingTop: 100,
+    paddingTop: 50,
     paddingHorizontal: 20,
     paddingBottom: 24,
   },

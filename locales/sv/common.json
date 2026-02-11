@@ -131,7 +131,9 @@
     "acceptAIPlan": "Godkänn AI‑plan",
     "untitled": "Utan titel",
     "showAll": "Visa allt",
-    "creatingAIPlan": "Skapar AI-plan"
+    "creatingAIPlan": "Skapar AI-plan",
+    "aiCreateTitle": "Skapa plan med AI",
+    "aiCreateDescription": "Låt AI skapa ett personligt förslag"
   },
   "supplementForm": {
     "dosage": "Dos",

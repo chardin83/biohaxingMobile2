@@ -15,17 +15,12 @@ export function GradientText({
 }: Readonly<{
   children: React.ReactNode;
   style?: any;
-  colors?: string[];
+  colors?: [string, string, ...string[]];
   start?: { x: number; y: number };
   end?: { x: number; y: number };
 }>) {
   const scheme = useColorScheme() ?? 'light';
-  // Använd gold-färger från Colors som default
-  const defaultColors = [
-    Colors[scheme].goldenGlowButtonGlow,
-    Colors[scheme].goldSoft,
-    Colors[scheme].cardBorder,
-  ];
+  const defaultColors = (Colors[scheme] as any).goldGradient as [string, string, ...string[]];
 
   const flatStyle = StyleSheet.flatten([styles.text, style]);
   const fontSize = flatStyle?.fontSize ?? 28;
@@ -44,12 +39,13 @@ export function GradientText({
         colors={colors ?? defaultColors}
         start={start}
         end={end}
-        style={{
-          width: screenWidth - 32,
-          minWidth: 200,
-          height,
-          alignSelf: 'center',
-        }}
+        style={[
+          styles.gradient,
+          {
+            width: screenWidth - 32,
+            height,
+          },
+        ]}
       />
     </MaskedView>
   );
@@ -60,5 +56,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 28,
     textAlign: 'center',
+  },
+  gradient: {
+    minWidth: 200,
+    alignSelf: 'center',
   },
 });
