@@ -57,8 +57,8 @@ export default function CreatePlanScreen() {
     const newSupplementItems = useMemo(() => tempPlans
         ? (tempPlans.supplements ?? []).flatMap(plan =>
             (plan.supplements ?? []).map(sup => ({
-                key: buildSupplementKey(plan.name, plan.prefferedTime, sup.name),
-                label: `${sup.name} • ${plan.prefferedTime}`,
+                key: buildSupplementKey(plan.name, plan.prefferedTime, sup.supplement.name),
+                label: `${sup.supplement.name} • ${plan.prefferedTime}`,
             }))
         )
         : [], [tempPlans]);
@@ -86,7 +86,7 @@ export default function CreatePlanScreen() {
 
     const existingSupplementItems = useMemo(() => plans
         ? (plans.supplements ?? []).flatMap(plan =>
-            (plan.supplements ?? []).map(sup => `${sup.name} • ${plan.prefferedTime})`)
+            (plan.supplements ?? []).map(sup => `${sup.supplement.name} • ${plan.prefferedTime})`)
         )
         : [], [plans]);
 
@@ -201,31 +201,44 @@ export default function CreatePlanScreen() {
 
     const handleAccept = () => {
         if (tempPlans) {
+            const now = new Date().toISOString();
             const filteredPlans = {
                 ...tempPlans,
                 supplements: (tempPlans.supplements ?? []).map(plan => ({
                     ...plan,
                     supplements: (plan.supplements ?? []).filter(sup => {
-                        const key = buildSupplementKey(plan.name, plan.prefferedTime, sup.name);
+                        const key = buildSupplementKey(plan.name, plan.prefferedTime, sup.supplement.name);
                         const approved = approvals.supplements[key];
                         return approved !== false;
-                    }),
+                    }).map(sup => ({
+                        ...sup,
+                        startedAt: sup.startedAt ?? now,
+                    })),
                 })),
                 training: (tempPlans.training ?? []).filter(tip => {
                     const key = `training:${tip.tipId}`;
                     const approved = approvals.training[key];
                     return approved !== false;
-                }),
+                }).map(tip => ({
+                    ...tip,
+                    startedAt: tip.startedAt ?? now,
+                })),
                 nutrition: (tempPlans.nutrition ?? []).filter(tip => {
                     const key = `nutrition:${tip.tipId}`;
                     const approved = approvals.nutrition[key];
                     return approved !== false;
-                }),
+                }).map(tip => ({
+                    ...tip,
+                    startedAt: tip.startedAt ?? now,
+                })),
                 other: (tempPlans.other ?? []).filter(tip => {
                     const key = `other:${tip.tipId}`;
                     const approved = approvals.other[key];
                     return approved !== false;
-                }),
+                }).map(tip => ({
+                    ...tip,
+                    startedAt: tip.startedAt ?? now,
+                })),
             };
 
             setPlans(filteredPlans);

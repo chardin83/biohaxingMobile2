@@ -1,6 +1,6 @@
 import { useStorage } from '@/app/context/StorageContext';
 import { Plan } from '@/app/domain/Plan';
-import { Supplement } from '@/app/domain/Supplement';
+import { SupplementPlanEntry } from '@/app/domain/SupplementPlanEntry';
 
 export const useSupplementSaver = () => {
   const { plans, setPlans, setErrorMessage } = useStorage();
@@ -8,7 +8,7 @@ export const useSupplementSaver = () => {
 
   const saveSupplementToPlan = (
     selectedPlan: Plan,
-    supplement: Supplement,
+    supplement: SupplementPlanEntry,
     isEditingSupplement: boolean,
     setSelectedPlan?: (plan: Plan | null) => void
   ) => {
@@ -29,17 +29,17 @@ export const useSupplementSaver = () => {
         const updatedPlan = {
           ...existingPlan,
           supplements: existingPlan.supplements.map(existingSupplement =>
-            existingSupplement.name === supplement.name ? supplement : existingSupplement
+            existingSupplement.supplement.name === supplement.supplement.name ? supplement : existingSupplement
           ),
         };
         updatedPlans = supplementPlans.map(plan => (plan.name === existingPlan.name ? updatedPlan : plan));
         setSelectedPlan?.(updatedPlan);
       } else {
         const supplementExists = existingPlan.supplements.some(
-          existingSupplement => existingSupplement.name === supplement.name
+          existingSupplement => existingSupplement.supplement.name === supplement.supplement.name
         );
         if (supplementExists) {
-          setErrorMessage?.(`Tillskottet "${supplement.name}" finns redan i planen.`);
+          setErrorMessage?.(`Tillskottet "${supplement.supplement.name}" finns redan i planen.`);
           setTimeout(() => setErrorMessage?.(null), 5000);
           return;
         }

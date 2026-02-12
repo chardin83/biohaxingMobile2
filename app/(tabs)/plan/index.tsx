@@ -6,6 +6,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
 import { useStorage } from '@/app/context/StorageContext';
+import { SupplementPlanEntry } from '@/app/domain/SupplementPlanEntry';
 import { Collapsible } from '@/components/Collapsible';
 import CreateTimeSlotModal from '@/components/modals/CreateTimeSlotModal';
 import TrainingSettingsModal from '@/components/modals/TrainingSettingsModal';
@@ -25,7 +26,6 @@ import { useSupplementMap } from '@/locales/supplements';
 import { Tip, tips } from '@/locales/tips';
 
 import { Plan } from '../../domain/Plan';
-import { Supplement } from '../../domain/Supplement';
 
 // Plan category mapping not currently used; remove to avoid unused warnings
 
@@ -62,7 +62,7 @@ export default function Plans() {
 
   const { saveSupplementToPlan } = useSupplementSaver();
 
-  const [supplement, setSupplement] = useState<Supplement | null>(null);
+  const [supplement, setSupplement] = useState<SupplementPlanEntry | null>(null);
 
   const { plans, setPlans, errorMessage, trainingPlanSettings, setTrainingPlanSettings } = useStorage();
 
@@ -205,7 +205,7 @@ export default function Plans() {
       plan.name === planName
         ? {
           ...plan,
-          supplements: plan.supplements.filter(sup => sup.name !== supplementName),
+          supplements: plan.supplements.filter(sup => sup.supplement.name !== supplementName),
         }
         : plan
     );
@@ -215,7 +215,7 @@ export default function Plans() {
   const handleEditSupplement = (planName: string, supplementTitle: string) => {
     const plan = supplementPlans.find(p => p.name === planName) || null;
     setPlanForSupplementEdit(plan);
-    const sup = plan?.supplements.find(s => s.name === supplementTitle) || null;
+    const sup = plan?.supplements.find(s => s.supplement.name === supplementTitle) || null;
     setSupplement(sup || null);
     setIsEditingSupplement(true);
   };
@@ -343,9 +343,9 @@ export default function Plans() {
     return supplementPlans.map(plan => <View key={`${plan.name}-${plan.prefferedTime}`}>{renderPlanRow(plan)}</View>);
   };
 
-  const renderSupplementItem = (planName: string, suppItem: Supplement) => (
+  const renderSupplementItem = (planName: string, suppItem: SupplementPlanEntry) => (
     <SupplementItem
-      key={`${planName}-${suppItem.name}`}
+      key={`${planName}-${suppItem.supplement.name}`}
       planName={planName}
       supplement={suppItem}
       onRemoveSupplement={handleRemoveSupplement}
@@ -366,7 +366,7 @@ export default function Plans() {
     });
   };
 
-// PlanMeta moved outside of Plans component below
+  // PlanMeta moved outside of Plans component below
 
   const renderTrainingGoals = () => {
     if (!trainingPlanGoals.length) {
@@ -710,9 +710,23 @@ export default function Plans() {
           <SupplementForm
             selectedTime={timeStringToDate(planForSupplementEdit.prefferedTime || '00:00')}
             isEditing={isEditingSupplement}
-            preselectedSupplement={supplement}
+            preselectedSupplement={supplement?.supplement ?? null}
             onSave={savedSupplement => {
-              saveSupplementToPlan(planForSupplementEdit, savedSupplement, isEditingSupplement);
+              // Skapa SupplementPlanEntry här
+              const entry: SupplementPlanEntry = {
+                supplement: savedSupplement,
+                startedAt: isEditingSupplement
+                  ? supplement?.startedAt ?? new Date().toISOString()
+                  : new Date().toISOString(),
+                createdBy: isEditingSupplement ? supplement?.createdBy ?? 'you' : 'you',
+                editedAt: isEditingSupplement ? new Date().toISOString() : '',
+                editedBy: isEditingSupplement ? 'you' : '',
+                planName: planForSupplementEdit.name,
+                prefferedTime: planForSupplementEdit.prefferedTime,
+                notify: planForSupplementEdit.notify,
+                reason: planForSupplementEdit.reason,
+              };
+              saveSupplementToPlan(planForSupplementEdit, entry, isEditingSupplement);
               setSupplement(null);
               setPlanForSupplementEdit(null);
             }}
@@ -721,6 +735,7 @@ export default function Plans() {
               setSupplement(null);
             }}
           />
+          <PlanMeta startedAt={supplement?.startedAt ?? ''} t={t} formatDate={formatDate} />
         </ThemedModal>
       )}
     </Container>

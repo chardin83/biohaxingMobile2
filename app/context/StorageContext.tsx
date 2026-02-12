@@ -40,6 +40,9 @@ export type DailyNutritionSummary = {
 
 export type PlanTipEntry = {
   startedAt: string;
+  createdBy:string;
+  editedAt: string;
+  editedBy: string;
   tipId: string;
   planCategory: Exclude<PlanCategory, 'supplement'>;
 };
@@ -213,7 +216,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
             const nutrition = Array.isArray(parsed?.nutrition) ? parsed.nutrition : [];
             const other = Array.isArray(parsed?.other) ? parsed.other : [];
 
-            return { supplements, training, nutrition, other };
+            return { supplements, training, nutrition, other, reasonSummary: parsed.reasonSummary ?? ''  };
           } catch (error) {
             console.warn('Failed to parse plans', error);
             return EMPTY_PLANS;

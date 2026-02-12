@@ -1,9 +1,9 @@
-import { Supplement } from './Supplement';
+import { SupplementPlanEntry } from './SupplementPlanEntry';
 
 export interface Plan {
   name: string;
   prefferedTime: string;
-  supplements: Supplement[];
+  supplements: SupplementPlanEntry[];
   notify: boolean;
   reason?: string;
 }
