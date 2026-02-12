@@ -58,7 +58,7 @@ export default function CreatePlanScreen() {
         ? (tempPlans.supplements ?? []).flatMap(plan =>
             (plan.supplements ?? []).map(sup => ({
                 key: buildSupplementKey(plan.name, plan.prefferedTime, sup.name),
-                label: `${sup.name} (${plan.name} ${plan.prefferedTime})`,
+                label: `${sup.name} • ${plan.prefferedTime}`,
             }))
         )
         : [], [tempPlans]);
@@ -86,7 +86,7 @@ export default function CreatePlanScreen() {
 
     const existingSupplementItems = useMemo(() => plans
         ? (plans.supplements ?? []).flatMap(plan =>
-            (plan.supplements ?? []).map(sup => `${sup.name} (${plan.name} ${plan.prefferedTime})`)
+            (plan.supplements ?? []).map(sup => `${sup.name} • ${plan.prefferedTime})`)
         )
         : [], [plans]);
 

@@ -29,6 +29,20 @@ import { Supplement } from '../../domain/Supplement';
 
 // Plan category mapping not currently used; remove to avoid unused warnings
 
+type PlanMetaProps = {
+  startedAt: string;
+  t: ReturnType<typeof useTranslation>['t'];
+  formatDate: (isoDate: string) => string;
+};
+
+const PlanMeta: React.FC<PlanMetaProps> = ({ startedAt, t, formatDate }) => (
+  <ThemedText type="caption" style={styles.trainingMeta}>
+    {t('plan.trainingActiveSince', {
+      date: formatDate(startedAt),
+    })} • skapad av AI
+  </ThemedText>
+);
+
 export default function Plans() {
   const params = useLocalSearchParams<{ openCreate?: string }>();
   const { colors } = useTheme();
@@ -61,8 +75,8 @@ export default function Plans() {
 
   const supplementPlans = plans.supplements;
   const trainingPlanGoals = useMemo(() => plans.training, [plans.training]);
-  const nutritionGoals = plans.nutrition;
-  const otherGoals = useMemo(() => plans.other, [plans.other]);
+  const nutritionPlans = plans.nutrition;
+  const otherPlans = useMemo(() => plans.other, [plans.other]);
 
   const getRecommendedDoseLabel = React.useCallback(
     (tip?: Tip) => {
@@ -86,14 +100,14 @@ export default function Plans() {
   const nutritionGroups = useMemo(() => {
     const tipIds = new Set<string>();
 
-    nutritionGoals.forEach(goal => {
-      if (goal.tipId) {
-        tipIds.add(goal.tipId);
+    nutritionPlans.forEach(plan => {
+      if (plan.tipId) {
+        tipIds.add(plan.tipId);
       }
     });
 
     return Array.from(tipIds).map(tipId => ({ tipId }));
-  }, [nutritionGoals]);
+  }, [nutritionPlans]);
 
   const toggleNutritionFoods = React.useCallback((tipId: string) => {
     setExpandedNutritionTips(prev => ({
@@ -344,9 +358,15 @@ export default function Plans() {
     if (Number.isNaN(date.getTime())) {
       return isoDate;
     }
-
-    return date.toLocaleDateString();
+    // Anpassa språkkod efter användarens språk om du har det i din app, annars 'sv-SE'
+    return date.toLocaleDateString('sv-SE', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
   };
+
+// PlanMeta moved outside of Plans component below
 
   const renderTrainingGoals = () => {
     if (!trainingPlanGoals.length) {
@@ -412,11 +432,7 @@ export default function Plans() {
           title={tipTitle ?? t('plan.untitled', { defaultValue: 'Utan titel' })}
           headerRight={editAction}
         >
-          <ThemedText type="default" style={styles.trainingMeta}>
-            {t('plan.trainingActiveSince', {
-              date: formatDate(goal.startedAt),
-            })}
-          </ThemedText>
+          <PlanMeta startedAt={goal.startedAt} t={t} formatDate={formatDate} />
           <View style={styles.trainingSettingsContainer}>
             {trainingBadges.length ? (
               <View style={styles.trainingBadgesRow}>
@@ -453,6 +469,9 @@ export default function Plans() {
         defaultValue: tip?.title ?? tipId,
       });
       const recommendedDoseLabel = getRecommendedDoseLabel(tip);
+
+      const plan = nutritionPlans.find(g => g.tipId === tipId);
+
       const foodItems = (tip?.nutritionFoods ?? []).map(food => {
         const itemKey = food.key;
         const detailKey = food.detailsKey ?? itemKey;
@@ -477,6 +496,8 @@ export default function Plans() {
 
       return (
         <AppBox key={tipId} title={tipTitle}>
+          {/* Visa PlanMeta om goal finns */}
+          {plan?.startedAt && <PlanMeta startedAt={plan.startedAt} t={t} formatDate={formatDate} />}
           {recommendedDoseLabel && (
             <ThemedText type="default" style={styles.recommendedDose}>
               {recommendedDoseLabel}
@@ -528,8 +549,8 @@ export default function Plans() {
     });
   };
 
-  const renderOtherGoals = () => {
-    if (!otherGoals.length) {
+  const renderOtherPlans = () => {
+    if (!otherPlans.length) {
       return (
         <ThemedText type="default">
           {t('plan.noActiveOther', { defaultValue: 'Inga övriga planer ännu.' })}
@@ -537,16 +558,18 @@ export default function Plans() {
       );
     }
 
-    return otherGoals.map((goal, index) => {
-      const tipTitle = goal.tipId
-        ? t(`tips:${goal.tipId}.title`, { defaultValue: goal.tipId })
+    return otherPlans.map((plan, index) => {
+      const tipTitle = plan.tipId
+        ? t(`tips:${plan.tipId}.title`, { defaultValue: plan.tipId })
         : t('plan.untitled', { defaultValue: 'Utan titel' });
 
       return (
         <AppBox
-          key={goal.tipId ?? `other-${index}`}
+          key={plan.tipId ?? `other-${index}`}
           title={tipTitle}
-        >-</AppBox>
+        >
+          <PlanMeta startedAt={plan.startedAt} t={t} formatDate={formatDate} />
+        </AppBox>
       );
     });
   };
@@ -595,7 +618,7 @@ export default function Plans() {
         </View>
         <View style={styles.sectionBlock}>
           <Collapsible title={t('plan.otherHeader', { defaultValue: 'Övrigt' })} contentStyle={styles.collapsibleContentFlush}>
-            {renderOtherGoals()}
+            {renderOtherPlans()}
           </Collapsible>
         </View>
       </View>
@@ -728,7 +751,7 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
   },
   trainingMeta: {
-    marginTop: 2,
+    marginTop: -10
   },
   trainingSettingsContainer: {
     marginTop: 12,
