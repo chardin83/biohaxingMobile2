@@ -2,7 +2,7 @@ import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, StyleSheet, TouchableOpacity,View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import ShowAllButton from '@/app/(tabs)/dashboard/area/[areaId]/details/ShowAllButton';
 import { useStorage } from '@/app/context/StorageContext';
@@ -11,6 +11,7 @@ import { GradientText } from '@/components/GradientText';
 import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
+import { Checkbox } from '@/components/ui/Checkbox';
 import Container from '@/components/ui/Container';
 import { GoldenGlowButton } from '@/components/ui/GoldenGlowButton';
 import { tips } from '@/locales/tips';
@@ -149,21 +150,12 @@ export default function CreatePlanScreen() {
             items.map((item, idx) => {
                 const checked = approvals[category]?.[item.key] ?? true;
                 return (
-                    <View key={`${item.key}-${idx}`} style={styles.listRow}>
-                        <TouchableOpacity
-                            onPress={() => toggleApproval(category, item.key)}
-                            style={styles.checkbox}
-                            accessibilityRole="checkbox"
-                            accessibilityState={{ checked }}
-                        >
-                            <ThemedText type="default" style={styles.checkboxIcon}>
-                                {checked ? '☑' : '☐'}
-                            </ThemedText>
-                        </TouchableOpacity>
-                        <ThemedText type="default" style={styles.listItem}>
-                            ✨ {item.label}
-                        </ThemedText>
-                    </View>
+                    <Checkbox
+                        key={`${item.key}-${idx}`}
+                        checked={checked}
+                        onPress={() => toggleApproval(category, item.key)}
+                        label={item.label}
+                    />
                 );
             })
         ) : (
@@ -192,6 +184,20 @@ export default function CreatePlanScreen() {
             </ThemedText>
         );
     };
+
+    const countSelected = React.useCallback(
+        (items: { key: string }[], category: keyof ApprovalsState) =>
+            items.reduce((acc, item) => {
+                const isChecked = approvals[category]?.[item.key] ?? true;
+                return acc + (isChecked ? 1 : 0);
+            }, 0),
+        [approvals]
+    );
+
+    const newSupplementSelectedCount = countSelected(newSupplementItems, 'supplements');
+    const newTrainingSelectedCount = countSelected(newTrainingItems, 'training');
+    const newNutritionSelectedCount = countSelected(newNutritionItems, 'nutrition');
+    const newOtherSelectedCount = countSelected(newOtherItems, 'other');
 
     const handleAccept = () => {
         if (tempPlans) {
@@ -241,8 +247,58 @@ export default function CreatePlanScreen() {
             .finally(() => setLoading(false));
     };
 
+    const buildSectionTitle = React.useCallback(
+        (selected: number, total: number, selectedKey: string, defaultKey: string) =>
+            selected < total
+                ? t(selectedKey, { selected, total })
+                : t(defaultKey, { count: total }),
+        [t]
+    );
+
+    const supplementsTitle = buildSectionTitle(
+        newSupplementSelectedCount,
+        newSupplementCount,
+        'createPlan.aiSupplementsSelected',
+        'createPlan.aiSupplements'
+    );
+    const trainingTitle = buildSectionTitle(
+        newTrainingSelectedCount,
+        newTrainingCount,
+        'createPlan.aiTrainingSelected',
+        'createPlan.aiTraining'
+    );
+    const nutritionTitle = buildSectionTitle(
+        newNutritionSelectedCount,
+        newNutritionCount,
+        'createPlan.aiNutritionSelected',
+        'createPlan.aiNutrition'
+    );
+    const otherTitle = buildSectionTitle(
+        newOtherSelectedCount,
+        newOtherCount,
+        'createPlan.aiOtherSelected',
+        'createPlan.aiOther'
+    );
+
+    const supplementsSummary = t('createPlan.aiSupplementsSelected', {
+        selected: newSupplementSelectedCount,
+        total: newSupplementCount,
+    });
+    const trainingSummary = t('createPlan.aiTrainingSelected', {
+        selected: newTrainingSelectedCount,
+        total: newTrainingCount,
+    });
+    const nutritionSummary = t('createPlan.aiNutritionSelected', {
+        selected: newNutritionSelectedCount,
+        total: newNutritionCount,
+    });
+    const otherSummary = t('createPlan.aiOtherSelected', {
+        selected: newOtherSelectedCount,
+        total: newOtherCount,
+    });
+
     return (
-        <Container background="gradient" showBackButton onBackPress={() => router.replace('/(tabs)/plan')  }>
+        <Container background="gradient" showBackButton onBackPress={() => router.replace('/(tabs)/plan')}>
             <Card style={styles.card}>
                 <View style={styles.title}>
                     <GradientText>
@@ -309,7 +365,7 @@ export default function CreatePlanScreen() {
                     <>
                         <Card>
                             <Collapsible
-                                title={t('createPlan.aiSupplements', { count: newSupplementCount })}
+                                title={supplementsTitle}
                                 contentStyle={styles.collapsibleContent}
                                 accessibilityLabel={t('createPlan.aiSupplementsLabel')}
                                 initialCollapsed={newSupplementItems.length === 0}
@@ -318,11 +374,18 @@ export default function CreatePlanScreen() {
                                 {renderNewList(newSupplementItems, 'supplements')}
                                 <SectionHeader variant="dimmed">{t('createPlan.existing')}</SectionHeader>
                                 {renderExistingList(existingSupplementItems)}
+                                <ThemedText
+                                    type="caption"
+                                    style={[styles.selectionSummary, styles.srOnly]}
+                                    accessibilityLiveRegion="polite"
+                                >
+                                    {supplementsSummary}
+                                </ThemedText>
                             </Collapsible>
                         </Card>
                         <Card>
                             <Collapsible
-                                title={t('createPlan.aiTraining', { count: newTrainingCount })}
+                                title={trainingTitle}
                                 contentStyle={styles.collapsibleContent}
                                 accessibilityLabel={t('createPlan.aiTrainingLabel')}
                                 initialCollapsed={newTrainingItems.length === 0}
@@ -331,11 +394,18 @@ export default function CreatePlanScreen() {
                                 {renderNewList(newTrainingItems, 'training')}
                                 <SectionHeader variant="dimmed">{t('createPlan.existing')}</SectionHeader>
                                 {renderExistingList(existingTrainingItems)}
+                                <ThemedText
+                                    type="caption"
+                                    style={[styles.selectionSummary, styles.srOnly]}
+                                    accessibilityLiveRegion="polite"
+                                >
+                                    {trainingSummary}
+                                </ThemedText>
                             </Collapsible>
                         </Card>
                         <Card>
                             <Collapsible
-                                title={t('createPlan.aiNutrition', { count: newNutritionCount })}
+                                title={nutritionTitle}
                                 contentStyle={styles.collapsibleContent}
                                 accessibilityLabel={t('createPlan.aiNutritionLabel')}
                                 initialCollapsed={newNutritionItems.length === 0}
@@ -344,11 +414,18 @@ export default function CreatePlanScreen() {
                                 {renderNewList(newNutritionItems, 'nutrition')}
                                 <SectionHeader variant="dimmed">{t('createPlan.existing')}</SectionHeader>
                                 {renderExistingList(existingNutritionItems)}
+                                <ThemedText
+                                    type="caption"
+                                    style={[styles.selectionSummary, styles.srOnly]}
+                                    accessibilityLiveRegion="polite"
+                                >
+                                    {nutritionSummary}
+                                </ThemedText>
                             </Collapsible>
                         </Card>
                         <Card>
                             <Collapsible
-                                title={t('createPlan.aiOther', { count: newOtherCount })}
+                                title={otherTitle}
                                 contentStyle={styles.collapsibleContent}
                                 accessibilityLabel={t('createPlan.aiOtherLabel')}
                                 initialCollapsed={newOtherItems.length === 0}
@@ -357,6 +434,13 @@ export default function CreatePlanScreen() {
                                 {renderNewList(newOtherItems, 'other')}
                                 <SectionHeader variant="dimmed">{t('createPlan.existing')}</SectionHeader>
                                 {renderExistingList(existingOtherItems)}
+                                <ThemedText
+                                    type="caption"
+                                    style={[styles.selectionSummary, styles.srOnly]}
+                                    accessibilityLiveRegion="polite"
+                                >
+                                    {otherSummary}
+                                </ThemedText>
                             </Collapsible>
                         </Card>
                         <View style={styles.buttonRow}>
@@ -410,7 +494,6 @@ const styles = StyleSheet.create({
         gap: 10,
     },
     reasonText: {
-        marginBottom: 16,
         opacity: 0.95,
     },
     captionInfo: {
@@ -468,12 +551,19 @@ const styles = StyleSheet.create({
         marginTop: 4,
         gap: 8,
     },
-    checkbox: {
-        paddingVertical: 2,
-        paddingHorizontal: 4,
+    selectionSummary: {
+        marginTop: 4,
+        marginBottom: 6,
+        opacity: 0.7,
     },
-    checkboxIcon: {
-        fontSize: 16,
+    srOnly: {
+        position: 'absolute',
+        width: 1,
+        height: 1,
+        margin: -1,
+        padding: 0,
+        overflow: 'hidden',
+        opacity: 0,
     },
 });
 

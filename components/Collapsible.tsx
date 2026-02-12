@@ -11,12 +11,14 @@ export function Collapsible({
   rightContent,
   contentStyle,
   accessibilityLabel,
+  accessibilityHint,
   initialCollapsed = false, // ny prop
 }: PropsWithChildren & {
   title: string;
   rightContent?: React.ReactNode;
   contentStyle?: StyleProp<ViewStyle>;
   accessibilityLabel?: string;
+  accessibilityHint?: string;
   initialCollapsed?: boolean; // ny prop
 }) {
   const [isOpen, setIsOpen] = useState(!initialCollapsed);
@@ -30,6 +32,7 @@ export function Collapsible({
         activeOpacity={0.8}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel ?? title}
+        accessibilityHint={accessibilityHint}
         accessibilityState={{ expanded: isOpen }}
       >
         <IconSymbol

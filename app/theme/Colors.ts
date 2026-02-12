@@ -121,6 +121,12 @@ export const Colors = {
       '#FFB300', // djupare guld
     ],
     showAllAccent: 'rgba(199, 121, 36, 0.95)',
+
+
+    checkboxCheckedBg: '#1FAF9A',
+    checkboxCheckedBorder: '#1FAF9A',
+    checkboxCheck: '#0B1F1C',
+    checkboxUncheckedBorder: '#CFC8BD', // light
   },
   dark: {
      area: {
@@ -232,10 +238,16 @@ export const Colors = {
     surfaceGreen: 'rgba(100,255,150,0.12)',
     surfaceGreenBorder: 'rgba(100,255,150,0.3)',
 
-     goldGradient: [
-      'rgba(255, 180, 80, 0.8)', // mörk guld
-      '#C99700', // mörk guld (nederst)
-      '#FFFBEA', // nästan vit (överst)
+    goldGradient: [
+      '#8C6A1f', // djup brons
+      '#C6A756', // champange guld (nederst)
+      '#E7D38A', // mjuk highlight (överst)
     ],
+    showAllAccent: 'rgba(199, 121, 36, 0.95)',
+    // I Colors.ts, under respektive theme:
+    checkboxCheckedBg: '#1FAF9A',
+    checkboxCheckedBorder: '#1FAF9A',
+    checkboxCheck: '#0B1F1C',
+    checkboxUncheckedBorder: 'rgba(255,255,255,0.35)',
   },
 };
