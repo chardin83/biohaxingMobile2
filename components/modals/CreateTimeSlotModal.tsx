@@ -118,7 +118,7 @@ const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({
 
         {isEditing && onDelete && (
           <AppButton
-            title={t('general.delete', { defaultValue: 'Ta bort' })}
+            title={t('general.delete')}
             onPress={onDelete}
             variant="danger"
             style={globalStyles.marginTop16}

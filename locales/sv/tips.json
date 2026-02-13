@@ -806,7 +806,32 @@
     "areas": {
       "digestiveHealth": "Färgglada grönsaker stödjer tarmhälsa och matsmältning.",
       "immuneSupport": "Olika färger ger olika antioxidanter som stärker immunförsvaret."
+    },
+      "nutritionFoods": {
+    "title": "Färgglada grönsaker",
+    "items": {
+      "redVeggies": {
+        "name": "Röda grönsaker (tomat, paprika, rödbeta)",
+        "details": "Röda grönsaker är rika på lykopen och antocyaniner som stödjer hjärthälsa och immunförsvar."
+      },
+      "orangeVeggies": {
+        "name": "Orange grönsaker (morot, pumpa, sötpotatis)",
+        "details": "Orange grönsaker innehåller betakaroten som omvandlas till A-vitamin och stärker syn och hud."
+      },
+      "yellowVeggies": {
+        "name": "Gula grönsaker (gul paprika, majs)",
+        "details": "Gula grönsaker är rika på lutein och zeaxantin som stödjer ögonhälsa."
+      },
+      "greenVeggies": {
+        "name": "Gröna grönsaker (spenat, broccoli, ärtor)",
+        "details": "Gröna grönsaker innehåller klorofyll, folat och magnesium som stödjer energi och nervsystem."
+      },
+      "bluePurpleVeggies": {
+        "name": "Blå/lila grönsaker (blåbär, rödkål, aubergine)",
+        "details": "Blå och lila grönsaker är rika på antocyaniner som skyddar celler och stödjer hjärnans funktion."
+      }
     }
+  }
   },
   "near_infrared_red_light": {
     "title": "Near Infrared / Rött ljus",

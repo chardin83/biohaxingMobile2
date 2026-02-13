@@ -40,11 +40,12 @@ export type DailyNutritionSummary = {
 
 export type PlanTipEntry = {
   startedAt: string;
-  createdBy:string;
+  createdBy: string;
   editedAt: string;
   editedBy: string;
   tipId: string;
   planCategory: Exclude<PlanCategory, 'supplement'>;
+  comment?: string;
 };
 
 export type PlansByCategory = {

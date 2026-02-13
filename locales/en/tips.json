@@ -19,6 +19,31 @@
     "areas": {
       "digestiveHealth": "Colorful vegetables support gut health and digestion.",
       "immuneSupport": "Different colors provide different antioxidants that strengthen the immune system."
+    },
+    "nutritionFoods": {
+      "title": "Colorful vegetables",
+      "items": {
+        "redVeggies": {
+          "name": "Red vegetables (tomato, bell pepper, beetroot)",
+          "details": "Red vegetables are rich in lycopene and anthocyanins, supporting heart health and immunity."
+        },
+        "orangeVeggies": {
+          "name": "Orange vegetables (carrot, pumpkin, sweet potato)",
+          "details": "Orange vegetables contain beta-carotene, which converts to vitamin A and supports vision and skin."
+        },
+        "yellowVeggies": {
+          "name": "Yellow vegetables (yellow pepper, corn)",
+          "details": "Yellow vegetables are high in lutein and zeaxanthin, supporting eye health."
+        },
+        "greenVeggies": {
+          "name": "Green vegetables (spinach, broccoli, peas)",
+          "details": "Green vegetables contain chlorophyll, folate, and magnesium, supporting energy and nervous system."
+        },
+        "bluePurpleVeggies": {
+          "name": "Blue/purple vegetables (blueberries, red cabbage, eggplant)",
+          "details": "Blue and purple vegetables are rich in anthocyanins, protecting cells and supporting brain function."
+        }
+      }
     }
   },
   "vitamin_d": {

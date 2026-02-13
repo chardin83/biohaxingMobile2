@@ -54,6 +54,7 @@
     "cancel": "Cancel",
     "close": "Close",
     "save": "Save",
+    "delete": "Delete",
     "countSuffix": "pcs",
     "level": "level",
     "showAll": "Show all",
@@ -619,5 +620,13 @@
     "feet": "Feet",
     "fattyTissue": "Fatty Tissue",
     "bloodVessels": "Blood Vessels"
+  },
+  "nutritionPlanSection": {
+    "noActiveNutrition": "No nutrition goals yet.",
+    "editNutritionSettings": "Edit",
+    "nutritionSettingsTitle": "Nutrition settings",
+    "nutritionCommentPlaceholder": "Comment (optional)",
+    "nutritionCommentLabel": "Comment",
+    "showMoreNutritionFoods": "{{count}}"
   }
 }

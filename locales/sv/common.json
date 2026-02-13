@@ -54,6 +54,7 @@
     "cancel": "Avbryt",
     "close": "Stäng",
     "save": "Spara",
+    "delete": "Ta bort",
     "countSuffix": "st",
     "sleep": "sömn",
     "level": "level",
@@ -629,5 +630,13 @@
     "feet": "Fötter",
     "fattyTissue": "Fettvävnad",
     "bloodVessels": "Blodkärl"
+  },
+  "nutritionPlanSection": {
+    "noActiveNutrition": "Inga näringsmål ännu.",
+    "editNutritionSettings": "Redigera",
+    "nutritionSettingsTitle": "Näringsinställningar",
+    "nutritionCommentPlaceholder": "Kommentar (valfri)",
+    "nutritionCommentLabel": "Kommentar",
+    "showMoreNutritionFoods": "{{count}}st"
   }
 }

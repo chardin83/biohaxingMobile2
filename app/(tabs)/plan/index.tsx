@@ -2,14 +2,15 @@ import { useTheme } from '@react-navigation/native';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
-import { useStorage } from '@/app/context/StorageContext';
+import { PlanTipEntry, useStorage } from '@/app/context/StorageContext';
 import { SupplementPlanEntry } from '@/app/domain/SupplementPlanEntry';
 import { Collapsible } from '@/components/Collapsible';
 import CreateTimeSlotModal from '@/components/modals/CreateTimeSlotModal';
 import TrainingSettingsModal from '@/components/modals/TrainingSettingsModal';
+import { NutritionPlanSection } from '@/components/NutritionPlanSection';
 import SupplementForm from '@/components/SupplementForm';
 import SupplementItem from '@/components/SupplementItem';
 import { ThemedModal } from '@/components/ThemedModal';
@@ -19,11 +20,10 @@ import AppButton from '@/components/ui/AppButton';
 import Badge from '@/components/ui/Badge';
 import Container from '@/components/ui/Container';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import PlanEditActions from '@/components/ui/PlanEditActions';
 import { PressableCard } from '@/components/ui/PressableCard';
 import { useSupplementSaver } from '@/hooks/useSupplementSaver';
 import { defaultPlans } from '@/locales/defaultPlans';
-import { useSupplementMap } from '@/locales/supplements';
-import { Tip, tips } from '@/locales/tips';
 
 import { Plan } from '../../domain/Plan';
 
@@ -52,7 +52,6 @@ export default function Plans() {
   const [isEditingPlan, setIsEditingPlan] = useState(false);
   const [isEditingSupplement, setIsEditingSupplement] = useState(false);
   const [planForSupplementEdit, setPlanForSupplementEdit] = useState<Plan | null>(null);
-  const [expandedNutritionTips, setExpandedNutritionTips] = useState<Record<string, boolean>>({});
   const [expandedPlans, setExpandedPlans] = useState<Record<string, boolean>>({});
   const [trainingSettingsVisible, setTrainingSettingsVisible] = useState(false);
   const [trainingSettingsTipId, setTrainingSettingsTipId] = useState<string | null>(null);
@@ -71,50 +70,10 @@ export default function Plans() {
   };
 
   const { t } = useTranslation(['common', 'areas', 'tips']);
-  const supplementMap = useSupplementMap();
 
   const supplementPlans = plans.supplements;
   const trainingPlanGoals = useMemo(() => plans.training, [plans.training]);
-  const nutritionPlans = plans.nutrition;
   const otherPlans = useMemo(() => plans.other, [plans.other]);
-
-  const getRecommendedDoseLabel = React.useCallback(
-    (tip?: Tip) => {
-      if (!tip?.supplements?.length) return null;
-      for (const reference of tip.supplements) {
-        if (!reference.id) continue;
-        const suppMeta = supplementMap.get(reference.id);
-        if (suppMeta?.quantity) {
-          const unit = suppMeta.unit ? ` ${suppMeta.unit}` : '';
-          const dose = `${suppMeta.quantity}${unit}`.trim();
-          if (dose.length > 0) {
-            return t('plan.recommendedDose', { dose });
-          }
-        }
-      }
-      return null;
-    },
-    [supplementMap, t]
-  );
-
-  const nutritionGroups = useMemo(() => {
-    const tipIds = new Set<string>();
-
-    nutritionPlans.forEach(plan => {
-      if (plan.tipId) {
-        tipIds.add(plan.tipId);
-      }
-    });
-
-    return Array.from(tipIds).map(tipId => ({ tipId }));
-  }, [nutritionPlans]);
-
-  const toggleNutritionFoods = React.useCallback((tipId: string) => {
-    setExpandedNutritionTips(prev => ({
-      ...prev,
-      [tipId]: !prev[tipId],
-    }));
-  }, []);
 
   const openTrainingSettingsModal = (tipId: string, trainingTitle?: string | null) => {
     const existing = trainingPlanSettings[tipId];
@@ -166,18 +125,6 @@ export default function Plans() {
 
     closeTrainingSettingsModal();
   };
-
-  useEffect(() => {
-    if (supplementPlans.length === 0) {
-      const translatedDefaults = defaultPlans.map(plan => ({
-        name: t(`plan.defaultPlan.${plan.key}`),
-        supplements: [],
-        prefferedTime: plan.time,
-        notify: false,
-      }));
-      setPlans(prev => ({ ...prev, supplements: translatedDefaults }));
-    }
-  }, [supplementPlans.length, setPlans, t]);
 
   // Öppna skapamodal om efterfrågat via route-param
   useEffect(() => {
@@ -261,30 +208,14 @@ export default function Plans() {
 
     const editLabel = t('plan.editTimeSlot', { defaultValue: 'Redigera' });
     const headerActions = (
-      <View style={styles.planHeaderActions}>
-        <TouchableOpacity
-          onPress={() => handleEditPlan(plan)}
-          accessibilityRole="button"
-          accessibilityLabel={editLabel}
-          style={styles.planHeaderButton}
-        >
-          <IconSymbol name="pencil" size={18} color={colors.icon} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => handleNotify(plan)}
-          accessibilityRole="button"
-          accessibilityLabel={t('plan.toggleNotifications', {
-            defaultValue: 'Växla notiser',
-          })}
-          style={styles.planHeaderButton}
-        >
-          <IconSymbol
-            name={plan.notify ? 'bell.fill' : 'bell.slash'}
-            size={18}
-            color={plan.notify ? colors.primary : colors.icon}
-          />
-        </TouchableOpacity>
-      </View>
+      <PlanEditActions
+        onEdit={() => handleEditPlan(plan)}
+        editLabel={editLabel}
+        onNotifyToggle={() => handleNotify(plan)}
+        notifyActive={plan.notify}
+        notifyLabel={t('plan.toggleNotifications', { defaultValue: 'Växla notiser' })}
+        style={styles.planHeaderActions}
+      />
     );
 
     return (
@@ -414,16 +345,11 @@ export default function Plans() {
       }
 
       const editAction = (
-        <TouchableOpacity
-          onPress={() => openTrainingSettingsModal(trainingSettingsKey, tipTitle)}
-          accessibilityRole="button"
-          accessibilityLabel={t('plan.editTrainingSettings', {
-            defaultValue: 'Redigera',
-          })}
-          style={styles.trainingEditIcon}
-        >
-          <IconSymbol name="pencil" size={16} color={colors.icon} />
-        </TouchableOpacity>
+        <PlanEditActions
+          onEdit={() => openTrainingSettingsModal(trainingSettingsKey, tipTitle)}
+          editLabel={t('plan.editTrainingSettings', { defaultValue: 'Redigera' })}
+          style={styles.planHeaderActions}
+        />
       );
 
       return (
@@ -458,96 +384,7 @@ export default function Plans() {
     });
   };
 
-  const renderNutritionGoals = () => {
-    if (!nutritionGroups.length) {
-      return null;
-    }
-
-    return nutritionGroups.map(({ tipId }) => {
-      const tip = tips.find(candidate => candidate.id === tipId);
-      const tipTitle = t(`tips:${tipId}.title`, {
-        defaultValue: tip?.title ?? tipId,
-      });
-      const recommendedDoseLabel = getRecommendedDoseLabel(tip);
-
-      const plan = nutritionPlans.find(g => g.tipId === tipId);
-
-      const foodItems = (tip?.nutritionFoods ?? []).map(food => {
-        const itemKey = food.key;
-        const detailKey = food.detailsKey ?? itemKey;
-        const name = t(`tips:${tipId}.nutritionFoods.items.${itemKey}.name`, {
-          defaultValue: itemKey,
-        });
-        const details = t(`tips:${tipId}.nutritionFoods.items.${detailKey}.details`, {
-          defaultValue: '',
-        });
-        return {
-          key: `${tipId}-${itemKey}-${detailKey}`,
-          name,
-          details,
-        };
-      });
-      const maxVisibleFoods = 2;
-      const isExpanded = !!expandedNutritionTips[tipId];
-      const visibleFoodItems = isExpanded ? foodItems : foodItems.slice(0, maxVisibleFoods);
-      const hiddenCount = Math.max(foodItems.length - maxVisibleFoods, 0);
-      const hasExtraFoods = hiddenCount > 0;
-      const arrowRotation = isExpanded ? '90deg' : '0deg';
-
-      return (
-        <AppBox key={tipId} title={tipTitle}>
-          {/* Visa PlanMeta om goal finns */}
-          {plan?.startedAt && <PlanMeta startedAt={plan.startedAt} t={t} formatDate={formatDate} />}
-          {recommendedDoseLabel && (
-            <ThemedText type="default" style={styles.recommendedDose}>
-              {recommendedDoseLabel}
-            </ThemedText>
-          )}
-          {!!foodItems.length && (
-            <View style={styles.badgeRow}>
-              {visibleFoodItems.map(({ key, name, details }) => (
-                <Badge key={`food-${key}`} variant="overlay">
-                  <ThemedText type="defaultSemiBold">
-                    {name}
-                  </ThemedText>
-                  {!!details && isExpanded && (
-                    <ThemedText type="default" style={styles.badgeDetail}>
-                      {details}
-                    </ThemedText>
-                  )}
-                </Badge>
-              ))}
-              {hasExtraFoods && (
-                <Badge
-                  key={`toggle-${tipId}`}
-                  variant="overlay"
-                  style={styles.toggleBadge}
-                  onPress={() => toggleNutritionFoods(tipId)}
-                >
-                  <ThemedText type="default">
-                    {isExpanded
-                      ? t('plan.hideNutritionFoods', {
-                        defaultValue: 'Visa färre',
-                      })
-                      : t('plan.showMoreNutritionFoods', {
-                        count: hiddenCount,
-                        defaultValue: `${hiddenCount}st`,
-                      })}
-                  </ThemedText>
-                  <IconSymbol
-                    name="chevron.right"
-                    size={18}
-                    color={colors.icon}
-                    style={[styles.toggleBadgeIcon, { transform: [{ rotate: arrowRotation }] }]}
-                  />
-                </Badge>
-              )}
-            </View>
-          )}
-        </AppBox>
-      );
-    });
-  };
+  
 
   const renderOtherPlans = () => {
     if (!otherPlans.length) {
@@ -558,15 +395,28 @@ export default function Plans() {
       );
     }
 
+    function handleEditOther(plan: PlanTipEntry): void {
+      throw new Error('Function not implemented.');
+    }
+
     return otherPlans.map((plan, index) => {
       const tipTitle = plan.tipId
         ? t(`tips:${plan.tipId}.title`, { defaultValue: plan.tipId })
         : t('plan.untitled', { defaultValue: 'Utan titel' });
 
+      const editAction = (
+        <PlanEditActions
+          onEdit={() => handleEditOther(plan)}
+          editLabel={t('plan.editOtherSettings', { defaultValue: 'Redigera' })}
+          style={styles.planHeaderActions}
+        />
+      );
+
       return (
         <AppBox
           key={plan.tipId ?? `other-${index}`}
           title={tipTitle}
+          headerRight={editAction}
         >
           <PlanMeta startedAt={plan.startedAt} t={t} formatDate={formatDate} />
         </AppBox>
@@ -595,7 +445,12 @@ export default function Plans() {
         </View>
         <View style={styles.sectionBlock}>
           <Collapsible title={t('plan.nutritionHeader')} contentStyle={styles.collapsibleContentFlush}>
-            {renderNutritionGoals()}
+            <NutritionPlanSection
+              colors={colors}
+              styles={styles}
+              formatDate={formatDate}
+              PlanMeta={PlanMeta}
+            />
           </Collapsible>
         </View>
         <View style={styles.sectionBlock}>
@@ -665,7 +520,7 @@ export default function Plans() {
         />
         <TrainingSettingsModal
           visible={trainingSettingsVisible}
-          title={t('plan.trainingSettingsTitle', { defaultValue: 'Träningsinställningar' })}
+          title={t('plan.trainingSettingsTitle')}
           trainingTitle={trainingSettingsTitle}
           sessionsPlaceholder={t('plan.trainingSessionsPlaceholder', {
             defaultValue: 'Pass per vecka',
@@ -787,9 +642,6 @@ const styles = StyleSheet.create({
   },
   trainingSettingsText: {
     flex: 1,
-  },
-  trainingEditIcon: {
-    padding: 6,
   },
   planAddButtonWrapper: {
     marginTop: 15,
