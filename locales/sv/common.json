@@ -104,7 +104,7 @@
     "supplementCountLabel_plural": "{{count}} tillskott",
     "toggleNotifications": "Växla notiser",
     "toggleSupplements": "Visa eller dölj innehåll",
-    "noSupplementSlots": "Inga tider skapade ännu.",
+    "noSupplementSlots": "Inga tider skapade ännu."
   },
   "createPlan": {
     "title": "AI-plan",
@@ -164,6 +164,9 @@
     "description": "Olika tips och tillskott kan hjälpa dig nå dina hälsomål. Välj ett för mer information"
   },
   "goalDetails": {
+    "lockedTipInfo": "Detta är ett mer avancerat tips. Utforska grunderna för bäst effekt.",
+    "basicTipInfo": "Detta är en del av grunden. Har du säkrat basen?",
+    "unlockedTipInfo": "Detta är ett fördjupningsområde. Bygger vidare på grunden.",
     "addTrainingGoal": "Lägg till i träningsplan",
     "addNutritionGoal": "Lägg till i kostplan",
     "addOtherGoal": "Lägg till i Övrig plan",
@@ -442,7 +445,7 @@
       },
       "stress": {
         "title": "Stress & Body Battery",
-        "description": "Kronisk stress försämrar kognitiv funktion och mental prestation. Body Battery speglar dina energireserver och återhämtningsstatus, vilket är avgörande för optimal hjärnfunktion."
+        "description": "Kronisk stress försämrar kognitiv funktion och mental prestation. Body Battery speglar dina energireserver och återhämtningstatus, vilket är avgörande för optimal hjärnfunktion."
       },
       "mood": {
         "title": "Humör & Emotionell Reglering",
@@ -591,7 +594,11 @@
     "appTitle": "BIOHAXING",
     "level": "LEVEL",
     "noFavorites": "Inga favoriter än",
-    "editAreas": "Redigera Områden"
+    "editAreas": "Redigera Områden",
+    "checkCoverage": "Min plan-täckning",
+    "myProgress": "Min kunskapsnivå",
+    "noPlanned": "Inget planerat",
+    "xpInfo": "XP mäter din kunskapsnivå inom olika hälsokategorier. Genom att utforska tips låser du upp mer avancerade rekommendationer."
   },
   "search": {
     "label": "Sök tips"

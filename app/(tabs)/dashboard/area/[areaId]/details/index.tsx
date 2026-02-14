@@ -14,6 +14,7 @@ import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
 import Badge from '@/components/ui/Badge';
 import Container from '@/components/ui/Container';
+import { InfoButtonWithText } from '@/components/ui/InfoButtonWithText';
 import { NotFound } from '@/components/ui/NotFound';
 import ProgressBarWithLabel from '@/components/ui/ProgressbarWithLabel';
 import VerdictSelector from '@/components/VerdictSelector';
@@ -27,7 +28,7 @@ import { POSITIVE_VERDICTS } from '@/types/verdict';
 import ShowAllButton from './ShowAllButton';
 
 
-  function getAreaIconColor(areaId: string, colors: any) {
+function getAreaIconColor(areaId: string, colors: any) {
   switch (areaId) {
     case 'energy':
       return colors.area.energy;
@@ -82,6 +83,15 @@ export default function AreaDetailScreen() {
 
   const [showAllAreas, setShowAllAreas] = React.useState(false);
 
+  let infoText = '';
+  if (myLevel < (tip?.level ?? 0)) {
+    infoText = t('goalDetails.lockedTipInfo');
+  } else if (tip?.level === 1) {
+    infoText = t('goalDetails.basicTipInfo');
+  } else {
+    infoText = t('goalDetails.unlockedTipInfo'); // Lägg till denna översättning!
+  }
+
   const goalIcon = mainArea?.icon ?? 'target';
   const notFound = !mainArea || !tip;
 
@@ -117,32 +127,32 @@ export default function AreaDetailScreen() {
   const isOtherTip = availablePlanCategories.includes('other');
   const effectiveTipId = tipId ?? tip?.id ?? null;
 
-    const handleAddTipPlanEntry = () => {
-  if (!effectiveTipId) return;
-  const targetCategory = getDefaultPlanCategory();
-  if (!targetCategory) return;
-  let listKey: keyof typeof plans;
-  if (targetCategory === 'training') listKey = 'training';
-  else if (targetCategory === 'nutrition') listKey = 'nutrition';
-  else if (targetCategory === 'other') listKey = 'other';
-  else return;
-  setPlans(prev => {
-    const existingList = prev[listKey] as any[];
-    const exists = existingList.some(entry => entry.tipId === effectiveTipId && entry.planCategory === targetCategory);
-    if (exists) return prev;
-    const nextEntry = {
-      tipId: effectiveTipId,
-      startedAt: new Date().toISOString(),
-      planCategory: targetCategory,
-    };
-    return {
-      ...prev,
-      [listKey]: [...existingList, nextEntry],
-    };
-  });
-};
+  const handleAddTipPlanEntry = () => {
+    if (!effectiveTipId) return;
+    const targetCategory = getDefaultPlanCategory();
+    if (!targetCategory) return;
+    let listKey: keyof typeof plans;
+    if (targetCategory === 'training') listKey = 'training';
+    else if (targetCategory === 'nutrition') listKey = 'nutrition';
+    else if (targetCategory === 'other') listKey = 'other';
+    else return;
+    setPlans(prev => {
+      const existingList = prev[listKey] as any[];
+      const exists = existingList.some(entry => entry.tipId === effectiveTipId && entry.planCategory === targetCategory);
+      if (exists) return prev;
+      const nextEntry = {
+        tipId: effectiveTipId,
+        startedAt: new Date().toISOString(),
+        planCategory: targetCategory,
+      };
+      return {
+        ...prev,
+        [listKey]: [...existingList, nextEntry],
+      };
+    });
+  };
 
- 
+
   let addPlanButtonTitle = '';
   if (isTrainingTip) {
     addPlanButtonTitle = t('goalDetails.addTrainingGoal');
@@ -165,7 +175,14 @@ export default function AreaDetailScreen() {
   const isTipInPlanCategory = React.useCallback(
     (target: 'training' | 'nutrition' | 'other') => {
       if (!effectiveTipId) return false;
-      const list = target === 'training' ? trainingPlans : target === 'nutrition' ? nutritionPlans : plans.other;
+      let list;
+      if (target === 'training') {
+        list = trainingPlans;
+      } else if (target === 'nutrition') {
+        list = nutritionPlans;
+      } else {
+        list = plans.other;
+      }
       return list.some(entry => entry.tipId === effectiveTipId && entry.planCategory === target);
     },
     [effectiveTipId, nutritionPlans, trainingPlans, plans.other]
@@ -293,8 +310,8 @@ export default function AreaDetailScreen() {
   const progress = Math.min(askedQuestions.length / maxChats, 1);
   const progressLabel =
     askedQuestions.length >= maxChats
-      ? t('common:goalDetails.fullyExplored') || 'Fully Explored! 🎉'
-      : `${askedQuestions.length}/${maxChats} questions explored`;
+      ? `${t('common:goalDetails.fullyExplored')} 🎉`
+      : `${askedQuestions.length}/${maxChats} ${t('common:goalDetails.questionsExplored')}`;
 
   const handleAIInsightPress = (questionKey: AIPromptKey) => {
     const tipTranslation = t(`tips:${titleKey}`);
@@ -359,7 +376,7 @@ export default function AreaDetailScreen() {
                 {myLevel < tip.level ? '🔒 ' : ''}
                 {t('general.level')} {tip.level}
               </ThemedText>
-          </Badge>
+            </Badge>
           )}
         </View>
         <ThemedText type="subtitle" style={{ color: colors.primary }}>
@@ -375,7 +392,13 @@ export default function AreaDetailScreen() {
         <ThemedText type="caption">
           {totalXpEarned} XP earned
         </ThemedText>
-        <ProgressBarWithLabel progress={progress} label={progressLabel} />
+        <View style={styles.progressRow}>
+          <View style={styles.progressBarWrap}>
+            <InfoButtonWithText infoTextKey={infoText}>
+              <ProgressBarWithLabel progress={progress} label={progressLabel} height={12} />
+            </InfoButtonWithText>
+          </View>
+        </View>
         <PlanActionSection
           showTopPlanAction={showTopPlanAction}
           isTipInPlan={isTipInPlan}
@@ -443,14 +466,14 @@ export default function AreaDetailScreen() {
         resolvedSupplements.length > 0 ||
         (supplementPlans?.some(p => Array.isArray(p.supplements) && p.supplements.length > 0))
       ) && (
-        <AppBox title={t('common:goalDetails.supplements')}>
-          <SupplementList
-            supplements={resolvedSupplements}
-            plannedSupplements={plannedSupplements}
-            supplementPlans={supplementPlans}
-          />
-        </AppBox>
-      )}
+          <AppBox title={t('common:goalDetails.supplements')}>
+            <SupplementList
+              supplements={resolvedSupplements}
+              plannedSupplements={plannedSupplements}
+              supplementPlans={supplementPlans}
+            />
+          </AppBox>
+        )}
     </Container>
   );
 }
@@ -461,9 +484,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   levelBadge: {
-  position: 'absolute',
-  bottom: -20,
-  zIndex: 2,
+    position: 'absolute',
+    bottom: -20,
+    zIndex: 2,
   },
   levelBadgeLocked: {
     minWidth: 120, // bredare för lås
@@ -593,6 +616,16 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     marginBottom: 8,
+  },
+  progressRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    marginBottom: 8,
+  },
+  progressBarWrap: {
+    flex: 1,
   },
 });
 

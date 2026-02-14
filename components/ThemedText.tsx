@@ -78,8 +78,8 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   defaultSemiBold: {
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: 14,
+    lineHeight: 22,
     fontWeight: '600',
   },
   title: {

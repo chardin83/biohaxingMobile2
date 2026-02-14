@@ -164,6 +164,9 @@
     "description": "Different tips and supplements can help you achieve your health goals. Select one for more information"
   },
   "goalDetails": {
+    "lockedTipInfo": "This is a more advanced tip. Explore the basics for best results.",
+    "basicTipInfo": "This is a basic tip that helps you build a solid foundation.",
+    "unlockedTipInfo": "This is an in-depth tip. Builds on the foundation.",
     "addTrainingGoal": "Add to training plan",
     "addNutritionGoal": "Add to diet plan",
     "addOtherGoal": "Add to other plan",
@@ -581,7 +584,11 @@
     "appTitle": "BIOHAXING",
     "level": "LEVEL",
     "noFavorites": "No favorites yet",
-    "editAreas": "Edit Areas"
+    "noPlanned": "Nothing planned",
+    "editAreas": "Edit Areas",
+    "checkCoverage": "Plan coverage",
+    "myProgress": "My education level",
+    "xpInfo": "XP measures your knowledge level in different health categories. By exploring tips, you increase your XP and unlock more advanced recommendations."
   },
   "search": {
     "label": "Search tips"
