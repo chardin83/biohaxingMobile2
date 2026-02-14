@@ -242,7 +242,16 @@ export default function Plans() {
         )}
         {isExpanded && (
           <View>
-            {supplements.map(sup => renderSupplementItem(plan.name, sup))}
+            {Array.isArray(plan.supplements) &&
+              plan.supplements.map(entry => (
+                <SupplementItem
+                  key={`${plan.name}-${entry.supplement.id ?? entry.supplement.name}`}
+                  planName={plan.name}
+                  entry={entry} // <-- skicka hela SupplementPlanEntry
+                  onRemoveSupplement={handleRemoveSupplement}
+                  onEditSupplement={handleEditSupplement}
+                />
+              ))}
             {errorMessage && <ThemedText type="caption" style={{ color: colors.error }}>{errorMessage}</ThemedText>}
             <View style={styles.planAddButtonWrapper}>
               <AppButton
@@ -273,16 +282,6 @@ export default function Plans() {
 
     return supplementPlans.map(plan => <View key={`${plan.name}-${plan.prefferedTime}`}>{renderPlanRow(plan)}</View>);
   };
-
-  const renderSupplementItem = (planName: string, suppItem: SupplementPlanEntry) => (
-    <SupplementItem
-      key={`${planName}-${suppItem.supplement.name}`}
-      planName={planName}
-      supplement={suppItem}
-      onRemoveSupplement={handleRemoveSupplement}
-      onEditSupplement={handleEditSupplement}
-    />
-  );
 
   const formatDate = (isoDate: string) => {
     const date = new Date(isoDate);

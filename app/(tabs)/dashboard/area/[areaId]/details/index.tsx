@@ -114,27 +114,66 @@ export default function AreaDetailScreen() {
 
   const isTrainingTip = availablePlanCategories.includes('training');
   const isNutritionTip = availablePlanCategories.includes('nutrition');
+  const isOtherTip = availablePlanCategories.includes('other');
   const effectiveTipId = tipId ?? tip?.id ?? null;
 
+    const handleAddTipPlanEntry = () => {
+  if (!effectiveTipId) return;
+  const targetCategory = getDefaultPlanCategory();
+  if (!targetCategory) return;
+  let listKey: keyof typeof plans;
+  if (targetCategory === 'training') listKey = 'training';
+  else if (targetCategory === 'nutrition') listKey = 'nutrition';
+  else if (targetCategory === 'other') listKey = 'other';
+  else return;
+  setPlans(prev => {
+    const existingList = prev[listKey] as any[];
+    const exists = existingList.some(entry => entry.tipId === effectiveTipId && entry.planCategory === targetCategory);
+    if (exists) return prev;
+    const nextEntry = {
+      tipId: effectiveTipId,
+      startedAt: new Date().toISOString(),
+      planCategory: targetCategory,
+    };
+    return {
+      ...prev,
+      [listKey]: [...existingList, nextEntry],
+    };
+  });
+};
+
+ 
+  let addPlanButtonTitle = '';
+  if (isTrainingTip) {
+    addPlanButtonTitle = t('goalDetails.addTrainingGoal');
+  } else if (isNutritionTip) {
+    addPlanButtonTitle = t('goalDetails.addNutritionGoal');
+  } else if (isOtherTip) {
+    addPlanButtonTitle = t('goalDetails.addOtherGoal'); // Lägg till denna översättning!
+  }
+
   const getDefaultPlanCategory = React.useCallback(() => {
-    if (typeof planCategory === 'string' && (planCategory === 'training' || planCategory === 'nutrition')) {
+    if (typeof planCategory === 'string' && (planCategory === 'training' || planCategory === 'nutrition' || planCategory === 'other')) {
       return planCategory;
     }
-    const fallbackOption = availablePlanCategories.find(option => option === 'training' || option === 'nutrition');
+    const fallbackOption = availablePlanCategories.find(option =>
+      option === 'training' || option === 'nutrition' || option === 'other'
+    );
     return fallbackOption;
   }, [planCategory, availablePlanCategories]);
 
   const isTipInPlanCategory = React.useCallback(
-    (target: 'training' | 'nutrition') => {
+    (target: 'training' | 'nutrition' | 'other') => {
       if (!effectiveTipId) return false;
-      const list = target === 'training' ? trainingPlans : nutritionPlans;
-      return list.some(entry => entry.tipId === effectiveTipId);
+      const list = target === 'training' ? trainingPlans : target === 'nutrition' ? nutritionPlans : plans.other;
+      return list.some(entry => entry.tipId === effectiveTipId && entry.planCategory === target);
     },
-    [effectiveTipId, nutritionPlans, trainingPlans]
+    [effectiveTipId, nutritionPlans, trainingPlans, plans.other]
   );
 
   const isTipInTrainingPlan = React.useMemo(() => isTipInPlanCategory('training'), [isTipInPlanCategory]);
   const isTipInNutritionPlan = React.useMemo(() => isTipInPlanCategory('nutrition'), [isTipInPlanCategory]);
+  const isTipInOtherPlan = React.useMemo(() => isTipInPlanCategory('other'), [isTipInPlanCategory]);
 
   const currentTip = viewedTips?.find(v => v.mainGoalId === areaId && v.tipId === tipId);
   const askedQuestions = currentTip?.askedQuestions || [];
@@ -188,74 +227,56 @@ export default function AreaDetailScreen() {
   const plannedSupplements = React.useMemo(() => {
     const ids = new Set<string>();
     const names = new Set<string>();
-    supplementPlans.forEach(plan => {
-      plan.supplements?.forEach(supplement => {
-        if (supplement.id) ids.add(supplement.id);
-        if (supplement.name) names.add(supplement.name);
-      });
+    (supplementPlans || []).forEach(plan => {
+      if (Array.isArray(plan?.supplements)) {
+        plan.supplements.forEach(entry => {
+          const sup = entry?.supplement;
+          if (sup?.id) ids.add(sup.id);
+          if (sup?.name) names.add(sup.name);
+        });
+      }
     });
     return { ids, names };
   }, [supplementPlans]);
 
   const isTipSupplementScheduled = React.useMemo(() => {
-    if (!resolvedSupplements.length) return false;
-    return resolvedSupplements.some((supplement: any) => {
-      const supplementId = supplement.id;
-      const supplementName = supplement.name;
-      return (
-        (typeof supplementId === 'string' && plannedSupplements.ids.has(supplementId)) ||
-        (typeof supplementName === 'string' && plannedSupplements.names.has(supplementName))
-      );
-    });
-  }, [plannedSupplements, resolvedSupplements]);
-
-  const planBadgeLabel = React.useMemo(() => {
-    if (isNutritionTip && isTipInNutritionPlan) {
-      return t('plan.alreadyInPlanNutrition');
-    }
-    if (isTrainingTip && isTipInTrainingPlan) {
-      return t('plan.alreadyInPlanTraining');
-    }
-    if (isTipSupplementScheduled) {
-      return t('plan.alreadyInPlanSupplement');
-    }
-    return t('plan.alreadyInPlan');
-  }, [isNutritionTip, isTipInNutritionPlan, isTrainingTip, isTipInTrainingPlan, isTipSupplementScheduled, t]);
+    const refs = tip?.supplements || [];
+    if (!refs.length) return false;
+    return refs.some(ref => ref?.id && plannedSupplements.ids.has(ref.id));
+  }, [tip?.supplements, plannedSupplements.ids]);
 
   const isTipInPlan = React.useMemo(() => {
     if (isTrainingTip && isTipInTrainingPlan) return true;
     if (isNutritionTip && isTipInNutritionPlan) return true;
+    if (isOtherTip && isTipInOtherPlan) return true;
     if (isTipSupplementScheduled) return true;
     return false;
-  }, [isTrainingTip, isNutritionTip, isTipInTrainingPlan, isTipInNutritionPlan, isTipSupplementScheduled]);
+  }, [isTrainingTip, isNutritionTip, isTipInTrainingPlan, isTipInNutritionPlan, isOtherTip, isTipInOtherPlan, isTipSupplementScheduled]);
+
+
+  const planBadgeLabel = React.useMemo(() => {
+    if (isNutritionTip && isTipInNutritionPlan) {
+      return t('goalDetails.alreadyInPlanNutrition');
+    }
+    if (isTrainingTip && isTipInTrainingPlan) {
+      return t('goalDetails.alreadyInPlanTraining');
+    }
+    if (isOtherTip && isTipInOtherPlan) {
+      return t('goalDetails.alreadyInPlanOther');
+    }
+    if (isTipSupplementScheduled) {
+      return t('goalDetails.alreadyInPlanSupplement');
+    }
+    return t('goalDetails.alreadyInPlan');
+  }, [isNutritionTip, isTipInNutritionPlan, isTrainingTip, isTipInTrainingPlan, isOtherTip, isTipInOtherPlan, isTipSupplementScheduled, t]);
 
   const showTopPlanAction = React.useMemo(() => {
     if (isTrainingTip) return true;
-    if (!isNutritionTip && isTipInPlan) return true;
+    if (isNutritionTip) return true;
+    if (isOtherTip) return true;
+    if (isTipInPlan) return true;
     return false;
-  }, [isTrainingTip, isNutritionTip, isTipInPlan]);
-
-  const handleAddTipPlanEntry = () => {
-    if (!areaId || !effectiveTipId) return;
-    const targetCategory = getDefaultPlanCategory();
-    if (!targetCategory) return;
-    const listKey = targetCategory === 'training' ? 'training' : 'nutrition';
-    setPlans(prev => {
-      const existingList = prev[listKey];
-      const exists = existingList.some(entry => entry.tipId === effectiveTipId && entry.mainGoalId === areaId);
-      if (exists) return prev;
-      const nextEntry = {
-        mainGoalId: areaId,
-        tipId: effectiveTipId,
-        startedAt: new Date().toISOString(),
-        planCategory: targetCategory,
-      } as const;
-      return {
-        ...prev,
-        [listKey]: [...existingList, nextEntry],
-      } as typeof prev;
-    });
-  };
+  }, [isTrainingTip, isNutritionTip, isOtherTip, isTipInPlan]);
 
   const handleVerdictPress = (
     verdict: 'interested' | 'startNow' | 'wantMore' | 'alreadyWorks' | 'notInterested' | 'noResearch' | 'testedFailed'
@@ -359,8 +380,8 @@ export default function AreaDetailScreen() {
           showTopPlanAction={showTopPlanAction}
           isTipInPlan={isTipInPlan}
           planBadgeLabel={planBadgeLabel}
-          isTrainingTip={isTrainingTip}
-          handleAddTipPlanEntry={handleAddTipPlanEntry}
+          addPlanButtonTitle={addPlanButtonTitle}
+          handleAddPlanEntry={handleAddTipPlanEntry}
           styles={styles}
           colors={colors}
         />
@@ -418,7 +439,10 @@ export default function AreaDetailScreen() {
         colors={colors}
       />
       <VerdictSelector currentVerdict={currentVerdict} onVerdictPress={handleVerdictPress} />
-      {resolvedSupplements.length > 0 && (
+      {(
+        resolvedSupplements.length > 0 ||
+        (supplementPlans?.some(p => Array.isArray(p.supplements) && p.supplements.length > 0))
+      ) && (
         <AppBox title={t('common:goalDetails.supplements')}>
           <SupplementList
             supplements={resolvedSupplements}
@@ -611,7 +635,7 @@ function NutritionFoodsSection({
           </View>
         ) : (
           <AppButton
-            title={t('plan.addNutritionGoal')}
+            title={t('goalDetails.addNutritionGoal')}
             onPress={handleAddTipPlanEntry}
             variant="primary"
             style={styles.planActionButton}
@@ -626,8 +650,8 @@ type PlanActionSectionProps = {
   showTopPlanAction: boolean;
   isTipInPlan: boolean;
   planBadgeLabel: string;
-  isTrainingTip: boolean;
-  handleAddTipPlanEntry: () => void;
+  addPlanButtonTitle: string;
+  handleAddPlanEntry: () => void;
   styles: { [key: string]: any };
   colors: any;
 };
@@ -636,12 +660,11 @@ function PlanActionSection({
   showTopPlanAction,
   isTipInPlan,
   planBadgeLabel,
-  isTrainingTip,
-  handleAddTipPlanEntry,
+  addPlanButtonTitle,
+  handleAddPlanEntry,
   styles,
   colors,
 }: PlanActionSectionProps) {
-  const { t } = useTranslation();
   if (!showTopPlanAction) return null;
   return (
     <View style={styles.planActionContainer}>
@@ -654,8 +677,8 @@ function PlanActionSection({
         </View>
       ) : (
         <AppButton
-          title={isTrainingTip ? t('plan.addTrainingGoal') : t('plan.addNutritionGoal')}
-          onPress={handleAddTipPlanEntry}
+          title={addPlanButtonTitle}
+          onPress={handleAddPlanEntry}
           variant="primary"
           style={styles.planActionButton}
         />

@@ -7,22 +7,23 @@ import { ThemedText } from '@/components/ThemedText';
 
 import { SwipeableRow } from './ui/SwipeableRow';
 
-interface RenderSupplementItemProps {
+interface SupplementItemProps {
   planName: string;
-  supplement: SupplementPlanEntry;
+  entry: SupplementPlanEntry; // <-- byt namn för tydlighet
   onRemoveSupplement: (planName: string, supplementTitle: string) => void;
   onEditSupplement: (planName: string, supplementTitle: string) => void;
 }
 
-const SupplementItem: React.FC<RenderSupplementItemProps> = ({
+const SupplementItem: React.FC<SupplementItemProps> = ({
   planName,
-  supplement: supplementEntry,
+  entry,
   onRemoveSupplement,
   onEditSupplement,
 }) => {
   const { colors } = useTheme();
 
-  let supplement = supplementEntry.supplement;
+  const { supplement } = entry;
+
   return (
     <SwipeableRow
       onEdit={() => onEditSupplement(planName, supplement.name)}

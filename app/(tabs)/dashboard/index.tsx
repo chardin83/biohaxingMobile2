@@ -31,6 +31,46 @@ export default function DashboardScreen() {
 
   const positiveVerdictsSet = React.useMemo(() => new Set(POSITIVE_VERDICTS), []);
 
+  const tipAreasMap = React.useMemo(() => {
+    const map = new Map<string, Set<string>>();
+    tips.forEach(t => {
+      map.set(t.id, new Set((t.areas || []).map(a => a.id)));
+    });
+    return map;
+  }, []);
+
+  // Ny: karta från supplement-id till områden (härleds från tips)
+  const supplementAreasMap = React.useMemo(() => {
+    const map = new Map<string, Set<string>>();
+    tips.forEach(t => {
+      const areaIds = (t.areas || []).map(a => a.id);
+      (t.supplements || []).forEach(ref => {
+        if (!ref?.id) return;
+        if (!map.has(ref.id)) map.set(ref.id, new Set<string>());
+        const set = map.get(ref.id)!;
+        areaIds.forEach(id => set.add(id));
+      });
+    });
+    return map;
+  }, []);
+
+  /* const clearAllStorage = async () => {
+    try {
+      await AsyncStorage.multiRemove([
+        "plans",
+        "viewedTips"
+      ]);
+      console.log('✅ All storage cleared!');
+    } catch (error) {
+      console.error('❌ Error clearing storage:', error);
+    }
+  };
+  
+  // Kör denna en gång vid app-start (ta bort sedan!):
+  useEffect(() => {
+    clearAllStorage();
+  }, []);*/
+
   // Hitta favorit-markerade tips för ett specifikt område
   const getFavoriteTipsForArea = (areaId: string) => {
     return (
@@ -82,7 +122,24 @@ export default function DashboardScreen() {
           const areaXP =
             viewedTips?.filter(tip => tip.mainGoalId === areaId).reduce((sum, tip) => sum + (tip.xpEarned || 0), 0) ||
             0;
-          const hasAnyTipInArea = [...plans.training, ...plans.nutrition].some(entry => entry.mainGoalId === areaId);
+
+          // Kolla training/nutrition/other via tipAreasMap
+          const hasAnyGoalInArea = [...plans.training, ...plans.nutrition, ...plans.other].some(entry => {
+            const areaIds = tipAreasMap.get(entry.tipId);
+            return areaIds?.has(areaId);
+          });
+
+          // Kolla supplements via supplementAreasMap
+          const hasAnySupplementInArea = (plans.supplements || []).some(plan =>
+            (plan.supplements || []).some(entry => {
+              const supId = entry?.supplement?.id;
+              if (!supId) return false;
+              const areaSet = supplementAreasMap.get(supId);
+              return areaSet?.has(areaId) ?? false;
+            })
+          );
+
+          const hasAnyTipInArea = hasAnyGoalInArea || hasAnySupplementInArea;
 
           return (
             <AppCard

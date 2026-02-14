@@ -105,12 +105,6 @@
     "toggleNotifications": "Växla notiser",
     "toggleSupplements": "Visa eller dölj innehåll",
     "noSupplementSlots": "Inga tider skapade ännu.",
-    "addTrainingGoal": "Lägg till i träningsplan",
-    "addNutritionGoal": "Lägg till i kostplan",
-    "alreadyInPlan": "Finns redan i planen",
-    "alreadyInPlanTraining": "Finns redan i planen (träning)",
-    "alreadyInPlanNutrition": "Finns redan i planen (kost)",
-    "alreadyInPlanSupplement": "Finns redan i planen (tillskott)"
   },
   "createPlan": {
     "title": "AI-plan",
@@ -170,6 +164,14 @@
     "description": "Olika tips och tillskott kan hjälpa dig nå dina hälsomål. Välj ett för mer information"
   },
   "goalDetails": {
+    "addTrainingGoal": "Lägg till i träningsplan",
+    "addNutritionGoal": "Lägg till i kostplan",
+    "addOtherGoal": "Lägg till i Övrig plan",
+    "alreadyInPlan": "Finns redan i planen",
+    "alreadyInPlanTraining": "Finns redan i planen (träning)",
+    "alreadyInPlanNutrition": "Finns redan i planen (kost)",
+    "alreadyInPlanSupplement": "Finns redan i planen (tillskott)",
+    "alreadyInPlanOther": "Finns redan i planen (övrigt)",
     "taskInfo": "Uppgift",
     "information": "Information",
     "aiInsights": "AI-insikter",

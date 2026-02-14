@@ -105,12 +105,6 @@
     "toggleNotifications": "Toggle notifications",
     "toggleSupplements": "Expand or collapse",
     "noSupplementSlots": "No supplement slots yet.",
-    "addTrainingGoal": "Add to training plan",
-    "addNutritionGoal": "Add to diet plan",
-    "alreadyInPlan": "Already in plan",
-    "alreadyInPlanTraining": "Already in plan (training)",
-    "alreadyInPlanNutrition": "Already in plan (diet)",
-    "alreadyInPlanSupplement": "Already in plan (supplement)",
     "aiCreateTitle": "Create a plan with AI",
     "aiCreateDescription": "Let AI create a personalized suggestion"
   },
@@ -170,6 +164,14 @@
     "description": "Different tips and supplements can help you achieve your health goals. Select one for more information"
   },
   "goalDetails": {
+    "addTrainingGoal": "Add to training plan",
+    "addNutritionGoal": "Add to diet plan",
+    "addOtherGoal": "Add to other plan",
+    "alreadyInPlan": "Already in plan",
+    "alreadyInPlanTraining": "Already in plan (training)",
+    "alreadyInPlanNutrition": "Already in plan (diet)",
+    "alreadyInPlanSupplement": "Already in plan (supplement)",
+    "alreadyInPlanOther": "Already in plan (other)",
     "taskInfo": "Task",
     "information": "Information",
     "aiInsights": "AI Insights",

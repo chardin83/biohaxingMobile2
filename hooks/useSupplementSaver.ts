@@ -14,6 +14,14 @@ export const useSupplementSaver = () => {
   ) => {
     try {
       const existingPlan = supplementPlans.find(plan => plan.name === selectedPlan.name);
+      const targetKey = supplement?.supplement?.id ?? supplement?.supplement?.name;
+
+      if (!targetKey) {
+        setErrorMessage?.('Ogiltigt tillskott (saknar id/namn).');
+        setTimeout(() => setErrorMessage?.(null), 4000);
+        return;
+      }
+
       let updatedPlans: Plan[];
 
       if (!existingPlan) {
@@ -23,32 +31,41 @@ export const useSupplementSaver = () => {
           supplements: [supplement],
           notify: selectedPlan.notify,
         };
-        updatedPlans = [...supplementPlans, newPlan];
+        updatedPlans = [...(supplementPlans || []), newPlan];
         setSelectedPlan?.(newPlan);
       } else if (isEditingSupplement) {
-        const updatedPlan = {
+        const updatedPlan: Plan = {
           ...existingPlan,
-          supplements: existingPlan.supplements.map(existingSupplement =>
-            existingSupplement.supplement.name === supplement.supplement.name ? supplement : existingSupplement
-          ),
+          supplements: (existingPlan.supplements || []).map(existingSupplement => {
+            const existingKey =
+              existingSupplement?.supplement?.id ?? existingSupplement?.supplement?.name;
+            return existingKey === targetKey ? supplement : existingSupplement;
+          }),
         };
-        updatedPlans = supplementPlans.map(plan => (plan.name === existingPlan.name ? updatedPlan : plan));
+        updatedPlans = (supplementPlans || []).map(plan =>
+          plan.name === existingPlan.name ? updatedPlan : plan
+        );
         setSelectedPlan?.(updatedPlan);
       } else {
-        const supplementExists = existingPlan.supplements.some(
-          existingSupplement => existingSupplement.supplement.name === supplement.supplement.name
-        );
+        const supplementExists = (existingPlan.supplements || []).some(existingSupplement => {
+          const existingKey =
+            existingSupplement?.supplement?.id ?? existingSupplement?.supplement?.name;
+          return existingKey === targetKey;
+        });
+
         if (supplementExists) {
-          setErrorMessage?.(`Tillskottet "${supplement.supplement.name}" finns redan i planen.`);
+          setErrorMessage?.(`Tillskottet "${supplement.supplement?.name ?? targetKey}" finns redan i planen.`);
           setTimeout(() => setErrorMessage?.(null), 5000);
           return;
         }
 
-        const updatedPlan = {
+        const updatedPlan: Plan = {
           ...existingPlan,
-          supplements: [...existingPlan.supplements, supplement],
+          supplements: [...(existingPlan.supplements || []), supplement],
         };
-        updatedPlans = supplementPlans.map(plan => (plan.name === existingPlan.name ? updatedPlan : plan));
+        updatedPlans = (supplementPlans || []).map(plan =>
+          plan.name === existingPlan.name ? updatedPlan : plan
+        );
         setSelectedPlan?.(updatedPlan);
       }
 

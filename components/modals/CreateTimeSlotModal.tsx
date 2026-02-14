@@ -39,12 +39,17 @@ const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({
 
   const isEditing = !!initialName;
 
+  const prevVisibleRef = React.useRef(visible);
+
   React.useEffect(() => {
-    if (visible) {
-      setPlanName(initialName);
-      setTime(initialTime);
-    }
-  }, [visible, initialName, initialTime]);
+    const becameVisible = visible && !prevVisibleRef.current;
+    prevVisibleRef.current = visible;
+
+    if (!becameVisible) return;
+
+    setPlanName(initialName);
+    setTime(initialTime);
+  }, [visible, initialName, initialTime]); // inkludera dependencies, men uppdatera bara vid öppning
 
   const handleSave = () => {
     if (!planName.trim()) return;

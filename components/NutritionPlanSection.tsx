@@ -12,6 +12,8 @@ import PlanEditActions from '@/components/ui/PlanEditActions';
 import { useSupplementMap } from '@/locales/supplements';
 import { Tip,tips } from '@/locales/tips';
 
+import { IconSymbol } from './ui/IconSymbol';
+
 type Props = {
   colors: any;
   styles: any;
@@ -152,7 +154,7 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, styles, formatDa
         const visibleFoodItems = isExpanded ? foodItems : foodItems.slice(0, maxVisibleFoods);
         const hiddenCount = Math.max(foodItems.length - maxVisibleFoods, 0);
         const hasExtraFoods = hiddenCount > 0;
-        const arrowRotation = isExpanded ? '90deg' : '0deg';
+        const arrowRotation = isExpanded ? '-90deg' : '0deg';
 
         const editAction = (
           <PlanEditActions
@@ -204,6 +206,12 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, styles, formatDa
                         ? t('general.showLess')
                         : t('nutritionPlanSection.showMoreNutritionFoods', { count: hiddenCount })}
                     </ThemedText>
+                     <IconSymbol
+                      name="chevron.right"
+                      size={18}
+                      color={colors.icon}
+                      style={[styles.toggleBadgeIcon, { transform: [{ rotate: arrowRotation }] }]}
+                    />
                   </Badge>
                 )}
               </View>

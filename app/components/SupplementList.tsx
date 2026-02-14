@@ -11,6 +11,7 @@ import AppButton from '@/components/ui/AppButton';
 import { useSupplementSaver } from '@/hooks/useSupplementSaver';
 
 import { Supplement } from '../domain/Supplement';
+import { SupplementPlanEntry } from '../domain/SupplementPlanEntry';
 
 interface SupplementListProps {
   supplements: Supplement[];
@@ -44,11 +45,23 @@ const SupplementList: React.FC<SupplementListProps> = ({
 
   const handleAddSupplementToPlan = (plan: any) => {
     if (!pendingSupplement) return;
+
+    const entry: SupplementPlanEntry = {
+      supplement: pendingSupplement,
+      startedAt: new Date().toISOString(),
+      createdBy: 'local',
+      planName: plan.name,
+      prefferedTime: plan.prefferedTime,
+      notify: plan.notify,
+    };
+
     saveSupplementToPlan(
       { name: plan.name, prefferedTime: plan.prefferedTime, supplements: plan.supplements ?? [], notify: plan.notify },
-      pendingSupplement,
+      entry,
       false
     );
+
+    // Stäng modal och nollställ valet
     setAddToPlanVisible(false);
     setPendingSupplement(null);
   };
@@ -153,19 +166,34 @@ const SupplementList: React.FC<SupplementListProps> = ({
       <CreateTimeSlotModal
         visible={createPlanVisible}
         onClose={() => {
+          // Stäng endast create-modal
           setCreatePlanVisible(false);
-          setAddToPlanVisible(true);
         }}
         onCreate={(newPlan: CreatePlanData) => {
-          if (pendingSupplement) {
-            saveSupplementToPlan(
-              { name: newPlan.name, prefferedTime: newPlan.prefferedTime, supplements: [], notify: newPlan.notify },
-              pendingSupplement,
-              false
-            );
+          if (!pendingSupplement) {
+            setCreatePlanVisible(false);
+            return;
           }
+
+          const entry: SupplementPlanEntry = {
+            supplement: pendingSupplement,
+            startedAt: new Date().toISOString(),
+            createdBy: 'local',
+            planName: newPlan.name,
+            prefferedTime: newPlan.prefferedTime,
+            notify: newPlan.notify,
+          };
+
+          saveSupplementToPlan(
+            { name: newPlan.name, prefferedTime: newPlan.prefferedTime, supplements: [], notify: newPlan.notify },
+            entry,
+            false
+          );
+
+          // Stäng båda modalerna och nollställ pending
+          setPendingSupplement(null);
           setCreatePlanVisible(false);
-          setAddToPlanVisible(true);
+          setAddToPlanVisible(false);
         }}
       />
     </>
