@@ -74,7 +74,7 @@ const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({
     >
       <View style={styles.fullWidth}>
         <LabeledInput
-          label={t('plan.timeSlotNameLabel', { defaultValue: 'Namn på tidpunkt' })}
+          label={t('plan.timeSlotNameLabel')}
           value={planName}
           onChangeText={setPlanName}
         />

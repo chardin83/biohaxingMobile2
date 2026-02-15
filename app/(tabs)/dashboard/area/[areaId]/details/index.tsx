@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 
+import AreaRelevanceSection from '@/app/components/AreaRelevanceSection';
 import SupplementList from '@/app/components/SupplementList';
 import { useStorage } from '@/app/context/StorageContext';
 import { Supplement } from '@/app/domain/Supplement';
@@ -24,9 +25,6 @@ import { useSupplements } from '@/locales/supplements';
 import { tips } from '@/locales/tips';
 import { PlanCategory } from '@/types/planCategory';
 import { POSITIVE_VERDICTS } from '@/types/verdict';
-
-import ShowAllButton from './ShowAllButton';
-
 
 function getAreaIconColor(areaId: string, colors: any) {
   switch (areaId) {
@@ -56,9 +54,10 @@ export default function AreaDetailScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { colors } = useTheme();
-  const { areaId, tipId } = useLocalSearchParams<{
+  const { areaId, tipId, prevAreaId } = useLocalSearchParams<{
     areaId: string;
     tipId?: string;
+    prevAreaId?: string;
   }>();
   const supplements = useSupplements();
   const { addTipView, incrementTipChat, viewedTips, setTipVerdict, plans, setPlans, myLevel } = useStorage();
@@ -355,7 +354,18 @@ export default function AreaDetailScreen() {
     <Container
       background="gradient"
       gradientLocations={colors.gradients?.sunrise?.locations3 as any}
-      onBackPress={() => router.replace(`/dashboard/area/${areaId}`)}
+      onBackPress={() => {
+        if (prevAreaId) {
+          // Om vi har tipId, gå tillbaka till details för föregående area/tip
+          router.replace({
+            pathname: `/dashboard/area/${prevAreaId}/details` as any,
+            params: { tipId: tipId },
+          });
+        } else {
+          // Annars gå till area-listan
+          router.replace(`/dashboard/area/${areaId}`);
+        }
+      }}
       showBackButton
     >
       <View style={styles.topSection}>
@@ -717,72 +727,6 @@ function PlanActionSection({
         />
       )}
     </View>
-  );
-}
-
-type AreaRelevanceSectionProps = {
-  tip: typeof tips[number] | undefined;
-  areaId: string;
-  showAllAreas: boolean;
-  setShowAllAreas: React.Dispatch<React.SetStateAction<boolean>>;
-  effectiveTipId: string | null;
-  addTipView: (areaId: string, tipId: string) => number;
-  styles: { [key: string]: any };
-  colors: any;
-};
-
-function AreaRelevanceSection({
-  tip,
-  areaId,
-  showAllAreas,
-  setShowAllAreas,
-  effectiveTipId,
-  addTipView,
-  styles,
-  colors,
-}: AreaRelevanceSectionProps) {
-  const { t } = useTranslation();
-  if (!tip?.areas?.length) return null;
-  return (
-    <>
-      <ThemedText type="subtitle" style={[styles.relevanceHeading, { color: colors.textPrimary }]}>
-        {t('common:goalDetails.relevance')}
-      </ThemedText>
-      {(showAllAreas ? tip.areas : tip.areas.filter(a => a.id === areaId)).map(a => {
-        const areaTitle = t(`areas:${a.id}.title`);
-        return (
-          <AppBox key={a.id} title={areaTitle}>
-            <ThemedText type="explainer" style={styles.descriptionText}>
-              {t(`tips:${a.descriptionKey}`)}
-            </ThemedText>
-          </AppBox>
-        );
-      })}
-      {tip.areas.length > 1 && (
-        <ShowAllButton
-          showAll={showAllAreas}
-          onPress={() => {
-            setShowAllAreas(v => {
-              const next = !v;
-              if (next && effectiveTipId && tip?.areas?.length) {
-                tip.areas.forEach(a => {
-                  if (a.id !== areaId) {
-                    const xpGained = addTipView(a.id, effectiveTipId);
-                    if (xpGained > 0) {
-                      console.log(`🎉 You gained ${xpGained} XP for viewing tip in area ${a.id} via Show All`);
-                    }
-                  }
-                });
-              }
-              return next;
-            });
-          }}
-          style={styles.showAllButton}
-          textStyle={styles.showAllText}
-          accentColor={colors.accentDefault}
-        />
-      )}
-    </>
   );
 }
 
