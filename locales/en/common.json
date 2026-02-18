@@ -104,6 +104,8 @@
     "supplementCountLabel_plural": "{{count}} supplements",
     "toggleNotifications": "Toggle notifications",
     "toggleSupplements": "Expand or collapse",
+    "createdBy": "Created by {{name}}",
+    "latestAiCommentTitle": "Latest AI comment",
     "noSupplementSlots": "No supplement slots yet.",
     "aiCreateTitle": "Create a plan with AI",
     "aiCreateDescription": "Let AI create a personalized suggestion"
@@ -114,6 +116,7 @@
     "createAIPlanLabel": "Create AI-plan",
     "createAIPlanHint": "You must approve o r cancel the current AI plan before creating a new one.",
     "intro": "Create and review your personal health plan",
+    "aiCommentTitle": "AI comment",
     "aiSupplements": "Supplements - {{count}} new",
     "aiSupplementsLabel": "Supplements",
     "aiSupplementsSelected": "Supplements - {{selected}} of {{total}}",
@@ -638,5 +641,13 @@
     "nutritionCommentPlaceholder": "Comment (optional)",
     "nutritionCommentLabel": "Comment",
     "showMoreNutritionFoods": "{{count}}"
+  },
+  "otherPlanSection": {
+    "otherHeader": "Other",
+    "noActiveOther": "No other plans yet.",
+    "editOtherSettings": "Edit",
+    "otherSettingsTitle": "Other settings",
+    "otherCommentPlaceholder": "Comment (optional)",
+    "otherCommentLabel": "Comment"
   }
 }

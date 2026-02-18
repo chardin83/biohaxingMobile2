@@ -7,7 +7,7 @@ import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
 import LabeledInput from '@/components/ui/LabeledInput';
 
-type NutritionSettingsModalProps = {
+type DefaultSettingsModalProps = {
   visible: boolean;
   title: string;
   commentPlaceholder: string;
@@ -23,7 +23,7 @@ type NutritionSettingsModalProps = {
   nutritionTitle?: string | null;
 };
 
-const NutritionSettingsModal: React.FC<NutritionSettingsModalProps> = ({
+const DefaultSettingsModal: React.FC<DefaultSettingsModalProps> = ({
   visible,
   title,
   commentPlaceholder,
@@ -84,7 +84,7 @@ const NutritionSettingsModal: React.FC<NutritionSettingsModalProps> = ({
   );
 };
 
-export default NutritionSettingsModal;
+export default DefaultSettingsModal;
 
 const styles = StyleSheet.create({
   nutritionTitle: {

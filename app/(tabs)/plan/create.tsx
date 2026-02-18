@@ -308,7 +308,14 @@ export default function CreatePlanScreen() {
                         }
                     });
 
-                    planMap.set(key, { ...plan, ...current, supplements: mergedSupplements });
+                    const mergedPlan = {
+                        ...current,
+                        ...plan,
+                        notify: current.notify ?? plan.notify,
+                        supplements: mergedSupplements,
+                    };
+
+                    planMap.set(key, mergedPlan);
                 });
 
                 return Array.from(planMap.values());
@@ -434,7 +441,7 @@ export default function CreatePlanScreen() {
                 )}
                 {tempPlans && tempPlans.reasonSummary && (
                     <>
-                        <ThemedText type="label">AI-kommentar</ThemedText>
+                        <ThemedText type="label">{t('createPlan.aiCommentTitle')}</ThemedText>
                         <ThemedText
                             type="default"
                             style={styles.reasonText}

@@ -1,10 +1,11 @@
 import React, { useCallback,useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
 import { PlanTipEntry, useStorage } from '@/app/context/StorageContext';
-import NutritionSettingsModal from '@/components/modals/NutritionSettingsModal';
+import DefaultSettingsModal from '@/components/modals/DefaultSettingsModal';
+import { PlanMeta } from '@/components/sections/PlanMeta';
 import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
 import Badge from '@/components/ui/Badge';
@@ -12,16 +13,14 @@ import PlanEditActions from '@/components/ui/PlanEditActions';
 import { useSupplementMap } from '@/locales/supplements';
 import { Tip,tips } from '@/locales/tips';
 
-import { IconSymbol } from './ui/IconSymbol';
+import { IconSymbol } from '../ui/IconSymbol';
 
 type Props = {
   colors: any;
-  styles: any;
   formatDate: (isoDate: string) => string;
-  PlanMeta: React.FC<any>;
 };
 
-export const NutritionPlanSection: React.FC<Props> = ({ colors, styles, formatDate, PlanMeta }) => {
+export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
   const { plans, setPlans } = useStorage();
   const supplementMap = useSupplementMap();
@@ -166,7 +165,14 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, styles, formatDa
 
         return (
           <AppBox key={tipId} title={tipTitle} headerRight={editAction}>
-            {plan?.startedAt && <PlanMeta startedAt={plan.startedAt} t={t} formatDate={formatDate} />}
+            {plan?.startedAt && (
+              <PlanMeta
+                startedAt={plan.startedAt}
+                createdBy={plan.createdBy}
+                t={t}
+                formatDate={formatDate}
+              />
+            )}
             {recommendedDoseLabel && (
               <ThemedText type="default" style={styles.recommendedDose}>
                 {recommendedDoseLabel}
@@ -174,7 +180,7 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, styles, formatDa
             )}
             {/* Visa kommentar om den finns */}
             {plan?.comment ? (
-              <ThemedText type="default" style={{ marginBottom: 8 }}>
+              <ThemedText type="default" style={styles.commentText}>
                 {plan.comment}
               </ThemedText>
             ) : null}
@@ -220,7 +226,7 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, styles, formatDa
         );
       })}
       <Portal>
-        <NutritionSettingsModal
+        <DefaultSettingsModal
           visible={nutritionSettingsVisible}
           title={t('nutritionPlanSection.nutritionSettingsTitle')}
           nutritionTitle={nutritionSettingsTitle}
@@ -239,3 +245,32 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, styles, formatDa
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  planHeaderActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  recommendedDose: {
+    marginBottom: 8,
+  },
+  commentText: {
+    marginBottom: 8,
+  },
+  badgeRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 8,
+  },
+  badgeDetail: {
+    marginTop: 4,
+  },
+  toggleBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  toggleBadgeIcon: {
+    marginLeft: 6,
+  },
+});

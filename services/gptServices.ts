@@ -324,9 +324,9 @@ function normalizePlanTips(
   return (items ?? []).map((item: any) => ({
     tipId: item.tipId ?? item.id,
     startedAt: item.startedAt ?? now,
-    createdBy: item.createdBy,
-    editedAt: item.editedAt,
-    editedBy: item.editedBy,
+    createdBy: item.createdBy ?? 'AI',
+    editedAt: item.editedAt ?? now,
+    editedBy: item.editedBy ?? item.createdBy ?? 'AI',
     planCategory: category,
   }));
 }

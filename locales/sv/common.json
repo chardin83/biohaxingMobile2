@@ -104,7 +104,9 @@
     "supplementCountLabel_plural": "{{count}} tillskott",
     "toggleNotifications": "Växla notiser",
     "toggleSupplements": "Visa eller dölj innehåll",
-    "noSupplementSlots": "Inga tider skapade ännu."
+    "noSupplementSlots": "Inga tider skapade ännu.",
+    "createdBy": "Skapad av {{name}}",
+    "latestAiCommentTitle": "Senaste AI-kommentar"
   },
   "createPlan": {
     "title": "AI-plan",
@@ -112,6 +114,7 @@
     "createAIPlanLabel": "Skapa AI-plan",
     "createAIPlanHint": "Du måste godkänna eller avbryta nuvarande AI-plan innan du kan skapa en ny.",
     "intro": "Skapa och granska din personliga hälsoplan",
+    "aiCommentTitle": "AI-kommentar",
     "aiSupplements": "Kosttillskott - {{count}} nya",
     "aiSupplementsLabel": "Kosttillskott",
     "aiSupplementsSelected": "Kosttillskott - {{selected}} av {{total}}",
@@ -648,5 +651,13 @@
     "nutritionCommentPlaceholder": "Kommentar (valfri)",
     "nutritionCommentLabel": "Kommentar",
     "showMoreNutritionFoods": "{{count}}st"
+  },
+  "otherPlanSection": {
+   "otherHeader": "Övrigt",
+    "noActiveOther": "Inga övriga planer ännu.",
+    "editOtherSettings": "Redigera",
+    "otherSettingsTitle": "Övriga inställningar",
+    "otherCommentPlaceholder": "Kommentar (valfri)",
+    "otherCommentLabel": "Kommentar"
   }
 }

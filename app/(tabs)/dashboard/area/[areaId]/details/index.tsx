@@ -115,6 +115,9 @@ export default function AreaDetailScreen() {
       const nextEntry = {
         tipId: effectiveTipId,
         startedAt: new Date().toISOString(),
+        createdBy: 'you',
+        editedAt: new Date().toISOString(),
+        editedBy: 'you',
         planCategory: targetCategory,
       };
       return {
