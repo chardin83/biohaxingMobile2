@@ -1,4 +1,5 @@
 // services/gptService.ts
+import debug from 'debug';
 import { t } from 'i18next';
 
 import { PlansByCategory } from '@/app/context/StorageContext';
@@ -7,6 +8,8 @@ import { Message } from '@/app/domain/Message';
 import i18n from '@/app/i18n';
 import { ENDPOINTS } from '@/config';
 import { tips } from '@/locales/tips';
+
+const log = debug('app:gptServices');
 
 export interface AnalysisResponse {
   type: string;
@@ -60,7 +63,7 @@ export const buildSystemPrompt = (plans: PlansByCategory, shareHealthPlan: boole
 
     const prompt = t('prompts:system.withPlanTemplate', { plan: planSummary });
 
-    console.log('[buildSystemPrompt] withPlanTemplate:', prompt);
+    log('[buildSystemPrompt] withPlanTemplate:', prompt);
 
     return prompt;
   }
@@ -202,7 +205,7 @@ export async function sendFileToAIAnalysis({
   const endpoint = ENDPOINTS.handleSupplementCheck;
 
   // innan fetch
-  console.log('[sendFileToAIAnalysis] sending to endpoint:', endpoint, {
+  log('[sendFileToAIAnalysis] sending to endpoint:', endpoint, {
     fileProvided: !!(file_base64 || uri),
     uri,
     name,
@@ -220,7 +223,7 @@ export async function sendFileToAIAnalysis({
   });
 
   const text = await res.text().catch(() => '');
-  console.log('[sendFileToAIAnalysis] RAW RESPONSE text:', text);
+  log('[sendFileToAIAnalysis] RAW RESPONSE text:', text);
   let json: any = null;
   try {
     json = text ? JSON.parse(text) : null;
@@ -332,9 +335,9 @@ export async function createPlan(
     supplements: tip.supplements,
   }));
 
-  console.log('[createPlan] tips (first 3):', translatedTips.slice(0, 3));
-  console.log('[createPlan] userAreas:', userAreas);
-  console.log('[createPlan] myLevel:', myLevel);
+  log('[createPlan] tips (first 3):', translatedTips.slice(0, 3));
+  log('[createPlan] userAreas:', userAreas);
+  log('[createPlan] myLevel:', myLevel);
 
   const response = await fetch(ENDPOINTS.createPlan, {
     method: 'POST',

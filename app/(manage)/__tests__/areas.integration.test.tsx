@@ -182,14 +182,4 @@ describe('Goals Integration Tests', () => {
       expect(goalElement.props.style).toBeDefined();
     });
   });
-
-  it('debug: list all rendered text nodes', async () => {
-    const { getAllByText } = renderWithProviders(<Areas />);
-    await waitFor(() => {
-      // Find all text nodes (any text)
-      const allTextNodes = getAllByText(/.*/);
-      // Print all text node values for debugging
-      console.log('Rendered text nodes:', allTextNodes.map(node => node.props.children));
-    });
-  });
 });

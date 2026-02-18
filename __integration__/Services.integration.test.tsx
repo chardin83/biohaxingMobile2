@@ -1,8 +1,6 @@
 import { act, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
 
-import { SupplementPlanEntry } from '@/app/domain/SupplementPlanEntry';
-
 import { StorageProvider, useStorage } from '../app/context/StorageContext';
 import { Message } from '../app/domain/Message';
 import { Plan } from '../app/domain/Plan';

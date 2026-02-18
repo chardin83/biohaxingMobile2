@@ -150,8 +150,11 @@ jest.mock('@/components/NutritionLogger', () => {
   };
 });
 
-const renderWithProviders = (children: React.ReactNode) => {
-  return render(<>{children}</>, { wrapper: AllProviders });
+const renderWithProviders = async (children: React.ReactNode) => {
+  const result = render(<>{children}</>, { wrapper: AllProviders });
+  // Flush initial effects within act to avoid warnings from useEffect updates.
+  await act(async () => {});
+  return result;
 };
 
 describe('Calendar Integration Tests', () => {
@@ -160,7 +163,7 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('renders calendar with real CalendarComponent integration', async () => {
-    const { getByTestId } = renderWithProviders(<Calendar />);
+    const { getByTestId } = await renderWithProviders(<Calendar />);
 
     await waitFor(() => {
       expect(getByTestId('real-calendar')).toBeTruthy();
@@ -168,7 +171,7 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('integrates calendar day selection with DayEdit component', async () => {
-    const { getByTestId, queryByText } = renderWithProviders(<Calendar />);
+    const { getByTestId, queryByText } = await renderWithProviders(<Calendar />);
 
     // Initially no DayEdit should be visible with supplements tab
     expect(queryByText('Tillskott')).toBeNull();
@@ -186,7 +189,7 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('allows adding supplements through the full workflow', async () => {
-    const { getByTestId, getByText, queryByText } = renderWithProviders(<Calendar />);
+    const { getByTestId, getByText, queryByText } = await renderWithProviders(<Calendar />);
 
     // Select a day
     await act(async () => {
@@ -210,7 +213,7 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('manages supplement state through storage context', async () => {
-    const { getByTestId, queryByText } = renderWithProviders(<Calendar />);
+    const { getByTestId, queryByText } = await renderWithProviders(<Calendar />);
 
     // Select a day and verify DayEdit appears
     await act(async () => {
@@ -238,7 +241,7 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('integrates calendar marking with supplement data', async () => {
-    const { getByTestId, queryByTestId } = renderWithProviders(<Calendar />);
+    const { getByTestId, queryByTestId } = await renderWithProviders(<Calendar />);
 
     // Select a day
     await act(async () => {
@@ -255,7 +258,7 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('switches between supplement and meal tabs', async () => {
-    const { getByTestId, getByText, queryByTestId } = renderWithProviders(<Calendar />);
+    const { getByTestId, getByText, queryByTestId } = await renderWithProviders(<Calendar />);
 
     // Select a day
     await act(async () => {
@@ -281,7 +284,7 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('handles time changes in supplement workflow', async () => {
-    const { getByTestId, getByText } = renderWithProviders(<Calendar />);
+    const { getByTestId, getByText } = await renderWithProviders(<Calendar />);
 
     // Select a day
     await act(async () => {
@@ -299,7 +302,7 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('handles supplement editing workflow', async () => {
-    const { getByTestId, getByText } = renderWithProviders(<Calendar />);
+    const { getByTestId, getByText } = await renderWithProviders(<Calendar />);
 
     // Select a day
     await act(async () => {
@@ -329,7 +332,7 @@ describe('Calendar Integration Tests', () => {
       return Promise.resolve(null);
     });
 
-    const { getByTestId } = renderWithProviders(<Calendar />);
+    const { getByTestId } = await renderWithProviders(<Calendar />);
 
     // Kalendern ska visa markering för 2024-01-15
     await waitFor(() => {

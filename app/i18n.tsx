@@ -39,7 +39,6 @@ const resources = {
   },
 };
 
-console.log('RAW', svSupplements.supplements?.[0]?.name);
 // Custom Language Detector for Expo
 const customLanguageDetector = {
   type: 'languageDetector' as const,
