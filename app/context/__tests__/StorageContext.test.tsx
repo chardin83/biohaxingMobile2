@@ -8,7 +8,7 @@ const TestComponent = ({ callback }: { callback: (ctx: ReturnType<typeof useStor
   const ctx = useStorage();
   React.useEffect(() => {
     callback(ctx);
-  }, [ctx]);
+  }, [callback, ctx]);
   return null;
 };
 
@@ -24,13 +24,14 @@ describe('StorageContext', () => {
         />
       </StorageProvider>
     );
-    expect(contextValues.plans).toEqual({ supplements: [], training: [], nutrition: [], other: [] });
+    expect(contextValues.plans).toEqual({ supplements: [], training: [], nutrition: [], other: [], reasonSummary: "" });
     act(() => {
       contextValues.setPlans({
         supplements: [{ name: 'Plan 1', supplements: [], prefferedTime: '08:00', notify: false }],
         training: [],
         nutrition: [],
         other: [],
+        reasonSummary: "",
       });
     });
     // Wait for the state update

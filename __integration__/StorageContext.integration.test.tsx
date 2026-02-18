@@ -7,97 +7,92 @@ import { Plan } from '../app/domain/Plan';
 
 // This is an integration test that uses real AsyncStorage and real context
 describe('StorageContext Integration', () => {
+  let contextValuesRef: { current: any };
+
+  // Definiera TestComponent EN gång
+  const TestComponent = () => {
+    const ctx = useStorage();
+    React.useEffect(() => {
+      contextValuesRef.current = ctx;
+    });
+    return null;
+  };
+
   beforeEach(async () => {
-    // Clear AsyncStorage before each test
     await AsyncStorage.clear();
+    contextValuesRef = { current: {} };
   });
 
   afterEach(async () => {
-    // Clean up after each test
     await AsyncStorage.clear();
   });
 
   it('should persist and load plans from real AsyncStorage', async () => {
-    let contextValues: any = {};
-
-    const TestComponent = () => {
-      const ctx = useStorage();
-      React.useEffect(() => {
-        contextValues = ctx;
-      });
-      return null;
-    };
-
     const testPlan: Plan = {
       name: 'Test Health Plan',
-      supplements: [
-        {
-          id: 'vitamin-d',
-          name: 'Vitamin D',
-          quantity: 1000,
-          unit: 'IU',
-        },
-      ],
       prefferedTime: 'morning',
       notify: false,
+      supplements: [
+        {
+          supplement: {
+            id: 'vitamin-d',
+            name: 'Vitamin D',
+            quantity: "1000",
+            unit: 'IU',
+          },
+          startedAt: '2024-01-01T00:00:00Z',
+          createdBy: 'test-user',
+          planName: 'Test Health Plan',
+          prefferedTime: 'morning',
+          notify: false,
+          reason: '',
+        },
+      ],
+      reason: '',
     };
 
-    // Render the provider
     render(
       <StorageProvider>
         <TestComponent />
       </StorageProvider>
     );
 
-    // Wait for initialization
     await waitFor(() => {
-      expect(contextValues.isInitialized).toBe(true);
+      expect(contextValuesRef.current.isInitialized).toBe(true);
     });
 
-    // Add a plan
     act(() => {
-      contextValues.setPlans({ supplements: [testPlan], training: [], nutrition: [], other: [] });
+      contextValuesRef.current.setPlans({
+        supplements: [testPlan],
+        training: [],
+        nutrition: [],
+        other: [],
+      });
     });
 
-    // Wait for the state to be updated
     await waitFor(() => {
-      expect(contextValues.plans).toEqual({ supplements: [testPlan], training: [], nutrition: [], other: [] });
+      expect(contextValuesRef.current.plans).toEqual({
+        supplements: [testPlan],
+        training: [],
+        nutrition: [],
+        other: [],
+        reasonSummary: "",
+      });
     });
 
-    // Wait a bit more for AsyncStorage operation to complete
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    // Verify the plan was persisted to AsyncStorage
     const storedPlans = await AsyncStorage.getItem('plans');
     expect(JSON.parse(storedPlans || '[]')).toEqual({
       supplements: [testPlan],
       training: [],
       nutrition: [],
       other: [],
+      reasonSummary: "",
     });
   });
 
   it('should persist and load goals from real AsyncStorage', async () => {
-    let contextValues: any = {};
-
-    const TestComponent = () => {
-      const ctx = useStorage();
-      React.useEffect(() => {
-        contextValues = ctx;
-      });
-      return null;
-    };
-
-    render(
-      <StorageProvider>
-        <TestComponent />
-      </StorageProvider>
-    );
-
-    await waitFor(() => {
-      expect(contextValues.isInitialized).toBe(true);
-    });
-
     const testGoals = ['goal1', 'goal2'];
     const planEntry = {
       mainGoalId: 'main1',
@@ -106,22 +101,28 @@ describe('StorageContext Integration', () => {
       planCategory: 'training' as const,
     };
 
-    // Set goals and categorized plans
-    act(() => {
-      contextValues.setMyGoals(testGoals);
-      contextValues.setPlans({ supplements: [], training: [planEntry], nutrition: [], other: [] });
-    });
+    render(
+      <StorageProvider>
+        <TestComponent />
+      </StorageProvider>
+    );
 
-    // Wait for state updates
     await waitFor(() => {
-      expect(contextValues.myGoals).toEqual(testGoals);
-      expect(contextValues.plans.training).toEqual([planEntry]);
+      expect(contextValuesRef.current.isInitialized).toBe(true);
     });
 
-    // Wait for AsyncStorage operations
+    act(() => {
+      contextValuesRef.current.setMyGoals(testGoals);
+      contextValuesRef.current.setPlans({ supplements: [], training: [planEntry], nutrition: [], other: [] });
+    });
+
+    await waitFor(() => {
+      expect(contextValuesRef.current.myGoals).toEqual(testGoals);
+      expect(contextValuesRef.current.plans.training).toEqual([planEntry]);
+    });
+
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    // Verify persistence
     const storedGoals = await AsyncStorage.getItem('myGoals');
     const storedPlans = await AsyncStorage.getItem('plans');
 
@@ -131,20 +132,11 @@ describe('StorageContext Integration', () => {
       training: [planEntry],
       nutrition: [],
       other: [],
+      reasonSummary: "",
     });
   });
 
   it('should handle XP and level progression with real persistence', async () => {
-    let contextValues: any = {};
-
-    const TestComponent = () => {
-      const ctx = useStorage();
-      React.useEffect(() => {
-        contextValues = ctx;
-      });
-      return null;
-    };
-
     render(
       <StorageProvider>
         <TestComponent />
@@ -152,24 +144,21 @@ describe('StorageContext Integration', () => {
     );
 
     await waitFor(() => {
-      expect(contextValues.isInitialized).toBe(true);
+      expect(contextValuesRef.current.isInitialized).toBe(true);
     });
 
-    // Set XP and level
     act(() => {
-      contextValues.setMyXP(150);
-      contextValues.setMyLevel(2);
+      contextValuesRef.current.setMyXP(150);
+      contextValuesRef.current.setMyLevel(2);
     });
 
     await waitFor(() => {
-      expect(contextValues.myXP).toBe(150);
-      expect(contextValues.myLevel).toBe(2);
+      expect(contextValuesRef.current.myXP).toBe(150);
+      expect(contextValuesRef.current.myLevel).toBe(2);
     });
 
-    // Wait for AsyncStorage operations
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    // Verify persistence
     const storedXP = await AsyncStorage.getItem('myXP');
     const storedLevel = await AsyncStorage.getItem('myLevel');
 
@@ -178,28 +167,18 @@ describe('StorageContext Integration', () => {
   });
 
   it('should load existing data on initialization', async () => {
-    // Pre-populate AsyncStorage
     const existingPlans = {
       supplements: [{ id: 'existing-plan', name: 'Existing Plan', supplements: [], prefferedTime: 'evening' }],
       training: [],
       nutrition: [],
       other: [],
+      reasonSummary: "",
     };
     const existingGoals = ['existing-goal'];
 
     await AsyncStorage.setItem('plans', JSON.stringify(existingPlans));
     await AsyncStorage.setItem('myGoals', JSON.stringify(existingGoals));
     await AsyncStorage.setItem('myXP', '50');
-
-    let contextValues: any = {};
-
-    const TestComponent = () => {
-      const ctx = useStorage();
-      React.useEffect(() => {
-        contextValues = ctx;
-      });
-      return null;
-    };
 
     render(
       <StorageProvider>
@@ -209,34 +188,14 @@ describe('StorageContext Integration', () => {
 
     // Wait for initialization and data loading
     await waitFor(() => {
-      expect(contextValues.isInitialized).toBe(true);
-      expect(contextValues.plans).toEqual(existingPlans);
-      expect(contextValues.myGoals).toEqual(existingGoals);
-      expect(contextValues.myXP).toBe(50);
+      expect(contextValuesRef.current.isInitialized).toBe(true);
+      expect(contextValuesRef.current.plans).toEqual(existingPlans);
+      expect(contextValuesRef.current.myGoals).toEqual(existingGoals);
+      expect(contextValuesRef.current.myXP).toBe(50);
     });
   });
 
   it('should handle nutrition summaries persistence', async () => {
-    let contextValues: any = {};
-
-    const TestComponent = () => {
-      const ctx = useStorage();
-      React.useEffect(() => {
-        contextValues = ctx;
-      });
-      return null;
-    };
-
-    render(
-      <StorageProvider>
-        <TestComponent />
-      </StorageProvider>
-    );
-
-    await waitFor(() => {
-      expect(contextValues.isInitialized).toBe(true);
-    });
-
     const nutritionSummary = {
       '2024-01-01': {
         date: '2024-01-01',
@@ -246,18 +205,22 @@ describe('StorageContext Integration', () => {
       },
     };
 
+     render(
+      <StorageProvider>
+        <TestComponent />
+      </StorageProvider>
+    );
+
     act(() => {
-      contextValues.setDailyNutritionSummaries(nutritionSummary);
+      contextValuesRef.current.setDailyNutritionSummaries(nutritionSummary);
     });
 
     await waitFor(() => {
-      expect(contextValues.dailyNutritionSummaries).toEqual(nutritionSummary);
+      expect(contextValuesRef.current.dailyNutritionSummaries).toEqual(nutritionSummary);
     });
 
-    // Wait for AsyncStorage operation
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    // Verify persistence
     const storedSummaries = await AsyncStorage.getItem('dailyNutritionSummary');
     expect(JSON.parse(storedSummaries || '{}')).toEqual(nutritionSummary);
   });

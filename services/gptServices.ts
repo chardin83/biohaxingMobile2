@@ -51,7 +51,7 @@ export const buildSystemPrompt = (plans: PlansByCategory, shareHealthPlan: boole
       .map(plan =>
         plan.supplements?.length
           ? `🕒 ${plan.prefferedTime}: ${plan.supplements
-              .map((s: any) => `${s.name} (${s.quantity}${s.unit})`)
+              .map((s: any) => `${s.supplement.name} (${s.supplement.quantity}${s.supplement.unit})`)
               .join(', ')}`
           : null
       )
@@ -60,7 +60,6 @@ export const buildSystemPrompt = (plans: PlansByCategory, shareHealthPlan: boole
 
     const prompt = t('prompts:system.withPlanTemplate', { plan: planSummary });
 
-    // ✅ Bekräfta via utskrift
     console.log('[buildSystemPrompt] withPlanTemplate:', prompt);
 
     return prompt;

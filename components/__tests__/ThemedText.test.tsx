@@ -56,7 +56,7 @@ describe('ThemedText', () => {
       expect.arrayContaining([
         expect.objectContaining({
           fontSize: 14,
-          lineHeight: 18,
+          lineHeight: 20,
         }),
       ])
     );
@@ -99,8 +99,8 @@ describe('ThemedText', () => {
     expect(textElement.props.style).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          fontSize: 16,
-          lineHeight: 24,
+          fontSize: 14,
+          lineHeight: 22,
           fontWeight: '600',
         }),
       ])
@@ -193,7 +193,7 @@ it('applies link style when type is link', () => {
       expect.arrayContaining([
         expect.objectContaining({
           fontSize: 14,
-          lineHeight: 18,
+          lineHeight: 20,
         }),
       ])
     );

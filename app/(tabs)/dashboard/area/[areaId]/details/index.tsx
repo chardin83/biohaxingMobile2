@@ -6,18 +6,16 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 
-import AreaRelevanceSection from '@/app/components/AreaRelevanceSection';
 import SupplementList from '@/app/components/SupplementList';
 import { useStorage } from '@/app/context/StorageContext';
 import { Supplement } from '@/app/domain/Supplement';
+import AreaRelevanceSection from '@/components/sections/AreaRelevanceSection';
+import DetailsTopSection from '@/components/sections/DetailsTopSection';
 import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
-import Badge from '@/components/ui/Badge';
 import Container from '@/components/ui/Container';
-import { InfoButtonWithText } from '@/components/ui/InfoButtonWithText';
 import { NotFound } from '@/components/ui/NotFound';
-import ProgressBarWithLabel from '@/components/ui/ProgressbarWithLabel';
 import VerdictSelector from '@/components/VerdictSelector';
 import { AIPromptKey, AIPrompts } from '@/constants/AIPrompts';
 import { areas } from '@/locales/areas';
@@ -25,30 +23,6 @@ import { useSupplements } from '@/locales/supplements';
 import { tips } from '@/locales/tips';
 import { PlanCategory } from '@/types/planCategory';
 import { POSITIVE_VERDICTS } from '@/types/verdict';
-
-function getAreaIconColor(areaId: string, colors: any) {
-  switch (areaId) {
-    case 'energy':
-      return colors.area.energy;
-    case 'mind':
-      return colors.area.mind;
-    case 'sleepQuality':
-      return colors.area.sleep;
-    case 'nervousSystem':
-      return colors.area.nervousSystem;
-    case 'strength':
-      return colors.area.strength;
-    case 'digestiveHealth':
-      return colors.area.digestiveHealth;
-    case 'cardioFitness':
-      return colors.area.cardio;
-    case 'immuneSystem':
-      return colors.area.immuneSystem;
-    // Lägg till fler områden vid behov
-    default:
-      return colors.primary;
-  }
-}
 
 export default function AreaDetailScreen() {
   const { t } = useTranslation();
@@ -90,8 +64,7 @@ export default function AreaDetailScreen() {
   } else {
     infoText = t('goalDetails.unlockedTipInfo'); // Lägg till denna översättning!
   }
-
-  const goalIcon = mainArea?.icon ?? 'target';
+  
   const notFound = !mainArea || !tip;
 
   const descriptionKey = tip?.descriptionKey;
@@ -368,57 +341,26 @@ export default function AreaDetailScreen() {
       }}
       showBackButton
     >
-      <View style={styles.topSection}>
-        <ThemedText type="title" style={{ color: colors.primary }}>
-          {t(`areas:${areaId}.title`)}
-        </ThemedText>
-        <View style={[styles.iconWrapper, { borderColor: colors.borderLight }]}>
-          <Icon source={goalIcon} size={50} color={getAreaIconColor(areaId, colors)} />
-          {tip?.level && (
-            <Badge
-              style={[
-                styles.levelBadge,
-                myLevel < tip.level ? styles.levelBadgeLocked : styles.levelBadgeUnlocked,
-                { backgroundColor: colors.modalBackground }
-              ]}
-            >
-              <ThemedText type="title3" style={{ color: colors.textLight }} uppercase numberOfLines={1}>
-                {myLevel < tip.level ? '🔒 ' : ''}
-                {t('general.level')} {tip.level}
-              </ThemedText>
-            </Badge>
-          )}
-        </View>
-        <ThemedText type="subtitle" style={{ color: colors.primary }}>
-          {resolvedSupplements[0]?.name ?? t(`tips:${titleKey}`)}
-        </ThemedText>
-        {isFavorite && (
-          <View style={[styles.favoriteChip, { backgroundColor: colors.accentWeak }]}>
-            <ThemedText type="caption" style={[styles.favoriteText, { color: colors.primary }]}>
-              ★ {t('common:dashboard.favorite', 'Favorite')}
-            </ThemedText>
-          </View>
-        )}
-        <ThemedText type="caption">
-          {totalXpEarned} XP earned
-        </ThemedText>
-        <View style={styles.progressRow}>
-          <View style={styles.progressBarWrap}>
-            <InfoButtonWithText infoTextKey={infoText}>
-              <ProgressBarWithLabel progress={progress} label={progressLabel} height={12} />
-            </InfoButtonWithText>
-          </View>
-        </View>
-        <PlanActionSection
-          showTopPlanAction={showTopPlanAction}
-          isTipInPlan={isTipInPlan}
-          planBadgeLabel={planBadgeLabel}
-          addPlanButtonTitle={addPlanButtonTitle}
-          handleAddPlanEntry={handleAddTipPlanEntry}
-          styles={styles}
-          colors={colors}
-        />
-      </View>
+
+      <DetailsTopSection
+        areaId={areaId}
+        colors={colors}
+        tip={tip}
+        myLevel={myLevel}
+        resolvedSupplements={resolvedSupplements}
+        titleKey={titleKey}
+        isFavorite={isFavorite}
+        totalXpEarned={totalXpEarned}
+        infoText={infoText}
+        progress={progress}
+        progressLabel={progressLabel}
+        showTopPlanAction={showTopPlanAction}
+        isTipInPlan={isTipInPlan}
+        planBadgeLabel={planBadgeLabel}
+        addPlanButtonTitle={addPlanButtonTitle}
+        handleAddPlanEntry={handleAddTipPlanEntry}
+      />
+
       {descriptionKey && (
         <AppBox title={t('common:goalDetails.information')}>
           <ThemedText type="explainer" style={styles.descriptionText}>
@@ -426,6 +368,15 @@ export default function AreaDetailScreen() {
           </ThemedText>
         </AppBox>
       )}
+            <AreaRelevanceSection
+        tip={tip}
+        areaId={areaId}
+        showAllAreas={showAllAreas}
+        setShowAllAreas={setShowAllAreas}
+        effectiveTipId={effectiveTipId}
+        addTipView={addTipView}
+        colors={colors}
+      />
       {trainingRelationLabel && (
         <AppBox title={t('common:goalDetails.trainingRelation.title')}>
           <ThemedText type="caption" style={styles.metaText}>{trainingRelationLabel}</ThemedText>
@@ -455,16 +406,6 @@ export default function AreaDetailScreen() {
         styles={styles}
         colors={colors}
       />
-      <AreaRelevanceSection
-        tip={tip}
-        areaId={areaId}
-        showAllAreas={showAllAreas}
-        setShowAllAreas={setShowAllAreas}
-        effectiveTipId={effectiveTipId}
-        addTipView={addTipView}
-        styles={styles}
-        colors={colors}
-      />
       <AIInsightsSection
         handleAIInsightPress={handleAIInsightPress}
         isQuestionAsked={isQuestionAsked}
@@ -489,23 +430,6 @@ export default function AreaDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  topSection: {
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  levelBadge: {
-    position: 'absolute',
-    bottom: -20,
-    zIndex: 2,
-  },
-  levelBadgeLocked: {
-    minWidth: 120, // bredare för lås
-    right: -88,
-  },
-  levelBadgeUnlocked: {
-    minWidth: 90, // smalare utan lås
-    right: -55,
-  },
   planActionContainer: {
     width: '100%',
     marginTop: 16,
@@ -531,15 +455,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginLeft: 6,
   },
-  iconWrapper: {
-    width: 90,
-    height: 90,
-    borderRadius: 60,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 10,
-  },
   favoriteChip: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -548,67 +463,10 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginTop: 6,
   },
-  favoriteText: {
-    fontWeight: '700',
-  },
-  goalTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
-    marginBottom: 10,
-    marginTop: 20,
-  },
-  subTitle: {
-    fontSize: 20,
-    marginBottom: 10,
-  },
   buttonRow: {
     flexDirection: 'row',
     gap: 16,
     marginTop: 'auto',
-  },
-  analyzeWrapper: {
-    alignItems: 'center',
-    flexDirection: 'column',
-    maxWidth: 180,
-  },
-  disabledHint: {
-    fontSize: 12,
-    marginTop: 6,
-    textAlign: 'center',
-  },
-  insightButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    marginBottom: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-  },
-  insightButtonAsked: {
-    opacity: 0.7,
-  },
-  insightText: {
-    fontSize: 16,
-  },
-  relevanceHeading: {
-    alignSelf: 'flex-start',
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 6,
-  },
-  showAllButton: {
-    alignSelf: 'flex-end',
-    paddingHorizontal: 10,
-    marginTop: -10,
-    marginBottom: 40,
-  },
-  showAllText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  addToCalendarText: {
-    fontWeight: 'bold',
-    fontSize: 14,
   },
   metaText: {
     fontSize: 16,
@@ -626,16 +484,6 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     marginBottom: 8,
-  },
-  progressRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    marginBottom: 8,
-  },
-  progressBarWrap: {
-    flex: 1,
   },
 });
 
@@ -686,47 +534,6 @@ function NutritionFoodsSection({
         )}
       </View>
     </AppBox>
-  );
-}
-
-type PlanActionSectionProps = {
-  showTopPlanAction: boolean;
-  isTipInPlan: boolean;
-  planBadgeLabel: string;
-  addPlanButtonTitle: string;
-  handleAddPlanEntry: () => void;
-  styles: { [key: string]: any };
-  colors: any;
-};
-
-function PlanActionSection({
-  showTopPlanAction,
-  isTipInPlan,
-  planBadgeLabel,
-  addPlanButtonTitle,
-  handleAddPlanEntry,
-  styles,
-  colors,
-}: PlanActionSectionProps) {
-  if (!showTopPlanAction) return null;
-  return (
-    <View style={styles.planActionContainer}>
-      {isTipInPlan ? (
-        <View style={[styles.planActionAdded, { backgroundColor: colors.accentVeryWeak }]}>
-          <Icon source="check" size={18} color={colors.primary} />
-          <ThemedText type="caption" style={[styles.planActionAddedText, { color: colors.primary }]}>
-            {planBadgeLabel}
-          </ThemedText>
-        </View>
-      ) : (
-        <AppButton
-          title={addPlanButtonTitle}
-          onPress={handleAddPlanEntry}
-          variant="primary"
-          style={styles.planActionButton}
-        />
-      )}
-    </View>
   );
 }
 

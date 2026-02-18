@@ -1,6 +1,8 @@
 import { act, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
 
+import { SupplementPlanEntry } from '@/app/domain/SupplementPlanEntry';
+
 import { StorageProvider, useStorage } from '../app/context/StorageContext';
 import { Message } from '../app/domain/Message';
 import { Plan } from '../app/domain/Plan';
@@ -10,17 +12,22 @@ import { askGPT, buildSystemPrompt, sendFileToAIAnalysis } from '../services/gpt
 global.fetch = jest.fn();
 
 // Mock i18next
-jest.mock('i18next', () => ({
-  t: (key: string, options?: any) => {
-    if (key === 'prompts:system.withPlanTemplate') {
-      return `You are a health assistant. Current plan: ${options?.plan}`;
-    }
-    if (key === 'prompts:system.noPlan') {
-      return 'You are a health assistant. No current plan.';
-    }
-    return key;
-  },
-}));
+jest.mock('i18next', () => {
+  const chain = {
+    use: jest.fn().mockReturnThis(),
+    init: jest.fn().mockResolvedValue(undefined),
+    t: (key: string, options?: any) => {
+      if (key === 'prompts:system.withPlanTemplate') {
+        return `You are a health assistant. Current plan: ${options?.plan}`;
+      }
+      if (key === 'prompts:system.noPlan') {
+        return 'You are a health assistant. No current plan.';
+      }
+      return key;
+    },
+  };
+  return chain;
+});
 
 // Mock config
 jest.mock('@/config', () => ({
@@ -29,6 +36,15 @@ jest.mock('@/config', () => ({
     handleSupplementCheck: 'http://test-server:7071/api/handleSupplementCheck',
   },
 }));
+
+// Extracted TestComponent
+const TestComponent = ({ setContextValues }: { setContextValues: (ctx: any) => void }) => {
+  const ctx = useStorage();
+  React.useEffect(() => {
+    setContextValues(ctx);
+  }, [ctx, setContextValues]);
+  return null;
+};
 
 describe('Services Integration', () => {
   beforeEach(() => {
@@ -40,17 +56,9 @@ describe('Services Integration', () => {
     it('should build system prompt with real plan data from storage', async () => {
       let contextValues: any = {};
 
-      const TestComponent = () => {
-        const ctx = useStorage();
-        React.useEffect(() => {
-          contextValues = ctx;
-        });
-        return null;
-      };
-
       render(
         <StorageProvider>
-          <TestComponent />
+          <TestComponent setContextValues={(ctx) => (contextValues = ctx)} />
         </StorageProvider>
       );
 
@@ -61,14 +69,28 @@ describe('Services Integration', () => {
       // Create a realistic health plan
       const healthPlan: Plan = {
         name: 'Morning Health Routine',
-        supplements: [
-          { id: 'vitamin-d', name: 'Vitamin D3', quantity: '2000', unit: 'IU' },
-          { id: 'omega-3', name: 'Omega-3', quantity: '1000', unit: 'mg' },
-        ],
         prefferedTime: 'morning',
         notify: false,
+        reason: '',
+        supplements: [
+          {
+            supplement: { id: 'vitamin-d', name: 'Vitamin D3', quantity: '2000', unit: 'IU' },
+            startedAt: '2024-01-01T00:00:00Z',
+            createdBy: 'test-user',
+            planName: 'Morning Health Routine',
+            prefferedTime: 'morning',
+            notify: false,
+          },
+          {
+            supplement: { id: 'omega-3', name: 'Omega-3', quantity: '1000', unit: 'mg' },
+            startedAt: '2024-01-01T00:00:00Z',
+            createdBy: 'test-user',
+            planName: 'Morning Health Routine',
+            prefferedTime: 'morning',
+            notify: false,
+          },
+        ],
       };
-
       // Set the plan in storage
       act(() => {
         contextValues.setPlans({ supplements: [healthPlan], training: [], nutrition: [], other: [] });
@@ -85,17 +107,9 @@ describe('Services Integration', () => {
     it('should build system prompt without plan when sharing is disabled', async () => {
       let contextValues: any = {};
 
-      const TestComponent = () => {
-        const ctx = useStorage();
-        React.useEffect(() => {
-          contextValues = ctx;
-        });
-        return null;
-      };
-
       render(
         <StorageProvider>
-          <TestComponent />
+          <TestComponent setContextValues={(ctx) => (contextValues = ctx)} />
         </StorageProvider>
       );
 
@@ -106,9 +120,18 @@ describe('Services Integration', () => {
       // Set plan but disable sharing
       const healthPlan: Plan = {
         name: 'Test Plan',
-        supplements: [{ id: 'vitamin-c', name: 'Vitamin C', quantity: '500', unit: 'mg' }],
         prefferedTime: 'morning',
         notify: false,
+        supplements: [
+          {
+            supplement: { id: 'vitamin-c', name: 'Vitamin C', quantity: '500', unit: 'mg' },
+            startedAt: '2024-01-01T00:00:00Z',
+            createdBy: 'test-user',
+            planName: 'Test Plan',
+            prefferedTime: 'morning',
+            notify: false,
+          },
+        ],
       };
 
       act(() => {
@@ -213,17 +236,9 @@ describe('Services Integration', () => {
     it('should handle complete chat workflow with storage integration', async () => {
       let contextValues: any = {};
 
-      const TestComponent = () => {
-        const ctx = useStorage();
-        React.useEffect(() => {
-          contextValues = ctx;
-        });
-        return null;
-      };
-
       render(
         <StorageProvider>
-          <TestComponent />
+          <TestComponent setContextValues={(ctx) => (contextValues = ctx)} />
         </StorageProvider>
       );
 
@@ -234,12 +249,26 @@ describe('Services Integration', () => {
       // Setup health plan
       const healthPlan: Plan = {
         name: 'Comprehensive Health Plan',
-        supplements: [
-          { id: 'multivitamin', name: 'Multivitamin', quantity: '1', unit: 'tablet' },
-          { id: 'fish-oil', name: 'Fish Oil', quantity: '2', unit: 'capsules' },
-        ],
         prefferedTime: 'evening',
         notify: false,
+        supplements: [
+          {
+            supplement: { id: 'multivitamin', name: 'Multivitamin', quantity: '1', unit: 'tablet' },
+            startedAt: '2024-01-01T00:00:00Z',
+            createdBy: 'test-user',
+            planName: 'Comprehensive Health Plan',
+            prefferedTime: 'evening',
+            notify: false,
+          },
+          {
+            supplement: { id: 'fish-oil', name: 'Fish Oil', quantity: '2', unit: 'capsules' },
+            startedAt: '2024-01-01T00:00:00Z',
+            createdBy: 'test-user',
+            planName: 'Comprehensive Health Plan',
+            prefferedTime: 'evening',
+            notify: false,
+          },
+        ],
       };
 
       act(() => {
@@ -286,17 +315,9 @@ describe('Services Integration', () => {
     it('should integrate supplement analysis with goal tracking', async () => {
       let contextValues: any = {};
 
-      const TestComponent = () => {
-        const ctx = useStorage();
-        React.useEffect(() => {
-          contextValues = ctx;
-        });
-        return null;
-      };
-
       render(
         <StorageProvider>
-          <TestComponent />
+          <TestComponent setContextValues={(ctx) => (contextValues = ctx)} />
         </StorageProvider>
       );
 

@@ -173,9 +173,9 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                     "color": "rgb(28, 28, 30)",
                   },
                   {
-                    "fontSize": 16,
+                    "fontSize": 14,
                     "fontWeight": "600",
-                    "lineHeight": 24,
+                    "lineHeight": 22,
                   },
                   false,
                   undefined,
@@ -264,12 +264,9 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                 [
                   {
                     "alignItems": "center",
-                    "borderRadius": 60,
-                    "borderWidth": 2,
-                    "height": 90,
+                    "flexDirection": "row",
                     "justifyContent": "center",
                     "marginBottom": 10,
-                    "width": 90,
                   },
                   {
                     "borderColor": undefined,
@@ -277,42 +274,88 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                 ]
               }
             >
-              <Text
-                accessibilityElementsHidden={true}
-                allowFontScaling={false}
-                importantForAccessibility="no-hide-descendants"
-                pointerEvents="none"
-                selectable={false}
+              <View
+                style={
+                  {
+                    "alignItems": "center",
+                    "flexDirection": "column",
+                    "gap": 4,
+                    "justifyContent": "center",
+                    "marginHorizontal": 4,
+                    "minWidth": 36,
+                    "width": 36,
+                  }
+                }
+              />
+              <View
                 style={
                   [
                     {
-                      "color": "rgb(0, 122, 255)",
-                      "fontSize": 50,
+                      "alignItems": "center",
+                      "borderRadius": 60,
+                      "borderWidth": 2,
+                      "height": 90,
+                      "justifyContent": "center",
+                      "marginBottom": 10,
+                      "width": 90,
                     },
-                    [
-                      {
-                        "lineHeight": 50,
-                        "transform": [
-                          {
-                            "scaleX": 1,
-                          },
-                        ],
-                      },
-                      {
-                        "backgroundColor": "transparent",
-                      },
-                    ],
                     {
-                      "fontFamily": "material-community",
-                      "fontStyle": "normal",
-                      "fontWeight": "normal",
+                      "backgroundColor": "rgb(242, 242, 242)",
+                      "borderColor": undefined,
                     },
-                    {},
                   ]
                 }
               >
-                󰓾
-              </Text>
+                <Text
+                  accessibilityElementsHidden={true}
+                  allowFontScaling={false}
+                  importantForAccessibility="no-hide-descendants"
+                  pointerEvents="none"
+                  selectable={false}
+                  style={
+                    [
+                      {
+                        "color": "rgb(0, 122, 255)",
+                        "fontSize": 50,
+                      },
+                      [
+                        {
+                          "lineHeight": 50,
+                          "transform": [
+                            {
+                              "scaleX": 1,
+                            },
+                          ],
+                        },
+                        {
+                          "backgroundColor": "transparent",
+                        },
+                      ],
+                      {
+                        "fontFamily": "material-community",
+                        "fontStyle": "normal",
+                        "fontWeight": "normal",
+                      },
+                      {},
+                    ]
+                  }
+                >
+                  󰓾
+                </Text>
+              </View>
+              <View
+                style={
+                  {
+                    "alignItems": "center",
+                    "flexDirection": "column",
+                    "gap": 4,
+                    "justifyContent": "center",
+                    "marginHorizontal": 4,
+                    "minWidth": 36,
+                    "width": 36,
+                  }
+                }
+              />
             </View>
             <Text
               style={
@@ -353,109 +396,245 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
             </Text>
             <View
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "width": "100%",
-                  },
-                  undefined,
-                ]
+                {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "center",
+                  "marginBottom": 8,
+                  "width": "100%",
+                }
               }
             >
               <View
-                animated={true}
-                animationConfig={
+                style={
                   {
-                    "bounciness": 0,
+                    "flex": 1,
                   }
                 }
-                animationType="spring"
-                indeterminate={false}
-                indeterminateAnimationDuration={1000}
-                onLayout={[Function]}
-                progress={0}
-                style={
-                  [
-                    {
-                      "backgroundColor": undefined,
-                      "borderColor": "rgba(0, 122, 255, 1)",
-                      "borderRadius": 5,
-                      "borderWidth": 0,
-                      "overflow": "hidden",
-                      "width": 200,
-                    },
-                    undefined,
-                  ]
-                }
-                testID="progress-bar"
-                useNativeDriver={false}
               >
-                <View
-                  collapsable={false}
-                  style={
-                    {
-                      "backgroundColor": "rgba(0, 122, 255, 1)",
-                      "height": 8,
-                      "transform": [
-                        {
-                          "translateX": -7.105427357601002e-15,
-                        },
-                        {
-                          "translateX": -100,
-                        },
-                        {
-                          "scaleX": 0.0001,
-                        },
-                      ],
+                <View>
+                  <View
+                    style={
+                      {
+                        "alignItems": "center",
+                        "alignSelf": "center",
+                        "justifyContent": "center",
+                        "marginBottom": 0,
+                        "maxWidth": 400,
+                        "position": "relative",
+                        "width": "100%",
+                      }
                     }
-                  }
-                />
+                  >
+                    <View
+                      style={
+                        {
+                          "width": "100%",
+                        }
+                      }
+                    >
+                      <View
+                        style={
+                          [
+                            {
+                              "alignItems": "center",
+                              "width": "100%",
+                            },
+                            undefined,
+                          ]
+                        }
+                      >
+                        <View
+                          animated={true}
+                          animationConfig={
+                            {
+                              "bounciness": 0,
+                            }
+                          }
+                          animationType="spring"
+                          indeterminate={false}
+                          indeterminateAnimationDuration={1000}
+                          onLayout={[Function]}
+                          progress={0}
+                          style={
+                            [
+                              {
+                                "backgroundColor": undefined,
+                                "borderColor": "rgba(0, 122, 255, 1)",
+                                "borderRadius": 5,
+                                "borderWidth": 0,
+                                "overflow": "hidden",
+                                "width": 200,
+                              },
+                              undefined,
+                            ]
+                          }
+                          testID="progress-bar"
+                          useNativeDriver={false}
+                        >
+                          <View
+                            collapsable={false}
+                            style={
+                              {
+                                "backgroundColor": "rgba(0, 122, 255, 1)",
+                                "height": 12,
+                                "transform": [
+                                  {
+                                    "translateX": -7.105427357601002e-15,
+                                  },
+                                  {
+                                    "translateX": -100,
+                                  },
+                                  {
+                                    "scaleX": 0.0001,
+                                  },
+                                ],
+                              }
+                            }
+                          />
+                        </View>
+                        <Text
+                          style={
+                            [
+                              {
+                                "fontSize": 12,
+                                "marginTop": 4,
+                                "textAlign": "center",
+                              },
+                              {
+                                "color": undefined,
+                              },
+                            ]
+                          }
+                        >
+                          0/3 common:goalDetails.questionsExplored
+                        </Text>
+                      </View>
+                    </View>
+                    <View
+                      accessibilityState={
+                        {
+                          "busy": undefined,
+                          "checked": undefined,
+                          "disabled": undefined,
+                          "expanded": undefined,
+                          "selected": undefined,
+                        }
+                      }
+                      accessibilityValue={
+                        {
+                          "max": undefined,
+                          "min": undefined,
+                          "now": undefined,
+                          "text": undefined,
+                        }
+                      }
+                      accessible={true}
+                      collapsable={false}
+                      focusable={true}
+                      hitSlop={
+                        {
+                          "bottom": 8,
+                          "left": 8,
+                          "right": 8,
+                          "top": 8,
+                        }
+                      }
+                      onBlur={[Function]}
+                      onClick={[Function]}
+                      onFocus={[Function]}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
+                      style={
+                        [
+                          {
+                            "alignItems": "center",
+                            "height": 22,
+                            "justifyContent": "center",
+                            "marginTop": -11,
+                            "position": "absolute",
+                            "right": 30,
+                            "top": "50%",
+                            "width": 22,
+                          },
+                          {
+                            "borderColor": undefined,
+                          },
+                        ]
+                      }
+                    >
+                      <Text
+                        style={
+                          [
+                            {
+                              "color": "rgb(28, 28, 30)",
+                            },
+                            {
+                              "fontSize": 12,
+                              "lineHeight": 16,
+                            },
+                            false,
+                            [
+                              {
+                                "fontSize": 12,
+                                "fontWeight": "700",
+                              },
+                              {
+                                "color": undefined,
+                              },
+                            ],
+                          ]
+                        }
+                      >
+                        ⓘ
+                      </Text>
+                    </View>
+                  </View>
+                </View>
               </View>
-              <Text
-                style={
+            </View>
+          </View>
+          <View
+            style={
+              {
+                "alignItems": "center",
+                "flexDirection": "row",
+                "gap": 6,
+              }
+            }
+          >
+            <Text
+              style={
+                [
+                  {
+                    "color": "rgb(28, 28, 30)",
+                  },
+                  {
+                    "fontSize": 20,
+                    "fontWeight": "bold",
+                  },
+                  false,
                   [
                     {
-                      "fontSize": 12,
-                      "marginTop": 4,
-                      "textAlign": "center",
+                      "alignSelf": "flex-start",
+                      "fontSize": 16,
+                      "fontWeight": "700",
+                      "marginBottom": 6,
                     },
                     {
                       "color": undefined,
                     },
-                  ]
-                }
-              >
-                0/3 questions explored
-              </Text>
-            </View>
+                  ],
+                ]
+              }
+            >
+              common:goalDetails.relevance
+            </Text>
           </View>
-          <Text
-            style={
-              [
-                {
-                  "color": "rgb(28, 28, 30)",
-                },
-                {
-                  "fontSize": 20,
-                  "fontWeight": "bold",
-                },
-                false,
-                [
-                  {
-                    "alignSelf": "flex-start",
-                    "fontSize": 16,
-                    "fontWeight": "700",
-                    "marginBottom": 6,
-                  },
-                  {
-                    "color": undefined,
-                  },
-                ],
-              ]
-            }
-          >
-            common:goalDetails.relevance
-          </Text>
           <View
             style={
               [
@@ -478,7 +657,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
             <View
               style={
                 {
-                  "alignItems": "center",
+                  "alignItems": "flex-start",
                   "flexDirection": "row",
                   "justifyContent": "space-between",
                   "marginBottom": 6,
@@ -488,7 +667,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
               <View
                 style={
                   {
-                    "alignItems": "center",
+                    "alignItems": "flex-start",
                     "flex": 1,
                     "flexDirection": "row",
                   }
@@ -524,25 +703,72 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                 </Text>
               </View>
             </View>
-            <Text
+            <View
               style={
-                [
-                  {
-                    "color": "rgb(28, 28, 30)",
-                  },
-                  {
-                    "fontSize": 12,
-                    "lineHeight": 16,
-                  },
-                  false,
-                  {
-                    "marginBottom": 8,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "gap": 6,
+                }
               }
             >
-              tips:undefined
-            </Text>
+              <Text
+                accessibilityElementsHidden={true}
+                allowFontScaling={false}
+                importantForAccessibility="no-hide-descendants"
+                pointerEvents="none"
+                selectable={false}
+                style={
+                  [
+                    {
+                      "color": "rgb(0, 122, 255)",
+                      "fontSize": 16,
+                    },
+                    [
+                      {
+                        "lineHeight": 16,
+                        "transform": [
+                          {
+                            "scaleX": 1,
+                          },
+                        ],
+                      },
+                      {
+                        "backgroundColor": "transparent",
+                      },
+                    ],
+                    {
+                      "fontFamily": "material-community",
+                      "fontStyle": "normal",
+                      "fontWeight": "normal",
+                    },
+                    {},
+                  ]
+                }
+              >
+                󰓾
+              </Text>
+              <Text
+                style={
+                  [
+                    {
+                      "color": "rgb(28, 28, 30)",
+                    },
+                    {
+                      "fontSize": 12,
+                      "lineHeight": 16,
+                    },
+                    false,
+                    {
+                      "paddingBottom": 8,
+                      "paddingRight": 20,
+                    },
+                  ]
+                }
+              >
+                tips:undefined
+              </Text>
+            </View>
           </View>
           <View
             style={
@@ -566,7 +792,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
             <View
               style={
                 {
-                  "alignItems": "center",
+                  "alignItems": "flex-start",
                   "flexDirection": "row",
                   "justifyContent": "space-between",
                   "marginBottom": 6,
@@ -576,7 +802,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
               <View
                 style={
                   {
-                    "alignItems": "center",
+                    "alignItems": "flex-start",
                     "flex": 1,
                     "flexDirection": "row",
                   }
@@ -644,13 +870,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
               onStartShouldSetResponder={[Function]}
               style={
                 [
-                  {
-                    "borderRadius": 8,
-                    "borderWidth": 1,
-                    "marginBottom": 8,
-                    "paddingHorizontal": 16,
-                    "paddingVertical": 12,
-                  },
+                  undefined,
                   {
                     "backgroundColor": undefined,
                     "borderColor": undefined,
@@ -671,9 +891,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                     },
                     false,
                     [
-                      {
-                        "fontSize": 16,
-                      },
+                      undefined,
                       {
                         "color": undefined,
                       },
@@ -719,13 +937,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
               onStartShouldSetResponder={[Function]}
               style={
                 [
-                  {
-                    "borderRadius": 8,
-                    "borderWidth": 1,
-                    "marginBottom": 8,
-                    "paddingHorizontal": 16,
-                    "paddingVertical": 12,
-                  },
+                  undefined,
                   {
                     "backgroundColor": undefined,
                     "borderColor": undefined,
@@ -746,9 +958,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                     },
                     false,
                     [
-                      {
-                        "fontSize": 16,
-                      },
+                      undefined,
                       {
                         "color": undefined,
                       },
@@ -794,13 +1004,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
               onStartShouldSetResponder={[Function]}
               style={
                 [
-                  {
-                    "borderRadius": 8,
-                    "borderWidth": 1,
-                    "marginBottom": 8,
-                    "paddingHorizontal": 16,
-                    "paddingVertical": 12,
-                  },
+                  undefined,
                   {
                     "backgroundColor": undefined,
                     "borderColor": undefined,
@@ -821,9 +1025,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                     },
                     false,
                     [
-                      {
-                        "fontSize": 16,
-                      },
+                      undefined,
                       {
                         "color": undefined,
                       },
@@ -863,7 +1065,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
             <View
               style={
                 {
-                  "alignItems": "center",
+                  "alignItems": "flex-start",
                   "flexDirection": "row",
                   "justifyContent": "space-between",
                   "marginBottom": 6,
@@ -873,7 +1075,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
               <View
                 style={
                   {
-                    "alignItems": "center",
+                    "alignItems": "flex-start",
                     "flex": 1,
                     "flexDirection": "row",
                   }
@@ -951,7 +1153,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                         },
                         {
                           "fontSize": 14,
-                          "lineHeight": 18,
+                          "lineHeight": 20,
                         },
                         false,
                         [
@@ -967,6 +1169,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                 </View>
                 <View
                   accessibilityLabel="common:goalDetails.addToPlan"
+                  accessibilityRole="button"
                   accessibilityState={
                     {
                       "busy": undefined,
@@ -1014,9 +1217,9 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                           "color": "rgb(28, 28, 30)",
                         },
                         {
-                          "fontSize": 16,
+                          "fontSize": 14,
                           "fontWeight": "600",
-                          "lineHeight": 24,
+                          "lineHeight": 22,
                         },
                         false,
                         [
