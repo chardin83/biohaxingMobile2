@@ -77,9 +77,9 @@ const mockSetMyXP = jest.fn();
 const mockSetPlans = jest.fn();
 
 const fullMockStorageContext = {
-  plans: { supplements: [], training: [], nutrition: [], other: [], reasonSummary: '' },
+  plans: { supplements: [], training: [], nutrition: [], other: [], reasonSummary: { text: '', createdAt: '' } },
   setPlans: mockSetPlans,
-  tempPlans: { supplements: [], training: [], nutrition: [], other: [], reasonSummary: '' },
+  tempPlans: { supplements: [], training: [], nutrition: [], other: [], reasonSummary: { text: '', createdAt: '' } },
   setTempPlans: jest.fn(),
   hasVisitedChat: false,
   setHasVisitedChat: jest.fn(),

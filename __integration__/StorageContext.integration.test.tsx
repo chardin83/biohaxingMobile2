@@ -76,7 +76,7 @@ describe('StorageContext Integration', () => {
         training: [],
         nutrition: [],
         other: [],
-        reasonSummary: "",
+        reasonSummary: { text: '', createdAt: '' },
       });
     });
 
@@ -88,7 +88,7 @@ describe('StorageContext Integration', () => {
       training: [],
       nutrition: [],
       other: [],
-      reasonSummary: "",
+      reasonSummary: { text: '', createdAt: '' },
     });
   });
 
@@ -132,7 +132,7 @@ describe('StorageContext Integration', () => {
       training: [planEntry],
       nutrition: [],
       other: [],
-      reasonSummary: "",
+      reasonSummary: { text: '', createdAt: '' },
     });
   });
 
@@ -172,7 +172,7 @@ describe('StorageContext Integration', () => {
       training: [],
       nutrition: [],
       other: [],
-      reasonSummary: "",
+      reasonSummary: { text: '', createdAt: '' },
     };
     const existingGoals = ['existing-goal'];
 

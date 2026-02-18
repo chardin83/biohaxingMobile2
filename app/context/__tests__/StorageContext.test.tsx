@@ -38,7 +38,7 @@ describe('StorageContext', () => {
         training: [],
         nutrition: [],
         other: [],
-        reasonSummary: "",
+        reasonSummary: { text: '', createdAt: '' },
       });
     });
 

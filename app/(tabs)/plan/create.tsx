@@ -25,7 +25,7 @@ export default function CreatePlanScreen() {
 
     const [loading, setLoading] = React.useState(false);
     const [showAllReason, setShowAllReason] = React.useState(false);
-    const reasonSummary = tempPlans?.reasonSummary ?? '';
+    const reasonSummary = tempPlans?.reasonSummary?.text ?? '';
     const reasonTooLong = reasonSummary.length > 300; // Justera om du vill, eller mät rader
 
     type ApprovalsState = {
@@ -324,7 +324,7 @@ export default function CreatePlanScreen() {
             setPlans(prev => ({
                 ...prev,
                 ...filteredPlans,
-                reasonSummary: filteredPlans.reasonSummary || prev.reasonSummary,
+                reasonSummary: filteredPlans.reasonSummary?.text ? filteredPlans.reasonSummary : prev.reasonSummary,
                 supplements: mergeSupplementPlans(prev.supplements ?? [], filteredPlans.supplements ?? []),
                 training: mergeTips(prev.training ?? [], filteredPlans.training ?? []),
                 nutrition: mergeTips(prev.nutrition ?? [], filteredPlans.nutrition ?? []),
@@ -439,16 +439,16 @@ export default function CreatePlanScreen() {
                         {t('createPlan.intro')}
                     </ThemedText>
                 )}
-                {tempPlans && tempPlans.reasonSummary && (
+                {tempPlans && tempPlans.reasonSummary?.text && (
                     <>
                         <ThemedText type="label">{t('createPlan.aiCommentTitle')}</ThemedText>
                         <ThemedText
                             type="default"
                             style={styles.reasonText}
-                            accessibilityLabel={`AI-planens sammanfattning: ${tempPlans.reasonSummary}`}
+                            accessibilityLabel={`AI-planens sammanfattning: ${tempPlans.reasonSummary.text}`}
                             numberOfLines={showAllReason ? undefined : 5}
                         >
-                            {tempPlans.reasonSummary}
+                            {tempPlans.reasonSummary.text}
                         </ThemedText>
                         {reasonTooLong && (
                             <ShowAllButton

@@ -49,7 +49,7 @@ const mockStorageContext = {
     training: [],
     nutrition: [],
     other: [],
-    reasonSummary: "",
+    reasonSummary: { text: '', createdAt: '' },
   },
   setPlans: jest.fn(),
   tempPlans: {
@@ -57,7 +57,7 @@ const mockStorageContext = {
     training: [],
     nutrition: [],
     other: [],
-    reasonSummary: "",
+    reasonSummary: { text: '', createdAt: '' },
   },
   setTempPlans: jest.fn(),
   hasVisitedChat: false,

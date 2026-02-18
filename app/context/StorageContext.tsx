@@ -48,12 +48,17 @@ export type PlanTipEntry = {
   comment?: string;
 };
 
+export type ReasonSummary = {
+  text: string;
+  createdAt: string;
+};
+
 export type PlansByCategory = {
   supplements: Plan[];
   training: PlanTipEntry[];
   nutrition: PlanTipEntry[];
   other: PlanTipEntry[];
-  reasonSummary: string;
+  reasonSummary: ReasonSummary;
 };
 
 const EMPTY_PLANS: PlansByCategory = {
@@ -61,7 +66,7 @@ const EMPTY_PLANS: PlansByCategory = {
   training: [],
   nutrition: [],
   other: [],
-  reasonSummary: '',
+  reasonSummary: { text: '', createdAt: '' },
 };
 
 export type TrainingPlanSettings = {
@@ -173,6 +178,16 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const [showMusicState, setShowMusicState] = useState(true);
   const [tempPlans, setTempPlans] = useState<PlansByCategory | null>(null);
 
+  const normalizeReasonSummary = (value: any): ReasonSummary => {
+    if (!value) return { text: '', createdAt: '' };
+    if (typeof value === 'string') {
+      return { text: value, createdAt: new Date().toISOString() };
+    }
+    const text = typeof value.text === 'string' ? value.text : '';
+    const createdAt = typeof value.createdAt === 'string' ? value.createdAt : '';
+    return { text, createdAt };
+  };
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -217,7 +232,13 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
             const nutrition = Array.isArray(parsed?.nutrition) ? parsed.nutrition : [];
             const other = Array.isArray(parsed?.other) ? parsed.other : [];
 
-            return { supplements, training, nutrition, other, reasonSummary: parsed.reasonSummary ?? ''  };
+            return {
+              supplements,
+              training,
+              nutrition,
+              other,
+              reasonSummary: normalizeReasonSummary(parsed.reasonSummary),
+            };
           } catch (error) {
             console.warn('Failed to parse plans', error);
             return EMPTY_PLANS;
@@ -256,6 +277,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
         training: newPlans.training ?? [],
         nutrition: newPlans.nutrition ?? [],
         other: (newPlans as any).other ?? [],
+        reasonSummary: normalizeReasonSummary((newPlans as any).reasonSummary),
       };
       AsyncStorage.setItem(STORAGE_KEYS.PLANS, JSON.stringify(normalizedPlans));
       return normalizedPlans;

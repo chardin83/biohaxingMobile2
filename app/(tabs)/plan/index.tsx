@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
+import ShowAllButton from '@/app/(tabs)/dashboard/area/[areaId]/details/ShowAllButton';
 import { useStorage } from '@/app/context/StorageContext';
 import { SupplementPlanEntry } from '@/app/domain/SupplementPlanEntry';
 import { Collapsible } from '@/components/Collapsible';
@@ -39,6 +40,7 @@ export default function Plans() {
   const [isEditingSupplement, setIsEditingSupplement] = useState(false);
   const [planForSupplementEdit, setPlanForSupplementEdit] = useState<Plan | null>(null);
   const [expandedPlans, setExpandedPlans] = useState<Record<string, boolean>>({});
+  const [showAllReason, setShowAllReason] = useState(false);
 
   const { saveSupplementToPlan } = useSupplementSaver();
 
@@ -219,6 +221,9 @@ export default function Plans() {
     });
   };
 
+  const reasonSummary = plans.reasonSummary?.text ?? '';
+  const reasonTooLong = reasonSummary.length > 300;
+
   // PlanMeta moved outside of Plans component below
 
 
@@ -235,13 +240,30 @@ export default function Plans() {
           {t('plan.aiCreateDescription')}
         </ThemedText>
       </PressableCard>
-      {!!plans.reasonSummary && (
-        <View style={styles.reasonSummary}>
-          <ThemedText type="label">{t('plan.latestAiCommentTitle')}</ThemedText>
-          <ThemedText type="caption" style={styles.reasonSummaryText}>
-            {plans.reasonSummary}
-          </ThemedText>
-        </View>
+      {!!plans.reasonSummary?.text && (
+        <AppBox
+          title={`${t('plan.latestAiCommentTitle')}`}
+        >
+          <>
+            <ThemedText type="explainer">{formatDate(plans.reasonSummary.createdAt)}</ThemedText>
+            <ThemedText 
+              type="caption" 
+              style={styles.reasonSummaryText}
+              numberOfLines={showAllReason ? undefined : 5}
+            >
+              {plans.reasonSummary.text}
+            </ThemedText>
+            {reasonTooLong && (
+              <ShowAllButton
+                showAll={showAllReason}
+                onPress={() => setShowAllReason(v => !v)}
+                accentColor={colors.showAllAccent}
+                style={styles.showAllButton}
+                showAllText={t('createPlan.showAll')}
+              />
+            )}
+          </>
+        </AppBox>
       )}
       <View style={styles.sectionsContainer}>
         <View style={styles.sectionBlock}>
@@ -389,7 +411,7 @@ export default function Plans() {
 
 const styles = StyleSheet.create({
   sectionsContainer: {
-    paddingTop: 50,
+    paddingTop: 20,
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
@@ -437,13 +459,12 @@ const styles = StyleSheet.create({
     opacity: 0.7,
     marginTop: 4,
   },
-  reasonSummary: {
-    marginTop: 12,
-    marginHorizontal: 20,
-    opacity: 0.95,
-  },
   reasonSummaryText: {
     opacity: 0.75,
     marginTop: 4,
+  },
+  showAllButton: {
+    alignSelf: 'flex-end',
+    marginBottom: 8,
   },
 });

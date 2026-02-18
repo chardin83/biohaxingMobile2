@@ -106,7 +106,7 @@
     "toggleSupplements": "Visa eller dölj innehåll",
     "noSupplementSlots": "Inga tider skapade ännu.",
     "createdBy": "Skapad av {{name}}",
-    "latestAiCommentTitle": "Senaste AI-kommentar"
+    "latestAiCommentTitle": "AI-kommentar"
   },
   "createPlan": {
     "title": "AI-plan",

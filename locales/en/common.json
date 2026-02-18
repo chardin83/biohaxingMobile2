@@ -105,7 +105,7 @@
     "toggleNotifications": "Toggle notifications",
     "toggleSupplements": "Expand or collapse",
     "createdBy": "Created by {{name}}",
-    "latestAiCommentTitle": "Latest AI comment",
+    "latestAiCommentTitle": "AI comment",
     "noSupplementSlots": "No supplement slots yet.",
     "aiCreateTitle": "Create a plan with AI",
     "aiCreateDescription": "Let AI create a personalized suggestion"

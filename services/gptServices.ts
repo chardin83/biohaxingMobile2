@@ -2,7 +2,7 @@
 import debug from 'debug';
 import { t } from 'i18next';
 
-import { PlansByCategory } from '@/app/context/StorageContext';
+import { PlansByCategory, ReasonSummary } from '@/app/context/StorageContext';
 import { GPTResponse } from '@/app/domain/GPTResponse';
 import { Message } from '@/app/domain/Message';
 import i18n from '@/app/i18n';
@@ -331,6 +331,16 @@ function normalizePlanTips(
   }));
 }
 
+function normalizeReasonSummary(value: any): ReasonSummary {
+  if (!value) return { text: '', createdAt: '' };
+  if (typeof value === 'string') {
+    return { text: value, createdAt: new Date().toISOString() };
+  }
+  const text = typeof value.text === 'string' ? value.text : '';
+  const createdAt = typeof value.createdAt === 'string' ? value.createdAt : '';
+  return { text, createdAt };
+}
+
 export async function createPlan(
   plans: PlansByCategory,
   userAreas: string[],
@@ -368,6 +378,7 @@ export async function createPlan(
   return {
     plans: {
       ...newPlans,
+      reasonSummary: normalizeReasonSummary((newPlans as any).reasonSummary),
       training: normalizePlanTips(newPlans.training as any, 'training'),
       nutrition: normalizePlanTips(newPlans.nutrition as any, 'nutrition'),
       other: normalizePlanTips(newPlans.other as any, 'other'),
