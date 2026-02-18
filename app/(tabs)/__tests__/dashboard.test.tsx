@@ -49,24 +49,20 @@ jest.mock('@/locales/supplements', () => ({
   ]),
 }));
 
-// Mock tips and main tips
+// Mock tips
 jest.mock('@/locales/tips', () => ({
-  goals: [
+  tips: [
     {
-      id: 'goal1',
-      mainGoalIds: ['improve_sleep'],
-      title: 'Sleep Optimization',
-      level: 1,
+      id: 'tip1',
+      //mainGoalIds: ['main1'],
+      title: 'Goal Title',
       xp: 100,
-      supplements: [{ id: 'supp1' }],
-    },
-    {
-      id: 'goal2',
-      mainGoalIds: ['boost_energy'],
-      title: 'Energy Boost',
       level: 1,
-      xp: 150,
-      supplements: [{ id: 'supp2' }],
+      supplements: [{ id: 'supp1' }],
+      taskInfo: { instructions: 'Do something', duration: { amount: 7, unit: 'days' } },
+      information: { text: 'info.text', author: 'info.author' },
+      startPrompt: 'start',
+      areas: [{ id: 'main1' }],
     },
   ],
 }));
@@ -116,12 +112,21 @@ const mockStorageContext = {
   plans: {
     supplements: [],
     training: [
-      { mainGoalId: 'improve_sleep', tipId: 'goal1', startedAt: new Date().toISOString(), planCategory: 'training' as const },
+      { mainGoalId: 'improve_sleep', tipId: 'goal1', startedAt: new Date().toISOString(), planCategory: 'training' as const, createdBy: 'test-user', editedAt: new Date().toISOString(), editedBy: 'test-user' },
     ],
     nutrition: [],
     other: [],
+    reasonSummary: '',
   },
   setPlans: jest.fn(),
+  tempPlans: {
+    supplements: [],
+    training: [],
+    nutrition: [],
+    other: [],
+    reasonSummary: '',
+  },
+  setTempPlans: jest.fn(),
   hasVisitedChat: false,
   setHasVisitedChat: jest.fn(),
   shareHealthPlan: false,
@@ -131,7 +136,7 @@ const mockStorageContext = {
   myGoals: ['improve_sleep', 'boost_energy'],
   setMyGoals: jest.fn(),
   activeGoals: [
-    { mainGoalId: 'improve_sleep', tipId: 'goal1', startedAt: new Date().toISOString(), planCategory: 'training' as const },
+    { mainGoalId: 'improve_sleep', tipId: 'goal1', startedAt: new Date().toISOString(), planCategory: 'training' as const, createdBy: 'test-user', editedAt: new Date().toISOString(), editedBy: 'test-user' },
   ],
   errorMessage: null,
   setErrorMessage: jest.fn(),

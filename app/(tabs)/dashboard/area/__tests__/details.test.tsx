@@ -11,6 +11,16 @@ import GoalDetailScreen from '../[areaId]/details';
 
 jest.mock('@/components/VerdictSelector', () => 'VerdictSelector');
 
+jest.mock('react-native-vector-icons/MaterialCommunityIcons', () => ({
+  __esModule: true,
+  default: (props: any) => require('react').createElement('Text', props, props.name),
+}));
+
+jest.mock('react-native-vector-icons/FontAwesome', () => ({
+  __esModule: true,
+  default: (props: any) => require('react').createElement('Text', props, props.name),
+}));
+
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(() => ({ replace: jest.fn(), back: jest.fn() })),
   useLocalSearchParams: jest.fn(),

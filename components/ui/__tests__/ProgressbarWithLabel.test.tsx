@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react-native';
+import { render, waitFor } from '@testing-library/react-native';
 import React from 'react';
 
 import { AllProviders } from '@/test-utils/Providers';
@@ -47,83 +47,110 @@ jest.mock('react-native-progress', () => ({
 }));
 
 describe('ProgressBarWithLabel', () => {
-  it('renders progress bar correctly', () => {
+  it('renders progress bar correctly', async () => {
     const { getByTestId } = renderWithProviders(<ProgressBarWithLabel progress={0.5} width={200} />);
-    expect(getByTestId('progress-bar')).toBeTruthy();
+    await waitFor(() => {
+      expect(getByTestId('progress-bar')).toBeTruthy();
+    });
   });
 
-  it('displays label when provided', () => {
+  it('displays label when provided', async () => {
     const { getByText } = renderWithProviders(<ProgressBarWithLabel progress={0.7} label="70% Complete" width={200} />);
-    expect(getByText('70% Complete')).toBeTruthy();
+    await waitFor(() => {
+      expect(getByText('70% Complete')).toBeTruthy();
+    });
   });
 
-  it('does not display label when not provided', () => {
+  it('does not display label when not provided', async () => {
     const { queryByText } = renderWithProviders(<ProgressBarWithLabel progress={0.5} width={200} />);
-    expect(queryByText('50% Complete')).toBeNull();
+    await waitFor(() => {
+      expect(queryByText('50% Complete')).toBeNull();
+    });
   });
 
-  it('uses default width when not specified', () => {
-  const { getByTestId } = renderWithProviders(<ProgressBarWithLabel progress={0.5} />);
+  it('uses default width when not specified', async () => {
+    const { getByTestId } = renderWithProviders(<ProgressBarWithLabel progress={0.5} />);
+    await waitFor(() => {
+      const progressBar = getByTestId('progress-bar');
+      expect(progressBar.props.style.width).toBe(200);
+    });
+  });
 
-  const progressBar = getByTestId('progress-bar');
-  expect(progressBar.props.style.width).toBe(200);
-});
-
-  it('uses custom width when provided', () => {
+  it('uses custom width when provided', async () => {
     const { getByTestId } = renderWithProviders(<ProgressBarWithLabel progress={0.5} width={300} />);
-    const progressBar = getByTestId('progress-bar');
-    expect(progressBar.props.style.width).toBe(300);
+    await waitFor(() => {
+      const progressBar = getByTestId('progress-bar');
+      expect(progressBar.props.style.width).toBe(300);
+    });
   });
 
-  it('applies correct progress value', () => {
+  it('applies correct progress value', async () => {
     const { getByTestId } = renderWithProviders(<ProgressBarWithLabel progress={0.75} />);
-    const progressBar = getByTestId('progress-bar');
-    expect(progressBar.props.accessibilityValue.now).toBe(75);
+    await waitFor(() => {
+      const progressBar = getByTestId('progress-bar');
+      expect(progressBar.props.accessibilityValue.now).toBe(75);
+    });
   });
 
-  it('handles progress value of 0', () => {
+  it('handles progress value of 0', async () => {
     const { getByTestId } = renderWithProviders(<ProgressBarWithLabel progress={0} />);
-    const progressBar = getByTestId('progress-bar');
-    expect(progressBar.props.accessibilityValue.now).toBe(0);
+    await waitFor(() => {
+      const progressBar = getByTestId('progress-bar');
+      expect(progressBar.props.accessibilityValue.now).toBe(0);
+    });
   });
 
-  it('handles progress value of 1', () => {
+  it('handles progress value of 1', async () => {
     const { getByTestId } = renderWithProviders(<ProgressBarWithLabel progress={1} />);
-    const progressBar = getByTestId('progress-bar');
-    expect(progressBar.props.accessibilityValue.now).toBe(100);
+    await waitFor(() => {
+      const progressBar = getByTestId('progress-bar');
+      expect(progressBar.props.accessibilityValue.now).toBe(100);
+    });
   });
 
-it('applies correct styling to label', () => {
+it('applies correct styling to label', async () => {
   const { getByText } = renderWithProviders(<ProgressBarWithLabel progress={0.5} label="Test Label" />);
-  const labelElement = getByText('Test Label');
+  await waitFor(() => {
+    const labelElement = getByText('Test Label');
 
-  // Platta ut style-arrayen till ett objekt
-  const style = Array.isArray(labelElement.props.style)
-    ? Object.assign({}, ...labelElement.props.style)
-    : labelElement.props.style;
+    // Platta ut style-arrayen till ett objekt
+    const style = Array.isArray(labelElement.props.style)
+      ? Object.assign({}, ...labelElement.props.style)
+      : labelElement.props.style;
 
-  expect(style).toEqual(
-    expect.objectContaining({
-      marginTop: 4,
-      textAlign: 'center',
-      color: '#AAAAAA',
-      fontSize: 12,
-    })
-  );
+    expect(style).toEqual(
+      expect.objectContaining({
+        marginTop: 4,
+        textAlign: 'center',
+        color: '#AAAAAA',
+        fontSize: 12,
+      })
+    );
+  });
 });
 
-  it('renders with all props together', () => {
+  it('renders with all props together', async () => {
     const { getByTestId, getByText } = renderWithProviders(<ProgressBarWithLabel progress={0.8} label="80% Progress" width={250} />);
 
-    const progressBar = getByTestId('progress-bar');
-    expect(progressBar).toBeTruthy();
-    expect(progressBar.props.style.width).toBe(250);
-    expect(progressBar.props.accessibilityValue.now).toBe(80);
-    expect(getByText('80% Progress')).toBeTruthy();
+    await waitFor(() => {
+      const progressBar = getByTestId('progress-bar');
+      expect(progressBar).toBeTruthy();
+      expect(progressBar.props.style.width).toBe(250);
+      expect(progressBar.props.accessibilityValue.now).toBe(80);
+      expect(getByText('80% Progress')).toBeTruthy();
+    });
   });
 
-  it('maintains proper container structure', () => {
+  it('maintains proper container structure', async () => {
     const { getByTestId, getByText } = renderWithProviders(<ProgressBarWithLabel progress={0.6} label="Container Test" />);
+    await waitFor(() => {
+      const progressBar = getByTestId('progress-bar');
+      const label = getByText('Container Test');
+
+      // Both should be rendered in the component
+      expect(progressBar).toBeTruthy();
+      expect(label).toBeTruthy();
+    });
 
     const progressBar = getByTestId('progress-bar');
     const label = getByText('Container Test');
@@ -133,28 +160,36 @@ it('applies correct styling to label', () => {
     expect(label).toBeTruthy();
   });
 
-  it('handles edge case values gracefully', () => {
+  it('handles edge case values gracefully', async () => {
     const { getByTestId } = renderWithProviders(<ProgressBarWithLabel progress={-0.1} />);
-    const progressBar = getByTestId('progress-bar');
-    expect(progressBar.props.accessibilityValue.now).toBe(-10);
+    await waitFor(() => {
+      const progressBar = getByTestId('progress-bar');
+      expect(progressBar.props.accessibilityValue.now).toBe(-10);
+    });
   });
 
-  it('handles values above 1 gracefully', () => {
+  it('handles values above 1 gracefully', async () => {
     const { getByTestId } = renderWithProviders(<ProgressBarWithLabel progress={1.5} />);
-    const progressBar = getByTestId('progress-bar');
-    expect(progressBar.props.accessibilityValue.now).toBe(150);
+    await waitFor(() => {
+      const progressBar = getByTestId('progress-bar');
+      expect(progressBar.props.accessibilityValue.now).toBe(150);
+    });
   });
 
-  it('applies correct unfilled color', () => {
+  it('applies correct unfilled color', async () => {
     const { getByTestId } = renderWithProviders(<ProgressBarWithLabel progress={0.3} />);
-    const progressBar = getByTestId('progress-bar');
-    expect(progressBar.props.style.backgroundColor).toBe('#122033');
+    await waitFor(() => {
+      const progressBar = getByTestId('progress-bar');
+      expect(progressBar.props.style.backgroundColor).toBe('#122033');
+    });
   });
 
-  it('applies correct border properties', () => {
+  it('applies correct border properties', async () => {
     const { getByTestId } = renderWithProviders(<ProgressBarWithLabel progress={0.3} />);
-    const progressBar = getByTestId('progress-bar');
-    expect(progressBar.props.style.borderRadius).toBe(5);
-    expect(progressBar.props.style.borderWidth).toBe(0);
+    await waitFor(() => {
+      const progressBar = getByTestId('progress-bar');
+      expect(progressBar.props.style.borderRadius).toBe(5);
+      expect(progressBar.props.style.borderWidth).toBe(0);
+    });
   });
 });

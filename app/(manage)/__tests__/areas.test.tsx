@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react-native';
+import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
 
 import { AllProviders } from '@/test-utils/Providers';
@@ -14,8 +14,30 @@ jest.mock('i18next', () => ({
       'areas:cardio.description': 'Cardio desc',
       'areas:sleep.title': 'Sleep',
       'areas:sleep.description': 'Sleep desc',
+      'areas:stress.title': 'Stress',
+      'areas:stress.description': 'Stress desc',
+      'areas:energy.title': 'Energy',
+      'areas:energy.description': 'Energy desc',
+      'areas:nutrition.title': 'Nutrition',
+      'areas:nutrition.description': 'Nutrition desc',
+      'areas:training.title': 'Training',
+      'areas:training.description': 'Training desc',
     };
     return translations[key] || key;
+  },
+}));
+
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+    i18n: {
+      changeLanguage: jest.fn(),
+      language: 'en',
+    },
+  }),
+  initReactI18next: {
+    type: '3rdParty',
+    init: jest.fn(),
   },
 }));
 
@@ -45,37 +67,45 @@ describe('Areas Screen', () => {
   const renderWithProviders = (ui: React.ReactNode) =>
     render(ui, { wrapper: AllProviders });
 
-  it('renders the screen title correctly', () => {
+  it('renders the screen title correctly', async () => {
     const { getByText } = renderWithProviders(<Areas />);
-    expect(getByText('Select Areas')).toBeTruthy();
+    await waitFor(() => {
+      expect(getByText('Select Areas')).toBeTruthy();
+    });
   });
 
-  it('renders all AppCards', () => {
+  it('renders all AppCards', async () => {
     const { getAllByTestId } = renderWithProviders(<Areas />);
-    expect(getAllByTestId(/app-card-/).length).toBe(2);
+    await waitFor(() => {
+      expect(getAllByTestId(/app-card-/).length).toBe(2);
+    });
   });
 
-  it('toggles goal active state on press', () => {
+  it('toggles goal active state on press', async () => {
     const { getByTestId, getAllByTestId } = renderWithProviders(<Areas />);
     const card = getByTestId('app-card-cardio');
-    fireEvent.press(card);
+    await act(async () => {
+      fireEvent.press(card);
+    });
     expect(getAllByTestId('card-active')[0].props.children).toMatch(/active|inactive/);
   });
 
-  it('applies correct styling to the container', () => {
-  const { getByText } = renderWithProviders(<Areas />);
-  const titleElement = getByText('Select Areas');
-  // Slå ihop alla style-objekt i arrayen
-  const mergedStyle = Array.isArray(titleElement.props.style)
-    ? Object.assign({}, ...titleElement.props.style)
-    : titleElement.props.style;
+  it('applies correct styling to the container', async () => {
+    const { getByText } = renderWithProviders(<Areas />);
+    const titleElement = getByText('Select Areas');
+    // Slå ihop alla style-objekt i arrayen
+    const mergedStyle = Array.isArray(titleElement.props.style)
+      ? Object.assign({}, ...titleElement.props.style)
+      : titleElement.props.style;
 
-  expect(mergedStyle).toEqual(
-    expect.objectContaining({
-      fontSize: 22,
-      fontWeight: 'bold',
-      marginBottom: 20,
-    })
-  );
-}); 
+    await waitFor(() => {
+      expect(mergedStyle).toEqual(
+        expect.objectContaining({
+          fontSize: 22,
+          fontWeight: 'bold',
+          marginBottom: 20,
+        })
+      );
+    });
+  });
 });

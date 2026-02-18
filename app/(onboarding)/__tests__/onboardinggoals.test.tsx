@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react-native';
+import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
 
 import { AllProviders } from '@/test-utils/Providers';
@@ -49,8 +49,17 @@ const mockStorageContext = {
     training: [],
     nutrition: [],
     other: [],
+    reasonSummary: "",
   },
   setPlans: jest.fn(),
+  tempPlans: {
+    supplements: [],
+    training: [],
+    nutrition: [],
+    other: [],
+    reasonSummary: "",
+  },
+  setTempPlans: jest.fn(),
   hasVisitedChat: false,
   setHasVisitedChat: jest.fn(),
   shareHealthPlan: false,
@@ -112,35 +121,42 @@ describe('OnboardingGoals', () => {
   const renderWithProviders = (ui: React.ReactElement) =>
     render(ui, { wrapper: AllProviders });
 
-  it('renders the screen title correctly', () => {
+  it('renders the screen title correctly', async () => {
     const { getByText } = renderWithProviders(<OnboardingGoals />);
-    expect(getByText('Select Areas')).toBeTruthy();
+    await waitFor(() => {
+      expect(getByText('Select Areas')).toBeTruthy();
+    });
   });
 
-  it('renders the continue button', () => {
+  it('renders the continue button', async () => {
     const { getByText } = renderWithProviders(<OnboardingGoals />);
-    expect(getByText('Continue')).toBeTruthy();
+    await waitFor(() => {
+      expect(getByText('Continue')).toBeTruthy();
+    });
   });
 
-  it('calls setHasCompletedOnboarding and navigates when continue is pressed', () => {
+  it('calls setHasCompletedOnboarding and navigates when continue is pressed', async () => {
     const { getByText } = renderWithProviders(<OnboardingGoals />);
     const continueButton = getByText('Continue');
 
-    fireEvent.press(continueButton);
+    await act(async () => {
+      fireEvent.press(continueButton);
+    });
 
     expect(mockSetHasCompletedOnboarding).toHaveBeenCalledWith(true);
     expect(mockRouterPush).toHaveBeenCalledWith('/dashboard');
   });
 
-  it('has proper layout structure', () => {
+  it('has proper layout structure', async () => {
     const { getByText } = renderWithProviders(<OnboardingGoals />);
-
-    // Check that all elements are present
-    expect(getByText('Select Areas')).toBeTruthy();
-    expect(getByText('Continue')).toBeTruthy();
+    await waitFor(() => {
+      // Check that all elements are present
+      expect(getByText('Select Areas')).toBeTruthy();
+      expect(getByText('Continue')).toBeTruthy();
+    });
   });
 
-  it('applies correct styling to the title', () => {
+  it('applies correct styling to the title', async () => {
     const { getByText } = renderWithProviders(<OnboardingGoals />);
     const titleElement = getByText('Select Areas');
 
@@ -149,20 +165,24 @@ describe('OnboardingGoals', () => {
       ? Object.assign({}, ...titleElement.props.style)
       : titleElement.props.style;
 
-    expect(mergedStyle).toEqual(
-      expect.objectContaining({
-        fontSize: 22,
-        fontWeight: 'bold',
-        marginBottom: 20,
-      })
-    );
+    await waitFor(() => {
+      expect(mergedStyle).toEqual(
+        expect.objectContaining({
+          fontSize: 22,
+          fontWeight: 'bold',
+          marginBottom: 20,
+        })
+      );
+    });
   });
 
-  it('handles button press correctly', () => {
+  it('handles button press correctly', async () => {
     const { getByTestId } = renderWithProviders(<OnboardingGoals />);
     const button = getByTestId('app-button');
 
-    fireEvent.press(button);
+    await act(async () => {
+      fireEvent.press(button);
+    });
 
     expect(mockSetHasCompletedOnboarding).toHaveBeenCalledTimes(1);
     expect(mockRouterPush).toHaveBeenCalledTimes(1);

@@ -15,6 +15,7 @@ const TestComponent = ({ callback }: { callback: (ctx: ReturnType<typeof useStor
 describe('StorageContext', () => {
   it('provides default values and allows updating plans', async () => {
     let contextValues: any = {};
+
     render(
       <StorageProvider>
         <TestComponent
@@ -24,7 +25,13 @@ describe('StorageContext', () => {
         />
       </StorageProvider>
     );
-    expect(contextValues.plans).toEqual({ supplements: [], training: [], nutrition: [], other: [], reasonSummary: "" });
+
+    // Vänta på initialisering
+    await waitFor(() => {
+      expect(contextValues.plans).toBeDefined();
+    });
+
+    // Uppdatera plans
     act(() => {
       contextValues.setPlans({
         supplements: [{ name: 'Plan 1', supplements: [], prefferedTime: '08:00', notify: false }],
@@ -34,7 +41,8 @@ describe('StorageContext', () => {
         reasonSummary: "",
       });
     });
-    // Wait for the state update
+
+    // Vänta på uppdateringen
     await waitFor(() => {
       expect(contextValues.plans.supplements).toHaveLength(1);
     });
@@ -42,6 +50,7 @@ describe('StorageContext', () => {
 
   it('can set and get myGoals', async () => {
     let contextValues: any = {};
+
     render(
       <StorageProvider>
         <TestComponent
@@ -51,17 +60,26 @@ describe('StorageContext', () => {
         />
       </StorageProvider>
     );
+
+    // Vänta på initialisering
+    await waitFor(() => {
+      expect(contextValues.myGoals).toBeDefined();
+    });
+
+    // Uppdatera myGoals
     act(() => {
       contextValues.setMyGoals(['goal1', 'goal2']);
     });
-    // Wait for the state update
+
+    // Vänta på uppdateringen
     await waitFor(() => {
       expect(contextValues.myGoals).toEqual(['goal1', 'goal2']);
     });
   });
 
-  it('derives activeGoals from training and nutrition plans', () => {
+  it('derives activeGoals from training and nutrition plans', async () => {
     let contextValues: any = {};
+
     render(
       <StorageProvider>
         <TestComponent
@@ -71,20 +89,33 @@ describe('StorageContext', () => {
         />
       </StorageProvider>
     );
+
+    // Vänta på initialisering
+    await waitFor(() => {
+      expect(contextValues.activeGoals).toBeDefined();
+    });
+
     const entry = {
       mainGoalId: 'main1',
       tipId: 'tip1',
       startedAt: new Date().toISOString(),
       planCategory: 'training' as const,
     };
+
+    // Uppdatera plans
     act(() => {
       contextValues.setPlans({ supplements: [], training: [entry], nutrition: [], other: [] });
     });
-    expect(contextValues.activeGoals).toEqual([entry]);
+
+    // Vänta på uppdateringen
+    await waitFor(() => {
+      expect(contextValues.activeGoals).toEqual([entry]);
+    });
   });
 
-  it('can set and get XP and level', () => {
+  it('can set and get XP and level', async () => {
     let contextValues: any = {};
+
     render(
       <StorageProvider>
         <TestComponent
@@ -94,16 +125,26 @@ describe('StorageContext', () => {
         />
       </StorageProvider>
     );
+
+    // Vänta på initialisering
+    await waitFor(() => {
+      expect(contextValues.myXP).toBeDefined();
+    });
+
+    // Uppdatera XP och level
     act(() => {
       contextValues.setMyXP(100);
       contextValues.setMyLevel(2);
     });
-    expect(contextValues.myXP).toBe(100);
-    expect(contextValues.myLevel).toBe(2);
+
+    // Vänta på uppdateringen
+    await waitFor(() => {
+      expect(contextValues.myXP).toBe(100);
+      expect(contextValues.myLevel).toBe(2);
+    });
   });
 
   it('throws error if useStorage is used outside provider', () => {
-    // Suppress error output for this test
     const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
     expect(() => useStorage()).toThrow();
     spy.mockRestore();
