@@ -308,13 +308,25 @@ function extractPlansFromResponse(raw: any): PlansByCategory | null {
 }
 
 function normalizePlanTips(
-  items: Array<{ id: string } | { tipId: string; }> | undefined,
+  items:
+    | Array<{
+        id?: string;
+        tipId?: string;
+        createdBy?: string;
+        editedAt?: string;
+        editedBy?: string;
+        startedAt?: string;
+      }>
+    | undefined,
   category: 'training' | 'nutrition' | 'other'
 ) {
   const now = new Date().toISOString();
   return (items ?? []).map((item: any) => ({
     tipId: item.tipId ?? item.id,
-    startedAt: now,
+    startedAt: item.startedAt ?? now,
+    createdBy: item.createdBy,
+    editedAt: item.editedAt,
+    editedBy: item.editedBy,
     planCategory: category,
   }));
 }

@@ -132,7 +132,8 @@
     "acceptAIPlan": "Accept AI plan",
     "untitled": "Untitled",
     "showAll": "Show all",
-    "creatingAIPlan": "Creating AI plan"
+    "creatingAIPlan": "Creating AI plan",
+    "duplicateWarning": "The AI plan includes {{count}} duplicates already in your plan."
   },
   "supplementForm": {
     "dosage": "Dosage",

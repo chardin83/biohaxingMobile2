@@ -131,6 +131,7 @@
     "untitled": "Utan titel",
     "showAll": "Visa allt",
     "creatingAIPlan": "Skapar AI-plan",
+    "duplicateWarning": "AI-planen innehaller {{count}} dubbletter som redan finns i din plan.",
     "aiCreateTitle": "Skapa plan med AI",
     "aiCreateDescription": "Låt AI skapa ett personligt förslag"
   },

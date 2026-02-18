@@ -84,6 +84,36 @@ export default function CreatePlanScreen() {
         }))
         : [], [tempPlans, tipTitleById]);
 
+    const duplicateSummary = useMemo(() => {
+        if (!tempPlans) return null;
+
+        const existingSupplementKeys = new Set(
+            (plans.supplements ?? []).flatMap(plan =>
+                (plan.supplements ?? []).map(sup =>
+                    buildSupplementKey(plan.name, plan.prefferedTime, sup.supplement.name)
+                )
+            )
+        );
+        const duplicateSupplements = (tempPlans.supplements ?? []).reduce((acc, plan) => {
+            const count = (plan.supplements ?? []).reduce((innerAcc, sup) => {
+                const key = buildSupplementKey(plan.name, plan.prefferedTime, sup.supplement.name);
+                return innerAcc + (existingSupplementKeys.has(key) ? 1 : 0);
+            }, 0);
+            return acc + count;
+        }, 0);
+
+        const existingTraining = new Set((plans.training ?? []).map(tip => tip.tipId));
+        const existingNutrition = new Set((plans.nutrition ?? []).map(tip => tip.tipId));
+        const existingOther = new Set((plans.other ?? []).map(tip => tip.tipId));
+
+        const duplicateTraining = (tempPlans.training ?? []).filter(tip => existingTraining.has(tip.tipId)).length;
+        const duplicateNutrition = (tempPlans.nutrition ?? []).filter(tip => existingNutrition.has(tip.tipId)).length;
+        const duplicateOther = (tempPlans.other ?? []).filter(tip => existingOther.has(tip.tipId)).length;
+
+        const total = duplicateSupplements + duplicateTraining + duplicateNutrition + duplicateOther;
+        return total > 0 ? { total, duplicateSupplements, duplicateTraining, duplicateNutrition, duplicateOther } : null;
+    }, [tempPlans, plans]);
+
     const existingSupplementItems = useMemo(() => plans
         ? (plans.supplements ?? []).flatMap(plan =>
             (plan.supplements ?? []).map(sup => `${sup.supplement.name} • ${plan.prefferedTime})`)
@@ -241,7 +271,58 @@ export default function CreatePlanScreen() {
                 })),
             };
 
-            setPlans(filteredPlans);
+            const mergeTips = (existing: typeof filteredPlans.training, incoming: typeof filteredPlans.training) => {
+                const seen = new Set(existing.map(item => item.tipId));
+                return [...existing, ...incoming.filter(item => !seen.has(item.tipId))];
+            };
+
+            const mergeSupplementPlans = (existing: typeof filteredPlans.supplements, incoming: typeof filteredPlans.supplements) => {
+                const planMap = new Map<string, (typeof filteredPlans.supplements)[number]>();
+
+                existing.forEach(plan => {
+                    const key = `${plan.name}:${plan.prefferedTime}`;
+                    planMap.set(key, { ...plan, supplements: [...(plan.supplements ?? [])] });
+                });
+
+                incoming.forEach(plan => {
+                    const key = `${plan.name}:${plan.prefferedTime}`;
+                    const current = planMap.get(key);
+
+                    if (!current) {
+                        planMap.set(key, plan);
+                        return;
+                    }
+
+                    const existingKeys = new Set(
+                        (current.supplements ?? []).map(sup =>
+                            buildSupplementKey(plan.name, plan.prefferedTime, sup.supplement.name)
+                        )
+                    );
+                    const mergedSupplements = [...(current.supplements ?? [])];
+
+                    (plan.supplements ?? []).forEach(sup => {
+                        const supKey = buildSupplementKey(plan.name, plan.prefferedTime, sup.supplement.name);
+                        if (!existingKeys.has(supKey)) {
+                            mergedSupplements.push(sup);
+                            existingKeys.add(supKey);
+                        }
+                    });
+
+                    planMap.set(key, { ...plan, ...current, supplements: mergedSupplements });
+                });
+
+                return Array.from(planMap.values());
+            };
+
+            setPlans(prev => ({
+                ...prev,
+                ...filteredPlans,
+                reasonSummary: filteredPlans.reasonSummary || prev.reasonSummary,
+                supplements: mergeSupplementPlans(prev.supplements ?? [], filteredPlans.supplements ?? []),
+                training: mergeTips(prev.training ?? [], filteredPlans.training ?? []),
+                nutrition: mergeTips(prev.nutrition ?? [], filteredPlans.nutrition ?? []),
+                other: mergeTips(prev.other ?? [], filteredPlans.other ?? []),
+            }));
         }
         setTempPlans(null);
         router.push('/(tabs)/plan');
@@ -372,6 +453,11 @@ export default function CreatePlanScreen() {
                             />
                         )}
                     </>
+                )}
+                {tempPlans && duplicateSummary && (
+                    <ThemedText type="caption" style={styles.duplicateWarning}>
+                        {t('createPlan.duplicateWarning', { count: duplicateSummary.total })}
+                    </ThemedText>
                 )}
 
                 {tempPlans && (
@@ -512,6 +598,11 @@ const styles = StyleSheet.create({
     captionInfo: {
         textAlign: 'center',
         opacity: 0.7,
+        marginBottom: 12,
+    },
+    duplicateWarning: {
+        textAlign: 'center',
+        opacity: 0.75,
         marginBottom: 12,
     },
     introInfo: {
