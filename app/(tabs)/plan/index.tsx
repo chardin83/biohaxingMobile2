@@ -270,12 +270,17 @@ export default function Plans() {
           <Collapsible
             title={t('plan.trainingHeader')}
             contentStyle={styles.collapsibleContentFlush}
+            titleType="title3"
           >
             <TrainingPlanSection colors={colors} formatDate={formatDate} />
           </Collapsible>
         </View>
         <View style={styles.sectionBlock}>
-          <Collapsible title={t('plan.nutritionHeader')} contentStyle={styles.collapsibleContentFlush}>
+          <Collapsible 
+            title={t('plan.nutritionHeader')} 
+            contentStyle={styles.collapsibleContentFlush}
+            titleType="title3"
+          >
             <NutritionPlanSection
               colors={colors}
               formatDate={formatDate}
@@ -283,7 +288,11 @@ export default function Plans() {
           </Collapsible>
         </View>
         <View style={styles.sectionBlock}>
-          <Collapsible title={t('plan.supplementSectionTitle')} contentStyle={styles.collapsibleContentFlush}>
+          <Collapsible 
+            title={t('plan.supplementSectionTitle')} 
+            contentStyle={styles.collapsibleContentFlush}
+            titleType="title3"
+          >
             <View>{renderSupplementPlans()}</View>
             <View style={styles.addTimeSlotButtonWrapper}>
               <AppButton
@@ -302,8 +311,9 @@ export default function Plans() {
         </View>
         <View style={styles.sectionBlock}>
           <Collapsible
-            title={t('plan.otherHeader', { defaultValue: 'Ovrigt' })}
+            title={t('plan.otherHeader')}
             contentStyle={styles.collapsibleContentFlush}
+            titleType="title3"
           >
             <OtherPlanSection formatDate={formatDate} />
           </Collapsible>

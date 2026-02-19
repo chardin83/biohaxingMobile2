@@ -1,6 +1,4 @@
-import { createPlan } from "./services/gptServices";
-
-export const BASE_IP = '192.168.68.59';
+export const BASE_IP = '192.168.68.58';
 export const API_PORT = '7071';
 
 export const BASE_URL = `http://${BASE_IP}:${API_PORT}`;

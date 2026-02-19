@@ -106,7 +106,10 @@
     "toggleSupplements": "Visa eller dölj innehåll",
     "noSupplementSlots": "Inga tider skapade ännu.",
     "createdBy": "Skapad av {{name}}",
-    "latestAiCommentTitle": "AI-kommentar"
+    "aiCreateTitle": "Skapa plan med AI",
+    "aiCreateDescription": "Låt AI skapa ett personligt förslag",
+    "latestAiCommentTitle": "AI-kommentar",
+    "otherHeader": "Övrigt"
   },
   "createPlan": {
     "title": "AI-plan",
@@ -134,9 +137,7 @@
     "untitled": "Utan titel",
     "showAll": "Visa allt",
     "creatingAIPlan": "Skapar AI-plan",
-    "duplicateWarning": "AI-planen innehaller {{count}} dubbletter som redan finns i din plan.",
-    "aiCreateTitle": "Skapa plan med AI",
-    "aiCreateDescription": "Låt AI skapa ett personligt förslag"
+    "duplicateWarning": "AI-planen innehaller {{count}} dubbletter som redan finns i din plan."
   },
   "supplementForm": {
     "dosage": "Dos",
@@ -653,7 +654,6 @@
     "showMoreNutritionFoods": "{{count}}st"
   },
   "otherPlanSection": {
-   "otherHeader": "Övrigt",
     "noActiveOther": "Inga övriga planer ännu.",
     "editOtherSettings": "Redigera",
     "otherSettingsTitle": "Övriga inställningar",

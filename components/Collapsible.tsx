@@ -13,6 +13,7 @@ export function Collapsible({
   accessibilityLabel,
   accessibilityHint,
   initialCollapsed = false, // ny prop
+  titleType = 'defaultSemiBold', // ny prop
 }: PropsWithChildren & {
   title: string;
   rightContent?: React.ReactNode;
@@ -20,6 +21,7 @@ export function Collapsible({
   accessibilityLabel?: string;
   accessibilityHint?: string;
   initialCollapsed?: boolean; // ny prop
+  titleType?: 'default' | 'title' | 'title2' | 'title3' | 'defaultSemiBold' | 'subtitle' | 'link' | 'caption' | 'value' | 'label' | 'explainer'; // ny prop
 }) {
   const [isOpen, setIsOpen] = useState(!initialCollapsed);
   const { colors } = useTheme();
@@ -41,7 +43,7 @@ export function Collapsible({
           color={colors.icon}
           style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}
         />
-        <ThemedText type="defaultSemiBold">
+        <ThemedText type={titleType}>
           {title}
         </ThemedText>
         {rightContent}

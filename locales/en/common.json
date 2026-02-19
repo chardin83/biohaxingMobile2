@@ -105,10 +105,11 @@
     "toggleNotifications": "Toggle notifications",
     "toggleSupplements": "Expand or collapse",
     "createdBy": "Created by {{name}}",
-    "latestAiCommentTitle": "AI comment",
     "noSupplementSlots": "No supplement slots yet.",
     "aiCreateTitle": "Create a plan with AI",
-    "aiCreateDescription": "Let AI create a personalized suggestion"
+    "aiCreateDescription": "Let AI create a personalized suggestion",
+    "latestAiCommentTitle": "AI comment",
+    "otherHeader": "Other"
   },
   "createPlan": {
     "title": "AI-plan",
@@ -643,7 +644,6 @@
     "showMoreNutritionFoods": "{{count}}"
   },
   "otherPlanSection": {
-    "otherHeader": "Other",
     "noActiveOther": "No other plans yet.",
     "editOtherSettings": "Edit",
     "otherSettingsTitle": "Other settings",
