@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { levels, XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW, XP_PER_CHAT_MESSAGE } from '@/constants/XP';
+import { tipMetricLinks } from '@/locales/metrics';
 import { PlanCategory } from '@/types/planCategory';
 import { VerdictValue } from '@/types/verdict';
 
@@ -39,6 +40,7 @@ export type DailyNutritionSummary = {
 // PlanCategory is shared from types/planCategory.ts
 
 export type PlanTipEntry = {
+  id: string; // Unikt ID för att länka till mätvärden
   startedAt: string;
   createdBy: string;
   editedAt: string;
@@ -51,6 +53,15 @@ export type PlanTipEntry = {
 export type ReasonSummary = {
   text: string;
   createdAt: string;
+};
+
+export type MetricEntry = {
+  metricId: string;
+  value: number;
+  unit: string;
+  recordedAt: string;
+  notes?: string;
+  planTipId?: string; // Referens till vilken plan/tip detta mätvärde är kopplat till
 };
 
 export type PlansByCategory = {
@@ -136,6 +147,14 @@ interface StorageContextType {
   setShowMusic: (val: boolean) => void;
   tempPlans: PlansByCategory | null;
   setTempPlans: React.Dispatch<React.SetStateAction<PlansByCategory | null>>;
+  metricEntries: MetricEntry[];
+  setMetricEntries: (
+    updater: MetricEntry[] | ((prev: MetricEntry[]) => MetricEntry[])
+  ) => void;
+  addMetricEntry: (entry: MetricEntry) => void;
+  getMetricHistory: (metricId: string, planTipId?: string) => MetricEntry[];
+  getMetricsForPlanTip: (planTipId: string) => MetricEntry[];
+  getRelevantTipsForMetrics: (metricIds: string[]) => Array<{ tipId: string; matchCount: number; matchingMetrics: string[] }>;
 }
 
 const STORAGE_KEYS = {
@@ -152,6 +171,7 @@ const STORAGE_KEYS = {
   VIEWED_TIPS: 'viewedTips',
   TRAINING_PLAN_SETTINGS: 'trainingPlanSettings',
   SHOW_MUSIC: 'showMusic',
+  METRIC_ENTRIES: 'metricEntries',
 };
 
 const StorageContext = createContext<StorageContextType | undefined>(undefined);
@@ -177,6 +197,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const [trainingPlanSettingsState, setTrainingPlanSettingsState] = useState<Record<string, TrainingPlanSettings>>({});
   const [showMusicState, setShowMusicState] = useState(true);
   const [tempPlans, setTempPlans] = useState<PlansByCategory | null>(null);
+  const [metricEntriesState, setMetricEntriesState] = useState<MetricEntry[]>([]);
 
   const normalizeReasonSummary = (value: any): ReasonSummary => {
     if (!value) return { text: '', createdAt: '' };
@@ -204,6 +225,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
           dailyNutritionRaw,
           viewedTipsRaw,
           trainingSettingsRaw,
+          metricEntriesRaw,
         ] = await Promise.all([
           AsyncStorage.getItem(STORAGE_KEYS.PLANS),
           AsyncStorage.getItem(STORAGE_KEYS.HAS_VISITED_CHAT),
@@ -217,6 +239,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
           AsyncStorage.getItem(STORAGE_KEYS.DAILY_NUTRITION),
           AsyncStorage.getItem(STORAGE_KEYS.VIEWED_TIPS),
           AsyncStorage.getItem(STORAGE_KEYS.TRAINING_PLAN_SETTINGS),
+          AsyncStorage.getItem(STORAGE_KEYS.METRIC_ENTRIES),
         ]);
 
         const normalizePlans = (raw: string | null): PlansByCategory => {
@@ -258,6 +281,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
         if (dailyNutritionRaw) setDailyNutritionSummariesState(JSON.parse(dailyNutritionRaw));
         if (viewedTipsRaw) setViewedTipsState(JSON.parse(viewedTipsRaw));
         if (trainingSettingsRaw) setTrainingPlanSettingsState(JSON.parse(trainingSettingsRaw));
+        if (metricEntriesRaw) setMetricEntriesState(JSON.parse(metricEntriesRaw));
       } catch (err) {
         console.error('Kunde inte ladda från AsyncStorage:', err);
       } finally {
@@ -396,6 +420,57 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   setShowMusicState(val);
   AsyncStorage.setItem(STORAGE_KEYS.SHOW_MUSIC, val ? 'true' : 'false');
 };
+
+  const setMetricEntries = (
+    updater: MetricEntry[] | ((prev: MetricEntry[]) => MetricEntry[])
+  ) => {
+    setMetricEntriesState(prev => {
+      const updated = typeof updater === 'function' ? updater(prev) : updater;
+      AsyncStorage.setItem(STORAGE_KEYS.METRIC_ENTRIES, JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const addMetricEntry = useCallback((entry: MetricEntry) => {
+    setMetricEntries(prev => [...prev, entry]);
+  }, []);
+
+  const getMetricHistory = useCallback((metricId: string, planTipId?: string): MetricEntry[] => {
+    return metricEntriesState.filter(entry => {
+      const matchesMetric = entry.metricId === metricId;
+      if (planTipId) {
+        return matchesMetric && entry.planTipId === planTipId;
+      }
+      return matchesMetric;
+    });
+  }, [metricEntriesState]);
+
+  const getMetricsForPlanTip = useCallback((planTipId: string): MetricEntry[] => {
+    return metricEntriesState.filter(entry => entry.planTipId === planTipId);
+  }, [metricEntriesState]);
+
+  const getRelevantTipsForMetrics = useCallback((metricIds: string[]) => {
+    const results: Array<{ tipId: string; matchCount: number; matchingMetrics: string[] }> = [];
+
+    // Gå igenom varje tip i tipMetricLinks
+    Object.entries(tipMetricLinks).forEach(([tipId, metricLinks]) => {
+      // Hitta vilka av de inmatade metricIds som finns i denna tips metricLinks
+      const matchingMetrics = metricLinks
+        .filter(link => metricIds.includes(link.metricId))
+        .map(link => link.metricId);
+
+      if (matchingMetrics.length > 0) {
+        results.push({
+          tipId,
+          matchCount: matchingMetrics.length,
+          matchingMetrics,
+        });
+      }
+    });
+
+    // Sort by matchCount - mest relevanta först
+    return results.sort((a, b) => b.matchCount - a.matchCount);
+  }, []);
 
   const addTipView = useCallback((mainGoalId: string, tipId: string): number => {
     const existing = viewedTipsState.find(v => v.mainGoalId === mainGoalId && v.tipId === tipId);
@@ -550,8 +625,14 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       setShowMusic,
       tempPlans,
       setTempPlans,
+      metricEntries: metricEntriesState,
+      setMetricEntries,
+      addMetricEntry,
+      getMetricHistory,
+      getMetricsForPlanTip,
+      getRelevantTipsForMetrics,
     }),
-    [plansState, activeGoals, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, trainingPlanSettingsState, showMusicState, tempPlans, setTempPlans]
+    [plansState, activeGoals, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, trainingPlanSettingsState, showMusicState, tempPlans, setTempPlans, metricEntriesState, addMetricEntry, getMetricHistory, getMetricsForPlanTip, getRelevantTipsForMetrics]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

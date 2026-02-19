@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import BottomSheet from '@gorhom/bottom-sheet';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
 import { useStorage } from '@/app/context/StorageContext';
 import TrainingSettingsModal from '@/components/modals/TrainingSettingsModal';
+import { MetricsBottomSheet } from '@/components/sections/MetricsBottomSheet';
 import { PlanMeta } from '@/components/sections/PlanMeta';
 import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
@@ -19,7 +21,7 @@ type Props = {
 
 export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
-  const { plans, trainingPlanSettings, setTrainingPlanSettings } = useStorage();
+  const { plans, trainingPlanSettings, setTrainingPlanSettings, getMetricsForPlanTip } = useStorage();
 
   const trainingPlanGoals = plans.training;
 
@@ -28,6 +30,8 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
   const [trainingSettingsTitle, setTrainingSettingsTitle] = useState<string | null>(null);
   const [trainingSessionsInput, setTrainingSessionsInput] = useState('');
   const [trainingDurationInput, setTrainingDurationInput] = useState('');
+  const [selectedMetricsTipId, setSelectedMetricsTipId] = useState<string | null>(null);
+  const metricsBottomSheetRef = useRef<BottomSheet>(null);
 
   const openTrainingSettingsModal = (tipId: string, trainingTitle?: string | null) => {
     const existing = trainingPlanSettings[tipId];
@@ -46,6 +50,15 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
     setTrainingSettingsTitle(null);
     setTrainingSessionsInput('');
     setTrainingDurationInput('');
+  };
+
+  const openMetricsSheet = (tipId: string) => {
+    console.log('[TrainingPlanSection] openMetricsSheet called with tipId:', tipId);
+    setSelectedMetricsTipId(tipId);
+    setTimeout(() => {
+      console.log('[TrainingPlanSection] calling snapToIndex');
+      metricsBottomSheetRef.current?.snapToIndex(1);
+    }, 100);
   };
 
   const handleSaveTrainingSettings = () => {
@@ -124,12 +137,24 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
           });
         }
 
+        // Count metric registrations for this planTipId
+        const metricCount = getMetricsForPlanTip(trainingSettingsKey).length;
+
         const editAction = (
-          <PlanEditActions
-            onEdit={() => openTrainingSettingsModal(trainingSettingsKey, tipTitle)}
-            editLabel={t('plan.editTrainingSettings')}
-            style={styles.planHeaderActions}
-          />
+          <View style={styles.headerActionsContainer}>
+            <TouchableOpacity
+              onPress={() => openMetricsSheet(trainingSettingsKey)}
+              style={styles.chartButton}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <ThemedText style={[styles.chartEmoji, metricCount === 0 && styles.chartEmojiDisabled]}>📊{metricCount > 0 ? ` ${metricCount}` : ''}</ThemedText>
+            </TouchableOpacity>
+            <PlanEditActions
+              onEdit={() => openTrainingSettingsModal(trainingSettingsKey, tipTitle)}
+              editLabel={t('plan.editTrainingSettings')}
+              style={styles.planHeaderActions}
+            />
+          </View>
         );
 
         return (
@@ -178,6 +203,7 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
           saveLabel={t('general.save')}
           cancelLabel={t('general.cancel')}
         />
+        <MetricsBottomSheet bottomSheetRef={metricsBottomSheetRef} tipId={selectedMetricsTipId} planTipId={selectedMetricsTipId} />
       </Portal>
     </>
   );
@@ -207,5 +233,19 @@ const styles = StyleSheet.create({
   },
   trainingSettingsText: {
     flex: 1,
+  },
+  headerActionsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  chartButton: {
+    padding: 4,
+  },
+  chartEmoji: {
+    fontSize: 20,
+  },
+  chartEmojiDisabled: {
+    opacity: 0.4,
   },
 });

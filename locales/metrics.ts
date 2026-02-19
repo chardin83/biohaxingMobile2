@@ -2,61 +2,62 @@
 
 export type MetricSystem = 'EU' | 'US';
 
-
 export type MetricUnit =
-    | 'mIU/L'
-    | 'µIU/mL'
-    | 'pmol/L'
-    | 'nmol/L'
-    | 'mmol/L'
-    | 'g/L'
-    | 'mg/dL'
-    | 'ng/mL'
-    | 'mmHg'
-    | 'bpm'
-    | 'ms'
-    | 'kg'
-    | 'cm'
-    | 'score_0_10'
-    | 'count'
-    | 'min'
-    | 'hours'
-    | 'bss'; // Bristol Stool Scale
+  | 'mIU/L'
+  | 'µIU/mL'
+  | 'pmol/L'
+  | 'nmol/L'
+  | 'mmol/L'
+  | 'mmol/mol'
+  | '%'
+  | 'g/L'
+  | 'mg/dL'
+  | 'ng/mL'
+  | 'pg/mL'
+  | 'ng/dL'
+  | 'mmHg'
+  | 'bpm'
+  | 'ms'
+  | 'kg'
+  | 'lb'
+  | 'cm'
+  | 'in'
+  | 'score_0_10'
+  | 'count'
+  | 'min'
+  | 'hours'
+  | 'bss'; // Bristol Stool Scale
 
 export type MetricSource = 'lab' | 'home' | 'wearable' | 'questionnaire';
 
 export type MetricDefinition = {
   id: string;
-  emoji: string;
+  emoji: string; // ✅ NYTT
   nameKey: string;
   descriptionKey?: string;
 
-  // 1) Intern standard (det du sparar i DB)
-  canonicalUnit: string;
+  canonicalUnit: MetricUnit;
 
-  // 2) Vilka units du accepterar i input och kan visa i UI
   units: Array<{
-    unit: string;
+    unit: MetricUnit;
     system: MetricSystem;
-    // konvertering TO canonical
     toCanonical: { mul: number; add?: number };
-    // konvertering FROM canonical
     fromCanonical: { mul: number; add?: number };
-    precision?: number; // hur många decimaler vid visning
+    precision?: number;
   }>;
 
-  source: 'lab' | 'home' | 'wearable' | 'questionnaire';
+  source: MetricSource;
   suggestedFrequency?: 'daily' | 'weekly' | 'monthly' | 'perTest';
 };
 
 export type TipMetricLink = {
-    metricId: string;
-    kind: 'primary' | 'secondary' | 'subjective' | 'safety';
+  metricId: string;
+  kind: 'primary' | 'secondary' | 'subjective' | 'safety';
 };
 
 export const metrics: Record<string, MetricDefinition> = {
+  // ---------------- LIPIDS ----------------
 
-  // 🫀 Lipids / cardio
   ldl: {
     id: 'ldl',
     emoji: '🫀',
@@ -65,7 +66,10 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'mmol/L',
     source: 'lab',
     suggestedFrequency: 'monthly',
-    units: [/* unchanged */],
+    units: [
+      { unit: 'mmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
+      { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.0259 }, fromCanonical: { mul: 38.67 }, precision: 0 }
+    ]
   },
 
   apob: {
@@ -76,7 +80,10 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'g/L',
     source: 'lab',
     suggestedFrequency: 'monthly',
-    units: [/* unchanged */],
+    units: [
+      { unit: 'g/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
+      { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.01 }, fromCanonical: { mul: 100 }, precision: 0 }
+    ]
   },
 
   triglycerides: {
@@ -87,7 +94,10 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'mmol/L',
     source: 'lab',
     suggestedFrequency: 'monthly',
-    units: [],
+    units: [
+      { unit: 'mmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
+      { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.0113 }, fromCanonical: { mul: 88.57 }, precision: 0 }
+    ]
   },
 
   hdl: {
@@ -98,10 +108,14 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'mmol/L',
     source: 'lab',
     suggestedFrequency: 'monthly',
-    units: [],
+    units: [
+      { unit: 'mmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
+      { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.0259 }, fromCanonical: { mul: 38.67 }, precision: 0 }
+    ]
   },
 
-  // 💓 Blood pressure
+  // ---------------- BLOOD PRESSURE ----------------
+
   systolic_bp: {
     id: 'systolic_bp',
     emoji: '📈',
@@ -110,7 +124,10 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'mmHg',
     source: 'home',
     suggestedFrequency: 'weekly',
-    units: [],
+    units: [
+      { unit: 'mmHg', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
+      { unit: 'mmHg', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
   },
 
   diastolic_bp: {
@@ -121,10 +138,14 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'mmHg',
     source: 'home',
     suggestedFrequency: 'weekly',
-    units: [],
+    units: [
+      { unit: 'mmHg', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
+      { unit: 'mmHg', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
   },
 
-  // 🍬 Glucose / metabolism
+  // ---------------- GLUCOSE ----------------
+
   fasting_glucose: {
     id: 'fasting_glucose',
     emoji: '🍬',
@@ -133,7 +154,10 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'mmol/L',
     source: 'lab',
     suggestedFrequency: 'monthly',
-    units: [],
+    units: [
+      { unit: 'mmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 },
+      { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.0555 }, fromCanonical: { mul: 18.02 }, precision: 0 }
+    ]
   },
 
   hba1c: {
@@ -144,7 +168,10 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'mmol/mol',
     source: 'lab',
     suggestedFrequency: 'perTest',
-    units: [],
+    units: [
+      { unit: 'mmol/mol', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 0 },
+      { unit: '%', system: 'US', toCanonical: { mul: 10.93, add: -23.5 }, fromCanonical: { mul: 0.0915, add: 2.15 }, precision: 1 }
+    ]
   },
 
   fasting_insulin: {
@@ -155,10 +182,14 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'mIU/L',
     source: 'lab',
     suggestedFrequency: 'monthly',
-    units: [],
+    units: [
+      { unit: 'mIU/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 },
+      { unit: 'µIU/mL', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 }
+    ]
   },
 
-  // ☀️ Vitamins / minerals
+  // ---------------- VITAMINS ----------------
+
   vitd_25oh: {
     id: 'vitd_25oh',
     emoji: '☀️',
@@ -167,7 +198,10 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'nmol/L',
     source: 'lab',
     suggestedFrequency: 'monthly',
-    units: [],
+    units: [
+      { unit: 'nmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 0 },
+      { unit: 'ng/mL', system: 'US', toCanonical: { mul: 2.5 }, fromCanonical: { mul: 0.4 }, precision: 1 }
+    ]
   },
 
   calcium: {
@@ -178,7 +212,10 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'mmol/L',
     source: 'lab',
     suggestedFrequency: 'monthly',
-    units: [],
+    units: [
+      { unit: 'mmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
+      { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.2495 }, fromCanonical: { mul: 4.01 }, precision: 1 }
+    ]
   },
 
   pth: {
@@ -189,10 +226,14 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'pmol/L',
     source: 'lab',
     suggestedFrequency: 'monthly',
-    units: [],
+    units: [
+      { unit: 'pmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 },
+      { unit: 'pg/mL', system: 'US', toCanonical: { mul: 0.106 }, fromCanonical: { mul: 9.43 }, precision: 0 }
+    ]
   },
 
-  // 🦋 Thyroid
+  // ---------------- THYROID ----------------
+
   tsh: {
     id: 'tsh',
     emoji: '🦋',
@@ -201,7 +242,10 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'mIU/L',
     source: 'lab',
     suggestedFrequency: 'monthly',
-    units: [],
+    units: [
+      { unit: 'mIU/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
+      { unit: 'µIU/mL', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 }
+    ]
   },
 
   free_t4: {
@@ -212,10 +256,14 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'pmol/L',
     source: 'lab',
     suggestedFrequency: 'monthly',
-    units: [],
+    units: [
+      { unit: 'pmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 },
+      { unit: 'ng/dL', system: 'US', toCanonical: { mul: 12.87 }, fromCanonical: { mul: 0.078 }, precision: 1 }
+    ]
   },
 
-  // ❤️‍🔥 Recovery
+  // ---------------- RECOVERY ----------------
+
   resting_hr: {
     id: 'resting_hr',
     emoji: '❤️',
@@ -224,7 +272,10 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'bpm',
     source: 'wearable',
     suggestedFrequency: 'daily',
-    units: [],
+    units: [
+      { unit: 'bpm', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
+      { unit: 'bpm', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
   },
 
   hrv: {
@@ -235,10 +286,14 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'ms',
     source: 'wearable',
     suggestedFrequency: 'daily',
-    units: [],
+    units: [
+      { unit: 'ms', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
+      { unit: 'ms', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
   },
 
-  // 😴 Sleep
+  // ---------------- SLEEP ----------------
+
   sleep_duration: {
     id: 'sleep_duration',
     emoji: '😴',
@@ -247,7 +302,10 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'hours',
     source: 'wearable',
     suggestedFrequency: 'daily',
-    units: [],
+    units: [
+      { unit: 'hours', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 },
+      { unit: 'hours', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 }
+    ]
   },
 
   sleep_quality: {
@@ -258,7 +316,10 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'score_0_10',
     source: 'questionnaire',
     suggestedFrequency: 'daily',
-    units: [],
+    units: [
+      { unit: 'score_0_10', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
+      { unit: 'score_0_10', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
   },
 
   sleep_latency: {
@@ -269,10 +330,14 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'min',
     source: 'questionnaire',
     suggestedFrequency: 'daily',
-    units: [],
+    units: [
+      { unit: 'min', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
+      { unit: 'min', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
   },
 
-  // ⚖️ Body
+  // ---------------- BODY ----------------
+
   weight: {
     id: 'weight',
     emoji: '⚖️',
@@ -281,7 +346,10 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'kg',
     source: 'home',
     suggestedFrequency: 'weekly',
-    units: [],
+    units: [
+      { unit: 'kg', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 },
+      { unit: 'lb', system: 'US', toCanonical: { mul: 0.4536 }, fromCanonical: { mul: 2.2046 }, precision: 1 }
+    ]
   },
 
   waist: {
@@ -292,10 +360,14 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'cm',
     source: 'home',
     suggestedFrequency: 'weekly',
-    units: [],
+    units: [
+      { unit: 'cm', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 0 },
+      { unit: 'in', system: 'US', toCanonical: { mul: 2.54 }, fromCanonical: { mul: 0.3937 }, precision: 0 }
+    ]
   },
 
-  // 💩 Gut
+  // ---------------- GUT ----------------
+
   bss: {
     id: 'bss',
     emoji: '💩',
@@ -304,7 +376,10 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'bss',
     source: 'questionnaire',
     suggestedFrequency: 'daily',
-    units: [],
+    units: [
+      { unit: 'bss', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
+      { unit: 'bss', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
   },
 
   bloating: {
@@ -315,10 +390,14 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'score_0_10',
     source: 'questionnaire',
     suggestedFrequency: 'daily',
-    units: [],
+    units: [
+      { unit: 'score_0_10', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
+      { unit: 'score_0_10', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
   },
 
-  // 🧘 Subjective
+  // ---------------- SUBJECTIVE ----------------
+
   energy: {
     id: 'energy',
     emoji: '⚡',
@@ -327,7 +406,10 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'score_0_10',
     source: 'questionnaire',
     suggestedFrequency: 'daily',
-    units: [],
+    units: [
+      { unit: 'score_0_10', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
+      { unit: 'score_0_10', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
   },
 
   stress: {
@@ -338,7 +420,10 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'score_0_10',
     source: 'questionnaire',
     suggestedFrequency: 'daily',
-    units: [],
+    units: [
+      { unit: 'score_0_10', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
+      { unit: 'score_0_10', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
   },
 
   focus: {
@@ -349,10 +434,12 @@ export const metrics: Record<string, MetricDefinition> = {
     canonicalUnit: 'score_0_10',
     source: 'questionnaire',
     suggestedFrequency: 'daily',
-    units: [],
-  },
+    units: [
+      { unit: 'score_0_10', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
+      { unit: 'score_0_10', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
+  }
 };
-
 
 export const tipMetricLinks: Record<string, TipMetricLink[]> = {
     // --- Intermittent fasting ---
@@ -474,6 +561,30 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
     nitrate_no_efficiency: [
         { metricId: 'systolic_bp', kind: 'secondary' },
         { metricId: 'diastolic_bp', kind: 'secondary' },
+        { metricId: 'energy', kind: 'subjective' },
+    ],
+
+    // --- Training Tips ---
+    neuromuscular_training: [
+        { metricId: 'strength', kind: 'primary' },
+        { metricId: 'hrv', kind: 'secondary' },
+        { metricId: 'resting_hr', kind: 'secondary' },
+        { metricId: 'muscle_mass', kind: 'primary' },
+        { metricId: 'energy', kind: 'subjective' },
+    ],
+    lactate_threshold_training: [
+        { metricId: 'vo2_max', kind: 'primary' },
+        { metricId: 'heart_rate_max', kind: 'secondary' },
+        { metricId: 'systolic_bp', kind: 'secondary' },
+        { metricId: 'diastolic_bp', kind: 'secondary' },
+        { metricId: 'focus', kind: 'subjective' },
+    ],
+    fasted_aerobic_training: [
+        { metricId: 'fasting_glucose', kind: 'secondary' },
+        { metricId: 'vo2_max', kind: 'primary' },
+        { metricId: 'resting_hr', kind: 'secondary' },
+        { metricId: 'hrv', kind: 'secondary' },
+        { metricId: 'weight', kind: 'secondary' },
         { metricId: 'energy', kind: 'subjective' },
     ],
 };

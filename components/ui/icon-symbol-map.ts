@@ -23,6 +23,10 @@ export const ICON_SYMBOLS = {
     sf: 'chevron.right',
     material: 'chevron-right',
   },
+  'chevron.left': {
+    sf: 'chevron.left',
+    material: 'chevron-left',
+  },
   'calendar': {
     sf: 'calendar',
     material: 'calendar-today',
