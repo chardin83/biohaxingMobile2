@@ -265,6 +265,8 @@
       "avoidMorning": "Undvik morgon",
       "avoidNight": "Undvik nattetid"
     },
+    "metricsTitle": "Relaterade mätvärden",
+    "metricsExplainer": "Dessa mätvärden är relaterade till ditt tips och kan hjälpa dig att följa din utveckling.",
     "moreInfo": "Mer info",
     "lessInfo": "Dölj info"
   },

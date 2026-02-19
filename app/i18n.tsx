@@ -6,6 +6,7 @@ import enAreas from '../locales/en/areas.json';
 import enCommon from '../locales/en/common.json';
 import enGenes from '../locales/en/genes.json';
 import enLevels from '../locales/en/levels.json';
+import enMetrics from '../locales/en/metrics.json';
 import enPrompts from '../locales/en/prompts.json';
 import enSupplements from '../locales/en/supplements.json';
 import enTips from '../locales/en/tips.json';
@@ -13,6 +14,7 @@ import svAreas from '../locales/sv/areas.json';
 import svCommon from '../locales/sv/common.json';
 import svGenes from '../locales/sv/genes.json';
 import svLevels from '../locales/sv/levels.json';
+import svMetrics from '../locales/sv/metrics.json';
 import svPrompts from '../locales/sv/prompts.json';
 import svSupplements from '../locales/sv/supplements.json';
 import svTips from '../locales/sv/tips.json';
@@ -27,6 +29,7 @@ const resources = {
     levels: enLevels,
     prompts: enPrompts,
     genes: enGenes,
+    metrics: enMetrics,
   },
   sv: {
     common: svCommon,
@@ -36,6 +39,7 @@ const resources = {
     levels: svLevels,
     prompts: svPrompts,
     genes: svGenes,
+    metrics: svMetrics,
   },
 };
 
@@ -62,7 +66,7 @@ i18next
     fallbackLng: 'en',
     debug: false,
     defaultNS: 'common', // Default namespace
-    ns: ['common', 'tips', 'supplements', 'areas', 'levels', 'prompts', 'genes'], // Available namespaces
+    ns: ['common', 'tips', 'supplements', 'areas', 'levels', 'prompts', 'genes', 'metrics'], // Available namespaces
     interpolation: {
       escapeValue: false, // Not needed for React
     },

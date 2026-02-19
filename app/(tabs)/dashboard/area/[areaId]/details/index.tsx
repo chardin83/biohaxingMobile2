@@ -9,6 +9,7 @@ import { Icon } from 'react-native-paper';
 import SupplementList from '@/app/components/SupplementList';
 import { useStorage } from '@/app/context/StorageContext';
 import { Supplement } from '@/app/domain/Supplement';
+import { globalStyles } from '@/app/theme/globalStyles';
 import AreaRelevanceSection from '@/components/sections/AreaRelevanceSection';
 import DetailsTopSection from '@/components/sections/DetailsTopSection';
 import { ThemedText } from '@/components/ThemedText';
@@ -19,6 +20,7 @@ import { NotFound } from '@/components/ui/NotFound';
 import VerdictSelector from '@/components/VerdictSelector';
 import { AIPromptKey, AIPrompts } from '@/constants/AIPrompts';
 import { areas } from '@/locales/areas';
+import { metrics, tipMetricLinks } from '@/locales/metrics';
 import { useSupplements } from '@/locales/supplements';
 import { tips } from '@/locales/tips';
 import { PlanCategory } from '@/types/planCategory';
@@ -415,6 +417,7 @@ export default function AreaDetailScreen() {
         styles={styles}
         colors={colors}
       />
+      <MetricsSection tipId={effectiveTipId} />
       <VerdictSelector currentVerdict={currentVerdict} onVerdictPress={handleVerdictPress} />
       {(
         resolvedSupplements.length > 0 ||
@@ -536,6 +539,35 @@ function NutritionFoodsSection({
           />
         )}
       </View>
+    </AppBox>
+  );
+}
+
+function MetricsSection({ tipId }: { tipId: string | null }) {
+  const { colors } = useTheme();
+  const { t } = useTranslation(['common', 'metrics']);
+  if (!tipId) return null;
+  
+  const metricLinks = tipMetricLinks[tipId];
+  if (!metricLinks || metricLinks.length === 0) return null;
+
+  return (
+    <AppBox title={t('common:goalDetails.metricsTitle')}>
+      {metricLinks.map(link => {
+        const metric = metrics[link.metricId];
+        if (!metric) return null;
+        return (
+          <ThemedText key={link.metricId} type="default">
+            {metric.emoji} {t(`metrics:${link.metricId}.name`)}
+          </ThemedText>
+        );
+        })}
+        <ThemedText type="explainer" style={[
+                    globalStyles.explainer,
+                    {  borderTopColor: colors.borderLight }
+                  ]}>
+          {t('common:goalDetails.metricsExplainer')}
+        </ThemedText>
     </AppBox>
   );
 }

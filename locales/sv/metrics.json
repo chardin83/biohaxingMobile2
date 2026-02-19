@@ -1,0 +1,106 @@
+{
+    "ldl": {
+        "name": "LDL-kolesterol",
+        "description": "Det \"onda\" kolesterolet som är starkt kopplat till hjärt-kärlrisk."
+    },
+    "apob": {
+        "name": "ApoB (Apolipoprotein B)",
+        "description": "Visar antalet skadliga kolesterolpartiklar i blodet."
+    },
+    "triglycerides": {
+        "name": "Triglycerider",
+        "description": "Blodfetter som påverkas av kost, alkohol och insulinresistens."
+    },
+    "hdl": {
+        "name": "HDL-kolesterol",
+        "description": "Det \"goda\" kolesterolet som hjälper till att transportera bort fett från blodet."
+    },
+    "systolic_bp": {
+        "name": "Systoliskt blodtryck",
+        "description": "Det övre värdet i blodtrycket när hjärtat pumpar."
+    },
+    "diastolic_bp": {
+        "name": "Diastoliskt blodtryck",
+        "description": "Det undre värdet i blodtrycket när hjärtat vilar mellan slagen."
+    },
+    "fasting_glucose": {
+        "name": "Fasteblodsocker",
+        "description": "Blodsockernivå efter minst 8 timmars fasta."
+    },
+    "hba1c": {
+        "name": "HbA1c (långtidsblodsocker)",
+        "description": "Visar genomsnittligt blodsocker de senaste 2–3 månaderna."
+    },
+    "fasting_insulin": {
+        "name": "Fasteinsulin",
+        "description": "Hormon som styr blodsockret och visar insulinresistens tidigt."
+    },
+    "vitd_25oh": {
+        "name": "Vitamin D-status",
+        "description": "Kroppens lagrade form av vitamin D i blodet."
+    },
+    "calcium": {
+        "name": "Kalcium",
+        "description": "Viktigt mineral för skelett, muskler och nervfunktion."
+    },
+    "pth": {
+        "name": "Parathormon (PTH)",
+        "description": "Hormon som reglerar kalciumbalans och vitamin D-omsättning."
+    },
+    "tsh": {
+        "name": "TSH (sköldkörtelstimulerande hormon)",
+        "description": "Visar hur sköldkörteln regleras av hypofysen."
+    },
+    "free_t4": {
+        "name": "Fritt T4",
+        "description": "Ett av sköldkörtelns viktigaste hormoner för ämnesomsättning."
+    },
+    "resting_hr": {
+        "name": "Vilopuls",
+        "description": "Hjärtfrekvens i vila – indikator på kondition och återhämtning."
+    },
+    "hrv": {
+        "name": "HRV (hjärtfrekvensvariation)",
+        "description": "Mått på nervsystemets balans och kroppens återhämtning."
+    },
+    "sleep_duration": {
+        "name": "Sömnlängd",
+        "description": "Total tid du sover per natt."
+    },
+    "sleep_quality": {
+        "name": "Sömnkvalitet",
+        "description": "Upplevd kvalitet på sömnen."
+    },
+    "sleep_latency": {
+        "name": "Insomningstid",
+        "description": "Hur lång tid det tar att somna."
+    },
+    "weight": {
+        "name": "Kroppsvikt",
+        "description": "Din vikt."
+    },
+    "waist": {
+        "name": "Midjemått",
+        "description": "Omkrets runt magen – stark markör för metabol hälsa."
+    },
+    "bss": {
+        "name": "Avföringstyp (Bristol-skalan)",
+        "description": "Skala för tarmfunktion och avföringskonsistens."
+    },
+    "bloating": {
+        "name": "Uppblåsthet",
+        "description": "Upplevd svullnad eller obehag i magen."
+    },
+    "energy": {
+        "name": "Energinivå",
+        "description": "Hur pigg och alert du känner dig."
+    },
+    "stress": {
+        "name": "Stressnivå",
+        "description": "Upplevd stress under dagen."
+    },
+    "focus": {
+        "name": "Fokus och koncentration",
+        "description": "Hur lätt du kan koncentrera dig."
+    }
+}

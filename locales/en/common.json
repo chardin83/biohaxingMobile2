@@ -261,6 +261,8 @@
       "avoidMorning": "Avoid morning",
       "avoidNight": "Avoid night"
     },
+    "metricsTitle": "Related metrics",
+    "metricsExplainer": "These metrics are related to your tip and can help you track your progress.",
     "moreInfo": "More info",
     "lessInfo": "Hide info"
   },

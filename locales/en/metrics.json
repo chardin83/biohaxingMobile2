@@ -1,0 +1,106 @@
+{
+    "ldl": {
+        "name": "LDL cholesterol",
+        "description": "The \"bad\" cholesterol strongly linked to cardiovascular risk."
+    },
+    "apob": {
+        "name": "ApoB (Apolipoprotein B)",
+        "description": "Shows the number of harmful cholesterol particles in the blood."
+    },
+    "triglycerides": {
+        "name": "Triglycerides",
+        "description": "Blood fats influenced by diet, alcohol, and insulin resistance."
+    },
+    "hdl": {
+        "name": "HDL cholesterol",
+        "description": "The \"good\" cholesterol that helps remove fat from the bloodstream."
+    },
+    "systolic_bp": {
+        "name": "Systolic blood pressure",
+        "description": "The top blood pressure value when the heart contracts."
+    },
+    "diastolic_bp": {
+        "name": "Diastolic blood pressure",
+        "description": "The bottom blood pressure value when the heart relaxes between beats."
+    },
+    "fasting_glucose": {
+        "name": "Fasting blood glucose",
+        "description": "Blood sugar level after at least 8 hours of fasting."
+    },
+    "hba1c": {
+        "name": "HbA1c (long-term blood sugar)",
+        "description": "Shows average blood sugar over the past 2–3 months."
+    },
+    "fasting_insulin": {
+        "name": "Fasting insulin",
+        "description": "Hormone that regulates blood sugar and reveals insulin resistance early."
+    },
+    "vitd_25oh": {
+        "name": "Vitamin D status",
+        "description": "Stored form of vitamin D measured in the blood."
+    },
+    "calcium": {
+        "name": "Calcium",
+        "description": "Essential mineral for bones, muscles, and nerve function."
+    },
+    "pth": {
+        "name": "Parathyroid hormone (PTH)",
+        "description": "Hormone that regulates calcium balance and vitamin D metabolism."
+    },
+    "tsh": {
+        "name": "TSH (thyroid stimulating hormone)",
+        "description": "Shows how the thyroid is regulated by the pituitary gland."
+    },
+    "free_t4": {
+        "name": "Free T4",
+        "description": "One of the main thyroid hormones controlling metabolism."
+    },
+    "resting_hr": {
+        "name": "Resting heart rate",
+        "description": "Heart rate at rest — an indicator of fitness and recovery."
+    },
+    "hrv": {
+        "name": "HRV (heart rate variability)",
+        "description": "Measure of nervous system balance and recovery capacity."
+    },
+    "sleep_duration": {
+        "name": "Sleep duration",
+        "description": "Total time you sleep each night."
+    },
+    "sleep_quality": {
+        "name": "Sleep quality",
+        "description": "Your perceived sleep quality."
+    },
+    "sleep_latency": {
+        "name": "Sleep onset time",
+        "description": "How long it takes you to fall asleep."
+    },
+    "weight": {
+        "name": "Body weight",
+        "description": "Your body weight."
+    },
+    "waist": {
+        "name": "Waist circumference",
+        "description": "Measurement around the abdomen — a strong marker of metabolic health."
+    },
+    "bss": {
+        "name": "Stool type (Bristol scale)",
+        "description": "Scale describing bowel movement consistency and gut health."
+    },
+    "bloating": {
+        "name": "Bloating",
+        "description": "Perceived abdominal swelling or discomfort."
+    },
+    "energy": {
+        "name": "Energy level",
+        "description": "How energetic and alert you feel."
+    },
+    "stress": {
+        "name": "Stress level",
+        "description": "Your perceived level of stress."
+    },
+    "focus": {
+        "name": "Focus and concentration",
+        "description": "How easily you can concentrate."
+    }
+}
