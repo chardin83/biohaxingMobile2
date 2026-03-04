@@ -4,10 +4,10 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
-import ShowAllButton from '@/app/(tabs)/dashboard/area/[areaId]/details/ShowAllButton';
 import { useStorage } from '@/app/context/StorageContext';
 import { Collapsible } from '@/components/Collapsible';
 import { GradientText } from '@/components/GradientText';
+import ShowAllButton from '@/components/ShowAllButton';
 import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';

@@ -14,17 +14,17 @@ export default function IndexRedirector() {
     if (!isInitialized) return;
 
     if (hasCompletedOnboarding) {
-      router.replace('/dashboard');
+      router.push('/dashboard');
     } else {
       switch (onboardingStep) {
         case 0:
-          router.replace('/(onboarding)/onboardingsupplements');
+          router.push('/(onboarding)/onboardingsupplements');
           break;
         case 1:
-          router.replace('/(onboarding)/onboardinggoals');
+          router.push('/(onboarding)/onboardinggoals');
           break;
         default:
-          router.replace('/(onboarding)/onboardingsupplements');
+          router.push('/(onboarding)/onboardingsupplements');
           break;
       }
     }

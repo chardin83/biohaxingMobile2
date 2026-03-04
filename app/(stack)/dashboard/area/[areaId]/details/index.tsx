@@ -314,7 +314,7 @@ export default function AreaDetailScreen() {
       pathname: '/(tabs)/chat',
       params: {
         initialPrompt: fullPrompt,
-        returnPath: `(tabs)/dashboard/area/${areaId}/details`,
+        returnPath: `/dashboard/area/${areaId}/details`,
         returnParams: JSON.stringify({ areaId, tipId }),
       },
     });
@@ -332,18 +332,6 @@ export default function AreaDetailScreen() {
     <Container
       background="gradient"
       gradientLocations={colors.gradients?.sunrise?.locations3 as any}
-      onBackPress={() => {
-        if (prevAreaId) {
-          // Om vi har tipId, gå tillbaka till details för föregående area/tip
-          router.replace({
-            pathname: `/dashboard/area/${prevAreaId}/details` as any,
-            params: { tipId: tipId },
-          });
-        } else {
-          // Annars gå till area-listan
-          router.replace(`/dashboard/area/${areaId}`);
-        }
-      }}
       showBackButton
     >
 

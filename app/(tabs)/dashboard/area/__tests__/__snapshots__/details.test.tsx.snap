@@ -95,6 +95,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
             "top": 50,
             "zIndex": 100,
           },
+          false,
           undefined,
           {
             "backgroundColor": "transparent",

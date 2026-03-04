@@ -19,7 +19,6 @@ export default function Calendar() {
   <Container
       background="gradient"
       gradientLocations={colors.gradients?.sunrise?.locations3 as any}
-      showBackButton
     >
         <CalendarComponent onDayPress={handleDayPress} ref={calendarRef} />
         {selectedDate && (

@@ -59,6 +59,7 @@ export default function RootLayout() {
                       <GlobalLevelUpModal />
                       <Stack
                         screenOptions={{
+                          headerShown: false,
                           headerTransparent: true,
                           headerStyle: {
                             backgroundColor: 'transparent',

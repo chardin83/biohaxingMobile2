@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
-import ShowAllButton from '@/app/(tabs)/dashboard/area/[areaId]/details/ShowAllButton';
 import { useStorage } from '@/app/context/StorageContext';
 import { SupplementPlanEntry } from '@/app/domain/SupplementPlanEntry';
 import { Collapsible } from '@/components/Collapsible';
@@ -14,6 +13,7 @@ import { NutritionPlanSection } from '@/components/sections/NutritionPlanSection
 import { OtherPlanSection } from '@/components/sections/OtherPlanSection';
 import { PlanMeta } from '@/components/sections/PlanMeta';
 import { TrainingPlanSection } from '@/components/sections/TrainingPlanSection';
+import ShowAllButton from '@/components/ShowAllButton';
 import SupplementForm from '@/components/SupplementForm';
 import SupplementItem from '@/components/SupplementItem';
 import { ThemedModal } from '@/components/ThemedModal';
@@ -49,7 +49,7 @@ export default function Plans() {
   const { plans, setPlans, errorMessage } = useStorage();
 
   const handleGoToCreatePlan = () => {
-    router.push('/(tabs)/plan/create');
+    router.push('/plan/create');
   };
 
   const { t } = useTranslation(['common', 'areas', 'tips']);

@@ -1,4 +1,4 @@
-
+import { useNavigationState } from '@react-navigation/native';
 import { router, useLocalSearchParams, usePathname, useSegments } from 'expo-router';
 import { useEffect } from 'react';
 
@@ -18,15 +18,17 @@ export default function AreaRootScreen() {
   const { areaId } = useLocalSearchParams<{ areaId: string }>();
   const segments = useSegments();
   const pathname = usePathname?.() ?? '';
+  const navState = useNavigationState(state => state);
 
   useEffect(() => {
     console.log('route segments:', segments);
     console.log('pathname:', pathname);
     console.log('areaId:', areaId);
-  }, [segments, pathname, areaId]);
+    console.log('NAVIGATION STACK:', navState);
+  }, [segments, pathname, areaId, navState]);
 
   return (
-    <Container background="gradient" gradientLocations={Colors.dark.gradients.sunrise.locations2 as any} onBackPress={() => router.push({ pathname: '/dashboard' })} showBackButton>
+    <Container background="gradient" gradientLocations={Colors.dark.gradients.sunrise.locations2 as any} onBackPress={() => router.back()} showBackButton>
       {areaId === 'nervousSystem' && <NervousSystemOverview mainGoalId={areaId} />}
       {areaId === 'sleepQuality' && <SleepOverview mainGoalId={areaId} />}
       {areaId === 'energy' && <EnergyOverview mainGoalId={areaId} />}

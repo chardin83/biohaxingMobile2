@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet,View } from 'react-native';
 import { Icon } from 'react-native-paper';
 
-import ShowAllButton from '@/app/(tabs)/dashboard/area/[areaId]/details/ShowAllButton';
+import ShowAllButton from '@/components/ShowAllButton';
 import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
 import { areas } from '@/locales/areas';

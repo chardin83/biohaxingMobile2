@@ -94,12 +94,14 @@ export default function TipsList({ areaId }: Readonly<TipsListProps>) {
     const tip = sortedTips[tipIndex];
 
     if (tip) {
-      router.push({
+      const routeObj = {
         pathname: `/dashboard/area/${areaId}/details` as any,
         params: {
           tipId: tip.id,
         },
-      });
+      };
+      console.log('router.push called with:', routeObj);
+      router.push(routeObj);
     }
   };
 

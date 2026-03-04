@@ -7,7 +7,7 @@ import * as useSupplementsModule from '@/locales/supplements';
 import { AllProviders } from '@/test-utils/Providers';
 
 import * as StorageContext from '../../../../context/StorageContext';
-import GoalDetailScreen from '../[areaId]/details';
+import GoalDetailScreen from '../../../../(stack)/dashboard/area/areaComponents/details';
 
 jest.mock('@/components/VerdictSelector', () => 'VerdictSelector');
 
