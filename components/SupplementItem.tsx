@@ -2,27 +2,25 @@ import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { SupplementPlanEntry } from '@/app/domain/SupplementPlanEntry';
+import { Supplement } from '@/app/domain/Supplement';
 import { ThemedText } from '@/components/ThemedText';
 
 import { SwipeableRow } from './ui/SwipeableRow';
 
 interface SupplementItemProps {
   planName: string;
-  entry: SupplementPlanEntry; // <-- byt namn för tydlighet
+  supplement: Supplement;
   onRemoveSupplement: (planName: string, supplementTitle: string) => void;
   onEditSupplement: (planName: string, supplementTitle: string) => void;
 }
 
 const SupplementItem: React.FC<SupplementItemProps> = ({
   planName,
-  entry,
+  supplement,
   onRemoveSupplement,
   onEditSupplement,
 }) => {
   const { colors } = useTheme();
-
-  const { supplement } = entry;
 
   return (
     <SwipeableRow

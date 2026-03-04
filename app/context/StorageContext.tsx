@@ -291,22 +291,25 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     loadData();
   }, []);
 
-  const setPlans = (update: PlansByCategory | ((prev: PlansByCategory) => PlansByCategory)) => {
-    setPlansState(prev => {
-      const newPlans = typeof update === 'function' ? update(prev) : update;
-      const normalizedPlans: PlansByCategory = {
-        ...EMPTY_PLANS,
-        ...newPlans,
-        supplements: newPlans.supplements ?? [],
-        training: newPlans.training ?? [],
-        nutrition: newPlans.nutrition ?? [],
-        other: (newPlans as any).other ?? [],
-        reasonSummary: normalizeReasonSummary((newPlans as any).reasonSummary),
-      };
-      AsyncStorage.setItem(STORAGE_KEYS.PLANS, JSON.stringify(normalizedPlans));
-      return normalizedPlans;
-    });
-  };
+  const setPlans = useCallback(
+    (update: PlansByCategory | ((prev: PlansByCategory) => PlansByCategory)) => {
+      setPlansState(prev => {
+        const newPlans = typeof update === 'function' ? update(prev) : update;
+        const normalizedPlans: PlansByCategory = {
+          ...EMPTY_PLANS,
+          ...newPlans,
+          supplements: newPlans.supplements ?? [],
+          training: newPlans.training ?? [],
+          nutrition: newPlans.nutrition ?? [],
+          other: (newPlans as any).other ?? [],
+          reasonSummary: normalizeReasonSummary((newPlans as any).reasonSummary),
+        };
+        AsyncStorage.setItem(STORAGE_KEYS.PLANS, JSON.stringify(normalizedPlans));
+        return normalizedPlans;
+      });
+    },
+    []
+  );
 
   const setTakenDates = (
     update:
@@ -417,9 +420,9 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   };
 
   const setShowMusic = (val: boolean) => {
-  setShowMusicState(val);
-  AsyncStorage.setItem(STORAGE_KEYS.SHOW_MUSIC, val ? 'true' : 'false');
-};
+    setShowMusicState(val);
+    AsyncStorage.setItem(STORAGE_KEYS.SHOW_MUSIC, val ? 'true' : 'false');
+  };
 
   const setMetricEntries = (
     updater: MetricEntry[] | ((prev: MetricEntry[]) => MetricEntry[])
@@ -632,7 +635,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       getMetricsForPlanTip,
       getRelevantTipsForMetrics,
     }),
-    [plansState, activeGoals, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, trainingPlanSettingsState, showMusicState, tempPlans, setTempPlans, metricEntriesState, addMetricEntry, getMetricHistory, getMetricsForPlanTip, getRelevantTipsForMetrics]
+    [plansState, setPlans, activeGoals, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, trainingPlanSettingsState, showMusicState, tempPlans, metricEntriesState, addMetricEntry, getMetricHistory, getMetricsForPlanTip, getRelevantTipsForMetrics]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

@@ -25,14 +25,16 @@ export default function BackButton({ onPress, style }: BackButtonProps) {
     }
   };
 
+  // Use a solid background on Android for better appearance
   const backgroundColor =
-    Platform.OS === 'ios' ? 'transparent' : colors.overlayLight;
+    Platform.OS === 'ios' ? 'transparent' : colors.background;
 
   return (
     <Pressable
       onPress={handlePress}
       style={[
         styles.backButton,
+        Platform.OS === 'android' && styles.androidButton,
         style,
         { backgroundColor },
       ]}
@@ -76,6 +78,18 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+  },
+  androidButton: {
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    elevation: 1,
+    minWidth: 0,
+    maxWidth: 120,
+    minHeight: 0,
+    shadowOffset: undefined,
+    shadowOpacity: 0,
+    shadowRadius: 0,
   },
   buttonContent: {
     flexDirection: 'row',

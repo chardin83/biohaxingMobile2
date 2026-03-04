@@ -22,6 +22,7 @@ interface DayeEditProps {
 
 const DayEdit: React.FC<DayeEditProps> = ({ selectedDate }) => {
   const [selectedTime, setSelectedTime] = useState<Date>(new Date());
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const [selectedSupplements, setSelectedSupplements] = useState<SupplementTime[]>([]);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -180,18 +181,45 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate }) => {
 
             {(isFormVisible || isPlanPickerVisible) && (
               <>
-                <Text style={[styles.label, { color: colors.text }]}>
+                <ThemedText type="title3" style={[styles.label]}>
                   {t('dayEdit.editSupplement')} {selectedDate}:
-                </Text>
+                </ThemedText>
                 <View style={styles.timePickerContainer}>
-                  <Text style={[styles.label, styles.chooseTimeLabel]}>{t('dayEdit.chooseTime')}</Text>
-                  <DateTimePicker
-                    value={selectedTime}
-                    mode="time"
-                    is24Hour={true}
-                    display="default"
-                    onChange={(event, time) => time && setSelectedTime(time)}
-                  />
+                  <ThemedText type="label" style={[styles.label]}>{t('dayEdit.chooseTime')}</ThemedText>
+                  {Platform.OS === 'ios' ? (
+                    <DateTimePicker
+                      value={selectedTime}
+                      mode="time"
+                      is24Hour={true}
+                      display="spinner"
+                      onChange={(event, time) => {
+                        if (time) setSelectedTime(time);
+                      }}
+                      style={{ width: 120, alignSelf: 'flex-start' }}
+                    />
+                  ) : (
+                    <>
+                      <AppButton
+                        title={selectedTime.toTimeString().slice(0, 5)}
+                        onPress={() => setShowTimePicker(true)}
+                        variant="secondary"
+                      />
+                      {showTimePicker && (
+                        <DateTimePicker
+                          value={selectedTime}
+                          mode="time"
+                          is24Hour={true}
+                          display="default"
+                          onChange={(event, time) => {
+                            if (event.type === 'set' && time) {
+                              setSelectedTime(time);
+                            }
+                            setShowTimePicker(false);
+                          }}
+                        />
+                      )}
+                    </>
+                  )}
                 </View>
               </>
             )}
@@ -247,11 +275,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   label: {
-    fontSize: 16,
     marginBottom: 10,
-  },
-  chooseTimeLabel: {
-    marginBottom: 5,
   },
   timePickerContainer: {
     marginVertical: 40,

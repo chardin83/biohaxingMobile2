@@ -29,10 +29,20 @@ export default function OnboardingSupplements() {
 
     const morning = defaultPlans.find(p => p.key === 'morning');
 
+    // Map each Supplement to SupplementPlanEntry
+    const supplementPlanEntries = selectedSupplements.map(supplement => ({
+      supplement,
+      startedAt: new Date().toISOString(),
+      createdBy: 'onboarding',
+      planName: t(`plan.defaultPlan.${morning!.key}`),
+      prefferedTime: morning!.time,
+      notify: true,
+    }));
+
     const morningPlan = {
       name: t(`plan.defaultPlan.${morning!.key}`),
       prefferedTime: morning!.time,
-      supplements: selectedSupplements,
+      supplements: supplementPlanEntries,
       notify: true,
     };
 

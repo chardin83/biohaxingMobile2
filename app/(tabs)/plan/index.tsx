@@ -172,7 +172,7 @@ export default function Plans() {
                 <SupplementItem
                   key={`${plan.name}-${entry.supplement.id ?? entry.supplement.name}`}
                   planName={plan.name}
-                  entry={entry} // <-- skicka hela SupplementPlanEntry
+                  supplement={entry.supplement} // <-- skicka hela SupplementPlanEntry
                   onRemoveSupplement={handleRemoveSupplement}
                   onEditSupplement={handleEditSupplement}
                 />
