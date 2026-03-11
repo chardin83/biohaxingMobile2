@@ -58,6 +58,8 @@
         { "id": "cranberryExtract", "name": "Cranberry Extract", "quantity": "500", "unit": "mg" },
         { "id": "garlicExtract", "name": "Garlic Extract", "quantity": "600", "unit": "mg" },
         { "id": "vitaminK2", "name": "Vitamin K2", "quantity": "90", "unit": "mcg", "description": "Supports calcium utilization and vascular health; often stacked with vitamin D." },
+        { "id": "pomegranateExtract", "name": "Pomegranate Extract", "quantity": "500", "unit": "mg", "description": "Extract of pomegranate rich in ellagitannins, which can be converted to urolithin A by the right gut bacteria." },
+        { "id": "urolithinA", "name": "Urolithin A", "quantity": "250", "unit": "mg", "description": "Direct supplement of urolithin A for those lacking the right gut bacteria, supporting mitochondrial health." },
         { "id": "astaxanthin", "name": "Astaxanthin", "quantity": "4", "unit": "mg" },
         { "id": "eveningPrimroseOil", "name": "Evening Primrose Oil", "quantity": "1000", "unit": "mg" },
         { "id": "macaRoot", "name": "Maca Root", "quantity": "500", "unit": "mg" },

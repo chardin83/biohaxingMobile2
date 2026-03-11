@@ -1,4 +1,80 @@
 {
+  "low_carb_diet": {
+    "title": "Lågkolhydratkost",
+    "description": "Lågkolhydratkost innebär att man minskar intaget av kolhydrater och ökar mängden hälsosamma fetter och proteiner. Kan stödja metabol hälsa, viktkontroll och stabila energinivåer.",
+    "areas": {
+      "energy": "Lågkolhydratkost kan bidra till stabilare energinivåer och mindre blodsockersvängningar.",
+      "metabolicHealth": "Kan förbättra insulinkänslighet och stödja metabol hälsa."
+    },
+    "nutritionFoods": {
+      "title": "Livsmedel för lågkolhydratkost",
+      "items": {
+        "leafyGreens": {
+          "name": "Bladgrönsaker",
+          "details": "Spenat, grönkål, sallad och andra bladgrönsaker är näringsrika och låga på kolhydrater."
+        },
+        "meat": {
+          "name": "Kött",
+          "details": "Nötkött, kyckling, fläsk och annat kött är naturligt lågt på kolhydrater."
+        },
+        "eggs": {
+          "name": "Ägg",
+          "details": "Ägg är ett mångsidigt, lågkolhydrat protein och fettkälla."
+        },
+        "cheese": {
+          "name": "Ost",
+          "details": "De flesta ostar är låga på kolhydrater och ger kalcium och protein."
+        },
+        "nuts": {
+          "name": "Nötter",
+          "details": "Mandel, valnötter och andra nötter är låga på kolhydrater och rika på nyttiga fetter."
+        }
+      }
+    }
+  },
+  "ketogenic_diet": {
+    "title": "Ketogen kost",
+    "description": "Ketogen kost är en mycket lågkolhydrat, högfettsdiet som inducerar ketos, ett tillstånd där kroppen förbränner fett som bränsle. Kan stödja hjärnhälsa, metabol flexibilitet och uthållig energi.",
+    "areas": {
+      "energy": "Ketogen kost kan ge stabil energi genom att kroppen använder fett som primär energikälla.",
+      "metabolicHealth": "Kan förbättra metabol flexibilitet och stödja blodsockerreglering.",
+      "mind": "Ketoner som bildas vid ketos kan stödja hjärnhälsa och kognitiv funktion."
+    },
+    "nutritionFoods": {
+      "title": "Livsmedel för ketogen kost",
+      "items": {
+        "avocado": {
+          "name": "Avokado",
+          "details": "Avokado är rik på nyttiga fetter och fiber, och mycket låg på kolhydrater."
+        },
+        "coconutOil": {
+          "name": "Kokosolja",
+          "details": "Kokosolja är en källa till MCT-fetter som stödjer ketos."
+        },
+        "fattyFish": {
+          "name": "Fet fisk",
+          "details": "Lax, makrill och sardiner är rika på omega-3 och låga på kolhydrater."
+        },
+        "eggs": {
+          "name": "Ägg",
+          "details": "Ägg är en bas i ketogen kost tack vare sitt protein- och fettinnehåll."
+        },
+        "cheese": {
+          "name": "Ost",
+          "details": "Ost är låg på kolhydrater och hög på fett, vilket gör den idealisk för keto."
+        }
+      }
+    }
+  },
+  "berberine": {
+    "title": "Berberin för blodsocker, blodfetter och metabolism",
+    "description": "Berberin är en växtförening som kan stödja blodsockerbalans, blodfetter, tarmhälsa och metabolism. Används ofta som supplement vid insulinresistens, för att förbättra tarmfloran och kan även hämma Helicobacter pylori.",
+    "areas": {
+      "digestiveHealth": "Stödjer tarmflorans balans och hälsa. Kan hämma Helicobacter pylori.",
+      "cardioFitness": "Kan förbättra blodfettsprofilen (kolesterol och triglycerider).",
+      "energy": "Stödjer ämnesomsättning och fettförbränning. Kan bidra till bättre blodsockerreglering."
+    }
+  },
   "brown_fat_cool_home": {
     "title": "Brunfett och sval inomhusmiljö",
     "description": "Brunfett (brunt fett) hjälper kroppen att förbränna energi och producera värme. Att vistas i en sval inomhusmiljö, gärna under 21 grader, kan stimulera brunfettets aktivitet och bidra till ökad energiförbrukning. Sänk temperaturen hemma ibland för att stödja ämnesomsättning och metabol hälsa.",
@@ -695,7 +771,8 @@
     "description": "Tröskelträning (tempo strax under mjölksyratröskeln) gör dig snabbare utan att du ‘surnar’ lika tidigt. Det är en nyckel för 10 km och 1 mil eftersom du kan hålla hög fart med kontrollerad ansträngning.",
     "areas": {
       "cardioFitness": "Tröskelpass höjer den fart du kan hålla innan laktat ackumuleras för snabbt, vilket förbättrar tävlingskapaciteten på 5–10 km.",
-      "energy": "Genom förbättrad laktat-clearance och effektivare energisystem kan du producera mer arbete med mindre upplevd trötthet vid högre fart."
+      "energy": "Genom förbättrad laktat-clearance och effektivare energisystem kan du producera mer arbete med mindre upplevd trötthet vid högre fart.",
+      "mind": "Laktat har neurologiska effekter som kan förbättra fokus och mental uthållighet under hårda ansträngningar, vilket hjälper dig att pusha igenom. Det har också neuroprotektiva effekter som kan stödja hjärnhälsa och motståndskraft under stress."
     },
     "analyzePrompt": "Analysera användarens träningsnivå och föreslå en tröskelstruktur (t.ex. 20–40 minuter sammanhängande eller intervallblock) som matchar deras kapacitet."
   },
@@ -807,31 +884,31 @@
       "digestiveHealth": "Färgglada grönsaker stödjer tarmhälsa och matsmältning.",
       "immuneSupport": "Olika färger ger olika antioxidanter som stärker immunförsvaret."
     },
-      "nutritionFoods": {
-    "title": "Färgglada grönsaker",
-    "items": {
-      "redVeggies": {
-        "name": "Röda grönsaker (tomat, paprika, rödbeta)",
-        "details": "Röda grönsaker är rika på lykopen och antocyaniner som stödjer hjärthälsa och immunförsvar."
-      },
-      "orangeVeggies": {
-        "name": "Orange grönsaker (morot, pumpa, sötpotatis)",
-        "details": "Orange grönsaker innehåller betakaroten som omvandlas till A-vitamin och stärker syn och hud."
-      },
-      "yellowVeggies": {
-        "name": "Gula grönsaker (gul paprika, majs)",
-        "details": "Gula grönsaker är rika på lutein och zeaxantin som stödjer ögonhälsa."
-      },
-      "greenVeggies": {
-        "name": "Gröna grönsaker (spenat, broccoli, ärtor)",
-        "details": "Gröna grönsaker innehåller klorofyll, folat och magnesium som stödjer energi och nervsystem."
-      },
-      "bluePurpleVeggies": {
-        "name": "Blå/lila grönsaker (blåbär, rödkål, aubergine)",
-        "details": "Blå och lila grönsaker är rika på antocyaniner som skyddar celler och stödjer hjärnans funktion."
+    "nutritionFoods": {
+      "title": "Färgglada grönsaker",
+      "items": {
+        "redVeggies": {
+          "name": "Röda grönsaker (tomat, paprika, rödbeta)",
+          "details": "Röda grönsaker är rika på lykopen och antocyaniner som stödjer hjärthälsa och immunförsvar."
+        },
+        "orangeVeggies": {
+          "name": "Orange grönsaker (morot, pumpa, sötpotatis)",
+          "details": "Orange grönsaker innehåller betakaroten som omvandlas till A-vitamin och stärker syn och hud."
+        },
+        "yellowVeggies": {
+          "name": "Gula grönsaker (gul paprika, majs)",
+          "details": "Gula grönsaker är rika på lutein och zeaxantin som stödjer ögonhälsa."
+        },
+        "greenVeggies": {
+          "name": "Gröna grönsaker (spenat, broccoli, ärtor)",
+          "details": "Gröna grönsaker innehåller klorofyll, folat och magnesium som stödjer energi och nervsystem."
+        },
+        "bluePurpleVeggies": {
+          "name": "Blå/lila grönsaker (blåbär, rödkål, aubergine)",
+          "details": "Blå och lila grönsaker är rika på antocyaniner som skyddar celler och stödjer hjärnans funktion."
+        }
       }
     }
-  }
   },
   "near_infrared_red_light": {
     "title": "Near Infrared / Rött ljus",
@@ -864,7 +941,7 @@
       "energy": "Stödjer ögonens energimetabolism och skydd."
     }
   },
-    "msm_joint_health": {
+  "msm_joint_health": {
     "title": "MSM för ledhälsa",
     "description": "MSM (metylsulfonylmetan) är ett svavelinnehållande ämne som kan minska ledvärk och stödja återhämtning. Används ofta vid ledproblem och för att minska inflammation. Det finns viss forskning och användarerfarenhet som tyder på att MSM kan minska inflammation i tarmen, stödja slemhinnans hälsa och bidra till bättre matsmältning. MSM används ibland vid IBS och andra mag-tarmbesvär. MSM kan även bidra till starkare hår och förbättrad hårväxt.",
     "areas": {
@@ -878,6 +955,35 @@
     "description": "Blått ljus (450–480 nm) från skärmar och starka taklampor hämmar melatoninproduktionen i 2–3 timmar. Efter solnedgången, byt till dämpad varm belysning (bärnstens-/rödspektrum) för att bevara den naturliga melatoninökningen. Rött ljus (630–700 nm) påverkar dygnsrytmen minimalt och kan användas säkert på kvällen.",
     "areas": {
       "sleepQuality": "Att minska exponeringen för blått ljus på kvällen stödjer naturlig melatoninproduktion och god sömn."
+    }
+  },
+  "urolithin_a": {
+    "title": "Urolithin A för mitokondriell hälsa",
+    "description": "Urolithin A är en metabolit som bildas av tarmbakterier vid nedbrytning av ellagitanniner från t.ex. granatäpple. Den har visat sig stödja mitokondriell funktion, öka energinivåer och främja muskelhälsa genom att stimulera mitofagi – cellens process för att rensa ut gamla mitokondrier. Observera att ungefär 60% av befolkningen inte har rätt tarmbakterie för att bilda urolithin A, och då kan tillskott vara nödvändigt för effekt.",
+    "areas": {
+      "energy": "Urolithin A kan förbättra cellulär energiproduktion genom att optimera mitokondriernas funktion.",
+      "mitochondria": "Stödjer mitofagi och bidrar till att bibehålla friska och effektiva mitokondrier i cellerna."
+    },
+    "nutritionFoods": {
+      "title": "Livsmedel som kan öka urolithin A",
+      "items": {
+        "pomegranate": {
+          "name": "Granatäpple",
+          "details": "Rik på ellagitanniner som omvandlas till urolithin A av tarmbakterier."
+        },
+        "walnuts": {
+          "name": "Valnötter",
+          "details": "Innehåller ellagitanniner som kan bidra till bildning av urolithin A."
+        },
+        "strawberries": {
+          "name": "Jordgubbar",
+          "details": "Ger ellagitanniner och andra polyfenoler som stödjer tarmhälsa och urolithin A-produktion."
+        },
+        "raspberries": {
+          "name": "Hallon",
+          "details": "Hallon är en källa till ellagitanniner och kan bidra till urolithin A-bildning."
+        }
+      }
     }
   }
 }

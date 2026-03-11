@@ -461,6 +461,14 @@
       "bdnf": {
         "title": "🧬 BDNF and Brain Development",
         "description": "BDNF (Brain-Derived Neurotrophic Factor) is a protein that plays a crucial role in brain plasticity, learning, and memory. Physical activity, especially intense exercise, increases BDNF levels, contributing to better cognitive function and protection against mental health issues."
+      },
+      "ketones": {
+        "title": "🧬 Ketones and Cognitive Function",
+        "description": "Ketones are an alternative fuel source for the brain, produced during fasting or ketogenic diets. They may enhance cognitive function, mental clarity, and focus, especially in individuals with insulin resistance or neurodegenerative conditions."
+      },
+      "lactate": {
+        "title": "Lactate and Brain Function",
+        "description": "Lactate, produced during intense exercise, can serve as an energy source for the brain and may have neuroprotective effects. It supports cognitive function and mental resilience."
       }
     }
   },

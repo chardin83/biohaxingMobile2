@@ -469,6 +469,14 @@
       "bdnf": {
         "title": "🧬 BDNF och hjärnans utveckling",
         "description": "BDNF (Brain-Derived Neurotrophic Factor) är ett protein som spelar en avgörande roll för hjärnans plasticitet, inlärning och minne. Fysisk aktivitet, särskilt intensiv träning, ökar nivåerna av BDNF och bidrar till bättre kognitiv funktion och skydd mot psykisk ohälsa."
+      },
+      "ketones": {
+        "title": "Ketoner och mental prestation",
+        "description": "Ketoner är en alternativ energikälla för hjärnan, särskilt under fasta eller lågkolhydratkost. De kan förbättra mental klarhet, fokus och kognitiv funktion, särskilt i situationer där glukosmetabolismen är nedsatt."
+      },
+      "lactate": {
+        "title": "Laktat och hjärnfunktion",
+        "description": "Laktat, som produceras under intensiv träning, kan fungera som en energikälla för hjärnan och kan ha neuroprotektiva effekter. Det stödjer kognitiv funktion och mental motståndskraft."
       }
     }
   },

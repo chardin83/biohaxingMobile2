@@ -51,6 +51,95 @@ export type Tip = {
 };
 
 const rawTips: Tip[] = [
+  // Lågkolhydratkost
+  {
+    id: 'low_carb_diet',
+    level: 4,
+    xp: 800,
+    areas: [
+      { id: 'energy', descriptionKey: 'low_carb_diet.areas.energy' },
+      { id: 'metabolicHealth', descriptionKey: 'low_carb_diet.areas.metabolicHealth' }
+    ],
+    title: 'low_carb_diet.title',
+    descriptionKey: 'low_carb_diet.description',
+    trainingRelation: 'anytime',
+    timeRule: 'anytime',
+    planCategory: ['nutrition'],
+    nutritionFoods: [
+      { key: 'leafyGreens' },
+      { key: 'meat' },
+      { key: 'eggs' },
+      { key: 'cheese' },
+      { key: 'nuts' }
+    ],
+    bodyParts: ['digestiveSystem', 'cells'],
+  },
+  // Ketogen kost
+  {
+    id: 'ketogenic_diet',
+    level: 6,
+    xp: 1200,
+    areas: [
+      { id: 'energy', descriptionKey: 'ketogenic_diet.areas.energy' },
+      { id: 'mind', descriptionKey: 'ketogenic_diet.areas.mind' },
+      { id: 'metabolicHealth', descriptionKey: 'ketogenic_diet.areas.metabolicHealth' }
+    ],
+    title: 'ketogenic_diet.title',
+    descriptionKey: 'ketogenic_diet.description',
+    trainingRelation: 'anytime',
+    timeRule: 'anytime',
+    planCategory: ['nutrition'],
+    nutritionFoods: [
+      { key: 'avocado' },
+      { key: 'coconutOil' },
+      { key: 'fattyFish' },
+      { key: 'eggs' },
+      { key: 'cheese' }
+    ],
+    bodyParts: ['brain', 'cells'],
+  },
+    {
+      id: 'berberine',
+      level: 2,
+      xp: 500,
+      areas: [
+        { id: 'digestiveHealth', descriptionKey: 'berberine.areas.digestiveHealth' },
+        { id: 'cardioFitness', descriptionKey: 'berberine.areas.cardioFitness' },
+        { id: 'energy', descriptionKey: 'berberine.areas.energy' }
+      ],
+      title: 'berberine.title',
+      descriptionKey: 'berberine.description',
+      supplements: [{ id: 'berberine' }],
+      trainingRelation: 'anytime',
+      preferredDayParts: ['morning', 'midday'],
+      timeRule: 'anytime',
+      planCategory: ['supplement'],
+      nutritionFoods: [ { key: 'barberry' } ],
+      bodyParts: ['digestiveSystem', 'cells'],
+    },
+  {
+    id: 'urolithin_a',
+    level: 2,
+    xp: 500,
+    areas: [
+      { id: 'energy', descriptionKey: 'urolithin_a.areas.energy' },
+      { id: 'mitochondria', descriptionKey: 'urolithin_a.areas.mitochondria' },
+    ],
+    title: 'urolithin_a.title',
+    descriptionKey: 'urolithin_a.description',
+    supplements: [{ id: 'urolithinA' }, { id: 'pomegranateExtract' }],
+    trainingRelation: 'anytime',
+    preferredDayParts: ['morning'],
+    timeRule: 'anytime',
+    planCategory: ['supplement'],
+    bodyParts: ['muscles', 'cells'],
+    nutritionFoods: [
+      { key: 'pomegranate' },
+      { key: 'walnuts' },
+      { key: 'strawberries' },
+      { key: 'raspberries' }
+    ],
+  },
   {
     id: 'intermittent_fasting_12h',
     level: 1,
@@ -996,6 +1085,7 @@ const rawTips: Tip[] = [
     areas: [
       { id: 'cardioFitness', descriptionKey: 'lactate_threshold_training.areas.cardioFitness' },
       { id: 'energy', descriptionKey: 'lactate_threshold_training.areas.energy' },
+      { id: 'mind', descriptionKey: 'lactate_threshold_training.areas.mind' },
     ],
     title: 'lactate_threshold_training.title',
     descriptionKey: 'lactate_threshold_training.description',

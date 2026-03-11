@@ -109,6 +109,14 @@ export default function MindOverviewScreen({ mainGoalId }: { mainGoalId: string 
                     <ThemedText type="title3">🧬 {t("mindOverview.informationCard.bdnf.title")}</ThemedText>
                     <ThemedText type="default">{t("mindOverview.informationCard.bdnf.description")}</ThemedText>
                 </View>
+                <View style={globalStyles.infoSection}>
+                    <ThemedText type="title3">🧬 {t("mindOverview.informationCard.ketones.title")}</ThemedText>
+                    <ThemedText type="default">{t("mindOverview.informationCard.ketones.description")}</ThemedText>
+                </View>
+                <View style={globalStyles.infoSection}>
+                    <ThemedText type="title3">🧬 {t("mindOverview.informationCard.lactate.title")}</ThemedText>
+                    <ThemedText type="default">{t("mindOverview.informationCard.lactate.description")}</ThemedText>
+                </View>
             </Card>
 
             <GenesListCard areaId="mind" />

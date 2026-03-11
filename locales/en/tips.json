@@ -1,4 +1,80 @@
 {
+  "low_carb_diet": {
+    "title": "Low-carb diet",
+    "description": "A low-carb diet focuses on reducing carbohydrate intake and increasing healthy fats and proteins. It may support metabolic health, weight management, and stable energy levels.",
+    "areas": {
+      "energy": "Low-carb diets can help stabilize energy levels and reduce blood sugar fluctuations.",
+      "metabolicHealth": "May improve insulin sensitivity and support metabolic health."
+    },
+    "nutritionFoods": {
+      "title": "Low-carb foods",
+      "items": {
+        "leafyGreens": {
+          "name": "Leafy greens",
+          "details": "Spinach, kale, lettuce, and other greens are low in carbs and high in nutrients."
+        },
+        "meat": {
+          "name": "Meat",
+          "details": "Beef, chicken, pork, and other meats are naturally low in carbohydrates."
+        },
+        "eggs": {
+          "name": "Eggs",
+          "details": "Eggs are a versatile, low-carb source of protein and healthy fats."
+        },
+        "cheese": {
+          "name": "Cheese",
+          "details": "Most cheeses are low in carbs and provide calcium and protein."
+        },
+        "nuts": {
+          "name": "Nuts",
+          "details": "Almonds, walnuts, and other nuts are low in carbs and high in healthy fats."
+        }
+      }
+    }
+  },
+  "ketogenic_diet": {
+    "title": "Ketogenic diet",
+    "description": "The ketogenic diet is a very low-carb, high-fat diet that induces ketosis, a metabolic state where the body burns fat for fuel. It may support brain health, metabolic flexibility, and sustained energy.",
+    "areas": {
+      "energy": "Ketogenic diets can provide stable energy by relying on fat as the primary fuel source.",
+      "metabolicHealth": "May improve metabolic flexibility and support blood sugar regulation.",
+      "mind": "Ketones produced during ketosis may support brain health and cognitive function."
+    },
+    "nutritionFoods": {
+      "title": "Keto-friendly foods",
+      "items": {
+        "avocado": {
+          "name": "Avocado",
+          "details": "Avocados are high in healthy fats and fiber, and very low in carbs."
+        },
+        "coconutOil": {
+          "name": "Coconut oil",
+          "details": "Coconut oil is a source of medium-chain triglycerides (MCTs) that support ketosis."
+        },
+        "fattyFish": {
+          "name": "Fatty fish",
+          "details": "Salmon, mackerel, and sardines are rich in omega-3 fats and low in carbs."
+        },
+        "eggs": {
+          "name": "Eggs",
+          "details": "Eggs are a staple in ketogenic diets for their protein and fat content."
+        },
+        "cheese": {
+          "name": "Cheese",
+          "details": "Cheese is low in carbs and high in fat, making it ideal for keto."
+        }
+      }
+    }
+  },
+  "berberine": {
+    "title": "Berberine for blood sugar, lipids and metabolism",
+    "description": "Berberine is a plant compound that may support blood sugar balance, blood lipids, gut health, and metabolism. Often used as a supplement for insulin resistance, to improve gut flora, and may also inhibit Helicobacter pylori.",
+    "areas": {
+      "digestiveHealth": "Supports gut flora balance and health. May inhibit Helicobacter pylori.",
+      "cardioFitness": "May improve blood lipid profile (cholesterol and triglycerides).",
+      "energy": "Supports metabolism and fat burning. May help regulate blood sugar levels."
+    }
+  },
   "brown_fat_cool_home": {
     "title": "Brown fat and a cool home environment",
     "description": "Brown fat helps the body burn energy and generate heat. Spending time in a cool indoor environment, ideally below 21°C (70°F), can stimulate brown fat activity and increase energy expenditure. Lowering the temperature at home occasionally may support metabolism and metabolic health.",
@@ -728,7 +804,8 @@
     "description": "Threshold training (tempo just below lactate threshold) makes you faster without accumulating fatigue as quickly. It’s a key driver for 10K and longer races because you can sustain a high pace with controlled effort.",
     "areas": {
       "cardioFitness": "Threshold sessions raise the pace you can sustain before lactate accumulates too quickly, improving race performance over 5–10K distances.",
-      "energy": "Improved lactate clearance and more efficient energy systems let you produce more work with less perceived fatigue at higher speeds."
+      "energy": "Improved lactate clearance and more efficient energy systems let you produce more work with less perceived fatigue at higher speeds.",
+      "mind": "Lactate have neurological effects that can improve focus and mental toughness during hard efforts, helping you push through. It also has neuroprotective effects that may support brain health and resilience under stress."
     },
     "analyzePrompt": "Analyze the user's current fitness and recommend a threshold structure (e.g., 20–40 minutes continuous or broken into blocks) that matches their capacity."
   },
@@ -862,6 +939,35 @@
     "description": "Blue light (450-480nm) from screens and bright overhead lights suppresses melatonin production for 2-3 hours. After sunset, switch to dim warm lighting (amber/red spectrum) to preserve natural melatonin rise. Red light (630-700nm) has minimal impact on circadian rhythm and can be used safely in the evening.",
     "areas": {
       "sleepQuality": "Reducing blue light exposure in the evening supports natural melatonin production and healthy sleep."
+    }
+  },
+  "urolithin_a": {
+    "title": "Urolithin A for mitochondrial health",
+    "description": "Urolithin A is a metabolite produced by gut bacteria from ellagitannins found in foods like pomegranate. It has been shown to support mitochondrial function, increase energy levels, and promote muscle health by stimulating mitophagy—the process by which cells clear out old mitochondria. Note: Around 60% of the population lack the right gut bacteria to produce urolithin A, so supplementation may be necessary for effect.",
+    "areas": {
+      "energy": "Urolithin A may improve cellular energy production by optimizing mitochondrial function.",
+      "mitochondria": "Supports mitophagy and helps maintain healthy, efficient mitochondria in cells."
+    },
+    "nutritionFoods": {
+      "title": "Foods that may increase urolithin A",
+      "items": {
+        "pomegranate": {
+          "name": "Pomegranate",
+          "details": "Rich in ellagitannins, which are converted to urolithin A by gut bacteria."
+        },
+        "walnuts": {
+          "name": "Walnuts",
+          "details": "Contain ellagitannins that may contribute to urolithin A formation."
+        },
+        "strawberries": {
+          "name": "Strawberries",
+          "details": "Provide ellagitannins and other polyphenols that support gut health and urolithin A production."
+        },
+        "raspberries": {
+          "name": "Raspberries",
+          "details": "A source of ellagitannins and may help with urolithin A formation."
+        }
+      }
     }
   }
 }
