@@ -14,6 +14,7 @@ import { Card } from '@/components/ui/Card';
 import { Error } from '@/components/ui/Error';
 import GenesListCard from '@/components/ui/GenesListCard';
 import { Loading } from '@/components/ui/Loading';
+import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { calculateHRVMetrics } from '@/utils/hrvCalculations';
@@ -249,6 +250,8 @@ export default function EnergyScreen({ mainGoalId }: { mainGoalId: string }) {
           </ThemedText>
         </View>
       </Card>
+
+      <MicrobiomeListCard areaId="energy" />
 
       {/* Tips Card */}
       <TipsList areaId={mainGoalId} />

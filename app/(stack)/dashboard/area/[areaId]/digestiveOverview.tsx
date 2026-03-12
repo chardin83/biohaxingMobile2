@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/Card';
 import { Error } from '@/components/ui/Error';
 import GenesListCard from '@/components/ui/GenesListCard';
 import { Loading } from '@/components/ui/Loading';
+import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { DailyActivity, EnergySignal, SleepSummary, TimeRange } from '@/wearables/types';
@@ -124,11 +125,48 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
         </View>
       </Card>
 
+      {/* Info section: Understanding your metrics */}
+      <Card title={t('digestiveOverview.understandingYourMetrics.title')}>
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🦠 {t('digestiveOverview.understandingYourMetrics.microbiome.title')}</ThemedText>
+          <ThemedText type="default">
+            {t('digestiveOverview.understandingYourMetrics.microbiome.description')}
+          </ThemedText>
+        </View>
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">😌 {t('digestiveOverview.understandingYourMetrics.stress.title')}</ThemedText>
+          <ThemedText type="default">
+            {t('digestiveOverview.understandingYourMetrics.stress.description')}
+          </ThemedText>
+        </View>
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">💤 {t('digestiveOverview.understandingYourMetrics.sleep.title')}</ThemedText>
+          <ThemedText type="default">
+            {t('digestiveOverview.understandingYourMetrics.sleep.description')}
+          </ThemedText>
+        </View>
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🏃‍♂️ {t('digestiveOverview.understandingYourMetrics.activity.title')}</ThemedText>
+          <ThemedText type="default">
+            {t('digestiveOverview.understandingYourMetrics.activity.description')}
+          </ThemedText>
+        </View>
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">💧 {t('digestiveOverview.understandingYourMetrics.hydration.title')}</ThemedText>
+          <ThemedText type="default">
+            {t('digestiveOverview.understandingYourMetrics.hydration.description')}
+          </ThemedText>
+        </View>
+      </Card>
+
+      {/* Microbiome section */}
+      <MicrobiomeListCard areaId="digestiveHealth" />
+
       {/* DNA & Digestive Genetics */}
       <GenesListCard areaId="digestiveHealth"  />
 
       {/* Tips card */}
-      <TipsList areaId={mainGoalId} title="tips:digestive.levels.optimization.title" />
+      <TipsList areaId={mainGoalId}/>
     </>
   );
 }

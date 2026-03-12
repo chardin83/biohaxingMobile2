@@ -309,6 +309,29 @@
       "sleep": "Sleep",
       "activity": "Activity",
       "steps": "steps"
+    },
+    "understandingYourMetrics": {
+      "title": "Understanding Your Digestive Metrics",
+      "microbiome": {
+        "title": "Gut Microbiome",
+        "description": "A diverse and balanced gut microbiome supports digestion, nutrient absorption, and immune function."
+      },
+      "stress": {
+        "title": "Stress",
+        "description": "High stress can negatively impact digestion and gut health. Managing stress supports a healthy digestive system."
+      },
+      "sleep": {
+        "title": "Sleep",
+        "description": "Quality sleep is essential for digestive repair and maintaining a healthy gut barrier."
+      },
+      "activity": {
+        "title": "Physical Activity",
+        "description": "Regular movement stimulates digestion and supports gut motility."
+      },
+      "hydration": {
+        "title": "Hydration",
+        "description": "Adequate water intake is crucial for digestion and nutrient transport."
+      }
     }
   },
   "energyOverview": {
@@ -555,6 +578,13 @@
     "noGenes": "No genes linked to this area yet.",
     "genesAffectHealth": "Multiple genes influence your health and function in this area. Understanding your genetic predispositions can help you tailor your health plan to optimize results.",
     "explainer": "Genetic testing can provide insights into your profile, but lifestyle always has the biggest impact!"
+  },
+  "microbiomeList": {
+    "title": "Microbiome Bacteria",
+    "bacteriaLinkedToArea": "Bacteria linked to {{area}}",
+    "noBacteria": "No bacteria linked to this area yet.",
+    "bacteriaAffectHealth": "Multiple bacteria influence your gut health and function in this area. Understanding your microbiome can help you tailor your health plan to optimize results.",
+    "explainer": "Microbiome testing can provide insights into your gut profile, but diet and lifestyle always have the biggest impact!"
   },
    "metrics":{
     "low": "Low",

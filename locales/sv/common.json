@@ -313,6 +313,29 @@
       "sleep": "Sömn",
       "activity": "Aktivitet",
       "steps": "steg"
+    },
+    "understandingYourMetrics": {
+      "title": "Förstå dina matsmältnings-mått",
+      "microbiome": {
+        "title": "Tarmmikrobiom",
+        "description": "Ett varierat och balanserat tarmmikrobiom stödjer matsmältning, näringsupptag och immunfunktion."
+      },
+      "stress": {
+        "title": "Stress",
+        "description": "Hög stress kan påverka matsmältningen och tarmhälsan negativt. Att hantera stress stödjer ett hälsosamt matsmältningssystem."
+      },
+      "sleep": {
+        "title": "Sömn",
+        "description": "Kvalitativ sömn är avgörande för matsmältningsreparation och för att bibehålla en hälsosam tarmbarriär."
+      },
+      "activity": {
+        "title": "Fysisk aktivitet",
+        "description": "Regelbunden rörelse stimulerar matsmältningen och stödjer tarmens rörlighet."
+      },
+      "hydration": {
+        "title": "Vätskebalans",
+        "description": "Tillräckligt med vatten är avgörande för matsmältning och näringstransport."
+      }
     }
   },
   "energyOverview": {
@@ -563,6 +586,13 @@
     "noGenes": "Inga gener kopplade till detta område ännu.",
     "genesAffectHealth": "Gener kan påverka hur du svarar på kost, träning och tillskott. Genom att förstå dina genetiska predispositioner kan du anpassa din hälsoplan för att optimera resultat.",
     "explainer": "Genetisk testning kan ge insikter om din profil, men livsstilen har alltid störst påverkan!"
+  },
+  "microbiomeList": {
+    "title": "Mikrobiom-bakterier",
+    "bacteriaLinkedToArea": "Bakterier kopplade till {{area}}",
+    "noBacteria": "Inga bakterier kopplade till detta område ännu.",
+    "bacteriaAffectHealth": "Flera bakterier påverkar din tarmhälsa och funktion i detta område. Att förstå ditt mikrobiom kan hjälpa dig att optimera din hälsoplan.",
+    "explainer": "Mikrobiomtest kan ge insikter om din tarmprofil, men kost och livsstil har alltid störst påverkan!"
   },
   "metrics":{
     "low": "Låg",

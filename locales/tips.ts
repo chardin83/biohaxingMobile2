@@ -48,6 +48,7 @@ export type Tip = {
   planCategory?: PlanCategory[]; // Markerar övergripande plan-kategori
   nutritionFoods?: TipNutritionFood[]; // Rekommenderade livsmedel för nutritionstips
   bodyParts?: string[]; // Rekommenderade delar av kroppen för detta tip
+  microbiomeIds?: string[]; // Koppling till microbiome-bakterier
 };
 
 const rawTips: Tip[] = [
@@ -139,6 +140,7 @@ const rawTips: Tip[] = [
       { key: 'strawberries' },
       { key: 'raspberries' }
     ],
+    microbiomeIds: ['Gordonibacter'],
   },
   {
     id: 'intermittent_fasting_12h',

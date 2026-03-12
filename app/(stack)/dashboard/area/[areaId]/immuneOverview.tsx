@@ -13,6 +13,7 @@ import { Card } from '@/components/ui/Card';
 import { Error } from '@/components/ui/Error';
 import GenesListCard from '@/components/ui/GenesListCard';
 import { Loading } from '@/components/ui/Loading';
+import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { EnergySignal, HRVSummary, SleepSummary, TimeRange } from '@/wearables/types';
@@ -177,6 +178,9 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
 
       {/* DNA & Immunförsvar Genetics */}
       <GenesListCard areaId="immune"/>
+
+      {/* Microbiome section */}
+      <MicrobiomeListCard areaId="immune" />
 
       {/* Tips card */}
       <TipsList areaId={mainGoalId}/>

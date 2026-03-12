@@ -1,0 +1,68 @@
+{
+  "Bifidobacterium": {
+    "title": "Bifidobacterium",
+    "description": "Stödjer matsmältning, minskar inflammation och hjälper till att bibehålla tarmbarriärens integritet. Vissa stammar kan bryta ner ellagitanniner till ellaginsyra (första steget i bildandet av Urolithin A).",
+    "areas": {
+      "digestiveHealth": "Främjar hälsosam matsmältning och regelbundenhet. Hjälper till att bryta ner kostfiber och producera nyttiga kortkedjiga fettsyror.",
+      "immune": "Förbättrar immunförsvaret och skyddar mot patogener."
+    }
+  },
+  "Lactobacillus": {
+    "title": "Lactobacillus",
+    "description": "Producerar mjölksyra, stödjer tarmhälsa och hämmar skadliga bakterier.",
+    "areas": {
+      "digestiveHealth": "Förbättrar matsmältning, minskar uppblåsthet och stödjer näringsupptag.",
+      "immune": "Stärker immunförsvaret och minskar inflammation."
+    }
+  },
+  "Akkermansia": {
+    "title": "Akkermansia",
+    "description": "Bibehåller tarmens slemhinna och metabolisk hälsa.",
+    "areas": {
+      "digestiveHealth": "Förbättrar tarmbarriärens funktion och metabolisk hälsa."
+    }
+  },
+  "Gordonibacter": {
+    "title": "Gordonibacter",
+    "description": "Specialiserad tarmbakterie. Omvandlar ellaginsyra (från granatäpple och bär) till Urolithin A, vilket stödjer mitokondriell och cellulär hälsa.",
+    "areas": {
+        "digestiveHealth": "Omvandlar ellaginsyra till Urolithin A och stödjer tarm- och cellhälsa.",
+        "energy": "Producerar Urolithin A som stödjer mitokondriernas funktion och energimetabolism."
+    }
+},
+  "Roseburia": {
+    "title": "Roseburia",
+    "description": "Producerar butyrat och stödjer antiinflammatoriska effekter.",
+    "areas": {
+      "digestiveHealth": "Främjar antiinflammatoriska effekter och tarmhälsa."
+    }
+  },
+  "Ruminococcus": {
+    "title": "Ruminococcus",
+    "description": "Bryter ner komplexa kolhydrater och producerar nyttiga metaboliter.",
+    "areas": {
+      "digestiveHealth": "Hjälper till att smälta fiber och stödjer tarmhälsa."
+    }
+  },
+  "Prevotella": {
+    "title": "Prevotella",
+    "description": "Associerad med växtrika dieter och fiberomsättning.",
+    "areas": {
+      "digestiveHealth": "Stödjer fiberomsättning och tarmhälsa."
+    }
+  },
+  "Lawsinobacter_asaccharolyticus": {
+    "title": "Lawsinobacter asaccharolyticus",
+    "description": "Ny tarmbakterie. Kan hjälpa till att bryta ner fiber och tillverka smörsyra (butyrat), vilket är viktigt för tarmhälsa.",
+    "areas": {
+      "digestiveHealth": "Potentiellt stödjer fiberomsättning och tarmhälsa genom produktion av smörsyra (butyrat). Mer forskning behövs."
+    }
+  },
+  "Faecalibacterium": {
+    "title": "Faecalibacterium",
+    "description": "Producerar smörsyra (butyrat), en viktig kortkedjig fettsyra för tarmhälsa. Smörsyra näringsförser tarmceller, stärker tarmbarriären och minskar inflammation. Lawsinobacter asaccharolyticus kan också tillverka smörsyra.",
+    "areas": {
+      "digestiveHealth": "Stödjer tarmbarriär, minskar inflammation och främjar regelbundenhet. Smörsyra (butyrat) är avgörande för kolonens hälsa och antiinflammatoriska effekter. Även Lawsinobacter asaccharolyticus kan tillverka smörsyra."
+    }
+  }
+}

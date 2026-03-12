@@ -37,7 +37,7 @@ const GenesListCard: React.FC<GenesListCardProps> = ({ areaId, style }) => {
   return (
     <Card title={`${t('genesList.title')}`} style={style}>
       <View style={styles.infoSection}>
-        <ThemedText style={[styles.infoLabel, { color: colors.textSecondary }]}>🧬 {t('genesList.genesLinkedToArea', { area: t(`area:${areaId}`) })}</ThemedText>
+        <ThemedText style={[styles.infoLabel, { color: colors.textSecondary }]}>🧬 {t('genesList.genesLinkedToArea', { area: t(`areas:${areaId}.title`) })}</ThemedText>
         {filteredGenes.length === 0 ? (
           <ThemedText style={[styles.infoText, { color: colors.textTertiary }]}>
             {t('genesList.noGenes')}
