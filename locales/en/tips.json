@@ -4,7 +4,7 @@
     "description": "A low-carb diet focuses on reducing carbohydrate intake and increasing healthy fats and proteins. It may support metabolic health, weight management, and stable energy levels.",
     "areas": {
       "energy": "Low-carb diets can help stabilize energy levels and reduce blood sugar fluctuations.",
-      "metabolicHealth": "May improve insulin sensitivity and support metabolic health."
+      "digestiveHealth": "May improve insulin sensitivity and support metabolic health."
     },
     "nutritionFoods": {
       "title": "Low-carb foods",
@@ -37,7 +37,7 @@
     "description": "The ketogenic diet is a very low-carb, high-fat diet that induces ketosis, a metabolic state where the body burns fat for fuel. It may support brain health, metabolic flexibility, and sustained energy.",
     "areas": {
       "energy": "Ketogenic diets can provide stable energy by relying on fat as the primary fuel source.",
-      "metabolicHealth": "May improve metabolic flexibility and support blood sugar regulation.",
+      "digestiveHealth": "May improve metabolic flexibility and support blood sugar regulation.",
       "mind": "Ketones produced during ketosis may support brain health and cognitive function."
     },
     "nutritionFoods": {
@@ -311,6 +311,55 @@
       }
     }
   },
+  "collagen": {
+    "title": "Collagen for connective tissue",
+    "description": "Collagen is a structural protein that supports joints, tendons, ligaments, skin, and bone matrix. Collagen peptides can be a practical way to support connective tissue resilience, especially together with a protein-rich diet and adequate vitamin C intake.",
+    "areas": {
+      "strength": "Collagen provides amino acids such as glycine and proline that support connective tissue structure in joints, tendons, ligaments, and bones."
+    },
+    "nutritionFoods": {
+      "title": "Collagen-rich foods",
+      "items": {
+        "boneBroth": {
+          "name": "Bone broth",
+          "details": "300 ml long-simmered bone broth can provide a few grams of collagen-derived amino acids depending on preparation."
+        },
+        "collagenCuts": {
+          "name": "Collagen-rich cuts (brisket, shank)",
+          "details": "120 g braised brisket or shank supplies roughly 3 g glycine-rich collagen."
+        },
+        "skinOnPoultry": {
+          "name": "Chicken with skin or fish skin",
+          "details": "A serving with skin contributes collagen-rich connective tissue proteins."
+        }
+      }
+    }
+  },
+  "glutathione": {
+    "title": "Glutathione for antioxidant defense",
+    "description": "Glutathione is one of the body's most important intracellular antioxidants. It is built from the amino acids glycine, glutamate, and cysteine, and helps neutralize reactive oxygen species, supports liver detoxification pathways, and protects cells during stress, inflammation, and high metabolic demand. Direct glutathione can be used, but many people also support glutathione status through precursors such as NAC. Glycine availability can matter for glutathione synthesis, while glutamate is one of the core building blocks already required in the molecule itself.",
+    "areas": {
+      "immuneSupport": "Glutathione helps immune cells manage oxidative stress and maintain balanced inflammatory signaling.",
+      "energy": "By protecting mitochondria and other cell structures from oxidative damage, glutathione supports efficient cellular energy production."
+    },
+    "nutritionFoods": {
+      "title": "Foods that support glutathione status",
+      "items": {
+        "broccoli": {
+          "name": "Broccoli and other cruciferous vegetables",
+          "details": "Cruciferous vegetables provide sulfur compounds that support the body's own glutathione production."
+        },
+        "avocado": {
+          "name": "Avocado",
+          "details": "Avocado provides antioxidant nutrients that can help maintain glutathione status."
+        },
+        "spinach": {
+          "name": "Spinach",
+          "details": "Spinach contributes folate and plant antioxidants that support cellular redox balance."
+        }
+      }
+    }
+  },
   "breathwork_parasympathetic": {
     "title": "Breathwork techniques",
     "description": "Breathwork is a powerful tool for activating the parasympathetic nervous system, reducing stress, and promoting relaxation. Different breathing techniques can be used for specific outcomes such as calm, focus, or better sleep.",
@@ -463,9 +512,17 @@
   },
   "adaptogenic_herbs": {
     "title": "Adaptogenic herbs",
-    "description": "Adaptogens are herbs and mushrooms that help the body adapt to stress and promote balance. They support energy, endurance, and overall wellbeing.",
+    "description": "Adaptogenic herbs help the body adapt to stress and promote balance. They support energy, resilience, and overall wellbeing.",
     "areas": {
       "nervousSystem": "Adaptogenic herbs support the nervous system by modulating the stress response and promoting mental and physical resilience."
+    }
+  },
+  "medicinal_mushrooms": {
+    "title": "Medicinal mushrooms",
+    "description": "Medicinal mushrooms are traditionally used to support immunity, energy, the nervous system, and cognitive function. Different mushrooms have different strengths, so the best choice depends on your goal.",
+    "areas": {
+      "immuneSupport": "Many medicinal mushrooms contain beta-glucans and other bioactive compounds that may support balanced immune function.",
+      "mind": "Some medicinal mushrooms may also support focus, mental clarity, and nervous system recovery."
     }
   },
   "neuromuscular_training": {
@@ -643,7 +700,7 @@
   },
   "zinc_comprehensive_support": {
     "title": "Zinc for immune resilience",
-    "description": "Zinc is a trace mineral critical for immune defense, tissue repair, and hormone balance. Highly absorbable forms can help maintain resilience during stress and intense training.",
+    "description": "Zinc is a trace mineral critical for immune defense, tissue repair, hormone balance, and normal hair growth. Highly absorbable forms can help maintain resilience during stress and intense training, and low zinc status can contribute to hair shedding and poorer hair quality.",
     "areas": {
       "immuneSupport": "Zinc supports innate and adaptive immunity by regulating cytokine signaling and white blood cell activity.",
       "nervousSystem": "Adequate zinc helps maintain neurotransmitter balance, supporting mood and stress tolerance.",
@@ -677,7 +734,7 @@
   },
   "selenium_thyroid_antioxidant": {
     "title": "Selenium for thyroid and antioxidant defense",
-    "description": "Selenium powers glutathione-based antioxidant enzymes and supports the conversion of thyroid hormones, helping maintain immunity, energy, and stress tolerance.",
+    "description": "Selenium powers glutathione-based antioxidant enzymes and supports the conversion of thyroid hormones, helping maintain immunity, energy, stress tolerance, and normal hair growth. Low selenium status or impaired thyroid function can negatively affect hair quality.",
     "areas": {
       "immuneSupport": "Selenium supports antibody production and regulates inflammation, bolstering immune resilience.",
       "energy": "Selenium-dependent enzymes activate thyroid hormones that drive metabolic energy and mitochondrial efficiency.",
@@ -711,7 +768,7 @@
   },
   "iodine_thyroid_balance": {
     "title": "Iodine for thyroid balance",
-    "description": "Iodine supplies the raw material for thyroid hormones, helping maintain metabolic drive, immune resilience, and clear thinking.",
+    "description": "Iodine supplies the raw material for thyroid hormones, helping maintain metabolic drive, immune resilience, clear thinking, and normal hair growth. When thyroid function is suboptimal, hair density and hair quality often suffer.",
     "areas": {
       "energy": "Adequate iodine keeps T3 and T4 production robust, sustaining metabolic energy throughout the day.",
       "immuneSupport": "Balanced thyroid hormones modulate immune signaling and help the body respond appropriately to stressors.",
@@ -771,6 +828,30 @@
     "areas": {
       "nervousSystem": "Holy Basil helps calm the nervous system and reduce stress through its adaptogenic effects.",
       "immuneSupport": "Holy Basil supports immune function with its antimicrobial and anti-inflammatory properties."
+    }
+  },
+  "reishi_mushroom": {
+    "title": "Reishi",
+    "description": "Reishi is a medicinal mushroom commonly used to support immune balance, recovery, and a calmer nervous system.",
+    "areas": {
+      "immuneSupport": "Reishi may support immune balance through beta-glucans and other immune-modulating compounds.",
+      "nervousSystem": "Reishi is often used to promote calm, stress resilience, and nervous system recovery."
+    }
+  },
+  "lions_mane_mushroom": {
+    "title": "Lion's Mane",
+    "description": "Lion's Mane is a medicinal mushroom best known for supporting the brain, focus, and nervous system function.",
+    "areas": {
+      "mind": "Lion's Mane may support focus, mental clarity, and cognitive performance.",
+      "nervousSystem": "It is being studied for its potential to support nerve repair and neurotrophic signaling."
+    }
+  },
+  "chaga_mushroom": {
+    "title": "Chaga",
+    "description": "Chaga is an antioxidant-rich medicinal mushroom traditionally used to support immune health and cellular protection.",
+    "areas": {
+      "immuneSupport": "Chaga contains polyphenols and other compounds that may help support a more resilient immune system.",
+      "energy": "By helping reduce oxidative stress, Chaga may indirectly support energy and recovery."
     }
   },
   "cordyceps_adaptogen": {
@@ -925,9 +1006,17 @@
       "energy": "Supports eye energy metabolism and protection."
     }
   },
+  "sulfate": {
+    "title": "Sulfate",
+    "description": "Sulfate is important for detoxification processes, liver function, cellular metabolism, and sulfur balance. It helps neutralize and excrete toxins, supports glutathione production, and also contributes sulfur needed for keratin structures in hair, skin, and nails.",
+    "areas": {
+      "digestiveHealth": "Sulfate supports digestion and gut detoxification processes.",
+      "energy": "Sulfate is necessary for cellular energy metabolism and mitochondrial function."
+    }
+  },
   "msm_joint_health": {
     "title": "MSM for Joint Health",
-    "description": "MSM (methylsulfonylmethane) is a sulfur-containing compound that may reduce joint pain and support recovery. Commonly used for joint issues and to reduce inflammation. There is some research and user experience suggesting that MSM may reduce inflammation in the gut, support mucosal health, and contribute to better digestion. MSM is sometimes used for IBS and other gastrointestinal issues. MSM may also contribute to stronger hair and improved hair growth.",
+    "description": "MSM (methylsulfonylmethane) is a sulfur-containing compound that may reduce joint pain and support recovery. Commonly used for joint issues and to reduce inflammation, it may also reduce gut inflammation, support mucosal health, and contribute to better digestion. MSM may also provide sulfur for keratin formation, making it relevant for stronger hair and improved hair growth.",
     "areas": {
       "strength": "Supports joint strength and function.",
       "recovery": "May help speed up recovery from joint issues.",
