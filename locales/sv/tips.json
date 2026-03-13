@@ -205,6 +205,44 @@
       "cardioFitness": "Hydrering förbättrar kardiovaskulär prestanda genom att upprätthålla blodvolym och syretransport."
     }
   },
+  "electrolytes_balance": {
+    "title": "Elektrolyter för vätskebalans och prestation",
+    "description": "Elektrolyter som natrium, kalium och magnesium hjälper kroppen att reglera vätskebalans, nervsignaler, muskelkontraktion och blodtryck. När du svettas mycket, tränar hårt eller dricker stora mängder vanligt vatten utan att ersätta mineraler kan låga elektrolytnivåer bidra till trötthet, huvudvärk, sämre prestation eller muskelkramper. För natrium är mineralrikt salt eller buljong ofta mer relevant än att bara öka vanligt bordssalt, särskilt eftersom högt intag av vanligt bordssalt kan bidra till förhöjt blodtryck hos känsliga personer.",
+    "areas": {
+      "energy": "Elektrolyter hjälper till att upprätthålla cellernas vätskebalans och nerv-muskel-funktion, vilket stödjer stabil energi och minskar trötthet.",
+      "cardioFitness": "Vid träning och värme hjälper tillräckliga elektrolyter till att bevara blodvolym, vätskestatus och fysisk prestationsförmåga.",
+      "nervousSystem": "Natrium och kalium är avgörande för nervimpulser, medan magnesium stödjer normal neuromuskulär avslappning och signalering."
+    },
+    "nutritionFoods": {
+      "title": "Livsmedel och drycker som stödjer elektrolytbalans",
+      "items": {
+        "mineralWater": {
+          "name": "Mineralvatten",
+          "details": "Mineralrikt vatten kan ge natrium, magnesium och andra elektrolyter, särskilt efter svettning."
+        },
+        "coconutWater": {
+          "name": "Kokosvatten",
+          "details": "Ett glas kokosvatten ger kalium och vätska, vilket kan vara användbart efter värme eller lättare träning."
+        },
+        "potatoes": {
+          "name": "Potatis eller rotfrukter",
+          "details": "Potatis är rik på kalium, ett av de viktigaste mineralerna för muskel- och nervfunktion."
+        },
+        "saltedMeals": {
+          "name": "Mineralrikt salt, saltad mat eller buljong",
+          "details": "Mineralrikt salt eller en ordentligt saltad buljong kan hjälpa till att återställa natriumförluster efter långvarig svettning. Vanligt bordssalt bör inte överdrivas, eftersom högt intag kan bidra till ökat blodtryck hos vissa."
+        }
+      }
+    }
+  },
+  "dental_health_basics": {
+    "title": "Grundläggande tandhälsa",
+    "description": "Grundläggande munvård är en av de mest värdefulla hälsovanorna. Att borsta tänderna regelbundet, rengöra mellan tänderna, minska hur ofta tänderna utsätts för socker och stödja en mer balanserad oral mikrobiota kan minska kariesrisk, skydda tandköttet och bevara tänderna på lång sikt. Småätande är ett stort problem eftersom tänderna då utsätts för upprepade syraattacker och får mindre tid att återhämta sig mellan måltiderna, vilket ökar kariesrisken även när maten inte känns extrem. God tuggfunktion och låg inflammation i munnen stödjer också matsmältning och allmän hälsa.",
+    "areas": {
+      "immuneSupport": "Friskare tandkött och lägre inflammation i munnen minskar kronisk belastning på immunförsvaret och hjälper till att hålla inflammationen mer balanserad. Blödande tandkött kan också göra det lättare för orala bakterier och inflammatoriska ämnen att ta sig ut i blodbanan, och dålig tandköttshälsa har kopplats till högre långsiktig risk för kognitiv svikt och Alzheimers sjukdom.",
+      "digestiveHealth": "God tandhälsa stödjer tuggning, salivproduktion och det första steget i matsmältningen samtidigt som problem kopplade till en obalanserad oral mikrobiota minskar."
+    }
+  },
   "vitamin_c_immunity": {
     "title": "C-vitamin för immunförsvar",
     "description": "C-vitamin är ett vattenlösligt vitamin som finns i frukt och grönsaker. Det är en kraftfull antioxidant som stödjer immunförsvaret och skyddar celler från oxidativ stress.",
@@ -498,6 +536,14 @@
       }
     }
   },
+  "lactobacillus_reuteri": {
+    "title": "Lactobacillus reuteri",
+    "description": "Lactobacillus reuteri är en probiotisk bakteriestam som har studerats för tarmbalans, immunsignalering, stöd till tarmbarriären och delar av munhälsan. Effekterna är stamspecifika, men vissa L. reuteri-stammar kan bidra till mindre magbesvär, ett mer motståndskraftigt tarmekosystem och potentiellt en mer gynnsam oral mikrobiota kopplad till lägre kariesrisk och bättre balans i tandköttet.",
+    "areas": {
+      "digestiveHealth": "L. reuteri kan stödja tarmbarriärens funktion, minska obalans i tarmfloran och hjälpa vid uppblåsthet eller magbesvär hos vissa personer.",
+      "immuneSupport": "Genom att interagera med immunförsvaret i tarmen kan L. reuteri stödja mer balanserad immunsignalering och lägre överdriven inflammatorisk ton. Vissa stammar har också studerats för bättre immunbalans i munnen och minskad tillväxt av bakterier kopplade till karies och irriterat tandkött."
+    }
+  },
   "fiber_microbiome": {
     "title": "Fiber och mikrobiomhälsa",
     "description": "Kostfiber fungerar som prebiotika och matar nyttiga tarmbakterier och stödjer ett hälsosamt mikrobiom. Tillräckligt fiberintag förbättrar tarmhälsan, minskar inflammation och stärker immunfunktionen.",
@@ -541,18 +587,26 @@
   },
   "hiit_vo2max": {
     "title": "HIIT för VO2 max",
-    "description": "Högintensiv intervallträning (HIIT) är en av de mest effektiva metoderna för att förbättra VO2 max, den maximala mängden syre din kropp kan använda under träning. HIIT förbättrar kardiovaskulär kondition, mitokondriell densitet och metabolisk effektivitet.",
+    "description": "Högintensiv intervallträning (HIIT) är en av de mest effektiva metoderna för att förbättra VO2 max, den maximala mängden syre din kropp kan använda under träning. Till skillnad från Zon 2, som framför allt bygger fler kapillärer och fler mitokondrier, förbättrar HIIT i hög grad hur effektivt de befintliga mitokondrierna arbetar under hög belastning.",
     "areas": {
       "cardioFitness": "HIIT-träning ökar VO2 max avsevärt, vilket förbättrar kardiovaskulär kapacitet, uthållighet och övergripande aerob kondition.",
-      "energy": "HIIT ökar mitokondriell biogenes, vilket ökar cellulär energiproduktion och förbättrar metabolisk effektivitet under hela dagen."
+      "energy": "HIIT förbättrar mitokondriernas arbetskapacitet och förmåga att producera energi snabbt vid hög intensitet, vilket höjer den metabola effektiviteten när kraven är stora."
     }
   },
   "running_volume_aerobic": {
     "title": "Löpvolym för aerob kapacitet",
-    "description": "Konsekvent löpvolym med måttlig intensitet bygger aerob bas, förbättrar kardiovaskulär effektivitet och förbättrar fettmetabolism. Långa, stadiga löppass utvecklar kapillär densitet och förbättrar syretillförseln till musklerna.",
+    "description": "Löpvolym handlar om den totala mängden löpning du samlar under en vecka. I praktiken bör en stor del av den volymen fortfarande ligga i Zon 2, annars blir den samlade stressen ofta för hög för återhämtning, leder och nervsystem. Till skillnad från Zon 2, som främst beskriver intensiteten i ett enskilt pass, handlar löpvolym mer om att bygga tålighet, vävnadskapacitet och aerob kapacitet genom konsekvent total belastning över tid. När volymen ökas gradvis kan den också stärka senor, ligament och vävnadstolerans runt lederna.",
     "areas": {
       "cardioFitness": "Regelbunden löpvolym stärker hjärtat, ökar slagvolymen och förbättrar övergripande kardiovaskulär uthållighet och aerob kapacitet.",
       "energy": "Aerob löpning förbättrar fettoxidation, förbättrar mitokondriell funktion och ökar hållbara energinivåer för dagliga aktiviteter."
+    }
+  },
+  "zone2_slow_running": {
+    "title": "Zon 2 / långsam löpning",
+    "description": "Lugn Zon 2-löpning är en av de mest användbara vanorna för hälsa eftersom den ger stor kardiometabol effekt utan att stressa kroppen för mycket. Målet är inte fart eller hög volym, utan ett avslappnat tempo där du fortfarande kan prata i hela meningar. Zon 2 ökar antalet kapillärer till musklerna och stimulerar bildning av fler mitokondrier, vilket gör musklerna bättre på att ta emot syre och producera energi aerobt. Detta skiljer sig från löpvolym: Zon 2 handlar främst om att hålla ansträngningen tillräckligt låg, medan löpvolym handlar om hur mycket total löpning du samlar över tid.",
+    "areas": {
+      "cardioFitness": "Långsam Zon 2-löpning stärker hjärtat och ökar kapillärtätheten i arbetande muskler, vilket förbättrar syreleverans och aerob uthållighet.",
+      "energy": "Lätt aerob rörelse stimulerar nybildning av mitokondrier och förbättrar energin i vardagen med relativt låg belastning."
     }
   },
   "multivitamin_general": {
@@ -832,10 +886,10 @@
   },
   "zone2_mitochondrial_base": {
     "title": "Zon 2 för mitokondriell bas",
-    "description": "Zon 2-träning bygger den aeroba grunden genom att öka mitokondriell densitet, kapillärisering och fettförbränning. Målet är ett lugnt, jämnt tempo där du kan prata i hela meningar och hålla intensiteten stabil över tid.",
+    "description": "Zon 2-träning bygger den aeroba grunden genom att öka mitokondriell densitet, kapillärisering och fettförbränning. Det betyder i praktiken fler kapillärer till musklerna och fler mitokondrier i muskelcellerna. Målet är ett lugnt, jämnt tempo där du kan prata i hela meningar och hålla intensiteten stabil över tid.",
     "areas": {
       "cardioFitness": "Zon 2 förbättrar aerob kapacitet genom ökad slagvolym, kapillär täthet och effektivare syreleverans till arbetande muskler.",
-      "energy": "Regelbunden Zon 2 ökar mitokondriell biogenes och förbättrar energiomsättning, vilket ger mer hållbar energi under både träning och vardag."
+      "energy": "Regelbunden Zon 2 ökar mitokondriell biogenes, alltså antalet mitokondrier, och förbättrar energiomsättning för mer hållbar energi under både träning och vardag."
     },
     "analyzePrompt": "Analysera användarens träningsmönster och avgör om de får tillräckligt med lågintensiv aerob volym (Zon 2) för mitokondriell utveckling."
   },

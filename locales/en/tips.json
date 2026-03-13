@@ -238,6 +238,44 @@
       "cardioFitness": "Hydration improves cardiovascular performance by maintaining blood volume and oxygen transport."
     }
   },
+  "electrolytes_balance": {
+    "title": "Electrolytes for fluid balance and performance",
+    "description": "Electrolytes such as sodium, potassium, and magnesium help regulate fluid balance, nerve signaling, muscle contraction, and blood pressure. When you sweat a lot, train hard, or drink large amounts of plain water without replacing minerals, low electrolyte status can contribute to fatigue, headaches, reduced performance, or muscle cramps. For sodium, mineral-rich salt or broth is often more relevant than simply increasing regular table salt, especially since high intake of ordinary table salt can contribute to elevated blood pressure in salt-sensitive individuals.",
+    "areas": {
+      "energy": "Electrolytes help maintain cellular fluid balance and nerve-muscle function, which supports stable energy and reduces fatigue.",
+      "cardioFitness": "During exercise and heat exposure, adequate electrolytes help preserve blood volume, hydration status, and physical performance.",
+      "nervousSystem": "Sodium and potassium are essential for nerve impulses, while magnesium supports normal neuromuscular relaxation and signaling."
+    },
+    "nutritionFoods": {
+      "title": "Electrolyte-supporting foods and drinks",
+      "items": {
+        "mineralWater": {
+          "name": "Mineral water",
+          "details": "Mineral-rich water can provide sodium, magnesium, and other electrolytes, especially after sweating."
+        },
+        "coconutWater": {
+          "name": "Coconut water",
+          "details": "A glass of coconut water provides potassium and fluid, useful after heat or light training."
+        },
+        "potatoes": {
+          "name": "Potatoes or root vegetables",
+          "details": "Potatoes are rich in potassium, one of the key minerals involved in muscle and nerve function."
+        },
+        "saltedMeals": {
+          "name": "Mineral-rich salt, salted meals, or broth",
+          "details": "Mineral-rich salt or a properly salted broth can help restore sodium losses after prolonged sweating. Regular table salt should not be overused, since higher intake can contribute to elevated blood pressure in some people."
+        }
+      }
+    }
+  },
+  "dental_health_basics": {
+    "title": "Dental health basics",
+    "description": "Basic oral care is one of the highest-return health habits. Regular brushing, cleaning between the teeth, reducing frequent sugar exposure, and supporting a healthier oral microbiome can lower caries risk, protect the gums, and preserve teeth long term. Frequent snacking is a major problem because the teeth are exposed to repeated acid attacks and less time to recover between meals, which raises caries risk even when the food itself does not seem extreme. Good chewing function and low oral inflammation also support digestion and overall health.",
+    "areas": {
+      "immuneSupport": "Healthier gums and lower oral inflammation reduce chronic immune burden and help maintain a more balanced inflammatory state. Bleeding gums can also make it easier for oral bacteria and inflammatory compounds to enter the bloodstream, and poor gum health has been associated with a higher long-term risk of cognitive decline and Alzheimer’s disease.",
+      "digestiveHealth": "Good dental health supports chewing, saliva production, and the first stage of digestion while reducing problems linked to an unhealthy oral microbiome."
+    }
+  },
   "vitamin_c_immunity": {
     "title": "Vitamin C for immunity",
     "description": "Vitamin C is a water-soluble vitamin found in fruits and vegetables. It is a powerful antioxidant that supports the immune system and protects cells from oxidative stress.",
@@ -595,6 +633,14 @@
       }
     }
   },
+  "lactobacillus_reuteri": {
+    "title": "Lactobacillus reuteri",
+    "description": "Lactobacillus reuteri is a probiotic bacterial strain studied for gut balance, immune signaling, support of the intestinal barrier, and parts of oral health. Effects are strain-specific, but certain L. reuteri strains may help reduce digestive discomfort, support a more resilient gut ecosystem, and potentially contribute to a healthier oral microbiome linked to lower caries risk and better gum balance.",
+    "areas": {
+      "digestiveHealth": "L. reuteri may support gut barrier function, reduce microbial imbalance, and help with bloating or digestive discomfort in some people.",
+      "immuneSupport": "By interacting with the gut immune system, L. reuteri may help support more balanced immune signaling and lower excessive inflammatory tone. Some strains are also studied for oral immune balance and reduced growth of bacteria associated with caries and gum irritation."
+    }
+  },
   "fiber_microbiome": {
     "title": "Fiber and microbiome health",
     "description": "Dietary fiber acts as a prebiotic, feeding beneficial gut bacteria and supporting a healthy microbiome. Adequate fiber intake improves digestive health, reduces inflammation, and strengthens immune function.",
@@ -638,18 +684,26 @@
   },
   "hiit_vo2max": {
     "title": "HIIT for VO2 max",
-    "description": "High-Intensity Interval Training (HIIT) is one of the most effective methods to improve VO2 max, the maximum amount of oxygen your body can use during exercise. HIIT enhances cardiovascular fitness, mitochondrial density, and metabolic efficiency.",
+    "description": "High-Intensity Interval Training (HIIT) is one of the most effective methods to improve VO2 max, the maximum amount of oxygen your body can use during exercise. Unlike Zone 2, which mainly builds more capillaries and more mitochondria, HIIT strongly improves how efficiently your existing mitochondria work under high demand.",
     "areas": {
       "cardioFitness": "HIIT training significantly increases VO2 max, improving cardiovascular capacity, endurance, and overall aerobic fitness.",
-      "energy": "HIIT boosts mitochondrial biogenesis, increasing cellular energy production and improving metabolic efficiency throughout the day."
+      "energy": "HIIT improves the working capacity of existing mitochondria and the ability to generate energy rapidly at high intensity, increasing metabolic efficiency when demand is high."
     }
   },
   "running_volume_aerobic": {
     "title": "Running volume for aerobic capacity",
-    "description": "Consistent running volume at moderate intensity builds aerobic base, improves cardiovascular efficiency, and enhances fat metabolism. Long, steady runs develop capillary density and improve oxygen delivery to muscles.",
+    "description": "Running volume is about the total amount of running you accumulate over a week. In practice, a large share of that volume should still be done in Zone 2, otherwise the total stress can become too high for recovery, joints, and the nervous system. Unlike Zone 2, which mainly describes the intensity of an individual session, running volume is more about building durability, tissue tolerance, and aerobic capacity through consistent total workload over time. When increased gradually, it can also strengthen tendons, ligaments, and tissue tolerance around the joints.",
     "areas": {
       "cardioFitness": "Regular running volume strengthens the heart, increases stroke volume, and improves overall cardiovascular endurance and aerobic capacity.",
       "energy": "Aerobic running improves fat oxidation, enhances mitochondrial function, and increases sustained energy levels for daily activities."
+    }
+  },
+  "zone2_slow_running": {
+    "title": "Zone 2 / slow running",
+    "description": "Easy Zone 2 running is one of the most useful health habits because it gives you a large cardio-metabolic return without excessive stress. The goal is not speed or mileage, but a relaxed pace where you can still speak in full sentences. Zone 2 increases the number of capillaries feeding the muscles and stimulates the creation of more mitochondria, making muscles better at receiving oxygen and producing aerobic energy. This is different from running volume: Zone 2 is primarily about keeping effort easy enough, while running volume is about how much total running you accumulate over time.",
+    "areas": {
+      "cardioFitness": "Slow Zone 2 running strengthens the heart and increases capillary density in working muscles, improving oxygen delivery and aerobic endurance.",
+      "energy": "Easy aerobic movement stimulates the creation of more mitochondria and improves day-to-day energy with relatively low strain."
     }
   },
   "multivitamin_general": {
@@ -865,10 +919,10 @@
   },
   "zone2_mitochondrial_base": {
     "title": "Zone 2 for a mitochondrial base",
-    "description": "Zone 2 training builds your aerobic foundation by increasing mitochondrial density, capillarization, and fat oxidation. The goal is a steady, conversational pace where you can speak in full sentences and keep intensity stable over time.",
+    "description": "Zone 2 training builds your aerobic foundation by increasing mitochondrial density, capillarization, and fat oxidation. In practice, that means more capillaries feeding the muscles and more mitochondria inside the muscle cells. The goal is a steady, conversational pace where you can speak in full sentences and keep intensity stable over time.",
     "areas": {
       "cardioFitness": "Zone 2 improves aerobic capacity through increased stroke volume, higher capillary density, and more efficient oxygen delivery to working muscles.",
-      "energy": "Consistent Zone 2 supports mitochondrial biogenesis and improves energy metabolism, leading to more sustainable energy during training and daily life."
+      "energy": "Consistent Zone 2 supports mitochondrial biogenesis, meaning the creation of more mitochondria, and improves energy metabolism for more sustainable energy during training and daily life."
     },
     "analyzePrompt": "Analyze the user's training pattern and determine whether they have enough low-intensity aerobic volume (Zone 2) to support mitochondrial development."
   },

@@ -78,7 +78,7 @@ const rawTips: Tip[] = [
   // Ketogen kost
   {
     id: 'ketogenic_diet',
-    level: 6,
+    level: 8,
     xp: 1200,
     areas: [
       { id: 'energy', descriptionKey: 'ketogenic_diet.areas.energy' },
@@ -101,7 +101,7 @@ const rawTips: Tip[] = [
   },
     {
       id: 'berberine',
-      level: 2,
+      level: 7,
       xp: 500,
       areas: [
         { id: 'digestiveHealth', descriptionKey: 'berberine.areas.digestiveHealth' },
@@ -120,7 +120,7 @@ const rawTips: Tip[] = [
     },
   {
     id: 'urolithin_a',
-    level: 2,
+    level: 9,
     xp: 500,
     areas: [
       { id: 'energy', descriptionKey: 'urolithin_a.areas.energy' },
@@ -143,7 +143,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'intermittent_fasting_12h',
-    level: 1,
+    level: 2,
     xp: 300,
     areas: [
       { id: 'energy', descriptionKey: 'intermittent_fasting_12h.areas.energy' },
@@ -159,7 +159,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'intermittent_fasting_16_8',
-    level: 2,
+    level: 4,
     xp: 500,
     areas: [
       { id: 'energy', descriptionKey: 'intermittent_fasting_16_8.areas.energy' },
@@ -175,7 +175,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'multivitamin_general',
-    level: 1,
+    level: 5,
     xp: 300,
     areas: [
       { id: 'energy', descriptionKey: 'multivitamin_general.areas.energy' },
@@ -193,7 +193,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'vitamin_d',
-    level: 3,
+    level: 4,
     xp: 700,
     areas: [
       { id: 'energy', descriptionKey: 'vitamin_d.areas.energy' },
@@ -220,7 +220,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'vitamin_e_antioxidant_support',
-    level: 2,
+    level: 9,
     xp: 500,
     areas: [
       { id: 'immuneSupport', descriptionKey: 'vitamin_e_antioxidant_support.areas.immuneSupport' },
@@ -244,7 +244,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'coq10',
-    level: 2,
+    level: 7,
     xp: 500,
     areas: [
       { id: 'energy', descriptionKey: 'coq10.areas.energy' },
@@ -269,7 +269,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'cellular_energy_nad',
-    level: 2,
+    level: 9,
     xp: 500,
     areas: [
       { id: 'energy', descriptionKey: 'cellular_energy_nad.areas.energy' },
@@ -287,7 +287,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'sleep_timing_circadian',
-    level: 2,
+    level: 1,
     xp: 500,
     areas: [
       { id: 'sleepQuality', descriptionKey: 'sleep_timing_circadian.areas.sleepQuality' },
@@ -304,7 +304,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'magnesium',
-    level: 3,
+    level: 4,
     xp: 700,
     areas: [
       { id: 'sleepQuality', descriptionKey: 'magnesium.areas.sleepQuality' },
@@ -336,7 +336,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'zinc_comprehensive_support',
-    level: 3,
+    level: 5,
     xp: 700,
     areas: [
       { id: 'immuneSupport', descriptionKey: 'zinc_comprehensive_support.areas.immuneSupport' },
@@ -361,7 +361,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'selenium_thyroid_antioxidant',
-    level: 2,
+    level: 5,
     xp: 500,
     areas: [
       { id: 'immuneSupport', descriptionKey: 'selenium_thyroid_antioxidant.areas.immuneSupport' },
@@ -386,7 +386,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'iodine_thyroid_balance',
-    level: 2,
+    level: 5,
     xp: 500,
     areas: [
       { id: 'energy', descriptionKey: 'iodine_thyroid_balance.areas.energy' },
@@ -405,7 +405,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'calm_alertness_ltheanine',
-    level: 2,
+    level: 6,
     xp: 500,
     areas: [{ id: 'mind', descriptionKey: 'calm_alertness_ltheanine.areas.mind' }],
     title: 'calm_alertness_ltheanine.title',
@@ -419,7 +419,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'neurotransmitter_ltyrosine',
-    level: 3,
+    level: 7,
     xp: 700,
     areas: [{ id: 'mind', descriptionKey: 'neurotransmitter_ltyrosine.areas.mind' }],
     title: 'neurotransmitter_ltyrosine.title',
@@ -449,6 +449,45 @@ const rawTips: Tip[] = [
     bodyParts: ['kidneys'],
   },
   {
+    id: 'electrolytes_balance',
+    level: 2,
+    xp: 400,
+    areas: [
+      { id: 'energy', descriptionKey: 'electrolytes_balance.areas.energy' },
+      { id: 'cardioFitness', descriptionKey: 'electrolytes_balance.areas.cardioFitness' },
+      { id: 'nervousSystem', descriptionKey: 'electrolytes_balance.areas.nervousSystem' },
+    ],
+    title: 'electrolytes_balance.title',
+    descriptionKey: 'electrolytes_balance.description',
+    trainingRelation: 'anytime',
+    preferredDayParts: ['morning', 'midday', 'afternoon'],
+    timeRule: 'anytime',
+    planCategory: ['nutrition'],
+    nutritionFoods: [
+      { key: 'mineralWater' },
+      { key: 'coconutWater' },
+      { key: 'potatoes' },
+      { key: 'saltedMeals' },
+    ],
+    bodyParts: ['muscles', 'nervousSystem', 'kidneys'],
+  },
+  {
+    id: 'dental_health_basics',
+    level: 1,
+    xp: 300,
+    areas: [
+      { id: 'immuneSupport', descriptionKey: 'dental_health_basics.areas.immuneSupport' },
+      { id: 'digestiveHealth', descriptionKey: 'dental_health_basics.areas.digestiveHealth' },
+    ],
+    title: 'dental_health_basics.title',
+    descriptionKey: 'dental_health_basics.description',
+    trainingRelation: 'anytime',
+    preferredDayParts: ['morning', 'evening'],
+    timeRule: 'anytime',
+    planCategory: ['other'],
+    bodyParts: ['teeth'],
+  },
+  {
     id: 'vitamin_c_immunity',
     level: 2,
     xp: 500,
@@ -471,7 +510,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'echinacea_herbs',
-    level: 3,
+    level: 6,
     xp: 700,
     areas: [{ id: 'immuneSupport', descriptionKey: 'echinacea_herbs.areas.immuneSupport' }],
     title: 'echinacea_herbs.title',
@@ -485,7 +524,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'calming_glycine',
-    level: 2,
+    level: 6,
     xp: 500,
     areas: [
       { id: 'nervousSystem', descriptionKey: 'calming_glycine.areas.nervousSystem' },
@@ -510,7 +549,7 @@ const rawTips: Tip[] = [
   },
     {
       id: 'collagen',
-      level: 2,
+      level: 5,
       xp: 500,
       areas: [
         { id: 'strength', descriptionKey: 'collagen.areas.strength' },
@@ -531,7 +570,7 @@ const rawTips: Tip[] = [
     },
     {
       id: 'glutathione',
-      level: 2,
+      level: 8,
       xp: 500,
       areas: [
         { id: 'immuneSupport', descriptionKey: 'glutathione.areas.immuneSupport' },
@@ -553,7 +592,7 @@ const rawTips: Tip[] = [
     },
   {
     id: 'breathwork_parasympathetic',
-    level: 1,
+    level: 2,
     xp: 0,
     areas: [
       { id: 'nervousSystem', descriptionKey: 'breathwork_parasympathetic.areas.nervousSystem' },
@@ -570,7 +609,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'box_breathing',
-    level: 1,
+    level: 2,
     xp: 0,
     parentId: 'breathwork_parasympathetic',
     areas: [
@@ -587,7 +626,7 @@ const rawTips: Tip[] = [
   },
   {
     id: '4_7_8_breathing',
-    level: 1,
+    level: 3,
     xp: 0,
     parentId: 'breathwork_parasympathetic',
     areas: [
@@ -604,7 +643,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'alternate_nostril_breathing',
-    level: 2,
+    level: 3,
     xp: 0,
     parentId: 'breathwork_parasympathetic',
     areas: [
@@ -621,7 +660,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'diaphragmatic_breathing',
-    level: 1,
+    level: 2,
     xp: 0,
     parentId: 'breathwork_parasympathetic',
     areas: [
@@ -742,7 +781,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'cold_exposure_ans',
-    level: 2,
+    level: 6,
     xp: 0,
     areas: [
       { id: 'nervousSystem', descriptionKey: 'cold_exposure_ans.areas.nervousSystem' },
@@ -774,7 +813,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'nature_parasympathetic',
-    level: 2,
+    level: 1,
     xp: 0,
     areas: [
       { id: 'nervousSystem', descriptionKey: 'nature_parasympathetic.areas.nervousSystem' },
@@ -790,7 +829,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'hrv_recovery_monitoring',
-    level: 3,
+    level: 6,
     xp: 0,
     areas: [
       { id: 'nervousSystem', descriptionKey: 'hrv_recovery_monitoring.areas.nervousSystem' },
@@ -808,7 +847,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'social_connection_vagal',
-    level: 2,
+    level: 1,
     xp: 0,
     areas: [
       { id: 'nervousSystem', descriptionKey: 'social_connection_vagal.areas.nervousSystem' },
@@ -840,7 +879,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'adaptogenic_herbs',
-    level: 3,
+    level: 6,
     xp: 0,
     areas: [{ id: 'nervousSystem', descriptionKey: 'adaptogenic_herbs.areas.nervousSystem' }],
     title: 'adaptogenic_herbs.title',
@@ -854,7 +893,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'medicinal_mushrooms',
-    level: 2,
+    level: 7,
     xp: 0,
     areas: [
       { id: 'immuneSupport', descriptionKey: 'medicinal_mushrooms.areas.immuneSupport' },
@@ -871,7 +910,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'neuromuscular_training',
-    level: 1,
+    level: 2,
     xp: 0,
     areas: [
       { id: 'strength', descriptionKey: 'neuromuscular_training.areas.strength' },
@@ -889,7 +928,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'creatine_atp_strength',
-    level: 2,
+    level: 4,
     xp: 500,
     areas: [
       { id: 'strength', descriptionKey: 'creatine_atp_strength.areas.strength' },
@@ -908,7 +947,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'betaalanine_endurance',
-    level: 3,
+    level: 6,
     xp: 700,
     areas: [
       { id: 'strength', descriptionKey: 'betaalanine_endurance.areas.strength' },
@@ -925,7 +964,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'shilajit_performance',
-    level: 4,
+    level: 8,
     xp: 900,
     areas: [
       { id: 'strength', descriptionKey: 'shilajit_performance.areas.strength' },
@@ -943,7 +982,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'probiotics_microbiota',
-    level: 1,
+    level: 2,
     xp: 300,
     areas: [
       { id: 'digestiveHealth', descriptionKey: 'probiotics_microbiota.areas.digestiveHealth' },
@@ -951,6 +990,7 @@ const rawTips: Tip[] = [
     ],
     title: 'probiotics_microbiota.title',
     descriptionKey: 'probiotics_microbiota.description',
+    isParent: true,
     supplements: [{ id: 'probiotics' }],
     trainingRelation: 'anytime',
     preferredDayParts: ['afternoon'],
@@ -960,8 +1000,27 @@ const rawTips: Tip[] = [
     bodyParts: ['digestiveSystem'],
   },
   {
-    id: 'fiber_microbiome',
+    id: 'lactobacillus_reuteri',
     level: 2,
+    xp: 500,
+    parentId: 'probiotics_microbiota',
+    areas: [
+      { id: 'digestiveHealth', descriptionKey: 'lactobacillus_reuteri.areas.digestiveHealth' },
+      { id: 'immuneSupport', descriptionKey: 'lactobacillus_reuteri.areas.immuneSupport' },
+    ],
+    title: 'lactobacillus_reuteri.title',
+    descriptionKey: 'lactobacillus_reuteri.description',
+    supplements: [{ id: 'probiotics' }],
+    trainingRelation: 'anytime',
+    preferredDayParts: ['afternoon'],
+    timeRule: 'anytime',
+    planCategory: ['supplement'],
+    bodyParts: ['digestiveSystem', 'immuneSystem', 'teeth'],
+    microbiomeIds: ['Lactobacillus'],
+  },
+  {
+    id: 'fiber_microbiome',
+    level: 1,
     xp: 500,
     areas: [
       { id: 'digestiveHealth', descriptionKey: 'fiber_microbiome.areas.digestiveHealth' },
@@ -984,7 +1043,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'milk_thistle_liver',
-    level: 3,
+    level: 7,
     xp: 700,
     areas: [
       { id: 'digestiveHealth', descriptionKey: 'milk_thistle_liver.areas.digestiveHealth' },
@@ -1029,11 +1088,11 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday', 'afternoon'],
     timeRule: 'anytime',
     planCategory: ['training'],
-    bodyParts: ['heart','lungs','muscles'],
+    bodyParts: ['heart','lungs','muscles','joints'],
   },
   {
     id: 'ashwagandha_adaptogen',
-    level: 3,
+    level: 6,
     xp: 0,
     parentId: 'adaptogenic_herbs',
     areas: [
@@ -1052,7 +1111,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'rhodiola_adaptogen',
-    level: 3,
+    level: 7,
     xp: 0,
     parentId: 'adaptogenic_herbs',
     areas: [
@@ -1071,7 +1130,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'holy_basil_adaptogen',
-    level: 3,
+    level: 7,
     xp: 0,
     parentId: 'adaptogenic_herbs',
     areas: [
@@ -1089,7 +1148,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'reishi_mushroom',
-    level: 2,
+    level: 7,
     xp: 0,
     parentId: 'medicinal_mushrooms',
     areas: [
@@ -1107,7 +1166,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'lions_mane_mushroom',
-    level: 2,
+    level: 8,
     xp: 0,
     parentId: 'medicinal_mushrooms',
     areas: [
@@ -1125,7 +1184,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'chaga_mushroom',
-    level: 2,
+    level: 8,
     xp: 0,
     parentId: 'medicinal_mushrooms',
     areas: [
@@ -1143,7 +1202,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'cordyceps_adaptogen',
-    level: 3,
+    level: 7,
     xp: 0,
     parentId: 'medicinal_mushrooms',
     areas: [
@@ -1163,8 +1222,23 @@ const rawTips: Tip[] = [
 
   // --- Running / performance tips (added) ---
   {
+    id: 'zone2_slow_running',
+    level: 1,
+    xp: 300,
+    areas: [
+      { id: 'cardioFitness', descriptionKey: 'zone2_slow_running.areas.cardioFitness' },
+      { id: 'energy', descriptionKey: 'zone2_slow_running.areas.energy' },
+    ],
+    title: 'zone2_slow_running.title',
+    descriptionKey: 'zone2_slow_running.description',
+    preferredDayParts: ['morning', 'midday', 'afternoon'],
+    timeRule: 'anytime',
+    planCategory: ['training'],
+    bodyParts: ['heart','lungs','muscles'],
+  },
+  {
     id: 'zone2_mitochondrial_base',
-    level: 2,
+    level: 3,
     xp: 500,
     areas: [
       { id: 'cardioFitness', descriptionKey: 'zone2_mitochondrial_base.areas.cardioFitness' },
@@ -1180,7 +1254,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'fasted_aerobic_training',
-    level: 3,
+    level: 6,
     xp: 700,
     areas: [
       { id: 'energy', descriptionKey: 'fasted_aerobic_training.areas.energy' },
@@ -1195,7 +1269,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'lactate_threshold_training',
-    level: 3,
+    level: 5,
     xp: 700,
     areas: [
       { id: 'cardioFitness', descriptionKey: 'lactate_threshold_training.areas.cardioFitness' },
@@ -1212,7 +1286,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'running_economy_drills',
-    level: 2,
+    level: 4,
     xp: 500,
     areas: [
       { id: 'strength', descriptionKey: 'running_economy_drills.areas.strength' },
@@ -1228,7 +1302,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'stride_frequency_optimization',
-    level: 3,
+    level: 6,
     xp: 700,
     areas: [
       { id: 'strength', descriptionKey: 'stride_frequency_optimization.areas.strength' },
@@ -1244,7 +1318,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'caffeine',
-    level: 2,
+    level: 4,
     xp: 500,
     areas: [
       { id: 'energy', descriptionKey: 'caffeine.areas.energy' },
@@ -1262,7 +1336,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'nitrate_no_efficiency',
-    level: 3,
+    level: 5,
     xp: 700,
     areas: [
       { id: 'cardioFitness', descriptionKey: 'nitrate_no_efficiency.areas.cardioFitness' },
@@ -1279,7 +1353,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'l_carnitine_fat_transport',
-    level: 3,
+    level: 8,
     xp: 700,
     areas: [
       { id: 'energy', descriptionKey: 'l_carnitine_fat_transport.areas.energy' },
@@ -1296,7 +1370,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'astaxanthin_recovery_antioxidant',
-    level: 3,
+    level: 9,
     xp: 700,
     areas: [
       { id: 'strength', descriptionKey: 'astaxanthin_recovery_antioxidant.areas.strength' },
@@ -1320,7 +1394,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'brown_fat_cool_home',
-    level: 1,
+    level: 9,
     xp: 300,
     areas: [{ id: 'energy', descriptionKey: 'brown_fat_cool_home.areas.energy' }],
     title: 'brown_fat_cool_home.title',
@@ -1369,7 +1443,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'near_infrared_red_light',
-    level: 2,
+    level: 10,
     xp: 500,
     areas: [
       { id: 'energy', descriptionKey: 'near_infrared_red_light.areas.energy' },
@@ -1384,7 +1458,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'far_infrared_light',
-    level: 2,
+    level: 10,
     xp: 500,
     areas: [
       { id: 'energy', descriptionKey: 'far_infrared_light.areas.energy' },
@@ -1414,7 +1488,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'lutein_zeaxanthin_eye_health',
-    level: 2,
+    level: 8,
     xp: 500,
     areas: [
       { id: 'energy', descriptionKey: 'lutein_zeaxanthin_eye_health.areas.energy' }
@@ -1429,7 +1503,7 @@ const rawTips: Tip[] = [
   },
     {
     id: 'sulfate',
-    level: 2,
+    level: 6,
     xp: 400,
      areas: [
         { id: 'digestiveHealth', descriptionKey: 'sulfate.areas.digestiveHealth' },
@@ -1448,7 +1522,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'msm_joint_health',
-    level: 2,
+    level: 6,
     xp: 500,
     areas: [
       { id: 'strength', descriptionKey: 'msm_joint_health.areas.strength' },
