@@ -340,6 +340,31 @@
       }
     }
   },
+  "citrulline_bloodflow_gut": {
+    "title": "Citrullin för blodflöde och magstöd",
+    "description": "L-citrullin är en aminosyra som kan omvandlas till arginin och bidra till ökad produktion av kväveoxid. Den är mest känd för att stödja cirkulation, endotelfunktion och blodflöde, vilket är varför den ofta används för hjärt-kärlprestation och bättre pump vid träning. För mag- och tarmhälsa är den intressant eftersom samma cirkulationsstöd kan hjälpa blodflödet till tarmslemhinnan och bidra till att bevara barriärfunktionen vid fysiologisk stress, hård träning eller återhämtning. Det är ett mer nischat tillskott än fibrer och probiotika, men kan vara relevant när målet är att stödja både kärlfunktion och slemhinnans motståndskraft.",
+    "areas": {
+      "digestiveHealth": "Genom att stödja tillgången på arginin och kväveoxid kan citrullin bidra till cirkulation och återhämtningsprocesser i tarmslemhinnan.",
+      "cardioFitness": "Citrullin är mest känt för att öka tillgången på kväveoxid, vilket kan stödja endotelfunktion, blodflöde och kardiovaskulär prestationsförmåga."
+    },
+    "nutritionFoods": {
+      "title": "Livsmedel som innehåller citrullin",
+      "items": {
+        "watermelon": {
+          "name": "Vattenmelon",
+          "details": "Vattenmelon är den mest kända matkällan till citrullin, och de högsta halterna finns ofta i det vita fruktköttet närmast skalet."
+        },
+        "cantaloupe": {
+          "name": "Cantaloupe och andra meloner",
+          "details": "Andra meloner innehåller också citrullin, men vanligtvis i mindre mängder än vattenmelon."
+        },
+        "cucumber": {
+          "name": "Gurka",
+          "details": "Gurka innehåller små mängder citrullin och kan bidra lite som del av en växtrik kost."
+        }
+      }
+    }
+  },
   "glutathione": {
     "title": "Glutation för antioxidantskydd",
     "description": "Glutation är en av kroppens viktigaste intracellulära antioxidanter. Det byggs upp av aminosyrorna glycin, glutamat och cystein och hjälper till att neutralisera reaktiva syreföreningar, stödjer leverns avgiftningsvägar och skyddar celler vid stress, inflammation och hög metabol belastning. Direkt glutation kan användas, men många stödjer även glutationstatus via prekursorer som NAC. Tillgång på glycin kan vara viktig för glutationsyntesen, medan glutamat är en av de grundläggande byggstenarna i själva molekylen.",

@@ -45,6 +45,7 @@
         { "id": "hyaluronicAcid", "name": "Hyaluronsyra", "quantity": "120", "unit": "mg" },
         { "id": "kelp", "name": "Kelp (Jod)", "quantity": "150", "unit": "mcg" },
         { "id": "lArginine", "name": "L-Arginin", "quantity": "5", "unit": "g" },
+        { "id": "citrulline", "name": "L-Citrullin", "quantity": "3000", "unit": "mg", "description": "Aminosyra som fungerar som prekursor till arginin och kväveoxid, och som ibland används för att stödja cirkulation och tarmbarriärens motståndskraft." },
         { "id": "lCarnitine", "name": "L-Karnitin", "quantity": "500", "unit": "mg" },
         { "id": "glucosamine", "name": "Glukosamin", "quantity": "1500", "unit": "mg" },
         { "id": "chondroitin", "name": "Kondroitin", "quantity": "1200", "unit": "mg" },

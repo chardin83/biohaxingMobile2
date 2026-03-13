@@ -45,6 +45,7 @@
         { "id": "hyaluronicAcid", "name": "Hyaluronic Acid", "quantity": "120", "unit": "mg" },
         { "id": "kelp", "name": "Kelp (Iodine)", "quantity": "150", "unit": "mcg" },
         { "id": "lArginine", "name": "L-Arginine", "quantity": "5", "unit": "g" },
+        { "id": "citrulline", "name": "L-Citrulline", "quantity": "3000", "unit": "mg", "description": "Amino acid precursor to arginine and nitric oxide, sometimes used to support circulation and gut barrier resilience." },
         { "id": "lCarnitine", "name": "L-Carnitine", "quantity": "500", "unit": "mg" },
         { "id": "glucosamine", "name": "Glucosamine", "quantity": "1500", "unit": "mg" },
         { "id": "chondroitin", "name": "Chondroitin", "quantity": "1200", "unit": "mg" },

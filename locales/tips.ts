@@ -569,6 +569,28 @@ const rawTips: Tip[] = [
       bodyParts: ['joints', 'skin', 'bones'],
     },
     {
+      id: 'citrulline_bloodflow_gut',
+      level: 7,
+      xp: 500,
+      areas: [
+        { id: 'digestiveHealth', descriptionKey: 'citrulline_bloodflow_gut.areas.digestiveHealth' },
+        { id: 'cardioFitness', descriptionKey: 'citrulline_bloodflow_gut.areas.cardioFitness' },
+      ],
+      title: 'citrulline_bloodflow_gut.title',
+      descriptionKey: 'citrulline_bloodflow_gut.description',
+      supplements: [{ id: 'citrulline' }],
+      trainingRelation: 'anytime',
+      preferredDayParts: ['morning', 'midday'],
+      timeRule: 'anytime',
+      planCategory: ['supplement'],
+      nutritionFoods: [
+        { key: 'watermelon' },
+        { key: 'cantaloupe' },
+        { key: 'cucumber' },
+      ],
+      bodyParts: ['digestiveSystem', 'bloodVessels'],
+    },
+    {
       id: 'glutathione',
       level: 8,
       xp: 500,

@@ -373,6 +373,31 @@
       }
     }
   },
+  "citrulline_bloodflow_gut": {
+    "title": "Citrulline for blood flow and gut support",
+    "description": "L-citrulline is an amino acid that can be converted into arginine and help raise nitric oxide production. It is best known for supporting circulation, endothelial function, and blood flow, which is why it is often used for cardiovascular performance and pump-related effects in training. For gut health, it is interesting because this same circulation support may help blood flow to the intestinal lining and help maintain barrier integrity during physiological stress, heavy training, or recovery. It is a more specialized supplement than fiber and probiotics, but can be relevant when the goal is to support both vascular function and mucosal resilience.",
+    "areas": {
+      "digestiveHealth": "By supporting arginine and nitric oxide availability, citrulline may help circulation and recovery processes in the intestinal mucosa.",
+      "cardioFitness": "Citrulline is most known for increasing nitric oxide availability, which can support endothelial function, blood flow, and cardiovascular performance."
+    },
+    "nutritionFoods": {
+      "title": "Foods containing citrulline",
+      "items": {
+        "watermelon": {
+          "name": "Watermelon",
+          "details": "Watermelon is the best-known food source of citrulline, with the highest concentrations typically found in the white rind close to the peel."
+        },
+        "cantaloupe": {
+          "name": "Cantaloupe and other melons",
+          "details": "Other melons also contain citrulline, though usually in smaller amounts than watermelon."
+        },
+        "cucumber": {
+          "name": "Cucumber",
+          "details": "Cucumber contains small amounts of citrulline and can modestly contribute as part of a plant-rich diet."
+        }
+      }
+    }
+  },
   "glutathione": {
     "title": "Glutathione for antioxidant defense",
     "description": "Glutathione is one of the body's most important intracellular antioxidants. It is built from the amino acids glycine, glutamate, and cysteine, and helps neutralize reactive oxygen species, supports liver detoxification pathways, and protects cells during stress, inflammation, and high metabolic demand. Direct glutathione can be used, but many people also support glutathione status through precursors such as NAC. Glycine availability can matter for glutathione synthesis, while glutamate is one of the core building blocks already required in the molecule itself.",

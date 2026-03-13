@@ -41,6 +41,7 @@ export const supplementIds = {
   hyaluronicAcid: 'hyaluronicAcid',
   kelp: 'kelp',
   lArginine: 'lArginine',
+  citrulline: 'citrulline',
   lCarnitine: 'lCarnitine',
   glucosamine: 'glucosamine',
   chondroitin: 'chondroitin',
