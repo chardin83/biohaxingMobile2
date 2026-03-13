@@ -19,8 +19,8 @@ export const PressableCard: React.FC<PressableCardProps> = ({ onPress, children,
         <Card
           style={[
             styles.card,
-            pressed && { backgroundColor: colors.overlayLight, borderColor: colors.accentMedium },
             style,
+            pressed && { backgroundColor: colors.overlayLight, borderColor: colors.accentMedium },
           ]}
         >
           {children}

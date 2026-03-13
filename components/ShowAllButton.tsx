@@ -22,7 +22,7 @@ export default function ShowAllButton({
   accentColor,
   showAllText,
   showLessText,
-}: ShowAllButtonProps) {
+}: Readonly<ShowAllButtonProps>) {
   const { t } = useTranslation();
   const showAllLabel = showAllText ?? t('general.showAll');
   const showLessLabel = showLessText ?? t('general.showLess');

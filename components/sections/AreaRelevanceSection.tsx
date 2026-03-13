@@ -16,6 +16,7 @@ type AreaRelevanceSectionProps = {
   areaId: string;
   showAllAreas: boolean;
   setShowAllAreas: React.Dispatch<React.SetStateAction<boolean>>;
+  expandAreas: boolean;
   effectiveTipId: string | null;
   addTipView: (areaId: string, tipId: string) => number;
   colors: any;
@@ -26,12 +27,14 @@ const AreaRelevanceSection: React.FC<AreaRelevanceSectionProps> = ({
   areaId,
   showAllAreas,
   setShowAllAreas,
+  expandAreas,
   effectiveTipId,
   addTipView,
   colors,
 }) => {
   const { t } = useTranslation();
   const router = useRouter();
+  const hiddenAreasCount = Math.max((tip?.areas?.length ?? 0) - 1, 0);
 
   const prevShowAllRef = useRef(showAllAreas);
 
@@ -83,7 +86,11 @@ const AreaRelevanceSection: React.FC<AreaRelevanceSectionProps> = ({
             onPress={() => {
               router.replace({
                 pathname: `/dashboard/area/${a.id}/details` as any,
-                params: { prevAreaId: areaId, tipId: effectiveTipId },
+                params: {
+                  prevAreaId: areaId,
+                  tipId: effectiveTipId,
+                  ...(expandAreas ? { expandAreas: '1' } : {}),
+                },
               });
             }}
             accessibilityRole="button"
@@ -101,6 +108,7 @@ const AreaRelevanceSection: React.FC<AreaRelevanceSectionProps> = ({
           style={styles.showAllButton}
           textStyle={styles.showAllText}
           accentColor={colors.accentDefault}
+          showAllText={`${t('general.showAll')} (${hiddenAreasCount})`}
         />
       )}
     </>

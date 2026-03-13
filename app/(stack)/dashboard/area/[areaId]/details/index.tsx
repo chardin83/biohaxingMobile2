@@ -30,11 +30,12 @@ export default function AreaDetailScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { colors } = useTheme();
-  const { areaId, tipId, prevAreaId } = useLocalSearchParams<{
+  const { areaId, tipId, expandAreas } = useLocalSearchParams<{
     areaId: string;
     tipId?: string;
-    prevAreaId?: string;
+    expandAreas?: string;
   }>();
+  const shouldExpandAreas = expandAreas === '1';
   const supplements = useSupplements();
   const { addTipView, incrementTipChat, viewedTips, setTipVerdict, plans, setPlans, myLevel } = useStorage();
 
@@ -56,7 +57,11 @@ export default function AreaDetailScreen() {
 
   const tip = findTip(tipId, areaId);
 
-  const [showAllAreas, setShowAllAreas] = React.useState(false);
+  const [showAllAreas, setShowAllAreas] = React.useState(shouldExpandAreas);
+
+  React.useEffect(() => {
+    setShowAllAreas(shouldExpandAreas);
+  }, [areaId, tipId, shouldExpandAreas]);
 
   let infoText = '';
   if (myLevel < (tip?.level ?? 0)) {
@@ -366,11 +371,12 @@ export default function AreaDetailScreen() {
         areaId={areaId}
         showAllAreas={showAllAreas}
         setShowAllAreas={setShowAllAreas}
+              expandAreas={shouldExpandAreas}
         effectiveTipId={effectiveTipId}
         addTipView={addTipView}
         colors={colors}
       />
-      {trainingRelationLabel && (
+      {!!(trainingRelationLabel) && (
         <AppBox title={t('common:goalDetails.trainingRelation.title')}>
           <ThemedText type="caption" style={styles.metaText}>{trainingRelationLabel}</ThemedText>
         </AppBox>
@@ -384,7 +390,7 @@ export default function AreaDetailScreen() {
           ))}
         </AppBox>
       )}
-      {timeRuleLabel && (
+      {!!(timeRuleLabel) && (
         <AppBox title={t('common:goalDetails.timeRules.title')}>
           <ThemedText type="caption" style={styles.metaText}>{timeRuleLabel}</ThemedText>
         </AppBox>
@@ -490,7 +496,7 @@ function NutritionFoodsSection({
   handleAddTipPlanEntry,
   styles,
   colors,
-}: {
+}: Readonly<{
   tip: typeof tips[number] | undefined;
   nutritionFoodItems: { key: string; name: string; details: string }[];
   nutritionFoodsTitle: string | null;
@@ -499,7 +505,7 @@ function NutritionFoodsSection({
   handleAddTipPlanEntry: () => void;
   styles: { [key: string]: any };
   colors: any;
-}) {
+}>) {
   const { t } = useTranslation();
   if (!tip?.nutritionFoods?.length || !nutritionFoodsTitle) return null;
   return (
@@ -531,7 +537,7 @@ function NutritionFoodsSection({
   );
 }
 
-function MetricsSection({ tipId }: { tipId: string | null }) {
+function MetricsSection({ tipId }: Readonly<{ tipId: string | null }>) {
   const { colors } = useTheme();
   const { t } = useTranslation(['common', 'metrics']);
   if (!tipId) return null;
@@ -565,12 +571,12 @@ function AIInsightsSection({
   isQuestionAsked,
   styles,
   colors,
-}: {
+}: Readonly<{
   handleAIInsightPress: (questionKey: AIPromptKey) => void;
   isQuestionAsked: (questionType: string) => boolean;
   styles: { [key: string]: any };
   colors: any;
-}) {
+}>) {
   const { t } = useTranslation();
   return (
     <AppBox title={t(`common:goalDetails.aiInsights`)}>

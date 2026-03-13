@@ -1,13 +1,14 @@
 import { useTheme } from '@react-navigation/native';
+import { router } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import Badge from '@/components/ui/Badge';
-import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
 import LabeledInput from '@/components/ui/LabeledInput';
+import { PressableCard } from '@/components/ui/PressableCard';
 import { bodyParts as allBodyParts } from '@/locales/bodyParts';
 import { tips } from '@/locales/tips';
 import { PlanCategory } from '@/types/planCategory';
@@ -163,8 +164,25 @@ export default function TipsSearchScreen() {
             <FlatList
                 data={filteredTips}
                 keyExtractor={item => item.id}
-                renderItem={({ item }) => (
-                    <Card>
+                renderItem={({ item }) => {
+                    const firstAreaId = item.areas[0]?.id;
+
+                    return (
+                    <PressableCard
+                        onPress={() => {
+                            if (!firstAreaId) {
+                                return;
+                            }
+
+                            router.push({
+                                pathname: `/dashboard/area/${firstAreaId}/details` as any,
+                                params: {
+                                    tipId: item.id,
+                                    expandAreas: '1',
+                                },
+                            });
+                        }}
+                    >
                         <View style={styles.titleRow}>
                             <ThemedText type="title3" style={styles.title}>{t('tips:' + item.title)}</ThemedText>
                             <Badge variant="overlay" style={[styles.toggleBadge, styles.levelBadge, { backgroundColor: colors.accentDefault }]}>
@@ -187,8 +205,9 @@ export default function TipsSearchScreen() {
                             ))}
                         </View>
                         <ThemedText type="default" style={styles.desc}>{t('tips:' + item.descriptionKey)}</ThemedText>
-                    </Card>
-                )}
+                    </PressableCard>
+                );
+                }}
                 ListEmptyComponent={<ThemedText type="default" style={styles.empty}>Inga tips hittades.</ThemedText>}
             />
         </Container>
