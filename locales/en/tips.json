@@ -1136,5 +1136,26 @@
         }
       }
     }
+  },
+  "eat_pomegranate": {
+    "title": "Eat pomegranate",
+    "description": "Pomegranate provides ellagitannins and polyphenols that can support gut health and, with the right gut bacteria, contribute to urolithin A formation. It is a practical food-first way to support both the microbiome and cellular energy pathways.",
+    "areas": {
+      "digestiveHealth": "Pomegranate polyphenols may support a healthier gut environment and microbiome balance.",
+      "energy": "Pomegranate provides compounds that can feed into urolithin A-related energy pathways when the microbiome is able to convert them."
+    },
+    "nutritionFoods": {
+      "title": "Ways to get more pomegranate",
+      "items": {
+        "pomegranate": {
+          "name": "Pomegranate",
+          "details": "Rich in ellagitannins and polyphenols that support gut health and may contribute to urolithin A formation."
+        },
+        "pomegranateJuice": {
+          "name": "Unsweetened pomegranate juice",
+          "details": "A convenient option when whole pomegranate is impractical. Choose unsweetened juice to keep the focus on polyphenols."
+        }
+      }
+    }
   }
 }

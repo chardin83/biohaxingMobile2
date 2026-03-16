@@ -1152,5 +1152,26 @@
         }
       }
     }
+  },
+  "eat_pomegranate": {
+    "title": "Ät granatäpple",
+    "description": "Granatäpple innehåller ellagitanniner och polyfenoler som kan stödja tarmhälsan och, med rätt tarmbakterier, bidra till bildning av urolithin A. Det är ett enkelt matbaserat sätt att stödja både microbiomet och energirelaterade processer i cellerna.",
+    "areas": {
+      "digestiveHealth": "Polyfenolerna i granatäpple kan stödja en bättre tarmmiljö och balans i microbiomet.",
+      "energy": "Granatäpple ger ämnen som kan bidra till urolithin A-relaterade energiprocesser när microbiomet kan omvandla dem."
+    },
+    "nutritionFoods": {
+      "title": "Sätt att få i sig mer granatäpple",
+      "items": {
+        "pomegranate": {
+          "name": "Granatäpple",
+          "details": "Rikt på ellagitanniner och polyfenoler som stödjer tarmhälsa och kan bidra till bildning av urolithin A."
+        },
+        "pomegranateJuice": {
+          "name": "Osötad granatäpplejuice",
+          "details": "Ett praktiskt alternativ när helt granatäpple är opraktiskt. Välj osötad juice så att fokus ligger på polyfenolerna."
+        }
+      }
+    }
   }
 }

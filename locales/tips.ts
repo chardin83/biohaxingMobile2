@@ -142,6 +142,27 @@ const rawTips: Tip[] = [
     microbiomeIds: ['Gordonibacter'],
   },
   {
+    id: 'eat_pomegranate',
+    level: 2,
+    xp: 300,
+    areas: [
+      { id: 'digestiveHealth', descriptionKey: 'eat_pomegranate.areas.digestiveHealth' },
+      { id: 'energy', descriptionKey: 'eat_pomegranate.areas.energy' },
+    ],
+    title: 'eat_pomegranate.title',
+    descriptionKey: 'eat_pomegranate.description',
+    trainingRelation: 'anytime',
+    preferredDayParts: ['midday', 'afternoon'],
+    timeRule: 'anytime',
+    planCategory: ['nutrition'],
+    nutritionFoods: [
+      { key: 'pomegranate' },
+      { key: 'pomegranateJuice' },
+    ],
+    bodyParts: ['digestiveSystem', 'cells'],
+    microbiomeIds: ['Akkermansia', 'Gordonibacter'],
+  },
+  {
     id: 'intermittent_fasting_12h',
     level: 2,
     xp: 300,
@@ -172,6 +193,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition'],
     bodyParts: ['digestiveSystem'],
+    microbiomeIds: ['Akkermansia'],
   },
   {
     id: 'multivitamin_general',
@@ -1020,6 +1042,7 @@ const rawTips: Tip[] = [
     planCategory: ['nutrition'],
     nutritionFoods: [{ key: 'yogurt' }, { key: 'kefir' }, { key: 'sauerkraut' }, { key: 'kimchi' }, { key: 'miso' }],
     bodyParts: ['digestiveSystem'],
+    microbiomeIds: ['Lactobacillus', 'Bifidobacterium'],
   },
   {
     id: 'lactobacillus_reuteri',
@@ -1062,6 +1085,7 @@ const rawTips: Tip[] = [
       { key: 'cruciferousVeg' },
     ],
     bodyParts: ['digestiveSystem'],
+    microbiomeIds: ['Akkermansia', 'Roseburia', 'Faecalibacterium', 'Ruminococcus'],
   },
   {
     id: 'milk_thistle_liver',

@@ -539,6 +539,10 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
         { metricId: 'bss', kind: 'primary' },
         { metricId: 'bloating', kind: 'secondary' },
     ],
+    eat_pomegranate: [
+      { metricId: 'bloating', kind: 'secondary' },
+      { metricId: 'energy', kind: 'subjective' },
+    ],
     eat_colorful_veggies: [
         { metricId: 'bloating', kind: 'secondary' },
         { metricId: 'energy', kind: 'subjective' },
