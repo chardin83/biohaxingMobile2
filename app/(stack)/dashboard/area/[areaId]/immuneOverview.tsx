@@ -16,10 +16,11 @@ import { Loading } from '@/components/ui/Loading';
 import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
-import { EnergySignal, HRVSummary, SleepSummary, TimeRange } from '@/wearables/types';
+import { useStoredHRVData } from '@/hooks/useStoredHRVData';
+import { EnergySignal, SleepSummary, TimeRange } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
-export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
+export default function ImmuneScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { colors } = useTheme();
   const { adapter, status } = useWearable();
   const { t } = useTranslation();
@@ -27,9 +28,9 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sleepData, setSleepData] = useState<SleepSummary[]>([]);
-  const [hrvData, setHrvData] = useState<HRVSummary[]>([]);
   const [energyData, setEnergyData] = useState<EnergySignal[]>([]);
   const [sleepHours, setSleepHours] = useState<number | null>(null);
+  const hrvData = useStoredHRVData();
 
   useEffect(() => {
     const loadData = async () => {
@@ -40,25 +41,18 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
           end: new Date().toISOString(),
         };
 
-        const [sleep, hrv, energy] = await Promise.all([
+        const [sleep, energy] = await Promise.all([
           adapter.getSleep(range),
-          adapter.getHRV(range),
           adapter.getEnergySignal(range),
         ]);
 
         setSleepData(sleep);
-        setHrvData(hrv);
         setEnergyData(energy);
 
         // Sätt sleepHours
         if (sleep.length > 0) {
           const latest = sleep[sleep.length - 1];
           setSleepHours(latest.durationMinutes ? latest.durationMinutes / 60 : null);
-        }
-
-        // Sätt hrv
-        if (hrv.length > 0) {
-          setHrvData(hrv);
         }
       } catch (err) {
         console.error('Failed to load data:', err);
@@ -120,7 +114,7 @@ export default function ImmuneScreen({ mainGoalId }: { mainGoalId: string }) {
           </View>
 
           {/* HRV */}
-          <HRVMetric hrvData={hrvData} />
+          <HRVMetric hrvData={hrvData} sourceLabel={hrvData.length > 0 ? t('metrics:hrv.manualSource') : undefined} />
         </View>
 
         {/* Second row */}

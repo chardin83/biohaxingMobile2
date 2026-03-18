@@ -1,10 +1,12 @@
-import React, { useCallback,useMemo, useState } from 'react';
+import BottomSheet from '@gorhom/bottom-sheet';
+import React, { useCallback,useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
 import { PlanTipEntry, useStorage } from '@/app/context/StorageContext';
 import DefaultSettingsModal from '@/components/modals/DefaultSettingsModal';
+import { MetricsBottomSheet } from '@/components/sections/MetricsBottomSheet';
 import { PlanMeta } from '@/components/sections/PlanMeta';
 import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
@@ -22,7 +24,7 @@ type Props = {
 
 export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
-  const { plans, setPlans } = useStorage();
+  const { plans, setPlans, getMetricsForPlanTip } = useStorage();
   const supplementMap = useSupplementMap();
 
   const nutritionPlans = plans.nutrition;
@@ -32,6 +34,8 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) =>
   const [nutritionSettingsTitle, setNutritionSettingsTitle] = useState<string | null>(null);
   const [nutritionCommentInput, setNutritionCommentInput] = useState('');
   const [nutritionEditTipId, setNutritionEditTipId] = useState<string | null>(null);
+  const [selectedMetricsTipId, setSelectedMetricsTipId] = useState<string | null>(null);
+  const metricsBottomSheetRef = useRef<BottomSheet>(null);
 
   const nutritionGroups = useMemo(() => {
     const tipIds = new Set<string>();
@@ -110,6 +114,13 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) =>
     closeNutritionSettingsModal();
   };
 
+  const openMetricsSheet = (tipId: string) => {
+    setSelectedMetricsTipId(tipId);
+    setTimeout(() => {
+      metricsBottomSheetRef.current?.snapToIndex(1);
+    }, 100);
+  };
+
   if (!nutritionGroups.length) {
     return (
       <ThemedText type="default">
@@ -132,6 +143,8 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) =>
         const recommendedDoseLabel = getRecommendedDoseLabel(tip);
 
         const plan = nutritionPlans.find(g => g.tipId === tipId);
+  const metricCount = getMetricsForPlanTip(tipId).length;
+        const metricsLabel = metricCount > 0 ? `📊 ${metricCount}` : '📊';
 
         const foodItems = (tip?.nutritionFoods ?? []).map(food => {
           const itemKey = food.key;
@@ -156,11 +169,22 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) =>
         const arrowRotation = isExpanded ? '-90deg' : '0deg';
 
         const editAction = (
-          <PlanEditActions
-            onEdit={() => handleEditNutrition(plan, tipId, tipTitle)}
-            editLabel={t('nutritionPlanSection.editNutritionSettings')}
-            style={styles.planHeaderActions}
-          />
+          <View style={styles.headerActionsContainer}>
+            <TouchableOpacity
+              onPress={() => openMetricsSheet(tipId)}
+              style={styles.chartButton}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <ThemedText style={[styles.chartEmoji, metricCount === 0 && styles.chartEmojiDisabled]}>
+                {metricsLabel}
+              </ThemedText>
+            </TouchableOpacity>
+            <PlanEditActions
+              onEdit={() => handleEditNutrition(plan, tipId, tipTitle)}
+              editLabel={t('nutritionPlanSection.editNutritionSettings')}
+              style={styles.planHeaderActions}
+            />
+          </View>
         );
 
         return (
@@ -241,15 +265,29 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) =>
           cancelLabel={t('general.cancel')}
           deleteLabel={t('general.delete')}
         />
+        <MetricsBottomSheet bottomSheetRef={metricsBottomSheetRef} tipId={selectedMetricsTipId} planTipId={selectedMetricsTipId ?? undefined} />
       </Portal>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  headerActionsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   planHeaderActions: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  chartButton: {
+    marginRight: 6,
+  },
+  chartEmoji: {
+    fontSize: 16,
+  },
+  chartEmojiDisabled: {
+    opacity: 0.55,
   },
   recommendedDose: {
     marginBottom: 8,

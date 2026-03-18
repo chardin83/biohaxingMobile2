@@ -1,8 +1,7 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
-import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
 import { calculateHRVMetrics } from '@/utils/hrvCalculations';
 import { HRVSummary } from '@/wearables/types';
@@ -10,21 +9,18 @@ import { HRVSummary } from '@/wearables/types';
 interface HRVMetricProps {
   readonly hrvData: HRVSummary[];
   readonly showDivider?: boolean;
+  readonly sourceLabel?: string;
+  readonly onPress?: () => void;
+  readonly isSelected?: boolean;
 }
 
-export function HRVMetric({ hrvData, showDivider = false }: HRVMetricProps) {
+export function HRVMetric({ hrvData, showDivider = false, sourceLabel, onPress, isSelected = false }: HRVMetricProps) {
   const { colors } = useTheme();
   const { hrv, hrvDelta } = calculateHRVMetrics(hrvData);
-
-  return (
-    <View
-      style={[
-        globalStyles.col,
-        showDivider && [globalStyles.colWithDivider, { borderRightColor: colors.textWeak }],
-      ]}
-    >
+  const content = (
+    <View style={styles.contentContainer}>
       <ThemedText type="label">HRV</ThemedText>
-      <View style={globalStyles.metricValueContainer}>
+      <View style={styles.metricValueContainer}>
         <ThemedText type="title2">{hrv ?? '—'}</ThemedText>
         {hrv && <ThemedText type="caption"> ms</ThemedText>}
       </View>
@@ -32,6 +28,64 @@ export function HRVMetric({ hrvData, showDivider = false }: HRVMetricProps) {
         {hrvDelta > 0 ? '+' : ''}
         {hrvDelta}% 7d avg
       </ThemedText>
+      {!!sourceLabel && (
+        <ThemedText type="caption" style={{ color: colors.textMuted }}>
+          {sourceLabel}
+        </ThemedText>
+      )}
+    </View>
+  );
+
+  const containerStyle = [
+    styles.metricContainer,
+    isSelected && { backgroundColor: colors.overlayLight, borderColor: colors.accentStrong },
+  ];
+
+  if (onPress) {
+    return (
+      <Pressable
+        onPress={onPress}
+        accessibilityRole="button"
+        style={({ pressed }) => [
+          containerStyle,
+          pressed && !isSelected && { backgroundColor: colors.overlayLight },
+        ]}
+      >
+        {content}
+        {showDivider && <View pointerEvents="none" style={[styles.divider, { backgroundColor: colors.textWeak }]} />}
+      </Pressable>
+    );
+  }
+
+  return (
+    <View style={containerStyle}>
+      {content}
+      {showDivider && <View pointerEvents="none" style={[styles.divider, { backgroundColor: colors.textWeak }]} />}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  metricContainer: {
+    flex: 1,
+    position: 'relative',
+    borderWidth: 1,
+    borderColor: 'transparent',
+    borderRadius: 16,
+  },
+  contentContainer: {
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+  },
+  divider: {
+    position: 'absolute',
+    top: 16,
+    right: 0,
+    bottom: 16,
+    width: 1,
+  },
+  metricValueContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
+});

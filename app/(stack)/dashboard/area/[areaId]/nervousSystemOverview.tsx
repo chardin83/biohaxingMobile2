@@ -14,8 +14,8 @@ import { Card } from '@/components/ui/Card';
 import GenesListCard from '@/components/ui/GenesListCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
+import { useStoredHRVData } from '@/hooks/useStoredHRVData';
 import { calculateHRVMetrics } from '@/utils/hrvCalculations';
-import { HRVSummary } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
 function daysAgo(n: number) {
@@ -34,13 +34,13 @@ function getBalanceMessage(stressScore: number, t: (key: string) => string): str
   }
 }
 
-export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string }) {
+export default function NervousSystemScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { adapter, status } = useWearable();
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const hrvData = useStoredHRVData();
 
   const [loading, setLoading] = React.useState(true);
-  const [hrvData, setHrvData] = React.useState<HRVSummary[]>([]);
   const [hrv, setHrv] = React.useState<number | null>(null);
   const [sleepHours, setSleepHours] = React.useState<number | null>(null);
   const [energyData, setEnergyData] = React.useState<any[]>([]);
@@ -50,15 +50,8 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
       setLoading(true);
       const range = { start: daysAgo(7), end: new Date().toISOString() };
 
-      const [hrvValue, energy] = await Promise.all([
-          adapter.getHRV(range),
-          adapter.getEnergySignal(range),
-        ]);
-      setHrvData(hrvValue);
+      const energy = await adapter.getEnergySignal(range);
       setEnergyData(energy);
-      
-      const hrvMetrics = calculateHRVMetrics(hrvValue);
-      setHrv(hrvMetrics.hrv);
 
       // Hämta sleep
       const sleepData = await adapter.getSleep(range);
@@ -70,6 +63,11 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
       setLoading(false);
     })().catch(() => setLoading(false));
   }, [adapter]);
+
+  React.useEffect(() => {
+    const hrvMetrics = calculateHRVMetrics(hrvData);
+    setHrv(hrvMetrics.hrv);
+  }, [hrvData]);
 
   // Beräkna status baserat på HRV
   const stressScore = hrv ? Math.max(0, Math.min(100, 100 - hrv)) : 50;
@@ -90,7 +88,7 @@ export default function NervousSystemScreen({ mainGoalId }: { mainGoalId: string
         ) : (
           <>
             <View style={globalStyles.row}>
-              <HRVMetric hrvData={hrvData} showDivider />
+              <HRVMetric hrvData={hrvData} showDivider sourceLabel={hrvData.length > 0 ? t('metrics:hrv.manualSource') : undefined} />
 
               {/* Stress Score */}
               <StressScoreMetric hrvData={hrvData} showDivider />

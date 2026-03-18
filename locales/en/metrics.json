@@ -59,9 +59,29 @@
         "name": "Resting heart rate",
         "description": "Heart rate at rest — an indicator of fitness and recovery."
     },
+    "vo2_max": {
+        "name": "VO₂ max",
+        "description": "An estimate of your body's aerobic capacity and oxygen utilization during exercise."
+    },
     "hrv": {
         "name": "HRV (heart rate variability)",
-        "description": "Measure of nervous system balance and recovery capacity."
+        "description": "Measure of nervous system balance and recovery capacity.",
+        "manualSource": "Manually registered",
+        "trendTitle": "HRV trend",
+        "trendSubtitle": "Last {{count}} registrations",
+        "trendEmpty": "Register HRV on at least two days to see the trend over time.",
+        "latestLabel": "Latest",
+        "lowLabel": "Low",
+        "highLabel": "High"
+    },
+    "trendChart": {
+        "title": "{{metric}} over time",
+        "subtitle": "Last {{count}} registrations",
+        "empty": "Register {{metric}} on at least two days to see the trend over time.",
+        "latestLabel": "Latest",
+        "lowLabel": "Low",
+        "highLabel": "High",
+        "addManualValue": "Add manual measurement"
     },
     "sleep_duration": {
         "name": "Sleep duration",

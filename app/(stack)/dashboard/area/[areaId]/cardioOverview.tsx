@@ -13,18 +13,19 @@ import GenesListCard from '@/components/ui/GenesListCard';
 import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
-import { DailyActivity, EnergySignal, HRVSummary, TimeRange } from '@/wearables/types';
+import { useStoredHRVData } from '@/hooks/useStoredHRVData';
+import { DailyActivity, EnergySignal, TimeRange } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
-export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
+export default function CardioScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { adapter, status } = useWearable();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [hrvData, setHrvData] = useState<HRVSummary[]>([]);
   const [activityData, setActivityData] = useState<DailyActivity[]>([]);
   const [energyData, setEnergyData] = useState<EnergySignal[]>([]);
+  const hrvData = useStoredHRVData();
 
   useEffect(() => {
     const loadData = async () => {
@@ -35,13 +36,11 @@ export default function CardioScreen({ mainGoalId }: { mainGoalId: string }) {
           end: new Date().toISOString(),
         };
 
-        const [hrv, activity, energy] = await Promise.all([
-          adapter.getHRV(range),
+        const [activity, energy] = await Promise.all([
           adapter.getDailyActivity(range),
           adapter.getEnergySignal(range),
         ]);
 
-        setHrvData(hrv);
         setActivityData(activity);
         setEnergyData(energy);
       } catch (err) {

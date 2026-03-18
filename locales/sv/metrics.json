@@ -59,9 +59,29 @@
         "name": "Vilopuls",
         "description": "Hjärtfrekvens i vila – indikator på kondition och återhämtning."
     },
+    "vo2_max": {
+        "name": "VO₂ max",
+        "description": "En uppskattning av kroppens aeroba kapacitet och syreanvändning under träning."
+    },
     "hrv": {
         "name": "HRV (hjärtfrekvensvariation)",
-        "description": "Mått på nervsystemets balans och kroppens återhämtning."
+        "description": "Mått på nervsystemets balans och kroppens återhämtning.",
+        "manualSource": "Manuellt registrerat",
+        "trendTitle": "HRV-trend",
+        "trendSubtitle": "Senaste {{count}} registreringarna",
+        "trendEmpty": "Registrera HRV minst två dagar för att se utvecklingen över tid.",
+        "latestLabel": "Senast",
+        "lowLabel": "Lägst",
+        "highLabel": "Högst"
+    },
+    "trendChart": {
+        "title": "{{metric}} över tid",
+        "subtitle": "Senaste {{count}} registreringarna",
+        "empty": "Registrera {{metric}} minst två dagar för att se utvecklingen över tid.",
+        "latestLabel": "Senast",
+        "lowLabel": "Lägst",
+        "highLabel": "Högst",
+        "addManualValue": "Lägg till manuellt mätvärde"
     },
     "sleep_duration": {
         "name": "Sömnlängd",

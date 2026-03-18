@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import BottomSheet from '@gorhom/bottom-sheet';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
 import { PlanTipEntry, useStorage } from '@/app/context/StorageContext';
 import DefaultSettingsModal from '@/components/modals/DefaultSettingsModal';
+import { MetricsBottomSheet } from '@/components/sections/MetricsBottomSheet';
 import { PlanMeta } from '@/components/sections/PlanMeta';
 import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
@@ -16,7 +18,7 @@ type Props = {
 
 export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
-  const { plans, setPlans } = useStorage();
+  const { plans, setPlans, getMetricsForPlanTip } = useStorage();
 
   const otherPlans = plans.other;
 
@@ -24,6 +26,8 @@ export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
   const [otherSettingsTitle, setOtherSettingsTitle] = useState<string | null>(null);
   const [otherCommentInput, setOtherCommentInput] = useState('');
   const [otherEditTipId, setOtherEditTipId] = useState<string | null>(null);
+  const [selectedMetricsTipId, setSelectedMetricsTipId] = useState<string | null>(null);
+  const metricsBottomSheetRef = useRef<BottomSheet>(null);
 
   const openOtherSettingsModal = (tipId: string, otherTitle?: string | null) => {
     setOtherEditTipId(tipId);
@@ -76,6 +80,13 @@ export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
     openOtherSettingsModal(plan.tipId, title);
   };
 
+  const openMetricsSheet = (tipId: string) => {
+    setSelectedMetricsTipId(tipId);
+    setTimeout(() => {
+      metricsBottomSheetRef.current?.snapToIndex(1);
+    }, 100);
+  };
+
   if (!otherPlans.length) {
     return (
       <ThemedText type="default">
@@ -90,13 +101,29 @@ export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
         const tipTitle = plan.tipId
           ? t(`tips:${plan.tipId}.title`)
           : t('plan.untitled');
+        const metricCount = plan.tipId ? getMetricsForPlanTip(plan.tipId).length : 0;
+        const hasTipId = Boolean(plan.tipId);
+        const metricsLabel = metricCount > 0 ? `📊 ${metricCount}` : '📊';
 
         const editAction = (
-          <PlanEditActions
-            onEdit={() => handleEditOther(plan)}
-            editLabel={t('otherPlanSection.editOtherSettings')}
-            style={styles.planHeaderActions}
-          />
+          <View style={styles.headerActionsContainer}>
+            {hasTipId && (
+              <TouchableOpacity
+                onPress={() => openMetricsSheet(plan.tipId)}
+                style={styles.chartButton}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <ThemedText style={[styles.chartEmoji, metricCount === 0 && styles.chartEmojiDisabled]}>
+                  {metricsLabel}
+                </ThemedText>
+              </TouchableOpacity>
+            )}
+            <PlanEditActions
+              onEdit={() => handleEditOther(plan)}
+              editLabel={t('otherPlanSection.editOtherSettings')}
+              style={styles.planHeaderActions}
+            />
+          </View>
         );
 
         return (
@@ -135,15 +162,29 @@ export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
           cancelLabel={t('general.cancel')}
           deleteLabel={t('general.delete')}
         />
+        <MetricsBottomSheet bottomSheetRef={metricsBottomSheetRef} tipId={selectedMetricsTipId} planTipId={selectedMetricsTipId ?? undefined} />
       </Portal>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  headerActionsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   planHeaderActions: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  chartButton: {
+    marginRight: 6,
+  },
+  chartEmoji: {
+    fontSize: 16,
+  },
+  chartEmojiDisabled: {
+    opacity: 0.55,
   },
   commentText: {
     marginBottom: 8,

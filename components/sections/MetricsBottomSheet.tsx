@@ -1,11 +1,11 @@
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, TextInput,TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
-import { RegisterMetricModal } from '@/components/RegisterMetricModal';
+import { RegisterMetricBottomSheet } from '@/components/RegisterMetricBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -17,58 +17,81 @@ type MetricsBottomSheetProps = {
   planTipId?: string;
 };
 
+const GLOBAL_METRIC_IDS = new Set(['hrv', 'resting_hr']);
+
+function isGlobalMetric(metricId: string): boolean {
+  return GLOBAL_METRIC_IDS.has(metricId);
+}
+
 export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSheetRef, tipId, planTipId }) => {
   const { t } = useTranslation(['metrics']);
   const { colors } = useTheme();
-  const { addMetricEntry, getMetricsForPlanTip } = useStorage();
+  const { addMetricEntry, getMetricHistory, getMetricsForPlanTip } = useStorage();
+  const registerBottomSheetRef = useRef<BottomSheet>(null);
   const [selectedMetricId, setSelectedMetricId] = useState<string | null>(null); // For detail view
-  const [addModalVisible, setAddModalVisible] = useState(false);
-  const [modalMetricId, setModalMetricId] = useState<string | null>(null); // For modal
+  const [isRegisterSheetVisible, setIsRegisterSheetVisible] = useState(false);
+  const [metricDraftId, setMetricDraftId] = useState<string | null>(null);
   const [metricValue, setMetricValue] = useState('');
   const [metricUnit, setMetricUnit] = useState('');
   const [metricNotes, setMetricNotes] = useState('');
+  const [recordedAt, setRecordedAt] = useState(() => new Date());
 
   const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
 
-  const handleOpenAddModal = (metricId: string) => {
-    setModalMetricId(metricId);
+  const getRegisteredEntries = (metricId: string) => {
+    if (isGlobalMetric(metricId)) {
+      return getMetricHistory(metricId);
+    }
+
+    if (!planTipId) {
+      return [];
+    }
+
+    return getMetricsForPlanTip(planTipId).filter(entry => entry.metricId === metricId);
+  };
+
+  const handleOpenAddMetricSheet = (metricId: string) => {
+    setMetricDraftId(metricId);
     const metric = metrics[metricId];
     if (metric && metric.units.length > 0) {
       setMetricUnit(metric.units[0].unit);
     } else {
       setMetricUnit('');
     }
-    setAddModalVisible(true);
+    setMetricValue('');
+    setMetricNotes('');
+    setRecordedAt(new Date());
+    setIsRegisterSheetVisible(true);
   };
 
   const handleSaveMetric = () => {
-    if (!modalMetricId || !metricValue) return;
+    if (!metricDraftId || !metricValue) return;
 
-    const value = parseFloat(metricValue);
-    if (isNaN(value)) return;
+    const value = Number.parseFloat(metricValue);
+    if (Number.isNaN(value)) return;
 
-    console.log('Sparar metricEntry', { metricId: modalMetricId, value, unit: metricUnit, planTipId });
+    const targetPlanTipId = isGlobalMetric(metricDraftId) ? undefined : planTipId;
+
+    console.log('Sparar metricEntry', { metricId: metricDraftId, value, unit: metricUnit, planTipId: targetPlanTipId });
 
     addMetricEntry({
-      metricId: modalMetricId,
+      metricId: metricDraftId,
       value,
       unit: metricUnit,
-      recordedAt: new Date().toISOString(),
+      recordedAt: recordedAt.toISOString(),
       notes: metricNotes || undefined,
-      planTipId,
+      planTipId: targetPlanTipId,
     });
 
-    setAddModalVisible(false);
-    setMetricValue('');
-    setMetricNotes('');
-    setModalMetricId(null);
+    handleCloseAddMetricSheet();
   };
 
-  const handleCloseAddModal = () => {
-    setAddModalVisible(false);
+  const handleCloseAddMetricSheet = () => {
+    setIsRegisterSheetVisible(false);
     setMetricValue('');
     setMetricNotes('');
-    setModalMetricId(null);
+    setRecordedAt(new Date());
+    setMetricDraftId(null);
   };
 
   React.useEffect(() => {
@@ -90,11 +113,8 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
   let detailView = null;
   if (selectedMetricId) {
     const metric = metrics[selectedMetricId];
-    if (!metric) {
-      setSelectedMetricId(null);
-    } else {
-      // Hämta redan registrerade värden för denna metric kopplat till denna planTipId
-      const registeredEntries = planTipId ? getMetricsForPlanTip(planTipId).filter(e => e.metricId === selectedMetricId) : [];
+    if (metric) {
+      const registeredEntries = getRegisteredEntries(selectedMetricId);
       console.log('registeredEntries', registeredEntries, 'planTipId', planTipId, 'selectedMetricId', selectedMetricId);
       detailView = (
         <BottomSheet
@@ -124,30 +144,33 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
             </ThemedText>
 
             <AppButton
-              onPress={() => handleOpenAddModal(selectedMetricId)}
+              onPress={() => handleOpenAddMetricSheet(selectedMetricId)}
               style={styles.addButton}
               title="+ Registrera nytt värde"
             />
 
             {/* Tabell över redan registrerade värden */}
             {registeredEntries.length > 0 && (
-              <View style={{ marginVertical: 12 }}>
-                <ThemedText type="defaultSemiBold" style={{ marginBottom: 4 }}>
+              <View style={styles.registeredEntriesSection}>
+                <ThemedText type="defaultSemiBold" style={styles.registeredEntriesTitle}>
                   Registrerade värden
                 </ThemedText>
-                <View style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 8, overflow: 'hidden' }}>
-                  <View style={{ flexDirection: 'row', backgroundColor: colors.cardBackground }}>
-                    <ThemedText style={{ flex: 1, padding: 8 }} type="caption">Datum</ThemedText>
-                    <ThemedText style={{ flex: 1, padding: 8 }} type="caption">Värde</ThemedText>
-                    <ThemedText style={{ flex: 1, padding: 8 }} type="caption">Enhet</ThemedText>
-                    <ThemedText style={{ flex: 2, padding: 8 }} type="caption">Notering</ThemedText>
+                <View style={[styles.registeredEntriesTable, { borderColor: colors.border }]}>
+                  <View style={[styles.registeredEntriesRow, { backgroundColor: colors.cardBackground }]}>
+                    <ThemedText style={styles.tableCellSmall} type="caption">Datum</ThemedText>
+                    <ThemedText style={styles.tableCellSmall} type="caption">Värde</ThemedText>
+                    <ThemedText style={styles.tableCellSmall} type="caption">Enhet</ThemedText>
+                    <ThemedText style={styles.tableCellLarge} type="caption">Notering</ThemedText>
                   </View>
-                  {registeredEntries.map((entry, i) => (
-                    <View key={i} style={{ flexDirection: 'row', backgroundColor: i % 2 === 0 ? colors.background : colors.cardBackground }}>
-                      <ThemedText style={{ flex: 1, padding: 8 }} type="caption">{entry.recordedAt.slice(0, 10)}</ThemedText>
-                      <ThemedText style={{ flex: 1, padding: 8 }} type="caption">{entry.value}</ThemedText>
-                      <ThemedText style={{ flex: 1, padding: 8 }} type="caption">{entry.unit}</ThemedText>
-                      <ThemedText style={{ flex: 2, padding: 8 }} type="caption">{entry.notes || ''}</ThemedText>
+                  {registeredEntries.map((entry, index) => (
+                    <View
+                      key={`${entry.metricId}-${entry.recordedAt}-${entry.value}`}
+                      style={[styles.registeredEntriesRow, { backgroundColor: index % 2 === 0 ? colors.background : colors.cardBackground }]}
+                    >
+                      <ThemedText style={styles.tableCellSmall} type="caption">{entry.recordedAt.slice(0, 10)}</ThemedText>
+                      <ThemedText style={styles.tableCellSmall} type="caption">{entry.value}</ThemedText>
+                      <ThemedText style={styles.tableCellSmall} type="caption">{entry.unit}</ThemedText>
+                      <ThemedText style={styles.tableCellLarge} type="caption">{entry.notes || ''}</ThemedText>
                     </View>
                   ))}
                 </View>
@@ -158,8 +181,8 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
               Enheter
             </ThemedText>
             <View style={styles.metricsContainer}>
-              {metric.units.map((unit, index) => (
-                <View key={index} style={[styles.unitItem, { backgroundColor: colors.cardBackground }]}> 
+              {metric.units.map(unit => (
+                <View key={`${unit.system}-${unit.unit}`} style={[styles.unitItem, { backgroundColor: colors.cardBackground }]}> 
                   <View style={styles.unitRow}>
                     <ThemedText type="defaultSemiBold">
                       {unit.unit}
@@ -169,7 +192,7 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
                     </ThemedText>
                   </View>
                   {unit.precision !== undefined && (
-                    <ThemedText type="caption" style={{ color: colors.textMuted, marginTop: 4 }}>
+                    <ThemedText type="caption" style={[styles.metaTextSpacing, { color: colors.textMuted }]}>
                       Precision: {unit.precision} decimaler
                     </ThemedText>
                   )}
@@ -182,7 +205,7 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
                 <ThemedText type="caption" style={{ color: colors.textMuted }}>
                   Källa
                 </ThemedText>
-                <ThemedText type="defaultSemiBold" style={{ marginTop: 4 }}>
+                <ThemedText type="defaultSemiBold" style={styles.metaTextSpacing}>
                   {metric.source}
                 </ThemedText>
               </View>
@@ -191,7 +214,7 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
                   <ThemedText type="caption" style={{ color: colors.textMuted }}>
                     Rekommenderad frekvens
                   </ThemedText>
-                  <ThemedText type="defaultSemiBold" style={{ marginTop: 4 }}>
+                  <ThemedText type="defaultSemiBold" style={styles.metaTextSpacing}>
                     {metric.suggestedFrequency}
                   </ThemedText>
                 </View>
@@ -200,6 +223,8 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
           </BottomSheetView>
         </BottomSheet>
       );
+    } else {
+      setSelectedMetricId(null);
     }
   }
 
@@ -249,19 +274,22 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
           </BottomSheetView>
         </BottomSheet>
       )}
-      <RegisterMetricModal
-        visible={addModalVisible}
-        onClose={handleCloseAddModal}
+      <RegisterMetricBottomSheet
+        bottomSheetRef={registerBottomSheetRef}
+        isVisible={isRegisterSheetVisible}
+        onClose={handleCloseAddMetricSheet}
         onSave={handleSaveMetric}
-        metricName={modalMetricId ? t(`metrics:${modalMetricId}.name`) : undefined}
+        metricName={metricDraftId ? t(`metrics:${metricDraftId}.name`) : undefined}
         metricValue={metricValue}
         setMetricValue={setMetricValue}
         metricUnit={metricUnit}
         setMetricUnit={setMetricUnit}
         metricNotes={metricNotes}
         setMetricNotes={setMetricNotes}
+        recordedAt={recordedAt}
+        setRecordedAt={setRecordedAt}
         colors={colors}
-        units={modalMetricId && metrics[modalMetricId]?.units ? metrics[modalMetricId].units : []}
+        units={metricDraftId && metrics[metricDraftId]?.units ? metrics[metricDraftId].units : []}
       />
     </>
   );
@@ -338,34 +366,29 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 8,
   },
-  modalContent: {
-    gap: 16,
+  registeredEntriesSection: {
+    marginVertical: 12,
   },
-  modalMetricName: {
-    marginBottom: 8,
-  },
-  inputGroup: {
-    gap: 8,
-  },
-  inputLabel: {
+  registeredEntriesTitle: {
     marginBottom: 4,
   },
-  input: {
+  registeredEntriesTable: {
     borderWidth: 1,
     borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
+    overflow: 'hidden',
   },
-  textArea: {
-    minHeight: 80,
-    textAlignVertical: 'top',
-  },
-  modalButtons: {
+  registeredEntriesRow: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 8,
   },
-  modalButton: {
+  tableCellSmall: {
     flex: 1,
+    padding: 8,
+  },
+  tableCellLarge: {
+    flex: 2,
+    padding: 8,
+  },
+  metaTextSpacing: {
+    marginTop: 4,
   },
 });

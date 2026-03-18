@@ -14,10 +14,11 @@ import GenesListCard from '@/components/ui/GenesListCard';
 import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
-import { DailyActivity, EnergySignal, HRVSummary, SleepSummary, TimeRange } from '@/wearables/types';
+import { useStoredHRVData } from '@/hooks/useStoredHRVData';
+import { DailyActivity, EnergySignal, SleepSummary, TimeRange } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
-export default function StrengthScreen({ mainGoalId }: { mainGoalId: string }) {
+export default function StrengthScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { adapter, status } = useWearable();
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -25,9 +26,9 @@ export default function StrengthScreen({ mainGoalId }: { mainGoalId: string }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sleepData, setSleepData] = useState<SleepSummary[]>([]);
-  const [hrvData, setHrvData] = useState<HRVSummary[]>([]);
   const [activityData, setActivityData] = useState<DailyActivity[]>([]);
   const [energyData, setEnergyData] = useState<EnergySignal[]>([]);
+  const hrvData = useStoredHRVData();
 
   useEffect(() => {
     const loadData = async () => {
@@ -38,15 +39,13 @@ export default function StrengthScreen({ mainGoalId }: { mainGoalId: string }) {
           end: new Date().toISOString(),
         };
 
-        const [sleep, hrv, activity, energy] = await Promise.all([
+        const [sleep, activity, energy] = await Promise.all([
           adapter.getSleep(range),
-          adapter.getHRV(range),
           adapter.getDailyActivity(range),
           adapter.getEnergySignal(range),
         ]);
 
         setSleepData(sleep);
-        setHrvData(hrv);
         setActivityData(activity);
         setEnergyData(energy);
       } catch (err) {
@@ -108,7 +107,7 @@ export default function StrengthScreen({ mainGoalId }: { mainGoalId: string }) {
         <View style={globalStyles.row}>
           <SleepMetric sleepData={sleepData} showDivider />
           <SleepConsistencyMetric sleepData={{ ...sleepData[0], targetBedtime: '22:30' }} showDivider />
-          <HRVMetric hrvData={hrvData} showDivider={false} />
+          <HRVMetric hrvData={hrvData} showDivider={false} sourceLabel={hrvData.length > 0 ? t('metrics:hrv.manualSource') : undefined} />
         </View>
         <View style={globalStyles.infoSection}> 
           <ThemedText type='explainer' style={[globalStyles.topBorder, { borderColor: colors.borderLight}]}>
