@@ -107,7 +107,7 @@ export default function StrengthScreen({ mainGoalId }: Readonly<{ mainGoalId: st
         <View style={globalStyles.row}>
           <SleepMetric sleepData={sleepData} showDivider />
           <SleepConsistencyMetric sleepData={{ ...sleepData[0], targetBedtime: '22:30' }} showDivider />
-          <HRVMetric hrvData={hrvData} showDivider={false} sourceLabel={hrvData.length > 0 ? t('metrics:hrv.manualSource') : undefined} />
+          <HRVMetric hrvData={hrvData} showDivider={false} />
         </View>
         <View style={globalStyles.infoSection}> 
           <ThemedText type='explainer' style={[globalStyles.topBorder, { borderColor: colors.borderLight}]}>

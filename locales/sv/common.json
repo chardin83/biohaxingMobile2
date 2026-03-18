@@ -349,7 +349,12 @@
     },
     "energyProductionMetrics": {
       "title": "Energi produktionsmetrik",
-      "explainer": "VO₂ max indikerar mitokondriell densitet och oxidativ kapacitet. Högre värden = mer effektiv ATP-produktion från syre."
+      "explainer": "VO₂ max indikerar mitokondriell densitet och oxidativ kapacitet. Högre värden = mer effektiv ATP-produktion från syre.",
+      "explainers": {
+        "vo2_max": "VO₂ max indikerar mitokondriell densitet och oxidativ kapacitet. Högre värden = mer effektiv ATP-produktion från syre.",
+        "resting_hr": "Vilopuls speglar hjärtats belastning i vila och återhämtningsnivå. Lägre vilopuls är ofta kopplat till bättre kondition och effektivare energisystem.",
+        "hrv": "HRV visar balansen i autonoma nervsystemet och hur väl kroppen återhämtar sig. Högre HRV är ofta ett tecken på bättre stressresiliens och energireglering."
+      }
     },
     "energyBalance": {
       "title": "Energibalans",

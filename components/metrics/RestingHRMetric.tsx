@@ -1,5 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
@@ -15,10 +16,11 @@ interface RestingHRMetricProps {
 
 export function RestingHRMetric({ hrvData, showDivider = false, onPress, isSelected = false }: Readonly<RestingHRMetricProps>) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const { restingHR, restingHRDelta } = calculateRestingHRMetrics(hrvData);
   const content = (
     <View style={styles.contentContainer}>
-      <ThemedText type="label">Resting HR</ThemedText>
+      <ThemedText type="label">{t('metrics:resting_hr.shortName', { defaultValue: t('metrics:resting_hr.name') })}</ThemedText>
       <View style={styles.metricValueContainer}>
         <ThemedText type="title2">{restingHR ?? '—'}</ThemedText>
         {restingHR && (

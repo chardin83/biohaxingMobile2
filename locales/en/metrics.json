@@ -57,16 +57,18 @@
     },
     "resting_hr": {
         "name": "Resting heart rate",
+        "shortName": "Resting HR",
         "description": "Heart rate at rest — an indicator of fitness and recovery."
     },
     "vo2_max": {
-        "name": "VO₂ max",
+        "name": "VO₂ max (maximal oxygen uptake)",
+        "shortName": "VO₂ max",
         "description": "An estimate of your body's aerobic capacity and oxygen utilization during exercise."
     },
     "hrv": {
         "name": "HRV (heart rate variability)",
+        "shortName": "HRV",
         "description": "Measure of nervous system balance and recovery capacity.",
-        "manualSource": "Manually registered",
         "trendTitle": "HRV trend",
         "trendSubtitle": "Last {{count}} registrations",
         "trendEmpty": "Register HRV on at least two days to see the trend over time.",

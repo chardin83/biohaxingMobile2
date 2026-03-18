@@ -345,7 +345,12 @@
     },
     "energyProductionMetrics": {
       "title": "Energy Production Metrics",
-      "explainer": "VO₂ max indicates mitochondrial density and oxidative capacity. Higher values = more efficient ATP production from oxygen."
+      "explainer": "VO₂ max indicates mitochondrial density and oxidative capacity. Higher values = more efficient ATP production from oxygen.",
+      "explainers": {
+        "vo2_max": "VO₂ max indicates mitochondrial density and oxidative capacity. Higher values = more efficient ATP production from oxygen.",
+        "resting_hr": "Resting heart rate reflects baseline cardiovascular load and recovery state. A lower resting heart rate is often associated with better fitness and energy efficiency.",
+        "hrv": "HRV reflects autonomic nervous system balance and recovery readiness. Higher HRV is often a sign of better stress resilience and energy regulation."
+      }
     },
     "energyBalance": {
       "title": "Energy Balance",

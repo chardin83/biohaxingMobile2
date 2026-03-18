@@ -40,7 +40,7 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
    
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedMetric, setSelectedMetric] = useState<EnergyProductionMetricKey>('hrv');
+  const [selectedMetric, setSelectedMetric] = useState<EnergyProductionMetricKey>('vo2_max');
   const [isRegisterSheetVisible, setIsRegisterSheetVisible] = useState(false);
   const [metricValue, setMetricValue] = useState('');
   const [metricUnit, setMetricUnit] = useState('');
@@ -140,14 +140,14 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
           metricName: t('metrics:vo2_max.name'),
           unit: '',
           data: vo2MaxTrendData,
-          accentColor: colors.area.energy,
+          accentColor: colors.chart.vo2Max,
         };
       case 'resting_hr':
         return {
           metricName: t('metrics:resting_hr.name'),
           unit: 'bpm',
           data: restingHRTrendData,
-          accentColor: colors.surfaceRedBorder,
+          accentColor: colors.chart.restingHr,
         };
       case 'hrv':
       default:
@@ -155,10 +155,10 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
           metricName: t('metrics:hrv.name'),
           unit: 'ms',
           data: hrvTrendData,
-          accentColor: colors.accentStrong,
+          accentColor: colors.chart.hrv,
         };
     }
-  }, [colors.accentStrong, colors.area.energy, colors.surfaceRedBorder, hrvTrendData, restingHRTrendData, selectedMetric, t, vo2MaxTrendData]);
+  }, [colors.chart.hrv, colors.chart.restingHr, colors.chart.vo2Max, hrvTrendData, restingHRTrendData, selectedMetric, t, vo2MaxTrendData]);
 
   const selectedMetricDefinition = metrics[selectedMetric];
 
@@ -257,7 +257,6 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
           />
           <HRVMetric
             hrvData={hrvData}
-            sourceLabel={hrvData.length > 0 ? t('metrics:hrv.manualSource') : undefined}
             onPress={() => setSelectedMetric('hrv')}
             isSelected={selectedMetric === 'hrv'}
           />
@@ -270,7 +269,9 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
           onAddManualValue={openManualMetricSheet}
         />
         <ThemedText type="explainer" style ={[globalStyles.explainer, { borderColor: colors.borderLight }]}>
-          {t('energyOverview.energyProductionMetrics.explainer')}
+          {t(`energyOverview.energyProductionMetrics.explainers.${selectedMetric}`, {
+            defaultValue: t('energyOverview.energyProductionMetrics.explainer'),
+          })}
         </ThemedText>
       </Card>
 

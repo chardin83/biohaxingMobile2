@@ -1,5 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
@@ -15,9 +16,10 @@ interface VO2MaxMetricProps {
 
 export function VO2MaxMetric({ vo2max, status, trend, showDivider = false, onPress, isSelected = false }: Readonly<VO2MaxMetricProps>) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const content = (
     <View style={styles.contentContainer}>
-      <ThemedText type="label">VO₂ Max</ThemedText>
+      <ThemedText type="label">{t('metrics:vo2_max.shortName', { defaultValue: t('metrics:vo2_max.name') })}</ThemedText>
       <ThemedText type="title2">{vo2max ?? '—'}</ThemedText>
       {trend !== undefined && (
         <ThemedText type="explainer">

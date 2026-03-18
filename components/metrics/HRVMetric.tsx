@@ -1,5 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
@@ -9,17 +10,17 @@ import { HRVSummary } from '@/wearables/types';
 interface HRVMetricProps {
   readonly hrvData: HRVSummary[];
   readonly showDivider?: boolean;
-  readonly sourceLabel?: string;
   readonly onPress?: () => void;
   readonly isSelected?: boolean;
 }
 
-export function HRVMetric({ hrvData, showDivider = false, sourceLabel, onPress, isSelected = false }: HRVMetricProps) {
+export function HRVMetric({ hrvData, showDivider = false, onPress, isSelected = false }: HRVMetricProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const { hrv, hrvDelta } = calculateHRVMetrics(hrvData);
   const content = (
     <View style={styles.contentContainer}>
-      <ThemedText type="label">HRV</ThemedText>
+      <ThemedText type="label">{t('metrics:hrv.shortName', { defaultValue: t('metrics:hrv.name') })}</ThemedText>
       <View style={styles.metricValueContainer}>
         <ThemedText type="title2">{hrv ?? '—'}</ThemedText>
         {hrv && <ThemedText type="caption"> ms</ThemedText>}
@@ -28,11 +29,6 @@ export function HRVMetric({ hrvData, showDivider = false, sourceLabel, onPress, 
         {hrvDelta > 0 ? '+' : ''}
         {hrvDelta}% 7d avg
       </ThemedText>
-      {!!sourceLabel && (
-        <ThemedText type="caption" style={{ color: colors.textMuted }}>
-          {sourceLabel}
-        </ThemedText>
-      )}
     </View>
   );
 

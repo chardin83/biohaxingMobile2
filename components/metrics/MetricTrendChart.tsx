@@ -12,6 +12,11 @@ export interface MetricTrendPoint {
   readonly value: number;
 }
 
+type AxisEntry = {
+  readonly id: 'max' | 'mid' | 'min';
+  readonly value: number;
+};
+
 interface MetricTrendChartProps {
   readonly data: MetricTrendPoint[];
   readonly metricName: string;
@@ -28,6 +33,9 @@ const CHART_PADDING = {
   bottom: 20,
   left: 8,
 };
+
+const Y_AXIS_LABEL_LINE_HEIGHT = 20;
+const Y_AXIS_LABEL_OFFSET = Y_AXIS_LABEL_LINE_HEIGHT / 2;
 
 function formatShortDate(date: string) {
   const [, month, day] = date.split('-');
@@ -69,12 +77,51 @@ export function MetricTrendChart({
   const { t } = useTranslation();
   const [chartWidth, setChartWidth] = React.useState(0);
   const lineColor = accentColor ?? colors.accentStrong;
+  const dynamicStyles = React.useMemo(
+    () =>
+      StyleSheet.create({
+        containerBorder: {
+          borderTopColor: colors.borderLight,
+        },
+        subtitleText: {
+          color: colors.textMuted,
+        },
+        emptyState: {
+          backgroundColor: colors.overlayLight,
+          borderColor: colors.borderLight,
+        },
+        emptyText: {
+          color: colors.textMuted,
+        },
+        chartRow: {
+          marginLeft: -20,
+        },
+        yAxisColumn: {
+          height,
+        },
+        yAxisUnit: {
+          color: colors.textMuted,
+          top: 0,
+        },
+        yAxisValue: {
+          color: colors.textMuted,
+        },
+        chartFrame: {
+          backgroundColor: colors.overlayLight,
+          borderColor: colors.borderLight,
+        },
+        axisLabelText: {
+          color: colors.textMuted,
+        },
+      }),
+    [colors.borderLight, colors.overlayLight, colors.textMuted, height]
+  );
 
   const chartData = React.useMemo<MetricTrendPoint[]>(() => {
     return data.slice(-daysToShow);
   }, [data, daysToShow]);
 
-  const latestValue = chartData[chartData.length - 1]?.value;
+  const latestValue = chartData.at(-1)?.value;
   const minValue = chartData.length > 0 ? Math.min(...chartData.map(entry => entry.value)) : undefined;
   const maxValue = chartData.length > 0 ? Math.max(...chartData.map(entry => entry.value)) : undefined;
 
@@ -92,10 +139,20 @@ export function MetricTrendChart({
     const innerHeight = Math.max(height - CHART_PADDING.top - CHART_PADDING.bottom, 1);
     const rawMin = Math.min(...chartData.map(entry => entry.value));
     const rawMax = Math.max(...chartData.map(entry => entry.value));
+
     const baseRange = Math.max(rawMax - rawMin, 1);
     const paddedMin = Math.max(0, rawMin - baseRange * 0.2);
     const paddedMax = rawMax + baseRange * 0.2;
     const paddedRange = Math.max(paddedMax - paddedMin, 1);
+
+    const axisEntries: AxisEntry[] = [
+      { id: 'max', value: rawMax },
+      { id: 'mid', value: (rawMax + rawMin) / 2 },
+      { id: 'min', value: rawMin },
+    ];
+    const gridLines = axisEntries.map(({ value }) =>
+      CHART_PADDING.top + ((paddedMax - value) / paddedRange) * innerHeight
+    );
 
     const points = chartData.map((entry, index) => {
       const x = chartData.length === 1
@@ -107,9 +164,10 @@ export function MetricTrendChart({
     });
 
     return {
+      axisEntries,
       points,
       chartBottom: CHART_PADDING.top + innerHeight,
-      gridLines: [0.25, 0.5, 0.75].map(ratio => CHART_PADDING.top + innerHeight * ratio),
+      gridLines,
     };
   }, [chartData, chartWidth, height]);
 
@@ -121,17 +179,30 @@ export function MetricTrendChart({
     return Array.from(new Set([0, Math.floor((chartData.length - 1) / 2), chartData.length - 1]));
   }, [chartData.length]);
 
+  const yAxisEntries = chartGeometry?.axisEntries ?? [];
+  const yAxisLabelStyles = React.useMemo(
+    () =>
+      (chartGeometry?.gridLines ?? []).map(gridY =>
+        StyleSheet.create({
+          value: {
+            top: gridY - Y_AXIS_LABEL_OFFSET,
+          },
+        }).value
+      ),
+    [chartGeometry?.gridLines]
+  );
+
   if (chartData.length < 2) {
     return (
-      <View style={[styles.container, { borderTopColor: colors.borderLight }]}> 
+      <View style={[styles.container, dynamicStyles.containerBorder]}> 
         <View style={styles.header}>
           <ThemedText type="title3">{t('metrics:trendChart.title', { metric: metricName })}</ThemedText>
-          <ThemedText type="caption" style={{ color: colors.textMuted }}>
+          <ThemedText type="caption" style={dynamicStyles.subtitleText}>
             {t('metrics:trendChart.subtitle', { count: daysToShow })}
           </ThemedText>
         </View>
-        <View style={[styles.emptyState, { backgroundColor: colors.overlayLight, borderColor: colors.borderLight }]}> 
-          <ThemedText type="explainer" style={{ color: colors.textMuted }}>
+        <View style={[styles.emptyState, dynamicStyles.emptyState]}> 
+          <ThemedText type="explainer" style={dynamicStyles.emptyText}>
             {t('metrics:trendChart.empty', { metric: metricName })}
           </ThemedText>
         </View>
@@ -147,33 +218,53 @@ export function MetricTrendChart({
   }
 
   return (
-    <View style={[styles.container, { borderTopColor: colors.borderLight }]}> 
-      <View style={styles.header}>
-        <View>
-          <ThemedText type="title3">{t('metrics:trendChart.title', { metric: metricName })}</ThemedText>
-          <ThemedText type="caption" style={{ color: colors.textMuted }}>
-            {t('metrics:trendChart.subtitle', { count: chartData.length })}
-          </ThemedText>
+  <View style={[styles.container, dynamicStyles.containerBorder]}> 
+    <View style={styles.header}>
+      <View>
+        <ThemedText type="title3">{t('metrics:trendChart.title', { metric: metricName })}</ThemedText>
+        <ThemedText type="caption" style={dynamicStyles.subtitleText}>
+          {t('metrics:trendChart.subtitle', { count: chartData.length })}
+        </ThemedText>
+      </View>
+      <View style={styles.summary}>
+        <View style={styles.summaryItem}>
+          <ThemedText type="caption" style={dynamicStyles.subtitleText}>{t('metrics:trendChart.latestLabel')}</ThemedText>
+          <ThemedText type="defaultSemiBold">{latestValue}{unit ? ` ${unit}` : ''}</ThemedText>
         </View>
-        <View style={styles.summary}>
-          <View style={styles.summaryItem}>
-            <ThemedText type="caption" style={{ color: colors.textMuted }}>{t('metrics:trendChart.latestLabel')}</ThemedText>
-            <ThemedText type="defaultSemiBold">{latestValue}{unit ? ` ${unit}` : ''}</ThemedText>
-          </View>
-          <View style={styles.summaryItem}>
-            <ThemedText type="caption" style={{ color: colors.textMuted }}>{t('metrics:trendChart.lowLabel')}</ThemedText>
-            <ThemedText type="defaultSemiBold">{minValue}{unit ? ` ${unit}` : ''}</ThemedText>
-          </View>
-          <View style={styles.summaryItem}>
-            <ThemedText type="caption" style={{ color: colors.textMuted }}>{t('metrics:trendChart.highLabel')}</ThemedText>
-            <ThemedText type="defaultSemiBold">{maxValue}{unit ? ` ${unit}` : ''}</ThemedText>
-          </View>
+        <View style={styles.summaryItem}>
+          <ThemedText type="caption" style={dynamicStyles.subtitleText}>{t('metrics:trendChart.lowLabel')}</ThemedText>
+          <ThemedText type="defaultSemiBold">{minValue}{unit ? ` ${unit}` : ''}</ThemedText>
+        </View>
+        <View style={styles.summaryItem}>
+          <ThemedText type="caption" style={dynamicStyles.subtitleText}>{t('metrics:trendChart.highLabel')}</ThemedText>
+          <ThemedText type="defaultSemiBold">{maxValue}{unit ? ` ${unit}` : ''}</ThemedText>
         </View>
       </View>
+    </View>
 
+    <View style={[styles.chartRow, dynamicStyles.chartRow]}>
+      <View style={[styles.yAxisColumn, dynamicStyles.yAxisColumn]}>
+        {!!unit && (
+          <ThemedText
+            type="caption"
+            style={[styles.yAxisUnit, dynamicStyles.yAxisUnit]}
+          >
+            {unit}
+          </ThemedText>
+        )}
+        {yAxisEntries.map(({ id, value }, index) => (
+          <ThemedText
+            key={id}
+            type="caption"
+            style={[styles.yAxisValue, dynamicStyles.yAxisValue, yAxisLabelStyles[index]]}
+          >
+            {value.toFixed(1)}
+          </ThemedText>
+        ))}
+      </View>
       <View
         onLayout={handleLayout}
-        style={[styles.chartFrame, { backgroundColor: colors.overlayLight, borderColor: colors.borderLight }]}
+        style={[styles.chartFrame, dynamicStyles.chartFrame]}
       >
         {chartGeometry && (
           <Svg width={chartWidth} height={height}>
@@ -183,10 +274,9 @@ export function MetricTrendChart({
                 <Stop offset="1" stopColor={lineColor} stopOpacity="0.04" />
               </LinearGradient>
             </Defs>
-
-            {chartGeometry.gridLines.map(gridY => (
+            {chartGeometry.gridLines.map((gridY, index) => (
               <Line
-                key={gridY}
+                key={chartGeometry.axisEntries[index]?.id ?? `grid-${gridY}`}
                 x1={CHART_PADDING.left}
                 x2={chartWidth - CHART_PADDING.right}
                 y1={gridY}
@@ -196,7 +286,6 @@ export function MetricTrendChart({
                 strokeWidth={1}
               />
             ))}
-
             <Path d={buildAreaPath(chartGeometry.points, chartGeometry.chartBottom)} fill="url(#hrvAreaGradient)" />
             <Path
               d={buildPath(chartGeometry.points)}
@@ -206,10 +295,8 @@ export function MetricTrendChart({
               strokeLinejoin="round"
               strokeWidth={3}
             />
-
             {chartGeometry.points.map((point, index) => {
               const isLatestPoint = index === chartGeometry.points.length - 1;
-
               return (
                 <Circle
                   key={`${chartData[index].date}-${chartData[index].value}`}
@@ -225,26 +312,27 @@ export function MetricTrendChart({
           </Svg>
         )}
       </View>
-
-      <View style={styles.axisLabels}>
-        {labelIndices.map(index => (
-          <View key={chartData[index].date} style={styles.axisLabelItem}>
-            <ThemedText type="caption" style={{ color: colors.textMuted }}>
-              {formatShortDate(chartData[index].date)}
-            </ThemedText>
-          </View>
-        ))}
-      </View>
-
-      {!!onAddManualValue && (
-        <AppButton
-          onPress={onAddManualValue}
-          title={t('metrics:trendChart.addManualValue')}
-          style={styles.ctaButton}
-        />
-      )}
     </View>
-  );
+
+    <View style={styles.axisLabels}>
+      {labelIndices.map(index => (
+        <View key={chartData[index].date} style={styles.axisLabelItem}>
+            <ThemedText type="caption" style={dynamicStyles.axisLabelText}>
+            {formatShortDate(chartData[index].date)}
+          </ThemedText>
+        </View>
+      ))}
+    </View>
+
+    {!!onAddManualValue && (
+      <AppButton
+        onPress={onAddManualValue}
+        title={t('metrics:trendChart.addManualValue')}
+        style={styles.ctaButton}
+      />
+    )}
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
@@ -264,11 +352,34 @@ const styles = StyleSheet.create({
   summaryItem: {
     flex: 1,
   },
+  chartRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
+  yAxisColumn: {
+    width: 40,
+    marginRight: 4,
+    position: 'relative',
+  },
+  yAxisUnit: {
+    position: 'absolute',
+    right: 0,
+    textAlign: 'right',
+  },
+  yAxisValue: {
+    position: 'absolute',
+    right: 0,
+    textAlign: 'right',
+  },
   chartFrame: {
     minHeight: 180,
     borderWidth: 1,
     borderRadius: 18,
     overflow: 'hidden',
+    flex: 1,
+    maxWidth: '100%',
+    width: '100%',
   },
   axisLabels: {
     flexDirection: 'row',

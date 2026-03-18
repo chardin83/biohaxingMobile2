@@ -114,7 +114,7 @@ export default function ImmuneScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
           </View>
 
           {/* HRV */}
-          <HRVMetric hrvData={hrvData} sourceLabel={hrvData.length > 0 ? t('metrics:hrv.manualSource') : undefined} />
+          <HRVMetric hrvData={hrvData} />
         </View>
 
         {/* Second row */}
