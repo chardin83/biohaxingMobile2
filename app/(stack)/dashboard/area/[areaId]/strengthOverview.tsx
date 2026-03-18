@@ -15,7 +15,7 @@ import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { useStoredHRVData } from '@/hooks/useStoredHRVData';
-import { DailyActivity, EnergySignal, SleepSummary, TimeRange } from '@/wearables/types';
+import { SleepSummary, TimeRange } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
 export default function StrengthScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
@@ -26,8 +26,6 @@ export default function StrengthScreen({ mainGoalId }: Readonly<{ mainGoalId: st
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sleepData, setSleepData] = useState<SleepSummary[]>([]);
-  const [activityData, setActivityData] = useState<DailyActivity[]>([]);
-  const [energyData, setEnergyData] = useState<EnergySignal[]>([]);
   const hrvData = useStoredHRVData();
 
   useEffect(() => {
@@ -39,15 +37,9 @@ export default function StrengthScreen({ mainGoalId }: Readonly<{ mainGoalId: st
           end: new Date().toISOString(),
         };
 
-        const [sleep, activity, energy] = await Promise.all([
-          adapter.getSleep(range),
-          adapter.getDailyActivity(range),
-          adapter.getEnergySignal(range),
-        ]);
+        const sleep = await adapter.getSleep(range);
 
         setSleepData(sleep);
-        setActivityData(activity);
-        setEnergyData(energy);
       } catch (err) {
         console.error('Failed to load data:', err);
         setError('Failed to load data');
@@ -67,32 +59,6 @@ export default function StrengthScreen({ mainGoalId }: Readonly<{ mainGoalId: st
     return <Error error={error} />;
   }
 
-  // Transform wearable data to performance metrics
-  const latestSleep = sleepData[0];
-  const latestHRV = hrvData[0];
-  const latestActivity = activityData[0];
-  const latestEnergy = energyData[0];
-
-  const performance = {
-    trainingReadiness: latestEnergy?.bodyBatteryLevel ?? 82,
-    readinessStatus: (latestEnergy?.bodyBatteryLevel ?? 82) > 75 ? t('general.optimal') : t('metrics.moderate'),
-    recoveryTime: 12, // Would need workout tracking data
-    trainingLoad: {
-      current: latestActivity?.activeMinutes ? latestActivity.activeMinutes * 2 : 245,
-      optimal: '220-280',
-      status: 'Balanced',
-    },
-    anaerobicLoad: 68, // Would need intensity data
-    strengthSessions: 4, // Would need workout tracking
-    lastStrengthWorkout: '2h ago', // Would need workout tracking
-    sleepQuality: latestSleep?.efficiencyPct ?? 88,
-    sleepHours: latestSleep ? latestSleep.durationMinutes / 60 : 8.2,
-    bodyBattery: latestEnergy?.bodyBatteryLevel ?? 78,
-    hrv: latestHRV?.rmssdMs ?? 68,
-    restingHR: latestHRV?.avgRestingHrBpm ?? 52,
-    proteinWindow: 'Active (45min remaining)', // Would need workout tracking
-  };
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <ThemedText type="title" style={{ color: colors.area.strength }}>{t('strengthOverview.title')}</ThemedText>
@@ -106,7 +72,7 @@ export default function StrengthScreen({ mainGoalId }: Readonly<{ mainGoalId: st
       <Card title={t('strengthOverview.recoveryFactors.title')}>
         <View style={globalStyles.row}>
           <SleepMetric sleepData={sleepData} showDivider />
-          <SleepConsistencyMetric sleepData={{ ...sleepData[0], targetBedtime: '22:30' }} showDivider />
+          <SleepConsistencyMetric sleepData={{ ...sleepData[0], targetBedtime: '' }} showDivider />
           <HRVMetric hrvData={hrvData} showDivider={false} />
         </View>
         <View style={globalStyles.infoSection}> 
@@ -119,9 +85,7 @@ export default function StrengthScreen({ mainGoalId }: Readonly<{ mainGoalId: st
       {/* Protein Timing Card */}
       <Card title="Anabolic Window">
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">
-            ⏰ {performance.proteinWindow}
-          </ThemedText>
+          <ThemedText type="title3">⏰ Post-workout protein timing</ThemedText>
           <ThemedText type='default'>
             Post-workout protein intake is most effective within 2-3 hours after training. Muscle protein synthesis
             remains elevated for 24-48 hours after resistance training.

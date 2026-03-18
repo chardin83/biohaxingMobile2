@@ -89,6 +89,14 @@
         "name": "Sömnlängd",
         "description": "Total tid du sover per natt."
     },
+    "deep_sleep": {
+        "name": "Djup sömn",
+        "description": "Den djupaste sömnfasen som stödjer fysisk återhämtning och reparation."
+    },
+    "rem_sleep": {
+        "name": "REM-sömn",
+        "description": "Sömnfasen som stödjer minne, inlärning och emotionell bearbetning."
+    },
     "sleep_quality": {
         "name": "Sömnkvalitet",
         "description": "Upplevd kvalitet på sömnen."

@@ -23,9 +23,10 @@ export function SleepConsistencyMetric({
 }: Readonly<SleepConsistencyMetricProps>) {
   const { colors } = useTheme();
   const { targetBedtime, startTime } = sleepData;
+  const hasConsistencyData = Boolean(targetBedtime && startTime);
 
-  const targetMinutes = typeof targetBedtime === 'string' ? timeStringToMinutes(targetBedtime) : 0;
-  const actualMinutes = typeof startTime === 'string' ? timeStringToMinutes(startTime) : 0;
+  const targetMinutes = hasConsistencyData ? timeStringToMinutes(targetBedtime) : 0;
+  const actualMinutes = hasConsistencyData ? timeStringToMinutes(startTime) : 0;
   let differenceMinutes = targetMinutes - actualMinutes;
   const isPerfect = Math.abs(differenceMinutes) <= 5;
   const isGood = Math.abs(differenceMinutes) <= 30;
@@ -41,7 +42,9 @@ export function SleepConsistencyMetric({
   }
 
   let differenceLabel: string;
-  if (isPerfect) {
+  if (!hasConsistencyData) {
+    differenceLabel = '—';
+  } else if (isPerfect) {
     differenceLabel = 'Perfect!';
   } else {
     differenceLabel = `Δ ${Math.abs(differenceMinutes)} min ${differenceMinutes > 0 ? 'earlier' : 'late'}`;
@@ -56,9 +59,9 @@ export function SleepConsistencyMetric({
     >
       <ThemedText type="label">Bedtime</ThemedText>
       <View style={globalStyles.metricValueContainer}>
-        <ThemedText type="title2">{startTime}</ThemedText>
+        <ThemedText type="title2">{startTime ?? '—'}</ThemedText>
       </View>
-      <ThemedText type={accentType} style={{ color: accentColor }}>
+      <ThemedText type={accentType} style={hasConsistencyData ? { color: accentColor } : undefined}>
         {differenceLabel}
       </ThemedText>
     </View>

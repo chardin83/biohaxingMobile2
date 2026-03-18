@@ -89,6 +89,14 @@
         "name": "Sleep duration",
         "description": "Total time you sleep each night."
     },
+    "deep_sleep": {
+        "name": "Deep sleep",
+        "description": "The deepest sleep phase supporting physical recovery and repair."
+    },
+    "rem_sleep": {
+        "name": "REM sleep",
+        "description": "The sleep phase supporting memory, learning, and emotional processing."
+    },
     "sleep_quality": {
         "name": "Sleep quality",
         "description": "Your perceived sleep quality."

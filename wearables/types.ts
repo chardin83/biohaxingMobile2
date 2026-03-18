@@ -1,4 +1,4 @@
-export type SourceId = 'mock' | 'garmin' | 'fitbit' | 'healthkit' | 'healthconnect';
+export type SourceId = 'none' | 'mock' | 'garmin' | 'fitbit' | 'healthkit' | 'healthconnect';
 
 export type TimeRange = {
   start: string; // ISO

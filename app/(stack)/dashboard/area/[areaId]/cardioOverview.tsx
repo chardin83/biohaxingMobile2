@@ -14,11 +14,13 @@ import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { useStoredHRVData } from '@/hooks/useStoredHRVData';
+import { useStorage } from '@/app/context/StorageContext';
 import { DailyActivity, EnergySignal, TimeRange } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
 export default function CardioScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { adapter, status } = useWearable();
+  const { getMetricHistory } = useStorage();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
@@ -67,10 +69,12 @@ export default function CardioScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
 
   // Calculate weekly training load from activity data
   const weeklyActiveMinutes = activityData.reduce((sum, day) => sum + (day.activeMinutes || 0), 0);
-  const trainingLoad = weeklyActiveMinutes * 2; // Simple calculation
+  const trainingLoad = activityData.length > 0 ? weeklyActiveMinutes * 2 : null;
 
   let trainingLoadStatus: string;
-  if (trainingLoad > 400) {
+  if (trainingLoad == null) {
+    trainingLoadStatus = '—';
+  } else if (trainingLoad > 400) {
     trainingLoadStatus = 'High';
   } else if (trainingLoad > 200) {
     trainingLoadStatus = 'Optimal';
@@ -78,14 +82,15 @@ export default function CardioScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
     trainingLoadStatus = 'Low';
   }
 
+  const latestVo2Max = getMetricHistory('vo2_max').at(-1)?.value ?? null;
+
   const cardio = {
-    vo2max: 48, // Would need fitness data from wearable
-    vo2maxDelta: 3,
-    trainingLoad: trainingLoad || 285,
+    vo2max: latestVo2Max,
+    trainingLoad,
     trainingLoadStatus,
-    recoveryTime: (latestEnergy?.bodyBatteryLevel ?? 0) > 80 ? 12 : 18,
-    fitnessAge: 32, // Would be calculated from VO2max and other factors
-    actualAge: 38,
+    recoveryTime: latestEnergy?.bodyBatteryLevel == null ? null : latestEnergy.bodyBatteryLevel > 80 ? 12 : 18,
+    fitnessAge: null,
+    actualAge: null,
   };
 
   return (
@@ -97,11 +102,11 @@ export default function CardioScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
       {/* Overview card */}
       <Card title={t("cardioOverview.yourCardioPerformance")}>
         <View style={globalStyles.row}>
-          <VO2MaxMetric vo2max={cardio.vo2max} trend={cardio.vo2maxDelta} showDivider />
+          <VO2MaxMetric vo2max={cardio.vo2max} showDivider />
           <RestingHRMetric hrvData={hrvData} showDivider />
           <View style={globalStyles.col}>
             <ThemedText type="label">{t("cardioOverview.trainingLoad")}</ThemedText>
-            <ThemedText type="title2">{cardio.trainingLoad}</ThemedText>
+            <ThemedText type="title2">{cardio.trainingLoad ?? '—'}</ThemedText>
             <ThemedText type="caption">{cardio.trainingLoadStatus}</ThemedText>
             {activityData.length > 0 && <ThemedText type="caption">{t("cardioOverview.sevenDayTotal")}</ThemedText>}
           </View>
@@ -109,13 +114,17 @@ export default function CardioScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
         <View style={[globalStyles.row, globalStyles.marginTop8]}>
           <View style={[globalStyles.col, globalStyles.colWithDivider, { borderRightColor: colors.borderLight ?? colors.border }]}>
             <ThemedText type="label">{t("cardioOverview.recoveryTime")}</ThemedText>
-            <ThemedText type="title2">{cardio.recoveryTime}h</ThemedText>
+            <ThemedText type="title2">{cardio.recoveryTime == null ? '—' : `${cardio.recoveryTime}h`}</ThemedText>
             <ThemedText type="caption">{t("cardioOverview.untilNextHardEffort")}</ThemedText>
           </View>
           <View style={globalStyles.col}>
             <ThemedText type="label">{t("cardioOverview.fitnessAge")}</ThemedText>
-            <ThemedText type="title2">{cardio.fitnessAge}</ThemedText>
-            <ThemedText type="caption">{cardio.actualAge - cardio.fitnessAge} {t("cardioOverview.yearsYounger")}</ThemedText>
+            <ThemedText type="title2">{cardio.fitnessAge ?? '—'}</ThemedText>
+            <ThemedText type="caption">
+              {cardio.actualAge != null && cardio.fitnessAge != null
+                ? `${cardio.actualAge - cardio.fitnessAge} ${t("cardioOverview.yearsYounger")}`
+                : '—'}
+            </ThemedText>
           </View>
         </View>
       </Card>

@@ -21,6 +21,7 @@ interface MetricTrendChartProps {
   readonly data: MetricTrendPoint[];
   readonly metricName: string;
   readonly unit?: string;
+  readonly valueFormatter?: (value: number) => string;
   readonly daysToShow?: number;
   readonly height?: number;
   readonly accentColor?: string;
@@ -68,6 +69,7 @@ export function MetricTrendChart({
   data,
   metricName,
   unit,
+  valueFormatter,
   daysToShow = 7,
   height = 180,
   accentColor,
@@ -124,6 +126,9 @@ export function MetricTrendChart({
   const latestValue = chartData.at(-1)?.value;
   const minValue = chartData.length > 0 ? Math.min(...chartData.map(entry => entry.value)) : undefined;
   const maxValue = chartData.length > 0 ? Math.max(...chartData.map(entry => entry.value)) : undefined;
+  const formatValue = React.useCallback((value: number) => {
+    return valueFormatter ? valueFormatter(value) : `${value}${unit ? ` ${unit}` : ''}`;
+  }, [unit, valueFormatter]);
 
   const handleLayout = React.useCallback((event: LayoutChangeEvent) => {
     const nextWidth = Math.round(event.nativeEvent.layout.width);
@@ -229,15 +234,15 @@ export function MetricTrendChart({
       <View style={styles.summary}>
         <View style={styles.summaryItem}>
           <ThemedText type="caption" style={dynamicStyles.subtitleText}>{t('metrics:trendChart.latestLabel')}</ThemedText>
-          <ThemedText type="defaultSemiBold">{latestValue}{unit ? ` ${unit}` : ''}</ThemedText>
+          <ThemedText type="defaultSemiBold">{latestValue == null ? '—' : formatValue(latestValue)}</ThemedText>
         </View>
         <View style={styles.summaryItem}>
           <ThemedText type="caption" style={dynamicStyles.subtitleText}>{t('metrics:trendChart.lowLabel')}</ThemedText>
-          <ThemedText type="defaultSemiBold">{minValue}{unit ? ` ${unit}` : ''}</ThemedText>
+          <ThemedText type="defaultSemiBold">{minValue == null ? '—' : formatValue(minValue)}</ThemedText>
         </View>
         <View style={styles.summaryItem}>
           <ThemedText type="caption" style={dynamicStyles.subtitleText}>{t('metrics:trendChart.highLabel')}</ThemedText>
-          <ThemedText type="defaultSemiBold">{maxValue}{unit ? ` ${unit}` : ''}</ThemedText>
+          <ThemedText type="defaultSemiBold">{maxValue == null ? '—' : formatValue(maxValue)}</ThemedText>
         </View>
       </View>
     </View>
@@ -258,7 +263,7 @@ export function MetricTrendChart({
             type="caption"
             style={[styles.yAxisValue, dynamicStyles.yAxisValue, yAxisLabelStyles[index]]}
           >
-            {value.toFixed(1)}
+            {valueFormatter ? valueFormatter(value) : value.toFixed(1)}
           </ThemedText>
         ))}
       </View>

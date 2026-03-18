@@ -108,6 +108,9 @@ export const Colors = {
       vo2Max: 'rgba(255,191,0, 0.95)',
       restingHr: 'rgba(217, 83, 79, 0.9)',
       hrv: 'rgba(0,191,174,0.95)',
+      sleepDuration: '#32D1A6',
+      deepSleep: 'rgba(120,170,255,0.95)',
+      remSleep: 'rgba(255,215,100,0.95)',
     },
 
      area: {
@@ -238,6 +241,9 @@ export const Colors = {
       vo2Max: 'rgba(255,215,100,0.95)',
       restingHr: 'rgba(0,191,174,0.95)',
       hrv: 'rgba(120,170,255,0.95)',
+      sleepDuration: '#1FAE9E',
+      deepSleep: 'rgba(120,170,255,0.95)',
+      remSleep: 'rgba(255,215,100,0.95)',
     },
     
     area: {

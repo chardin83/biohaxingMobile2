@@ -16,9 +16,8 @@ export function StepsMetric({ activityData, showDivider = false }: Readonly<Step
   const { colors } = useTheme();
   const { t } = useTranslation();
 
-  // Hämta dagens aktivitet (första i listan, eller använd ett datumfilter om du vill)
   const today = activityData[0];
-  const steps = today?.steps ?? 0;
+  const steps = today?.steps;
 
   return (
     <View
@@ -29,7 +28,7 @@ export function StepsMetric({ activityData, showDivider = false }: Readonly<Step
       ]}
     >
       <ThemedText type="label">{t("metrics.todaysSteps.title")}</ThemedText>
-      <ThemedText type="title2">{steps.toLocaleString()}</ThemedText>
+      <ThemedText type="title2">{typeof steps === 'number' ? steps.toLocaleString() : '—'}</ThemedText>
     </View>
   );
 }

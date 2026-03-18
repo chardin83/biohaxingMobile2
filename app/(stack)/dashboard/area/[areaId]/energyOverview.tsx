@@ -111,26 +111,31 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
   const latestSleep = sleepData[0];
   const latestActivity = activityData[0];
   const latestEnergy = energyData[0];
+  const latestVo2Max = vo2MaxTrendData.at(-1)?.value ?? null;
 
   // Calculate metrics only for display in energy object
   const { hrv } = calculateHRVMetrics(hrvData);
   const { restingHR } = calculateRestingHRMetrics(hrvData);
 
   const energy = {
-    bodyBattery: latestEnergy?.bodyBatteryLevel ?? 0,
-    bodyBatteryChange: '+18',
-    //bodyBatteryStatus: (latestEnergy?.bodyBatteryLevel ?? 72) > 60 ? 'Good' : 'Low',
-    stressScore: 32,
-    stressLevel: 'Moderate',
-    sleepHours: latestSleep ? latestSleep.durationMinutes / 60 : 7.5,
-    sleepQuality: latestSleep?.efficiencyPct ?? 82,
-    deepSleepMinutes: latestSleep?.stages?.deepMinutes ?? 0,
-    vo2max: 46,
-    vo2maxStatus: 'Good',
-    restingHR: restingHR ?? 56,
-    hrv: hrv ?? 64,
-    activityMinutes: latestActivity?.activeMinutes ?? 0,
-    intensityMinutes: latestActivity?.intensityMinutes ?? 0,
+    bodyBattery: latestEnergy?.bodyBatteryLevel ?? null,
+    bodyBatteryChange: null,
+    stressScore: null,
+    stressLevel:
+      latestEnergy?.bodyBatteryLevel == null
+        ? '—'
+        : latestEnergy.bodyBatteryLevel > 70
+          ? t('metrics.low')
+          : t('metrics.moderate'),
+    sleepHours: latestSleep ? latestSleep.durationMinutes / 60 : null,
+    sleepQuality: latestSleep?.efficiencyPct ?? null,
+    deepSleepMinutes: latestSleep?.stages?.deepMinutes ?? null,
+    vo2max: latestVo2Max,
+    vo2maxStatus: undefined,
+    restingHR,
+    hrv,
+    activityMinutes: latestActivity?.activeMinutes ?? null,
+    intensityMinutes: latestActivity?.intensityMinutes ?? null,
   };
 
   const selectedMetricConfig = React.useMemo(() => {
@@ -216,16 +221,18 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
       {/* Body Battery - Main Energy Indicator */}
       <Card title={t('energyOverview.cellularEnergyReserves.title')}>
         <View style={styles.centerMetric}>
-          <ThemedText type="title2">{energy.bodyBattery}</ThemedText>
+          <ThemedText type="title2">{energy.bodyBattery ?? '—'}</ThemedText>
           <ThemedText type="label">{t('energyOverview.cellularEnergyReserves.bodyBattery')}</ThemedText>
-          <ThemedText type="caption">{energy.bodyBatteryChange} {t('energyOverview.cellularEnergyReserves.sinceWaking')}</ThemedText>
+          <ThemedText type="caption">
+            {energy.bodyBatteryChange == null ? '—' : `${energy.bodyBatteryChange} ${t('energyOverview.cellularEnergyReserves.sinceWaking')}`}
+          </ThemedText>
         </View>
         <View style={[styles.batteryBar, { backgroundColor: colors.overlayLight }]}>
           <View
             style={[
               styles.batteryFill,
               {
-                width: `${energy.bodyBattery}%`,
+                width: `${Math.max(0, energy.bodyBattery ?? 0)}%`,
                 backgroundColor: colors.goldSoft,
               }
             ]}
@@ -289,7 +296,7 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
                 },
               ]}
             >
-              <ThemedText type="value">{energy.stressScore}</ThemedText>
+              <ThemedText type="value">{energy.stressScore ?? '—'}</ThemedText>
               <ThemedText type="label">{t('energyOverview.energyBalance.stressScore')}</ThemedText>
               <ThemedText type="caption">{energy.stressLevel}</ThemedText>
             </View>
@@ -297,7 +304,7 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
                   borderColor: colors.surfaceRedBorder,
                   backgroundColor: colors.surfaceRed,
                 },]}>
-              <ThemedText type="value">{energy.intensityMinutes}</ThemedText>
+              <ThemedText type="value">{energy.intensityMinutes ?? '—'}</ThemedText>
               <ThemedText type="label">{t('energyOverview.energyBalance.intensityMinutes')}</ThemedText>
             </View>
           </View>
@@ -313,15 +320,17 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
                 },
               ]}
             >
-              <ThemedText type="value">{energy.sleepHours}h</ThemedText>
+              <ThemedText type="value">{energy.sleepHours == null ? '—' : `${energy.sleepHours.toFixed(1)}h`}</ThemedText>
               <ThemedText type="label">{t('energyOverview.energyBalance.sleepDuration')}</ThemedText>
-              <ThemedText type="caption">{energy.sleepQuality}% {t('energyOverview.energyBalance.sleepQuality')}</ThemedText>
+              <ThemedText type="caption">
+                {energy.sleepQuality == null ? '—' : `${energy.sleepQuality}% ${t('energyOverview.energyBalance.sleepQuality')}`}
+              </ThemedText>
             </View>
             <View style={[globalStyles.card, globalStyles.marginTop8, {
                   borderColor: colors.surfaceGreenBorder,
                   backgroundColor: colors.surfaceGreen,
                 },]}>
-              <ThemedText type="value">{energy.deepSleepMinutes}min</ThemedText>
+              <ThemedText type="value">{energy.deepSleepMinutes == null ? '—' : `${energy.deepSleepMinutes}min`}</ThemedText>
               <ThemedText type="label">{t('energyOverview.energyBalance.deepSleep')}</ThemedText>
             </View>
           </View>
@@ -393,7 +402,7 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
         <View style={globalStyles.row}>
           <View style={[globalStyles.col, globalStyles.colWithDivider]}>
             <ThemedText type="label">{t("energyOverview.todaysActivity.activeMinutes")}</ThemedText>
-            <ThemedText type="value">{energy.activityMinutes}</ThemedText>
+            <ThemedText type="value">{energy.activityMinutes ?? '—'}</ThemedText>
           </View>
 
           <StepsMetric activityData={activityData} showDivider />

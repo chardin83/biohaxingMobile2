@@ -15,7 +15,7 @@ import { WearableStatus } from '@/components/WearableStatus';
 import { DailyActivity, EnergySignal, SleepSummary, TimeRange } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
-export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) {
+export default function DigestiveScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { adapter, status } = useWearable();
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -67,24 +67,25 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
   const latestSleep = sleepData[0];
   const latestActivity = activityData[0];
   const latestEnergy = energyData[0];
+  let stressLevel = '—';
+  if (latestEnergy?.bodyBatteryLevel != null) {
+    stressLevel = latestEnergy.bodyBatteryLevel > 70 ? t('metrics.low') : t('metrics.moderate');
+  }
 
   const getSleepQuality = (): string => {
-    if (!latestSleep || latestSleep.efficiencyPct === undefined) {
-      return 'Good';
+    if (latestSleep?.efficiencyPct === undefined) {
+      return '—';
     }
-    return latestSleep.efficiencyPct > 80 ? 'Good' : 'Fair';
+    return latestSleep.efficiencyPct > 80 ? t('metrics.good') : t('metrics.moderate');
   };
 
   const digestive = {
-    stressLevel: (latestEnergy?.bodyBatteryLevel ?? 82) > 70 ? 'Low' : 'Moderate',
-    bodyBattery: latestEnergy?.bodyBatteryLevel ?? 82,
-    sleepHours: latestSleep ? latestSleep.durationMinutes / 60 : 7.8,
+    stressLevel,
+    bodyBattery: latestEnergy?.bodyBatteryLevel ?? null,
+    sleepHours: latestSleep ? latestSleep.durationMinutes / 60 : null,
     sleepQuality: getSleepQuality(),
-    activityMinutes: latestActivity?.activeMinutes ?? 145,
-    stepCount: latestActivity?.steps ?? 9500,
-    hydration: 2.1, // Would need manual logging
-    lastMealLogged: '3h ago', // Would need manual logging
-    symptomsToday: 0, // Would need manual logging
+    activityMinutes: latestActivity?.activeMinutes ?? null,
+    stepCount: latestActivity?.steps ?? null,
   };
 
   return (
@@ -103,14 +104,14 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
           <View style={[globalStyles.col, globalStyles.colWithDivider, { borderRightColor: colors.borderLight ?? colors.border }]}>
             <ThemedText type="label">{t('digestiveOverview.gutHealthInfluencers.stressLevel')}</ThemedText>
             <ThemedText type="title3">{digestive.stressLevel}</ThemedText>
-            <ThemedText type="caption">Battery: {digestive.bodyBattery}%</ThemedText>
+            <ThemedText type="caption">Battery: {digestive.bodyBattery == null ? '—' : `${digestive.bodyBattery}%`}</ThemedText>
             {latestEnergy && <ThemedText type="caption">{latestEnergy.source}</ThemedText>}
           </View>
 
           {/* Sleep */}
           <View style={[globalStyles.col, globalStyles.colWithDivider, { borderRightColor: colors.borderLight ?? colors.border }]}>
             <ThemedText type="label">{t('digestiveOverview.gutHealthInfluencers.sleep')}</ThemedText>
-            <ThemedText type="title3">{digestive.sleepHours.toFixed(1)}h</ThemedText>
+            <ThemedText type="title3">{digestive.sleepHours == null ? '—' : `${digestive.sleepHours.toFixed(1)}h`}</ThemedText>
             <ThemedText type="caption">{digestive.sleepQuality}</ThemedText>
             {latestSleep && <ThemedText type="caption">{latestSleep.source}</ThemedText>}
           </View>
@@ -118,8 +119,10 @@ export default function DigestiveScreen({ mainGoalId }: { mainGoalId: string }) 
           {/* Activity */}
           <View style={globalStyles.col}>
             <ThemedText type="label">{t('digestiveOverview.gutHealthInfluencers.activity')}</ThemedText>
-            <ThemedText type="title3">{digestive.activityMinutes}min</ThemedText>
-            <ThemedText type="caption">{digestive.stepCount.toLocaleString()} {t('digestiveOverview.gutHealthInfluencers.steps')}</ThemedText>
+            <ThemedText type="title3">{digestive.activityMinutes == null ? '—' : `${digestive.activityMinutes}min`}</ThemedText>
+            <ThemedText type="caption">
+              {digestive.stepCount == null ? '—' : `${digestive.stepCount.toLocaleString()} ${t('digestiveOverview.gutHealthInfluencers.steps')}`}
+            </ThemedText>
             {latestActivity && <ThemedText type="caption">{latestActivity.source}</ThemedText>}
           </View>
         </View>

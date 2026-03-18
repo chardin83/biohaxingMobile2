@@ -533,6 +533,14 @@
       },
       "explainer": "Djup sömn är avgörande för fysisk återhämtning och immunfunktion. REM-sömn stödjer minneskonsolidering och emotionell reglering."
     },
+    "sleepTrends": {
+      "title": "Sömntrender",
+      "explainers": {
+        "sleep_duration": "Sömnlängd visar din totala nattliga återhämtning. En stabil nivå på ungefär 7 till 9 timmar stödjer hormonbalans, immunförsvar och mental skärpa.",
+        "deep_sleep": "Djupsömn är fasen där kroppen prioriterar fysisk återhämtning, vävnadsreparation och immunstöd. Trenden hjälper dig se om återhämtningen faktiskt förbättras över tid.",
+        "rem_sleep": "REM-sömn stödjer minneskonsolidering, emotionell bearbetning och inlärning. Att följa REM över tid ger en bättre bild av stress, sömnkvalitet och mental återhämtning."
+      }
+    },
     "understandingSleep": {
       "title": "Förstå sömn",
       "stages": {

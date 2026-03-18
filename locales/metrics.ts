@@ -299,12 +299,40 @@ export const metrics: Record<string, MetricDefinition> = {
     emoji: '😴',
     nameKey: 'sleep_duration.name',
     descriptionKey: 'sleep_duration.description',
-    canonicalUnit: 'hours',
+    canonicalUnit: 'min',
     source: 'wearable',
     suggestedFrequency: 'daily',
     units: [
-      { unit: 'hours', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 },
-      { unit: 'hours', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 }
+      { unit: 'min', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
+      { unit: 'min', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
+  },
+
+  deep_sleep: {
+    id: 'deep_sleep',
+    emoji: '💤',
+    nameKey: 'deep_sleep.name',
+    descriptionKey: 'deep_sleep.description',
+    canonicalUnit: 'min',
+    source: 'wearable',
+    suggestedFrequency: 'daily',
+    units: [
+      { unit: 'min', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
+      { unit: 'min', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
+  },
+
+  rem_sleep: {
+    id: 'rem_sleep',
+    emoji: '💭',
+    nameKey: 'rem_sleep.name',
+    descriptionKey: 'rem_sleep.description',
+    canonicalUnit: 'min',
+    source: 'wearable',
+    suggestedFrequency: 'daily',
+    units: [
+      { unit: 'min', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
+      { unit: 'min', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
 

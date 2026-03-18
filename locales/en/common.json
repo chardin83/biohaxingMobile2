@@ -525,6 +525,14 @@
       },
       "explainer": "Deep sleep is crucial for physical recovery and immune function. REM sleep supports memory consolidation and emotional regulation."
     },
+    "sleepTrends": {
+      "title": "Sleep trends",
+      "explainers": {
+        "sleep_duration": "Sleep duration shows your total nightly recovery. A stable level around 7 to 9 hours supports hormone balance, immune function, and mental sharpness.",
+        "deep_sleep": "Deep sleep is the phase where the body prioritizes physical recovery, tissue repair, and immune support. The trend helps show whether recovery is actually improving over time.",
+        "rem_sleep": "REM sleep supports memory consolidation, emotional processing, and learning. Tracking REM over time gives a better signal of stress, sleep quality, and mental recovery."
+      }
+    },
     "understandingSleep": {
       "title": "Understanding sleep",
       "stages": {

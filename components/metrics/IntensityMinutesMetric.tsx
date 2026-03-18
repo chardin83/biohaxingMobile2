@@ -14,9 +14,8 @@ interface IntensityMinutesMetricProps {
 export function IntensityMinutesMetric({ activityData, showDivider = false }: Readonly<IntensityMinutesMetricProps>) {
   const { t } = useTranslation();
 
-  // Plocka ut dagens intensiva minuter (justera logik om du vill summera eller filtrera på datum)
   const today = activityData[0];
-  const intensityMinutes = today?.intensityMinutes ?? 0;
+  const intensityMinutes = today?.intensityMinutes;
 
   return (
     <View
@@ -26,7 +25,7 @@ export function IntensityMinutesMetric({ activityData, showDivider = false }: Re
       ]}
     >
       <ThemedText type="label">{t("metrics.intensityMinutes.title")}</ThemedText>
-      <ThemedText type="title2">{intensityMinutes}</ThemedText>
+      <ThemedText type="title2">{typeof intensityMinutes === 'number' ? intensityMinutes : '—'}</ThemedText>
     </View>
   );
 }

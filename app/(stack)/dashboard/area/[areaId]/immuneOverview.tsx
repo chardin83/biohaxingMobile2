@@ -78,11 +78,22 @@ export default function ImmuneScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
 
   // Transform wearable data to immune metrics
   const latestEnergy = energyData[0];
+  let stressLevel: string | null = null;
+  if (latestEnergy?.bodyBatteryLevel != null) {
+    stressLevel = latestEnergy.bodyBatteryLevel > 70 ? t('metrics.low') : t('metrics.moderate');
+  }
 
   const immune = {
-    stressLevel: (latestEnergy?.bodyBatteryLevel ?? 78) > 70 ? t("metrics.low") : t("metrics.moderate"),
-    bodyBattery: latestEnergy?.bodyBatteryLevel ?? 78,
+    stressLevel,
+    bodyBattery: latestEnergy?.bodyBatteryLevel ?? null,
   };
+
+  let immuneRecoveryTitle = '—';
+  let immuneRecoveryCaption = '—';
+  if (immune.bodyBattery != null) {
+    immuneRecoveryTitle = immune.bodyBattery > 70 ? t('metrics.good') : t('metrics.moderate');
+    immuneRecoveryCaption = immune.bodyBattery > 70 ? t('metrics.readyForActivity') : t('metrics.needRecovery');
+  }
 
   return (
     <>
@@ -108,8 +119,10 @@ export default function ImmuneScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
             ]}
           >
             <ThemedText type="label">{t("immuneOverview.immuneStatus.stressLevel")}</ThemedText>
-            <ThemedText type="title3">{immune.stressLevel}</ThemedText>
-            <ThemedText type="caption">{t("immuneOverview.immuneStatus.bodyBattery")}: {immune.bodyBattery}%</ThemedText>
+            <ThemedText type="title3">{immune.stressLevel ?? '—'}</ThemedText>
+            <ThemedText type="caption">
+              {t("immuneOverview.immuneStatus.bodyBattery")}: {immune.bodyBattery == null ? '—' : `${immune.bodyBattery}%`}
+            </ThemedText>
             {latestEnergy && <ThemedText type="caption">{latestEnergy.source}</ThemedText>}
           </View>
 
@@ -131,8 +144,8 @@ export default function ImmuneScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
            {/* Immune Recovery Status */}
           <View style={globalStyles.col}>
             <ThemedText type="label">{t("immuneOverview.immuneStatus.recoveryStatus")}</ThemedText>
-            <ThemedText type="title3">{immune.bodyBattery > 70 ? t("metrics.good") : t("metrics.moderate")}</ThemedText>
-            <ThemedText type="caption">{immune.bodyBattery > 70 ? t("metrics.readyForActivity") : t("metrics.needRecovery")}</ThemedText>
+            <ThemedText type="title3">{immuneRecoveryTitle}</ThemedText>
+            <ThemedText type="caption">{immuneRecoveryCaption}</ThemedText>
           </View>
         </View>
       </Card>

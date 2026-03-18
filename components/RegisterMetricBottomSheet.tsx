@@ -10,6 +10,7 @@ import { DateTimeInput } from '@/components/ui/DateTimeInput';
 interface RegisterMetricBottomSheetProps {
   bottomSheetRef: React.RefObject<BottomSheet | null>;
   isVisible: boolean;
+  metricId?: string;
   metricName?: string;
   metricValue: string;
   setMetricValue: (value: string) => void;
@@ -28,6 +29,7 @@ interface RegisterMetricBottomSheetProps {
 export function RegisterMetricBottomSheet({
   bottomSheetRef,
   isVisible,
+  metricId,
   metricName,
   metricValue,
   setMetricValue,
@@ -47,6 +49,27 @@ export function RegisterMetricBottomSheet({
   const hasMetricName = Boolean(metricName);
   const hasMultipleUnits = (units?.length ?? 0) > 1;
   const hasSingleUnit = (units?.length ?? 0) === 1;
+  const isSleepDurationMetric = metricId === 'sleep_duration';
+  const parsedSleepDurationMinutes = React.useMemo(() => {
+    const parsedValue = Number.parseInt(metricValue, 10);
+    return Number.isNaN(parsedValue) ? 0 : parsedValue;
+  }, [metricValue]);
+  const sleepDurationHours = String(Math.floor(parsedSleepDurationMinutes / 60));
+  const sleepDurationMinutes = String(parsedSleepDurationMinutes % 60);
+
+  const updateSleepDurationValue = React.useCallback((nextHoursRaw: string, nextMinutesRaw: string) => {
+    const normalizedHours = nextHoursRaw.replace(/[^0-9]/g, '');
+    const normalizedMinutes = nextMinutesRaw.replace(/[^0-9]/g, '');
+
+    if (!normalizedHours && !normalizedMinutes) {
+      setMetricValue('');
+      return;
+    }
+
+    const hours = normalizedHours ? Number.parseInt(normalizedHours, 10) : 0;
+    const minutes = normalizedMinutes ? Math.min(Number.parseInt(normalizedMinutes, 10), 59) : 0;
+    setMetricValue(String(hours * 60 + minutes));
+  }, [setMetricValue]);
 
   let unitField = (
     <BottomSheetTextInput
@@ -129,22 +152,49 @@ export function RegisterMetricBottomSheet({
           <ThemedText type="default" style={styles.inputLabel}>
             Värde
           </ThemedText>
-          <BottomSheetTextInput
-            style={[styles.input, { color: colors.text, borderColor: colors.border }]}
-            value={metricValue}
-            onChangeText={setMetricValue}
-            keyboardType="decimal-pad"
-            placeholder="Ange värde"
-            placeholderTextColor={colors.textMuted}
-          />
+          {isSleepDurationMetric ? (
+            <View style={styles.sleepDurationRow}>
+              <View style={styles.sleepDurationField}>
+                <BottomSheetTextInput
+                  style={[styles.input, { color: colors.text, borderColor: colors.border }]}
+                  value={metricValue === '' ? '' : sleepDurationHours}
+                  onChangeText={hours => updateSleepDurationValue(hours, sleepDurationMinutes)}
+                  keyboardType="number-pad"
+                  placeholder="Timmar"
+                  placeholderTextColor={colors.textMuted}
+                />
+              </View>
+              <View style={styles.sleepDurationField}>
+                <BottomSheetTextInput
+                  style={[styles.input, { color: colors.text, borderColor: colors.border }]}
+                  value={metricValue === '' ? '' : sleepDurationMinutes}
+                  onChangeText={minutes => updateSleepDurationValue(sleepDurationHours, minutes)}
+                  keyboardType="number-pad"
+                  placeholder="Minuter"
+                  placeholderTextColor={colors.textMuted}
+                />
+              </View>
+            </View>
+          ) : (
+            <BottomSheetTextInput
+              style={[styles.input, { color: colors.text, borderColor: colors.border }]}
+              value={metricValue}
+              onChangeText={setMetricValue}
+              keyboardType="decimal-pad"
+              placeholder="Ange värde"
+              placeholderTextColor={colors.textMuted}
+            />
+          )}
         </View>
 
-        <View style={styles.inputGroup}>
-          <ThemedText type="default" style={styles.inputLabel}>
-            Enhet
-          </ThemedText>
-          {unitField}
-        </View>
+        {!isSleepDurationMetric && (
+          <View style={styles.inputGroup}>
+            <ThemedText type="default" style={styles.inputLabel}>
+              Enhet
+            </ThemedText>
+            {unitField}
+          </View>
+        )}
 
         <DateTimeInput value={recordedAt} onChange={setRecordedAt} />
 
@@ -198,6 +248,13 @@ const styles = StyleSheet.create({
   pickerContainer: {
     padding: 0,
     justifyContent: 'center',
+  },
+  sleepDurationRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  sleepDurationField: {
+    flex: 1,
   },
   singleUnitContainer: {
     justifyContent: 'center',
