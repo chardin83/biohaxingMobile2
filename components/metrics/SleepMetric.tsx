@@ -1,5 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
@@ -13,11 +14,26 @@ interface SleepMetricProps {
 
 export function SleepMetric({ sleepData, showDivider = false }: Readonly<SleepMetricProps>) {
   const { colors } = useTheme();
-  const latestSleep = sleepData[0];
-  const sleepMinutes = latestSleep?.durationMinutes ?? null;
+  const { t } = useTranslation();
+  const latestSleepWithDuration = React.useMemo(() => {
+    const validSleepEntries = sleepData.filter(entry => typeof entry.durationMinutes === 'number');
+
+    if (validSleepEntries.length === 0) {
+      return undefined;
+    }
+
+    return validSleepEntries.reduce((latest, current) => {
+      if (!latest) {
+        return current;
+      }
+
+      return current.date > latest.date ? current : latest;
+    }, validSleepEntries[0]);
+  }, [sleepData]);
+  const sleepMinutes = latestSleepWithDuration?.durationMinutes ?? null;
   const sleepHours = sleepMinutes ? Math.floor(sleepMinutes / 60) : null;
   const sleepMins = sleepMinutes ? sleepMinutes % 60 : null;
-  const efficiency = latestSleep?.efficiencyPct ?? null;
+  const efficiency = latestSleepWithDuration?.efficiencyPct ?? null;
 
   return (
     <View
@@ -26,7 +42,7 @@ export function SleepMetric({ sleepData, showDivider = false }: Readonly<SleepMe
         showDivider && [globalStyles.colWithDivider, { borderRightColor: colors.textWeak }],
       ]}
     >
-      <ThemedText type="label">Sleep duration</ThemedText>
+      <ThemedText type="label">{t('metrics:sleep_duration.name')}</ThemedText>
       <View style={globalStyles.metricValueContainer}>
         {sleepMinutes === null ? (
           <ThemedText type="title2">—</ThemedText>
@@ -44,9 +60,9 @@ export function SleepMetric({ sleepData, showDivider = false }: Readonly<SleepMe
           {efficiency}% efficiency
         </ThemedText>
       )}
-      {latestSleep && (
+      {latestSleepWithDuration && latestSleepWithDuration.source !== 'none' && (
         <ThemedText type="explainer">
-          {latestSleep.source}
+          {latestSleepWithDuration.source}
         </ThemedText>
       )}
     </View>

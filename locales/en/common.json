@@ -462,7 +462,13 @@
     "title": "Mind & Cognition",
     "description": "Cognitive function, mental performance, and brain health",
     "mindMetrics": {
-      "title": "Cognitive metrics"
+      "title": "Cognitive metrics",
+      "explainers": {
+        "body_battery": "The Body Battery trend shows how your energy reserves change over time. Higher and more stable levels are often linked to better mental stamina and focus.",
+        "sleep_duration": "Sleep duration in hours and minutes shows your recovery baseline. A stable level night after night supports memory, concentration, and emotional regulation.",
+        "steps": "The steps trend reflects your daily movement volume. Consistent everyday activity supports brain blood flow and can improve cognitive sharpness.",
+        "intensity_minutes": "Intensity minutes show how much pulse-raising activity you get. The right weekly dose can improve stress resilience and mental performance."
+      }
     },
     "informationCard": {
       "title": "Why these metrics matter",

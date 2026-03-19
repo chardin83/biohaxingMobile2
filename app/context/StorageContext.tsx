@@ -152,6 +152,7 @@ interface StorageContextType {
     updater: MetricEntry[] | ((prev: MetricEntry[]) => MetricEntry[])
   ) => void;
   addMetricEntry: (entry: MetricEntry) => void;
+  upsertMetricEntries: (entries: MetricEntry[]) => void;
   getMetricHistory: (metricId: string, planTipId?: string) => MetricEntry[];
   getMetricsForPlanTip: (planTipId: string) => MetricEntry[];
   getRelevantTipsForMetrics: (metricIds: string[]) => Array<{ tipId: string; matchCount: number; matchingMetrics: string[] }>;
@@ -438,6 +439,39 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     setMetricEntries(prev => [...prev, entry]);
   }, []);
 
+  const upsertMetricEntries = useCallback((entries: MetricEntry[]) => {
+    if (entries.length === 0) {
+      return;
+    }
+
+    setMetricEntries(prev => {
+      const next = [...prev];
+      const existingIndexByKey = new Map<string, number>();
+
+      next.forEach((entry, index) => {
+        existingIndexByKey.set(`${entry.metricId}|${entry.recordedAt}|${entry.planTipId ?? ''}`, index);
+      });
+
+      entries.forEach(entry => {
+        const key = `${entry.metricId}|${entry.recordedAt}|${entry.planTipId ?? ''}`;
+        const existingIndex = existingIndexByKey.get(key);
+
+        if (existingIndex === undefined) {
+          existingIndexByKey.set(key, next.length);
+          next.push(entry);
+          return;
+        }
+
+        next[existingIndex] = {
+          ...next[existingIndex],
+          ...entry,
+        };
+      });
+
+      return next;
+    });
+  }, []);
+
   const getMetricHistory = useCallback((metricId: string, planTipId?: string): MetricEntry[] => {
     return metricEntriesState.filter(entry => {
       const matchesMetric = entry.metricId === metricId;
@@ -631,11 +665,12 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       metricEntries: metricEntriesState,
       setMetricEntries,
       addMetricEntry,
+      upsertMetricEntries,
       getMetricHistory,
       getMetricsForPlanTip,
       getRelevantTipsForMetrics,
     }),
-    [plansState, setPlans, activeGoals, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, trainingPlanSettingsState, showMusicState, tempPlans, metricEntriesState, addMetricEntry, getMetricHistory, getMetricsForPlanTip, getRelevantTipsForMetrics]
+    [plansState, setPlans, activeGoals, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, trainingPlanSettingsState, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, getMetricsForPlanTip, getRelevantTipsForMetrics]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

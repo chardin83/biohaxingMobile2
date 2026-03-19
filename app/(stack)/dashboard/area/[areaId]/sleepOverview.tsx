@@ -38,7 +38,7 @@ function daysAgo(n: number) {
 
 export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { adapter, status } = useWearable();
-  const { addMetricEntry, getMetricHistory } = useStorage();
+  const { addMetricEntry, getMetricHistory, upsertMetricEntries } = useStorage();
   const registerBottomSheetRef = React.useRef<BottomSheet>(null);
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -50,7 +50,7 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
   const [metricUnit, setMetricUnit] = React.useState('');
   const [metricNotes, setMetricNotes] = React.useState('');
   const [recordedAt, setRecordedAt] = React.useState(() => new Date());
-  const [sleepData, setSleepData] = React.useState<SleepSummary[]>([]);
+  const [wearableSleepData, setWearableSleepData] = React.useState<SleepSummary[]>([]);
   const [consistencyLabel, setConsistencyLabel] = React.useState<string>('-');
   const [deepSleepMinutes, setDeepSleepMinutes] = React.useState<number | null>(null);
   const [remSleepMinutes, setRemSleepMinutes] = React.useState<number | null>(null);
@@ -86,6 +86,50 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
   );
 
   const selectedTrendMetricDefinition = metrics[selectedTrendMetric];
+  const sleepDurationManualEntries = React.useMemo(() => {
+    return getMetricHistory('sleep_duration').map(entry => {
+      const valueInMinutes = entry.unit === 'hours' ? Math.round(entry.value * 60) : Math.round(entry.value);
+
+      return {
+        date: entry.recordedAt.slice(0, 10),
+        durationMinutes: valueInMinutes,
+      };
+    });
+  }, [getMetricHistory]);
+
+  const sleepData = React.useMemo<SleepSummary[]>(() => {
+    const byDate = new Map<string, SleepSummary>();
+
+    wearableSleepData.forEach(entry => {
+      byDate.set(entry.date, entry);
+    });
+
+    sleepDurationManualEntries.forEach(entry => {
+      const existing = byDate.get(entry.date);
+
+      if (existing) {
+        byDate.set(entry.date, {
+          ...existing,
+          durationMinutes: entry.durationMinutes,
+        });
+      } else {
+        byDate.set(entry.date, {
+          source: 'none',
+          date: entry.date,
+          durationMinutes: entry.durationMinutes,
+        });
+      }
+    });
+
+    return Array.from(byDate.values()).sort((left, right) => left.date.localeCompare(right.date));
+  }, [sleepDurationManualEntries, wearableSleepData]);
+  const latestSleepEntry = React.useMemo(() => {
+    if (sleepData.length === 0) {
+      return undefined;
+    }
+
+    return sleepData.reduce((acc, current) => (current.date > acc.date ? current : acc), sleepData[0]);
+  }, [sleepData]);
 
   const buildTrendData = React.useCallback((wearablePoints: MetricTrendPoint[], metricId: SleepTrendMetricKey) => {
     const byDate = new Map<string, MetricTrendPoint>();
@@ -107,15 +151,13 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
   }, [getMetricHistory]);
 
   const sleepDurationTrendData = React.useMemo<MetricTrendPoint[]>(() => {
-    const wearablePoints = sleepData
+    return sleepData
       .filter(entry => typeof entry.durationMinutes === 'number')
       .map(entry => ({
         date: entry.date,
         value: entry.durationMinutes,
       }));
-
-    return buildTrendData(wearablePoints, 'sleep_duration');
-  }, [buildTrendData, sleepData]);
+  }, [sleepData]);
 
   const deepSleepTrendData = React.useMemo<MetricTrendPoint[]>(() => {
     const wearablePoints = sleepData
@@ -167,7 +209,6 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
     }
   }, [colors.chart.deepSleep, colors.chart.remSleep, colors.chart.sleepDuration, deepSleepTrendData, remSleepTrendData, selectedTrendMetric, sleepDurationTrendData, t]);
 
-  const latestSleepDuration = sleepDurationTrendData.at(-1)?.value;
   const latestDeepSleep = deepSleepTrendData.at(-1)?.value;
   const latestRemSleep = remSleepTrendData.at(-1)?.value;
 
@@ -214,10 +255,48 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
       const range = { start: daysAgo(7), end: new Date().toISOString() };
 
       const sleeps = await adapter.getSleep(range);
-      setSleepData(sleeps);
+      setWearableSleepData(sleeps);
 
-      // V1: visa senaste nattens duration
-      const latest = sleeps[sleeps.length - 1];
+      const wearableMetricEntries = [
+        ...sleeps
+          .filter(entry => typeof entry.durationMinutes === 'number')
+          .map(entry => ({
+            metricId: 'sleep_duration',
+            value: entry.durationMinutes,
+            unit: 'min',
+            recordedAt: `${entry.date}T00:00:00.000Z`,
+            notes: 'wearable_sync',
+          })),
+        ...sleeps
+          .filter(entry => typeof entry.stages?.deepMinutes === 'number')
+          .map(entry => ({
+            metricId: 'deep_sleep',
+            value: entry.stages?.deepMinutes as number,
+            unit: 'min',
+            recordedAt: `${entry.date}T00:00:00.000Z`,
+            notes: 'wearable_sync',
+          })),
+        ...sleeps
+          .filter(entry => typeof entry.stages?.remMinutes === 'number')
+          .map(entry => ({
+            metricId: 'rem_sleep',
+            value: entry.stages?.remMinutes as number,
+            unit: 'min',
+            recordedAt: `${entry.date}T00:00:00.000Z`,
+            notes: 'wearable_sync',
+          })),
+      ];
+
+      upsertMetricEntries(wearableMetricEntries);
+
+      const latest = sleeps.reduce<SleepSummary | undefined>((acc, current) => {
+        if (!acc) {
+          return current;
+        }
+
+        return current.date > acc.date ? current : acc;
+      }, undefined);
+
       setDeepSleepMinutes(latest?.stages?.deepMinutes ?? null);
       setRemSleepMinutes(latest?.stages?.remMinutes ?? null);
 
@@ -226,7 +305,7 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
 
       setLoading(false);
     })().catch(() => setLoading(false));
-  }, [adapter, t]);
+  }, [adapter, t, upsertMetricEntries]);
 
   return (
     <>
@@ -240,8 +319,6 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
           <ThemedText type="caption">Loading…</ThemedText>
         ) : (
           <View style={globalStyles.row}>
-            <SleepMetric sleepData={sleepData} showDivider />
-
             <View
               style={[globalStyles.col, globalStyles.colWithDivider, { borderRightColor: colors.borderLight ?? colors.border }]}
             >
@@ -251,7 +328,7 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
             </View>
 
             <View style={globalStyles.col}>
-              <SleepConsistencyMetric sleepData={{ ...sleepData[0], targetBedtime: '22:30' }} />
+              <SleepConsistencyMetric sleepData={{ ...latestSleepEntry, targetBedtime: '22:30' }} />
             </View>
           </View>
         )}
@@ -272,9 +349,7 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
                   selectedTrendMetric === 'sleep_duration' && dynamicStyles.sleepDurationCardSelected,
                 ]}
               >
-                <ThemedText type="label">{t('metrics:sleep_duration.name')}</ThemedText>
-                <ThemedText type="title3">{latestSleepDuration == null ? '—' : formatSleepDuration(latestSleepDuration)}</ThemedText>
-                <ThemedText type="caption" style={dynamicStyles.trendMetricSubtle}>hh:mm</ThemedText>
+                <SleepMetric sleepData={sleepData} showDivider={false} />
               </Pressable>
 
               <Pressable
@@ -407,7 +482,6 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
           recordedAt={recordedAt}
           setRecordedAt={setRecordedAt}
           colors={colors}
-          units={selectedTrendMetricDefinition?.units ?? []}
         />
       </Portal>
     </>

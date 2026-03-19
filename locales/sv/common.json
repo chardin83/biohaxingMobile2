@@ -470,7 +470,13 @@
     "title": "Hjärna & Kognition",
     "description": "Kognitiv funktion, mental prestation och hjärnhälsa",
     "mindMetrics": {
-      "title": "Kognitiva mått"
+      "title": "Kognitiva mått",
+      "explainers": {
+        "body_battery": "Body Battery-trenden visar hur dina energireserver förändras över tid. Högre och stabilare nivåer brukar hänga ihop med bättre mental uthållighet och fokus.",
+        "sleep_duration": "Sömnlängd i timmar och minuter visar din återhämtningsbas. En jämn nivå natt efter natt stödjer minne, koncentration och emotionell reglering.",
+        "steps": "Stegtrenden speglar din dagliga rörelse. Konsekvent vardagsaktivitet bidrar till bättre blodflöde till hjärnan och kan förbättra kognitiv skärpa.",
+        "intensity_minutes": "Intensitetsminuter visar hur mycket pulshöjande aktivitet du får in. Rätt dos över veckan kan stärka stressresiliens och mental prestationsförmåga."
+      }
     },
     "informationCard": {
       "title": "Varför dessa metrik är viktiga",

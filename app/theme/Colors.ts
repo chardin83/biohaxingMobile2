@@ -111,6 +111,9 @@ export const Colors = {
       sleepDuration: '#32D1A6',
       deepSleep: 'rgba(120,170,255,0.95)',
       remSleep: 'rgba(255,215,100,0.95)',
+      mindBodyBattery: 'rgba(0,191,174,0.95)',
+      mindSteps: 'rgba(120,170,255,0.95)',
+      mindIntensity: 'rgba(255,120,100,0.95)',
     },
 
      area: {
@@ -244,6 +247,9 @@ export const Colors = {
       sleepDuration: '#1FAE9E',
       deepSleep: 'rgba(120,170,255,0.95)',
       remSleep: 'rgba(255,215,100,0.95)',
+      mindBodyBattery: 'rgba(120,255,220,0.95)',
+      mindSteps: 'rgba(120,200,255,0.95)',
+      mindIntensity: 'rgba(255,140,120,0.95)',
     },
     
     area: {
