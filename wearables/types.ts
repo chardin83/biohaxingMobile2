@@ -45,11 +45,16 @@ export type EnergySignal = {
   bodyBatteryLevel?: number; // 0..100
 };
 
-export type AdapterStatus =
+type AdapterStatusMeta = {
+  lastSyncAt?: string;
+};
+
+export type AdapterStatus = (
   | { state: 'disconnected', source: SourceId }
   | { state: 'connecting', source: SourceId }
   | { state: 'connected'; source: SourceId }
-  | { state: 'error'; message: string };
+  | { state: 'error'; message: string }
+) & AdapterStatusMeta;
 
 export interface WearableAdapter {
   source: SourceId;

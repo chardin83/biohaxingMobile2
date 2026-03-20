@@ -89,6 +89,30 @@
         "name": "Sleep duration",
         "description": "Total time you sleep each night."
     },
+    "sleep_bedtime": {
+        "name": "Bedtime",
+        "description": "When you usually fall asleep."
+    },
+    "sleep_consistency": {
+        "title": "Sleep consistency",
+        "pattern": "7 day pattern"
+    },
+    "sleepStages": {
+        "title": "Sleep stages",
+        "deepSleep": {
+            "title": "Deep sleep",
+            "minutes": "minutes"
+        },
+        "remSleep": {
+            "title": "REM sleep",
+            "minutes": "minutes"
+        },
+        "explainer": "Deep sleep is crucial for physical recovery and immune function. REM sleep supports memory consolidation and emotional regulation."
+    },
+    "perfect": "Perfect!",
+    "bedtimeDifference": "Δ {{minutes}} min {{direction}}",
+    "earlier": "earlier",
+    "late": "late",
     "deep_sleep": {
         "name": "Deep sleep",
         "description": "The deepest sleep phase supporting physical recovery and repair."
@@ -132,5 +156,19 @@
     "focus": {
         "name": "Focus and concentration",
         "description": "How easily you can concentrate."
+    },
+    "activeMinutes": {
+        "name": "Active minutes",
+        "description": "Total minutes of physical activity.",
+        "shortName": "Active min"
+    },
+    "intensityMinutes": {
+        "name": "Intensity minutes",
+        "description": "Total minutes of high-intensity physical activity. Includes all intensity levels.",
+        "shortName": "Intensity min"
+    },
+    "todaysSteps":{
+        "name": "Today's steps",
+        "description": "Total number of steps taken today." 
     }
 }

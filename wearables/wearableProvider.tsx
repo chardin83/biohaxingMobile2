@@ -18,18 +18,53 @@ type WearableProviderProps = {
 };
 
 export function WearableProvider({ children, initialAdapter }: WearableProviderProps) {
-  const [adapterState, setAdapterState] = useState<WearableAdapter>(() => initialAdapter ?? new NoopAdapter());
+  const markSuccessfulSync = useCallback(() => {
+    const syncTime = new Date().toISOString();
+    setStatus(prev => ({ ...prev, lastSyncAt: syncTime }));
+  }, []);
+
+  const createTrackedAdapter = useCallback((base: WearableAdapter): WearableAdapter => {
+    return {
+      source: base.source,
+      getStatus: () => base.getStatus(),
+      connect: base.connect ? async () => { await base.connect?.(); } : undefined,
+      disconnect: base.disconnect ? async () => { await base.disconnect?.(); } : undefined,
+      getSleep: async range => {
+        const result = await base.getSleep(range);
+        markSuccessfulSync();
+        return result;
+      },
+      getHRV: async range => {
+        const result = await base.getHRV(range);
+        markSuccessfulSync();
+        return result;
+      },
+      getDailyActivity: async range => {
+        const result = await base.getDailyActivity(range);
+        markSuccessfulSync();
+        return result;
+      },
+      getEnergySignal: async range => {
+        const result = await base.getEnergySignal(range);
+        markSuccessfulSync();
+        return result;
+      },
+    };
+  }, [markSuccessfulSync]);
+
+  const [adapterState, setAdapterState] = useState<WearableAdapter>(() => createTrackedAdapter(initialAdapter ?? new NoopAdapter()));
   const [status, setStatus] = useState<AdapterStatus>(() => ({ state: 'disconnected', source: (initialAdapter ?? new NoopAdapter()).source }));
 
   const refreshStatus = useCallback(async () => {
     const s = await adapterState.getStatus();
-    setStatus(s);
+    setStatus(prev => ({ ...s, lastSyncAt: prev.lastSyncAt }));
   }, [adapterState]);
 
   const setAdapter = async (next: WearableAdapter) => {
-    setAdapterState(next);
+    const trackedAdapter = createTrackedAdapter(next);
+    setAdapterState(trackedAdapter);
     const s = await next.getStatus();
-    setStatus(s);
+    setStatus(prev => ({ ...s, lastSyncAt: prev.lastSyncAt }));
   };
 
   // load initial status once adapter exists

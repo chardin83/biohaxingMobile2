@@ -11,6 +11,9 @@ interface WearableStatusProps {
 
 export function WearableStatus({ status, style }: WearableStatusProps) {
   const { colors } = useTheme();
+  const formattedLastSync = status.lastSyncAt
+    ? new Date(status.lastSyncAt).toLocaleString()
+    : null;
 
   const getStatusColor = () => {
     switch (status.state) {
@@ -40,11 +43,16 @@ export function WearableStatus({ status, style }: WearableStatusProps) {
 
   return (
     <View style={[styles.container, style]}>
-      <Text style={[styles.statusText, { color: getStatusColor() }]}>
-        {getStatusIcon()} {status.state}
-      </Text>
-      {status.state === 'connected' && status.source && (
-        <Text style={[styles.sourceText, { color: colors.textMuted }]}> • {status.source}</Text>
+      <View style={styles.statusRow}>
+        <Text style={[styles.statusText, { color: getStatusColor() }]}> 
+          {getStatusIcon()} {status.state}
+        </Text>
+        {status.state === 'connected' && status.source && (
+          <Text style={[styles.sourceText, { color: colors.textMuted }]}> • {status.source}</Text>
+        )}
+      </View>
+      {formattedLastSync && (
+        <Text style={[styles.syncText, { color: colors.textMuted }]}>Last sync: {formattedLastSync}</Text>
       )}
     </View>
   );
@@ -52,10 +60,14 @@ export function WearableStatus({ status, style }: WearableStatusProps) {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 8,
+    gap: 2,
+  },
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   statusText: {
     fontSize: 12,
@@ -63,5 +75,8 @@ const styles = StyleSheet.create({
   },
   sourceText: {
     fontSize: 12,
+  },
+  syncText: {
+    fontSize: 11,
   },
 });

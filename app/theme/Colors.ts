@@ -114,6 +114,9 @@ export const Colors = {
       mindBodyBattery: 'rgba(0,191,174,0.95)',
       mindSteps: 'rgba(120,170,255,0.95)',
       mindIntensity: 'rgba(255,120,100,0.95)',
+      steps: 'rgba(120,170,255,0.95)',
+      intensityMinutes: 'rgba(255,120,100,0.95)',
+      activeMinutes: 'rgba(0,191,174,0.95)',
     },
 
      area: {
@@ -250,6 +253,9 @@ export const Colors = {
       mindBodyBattery: 'rgba(120,255,220,0.95)',
       mindSteps: 'rgba(120,200,255,0.95)',
       mindIntensity: 'rgba(255,140,120,0.95)',
+      steps: 'rgba(120,170,255,0.95)',
+      intensityMinutes: 'rgba(255,120,100,0.95)',
+      activeMinutes: 'rgba(0,191,174,0.95)',
     },
     
     area: {

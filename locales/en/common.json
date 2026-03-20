@@ -343,15 +343,6 @@
       "sinceWaking": "since waking",
       "explainer": "Body Battery tracks your body's energy reserves by monitoring stress, activity, and recovery. It reflects your mitochondrial ATP production capacity."
     },
-    "energyProductionMetrics": {
-      "title": "Energy Production Metrics",
-      "explainer": "VO₂ max indicates mitochondrial density and oxidative capacity. Higher values = more efficient ATP production from oxygen.",
-      "explainers": {
-        "vo2_max": "VO₂ max indicates mitochondrial density and oxidative capacity. Higher values = more efficient ATP production from oxygen.",
-        "resting_hr": "Resting heart rate reflects baseline cardiovascular load and recovery state. A lower resting heart rate is often associated with better fitness and energy efficiency.",
-        "hrv": "HRV reflects autonomic nervous system balance and recovery readiness. Higher HRV is often a sign of better stress resilience and energy regulation."
-      }
-    },
     "energyBalance": {
       "title": "Energy Balance",
       "energyDrain": "Energy Drain",
@@ -389,11 +380,6 @@
         "title": "Mitophagy & Cellular Cleanup",
         "description": "Mitophagy is the selective autophagy of damaged mitochondria. Occurs during fasting and deep sleep. Regular mitophagy prevents accumulation of dysfunctional mitochondria that produce excess ROS and less ATP."
       }
-    },
-    "todaysActivity": {
-      "title": "Today's activity",
-      "activeMinutes": "Active minutes",
-      "explainer": "Regular movement throughout the day maintains mitochondrial health. Even light activity (walking) stimulates ATP production and reduces oxidative stress."
     }
   },
   "immuneOverview": {
@@ -519,26 +505,6 @@
         "high": "High"
       }
     },
-    "sleepStages": {
-      "title": "Sleep stages",
-      "deepSleep": {
-        "title": "Deep sleep",
-        "minutes": "minutes"
-      },
-      "remSleep": {
-        "title": "REM sleep",
-        "minutes": "minutes"
-      },
-      "explainer": "Deep sleep is crucial for physical recovery and immune function. REM sleep supports memory consolidation and emotional regulation."
-    },
-    "sleepTrends": {
-      "title": "Sleep trends",
-      "explainers": {
-        "sleep_duration": "Sleep duration shows your total nightly recovery. A stable level around 7 to 9 hours supports hormone balance, immune function, and mental sharpness.",
-        "deep_sleep": "Deep sleep is the phase where the body prioritizes physical recovery, tissue repair, and immune support. The trend helps show whether recovery is actually improving over time.",
-        "rem_sleep": "REM sleep supports memory consolidation, emotional processing, and learning. Tracking REM over time gives a better signal of stress, sleep quality, and mental recovery."
-      }
-    },
     "understandingSleep": {
       "title": "Understanding sleep",
       "stages": {
@@ -591,7 +557,7 @@
     "showAll": "Show all ({{count}} hidden)",
     "hideNotInterested": "Hide not interested"
   },
-   "genesList": {
+  "genesList": {
     "title": "Genes & DNA",
     "genesLinkedToArea": "Genes linked to {{area}}",
     "noGenes": "No genes linked to this area yet.",
@@ -605,7 +571,7 @@
     "bacteriaAffectHealth": "Multiple bacteria influence your gut health and function in this area. Understanding your microbiome can help you tailor your health plan to optimize results.",
     "explainer": "Microbiome testing can provide insights into your gut profile, but diet and lifestyle always have the biggest impact!"
   },
-   "metrics":{
+  "metrics": {
     "low": "Low",
     "moderate": "Moderate",
     "good": "Good",
@@ -614,20 +580,14 @@
     "needRecovery": "Need recovery",
     "sleep": "Sleep",
     "noSleepData": "No sleep data",
-    "bodyBattery":{
+    "bodyBattery": {
       "title": "Body Battery"
     },
-    "stressScore":{
+    "stressScore": {
       "title": "Stress Score"
     },
-    "recoveryStatus":{
+    "recoveryStatus": {
       "title": "Recovery Status"
-    },
-    "todaysSteps":{
-      "title": "Today's steps"
-    },
-    "intensityMinutes": {
-      "title": "Intensity min"
     }
   },
   "chat": {
@@ -708,5 +668,31 @@
     "otherSettingsTitle": "Other settings",
     "otherCommentPlaceholder": "Comment (optional)",
     "otherCommentLabel": "Comment"
+  },
+  "energyProductionCharts": {
+    "title": "Energy Production Metrics",
+    "explainer": "VO₂ max indicates mitochondrial density and oxidative capacity. Higher values = more efficient ATP production from oxygen.",
+    "explainers": {
+      "vo2_max": "VO₂ max indicates mitochondrial density and oxidative capacity. Higher values = more efficient ATP production from oxygen.",
+      "resting_hr": "Resting heart rate reflects baseline cardiovascular load and recovery state. A lower resting heart rate is often associated with better fitness and energy efficiency.",
+      "hrv": "HRV reflects autonomic nervous system balance and recovery readiness. Higher HRV is often a sign of better stress resilience and energy regulation."
+    }
+  },
+  "sleepTrendChart": {
+    "title": "Sleep trends",
+    "explainers": {
+      "sleep_duration": "Sleep duration shows your total nightly recovery. A stable level around 7 to 9 hours supports hormone balance, immune function, and mental sharpness.",
+      "deep_sleep": "Deep sleep is the phase where the body prioritizes physical recovery, tissue repair, and immune support. The trend helps show whether recovery is actually improving over time.",
+      "rem_sleep": "REM sleep supports memory consolidation, emotional processing, and learning. Tracking REM over time gives a better signal of stress, sleep quality, and mental recovery."
+    }
+  },
+  "todaysActivityCharts": {
+    "title": "Today's activity",
+    "explainer": "Regular movement throughout the day maintains mitochondrial health. Even light activity (walking) stimulates ATP production and reduces oxidative stress.",
+    "explainers": {
+      "activity_minutes": "Total minutes of activity today. Aim for at least 150 minutes of moderate or 75 minutes of vigorous activity per week to support mitochondrial function.",
+      "steps": "Your total steps for the day. Aim for consistent movement to support energy levels and metabolic health.",
+      "intensity_minutes": "Minutes of elevated heart rate. Both moderate and vigorous activity boost mitochondrial function and overall fitness."
+    }
   }
 }

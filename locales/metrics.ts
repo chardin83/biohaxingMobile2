@@ -308,6 +308,20 @@ export const metrics: Record<string, MetricDefinition> = {
     ]
   },
 
+  sleep_bedtime: {
+    id: 'sleep_bedtime',
+    emoji: '🛏️',
+    nameKey: 'sleep_bedtime.name',
+    descriptionKey: 'sleep_bedtime.description',
+    canonicalUnit: 'min_from_midnight',
+    source: 'wearable',
+    suggestedFrequency: 'daily',
+    units: [
+      { unit: 'min_from_midnight', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
+      { unit: 'min_from_midnight', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
+  },
+
   deep_sleep: {
     id: 'deep_sleep',
     emoji: '💤',
@@ -421,6 +435,32 @@ export const metrics: Record<string, MetricDefinition> = {
     units: [
       { unit: 'score_0_10', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
       { unit: 'score_0_10', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
+  },
+  active_minutes: {
+    id: 'active_minutes',
+    emoji: '🏃‍♂️',
+    nameKey: 'activeMinutes.name',
+    descriptionKey: 'activeMinutes.description',
+    canonicalUnit: 'min',
+    source: 'wearable',
+    suggestedFrequency: 'daily',
+    units: [
+      { unit: 'min', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
+      { unit: 'min', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
+  },
+  intensity_minutes: {
+    id: 'intensity_minutes',
+    emoji: '🔥',
+    nameKey: 'intensityMinutes.name',
+    descriptionKey: 'intensityMinutes.description',
+    canonicalUnit: 'min',
+    source: 'wearable',
+    suggestedFrequency: 'daily',
+    units: [
+      { unit: 'min', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
+      { unit: 'min', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
 

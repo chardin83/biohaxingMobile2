@@ -347,15 +347,6 @@
       "sinceWaking": "sedan uppvaknande",
       "explainer": "Body Battery spårar kroppens energireserver genom att övervaka stress, aktivitet och återhämtning. Det speglar din mitokondriella ATP-produktionskapacitet."
     },
-    "energyProductionMetrics": {
-      "title": "Energi produktionsmetrik",
-      "explainer": "VO₂ max indikerar mitokondriell densitet och oxidativ kapacitet. Högre värden = mer effektiv ATP-produktion från syre.",
-      "explainers": {
-        "vo2_max": "VO₂ max indikerar mitokondriell densitet och oxidativ kapacitet. Högre värden = mer effektiv ATP-produktion från syre.",
-        "resting_hr": "Vilopuls speglar hjärtats belastning i vila och återhämtningsnivå. Lägre vilopuls är ofta kopplat till bättre kondition och effektivare energisystem.",
-        "hrv": "HRV visar balansen i autonoma nervsystemet och hur väl kroppen återhämtar sig. Högre HRV är ofta ett tecken på bättre stressresiliens och energireglering."
-      }
-    },
     "energyBalance": {
       "title": "Energibalans",
       "energyDrain": "Energiutarmning",
@@ -394,11 +385,6 @@
         "title": "Mitofagi och cellulär rengöring",
         "description": "Mitofagi är selektiv autofagi av skadade mitokondrier. Det sker under fasta och djupsömn. Regelbunden mitofagi förhindrar ackumulering av dysfunktionella mitokondrier som producerar överskott av ROS och mindre ATP."
       }
-    },
-    "todaysActivity": {
-      "title": "Dagens aktivitet",
-      "activeMinutes": "Aktiva minuter",
-      "explainer": "Regelbunden rörelse under dagen upprätthåller mitokondriell hälsa. Även lätt aktivitet (promenader) stimulerar ATP-produktion och minskar oxidativ stress."
     }
   },
   "immuneOverview": {
@@ -448,7 +434,7 @@
     },
     "informationCard": {
       "title": "Förstå ditt nervsystem",
-      "hrv":{
+      "hrv": {
         "title": "HRV (Heart Rate Variability)",
         "description": "HRV mäter variationen i tid mellan hjärtslag. Hög HRV indikerar en stark parasympatisk aktivitet och god återhämtning. Låg HRV kan signalera stress, trötthet eller sjukdom."
       },
@@ -496,7 +482,7 @@
         "title": "Sömnkvalitet",
         "description": "Dålig sömnkvalitet påverkar negativt minne, uppmärksamhet och exekutiva funktioner. Att prioritera god sömn är avgörande för att upprätthålla kognitiv hälsa."
       },
-       "steps": {
+      "steps": {
         "title": "🚶‍♂️ Steg och hjärnhälsa",
         "description": "Fysisk aktivitet och dagliga steg ökar blodflödet till hjärnan, förbättrar minne och koncentration samt minskar stress och risken för psykisk ohälsa."
       },
@@ -525,26 +511,6 @@
         "moderate": "Måttlig",
         "low": "Låg",
         "high": "Hög"
-      }
-    },
-    "sleepStages": {
-      "title": "Sömnfaser",
-      "deepSleep": {
-        "title": "Djup sömn",
-        "minutes": "minuter"
-      },
-      "remSleep": {
-        "title": "REM-sömn",
-        "minutes": "minuter"
-      },
-      "explainer": "Djup sömn är avgörande för fysisk återhämtning och immunfunktion. REM-sömn stödjer minneskonsolidering och emotionell reglering."
-    },
-    "sleepTrends": {
-      "title": "Sömntrender",
-      "explainers": {
-        "sleep_duration": "Sömnlängd visar din totala nattliga återhämtning. En stabil nivå på ungefär 7 till 9 timmar stödjer hormonbalans, immunförsvar och mental skärpa.",
-        "deep_sleep": "Djupsömn är fasen där kroppen prioriterar fysisk återhämtning, vävnadsreparation och immunstöd. Trenden hjälper dig se om återhämtningen faktiskt förbättras över tid.",
-        "rem_sleep": "REM-sömn stödjer minneskonsolidering, emotionell bearbetning och inlärning. Att följa REM över tid ger en bättre bild av stress, sömnkvalitet och mental återhämtning."
       }
     },
     "understandingSleep": {
@@ -613,7 +579,7 @@
     "bacteriaAffectHealth": "Flera bakterier påverkar din tarmhälsa och funktion i detta område. Att förstå ditt mikrobiom kan hjälpa dig att optimera din hälsoplan.",
     "explainer": "Mikrobiomtest kan ge insikter om din tarmprofil, men kost och livsstil har alltid störst påverkan!"
   },
-  "metrics":{
+  "metrics": {
     "low": "Låg",
     "moderate": "Måttlig",
     "good": "Bra",
@@ -622,20 +588,14 @@
     "needRecovery": "Behöver återhämtning",
     "sleep": "Sömn",
     "noSleepData": "Ingen sömndata",
-    "bodyBattery":{
+    "bodyBattery": {
       "title": "Body Battery"
     },
-    "stressScore":{
+    "stressScore": {
       "title": "Stressnivå"
     },
-    "recoveryStatus":{
+    "recoveryStatus": {
       "title": "Återhämtningsstatus"
-    },
-    "todaysSteps":{
-      "title": "Dagens steg"
-    },
-    "intensityMinutes":{
-      "title": "Intensiva min"
     }
   },
   "chat": {
@@ -718,5 +678,31 @@
     "otherSettingsTitle": "Övriga inställningar",
     "otherCommentPlaceholder": "Kommentar (valfri)",
     "otherCommentLabel": "Kommentar"
+  },
+  "energyProductionCharts": {
+    "title": "Energi produktionsmetrik",
+    "explainer": "VO₂ max indikerar mitokondriell densitet och oxidativ kapacitet. Högre värden = mer effektiv ATP-produktion från syre.",
+    "explainers": {
+      "vo2_max": "VO₂ max indikerar mitokondriell densitet och oxidativ kapacitet. Högre värden = mer effektiv ATP-produktion från syre.",
+      "resting_hr": "Vilopuls speglar hjärtats belastning i vila och återhämtningsnivå. Lägre vilopuls är ofta kopplat till bättre kondition och effektivare energisystem.",
+      "hrv": "HRV visar balansen i autonoma nervsystemet och hur väl kroppen återhämtar sig. Högre HRV är ofta ett tecken på bättre stressresiliens och energireglering."
+    }
+  },
+  "sleepTrendChart": {
+    "title": "Sömntrender",
+    "explainers": {
+      "sleep_duration": "Sömnlängd visar din totala nattliga återhämtning. En stabil nivå på ungefär 7 till 9 timmar stödjer hormonbalans, immunförsvar och mental skärpa.",
+      "deep_sleep": "Djupsömn är fasen där kroppen prioriterar fysisk återhämtning, vävnadsreparation och immunstöd. Trenden hjälper dig se om återhämtningen faktiskt förbättras över tid.",
+      "rem_sleep": "REM-sömn stödjer minneskonsolidering, emotionell bearbetning och inlärning. Att följa REM över tid ger en bättre bild av stress, sömnkvalitet och mental återhämtning."
+    }
+  },
+  "todaysActivityCharts": {
+    "title": "Dagens aktivitet",
+    "explainer": "Regelbunden rörelse under dagen upprätthåller mitokondriell hälsa. Även lätt aktivitet (promenader) stimulerar ATP-produktion och minskar oxidativ stress. Att ta steg under dagen bidrar till kardiovaskulär hälsa och förbättrar blodcirkulationen. Intensiv aktivitet under korta perioder ökar hjärtfrekvensen och förbättrar aerob kapacitet.",
+    "explainers": {
+      "active_minutes": "Regelbunden rörelse under dagen upprätthåller mitokondriell hälsa. Även lätt aktivitet (promenader) stimulerar ATP-produktion och minskar oxidativ stress.",
+      "steps": "Att ta steg under dagen bidrar till kardiovaskulär hälsa och förbättrar blodcirkulationen.",
+      "intensity_minutes": "Intensiv aktivitet under korta perioder ökar hjärtfrekvensen och förbättrar aerob kapacitet."
+    }
   }
 }

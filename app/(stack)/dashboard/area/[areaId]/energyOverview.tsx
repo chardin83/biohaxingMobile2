@@ -1,19 +1,11 @@
-import BottomSheet from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
-import { Portal } from 'react-native-paper';
 
-import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
-import { HRVMetric } from '@/components/metrics/HRVMetric';
-import { IntensityMinutesMetric } from '@/components/metrics/IntensityMinutesMetric';
-import { MetricTrendChart, type MetricTrendPoint } from '@/components/metrics/MetricTrendChart';
-import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
-import { StepsMetric } from '@/components/metrics/StepsMetric';
-import { VO2MaxMetric } from '@/components/metrics/VO2MaxMetric';
-import { RegisterMetricBottomSheet } from '@/components/RegisterMetricBottomSheet';
+import { EnergyProductionCharts } from '@/components/metrics/EnergyProductionCharts';
+import { TodaysActivityCharts } from '@/components/metrics/TodaysActivityCharts';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { Error } from '@/components/ui/Error';
@@ -22,61 +14,19 @@ import { Loading } from '@/components/ui/Loading';
 import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
-import { useStoredHRVData } from '@/hooks/useStoredHRVData';
-import { metrics } from '@/locales/metrics';
-import { calculateHRVMetrics } from '@/utils/hrvCalculations';
-import { calculateRestingHRMetrics } from '@/utils/restingHRCalculations';
-import { DailyActivity, EnergySignal, SleepSummary, TimeRange } from '@/wearables/types';
+import { EnergySignal, SleepSummary, TimeRange } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
-
-type EnergyProductionMetricKey = 'vo2_max' | 'resting_hr' | 'hrv';
 
 export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { adapter, status } = useWearable();
-  const { addMetricEntry, getMetricHistory } = useStorage();
-  const registerBottomSheetRef = useRef<BottomSheet>(null);
   const { colors } = useTheme();
   const { t } = useTranslation();
    
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedMetric, setSelectedMetric] = useState<EnergyProductionMetricKey>('vo2_max');
-  const [isRegisterSheetVisible, setIsRegisterSheetVisible] = useState(false);
-  const [metricValue, setMetricValue] = useState('');
-  const [metricUnit, setMetricUnit] = useState('');
-  const [metricNotes, setMetricNotes] = useState('');
-  const [recordedAt, setRecordedAt] = useState(() => new Date());
   const [sleepData, setSleepData] = useState<SleepSummary[]>([]);
-  const [activityData, setActivityData] = useState<DailyActivity[]>([]);
   const [energyData, setEnergyData] = useState<EnergySignal[]>([]);
-  const hrvData = useStoredHRVData();
 
-  const hrvTrendData = React.useMemo<MetricTrendPoint[]>(() => {
-    return hrvData
-      .filter(entry => typeof entry.rmssdMs === 'number')
-      .map(entry => ({
-        date: entry.date,
-        value: entry.rmssdMs as number,
-      }));
-  }, [hrvData]);
-
-  const restingHRTrendData = React.useMemo<MetricTrendPoint[]>(() => {
-    return hrvData
-      .filter(entry => typeof entry.avgRestingHrBpm === 'number')
-      .map(entry => ({
-        date: entry.date,
-        value: entry.avgRestingHrBpm as number,
-      }));
-  }, [hrvData]);
-
-  const vo2MaxTrendData = React.useMemo<MetricTrendPoint[]>(() => {
-    return getMetricHistory('vo2_max')
-      .map(entry => ({
-        date: entry.recordedAt.slice(0, 10),
-        value: entry.value,
-      }))
-      .sort((left, right) => left.date.localeCompare(right.date));
-  }, [getMetricHistory]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -87,14 +37,12 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
           end: new Date().toISOString(),
         };
 
-        const [sleep, activity, energy] = await Promise.all([
+        const [sleep, energy] = await Promise.all([
           adapter.getSleep(range),
-          adapter.getDailyActivity(range),
           adapter.getEnergySignal(range),
         ]);
 
         setSleepData(sleep);
-        setActivityData(activity);
         setEnergyData(energy);
       } catch (err) {
         console.error('Failed to load data:', err);
@@ -109,13 +57,7 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
 
   // Transform wearable data to energy metrics
   const latestSleep = sleepData[0];
-  const latestActivity = activityData[0];
   const latestEnergy = energyData[0];
-  const latestVo2Max = vo2MaxTrendData.at(-1)?.value ?? null;
-
-  // Calculate metrics only for display in energy object
-  const { hrv } = calculateHRVMetrics(hrvData);
-  const { restingHR } = calculateRestingHRMetrics(hrvData);
 
   const energy = {
     bodyBattery: latestEnergy?.bodyBatteryLevel ?? null,
@@ -130,79 +72,7 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
     sleepHours: latestSleep ? latestSleep.durationMinutes / 60 : null,
     sleepQuality: latestSleep?.efficiencyPct ?? null,
     deepSleepMinutes: latestSleep?.stages?.deepMinutes ?? null,
-    vo2max: latestVo2Max,
-    vo2maxStatus: undefined,
-    restingHR,
-    hrv,
-    activityMinutes: latestActivity?.activeMinutes ?? null,
-    intensityMinutes: latestActivity?.intensityMinutes ?? null,
   };
-
-  const selectedMetricConfig = React.useMemo(() => {
-    switch (selectedMetric) {
-      case 'vo2_max':
-        return {
-          metricName: t('metrics:vo2_max.name'),
-          unit: '',
-          data: vo2MaxTrendData,
-          accentColor: colors.chart.vo2Max,
-        };
-      case 'resting_hr':
-        return {
-          metricName: t('metrics:resting_hr.name'),
-          unit: 'bpm',
-          data: restingHRTrendData,
-          accentColor: colors.chart.restingHr,
-        };
-      case 'hrv':
-      default:
-        return {
-          metricName: t('metrics:hrv.name'),
-          unit: 'ms',
-          data: hrvTrendData,
-          accentColor: colors.chart.hrv,
-        };
-    }
-  }, [colors.chart.hrv, colors.chart.restingHr, colors.chart.vo2Max, hrvTrendData, restingHRTrendData, selectedMetric, t, vo2MaxTrendData]);
-
-  const selectedMetricDefinition = metrics[selectedMetric];
-
-  const openManualMetricSheet = React.useCallback(() => {
-    const defaultUnit = selectedMetricDefinition?.units?.[0]?.unit ?? '';
-    setMetricUnit(defaultUnit);
-    setMetricValue('');
-    setMetricNotes('');
-    setRecordedAt(new Date());
-    setIsRegisterSheetVisible(true);
-  }, [selectedMetricDefinition]);
-
-  const closeManualMetricSheet = React.useCallback(() => {
-    setIsRegisterSheetVisible(false);
-    setMetricValue('');
-    setMetricNotes('');
-    setRecordedAt(new Date());
-  }, []);
-
-  const saveManualMetric = React.useCallback(() => {
-    if (!metricValue) {
-      return;
-    }
-
-    const parsedValue = Number.parseFloat(metricValue);
-    if (Number.isNaN(parsedValue)) {
-      return;
-    }
-
-    addMetricEntry({
-      metricId: selectedMetric,
-      value: parsedValue,
-      unit: metricUnit || selectedMetricDefinition?.canonicalUnit || '',
-      recordedAt: recordedAt.toISOString(),
-      notes: metricNotes || undefined,
-    });
-
-    closeManualMetricSheet();
-  }, [addMetricEntry, closeManualMetricSheet, metricNotes, metricUnit, metricValue, recordedAt, selectedMetric, selectedMetricDefinition?.canonicalUnit]);
 
   if (loading) {
     return <Loading />;
@@ -247,40 +117,7 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
       <GenesListCard areaId="energy" />
 
       {/* Energy Production Factors */}
-      <Card title={t('energyOverview.energyProductionMetrics.title')}>
-        <View style={globalStyles.row}>
-          <VO2MaxMetric
-            vo2max={energy.vo2max}
-            status={energy.vo2maxStatus}
-            showDivider
-            onPress={() => setSelectedMetric('vo2_max')}
-            isSelected={selectedMetric === 'vo2_max'}
-          />
-          <RestingHRMetric
-            hrvData={hrvData}
-            showDivider
-            onPress={() => setSelectedMetric('resting_hr')}
-            isSelected={selectedMetric === 'resting_hr'}
-          />
-          <HRVMetric
-            hrvData={hrvData}
-            onPress={() => setSelectedMetric('hrv')}
-            isSelected={selectedMetric === 'hrv'}
-          />
-        </View>
-        <MetricTrendChart
-          data={selectedMetricConfig.data}
-          metricName={selectedMetricConfig.metricName}
-          unit={selectedMetricConfig.unit || undefined}
-          accentColor={selectedMetricConfig.accentColor}
-          onAddManualValue={openManualMetricSheet}
-        />
-        <ThemedText type="explainer" style ={[globalStyles.explainer, { borderColor: colors.borderLight }]}>
-          {t(`energyOverview.energyProductionMetrics.explainers.${selectedMetric}`, {
-            defaultValue: t('energyOverview.energyProductionMetrics.explainer'),
-          })}
-        </ThemedText>
-      </Card>
+      <EnergyProductionCharts />
 
       {/* Energy Drain vs Recharge */}
       <Card title={t('energyOverview.energyBalance.title')}>
@@ -398,48 +235,7 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
       <TipsList areaId={mainGoalId} />
 
       {/* Activity Tracking */}
-      <Card title={t("energyOverview.todaysActivity.title")}>
-        <View style={globalStyles.row}>
-          <View style={[globalStyles.col, globalStyles.colWithDivider]}>
-            <ThemedText type="label">{t("energyOverview.todaysActivity.activeMinutes")}</ThemedText>
-            <ThemedText type="value">{energy.activityMinutes ?? '—'}</ThemedText>
-          </View>
-
-          <StepsMetric activityData={activityData} showDivider />
-
-          <IntensityMinutesMetric activityData={activityData} />
-        </View>
-
-        <ThemedText
-          type="explainer"
-          style={[
-            globalStyles.explainer,
-            { borderTopColor: colors.borderLight }
-          ]}
-        >
-          {t("energyOverview.todaysActivity.explainer")}
-        </ThemedText>
-      </Card>
-
-      <Portal>
-        <RegisterMetricBottomSheet
-          bottomSheetRef={registerBottomSheetRef}
-          isVisible={isRegisterSheetVisible}
-          onClose={closeManualMetricSheet}
-          onSave={saveManualMetric}
-          metricName={t(`metrics:${selectedMetric}.name`)}
-          metricValue={metricValue}
-          setMetricValue={setMetricValue}
-          metricUnit={metricUnit}
-          setMetricUnit={setMetricUnit}
-          metricNotes={metricNotes}
-          setMetricNotes={setMetricNotes}
-          recordedAt={recordedAt}
-          setRecordedAt={setRecordedAt}
-          colors={colors}
-          units={selectedMetricDefinition?.units ?? []}
-        />
-      </Portal>
+      <TodaysActivityCharts />
    </>
   );
 }

@@ -89,6 +89,30 @@
         "name": "Sömnlängd",
         "description": "Total tid du sover per natt."
     },
+    "sleep_bedtime": {
+        "name": "Läggdags",
+        "description": "När du vanligtvis somnar."
+    },
+    "sleep_consistency": {
+        "title": "Sömnkonsistens",
+        "pattern": "7 dagars mönster"
+    },
+    "sleepStages": {
+      "title": "Sömnfaser",
+      "deepSleep": {
+        "title": "Djup sömn",
+        "minutes": "minuter"
+      },
+      "remSleep": {
+        "title": "REM-sömn",
+        "minutes": "minuter"
+      },
+      "explainer": "Djup sömn är avgörande för fysisk återhämtning och immunfunktion. REM-sömn stödjer minneskonsolidering och emotionell reglering."
+    },
+    "perfect": "Perfekt!",
+    "bedtimeDifference": "Δ {{minutes}} min {{direction}}",
+    "earlier": "tidigare",
+    "late": "sen",
     "deep_sleep": {
         "name": "Djup sömn",
         "description": "Den djupaste sömnfasen som stödjer fysisk återhämtning och reparation."
@@ -132,5 +156,19 @@
     "focus": {
         "name": "Fokus och koncentration",
         "description": "Hur lätt du kan koncentrera dig."
+    },
+    "activeMinutes": {
+        "name": "Aktiva minuter",
+        "shortName": "Aktiva min",
+        "description": "Totalt antal minuter av fysisk aktivitet. Inklusive alla intensitetsnivåer."
+    },
+    "intensityMinutes": {
+        "name": "Intensiva minuter",
+        "shortName": "Intensiva min",
+        "description": "Totalt antal minuter av högintensiv fysisk aktivitet."
+    },
+    "todaysSteps":{
+      "name": "Dagens steg",
+      "description": "Totalt antal steg tagna idag."
     }
 }
