@@ -88,7 +88,7 @@ export default function NervousSystemScreen({ mainGoalId }: Readonly<{ mainGoalI
         ) : (
           <>
             <View style={globalStyles.row}>
-              <HRVMetric hrvData={hrvData} showDivider />
+              <HRVMetric showDivider />
 
               {/* Stress Score */}
               <StressScoreMetric hrvData={hrvData} showDivider />
@@ -99,7 +99,7 @@ export default function NervousSystemScreen({ mainGoalId }: Readonly<{ mainGoalI
 
             {/* Second row */}
             <View style={[globalStyles.row, globalStyles.marginTop16]}>
-              <RestingHRMetric hrvData={hrvData} showDivider />
+              <RestingHRMetric showDivider />
 
             {/* Recovery Status */}
             <RecoveryStatusMetric hrvData={hrvData} sleepHours={sleepHours} />

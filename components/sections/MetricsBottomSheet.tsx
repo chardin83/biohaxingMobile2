@@ -6,8 +6,8 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { RegisterMetricBottomSheet } from '@/components/RegisterMetricBottomSheet';
+import { MetricValuesTableSection } from '@/components/sections/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
-import AppButton from '@/components/ui/AppButton';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { metrics, tipMetricLinks } from '@/locales/metrics';
 
@@ -29,6 +29,7 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
   const { addMetricEntry, getMetricHistory, getMetricsForPlanTip } = useStorage();
   const registerBottomSheetRef = useRef<BottomSheet>(null);
   const [selectedMetricId, setSelectedMetricId] = useState<string | null>(null); // For detail view
+  const [sheetIndex, setSheetIndex] = useState(1);
   const [isRegisterSheetVisible, setIsRegisterSheetVisible] = useState(false);
   const [metricDraftId, setMetricDraftId] = useState<string | null>(null);
   const [metricValue, setMetricValue] = useState('');
@@ -94,6 +95,12 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
     setMetricDraftId(null);
   };
 
+  const handleSheetChange = (index: number) => {
+    if (index >= 0) {
+      setSheetIndex(index);
+    }
+  };
+
   React.useEffect(() => {
     console.log('[MetricsBottomSheet] tipId changed:', tipId);
   }, [tipId]);
@@ -124,6 +131,7 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
           backgroundStyle={{ backgroundColor: colors.background }}
           animateOnMount
           index={-1}
+          onChange={handleSheetChange}
         >
           <BottomSheetView style={[styles.contentContainer, { backgroundColor: colors.background }]}> 
             <View style={styles.headerWithBack}>
@@ -143,39 +151,12 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
               {t(`metrics:${selectedMetricId}.description`)}
             </ThemedText>
 
-            <AppButton
-              onPress={() => handleOpenAddMetricSheet(selectedMetricId)}
-              style={styles.addButton}
-              title="+ Registrera nytt värde"
+            <MetricValuesTableSection
+              entries={registeredEntries}
+              colors={colors}
+              emptyText={t('metrics:trendChart.empty', { metric: t(`metrics:${selectedMetricId}.name`) })}
+              onAddPress={() => handleOpenAddMetricSheet(selectedMetricId)}
             />
-
-            {/* Tabell över redan registrerade värden */}
-            {registeredEntries.length > 0 && (
-              <View style={styles.registeredEntriesSection}>
-                <ThemedText type="defaultSemiBold" style={styles.registeredEntriesTitle}>
-                  Registrerade värden
-                </ThemedText>
-                <View style={[styles.registeredEntriesTable, { borderColor: colors.border }]}>
-                  <View style={[styles.registeredEntriesRow, { backgroundColor: colors.cardBackground }]}>
-                    <ThemedText style={styles.tableCellSmall} type="caption">Datum</ThemedText>
-                    <ThemedText style={styles.tableCellSmall} type="caption">Värde</ThemedText>
-                    <ThemedText style={styles.tableCellSmall} type="caption">Enhet</ThemedText>
-                    <ThemedText style={styles.tableCellLarge} type="caption">Notering</ThemedText>
-                  </View>
-                  {registeredEntries.map((entry, index) => (
-                    <View
-                      key={`${entry.metricId}-${entry.recordedAt}-${entry.value}`}
-                      style={[styles.registeredEntriesRow, { backgroundColor: index % 2 === 0 ? colors.background : colors.cardBackground }]}
-                    >
-                      <ThemedText style={styles.tableCellSmall} type="caption">{entry.recordedAt.slice(0, 10)}</ThemedText>
-                      <ThemedText style={styles.tableCellSmall} type="caption">{entry.value}</ThemedText>
-                      <ThemedText style={styles.tableCellSmall} type="caption">{entry.unit}</ThemedText>
-                      <ThemedText style={styles.tableCellLarge} type="caption">{entry.notes || ''}</ThemedText>
-                    </View>
-                  ))}
-                </View>
-              </View>
-            )}
 
             <ThemedText type="defaultSemiBold" style={styles.unitsTitle}>
               Enheter
@@ -238,6 +219,7 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
           backgroundStyle={{ backgroundColor: colors.background }}
           animateOnMount
           index={-1}
+          onChange={handleSheetChange}
         >
           <BottomSheetView style={[styles.contentContainer, { backgroundColor: colors.background }]}> 
             <ThemedText type="title3" style={styles.title}>
@@ -277,6 +259,8 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
       <RegisterMetricBottomSheet
         bottomSheetRef={registerBottomSheetRef}
         isVisible={isRegisterSheetVisible}
+        initialSnapIndex={sheetIndex}
+        snapPoints={['25%', '50%', '90%']}
         onClose={handleCloseAddMetricSheet}
         onSave={handleSaveMetric}
         metricName={metricDraftId ? t(`metrics:${metricDraftId}.name`) : undefined}
@@ -361,32 +345,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 12,
     borderRadius: 8,
-  },
-  addButton: {
-    marginTop: 12,
-    marginBottom: 8,
-  },
-  registeredEntriesSection: {
-    marginVertical: 12,
-  },
-  registeredEntriesTitle: {
-    marginBottom: 4,
-  },
-  registeredEntriesTable: {
-    borderWidth: 1,
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  registeredEntriesRow: {
-    flexDirection: 'row',
-  },
-  tableCellSmall: {
-    flex: 1,
-    padding: 8,
-  },
-  tableCellLarge: {
-    flex: 2,
-    padding: 8,
   },
   metaTextSpacing: {
     marginTop: 4,

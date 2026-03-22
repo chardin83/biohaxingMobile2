@@ -12,6 +12,8 @@ interface RegisterMetricBottomSheetProps {
   isVisible: boolean;
   metricId?: string;
   metricName?: string;
+  initialSnapIndex?: number;
+  snapPoints?: string[];
   metricValue: string;
   setMetricValue: (value: string) => void;
   metricUnit: string;
@@ -31,6 +33,8 @@ export function RegisterMetricBottomSheet({
   isVisible,
   metricId,
   metricName,
+  initialSnapIndex = 0,
+  snapPoints: providedSnapPoints,
   metricValue,
   setMetricValue,
   metricUnit,
@@ -44,7 +48,7 @@ export function RegisterMetricBottomSheet({
   onSave,
   onClose,
 }: Readonly<RegisterMetricBottomSheetProps>) {
-  const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
+  const snapPoints = useMemo(() => providedSnapPoints ?? ['25%', '50%', '90%'], [providedSnapPoints]);
   const hasOpenedRef = React.useRef(false);
   const hasMetricName = Boolean(metricName);
   const hasMultipleUnits = (units?.length ?? 0) > 1;
@@ -58,8 +62,8 @@ export function RegisterMetricBottomSheet({
   const sleepDurationMinutes = String(parsedSleepDurationMinutes % 60);
 
   const updateSleepDurationValue = React.useCallback((nextHoursRaw: string, nextMinutesRaw: string) => {
-    const normalizedHours = nextHoursRaw.replace(/[^0-9]/g, '');
-    const normalizedMinutes = nextMinutesRaw.replace(/[^0-9]/g, '');
+    const normalizedHours = nextHoursRaw.replaceAll(/\D/g, '');
+    const normalizedMinutes = nextMinutesRaw.replaceAll(/\D/g, '');
 
     if (!normalizedHours && !normalizedMinutes) {
       setMetricValue('');
@@ -131,7 +135,7 @@ export function RegisterMetricBottomSheet({
       enablePanDownToClose
       backgroundStyle={{ backgroundColor: colors.background }}
       animateOnMount
-      index={0}
+      index={initialSnapIndex}
       onChange={handleSheetChange}
     >
       <BottomSheetScrollView

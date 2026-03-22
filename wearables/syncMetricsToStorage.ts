@@ -104,6 +104,15 @@ export async function syncWearableMetricsToStorage(
         notes: 'wearable_sync',
       })),
     ...activity
+      .filter(entry => typeof entry.activeMinutes === 'number')
+      .map(entry => ({
+        metricId: 'active_minutes',
+        value: entry.activeMinutes as number,
+        unit: 'min',
+        recordedAt: toRecordedAt(entry.date),
+        notes: 'wearable_sync',
+      })),
+    ...activity
       .filter(entry => typeof entry.intensityMinutes === 'number')
       .map(entry => ({
         metricId: 'intensity_minutes',

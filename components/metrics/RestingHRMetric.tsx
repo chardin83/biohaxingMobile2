@@ -4,19 +4,19 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
+import { useStoredHRVData } from '@/hooks/useStoredHRVData';
 import { calculateRestingHRMetrics } from '@/utils/restingHRCalculations';
-import { HRVSummary } from '@/wearables/types';
 
 interface RestingHRMetricProps {
-  hrvData: HRVSummary[];
   showDivider?: boolean;
   onPress?: () => void;
   isSelected?: boolean;
 }
 
-export function RestingHRMetric({ hrvData, showDivider = false, onPress, isSelected = false }: Readonly<RestingHRMetricProps>) {
+export function RestingHRMetric({ showDivider = false, onPress, isSelected = false }: Readonly<RestingHRMetricProps>) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const hrvData = useStoredHRVData();
   const { restingHR, restingHRDelta } = calculateRestingHRMetrics(hrvData);
   const content = (
     <View style={styles.contentContainer}>

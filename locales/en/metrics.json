@@ -1,4 +1,11 @@
 {
+    "common": {
+        "low": "Low",
+        "moderate": "Moderate",
+        "good": "Good",
+        "optimal": "Optimal",
+        "high": "High"
+    },
     "ldl": {
         "name": "LDL cholesterol",
         "description": "The \"bad\" cholesterol strongly linked to cardiovascular risk."
@@ -79,6 +86,10 @@
     "trendChart": {
         "title": "{{metric}} over time",
         "subtitle": "Last {{count}} registrations",
+        "subtitleDays_one": "Last day",
+        "subtitleDays_other": "Last {{count}} days",
+        "subtitleWeeks_one": "Last week",
+        "subtitleWeeks_other": "Last {{count}} weeks",
         "empty": "Register {{metric}} on at least two days to see the trend over time.",
         "latestLabel": "Latest",
         "lowLabel": "Low",
@@ -170,5 +181,9 @@
     "todaysSteps":{
         "name": "Today's steps",
         "description": "Total number of steps taken today." 
+    },
+     "trainingLoad": {
+        "name": "Training load",
+        "sevenDayTotal": "7-day total"  
     }
 }

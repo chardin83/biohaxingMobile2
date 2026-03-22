@@ -21,6 +21,9 @@ function getRecoveryStatus(hrv: number | null, sleepHours: number | null, t: (ke
     return t('metrics.needRecovery');
   }
 }
+//* Fitbit and Garmin does not expose Recovery, REMOVE?!
+// Recovery score finns i Whoop
+//Oura har en "Readiness Score" som är lik 
 
 export function RecoveryStatusMetric({ hrvData, sleepHours }: Readonly<RecoveryStatusMetricProps>) {
   const { t } = useTranslation();

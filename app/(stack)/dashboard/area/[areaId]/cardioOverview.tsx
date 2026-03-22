@@ -1,97 +1,21 @@
 import { useTheme } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
-import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
-import { VO2MaxMetric } from '@/components/metrics/VO2MaxMetric';
+import { CardioTrendsChart } from '@/components/metrics/CardioTrendsChart';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
-import { Error } from '@/components/ui/Error';
 import GenesListCard from '@/components/ui/GenesListCard';
-import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
-import { useStoredHRVData } from '@/hooks/useStoredHRVData';
-import { useStorage } from '@/app/context/StorageContext';
-import { DailyActivity, EnergySignal, TimeRange } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
 export default function CardioScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
-  const { adapter, status } = useWearable();
-  const { getMetricHistory } = useStorage();
+  const { status } = useWearable();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [activityData, setActivityData] = useState<DailyActivity[]>([]);
-  const [energyData, setEnergyData] = useState<EnergySignal[]>([]);
-  const hrvData = useStoredHRVData();
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        const range: TimeRange = {
-          start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-          end: new Date().toISOString(),
-        };
-
-        const [activity, energy] = await Promise.all([
-          adapter.getDailyActivity(range),
-          adapter.getEnergySignal(range),
-        ]);
-
-        setActivityData(activity);
-        setEnergyData(energy);
-      } catch (err) {
-        console.error('Failed to load data:', err);
-        setError('Failed to load data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, [adapter]);
-
-  if (loading) {
-    return <Loading />;
-  }
-
-  if (error) {
-    return <Error error={error} />;
-  }
-
-  // Transform wearable data to cardio metrics
-  const latestEnergy = energyData[0];
-
-  // Calculate weekly training load from activity data
-  const weeklyActiveMinutes = activityData.reduce((sum, day) => sum + (day.activeMinutes || 0), 0);
-  const trainingLoad = activityData.length > 0 ? weeklyActiveMinutes * 2 : null;
-
-  let trainingLoadStatus: string;
-  if (trainingLoad == null) {
-    trainingLoadStatus = '—';
-  } else if (trainingLoad > 400) {
-    trainingLoadStatus = 'High';
-  } else if (trainingLoad > 200) {
-    trainingLoadStatus = 'Optimal';
-  } else {
-    trainingLoadStatus = 'Low';
-  }
-
-  const latestVo2Max = getMetricHistory('vo2_max').at(-1)?.value ?? null;
-
-  const cardio = {
-    vo2max: latestVo2Max,
-    trainingLoad,
-    trainingLoadStatus,
-    recoveryTime: latestEnergy?.bodyBatteryLevel == null ? null : latestEnergy.bodyBatteryLevel > 80 ? 12 : 18,
-    fitnessAge: null,
-    actualAge: null,
-  };
 
   return (
     <>
@@ -99,35 +23,7 @@ export default function CardioScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
       <ThemedText type="subtitle">{t("cardioOverview.description")}</ThemedText>
       <WearableStatus status={status} />
 
-      {/* Overview card */}
-      <Card title={t("cardioOverview.yourCardioPerformance")}>
-        <View style={globalStyles.row}>
-          <VO2MaxMetric vo2max={cardio.vo2max} showDivider />
-          <RestingHRMetric hrvData={hrvData} showDivider />
-          <View style={globalStyles.col}>
-            <ThemedText type="label">{t("cardioOverview.trainingLoad")}</ThemedText>
-            <ThemedText type="title2">{cardio.trainingLoad ?? '—'}</ThemedText>
-            <ThemedText type="caption">{cardio.trainingLoadStatus}</ThemedText>
-            {activityData.length > 0 && <ThemedText type="caption">{t("cardioOverview.sevenDayTotal")}</ThemedText>}
-          </View>
-        </View>
-        <View style={[globalStyles.row, globalStyles.marginTop8]}>
-          <View style={[globalStyles.col, globalStyles.colWithDivider, { borderRightColor: colors.borderLight ?? colors.border }]}>
-            <ThemedText type="label">{t("cardioOverview.recoveryTime")}</ThemedText>
-            <ThemedText type="title2">{cardio.recoveryTime == null ? '—' : `${cardio.recoveryTime}h`}</ThemedText>
-            <ThemedText type="caption">{t("cardioOverview.untilNextHardEffort")}</ThemedText>
-          </View>
-          <View style={globalStyles.col}>
-            <ThemedText type="label">{t("cardioOverview.fitnessAge")}</ThemedText>
-            <ThemedText type="title2">{cardio.fitnessAge ?? '—'}</ThemedText>
-            <ThemedText type="caption">
-              {cardio.actualAge != null && cardio.fitnessAge != null
-                ? `${cardio.actualAge - cardio.fitnessAge} ${t("cardioOverview.yearsYounger")}`
-                : '—'}
-            </ThemedText>
-          </View>
-        </View>
-      </Card>
+      <CardioTrendsChart />
 
       {/* VO2 Max explanation */}
       <Card title={t("cardioOverview.understandingYourMetrics.title")}>

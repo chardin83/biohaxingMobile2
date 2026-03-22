@@ -108,13 +108,11 @@ export function EnergyProductionCharts() {
             isSelected={selectedMetric === 'vo2_max'}
           />
           <RestingHRMetric
-            hrvData={hrvData}
             showDivider
             onPress={() => setSelectedMetric('resting_hr')}
             isSelected={selectedMetric === 'resting_hr'}
           />
           <HRVMetric
-            hrvData={hrvData}
             onPress={() => setSelectedMetric('hrv')}
             isSelected={selectedMetric === 'hrv'}
           />

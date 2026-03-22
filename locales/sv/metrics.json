@@ -1,4 +1,11 @@
 {
+    "common": {
+        "low": "Låg",
+        "moderate": "Måttlig",
+        "good": "Bra",
+        "optimal": "Optimal",
+        "high": "Hög"
+    },
     "ldl": {
         "name": "LDL-kolesterol",
         "description": "Det \"onda\" kolesterolet som är starkt kopplat till hjärt-kärlrisk."
@@ -79,6 +86,10 @@
     "trendChart": {
         "title": "{{metric}} över tid",
         "subtitle": "Senaste {{count}} registreringarna",
+        "subtitleDays_one": "Senaste dagen",
+        "subtitleDays_other": "Senaste {{count}} dagarna",
+        "subtitleWeeks_one": "Senaste veckan",
+        "subtitleWeeks_other": "Senaste {{count}} veckorna",
         "empty": "Registrera {{metric}} minst två dagar för att se utvecklingen över tid.",
         "latestLabel": "Senast",
         "lowLabel": "Lägst",
@@ -170,5 +181,9 @@
     "todaysSteps":{
       "name": "Dagens steg",
       "description": "Totalt antal steg tagna idag."
+    },
+    "trainingLoad": {
+        "name": "Träningsbelastning",
+        "sevenDayTotal": "7-dagars total"  
     }
 }

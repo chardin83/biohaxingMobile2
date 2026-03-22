@@ -14,7 +14,6 @@ import GenesListCard from '@/components/ui/GenesListCard';
 import { Loading } from '@/components/ui/Loading';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
-import { useStoredHRVData } from '@/hooks/useStoredHRVData';
 import { SleepSummary, TimeRange } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
@@ -26,7 +25,6 @@ export default function StrengthScreen({ mainGoalId }: Readonly<{ mainGoalId: st
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sleepData, setSleepData] = useState<SleepSummary[]>([]);
-  const hrvData = useStoredHRVData();
 
   useEffect(() => {
     const loadData = async () => {
@@ -71,9 +69,9 @@ export default function StrengthScreen({ mainGoalId }: Readonly<{ mainGoalId: st
       {/* Recovery Factors Card */}
       <Card title={t('strengthOverview.recoveryFactors.title')}>
         <View style={globalStyles.row}>
-          <SleepMetric sleepData={sleepData} showDivider />
+          <SleepMetric showDivider />
           <SleepConsistencyMetric sleepData={{ ...sleepData[0], targetBedtime: '' }} showDivider />
-          <HRVMetric hrvData={hrvData} showDivider={false} />
+          <HRVMetric showDivider={false} />
         </View>
         <View style={globalStyles.infoSection}> 
           <ThemedText type='explainer' style={[globalStyles.topBorder, { borderColor: colors.borderLight}]}>

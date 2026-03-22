@@ -270,8 +270,6 @@
     "title": "Cardiovascular Health",
     "description": "Heart, blood vessels, and overall cardiovascular function",
     "yourCardioPerformance": "Your cardio performance",
-    "trainingLoad": "Training load",
-    "sevenDayTotal": "7-day total",
     "recoveryTime": "Recovery time",
     "untilNextHardEffort": "Until next hard effort",
     "fitnessAge": "Fitness age",
@@ -303,13 +301,6 @@
   "digestiveOverview": {
     "title": "Digestive Health",
     "description": "Gut function, microbiome, and digestive wellness",
-    "gutHealthInfluencers": {
-      "title": "Gut health influencers",
-      "stressLevel": "Stress level",
-      "sleep": "Sleep",
-      "activity": "Activity",
-      "steps": "steps"
-    },
     "understandingYourMetrics": {
       "title": "Understanding Your Digestive Metrics",
       "microbiome": {
@@ -693,6 +684,14 @@
       "activity_minutes": "Total minutes of activity today. Aim for at least 150 minutes of moderate or 75 minutes of vigorous activity per week to support mitochondrial function.",
       "steps": "Your total steps for the day. Aim for consistent movement to support energy levels and metabolic health.",
       "intensity_minutes": "Minutes of elevated heart rate. Both moderate and vigorous activity boost mitochondrial function and overall fitness."
+    }
+  },
+  "digestiveTrendChart": {
+    "title": "Digestive Health Drivers",
+    "explainers": {
+      "hrv": "HRV reflects stress load and recovery through autonomic balance. Prolonged stress can negatively affect gut barrier function, motility, and microbiome stability.",
+      "sleep_duration": "Sufficient and consistent sleep supports gut recovery, hormone balance, and microbiome circadian rhythm. Short or irregular sleep can worsen digestion over time.",
+      "active_minutes": "Regular movement supports gut motility, circulation, and metabolic health. Over time, this can improve digestive function and reduce gastrointestinal discomfort."
     }
   }
 }

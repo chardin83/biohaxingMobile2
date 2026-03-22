@@ -17,7 +17,7 @@ import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { useStoredHRVData } from '@/hooks/useStoredHRVData';
-import { EnergySignal, SleepSummary, TimeRange } from '@/wearables/types';
+import { EnergySignal, TimeRange } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
 export default function ImmuneScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
@@ -27,7 +27,6 @@ export default function ImmuneScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
     
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sleepData, setSleepData] = useState<SleepSummary[]>([]);
   const [energyData, setEnergyData] = useState<EnergySignal[]>([]);
   const [sleepHours, setSleepHours] = useState<number | null>(null);
   const hrvData = useStoredHRVData();
@@ -46,7 +45,6 @@ export default function ImmuneScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
           adapter.getEnergySignal(range),
         ]);
 
-        setSleepData(sleep);
         setEnergyData(energy);
 
         // Sätt sleepHours
@@ -108,7 +106,7 @@ export default function ImmuneScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
       <Card title={t("immuneOverview.immuneStatus.title")} >
         <View style={globalStyles.row}>
           {/* Sleep */}
-          <SleepMetric sleepData={sleepData} showDivider />
+          <SleepMetric showDivider />
 
           {/* Stress/Body Battery */}
           <View
@@ -127,13 +125,13 @@ export default function ImmuneScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
           </View>
 
           {/* HRV */}
-          <HRVMetric hrvData={hrvData} />
+          <HRVMetric />
         </View>
 
         {/* Second row */}
         <View style={[globalStyles.row, globalStyles.marginTop8]}>
           {/* Resting Heart Rate */}
-          <RestingHRMetric hrvData={hrvData} showDivider />
+          <RestingHRMetric showDivider />
 
           {/* Recovery Status */}
           <RecoveryStatusMetric

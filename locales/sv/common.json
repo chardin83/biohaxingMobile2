@@ -274,8 +274,6 @@
     "title": "Kardiovaskulär hälsa",
     "description": "Hjärta, blodkärl och övergripande kardiovaskulär funktion",
     "yourCardioPerformance": "Din konditionsprestanda",
-    "trainingLoad": "Träningsbelastning",
-    "sevenDayTotal": "7-dagars total",
     "recoveryTime": "Återhämtningstid",
     "untilNextHardEffort": "till nästa hårda ansträngning",
     "fitnessAge": "Konditionsålder",
@@ -307,13 +305,6 @@
   "digestiveOverview": {
     "title": "Matsmältning",
     "description": "Faktorer som påverkar matsmältningshälsa och tarmfunktion",
-    "gutHealthInfluencers": {
-      "title": "Påverkare av tarmhälsa",
-      "stressLevel": "Stressnivå",
-      "sleep": "Sömn",
-      "activity": "Aktivitet",
-      "steps": "steg"
-    },
     "understandingYourMetrics": {
       "title": "Förstå dina matsmältnings-mått",
       "microbiome": {
@@ -703,6 +694,14 @@
       "active_minutes": "Regelbunden rörelse under dagen upprätthåller mitokondriell hälsa. Även lätt aktivitet (promenader) stimulerar ATP-produktion och minskar oxidativ stress.",
       "steps": "Att ta steg under dagen bidrar till kardiovaskulär hälsa och förbättrar blodcirkulationen.",
       "intensity_minutes": "Intensiv aktivitet under korta perioder ökar hjärtfrekvensen och förbättrar aerob kapacitet."
+    }
+  },
+  "digestiveTrendChart": {
+    "title": "Tarmhälsans påverkan",
+    "explainers": {
+      "hrv": "HRV speglar stress- och återhämtningsnivåer via nervsystemet. Långvarig stress kan påverka tarmbarriär, motilitet och mikrobiom negativt.",
+      "sleep_duration": "Tillräcklig och stabil sömn stödjer tarmens återhämtning, hormonbalans och mikrobiomets dygnsrytm. Oregelbunden eller kort sömn kan försämra matsmältningen.",
+      "active_minutes": "Regelbunden rörelse främjar tarmmotilitet, blodflöde och metabol hälsa. Över tid kan det bidra till bättre tarmfunktion och minskade magbesvär."
     }
   }
 }

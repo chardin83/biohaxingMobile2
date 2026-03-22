@@ -10,13 +10,18 @@ export function calculateRestingHRMetrics(hrvData: HRVSummary[]): RestingHRMetri
     return { restingHR: null, restingHRDelta: 0 };
   }
 
-  const latest = hrvData.at(-1)!;
+  const entriesWithHR = hrvData.filter(d => typeof d.avgRestingHrBpm === 'number');
+  if (entriesWithHR.length === 0) {
+    return { restingHR: null, restingHRDelta: 0 };
+  }
+
+  const latest = entriesWithHR.at(-1)!;
   const restingHR = latest.avgRestingHrBpm ?? null;
 
   let restingHRDelta = 0;
 
-  if (hrvData.length >= 2) {
-    const avgHR = hrvData.slice(0, -1).reduce((sum, d) => sum + (d.avgRestingHrBpm ?? 0), 0) / (hrvData.length - 1);
+  if (entriesWithHR.length >= 2) {
+    const avgHR = entriesWithHR.slice(0, -1).reduce((sum, d) => sum + (d.avgRestingHrBpm ?? 0), 0) / (entriesWithHR.length - 1);
     restingHRDelta = latest.avgRestingHrBpm && avgHR > 0 ? Math.round(latest.avgRestingHrBpm - avgHR) : 0;
   }
 
