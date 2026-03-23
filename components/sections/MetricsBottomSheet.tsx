@@ -2,9 +2,9 @@ import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { useStorage } from '@/app/context/StorageContext';
+import { type MetricEntry, useStorage } from '@/app/context/StorageContext';
 import { RegisterMetricBottomSheet } from '@/components/RegisterMetricBottomSheet';
 import { MetricValuesTableSection } from '@/components/sections/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
@@ -24,13 +24,14 @@ function isGlobalMetric(metricId: string): boolean {
 }
 
 export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSheetRef, tipId, planTipId }) => {
-  const { t } = useTranslation(['metrics']);
+  const { t } = useTranslation(['metrics', 'common']);
   const { colors } = useTheme();
-  const { addMetricEntry, getMetricHistory, getMetricsForPlanTip } = useStorage();
+  const { addMetricEntry, getMetricHistory, getMetricsForPlanTip, setMetricEntries } = useStorage();
   const registerBottomSheetRef = useRef<BottomSheet>(null);
   const [selectedMetricId, setSelectedMetricId] = useState<string | null>(null); // For detail view
   const [sheetIndex, setSheetIndex] = useState(1);
   const [isRegisterSheetVisible, setIsRegisterSheetVisible] = useState(false);
+  const [editingEntry, setEditingEntry] = useState<MetricEntry | null>(null);
   const [metricDraftId, setMetricDraftId] = useState<string | null>(null);
   const [metricValue, setMetricValue] = useState('');
   const [metricUnit, setMetricUnit] = useState('');
@@ -52,6 +53,7 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
   };
 
   const handleOpenAddMetricSheet = (metricId: string) => {
+    setEditingEntry(null);
     setMetricDraftId(metricId);
     const metric = metrics[metricId];
     if (metric && metric.units.length > 0) {
@@ -71,28 +73,116 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
     const value = Number.parseFloat(metricValue);
     if (Number.isNaN(value)) return;
 
-    const targetPlanTipId = isGlobalMetric(metricDraftId) ? undefined : planTipId;
+    let targetPlanTipId = planTipId;
+    if (isGlobalMetric(metricDraftId)) {
+      targetPlanTipId = undefined;
+    }
+    if (editingEntry) {
+      targetPlanTipId = editingEntry.planTipId;
+    }
 
-    console.log('Sparar metricEntry', { metricId: metricDraftId, value, unit: metricUnit, planTipId: targetPlanTipId });
-
-    addMetricEntry({
+    const nextEntry: MetricEntry = {
       metricId: metricDraftId,
       value,
       unit: metricUnit,
       recordedAt: recordedAt.toISOString(),
       notes: metricNotes || undefined,
       planTipId: targetPlanTipId,
-    });
+    };
+
+    if (editingEntry) {
+      setMetricEntries(prev => {
+        let replaced = false;
+        const next = prev.map(entry => {
+          if (
+            !replaced
+            && entry.metricId === editingEntry.metricId
+            && entry.recordedAt === editingEntry.recordedAt
+            && entry.value === editingEntry.value
+            && entry.unit === editingEntry.unit
+            && (entry.notes ?? '') === (editingEntry.notes ?? '')
+            && (entry.planTipId ?? '') === (editingEntry.planTipId ?? '')
+          ) {
+            replaced = true;
+            return nextEntry;
+          }
+
+          return entry;
+        });
+
+        if (!replaced) {
+          next.push(nextEntry);
+        }
+
+        return next;
+      });
+    } else {
+      addMetricEntry(nextEntry);
+    }
 
     handleCloseAddMetricSheet();
   };
 
   const handleCloseAddMetricSheet = () => {
     setIsRegisterSheetVisible(false);
+    setEditingEntry(null);
     setMetricValue('');
     setMetricNotes('');
     setRecordedAt(new Date());
     setMetricDraftId(null);
+  };
+
+  const handleEditMetricEntry = (entry: MetricEntry) => {
+    setEditingEntry(entry);
+    setMetricDraftId(entry.metricId);
+    setMetricValue(String(entry.value));
+    setMetricUnit(entry.unit);
+    setMetricNotes(entry.notes ?? '');
+
+    const parsedDate = new Date(entry.recordedAt);
+    setRecordedAt(Number.isNaN(parsedDate.getTime()) ? new Date() : parsedDate);
+
+    setIsRegisterSheetVisible(true);
+  };
+
+  const performDeleteMetricEntry = (entry: MetricEntry) => {
+    setMetricEntries(prev => {
+      let removed = false;
+      return prev.filter(current => {
+        if (
+          !removed
+          && current.metricId === entry.metricId
+          && current.recordedAt === entry.recordedAt
+          && current.value === entry.value
+          && current.unit === entry.unit
+          && (current.notes ?? '') === (entry.notes ?? '')
+          && (current.planTipId ?? '') === (entry.planTipId ?? '')
+        ) {
+          removed = true;
+          return false;
+        }
+
+        return true;
+      });
+    });
+  };
+
+  const handleDeleteMetricEntry = (entry: MetricEntry) => {
+    Alert.alert(
+      t('common:metricValuesBottomSheet.confirmDeleteTitle'),
+      t('common:metricValuesBottomSheet.confirmDeleteMessage'),
+      [
+        {
+          text: t('common:general.cancel'),
+          style: 'cancel',
+        },
+        {
+          text: t('common:metricValuesBottomSheet.confirmDeleteAction'),
+          style: 'destructive',
+          onPress: () => performDeleteMetricEntry(entry),
+        },
+      ]
+    );
   };
 
   const handleSheetChange = (index: number) => {
@@ -156,6 +246,14 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
               colors={colors}
               emptyText={t('metrics:trendChart.empty', { metric: t(`metrics:${selectedMetricId}.name`) })}
               onAddPress={() => handleOpenAddMetricSheet(selectedMetricId)}
+              onEditEntry={handleEditMetricEntry}
+              onDeleteEntry={handleDeleteMetricEntry}
+              addButtonTitle={t('common:metricValuesBottomSheet.addButton')}
+              registeredValuesTitle={t('common:metricValuesBottomSheet.registeredValuesTitle')}
+              dateLabel={t('common:metricValuesBottomSheet.columns.date')}
+              valueLabel={t('common:metricValuesBottomSheet.columns.value')}
+              unitLabel={t('common:metricValuesBottomSheet.columns.unit')}
+              notesLabel={t('common:metricValuesBottomSheet.columns.notes')}
             />
 
             <ThemedText type="defaultSemiBold" style={styles.unitsTitle}>

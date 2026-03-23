@@ -32,7 +32,7 @@ const SupplementItem: React.FC<SupplementItemProps> = ({
         <ThemedText type="default" style={[styles.text, { color: colors.text }]}>
           {`${supplement.name} (${supplement.quantity} ${supplement.unit})`}
         </ThemedText>
-        <ThemedText type="default" style={[styles.icon, { color: colors.textLight || '#888' }]}>
+        <ThemedText type="default" style={[styles.icon, { color: colors.textLight}]}>
           ⋮
         </ThemedText>
       </View>

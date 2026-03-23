@@ -47,7 +47,7 @@ export function BodyBatteryMetric({ energyData, showDivider = false, onPress, is
       onPress={onPress}
       borderColor={isSelected ? colors.chart?.mindBodyBattery || colors.primary : 'transparent'}
     >
-        <ThemedText type="label">{t('metrics.bodyBattery.title')}</ThemedText>
+        <ThemedText type="label">{t('metrics:bodyBattery.name')}</ThemedText>
         <View style={globalStyles.metricValueContainer}>
           <ThemedText type="title2">{latestBodyBattery ?? '—'}</ThemedText>
           <ThemedText type="caption">%</ThemedText>

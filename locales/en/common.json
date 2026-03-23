@@ -438,15 +438,6 @@
   "mindOverview": {
     "title": "Mind & Cognition",
     "description": "Cognitive function, mental performance, and brain health",
-    "mindMetrics": {
-      "title": "Cognitive metrics",
-      "explainers": {
-        "body_battery": "The Body Battery trend shows how your energy reserves change over time. Higher and more stable levels are often linked to better mental stamina and focus.",
-        "sleep_duration": "Sleep duration in hours and minutes shows your recovery baseline. A stable level night after night supports memory, concentration, and emotional regulation.",
-        "steps": "The steps trend reflects your daily movement volume. Consistent everyday activity supports brain blood flow and can improve cognitive sharpness.",
-        "intensity_minutes": "Intensity minutes show how much pulse-raising activity you get. The right weekly dose can improve stress resilience and mental performance."
-      }
-    },
     "informationCard": {
       "title": "Why these metrics matter",
       "focus": {
@@ -521,7 +512,12 @@
     "description": "Muscle function, strength training, and recovery",
     "recoveryFactors": {
       "title": "Recovery factors",
-      "explainer": "Sleep and HRV are primary drivers of muscle recovery and protein synthesis. Deep sleep stages trigger growth hormone release for muscle repair. Respecting recovery prevents injury and promotes strength gains. Training hard when recovery is incomplete leads to diminished returns and increased injury risk."
+      "explainer": "Sleep and HRV are primary drivers of muscle recovery and protein synthesis. Deep sleep stages trigger growth hormone release for muscle repair. Respecting recovery prevents injury and promotes strength gains. Training hard when recovery is incomplete leads to diminished returns and increased injury risk.",
+      "explainers": {
+        "sleep_duration": "Sleep duration directly affects muscular and nervous-system recovery between sessions. Too little sleep reduces force output, movement quality, and your ability to handle progressive overload.",
+        "sleep_bedtime": "A consistent bedtime improves recovery timing and sleep quality. A stable rhythm makes it easier to perform heavy lifts and recover for the next strength session.",
+        "hrv": "HRV reflects autonomic recovery readiness before training. Lower HRV can indicate higher stress load and a need to adjust volume, intensity, or rest days."
+      }
     },
     "information": {
       "title": "Information",
@@ -571,9 +567,6 @@
     "needRecovery": "Need recovery",
     "sleep": "Sleep",
     "noSleepData": "No sleep data",
-    "bodyBattery": {
-      "title": "Body Battery"
-    },
     "stressScore": {
       "title": "Stress Score"
     },
@@ -661,8 +654,8 @@
     "otherCommentLabel": "Comment"
   },
   "energyProductionCharts": {
-    "title": "Energy Production Metrics",
-    "explainer": "VO₂ max indicates mitochondrial density and oxidative capacity. Higher values = more efficient ATP production from oxygen.",
+    "title": "Energy metrics",
+    "explainer": "VO₂ max, resting heart rate, and HRV are three key indicators of your fitness and energy production capacity. Tap a metric to view its trend.",
     "explainers": {
       "vo2_max": "VO₂ max indicates mitochondrial density and oxidative capacity. Higher values = more efficient ATP production from oxygen.",
       "resting_hr": "Resting heart rate reflects baseline cardiovascular load and recovery state. A lower resting heart rate is often associated with better fitness and energy efficiency.",
@@ -671,6 +664,7 @@
   },
   "sleepTrendChart": {
     "title": "Sleep trends",
+    "explainer": "Tap different metrics to view their trends over time.",
     "explainers": {
       "sleep_duration": "Sleep duration shows your total nightly recovery. A stable level around 7 to 9 hours supports hormone balance, immune function, and mental sharpness.",
       "deep_sleep": "Deep sleep is the phase where the body prioritizes physical recovery, tissue repair, and immune support. The trend helps show whether recovery is actually improving over time.",
@@ -686,12 +680,36 @@
       "intensity_minutes": "Minutes of elevated heart rate. Both moderate and vigorous activity boost mitochondrial function and overall fitness."
     }
   },
-  "digestiveTrendChart": {
+  "digestiveTrendsChart": {
     "title": "Digestive Health Drivers",
+    "explainer": "HRV, sleep, and activity all influence digestion, gut barrier function, and microbiome balance. Tap a metric to see how its trend changes over time.",
     "explainers": {
       "hrv": "HRV reflects stress load and recovery through autonomic balance. Prolonged stress can negatively affect gut barrier function, motility, and microbiome stability.",
       "sleep_duration": "Sufficient and consistent sleep supports gut recovery, hormone balance, and microbiome circadian rhythm. Short or irregular sleep can worsen digestion over time.",
       "active_minutes": "Regular movement supports gut motility, circulation, and metabolic health. Over time, this can improve digestive function and reduce gastrointestinal discomfort."
+    }
+  },
+  "mindTrendsChart": {
+      "title": "Cognitive metrics",
+      "explainer": "Tap different metrics to view their trends over time.",
+      "explainers": {
+        "body_battery": "The Body Battery trend shows how your energy reserves change over time. Higher and more stable levels are often linked to better mental stamina and focus.",
+        "sleep_duration": "Sleep duration in hours and minutes shows your recovery baseline. A stable level night after night supports memory, concentration, and emotional regulation.",
+        "steps": "The steps trend reflects your daily movement volume. Consistent everyday activity supports brain blood flow and can improve cognitive sharpness.",
+        "intensity_minutes": "Intensity minutes show how much pulse-raising activity you get. The right weekly dose can improve stress resilience and mental performance."
+      }
+  },
+  "metricValuesBottomSheet": {
+    "addButton": "Register new value",
+    "registeredValuesTitle": "Registered values",
+    "confirmDeleteTitle": "Delete metric value?",
+    "confirmDeleteMessage": "This action cannot be undone.",
+    "confirmDeleteAction": "Delete",
+    "columns": {
+      "date": "Date",
+      "value": "Value",
+      "unit": "Unit",
+      "notes": "Note"
     }
   }
 }

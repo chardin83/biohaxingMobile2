@@ -4,9 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
-import { HRVMetric } from '@/components/metrics/HRVMetric';
-import { SleepConsistencyMetric } from '@/components/metrics/SleepConsistencyMetric';
-import { SleepMetric } from '@/components/metrics/SleepMetric';
+import { StrengthRecoveryTrendsChart } from '@/components/metrics/StrengthRecoveryTrendsChart';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { Error } from '@/components/ui/Error';
@@ -66,19 +64,7 @@ export default function StrengthScreen({ mainGoalId }: Readonly<{ mainGoalId: st
 
       <WearableStatus status={status} />
 
-      {/* Recovery Factors Card */}
-      <Card title={t('strengthOverview.recoveryFactors.title')}>
-        <View style={globalStyles.row}>
-          <SleepMetric showDivider />
-          <SleepConsistencyMetric sleepData={{ ...sleepData[0], targetBedtime: '' }} showDivider />
-          <HRVMetric showDivider={false} />
-        </View>
-        <View style={globalStyles.infoSection}> 
-          <ThemedText type='explainer' style={[globalStyles.topBorder, { borderColor: colors.borderLight}]}>
-            {t('strengthOverview.recoveryFactors.explainer')}
-          </ThemedText>
-        </View>
-      </Card>
+      <StrengthRecoveryTrendsChart sleepData={sleepData} />
 
       {/* Protein Timing Card */}
       <Card title="Anabolic Window">

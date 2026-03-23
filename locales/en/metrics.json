@@ -94,7 +94,7 @@
         "latestLabel": "Latest",
         "lowLabel": "Low",
         "highLabel": "High",
-        "addManualValue": "Add manual measurement"
+        "viewRegisteredValues": "View registered values"
     },
     "sleep_duration": {
         "name": "Sleep duration",
@@ -185,5 +185,8 @@
      "trainingLoad": {
         "name": "Training load",
         "sevenDayTotal": "7-day total"  
+    },
+    "bodyBattery": {
+      "name": "Body Battery"
     }
 }

@@ -25,7 +25,7 @@ interface MetricTrendChartProps {
   readonly daysToShow?: number;
   readonly height?: number;
   readonly accentColor?: string;
-  readonly onAddManualValue?: () => void;
+  readonly onViewRegisteredValues?: () => void;
   readonly xAxisLabelFormatter?: (date: string) => string;
   readonly referenceLines?: Array<{
     value: number;
@@ -100,12 +100,12 @@ export function MetricTrendChart({
   daysToShow = 7,
   height = 180,
   accentColor,
-  onAddManualValue,
+  onViewRegisteredValues,
   xAxisLabelFormatter,
   referenceLines,
 }: Readonly<MetricTrendChartProps>) {
   const { colors } = useTheme();
-  const { t } = useTranslation();
+  const { t } = useTranslation('metrics');
   const [chartWidth, setChartWidth] = React.useState(0);
   const lineColor = accentColor ?? colors.accentStrong;
   const dynamicStyles = React.useMemo(
@@ -285,10 +285,11 @@ export function MetricTrendChart({
             {t('metrics:trendChart.empty', { metric: metricName })}
           </ThemedText>
         </View>
-        {!!onAddManualValue && (
+        {!!onViewRegisteredValues && (
           <AppButton
-            onPress={onAddManualValue}
-            title={t('metrics:trendChart.addManualValue')}
+            onPress={onViewRegisteredValues}
+            title={t('trendChart.viewRegisteredValues')}
+            variant="secondary"
             style={styles.ctaButton}
           />
         )}
@@ -444,13 +445,15 @@ export function MetricTrendChart({
       </View>
     )}
 
-    {!!onAddManualValue && (
+    {!!onViewRegisteredValues && (
       <AppButton
-        onPress={onAddManualValue}
-        title={t('metrics:trendChart.addManualValue')}
+        onPress={onViewRegisteredValues}
+        title={t('trendChart.viewRegisteredValues')}
+        variant="secondary"
         style={styles.ctaButton}
       />
     )}
+
   </View>
 );
 }
@@ -516,7 +519,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   ctaButton: {
-    marginTop: 16,
+    marginTop: 12,
   },
   emptyState: {
     borderWidth: 1,

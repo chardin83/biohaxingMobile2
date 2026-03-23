@@ -1,3 +1,4 @@
+import BottomSheet from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,12 +10,11 @@ import { DeepSleepMetric } from '@/components/metrics/DeepSleepMetric';
 import { MetricTrendChart, type MetricTrendPoint } from '@/components/metrics/MetricTrendChart';
 import { RemSleepMetric } from '@/components/metrics/RemSleepMetric';
 import { SleepMetric } from '@/components/metrics/SleepMetric';
+import { MetricValuesBottomSheet } from '@/components/sections/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
-import { metrics } from '@/locales/metrics';
 import { buildTrendData } from '@/utils/metrics';
 
 import { Card } from '../ui/Card';
-import { RegisterMetricSheetPortal,useRegisterMetricSheet } from './useRegisterMetricSheet';
 
 export type SleepTrendMetricKey = 'sleep_duration' | 'deep_sleep' | 'rem_sleep';
 
@@ -29,11 +29,16 @@ export function SleepTrendsChart() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { getMetricHistory } = useStorage();
-  const [selectedTrendMetric, setSelectedTrendMetric] = React.useState<SleepTrendMetricKey>('sleep_duration');
-  const selectedTrendMetricDefinition = metrics[selectedTrendMetric];
+  const [selectedTrendMetric, setSelectedTrendMetric] = React.useState<SleepTrendMetricKey | null>(null);
+  const metricValuesBottomSheetRef = React.useRef<BottomSheet>(null);
 
-  // RegisterMetricSheet state
-  const registerSheet = useRegisterMetricSheet();
+  const toggleMetric = React.useCallback((metric: SleepTrendMetricKey) => {
+    setSelectedTrendMetric(current => (current === metric ? null : metric));
+  }, []);
+
+  const openMetricValuesTable = React.useCallback(() => {
+    metricValuesBottomSheetRef.current?.snapToIndex(1);
+  }, []);
 
   const sleepDurationTrendData = React.useMemo<MetricTrendPoint[]>(() => {
     return buildTrendData(
@@ -56,6 +61,10 @@ export function SleepTrendsChart() {
   }, [getMetricHistory]);
 
   const selectedTrendConfig = React.useMemo(() => {
+    if (!selectedTrendMetric) {
+      return null;
+    }
+
     switch (selectedTrendMetric) {
       case 'deep_sleep':
         return {
@@ -88,50 +97,40 @@ export function SleepTrendsChart() {
       <View style={styles.trendMetricRow}>
         <SleepMetric
           showDivider={true}
-          onPress={() => setSelectedTrendMetric('sleep_duration')}
+          onPress={() => toggleMetric('sleep_duration')}
           isSelected={selectedTrendMetric === 'sleep_duration'}
         />
         <DeepSleepMetric
           showDivider={true}
-          onPress={() => setSelectedTrendMetric('deep_sleep')}
+          onPress={() => toggleMetric('deep_sleep')}
           isSelected={selectedTrendMetric === 'deep_sleep'}
         />
         <RemSleepMetric
-          onPress={() => setSelectedTrendMetric('rem_sleep')}
+          onPress={() => toggleMetric('rem_sleep')}
           isSelected={selectedTrendMetric === 'rem_sleep'}
         />
       </View>
-      <MetricTrendChart
-        data={selectedTrendConfig.data}
-        metricName={selectedTrendConfig.metricName}
-        unit={selectedTrendConfig.unit}
-        valueFormatter={selectedTrendConfig.valueFormatter}
-        accentColor={selectedTrendConfig.accentColor}
-        onAddManualValue={registerSheet.open}
-      />
+      {selectedTrendConfig && (
+        <MetricTrendChart
+          data={selectedTrendConfig.data}
+          metricName={selectedTrendConfig.metricName}
+          unit={selectedTrendConfig.unit}
+          valueFormatter={selectedTrendConfig.valueFormatter}
+          accentColor={selectedTrendConfig.accentColor}
+          onViewRegisteredValues={openMetricValuesTable}
+        />
+      )}
       <ThemedText type="explainer" style={[globalStyles.explainer, { borderColor: colors.borderLight }] }>
-        {t(`sleepTrendChart.explainers.${selectedTrendMetric}`)}
+        {selectedTrendMetric
+          ? t(`sleepTrendChart.explainers.${selectedTrendMetric}`, {
+            defaultValue: t('sleepTrendChart.explainer'),
+          })
+          : t('sleepTrendChart.explainer')}
       </ThemedText>
-      <RegisterMetricSheetPortal
-        bottomSheetRef={registerSheet.registerBottomSheetRef}
-        isVisible={registerSheet.isVisible}
+      <MetricValuesBottomSheet
+        bottomSheetRef={metricValuesBottomSheetRef}
         metricId={selectedTrendMetric}
-        metricName={t(`metrics:${selectedTrendMetricDefinition?.nameKey}`)}
-        metricValue={registerSheet.metricValue}
-        setMetricValue={registerSheet.setMetricValue}
-        metricUnit={registerSheet.metricUnit}
-        setMetricUnit={registerSheet.setMetricUnit}
-        metricNotes={registerSheet.metricNotes}
-        setMetricNotes={registerSheet.setMetricNotes}
-        recordedAt={registerSheet.recordedAt}
-        setRecordedAt={registerSheet.setRecordedAt}
-        colors={colors}
-        units={selectedTrendMetricDefinition?.units?.map(u => u.unit)}
-        onSave={() => {
-          // TODO: implement save logic for manual metric entry
-          registerSheet.close();
-        }}
-        onClose={registerSheet.close}
+        metricName={selectedTrendConfig?.metricName}
       />
     </Card>
   );

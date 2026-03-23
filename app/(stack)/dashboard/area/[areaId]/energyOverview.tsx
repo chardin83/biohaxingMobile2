@@ -88,6 +88,9 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
       <ThemedText type="subtitle">{t('energyOverview.description')}</ThemedText>
       <WearableStatus status={status} />
 
+            {/* Energy Production Factors */}
+      <EnergyProductionCharts />
+
       {/* Body Battery - Main Energy Indicator */}
       <Card title={t('energyOverview.cellularEnergyReserves.title')}>
         <View style={styles.centerMetric}>
@@ -115,9 +118,6 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
 
       {/* DNA & Mitochondria Genetics */}
       <GenesListCard areaId="energy" />
-
-      {/* Energy Production Factors */}
-      <EnergyProductionCharts />
 
       {/* Energy Drain vs Recharge */}
       <Card title={t('energyOverview.energyBalance.title')}>

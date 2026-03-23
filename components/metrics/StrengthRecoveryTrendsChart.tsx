@@ -10,13 +10,18 @@ import { MetricValuesBottomSheet } from '@/components/sections/MetricValuesBotto
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { buildTrendData } from '@/utils/metrics';
+import { SleepSummary } from '@/wearables/types';
 
 import { HRVMetric } from './HRVMetric';
 import { MetricTrendChart } from './MetricTrendChart';
+import { SleepConsistencyMetric } from './SleepConsistencyMetric';
 import { SleepMetric } from './SleepMetric';
-import { TotalActivityMetric } from './TotalActivityMetric';
 
-type DigestiveTrendMetricKey = 'hrv' | 'sleep_duration' | 'active_minutes';
+type StrengthRecoveryMetricKey = 'sleep_duration' | 'sleep_bedtime' | 'hrv';
+
+type StrengthRecoveryTrendsChartProps = {
+  sleepData?: SleepSummary[];
+};
 
 function formatSleepDuration(valueInMinutes: number) {
   const roundedMinutes = Math.max(0, Math.round(valueInMinutes));
@@ -25,15 +30,21 @@ function formatSleepDuration(valueInMinutes: number) {
   return `${hours}h ${String(minutes).padStart(2, '0')}m`;
 }
 
-export function DigestiveTrendsChart() {
+function formatTimeFromMinutes(value: number) {
+  const normalized = ((Math.round(value) % 1440) + 1440) % 1440;
+  const hours = Math.floor(normalized / 60);
+  const minutes = normalized % 60;
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+}
+
+export function StrengthRecoveryTrendsChart({ sleepData }: Readonly<StrengthRecoveryTrendsChartProps>) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { getMetricHistory } = useStorage();
-  const [selectedMetric, setSelectedMetric] = React.useState<DigestiveTrendMetricKey | null>(null);
+  const [selectedMetric, setSelectedMetric] = React.useState<StrengthRecoveryMetricKey | null>(null);
   const metricValuesBottomSheetRef = React.useRef<BottomSheet>(null);
 
-  const hrvTrendData = React.useMemo(() => buildTrendData(getMetricHistory('hrv')), [getMetricHistory]);
-  const sleepTrendData = React.useMemo(
+  const sleepDurationTrendData = React.useMemo(
     () =>
       buildTrendData(getMetricHistory('sleep_duration'), (value, unit) => {
         if (unit === 'hours') {
@@ -43,9 +54,10 @@ export function DigestiveTrendsChart() {
       }),
     [getMetricHistory]
   );
-  const activityTrendData = React.useMemo(() => buildTrendData(getMetricHistory('active_minutes')), [getMetricHistory]);
+  const sleepBedtimeTrendData = React.useMemo(() => buildTrendData(getMetricHistory('sleep_bedtime')), [getMetricHistory]);
+  const hrvTrendData = React.useMemo(() => buildTrendData(getMetricHistory('hrv')), [getMetricHistory]);
 
-  const toggleMetric = React.useCallback((metric: DigestiveTrendMetricKey) => {
+  const toggleMetric = React.useCallback((metric: StrengthRecoveryMetricKey) => {
     setSelectedMetric(current => (current === metric ? null : metric));
   }, []);
 
@@ -54,62 +66,66 @@ export function DigestiveTrendsChart() {
   }, []);
 
   const selectedConfig = React.useMemo(() => {
-    if (!selectedMetric) {
-      return null;
-    }
+    if (!selectedMetric) return null;
 
     switch (selectedMetric) {
-      case 'sleep_duration':
+      case 'sleep_bedtime':
         return {
-          metricName: t('metrics:sleep_duration.name'),
+          metricName: t('metrics:sleep_bedtime.name'),
           unit: undefined,
-          valueFormatter: formatSleepDuration,
-          data: sleepTrendData,
-          accentColor: colors.chart.sleepDuration,
-        };
-      case 'active_minutes':
-        return {
-          metricName: t('metrics:activeMinutes.name'),
-          unit: 'min',
-          data: activityTrendData,
-          accentColor: colors.chart.activeMinutes,
+          valueFormatter: formatTimeFromMinutes,
+          data: sleepBedtimeTrendData,
+          accentColor: colors.chart.deepSleep,
+          explainer: t('strengthOverview.recoveryFactors.explainers.sleep_bedtime'),
         };
       case 'hrv':
-      default:
         return {
           metricName: t('metrics:hrv.name'),
           unit: 'ms',
           data: hrvTrendData,
           accentColor: colors.chart.hrv,
+          explainer: t('strengthOverview.recoveryFactors.explainers.hrv'),
+        };
+      case 'sleep_duration':
+      default:
+        return {
+          metricName: t('metrics:sleep_duration.name'),
+          unit: undefined,
+          valueFormatter: formatSleepDuration,
+          data: sleepDurationTrendData,
+          accentColor: colors.chart.sleepDuration,
+          explainer: t('strengthOverview.recoveryFactors.explainers.sleep_duration'),
         };
     }
   }, [
     selectedMetric,
     t,
-    sleepTrendData,
-    activityTrendData,
+    sleepBedtimeTrendData,
     hrvTrendData,
-    colors.chart.sleepDuration,
-    colors.chart.activeMinutes,
+    sleepDurationTrendData,
+    colors.chart.deepSleep,
     colors.chart.hrv,
+    colors.chart.sleepDuration,
   ]);
 
   return (
-    <Card title={t('digestiveTrendsChart.title')}>
+    <Card title={t('strengthOverview.recoveryFactors.title')}>
       <View style={globalStyles.row}>
-        <HRVMetric
-          showDivider
-          onPress={() => toggleMetric('hrv')}
-          isSelected={selectedMetric === 'hrv'}
-        />
         <SleepMetric
           showDivider
           onPress={() => toggleMetric('sleep_duration')}
           isSelected={selectedMetric === 'sleep_duration'}
         />
-        <TotalActivityMetric
-          onPress={() => toggleMetric('active_minutes')}
-          isSelected={selectedMetric === 'active_minutes'}
+        <SleepConsistencyMetric
+          sleepData={sleepData?.[0] ? { ...sleepData[0], targetBedtime: '' } : undefined}
+          showDivider
+          onPress={() => toggleMetric('sleep_bedtime')}
+          isSelected={selectedMetric === 'sleep_bedtime'}
+        />
+        <HRVMetric
+          showDivider={false}
+          onPress={() => toggleMetric('hrv')}
+          isSelected={selectedMetric === 'hrv'}
         />
       </View>
 
@@ -124,13 +140,11 @@ export function DigestiveTrendsChart() {
         />
       )}
 
-      <ThemedText type="explainer" style={[globalStyles.explainer, { borderColor: colors.borderLight }]}>
-        {selectedMetric
-          ? t(`digestiveTrendsChart.explainers.${selectedMetric}`, {
-              defaultValue: t('digestiveTrendsChart.explainer'),
-            })
-          : t('digestiveTrendsChart.explainer')}
-      </ThemedText>
+      <View style={globalStyles.infoSection}>
+        <ThemedText type="explainer" style={[globalStyles.topBorder, { borderColor: colors.borderLight }]}> 
+          {selectedConfig?.explainer ?? t('strengthOverview.recoveryFactors.explainer')}
+        </ThemedText>
+      </View>
 
       <MetricValuesBottomSheet
         bottomSheetRef={metricValuesBottomSheetRef}

@@ -1,7 +1,7 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet,View } from 'react-native';
+import { View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
@@ -13,6 +13,8 @@ import { MetricContainer } from './MetricContainer';
 interface SleepConsistencyMetricProps {
   sleepData?: SleepSummaryWithTarget;
   showDivider?: boolean;
+  onPress?: () => void;
+  isSelected?: boolean;
 }
 
 // Helper to convert "HH:mm" to minutes since midnight
@@ -35,6 +37,8 @@ function minutesToTimeString(minutesFromMidnight?: number) {
 export function SleepConsistencyMetric({
   sleepData,
   showDivider = false,
+  onPress,
+  isSelected = false,
 }: Readonly<SleepConsistencyMetricProps>) {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -86,6 +90,9 @@ export function SleepConsistencyMetric({
   return (
     <MetricContainer
       showDivider={showDivider}
+      isSelected={isSelected}
+      onPress={onPress}
+      borderColor={isSelected ? colors.accentStrong : 'transparent'}
     >
       <ThemedText type="label">{t('metrics:sleep_bedtime.name')}</ThemedText>
       <View style={globalStyles.metricValueContainer}>

@@ -446,15 +446,6 @@
   "mindOverview": {
     "title": "Hjärna & Kognition",
     "description": "Kognitiv funktion, mental prestation och hjärnhälsa",
-    "mindMetrics": {
-      "title": "Kognitiva mått",
-      "explainers": {
-        "body_battery": "Body Battery-trenden visar hur dina energireserver förändras över tid. Högre och stabilare nivåer brukar hänga ihop med bättre mental uthållighet och fokus.",
-        "sleep_duration": "Sömnlängd i timmar och minuter visar din återhämtningsbas. En jämn nivå natt efter natt stödjer minne, koncentration och emotionell reglering.",
-        "steps": "Stegtrenden speglar din dagliga rörelse. Konsekvent vardagsaktivitet bidrar till bättre blodflöde till hjärnan och kan förbättra kognitiv skärpa.",
-        "intensity_minutes": "Intensitetsminuter visar hur mycket pulshöjande aktivitet du får in. Rätt dos över veckan kan stärka stressresiliens och mental prestationsförmåga."
-      }
-    },
     "informationCard": {
       "title": "Varför dessa metrik är viktiga",
       "focus": {
@@ -529,7 +520,12 @@
     "description": "Muskelprestanda, styrketräning och återhämtning",
     "recoveryFactors": {
       "title": "Återhämtningsfaktorer",
-      "explainer": "Sömn och HRV är primära drivkrafter för muskelåterhämtning och proteinsyntes. Djupsömn utlöser tillväxthormonfrisättning för muskelreparation. Att respektera återhämtning förhindrar skador och främjar styrkeökningar. Att träna hårt när återhämtningen är ofullständig leder till minskade resultat och ökad skaderisk."
+      "explainer": "Sömn och HRV är primära drivkrafter för muskelåterhämtning och proteinsyntes. Djupsömn utlöser tillväxthormonfrisättning för muskelreparation. Att respektera återhämtning förhindrar skador och främjar styrkeökningar. Att träna hårt när återhämtningen är ofullständig leder till minskade resultat och ökad skaderisk.",
+      "explainers": {
+        "sleep_duration": "Sömnlängd styr hur väl du återhämtar muskler och nervsystem mellan passen. För kort sömn försämrar kraftutveckling, teknik och förmågan att klara progressiv överbelastning.",
+        "sleep_bedtime": "Regelbunden läggtid förbättrar återhämtningens timing och sömnkvalitet. Stabil dygnsrytm gör att du lättare presterar tungt och återhämtar dig till nästa styrkepass.",
+        "hrv": "HRV visar hur återhämtat ditt autonoma nervsystem är inför träning. Lägre HRV kan signalera hög stressbelastning och behov av att justera volym, intensitet eller vilodag."
+      }
     },
     "information": {
       "title": "Information",
@@ -579,9 +575,6 @@
     "needRecovery": "Behöver återhämtning",
     "sleep": "Sömn",
     "noSleepData": "Ingen sömndata",
-    "bodyBattery": {
-      "title": "Body Battery"
-    },
     "stressScore": {
       "title": "Stressnivå"
     },
@@ -671,8 +664,8 @@
     "otherCommentLabel": "Kommentar"
   },
   "energyProductionCharts": {
-    "title": "Energi produktionsmetrik",
-    "explainer": "VO₂ max indikerar mitokondriell densitet och oxidativ kapacitet. Högre värden = mer effektiv ATP-produktion från syre.",
+    "title": "Energimätvärden",
+    "explainer": "VO₂ max, vilopuls och HRV är tre nyckeltal för din kondition och energiproduktionsförmåga. Välj ett mätvärde för att se din trend.",
     "explainers": {
       "vo2_max": "VO₂ max indikerar mitokondriell densitet och oxidativ kapacitet. Högre värden = mer effektiv ATP-produktion från syre.",
       "resting_hr": "Vilopuls speglar hjärtats belastning i vila och återhämtningsnivå. Lägre vilopuls är ofta kopplat till bättre kondition och effektivare energisystem.",
@@ -681,6 +674,7 @@
   },
   "sleepTrendChart": {
     "title": "Sömntrender",
+    "explainer": "Klicka på olika mätvärden för att visa deras trender över tid.",
     "explainers": {
       "sleep_duration": "Sömnlängd visar din totala nattliga återhämtning. En stabil nivå på ungefär 7 till 9 timmar stödjer hormonbalans, immunförsvar och mental skärpa.",
       "deep_sleep": "Djupsömn är fasen där kroppen prioriterar fysisk återhämtning, vävnadsreparation och immunstöd. Trenden hjälper dig se om återhämtningen faktiskt förbättras över tid.",
@@ -696,12 +690,36 @@
       "intensity_minutes": "Intensiv aktivitet under korta perioder ökar hjärtfrekvensen och förbättrar aerob kapacitet."
     }
   },
-  "digestiveTrendChart": {
+  "digestiveTrendsChart": {
     "title": "Tarmhälsans påverkan",
+    "explainer": "HRV, sömn och aktivitet påverkar matsmältningen, tarmbarriären och mikrobiomet. Klicka på ett mätvärde för att se hur trenden utvecklas över tid.",
     "explainers": {
       "hrv": "HRV speglar stress- och återhämtningsnivåer via nervsystemet. Långvarig stress kan påverka tarmbarriär, motilitet och mikrobiom negativt.",
       "sleep_duration": "Tillräcklig och stabil sömn stödjer tarmens återhämtning, hormonbalans och mikrobiomets dygnsrytm. Oregelbunden eller kort sömn kan försämra matsmältningen.",
       "active_minutes": "Regelbunden rörelse främjar tarmmotilitet, blodflöde och metabol hälsa. Över tid kan det bidra till bättre tarmfunktion och minskade magbesvär."
+    }
+  },
+  "mindTrendsChart": {
+    "title": "Kognitiva mått",
+    "explainer": "Klicka på olika mätvärden för att visa deras trender över tid.",
+    "explainers": {
+      "body_battery": "Body Battery-trenden visar hur dina energireserver förändras över tid. Högre och stabilare nivåer brukar hänga ihop med bättre mental uthållighet och fokus.",
+      "sleep_duration": "Sömnlängd i timmar och minuter visar din återhämtningsbas. En jämn nivå natt efter natt stödjer minne, koncentration och emotionell reglering.",
+      "steps": "Stegtrenden speglar din dagliga rörelse. Konsekvent vardagsaktivitet bidrar till bättre blodflöde till hjärnan och kan förbättra kognitiv skärpa.",
+      "intensity_minutes": "Intensitetsminuter visar hur mycket pulshöjande aktivitet du får in. Rätt dos över veckan kan stärka stressresiliens och mental prestationsförmåga."
+    }
+  },
+  "metricValuesBottomSheet": {
+    "addButton": "Registrera nytt värde",
+    "registeredValuesTitle": "Registrerade värden",
+    "confirmDeleteTitle": "Ta bort mätvärde?",
+    "confirmDeleteMessage": "Det här går inte att ångra.",
+    "confirmDeleteAction": "Ta bort",
+    "columns": {
+      "date": "Datum",
+      "value": "Värde",
+      "unit": "Enhet",
+      "notes": "Notering"
     }
   }
 }

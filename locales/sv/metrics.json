@@ -94,7 +94,7 @@
         "latestLabel": "Senast",
         "lowLabel": "Lägst",
         "highLabel": "Högst",
-        "addManualValue": "Lägg till manuellt mätvärde"
+        "viewRegisteredValues": "Visa registrerade värden"
     },
     "sleep_duration": {
         "name": "Sömnlängd",
@@ -185,5 +185,8 @@
     "trainingLoad": {
         "name": "Träningsbelastning",
         "sevenDayTotal": "7-dagars total"  
+    },
+    "bodyBattery": {
+      "name": "Body Battery"
     }
 }

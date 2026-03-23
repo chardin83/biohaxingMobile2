@@ -1,3 +1,4 @@
+import BottomSheet from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -5,6 +6,7 @@ import { View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
+import { MetricValuesBottomSheet } from '@/components/sections/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { buildTrendData } from '@/utils/metrics';
@@ -28,6 +30,11 @@ export function CardioTrendsChart() {
   const { t } = useTranslation();
   const { getMetricHistory } = useStorage();
   const [selectedMetric, setSelectedMetric] = React.useState<CardioTrendMetricKey>('vo2_max');
+  const metricValuesBottomSheetRef = React.useRef<BottomSheet>(null);
+
+  const openMetricValuesTable = React.useCallback(() => {
+    metricValuesBottomSheetRef.current?.snapToIndex(1);
+  }, []);
 
   const vo2TrendData = React.useMemo(() => buildTrendData(getMetricHistory('vo2_max')), [getMetricHistory]);
   const restingHrTrendData = React.useMemo(() => buildTrendData(getMetricHistory('resting_hr')), [getMetricHistory]);
@@ -114,11 +121,18 @@ export function CardioTrendsChart() {
         accentColor={selectedConfig.accentColor}
         xAxisLabelFormatter={selectedConfig.xAxisLabelFormatter}
         referenceLines={selectedConfig.referenceLines}
+        onViewRegisteredValues={openMetricValuesTable}
       />
 
       <ThemedText type="explainer" style={[globalStyles.explainer, { borderColor: colors.borderLight }]}>
         {selectedConfig.explainer}
       </ThemedText>
+
+      <MetricValuesBottomSheet
+        bottomSheetRef={metricValuesBottomSheetRef}
+        metricId={selectedMetric}
+        metricName={selectedConfig.metricName}
+      />
     </Card>
   );
 }

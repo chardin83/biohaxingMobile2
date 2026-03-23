@@ -61,10 +61,8 @@ export default function MindOverviewScreen({ mainGoalId }: Readonly<{ mainGoalId
 
             <WearableStatus status={status} />
 
-            {/* Overview card - Main mind metrics */}
-            <Card title={t("mindOverview.mindMetrics.title")}>                
-                <MindTrendsChart />
-            </Card>
+            {/* Overview card - Main mind metrics */}            
+            <MindTrendsChart />
 
             {/* Information card */}
             <Card title={t("mindOverview.informationCard.title")}>
