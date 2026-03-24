@@ -570,17 +570,7 @@
     "low": "Låg",
     "moderate": "Måttlig",
     "good": "Bra",
-    "optimal": "Optimal",
-    "readyForActivity": "Redo för aktivitet",
-    "needRecovery": "Behöver återhämtning",
-    "sleep": "Sömn",
-    "noSleepData": "Ingen sömndata",
-    "stressScore": {
-      "title": "Stressnivå"
-    },
-    "recoveryStatus": {
-      "title": "Återhämtningsstatus"
-    }
+    "optimal": "Optimal"
   },
   "chat": {
     "welcomeMessage": "Hej! Jag är din personliga hälsocoach – specialiserad på biohacking och kosttillskott. Ställ gärna en fråga om tillskott, dagliga rutiner eller hur du optimerar din hälsa. 💪🌿",
@@ -707,6 +697,35 @@
       "sleep_duration": "Sömnlängd i timmar och minuter visar din återhämtningsbas. En jämn nivå natt efter natt stödjer minne, koncentration och emotionell reglering.",
       "steps": "Stegtrenden speglar din dagliga rörelse. Konsekvent vardagsaktivitet bidrar till bättre blodflöde till hjärnan och kan förbättra kognitiv skärpa.",
       "intensity_minutes": "Intensitetsminuter visar hur mycket pulshöjande aktivitet du får in. Rätt dos över veckan kan stärka stressresiliens och mental prestationsförmåga."
+    }
+  },
+  "immuneTrendsChart": {
+    "title": "Immuntillstånd",
+    "explainer": "Ditt immunförsvar påverkas av återhämtning, stressreglering och belastning. Klicka på ett mätvärde för att se trenden över tid och upptäcka tidiga tecken på obalans.",
+    "explainers": {
+      "sleep_duration": "Tillräcklig sömnlängd stärker immunförsvarets signalering och minskar inflammatorisk belastning. Trenden hjälper dig se om återhämtningen är stabil vecka för vecka.",
+      "deep_sleep": "Djupsömn är den mest immunstödjande sömnfasen där kroppen reparerar vävnad och återställer försvarssystem. En sjunkande trend kan signalera ökad sårbarhet.",
+      "body_battery": "Body Battery visar om dina energireserver byggs upp eller bryts ned. Låga nivåer över tid hänger ofta ihop med stress, sämre återhämtning och svagare immunresiliens.",
+      "resting_hr": "Vilopuls är en känslig markör för belastning på kroppen. En ovanligt stigande trend kan vara ett tidigt tecken på infektion, inflammation eller underåterhämtning.",
+      "hrv": "HRV speglar balansen i autonoma nervsystemet och kroppens återhämtningsförmåga. Högre och stabilare nivåer är ofta kopplade till bättre immunrespons och stressmotstånd."
+    }
+  },
+  "nervousTrendsChart": {
+    "title": "Nervsystemets trender",
+    "explainer": "Klicka på HRV, stressnivå, Body Battery eller vilopuls för att se hur ditt autonoma nervsystem belastas och återhämtar sig över tid.",
+    "explainers": {
+      "hrv": "HRV-trenden visar hur väl ditt autonoma nervsystem växlar till återhämtning. Högre och stabilare nivåer tyder ofta på bättre stressresiliens.",
+      "stress_score": "Stressnivå bygger på HRV och visar den uppskattade fysiologiska belastningen över tid. En stigande trend kan indikera ökad sympatisk aktivering.",
+      "body_battery": "Body Battery visar om dina energireserver fylls på eller töms. Låga nivåer under flera dagar kan signalera att nervsystemet är under press.",
+      "resting_hr": "Vilopuls är en känslig markör för stress och återhämtning. En gradvis ökning kan vara ett tidigt tecken på otillräcklig återhämtning."
+    }
+  },
+  "cardioTrendsChart": {
+    "explainer": "Klicka på VO₂ max, vilopuls eller träningsbelastning för att visa trender över tid.",
+    "explainers": {
+      "vo2_max": "VO₂ max-trenden visar hur din maximala syreupptagningsförmåga utvecklas. Det är guldstandarden för kondition – en stigande kurva är ett tydligt tecken på förbättring.",
+      "resting_hr": "Vilopulsen speglar hjärtats effektivitet i vila. En sjunkande trend över tid är ett gott tecken på bättre kardiovaskulär kondition och lägre stressbelastning.",
+      "training_load": "Träningsbelastning visar veckovis volym av aktivitets- och intensitetsminuter. Referenslinjerna vid 150 och 300 hjälper dig hålla belastningen i rätt zon."
     }
   },
   "metricValuesBottomSheet": {

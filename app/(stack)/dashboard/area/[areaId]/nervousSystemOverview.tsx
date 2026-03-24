@@ -4,11 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
-import { BodyBatteryMetric } from '@/components/metrics/BodyBatteryMetric';
-import { HRVMetric } from '@/components/metrics/HRVMetric';
-import { RecoveryStatusMetric } from '@/components/metrics/RecoveryStatusMetric';
-import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
-import { StressScoreMetric } from '@/components/metrics/StressScoreMetric';
+import { NervousSystemStatusChart } from '@/components/metrics/NervousSystemStatusChart';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import GenesListCard from '@/components/ui/GenesListCard';
@@ -17,12 +13,6 @@ import { WearableStatus } from '@/components/WearableStatus';
 import { useStoredHRVData } from '@/hooks/useStoredHRVData';
 import { calculateHRVMetrics } from '@/utils/hrvCalculations';
 import { useWearable } from '@/wearables/wearableProvider';
-
-function daysAgo(n: number) {
-  const d = new Date();
-  d.setDate(d.getDate() - n);
-  return d.toISOString();
-}
 
 function getBalanceMessage(stressScore: number, t: (key: string) => string): string {
   if (stressScore < 40) {
@@ -35,39 +25,11 @@ function getBalanceMessage(stressScore: number, t: (key: string) => string): str
 }
 
 export default function NervousSystemScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
-  const { adapter, status } = useWearable();
+  const { status } = useWearable();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const hrvData = useStoredHRVData();
-
-  const [loading, setLoading] = React.useState(true);
-  const [hrv, setHrv] = React.useState<number | null>(null);
-  const [sleepHours, setSleepHours] = React.useState<number | null>(null);
-  const [energyData, setEnergyData] = React.useState<any[]>([]);
-
-  React.useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const range = { start: daysAgo(7), end: new Date().toISOString() };
-
-      const energy = await adapter.getEnergySignal(range);
-      setEnergyData(energy);
-
-      // Hämta sleep
-      const sleepData = await adapter.getSleep(range);
-      if (sleepData.length > 0) {
-        const latest = sleepData[sleepData.length - 1];
-        setSleepHours(latest.durationMinutes ? latest.durationMinutes / 60 : null);
-      }
-
-      setLoading(false);
-    })().catch(() => setLoading(false));
-  }, [adapter]);
-
-  React.useEffect(() => {
-    const hrvMetrics = calculateHRVMetrics(hrvData);
-    setHrv(hrvMetrics.hrv);
-  }, [hrvData]);
+  const hrv = React.useMemo(() => calculateHRVMetrics(hrvData).hrv, [hrvData]);
 
   // Beräkna status baserat på HRV
   const stressScore = hrv ? Math.max(0, Math.min(100, 100 - hrv)) : 50;
@@ -81,52 +43,23 @@ export default function NervousSystemScreen({ mainGoalId }: Readonly<{ mainGoalI
 
       <WearableStatus status={status} />
 
-      {/* Overview card - Main ANS metrics */}
-      <Card title={t("nervousSystemOverview.autonomicNervousSystem.title")}>
-        {loading ? (
-          <ThemedText type="caption">{t("general.loading")}</ThemedText>
-        ) : (
-          <>
-            <View style={globalStyles.row}>
-              <HRVMetric showDivider />
-
-              {/* Stress Score */}
-              <StressScoreMetric hrvData={hrvData} showDivider />
-
-              {/* Body Battery */}
-              <BodyBatteryMetric energyData={energyData} />
-            </View>
-
-            {/* Second row */}
-            <View style={[globalStyles.row, globalStyles.marginTop16]}>
-              <RestingHRMetric showDivider />
-
-            {/* Recovery Status */}
-            <RecoveryStatusMetric hrvData={hrvData} sleepHours={sleepHours} />
-            </View>
-          </>
-        )}
-      </Card>
+      <NervousSystemStatusChart />
 
       {/* ANS Balance visualization */}
       <Card title={t("nervousSystemOverview.ansBalance.title")}>
-        {loading ? (
-          <ThemedText type="caption">{t("general.loading")}</ThemedText>
-        ) : (
-          <>
-            <View style={styles.balanceContainer}>
-              <View style={styles.balanceBar}>
-                <View style={[{ flex: stressScore, backgroundColor: colors.warmDefault }]} />
-                <View style={[{ flex: 100 - stressScore, backgroundColor: colors.accentDefault }]} />
-              </View>
-              <View style={styles.balanceLabels}>
-                <ThemedText type="caption">⚡ {t("nervousSystemOverview.ansBalance.fightFlight")}</ThemedText>
-                <ThemedText type="caption">😌 {t("nervousSystemOverview.ansBalance.restDigest")}</ThemedText>
-              </View>
+        <>
+          <View style={styles.balanceContainer}>
+            <View style={styles.balanceBar}>
+              <View style={[{ flex: stressScore, backgroundColor: colors.warmDefault }]} />
+              <View style={[{ flex: 100 - stressScore, backgroundColor: colors.accentDefault }]} />
             </View>
-            <ThemedText type="default">{getBalanceMessage(stressScore, t)}</ThemedText>
-          </>
-        )}
+            <View style={styles.balanceLabels}>
+              <ThemedText type="caption">⚡ {t("nervousSystemOverview.ansBalance.fightFlight")}</ThemedText>
+              <ThemedText type="caption">😌 {t("nervousSystemOverview.ansBalance.restDigest")}</ThemedText>
+            </View>
+          </View>
+          <ThemedText type="default">{getBalanceMessage(stressScore, t)}</ThemedText>
+        </>
       </Card>
 
       {/* Information card */}

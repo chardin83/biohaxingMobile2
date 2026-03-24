@@ -29,7 +29,11 @@ export function CardioTrendsChart() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { getMetricHistory } = useStorage();
-  const [selectedMetric, setSelectedMetric] = React.useState<CardioTrendMetricKey>('vo2_max');
+  const [selectedMetric, setSelectedMetric] = React.useState<CardioTrendMetricKey | null>(null);
+  const toggleMetric = React.useCallback(
+    (metric: CardioTrendMetricKey) => setSelectedMetric(c => (c === metric ? null : metric)),
+    []
+  );
   const metricValuesBottomSheetRef = React.useRef<BottomSheet>(null);
 
   const openMetricValuesTable = React.useCallback(() => {
@@ -49,16 +53,14 @@ export function CardioTrendsChart() {
   );
 
   const selectedConfig = React.useMemo(() => {
+    if (!selectedMetric) return null;
     switch (selectedMetric) {
       case 'resting_hr':
         return {
-          metricName: t('metrics:resting_hr.shortName', { defaultValue: t('metrics:resting_hr.name') }),
+          metricName: t('metrics:resting_hr.shortName'),
           unit: 'bpm',
           data: restingHrTrendData,
           accentColor: colors.chart.restingHr,
-          explainer: t('cardioOverview.trendExplainers.resting_hr', {
-            defaultValue: 'Visar hur din vilopuls utvecklas över tid.',
-          }),
         };
       case 'training_load':
         return {
@@ -72,21 +74,16 @@ export function CardioTrendsChart() {
             { value: 150, label: '150', color: colors.infoColor },
             { value: 300, label: '300', color: colors.successColor },
           ],
-          explainer: t('cardioOverview.trendExplainers.training_load', {
-            defaultValue: 'Visar veckovis träningsbelastning (intensiva minuter viktas dubbelt). Referenslinjer: 150 och 300.',
-          }),
         };
       case 'vo2_max':
-      default:
         return {
-          metricName: t('metrics:vo2_max.shortName', { defaultValue: t('metrics:vo2_max.name') }),
+          metricName: t('metrics:vo2_max.shortName'),
           unit: '',
           data: vo2TrendData,
           accentColor: colors.chart.vo2Max,
-          explainer: t('cardioOverview.trendExplainers.vo2_max', {
-            defaultValue: 'Visar utvecklingen av VO2 max över tid.',
-          }),
         };
+      default:
+        return null;
     }
   }, [
     selectedMetric,
@@ -104,34 +101,38 @@ export function CardioTrendsChart() {
   return (
     <Card title={t('cardioOverview.yourCardioPerformance')}>
       <View style={globalStyles.row}>
-        <VO2MaxMetric showDivider onPress={() => setSelectedMetric('vo2_max')} isSelected={selectedMetric === 'vo2_max'} />
+        <VO2MaxMetric showDivider onPress={() => toggleMetric('vo2_max')} isSelected={selectedMetric === 'vo2_max'} />
         <RestingHRMetric
           showDivider
-          onPress={() => setSelectedMetric('resting_hr')}
+          onPress={() => toggleMetric('resting_hr')}
           isSelected={selectedMetric === 'resting_hr'}
         />
-        <TrainingLoadMetric onPress={() => setSelectedMetric('training_load')} isSelected={selectedMetric === 'training_load'} />
+        <TrainingLoadMetric onPress={() => toggleMetric('training_load')} isSelected={selectedMetric === 'training_load'} />
       </View>
 
-      <MetricTrendChart
-        data={selectedConfig.data}
-        metricName={selectedConfig.metricName}
-        unit={selectedConfig.unit || undefined}
-        daysToShow={selectedConfig.daysToShow}
-        accentColor={selectedConfig.accentColor}
-        xAxisLabelFormatter={selectedConfig.xAxisLabelFormatter}
-        referenceLines={selectedConfig.referenceLines}
-        onViewRegisteredValues={openMetricValuesTable}
-      />
+      {selectedConfig && (
+        <MetricTrendChart
+          data={selectedConfig.data}
+          metricName={selectedConfig.metricName}
+          unit={selectedConfig.unit || undefined}
+          daysToShow={selectedConfig.daysToShow}
+          accentColor={selectedConfig.accentColor}
+          xAxisLabelFormatter={selectedConfig.xAxisLabelFormatter}
+          referenceLines={selectedConfig.referenceLines}
+          onViewRegisteredValues={openMetricValuesTable}
+        />
+      )}
 
       <ThemedText type="explainer" style={[globalStyles.explainer, { borderColor: colors.borderLight }]}>
-        {selectedConfig.explainer}
+        {selectedMetric
+          ? t(`cardioTrendsChart.explainers.${selectedMetric}`)
+          : t('cardioTrendsChart.explainer')}
       </ThemedText>
 
       <MetricValuesBottomSheet
         bottomSheetRef={metricValuesBottomSheetRef}
         metricId={selectedMetric}
-        metricName={selectedConfig.metricName}
+        metricName={selectedConfig?.metricName}
       />
     </Card>
   );

@@ -1,97 +1,22 @@
 import { useTheme } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
-import { HRVMetric } from '@/components/metrics/HRVMetric';
-import { RecoveryStatusMetric } from '@/components/metrics/RecoveryStatusMetric';
-import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
-import { SleepMetric } from '@/components/metrics/SleepMetric';
+import { ImmuneStatusChart } from '@/components/metrics/ImmuneStatusChart';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
-import { Error } from '@/components/ui/Error';
 import GenesListCard from '@/components/ui/GenesListCard';
-import { Loading } from '@/components/ui/Loading';
 import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
-import { useStoredHRVData } from '@/hooks/useStoredHRVData';
-import { EnergySignal, TimeRange } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
 export default function ImmuneScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { colors } = useTheme();
-  const { adapter, status } = useWearable();
+  const { status } = useWearable();
   const { t } = useTranslation();
-    
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [energyData, setEnergyData] = useState<EnergySignal[]>([]);
-  const [sleepHours, setSleepHours] = useState<number | null>(null);
-  const hrvData = useStoredHRVData();
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        const range: TimeRange = {
-          start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-          end: new Date().toISOString(),
-        };
-
-        const [sleep, energy] = await Promise.all([
-          adapter.getSleep(range),
-          adapter.getEnergySignal(range),
-        ]);
-
-        setEnergyData(energy);
-
-        // Sätt sleepHours
-        if (sleep.length > 0) {
-          const latest = sleep[sleep.length - 1];
-          setSleepHours(latest.durationMinutes ? latest.durationMinutes / 60 : null);
-        }
-      } catch (err) {
-        console.error('Failed to load data:', err);
-        setError('Failed to load data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, [adapter]);
-
-
-  if (loading) {
-    return (
-        <Loading />
-    );
-  }
-
-  if (error) {
-    return <Error error={error} />;
-  }
-
-  // Transform wearable data to immune metrics
-  const latestEnergy = energyData[0];
-  let stressLevel: string | null = null;
-  if (latestEnergy?.bodyBatteryLevel != null) {
-    stressLevel = latestEnergy.bodyBatteryLevel > 70 ? t('metrics.low') : t('metrics.moderate');
-  }
-
-  const immune = {
-    stressLevel,
-    bodyBattery: latestEnergy?.bodyBatteryLevel ?? null,
-  };
-
-  let immuneRecoveryTitle = '—';
-  let immuneRecoveryCaption = '—';
-  if (immune.bodyBattery != null) {
-    immuneRecoveryTitle = immune.bodyBattery > 70 ? t('metrics.good') : t('metrics.moderate');
-    immuneRecoveryCaption = immune.bodyBattery > 70 ? t('metrics.readyForActivity') : t('metrics.needRecovery');
-  }
 
   return (
     <>
@@ -102,51 +27,7 @@ export default function ImmuneScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
 
       <WearableStatus status={status} />
 
-      {/* Overview card */}
-      <Card title={t("immuneOverview.immuneStatus.title")} >
-        <View style={globalStyles.row}>
-          {/* Sleep */}
-          <SleepMetric showDivider />
-
-          {/* Stress/Body Battery */}
-          <View
-            style={[
-              globalStyles.col,
-              globalStyles.colWithDivider,
-              { borderRightColor: colors.borderLight ?? colors.border },
-            ]}
-          >
-            <ThemedText type="label">{t("immuneOverview.immuneStatus.stressLevel")}</ThemedText>
-            <ThemedText type="title3">{immune.stressLevel ?? '—'}</ThemedText>
-            <ThemedText type="caption">
-              {t("immuneOverview.immuneStatus.bodyBattery")}: {immune.bodyBattery == null ? '—' : `${immune.bodyBattery}%`}
-            </ThemedText>
-            {latestEnergy && <ThemedText type="caption">{latestEnergy.source}</ThemedText>}
-          </View>
-
-          {/* HRV */}
-          <HRVMetric />
-        </View>
-
-        {/* Second row */}
-        <View style={[globalStyles.row, globalStyles.marginTop8]}>
-          {/* Resting Heart Rate */}
-          <RestingHRMetric showDivider />
-
-          {/* Recovery Status */}
-          <RecoveryStatusMetric
-            hrvData={hrvData}
-            sleepHours={sleepHours}
-          />
-
-           {/* Immune Recovery Status */}
-          <View style={globalStyles.col}>
-            <ThemedText type="label">{t("immuneOverview.immuneStatus.recoveryStatus")}</ThemedText>
-            <ThemedText type="title3">{immuneRecoveryTitle}</ThemedText>
-            <ThemedText type="caption">{immuneRecoveryCaption}</ThemedText>
-          </View>
-        </View>
-      </Card>
+  <ImmuneStatusChart />
 
       {/* Information card */}
       <Card title={t("immuneOverview.whyTheseMetricsMatter.title")}>

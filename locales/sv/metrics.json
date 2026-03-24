@@ -188,5 +188,16 @@
     },
     "bodyBattery": {
       "name": "Body Battery"
+    },
+    "stressScore": {
+        "title": "Stressnivå"
+    },
+    "recoveryStatus": {
+        "title": "Återhämtningsstatus",
+        "readyForActivity": "Redo för aktivitet",
+        "goodRecovery": "Bra återhämtning",
+        "needRecovery": "Behöver återhämtning",
+        "sleep": "Sömn",
+        "noSleepData": "Ingen sömndata"
     }
 }

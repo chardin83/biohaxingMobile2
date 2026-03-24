@@ -562,17 +562,7 @@
     "low": "Low",
     "moderate": "Moderate",
     "good": "Good",
-    "optimal": "Optimal",
-    "readyForActivity": "Ready for activity",
-    "needRecovery": "Need recovery",
-    "sleep": "Sleep",
-    "noSleepData": "No sleep data",
-    "stressScore": {
-      "title": "Stress Score"
-    },
-    "recoveryStatus": {
-      "title": "Recovery Status"
-    }
+    "optimal": "Optimal"
   },
   "chat": {
     "welcomeMessage": "Hi! I'm your personal health coach – specialized in biohacking and supplements. Ask me about daily routines or optimizing your health. 💪🌿",
@@ -698,6 +688,35 @@
         "steps": "The steps trend reflects your daily movement volume. Consistent everyday activity supports brain blood flow and can improve cognitive sharpness.",
         "intensity_minutes": "Intensity minutes show how much pulse-raising activity you get. The right weekly dose can improve stress resilience and mental performance."
       }
+  },
+  "immuneTrendsChart": {
+    "title": "Immune status",
+    "explainer": "Your immune resilience is shaped by recovery, stress regulation, and physiological load. Tap a metric to view its trend over time and spot early signs of imbalance.",
+    "explainers": {
+      "sleep_duration": "Adequate sleep duration supports immune signaling and lowers inflammatory load. The trend helps you see whether your recovery foundation is stable week to week.",
+      "deep_sleep": "Deep sleep is the most immune-supportive sleep stage, where tissue repair and immune regulation are prioritized. A declining trend can indicate growing vulnerability.",
+      "body_battery": "Body Battery shows whether your energy reserves are rebuilding or draining. Persistently low levels often align with stress, poorer recovery, and lower immune resilience.",
+      "resting_hr": "Resting heart rate is a sensitive load marker. An unusual upward trend can be an early signal of infection, inflammation, or under-recovery.",
+      "hrv": "HRV reflects autonomic balance and recovery capacity. Higher, more stable levels are often associated with stronger immune response and stress resilience."
+    }
+  },
+  "nervousTrendsChart": {
+    "title": "Nervous system trends",
+    "explainer": "Tap HRV, stress score, Body Battery, or resting heart rate to see how your autonomic system is loading and recovering over time.",
+    "explainers": {
+      "hrv": "The HRV trend shows how effectively your autonomic system shifts into recovery. Higher and steadier levels often indicate better stress resilience.",
+      "stress_score": "Stress score is derived from HRV and reflects estimated physiological load over time. An upward trend can indicate increasing sympathetic activation.",
+      "body_battery": "Body Battery indicates whether your energy reserves are rebuilding or draining. Persistently low levels can signal ongoing nervous system strain.",
+      "resting_hr": "Resting heart rate is a sensitive stress and recovery marker. A gradual upward trend can be an early sign of under-recovery."
+    }
+  },
+  "cardioTrendsChart": {
+    "explainer": "Tap VO₂ max, resting heart rate, or training load to view their trends over time.",
+    "explainers": {
+      "vo2_max": "The VO₂ max trend shows how your peak oxygen uptake develops over time. It's the gold standard for cardiovascular fitness — a rising curve is a clear sign of improvement.",
+      "resting_hr": "Resting heart rate reflects cardiac efficiency at rest. A declining trend over time is a positive sign of improved cardiovascular fitness and lower stress load.",
+      "training_load": "Training load shows weekly volume of activity and intensity minutes. The reference lines at 150 and 300 help you keep load in the right zone."
+    }
   },
   "metricValuesBottomSheet": {
     "addButton": "Register new value",

@@ -188,5 +188,16 @@
     },
     "bodyBattery": {
       "name": "Body Battery"
+    },
+    "stressScore": {
+        "title": "Stress Score"
+    },
+    "recoveryStatus": {
+        "title": "Recovery Status",
+        "readyForActivity": "Ready for activity",
+        "goodRecovery": "Good recovery",
+        "needRecovery": "Need recovery",
+        "sleep": "Sleep",
+        "noSleepData": "No sleep data"
     }
 }
