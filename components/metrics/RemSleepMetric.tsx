@@ -6,6 +6,8 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { useStorage } from '@/app/context/StorageContext';
 import { ThemedText } from '@/components/ThemedText';
 
+import { getLatestEntryForToday } from './metricDateUtils';
+
 interface RemSleepMetricProps {
   labelType?: 'label' | 'default';
   valueType?: 'title2' | 'title3';
@@ -26,9 +28,7 @@ export function RemSleepMetric({
   const { colors } = useTheme();
 
   const latestRemSleep = React.useMemo(() => {
-    const latestEntry = getMetricHistory('rem_sleep')
-      .sort((left, right) => left.recordedAt.localeCompare(right.recordedAt))
-      .at(-1);
+    const latestEntry = getLatestEntryForToday(getMetricHistory('rem_sleep'));
 
     if (!latestEntry) {
       return null;

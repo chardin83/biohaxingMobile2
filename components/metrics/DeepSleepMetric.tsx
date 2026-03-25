@@ -6,6 +6,7 @@ import { useStorage } from '@/app/context/StorageContext';
 import { ThemedText } from '@/components/ThemedText';
 
 import { MetricContainer } from './MetricContainer';
+import { getLatestEntryForToday } from './metricDateUtils';
 
 interface DeepSleepMetricProps {
   labelType?: 'label' | 'default';
@@ -27,9 +28,7 @@ export function DeepSleepMetric({
   const { colors } = useTheme();
 
   const latestDeepSleep = React.useMemo(() => {
-    const latestEntry = getMetricHistory('deep_sleep')
-      .sort((left, right) => left.recordedAt.localeCompare(right.recordedAt))
-      .at(-1);
+    const latestEntry = getLatestEntryForToday(getMetricHistory('deep_sleep'));
 
     if (!latestEntry) {
       return null;

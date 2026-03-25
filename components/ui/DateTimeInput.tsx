@@ -11,6 +11,7 @@ interface DateTimeInputProps {
   onChange: (value: Date) => void;
   dateLabel?: string;
   timeLabel?: string;
+  showTime?: boolean;
 }
 
 export function DateTimeInput({
@@ -18,6 +19,7 @@ export function DateTimeInput({
   onChange,
   dateLabel = 'Datum',
   timeLabel = 'Tid',
+  showTime = true,
 }: Readonly<DateTimeInputProps>) {
   const { colors } = useTheme();
   const [showDatePicker, setShowDatePicker] = React.useState(false);
@@ -69,14 +71,16 @@ export function DateTimeInput({
           </View>
         </View>
 
-        <View style={styles.group}>
-          <ThemedText type="default" style={styles.label}>
-            {timeLabel}
-          </ThemedText>
-          <View style={[styles.pickerContainer, { borderColor: colors.border }]}> 
-            <DateTimePicker value={value} mode="time" display="spinner" is24Hour onChange={handleTimeChange} />
+        {showTime && (
+          <View style={styles.group}>
+            <ThemedText type="default" style={styles.label}>
+              {timeLabel}
+            </ThemedText>
+            <View style={[styles.pickerContainer, { borderColor: colors.border }]}> 
+              <DateTimePicker value={value} mode="time" display="spinner" is24Hour onChange={handleTimeChange} />
+            </View>
           </View>
-        </View>
+        )}
       </View>
     );
   }
@@ -93,15 +97,17 @@ export function DateTimeInput({
         )}
       </View>
 
-      <View style={styles.group}>
-        <ThemedText type="default" style={styles.label}>
-          {timeLabel}
-        </ThemedText>
-        <AppButton title={formattedTime} onPress={() => setShowTimePicker(true)} variant="secondary" />
-        {showTimePicker && (
-          <DateTimePicker value={value} mode="time" display="default" is24Hour onChange={handleTimeChange} />
-        )}
-      </View>
+      {showTime && (
+        <View style={styles.group}>
+          <ThemedText type="default" style={styles.label}>
+            {timeLabel}
+          </ThemedText>
+          <AppButton title={formattedTime} onPress={() => setShowTimePicker(true)} variant="secondary" />
+          {showTimePicker && (
+            <DateTimePicker value={value} mode="time" display="default" is24Hour onChange={handleTimeChange} />
+          )}
+        </View>
+      )}
     </View>
   );
 }

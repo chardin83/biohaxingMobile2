@@ -1,28 +1,52 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
-import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
 
-export function SleepConsistencyLabel() {
+import { MetricContainer } from './MetricContainer';
+import { getSleepConsistencySummary, minutesToTimeString } from './sleepConsistency';
+
+interface SleepConsistencyLabelProps {
+  readonly showDivider?: boolean;
+}
+
+export function SleepConsistencyLabel({ showDivider }: Readonly<SleepConsistencyLabelProps>) {
   const { t } = useTranslation('metrics');
   const { colors } = useTheme();
   const { getMetricHistory } = useStorage();
 
-  const bedtimeEntryCount = React.useMemo(() => {
-    return getMetricHistory('sleep_bedtime').length;
+  const consistencySummary = React.useMemo(() => {
+    return getSleepConsistencySummary(getMetricHistory('sleep_bedtime'));
   }, [getMetricHistory]);
 
-  const consistencyLabel = bedtimeEntryCount >= 6 ? t('moderate') : t('low');
+  const labelMap = {
+    low: t('common.low'),
+    moderate: t('common.moderate'),
+    good: t('common.good'),
+    optimal: t('common.optimal'),
+  } as const;
+
+  const colorMap = {
+    low: colors.warmColor,
+    moderate: colors.goldSoft,
+    good: colors.goldSoft,
+    optimal: colors.accentStrong,
+  } as const;
+
+  const consistencyLabel = labelMap[consistencySummary.level];
+  const consistencyColor = colorMap[consistencySummary.level];
+  const weeklyAverageBedtimeLabel = minutesToTimeString(consistencySummary.weeklyAverageBedtimeMinutes) ?? '-';
 
   return (
-    <View style={[globalStyles.col, globalStyles.colWithDivider, { borderRightColor: colors.borderLight ?? colors.border }]}>
+      <MetricContainer
+          showDivider={showDivider}
+        >
       <ThemedText type="label">{t('sleep_consistency.title')}</ThemedText>
-      <ThemedText type="title3">{consistencyLabel}</ThemedText>
+      <ThemedText type="title3" style={{ color: consistencyColor }}>{consistencyLabel}</ThemedText>
+      <ThemedText type="caption">{t('sleep_bedtime.name')}: {weeklyAverageBedtimeLabel}</ThemedText>
       <ThemedText type="caption">{t('sleep_consistency.pattern')}</ThemedText>
-    </View>
+   </MetricContainer>
   );
 }

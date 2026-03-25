@@ -370,6 +370,22 @@
       "mitophagy": {
         "title": "Mitophagy & Cellular Cleanup",
         "description": "Mitophagy is the selective autophagy of damaged mitochondria. Occurs during fasting and deep sleep. Regular mitophagy prevents accumulation of dysfunctional mitochondria that produce excess ROS and less ATP."
+      },
+      "insulinResistance": {
+        "title": "Insulin and Insulin Resistance",
+        "description": "Insulin helps cells take up glucose for energy production. In insulin resistance, cells respond less effectively to insulin, which can lead to higher blood glucose and reduced metabolic flexibility. Chronically elevated insulin can strain mitochondrial function and contribute to lower energy levels over time. Based on epidemiological estimates, around 15-30% of adults in the EU and around 30-40% of adults in the USA have insulin resistance, depending on definition and measurement method."
+      },
+      "chronicStress": {
+        "title": "Chronic Stress and Mitochondrial Function",
+        "description": "Chronic stress increases cortisol and adrenaline production, mobilizing energy for immediate survival but suppressing long-term mitochondrial repair and biogenesis. High cortisol increases ROS production, impairs DNA repair, and reduces NAD+ levels. Stress-induced brain activation can also redirect blood flow away from the digestive system and trigger immune suppression. Regular rest, deep sleep, and parasympathetic activation (deep breathing, meditation) are critical for restoring mitochondrial health."
+      },
+      "metabolicFlexibility": {
+        "title": "Metabolic Flexibility",
+        "description": "Metabolic flexibility is your body's ability to smoothly switch between burning glucose and fat for energy depending on availability and demand. Well-developed metabolic flexibility reduces dependence on frequent meals, improves insulin sensitivity, and enhances mental clarity. Intermittent fasting, low-carbohydrate periods, and aerobic training improve this switching capacity. Chronic sugar overfeeding can impair metabolic flexibility, locking your body into glucose-burning mode and making it less resilient to energy fluctuations."
+      },
+      "lowCarbHighIntensityTraining": {
+        "title": "Low-Carb Nutrition and High-Intensity Training",
+        "description": "Low-carbohydrate nutrition combined with high-intensity training can be effective for fat loss, improved insulin sensitivity, and metabolic health, but it requires planning. High-intensity sessions rely more on glycogen, so very low carbohydrate availability can reduce performance and recovery. If training stress gets too high, cortisol may rise and the autonomic nervous system can remain in sympathetic dominance (higher stress load, poorer sleep, and lower HRV). A periodized approach often works best: lower carbohydrate intake on rest or low-intensity days, and targeted carbohydrates before or after hard sessions to support power output, hormonal balance, and a return to parasympathetic recovery."
       }
     }
   },
@@ -658,7 +674,8 @@
     "explainers": {
       "sleep_duration": "Sleep duration shows your total nightly recovery. A stable level around 7 to 9 hours supports hormone balance, immune function, and mental sharpness.",
       "deep_sleep": "Deep sleep is the phase where the body prioritizes physical recovery, tissue repair, and immune support. The trend helps show whether recovery is actually improving over time.",
-      "rem_sleep": "REM sleep supports memory consolidation, emotional processing, and learning. Tracking REM over time gives a better signal of stress, sleep quality, and mental recovery."
+      "rem_sleep": "REM sleep supports memory consolidation, emotional processing, and learning. Tracking REM over time gives a better signal of stress, sleep quality, and mental recovery.",
+      "sleep_bedtime": "Bedtime consistency is one of the most powerful levers for sleep quality. The trend shows whether your sleep timing is becoming more stable — a key factor for circadian rhythm and overall recovery."
     }
   },
   "todaysActivityCharts": {

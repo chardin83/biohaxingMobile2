@@ -102,7 +102,11 @@
     },
     "sleep_bedtime": {
         "name": "Bedtime",
-        "description": "When you usually fall asleep."
+        "description": "When you usually fall asleep.",
+        "perfect": "Perfect!",
+        "bedtimeDifference": "Δ {{minutes}} min {{direction}}",
+        "earlier": "earlier",
+        "late": "late"
     },
     "sleep_consistency": {
         "title": "Sleep consistency",
@@ -120,10 +124,6 @@
         },
         "explainer": "Deep sleep is crucial for physical recovery and immune function. REM sleep supports memory consolidation and emotional regulation."
     },
-    "perfect": "Perfect!",
-    "bedtimeDifference": "Δ {{minutes}} min {{direction}}",
-    "earlier": "earlier",
-    "late": "late",
     "deep_sleep": {
         "name": "Deep sleep",
         "description": "The deepest sleep phase supporting physical recovery and repair."

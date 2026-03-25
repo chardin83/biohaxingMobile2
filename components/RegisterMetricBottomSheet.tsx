@@ -1,7 +1,8 @@
 import BottomSheet, { BottomSheetScrollView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import React, { useMemo } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
@@ -49,17 +50,58 @@ export function RegisterMetricBottomSheet({
   onClose,
 }: Readonly<RegisterMetricBottomSheetProps>) {
   const snapPoints = useMemo(() => providedSnapPoints ?? ['25%', '50%', '90%'], [providedSnapPoints]);
+  const uniqueUnits = useMemo(() => {
+    if (!units || units.length === 0) {
+      return [];
+    }
+
+    const seen = new Set<string>();
+    return units.filter(unit => {
+      if (seen.has(unit.unit)) {
+        return false;
+      }
+      seen.add(unit.unit);
+      return true;
+    });
+  }, [units]);
   const hasOpenedRef = React.useRef(false);
   const hasMetricName = Boolean(metricName);
-  const hasMultipleUnits = (units?.length ?? 0) > 1;
-  const hasSingleUnit = (units?.length ?? 0) === 1;
+  const hasMultipleUnits = uniqueUnits.length > 1;
+  const hasSingleUnit = uniqueUnits.length === 1;
+  const [showBedtimePicker, setShowBedtimePicker] = React.useState(false);
   const isSleepDurationMetric = metricId === 'sleep_duration';
+  const isSleepStageDurationMetric = metricId === 'deep_sleep' || metricId === 'rem_sleep';
+  const isSleepMinutesMetric = isSleepDurationMetric || isSleepStageDurationMetric;
+  const isSleepBedtimeMetric = metricId === 'sleep_bedtime';
+  const isSleepTimeMetric = isSleepMinutesMetric || isSleepBedtimeMetric;
+  const defaultBedtimeMinutes = 22 * 60 + 30;
+
+  React.useEffect(() => {
+    if (!isVisible || !isSleepBedtimeMetric || metricValue !== '') {
+      return;
+    }
+
+    setMetricValue(String(defaultBedtimeMinutes));
+  }, [defaultBedtimeMinutes, isSleepBedtimeMetric, isVisible, metricValue, setMetricValue]);
+
   const parsedSleepDurationMinutes = React.useMemo(() => {
     const parsedValue = Number.parseInt(metricValue, 10);
     return Number.isNaN(parsedValue) ? 0 : parsedValue;
   }, [metricValue]);
   const sleepDurationHours = String(Math.floor(parsedSleepDurationMinutes / 60));
   const sleepDurationMinutes = String(parsedSleepDurationMinutes % 60);
+  const bedtimePickerValue = React.useMemo(() => {
+    const nextValue = new Date(recordedAt);
+    const normalizedMinutes = ((parsedSleepDurationMinutes % 1440) + 1440) % 1440;
+    const hours = Math.floor(normalizedMinutes / 60);
+    const minutes = normalizedMinutes % 60;
+    nextValue.setHours(hours, minutes, 0, 0);
+    return nextValue;
+  }, [parsedSleepDurationMinutes, recordedAt]);
+  const formattedBedtime = bedtimePickerValue.toLocaleTimeString('sv-SE', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 
   const updateSleepDurationValue = React.useCallback((nextHoursRaw: string, nextMinutesRaw: string) => {
     const normalizedHours = nextHoursRaw.replaceAll(/\D/g, '');
@@ -75,6 +117,19 @@ export function RegisterMetricBottomSheet({
     setMetricValue(String(hours * 60 + minutes));
   }, [setMetricValue]);
 
+  const handleBedtimeChange = React.useCallback((_event: unknown, selectedDate?: Date) => {
+    if (Platform.OS === 'android') {
+      setShowBedtimePicker(false);
+    }
+
+    if (!selectedDate) {
+      return;
+    }
+
+    const minutesFromMidnight = selectedDate.getHours() * 60 + selectedDate.getMinutes();
+    setMetricValue(String(minutesFromMidnight));
+  }, [setMetricValue]);
+
   let unitField = (
     <BottomSheetTextInput
       style={[styles.input, { color: colors.text, borderColor: colors.border }]}
@@ -85,7 +140,7 @@ export function RegisterMetricBottomSheet({
     />
   );
 
-  if (hasMultipleUnits && units) {
+  if (hasMultipleUnits) {
     unitField = (
       <View style={[styles.input, styles.pickerContainer, { borderColor: colors.border }]}> 
         <Picker
@@ -94,7 +149,7 @@ export function RegisterMetricBottomSheet({
           style={{ color: colors.text }}
           dropdownIconColor={colors.text}
         >
-          {units.map(unit => (
+          {uniqueUnits.map(unit => (
             <Picker.Item
               key={`${unit.system}-${unit.unit}`}
               label={unit.unit + (unit.system ? ` (${unit.system})` : '')}
@@ -104,10 +159,10 @@ export function RegisterMetricBottomSheet({
         </Picker>
       </View>
     );
-  } else if (hasSingleUnit && units) {
+  } else if (hasSingleUnit) {
     unitField = (
       <View style={[styles.input, styles.singleUnitContainer, { borderColor: colors.border }]}> 
-        <ThemedText type="defaultSemiBold">{units[0].unit}</ThemedText>
+        <ThemedText type="defaultSemiBold">{uniqueUnits[0].unit}</ThemedText>
       </View>
     );
   }
@@ -127,6 +182,84 @@ export function RegisterMetricBottomSheet({
       onClose();
     }
   };
+
+  let valueField = (
+    <BottomSheetTextInput
+      style={[styles.input, { color: colors.text, borderColor: colors.border }]}
+      value={metricValue}
+      onChangeText={setMetricValue}
+      keyboardType="decimal-pad"
+      placeholder="Ange värde"
+      placeholderTextColor={colors.textMuted}
+    />
+  );
+
+  if (isSleepMinutesMetric) {
+    valueField = (
+      <View style={styles.sleepDurationRow}>
+        <View style={styles.sleepDurationField}>
+          <BottomSheetTextInput
+            style={[styles.input, { color: colors.text, borderColor: colors.border }]}
+            value={metricValue === '' ? '' : sleepDurationHours}
+            onChangeText={hours => updateSleepDurationValue(hours, sleepDurationMinutes)}
+            keyboardType="number-pad"
+            placeholder="Timmar"
+            placeholderTextColor={colors.textMuted}
+          />
+        </View>
+        <View style={styles.sleepDurationField}>
+          <BottomSheetTextInput
+            style={[styles.input, { color: colors.text, borderColor: colors.border }]}
+            value={metricValue === '' ? '' : sleepDurationMinutes}
+            onChangeText={minutes => updateSleepDurationValue(sleepDurationHours, minutes)}
+            keyboardType="number-pad"
+            placeholder="Minuter"
+            placeholderTextColor={colors.textMuted}
+          />
+        </View>
+      </View>
+    );
+  }
+
+  if (isSleepBedtimeMetric) {
+    let bedtimePickerControl = (
+      <>
+        <AppButton title={formattedBedtime} onPress={() => setShowBedtimePicker(true)} variant="secondary" />
+        {showBedtimePicker && (
+          <DateTimePicker
+            value={bedtimePickerValue}
+            mode="time"
+            display="default"
+            is24Hour
+            onChange={handleBedtimeChange}
+          />
+        )}
+      </>
+    );
+
+    if (Platform.OS === 'ios') {
+      bedtimePickerControl = (
+        <View style={[styles.pickerContainer, { borderColor: colors.border }]}> 
+          <DateTimePicker
+            value={bedtimePickerValue}
+            mode="time"
+            display="spinner"
+            is24Hour
+            onChange={handleBedtimeChange}
+          />
+        </View>
+      );
+    }
+
+    valueField = (
+      <View style={styles.inputGroup}>
+        {bedtimePickerControl}
+        <View style={[styles.input, styles.singleUnitContainer, { borderColor: colors.border }]}> 
+          <ThemedText type="default">Använder klockslag (HH:mm)</ThemedText>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <BottomSheet
@@ -156,42 +289,10 @@ export function RegisterMetricBottomSheet({
           <ThemedText type="default" style={styles.inputLabel}>
             Värde
           </ThemedText>
-          {isSleepDurationMetric ? (
-            <View style={styles.sleepDurationRow}>
-              <View style={styles.sleepDurationField}>
-                <BottomSheetTextInput
-                  style={[styles.input, { color: colors.text, borderColor: colors.border }]}
-                  value={metricValue === '' ? '' : sleepDurationHours}
-                  onChangeText={hours => updateSleepDurationValue(hours, sleepDurationMinutes)}
-                  keyboardType="number-pad"
-                  placeholder="Timmar"
-                  placeholderTextColor={colors.textMuted}
-                />
-              </View>
-              <View style={styles.sleepDurationField}>
-                <BottomSheetTextInput
-                  style={[styles.input, { color: colors.text, borderColor: colors.border }]}
-                  value={metricValue === '' ? '' : sleepDurationMinutes}
-                  onChangeText={minutes => updateSleepDurationValue(sleepDurationHours, minutes)}
-                  keyboardType="number-pad"
-                  placeholder="Minuter"
-                  placeholderTextColor={colors.textMuted}
-                />
-              </View>
-            </View>
-          ) : (
-            <BottomSheetTextInput
-              style={[styles.input, { color: colors.text, borderColor: colors.border }]}
-              value={metricValue}
-              onChangeText={setMetricValue}
-              keyboardType="decimal-pad"
-              placeholder="Ange värde"
-              placeholderTextColor={colors.textMuted}
-            />
-          )}
+          {valueField}
         </View>
 
-        {!isSleepDurationMetric && (
+        {!isSleepTimeMetric && (
           <View style={styles.inputGroup}>
             <ThemedText type="default" style={styles.inputLabel}>
               Enhet
@@ -200,7 +301,7 @@ export function RegisterMetricBottomSheet({
           </View>
         )}
 
-        <DateTimeInput value={recordedAt} onChange={setRecordedAt} />
+        <DateTimeInput value={recordedAt} onChange={setRecordedAt} showTime={false} />
 
         <View style={styles.inputGroup}>
           <ThemedText type="default" style={styles.inputLabel}>
@@ -252,6 +353,9 @@ const styles = StyleSheet.create({
   pickerContainer: {
     padding: 0,
     justifyContent: 'center',
+    borderWidth: 1,
+    borderRadius: 8,
+    overflow: 'hidden',
   },
   sleepDurationRow: {
     flexDirection: 'row',

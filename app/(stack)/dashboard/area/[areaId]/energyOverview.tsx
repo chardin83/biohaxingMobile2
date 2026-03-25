@@ -227,6 +227,34 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
             {t('energyOverview.mitochondrialHealth.mitophagy.description')}
           </ThemedText>
         </View>
+
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🍬 {t('energyOverview.mitochondrialHealth.insulinResistance.title')}</ThemedText>
+          <ThemedText type="default">
+            {t('energyOverview.mitochondrialHealth.insulinResistance.description')}
+          </ThemedText>
+        </View>
+
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">⚠️ {t('energyOverview.mitochondrialHealth.chronicStress.title')}</ThemedText>
+          <ThemedText type="default">
+            {t('energyOverview.mitochondrialHealth.chronicStress.description')}
+          </ThemedText>
+        </View>
+
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🔄 {t('energyOverview.mitochondrialHealth.metabolicFlexibility.title')}</ThemedText>
+          <ThemedText type="default">
+            {t('energyOverview.mitochondrialHealth.metabolicFlexibility.description')}
+          </ThemedText>
+        </View>
+
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🏃 {t('energyOverview.mitochondrialHealth.lowCarbHighIntensityTraining.title')}</ThemedText>
+          <ThemedText type="default">
+            {t('energyOverview.mitochondrialHealth.lowCarbHighIntensityTraining.description')}
+          </ThemedText>
+        </View>
       </Card>
 
       <MicrobiomeListCard areaId="energy" />

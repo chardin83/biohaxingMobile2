@@ -252,7 +252,6 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
               registeredValuesTitle={t('common:metricValuesBottomSheet.registeredValuesTitle')}
               dateLabel={t('common:metricValuesBottomSheet.columns.date')}
               valueLabel={t('common:metricValuesBottomSheet.columns.value')}
-              unitLabel={t('common:metricValuesBottomSheet.columns.unit')}
               notesLabel={t('common:metricValuesBottomSheet.columns.notes')}
             />
 
@@ -266,9 +265,11 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
                     <ThemedText type="defaultSemiBold">
                       {unit.unit}
                     </ThemedText>
-                    <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                      {unit.system}
-                    </ThemedText>
+                    {metric.units.length > 1 && (
+                      <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                        {unit.system}
+                      </ThemedText>
+                    )}
                   </View>
                   {unit.precision !== undefined && (
                     <ThemedText type="caption" style={[styles.metaTextSpacing, { color: colors.textMuted }]}>

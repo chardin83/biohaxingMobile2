@@ -102,7 +102,11 @@
     },
     "sleep_bedtime": {
         "name": "Läggdags",
-        "description": "När du vanligtvis somnar."
+        "description": "När du vanligtvis somnar.",
+        "perfect": "Perfekt!",
+        "bedtimeDifference": "Δ {{minutes}} min {{direction}}",
+        "earlier": "tidigare",
+        "late": "sen"
     },
     "sleep_consistency": {
         "title": "Sömnkonsistens",
@@ -120,10 +124,6 @@
       },
       "explainer": "Djup sömn är avgörande för fysisk återhämtning och immunfunktion. REM-sömn stödjer minneskonsolidering och emotionell reglering."
     },
-    "perfect": "Perfekt!",
-    "bedtimeDifference": "Δ {{minutes}} min {{direction}}",
-    "earlier": "tidigare",
-    "late": "sen",
     "deep_sleep": {
         "name": "Djup sömn",
         "description": "Den djupaste sömnfasen som stödjer fysisk återhämtning och reparation."

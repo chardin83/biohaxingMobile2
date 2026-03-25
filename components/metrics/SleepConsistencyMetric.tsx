@@ -9,29 +9,19 @@ import { ThemedText } from '@/components/ThemedText';
 import { SleepSummaryWithTarget } from '@/wearables/types';
 
 import { MetricContainer } from './MetricContainer';
+import { getLatestEntryForToday } from './metricDateUtils';
+import {
+  DEFAULT_TARGET_BEDTIME_MINUTES,
+  getBedtimeDeviation,
+  minutesToTimeString,
+  timeStringToMinutes,
+} from './sleepConsistency';
 
 interface SleepConsistencyMetricProps {
   sleepData?: SleepSummaryWithTarget;
   showDivider?: boolean;
   onPress?: () => void;
   isSelected?: boolean;
-}
-
-// Helper to convert "HH:mm" to minutes since midnight
-function timeStringToMinutes(time: string): number {
-  const [hours, minutes] = time.split(':').map(Number);
-  return hours * 60 + minutes;
-}
-
-function minutesToTimeString(minutesFromMidnight?: number) {
-  if (typeof minutesFromMidnight !== 'number') {
-    return undefined;
-  }
-
-  const normalized = ((Math.round(minutesFromMidnight) % 1440) + 1440) % 1440;
-  const hours = Math.floor(normalized / 60);
-  const minutes = normalized % 60;
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }
 
 export function SleepConsistencyMetric({
@@ -41,29 +31,26 @@ export function SleepConsistencyMetric({
   isSelected = false,
 }: Readonly<SleepConsistencyMetricProps>) {
   const { colors } = useTheme();
-  const { t } = useTranslation();
+  const { t } = useTranslation('metrics');
   const { getMetricHistory } = useStorage();
+  const targetBedtimeMinutes = sleepData?.targetBedtime
+    ? timeStringToMinutes(sleepData.targetBedtime)
+    : DEFAULT_TARGET_BEDTIME_MINUTES;
 
-  const latestBedtimeFromStorage = React.useMemo(() => {
-    const latestEntry = getMetricHistory('sleep_bedtime')
-      .sort((left, right) => left.recordedAt.localeCompare(right.recordedAt))
-      .at(-1);
-    return latestEntry?.value;
+  const latestTodayEntry = React.useMemo(() => {
+    return getLatestEntryForToday(getMetricHistory('sleep_bedtime'));
   }, [getMetricHistory]);
 
-  const startTimeFromStorage = React.useMemo(() => {
-    return minutesToTimeString(latestBedtimeFromStorage);
-  }, [latestBedtimeFromStorage]);
-
-  const targetBedtime = sleepData?.targetBedtime ?? '22:30';
-  const startTime = sleepData?.startTime ?? startTimeFromStorage;
-  const hasConsistencyData = Boolean(targetBedtime && startTime);
-
-  const targetMinutes = hasConsistencyData ? timeStringToMinutes(targetBedtime) : 0;
-  const actualMinutes = hasConsistencyData ? timeStringToMinutes(startTime) : 0;
-  let differenceMinutes = targetMinutes - actualMinutes;
-  const isPerfect = Math.abs(differenceMinutes) <= 5;
-  const isGood = Math.abs(differenceMinutes) <= 30;
+  const actualMinutes =
+    typeof latestTodayEntry?.value === 'number' ? latestTodayEntry.value : undefined;
+  const startTime =
+    typeof actualMinutes === 'number' ? minutesToTimeString(actualMinutes) : undefined;
+  const nightlyDeviation = typeof actualMinutes === 'number'
+    ? getBedtimeDeviation(targetBedtimeMinutes, actualMinutes)
+    : undefined;
+  const hasConsistencyData = Boolean(nightlyDeviation);
+  const isPerfect = Boolean(nightlyDeviation?.isPerfect);
+  const isGood = Boolean(nightlyDeviation?.isGood);
 
   let accentType = 'explainer' as const;
   let accentColor;
@@ -79,12 +66,14 @@ export function SleepConsistencyMetric({
   if (!hasConsistencyData) {
     differenceLabel = '—';
   } else if (isPerfect) {
-    differenceLabel = t('metrics.perfect');
-  } else {
-    differenceLabel = t('metrics.bedtimeDifference', {
-      minutes: Math.abs(differenceMinutes),
-      direction: differenceMinutes > 0 ? t('metrics.earlier') : t('metrics.late'),
+    differenceLabel = t('sleep_bedtime.perfect');
+  } else if (nightlyDeviation) {
+    differenceLabel = t('sleep_bedtime.bedtimeDifference', {
+      minutes: Math.abs(Math.round(nightlyDeviation.differenceMinutes)),
+      direction: nightlyDeviation.direction === 'earlier' ? t('sleep_bedtime.earlier') : t('sleep_bedtime.late'),
     });
+  } else {
+    differenceLabel = '—';
   }
 
   return (
@@ -94,7 +83,7 @@ export function SleepConsistencyMetric({
       onPress={onPress}
       borderColor={isSelected ? colors.accentStrong : 'transparent'}
     >
-      <ThemedText type="label">{t('metrics:sleep_bedtime.name')}</ThemedText>
+      <ThemedText type="label">{t('sleep_bedtime.name')}</ThemedText>
       <View style={globalStyles.metricValueContainer}>
         <ThemedText type="title2">{startTime ?? '—'}</ThemedText>
       </View>

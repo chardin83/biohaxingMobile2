@@ -9,6 +9,8 @@ import { globalStyles } from '@/app/theme/globalStyles';
 import { DeepSleepMetric } from '@/components/metrics/DeepSleepMetric';
 import { MetricTrendChart, type MetricTrendPoint } from '@/components/metrics/MetricTrendChart';
 import { RemSleepMetric } from '@/components/metrics/RemSleepMetric';
+import { SleepConsistencyLabel } from '@/components/metrics/SleepConsistencyLabel';
+import { SleepConsistencyMetric } from '@/components/metrics/SleepConsistencyMetric';
 import { SleepMetric } from '@/components/metrics/SleepMetric';
 import { MetricValuesBottomSheet } from '@/components/sections/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
@@ -16,7 +18,23 @@ import { buildTrendData } from '@/utils/metrics';
 
 import { Card } from '../ui/Card';
 
-export type SleepTrendMetricKey = 'sleep_duration' | 'deep_sleep' | 'rem_sleep';
+export type SleepTrendMetricKey = 'sleep_duration' | 'deep_sleep' | 'rem_sleep' | 'sleep_bedtime';
+
+const MINUTES_PER_DAY = 1440;
+const MIDDAY_MINUTES = 12 * 60;
+
+function normalizeBedtimeForChart(value: number) {
+  const normalized = ((Math.round(value) % MINUTES_PER_DAY) + MINUTES_PER_DAY) % MINUTES_PER_DAY;
+  // Shift post-midnight bedtimes to the next day so the chart is visually continuous around bedtime.
+  return normalized < MIDDAY_MINUTES ? normalized + MINUTES_PER_DAY : normalized;
+}
+
+function formatBedtimeChartValue(chartValue: number) {
+  const normalized = ((Math.round(chartValue) % MINUTES_PER_DAY) + MINUTES_PER_DAY) % MINUTES_PER_DAY;
+  const hours = Math.floor(normalized / 60);
+  const minutes = normalized % 60;
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+}
 
 function formatSleepDuration(valueInMinutes: number) {
   const roundedMinutes = Math.max(0, Math.round(valueInMinutes));
@@ -60,6 +78,15 @@ export function SleepTrendsChart() {
     return buildTrendData(getMetricHistory('rem_sleep'));
   }, [getMetricHistory]);
 
+  const bedtimeTrendData = React.useMemo<MetricTrendPoint[]>(() => {
+    return buildTrendData(
+      getMetricHistory('sleep_bedtime'),
+      (value) => {
+        return normalizeBedtimeForChart(value);
+      }
+    );
+  }, [getMetricHistory]);
+
   const selectedTrendConfig = React.useMemo(() => {
     if (!selectedTrendMetric) {
       return null;
@@ -80,6 +107,14 @@ export function SleepTrendsChart() {
           data: remSleepTrendData,
           accentColor: colors.chart.remSleep,
         };
+      case 'sleep_bedtime':
+        return {
+          metricName: t('metrics:sleep_bedtime.name'),
+          unit: undefined,
+          valueFormatter: formatBedtimeChartValue,
+          data: bedtimeTrendData,
+          accentColor: colors.chart.sleepBedtime,
+        };
       case 'sleep_duration':
       default:
         return {
@@ -90,7 +125,7 @@ export function SleepTrendsChart() {
           accentColor: colors.chart.sleepDuration,
         };
     }
-  }, [colors.chart.deepSleep, colors.chart.remSleep, colors.chart.sleepDuration, deepSleepTrendData, remSleepTrendData, selectedTrendMetric, sleepDurationTrendData, t]);
+  }, [bedtimeTrendData, colors.chart.deepSleep, colors.chart.remSleep, colors.chart.sleepBedtime, colors.chart.sleepDuration, deepSleepTrendData, remSleepTrendData, selectedTrendMetric, sleepDurationTrendData, t]);
 
   return (
      <Card title={t('sleepTrendChart.title')}>
@@ -109,6 +144,15 @@ export function SleepTrendsChart() {
           onPress={() => toggleMetric('rem_sleep')}
           isSelected={selectedTrendMetric === 'rem_sleep'}
         />
+      </View>
+      <View style={globalStyles.row}>
+        <SleepConsistencyLabel showDivider={true} />
+        <View style={globalStyles.col}>
+          <SleepConsistencyMetric
+            onPress={() => toggleMetric('sleep_bedtime')}
+            isSelected={selectedTrendMetric === 'sleep_bedtime'}
+          />
+        </View>
       </View>
       {selectedTrendConfig && (
         <MetricTrendChart

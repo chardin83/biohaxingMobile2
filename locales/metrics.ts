@@ -1,6 +1,6 @@
 // measurements.ts
 
-export type MetricSystem = 'EU' | 'US';
+export type MetricSystem = 'EU' | 'US' | 'all';
 
 export type MetricUnit =
   | 'mIU/L'
@@ -25,6 +25,7 @@ export type MetricUnit =
   | 'score_0_10'
   | 'count'
   | 'min'
+  | 'min_from_midnight'
   | 'hours'
   | 'bss'; // Bristol Stool Scale
 
@@ -125,8 +126,7 @@ export const metrics: Record<string, MetricDefinition> = {
     source: 'home',
     suggestedFrequency: 'weekly',
     units: [
-      { unit: 'mmHg', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
-      { unit: 'mmHg', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+      { unit: 'mmHg', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
 
@@ -139,8 +139,7 @@ export const metrics: Record<string, MetricDefinition> = {
     source: 'home',
     suggestedFrequency: 'weekly',
     units: [
-      { unit: 'mmHg', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
-      { unit: 'mmHg', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+      { unit: 'mmHg', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
 
@@ -273,8 +272,7 @@ export const metrics: Record<string, MetricDefinition> = {
     source: 'wearable',
     suggestedFrequency: 'daily',
     units: [
-      { unit: 'bpm', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
-      { unit: 'bpm', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+      { unit: 'bpm', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
 
@@ -287,8 +285,7 @@ export const metrics: Record<string, MetricDefinition> = {
     source: 'wearable',
     suggestedFrequency: 'daily',
     units: [
-      { unit: 'ms', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
-      { unit: 'ms', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+      { unit: 'ms', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
 
@@ -303,8 +300,7 @@ export const metrics: Record<string, MetricDefinition> = {
     source: 'wearable',
     suggestedFrequency: 'daily',
     units: [
-      { unit: 'min', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
-      { unit: 'min', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+      { unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
 
@@ -317,8 +313,7 @@ export const metrics: Record<string, MetricDefinition> = {
     source: 'wearable',
     suggestedFrequency: 'daily',
     units: [
-      { unit: 'min_from_midnight', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
-      { unit: 'min_from_midnight', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+      { unit: 'min_from_midnight', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
 
@@ -331,8 +326,7 @@ export const metrics: Record<string, MetricDefinition> = {
     source: 'wearable',
     suggestedFrequency: 'daily',
     units: [
-      { unit: 'min', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
-      { unit: 'min', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+      { unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
 
@@ -345,8 +339,7 @@ export const metrics: Record<string, MetricDefinition> = {
     source: 'wearable',
     suggestedFrequency: 'daily',
     units: [
-      { unit: 'min', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
-      { unit: 'min', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+      { unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
 
@@ -359,8 +352,7 @@ export const metrics: Record<string, MetricDefinition> = {
     source: 'questionnaire',
     suggestedFrequency: 'daily',
     units: [
-      { unit: 'score_0_10', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
-      { unit: 'score_0_10', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+      { unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
 
@@ -373,8 +365,7 @@ export const metrics: Record<string, MetricDefinition> = {
     source: 'questionnaire',
     suggestedFrequency: 'daily',
     units: [
-      { unit: 'min', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
-      { unit: 'min', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+      { unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
 
@@ -419,8 +410,7 @@ export const metrics: Record<string, MetricDefinition> = {
     source: 'questionnaire',
     suggestedFrequency: 'daily',
     units: [
-      { unit: 'bss', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
-      { unit: 'bss', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+      { unit: 'bss', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
 
@@ -433,8 +423,7 @@ export const metrics: Record<string, MetricDefinition> = {
     source: 'questionnaire',
     suggestedFrequency: 'daily',
     units: [
-      { unit: 'score_0_10', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
-      { unit: 'score_0_10', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+      { unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
   active_minutes: {
@@ -446,8 +435,7 @@ export const metrics: Record<string, MetricDefinition> = {
     source: 'wearable',
     suggestedFrequency: 'daily',
     units: [
-      { unit: 'min', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
-      { unit: 'min', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+      { unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
   intensity_minutes: {
@@ -459,8 +447,7 @@ export const metrics: Record<string, MetricDefinition> = {
     source: 'wearable',
     suggestedFrequency: 'daily',
     units: [
-      { unit: 'min', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
-      { unit: 'min', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+      { unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
 
@@ -475,8 +462,7 @@ export const metrics: Record<string, MetricDefinition> = {
     source: 'questionnaire',
     suggestedFrequency: 'daily',
     units: [
-      { unit: 'score_0_10', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
-      { unit: 'score_0_10', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+      { unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
 
@@ -489,8 +475,7 @@ export const metrics: Record<string, MetricDefinition> = {
     source: 'questionnaire',
     suggestedFrequency: 'daily',
     units: [
-      { unit: 'score_0_10', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
-      { unit: 'score_0_10', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+      { unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
 
@@ -503,8 +488,7 @@ export const metrics: Record<string, MetricDefinition> = {
     source: 'questionnaire',
     suggestedFrequency: 'daily',
     units: [
-      { unit: 'score_0_10', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } },
-      { unit: 'score_0_10', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+      { unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   }
 };

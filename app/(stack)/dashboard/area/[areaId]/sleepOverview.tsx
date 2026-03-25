@@ -5,8 +5,6 @@ import { View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
-import { SleepConsistencyLabel } from '@/components/metrics/SleepConsistencyLabel';
-import { SleepConsistencyMetric } from '@/components/metrics/SleepConsistencyMetric';
 import { SleepTrendsChart } from '@/components/metrics/SleepTrendsChart';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
@@ -24,23 +22,16 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
   const { colors } = useTheme();
   const { t } = useTranslation();
 
-  const [loading, setLoading] = React.useState(() => adapter.source !== 'none');
   const lastSyncAtRef = React.useRef(status.lastSyncAt);
   lastSyncAtRef.current = status.lastSyncAt;
 
   React.useEffect(() => {
-    if (adapter.source === 'none') {
-      setLoading(false);
-      return;
-    }
+    if (adapter.source === 'none') return;
     (async () => {
-      setLoading(true);
       if (shouldSyncWearableData(lastSyncAtRef.current)) {
         await syncWearableMetricsToStorage(adapter, upsertMetricEntries);
       }
-
-      setLoading(false);
-    })().catch(() => setLoading(false));
+    })().catch(() => {});
   }, [adapter, upsertMetricEntries]);
 
   return (
@@ -49,21 +40,6 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
       <ThemedText type="subtitle">{t('sleepOverview.description')}</ThemedText>
       <WearableStatus status={status} />
 
-      {/* Overview card */}
-      <Card title={t('sleepOverview.overview.title')}>
-        {loading ? (
-          <ThemedText type="caption">Loading…</ThemedText>
-        ) : (
-          <View style={globalStyles.row}>
-            <SleepConsistencyLabel />
-
-            <View style={globalStyles.col}>
-              <SleepConsistencyMetric />
-            </View>
-          </View>
-        )}
-      </Card>
-      
       <SleepTrendsChart />
 
       {/* Information card */}

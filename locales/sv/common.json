@@ -375,6 +375,22 @@
       "mitophagy": {
         "title": "Mitofagi och cellulär rengöring",
         "description": "Mitofagi är selektiv autofagi av skadade mitokondrier. Det sker under fasta och djupsömn. Regelbunden mitofagi förhindrar ackumulering av dysfunktionella mitokondrier som producerar överskott av ROS och mindre ATP."
+      },
+      "insulinResistance": {
+        "title": "Insulin och insulinresistens",
+        "description": "Insulin hjälper celler att ta upp glukos för energiproduktion. Vid insulinresistens svarar cellerna sämre på insulin, vilket kan leda till högre blodsocker och minskad metabol flexibilitet. Kroniskt förhöjt insulin kan belasta mitokondrierna och bidra till lägre energinivåer över tid. Baserat på epidemiologiska uppskattningar har cirka 15-30% av vuxna i EU och cirka 30-40% av vuxna i USA insulinresistens, beroende på definition och mätmetod."
+      },
+      "chronicStress": {
+        "title": "Kronisk stress och mitokondriell funktion",
+        "description": "Kronisk stress ökar kortisol- och adrenalinproduktion, vilket öppnar energi för omedelbar överlevnad men undertrycker långsiktig mitokondriell reparation och biogenesis. Högt kortisol ökar ROS-produktion, försämrar DNA-reparation och minskar NAD+-nivåer. Stress-inducerad hjärnaktivering kan också reducera blodflödet till mag-tarmkanalen och framkallar immunundertryckande. Regelbunden vila, djupsömn och parasympatisk aktivering (djupandning, meditation) är kritiska för att återställa mitokondriell hälsa."
+      },
+      "metabolicFlexibility": {
+        "title": "Metabol flexibilitet",
+        "description": "Metabol flexibilitet är kroppens förmåga att smidigt växla mellan att bränna glukos och fett för energi beroende på tillgänglighet och behov. Väl utvecklad metabol flexibilitet minskar beroendet av frekventa måltider, förbättrar insulinkänsligheten och ökar mental klarhet. Intermittend fasta, låg-kohlenhydrat-perioder och aerob träning förbättrar denna växlingsförmåga. Kronisk överföring av socker kan försämra metabol flexibilitet, vilket gör kroppen låst vid glukosförbränning och mindre motståndskraftig mot energifluktuationer."
+      },
+      "lowCarbHighIntensityTraining": {
+        "title": "Lågkolhydratkost och högintensiv träning",
+        "description": "Lågkolhydratkost i kombination med högintensiv träning kan vara effektiv för fettminskning, förbättrad insulinkänslighet och metabol hälsa, men kräver planering. Högintensiva pass är mer beroende av glykogen, så för låg kolhydratnivå kan sänka prestationsförmåga och återhämtning. Om belastningen blir för hög kan kortisol stiga och nervsystemet fastna i sympatisk dominans (högre stresspåslag, sämre sömn och lägre HRV). En periodiserad strategi fungerar ofta bäst: lägre kolhydratintag i vila eller lågintensiva dagar, och riktade kolhydrater före eller efter hårda pass för att stödja kraftutveckling, hormonbalans och återgång till parasympatisk återhämtning."
       }
     }
   },
@@ -668,7 +684,8 @@
     "explainers": {
       "sleep_duration": "Sömnlängd visar din totala nattliga återhämtning. En stabil nivå på ungefär 7 till 9 timmar stödjer hormonbalans, immunförsvar och mental skärpa.",
       "deep_sleep": "Djupsömn är fasen där kroppen prioriterar fysisk återhämtning, vävnadsreparation och immunstöd. Trenden hjälper dig se om återhämtningen faktiskt förbättras över tid.",
-      "rem_sleep": "REM-sömn stödjer minneskonsolidering, emotionell bearbetning och inlärning. Att följa REM över tid ger en bättre bild av stress, sömnkvalitet och mental återhämtning."
+      "rem_sleep": "REM-sömn stödjer minneskonsolidering, emotionell bearbetning och inlärning. Att följa REM över tid ger en bättre bild av stress, sömnkvalitet och mental återhämtning.",
+      "sleep_bedtime": "Läggtidskonsistens är en av de kraftfullaste faktorerna för sömnkvalitet. Trenden visar om din sömnrytm blir mer stabil — en nyckel för dygnsrytm och återhämtning."
     }
   },
   "todaysActivityCharts": {

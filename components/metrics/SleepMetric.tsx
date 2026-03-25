@@ -8,6 +8,7 @@ import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
 
 import { MetricContainer } from './MetricContainer';
+import { getLatestEntryForToday } from './metricDateUtils';
 
 interface SleepMetricProps {
   showDivider?: boolean;
@@ -21,9 +22,7 @@ export function SleepMetric({ showDivider = false, onPress, isSelected = false }
   const { getMetricHistory } = useStorage();
 
   const latestSleepFromStorage = React.useMemo(() => {
-    const latestEntry = getMetricHistory('sleep_duration')
-      .sort((left, right) => left.recordedAt.localeCompare(right.recordedAt))
-      .at(-1);
+    const latestEntry = getLatestEntryForToday(getMetricHistory('sleep_duration'));
     if (!latestEntry) {
       return null;
     }
