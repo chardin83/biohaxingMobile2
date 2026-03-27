@@ -19,7 +19,8 @@
         "title": "Akkermansia",
         "description": "Maintains gut lining and metabolic health.",
         "areas": {
-            "digestiveHealth": "Improves gut barrier function and metabolic health."
+            "digestiveHealth": "Improves gut barrier function and metabolic health.",
+            "longevity": "Akkermansia is associated with better gut barrier integrity and metabolic function, both strongly linked to healthier aging and long-term resilience."
         }
     },
     "Gordonibacter": {
@@ -34,7 +35,9 @@
         "title": "Roseburia",
         "description": "Produces butyrate and supports anti-inflammatory effects.",
         "areas": {
-            "digestiveHealth": "Promotes anti-inflammatory effects and gut health."
+            "digestiveHealth": "Promotes anti-inflammatory effects and gut health.",
+            "strength": "Roseburia inulinivorans, a specific form in the Roseburia-family, has been associated in observational data with up to around 30% higher muscle strength. Likely mechanisms include butyrate production, lower inflammation, and a more favorable metabolic environment for muscle function and recovery.",
+            "cardioFitness": "The cardio link appears weaker: people with higher VO2 max often have more Roseburia, but intervention data has not consistently shown faster performance after adding this bacterium alone."
         }
     },
     "Ruminococcus": {
@@ -63,6 +66,13 @@
         "description": "Produces butyrate (butyric acid), a key short-chain fatty acid for gut health. Butyrate nourishes colon cells, strengthens the gut barrier, and reduces inflammation. Lawsinobacter asaccharolyticus may also produce butyrate.",
         "areas": {
             "digestiveHealth": "Supports gut barrier, reduces inflammation, and promotes regularity. Butyrate (butyric acid) is essential for colon health and anti-inflammatory effects. Lawsinobacter asaccharolyticus may also produce butyrate."
+        }
+    },
+    "Veillonella_atypica": {
+        "title": "Veillonella atypica",
+        "description": "Veillonella atypica is a gut bacterium linked to endurance. It uses lactate produced during hard exercise and converts it into propionate.",
+        "areas": {
+            "cardioFitness": "By converting lactate into propionate, Veillonella atypica may influence energy and performance, but the evidence is still emerging and should be interpreted cautiously."
         }
     }
 }

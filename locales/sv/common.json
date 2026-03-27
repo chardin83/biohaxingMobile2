@@ -284,6 +284,18 @@
         "title": "VO₂ Max",
         "description": "VO₂ max mäter den maximala mängden syre din kropp kan använda under intensiv träning. Det är guldstandarden för kondition. Högre värden indikerar bättre uthållighetskapacitet."
       },
+      "vo2Health": {
+        "title": "Varför VO₂ max är bra för hälsan",
+        "description": "Högre VO₂ max är starkt kopplat till lägre risk för hjärt-kärlsjukdom, bättre metabol hälsa och lägre total dödlighet. Det speglar hur effektivt hjärta, lungor, blodkärl och muskler samarbetar för att leverera och använda syre."
+      },
+      "easyRun": {
+        "title": "Varför Easy run är bra för hälsan",
+        "description": "Lugna pass (zon 2/easy run) bygger aerob bas med låg stressbelastning. De förbättrar kapillärtäthet, mitokondriell funktion och fettförbränning, samtidigt som återhämtningen blir bättre än vid för många hårda pass."
+      },
+      "lactate": {
+        "title": "Varför laktat är bra för hälsan",
+        "description": "Laktat är inte bara en restprodukt utan ett viktigt bränsle och en signalmolekyl. Det kan användas av hjärta, muskler och hjärna, och är kopplat till träningseffekter som förbättrad kondition, metabol flexibilitet och mitokondriell anpassning."
+      },
       "restingHeartRate": {
         "title": "Vilopuls",
         "description": "Lägre vilopuls indikerar vanligtvis bättre kardiovaskulär kondition. Idrottare har ofta vilopulser under 60 bpm. Övervaka trender över tid. En plötslig ökning kan signalera överträning, sjukdom eller stress."
@@ -313,7 +325,7 @@
       },
       "stress": {
         "title": "Stress",
-        "description": "Hög stress kan påverka matsmältningen och tarmhälsan negativt. Att hantera stress stödjer ett hälsosamt matsmältningssystem."
+        "description": "Hög stress aktiverar det sympatiska nervsystemet (fight-or-flight), vilket kan minska blodflödet till mag-tarmkanalen och bromsa matsmältningen. Det kan ge mer uppblåsthet, magont, förändrad tarmmotilitet och sämre näringsupptag. Stress kan också påverka tarmbarriären och mikrobiomet negativt samt öka låggradig inflammation. Att hantera stress stödjer därför både tarmfunktion och matsmältningshälsa."
       },
       "sleep": {
         "title": "Sömn",
@@ -321,7 +333,7 @@
       },
       "activity": {
         "title": "Fysisk aktivitet",
-        "description": "Regelbunden rörelse stimulerar matsmältningen och stödjer tarmens rörlighet."
+        "description": "Regelbunden rörelse stimulerar matsmältningen och stödjer tarmens rörlighet. Lätt aktivitet som promenader (särskilt 10-20 minuter efter måltid) passar bra för blodsocker och minskad uppblåsthet. Styrketräning 2-4 gånger per vecka stödjer metabol hälsa och insulinrespons. Högintensiv träning kan vara effektiv men passar oftast bäst när magen är lugn och inte direkt efter större måltider. Vid känslig mage eller stressad period är låg- till medelintensiv träning ofta skonsammare."
       },
       "hydration": {
         "title": "Vätskebalans",
@@ -388,6 +400,10 @@
         "title": "Metabol flexibilitet",
         "description": "Metabol flexibilitet är kroppens förmåga att smidigt växla mellan att bränna glukos och fett för energi beroende på tillgänglighet och behov. Väl utvecklad metabol flexibilitet minskar beroendet av frekventa måltider, förbättrar insulinkänsligheten och ökar mental klarhet. Intermittend fasta, låg-kohlenhydrat-perioder och aerob träning förbättrar denna växlingsförmåga. Kronisk överföring av socker kan försämra metabol flexibilitet, vilket gör kroppen låst vid glukosförbränning och mindre motståndskraftig mot energifluktuationer."
       },
+      "resistantStarch": {
+        "title": "Resistent stärkelse och energi",
+        "description": "Resistent stärkelse är en nyckelfiber för energi och metabol hälsa. Den bryts inte ner i tunntarmen utan fermenteras i tjocktarmen till kortkedjiga fettsyror, särskilt butyrat. Detta kan förbättra insulinkänslighet, stödja metabol flexibilitet och dämpa låggradig inflammation, vilket indirekt gynnar energiproduktion och mitokondriell hälsa. Exempel är avsvalnad potatis/ris, gröna bananer, baljväxter och havre. Bäst total effekt fås ofta när resistent stärkelse kombineras med andra fibertyper i en varierad kost."
+      },
       "lowCarbHighIntensityTraining": {
         "title": "Lågkolhydratkost och högintensiv träning",
         "description": "Lågkolhydratkost i kombination med högintensiv träning kan vara effektiv för fettminskning, förbättrad insulinkänslighet och metabol hälsa, men kräver planering. Högintensiva pass är mer beroende av glykogen, så för låg kolhydratnivå kan sänka prestationsförmåga och återhämtning. Om belastningen blir för hög kan kortisol stiga och nervsystemet fastna i sympatisk dominans (högre stresspåslag, sämre sömn och lägre HRV). En periodiserad strategi fungerar ofta bäst: lägre kolhydratintag i vila eller lågintensiva dagar, och riktade kolhydrater före eller efter hårda pass för att stödja kraftutveckling, hormonbalans och återgång till parasympatisk återhämtning."
@@ -422,6 +438,10 @@
       "restingHeartRate": {
         "title": "Vilopuls",
         "description": "En förhöjd vilopuls kan vara ett tidigt tecken på sjukdom, inflammation eller otillräcklig återhämtning."
+      },
+      "microbiomeButyrate": {
+        "title": "Mikrobiom och butyratproducerande bakterier",
+        "description": "Tarmmikrobiomet påverkar immunförsvaret direkt. Butyratproducerande bakterier (som producerar kortkedjiga fettsyran butyrat) stärker tarmbarriären, dämpar låggradig inflammation och stödjer immuntolerans. Resistent stärkelse är ett viktigt bränsle för dessa bakterier och finns bland annat i avsvalnad potatis/ris, gröna bananer, baljväxter och havre. En fiberrik kost gynnar därför butyratproduktion och kan förbättra immunbalansen."
       }
     }
   },
@@ -456,6 +476,65 @@
       "ansBalance": {
         "title": "ANS-balans",
         "description": "Balansen mellan sympatisk (stressrespons) och parasympatisk (återhämtningsrespons) aktivitet. En övervägande parasympatisk aktivitet indikerar god återhämtning, medan en övervägande sympatisk aktivitet kan signalera stress eller otillräcklig återhämtning."
+      },
+      "nutrients": {
+        "title": "Näringsämnen som stöder nervsystemet",
+        "description": "Flera näringsämnen är särskilt viktiga för nervsystemets funktion: B-vitaminer (särskilt B1, B6, B12 och folat) för nervsignalering och energimetabolism, magnesium för avslappning och stressreglering, omega-3 (EPA/DHA) för nervcellernas membran, D-vitamin för neuroimmun balans, kolin för acetylkolinproduktion samt tillräckligt natrium, kalium och vätska för stabil nervledning."
+      },
+      "overstimulationScreenTime": {
+        "title": "Överstimulering och skärmtid",
+        "description": "Hög skärmtid, snabba dopaminstimuli och konstant informationsflöde kan hålla nervsystemet i ett mer aktiverat läge. Särskilt kvällstid kan blått ljus och mental stimulans fördröja melatoninfrisättning, försämra sömnkvalitet och minska nattlig återhämtning. Detta kan över tid bidra till högre stresskänslighet, lägre HRV och svårare reglering mellan fokus och vila. Regelbundna pauser, skärmfria kvällsrutiner och nedvarvning före sömn stödjer parasympatisk balans."
+      },
+      "breathing": {
+        "title": "Andning och nervsystemet",
+        "description": "Långsam och kontrollerad andning kan snabbt sänka stresspåslag och öka parasympatisk aktivitet via vagusnerven. Förlängd utandning (till exempel 4 sek in, 6-8 sek ut) signalerar trygghet till nervsystemet och kan förbättra HRV, fokus och återhämtning. Några minuters andningsövning före sömn eller efter stressiga perioder kan ge tydlig effekt."
+      },
+      "immuneInflammation": {
+        "title": "Immunförsvar och låggradig inflammation",
+        "description": "Nervsystemet och immunförsvaret är tätt sammankopplade. Låggradig inflammation med förhöjda inflammationssignaler kan öka stresskänslighet, försämra sömn och minska återhämtning i nervsystemet. Samtidigt kan långvarig stress driva mer inflammation. Antiinflammatoriska vanor som god sömn, regelbunden rörelse, stabilt blodsocker och näringstät kost kan hjälpa till att bryta denna negativa loop."
+      },
+      "gutVagusMicrobiome": {
+        "title": "Tarmhälsa, vagusnerven och tarmfloran",
+        "description": "Tarmen och hjärnan kommunicerar kontinuerligt via tarm-hjärna-axeln, där vagusnerven är en central signalväg. En balanserad tarmflora producerar metaboliter och signalsubstanser som kan stödja lugnare stressrespons och bättre återhämtning, medan dysbios kan bidra till inflammation och ökad nervsystemsbelastning. Fiberrik kost, fermenterade livsmedel, god sömn och stresshantering kan stärka tarmmiljön och därmed även nervsystemets reglering."
+      },
+      "trainingStrengthens": {
+        "title": "Hur träning stärker nervsystemet",
+        "description": "Rätt dos träning stärker nervsystemets regleringsförmåga. Regelbunden aerob träning och styrketräning kan höja HRV över tid, förbättra stressresiliens och göra att du snabbare växlar tillbaka till parasympatisk återhämtning efter belastning. HIT är bra för nervsystemet eftersom korta, intensiva intervaller tränar kroppen att tåla snabb sympatisk aktivering och därefter återgå effektivt till återhämtning. Med tiden kan detta förbättra autonom flexibilitet, stressrespons och mental skärpa. Progressiv upptrappning med tillräcklig återhämtning är nyckeln, oftast 1-3 HIT-pass per vecka."
+      },
+      "trainingNutritionStress": {
+        "title": "Högintensiv träning, kost och stressbelastning",
+        "description": "Högintensiv träning är effektiv men ökar den akuta aktiveringen av sympatikus. Om den kombineras med för lågt energi- eller kolhydratintag under längre perioder kan kortisol förbli förhöjt, HRV sjunka och sömnen försämras. Det kan ge tecken på nervsystemsbelastning som trötthet, sämre återhämtning och minskad prestation. För att skydda nervsystemet: periodisera intensiva pass, säkerställ tillräcklig energi och använd återhämtningsdagar med fokus på parasympatisk aktivering."
+      }
+    }
+  },
+  "longevityOverview": {
+    "title": "Longevity",
+    "description": "Grunderna som stöttar långsiktig hälsospan och motståndskraft",
+    "pillars": {
+      "title": "Kärnpelare för longevity",
+      "sleepRecovery": {
+        "title": "Sömn och återhämtning",
+        "description": "Konsekvent sömn av hög kvalitet stödjer hormonbalans, immunreglering, hjärnans återhämtning och lägre kronisk belastning över tid."
+      },
+      "metabolicHealth": {
+        "title": "Metabol hälsa",
+        "description": "Stabilt blodsocker, god insulinkänslighet och fungerande mitokondrier är starkt kopplat till friskare åldrande och lägre kardiometabol risk."
+      },
+      "trainingCapacity": {
+        "title": "Träningskapacitet",
+        "description": "En kombination av zon 2, styrketräning, rörlighet och riktad högintensiv träning hjälper till att bevara VO2 max, muskelmassa och funktionell självständighet med åldern. För helkropps-longevity, sikta på minst 4-5 olika rörelsetyper per vecka så att överkropp, underkropp, bål, balans och stöttålighet tränas."
+      },
+      "fasciaStrength": {
+        "title": "Fascia och bindvävsstyrka",
+        "description": "Fascian är bindvävsnätverket som överför kraft genom hela kroppen och stödjer ledstabilitet, elasticitet och rörelseeffektivitet. Den svarar bäst på varierad belastning: styrketräning, carries, rotationer, plyometriska eller stötbärande moment och rörlighet i flera plan. Den typen av helkroppsträning stödjer muskler, senor, ligament och skelettets anpassning över tid."
+      },
+      "nervousSystemStress": {
+        "title": "Nervsystem och stressbelastning",
+        "description": "Minska kronisk sympatisk dominans med återhämtningsrutiner, andningsövningar och smart periodisering av träningen för att skydda långsiktig resiliens."
+      },
+      "inflammationMicrobiome": {
+        "title": "Inflammation och mikrobiom",
+        "description": "En fiberrik och näringstät kost stödjer butyratproducerande bakterier, bättre tarmbarriärfunktion och lägre låggradig inflammation."
       }
     }
   },
@@ -580,6 +659,9 @@
     "bacteriaLinkedToArea": "Bakterier kopplade till {{area}}",
     "noBacteria": "Inga bakterier kopplade till detta område ännu.",
     "bacteriaAffectHealth": "Flera bakterier påverkar din tarmhälsa och funktion i detta område. Att förstå ditt mikrobiom kan hjälpa dig att optimera din hälsoplan.",
+    "bacteriaAffectHealthByArea": {
+      "longevity": "Ett diversifierat mikrobiom är viktigt för hälsosamt åldrande. Personer över 70 har ofta minskad diversitet, medan hundraåringar ofta har en mikrobiomprofil som är närmare yngre personers."
+    },
     "explainer": "Mikrobiomtest kan ge insikter om din tarmprofil, men kost och livsstil har alltid störst påverkan!"
   },
   "metrics": {

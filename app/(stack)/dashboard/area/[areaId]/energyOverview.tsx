@@ -250,6 +250,13 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
         </View>
 
         <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🌾 {t('energyOverview.mitochondrialHealth.resistantStarch.title')}</ThemedText>
+          <ThemedText type="default">
+            {t('energyOverview.mitochondrialHealth.resistantStarch.description')}
+          </ThemedText>
+        </View>
+
+        <View style={globalStyles.infoSection}>
           <ThemedText type="title3">🏃 {t('energyOverview.mitochondrialHealth.lowCarbHighIntensityTraining.title')}</ThemedText>
           <ThemedText type="default">
             {t('energyOverview.mitochondrialHealth.lowCarbHighIntensityTraining.description')}

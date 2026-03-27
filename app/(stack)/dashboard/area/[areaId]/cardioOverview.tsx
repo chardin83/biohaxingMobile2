@@ -8,6 +8,7 @@ import { CardioTrendsChart } from '@/components/metrics/CardioTrendsChart';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import GenesListCard from '@/components/ui/GenesListCard';
+import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { useWearable } from '@/wearables/wearableProvider';
@@ -31,6 +32,24 @@ export default function CardioScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
           <ThemedText type="title3">🫁 {t("cardioOverview.understandingYourMetrics.vo2Max.title")}</ThemedText>
           <ThemedText type="default">
             {t("cardioOverview.understandingYourMetrics.vo2Max.description")}
+          </ThemedText>
+        </View>
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">❤️ {t("cardioOverview.understandingYourMetrics.vo2Health.title")}</ThemedText>
+          <ThemedText type="default">
+            {t("cardioOverview.understandingYourMetrics.vo2Health.description")}
+          </ThemedText>
+        </View>
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🏃 {t("cardioOverview.understandingYourMetrics.easyRun.title")}</ThemedText>
+          <ThemedText type="default">
+            {t("cardioOverview.understandingYourMetrics.easyRun.description")}
+          </ThemedText>
+        </View>
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">⚡ {t("cardioOverview.understandingYourMetrics.lactate.title")}</ThemedText>
+          <ThemedText type="default">
+            {t("cardioOverview.understandingYourMetrics.lactate.description")}
           </ThemedText>
         </View>
         <View style={globalStyles.infoSection}>
@@ -60,6 +79,8 @@ export default function CardioScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
       </Card>
 
       <GenesListCard areaId="cardioFitness" />
+
+      <MicrobiomeListCard areaId="cardioFitness" />
 
       {/* Tips Card */}
       <TipsList areaId={mainGoalId}/>

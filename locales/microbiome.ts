@@ -32,7 +32,8 @@ export const microbiome: MicrobiomeBacteria[] = [
     id: "Akkermansia",
     titleKey: "Akkermansia.title",
     areas: [
-      { id: "digestiveHealth", descriptionKey: "Akkermansia.areas.digestiveHealth" }
+      { id: "digestiveHealth", descriptionKey: "Akkermansia.areas.digestiveHealth" },
+      { id: "longevity", descriptionKey: "Akkermansia.areas.longevity" }
     ]
   },
   {
@@ -47,7 +48,9 @@ export const microbiome: MicrobiomeBacteria[] = [
     id: "Roseburia",
     titleKey: "Roseburia.title",
     areas: [
-      { id: "digestiveHealth", descriptionKey: "Roseburia.areas.digestiveHealth" }
+      { id: "digestiveHealth", descriptionKey: "Roseburia.areas.digestiveHealth" },
+      { id: "strength", descriptionKey: "Roseburia.areas.strength" },
+      { id: "cardioFitness", descriptionKey: "Roseburia.areas.cardioFitness" }
     ]
   },
   {
@@ -76,6 +79,13 @@ export const microbiome: MicrobiomeBacteria[] = [
     titleKey: "Faecalibacterium.title",
     areas: [
       { id: "digestiveHealth", descriptionKey: "Faecalibacterium.areas.digestiveHealth" }
+    ]
+  },
+  {
+    id: "Veillonella atypica",
+    titleKey: "Veillonella_atypica.title",
+    areas: [
+      { id: "cardioFitness", descriptionKey: "Veillonella_atypica.areas.cardioFitness" }
     ]
   },
 ];

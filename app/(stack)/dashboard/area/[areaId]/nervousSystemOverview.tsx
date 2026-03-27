@@ -91,6 +91,55 @@ export default function NervousSystemScreen({ mainGoalId }: Readonly<{ mainGoalI
             {t("nervousSystemOverview.informationCard.ansBalance.description")}
           </ThemedText>
         </View>
+
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🥦 {t("nervousSystemOverview.informationCard.nutrients.title")}</ThemedText>
+          <ThemedText type="default">
+            {t("nervousSystemOverview.informationCard.nutrients.description")}
+          </ThemedText>
+        </View>
+
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">📱 {t("nervousSystemOverview.informationCard.overstimulationScreenTime.title")}</ThemedText>
+          <ThemedText type="default">
+            {t("nervousSystemOverview.informationCard.overstimulationScreenTime.description")}
+          </ThemedText>
+        </View>
+
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🫁 {t("nervousSystemOverview.informationCard.breathing.title")}</ThemedText>
+          <ThemedText type="default">
+            {t("nervousSystemOverview.informationCard.breathing.description")}
+          </ThemedText>
+        </View>
+
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🛡️ {t("nervousSystemOverview.informationCard.immuneInflammation.title")}</ThemedText>
+          <ThemedText type="default">
+            {t("nervousSystemOverview.informationCard.immuneInflammation.description")}
+          </ThemedText>
+        </View>
+
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🦠 {t("nervousSystemOverview.informationCard.gutVagusMicrobiome.title")}</ThemedText>
+          <ThemedText type="default">
+            {t("nervousSystemOverview.informationCard.gutVagusMicrobiome.description")}
+          </ThemedText>
+        </View>
+
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">💪 {t("nervousSystemOverview.informationCard.trainingStrengthens.title")}</ThemedText>
+          <ThemedText type="default">
+            {t("nervousSystemOverview.informationCard.trainingStrengthens.description")}
+          </ThemedText>
+        </View>
+
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🏃 {t("nervousSystemOverview.informationCard.trainingNutritionStress.title")}</ThemedText>
+          <ThemedText type="default">
+            {t("nervousSystemOverview.informationCard.trainingNutritionStress.description")}
+          </ThemedText>
+        </View>
       </Card>
 
       <GenesListCard areaId="nervousSystem"/>

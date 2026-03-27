@@ -34,5 +34,9 @@
   "mind": {
     "title": "Sinne & Kognition",
     "description": "Stöd kognitiv funktion och mental prestanda"
+  },
+  "longevity": {
+    "title": "Longevity",
+    "description": "Bygg vanor som förbättrar långsiktig hälsospan"
   }
 }

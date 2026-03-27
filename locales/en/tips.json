@@ -212,7 +212,8 @@
     "areas": {
       "sleepQuality": "Regular sleep rhythm improves sleep quality by strengthening the body's natural melatonin production.",
       "immuneSupport": "Circadian synchronization supports immune function by optimizing the body's natural defense cycles.",
-      "energy": "Consistent sleep schedule regulates energy levels and reduces daytime fatigue."
+      "energy": "Consistent sleep schedule regulates energy levels and reduces daytime fatigue.",
+      "longevity": "Stable circadian timing supports long-term metabolic, hormonal, and cognitive resilience, which are key factors for healthy aging."
     }
   },
   "calm_alertness_ltheanine": {
@@ -532,7 +533,8 @@
     "areas": {
       "nervousSystem": "Meditation activates the parasympathetic nervous system, reducing stress hormones like cortisol and promoting deep relaxation and nervous system recovery.",
       "immuneSupport": "Regular meditation has been shown to reduce inflammation, strengthen immune response, and improve overall health markers.",
-      "mind": "Mindfulness practices improve attention span, working memory, and cognitive flexibility by strengthening neural pathways associated with focus and awareness."
+      "mind": "Mindfulness practices improve attention span, working memory, and cognitive flexibility by strengthening neural pathways associated with focus and awareness.",
+      "longevity": "Lower chronic stress and better autonomic balance are associated with reduced allostatic load and improved long-term healthspan."
     }
   },
   "nature_parasympathetic": {
@@ -552,7 +554,8 @@
       "immuneSupport": "Low HRV can indicate increased inflammation and reduced immune function, while higher HRV suggests better recovery and immune resilience.",
       "energy": "HRV tracking helps identify when the body needs rest, preventing fatigue and optimizing energy management.",
       "cardioFitness": "Monitoring HRV helps optimize cardiovascular training by ensuring adequate recovery between high-intensity sessions.",
-      "strength": "HRV data guides training decisions, helping prevent overtraining and optimize muscle recovery and performance gains."
+      "strength": "HRV data guides training decisions, helping prevent overtraining and optimize muscle recovery and performance gains.",
+      "longevity": "Tracking recovery helps maintain sustainable training and lower chronic stress burden, both important for long-term health and functional aging."
     }
   },
   "social_connection_vagal": {
@@ -671,7 +674,8 @@
     "description": "Dietary fiber acts as a prebiotic, feeding beneficial gut bacteria and supporting a healthy microbiome. Adequate fiber intake improves digestive health, reduces inflammation, and strengthens immune function.",
     "areas": {
       "digestiveHealth": "Fiber promotes regular bowel movements, feeds beneficial bacteria, and supports gut barrier integrity by producing short-chain fatty acids.",
-      "immuneSupport": "A fiber-rich diet strengthens the gut microbiome, which produces metabolites that regulate immune function and reduce systemic inflammation."
+      "immuneSupport": "A fiber-rich diet strengthens the gut microbiome, which produces metabolites that regulate immune function and reduce systemic inflammation.",
+      "longevity": "Fiber intake supports butyrate production and lower low-grade inflammation, two central mechanisms linked to healthier aging."
     },
     "nutritionFoods": {
       "title": "High-fiber foods",
@@ -712,7 +716,26 @@
     "description": "High-Intensity Interval Training (HIIT) is one of the most effective methods to improve VO2 max, the maximum amount of oxygen your body can use during exercise. Unlike Zone 2, which mainly builds more capillaries and more mitochondria, HIIT strongly improves how efficiently your existing mitochondria work under high demand.",
     "areas": {
       "cardioFitness": "HIIT training significantly increases VO2 max, improving cardiovascular capacity, endurance, and overall aerobic fitness.",
-      "energy": "HIIT improves the working capacity of existing mitochondria and the ability to generate energy rapidly at high intensity, increasing metabolic efficiency when demand is high."
+      "energy": "HIIT improves the working capacity of existing mitochondria and the ability to generate energy rapidly at high intensity, increasing metabolic efficiency when demand is high.",
+      "longevity": "Higher VO2 max is one of the strongest predictors of long-term health and survival, making HIIT a valuable longevity stimulus when recovery is managed well."
+    }
+  },
+  "vo2max_4x4_intervals": {
+    "title": "VO2max 4x4 intervals",
+    "description": "A classic protocol for improving VO2 max is 4 x 4 minutes at high but controlled intensity (about 85-95% of max heart rate), with 3 minutes easy recovery between intervals. Performed 1-2 times per week, this can effectively raise oxygen uptake capacity, stroke volume, and performance.",
+    "areas": {
+      "cardioFitness": "4x4 intervals provide a strong central cardiovascular stimulus and are one of the most evidence-based methods for increasing VO2 max.",
+      "energy": "Improved oxygen delivery and utilization supports higher sustainable output and better energetic capacity in daily life.",
+      "longevity": "Maintaining high aerobic capacity over time is closely associated with healthier aging and lower cardiometabolic risk."
+    }
+  },
+  "vo2max_hill_intervals": {
+    "title": "Hill intervals for VO2 max",
+    "description": "Uphill intervals (for example 6-10 repeats of 45-90 seconds) are an efficient way to improve VO2 max while also building lower-body strength and running economy. Hills reduce impact speed while increasing force demand, making them a practical high-intensity option.",
+    "areas": {
+      "cardioFitness": "Hill intervals challenge oxygen transport and heart-lung capacity, supporting improvements in VO2 max and endurance performance.",
+      "strength": "Uphill work increases force production in glutes, calves, and posterior chain, improving strength-endurance transfer.",
+      "longevity": "Combining aerobic intensity and musculoskeletal loading supports both cardiovascular resilience and functional capacity with age."
     }
   },
   "running_volume_aerobic": {
@@ -947,9 +970,19 @@
     "description": "Zone 2 training builds your aerobic foundation by increasing mitochondrial density, capillarization, and fat oxidation. In practice, that means more capillaries feeding the muscles and more mitochondria inside the muscle cells. The goal is a steady, conversational pace where you can speak in full sentences and keep intensity stable over time.",
     "areas": {
       "cardioFitness": "Zone 2 improves aerobic capacity through increased stroke volume, higher capillary density, and more efficient oxygen delivery to working muscles.",
-      "energy": "Consistent Zone 2 supports mitochondrial biogenesis, meaning the creation of more mitochondria, and improves energy metabolism for more sustainable energy during training and daily life."
+      "energy": "Consistent Zone 2 supports mitochondrial biogenesis, meaning the creation of more mitochondria, and improves energy metabolism for more sustainable energy during training and daily life.",
+      "longevity": "Maintaining aerobic base and mitochondrial function is strongly linked to healthier aging, higher resilience, and better long-term physical capacity."
     },
     "analyzePrompt": "Analyze the user's training pattern and determine whether they have enough low-intensity aerobic volume (Zone 2) to support mitochondrial development."
+  },
+  "fascia_strength_whole_body_variation": {
+    "title": "4-5 training modalities for whole-body fascia strength",
+    "description": "For long-term resilience, avoid repeating only one training pattern. Aim for at least 4-5 different activity types each week, for example: strength, Zone 2 cardio, impact/plyometric loading, rotational or unilateral work, and mobility/balance. This creates varied mechanical signals that support fascia quality, tendon and ligament tolerance, bone remodeling, and whole-body muscle function.",
+    "areas": {
+      "longevity": "Training variety across the week helps preserve movement capacity, connective tissue quality, and functional independence as you age.",
+      "strength": "Different loading patterns improve force transfer through fascia and build stronger, more resilient muscles, tendons, ligaments, and bones.",
+      "nervousSystem": "Changing training stimulus improves coordination and motor adaptability while reducing repetitive stress on the nervous system."
+    }
   },
   "fasted_aerobic_training": {
     "title": "Fasted aerobic training",

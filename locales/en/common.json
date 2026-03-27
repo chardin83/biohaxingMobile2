@@ -280,6 +280,18 @@
         "title": "VO₂ Max",
         "description": "VO₂ max measures the maximum amount of oxygen your body can use during intense exercise. It's the gold standard for cardiovascular fitness. Higher values indicate better endurance capacity."
       },
+      "vo2Health": {
+        "title": "Why VO₂ max is good for health",
+        "description": "Higher VO₂ max is strongly linked to lower cardiovascular risk, better metabolic health, and lower all-cause mortality. It reflects how efficiently your heart, lungs, blood vessels, and muscles work together to deliver and use oxygen."
+      },
+      "easyRun": {
+        "title": "Why easy runs are good for health",
+        "description": "Easy Zone 2 sessions build your aerobic base with relatively low stress load. They improve capillary density, mitochondrial function, and fat oxidation while being easier to recover from than too many hard sessions."
+      },
+      "lactate": {
+        "title": "Why lactate is good for health",
+        "description": "Lactate is not only a byproduct, but also a useful fuel and signaling molecule. It can be used by the heart, muscles, and brain and is linked to training adaptations such as improved endurance, metabolic flexibility, and mitochondrial adaptation."
+      },
       "restingHeartRate": {
         "title": "Resting Heart Rate",
         "description": "Lower resting heart rate typically indicates better cardiovascular fitness. Athletes often have resting heart rates below 60 bpm. Monitor trends over time. A sudden increase may signal overtraining, illness, or stress."
@@ -309,7 +321,7 @@
       },
       "stress": {
         "title": "Stress",
-        "description": "High stress can negatively impact digestion and gut health. Managing stress supports a healthy digestive system."
+        "description": "High stress activates the sympathetic nervous system (fight-or-flight), which can reduce blood flow to the gastrointestinal tract and slow digestion. This may lead to more bloating, abdominal discomfort, altered gut motility, and poorer nutrient absorption. Stress can also negatively affect the gut barrier and microbiome and increase low-grade inflammation. Managing stress therefore supports both gut function and digestive health."
       },
       "sleep": {
         "title": "Sleep",
@@ -317,7 +329,7 @@
       },
       "activity": {
         "title": "Physical Activity",
-        "description": "Regular movement stimulates digestion and supports gut motility."
+        "description": "Regular movement stimulates digestion and supports gut motility. Light activity such as walking (especially 10-20 minutes after meals) is great for blood glucose control and reduced bloating. Strength training 2-4 times per week supports metabolic health and insulin response. High-intensity training can be effective, but it usually works best when the stomach feels settled and not immediately after larger meals. During periods of gut sensitivity or high stress, low- to moderate-intensity training is often better tolerated."
       },
       "hydration": {
         "title": "Hydration",
@@ -383,6 +395,10 @@
         "title": "Metabolic Flexibility",
         "description": "Metabolic flexibility is your body's ability to smoothly switch between burning glucose and fat for energy depending on availability and demand. Well-developed metabolic flexibility reduces dependence on frequent meals, improves insulin sensitivity, and enhances mental clarity. Intermittent fasting, low-carbohydrate periods, and aerobic training improve this switching capacity. Chronic sugar overfeeding can impair metabolic flexibility, locking your body into glucose-burning mode and making it less resilient to energy fluctuations."
       },
+      "resistantStarch": {
+        "title": "Resistant Starch and Energy",
+        "description": "Resistant starch is a key fiber for energy and metabolic health. It is not digested in the small intestine but fermented in the colon into short-chain fatty acids, especially butyrate. This may improve insulin sensitivity, support metabolic flexibility, and reduce low-grade inflammation, which indirectly supports energy production and mitochondrial health. Examples include cooled potatoes/rice, green bananas, legumes, and oats. The best overall effect is often achieved when resistant starch is combined with other fiber types in a varied diet."
+      },
       "lowCarbHighIntensityTraining": {
         "title": "Low-Carb Nutrition and High-Intensity Training",
         "description": "Low-carbohydrate nutrition combined with high-intensity training can be effective for fat loss, improved insulin sensitivity, and metabolic health, but it requires planning. High-intensity sessions rely more on glycogen, so very low carbohydrate availability can reduce performance and recovery. If training stress gets too high, cortisol may rise and the autonomic nervous system can remain in sympathetic dominance (higher stress load, poorer sleep, and lower HRV). A periodized approach often works best: lower carbohydrate intake on rest or low-intensity days, and targeted carbohydrates before or after hard sessions to support power output, hormonal balance, and a return to parasympathetic recovery."
@@ -414,6 +430,10 @@
       "restingHeartRate": {
         "title": "Resting Heart Rate",
         "description": "An elevated resting heart rate can be an early sign of illness, inflammation, or inadequate recovery."
+      },
+      "microbiomeButyrate": {
+        "title": "Microbiome and Butyrate-Producing Bacteria",
+        "description": "The gut microbiome directly influences immune function. Butyrate-producing bacteria (which produce the short-chain fatty acid butyrate) strengthen the gut barrier, reduce low-grade inflammation, and support immune tolerance. Resistant starch is a key fuel for these bacteria and is found in foods such as cooled potatoes/rice, green bananas, legumes, and oats. A fiber-rich diet therefore supports butyrate production and may improve immune balance."
       }
     }
   },
@@ -448,6 +468,65 @@
       "ansBalance": {
         "title": "ANS Balance",
         "description": "The balance between sympathetic (stress response) and parasympathetic (recovery response) activity. Predominant parasympathetic activity indicates good recovery, while predominant sympathetic activity may signal stress or inadequate recovery."
+      },
+      "nutrients": {
+        "title": "Nutrients That Support the Nervous System",
+        "description": "Several nutrients are especially important for nervous system function: B vitamins (especially B1, B6, B12, and folate) for nerve signaling and energy metabolism, magnesium for relaxation and stress regulation, omega-3 (EPA/DHA) for neuronal membrane health, vitamin D for neuroimmune balance, choline for acetylcholine production, and adequate sodium, potassium, and hydration for stable nerve conduction."
+      },
+      "overstimulationScreenTime": {
+        "title": "Overstimulation and Screen Time",
+        "description": "High screen time, rapid dopamine stimuli, and constant information flow can keep the nervous system in a more activated state. Especially in the evening, blue light and cognitive stimulation can delay melatonin release, reduce sleep quality, and impair overnight recovery. Over time, this may contribute to higher stress sensitivity, lower HRV, and poorer switching between focus and rest. Regular breaks, screen-light evening routines, and pre-sleep wind-down support parasympathetic balance."
+      },
+      "breathing": {
+        "title": "Breathing and the Nervous System",
+        "description": "Slow, controlled breathing can quickly reduce stress load and increase parasympathetic activity through the vagus nerve. Longer exhales (for example, 4 seconds in and 6-8 seconds out) signal safety to the nervous system and may improve HRV, focus, and recovery. A few minutes of breathwork before sleep or after stressful periods can have a clear effect."
+      },
+      "immuneInflammation": {
+        "title": "Immune Defense and Low-Grade Inflammation",
+        "description": "The nervous system and immune system are closely linked. Low-grade inflammation with elevated inflammatory signaling can increase stress sensitivity, impair sleep, and reduce nervous system recovery. At the same time, chronic stress can further drive inflammation. Anti-inflammatory habits such as good sleep, regular movement, stable blood glucose, and a nutrient-dense diet can help break this negative loop."
+      },
+      "gutVagusMicrobiome": {
+        "title": "Gut Health, the Vagus Nerve, and the Microbiome",
+        "description": "The gut and brain continuously communicate through the gut-brain axis, with the vagus nerve as a key signaling pathway. A balanced microbiome produces metabolites and signaling compounds that can support calmer stress responses and better recovery, while dysbiosis may contribute to inflammation and higher nervous system load. A fiber-rich diet, fermented foods, good sleep, and stress management can strengthen gut ecology and support nervous system regulation."
+      },
+      "trainingStrengthens": {
+        "title": "How Training Strengthens the Nervous System",
+        "description": "The right training dose strengthens nervous system regulation. Regular aerobic and strength training can increase HRV over time, improve stress resilience, and help you shift back to parasympathetic recovery faster after strain. HIT can support the nervous system because short intense intervals train the body to tolerate rapid sympathetic activation and then return to recovery more efficiently. Over time, this can improve autonomic flexibility, stress response, and mental sharpness. Progressive overload with sufficient recovery is key, typically 1-3 HIT sessions per week."
+      },
+      "trainingNutritionStress": {
+        "title": "High-Intensity Training, Nutrition, and Stress Load",
+        "description": "High-intensity training is effective but increases acute sympathetic activation. If combined with chronically low energy or carbohydrate intake, cortisol may remain elevated, HRV can drop, and sleep quality may decline. This can present as nervous system overload, including fatigue, poorer recovery, and reduced performance. To protect the nervous system: periodize hard sessions, ensure adequate energy intake, and include recovery days focused on parasympathetic activation."
+      }
+    }
+  },
+  "longevityOverview": {
+    "title": "Longevity",
+    "description": "The foundations that support long-term healthspan and resilience",
+    "pillars": {
+      "title": "Core pillars for longevity",
+      "sleepRecovery": {
+        "title": "Sleep and Recovery",
+        "description": "Consistent high-quality sleep supports hormonal balance, immune regulation, brain recovery, and lower allostatic load over time."
+      },
+      "metabolicHealth": {
+        "title": "Metabolic Health",
+        "description": "Stable blood glucose, good insulin sensitivity, and mitochondrial function are strongly linked to healthier aging and reduced cardiometabolic risk."
+      },
+      "trainingCapacity": {
+        "title": "Training Capacity",
+        "description": "A mix of Zone 2, strength, mobility, and targeted high-intensity work helps preserve VO2 max, muscle mass, and functional independence with age. For whole-body longevity, aim for at least 4-5 different movement types across the week so both upper and lower body, core, balance, and impact tolerance are trained."
+      },
+      "fasciaStrength": {
+        "title": "Fascia and Connective Tissue Strength",
+        "description": "Fascia is the connective network that transfers force through the entire body and supports joint stability, elasticity, and movement efficiency. It responds best to varied loading: strength training, carries, rotational work, plyometric or impact elements, and multi-planar mobility. This type of whole-body training supports muscles, tendons, ligaments, and bone remodeling over time."
+      },
+      "nervousSystemStress": {
+        "title": "Nervous System and Stress Load",
+        "description": "Lower chronic sympathetic dominance through recovery practices, breathwork, and smart training periodization to protect long-term resilience."
+      },
+      "inflammationMicrobiome": {
+        "title": "Inflammation and Microbiome",
+        "description": "A fiber-rich, nutrient-dense diet supports butyrate-producing bacteria, better gut barrier function, and lower low-grade inflammation."
       }
     }
   },
@@ -572,6 +651,9 @@
     "bacteriaLinkedToArea": "Bacteria linked to {{area}}",
     "noBacteria": "No bacteria linked to this area yet.",
     "bacteriaAffectHealth": "Multiple bacteria influence your gut health and function in this area. Understanding your microbiome can help you tailor your health plan to optimize results.",
+    "bacteriaAffectHealthByArea": {
+      "longevity": "A diverse microbiome is important for healthy aging. People over 70 often show reduced microbial diversity, while centenarians tend to have a microbiome profile closer to younger individuals."
+    },
     "explainer": "Microbiome testing can provide insights into your gut profile, but diet and lifestyle always have the biggest impact!"
   },
   "metrics": {

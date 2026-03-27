@@ -60,6 +60,13 @@ export default function ImmuneScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
             {t("immuneOverview.whyTheseMetricsMatter.restingHeartRate.description")}
           </ThemedText>
         </View>
+
+        <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🦠 {t("immuneOverview.whyTheseMetricsMatter.microbiomeButyrate.title")}</ThemedText>
+          <ThemedText type="default">
+            {t("immuneOverview.whyTheseMetricsMatter.microbiomeButyrate.description")}
+          </ThemedText>
+        </View>
       </Card>
 
       {/* DNA & Immunförsvar Genetics */}

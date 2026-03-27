@@ -34,5 +34,9 @@
   "mind": {
     "title": "Mind & Cognition",
     "description": "Support cognitive function and mental performance"
+  },
+  "longevity": {
+    "title": "Longevity",
+    "description": "Build habits that improve long-term healthspan"
   }
 }

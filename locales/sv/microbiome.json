@@ -19,7 +19,8 @@
     "title": "Akkermansia",
     "description": "Bibehåller tarmens slemhinna och metabolisk hälsa.",
     "areas": {
-      "digestiveHealth": "Förbättrar tarmbarriärens funktion och metabolisk hälsa."
+      "digestiveHealth": "Förbättrar tarmbarriärens funktion och metabolisk hälsa.",
+      "longevity": "Akkermansia är kopplad till bättre tarmbarriär och metabol funktion, vilket är starkt förknippat med friskare åldrande och långsiktig motståndskraft."
     }
   },
   "Gordonibacter": {
@@ -34,7 +35,9 @@
     "title": "Roseburia",
     "description": "Producerar butyrat och stödjer antiinflammatoriska effekter.",
     "areas": {
-      "digestiveHealth": "Främjar antiinflammatoriska effekter och tarmhälsa."
+      "digestiveHealth": "Främjar antiinflammatoriska effekter och tarmhälsa.",
+      "strength": "Roseburia inulinivorans, en specifik form inom Roseburia-familjen, har i observationsdata associerats med upp till cirka 30% högre muskelstyrka. Troliga mekanismer är butyratproduktion, lägre inflammation och bättre metabol miljö för muskelfunktion och återhämtning.",
+      "cardioFitness": "Kopplingen till kondition verkar svagare: personer med högre VO2 max har ofta mer Roseburia, men interventionsdata har inte konsekvent visat att man blir snabbare av att bara tillsätta bakterien."
     }
   },
   "Ruminococcus": {
@@ -63,6 +66,13 @@
     "description": "Producerar smörsyra (butyrat), en viktig kortkedjig fettsyra för tarmhälsa. Smörsyra näringsförser tarmceller, stärker tarmbarriären och minskar inflammation. Lawsinobacter asaccharolyticus kan också tillverka smörsyra.",
     "areas": {
       "digestiveHealth": "Stödjer tarmbarriär, minskar inflammation och främjar regelbundenhet. Smörsyra (butyrat) är avgörande för kolonens hälsa och antiinflammatoriska effekter. Även Lawsinobacter asaccharolyticus kan tillverka smörsyra."
+    }
+  },
+  "Veillonella_atypica": {
+    "title": "Veillonella atypica",
+    "description": "Veillonella atypica är en tarmbakterie som kopplas till uthållighet. Den använder laktat (mjölksyra) som bildas vid hård träning och omvandlar det till propionat.",
+    "areas": {
+      "cardioFitness": "Genom att omvandla laktat till propionat kan Veillonella atypica potentiellt påverka energi och prestation, men evidensen är fortfarande under utveckling och bör tolkas försiktigt."
     }
   }
 }

@@ -179,7 +179,8 @@
     "areas": {
       "sleepQuality": "Regelbunden sömnrytm förbättrar sömnkvalitet genom att stärka kroppens naturliga melatoninproduktion.",
       "immuneSupport": "Cirkadisk synkronisering stödjer immunfunktion genom att optimera kroppens naturliga försvarscykler.",
-      "energy": "Konsekvent sömnschema reglerar energinivåer och minskar trötthet under dagen."
+      "energy": "Konsekvent sömnschema reglerar energinivåer och minskar trötthet under dagen.",
+      "longevity": "Stabil dygnsrytm stödjer långsiktig metabol, hormonell och kognitiv motståndskraft, vilket är centralt för hälsosamt åldrande."
     }
   },
   "calm_alertness_ltheanine": {
@@ -435,7 +436,8 @@
     "areas": {
       "nervousSystem": "Meditation aktiverar det parasympatiska nervsystemet, vilket minskar stresshormoner som kortisol och främjar djup avslappning och återhämtning av nervsystemet.",
       "immuneSupport": "Regelbunden meditation har visat sig minska inflammation, stärka immunresponsen och förbättra övergripande hälsomarkörer.",
-      "mind": "Mindfulness-övningar förbättrar uppmärksamhetsspann, arbetsminne och kognitiv flexibilitet genom att stärka neurala vägar kopplade till fokus och medvetenhet."
+      "mind": "Mindfulness-övningar förbättrar uppmärksamhetsspann, arbetsminne och kognitiv flexibilitet genom att stärka neurala vägar kopplade till fokus och medvetenhet.",
+      "longevity": "Lägre kronisk stress och bättre autonom balans är kopplat till lägre allostatisk belastning och bättre långsiktig hälsospan."
     }
   },
   "nature_parasympathetic": {
@@ -455,7 +457,8 @@
       "immuneSupport": "Låg HRV kan indikera ökad inflammation och minskad immunfunktion, medan högre HRV tyder på bättre återhämtning och immunresiliens.",
       "energy": "HRV-spårning hjälper till att identifiera när kroppen behöver vila, vilket förhindrar trötthet och optimerar energihantering.",
       "cardioFitness": "Övervakning av HRV hjälper till att optimera kardiovaskulär träning genom att säkerställa tillräcklig återhämtning mellan högintensiva pass.",
-      "strength": "HRV-data vägleder träningsbeslut, vilket hjälper till att förhindra överträning och optimera muskelåterhämtning och prestandavinster."
+      "strength": "HRV-data vägleder träningsbeslut, vilket hjälper till att förhindra överträning och optimera muskelåterhämtning och prestandavinster.",
+      "longevity": "Att följa återhämtning hjälper dig hålla träningen hållbar och minska kronisk stressbelastning, vilket är viktigt för långsiktig hälsa och funktionellt åldrande."
     }
   },
   "social_connection_vagal": {
@@ -574,7 +577,8 @@
     "description": "Kostfiber fungerar som prebiotika och matar nyttiga tarmbakterier och stödjer ett hälsosamt mikrobiom. Tillräckligt fiberintag förbättrar tarmhälsan, minskar inflammation och stärker immunfunktionen.",
     "areas": {
       "digestiveHealth": "Fiber främjar regelbundna tarmrörelser, matar nyttiga bakterier och stödjer tarmbarriärens integritet genom att producera kortkedjiga fettsyror.",
-      "immuneSupport": "En fiberrik kost stärker tarmmikrobiomet, som producerar metaboliter som reglerar immunfunktionen och minskar systemisk inflammation."
+      "immuneSupport": "En fiberrik kost stärker tarmmikrobiomet, som producerar metaboliter som reglerar immunfunktionen och minskar systemisk inflammation.",
+      "longevity": "Fiberintag stödjer butyratproduktion och lägre låggradig inflammation, två centrala mekanismer kopplade till friskare åldrande."
     },
     "nutritionFoods": {
       "title": "Fiberrika livsmedel",
@@ -615,7 +619,26 @@
     "description": "Högintensiv intervallträning (HIIT) är en av de mest effektiva metoderna för att förbättra VO2 max, den maximala mängden syre din kropp kan använda under träning. Till skillnad från Zon 2, som framför allt bygger fler kapillärer och fler mitokondrier, förbättrar HIIT i hög grad hur effektivt de befintliga mitokondrierna arbetar under hög belastning.",
     "areas": {
       "cardioFitness": "HIIT-träning ökar VO2 max avsevärt, vilket förbättrar kardiovaskulär kapacitet, uthållighet och övergripande aerob kondition.",
-      "energy": "HIIT förbättrar mitokondriernas arbetskapacitet och förmåga att producera energi snabbt vid hög intensitet, vilket höjer den metabola effektiviteten när kraven är stora."
+      "energy": "HIIT förbättrar mitokondriernas arbetskapacitet och förmåga att producera energi snabbt vid hög intensitet, vilket höjer den metabola effektiviteten när kraven är stora.",
+      "longevity": "Högre VO2 max är en av de starkaste prediktorerna för långsiktig hälsa och överlevnad, vilket gör HIIT till en värdefull longevity-stimulus när återhämtningen hanteras smart."
+    }
+  },
+  "vo2max_4x4_intervals": {
+    "title": "VO2max 4x4-intervaller",
+    "description": "Ett klassiskt upplägg för att förbättra VO2 max är 4 x 4 minuter på hög men kontrollerad intensitet (cirka 85-95% av maxpuls), med 3 minuter lugn återhämtning mellan intervallerna. Utfört 1-2 gånger per vecka kan detta effektivt höja syreupptagningsförmåga, slagvolym och prestation.",
+    "areas": {
+      "cardioFitness": "4x4-intervaller ger en stark central kardiovaskulär stimulus och är en av de mest evidensbaserade metoderna för att höja VO2 max.",
+      "energy": "Förbättrad syreleverans och syreanvändning stödjer högre hållbar kapacitet och bättre energisystem i vardagen.",
+      "longevity": "Att bevara hög aerob kapacitet över tid är tydligt kopplat till friskare åldrande och lägre kardiometabol risk."
+    }
+  },
+  "vo2max_hill_intervals": {
+    "title": "Backintervaller för VO2 max",
+    "description": "Backintervaller (till exempel 6-10 repetitioner på 45-90 sekunder) är ett effektivt sätt att förbättra VO2 max samtidigt som du bygger underkroppsstyrka och löpekonomi. Backar minskar steghastighetens stötar men ökar kraftkravet, vilket gör dem till ett praktiskt högintensivt alternativ.",
+    "areas": {
+      "cardioFitness": "Backintervaller utmanar syretransport och hjärt-lungkapacitet, vilket stödjer förbättringar i VO2 max och uthållighetsprestation.",
+      "strength": "Uppförsarbete ökar kraftutvecklingen i säte, vader och bakre kedjan och förbättrar överföringen mellan styrka och uthållighet.",
+      "longevity": "Kombinationen av aerob intensitet och muskuloskeletal belastning stödjer både hjärt-kärlresiliens och funktionell kapacitet med åldern."
     }
   },
   "running_volume_aerobic": {
@@ -914,9 +937,19 @@
     "description": "Zon 2-träning bygger den aeroba grunden genom att öka mitokondriell densitet, kapillärisering och fettförbränning. Det betyder i praktiken fler kapillärer till musklerna och fler mitokondrier i muskelcellerna. Målet är ett lugnt, jämnt tempo där du kan prata i hela meningar och hålla intensiteten stabil över tid.",
     "areas": {
       "cardioFitness": "Zon 2 förbättrar aerob kapacitet genom ökad slagvolym, kapillär täthet och effektivare syreleverans till arbetande muskler.",
-      "energy": "Regelbunden Zon 2 ökar mitokondriell biogenes, alltså antalet mitokondrier, och förbättrar energiomsättning för mer hållbar energi under både träning och vardag."
+      "energy": "Regelbunden Zon 2 ökar mitokondriell biogenes, alltså antalet mitokondrier, och förbättrar energiomsättning för mer hållbar energi under både träning och vardag.",
+      "longevity": "Att bevara aerob bas och mitokondriell funktion är starkt kopplat till friskare åldrande, högre motståndskraft och bättre långsiktig fysisk kapacitet."
     },
     "analyzePrompt": "Analysera användarens träningsmönster och avgör om de får tillräckligt med lågintensiv aerob volym (Zon 2) för mitokondriell utveckling."
+  },
+  "fascia_strength_whole_body_variation": {
+    "title": "4-5 träningsformer för helkroppens fascia-styrka",
+    "description": "För långsiktig motståndskraft bör du undvika att upprepa bara ett träningsmönster. Sikta på minst 4-5 olika aktivitetstyper per vecka, till exempel: styrka, zon 2-kondition, stötbärande/plyometrisk belastning, rotationer eller unilateralt arbete samt rörlighet/balans. Det ger varierade mekaniska signaler som stödjer fascian, senors och ligaments tålighet, skelettets anpassning och helkroppens muskelfunktion.",
+    "areas": {
+      "longevity": "Variation i träningen över veckan hjälper dig bevara rörelsekapacitet, bindvävskvalitet och funktionell självständighet med åldern.",
+      "strength": "Olika belastningsmönster förbättrar kraftöverföring genom fascian och bygger starkare och mer motståndskraftiga muskler, senor, ligament och skelett.",
+      "nervousSystem": "Variation i träningsstimulus förbättrar koordination och motorisk anpassningsförmåga samtidigt som repetitiv belastning på nervsystemet minskar."
+    }
   },
   "fasted_aerobic_training": {
     "title": "Nüchtern aerob träning",

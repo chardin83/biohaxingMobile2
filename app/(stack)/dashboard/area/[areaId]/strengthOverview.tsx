@@ -10,6 +10,7 @@ import { Card } from '@/components/ui/Card';
 import { Error } from '@/components/ui/Error';
 import GenesListCard from '@/components/ui/GenesListCard';
 import { Loading } from '@/components/ui/Loading';
+import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { SleepSummary, TimeRange } from '@/wearables/types';
@@ -116,6 +117,9 @@ export default function StrengthScreen({ mainGoalId }: Readonly<{ mainGoalId: st
 
       {/* DNA & Gener som påverkar styrka */}
       <GenesListCard areaId="strength" />
+
+      {/* Microbiome section */}
+      <MicrobiomeListCard areaId="strength" />
 
       {/* Optimization Tips Card */}
       <TipsList areaId={mainGoalId}/>

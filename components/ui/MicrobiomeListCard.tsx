@@ -14,11 +14,12 @@ import MicrobiomeCard from './MicrobiomeCard';
 interface MicrobiomeListCardProps {
   areaId: string;
   style?: any;
+  bacteriaAffectHealthKey?: string;
 }
 
-const MicrobiomeListCard: React.FC<MicrobiomeListCardProps> = ({ areaId, style }) => {
+const MicrobiomeListCard: React.FC<MicrobiomeListCardProps> = ({ areaId, style, bacteriaAffectHealthKey }) => {
   const { colors } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
    const handleMicrobiomePress = (propbioticId: string) => {
     router.push({
@@ -31,6 +32,11 @@ const MicrobiomeListCard: React.FC<MicrobiomeListCardProps> = ({ areaId, style }
     bacteria.areas.some(area => area.id === areaId)
   );
 
+  const areaSpecificDescriptionKey = bacteriaAffectHealthKey ?? `microbiomeList.bacteriaAffectHealthByArea.${areaId}`;
+  const bacteriaAffectHealthText = i18n.exists(areaSpecificDescriptionKey)
+    ? t(areaSpecificDescriptionKey)
+    : t('microbiomeList.bacteriaAffectHealth');
+
   if (filteredBacteria.length === 0) return null;
 
   return (
@@ -40,7 +46,7 @@ const MicrobiomeListCard: React.FC<MicrobiomeListCardProps> = ({ areaId, style }
         {filteredBacteria.length === 0 ? (
           <ThemedText style={[styles.infoText, { color: colors.textTertiary }]}> {t('microbiomeList.noBacteria')} </ThemedText>
         ) : (
-          <ThemedText style={[styles.infoText, { color: colors.textTertiary }]}> {t('microbiomeList.bacteriaAffectHealth')} </ThemedText>
+          <ThemedText style={[styles.infoText, { color: colors.textTertiary }]}> {bacteriaAffectHealthText} </ThemedText>
         )}
       </View>
       {filteredBacteria.map(bacteria => {

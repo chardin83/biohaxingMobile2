@@ -9,6 +9,7 @@ export type Area = {
 export const areas: Area[] = [
   { id: 'energy', title: 'energy.title', description: 'energy.description', icon: 'flash' },
   { id: 'sleepQuality', title: 'sleepQuality.title', description: 'sleepQuality.description', icon: 'sleep' },
+  { id: 'longevity', title: 'longevity.title', description: 'longevity.description', icon: 'infinity' },
   { id: 'mind', title: 'mind.title', description: 'mind.description', icon: 'target' },
   { id: 'immuneSupport', title: 'immuneSupport.title', description: 'immuneSupport.description', icon: 'shield-check' },
   { id: 'cardioFitness', title: 'cardioFitness.title', description: 'cardioFitness.description', icon: 'heart-pulse' },
