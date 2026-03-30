@@ -342,7 +342,8 @@ export default function CreatePlanScreen() {
 
     const handleCreatePlan = () => {
         setLoading(true);
-        const locale = i18n.language?.startsWith('sv') ? 'sv' : 'en';
+        const activeLanguage = (i18n.resolvedLanguage ?? i18n.language ?? 'en').toLowerCase();
+        const locale: 'sv' | 'en' = activeLanguage.startsWith('sv') ? 'sv' : 'en';
         createPlan(plans, myGoals, myLevel, locale)
             .then(res => setTempPlans(res.plans))
             .finally(() => setLoading(false));

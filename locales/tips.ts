@@ -858,6 +858,22 @@ const rawTips: Tip[] = [
     bodyParts: ['nervousSystem'],
   },
   {
+    id: 'ikigai_purpose_longevity',
+    level: 2,
+    xp: 0,
+    areas: [
+      { id: 'mind', descriptionKey: 'ikigai_purpose_longevity.areas.mind' },
+      { id: 'longevity', descriptionKey: 'ikigai_purpose_longevity.areas.longevity' },
+    ],
+    title: 'ikigai_purpose_longevity.title',
+    descriptionKey: 'ikigai_purpose_longevity.description',
+    trainingRelation: 'anytime',
+    preferredDayParts: ['morning', 'midday', 'evening'],
+    timeRule: 'anytime',
+    planCategory: ['other'],
+    bodyParts: ['brain', 'nervousSystem'],
+  },
+  {
     id: 'nature_parasympathetic',
     level: 1,
     xp: 0,

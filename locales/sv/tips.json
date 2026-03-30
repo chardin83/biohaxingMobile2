@@ -440,6 +440,14 @@
       "longevity": "Lägre kronisk stress och bättre autonom balans är kopplat till lägre allostatisk belastning och bättre långsiktig hälsospan."
     }
   },
+  "ikigai_purpose_longevity": {
+    "title": "Purpose och longevity",
+    "description": "Att hitta en känsla av syfte är en viktig drivkraft för longevity och är kopplat till lägre sjukdomsrisk och långsammare kognitiv nedgång. Bygg din egen Ikigai genom att identifiera vad du älskar, vad du är bra på och vad världen behöver, och gör överlappet till små dagliga handlingar.",
+    "areas": {
+      "mind": "Ett tydligt syfte stärker motivation, emotionell motståndskraft och kognitivt engagemang över tid.",
+      "longevity": "Personer med starkare känsla av syfte har ofta lägre risk för kronisk sjukdom, bättre hälsobeteenden och längre hälsospann."
+    }
+  },
   "nature_parasympathetic": {
     "title": "Tid i naturen",
     "description": "Att tillbringa tid i naturliga miljöer aktiverar det parasympatiska nervsystemet och minskar stress. Skogsbad (Shinrin-yoku) och exponering för naturliga miljöer har visat sig sänka kortisol, minska blodtryck och förbättra det övergripande välbefinnandet.",

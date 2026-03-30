@@ -115,7 +115,7 @@
     "title": "AI-plan",
     "createAIPlan": "✨ Create AI-plan",
     "createAIPlanLabel": "Create AI-plan",
-    "createAIPlanHint": "You must approve o r cancel the current AI plan before creating a new one.",
+    "createAIPlanHint": "You must approve or cancel the current AI plan before creating a new one.",
     "intro": "Create and review your personal health plan",
     "aiCommentTitle": "AI comment",
     "aiSupplements": "Supplements - {{count}} new",

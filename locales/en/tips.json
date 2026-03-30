@@ -537,6 +537,14 @@
       "longevity": "Lower chronic stress and better autonomic balance are associated with reduced allostatic load and improved long-term healthspan."
     }
   },
+  "ikigai_purpose_longevity": {
+    "title": "Purpose and longevity",
+    "description": "Finding a sense of purpose is a key driver of longevity, linked to lower disease risk and slower cognitive decline. Build your own Ikigai by identifying what you love, what you are good at, and what the world needs, then turn that overlap into small daily actions.",
+    "areas": {
+      "mind": "A clear purpose improves motivation, emotional resilience, and cognitive engagement over time.",
+      "longevity": "People with a stronger sense of purpose tend to show lower chronic disease risk, better health behaviors, and a longer healthspan."
+    }
+  },
   "nature_parasympathetic": {
     "title": "Time in nature",
     "description": "Spending time in natural environments activates the parasympathetic nervous system and reduces stress. Forest bathing (Shinrin-yoku) and exposure to natural settings have been shown to lower cortisol, reduce blood pressure, and improve overall well-being.",

@@ -53,7 +53,11 @@ const customLanguageDetector = {
   async: true,
   detect: (callback: (language: string) => void) => {
     const locales = Localization.getLocales();
-    const locale = locales[0]?.languageCode ?? 'sv';
+    const rawLanguage =
+      locales[0]?.languageCode ??
+      locales[0]?.languageTag?.split('-')[0] ??
+      'en';
+    const locale = rawLanguage.toLowerCase().startsWith('sv') ? 'sv' : 'en';
     console.log('Language chosen for i18n:', locale);
     callback(locale);
   },

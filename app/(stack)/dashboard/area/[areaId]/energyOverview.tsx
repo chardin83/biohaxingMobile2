@@ -91,99 +91,6 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
             {/* Energy Production Factors */}
       <EnergyProductionCharts />
 
-      {/* Body Battery - Main Energy Indicator */}
-      <Card title={t('energyOverview.cellularEnergyReserves.title')}>
-        <View style={styles.centerMetric}>
-          <ThemedText type="title2">{energy.bodyBattery ?? '—'}</ThemedText>
-          <ThemedText type="label">{t('energyOverview.cellularEnergyReserves.bodyBattery')}</ThemedText>
-          <ThemedText type="caption">
-            {energy.bodyBatteryChange == null ? '—' : `${energy.bodyBatteryChange} ${t('energyOverview.cellularEnergyReserves.sinceWaking')}`}
-          </ThemedText>
-        </View>
-        <View style={[styles.batteryBar, { backgroundColor: colors.overlayLight }]}>
-          <View
-            style={[
-              styles.batteryFill,
-              {
-                width: `${Math.max(0, energy.bodyBattery ?? 0)}%`,
-                backgroundColor: colors.goldSoft,
-              }
-            ]}
-          />
-        </View>
-        <ThemedText type="explainer" >
-          {t('energyOverview.cellularEnergyReserves.explainer')}
-        </ThemedText>
-      </Card>
-
-      {/* DNA & Mitochondria Genetics */}
-      <GenesListCard areaId="energy" />
-
-      {/* Energy Drain vs Recharge */}
-      <Card title={t('energyOverview.energyBalance.title')}>
-        <View style={styles.balanceSection}>
-          <View style={globalStyles.flex1}>
-            <ThemedText type="title3">⚡{t('energyOverview.energyBalance.energyDrain')}</ThemedText>
-            <View
-              style={[
-                globalStyles.card,
-                {
-                  borderColor: colors.surfaceRedBorder,
-                  backgroundColor: colors.surfaceRed,
-                },
-              ]}
-            >
-              <ThemedText type="value">{energy.stressScore ?? '—'}</ThemedText>
-              <ThemedText type="label">{t('energyOverview.energyBalance.stressScore')}</ThemedText>
-              <ThemedText type="caption">{energy.stressLevel}</ThemedText>
-            </View>
-            <View style={[globalStyles.card, globalStyles.marginTop8,  {
-                  borderColor: colors.surfaceRedBorder,
-                  backgroundColor: colors.surfaceRed,
-                },]}>
-              <ThemedText type="value">{energy.intensityMinutes ?? '—'}</ThemedText>
-              <ThemedText type="label">{t('energyOverview.energyBalance.intensityMinutes')}</ThemedText>
-            </View>
-          </View>
-
-          <View style={globalStyles.flex1}>
-            <ThemedText type="title3">🔋 {t('energyOverview.energyBalance.energyRecharge')}</ThemedText>
-            <View
-              style={[
-                globalStyles.card,
-                {
-                  borderColor: colors.surfaceGreenBorder,
-                  backgroundColor: colors.surfaceGreen,
-                },
-              ]}
-            >
-              <ThemedText type="value">{energy.sleepHours == null ? '—' : `${energy.sleepHours.toFixed(1)}h`}</ThemedText>
-              <ThemedText type="label">{t('energyOverview.energyBalance.sleepDuration')}</ThemedText>
-              <ThemedText type="caption">
-                {energy.sleepQuality == null ? '—' : `${energy.sleepQuality}% ${t('energyOverview.energyBalance.sleepQuality')}`}
-              </ThemedText>
-            </View>
-            <View style={[globalStyles.card, globalStyles.marginTop8, {
-                  borderColor: colors.surfaceGreenBorder,
-                  backgroundColor: colors.surfaceGreen,
-                },]}>
-              <ThemedText type="value">{energy.deepSleepMinutes == null ? '—' : `${energy.deepSleepMinutes}min`}</ThemedText>
-              <ThemedText type="label">{t('energyOverview.energyBalance.deepSleep')}</ThemedText>
-            </View>
-          </View>
-        </View>
-
-        <ThemedText
-          type="explainer"
-          style={[
-            globalStyles.explainer,
-            {  borderTopColor: colors.borderLight }
-          ]}
-        >
-          {t('energyOverview.energyBalance.explainer')}
-        </ThemedText>
-      </Card>
-
       {/* Mitochondrial Health Information */}
       <Card title={t('energyOverview.mitochondrialHealth.title')}>
         <View style={globalStyles.infoSection}>
@@ -263,6 +170,101 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
           </ThemedText>
         </View>
       </Card>
+
+      {/* Body Battery - Main Energy Indicator */}
+       {/* B<Card title={t('energyOverview.cellularEnergyReserves.title')}>
+        <View style={styles.centerMetric}>
+          <ThemedText type="title2">{energy.bodyBattery ?? '—'}</ThemedText>
+          <ThemedText type="label">{t('energyOverview.cellularEnergyReserves.bodyBattery')}</ThemedText>
+          <ThemedText type="caption">
+            {energy.bodyBatteryChange == null ? '—' : `${energy.bodyBatteryChange} ${t('energyOverview.cellularEnergyReserves.sinceWaking')}`}
+          </ThemedText>
+        </View>
+        <View style={[styles.batteryBar, { backgroundColor: colors.overlayLight }]}>
+          <View
+            style={[
+              styles.batteryFill,
+              {
+                width: `${Math.max(0, energy.bodyBattery ?? 0)}%`,
+                backgroundColor: colors.goldSoft,
+              }
+            ]}
+          />
+        </View>
+        <ThemedText type="explainer" >
+          {t('energyOverview.cellularEnergyReserves.explainer')}
+        </ThemedText>
+      </Card>*/}
+
+      {/* DNA & Mitochondria Genetics */}
+      <GenesListCard areaId="energy" />
+
+      {/* Energy Drain vs Recharge */}
+      <Card title={t('energyOverview.energyBalance.title')}>
+        <View style={styles.balanceSection}>
+          <View style={globalStyles.flex1}>
+            <ThemedText type="title3">⚡{t('energyOverview.energyBalance.energyDrain')}</ThemedText>
+            <View
+              style={[
+                globalStyles.card,
+                {
+                  borderColor: colors.surfaceRedBorder,
+                  backgroundColor: colors.surfaceRed,
+                },
+              ]}
+            >
+              <ThemedText type="value">{energy.stressScore ?? '—'}</ThemedText>
+              <ThemedText type="label">{t('energyOverview.energyBalance.stressScore')}</ThemedText>
+              <ThemedText type="caption">{energy.stressLevel}</ThemedText>
+            </View>
+            <View style={[globalStyles.card, globalStyles.marginTop8,  {
+                  borderColor: colors.surfaceRedBorder,
+                  backgroundColor: colors.surfaceRed,
+                },]}>
+              <ThemedText type="value">{energy.intensityMinutes ?? '—'}</ThemedText>
+              <ThemedText type="label">{t('energyOverview.energyBalance.intensityMinutes')}</ThemedText>
+            </View>
+          </View>
+
+          <View style={globalStyles.flex1}>
+            <ThemedText type="title3">🔋 {t('energyOverview.energyBalance.energyRecharge')}</ThemedText>
+            <View
+              style={[
+                globalStyles.card,
+                {
+                  borderColor: colors.surfaceGreenBorder,
+                  backgroundColor: colors.surfaceGreen,
+                },
+              ]}
+            >
+              <ThemedText type="value">{energy.sleepHours == null ? '—' : `${energy.sleepHours.toFixed(1)}h`}</ThemedText>
+              <ThemedText type="label">{t('energyOverview.energyBalance.sleepDuration')}</ThemedText>
+              <ThemedText type="caption">
+                {energy.sleepQuality == null ? '—' : `${energy.sleepQuality}% ${t('energyOverview.energyBalance.sleepQuality')}`}
+              </ThemedText>
+            </View>
+            <View style={[globalStyles.card, globalStyles.marginTop8, {
+                  borderColor: colors.surfaceGreenBorder,
+                  backgroundColor: colors.surfaceGreen,
+                },]}>
+              <ThemedText type="value">{energy.deepSleepMinutes == null ? '—' : `${energy.deepSleepMinutes}min`}</ThemedText>
+              <ThemedText type="label">{t('energyOverview.energyBalance.deepSleep')}</ThemedText>
+            </View>
+          </View>
+        </View>
+
+        <ThemedText
+          type="explainer"
+          style={[
+            globalStyles.explainer,
+            {  borderTopColor: colors.borderLight }
+          ]}
+        >
+          {t('energyOverview.energyBalance.explainer')}
+        </ThemedText>
+      </Card>
+
+      
 
       <MicrobiomeListCard areaId="energy" />
 
