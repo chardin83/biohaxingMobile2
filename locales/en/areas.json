@@ -5,7 +5,13 @@
   },
   "sleepQuality": {
     "title": "Sleep Quality",
-    "description": "Improve sleep duration and sleep quality"
+    "description": "Improve sleep duration and sleep quality",
+    "relatedAreas": {
+      "sectionTitle": "Related areas",
+      "nervousSystem": "Sleep and the nervous system are deeply interlinked. During sleep, the autonomic nervous system recovers, HRV is restored, and cortisol levels drop. Poor sleep drives up the stress response and impairs recovery.",
+      "digestiveHealth": "During sleep the gut barrier repairs and strengthens. Sleep deprivation raises cortisol, which can increase intestinal permeability and disrupt microbiome balance. Good sleep supports a healthy gut flora.",
+      "energy": "Deep sleep is when mitochondrial repair and autophagy occur. Insufficient sleep impairs cellular ATP production and reduces insulin sensitivity, directly lowering energy levels throughout the day."
+    }
   },
   "focus": {
     "title": "Focus & Concentration",
@@ -25,11 +31,23 @@
   },
   "digestiveHealth": {
     "title": "Digestive Health",
-    "description": "Support healthy digestion and gut microbiome"
+    "description": "Support healthy digestion and gut microbiome",
+    "relatedAreas": {
+      "sectionTitle": "Related areas",
+      "nervousSystem": "The gut and brain communicate constantly via the gut-brain axis. Stress activates the sympathetic nervous system and suppresses digestion. Calming the nervous system through breathing, sleep, and recovery directly improves gut function.",
+      "immuneSupport": "Around 70% of immune cells reside in and along the gut wall. A thriving microbiome and an intact gut barrier are foundational for a strong and balanced immune system.",
+      "cardioFitness": "Regular Zone 2 training increases blood flow, improves gut motility, and promotes microbiome diversity. High-intensity exercise can temporarily reduce blood flow to the gut, making timing and recovery key."
+    }
   },
   "cardioFitness": {
     "title": "Cardiovascular Fitness",
-    "description": "Improve heart health and aerobic capacity"
+    "description": "Improve heart health and aerobic capacity",
+    "relatedAreas": {
+      "sectionTitle": "Related areas",
+      "digestiveHealth": "During heavy training, blood flow to the gut decreases, which can strain the gut barrier and in some cases contribute to increased intestinal permeability. Supporting digestion with recovery, hydration, adequate fueling, and easier sessions between hard blocks can protect gut health while improving performance.",
+      "nervousSystem": "High training load can elevate stress in the nervous system. Balancing hard sessions with recovery, sleep, and easy Zone 2 work supports HRV, recovery, and sustainable cardio progress.",
+      "sleepQuality": "Sleep is the most important recovery factor for endurance athletes. During deep sleep, growth hormone is released, muscle repair occurs, and heart rate variability recovers. Prioritize 7–9 hours of sleep for optimal cardio adaptation."
+    }
   },
   "mind": {
     "title": "Mind & Cognition",

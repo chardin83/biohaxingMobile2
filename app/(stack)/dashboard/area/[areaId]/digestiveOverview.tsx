@@ -1,8 +1,7 @@
 import { useTheme } from '@react-navigation/native';
-import { router } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
 import { DigestiveTrendsChart } from '@/components/metrics/DigestiveTrendsChart';
@@ -10,7 +9,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import GenesListCard from '@/components/ui/GenesListCard';
 import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
-import { PressableCard } from '@/components/ui/PressableCard';
+import RelatedAreasList from '@/components/ui/RelatedAreasList';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { useWearable } from '@/wearables/wearableProvider';
@@ -66,57 +65,7 @@ export default function DigestiveScreen({ mainGoalId }: Readonly<{ mainGoalId: s
       </Card>
 
       {/* Related areas */}
-      <Card title={t('digestiveOverview.relatedAreas.title')}>
-        <PressableCard
-          onPress={() => {
-            router.push({
-              pathname: '/dashboard/area/[areaId]',
-              params: { areaId: 'nervousSystem' },
-            });
-          }}
-        >
-          <ThemedText type="title3">
-            {t('digestiveOverview.relatedAreas.nervousSystem.title')}
-          </ThemedText>
-          <ThemedText type="default">
-            {t('digestiveOverview.relatedAreas.nervousSystem.description')}
-          </ThemedText>
-        </PressableCard>
-
-        <PressableCard
-          style={styles.relatedAreaCardSpacing}
-          onPress={() => {
-            router.push({
-              pathname: '/dashboard/area/[areaId]',
-              params: { areaId: 'immuneSupport' },
-            });
-          }}
-        >
-          <ThemedText type="title3">
-            {t('digestiveOverview.relatedAreas.immuneSupport.title')}
-          </ThemedText>
-          <ThemedText type="default">
-            {t('digestiveOverview.relatedAreas.immuneSupport.description')}
-          </ThemedText>
-        </PressableCard>
-
-        <PressableCard
-          style={styles.relatedAreaCardSpacing}
-          onPress={() => {
-            router.push({
-              pathname: '/dashboard/area/[areaId]',
-              params: { areaId: 'cardioFitness' },
-            });
-          }}
-        >
-          <ThemedText type="title3">
-            {t('digestiveOverview.relatedAreas.cardioFitness.title')}
-          </ThemedText>
-          <ThemedText type="default">
-            {t('digestiveOverview.relatedAreas.cardioFitness.description')}
-          </ThemedText>
-        </PressableCard>
-      </Card>
+      <RelatedAreasList areaId="digestiveHealth" />
 
       {/* Microbiome section */}
       <MicrobiomeListCard areaId="digestiveHealth" />
@@ -130,8 +79,4 @@ export default function DigestiveScreen({ mainGoalId }: Readonly<{ mainGoalId: s
   );
 }
 
-const styles = StyleSheet.create({
-  relatedAreaCardSpacing: {
-    marginTop: 12,
-  },
-});
+
