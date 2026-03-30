@@ -1,7 +1,8 @@
 import { useTheme } from '@react-navigation/native';
+import { router } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
@@ -9,6 +10,7 @@ import { SleepTrendsChart } from '@/components/metrics/SleepTrendsChart';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import GenesListCard from '@/components/ui/GenesListCard';
+import { PressableCard } from '@/components/ui/PressableCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { shouldSyncWearableData, syncWearableMetricsToStorage } from '@/wearables/syncMetricsToStorage';
@@ -73,6 +75,59 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
         </View>
       </Card>
 
+      {/* Related areas */}
+      <Card title={t('sleepOverview.relatedAreas.title')}>
+        <PressableCard
+          onPress={() => {
+            router.push({
+              pathname: '/dashboard/area/[areaId]',
+              params: { areaId: 'nervousSystem' },
+            });
+          }}
+        >
+          <ThemedText type="title3">
+            {t('sleepOverview.relatedAreas.nervousSystem.title')}
+          </ThemedText>
+          <ThemedText type="default">
+            {t('sleepOverview.relatedAreas.nervousSystem.description')}
+          </ThemedText>
+        </PressableCard>
+
+        <PressableCard
+          style={styles.relatedAreaCardSpacing}
+          onPress={() => {
+            router.push({
+              pathname: '/dashboard/area/[areaId]',
+              params: { areaId: 'digestiveHealth' },
+            });
+          }}
+        >
+          <ThemedText type="title3">
+            {t('sleepOverview.relatedAreas.digestiveHealth.title')}
+          </ThemedText>
+          <ThemedText type="default">
+            {t('sleepOverview.relatedAreas.digestiveHealth.description')}
+          </ThemedText>
+        </PressableCard>
+
+        <PressableCard
+          style={styles.relatedAreaCardSpacing}
+          onPress={() => {
+            router.push({
+              pathname: '/dashboard/area/[areaId]',
+              params: { areaId: 'energy' },
+            });
+          }}
+        >
+          <ThemedText type="title3">
+            {t('sleepOverview.relatedAreas.energy.title')}
+          </ThemedText>
+          <ThemedText type="default">
+            {t('sleepOverview.relatedAreas.energy.description')}
+          </ThemedText>
+        </PressableCard>
+      </Card>
+
       {/* DNA & Gener som påverkar sömn */}
       <GenesListCard areaId="sleepQuality" />
 
@@ -84,4 +139,8 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
   );
 }
 
-// const styles = StyleSheet.create(...)
+const styles = StyleSheet.create({
+  relatedAreaCardSpacing: {
+    marginTop: 12,
+  },
+});

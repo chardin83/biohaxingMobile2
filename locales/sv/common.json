@@ -312,11 +312,41 @@
         "title": "Konditionsålder",
         "description": "Baserat på din VO₂ max, vilopuls och andra faktorer. En lägre konditionsålder indikerar överlägsen kardiovaskulär hälsa. Regelbunden aerob träning kan minska din konditionsålder med 10-20 år jämfört med stillasittande jämnåriga."
       }
+    },
+    "relatedAreas": {
+      "title": "Relaterade områden",
+      "digestiveHealth": {
+        "title": "Maghälsa",
+        "description": "När man tränar mycket minskar blodflödet till magen, vilket kan påverka tarmbarriären och i vissa fall bidra till ökad genomsläpplighet (\"läckande tarm\"). Genom att stötta matsmältningen med återhämtning, vätska, tillräckligt energiintag och lugnare pass mellan hårda block kan du skydda maghälsan och samtidigt prestera bättre."
+      },
+      "nervousSystem": {
+        "title": "Nervsystem",
+        "description": "Hög träningsbelastning kan driva upp stresspåslag i nervsystemet. Genom att balansera hårda pass med återhämtning, sömn och lugna zon 2-pass stöttar du HRV, återhämtning och hållbar konditionsutveckling."
+      },
+      "sleepQuality": {
+        "title": "Sömn",
+        "description": "Sömn är den viktigaste återhämtningsfaktorn för konditionsidrottare. Under djupsömn frigörs tillväxthormon, muskelreparation sker och hjärtats slag-för-slag-variabilitet återhämtas. Prioritera 7–9 timmars sömn för optimal konditionsutveckling."
+      }
     }
   },
   "digestiveOverview": {
     "title": "Matsmältning",
     "description": "Faktorer som påverkar matsmältningshälsa och tarmfunktion",
+    "relatedAreas": {
+      "title": "Relaterade områden",
+      "nervousSystem": {
+        "title": "Nervsystem",
+        "description": "Tarm och hjärna kommunicerar konstant via tarm-hjärn-axeln. Stress aktiverar det sympatiska nervsystemet och hämmar matsmältningen. Att lugna nervsystemet – med andning, sömn och återhämtning – förbättrar direkt tarmfunktionen."
+      },
+      "immuneSupport": {
+        "title": "Immunförsvar",
+        "description": "Cirka 70 % av immunsystemets celler finns i och längs tarmväggen. En välmående tarmflora och en intakt tarmbarriär är grundläggande för ett starkt och balanserat immunförsvar."
+      },
+      "cardioFitness": {
+        "title": "Kardiovaskulär hälsa",
+        "description": "Regelbunden zon 2-träning ökar blodflödet, stärker tarmens rörlighet och gynnar mångfalden i mikrobiom. Hög träningsintensitet kan däremot tillfälligt minska blodflödet till tarmarna – timing och återhämtning är nyckeln."
+      }
+    },
     "understandingYourMetrics": {
       "title": "Förstå dina matsmältnings-mått",
       "microbiome": {
@@ -580,6 +610,21 @@
   "sleepOverview": {
     "title": "Sömn",
     "description": "Återhämtning, reparation och cirkadisk hälsa",
+    "relatedAreas": {
+      "title": "Relaterade områden",
+      "nervousSystem": {
+        "title": "Nervsystem",
+        "description": "Sömn och nervsystemet är djupt sammanlänkade. Under sömn återhämtar sig det autonoma nervsystemet, HRV återställs och kortisolnivåerna sjunker. Dålig sömn driver upp stressresponsen och försämrar återhämtning."
+      },
+      "digestiveHealth": {
+        "title": "Maghälsa",
+        "description": "Under sömn repareras och stärks tarmbarriären. Sömnbrist ökar kortisolnivåer som kan öka tarmens genomsläpplighet och störa mikrobiomets balans. God sömn stödjer en hälsosam tarmflora."
+      },
+      "energy": {
+        "title": "Energi",
+        "description": "Djupsömn är när mitokondriell reparation och autofagi sker. Sömnbrist försämrar cellernas ATP-produktion och minskar insulinkänsligheten, vilket direkt sänker energinivån under dagen."
+      }
+    },
     "overview": {
       "title": "Översikt",
       "consistency": {
