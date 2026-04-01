@@ -577,6 +577,29 @@
       }
     }
   },
+  "philosophyOverview": {
+    "title": "Filosofi & Syfte",
+    "description": "Tankemodeller som formar robusta val i vardagen",
+    "principles": {
+      "title": "Grundprinciper",
+      "dichotomy": {
+        "title": "Kontrolldikotomin",
+        "description": "Fokusera på det du kan påverka idag och släpp det du inte kan styra. Det minskar onödig stress och förbättrar genomförandet."
+      },
+      "values": {
+        "title": "Värderingar före humör",
+        "description": "Låt värderingar styra handlingar, inte tillfälliga känslotillstånd. Konsekvens ger effekt över tid."
+      },
+      "meaning": {
+        "title": "Mening genom bidrag",
+        "description": "Syfte växer när dina dagliga handlingar skapar värde för andra, inte bara resultat för dig själv."
+      },
+      "reflection": {
+        "title": "Daglig reflektion",
+        "description": "Använd en minut varje kväll och fråga: Vad var viktigt idag? Vad kan jag göra bättre imorgon?"
+      }
+    }
+  },
   "sleepOverview": {
     "title": "Sömn",
     "description": "Återhämtning, reparation och cirkadisk hälsa",

@@ -125,6 +125,7 @@ export const Colors = {
       mind: 'rgba(0,191,174,0.95)',     // accentStrong
       sleep: '#32D1A6',                 // primary
       longevity: 'rgba(245,190,90,0.95)',
+      philosophy: 'rgba(170,160,255,0.95)',
       nervousSystem: 'rgba(120,170,255,0.95)',    // lugn blå (tidigare röd)
       strength: 'rgba(255,120,100,0.95)',   // tomato
       digestiveHealth: 'rgba(170,220,120,0.95)',  // grön (unik)
@@ -266,6 +267,7 @@ export const Colors = {
       mind: 'rgba(0,191,174,0.95)',     // accentStrong
       sleep: '#1FAE9E',                 // primary
       longevity: 'rgba(245,190,90,0.95)',
+      philosophy: 'rgba(170,160,255,0.95)',
       nervousSystem: 'rgba(120,170,255,0.95)', // lugn blå
       strength: 'rgba(255,120,100,0.95)',   // tomato
       digestiveHealth: 'rgba(170,220,120,0.95)',  // grön (unik)

@@ -53,6 +53,16 @@
     "title": "Sinne & Kognition",
     "description": "Stöd kognitiv funktion och mental prestanda"
   },
+  "philosophy": {
+    "title": "Filosofi & Syfte",
+    "description": "Tankemodeller, värderingar och mening för robusta vardagsval",
+    "relatedAreas": {
+      "sectionTitle": "Relaterade områden",
+      "mind": "Filosofi stärker fokus, emotionell reglering och klarare tänkande under press.",
+      "longevity": "Ett värderingsstyrt liv gör det lättare att vara konsekvent med sömn, träning, kost och återhämtning över tid.",
+      "nervousSystem": "Filosofisk omtolkning kan minska stressreaktivitet och hjälpa nervsystemet tillbaka till lugn snabbare."
+    }
+  },
   "longevity": {
     "title": "Longevity",
     "description": "Bygg vanor som förbättrar långsiktig hälsospan"

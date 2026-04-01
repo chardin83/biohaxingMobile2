@@ -569,6 +569,29 @@
       }
     }
   },
+  "philosophyOverview": {
+    "title": "Philosophy & Purpose",
+    "description": "Mental models that shape resilient choices in daily life",
+    "principles": {
+      "title": "Core principles",
+      "dichotomy": {
+        "title": "Dichotomy of control",
+        "description": "Focus on what you can influence today and release what you cannot. This reduces wasted stress and improves execution."
+      },
+      "values": {
+        "title": "Values before mood",
+        "description": "Let your values decide your actions, not your temporary emotional state. Consistency compounds over time."
+      },
+      "meaning": {
+        "title": "Meaning through contribution",
+        "description": "Purpose grows when your daily actions create value for others, not only outcomes for yourself."
+      },
+      "reflection": {
+        "title": "Daily reflection",
+        "description": "Use one minute each evening to ask: What mattered today? What can I improve tomorrow?"
+      }
+    }
+  },
   "sleepOverview": {
     "title": "Sleep",
     "description": "Recovery, restoration, and circadian health",

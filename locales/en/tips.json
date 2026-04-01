@@ -541,8 +541,60 @@
     "title": "Purpose and longevity",
     "description": "Finding a sense of purpose is a key driver of longevity, linked to lower disease risk and slower cognitive decline. Build your own Ikigai by identifying what you love, what you are good at, and what the world needs, then turn that overlap into small daily actions.",
     "areas": {
+      "philosophy": "Ikigai is a philosophical framework that helps align values, strengths, and contribution into meaningful daily action.",
       "mind": "A clear purpose improves motivation, emotional resilience, and cognitive engagement over time.",
       "longevity": "People with a stronger sense of purpose tend to show lower chronic disease risk, better health behaviors, and a longer healthspan."
+    }
+  },
+  "stoic_dichotomy_control": {
+    "title": "Stoic dichotomy of control",
+    "description": "Write down one current stressor and split it into two lists: what you can control and what you cannot. Act only on the controllable list today.",
+    "areas": {
+      "philosophy": "This is a practical philosophical model for reducing noise and improving intentional action.",
+      "nervousSystem": "Shifting focus to controllable factors lowers perceived stress load and helps autonomic balance."
+    }
+  },
+  "memento_mori_priority": {
+    "title": "Memento mori for priorities",
+    "description": "Use mortality awareness as clarity, not fear. Ask: If this week mattered deeply, what would I stop doing and what would I start?",
+    "areas": {
+      "philosophy": "Memento mori sharpens attention toward what is meaningful instead of what is merely urgent.",
+      "longevity": "Clear priorities improve long-term consistency in habits that protect healthspan."
+    }
+  },
+  "virtue_before_mood": {
+    "title": "Virtue before mood",
+    "description": "Choose one virtue for today (courage, patience, honesty, discipline) and define one concrete action that expresses it.",
+    "areas": {
+      "philosophy": "Virtue ethics translates abstract values into concrete behavior.",
+      "mind": "Value-based action reduces decision fatigue and improves self-trust."
+    }
+  },
+  "amor_fati_reframe": {
+    "title": "Amor fati reframe",
+    "description": "When something goes wrong, ask: How can this event train a useful skill in me? Reframe setbacks into deliberate practice.",
+    "areas": {
+      "philosophy": "Amor fati means relating to reality as training material, not an enemy.",
+      "nervousSystem": "Cognitive reframing can reduce threat perception and calm stress reactivity.",
+      "mind": "Reframing adversity strengthens psychological flexibility and resilience."
+    }
+  },
+  "philosophical_journaling": {
+    "title": "Philosophical journaling",
+    "description": "Each evening, answer three prompts: What did I do well? Where did I miss my values? What is one better choice tomorrow?",
+    "areas": {
+      "philosophy": "Reflection turns philosophy into a repeated practice rather than a theory.",
+      "mind": "Structured reflection improves metacognition and emotional regulation.",
+      "longevity": "Small daily course-corrections improve long-term behavior quality."
+    }
+  },
+  "philosophical_walk": {
+    "title": "Philosophical walk",
+    "description": "Take a 20-minute walk without audio input and think through one guiding question about your current life direction.",
+    "areas": {
+      "philosophy": "Walking contemplation has long been used to clarify judgment and priorities.",
+      "mind": "Low-stimulus walking can restore attention and improve cognitive clarity.",
+      "nervousSystem": "Slow walking with intentional breathing supports parasympathetic activation."
     }
   },
   "nature_parasympathetic": {

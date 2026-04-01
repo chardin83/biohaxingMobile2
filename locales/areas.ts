@@ -16,6 +16,7 @@ export const areas: Area[] = [
   { id: 'sleepQuality', title: 'sleepQuality.title', description: 'sleepQuality.description', icon: 'sleep', relatedAreas: [{ areaId: 'nervousSystem' }, { areaId: 'digestiveHealth' }, { areaId: 'energy' }] },
   { id: 'longevity', title: 'longevity.title', description: 'longevity.description', icon: 'infinity' },
   { id: 'mind', title: 'mind.title', description: 'mind.description', icon: 'target' },
+  { id: 'philosophy', title: 'philosophy.title', description: 'philosophy.description', icon: 'book-open-page-variant-outline', relatedAreas: [{ areaId: 'mind' }, { areaId: 'longevity' }, { areaId: 'nervousSystem' }] },
   { id: 'immuneSupport', title: 'immuneSupport.title', description: 'immuneSupport.description', icon: 'shield-check' },
   { id: 'cardioFitness', title: 'cardioFitness.title', description: 'cardioFitness.description', icon: 'heart-pulse', relatedAreas: [{ areaId: 'digestiveHealth' }, { areaId: 'nervousSystem' }, { areaId: 'sleepQuality' }] },
   { id: 'digestiveHealth', title: 'digestiveHealth.title', description: 'digestiveHealth.description', icon: 'food-apple', relatedAreas: [{ areaId: 'nervousSystem' }, { areaId: 'immuneSupport' }, { areaId: 'cardioFitness' }] },

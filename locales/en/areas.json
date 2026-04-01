@@ -53,6 +53,16 @@
     "title": "Mind & Cognition",
     "description": "Support cognitive function and mental performance"
   },
+  "philosophy": {
+    "title": "Philosophy & Purpose",
+    "description": "Mental models, values, and meaning for resilient daily choices",
+    "relatedAreas": {
+      "sectionTitle": "Related areas",
+      "mind": "Philosophy strengthens attention, emotional regulation, and clearer thinking under pressure.",
+      "longevity": "A values-driven life supports long-term consistency in sleep, training, nutrition, and recovery habits.",
+      "nervousSystem": "Philosophical reframing can reduce stress reactivity and help the nervous system return to calm faster."
+    }
+  },
   "longevity": {
     "title": "Longevity",
     "description": "Build habits that improve long-term healthspan"

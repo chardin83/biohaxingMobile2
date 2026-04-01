@@ -444,8 +444,60 @@
     "title": "Purpose och longevity",
     "description": "Att hitta en känsla av syfte är en viktig drivkraft för longevity och är kopplat till lägre sjukdomsrisk och långsammare kognitiv nedgång. Bygg din egen Ikigai genom att identifiera vad du älskar, vad du är bra på och vad världen behöver, och gör överlappet till små dagliga handlingar.",
     "areas": {
+      "philosophy": "Ikigai är ett filosofiskt ramverk som hjälper dig att linjera värderingar, styrkor och bidrag till meningsfull handling i vardagen.",
       "mind": "Ett tydligt syfte stärker motivation, emotionell motståndskraft och kognitivt engagemang över tid.",
       "longevity": "Personer med starkare känsla av syfte har ofta lägre risk för kronisk sjukdom, bättre hälsobeteenden och längre hälsospann."
+    }
+  },
+  "stoic_dichotomy_control": {
+    "title": "Stoisk kontrolldikotomi",
+    "description": "Skriv ner en aktuell stressfaktor och dela upp den i två listor: det du kan påverka och det du inte kan påverka. Agera bara på det påverkbara idag.",
+    "areas": {
+      "philosophy": "Detta är en praktisk filosofisk modell för att minska brus och öka medveten handling.",
+      "nervousSystem": "Fokus på påverkbara faktorer sänker upplevd stressbelastning och hjälper autonom balans."
+    }
+  },
+  "memento_mori_priority": {
+    "title": "Memento mori för prioritering",
+    "description": "Använd dödlighetsmedvetenhet som klarhet, inte rädsla. Fråga: Om den här veckan verkligen betydde något, vad skulle jag sluta med och vad skulle jag börja med?",
+    "areas": {
+      "philosophy": "Memento mori skärper fokus mot det meningsfulla istället för det bara brådskande.",
+      "longevity": "Tydliga prioriteringar förbättrar långsiktig konsekvens i vanor som skyddar hälsospannet."
+    }
+  },
+  "virtue_before_mood": {
+    "title": "Dygd före humör",
+    "description": "Välj en dygd för idag (mod, tålamod, ärlighet, disciplin) och definiera en konkret handling som uttrycker den.",
+    "areas": {
+      "philosophy": "Dygdetik översätter abstrakta värden till konkret beteende.",
+      "mind": "Värderingsstyrd handling minskar beslutsutmattning och stärker självförtroende."
+    }
+  },
+  "amor_fati_reframe": {
+    "title": "Amor fati-omtolkning",
+    "description": "När något går fel, fråga: Hur kan den här händelsen träna en användbar förmåga i mig? Omtolka motgångar till medveten träning.",
+    "areas": {
+      "philosophy": "Amor fati handlar om att möta verkligheten som träningsmaterial, inte som fiende.",
+      "nervousSystem": "Kognitiv omtolkning kan minska hotrespons och lugna stressreaktivitet.",
+      "mind": "Att omtolka motgång stärker psykologisk flexibilitet och motståndskraft."
+    }
+  },
+  "philosophical_journaling": {
+    "title": "Filosofisk journaling",
+    "description": "Besvara tre frågor varje kväll: Vad gjorde jag bra? Var missade jag mina värderingar? Vad är ett bättre val imorgon?",
+    "areas": {
+      "philosophy": "Reflektion gör filosofi till en återkommande praktik istället för en teori.",
+      "mind": "Strukturerad reflektion förbättrar metakognition och emotionell reglering.",
+      "longevity": "Små dagliga kurskorrigeringar höjer kvaliteten i långsiktiga beteenden."
+    }
+  },
+  "philosophical_walk": {
+    "title": "Filosofisk promenad",
+    "description": "Ta en 20-minuters promenad utan ljud i öronen och tänk igenom en vägledande fråga om din nuvarande livsriktning.",
+    "areas": {
+      "philosophy": "Reflekterande promenader har länge använts för att klargöra omdöme och prioriteringar.",
+      "mind": "Promenad med låg stimulans kan återställa fokus och förbättra mental klarhet.",
+      "nervousSystem": "Lugn gång med medveten andning stödjer parasympatisk aktivering."
     }
   },
   "nature_parasympathetic": {
