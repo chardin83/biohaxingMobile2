@@ -24,9 +24,102 @@ export type TimeOfDayRule =
   | 'avoidLateEvening' // koffein
   | 'avoidNight'; // ännu striktare om du vill
 
+export type EvidenceConfidence = 'high' | 'medium' | 'low';
+
+export type FiberType =
+  | 'fiber_total'
+  | 'fiber_gel_forming'
+  | 'fiber_non_gel_forming'
+  | 'fiber_fermentable';
+
+export type FiberCategory = Exclude<FiberType, 'fiber_total'>;
+
+export type FiberSubtype =
+  | 'beta_glucans'
+  | 'pectin'
+  | 'psyllium'
+  | 'mucilage'
+  | 'cellulose'
+  | 'hemicellulose'
+  | 'lignin'
+  | 'arabinoxylan'
+  | 'resistant_starch'
+  | 'inulin'
+  | 'fructooligosaccharides'
+  | 'galactooligosaccharides'
+  | 'pectic_oligosaccharides';
+
+export const FIBER_SUBTYPE_LABELS: Record<FiberSubtype, string> = {
+  beta_glucans: 'Beta-glukaner',
+  pectin: 'Pektin',
+  psyllium: 'Psyllium',
+  mucilage: 'Slemfibrer (mucilage)',
+  cellulose: 'Cellulosa',
+  hemicellulose: 'Hemicellulosa',
+  lignin: 'Lignin',
+  arabinoxylan: 'Arabinoxylan',
+  resistant_starch: 'Resistent stärkelse',
+  inulin: 'Inulin',
+  fructooligosaccharides: 'Fruktooligosackarider (FOS)',
+  galactooligosaccharides: 'Galaktooligosackarider (GOS)',
+  pectic_oligosaccharides: 'Pektiska oligosackarider',
+};
+
+// Canonical mapping: vilka fibertyper som hör till respektive kategori.
+export const FIBER_CATEGORY_SUBTYPES: Record<FiberCategory, FiberSubtype[]> = {
+  fiber_gel_forming: ['beta_glucans', 'pectin', 'psyllium', 'mucilage'],
+  fiber_non_gel_forming: ['cellulose', 'hemicellulose', 'lignin', 'arabinoxylan'],
+  fiber_fermentable: [
+    'resistant_starch',
+    'inulin',
+    'fructooligosaccharides',
+    'galactooligosaccharides',
+    'pectic_oligosaccharides',
+    'beta_glucans',
+    'pectin',
+    'mucilage',
+  ],
+};
+
+export type PolyphenolType =
+  | 'polyphenols_total'
+  | 'flavonoids_total'
+  | 'flavonoids' // parent category marker when exact subclass is unknown
+  | 'anthocyanins'
+  | 'catechins'
+  | 'flavanols'
+  | 'flavonols'
+  | 'quercetin'
+  | 'ellagitannins';
+
+export type NutrientTag = FiberType | PolyphenolType;
+
+export type FiberTarget = {
+  tag: FiberType;
+  amount: number;
+  unit: 'g';
+  period: 'daily' | 'weekly';
+  sourceBackedWeight?: number; // Default 1.0 when omitted
+  inferredWeight?: number; // Default 0.7 when omitted
+};
+
+export type PolyphenolTarget = {
+  tag: PolyphenolType;
+  amount: number;
+  unit: 'mg';
+  period: 'daily' | 'weekly';
+  sourceBackedWeight?: number; // Default 1.0 when omitted
+  inferredWeight?: number; // Default 0.7 when omitted
+};
+
 export type TipNutritionFood = {
   key: string;
   detailsKey?: string; // Optional override when detail uses a separate translation key
+  nutrientTags?: NutrientTag[];
+  fiberSubtypes?: FiberSubtype[];
+  microbiomeSupport?: string[];
+  sourceRefs?: string[];
+  defaultConfidence?: EvidenceConfidence;
 };
 
 export type Tip = {
@@ -47,6 +140,8 @@ export type Tip = {
   timeRule?: TimeOfDayRule; // (tidsrestriktioner)
   planCategory?: PlanCategory[]; // Markerar övergripande plan-kategori
   nutritionFoods?: TipNutritionFood[]; // Rekommenderade livsmedel för nutritionstips
+  fiberTargets?: FiberTarget[]; // Fibermål som används för plan-uppföljning
+  polyphenolTargets?: PolyphenolTarget[]; // Polyfenolmål som används för plan-uppföljning
   bodyParts?: string[]; // Rekommenderade delar av kroppen för detta tip
   microbiomeIds?: string[]; // Koppling till microbiome-bakterier
 };
@@ -156,8 +251,20 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition'],
     nutritionFoods: [
-      { key: 'pomegranate' },
-      { key: 'pomegranateJuice' },
+      {
+        key: 'pomegranate',
+        nutrientTags: ['ellagitannins', 'flavonoids_total', 'polyphenols_total'],
+        microbiomeSupport: ['Akkermansia', 'Gordonibacter'],
+        sourceRefs: ['Phenol-Explorer', 'USDA FoodData Central'],
+        defaultConfidence: 'high',
+      },
+      {
+        key: 'pomegranateJuice',
+        nutrientTags: ['ellagitannins', 'flavonoids_total', 'polyphenols_total'],
+        microbiomeSupport: ['Akkermansia', 'Gordonibacter'],
+        sourceRefs: ['Phenol-Explorer'],
+        defaultConfidence: 'medium',
+      },
     ],
     bodyParts: ['digestiveSystem', 'cells'],
     microbiomeIds: ['Akkermansia', 'Gordonibacter'],
@@ -1197,12 +1304,57 @@ const rawTips: Tip[] = [
     preferredDayParts: ['afternoon', 'evening'],
     timeRule: 'anytime',
     planCategory: ['nutrition'],
+    fiberTargets: [
+      { tag: 'fiber_total', amount: 30, unit: 'g', period: 'daily', sourceBackedWeight: 1, inferredWeight: 0.7 },
+      { tag: 'fiber_gel_forming', amount: 10, unit: 'g', period: 'daily', sourceBackedWeight: 1, inferredWeight: 0.7 },
+      { tag: 'fiber_non_gel_forming', amount: 20, unit: 'g', period: 'daily', sourceBackedWeight: 1, inferredWeight: 0.7 },
+      { tag: 'fiber_fermentable', amount: 15, unit: 'g', period: 'daily', sourceBackedWeight: 1, inferredWeight: 0.6 },
+    ],
+    polyphenolTargets: [
+      { tag: 'polyphenols_total', amount: 1000, unit: 'mg', period: 'daily', sourceBackedWeight: 1, inferredWeight: 0.5 },
+      { tag: 'flavonoids_total', amount: 500, unit: 'mg', period: 'daily', sourceBackedWeight: 1, inferredWeight: 0.5 },
+    ],
     nutritionFoods: [
-      { key: 'oats' },
-      { key: 'legumes' },
-      { key: 'chiaSeeds' },
-      { key: 'berries' },
-      { key: 'cruciferousVeg' },
+      {
+        key: 'oats',
+        nutrientTags: ['fiber_total', 'fiber_gel_forming', 'fiber_fermentable'],
+        fiberSubtypes: ['beta_glucans', 'arabinoxylan', 'resistant_starch'],
+        microbiomeSupport: ['Roseburia', 'Faecalibacterium'],
+        sourceRefs: ['USDA FoodData Central'],
+        defaultConfidence: 'high',
+      },
+      {
+        key: 'legumes',
+        nutrientTags: ['fiber_total', 'fiber_gel_forming', 'fiber_fermentable', 'polyphenols_total'],
+        fiberSubtypes: ['pectin', 'cellulose', 'hemicellulose', 'resistant_starch', 'galactooligosaccharides'],
+        microbiomeSupport: ['Akkermansia', 'Roseburia', 'Ruminococcus'],
+        sourceRefs: ['USDA FoodData Central'],
+        defaultConfidence: 'high',
+      },
+      {
+        key: 'chiaSeeds',
+        nutrientTags: ['fiber_total', 'fiber_gel_forming', 'fiber_non_gel_forming'],
+        fiberSubtypes: ['mucilage', 'cellulose', 'hemicellulose'],
+        microbiomeSupport: ['Faecalibacterium', 'Ruminococcus'],
+        sourceRefs: ['USDA FoodData Central'],
+        defaultConfidence: 'high',
+      },
+      {
+        key: 'berries',
+        nutrientTags: ['fiber_total', 'polyphenols_total', 'flavonoids_total', 'anthocyanins'],
+        fiberSubtypes: ['pectin', 'cellulose', 'hemicellulose', 'pectic_oligosaccharides'],
+        microbiomeSupport: ['Akkermansia', 'Roseburia'],
+        sourceRefs: ['Phenol-Explorer', 'USDA FoodData Central'],
+        defaultConfidence: 'high',
+      },
+      {
+        key: 'cruciferousVeg',
+        nutrientTags: ['fiber_total', 'fiber_non_gel_forming', 'polyphenols_total'],
+        fiberSubtypes: ['cellulose', 'hemicellulose', 'pectin'],
+        microbiomeSupport: ['Faecalibacterium', 'Ruminococcus'],
+        sourceRefs: ['USDA FoodData Central'],
+        defaultConfidence: 'medium',
+      },
     ],
     bodyParts: ['digestiveSystem'],
     microbiomeIds: ['Akkermansia', 'Roseburia', 'Faecalibacterium', 'Ruminococcus'],

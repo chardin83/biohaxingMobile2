@@ -44,6 +44,7 @@ type AnalyseParams = {
   mime?: string;
   prompt?: string;
   supplement?: string;
+  locale?: 'sv' | 'en';
 };
 
 export const buildSystemPrompt = (plans: PlansByCategory, shareHealthPlan: boolean): string => {
@@ -244,45 +245,74 @@ export async function sendFileToAIAnalysis({
 }
 
 export async function NutritionAnalyze(params: AnalyseParams): Promise<NutritionAnalysisResponse> {
-  const form = new FormData();
+  const shouldRetry = (message: string): boolean => {
+    const normalized = message.toLowerCase();
+    return normalized.includes('socket hang up') || normalized.includes('econnreset') || normalized.includes('timeout');
+  };
 
-  if (params.file_base64) {
-    const raw = params.file_base64.includes(',') ? params.file_base64.split(',')[1] : params.file_base64;
-    form.append('file_base64', raw);
-    form.append('mime', params.mime ?? 'image/jpeg');
-  } else if (params.uri) {
-    // @ts-ignore - React Native file object
-    form.append('file', {
-      uri: params.uri,
-      name: params.name ?? `upload_${Date.now()}.jpg`,
-      type: params.type ?? 'image/jpeg',
-    } as any);
-  } else {
-    throw new Error('No file data provided to NutritionAnalyze');
-  }
+  const runOnce = async (): Promise<NutritionAnalysisResponse> => {
+    const form = new FormData();
 
-  form.append('prompt', params.prompt ?? '');
-  form.append('supplement', params.supplement ?? '');
+    if (params.file_base64) {
+      const raw = params.file_base64.includes(',') ? params.file_base64.split(',')[1] : params.file_base64;
+      form.append('file_base64', raw);
+      form.append('mime', params.mime ?? 'image/jpeg');
+    } else if (params.uri) {
+      // @ts-ignore - React Native file object
+      form.append('file', {
+        uri: params.uri,
+        name: params.name ?? `upload_${Date.now()}.jpg`,
+        type: params.type ?? 'image/jpeg',
+      } as any);
+    } else {
+      throw new Error('No file data provided to NutritionAnalyze');
+    }
 
-  const resp = await fetch(ENDPOINTS.handleNutritionCheck, {
-    method: 'POST',
-    body: form as any, // don't set Content-Type
-  });
+    const activeLanguage = (i18n.resolvedLanguage ?? i18n.language ?? 'en').toLowerCase();
+    const fallbackLocale: 'sv' | 'en' = activeLanguage.startsWith('sv') ? 'sv' : 'en';
+    const effectiveLocale: 'sv' | 'en' = params.locale ?? fallbackLocale;
+    const languageInstruction =
+      effectiveLocale === 'sv'
+        ? 'Write all free-text outputs in Swedish.'
+        : 'Write all free-text outputs in English.';
+    const promptWithLanguage = `${params.prompt ?? ''}\n${languageInstruction}`.trim();
 
-  const text = await resp.text();
-  let json: NutritionAnalysisResponse | null = null;
+    form.append('prompt', promptWithLanguage);
+    form.append('supplement', params.supplement ?? '');
+    form.append('locale', effectiveLocale);
+
+    const resp = await fetch(ENDPOINTS.handleNutritionCheck, {
+      method: 'POST',
+      body: form as any, // don't set Content-Type
+    });
+
+    const text = await resp.text();
+    let json: NutritionAnalysisResponse | null = null;
+    try {
+      json = text ? JSON.parse(text) : null;
+    } catch {
+      throw new Error(`Invalid JSON from server: ${text}`);
+    }
+
+    if (!resp.ok) {
+      const msg = (json && (json.message || json.content)) ?? `HTTP ${resp.status}`;
+      throw new Error(msg);
+    }
+
+    return json!;
+  };
+
   try {
-    json = text ? JSON.parse(text) : null;
-  } catch (err) {
-    throw new Error(`Invalid JSON from server: ${text}`);
-  }
+    return await runOnce();
+  } catch (error) {
+    const firstMessage = error instanceof Error ? error.message : String(error);
+    if (!shouldRetry(firstMessage)) {
+      throw error;
+    }
 
-  if (!resp.ok) {
-    const msg = (json && (json.message || json.content)) ?? `HTTP ${resp.status}`;
-    throw new Error(msg);
+    await new Promise(resolve => setTimeout(resolve, 700));
+    return await runOnce();
   }
-
-  return json!;
 }
 
 type PlanTipPayload = {

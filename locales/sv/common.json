@@ -862,5 +862,52 @@
       "unit": "Enhet",
       "notes": "Notering"
     }
+  },
+  "nutritionLogger": {
+    "mealTitle": "Loggad måltid",
+    "showSummary": "Visa dagssummering",
+    "hideSummary": "Dölj dagssummering",
+    "summaryTitle": "Dagssummering",
+    "protein": "🍗 Protein: {{value}} g",
+    "carbohydrates": "🍞 Kolhydrater: {{value}} g",
+    "fat": "🥑 Fett: {{value}} g",
+    "calories": "🔥 Kalorier: {{value}} kcal",
+    "fiber": "🌾 Fibrer: {{value}} g",
+    "polyphenols": "🍷 Polyfenoler: {{value}} mg",
+    "microbiomeYes": "🦠 Mikrobiom-support: Ja ({{count}})",
+    "linkedNutrients": "Nutrienter",
+    "sources": "Källor",
+    "fiberLabels": {
+      "fiber_total": "Fibrer totalt",
+      "fiber_gel_forming": "Gelbildande fibrer",
+      "fiber_non_gel_forming": "Ej gelbildande fibrer",
+      "fiber_fermentable": "Fermenterbara fibrer"
+    },
+    "polyphenolLabels": {
+      "polyphenols_total": "Polyfenoler totalt",
+      "flavonoids_total": "Flavonoider totalt",
+      "flavonoids": "Flavonoider",
+      "anthocyanins": "Antocyaniner",
+      "catechins": "Katekiner",
+      "flavanols": "Flavanoler",
+      "flavonols": "Flavonoler",
+      "quercetin": "Quercetin",
+      "ellagitannins": "Ellagitanniner"
+    },
+    "fiberSubtypeLabels": {
+      "beta_glucans": "Beta-glukaner",
+      "pectin": "Pektin",
+      "psyllium": "Psyllium",
+      "mucilage": "Slemfibrer",
+      "cellulose": "Cellulosa",
+      "hemicellulose": "Hemicellulosa",
+      "lignin": "Lignin",
+      "arabinoxylan": "Arabinoxylan",
+      "resistant_starch": "Resistent stärkelse",
+      "inulin": "Inulin",
+      "fructooligosaccharides": "Fruktooligosackarider (FOS)",
+      "galactooligosaccharides": "Galaktooligosackarider (GOS)",
+      "pectic_oligosaccharides": "Pektiska oligosackarider"
+    }
   }
 }

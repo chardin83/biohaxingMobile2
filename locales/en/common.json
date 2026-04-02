@@ -852,5 +852,52 @@
       "unit": "Unit",
       "notes": "Note"
     }
+  },
+  "nutritionLogger": {
+    "mealTitle": "Logged meal",
+    "showSummary": "Show daily summary",
+    "hideSummary": "Hide daily summary",
+    "summaryTitle": "Daily summary",
+    "protein": "🍗 Protein: {{value}} g",
+    "carbohydrates": "🍞 Carbohydrates: {{value}} g",
+    "fat": "🥑 Fat: {{value}} g",
+    "calories": "🔥 Calories: {{value}} kcal",
+    "fiber": "🌾 Fiber: {{value}} g",
+    "polyphenols": "🍷 Polyphenols: {{value}} mg",
+    "microbiomeYes": "🦠 Microbiome support: Yes ({{count}})",
+    "linkedNutrients": "Nutrients",
+    "sources": "Sources",
+    "fiberLabels": {
+      "fiber_total": "Fiber total",
+      "fiber_gel_forming": "Gel-forming fiber",
+      "fiber_non_gel_forming": "Non-gel-forming fiber",
+      "fiber_fermentable": "Fermentable fiber"
+    },
+    "polyphenolLabels": {
+      "polyphenols_total": "Polyphenols total",
+      "flavonoids_total": "Flavonoids total",
+      "flavonoids": "Flavonoids",
+      "anthocyanins": "Anthocyanins",
+      "catechins": "Catechins",
+      "flavanols": "Flavanols",
+      "flavonols": "Flavonols",
+      "quercetin": "Quercetin",
+      "ellagitannins": "Ellagitannins"
+    },
+    "fiberSubtypeLabels": {
+      "beta_glucans": "Beta-glucans",
+      "pectin": "Pectin",
+      "psyllium": "Psyllium",
+      "mucilage": "Mucilage",
+      "cellulose": "Cellulose",
+      "hemicellulose": "Hemicellulose",
+      "lignin": "Lignin",
+      "arabinoxylan": "Arabinoxylan",
+      "resistant_starch": "Resistant starch",
+      "inulin": "Inulin",
+      "fructooligosaccharides": "Fructooligosaccharides (FOS)",
+      "galactooligosaccharides": "Galactooligosaccharides (GOS)",
+      "pectic_oligosaccharides": "Pectic oligosaccharides"
+    }
   }
 }

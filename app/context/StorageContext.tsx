@@ -16,6 +16,16 @@ export type MealNutrition = {
   carbohydrates: number;
   fat: number;
   fiber: number;
+  fiberByType?: Record<string, number>;
+  fiberSubtypeTotals?: Record<string, number>;
+  polyphenolByType?: Record<string, number>;
+  microbiomeSupport?: Array<{
+    microbe: string;
+    supportLevel: 'high' | 'medium' | 'low' | 'unknown';
+    linkedNutrients: string[];
+    likelyFoods: string[];
+    rationale?: string;
+  }>;
 };
 
 export type DailyNutritionSummary = {
