@@ -67,6 +67,38 @@ export const ICON_SYMBOLS = {
     sf: 'magnifyingglass',
     material: 'search',
   },
+  'camera': {
+    sf: 'camera',
+    material: 'photo-camera',
+  },
+  'flame': {
+    sf: 'flame',
+    material: 'whatshot',
+  },
+  'fiber': {
+    sf: 'heart.fill',
+    material: 'grain',
+  },
+  'protein': {
+    sf: 'dumbbell',
+    material: 'fitness-center',
+  },
+  'carbs': {
+    sf: 'leaf',
+    material: 'restaurant',
+  },
+  'fat': {
+    sf: 'drop',
+    material: 'opacity',
+  },
+  'polyphenol': {
+    sf: 'flask',
+    material: 'science',
+  },
+  'microbiome': {
+    sf: 'circle.grid.cross',
+    material: 'bubble-chart',
+  },
 } as const;
 
 export type IconSymbolName = keyof typeof ICON_SYMBOLS;

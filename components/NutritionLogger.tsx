@@ -1,8 +1,8 @@
 import { useTheme } from '@react-navigation/native';
 import { t as i18nT } from 'i18next';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
@@ -11,8 +11,12 @@ import { NutritionAnalyze } from '@/services/gptServices';
 
 import { Collapsible } from './Collapsible';
 import ImagePickerButton from './ImagePickerButton';
+import { ThemedModal } from './ThemedModal';
 import { ThemedText } from './ThemedText';
 import { Card } from './ui/Card';
+import { IconSymbol } from './ui/IconSymbol';
+import LabeledInput from './ui/LabeledInput';
+import { SwipeableRow } from './ui/SwipeableRow';
 
 interface NutritionLoggerProps {
   selectedDate: string;
@@ -157,6 +161,7 @@ const buildEvidenceMessage = (evidence: NutritionEvidence): string => {
 };
 
 type ParsedMacroAnalysis = {
+  mealName: string;
   protein: number;
   calories: number;
   carbohydrates: number;
@@ -463,7 +468,18 @@ const extractFromCandidate = (candidate: any): ParsedMacroAnalysis | null => {
     return null;
   }
 
+  let mealNameRaw = '';
+  if (typeof candidate?.mealName === 'string') {
+    mealNameRaw = candidate.mealName;
+  } else if (typeof candidate?.meal_name === 'string') {
+    mealNameRaw = candidate.meal_name;
+  } else if (typeof candidate?.name === 'string') {
+    mealNameRaw = candidate.name;
+  }
+  const mealName = mealNameRaw.trim();
+
   return {
+    mealName,
     protein: protein ?? 0,
     calories: calories ?? 0,
     carbohydrates: carbohydrates ?? 0,
@@ -494,6 +510,7 @@ const extractFromText = (text: string): ParsedMacroAnalysis | null => {
   }
 
   return {
+    mealName: '',
     protein: protein ?? 0,
     calories: calories ?? 0,
     carbohydrates: carbohydrates ?? 0,
@@ -543,7 +560,133 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [analysisEvidence, setAnalysisEvidence] = useState<string | null>(null);
   const [lastLoggedMeal, setLastLoggedMeal] = useState<ParsedMacroAnalysis | null>(null);
-  const [showDaySummary, setShowDaySummary] = useState(false);
+  const [selectedLoggedMealId, setSelectedLoggedMealId] = useState<string | null>(null);
+  const [isEditMealModalVisible, setIsEditMealModalVisible] = useState(false);
+  const [editingMealId, setEditingMealId] = useState<string | null>(null);
+  const [editingMealName, setEditingMealName] = useState('');
+
+  useEffect(() => {
+    setLastLoggedMeal(null);
+    setSelectedLoggedMealId(null);
+    setIsEditMealModalVisible(false);
+    setEditingMealId(null);
+    setEditingMealName('');
+  }, [selectedDate]);
+
+  const buildDailySummary = (meals: Array<any>) => {
+    const totals = meals.reduce(
+      (acc, m) => ({
+        protein: acc.protein + (m.protein ?? 0),
+        calories: acc.calories + (m.calories ?? 0),
+        carbohydrates: acc.carbohydrates + (m.carbohydrates ?? 0),
+        fat: acc.fat + (m.fat ?? 0),
+        fiber: acc.fiber + (m.fiber ?? 0),
+      }),
+      { protein: 0, calories: 0, carbohydrates: 0, fat: 0, fiber: 0 }
+    );
+
+    return {
+      date: selectedDate,
+      meals,
+      totals,
+      goalsMet: {
+        protein: totals.protein >= 100,
+        calories: totals.calories >= 2000,
+        carbohydrates: totals.carbohydrates >= 250,
+        fat: totals.fat >= 70,
+        fiber: totals.fiber >= 25,
+      },
+    };
+  };
+
+  const handleRemoveMeal = (mealId: string) => {
+    if (mealId === selectedLoggedMealId) {
+      setSelectedLoggedMealId(null);
+      setLastLoggedMeal(null);
+    }
+
+    setDailyNutritionSummaries(prev => {
+      const existingSummary = prev[selectedDate];
+      if (!existingSummary) return prev;
+
+      const updatedMeals = (existingSummary.meals ?? []).filter(meal => meal?.id !== mealId);
+      const next = { ...prev };
+
+      if (!updatedMeals.length) {
+        delete next[selectedDate];
+        return next;
+      }
+
+      next[selectedDate] = buildDailySummary(updatedMeals);
+      return next;
+    });
+  };
+
+  const handleStartEditMealName = (mealId: string, currentName: string) => {
+    setEditingMealId(mealId);
+    setEditingMealName(currentName);
+    setIsEditMealModalVisible(true);
+  };
+
+  const handleCloseEditMealModal = () => {
+    setIsEditMealModalVisible(false);
+    setEditingMealId(null);
+    setEditingMealName('');
+  };
+
+  const handleSaveMealName = () => {
+    if (!editingMealId) {
+      handleCloseEditMealModal();
+      return;
+    }
+
+    setDailyNutritionSummaries(prev => {
+      const existingSummary = prev[selectedDate];
+      if (!existingSummary) return prev;
+
+      const nextMealName = editingMealName.trim() || t('nutritionLogger.unnamedMeal');
+      const updatedMeals = (existingSummary.meals ?? []).map(meal => (
+        meal?.id === editingMealId
+          ? { ...meal, mealName: nextMealName }
+          : meal
+      ));
+
+      if (editingMealId === selectedLoggedMealId) {
+        setLastLoggedMeal(prevMeal => (
+          prevMeal
+            ? { ...prevMeal, mealName: nextMealName }
+            : prevMeal
+        ));
+      }
+
+      return {
+        ...prev,
+        [selectedDate]: buildDailySummary(updatedMeals),
+      };
+    });
+
+    handleCloseEditMealModal();
+  };
+
+  const toParsedMacroAnalysis = (meal: any): ParsedMacroAnalysis => ({
+    mealName: typeof meal?.mealName === 'string' && meal.mealName.trim().length > 0
+      ? meal.mealName
+      : t('nutritionLogger.unnamedMeal'),
+    protein: typeof meal?.protein === 'number' ? meal.protein : 0,
+    calories: typeof meal?.calories === 'number' ? meal.calories : 0,
+    carbohydrates: typeof meal?.carbohydrates === 'number' ? meal.carbohydrates : 0,
+    fat: typeof meal?.fat === 'number' ? meal.fat : 0,
+    fiber: typeof meal?.fiber === 'number' ? meal.fiber : 0,
+    fiberByType: typeof meal?.fiberByType === 'object' && meal.fiberByType !== null ? meal.fiberByType : {},
+    fiberSubtypeTotals: typeof meal?.fiberSubtypeTotals === 'object' && meal.fiberSubtypeTotals !== null ? meal.fiberSubtypeTotals : {},
+    polyphenolByType: typeof meal?.polyphenolByType === 'object' && meal.polyphenolByType !== null ? meal.polyphenolByType : {},
+    microbiomeSupport: Array.isArray(meal?.microbiomeSupport) ? meal.microbiomeSupport : [],
+  });
+
+  const handleSelectLoggedMeal = (meal: any, mealId: string) => {
+    setSelectedLoggedMealId(mealId);
+    setLastLoggedMeal(toParsedMacroAnalysis(meal));
+  };
 
   // Ny: hantera lokal fil från ImagePickerButton via NutritionAnalyze
   const handleImageSelected = async (file: { uri: string; name: string; type: string }) => {
@@ -618,6 +761,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
 
       analysis = {
         ...analysis,
+        mealName: analysis.mealName || t('nutritionLogger.unnamedMeal'),
         fiberByType: typedTotals.fiberByType,
         fiberSubtypeTotals: typedTotals.fiberSubtypeTotals,
         polyphenolByType: typedTotals.polyphenolByType,
@@ -642,34 +786,17 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
       // Uppdatera storage med verklig analys
       setDailyNutritionSummaries(prev => {
         const existing = prev[selectedDate]?.meals ?? [];
-        const newMeal = { date: selectedDate, ...analysis };
+        const newMeal = {
+          id: `${selectedDate}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          date: selectedDate,
+          ...analysis,
+        };
+        setSelectedLoggedMealId(newMeal.id);
         const updatedMeals = [...existing, newMeal];
-
-        const totals = updatedMeals.reduce(
-          (acc, m) => ({
-            protein: acc.protein + (m.protein ?? 0),
-            calories: acc.calories + (m.calories ?? 0),
-            carbohydrates: acc.carbohydrates + (m.carbohydrates ?? 0),
-            fat: acc.fat + (m.fat ?? 0),
-            fiber: acc.fiber + (m.fiber ?? 0),
-          }),
-          { protein: 0, calories: 0, carbohydrates: 0, fat: 0, fiber: 0 }
-        );
 
         return {
           ...prev,
-          [selectedDate]: {
-            date: selectedDate,
-            meals: updatedMeals,
-            totals,
-            goalsMet: {
-              protein: totals.protein >= 100,
-              calories: totals.calories >= 2000,
-              carbohydrates: totals.carbohydrates >= 250,
-              fat: totals.fat >= 70,
-              fiber: totals.fiber >= 25,
-            },
-          },
+          [selectedDate]: buildDailySummary(updatedMeals),
         };
       });
 
@@ -702,180 +829,285 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
           onImageSelected={handleImageSelected}
           isLoading={isAnalyzing}
           label={t('dayEdit.pickImage')}
+          style={styles.imagePickerButton}
         />
-        {analysisResult && <ThemedText type="defaultSemiBold">{analysisResult}</ThemedText>}
-        {analysisEvidence && <ThemedText style={styles.evidenceText}>{analysisEvidence}</ThemedText>}
+        {/* {analysisResult && <ThemedText type="defaultSemiBold">{analysisResult}</ThemedText>}
+        {analysisEvidence && <ThemedText style={styles.evidenceText}>{analysisEvidence}</ThemedText>} */}
 
-        <ThemedText style={[styles.label, { color: colors.text }]}>{t('dayEdit.logMeal')}</ThemedText>
         {lastLoggedMeal && (
           <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
-            <ThemedText type="title3">{t('nutritionLogger.mealTitle')}</ThemedText>
-            <ThemedText type="default">{t('nutritionLogger.protein', { value: lastLoggedMeal.protein })}</ThemedText>
-            <ThemedText type="default">{t('nutritionLogger.carbohydrates', { value: lastLoggedMeal.carbohydrates })}</ThemedText>
-            <ThemedText type="default">{t('nutritionLogger.fat', { value: lastLoggedMeal.fat })}</ThemedText>
-            <ThemedText type="default">{t('nutritionLogger.calories', { value: lastLoggedMeal.calories })}</ThemedText>
-
+            <ThemedText type="title3">{t('nutritionLogger.mealTitleWithName', { name: lastLoggedMeal.mealName })}</ThemedText>
+            <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
+              <IconSymbol name="flame" size={16} color={colors.textMuted} />
+              <ThemedText type="default">{t('nutritionLogger.calories', { value: lastLoggedMeal.calories })}</ThemedText>
+            </View>
+            <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
+              <IconSymbol name="protein" size={16} color={colors.textMuted} />
+              <ThemedText type="default">{t('nutritionLogger.protein', { value: lastLoggedMeal.protein })}</ThemedText>
+            </View>
+            <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
+              <IconSymbol name="carbs" size={16} color={colors.textMuted} />
+              <ThemedText type="default">{t('nutritionLogger.carbohydrates', { value: lastLoggedMeal.carbohydrates })}</ThemedText>
+            </View>
+            <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
+              <IconSymbol name="fat" size={16} color={colors.textMuted} />
+              <ThemedText type="default">{t('nutritionLogger.fat', { value: lastLoggedMeal.fat })}</ThemedText>
+            </View>
             {hasAnyTypedTotals(lastLoggedMeal.fiberByType) ? (
-              <Collapsible
-                title={t('nutritionLogger.fiber', { value: lastLoggedMeal.fiber })}
-                titleType="default"
-                initialCollapsed
-              >
-                {FIBER_TYPE_KEYS.map(key => {
-                  const value = lastLoggedMeal.fiberByType[key] ?? 0;
-                  if (value <= 0) return null;
-                  const subtypeRows = getFiberSubtypeAmountsForCategory(key, lastLoggedMeal.fiberSubtypeTotals);
-                  return (
-                    <View key={key} style={styles.fiberCategoryRow}>
-                      <ThemedText type="default">
-                        • {t(`nutritionLogger.fiberLabels.${key}`)}: {value.toFixed(1)} g
-                      </ThemedText>
-                      {subtypeRows.map(row => (
-                        <ThemedText key={`${key}_${row.subtype}`} type="caption" style={styles.fiberSubtypeText}>
-                          - {row.label}: {row.amount.toFixed(1)} g
+              <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
+                <Collapsible
+                  title={t('nutritionLogger.fiber', { value: lastLoggedMeal.fiber })}
+                  titleType="default"
+                  initialCollapsed
+                  leftContent={<IconSymbol name="fiber" size={14} color={colors.textMuted} />}
+                >
+                  {FIBER_TYPE_KEYS.map(key => {
+                    const value = lastLoggedMeal.fiberByType[key] ?? 0;
+                    if (value <= 0) return null;
+                    const subtypeRows = getFiberSubtypeAmountsForCategory(key, lastLoggedMeal.fiberSubtypeTotals);
+                    return (
+                      <View key={key} style={styles.fiberCategoryRow}>
+                        <ThemedText type="default">
+                          • {t(`nutritionLogger.fiberLabels.${key}`)}: {value.toFixed(1)} g
                         </ThemedText>
-                      ))}
-                    </View>
-                  );
-                })}
-              </Collapsible>
+                        {subtypeRows.map(row => (
+                          <ThemedText key={`${key}_${row.subtype}`} type="caption" style={styles.fiberSubtypeText}>
+                            - {row.label}: {row.amount.toFixed(1)} g
+                          </ThemedText>
+                        ))}
+                      </View>
+                    );
+                  })}
+                </Collapsible>
+              </View>
             ) : (
               <ThemedText type="default">{t('nutritionLogger.fiber', { value: lastLoggedMeal.fiber })}</ThemedText>
             )}
 
             {hasAnyTypedTotals(lastLoggedMeal.polyphenolByType) && (
-              <Collapsible
-                title={t('nutritionLogger.polyphenols', { value: (lastLoggedMeal.polyphenolByType.polyphenols_total ?? 0).toFixed(1) })}
-                titleType="default"
-                initialCollapsed
-              >
-                {POLYPHENOL_TYPE_KEYS.filter(key => key !== 'polyphenols_total').map(key => {
-                  const value = lastLoggedMeal.polyphenolByType[key] ?? 0;
-                  if (value <= 0) return null;
-                  return (
-                    <ThemedText key={key} type="default">
-                      • {t(`nutritionLogger.polyphenolLabels.${key}`)}: {value.toFixed(1)} mg
-                    </ThemedText>
-                  );
-                })}
-              </Collapsible>
+              <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
+                <Collapsible
+                  title={t('nutritionLogger.polyphenols', { value: (lastLoggedMeal.polyphenolByType.polyphenols_total ?? 0).toFixed(1) })}
+                  titleType="default"
+                  initialCollapsed
+                  leftContent={<IconSymbol name="polyphenol" size={14} color={colors.textMuted} />}
+                >
+                  {POLYPHENOL_TYPE_KEYS.filter(key => key !== 'polyphenols_total').map(key => {
+                    const value = lastLoggedMeal.polyphenolByType[key] ?? 0;
+                    if (value <= 0) return null;
+                    return (
+                      <ThemedText key={key} type="default">
+                        • {t(`nutritionLogger.polyphenolLabels.${key}`)}: {value.toFixed(1)} mg
+                      </ThemedText>
+                    );
+                  })}
+                </Collapsible>
+              </View>
             )}
 
             {lastLoggedMeal.microbiomeSupport.length > 0 && (
-              <Collapsible
-                title={t('nutritionLogger.microbiomeYes', { count: lastLoggedMeal.microbiomeSupport.length })}
-                titleType="default"
-                initialCollapsed
-              >
-                {lastLoggedMeal.microbiomeSupport.map(item => (
-                  <View key={`meal_${item.microbe}`} style={styles.microbeRow}>
-                    <ThemedText type="default">• {item.microbe}: {item.supportLevel}</ThemedText>
-                    {item.linkedNutrients.length > 0 && (
-                      <ThemedText type="caption" style={styles.fiberSubtypeText}>
-                        {t('nutritionLogger.linkedNutrients')}: {item.linkedNutrients.join(', ')}
-                      </ThemedText>
-                    )}
-                    {item.likelyFoods.length > 0 && (
-                      <ThemedText type="caption" style={styles.fiberSubtypeText}>
-                        {t('nutritionLogger.sources')}: {item.likelyFoods.join(', ')}
-                      </ThemedText>
-                    )}
-                  </View>
-                ))}
-              </Collapsible>
+
+                <Collapsible
+                  title={t('nutritionLogger.microbiomeYes', { count: lastLoggedMeal.microbiomeSupport.length })}
+                  titleType="default"
+                  initialCollapsed
+                  leftContent={<IconSymbol name="microbiome" size={14} color={colors.textMuted} />}
+                >
+                  {lastLoggedMeal.microbiomeSupport.map(item => (
+                    <View key={`meal_${item.microbe}`} style={styles.microbeRow}>
+                      <ThemedText type="default">• {item.microbe}: {item.supportLevel}</ThemedText>
+                      {item.linkedNutrients.length > 0 && (
+                        <ThemedText type="caption" style={styles.fiberSubtypeText}>
+                          {t('nutritionLogger.linkedNutrients')}: {item.linkedNutrients.join(', ')}
+                        </ThemedText>
+                      )}
+                      {item.likelyFoods.length > 0 && (
+                        <ThemedText type="caption" style={styles.fiberSubtypeText}>
+                          {t('nutritionLogger.sources')}: {item.likelyFoods.join(', ')}
+                        </ThemedText>
+                      )}
+                    </View>
+                  ))}
+                </Collapsible>
             )}
           </Card>
         )}
 
         {summary && (
-          <ThemedText
-            type="link"
-            onPress={() => setShowDaySummary(prev => !prev)}
-            style={styles.summaryToggle}
-          >
-            {showDaySummary ? t('nutritionLogger.hideSummary') : t('nutritionLogger.showSummary')}
-          </ThemedText>
-        )}
-
-        {summary && showDaySummary && (
           <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
-            <ThemedText type="title3">{t('nutritionLogger.summaryTitle')}</ThemedText>
-            <ThemedText type="default">{t('nutritionLogger.protein', { value: summary.totals.protein })}</ThemedText>
-            <ThemedText type="default">{t('nutritionLogger.carbohydrates', { value: summary.totals.carbohydrates })}</ThemedText>
-            <ThemedText type="default">{t('nutritionLogger.fat', { value: summary.totals.fat })}</ThemedText>
-            <ThemedText type="default">{t('nutritionLogger.calories', { value: summary.totals.calories })}</ThemedText>
-
-            {hasAnyTypedTotals(dailyFiberByType) ? (
-              <Collapsible
-                title={t('nutritionLogger.fiber', { value: summary.totals.fiber })}
-                titleType="default"
-                initialCollapsed
-              >
-                {FIBER_TYPE_KEYS.map(key => {
-                  const value = dailyFiberByType[key] ?? 0;
-                  if (value <= 0) return null;
-                  const subtypeRows = getFiberSubtypeAmountsForCategory(key, dailyFiberSubtypeTotals);
-                  return (
-                    <View key={key} style={styles.fiberCategoryRow}>
-                      <ThemedText type="default">
-                        • {t(`nutritionLogger.fiberLabels.${key}`)}: {value.toFixed(1)} g
-                      </ThemedText>
-                      {subtypeRows.map(row => (
-                        <ThemedText key={`${key}_daily_${row.subtype}`} type="caption" style={styles.fiberSubtypeText}>
-                          - {row.label}: {row.amount.toFixed(1)} g
-                        </ThemedText>
-                      ))}
-                    </View>
-                  );
-                })}
-              </Collapsible>
-            ) : (
-              <ThemedText type="default">{t('nutritionLogger.fiber', { value: summary.totals.fiber })}</ThemedText>
-            )}
-
-            {hasAnyTypedTotals(dailyPolyphenolByType) && (
-              <Collapsible
-                title={t('nutritionLogger.polyphenols', { value: (dailyPolyphenolByType.polyphenols_total ?? 0).toFixed(1) })}
-                titleType="default"
-                initialCollapsed
-              >
-                {POLYPHENOL_TYPE_KEYS.filter(key => key !== 'polyphenols_total').map(key => {
-                  const value = dailyPolyphenolByType[key] ?? 0;
-                  if (value <= 0) return null;
-                  return (
-                    <ThemedText key={key} type="default">
-                      • {t(`nutritionLogger.polyphenolLabels.${key}`)}: {value.toFixed(1)} mg
-                    </ThemedText>
-                  );
-                })}
-              </Collapsible>
-            )}
-
-            {dailyMicrobiomeSupport.length > 0 && (
-              <Collapsible
-                title={t('nutritionLogger.microbiomeYes', { count: dailyMicrobiomeSupport.length })}
-                titleType="default"
-                initialCollapsed
-              >
-                {dailyMicrobiomeSupport.map(item => (
-                  <View key={`day_${item.microbe}`} style={styles.microbeRow}>
-                    <ThemedText type="default">• {item.microbe}: {item.supportLevel}</ThemedText>
-                    {item.linkedNutrients.length > 0 && (
-                      <ThemedText type="caption" style={styles.fiberSubtypeText}>
-                        {t('nutritionLogger.linkedNutrients')}: {item.linkedNutrients.join(', ')}
-                      </ThemedText>
-                    )}
-                    {item.likelyFoods.length > 0 && (
-                      <ThemedText type="caption" style={styles.fiberSubtypeText}>
-                        {t('nutritionLogger.sources')}: {item.likelyFoods.join(', ')}
-                      </ThemedText>
-                    )}
+            <Collapsible
+              title={t('nutritionLogger.summaryTitle')}
+              titleType="title3"
+              initialCollapsed
+              rightContent={
+                <View style={styles.summaryQuickRow}>
+                  <View style={styles.summaryQuickItem}>
+                    <IconSymbol name="flame" size={14} color={colors.textMuted} />
+                    <ThemedText type="caption">{Math.round(summary.totals.calories)}</ThemedText>
                   </View>
-                ))}
-              </Collapsible>
-            )}
+                  <View style={styles.summaryQuickItem}>
+                    <IconSymbol name="fiber" size={14} color={colors.textMuted} />
+                    <ThemedText type="caption">{summary.totals.fiber.toFixed(1)} g</ThemedText>
+                  </View>
+                </View>
+              }
+            >
+              <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
+                <IconSymbol name="flame" size={16} color={colors.textMuted} />
+                <ThemedText type="default">{t('nutritionLogger.calories', { value: summary.totals.calories })}</ThemedText>
+              </View>
+              <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
+                <IconSymbol name="protein" size={16} color={colors.textMuted} />
+                <ThemedText type="default">{t('nutritionLogger.protein', { value: summary.totals.protein })}</ThemedText>
+              </View>
+              <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
+                <IconSymbol name="carbs" size={16} color={colors.textMuted} />
+                <ThemedText type="default">{t('nutritionLogger.carbohydrates', { value: summary.totals.carbohydrates })}</ThemedText>
+              </View>
+              <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
+                <IconSymbol name="fat" size={16} color={colors.textMuted} />
+                <ThemedText type="default">{t('nutritionLogger.fat', { value: summary.totals.fat })}</ThemedText>
+              </View>
+
+              {hasAnyTypedTotals(dailyFiberByType) ? (
+                <View style={[styles.nutrientRow, { borderBottomColor: colors.textMuted }]}> 
+                  <Collapsible
+                    title={t('nutritionLogger.fiber', { value: summary.totals.fiber })}
+                    titleType="default"
+                    initialCollapsed
+                    leftContent={<IconSymbol name="fiber" size={14} color={colors.textMuted} />}
+                  >
+                    {FIBER_TYPE_KEYS.map(key => {
+                      const value = dailyFiberByType[key] ?? 0;
+                      if (value <= 0) return null;
+                      const subtypeRows = getFiberSubtypeAmountsForCategory(key, dailyFiberSubtypeTotals);
+                      return (
+                        <View key={key} style={styles.fiberCategoryRow}>
+                          <ThemedText type="default">
+                            • {t(`nutritionLogger.fiberLabels.${key}`)}: {value.toFixed(1)} g
+                          </ThemedText>
+                          {subtypeRows.map(row => (
+                            <ThemedText key={`${key}_daily_${row.subtype}`} type="caption" style={styles.fiberSubtypeText}>
+                              - {row.label}: {row.amount.toFixed(1)} g
+                            </ThemedText>
+                          ))}
+                        </View>
+                      );
+                    })}
+                  </Collapsible>
+                </View>
+              ) : (
+                <ThemedText type="default">{t('nutritionLogger.fiber', { value: summary.totals.fiber })}</ThemedText>
+              )}
+
+              {hasAnyTypedTotals(dailyPolyphenolByType) && (
+                <View style={[styles.nutrientRow, { borderBottomColor: colors.textMuted }]}> 
+                  <Collapsible
+                    title={t('nutritionLogger.polyphenols', { value: (dailyPolyphenolByType.polyphenols_total ?? 0).toFixed(1) })}
+                    titleType="default"
+                    initialCollapsed
+                    leftContent={<IconSymbol name="polyphenol" size={14} color={colors.textMuted} />}
+                  >
+                    {POLYPHENOL_TYPE_KEYS.filter(key => key !== 'polyphenols_total').map(key => {
+                      const value = dailyPolyphenolByType[key] ?? 0;
+                      if (value <= 0) return null;
+                      return (
+                        <ThemedText key={key} type="default">
+                          • {t(`nutritionLogger.polyphenolLabels.${key}`)}: {value.toFixed(1)} mg
+                        </ThemedText>
+                      );
+                    })}
+                  </Collapsible>
+                </View>
+              )}
+
+              {dailyMicrobiomeSupport.length > 0 && (
+                <Collapsible
+                  title={t('nutritionLogger.microbiomeYes', { count: dailyMicrobiomeSupport.length })}
+                  titleType="default"
+                  initialCollapsed
+                  leftContent={<IconSymbol name="microbiome" size={14} color={colors.textMuted} />}
+                >
+                  {dailyMicrobiomeSupport.map(item => (
+                    <View key={`day_${item.microbe}`} style={styles.microbeRow}>
+                      <ThemedText type="default">• {item.microbe}: {item.supportLevel}</ThemedText>
+                      {item.linkedNutrients.length > 0 && (
+                        <ThemedText type="caption" style={styles.fiberSubtypeText}>
+                          {t('nutritionLogger.linkedNutrients')}: {item.linkedNutrients.join(', ')}
+                        </ThemedText>
+                      )}
+                      {item.likelyFoods.length > 0 && (
+                        <ThemedText type="caption" style={styles.fiberSubtypeText}>
+                          {t('nutritionLogger.sources')}: {item.likelyFoods.join(', ')}
+                        </ThemedText>
+                      )}
+                    </View>
+                  ))}
+                </Collapsible>
+              )}
+            </Collapsible>
+
           </Card>
         )}
+
+        {summary && summary.meals.length > 0 && (
+          <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
+            <View style={styles.loggedMealsSection}>
+              <Collapsible
+                title={`${t('nutritionLogger.loggedMealsTitle')} (${summary.meals.length})`}
+                titleType="default"
+                initialCollapsed
+              >
+                {summary.meals.map((meal, index) => {
+                  const mealName = typeof meal?.mealName === 'string' && meal.mealName.trim().length > 0
+                    ? meal.mealName
+                    : t('nutritionLogger.unnamedMeal');
+                  const mealId = typeof meal?.id === 'string' ? meal.id : `${selectedDate}-fallback-${index}`;
+
+                  return (
+                    <SwipeableRow
+                      key={mealId}
+                      onEdit={() => handleStartEditMealName(mealId, mealName)}
+                      onDelete={() => handleRemoveMeal(mealId)}
+                      containerStyle={styles.loggedMealSwipeContent}
+                    >
+                      <TouchableOpacity
+                        style={styles.loggedMealPressable}
+                        onPress={() => handleSelectLoggedMeal(meal, mealId)}
+                        activeOpacity={0.8}
+                      >
+                        <View style={styles.loggedMealRow}>
+                          <ThemedText type="default" style={styles.loggedMealName}>{mealName}</ThemedText>
+                          <ThemedText type="default" style={[styles.loggedMealIcon, { color: colors.textMuted }]}> 
+                            ⋮
+                          </ThemedText>
+                        </View>
+                      </TouchableOpacity>
+                    </SwipeableRow>
+                  );
+                })}
+              </Collapsible>
+            </View>
+          </Card>
+        )}
+
+        <ThemedModal
+          visible={isEditMealModalVisible}
+          title={t('nutritionLogger.editMealNameTitle')}
+          onClose={handleCloseEditMealModal}
+          onSave={handleSaveMealName}
+        >
+          <View style={styles.editMealModalContent}>
+            <LabeledInput
+              label={t('nutritionLogger.mealNameLabel')}
+              value={editingMealName}
+              onChangeText={setEditingMealName}
+              autoCapitalize="sentences"
+              autoCorrect={false}
+              autoFocus
+            />
+          </View>
+        </ThemedModal>
       </View>
     </KeyboardAvoidingView>
   );
@@ -900,6 +1132,24 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
   },
+  imagePickerButton: {
+    alignSelf: 'center',
+    marginBottom: 16,
+  },
+  nutrientRow: {
+    paddingBottom: 6,
+    marginBottom: 6,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  nutrientRowWithIcon: {
+    paddingBottom: 6,
+    marginBottom: 6,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingLeft: 22,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   breakdownSection: {
     marginTop: 12,
     gap: 4,
@@ -914,8 +1164,51 @@ const styles = StyleSheet.create({
   microbeRow: {
     marginBottom: 6,
   },
-  summaryToggle: {
-    marginTop: 10,
+  loggedMealRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  loggedMealPressable: {
+    width: '100%',
+    justifyContent: 'center',
+  },
+  loggedMealName: {
+    flex: 1,
+  },
+  loggedMealSwipeContent: {
+    height: 50,
+    justifyContent: 'center',
+    width: '100%',
+    borderRadius: 0,
+    overflow: 'hidden',
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+  },
+  loggedMealIcon: {
+    fontSize: 18,
+    opacity: 0.6,
+  },
+  loggedMealsSection: {
+    marginTop: 2,
+  },
+  editMealModalContent: {
+    width: '100%',
+  },
+  summaryQuickRow: {
+    marginLeft: 'auto',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  summaryQuickItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  collapsibleTitleIcon: {
+    marginLeft: 'auto',
   },
 });
 

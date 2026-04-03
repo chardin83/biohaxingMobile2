@@ -1,7 +1,7 @@
 import * as ImagePicker from 'expo-image-picker';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert } from 'react-native';
+import { Alert, StyleProp, ViewStyle } from 'react-native';
 
 import AppButton from './ui/AppButton';
 
@@ -10,12 +10,14 @@ interface ImagePickerButtonProps {
   onImageSelected: (file: { uri: string; name: string; type: string }) => void;
   isLoading?: boolean;
   label?: string;
+  style?: StyleProp<ViewStyle>;
 }
 
 const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({
   onImageSelected,
   isLoading = false,
   label = 'Välj bild',
+  style,
 }) => {
   const { t } = useTranslation();
 
@@ -90,6 +92,9 @@ const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({
       onPress={showOptions}
       disabled={isLoading}
       variant="primary"
+      icon="camera"
+      style={style}
+      glow
     />
   );
 };

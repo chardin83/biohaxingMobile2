@@ -7,7 +7,8 @@ import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
 
 export default function Calendar() {
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const today = new Date().toISOString().split('T')[0];
+  const [selectedDate, setSelectedDate] = useState<string | null>(today);
   const calendarRef = useRef<any>(null);
   const { colors } = useTheme();
 
@@ -16,17 +17,15 @@ export default function Calendar() {
   };
 
   return (
-  <Container
+    <Container
       background="gradient"
       gradientLocations={colors.gradients?.sunrise?.locations3 as any}
     >
-        <CalendarComponent onDayPress={handleDayPress} ref={calendarRef} />
-        {selectedDate && (
-          <Card
-          >
-            <DayEdit selectedDate={selectedDate} />
-          </Card>
-        )}
+      <CalendarComponent onDayPress={handleDayPress} ref={calendarRef} />
+      {selectedDate && (
+        <DayEdit selectedDate={selectedDate} />
+
+      )}
     </Container>
   );
 }

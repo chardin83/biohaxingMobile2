@@ -1,9 +1,11 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { Platform, StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
+import { Platform, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
+import { IconSymbolName } from '@/components/ui/icon-symbol-map';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 type Variant = 'primary' | 'secondary' | 'danger';
 
@@ -15,7 +17,8 @@ interface AppButtonProps {
   disabled?: boolean;
   glow?: boolean;
   accessibilityLabel?: string;
-  accessibilityHint?: string; // Lägg till denna rad
+  accessibilityHint?: string;
+  icon?: IconSymbolName;
 }
 
 const AppButton: React.FC<AppButtonProps> = ({
@@ -26,7 +29,8 @@ const AppButton: React.FC<AppButtonProps> = ({
   disabled = false,
   glow = false,
   accessibilityLabel,
-  accessibilityHint, // Lägg till denna rad
+  accessibilityHint,
+  icon,
 }) => {
   const { colors } = useTheme();
 
@@ -51,6 +55,8 @@ const AppButton: React.FC<AppButtonProps> = ({
   } else {
     textColorStyle = { color: colors.textLight };
   }
+
+  const iconColor = disabled ? colors.textMuted : textColorStyle.color;
 
   return (
     <TouchableOpacity
@@ -81,22 +87,28 @@ const AppButton: React.FC<AppButtonProps> = ({
       accessibilityHint={accessibilityHint}
       accessible={true}
     >
-      <ThemedText
-        type="defaultSemiBold"
-        style={[
-          styles.text,
-          textColorStyle,
-          isPrimary &&
-            glow &&
-            (Platform.OS === 'ios' || Platform.OS === 'android') &&
-            [
-              styles.textShadow,
-              { textShadowColor: colors.buttonTextGlow },
-            ],
-        ]}
-      >
-        {title}
-      </ThemedText>
+      <View style={styles.content}>
+        {icon && (
+          <IconSymbol name={icon} size={26} color={iconColor} />
+        )}
+        <ThemedText
+          type="defaultSemiBold"
+          style={[
+            styles.text,
+            textColorStyle,
+            icon && styles.textWithIcon,
+            isPrimary &&
+              glow &&
+              (Platform.OS === 'ios' || Platform.OS === 'android') &&
+              [
+                styles.textShadow,
+                { textShadowColor: colors.buttonTextGlow },
+              ],
+          ]}
+        >
+          {title}
+        </ThemedText>
+      </View>
     </TouchableOpacity>
   );
 };
@@ -117,10 +129,18 @@ const styles = StyleSheet.create({
   disabled: {
     opacity: 0.5,
   },
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   text: {
     fontWeight: 'bold',
     textTransform: 'uppercase',
     letterSpacing: 1,
+  },
+  textWithIcon: {
+    marginLeft: 4,
   },
   textShadow: {
     textShadowOffset: { width: 0, height: 0 },

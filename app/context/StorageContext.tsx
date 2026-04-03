@@ -10,7 +10,9 @@ import { Plan } from '../domain/Plan';
 import { SupplementTime } from '../domain/SupplementTime';
 
 export type MealNutrition = {
+  id?: string;
   date: string; // YYYY-MM-DD
+  mealName?: string;
   protein: number;
   calories: number;
   carbohydrates: number;

@@ -8,6 +8,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 export function Collapsible({
   children,
   title,
+  leftContent,
   rightContent,
   contentStyle,
   accessibilityLabel,
@@ -16,6 +17,7 @@ export function Collapsible({
   titleType = 'defaultSemiBold', // ny prop
 }: PropsWithChildren & {
   title: string;
+  leftContent?: React.ReactNode;
   rightContent?: React.ReactNode;
   contentStyle?: StyleProp<ViewStyle>;
   accessibilityLabel?: string;
@@ -43,6 +45,7 @@ export function Collapsible({
           color={colors.icon}
           style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}
         />
+        {leftContent}
         <ThemedText type={titleType}>
           {title}
         </ThemedText>

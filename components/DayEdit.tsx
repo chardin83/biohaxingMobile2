@@ -272,7 +272,7 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 2,
   },
   label: {
     marginBottom: 10,

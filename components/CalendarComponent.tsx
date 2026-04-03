@@ -1,11 +1,29 @@
 import { useTheme } from '@react-navigation/native';
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
+import { ThemedText } from '@/components/ThemedText';
+import { IconSymbol } from '@/components/ui/IconSymbol';
+
+const addDays = (dateString: string, days: number) => {
+  const date = new Date(`${dateString}T12:00:00`);
+  date.setDate(date.getDate() + days);
+  return date.toISOString().split('T')[0];
+};
+
+const formatDayLabel = (dateString: string, language: string) => {
+  const date = new Date(`${dateString}T12:00:00`);
+  return date.toLocaleDateString(language, {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+};
 
 const configureCalendarLocale = (language: string, t: any) => {
   const localeConfig = {
@@ -32,10 +50,12 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
   const { takenDates, setTakenDates } = useStorage();
+  const today = new Date().toISOString().split('T')[0];
 
   const [calendarKey, setCalendarKey] = useState(i18n.language + colors.background);
   const [isLocaleReady, setIsLocaleReady] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string>(today);
+  const [isExpanded, setIsExpanded] = useState(false);
   const { dailyNutritionSummaries } = useStorage();
 
   useImperativeHandle(ref, () => ({
@@ -59,7 +79,22 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
 
   const handleDayPress = (day: { dateString: string }) => {
     setSelectedDate(day.dateString);
+    setIsExpanded(false);
     onDayPress?.(day.dateString);
+  };
+
+  const goToPreviousDay = () => {
+    const nextDate = addDays(selectedDate, -1);
+    setSelectedDate(nextDate);
+    setIsExpanded(false);
+    onDayPress?.(nextDate);
+  };
+
+  const goToNextDay = () => {
+    const nextDate = addDays(selectedDate, 1);
+    setSelectedDate(nextDate);
+    setIsExpanded(false);
+    onDayPress?.(nextDate);
   };
 
   if (!isLocaleReady) return null;
@@ -90,37 +125,89 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
     {} as { [date: string]: any }
   );
 
-  if (selectedDate) {
-    dynamicMarkedDates[selectedDate] = {
-      ...dynamicMarkedDates[selectedDate],
-      selected: true,
-      //selectedColor: colors.successColor,
-    };
-  }
+  dynamicMarkedDates[selectedDate] = {
+    ...dynamicMarkedDates[selectedDate],
+    selected: true,
+  };
+
+  const calendarTheme = {
+    backgroundColor: colors.cardBackground,
+    calendarBackground: colors.cardBackground,
+    dayTextColor: colors.text,
+    todayTextColor: colors.primary,
+    selectedDayBackgroundColor: colors.primary,
+    selectedDayTextColor: colors.background,
+    textSectionTitleColor: colors.textLight,
+    textDisabledColor: colors.textMuted,
+    monthTextColor: colors.text,
+    arrowColor: colors.primary,
+  };
+
+  const hasMealOnSelectedDay = (dailyNutritionSummaries[selectedDate]?.meals?.length ?? 0) > 0;
+  const hasSupplementsOnSelectedDay = (takenDates[selectedDate]?.length ?? 0) > 0;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.cardBackground, shadowColor: colors.buttonGlow }]}>
-      {/* Exempel på rubrik med ThemedText */}
-      {/* <ThemedText type="title3" style={{ marginBottom: 8 }}>{t('calendar.title')}</ThemedText> */}
-      <Calendar
-        key={calendarKey}
-        onDayPress={handleDayPress}
-        markingType="multi-dot"
-        markedDates={dynamicMarkedDates}
-        theme={{
-          backgroundColor: colors.cardBackground,
-          calendarBackground: colors.cardBackground,
-          dayTextColor: colors.text,
-          todayTextColor: colors.primary,
-          selectedDayBackgroundColor: colors.primary,
-          selectedDayTextColor: colors.background,
-          textSectionTitleColor: colors.textLight ,
-          textDisabledColor: colors.textMuted,
-          monthTextColor: colors.text,
-          arrowColor: colors.primary,
-        }}
-        style={styles.calendar}
-      />
+      <View style={styles.headerRow}>
+        {!isExpanded ? (
+          <View style={styles.dayNavRow}>
+            <TouchableOpacity
+              onPress={goToPreviousDay}
+              style={styles.dayNavButton}
+              accessibilityRole="button"
+              accessibilityLabel="Previous day"
+            >
+              <IconSymbol name="chevron.left" size={20} color={colors.primary} />
+            </TouchableOpacity>
+
+            <View style={styles.dayLabelContainer}>
+              <ThemedText type="defaultSemiBold">{formatDayLabel(selectedDate, i18n.language)}</ThemedText>
+            </View>
+
+            <TouchableOpacity
+              style={styles.toggleButton}
+              onPress={() => setIsExpanded(true)}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: false }}
+              accessibilityLabel="Expand calendar"
+            >
+              <IconSymbol name="calendar" size={20} color={colors.primary} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={goToNextDay}
+              style={styles.dayNavButton}
+              accessibilityRole="button"
+              accessibilityLabel="Next day"
+            >
+              <IconSymbol name="chevron.right" size={20} color={colors.primary} />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <TouchableOpacity
+            style={styles.toggleButton}
+            onPress={() => setIsExpanded(false)}
+            accessibilityRole="button"
+            accessibilityState={{ expanded: true }}
+            accessibilityLabel="Collapse calendar"
+          >
+            <IconSymbol name="calendar" size={20} color={colors.primary} />
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {isExpanded ? (
+        <Calendar
+          key={`${calendarKey}-month`}
+          current={selectedDate}
+          onDayPress={handleDayPress}
+          markingType="multi-dot"
+          markedDates={dynamicMarkedDates}
+          theme={calendarTheme}
+          style={styles.calendar}
+          enableSwipeMonths
+        />
+      ) : null}
     </View>
   );
 });
@@ -138,6 +225,40 @@ const styles = StyleSheet.create({
   calendar: {
     borderRadius: globalStyles.borders.borderRadius,
     overflow: 'hidden',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  dayNavRow: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+  },
+  dayNavButton: {
+    padding: 4,
+  },
+  dayLabelContainer: {
+    alignItems: 'center',
+  },
+  dayDotRow: {
+    flexDirection: 'row',
+    gap: 6,
+    marginTop: 4,
+    minHeight: 8,
+    alignItems: 'center',
+  },
+  dayDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+  },
+  toggleButton: {
+    padding: 4,
   },
 });
 

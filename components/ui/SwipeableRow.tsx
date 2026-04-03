@@ -13,7 +13,7 @@ interface SwipeableRowProps {
   containerStyle?: StyleProp<ViewStyle>;
 }
 
-const ACTION_WIDTH = 160;
+const ACTION_BUTTON_WIDTH = 80;
 
 interface RightActionsProps {
   drag: any;
@@ -23,12 +23,14 @@ interface RightActionsProps {
 
 const RightActions = ({ drag, onEdit, onDelete }: RightActionsProps) => {
   const { colors } = useTheme();
+  const actionCount = Number(Boolean(onEdit)) + Number(Boolean(onDelete));
+  const actionWidth = Math.max(actionCount, 1) * ACTION_BUTTON_WIDTH;
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: drag.value + ACTION_WIDTH }],
+    transform: [{ translateX: drag.value + actionWidth }],
   }));
 
   return (
-    <Reanimated.View style={[styles.rightActionContainer, animatedStyle]}>
+    <Reanimated.View style={[styles.rightActionContainer, { width: actionWidth }, animatedStyle]}>
       {onEdit && (
         <TouchableOpacity
           style={[
@@ -85,7 +87,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   actionButton: {
-    width: 80,
+    width: ACTION_BUTTON_WIDTH,
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
