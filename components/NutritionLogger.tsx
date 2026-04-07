@@ -1,4 +1,5 @@
 import { useTheme } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { t as i18nT } from 'i18next';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,7 +7,7 @@ import { KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, View } fr
 
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
-import { FIBER_CATEGORY_SUBTYPES, type FiberSubtype } from '@/locales/tips';
+import { FIBER_CATEGORY_SUBTYPES, type FiberSubtype,tips } from '@/locales/tips';
 import { NutritionAnalyze } from '@/services/gptServices';
 
 import { Collapsible } from './Collapsible';
@@ -435,6 +436,61 @@ const sumMicrobiomeSupport = (meals: Array<any>): MicrobiomeSupportEntry[] => {
   return mergeMicrobiomeSupportLists(allEntries as MicrobiomeSupportEntry[]);
 };
 
+const formatTargetValue = (value: number, unit: 'g' | 'mg') => {
+  const decimals = unit === 'g' ? 1 : 0;
+  return `${value.toFixed(decimals)} ${unit}`;
+};
+
+const roundToOneDecimal = (value: number): number =>
+  Math.round((value + Number.EPSILON) * 10) / 10;
+
+const toDateKeyLocal = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const pruneFutureNutritionSummaries = (
+  summaries: Record<string, any>,
+  todayKey: string
+): { changed: boolean; next: Record<string, any> } => {
+  let changed = false;
+  const next: Record<string, any> = {};
+
+  Object.entries(summaries).forEach(([dateKey, daySummary]) => {
+    if (dateKey > todayKey) {
+      changed = true;
+      return;
+    }
+
+    const meals = Array.isArray(daySummary?.meals) ? daySummary.meals : [];
+    const safeMeals: any[] = [];
+
+    meals.forEach((meal: any) => {
+      const mealDate = typeof meal?.date === 'string' ? meal.date : dateKey;
+      if (mealDate > todayKey) {
+        changed = true;
+        return;
+      }
+      safeMeals.push(meal);
+    });
+
+    if (!safeMeals.length) {
+      if (meals.length > 0 || daySummary) changed = true;
+      return;
+    }
+
+    next[dateKey] = {
+      ...daySummary,
+      date: dateKey,
+      meals: safeMeals,
+    };
+  });
+
+  return { changed, next };
+};
+
 const parseNumberValue = (value: unknown): number | null => {
   if (typeof value === 'number') return Number.isFinite(value) ? value : null;
   if (typeof value !== 'string') return null;
@@ -553,9 +609,10 @@ const extractStructuredAnalysis = (data: any, parsedContent: any): ParsedMacroAn
 const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
+  const router = useRouter();
   
     
-  const { dailyNutritionSummaries, setDailyNutritionSummaries } = useStorage();
+  const { dailyNutritionSummaries, setDailyNutritionSummaries, plans } = useStorage();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [analysisEvidence, setAnalysisEvidence] = useState<string | null>(null);
@@ -573,8 +630,16 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
     setEditingMealName('');
   }, [selectedDate]);
 
+  useEffect(() => {
+    const todayKey = toDateKeyLocal(new Date());
+    setDailyNutritionSummaries(prev => {
+      const { changed, next } = pruneFutureNutritionSummaries(prev, todayKey);
+      return changed ? next : prev;
+    });
+  }, [setDailyNutritionSummaries]);
+
   const buildDailySummary = (meals: Array<any>) => {
-    const totals = meals.reduce(
+    const rawTotals = meals.reduce(
       (acc, m) => ({
         protein: acc.protein + (m.protein ?? 0),
         calories: acc.calories + (m.calories ?? 0),
@@ -584,6 +649,14 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
       }),
       { protein: 0, calories: 0, carbohydrates: 0, fat: 0, fiber: 0 }
     );
+
+    const totals = {
+      protein: roundToOneDecimal(rawTotals.protein),
+      calories: roundToOneDecimal(rawTotals.calories),
+      carbohydrates: roundToOneDecimal(rawTotals.carbohydrates),
+      fat: roundToOneDecimal(rawTotals.fat),
+      fiber: roundToOneDecimal(rawTotals.fiber),
+    };
 
     return {
       date: selectedDate,
@@ -822,6 +895,53 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
   const dailyPolyphenolByType = summary ? sumTypedTotals(summary.meals, 'polyphenolByType') : {};
   const dailyMicrobiomeSupport = summary ? sumMicrobiomeSupport(summary.meals) : [];
 
+  const getDailyTargetValue = (tag: string, unit: 'g' | 'mg'): number => {
+    if (unit === 'g') {
+      if (tag === 'fiber_total') return summary?.totals.fiber ?? 0;
+      return dailyFiberByType[tag] ?? 0;
+    }
+    return dailyPolyphenolByType[tag] ?? 0;
+  };
+
+  const nutritionPlanTipProgress = (plans.nutrition ?? []).flatMap(planTip => {
+    const tip = tips.find(tipItem => tipItem.id === planTip.tipId);
+    if (!tip) return [];
+
+    const fiberTargets = (tip.fiberTargets ?? []).filter(target => target.period === 'daily');
+    const polyphenolTargets = (tip.polyphenolTargets ?? []).filter(target => target.period === 'daily');
+    const allTargets = [...fiberTargets, ...polyphenolTargets];
+    if (!allTargets.length) return [];
+
+    const targets = allTargets.map(target => {
+      const actual = getDailyTargetValue(target.tag, target.unit);
+      const labelGroup = target.unit === 'g' ? 'fiberLabels' : 'polyphenolLabels';
+
+      return {
+        tag: target.tag,
+        unit: target.unit,
+        amount: target.amount,
+        actual,
+        isMet: actual >= target.amount,
+        label: t(`nutritionLogger.${labelGroup}.${target.tag}`),
+      };
+    });
+
+    const metCount = targets.reduce((count, target) => count + (target.isMet ? 1 : 0), 0);
+
+    const totalCount = allTargets.length;
+    return [{
+      planTipId: planTip.id,
+      tipId: tip.id,
+      areaId: tip.areas[0]?.id ?? null,
+      title: t(`tips:${tip.title}`),
+      targets,
+      metCount,
+      totalCount,
+      isFulfilled: metCount === totalCount,
+      progress: totalCount > 0 ? metCount / totalCount : 0,
+    }];
+  });
+
   return (
     <KeyboardAvoidingView style={globalStyles.flex1} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.container}>
@@ -831,7 +951,15 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
           label={t('dayEdit.pickImage')}
           style={styles.imagePickerButton}
         />
-        {/* {analysisResult && <ThemedText type="defaultSemiBold">{analysisResult}</ThemedText>}
+        {/*{Object.keys(dailyNutritionSummaries).length > 0 && (
+          <AppButton
+            title={t('nutritionLogger.clearAllMeals', { defaultValue: 'Rensa alla meals' })}
+            onPress={handleClearAllNutritionMeals}
+            variant="secondary"
+            style={styles.clearAllMealsButton}
+          />
+        )}
+         {analysisResult && <ThemedText type="defaultSemiBold">{analysisResult}</ThemedText>}
         {analysisEvidence && <ThemedText style={styles.evidenceText}>{analysisEvidence}</ThemedText>} */}
 
         {lastLoggedMeal && (
@@ -958,15 +1086,15 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
               </View>
               <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
                 <IconSymbol name="protein" size={16} color={colors.textMuted} />
-                <ThemedText type="default">{t('nutritionLogger.protein', { value: summary.totals.protein })}</ThemedText>
+                <ThemedText type="default">{t('nutritionLogger.protein', { value: roundToOneDecimal(summary.totals.protein) })}</ThemedText>
               </View>
               <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
                 <IconSymbol name="carbs" size={16} color={colors.textMuted} />
-                <ThemedText type="default">{t('nutritionLogger.carbohydrates', { value: summary.totals.carbohydrates })}</ThemedText>
+                <ThemedText type="default">{t('nutritionLogger.carbohydrates', { value: roundToOneDecimal(summary.totals.carbohydrates) })}</ThemedText>
               </View>
               <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
                 <IconSymbol name="fat" size={16} color={colors.textMuted} />
-                <ThemedText type="default">{t('nutritionLogger.fat', { value: summary.totals.fat })}</ThemedText>
+                <ThemedText type="default">{t('nutritionLogger.fat', { value: roundToOneDecimal(summary.totals.fat) })}</ThemedText>
               </View>
 
               {hasAnyTypedTotals(dailyFiberByType) ? (
@@ -1091,6 +1219,74 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
           </Card>
         )}
 
+        {summary && (
+          <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
+            <ThemedText type="title3">{t('nutritionLogger.fulfilledTipsTitle')}</ThemedText>
+            {nutritionPlanTipProgress.length > 0 ? (
+              nutritionPlanTipProgress.map((tip, index) => (
+                <TouchableOpacity
+                  key={`${tip.tipId}-${tip.planTipId ?? 'no-plan-tip-id'}-${index}`}
+                  style={[styles.planTipProgressRow, { borderBottomColor: colors.textMuted }]}
+                  activeOpacity={0.8}
+                  disabled={!tip.areaId}
+                  onPress={() => {
+                    if (!tip.areaId) return;
+                    router.push({
+                      pathname: `/dashboard/area/${tip.areaId}/details` as any,
+                      params: {
+                        tipId: tip.tipId,
+                      },
+                    });
+                  }}
+                > 
+                  <View style={styles.planTipProgressHeader}>
+                    <IconSymbol name={tip.isFulfilled ? 'checklist' : 'clock'} size={16} color={colors.textMuted} />
+                    <ThemedText type="defaultSemiBold" style={styles.fulfilledTipTextBlock}>{tip.title}</ThemedText>
+                  </View>
+                  <ThemedText type="caption" style={styles.planTipStatusText}>
+                    {tip.isFulfilled
+                      ? t('nutritionLogger.tipStatusFulfilled')
+                      : t('nutritionLogger.tipStatusNotFulfilled')}
+                    {' • '}
+                    {t('nutritionLogger.fulfilledTargetsCount', { met: tip.metCount, total: tip.totalCount })}
+                  </ThemedText>
+                  {tip.targets.map(target => (
+                    <View key={`${tip.tipId}-${target.tag}-${target.unit}`} style={styles.planTipTargetRow}>
+                      <ThemedText type="caption" style={styles.planTipTargetLabel}>
+                        {target.label}
+                      </ThemedText>
+                      <ThemedText
+                        type="caption"
+                        style={[
+                          styles.planTipTargetValue,
+                          { color: target.isMet ? colors.primary : colors.textMuted },
+                        ]}
+                      >
+                        {formatTargetValue(target.actual, target.unit)} / {formatTargetValue(target.amount, target.unit)}
+                      </ThemedText>
+                    </View>
+                  ))}
+                  <View style={[styles.progressTrack, { backgroundColor: colors.secondaryBackground }]}> 
+                    <View
+                      style={[
+                        styles.progressFill,
+                        {
+                          width: `${Math.round(tip.progress * 100)}%`,
+                          backgroundColor: tip.isFulfilled ? colors.primary : colors.icon,
+                        },
+                      ]}
+                    />
+                  </View>
+                </TouchableOpacity>
+              ))
+            ) : (
+              <ThemedText type="caption" style={styles.noFulfilledTipsText}>
+                {t('nutritionLogger.noPlanTipsWithTargets')}
+              </ThemedText>
+            )}
+          </Card>
+        )}
+
         <ThemedModal
           visible={isEditMealModalVisible}
           title={t('nutritionLogger.editMealNameTitle')}
@@ -1135,6 +1331,9 @@ const styles = StyleSheet.create({
   imagePickerButton: {
     alignSelf: 'center',
     marginBottom: 16,
+  },
+  clearAllMealsButton: {
+    marginBottom: 12,
   },
   nutrientRow: {
     paddingBottom: 6,
@@ -1192,6 +1391,49 @@ const styles = StyleSheet.create({
   },
   loggedMealsSection: {
     marginTop: 2,
+  },
+  fulfilledTipTextBlock: {
+    flex: 1,
+  },
+  planTipProgressRow: {
+    paddingBottom: 8,
+    marginBottom: 8,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  planTipProgressHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  planTipStatusText: {
+    marginTop: 4,
+    marginBottom: 6,
+  },
+  planTipTargetRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 4,
+  },
+  planTipTargetLabel: {
+    flex: 1,
+  },
+  planTipTargetValue: {
+    textAlign: 'right',
+  },
+  progressTrack: {
+    height: 6,
+    borderRadius: 999,
+    overflow: 'hidden',
+    width: '100%',
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: 999,
+  },
+  noFulfilledTipsText: {
+    marginTop: 8,
   },
   editMealModalContent: {
     width: '100%',

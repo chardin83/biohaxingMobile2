@@ -872,6 +872,12 @@
     "fiber": "Fiber: {{value}} g",
     "polyphenols": "Polyphenols: {{value}} mg",
     "microbiomeYes": "Microbiome support: Yes ({{count}})",
+    "fulfilledTipsTitle": "Plan tips completed today",
+    "fulfilledTargetsCount": "Targets met: {{met}}/{{total}}",
+    "tipStatusFulfilled": "Fulfilled",
+    "tipStatusNotFulfilled": "Not fulfilled",
+    "noPlanTipsWithTargets": "You have no plan tips with fiber/polyphenol targets.",
+    "noFulfilledTipsToday": "No plan tips with fiber/polyphenol targets are completed today.",
     "linkedNutrients": "Nutrients",
     "sources": "Sources",
     "fiberLabels": {

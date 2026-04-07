@@ -882,6 +882,12 @@
     "fiber": "Fibrer: {{value}} g",
     "polyphenols": "Polyfenoler: {{value}} mg",
     "microbiomeYes": "Mikrobiom-support: Ja ({{count}})",
+    "fulfilledTipsTitle": "Uppfyllda plantips idag",
+    "fulfilledTargetsCount": "Mål uppfyllda: {{met}}/{{total}}",
+    "tipStatusFulfilled": "Uppfyllt",
+    "tipStatusNotFulfilled": "Ej uppfyllt",
+    "noPlanTipsWithTargets": "Du har inga plantips med fiber/polyfenol-mål.",
+    "noFulfilledTipsToday": "Inga plantips med fiber/polyfenol-mål är uppfyllda idag.",
     "linkedNutrients": "Nutrienter",
     "sources": "Källor",
     "fiberLabels": {

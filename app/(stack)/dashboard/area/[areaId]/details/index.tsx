@@ -395,6 +395,9 @@ export default function AreaDetailScreen() {
           <ThemedText type="caption" style={styles.metaText}>{timeRuleLabel}</ThemedText>
         </AppBox>
       )}
+      {isNutritionTip && (tip?.fiberTargets?.length || 0) + (tip?.polyphenolTargets?.length || 0) > 0 && (
+        <NutritionTargetsSection tip={tip} colors={colors} t={t} />
+      )}
       <NutritionFoodsSection
         tip={tip}
         nutritionFoodItems={nutritionFoodItems}
@@ -533,6 +536,50 @@ function NutritionFoodsSection({
           />
         )}
       </View>
+    </AppBox>
+  );
+}
+
+function NutritionTargetsSection({
+  tip,
+  colors,
+  t,
+}: Readonly<{
+  tip: any;
+  colors: any;
+  t: any;
+}>) {
+  if (!tip?.fiberTargets && !tip?.polyphenolTargets) return null;
+
+  const fiberTargets = (tip?.fiberTargets ?? []).filter((target: any) => target.period === 'daily');
+  const polyphenolTargets = (tip?.polyphenolTargets ?? []).filter((target: any) => target.period === 'daily');
+  const allTargets = [...fiberTargets, ...polyphenolTargets];
+
+  if (!allTargets.length) return null;
+
+  const formatValue = (value: number, unit: 'g' | 'mg') => {
+    const decimals = unit === 'g' ? 1 : 0;
+    return `${value.toFixed(decimals)} ${unit}`;
+  };
+
+  return (
+    <AppBox title={t('nutritionLogger.nutritionTargetsTitle', { defaultValue: 'Nutrition targets' })}>
+      {allTargets.map((target: any) => {
+        const labelGroup = target.unit === 'g' ? 'fiberLabels' : 'polyphenolLabels';
+        const label = t(`nutritionLogger.${labelGroup}.${target.tag}`);
+        return (
+          <View key={`target-${target.tag}`} style={{ marginBottom: 12 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <ThemedText type="default" style={{ flex: 1 }}>
+                {label}
+              </ThemedText>
+              <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                {formatValue(target.amount, target.unit)}
+              </ThemedText>
+            </View>
+          </View>
+        );
+      })}
     </AppBox>
   );
 }
