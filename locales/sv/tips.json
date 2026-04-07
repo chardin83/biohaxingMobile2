@@ -634,7 +634,7 @@
   },
   "fiber_microbiome": {
     "title": "Fiber och mikrobiomhälsa",
-    "description": "Kostfiber fungerar som prebiotika och matar nyttiga tarmbakterier och stödjer ett hälsosamt mikrobiom. Tillräckligt fiberintag förbättrar tarmhälsan, minskar inflammation och stärker immunfunktionen.",
+    "description": "Kostfiber fungerar som prebiotika och matar nyttiga tarmbakterier och stödjer ett hälsosamt mikrobiom. Börja med att nå 25 g totalfiber per dag via varierade vegetabilier.",
     "areas": {
       "digestiveHealth": "Fiber främjar regelbundna tarmrörelser, matar nyttiga bakterier och stödjer tarmbarriärens integritet genom att producera kortkedjiga fettsyror.",
       "immuneSupport": "En fiberrik kost stärker tarmmikrobiomet, som producerar metaboliter som reglerar immunfunktionen och minskar systemisk inflammation.",
@@ -662,6 +662,142 @@
         "cruciferousVeg": {
           "name": "Korsblommiga grönsaker (broccoli, brysselkål)",
           "details": "1 kopp ångad broccoli eller blomkål (~150 g) ger ca 5 g fiber."
+        }
+      }
+    }
+  },
+  "fiber_butyrate": {
+    "title": "Fermenterbara fibrer och butyrat",
+    "description": "Fermenterbara fibrer bryts ned av tarmbakterier till kortkedjiga fettsyror, framför allt butyrat — tjocktarmscellernas primära bränsle och en nyckelregulator av tarminflammation. Sikta på 30 g totalfiber varav minst 15 g fermenterbara.",
+    "areas": {
+      "digestiveHealth": "Resistent stärkelse och inulin jäses av Faecalibacterium och Roseburia till butyrat, vilket stärker tarmslemhinnan och minskar inflammation.",
+      "immuneSupport": "Butyrat reglerar T-cells differentiering och intestinal immuntolerens, vilket minskar risken för inflammatoriska reaktioner.",
+      "longevity": "Högre butyratproduktion är kopplad till minskad tarmpermeabilitet, lägre systemisk inflammation och friskare åldrande."
+    },
+    "nutritionFoods": {
+      "title": "Fermenterbara fiberkällor",
+      "items": {
+        "oats": {
+          "name": "Havre",
+          "details": "En halv kopp torrhavre (~40 g) ger ~4 g betaglukan, en fermenterbar fiber som stimulerar butyratproducerande bakterier."
+        },
+        "legumes": {
+          "name": "Baljväxter (kikärtor, linser, bönor)",
+          "details": "1 kopp kokta baljväxter (~180 g) ger 8-15 g fermenterbara fibrer inklusive resistent stärkelse och GOS."
+        },
+        "greenBanana": {
+          "name": "Grön (omogen) banan",
+          "details": "En medelstor grön banan (~120 g) innehåller 5-6 g resistent stärkelse, vilket sjunker kraftigt vid mogning."
+        },
+        "chicoryRoot": {
+          "name": "Cikoriarot och jordärtskocka",
+          "details": "100 g cikoriarot innehåller 35-40 g inulin och FOS, bland de rikaste kostmässiga källorna till fermenterbara fibrer."
+        },
+        "cookedCooledPotato": {
+          "name": "Kokta och kylda potatisar eller ris",
+          "details": "Att kyla kokta stärkelserika livsmedel över natten ökar innehållet av resistent stärkelse med 2-4 g per 100 g."
+        }
+      }
+    }
+  },
+  "fiber_gel_forming_focus": {
+    "title": "Fokus på gelbildande fibrer",
+    "description": "Gelbildande fibrer binder vatten och bildar viskositet i tarmen. Den viktigaste kardiometabola effekten är ofta förbättrade blodfetter, särskilt sänkt LDL-kolesterol, bland annat via bindning av gallsyror och ökad kolesterolutsöndring. Sikta på 30 g totalfiber och minst 10 g gelbildande fibrer per dag.",
+    "areas": {
+      "digestiveHealth": "Gelbildande fibrer som betaglukaner, pektin, psyllium och mucilage kan förbättra tarmfunktion och stödja tarmbarriären.",
+      "immuneSupport": "Genom förbättrad lipidmetabolism och lägre inflammatorisk ton från tarmen kan gelbildande fibrer stödja en bättre immunbalans.",
+      "longevity": "Högre intag av viskösa gelbildande fibrer är kopplat till lägre LDL-kolesterol, bättre kardiometabola markörer och bättre långsiktiga hälsoresultat."
+    },
+    "nutritionFoods": {
+      "title": "Livsmedel med gelbildande fibrer",
+      "items": {
+        "oats": {
+          "name": "Havre och korn",
+          "details": "Betaglukaner i havre och korn är klassiska gelbildande fibrer med väldokumenterad LDL-sänkande effekt."
+        },
+        "psylliumHusk": {
+          "name": "Psylliumfröskal",
+          "details": "1 matsked psyllium (~9 g) är rik på gelbildande fibrer och är ett av de mest effektiva kostverktygen för att sänka LDL-kolesterol."
+        },
+        "chiaSeeds": {
+          "name": "Chiafrön",
+          "details": "Chia bildar ett mucilage-gel i kontakt med vatten och bidrar både med totalfiber och gelbildande fiber."
+        },
+        "apples": {
+          "name": "Äpplen",
+          "details": "Äpplen innehåller pektin, en gelbildande fiber kopplad till bättre avföringskonsistens och mikrobiomstöd."
+        },
+        "okra": {
+          "name": "Okra",
+          "details": "Okra innehåller mucilage och pektin som bidrar till gelbildning och bättre tarmkomfort."
+        }
+      }
+    }
+  },
+  "fiber_non_gel_forming_focus": {
+    "title": "Fokus på icke-gelbildande fibrer",
+    "description": "Icke-gelbildande fibrer är volymgivande strukturfibrer som ökar avföringsmassa och snabbar upp passagetid i tjocktarmen. Det är viktigt eftersom kortare transittid minskar tiden då tarmslemhinnan exponeras för potentiellt skadliga nedbrytningsprodukter och gynnar regelbunden tarmtömning. Sikta på 30 g totalfiber och cirka 20 g icke-gelbildande fibrer per dag.",
+    "areas": {
+      "digestiveHealth": "Cellulosa, hemicellulosa, lignin och arabinoxylan stödjer regelbunden tarmtömning genom att öka avföringsvolymen och förkorta passagetiden, vilket minskar förstoppningsrisk och uppblåsthet.",
+      "immuneSupport": "Regelbunden tarmpassage kan minska lokal inflammationsbelastning genom mindre kontakt mellan tarmslemhinnan och irriterande restprodukter, och därmed stödja en mer balanserad tarmmiljö för immunförsvaret.",
+      "longevity": "Kontinuerligt intag av strukturfibrer stödjer långsiktig tarmfunktion, mer gynnsam transittid och lägre riskmönster kopplade till kolorektal sjukdom."
+    },
+    "nutritionFoods": {
+      "title": "Livsmedel med icke-gelbildande fibrer",
+      "items": {
+        "wheatBran": {
+          "name": "Vetekli",
+          "details": "Vetekli är rikt på arabinoxylan och olösliga fibrer som effektivt ökar avföringsvolymen."
+        },
+        "cruciferousVeg": {
+          "name": "Korsblommiga grönsaker",
+          "details": "Broccoli, kål och brysselkål bidrar med cellulosa och hemicellulosa."
+        },
+        "leafyGreens": {
+          "name": "Bladgrönsaker",
+          "details": "Bladgrönsaker innehåller olösliga strukturfibrer som stödjer regelbunden tarmtömning."
+        },
+        "nuts": {
+          "name": "Nötter och frön",
+          "details": "Nötter bidrar med cellulosa och lignin, vilket hjälper till att öka avföringsmassa och mättnad."
+        },
+        "wholeGrainRye": {
+          "name": "Fullkornsråg",
+          "details": "Fullkornsråg innehåller kli-fraktioner rika på arabinoxylan som stödjer regelbunden passagetid."
+        }
+      }
+    }
+  },
+  "polyphenol_microbiome": {
+    "title": "Polyfenoler och mikrobiomhälsa",
+    "description": "Polyfenoler är växtföreningar som fungerar som prebiotika och selektivt matar nyttiga tarmbakterier. Ett högt polyfenolintag stödjer mikrobiomdiversiteten, minskar tarminflammation och skyddar mot oxidativ stress.",
+    "areas": {
+      "digestiveHealth": "Polyfenoler metaboliseras delvis av tarmbakterier och producerar bioaktiva metaboliter som skyddar tarmslemhinnan och stödjer mikrobiomdiversiteten.",
+      "immuneSupport": "Polyfenolmetaboliter reglerar immunsignalering och minskar systemisk inflammation genom interaktioner med tarm-immunaxeln.",
+      "longevity": "Högt polyfenolintag är förknippat med lägre oxidativ skada, minskad inflammation och förbättrade markörer för friskare åldrande."
+    },
+    "nutritionFoods": {
+      "title": "Polyfenolrika livsmedel",
+      "items": {
+        "berries": {
+          "name": "Bär (blåbär, hallon, björnbär)",
+          "details": "1 kopp blåbär (~150 g) ger ungefär 400–600 mg polyfenoler inklusive antocyaniner."
+        },
+        "darkChocolate": {
+          "name": "Mörk choklad (70–85% kakao)",
+          "details": "30 g mörk choklad ger ca 200–400 mg polyfenoler, framför allt flavanoler och katekin."
+        },
+        "pomegranate": {
+          "name": "Granatäpple",
+          "details": "Halvt granatäpple (~150 g) innehåller ca 400 mg polyfenoler inklusive ellagitanniner."
+        },
+        "greenTea": {
+          "name": "Grönt te",
+          "details": "2 koppar grönt te (~500 ml) ger ca 200–400 mg katekin och andra flavonoider."
+        },
+        "extraVirginOliveOil": {
+          "name": "Kallpressad olivolja (EVOO)",
+          "details": "2 matskedar EVOO (~30 ml) ger ca 30–50 mg polyfenoler inklusive oleocanthal."
         }
       }
     }

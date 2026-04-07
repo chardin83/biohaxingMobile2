@@ -731,7 +731,7 @@
   },
   "fiber_microbiome": {
     "title": "Fiber and microbiome health",
-    "description": "Dietary fiber acts as a prebiotic, feeding beneficial gut bacteria and supporting a healthy microbiome. Adequate fiber intake improves digestive health, reduces inflammation, and strengthens immune function.",
+    "description": "Dietary fiber acts as a prebiotic, feeding beneficial gut bacteria and supporting a healthy microbiome. Start by reaching 25 g of total fiber per day through a variety of plant foods.",
     "areas": {
       "digestiveHealth": "Fiber promotes regular bowel movements, feeds beneficial bacteria, and supports gut barrier integrity by producing short-chain fatty acids.",
       "immuneSupport": "A fiber-rich diet strengthens the gut microbiome, which produces metabolites that regulate immune function and reduce systemic inflammation.",
@@ -759,6 +759,142 @@
         "cruciferousVeg": {
           "name": "Cruciferous vegetables (broccoli, Brussels sprouts)",
           "details": "1 cup steamed broccoli or cauliflower (~150 g) offers around 5 g fiber."
+        }
+      }
+    }
+  },
+  "fiber_butyrate": {
+    "title": "Fermentable fiber and butyrate",
+    "description": "Fermentable fibers are broken down by gut bacteria into short-chain fatty acids, especially butyrate. Butyrate is the primary fuel for colon cells and a key regulator of gut inflammation. Aim for 30 g total fiber with at least 15 g fermentable.",
+    "areas": {
+      "digestiveHealth": "Resistant starch and inulin are fermented by Faecalibacterium and Roseburia to produce butyrate, which strengthens the gut lining and reduces inflammation.",
+      "immuneSupport": "Butyrate regulates T-cell differentiation and intestinal immune tolerance, reducing risk of inflammatory responses.",
+      "longevity": "Higher butyrate production is linked to reduced intestinal permeability, lower systemic inflammation, and healthier aging."
+    },
+    "nutritionFoods": {
+      "title": "Fermentable fiber foods",
+      "items": {
+        "oats": {
+          "name": "Oats",
+          "details": "Half a cup dry oats (~40 g) provides roughly 4 g beta-glucan, fueling butyrate-producing bacteria."
+        },
+        "legumes": {
+          "name": "Legumes (chickpeas, lentils, beans)",
+          "details": "1 cup cooked legumes (~180 g) delivers 8-15 g fermentable fiber including resistant starch and GOS."
+        },
+        "greenBanana": {
+          "name": "Green (unripe) banana",
+          "details": "One medium green banana (~120 g) contains 5-6 g resistant starch, which drops sharply on ripening."
+        },
+        "chicoryRoot": {
+          "name": "Chicory root and Jerusalem artichoke",
+          "details": "100 g chicory root supplies 35-40 g inulin and FOS, among the richest sources of fermentable fiber."
+        },
+        "cookedCooledPotato": {
+          "name": "Cooked and cooled potato or rice",
+          "details": "Cooling cooked starchy foods overnight increases resistant starch content by 2-4 g per 100 g."
+        }
+      }
+    }
+  },
+  "fiber_gel_forming_focus": {
+    "title": "Gel-forming fiber focus",
+    "description": "Gel-forming fibers absorb water and create viscosity in the gut. Their most important cardiometabolic effect is lowering blood lipids, especially LDL cholesterol, partly by binding bile acids and increasing cholesterol excretion. Aim for 30 g total fiber and at least 10 g gel-forming fiber daily.",
+    "areas": {
+      "digestiveHealth": "Gel-forming fibers such as beta-glucans, pectin, psyllium, and mucilage improve stool quality and support gut barrier function.",
+      "immuneSupport": "By improving lipid metabolism and gut-derived inflammatory tone, gel-forming fibers can support better immune regulation.",
+      "longevity": "Higher intake of viscous gel-forming fibers is consistently associated with lower LDL cholesterol, improved cardiometabolic markers, and better long-term health outcomes."
+    },
+    "nutritionFoods": {
+      "title": "Gel-forming fiber foods",
+      "items": {
+        "oats": {
+          "name": "Oats and barley",
+          "details": "Beta-glucans in oats and barley are classic gel-forming fibers with well-documented LDL-lowering effects."
+        },
+        "psylliumHusk": {
+          "name": "Psyllium husk",
+          "details": "1 tablespoon psyllium (~9 g) is rich in gel-forming fiber and is one of the most effective dietary tools to lower LDL cholesterol."
+        },
+        "chiaSeeds": {
+          "name": "Chia seeds",
+          "details": "Chia forms a mucilage gel in contact with water and contributes both total and gel-forming fiber."
+        },
+        "apples": {
+          "name": "Apples",
+          "details": "Apples are rich in pectin, a gel-forming fiber associated with better stool consistency and microbiome support."
+        },
+        "okra": {
+          "name": "Okra",
+          "details": "Okra contains mucilage and pectin that contribute to gel formation and gut comfort."
+        }
+      }
+    }
+  },
+  "fiber_non_gel_forming_focus": {
+    "title": "Non-gel-forming fiber focus",
+    "description": "Non-gel-forming fibers are bulk-forming structural fibers that increase stool mass and speed colonic transit. This is important because shorter transit time reduces how long the gut lining is exposed to potentially harmful breakdown products and supports regular bowel emptying. Aim for 30 g total fiber and around 20 g non-gel-forming fiber daily.",
+    "areas": {
+      "digestiveHealth": "Cellulose, hemicellulose, lignin, and arabinoxylan support bowel regularity by adding stool bulk and reducing transit time, lowering constipation risk and bloating.",
+      "immuneSupport": "Regular bowel transit may reduce local inflammatory pressure by limiting mucosal contact with irritating residues, supporting a healthier gut environment for immune balance.",
+      "longevity": "Consistent intake of structural fibers supports long-term bowel function, healthier transit patterns, and lower risk patterns linked to colorectal disease."
+    },
+    "nutritionFoods": {
+      "title": "Non-gel-forming fiber foods",
+      "items": {
+        "wheatBran": {
+          "name": "Wheat bran",
+          "details": "Wheat bran is rich in arabinoxylan and insoluble fibers that efficiently increase stool bulk."
+        },
+        "cruciferousVeg": {
+          "name": "Cruciferous vegetables",
+          "details": "Broccoli, cabbage, and Brussels sprouts contribute cellulose and hemicellulose."
+        },
+        "leafyGreens": {
+          "name": "Leafy greens",
+          "details": "Leafy greens provide insoluble structural fibers that support bowel movement regularity."
+        },
+        "nuts": {
+          "name": "Nuts and seeds",
+          "details": "Nuts contribute cellulose and lignin, helping increase stool mass and satiety."
+        },
+        "wholeGrainRye": {
+          "name": "Whole-grain rye",
+          "details": "Whole rye products contain arabinoxylan-rich bran fractions that support regular transit."
+        }
+      }
+    }
+  },
+  "polyphenol_microbiome": {
+    "title": "Polyphenols and microbiome health",
+    "description": "Polyphenols are plant compounds that act as prebiotics, selectively feeding beneficial gut bacteria. A high polyphenol intake supports microbiome diversity, reduces gut inflammation, and protects against oxidative stress.",
+    "areas": {
+      "digestiveHealth": "Polyphenols are partially metabolized by gut bacteria, producing bioactive metabolites that protect the gut lining and support microbiome balance.",
+      "immuneSupport": "Polyphenol metabolites regulate immune signaling and reduce systemic inflammation through interactions with the gut-immune axis.",
+      "longevity": "Higher polyphenol intake is associated with lower oxidative damage, reduced inflammation, and improved markers of healthy aging."
+    },
+    "nutritionFoods": {
+      "title": "High-polyphenol foods",
+      "items": {
+        "berries": {
+          "name": "Berries (blueberries, raspberries, blackberries)",
+          "details": "1 cup blueberries (~150 g) provides roughly 400–600 mg polyphenols including anthocyanins."
+        },
+        "darkChocolate": {
+          "name": "Dark chocolate (70–85% cacao)",
+          "details": "30 g dark chocolate supplies approximately 200–400 mg polyphenols, mainly flavanols and catechins."
+        },
+        "pomegranate": {
+          "name": "Pomegranate",
+          "details": "Half a pomegranate (~150 g) contains around 400 mg polyphenols including ellagitannins."
+        },
+        "greenTea": {
+          "name": "Green tea",
+          "details": "2 cups green tea (~500 ml) provides about 200–400 mg catechins and other flavonoids."
+        },
+        "extraVirginOliveOil": {
+          "name": "Extra virgin olive oil (EVOO)",
+          "details": "2 tablespoons EVOO (~30 ml) supply roughly 30–50 mg polyphenols including oleocanthal."
         }
       }
     }
