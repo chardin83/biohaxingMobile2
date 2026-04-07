@@ -872,10 +872,12 @@
     "fiber": "Fiber: {{value}} g",
     "polyphenols": "Polyphenols: {{value}} mg",
     "microbiomeYes": "Microbiome support: Yes ({{count}})",
-    "fulfilledTipsTitle": "Plan tips completed today",
+    "fulfilledTipsTitle": "Nutrition tips to complete",
     "fulfilledTargetsCount": "Targets met: {{met}}/{{total}}",
     "tipStatusFulfilled": "Fulfilled",
     "tipStatusNotFulfilled": "Not fulfilled",
+    "periodDaily": "day",
+    "periodWeekly": "week",
     "noPlanTipsWithTargets": "You have no plan tips with fiber/polyphenol targets.",
     "noFulfilledTipsToday": "No plan tips with fiber/polyphenol targets are completed today.",
     "linkedNutrients": "Nutrients",
@@ -896,6 +898,15 @@
       "flavonols": "Flavonols",
       "quercetin": "Quercetin",
       "ellagitannins": "Ellagitannins"
+    },
+    "plantDiversityLabels": {
+      "plant_diversity": "Plant diversity"
+    },
+    "weeklyTrackingLabels": {
+      "unique_plants": "Unique plants",
+      "vegetable_colors": "Vegetable colors",
+      "fish_meals": "Fish meals",
+      "fatty_fish_meals": "Fatty fish meals"
     },
     "fiberSubtypeLabels": {
       "beta_glucans": "Beta-glucans",

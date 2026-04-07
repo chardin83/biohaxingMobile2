@@ -33,8 +33,23 @@ export interface NutritionAnalysisResponse {
     fiber?: number;
     [k: string]: any;
   };
+  weeklyTrackingSignals?: Record<string, string[] | number> | Array<{
+    key?: string;
+    trackingKey?: string;
+    items?: string[];
+    count?: number;
+    increment?: number;
+    countIncrement?: number;
+  }>;
   message?: string;
 }
+
+type WeeklyTrackingTargetInput = {
+  key: string;
+  unit: 'items' | 'count';
+  amount?: number;
+  aiInstruction?: string;
+};
 
 type AnalyseParams = {
   uri?: string;
@@ -45,6 +60,7 @@ type AnalyseParams = {
   prompt?: string;
   supplement?: string;
   locale?: 'sv' | 'en';
+  weeklyTrackingTargets?: WeeklyTrackingTargetInput[];
 };
 
 export const buildSystemPrompt = (plans: PlansByCategory, shareHealthPlan: boolean): string => {
@@ -280,6 +296,9 @@ export async function NutritionAnalyze(params: AnalyseParams): Promise<Nutrition
     form.append('prompt', promptWithLanguage);
     form.append('supplement', params.supplement ?? '');
     form.append('locale', effectiveLocale);
+    if (Array.isArray(params.weeklyTrackingTargets) && params.weeklyTrackingTargets.length > 0) {
+      form.append('weeklyTrackingTargets', JSON.stringify(params.weeklyTrackingTargets));
+    }
 
     const resp = await fetch(ENDPOINTS.handleNutritionCheck, {
       method: 'POST',

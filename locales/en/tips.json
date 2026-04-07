@@ -865,6 +865,74 @@
       }
     }
   },
+  "plant_diversity_30_week": {
+    "title": "30 different plants per week",
+    "description": "Aim for at least 30 different plant foods per week (vegetables, berries, fruits, legumes, nuts, seeds, herbs, and whole grains). Higher plant diversity is linked to a more diverse and resilient microbiome. How to fulfill it: count each unique plant once per week, and use mixed meals to increase variety fast.",
+    "areas": {
+      "digestiveHealth": "A wider range of plant fibers and polyphenols feeds more microbial species, which can improve stool quality, gut barrier support, and digestive resilience.",
+      "immuneSupport": "Greater microbiome diversity is associated with better immune signaling balance and lower chronic inflammatory tone.",
+      "longevity": "Weekly plant diversity is linked to better metabolic and inflammatory profiles, both relevant for healthy aging."
+    },
+    "nutritionFoods": {
+      "title": "How to reach 30/week",
+      "items": {
+        "legumes": {
+          "name": "Build around legumes",
+          "details": "Use 2-3 different legumes weekly (for example lentils, chickpeas, black beans). Each counts as one unique plant."
+        },
+        "berries": {
+          "name": "Use mixed berries and fruit",
+          "details": "Rotate berry and fruit types across the week. Frozen mixes are an easy way to add 3-5 unique plants quickly."
+        },
+        "leafyGreens": {
+          "name": "Rotate leafy greens",
+          "details": "Swap between spinach, kale, arugula, romaine, and herbs instead of repeating one green every day."
+        },
+        "nuts": {
+          "name": "Mix nuts and seeds",
+          "details": "Use mixed nuts/seeds (for example walnuts, almonds, pumpkin seeds, chia) and count each type separately."
+        },
+        "freshHerbs": {
+          "name": "Treat herbs as plants that count",
+          "details": "Parsley, dill, cilantro, basil, mint, and similar herbs all count toward the weekly 30 target."
+        }
+      }
+    }
+  },
+  "fish_omega3_weekly": {
+    "title": "Fish meals for omega-3 and heart health",
+    "description": "Aim for 3 fish meals per week, with at least 1 fatty fish meal rich in EPA and DHA omega-3 fats. Omega-3 fatty acids support cardiovascular health, reduce inflammation, and promote brain function. Fatty fish like salmon, mackerel, and sardines are the most bioavailable sources.",
+    "areas": {
+      "cardioFitness": "Omega-3 fats reduce triglycerides, support healthy blood pressure, and improve endothelial function for cardiovascular resilience.",
+      "brainHealth": "EPA and DHA are structural components of brain cell membranes and support cognitive function, mood regulation, and neuroprotection.",
+      "inflammation": "Omega-3 fats actively reduce systemic inflammation by modulating immune signaling and shifting the inflammatory balance toward resolution."
+    },
+    "nutritionFoods": {
+      "title": "Fish for omega-3s",
+      "items": {
+        "fattyFish": {
+          "name": "Fatty fish (salmon, mackerel, sardines, herring, trout)",
+          "details": "100 g wild salmon provides ~2 g EPA+DHA; mackerel provides ~1.5 g per 100 g. Highest bioavailable omega-3 sources."
+        },
+        "leanFish": {
+          "name": "Lean fish (cod, haddock, flounder)",
+          "details": "100 g provides ~0.2 g omega-3s. Excellent protein source and easier to prepare than fatty fish."
+        },
+        "canTuna": {
+          "name": "Canned fish (sardines, mackerel)",
+          "details": "Convenient option with similar omega-3 content to fresh fish. Often packed in oil for added omega-3s."
+        },
+        "preparation": {
+          "name": "Best preparation methods",
+          "details": "Baking, steaming, or poaching preserve omega-3s. Frying at high heat can damage delicate fats; use moderate heat or eat raw (sushi)."
+        },
+        "quantity": {
+          "name": "Portion recommendation",
+          "details": "120–150 g fish meal (roughly a palm-sized fillet) provides meaningful omega-3 intake. Higher frequency compensates for smaller portions."
+        }
+      }
+    }
+  },
   "polyphenol_microbiome": {
     "title": "Polyphenols and microbiome health",
     "description": "Polyphenols are plant compounds that act as prebiotics, selectively feeding beneficial gut bacteria. A high polyphenol intake supports microbiome diversity, reduces gut inflammation, and protects against oxidative stress.",

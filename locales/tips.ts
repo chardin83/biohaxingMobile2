@@ -112,6 +112,21 @@ export type PolyphenolTarget = {
   inferredWeight?: number; // Default 0.7 when omitted
 };
 
+export type PlantDiversityTarget = {
+  tag: 'plant_diversity';
+  amount: number; // Number of unique plants to consume in the period
+  unit: 'plants';
+  period: 'daily' | 'weekly';
+};
+
+export type WeeklyTrackingTarget = {
+  trackingKey: string; // e.g., 'unique_plants', 'vegetable_colors', 'fish_meals', 'fatty_fish_meals'
+  amount: number; // Target value (e.g., 30 for plants, 3 for fish meals)
+  unit: 'items' | 'count'; // 'items' for arrays, 'count' for numbers
+  period: 'weekly';
+  aiInstruction?: string; // Optional dynamic guidance sent to AI for this key
+};
+
 export type TipNutritionFood = {
   key: string;
   detailsKey?: string; // Optional override when detail uses a separate translation key
@@ -142,6 +157,8 @@ export type Tip = {
   nutritionFoods?: TipNutritionFood[]; // Rekommenderade livsmedel för nutritionstips
   fiberTargets?: FiberTarget[]; // Fibermål som används för plan-uppföljning
   polyphenolTargets?: PolyphenolTarget[]; // Polyfenolmål som används för plan-uppföljning
+  plantDiversityTargets?: PlantDiversityTarget[]; // Växtdiversitetsmål (antal unika växter per period)
+  weeklyTrackingTargets?: WeeklyTrackingTarget[]; // Flexibla veckomål (växter, färger, fisk, etc.)
   bodyParts?: string[]; // Rekommenderade delar av kroppen för detta tip
   microbiomeIds?: string[]; // Koppling till microbiome-bakterier
 };
@@ -1547,6 +1564,132 @@ const rawTips: Tip[] = [
     ],
     bodyParts: ['digestiveSystem'],
     microbiomeIds: ['Ruminococcus', 'Faecalibacterium', 'Roseburia'],
+  },
+  {
+    id: 'plant_diversity_30_week',
+    level: 2,
+    xp: 450,
+    parentId: 'fiber_microbiome',
+    areas: [
+      { id: 'digestiveHealth', descriptionKey: 'plant_diversity_30_week.areas.digestiveHealth' },
+      { id: 'immuneSupport', descriptionKey: 'plant_diversity_30_week.areas.immuneSupport' },
+      { id: 'longevity', descriptionKey: 'plant_diversity_30_week.areas.longevity' },
+    ],
+    title: 'plant_diversity_30_week.title',
+    descriptionKey: 'plant_diversity_30_week.description',
+    trainingRelation: 'anytime',
+    preferredDayParts: ['morning', 'midday', 'evening'],
+    timeRule: 'anytime',
+    planCategory: ['nutrition'],
+    nutritionFoods: [
+      {
+        key: 'legumes',
+        nutrientTags: ['fiber_total', 'fiber_fermentable'],
+        fiberSubtypes: ['resistant_starch', 'galactooligosaccharides'],
+        microbiomeSupport: ['Roseburia', 'Faecalibacterium', 'Akkermansia'],
+        sourceRefs: ['USDA FoodData Central'],
+        defaultConfidence: 'high',
+      },
+      {
+        key: 'berries',
+        nutrientTags: ['fiber_total', 'polyphenols_total', 'anthocyanins'],
+        fiberSubtypes: ['pectin'],
+        microbiomeSupport: ['Akkermansia', 'Roseburia'],
+        sourceRefs: ['Phenol-Explorer', 'USDA FoodData Central'],
+        defaultConfidence: 'high',
+      },
+      {
+        key: 'leafyGreens',
+        nutrientTags: ['fiber_total', 'fiber_non_gel_forming'],
+        fiberSubtypes: ['cellulose', 'hemicellulose'],
+        microbiomeSupport: ['Ruminococcus', 'Faecalibacterium'],
+        sourceRefs: ['USDA FoodData Central'],
+        defaultConfidence: 'high',
+      },
+      {
+        key: 'nuts',
+        nutrientTags: ['fiber_total', 'polyphenols_total'],
+        fiberSubtypes: ['cellulose', 'lignin'],
+        microbiomeSupport: ['Akkermansia', 'Ruminococcus'],
+        sourceRefs: ['USDA FoodData Central'],
+        defaultConfidence: 'medium',
+      },
+      {
+        key: 'freshHerbs',
+        nutrientTags: ['polyphenols_total', 'flavonoids_total'],
+        microbiomeSupport: ['Akkermansia', 'Gordonibacter'],
+        sourceRefs: ['Phenol-Explorer'],
+        defaultConfidence: 'medium',
+      },
+    ],
+    bodyParts: ['digestiveSystem', 'immuneSystem'],
+    microbiomeIds: ['Akkermansia', 'Roseburia', 'Faecalibacterium', 'Ruminococcus', 'Gordonibacter'],
+    weeklyTrackingTargets: [
+      {
+        trackingKey: 'unique_plants',
+        amount: 30,
+        unit: 'items',
+        period: 'weekly',
+        aiInstruction: 'List distinct plant foods visible in the meal. Do not include animal foods or sauces.',
+      },
+      {
+        trackingKey: 'vegetable_colors',
+        amount: 6,
+        unit: 'items',
+        period: 'weekly',
+        aiInstruction: 'Track only colors represented by visible vegetables. Never infer color from egg, pasta, dairy, meat, or dressing.',
+      },
+    ],
+  },
+  {
+    id: 'fish_omega3_weekly',
+    level: 2,
+    xp: 400,
+    areas: [
+      { id: 'heartHealth', descriptionKey: 'fish_omega3_weekly.areas.heartHealth' },
+      { id: 'brainHealth', descriptionKey: 'fish_omega3_weekly.areas.brainHealth' },
+      { id: 'inflammation', descriptionKey: 'fish_omega3_weekly.areas.inflammation' },
+    ],
+    title: 'fish_omega3_weekly.title',
+    descriptionKey: 'fish_omega3_weekly.description',
+    trainingRelation: 'anytime',
+    preferredDayParts: ['midday', 'evening'],
+    timeRule: 'anytime',
+    planCategory: ['nutrition'],
+    weeklyTrackingTargets: [
+      {
+        trackingKey: 'fish_meals',
+        amount: 3,
+        unit: 'count',
+        period: 'weekly',
+        aiInstruction: 'Increment by 1 only when fish is clearly visible in the meal.',
+      },
+      {
+        trackingKey: 'fatty_fish_meals',
+        amount: 1,
+        unit: 'count',
+        period: 'weekly',
+        aiInstruction: 'Increment by 1 only when fatty fish is clearly visible (e.g., salmon, mackerel, herring, sardine, trout).',
+      },
+    ],
+    nutritionFoods: [
+      {
+        key: 'fattyFish',
+        nutrientTags: ['fiber_total'],
+        microbiomeSupport: ['Akkermansia', 'Roseburia'],
+        sourceRefs: ['USDA FoodData Central'],
+        defaultConfidence: 'high',
+      },
+      {
+        key: 'leanFish',
+        nutrientTags: ['fiber_total'],
+        microbiomeSupport: ['Faecalibacterium'],
+        sourceRefs: ['USDA FoodData Central'],
+        defaultConfidence: 'medium',
+      },
+    ],
+    bodyParts: ['cardiovascularSystem', 'brain'],
+    microbiomeIds: ['Akkermansia', 'Roseburia', 'Faecalibacterium'],
   },
   {
     id: 'polyphenol_microbiome',

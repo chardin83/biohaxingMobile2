@@ -1,7 +1,7 @@
 import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { t as i18nT } from 'i18next';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
@@ -36,6 +36,9 @@ type MicrobiomeSupportEntry = {
   likelyFoods: string[];
   rationale?: string;
 };
+
+type WeeklyTrackingSignalValue = string[] | number;
+type WeeklyTrackingSignals = Record<string, WeeklyTrackingSignalValue>;
 
 const parseStringArray = (value: unknown): string[] => {
   if (Array.isArray(value)) {
@@ -436,7 +439,10 @@ const sumMicrobiomeSupport = (meals: Array<any>): MicrobiomeSupportEntry[] => {
   return mergeMicrobiomeSupportLists(allEntries as MicrobiomeSupportEntry[]);
 };
 
-const formatTargetValue = (value: number, unit: 'g' | 'mg') => {
+const formatTargetValue = (value: number, unit: 'g' | 'mg' | 'plants' | 'items' | 'count') => {
+  if (unit === 'plants' || unit === 'items' || unit === 'count') {
+    return `${Math.round(value)} ${unit}`;
+  }
   const decimals = unit === 'g' ? 1 : 0;
   return `${value.toFixed(decimals)} ${unit}`;
 };
@@ -449,6 +455,60 @@ const toDateKeyLocal = (date: Date): string => {
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+};
+
+const parseDateKeyLocal = (dateKey: string): Date => {
+  const [yearRaw, monthRaw, dayRaw] = dateKey.split('-');
+  const year = Number(yearRaw);
+  const month = Number(monthRaw);
+  const day = Number(dayRaw);
+  return new Date(year, month - 1, day);
+};
+
+const getStartOfWeekMonday = (date: Date): Date => {
+  const result = new Date(date);
+  const dayOfWeek = result.getDay(); // 0=Sun, 1=Mon, ...
+  const diffToMonday = (dayOfWeek + 6) % 7;
+  result.setDate(result.getDate() - diffToMonday);
+  result.setHours(0, 0, 0, 0);
+  return result;
+};
+
+const getWeekBoundsFromDateKey = (dateKey: string): { weekStartISO: string; weekEndISO: string } => {
+  const date = parseDateKeyLocal(dateKey);
+  const weekStartDate = getStartOfWeekMonday(date);
+  const weekEndDate = new Date(weekStartDate);
+  weekEndDate.setDate(weekStartDate.getDate() + 6);
+
+  return {
+    weekStartISO: toDateKeyLocal(weekStartDate),
+    weekEndISO: toDateKeyLocal(weekEndDate),
+  };
+};
+
+const buildWeekTrackingFromSummaries = (
+  summaries: Record<string, any>,
+  weekStartISO: string,
+  weekEndISO: string,
+  allowedKeys: Set<string>
+): Record<string, string[] | number> => {
+  const aggregated: WeeklyTrackingSignals = {};
+
+  Object.entries(summaries)
+    .filter(([dateKey]) => dateKey >= weekStartISO && dateKey <= weekEndISO)
+    .forEach(([, daySummary]) => {
+      const meals = Array.isArray(daySummary?.meals) ? daySummary.meals : [];
+      meals.forEach((meal: any) => {
+        const mealSignals = extractWeeklyTrackingSignals(meal, undefined);
+        Object.entries(mealSignals)
+          .filter(([key]) => allowedKeys.has(key))
+          .forEach(([key, value]) => {
+            mergeWeeklyTrackingSignal(aggregated, key, value);
+          });
+      });
+    });
+
+  return aggregated;
 };
 
 const pruneFutureNutritionSummaries = (
@@ -606,13 +666,85 @@ const extractStructuredAnalysis = (data: any, parsedContent: any): ParsedMacroAn
   return null;
 };
 
+const mergeWeeklyTrackingSignal = (
+  target: WeeklyTrackingSignals,
+  key: string,
+  value: unknown
+) => {
+  if (!key || typeof key !== 'string') return;
+
+  if (Array.isArray(value)) {
+    const nextItems = value
+      .filter((item): item is string => typeof item === 'string')
+      .map(item => item.trim())
+      .filter(item => item.length > 0);
+    if (!nextItems.length) return;
+
+    const existing = target[key];
+    const existingItems = Array.isArray(existing) ? existing : [];
+    target[key] = Array.from(new Set([...existingItems, ...nextItems]));
+    return;
+  }
+
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    const existing = target[key];
+    const existingNumber = typeof existing === 'number' ? existing : 0;
+    target[key] = existingNumber + value;
+  }
+};
+
+const extractWeeklyTrackingSignals = (data: any, parsedContent: any): WeeklyTrackingSignals => {
+  const collected: WeeklyTrackingSignals = {};
+  const candidates = [
+    data,
+    data?.nutrition,
+    data?.raw,
+    data?.result,
+    data?.result?.nutrition,
+    data?.result?.raw,
+    parsedContent,
+    parsedContent?.nutrition,
+    parsedContent?.raw,
+  ];
+
+  candidates.forEach(candidate => {
+    const fromObject = candidate?.weeklyTrackingSignals;
+    if (fromObject && typeof fromObject === 'object' && !Array.isArray(fromObject)) {
+      Object.entries(fromObject).forEach(([key, value]) => mergeWeeklyTrackingSignal(collected, key, value));
+    }
+
+    const fromRows = Array.isArray(candidate?.weeklyTrackingSignals)
+      ? candidate.weeklyTrackingSignals
+      : Array.isArray(candidate?.nutritionDetails?.weeklyTrackingSignals)
+        ? candidate.nutritionDetails.weeklyTrackingSignals
+        : [];
+
+    fromRows.forEach((row: any) => {
+      const key = String(row?.key ?? row?.trackingKey ?? '').trim();
+      if (!key) return;
+
+      if (Array.isArray(row?.items)) {
+        mergeWeeklyTrackingSignal(collected, key, row.items);
+      }
+
+      const increment = parseNumberValue(row?.countIncrement ?? row?.increment ?? row?.count);
+      if (increment !== null) {
+        mergeWeeklyTrackingSignal(collected, key, increment);
+      }
+    });
+  });
+
+  return collected;
+};
+
+
 const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
   const router = useRouter();
   
     
-  const { dailyNutritionSummaries, setDailyNutritionSummaries, plans } = useStorage();
+  const { dailyNutritionSummaries, setDailyNutritionSummaries, plans, weeklyTracking, setWeeklyTracking, addToWeeklyTracking } = useStorage();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [analysisEvidence, setAnalysisEvidence] = useState<string | null>(null);
@@ -621,6 +753,57 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
   const [isEditMealModalVisible, setIsEditMealModalVisible] = useState(false);
   const [editingMealId, setEditingMealId] = useState<string | null>(null);
   const [editingMealName, setEditingMealName] = useState('');
+
+  const activeWeeklyTrackingTargetsForAI = useMemo(() => {
+    const byKey = new Map<string, { key: string; unit: 'items' | 'count'; amount?: number; aiInstruction?: string }>();
+
+    (plans?.nutrition ?? []).forEach(planTip => {
+      const tip = tips.find(candidate => candidate.id === planTip.tipId);
+      (tip?.weeklyTrackingTargets ?? []).forEach(target => {
+        const key = target.trackingKey?.trim();
+        if (!key) return;
+
+        if (!byKey.has(key)) {
+          byKey.set(key, {
+            key,
+            unit: target.unit,
+            amount: target.amount,
+            aiInstruction: target.aiInstruction,
+          });
+        }
+      });
+    });
+
+    return Array.from(byKey.values());
+  }, [plans]);
+
+  const activeWeeklyTrackingKeys = useMemo(() => {
+    const keys = new Set<string>();
+
+    (plans?.nutrition ?? []).forEach(planTip => {
+      const tip = tips.find(candidate => candidate.id === planTip.tipId);
+      (tip?.weeklyTrackingTargets ?? []).forEach(target => {
+        if (typeof target.trackingKey === 'string' && target.trackingKey.trim().length > 0) {
+          keys.add(target.trackingKey.trim());
+        }
+      });
+    });
+
+    return keys;
+  }, [plans]);
+
+  const trackingPromptForAI = useMemo(() => {
+    if (!activeWeeklyTrackingTargetsForAI.length) return 'nutrition_analysis';
+
+    const targetsJson = JSON.stringify(activeWeeklyTrackingTargetsForAI);
+    return [
+      'nutrition_analysis',
+      'weekly_tracking_targets_for_this_user:',
+      targetsJson,
+      'Only return weeklyTrackingSignals keys that exist in weekly_tracking_targets_for_this_user.',
+      'For unit=items return items[]. For unit=count return countIncrement.',
+    ].join('\n');
+  }, [activeWeeklyTrackingTargetsForAI]);
 
   useEffect(() => {
     setLastLoggedMeal(null);
@@ -678,6 +861,8 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
       setLastLoggedMeal(null);
     }
 
+    const { weekStartISO, weekEndISO } = getWeekBoundsFromDateKey(selectedDate);
+
     setDailyNutritionSummaries(prev => {
       const existingSummary = prev[selectedDate];
       if (!existingSummary) return prev;
@@ -687,10 +872,34 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
 
       if (!updatedMeals.length) {
         delete next[selectedDate];
+
+        const recalculatedWeekTracking = buildWeekTrackingFromSummaries(next, weekStartISO, weekEndISO, activeWeeklyTrackingKeys);
+        setWeeklyTracking(previousWeeklyTracking => {
+          const updatedWeeklyTracking = { ...previousWeeklyTracking };
+          if (Object.keys(recalculatedWeekTracking).length > 0) {
+            updatedWeeklyTracking[weekStartISO] = recalculatedWeekTracking;
+          } else {
+            delete updatedWeeklyTracking[weekStartISO];
+          }
+          return updatedWeeklyTracking;
+        });
+
         return next;
       }
 
       next[selectedDate] = buildDailySummary(updatedMeals);
+
+      const recalculatedWeekTracking = buildWeekTrackingFromSummaries(next, weekStartISO, weekEndISO, activeWeeklyTrackingKeys);
+      setWeeklyTracking(previousWeeklyTracking => {
+        const updatedWeeklyTracking = { ...previousWeeklyTracking };
+        if (Object.keys(recalculatedWeekTracking).length > 0) {
+          updatedWeeklyTracking[weekStartISO] = recalculatedWeekTracking;
+        } else {
+          delete updatedWeeklyTracking[weekStartISO];
+        }
+        return updatedWeeklyTracking;
+      });
+
       return next;
     });
   };
@@ -777,7 +986,8 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
         name: file.name,
         type: file.type,
         locale,
-        prompt: 'nutrition_analysis', // valfri prompt, kan anpassas
+        prompt: trackingPromptForAI,
+        weeklyTrackingTargets: activeWeeklyTrackingTargetsForAI,
       });
 
       console.log('NutritionAnalyze payload:', data);
@@ -820,6 +1030,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
       analysis = extractStructuredAnalysis(data, parsedContent);
       const typedTotals = extractTypedTotals(data, parsedContent);
       const microbiomeSupport = extractMicrobiomeSupport(data, parsedContent);
+      const aiWeeklyTrackingSignals = extractWeeklyTrackingSignals(data, parsedContent);
 
       const evidence = extractEvidence(data, parsedContent);
       setAnalysisEvidence(buildEvidenceMessage(evidence));
@@ -865,11 +1076,44 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
           ...analysis,
         };
         setSelectedLoggedMealId(newMeal.id);
-        const updatedMeals = [...existing, newMeal];
+
+        // Dynamic weekly tracking from AI backend signals only.
+        const mealDateLocal = parseDateKeyLocal(selectedDate);
+        const weekStartDate = getStartOfWeekMonday(mealDateLocal);
+        const weekStartISO = toDateKeyLocal(weekStartDate);
+        const mergedSignals: WeeklyTrackingSignals = {};
+        Object.entries(aiWeeklyTrackingSignals).forEach(([key, value]) => {
+          mergeWeeklyTrackingSignal(mergedSignals, key, value);
+        });
+
+        const signalsToApply = Object.entries(mergedSignals).filter(([key]) => activeWeeklyTrackingKeys.has(key));
+
+        const mealWeeklyTrackingSignals = signalsToApply.reduce((acc, [key, value]) => {
+          acc[key] = value;
+          return acc;
+        }, {} as WeeklyTrackingSignals);
+
+        const newMealWithTracking = {
+          ...newMeal,
+          weeklyTrackingSignals: mealWeeklyTrackingSignals,
+        };
+
+        const updatedMealsWithTracking = [...existing, newMealWithTracking];
+
+        signalsToApply.forEach(([key, value]) => {
+          if (Array.isArray(value)) {
+            value.forEach(item => addToWeeklyTracking(weekStartISO, key, item));
+            return;
+          }
+
+          const existingCount = weeklyTracking[weekStartISO]?.[key];
+          const nextCount = (typeof existingCount === 'number' ? existingCount : 0) + value;
+          addToWeeklyTracking(weekStartISO, key, nextCount);
+        });
 
         return {
           ...prev,
-          [selectedDate]: buildDailySummary(updatedMeals),
+          [selectedDate]: buildDailySummary(updatedMealsWithTracking),
         };
       });
 
@@ -895,7 +1139,38 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
   const dailyPolyphenolByType = summary ? sumTypedTotals(summary.meals, 'polyphenolByType') : {};
   const dailyMicrobiomeSupport = summary ? sumMicrobiomeSupport(summary.meals) : [];
 
-  const getDailyTargetValue = (tag: string, unit: 'g' | 'mg'): number => {
+  const selectedDateLocal = parseDateKeyLocal(selectedDate);
+  const weekStartDate = getStartOfWeekMonday(selectedDateLocal);
+  const weekEndDate = new Date(weekStartDate);
+  weekEndDate.setDate(weekStartDate.getDate() + 6);
+
+  const weekStartKey = toDateKeyLocal(weekStartDate);
+  const weekEndKey = toDateKeyLocal(weekEndDate);
+
+  const weeklySummaries = Object.entries(dailyNutritionSummaries)
+    .filter(([dateKey]) => dateKey >= weekStartKey && dateKey <= weekEndKey)
+    .map(([, daySummary]) => daySummary);
+
+  const weeklyMeals = weeklySummaries.flatMap(daySummary =>
+    Array.isArray(daySummary?.meals) ? daySummary.meals : []
+  );
+
+  const weeklyFiberByType = sumTypedTotals(weeklyMeals, 'fiberByType');
+  const weeklyPolyphenolByType = sumTypedTotals(weeklyMeals, 'polyphenolByType');
+  const weeklyFiberTotal = weeklySummaries.reduce((sum, daySummary) => {
+    const dayFiber = parseNumberValue(daySummary?.totals?.fiber) ?? 0;
+    return sum + dayFiber;
+  }, 0);
+
+  const getDailyTargetValue = (tag: string, unit: 'g' | 'mg' | 'plants' | 'items' | 'count'): number => {
+    if (unit === 'plants') {
+      // Daily plant diversity not currently tracked, only weekly
+      return 0;
+    }
+    if (unit === 'items' || unit === 'count') {
+      // Weekly tracking metrics are only evaluated on weekly targets.
+      return 0;
+    }
     if (unit === 'g') {
       if (tag === 'fiber_total') return summary?.totals.fiber ?? 0;
       return dailyFiberByType[tag] ?? 0;
@@ -903,37 +1178,74 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
     return dailyPolyphenolByType[tag] ?? 0;
   };
 
-  const nutritionPlanTipProgress = (plans.nutrition ?? []).flatMap(planTip => {
-    const tip = tips.find(tipItem => tipItem.id === planTip.tipId);
+  const getWeeklyTargetValue = (tag: string, unit: 'g' | 'mg' | 'plants' | 'items' | 'count'): number => {
+    if (unit === 'plants' || unit === 'items' || unit === 'count') {
+      const value = weeklyTracking[weekStartKey]?.[tag];
+      if (typeof value === 'number') return value;
+      if (Array.isArray(value)) return value.length;
+      return 0;
+    }
+    if (unit === 'g') {
+      if (tag === 'fiber_total') return weeklyFiberTotal;
+      return weeklyFiberByType[tag] ?? 0;
+    }
+    return weeklyPolyphenolByType[tag] ?? 0;
+  };
+
+  const nutritionPlanTipProgress = (plans?.nutrition ?? []).flatMap(planTip => {
+    const tip = tips.find(candidate => candidate.id === planTip.tipId);
     if (!tip) return [];
 
-    const fiberTargets = (tip.fiberTargets ?? []).filter(target => target.period === 'daily');
-    const polyphenolTargets = (tip.polyphenolTargets ?? []).filter(target => target.period === 'daily');
-    const allTargets = [...fiberTargets, ...polyphenolTargets];
+    const fiberTargets = tip.fiberTargets ?? [];
+    const polyphenolTargets = tip.polyphenolTargets ?? [];
+    const plantDiversityTargets = tip.plantDiversityTargets ?? [];
+    const weeklyTrackingTargets = tip.weeklyTrackingTargets ?? [];
+    const allTargets = [...fiberTargets, ...polyphenolTargets, ...plantDiversityTargets, ...weeklyTrackingTargets].filter(
+      target => target.period === 'daily' || target.period === 'weekly'
+    );
+
     if (!allTargets.length) return [];
 
     const targets = allTargets.map(target => {
-      const actual = getDailyTargetValue(target.tag, target.unit);
-      const labelGroup = target.unit === 'g' ? 'fiberLabels' : 'polyphenolLabels';
+      const trackingKey = 'trackingKey' in target ? target.trackingKey : target.tag;
+      const actual = target.period === 'weekly'
+        ? getWeeklyTargetValue(trackingKey, target.unit)
+        : getDailyTargetValue(trackingKey, target.unit);
+      const weeklyTrackingValue = target.period === 'weekly' ? weeklyTracking[weekStartKey]?.[trackingKey] : undefined;
+      const trackedItems = Array.isArray(weeklyTrackingValue)
+        ? weeklyTrackingValue
+            .map(item => item.trim())
+            .filter(item => item.length > 0)
+            .sort((a, b) => a.localeCompare(b))
+        : undefined;
+      const labelGroup = target.unit === 'plants' || target.unit === 'items' || target.unit === 'count'
+        ? 'weeklyTrackingLabels'
+        : (target.unit === 'g' ? 'fiberLabels' : 'polyphenolLabels');
+      const periodLabel = target.period === 'weekly'
+        ? t('nutritionLogger.periodWeekly')
+        : t('nutritionLogger.periodDaily');
 
       return {
-        tag: target.tag,
+        tag: trackingKey,
         unit: target.unit,
+        period: target.period,
+        periodLabel,
         amount: target.amount,
         actual,
         isMet: actual >= target.amount,
-        label: t(`nutritionLogger.${labelGroup}.${target.tag}`),
+        label: t(`nutritionLogger.${labelGroup}.${trackingKey}`),
+        trackedItems,
       };
     });
 
     const metCount = targets.reduce((count, target) => count + (target.isMet ? 1 : 0), 0);
+    const totalCount = targets.length;
 
-    const totalCount = allTargets.length;
     return [{
       planTipId: planTip.id,
       tipId: tip.id,
-      areaId: tip.areas[0]?.id ?? null,
-      title: t(`tips:${tip.title}`),
+      title: tip.title,
+      areaId: tip.areas[0]?.id,
       targets,
       metCount,
       totalCount,
@@ -948,14 +1260,13 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
         <ImagePickerButton
           onImageSelected={handleImageSelected}
           isLoading={isAnalyzing}
-          label={t('dayEdit.pickImage')}
           style={styles.imagePickerButton}
         />
         {/*{Object.keys(dailyNutritionSummaries).length > 0 && (
           <AppButton
             title={t('nutritionLogger.clearAllMeals', { defaultValue: 'Rensa alla meals' })}
             onPress={handleClearAllNutritionMeals}
-            variant="secondary"
+            label: t(`nutritionLogger.${labelGroup}.${trackingKey}`),
             style={styles.clearAllMealsButton}
           />
         )}
@@ -1219,8 +1530,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
           </Card>
         )}
 
-        {summary && (
-          <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
+        <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
             <ThemedText type="title3">{t('nutritionLogger.fulfilledTipsTitle')}</ThemedText>
             {nutritionPlanTipProgress.length > 0 ? (
               nutritionPlanTipProgress.map((tip, index) => (
@@ -1241,7 +1551,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
                 > 
                   <View style={styles.planTipProgressHeader}>
                     <IconSymbol name={tip.isFulfilled ? 'checklist' : 'clock'} size={16} color={colors.textMuted} />
-                    <ThemedText type="defaultSemiBold" style={styles.fulfilledTipTextBlock}>{tip.title}</ThemedText>
+                    <ThemedText type="defaultSemiBold" style={styles.fulfilledTipTextBlock}>{t(`tips:${tip.title}`)}</ThemedText>
                   </View>
                   <ThemedText type="caption" style={styles.planTipStatusText}>
                     {tip.isFulfilled
@@ -1250,22 +1560,48 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
                     {' • '}
                     {t('nutritionLogger.fulfilledTargetsCount', { met: tip.metCount, total: tip.totalCount })}
                   </ThemedText>
-                  {tip.targets.map(target => (
-                    <View key={`${tip.tipId}-${target.tag}-${target.unit}`} style={styles.planTipTargetRow}>
-                      <ThemedText type="caption" style={styles.planTipTargetLabel}>
-                        {target.label}
-                      </ThemedText>
-                      <ThemedText
-                        type="caption"
-                        style={[
-                          styles.planTipTargetValue,
-                          { color: target.isMet ? colors.primary : colors.textMuted },
-                        ]}
-                      >
-                        {formatTargetValue(target.actual, target.unit)} / {formatTargetValue(target.amount, target.unit)}
-                      </ThemedText>
-                    </View>
-                  ))}
+                  {tip.targets.map(target => {
+                    const targetValueText = `${formatTargetValue(target.actual, target.unit)} / ${formatTargetValue(target.amount, target.unit)}`;
+                    const hasTrackedItems = Array.isArray(target.trackedItems) && target.trackedItems.length > 0;
+                    const trackedItems = target.trackedItems ?? [];
+
+                    if (hasTrackedItems) {
+                      return (
+                        <View key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`} style={styles.planTipTargetCollapsibleRow}>
+                          <Collapsible
+                            title={`${target.label} (${target.periodLabel}) • ${targetValueText}`}
+                            titleType="caption"
+                            initialCollapsed
+                          >
+                            <View style={styles.planTipTargetItemsList}>
+                              {trackedItems.map(item => (
+                                <ThemedText key={`${target.tag}-${item}`} type="caption" style={styles.planTipTargetItem}>
+                                  • {item}
+                                </ThemedText>
+                              ))}
+                            </View>
+                          </Collapsible>
+                        </View>
+                      );
+                    }
+
+                    return (
+                      <View key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`} style={styles.planTipTargetRow}>
+                        <ThemedText type="caption" style={styles.planTipTargetLabel}>
+                          {target.label} ({target.periodLabel})
+                        </ThemedText>
+                        <ThemedText
+                          type="caption"
+                          style={[
+                            styles.planTipTargetValue,
+                            { color: target.isMet ? colors.primary : colors.textMuted },
+                          ]}
+                        >
+                          {targetValueText}
+                        </ThemedText>
+                      </View>
+                    );
+                  })}
                   <View style={[styles.progressTrack, { backgroundColor: colors.secondaryBackground }]}> 
                     <View
                       style={[
@@ -1285,7 +1621,6 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
               </ThemedText>
             )}
           </Card>
-        )}
 
         <ThemedModal
           visible={isEditMealModalVisible}
@@ -1416,11 +1751,23 @@ const styles = StyleSheet.create({
     gap: 12,
     marginBottom: 4,
   },
+  planTipTargetCollapsibleRow: {
+    marginBottom: 4,
+    width: '100%',
+  },
   planTipTargetLabel: {
     flex: 1,
   },
   planTipTargetValue: {
     textAlign: 'right',
+  },
+  planTipTargetItemsList: {
+    marginTop: 4,
+    marginLeft: 4,
+    gap: 2,
+  },
+  planTipTargetItem: {
+    opacity: 0.9,
   },
   progressTrack: {
     height: 6,

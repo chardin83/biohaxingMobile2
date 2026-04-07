@@ -768,6 +768,74 @@
       }
     }
   },
+  "plant_diversity_30_week": {
+    "title": "30 olika växter per vecka",
+    "description": "Sikta på minst 30 olika växtlivsmedel per vecka (grönsaker, bär, frukt, baljväxter, nötter, frön, kryddörter och fullkorn). Högre växtvariation är kopplad till ett mer diversifierat och robust mikrobiom. Så uppfyller du målet: räkna varje unik växt en gång per vecka och använd blandade måltider för att öka variationen snabbt.",
+    "areas": {
+      "digestiveHealth": "Ett bredare spektrum av växtfibrer och polyfenoler matar fler bakteriearter, vilket kan förbättra avföringskvalitet, tarmbarriärstöd och matsmältningsresiliens.",
+      "immuneSupport": "Högre mikrobiomdiversitet är kopplad till bättre immunbalans och lägre kronisk inflammatorisk ton.",
+      "longevity": "Veckovis växtdiversitet är kopplad till bättre metabola och inflammatoriska profiler, vilket är relevant för friskare åldrande."
+    },
+    "nutritionFoods": {
+      "title": "Så når du 30/vecka",
+      "items": {
+        "legumes": {
+          "name": "Bygg måltider kring baljväxter",
+          "details": "Använd 2-3 olika baljväxter per vecka (t.ex. linser, kikärtor, svarta bönor). Varje sort räknas som en unik växt."
+        },
+        "berries": {
+          "name": "Variera bär och frukt",
+          "details": "Rotera olika bär och frukter över veckan. Frysta blandningar är ett enkelt sätt att få in 3-5 unika växter snabbt."
+        },
+        "leafyGreens": {
+          "name": "Rotera bladgrönt",
+          "details": "Växla mellan spenat, grönkål, ruccola, romansallad och örter i stället för samma gröna varje dag."
+        },
+        "nuts": {
+          "name": "Blanda nötter och frön",
+          "details": "Använd blandade nötter/frön (t.ex. valnötter, mandlar, pumpafrön, chia) och räkna varje sort separat."
+        },
+        "freshHerbs": {
+          "name": "Räkna färska örter",
+          "details": "Persilja, dill, koriander, basilika, mynta och liknande örter räknas också mot målet 30 per vecka."
+        }
+      }
+    }
+  },
+  "fish_omega3_weekly": {
+    "title": "Fiskåtagningar för omega-3 och hjärthälsa",
+    "description": "Sikta på 3 fiskåtagningar per vecka, med minst 1 fet fisk rik på EPA och DHA omega-3-fettsyror. Omega-3-fettsyror stödjer kardiovaskulär hälsa, minskar inflammation och främjar hjärnfunktion. Fet fisk som lax, makrill och sardiner är de mest biovärfbara källorna.",
+    "areas": {
+      "cardioFitness": "Omega-3-fettsyror minskar triglycerider, stödjer ett sunt blodtryck och förbättrar endotelial funktion för kardiovaskulär motståndskraft.",
+      "brainHealth": "EPA och DHA är strukturella komponenter i hjärncellets membran och stödjer kognitiv funktion, humörreglering och neuroprotection.",
+      "inflammation": "Omega-3-fettsyror minskar aktivt systemisk inflammation genom att modulera immunsignalering och skifta inflammationsbalansen mot upplösning."
+    },
+    "nutritionFoods": {
+      "title": "Fisk för omega-3",
+      "items": {
+        "fattyFish": {
+          "name": "Fet fisk (lax, makrill, sardiner, sill, öring)",
+          "details": "100 g vild lax ger ~2 g EPA+DHA; makrill ger ~1,5 g per 100 g. Högsta biovärfbara omega-3-kilder."
+        },
+        "leanFish": {
+          "name": "Vit fisk (torsk, kolja, skrubbskädda)",
+          "details": "100 g ger ~0,2 g omega-3. Utmärkt proteinkälla och lättare att förbereda än fet fisk."
+        },
+        "canTuna": {
+          "name": "Konserverad fisk (sardiner, makrill)",
+          "details": "Bekväm alternativ med liknande omega-3-innehål som färsk fisk. Ofta konserverad i olja för extra omega-3."
+        },
+        "preparation": {
+          "name": "Bästa tillredningsmetoder",
+          "details": "Ugn, ångning eller pochering bevarar omega-3. Stekt på högt värme kan skada känsliga fettsyror; använd måttlig värme eller ät rå (sushi)."
+        },
+        "quantity": {
+          "name": "Portionrekommendation",
+          "details": "120–150 g fiskåtagning (ungefär handflatans stora filé) ger meningsfull omega-3-intag. Högre frekvens kompenserar för mindre portioner."
+        }
+      }
+    }
+  },
   "polyphenol_microbiome": {
     "title": "Polyfenoler och mikrobiomhälsa",
     "description": "Polyfenoler är växtföreningar som fungerar som prebiotika och selektivt matar nyttiga tarmbakterier. Ett högt polyfenolintag stödjer mikrobiomdiversiteten, minskar tarminflammation och skyddar mot oxidativ stress.",

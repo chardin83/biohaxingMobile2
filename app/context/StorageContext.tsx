@@ -168,6 +168,12 @@ interface StorageContextType {
   getMetricHistory: (metricId: string, planTipId?: string) => MetricEntry[];
   getMetricsForPlanTip: (planTipId: string) => MetricEntry[];
   getRelevantTipsForMetrics: (metricIds: string[]) => Array<{ tipId: string; matchCount: number; matchingMetrics: string[] }>;
+  weeklyTracking: Record<string, Record<string, string[] | number>>;
+  setWeeklyTracking: (
+    updater: Record<string, Record<string, string[] | number>> | ((prev: Record<string, Record<string, string[] | number>>) => Record<string, Record<string, string[] | number>>)
+  ) => void;
+  addToWeeklyTracking: (weekStartISO: string, key: string, value: string | number) => void;
+  getWeeklyTrackingValue: (weekStartISO: string, key: string) => string[] | number | undefined;
 }
 
 const STORAGE_KEYS = {
@@ -185,6 +191,7 @@ const STORAGE_KEYS = {
   TRAINING_PLAN_SETTINGS: 'trainingPlanSettings',
   SHOW_MUSIC: 'showMusic',
   METRIC_ENTRIES: 'metricEntries',
+  WEEKLY_TRACKING: 'weeklyTracking',
 };
 
 const StorageContext = createContext<StorageContextType | undefined>(undefined);
@@ -211,6 +218,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const [showMusicState, setShowMusicState] = useState(true);
   const [tempPlans, setTempPlans] = useState<PlansByCategory | null>(null);
   const [metricEntriesState, setMetricEntriesState] = useState<MetricEntry[]>([]);
+  const [weeklyTrackingState, setWeeklyTrackingState] = useState<Record<string, Record<string, string[] | number>>>({});
 
   const normalizeReasonSummary = (value: any): ReasonSummary => {
     if (!value) return { text: '', createdAt: '' };
@@ -239,6 +247,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
           viewedTipsRaw,
           trainingSettingsRaw,
           metricEntriesRaw,
+          weeklyTrackingRaw,
         ] = await Promise.all([
           AsyncStorage.getItem(STORAGE_KEYS.PLANS),
           AsyncStorage.getItem(STORAGE_KEYS.HAS_VISITED_CHAT),
@@ -253,6 +262,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
           AsyncStorage.getItem(STORAGE_KEYS.VIEWED_TIPS),
           AsyncStorage.getItem(STORAGE_KEYS.TRAINING_PLAN_SETTINGS),
           AsyncStorage.getItem(STORAGE_KEYS.METRIC_ENTRIES),
+          AsyncStorage.getItem(STORAGE_KEYS.WEEKLY_TRACKING),
         ]);
 
         const normalizePlans = (raw: string | null): PlansByCategory => {
@@ -295,6 +305,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
         if (viewedTipsRaw) setViewedTipsState(JSON.parse(viewedTipsRaw));
         if (trainingSettingsRaw) setTrainingPlanSettingsState(JSON.parse(trainingSettingsRaw));
         if (metricEntriesRaw) setMetricEntriesState(JSON.parse(metricEntriesRaw));
+        if (weeklyTrackingRaw) setWeeklyTrackingState(JSON.parse(weeklyTrackingRaw));
       } catch (err) {
         console.error('Kunde inte ladda från AsyncStorage:', err);
       } finally {
@@ -627,6 +638,51 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     [viewedTipsState, setViewedTips, setMyXP]
   );
 
+  const setWeeklyTracking = (
+    updater: Record<string, Record<string, string[] | number>> | ((prev: Record<string, Record<string, string[] | number>>) => Record<string, Record<string, string[] | number>>)
+  ) => {
+    setWeeklyTrackingState(prev => {
+      const updated = typeof updater === 'function' ? updater(prev) : updater;
+      AsyncStorage.setItem(STORAGE_KEYS.WEEKLY_TRACKING, JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const addToWeeklyTracking = useCallback((weekStartISO: string, key: string, value: string | number) => {
+    setWeeklyTracking(prev => {
+      const updated = { ...prev };
+      if (!updated[weekStartISO]) {
+        updated[weekStartISO] = {};
+      }
+      const weekData = updated[weekStartISO];
+
+      // If value is a string, treat as array (for collecting items like plants, colors)
+      if (typeof value === 'string') {
+        const existing = weekData[key];
+        if (Array.isArray(existing)) {
+          // Only add if not already present (unique constraint)
+          if (!existing.includes(value)) {
+            weekData[key] = [...existing, value];
+          }
+        } else {
+          weekData[key] = [value];
+        }
+      } else {
+        // If value is a number, just set/overwrite (for counts)
+        weekData[key] = value;
+      }
+
+      return updated;
+    });
+  }, []);
+
+  const getWeeklyTrackingValue = useCallback(
+    (weekStartISO: string, key: string): string[] | number | undefined => {
+      return weeklyTrackingState[weekStartISO]?.[key];
+    },
+    [weeklyTrackingState]
+  );
+
   const activeGoals = useMemo(
     () => [...plansState.training, ...plansState.nutrition, ...plansState.other],
     [plansState.nutrition, plansState.other, plansState.training]
@@ -681,8 +737,12 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       getMetricHistory,
       getMetricsForPlanTip,
       getRelevantTipsForMetrics,
+      weeklyTracking: weeklyTrackingState,
+      setWeeklyTracking,
+      addToWeeklyTracking,
+      getWeeklyTrackingValue,
     }),
-    [plansState, setPlans, activeGoals, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, trainingPlanSettingsState, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, getMetricsForPlanTip, getRelevantTipsForMetrics]
+    [plansState, setPlans, activeGoals, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, trainingPlanSettingsState, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, getMetricsForPlanTip, getRelevantTipsForMetrics, weeklyTrackingState, addToWeeklyTracking, getWeeklyTrackingValue]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

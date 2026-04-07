@@ -882,10 +882,12 @@
     "fiber": "Fibrer: {{value}} g",
     "polyphenols": "Polyfenoler: {{value}} mg",
     "microbiomeYes": "Mikrobiom-support: Ja ({{count}})",
-    "fulfilledTipsTitle": "Uppfyllda plantips idag",
+    "fulfilledTipsTitle": "Nutritionstips att uppfylla",
     "fulfilledTargetsCount": "Mål uppfyllda: {{met}}/{{total}}",
     "tipStatusFulfilled": "Uppfyllt",
     "tipStatusNotFulfilled": "Ej uppfyllt",
+    "periodDaily": "dag",
+    "periodWeekly": "vecka",
     "noPlanTipsWithTargets": "Du har inga plantips med fiber/polyfenol-mål.",
     "noFulfilledTipsToday": "Inga plantips med fiber/polyfenol-mål är uppfyllda idag.",
     "linkedNutrients": "Nutrienter",
@@ -906,6 +908,15 @@
       "flavonols": "Flavonoler",
       "quercetin": "Quercetin",
       "ellagitannins": "Ellagitanniner"
+    },
+    "plantDiversityLabels": {
+      "plant_diversity": "Växtdiversitet"
+    },
+    "weeklyTrackingLabels": {
+      "unique_plants": "Unika växter",
+      "vegetable_colors": "Grönsaksfarger",
+      "fish_meals": "Fiskåtagningar",
+      "fatty_fish_meals": "Fet fiskåtagningar"
     },
     "fiberSubtypeLabels": {
       "beta_glucans": "Beta-glukaner",
