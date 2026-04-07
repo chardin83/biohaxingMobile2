@@ -7,6 +7,7 @@ import { useStorage } from '@/app/context/StorageContext';
 import { Colors } from '@/app/theme/Colors';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { Card } from '@/components/ui/Card';
+import { XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW } from '@/constants/XP';
 import { tips } from '@/locales/tips';
 import { NEGATIVE_VERDICTS, POSITIVE_VERDICTS, VerdictValue } from '@/types/verdict';
 
@@ -19,7 +20,7 @@ interface TipsListProps {
 export default function TipsList({ areaId }: Readonly<TipsListProps>) {
   const { t } = useTranslation();
   const router = useRouter();
-  const { viewedTips, myLevel } = useStorage();
+  const { viewedTips, myLevel, nutritionXpClaims } = useStorage();
   const [showAllTips, setShowAllTips] = React.useState(false);
 
   const tipsRaw = tips.filter(tip => tip.areas.some(area => area.id === areaId));
@@ -46,8 +47,8 @@ export default function TipsList({ areaId }: Readonly<TipsListProps>) {
   // Sortera tips: positiva → neutrala → negativa
   const sortedTips = React.useMemo(() => {
     return [...tipsRaw].sort((a, b) => {
-      const aViewed = viewedTips?.find(v => v.mainGoalId === areaId && v.tipId === a.id);
-      const bViewed = viewedTips?.find(v => v.mainGoalId === areaId && v.tipId === b.id);
+      const aViewed = viewedTips?.find(v => v.tipId === a.id);
+      const bViewed = viewedTips?.find(v => v.tipId === b.id);
 
       const aVerdict = aViewed?.verdict;
       const bVerdict = bViewed?.verdict;
@@ -65,7 +66,7 @@ export default function TipsList({ areaId }: Readonly<TipsListProps>) {
       return sortedTips;
     }
     return sortedTips.filter(tip => {
-      const viewedTip = viewedTips?.find(v => v.mainGoalId === areaId && v.tipId === tip.id);
+      const viewedTip = viewedTips?.find(v => v.tipId === tip.id);
       return viewedTip?.verdict ? !negativeVerdicts.has(viewedTip.verdict) : true;
     });
   }, [showAllTips, sortedTips, viewedTips, negativeVerdicts, areaId]);
@@ -73,17 +74,38 @@ export default function TipsList({ areaId }: Readonly<TipsListProps>) {
   const hiddenTipsCount = sortedTips.length - visibleTips.length;
 
   const getTipProgress = (tipId: string) => {
-    const viewedTip = viewedTips?.find(v => v.mainGoalId === areaId && v.tipId === tipId);
+    const viewedTip = viewedTips?.find(v => v.tipId === tipId);
+
+    const nutritionXpRaw = Object.values(nutritionXpClaims ?? {}).reduce((sum, claim) => {
+      if (claim.tipId !== tipId) {
+        return sum;
+      }
+      const xp = Number.isFinite(claim.xp) ? claim.xp : 0;
+      return sum + xp;
+    }, 0);
+
+    const nutritionXp = nutritionXpRaw;
+    const educationXp = viewedTip?.xpEarned ?? 0;
+    const totalXp = educationXp + nutritionXp;
 
     if (!viewedTip) {
-      return { xp: 0, progress: 0, askedQuestions: 0, verdict: undefined };
+      return {
+        xp: totalXp,
+        educationXp,
+        nutritionXp,
+        progress: 0,
+        askedQuestions: 0,
+        verdict: undefined,
+      };
     }
 
-    const maxQuestions = 3;
-    const progress = Math.min(viewedTip.askedQuestions.length / maxQuestions, 1);
+    const maxEducationXp = XP_FOR_VIEW + XP_FOR_CHAT_QUESTION * 3 + XP_FOR_VERDICT;
+    const progress = Math.min(educationXp / maxEducationXp, 1);
 
     return {
-      xp: viewedTip.xpEarned,
+      xp: totalXp,
+      educationXp,
+      nutritionXp,
       progress,
       askedQuestions: viewedTip.askedQuestions.length,
       verdict: viewedTip.verdict,
@@ -124,7 +146,7 @@ export default function TipsList({ areaId }: Readonly<TipsListProps>) {
       })}
 
       {sortedTips.some(tip => {
-        const viewedTip = viewedTips?.find(v => v.mainGoalId === areaId && v.tipId === tip.id);
+        const viewedTip = viewedTips?.find(v => v.tipId === tip.id);
         return viewedTip?.verdict && negativeVerdicts.has(viewedTip.verdict);
       }) && (
           <Pressable style={styles.showAllButton} onPress={() => setShowAllTips(!showAllTips)}>

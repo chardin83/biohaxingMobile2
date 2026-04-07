@@ -12,6 +12,7 @@ import { ThemedText } from '@/components/ThemedText';
 import Badge from '@/components/ui/Badge';
 import { PressableCard } from '@/components/ui/PressableCard';
 import ProgressBarWithLabel from '@/components/ui/ProgressbarWithLabel';
+import { XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW } from '@/constants/XP';
 import { Tip } from '@/locales/tips';
 import { isNegativeVerdict, isPositiveVerdict, VerdictValue } from '@/types/verdict';
 
@@ -21,6 +22,8 @@ const ICON_SIZE = 22;
 
 interface TipProgress {
   xp: number;
+  educationXp: number;
+  nutritionXp: number;
   progress: number;
   askedQuestions: number;
   verdict?: TipVerdict;
@@ -38,6 +41,7 @@ export default function TipCard({ tip, tipProgress, onPress, areaId, locked=fals
   const { t } = useTranslation();
   const { colors } = useTheme();
   const area = tip.areas.find(a => a.id === areaId) ?? tip.areas[0];
+  const maxEducationXp = XP_FOR_VIEW + XP_FOR_CHAT_QUESTION * 3 + XP_FOR_VERDICT;
 
   const isStarted = tipProgress.xp > 0;
   const isCompleted = tipProgress.progress >= 1;
@@ -125,12 +129,21 @@ export default function TipCard({ tip, tipProgress, onPress, areaId, locked=fals
       {isStarted && (
         <ProgressBarWithLabel
           progress={tipProgress.progress}
-          label={`${tipProgress.askedQuestions}/3 ${t('common:goalDetails.questionsExplored')}`}
+          label={`${tipProgress.educationXp}/${maxEducationXp} XP`}
           height={6}
           style={styles.progressContainer}
           color={colors.accentDefault}
           unfilledColor={colors.textWeak}
         />
+      )}
+
+      {isStarted && (
+        <ThemedText type="explainer" style={[styles.xpBreakdownText, { color: colors.textMuted }]}> 
+          {t('common:dashboard.xpBreakdown', {
+            education: tipProgress.educationXp,
+            nutrition: tipProgress.nutritionXp,
+          })}
+        </ThemedText>
       )}
 
       <ThemedText type="caption" style={[styles.tapHint, { color: colors.accentStrong }]}>
@@ -171,6 +184,9 @@ const styles = StyleSheet.create({
   },
   progressContainer: {
     marginTop: 8,
+    marginBottom: 4,
+  },
+  xpBreakdownText: {
     marginBottom: 4,
   },
   tapHint: {

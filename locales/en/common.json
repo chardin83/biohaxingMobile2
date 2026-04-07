@@ -184,7 +184,6 @@
     "taskInfo": "Task",
     "information": "Information",
     "aiInsights": "AI Insights",
-    "questionsExplored": "questions explored",
     "startExploring": "Start exploring",
     "continueExploring": "Continue exploring",
     "skip": "Skip",
@@ -708,7 +707,8 @@
     "editAreas": "Edit Areas",
     "checkCoverage": "Plan coverage",
     "myProgress": "My education level",
-    "xpInfo": "XP measures your knowledge level in different health categories. By exploring tips, you increase your XP and unlock more advanced recommendations."
+    "xpBreakdown": "Education XP: {{education}} • Nutrition XP: {{nutrition}}",
+    "xpInfo": "XP tracks your progress in the app. Education XP comes from exploring tips and questions. Nutrition XP comes from completing nutrition tips (daily/weekly targets).\n\nCurrent breakdown: \n Education XP: {{education}} • Nutrition XP: {{nutrition}}."
   },
   "search": {
     "label": "Search tips"

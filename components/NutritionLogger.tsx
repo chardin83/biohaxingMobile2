@@ -7,6 +7,10 @@ import { KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, View } fr
 
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
+import {
+  XP_FOR_NUTRITION_TIP_DAILY_COMPLETION,
+  XP_FOR_NUTRITION_TIP_WEEKLY_COMPLETION,
+} from '@/constants/XP';
 import { FIBER_CATEGORY_SUBTYPES, type FiberSubtype,tips } from '@/locales/tips';
 import { NutritionAnalyze } from '@/services/gptServices';
 
@@ -513,13 +517,16 @@ const buildWeekTrackingFromSummaries = (
 
 const pruneFutureNutritionSummaries = (
   summaries: Record<string, any>,
-  todayKey: string
+  todayKey: string,
+  protectedDateKey?: string
 ): { changed: boolean; next: Record<string, any> } => {
   let changed = false;
   const next: Record<string, any> = {};
 
   Object.entries(summaries).forEach(([dateKey, daySummary]) => {
-    if (dateKey > todayKey) {
+    const keepDate = protectedDateKey && dateKey === protectedDateKey;
+
+    if (dateKey > todayKey && !keepDate) {
       changed = true;
       return;
     }
@@ -529,7 +536,8 @@ const pruneFutureNutritionSummaries = (
 
     meals.forEach((meal: any) => {
       const mealDate = typeof meal?.date === 'string' ? meal.date : dateKey;
-      if (mealDate > todayKey) {
+      const keepMeal = protectedDateKey && mealDate === protectedDateKey;
+      if (mealDate > todayKey && !keepMeal) {
         changed = true;
         return;
       }
@@ -744,7 +752,15 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
   const router = useRouter();
   
     
-  const { dailyNutritionSummaries, setDailyNutritionSummaries, plans, weeklyTracking, setWeeklyTracking, addToWeeklyTracking } = useStorage();
+  const {
+    dailyNutritionSummaries,
+    setDailyNutritionSummaries,
+    plans,
+    weeklyTracking,
+    setWeeklyTracking,
+    addToWeeklyTracking,
+    claimNutritionTipCompletionXP,
+  } = useStorage();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [analysisEvidence, setAnalysisEvidence] = useState<string | null>(null);
@@ -816,10 +832,10 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
   useEffect(() => {
     const todayKey = toDateKeyLocal(new Date());
     setDailyNutritionSummaries(prev => {
-      const { changed, next } = pruneFutureNutritionSummaries(prev, todayKey);
+      const { changed, next } = pruneFutureNutritionSummaries(prev, todayKey, selectedDate);
       return changed ? next : prev;
     });
-  }, [setDailyNutritionSummaries]);
+  }, [selectedDate, setDailyNutritionSummaries]);
 
   const buildDailySummary = (meals: Array<any>) => {
     const rawTotals = meals.reduce(
@@ -1051,19 +1067,27 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
         polyphenolByType: typedTotals.polyphenolByType,
         microbiomeSupport,
       };
-      setLastLoggedMeal(analysis);
 
-      if (
+      const hasMacroData = !(
         analysis.protein === 0
         && analysis.calories === 0
         && analysis.carbohydrates === 0
         && analysis.fat === 0
         && analysis.fiber === 0
-      ) {
+      );
+      const hasTypedNutritionData =
+        hasAnyTypedTotals(typedTotals.fiberByType)
+        || hasAnyTypedTotals(typedTotals.fiberSubtypeTotals)
+        || hasAnyTypedTotals(typedTotals.polyphenolByType);
+      const hasMicrobiomeData = microbiomeSupport.length > 0;
+      const hasTrackingSignals = Object.keys(aiWeeklyTrackingSignals).length > 0;
+
+      if (!hasMacroData && !hasTypedNutritionData && !hasMicrobiomeData && !hasTrackingSignals) {
         const text =
           data?.content
           ?? 'AI hittade ingen tillforlitlig macro-data i svaret. Prova en tydligare bild eller en narbild pa tallriken.';
         setAnalysisResult(typeof text === 'string' ? text : JSON.stringify(text));
+        setLastLoggedMeal(null);
         return;
       }
 
@@ -1117,6 +1141,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
         };
       });
 
+      setLastLoggedMeal(analysis);
       setAnalysisResult('✅ Måltid loggad och analyserad!');
     } catch (err) {
       console.error('Error analyzing image:', err);
@@ -1253,6 +1278,40 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
       progress: totalCount > 0 ? metCount / totalCount : 0,
     }];
   });
+
+  useEffect(() => {
+    nutritionPlanTipProgress.forEach(tipProgress => {
+      const planTipId = tipProgress.planTipId ?? 'no-plan-tip-id';
+
+      const dailyTargets = tipProgress.targets.filter(target => target.period === 'daily');
+      const weeklyTargets = tipProgress.targets.filter(target => target.period === 'weekly');
+
+      const isDailyComplete = dailyTargets.length > 0 && dailyTargets.every(target => target.isMet);
+      const isWeeklyComplete = weeklyTargets.length > 0 && weeklyTargets.every(target => target.isMet);
+
+      if (isDailyComplete) {
+        claimNutritionTipCompletionXP?.({
+          claimKey: `${planTipId}|${tipProgress.tipId}|daily|${selectedDate}`,
+          tipId: tipProgress.tipId,
+          planTipId,
+          period: 'daily',
+          periodKey: selectedDate,
+          amount: XP_FOR_NUTRITION_TIP_DAILY_COMPLETION,
+        });
+      }
+
+      if (isWeeklyComplete) {
+        claimNutritionTipCompletionXP?.({
+          claimKey: `${planTipId}|${tipProgress.tipId}|weekly|${weekStartKey}`,
+          tipId: tipProgress.tipId,
+          planTipId,
+          period: 'weekly',
+          periodKey: weekStartKey,
+          amount: XP_FOR_NUTRITION_TIP_WEEKLY_COMPLETION,
+        });
+      }
+    });
+  }, [claimNutritionTipCompletionXP, nutritionPlanTipProgress, selectedDate, weekStartKey]);
 
   return (
     <KeyboardAvoidingView style={globalStyles.flex1} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>

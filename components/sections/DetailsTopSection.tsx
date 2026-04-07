@@ -51,6 +51,8 @@ type DetailsTopSectionProps = {
   titleKey: string | undefined;
   isFavorite: boolean;
   totalXpEarned: number;
+  educationXpEarned: number;
+  nutritionXpEarned: number;
   infoText: string;
   progress: number;
   progressLabel: string;
@@ -70,6 +72,8 @@ const DetailsTopSection: React.FC<DetailsTopSectionProps> = ({
   titleKey,
   isFavorite,
   totalXpEarned,
+  educationXpEarned,
+  nutritionXpEarned,
   infoText,
   progress,
   progressLabel,
@@ -184,6 +188,12 @@ const DetailsTopSection: React.FC<DetailsTopSectionProps> = ({
       <ThemedText type="caption">
         {totalXpEarned} XP earned
       </ThemedText>
+      <ThemedText type="explainer" style={[styles.xpSplitText, { color: colors.textMuted }]}> 
+        {t('common:dashboard.xpBreakdown', {
+          education: educationXpEarned,
+          nutrition: nutritionXpEarned,
+        })}
+      </ThemedText>
       <View style={styles.progressRow}>
         <View style={styles.progressBarWrap}>
           <InfoButtonWithText infoTextKey={infoText}>
@@ -278,6 +288,10 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 12,
     marginTop: 6,
+  },
+  xpSplitText: {
+    marginTop: 2,
+    marginBottom: 6,
   },
   favoriteText: {
     fontWeight: '700',

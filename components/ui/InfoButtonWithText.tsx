@@ -7,12 +7,14 @@ import { ThemedText } from '@/components/ThemedText';
 
 interface InfoButtonWithTextProps {
   infoTextKey: string;
+  infoTextValues?: Record<string, string | number>;
   children?: React.ReactNode; // t.ex. progressbar
   style?: object;
 }
 
 export const InfoButtonWithText: React.FC<InfoButtonWithTextProps> = ({
   infoTextKey,
+  infoTextValues,
   children,
   style,
 }) => {
@@ -38,7 +40,7 @@ export const InfoButtonWithText: React.FC<InfoButtonWithTextProps> = ({
       {show && (
         <View style={styles.infoTextWrap}>
           <ThemedText type="explainer" style={styles.infoText}>
-            {t(infoTextKey)}
+            {t(infoTextKey, infoTextValues)}
           </ThemedText>
         </View>
       )}

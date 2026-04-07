@@ -478,7 +478,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                         ]
                       }
                     >
-                      0/3 common:goalDetails.questionsExplored
+                      0/30 XP
                     </Text>
                   </View>
                 </View>

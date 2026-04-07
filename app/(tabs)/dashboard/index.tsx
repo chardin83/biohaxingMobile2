@@ -11,7 +11,7 @@ import AppCard from '@/components/ui/AppCard';
 import Container from '@/components/ui/Container';
 import { InfoButtonWithText } from '@/components/ui/InfoButtonWithText';
 import ProgressBarWithLabel from '@/components/ui/ProgressbarWithLabel';
-import { levels } from '@/constants/XP';
+import { levels, XP_FOR_VIEW } from '@/constants/XP';
 import { areas } from '@/locales/areas';
 import { tips } from '@/locales/tips';
 import { POSITIVE_VERDICTS, VerdictValue } from '@/types/verdict';
@@ -31,7 +31,8 @@ function addAreaIdsToSupplementMap(
 
 export default function DashboardScreen() {
   const { t } = useTranslation(['common', 'areas', 'levels']);
-  const { myGoals, myXP, myLevel, viewedTips, plans } = useStorage();
+  const { myGoals, myXP, myLevel, viewedTips, plans, xpBreakdown, nutritionXpClaims } = useStorage();
+  const safeXpBreakdown = xpBreakdown ?? { education: 0, nutrition: 0 };
   const router = useRouter();
   const { colors, dark } = useTheme();
 
@@ -43,6 +44,10 @@ export default function DashboardScreen() {
   const levelTitle = levels.find(o => o.level === myLevel)?.titleKey;
 
   const positiveVerdictsSet = React.useMemo(() => new Set(POSITIVE_VERDICTS), []);
+  const viewedTipsByTipId = React.useMemo(
+    () => Array.from(new Map((viewedTips ?? []).map(v => [v.tipId, v])).values()),
+    [viewedTips]
+  );
 
   const tipAreasMap = React.useMemo(() => {
     const map = new Map<string, Set<string>>();
@@ -56,11 +61,11 @@ export default function DashboardScreen() {
     return tips
       .filter(tip => (tip.areas || []).some(a => a.id === areaId))
       .filter(tip => {
-        const v = viewedTips?.find(vt => vt.mainGoalId === areaId && vt.tipId === tip.id);
+        const v = viewedTipsByTipId.find(vt => vt.tipId === tip.id);
         return v?.verdict && positiveVerdictsSet.has(v.verdict as VerdictValue);
       })
       .map(tip => t(`tips:${tip.id}.title`));
-  }, [t, viewedTips, positiveVerdictsSet]);
+  }, [t, viewedTipsByTipId, positiveVerdictsSet]);
 
   // Ny: karta från supplement-id till områden (härleds från tips)
     const supplementAreasMap = React.useMemo(() => {
@@ -168,7 +173,13 @@ export default function DashboardScreen() {
       <View style={styles.progressRow}>
         <View style={styles.progressBarWrap}>
           
-        <InfoButtonWithText infoTextKey="dashboard.xpInfo">
+        <InfoButtonWithText
+          infoTextKey="dashboard.xpInfo"
+          infoTextValues={{
+            education: safeXpBreakdown.education,
+            nutrition: safeXpBreakdown.nutrition,
+          }}
+        >
           <ProgressBarWithLabel progress={myXP / xpMax} label={progressText} height={12} />
         </InfoButtonWithText>
         </View>
@@ -214,9 +225,24 @@ export default function DashboardScreen() {
               ? favoriteTipsList.join('\n')
               : t('common:dashboard.noFavorites');
           }
-          const areaXP =
-            viewedTips?.filter(tip => tip.mainGoalId === areaId).reduce((sum, tip) => sum + (tip.xpEarned || 0), 0) ||
-            0;
+          const areaEducationXP = viewedTipsByTipId.reduce((sum, viewedTip) => {
+            const areaIds = tipAreasMap.get(viewedTip.tipId);
+            if (!areaIds?.has(areaId)) {
+              return sum;
+            }
+            return sum + XP_FOR_VIEW;
+          }, 0);
+
+          const areaNutritionXP = Object.values(nutritionXpClaims ?? {}).reduce((sum, claim) => {
+            const areaIds = tipAreasMap.get(claim.tipId);
+            if (!areaIds?.has(areaId)) {
+              return sum;
+            }
+            const xp = Number.isFinite(claim.xp) ? claim.xp : 0;
+            return sum + xp;
+          }, 0);
+
+          const totalXPForArea = Math.round(areaEducationXP + areaNutritionXP);
 
           const hasAnyGoalInArea = [...plans.training, ...plans.nutrition, ...plans.other].some(entry => {
             const areaIds = tipAreasMap.get(entry.tipId);
@@ -236,7 +262,7 @@ export default function DashboardScreen() {
 
           // Visa checkIcon när coverage-tabben är aktiv, annars XP
           const isActiveForCard = activeTab === 'coverage' ? hasAnyTipInArea : false;
-          const xpForCard = activeTab === 'coverage' ? undefined : areaXP;
+          const xpForCard = activeTab === 'coverage' ? undefined : totalXPForArea;
 
           return (
             <AppCard

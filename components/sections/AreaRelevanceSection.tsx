@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet,View } from 'react-native';
 import { Icon } from 'react-native-paper';
@@ -18,7 +18,6 @@ type AreaRelevanceSectionProps = {
   setShowAllAreas: React.Dispatch<React.SetStateAction<boolean>>;
   expandAreas: boolean;
   effectiveTipId: string | null;
-  addTipView: (areaId: string, tipId: string) => number;
   colors: any;
 };
 
@@ -29,29 +28,12 @@ const AreaRelevanceSection: React.FC<AreaRelevanceSectionProps> = ({
   setShowAllAreas,
   expandAreas,
   effectiveTipId,
-  addTipView,
   colors,
 }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const hiddenAreasCount = Math.max((tip?.areas?.length ?? 0) - 1, 0);
-
-  const prevShowAllRef = useRef(showAllAreas);
-
-  useEffect(() => {
-    const wasShowingAll = prevShowAllRef.current;
-    if (!wasShowingAll && showAllAreas && effectiveTipId && tip?.areas?.length) {
-      tip.areas.forEach(a => {
-        if (a.id !== areaId) {
-          const xpGained = addTipView(a.id, effectiveTipId);
-          if (xpGained > 0) {
-            console.log(`🎉 You gained ${xpGained} XP for viewing tip in area ${a.id} via Show All`);
-          }
-        }
-      });
-    }
-    prevShowAllRef.current = showAllAreas;
-  }, [showAllAreas, effectiveTipId, tip?.areas, areaId, addTipView]);
+  const showAllLabel = `${t('general.showAll')} (${hiddenAreasCount})`;
 
   if (!tip?.areas?.length) return null;
   return (
@@ -108,7 +90,7 @@ const AreaRelevanceSection: React.FC<AreaRelevanceSectionProps> = ({
           style={styles.showAllButton}
           textStyle={styles.showAllText}
           accentColor={colors.accentDefault}
-          showAllText={`${t('general.showAll')} (${hiddenAreasCount})`}
+          showAllText={showAllLabel}
         />
       )}
     </>

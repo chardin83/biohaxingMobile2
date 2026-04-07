@@ -184,7 +184,6 @@
     "taskInfo": "Uppgift",
     "information": "Information",
     "aiInsights": "AI-insikter",
-    "questionsExplored": "frågor utforskade",
     "startExploring": "Börja utforska",
     "continueExploring": "Fortsätt utforska",
     "skip": "Skippa",
@@ -717,8 +716,9 @@
     "editAreas": "Redigera Områden",
     "checkCoverage": "Min plan-täckning",
     "myProgress": "Min kunskapsnivå",
+    "xpBreakdown": "Kunskaps-XP: {{education}} • Nutrition-XP: {{nutrition}}",
     "noPlanned": "Inget planerat",
-    "xpInfo": "XP mäter din kunskapsnivå inom olika hälsokategorier. Genom att utforska tips låser du upp mer avancerade rekommendationer."
+    "xpInfo": "XP mäter din utveckling i appen. Kunskaps-XP får du när du utforskar tips och frågor. Nutrition-XP får du när du uppfyller nutritionstips (dagliga/veckovisa mål).\n\nNuvarande uppdelning:\n Kunskaps-XP: {{education}} • Nutrition-XP: {{nutrition}}."
   },
   "search": {
     "label": "Sök tips"

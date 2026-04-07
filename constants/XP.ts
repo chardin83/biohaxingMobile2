@@ -3,6 +3,10 @@ export const XP_FOR_VIEW = 10; // First time viewing a tip
 export const XP_FOR_CHAT_QUESTION = 5; // Per unique question type (studies/experts/risks)
 export const XP_PER_CHAT_MESSAGE = 2; // Per chat message
 export const XP_FOR_VERDICT = 5; // First time setting a verdict
+export const XP_FOR_NUTRITION_TIP_DAILY_COMPLETION = 10; // Per tip/day when all daily targets are met
+export const XP_FOR_NUTRITION_TIP_WEEKLY_COMPLETION = 25; // Per tip/week when all weekly targets are met
+
+export type XpSource = 'education' | 'nutrition';
 
 export type XpEventType = 'view' | 'chat-question' | 'chat-message' | 'verdict';
 

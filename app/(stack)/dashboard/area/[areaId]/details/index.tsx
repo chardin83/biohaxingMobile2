@@ -19,6 +19,7 @@ import Container from '@/components/ui/Container';
 import { NotFound } from '@/components/ui/NotFound';
 import VerdictSelector from '@/components/VerdictSelector';
 import { AIPromptKey, AIPrompts } from '@/constants/AIPrompts';
+import { XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW } from '@/constants/XP';
 import { areas } from '@/locales/areas';
 import { metrics, tipMetricLinks } from '@/locales/metrics';
 import { useSupplements } from '@/locales/supplements';
@@ -37,7 +38,7 @@ export default function AreaDetailScreen() {
   }>();
   const shouldExpandAreas = expandAreas === '1';
   const supplements = useSupplements();
-  const { addTipView, incrementTipChat, viewedTips, setTipVerdict, plans, setPlans, myLevel } = useStorage();
+  const { addTipView, incrementTipChat, viewedTips, setTipVerdict, plans, setPlans, myLevel, nutritionXpClaims } = useStorage();
 
   React.useEffect(() => {
     if (areaId && tipId) {
@@ -174,9 +175,21 @@ export default function AreaDetailScreen() {
   const isTipInNutritionPlan = React.useMemo(() => isTipInPlanCategory('nutrition'), [isTipInPlanCategory]);
   const isTipInOtherPlan = React.useMemo(() => isTipInPlanCategory('other'), [isTipInPlanCategory]);
 
-  const currentTip = viewedTips?.find(v => v.mainGoalId === areaId && v.tipId === tipId);
+  const currentTip = viewedTips?.find(v => v.tipId === tipId);
   const askedQuestions = currentTip?.askedQuestions || [];
-  const totalXpEarned = currentTip?.xpEarned || 0;
+  const educationXpEarned = currentTip?.xpEarned || 0;
+  const nutritionXpEarned = React.useMemo(() => {
+    if (!tip?.id) return 0;
+    const raw = Object.values(nutritionXpClaims ?? {}).reduce((sum, claim) => {
+      if (claim.tipId !== tip.id) {
+        return sum;
+      }
+      const xp = Number.isFinite(claim.xp) ? claim.xp : 0;
+      return sum + xp;
+    }, 0);
+    return raw;
+  }, [nutritionXpClaims, tip?.id]);
+  const totalXpEarned = educationXpEarned + nutritionXpEarned;
   const currentVerdict = currentTip?.verdict;
   const positiveVerdicts = React.useMemo(() => new Set(POSITIVE_VERDICTS), []);
   const isFavorite = React.useMemo(() => {
@@ -288,12 +301,12 @@ export default function AreaDetailScreen() {
     }
   };
 
-  const maxChats = 3;
-  const progress = Math.min(askedQuestions.length / maxChats, 1);
+  const maxEducationXp = XP_FOR_VIEW + XP_FOR_CHAT_QUESTION * 3 + XP_FOR_VERDICT;
+  const progress = Math.min(educationXpEarned / maxEducationXp, 1);
   const progressLabel =
-    askedQuestions.length >= maxChats
+    educationXpEarned >= maxEducationXp
       ? `${t('common:goalDetails.fullyExplored')} 🎉`
-      : `${askedQuestions.length}/${maxChats} ${t('common:goalDetails.questionsExplored')}`;
+      : `${educationXpEarned}/${maxEducationXp} XP`;
 
   const handleAIInsightPress = (questionKey: AIPromptKey) => {
     const tipTranslation = t(`tips:${titleKey}`);
@@ -349,6 +362,8 @@ export default function AreaDetailScreen() {
         titleKey={titleKey}
         isFavorite={isFavorite}
         totalXpEarned={totalXpEarned}
+        educationXpEarned={educationXpEarned}
+        nutritionXpEarned={nutritionXpEarned}
         infoText={infoText}
         progress={progress}
         progressLabel={progressLabel}
@@ -366,14 +381,13 @@ export default function AreaDetailScreen() {
           </ThemedText>
         </AppBox>
       )}
-            <AreaRelevanceSection
+          <AreaRelevanceSection
         tip={tip}
         areaId={areaId}
         showAllAreas={showAllAreas}
         setShowAllAreas={setShowAllAreas}
-              expandAreas={shouldExpandAreas}
+            expandAreas={shouldExpandAreas}
         effectiveTipId={effectiveTipId}
-        addTipView={addTipView}
         colors={colors}
       />
       {!!(trainingRelationLabel) && (
