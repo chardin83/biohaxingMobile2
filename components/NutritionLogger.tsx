@@ -988,6 +988,14 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
 
   // Ny: hantera lokal fil från ImagePickerButton via NutritionAnalyze
   const handleImageSelected = async (file: { uri: string; name: string; type: string }) => {
+    const todayKey = toDateKeyLocal(new Date());
+    if (selectedDate > todayKey) {
+      setAnalysisResult(t('nutritionLogger.futureDateLocked'));
+      setAnalysisEvidence(null);
+      setLastLoggedMeal(null);
+      return;
+    }
+
     const activeLanguage = (i18n.resolvedLanguage ?? i18n.language ?? 'en').toLowerCase();
     const locale: 'sv' | 'en' = activeLanguage.startsWith('sv') ? 'sv' : 'en';
 
@@ -1159,6 +1167,8 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
   };
 
   const summary = dailyNutritionSummaries[selectedDate];
+  const todayKey = toDateKeyLocal(new Date());
+  const isFutureSelectedDate = selectedDate > todayKey;
   const dailyFiberByType = summary ? sumTypedTotals(summary.meals, 'fiberByType') : {};
   const dailyFiberSubtypeTotals = summary ? sumTypedTotals(summary.meals, 'fiberSubtypeTotals') : {};
   const dailyPolyphenolByType = summary ? sumTypedTotals(summary.meals, 'polyphenolByType') : {};
@@ -1319,8 +1329,14 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
         <ImagePickerButton
           onImageSelected={handleImageSelected}
           isLoading={isAnalyzing}
+          disabled={isFutureSelectedDate}
           style={styles.imagePickerButton}
         />
+        {isFutureSelectedDate && (
+          <ThemedText type="caption" style={[styles.futureDateHint, { color: colors.textMuted }]}> 
+            {t('nutritionLogger.futureDateLocked')}
+          </ThemedText>
+        )}
         {/*{Object.keys(dailyNutritionSummaries).length > 0 && (
           <AppButton
             title={t('nutritionLogger.clearAllMeals', { defaultValue: 'Rensa alla meals' })}
@@ -1725,6 +1741,11 @@ const styles = StyleSheet.create({
   imagePickerButton: {
     alignSelf: 'center',
     marginBottom: 16,
+  },
+  futureDateHint: {
+    textAlign: 'center',
+    marginTop: -6,
+    marginBottom: 12,
   },
   clearAllMealsButton: {
     marginBottom: 12,

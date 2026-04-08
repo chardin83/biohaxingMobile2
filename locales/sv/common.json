@@ -868,6 +868,7 @@
     "mealTitle": "Loggad måltid",
     "mealTitleWithName": "Loggad måltid: {{name}}",
     "loggedMealsTitle": "Loggade måltider",
+    "futureDateLocked": "Du kan inte logga eller analysera måltider på framtida datum.",
     "unnamedMeal": "Namnlös måltid",
     "editMealNameTitle": "Redigera måltidsnamn",
     "mealNameLabel": "Måltidsnamn",

@@ -858,6 +858,7 @@
     "mealTitle": "Logged meal",
     "mealTitleWithName": "Logged meal: {{name}}",
     "loggedMealsTitle": "Logged meals",
+    "futureDateLocked": "You cannot log or analyze meals on future dates.",
     "unnamedMeal": "Unnamed meal",
     "editMealNameTitle": "Edit meal name",
     "mealNameLabel": "Meal name",

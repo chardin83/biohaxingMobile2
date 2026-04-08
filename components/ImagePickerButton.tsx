@@ -9,6 +9,7 @@ interface ImagePickerButtonProps {
   // now returns a local file descriptor instead of base64
   onImageSelected: (file: { uri: string; name: string; type: string }) => void;
   isLoading?: boolean;
+  disabled?: boolean;
   label?: string;
   style?: StyleProp<ViewStyle>;
 }
@@ -16,6 +17,7 @@ interface ImagePickerButtonProps {
 const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({
   onImageSelected,
   isLoading = false,
+  disabled = false,
   label = 'Välj bild',
   style,
 }) => {
@@ -90,7 +92,7 @@ const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({
     <AppButton
       title={isLoading ? t('dayEdit.analyzing') : label}
       onPress={showOptions}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       variant="primary"
       icon="camera"
       style={style}
