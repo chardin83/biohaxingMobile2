@@ -563,13 +563,28 @@ function NutritionTargetsSection({
   colors: any;
   t: any;
 }>) {
-  if (!tip?.fiberTargets && !tip?.polyphenolTargets && !tip?.plantDiversityTargets && !tip?.trackingTargets) return null;
+  if (!tip?.fiberTargets && !tip?.polyphenolTargets && !tip?.mineralTargets && !tip?.trackingTargets) return null;
 
   const fiberTargets = tip?.fiberTargets ?? [];
   const polyphenolTargets = tip?.polyphenolTargets ?? [];
-  const plantDiversityTargets = tip?.plantDiversityTargets ?? [];
+  const mineralTargets = tip?.mineralTargets ?? [];
   const trackingTargets = tip?.trackingTargets ?? [];
-  const allTargets = [...fiberTargets, ...polyphenolTargets, ...plantDiversityTargets, ...trackingTargets];
+  const allTargets = [...fiberTargets, ...polyphenolTargets, ...mineralTargets, ...trackingTargets];
+
+  const mineralTags = new Set([
+    'minerals_total',
+    'sodium',
+    'potassium',
+    'magnesium',
+    'calcium',
+    'iron',
+    'zinc',
+    'selenium',
+    'iodine',
+    'phosphorus',
+    'copper',
+    'manganese',
+  ]);
 
   if (!allTargets.length) return null;
 
@@ -587,7 +602,7 @@ function NutritionTargetsSection({
         const trackingKey = 'trackingKey' in target ? target.trackingKey : target.tag;
         const labelGroup = target.unit === 'plants' || target.unit === 'items' || target.unit === 'count'
           ? 'weeklyTrackingLabels'
-          : (target.unit === 'g' ? 'fiberLabels' : 'polyphenolLabels');
+          : (target.unit === 'g' ? 'fiberLabels' : (mineralTags.has(trackingKey) ? 'mineralLabels' : 'polyphenolLabels'));
         const label = t(`nutritionLogger.${labelGroup}.${trackingKey}`);
         return (
           <View key={`target-${trackingKey}`} style={{ marginBottom: 12 }}>

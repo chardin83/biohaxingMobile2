@@ -94,36 +94,49 @@ export type PolyphenolType =
   | 'quercetin'
   | 'ellagitannins';
 
-export type NutrientTag = FiberType | PolyphenolType;
+export type MineralType =
+  | 'minerals_total'
+  | 'sodium'
+  | 'potassium'
+  | 'magnesium'
+  | 'calcium'
+  | 'iron'
+  | 'zinc'
+  | 'selenium'
+  | 'iodine'
+  | 'phosphorus'
+  | 'copper'
+  | 'manganese';
+
+export type NutrientTag = FiberType | PolyphenolType | MineralType;
+
+type BaseTarget<TUnit extends string> = {
+  amount: number;
+  unit: TUnit;
+};
+
+type WeightedTarget = {
+  sourceBackedWeight?: number; // Default 1.0 when omitted
+  inferredWeight?: number; // Default 0.7 when omitted
+};
 
 export type FiberTarget = {
   tag: FiberType;
-  amount: number;
-  unit: 'g';
-  sourceBackedWeight?: number; // Default 1.0 when omitted
-  inferredWeight?: number; // Default 0.7 when omitted
-};
+} & BaseTarget<'g'> & WeightedTarget;
 
 export type PolyphenolTarget = {
   tag: PolyphenolType;
-  amount: number;
-  unit: 'mg';
-  sourceBackedWeight?: number; // Default 1.0 when omitted
-  inferredWeight?: number; // Default 0.7 when omitted
-};
+} & BaseTarget<'mg'> & WeightedTarget;
 
-export type PlantDiversityTarget = {
-  tag: 'plant_diversity';
-  amount: number; // Number of unique plants to consume in the period
-  unit: 'plants';
-};
+export type MineralTarget = {
+  tag: MineralType;
+} & BaseTarget<'mg'> & WeightedTarget;
 
 export type TrackingTarget = {
   trackingKey: string; // e.g., 'unique_plants', 'vegetable_colors', 'fish_meals', 'fatty_fish_meals'
-  amount: number; // Target value (e.g., 30 for plants, 3 for fish meals)
-  unit: 'items' | 'count'; // 'items' for arrays, 'count' for numbers
+  // Optional dynamic guidance sent to AI for this key
   aiInstruction?: string; // Optional dynamic guidance sent to AI for this key
-};
+} & BaseTarget<'items' | 'count'>;
 
 export type TipNutritionFood = {
   key: string;
@@ -161,7 +174,7 @@ type TipWithoutTargets = {
   targetPeriod?: never;
   fiberTargets?: never;
   polyphenolTargets?: never;
-  plantDiversityTargets?: never;
+  mineralTargets?: never;
   trackingTargets?: never;
 };
 
@@ -169,7 +182,7 @@ type TipWithTargets = {
   targetPeriod: TargetPeriod;
   fiberTargets?: FiberTarget[]; // Fibermål som används för plan-uppföljning
   polyphenolTargets?: PolyphenolTarget[]; // Polyfenolmål som används för plan-uppföljning
-  plantDiversityTargets?: PlantDiversityTarget[]; // Växtdiversitetsmål (antal unika växter per period)
+  mineralTargets?: MineralTarget[]; // Mineralmål som används för plan-uppföljning
   trackingTargets?: TrackingTarget[]; // Flexibla tracking-mål (växter, färger, fisk, etc.)
 };
 
@@ -483,6 +496,10 @@ const rawTips: Tip[] = [
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
     planCategory: ['nutrition','supplement'],
+    targetPeriod: 'daily',
+    mineralTargets: [
+      { tag: 'magnesium', amount: 320, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
+    ],
     nutritionFoods: [
       { key: 'leafyGreens' },
       { key: 'pumpkinSeeds' },

@@ -1376,10 +1376,14 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
 
   const weeklyFiberByType = sumTypedTotals(weeklyMeals, 'fiberByType');
   const weeklyPolyphenolByType = sumTypedTotals(weeklyMeals, 'polyphenolByType');
+  const weeklyMineralsByType = sumTypedTotals(weeklyMeals, 'mineralsByType');
   const weeklyFiberTotal = weeklySummaries.reduce((sum, daySummary) => {
     const dayFiber = parseNumberValue(daySummary?.totals?.fiber) ?? 0;
     return sum + dayFiber;
   }, 0);
+
+  const isMineralTargetTag = (tag: string): boolean =>
+    MINERAL_TYPE_KEYS.includes(tag as MineralTypeKey);
 
   const getDailyTargetValue = (tag: string, unit: 'g' | 'mg' | 'plants' | 'items' | 'count'): number => {
     if (unit === 'plants') {
@@ -1393,6 +1397,9 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
     if (unit === 'g') {
       if (tag === 'fiber_total') return summary?.totals.fiber ?? 0;
       return dailyFiberByType[tag] ?? 0;
+    }
+    if (isMineralTargetTag(tag)) {
+      return dailyMineralsByType[tag] ?? 0;
     }
     return dailyPolyphenolByType[tag] ?? 0;
   };
@@ -1408,6 +1415,9 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
       if (tag === 'fiber_total') return weeklyFiberTotal;
       return weeklyFiberByType[tag] ?? 0;
     }
+    if (isMineralTargetTag(tag)) {
+      return weeklyMineralsByType[tag] ?? 0;
+    }
     return weeklyPolyphenolByType[tag] ?? 0;
   };
 
@@ -1418,9 +1428,9 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
     const tipPeriod = tip.targetPeriod;
     const fiberTargets = tip.fiberTargets ?? [];
     const polyphenolTargets = tip.polyphenolTargets ?? [];
-    const plantDiversityTargets = tip.plantDiversityTargets ?? [];
+    const mineralTargets = tip.mineralTargets ?? [];
     const trackingTargets = tip.trackingTargets ?? [];
-    const allTargets = [...fiberTargets, ...polyphenolTargets, ...plantDiversityTargets, ...trackingTargets];
+    const allTargets = [...fiberTargets, ...polyphenolTargets, ...mineralTargets, ...trackingTargets];
 
     if (!tipPeriod || !allTargets.length) return [];
 
@@ -1436,9 +1446,9 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
             .filter(item => item.length > 0)
             .sort((a, b) => a.localeCompare(b))
         : undefined;
-      const labelGroup = target.unit === 'plants' || target.unit === 'items' || target.unit === 'count'
+      const labelGroup = target.unit === 'items' || target.unit === 'count'
         ? 'weeklyTrackingLabels'
-        : (target.unit === 'g' ? 'fiberLabels' : 'polyphenolLabels');
+        : (target.unit === 'g' ? 'fiberLabels' : (isMineralTargetTag(trackingKey) ? 'mineralLabels' : 'polyphenolLabels'));
 
       return {
         tag: trackingKey,
