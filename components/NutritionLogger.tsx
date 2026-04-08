@@ -33,6 +33,8 @@ type NutritionEvidence = {
   confidence: 'high' | 'medium' | 'low' | 'unknown';
 };
 
+type ConfidenceLevel = NutritionEvidence['confidence'];
+
 type MicrobiomeSupportEntry = {
   microbe: string;
   supportLevel: 'high' | 'medium' | 'low' | 'unknown';
@@ -178,6 +180,8 @@ type ParsedMacroAnalysis = {
   fiberByType: Record<string, number>;
   fiberSubtypeTotals: Record<string, number>;
   polyphenolByType: Record<string, number>;
+  mineralsByType: Record<string, number>;
+  mineralsConfidenceByType: Record<string, ConfidenceLevel>;
   microbiomeSupport: MicrobiomeSupportEntry[];
 };
 
@@ -194,9 +198,25 @@ const POLYPHENOL_TYPE_KEYS = [
   'ellagitannins',
 ] as const;
 
+const MINERAL_TYPE_KEYS = [
+  'minerals_total',
+  'sodium',
+  'potassium',
+  'magnesium',
+  'calcium',
+  'iron',
+  'zinc',
+  'selenium',
+  'iodine',
+  'phosphorus',
+  'copper',
+  'manganese',
+] as const;
+
 type FiberTypeKey = (typeof FIBER_TYPE_KEYS)[number];
 type FiberSubtypeKey = FiberSubtype;
 type PolyphenolTypeKey = (typeof POLYPHENOL_TYPE_KEYS)[number];
+type MineralTypeKey = (typeof MINERAL_TYPE_KEYS)[number];
 
 const ALL_FIBER_SUBTYPES: FiberSubtypeKey[] = [
   ...new Set(Object.values(FIBER_CATEGORY_SUBTYPES).flat()),
@@ -210,6 +230,32 @@ const emptyFiberSubtypeTotals = (): Record<string, number> =>
 
 const emptyPolyphenolTotals = (): Record<string, number> =>
   POLYPHENOL_TYPE_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
+
+const emptyMineralTotals = (): Record<string, number> =>
+  MINERAL_TYPE_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
+
+const emptyMineralConfidenceTotals = (): Record<string, ConfidenceLevel> =>
+  MINERAL_TYPE_KEYS.reduce((acc, key) => ({ ...acc, [key]: 'unknown' }), {} as Record<string, ConfidenceLevel>);
+
+const confidenceRank: Record<ConfidenceLevel, number> = {
+  unknown: 0,
+  low: 1,
+  medium: 2,
+  high: 3,
+};
+
+const mergeConfidenceLevel = (current: ConfidenceLevel, next: ConfidenceLevel): ConfidenceLevel => {
+  return confidenceRank[next] > confidenceRank[current] ? next : current;
+};
+
+const setMineralConfidence = (
+  target: Record<string, ConfidenceLevel>,
+  key: string,
+  level: ConfidenceLevel
+) => {
+  const current = target[key] ?? 'unknown';
+  target[key] = mergeConfidenceLevel(current, level);
+};
 
 const addToTotals = (target: Record<string, number>, key: string, value: unknown) => {
   const parsed = parseNumberValue(value);
@@ -323,11 +369,14 @@ const applyMeasuredByTypeFromCandidate = (
   candidate: any,
   fiberByType: Record<string, number>,
   fiberSubtypeTotals: Record<string, number>,
-  polyphenolByType: Record<string, number>
+  polyphenolByType: Record<string, number>,
+  mineralsByType: Record<string, number>,
+  mineralsConfidenceByType: Record<string, ConfidenceLevel>
 ) => {
   const fiberMap = candidate?.fiberByType;
   const fiberSubtypeMap = candidate?.fiberSubtypeTotals;
   const polyMap = candidate?.polyphenolByType;
+  const mineralMap = candidate?.mineralsByType ?? candidate?.mineralByType;
 
   if (fiberMap && typeof fiberMap === 'object') {
     FIBER_TYPE_KEYS.forEach(tag => addToTotals(fiberByType, tag, fiberMap?.[tag]));
@@ -340,13 +389,25 @@ const applyMeasuredByTypeFromCandidate = (
   if (polyMap && typeof polyMap === 'object') {
     POLYPHENOL_TYPE_KEYS.forEach(tag => addToTotals(polyphenolByType, tag, polyMap?.[tag]));
   }
+
+  if (mineralMap && typeof mineralMap === 'object') {
+    MINERAL_TYPE_KEYS.forEach(tag => {
+      const before = mineralsByType[tag] ?? 0;
+      addToTotals(mineralsByType, tag, mineralMap?.[tag]);
+      if ((mineralsByType[tag] ?? 0) > before) {
+        setMineralConfidence(mineralsConfidenceByType, tag, 'medium');
+      }
+    });
+  }
 };
 
 const applyDetailsFromCandidate = (
   candidate: any,
   fiberByType: Record<string, number>,
   fiberSubtypeTotals: Record<string, number>,
-  polyphenolByType: Record<string, number>
+  polyphenolByType: Record<string, number>,
+  mineralsByType: Record<string, number>,
+  mineralsConfidenceByType: Record<string, ConfidenceLevel>
 ) => {
   const details = candidate?.nutritionDetails;
   const fiberDetails = details?.fiber;
@@ -378,12 +439,46 @@ const applyDetailsFromCandidate = (
     const classTag = normalizeFlavonoidClassTag(item?.name);
     if (classTag) addToTotals(polyphenolByType, classTag, item?.amountMg ?? item?.amount_mg);
   });
+
+  const minerals = details?.minerals;
+  if (!minerals) return;
+
+  MINERAL_TYPE_KEYS.forEach(tag => {
+    const before = mineralsByType[tag] ?? 0;
+    addToTotals(mineralsByType, tag, minerals?.[tag]);
+    if ((mineralsByType[tag] ?? 0) > before) {
+      setMineralConfidence(mineralsConfidenceByType, tag, 'high');
+    }
+  });
+
+  const mineralRows = Array.isArray(minerals?.items)
+    ? minerals.items
+    : Array.isArray(minerals?.list)
+      ? minerals.list
+      : [];
+
+  mineralRows.forEach((item: any) => {
+    const rawKey = String(item?.name ?? item?.tag ?? '').toLowerCase().trim();
+    const normalizedKey = rawKey.replace(/\s+/g, '_');
+    if (!MINERAL_TYPE_KEYS.includes(normalizedKey as MineralTypeKey)) return;
+    const before = mineralsByType[normalizedKey] ?? 0;
+    addToTotals(
+      mineralsByType,
+      normalizedKey,
+      item?.amountMg ?? item?.amount_mg ?? item?.amount
+    );
+    if ((mineralsByType[normalizedKey] ?? 0) > before) {
+      setMineralConfidence(mineralsConfidenceByType, normalizedKey, 'high');
+    }
+  });
 };
 
 const extractTypedTotals = (data: any, parsedContent: any) => {
   const fiberByType = emptyFiberTotals();
   const fiberSubtypeTotals = emptyFiberSubtypeTotals();
   const polyphenolByType = emptyPolyphenolTotals();
+  const mineralsByType = emptyMineralTotals();
+  const mineralsConfidenceByType = emptyMineralConfidenceTotals();
 
   const candidates = [
     data,
@@ -398,11 +493,25 @@ const extractTypedTotals = (data: any, parsedContent: any) => {
   ];
 
   for (const candidate of candidates) {
-    applyMeasuredByTypeFromCandidate(candidate, fiberByType, fiberSubtypeTotals, polyphenolByType);
-    applyDetailsFromCandidate(candidate, fiberByType, fiberSubtypeTotals, polyphenolByType);
+    applyMeasuredByTypeFromCandidate(
+      candidate,
+      fiberByType,
+      fiberSubtypeTotals,
+      polyphenolByType,
+      mineralsByType,
+      mineralsConfidenceByType
+    );
+    applyDetailsFromCandidate(
+      candidate,
+      fiberByType,
+      fiberSubtypeTotals,
+      polyphenolByType,
+      mineralsByType,
+      mineralsConfidenceByType
+    );
   }
 
-  return { fiberByType, fiberSubtypeTotals, polyphenolByType };
+  return { fiberByType, fiberSubtypeTotals, polyphenolByType, mineralsByType, mineralsConfidenceByType };
 };
 
 const hasAnyTypedTotals = (values: Record<string, number>) =>
@@ -424,7 +533,7 @@ const getFiberSubtypeAmountsForCategory = (
     .filter(item => item.amount > 0);
 };
 
-const sumTypedTotals = (meals: Array<any>, key: 'fiberByType' | 'fiberSubtypeTotals' | 'polyphenolByType') =>
+const sumTypedTotals = (meals: Array<any>, key: 'fiberByType' | 'fiberSubtypeTotals' | 'polyphenolByType' | 'mineralsByType') =>
   meals.reduce((acc, meal) => {
     const rawValue = meal?.[key];
     const source = typeof rawValue === 'object' && rawValue !== null ? rawValue : {};
@@ -441,6 +550,39 @@ const sumMicrobiomeSupport = (meals: Array<any>): MicrobiomeSupportEntry[] => {
     Array.isArray(meal?.microbiomeSupport) ? meal.microbiomeSupport : []
   );
   return mergeMicrobiomeSupportLists(allEntries as MicrobiomeSupportEntry[]);
+};
+
+const getMineralsTotal = (mineralsByType: Record<string, number>): number => {
+  const explicit = mineralsByType.minerals_total ?? 0;
+  if (explicit > 0) return explicit;
+  return MINERAL_TYPE_KEYS
+    .filter(key => key !== 'minerals_total')
+    .reduce((sum, key) => sum + (mineralsByType[key] ?? 0), 0);
+};
+
+const mergeMineralConfidenceFromMeals = (meals: Array<any>): Record<string, ConfidenceLevel> => {
+  const totals = emptyMineralConfidenceTotals();
+
+  meals.forEach(meal => {
+    const raw = meal?.mineralsConfidenceByType;
+    if (!raw || typeof raw !== 'object') return;
+
+    MINERAL_TYPE_KEYS.forEach(key => {
+      const value = raw[key];
+      if (value === 'high' || value === 'medium' || value === 'low' || value === 'unknown') {
+        totals[key] = mergeConfidenceLevel(totals[key], value);
+      }
+    });
+  });
+
+  return totals;
+};
+
+const getConfidenceLabelKey = (confidence: ConfidenceLevel): string => {
+  if (confidence === 'high') return 'nutritionLogger.confidenceHigh';
+  if (confidence === 'medium') return 'nutritionLogger.confidenceMedium';
+  if (confidence === 'low') return 'nutritionLogger.confidenceLow';
+  return 'nutritionLogger.confidenceUnknown';
 };
 
 const formatTargetValue = (value: number, unit: 'g' | 'mg' | 'plants' | 'items' | 'count') => {
@@ -612,6 +754,8 @@ const extractFromCandidate = (candidate: any): ParsedMacroAnalysis | null => {
     fiberByType: emptyFiberTotals(),
     fiberSubtypeTotals: emptyFiberSubtypeTotals(),
     polyphenolByType: emptyPolyphenolTotals(),
+    mineralsByType: emptyMineralTotals(),
+    mineralsConfidenceByType: emptyMineralConfidenceTotals(),
     microbiomeSupport: [],
   };
 };
@@ -643,6 +787,8 @@ const extractFromText = (text: string): ParsedMacroAnalysis | null => {
     fiberByType: emptyFiberTotals(),
     fiberSubtypeTotals: emptyFiberSubtypeTotals(),
     polyphenolByType: emptyPolyphenolTotals(),
+    mineralsByType: emptyMineralTotals(),
+    mineralsConfidenceByType: emptyMineralConfidenceTotals(),
     microbiomeSupport: [],
   };
 };
@@ -978,6 +1124,11 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
     fiberByType: typeof meal?.fiberByType === 'object' && meal.fiberByType !== null ? meal.fiberByType : {},
     fiberSubtypeTotals: typeof meal?.fiberSubtypeTotals === 'object' && meal.fiberSubtypeTotals !== null ? meal.fiberSubtypeTotals : {},
     polyphenolByType: typeof meal?.polyphenolByType === 'object' && meal.polyphenolByType !== null ? meal.polyphenolByType : {},
+    mineralsByType: typeof meal?.mineralsByType === 'object' && meal.mineralsByType !== null ? meal.mineralsByType : {},
+    mineralsConfidenceByType:
+      typeof meal?.mineralsConfidenceByType === 'object' && meal.mineralsConfidenceByType !== null
+        ? meal.mineralsConfidenceByType
+        : {},
     microbiomeSupport: Array.isArray(meal?.microbiomeSupport) ? meal.microbiomeSupport : [],
   });
 
@@ -1073,6 +1224,8 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
         fiberByType: typedTotals.fiberByType,
         fiberSubtypeTotals: typedTotals.fiberSubtypeTotals,
         polyphenolByType: typedTotals.polyphenolByType,
+        mineralsByType: typedTotals.mineralsByType,
+        mineralsConfidenceByType: typedTotals.mineralsConfidenceByType,
         microbiomeSupport,
       };
 
@@ -1086,7 +1239,8 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
       const hasTypedNutritionData =
         hasAnyTypedTotals(typedTotals.fiberByType)
         || hasAnyTypedTotals(typedTotals.fiberSubtypeTotals)
-        || hasAnyTypedTotals(typedTotals.polyphenolByType);
+        || hasAnyTypedTotals(typedTotals.polyphenolByType)
+        || hasAnyTypedTotals(typedTotals.mineralsByType);
       const hasMicrobiomeData = microbiomeSupport.length > 0;
       const hasTrackingSignals = Object.keys(aiWeeklyTrackingSignals).length > 0;
 
@@ -1172,6 +1326,8 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
   const dailyFiberByType = summary ? sumTypedTotals(summary.meals, 'fiberByType') : {};
   const dailyFiberSubtypeTotals = summary ? sumTypedTotals(summary.meals, 'fiberSubtypeTotals') : {};
   const dailyPolyphenolByType = summary ? sumTypedTotals(summary.meals, 'polyphenolByType') : {};
+  const dailyMineralsByType = summary ? sumTypedTotals(summary.meals, 'mineralsByType') : {};
+  const dailyMineralConfidenceByType = summary ? mergeMineralConfidenceFromMeals(summary.meals) : {};
   const dailyMicrobiomeSupport = summary ? sumMicrobiomeSupport(summary.meals) : [];
 
   const selectedDateLocal = parseDateKeyLocal(selectedDate);
@@ -1419,6 +1575,28 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
               </View>
             )}
 
+            {hasAnyTypedTotals(lastLoggedMeal.mineralsByType) && (
+              <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}> 
+                <Collapsible
+                  title={t('nutritionLogger.minerals', { value: getMineralsTotal(lastLoggedMeal.mineralsByType).toFixed(1) })}
+                  titleType="default"
+                  initialCollapsed
+                >
+                  {MINERAL_TYPE_KEYS.filter(key => key !== 'minerals_total').map(key => {
+                    const value = lastLoggedMeal.mineralsByType[key] ?? 0;
+                    if (value <= 0) return null;
+                    return (
+                      <ThemedText key={key} type="default">
+                        • {t(`nutritionLogger.mineralLabels.${key}`)}: {value.toFixed(1)} mg
+                        {' • '}
+                        {t(getConfidenceLabelKey(lastLoggedMeal.mineralsConfidenceByType[key] ?? 'unknown'))}
+                      </ThemedText>
+                    );
+                  })}
+                </Collapsible>
+              </View>
+            )}
+
             {lastLoggedMeal.microbiomeSupport.length > 0 && (
 
                 <Collapsible
@@ -1528,6 +1706,28 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
                       return (
                         <ThemedText key={key} type="default">
                           • {t(`nutritionLogger.polyphenolLabels.${key}`)}: {value.toFixed(1)} mg
+                        </ThemedText>
+                      );
+                    })}
+                  </Collapsible>
+                </View>
+              )}
+
+              {hasAnyTypedTotals(dailyMineralsByType) && (
+                <View style={[styles.nutrientRow, { borderBottomColor: colors.textMuted }]}> 
+                  <Collapsible
+                    title={t('nutritionLogger.minerals', { value: getMineralsTotal(dailyMineralsByType).toFixed(1) })}
+                    titleType="default"
+                    initialCollapsed
+                  >
+                    {MINERAL_TYPE_KEYS.filter(key => key !== 'minerals_total').map(key => {
+                      const value = dailyMineralsByType[key] ?? 0;
+                      if (value <= 0) return null;
+                      return (
+                        <ThemedText key={key} type="default">
+                          • {t(`nutritionLogger.mineralLabels.${key}`)}: {value.toFixed(1)} mg
+                          {' • '}
+                          {t(getConfidenceLabelKey(dailyMineralConfidenceByType[key] ?? 'unknown'))}
                         </ThemedText>
                       );
                     })}

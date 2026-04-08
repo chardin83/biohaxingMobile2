@@ -882,6 +882,7 @@
     "calories": "Kalorier: {{value}} kcal",
     "fiber": "Fibrer: {{value}} g",
     "polyphenols": "Polyfenoler: {{value}} mg",
+    "minerals": "Mineraler: {{value}} mg",
     "microbiomeYes": "Mikrobiom-support: Ja ({{count}})",
     "fulfilledTipsTitle": "Nutritionstips att uppfylla",
     "fulfilledTargetsCount": "Mål uppfyllda: {{met}}/{{total}}",
@@ -893,6 +894,10 @@
     "noFulfilledTipsToday": "Inga plantips med fiber/polyfenol-mål är uppfyllda idag.",
     "linkedNutrients": "Nutrienter",
     "sources": "Källor",
+    "confidenceHigh": "Hög säkerhet",
+    "confidenceMedium": "Medelhög säkerhet",
+    "confidenceLow": "Låg säkerhet",
+    "confidenceUnknown": "Okänd säkerhet",
     "fiberLabels": {
       "fiber_total": "Fibrer totalt",
       "fiber_gel_forming": "Gelbildande fibrer",
@@ -909,6 +914,20 @@
       "flavonols": "Flavonoler",
       "quercetin": "Quercetin",
       "ellagitannins": "Ellagitanniner"
+    },
+    "mineralLabels": {
+      "minerals_total": "Mineraler totalt",
+      "sodium": "Natrium",
+      "potassium": "Kalium",
+      "magnesium": "Magnesium",
+      "calcium": "Kalcium",
+      "iron": "Järn",
+      "zinc": "Zink",
+      "selenium": "Selen",
+      "iodine": "Jod",
+      "phosphorus": "Fosfor",
+      "copper": "Koppar",
+      "manganese": "Mangan"
     },
     "plantDiversityLabels": {
       "plant_diversity": "Växtdiversitet"

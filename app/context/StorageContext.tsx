@@ -28,6 +28,8 @@ export type MealNutrition = {
   fiberByType?: Record<string, number>;
   fiberSubtypeTotals?: Record<string, number>;
   polyphenolByType?: Record<string, number>;
+  mineralsByType?: Record<string, number>;
+  mineralsConfidenceByType?: Record<string, 'high' | 'medium' | 'low' | 'unknown'>;
   microbiomeSupport?: Array<{
     microbe: string;
     supportLevel: 'high' | 'medium' | 'low' | 'unknown';

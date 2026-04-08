@@ -872,6 +872,7 @@
     "calories": "Calories: {{value}} kcal",
     "fiber": "Fiber: {{value}} g",
     "polyphenols": "Polyphenols: {{value}} mg",
+    "minerals": "Minerals: {{value}} mg",
     "microbiomeYes": "Microbiome support: Yes ({{count}})",
     "fulfilledTipsTitle": "Nutrition tips to complete",
     "fulfilledTargetsCount": "Targets met: {{met}}/{{total}}",
@@ -883,6 +884,10 @@
     "noFulfilledTipsToday": "No plan tips with fiber/polyphenol targets are completed today.",
     "linkedNutrients": "Nutrients",
     "sources": "Sources",
+    "confidenceHigh": "High confidence",
+    "confidenceMedium": "Medium confidence",
+    "confidenceLow": "Low confidence",
+    "confidenceUnknown": "Unknown confidence",
     "fiberLabels": {
       "fiber_total": "Fiber total",
       "fiber_gel_forming": "Gel-forming fiber",
@@ -899,6 +904,20 @@
       "flavonols": "Flavonols",
       "quercetin": "Quercetin",
       "ellagitannins": "Ellagitannins"
+    },
+    "mineralLabels": {
+      "minerals_total": "Minerals total",
+      "sodium": "Sodium",
+      "potassium": "Potassium",
+      "magnesium": "Magnesium",
+      "calcium": "Calcium",
+      "iron": "Iron",
+      "zinc": "Zinc",
+      "selenium": "Selenium",
+      "iodine": "Iodine",
+      "phosphorus": "Phosphorus",
+      "copper": "Copper",
+      "manganese": "Manganese"
     },
     "plantDiversityLabels": {
       "plant_diversity": "Plant diversity"
