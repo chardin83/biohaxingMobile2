@@ -563,15 +563,20 @@ function NutritionTargetsSection({
   colors: any;
   t: any;
 }>) {
-  if (!tip?.fiberTargets && !tip?.polyphenolTargets) return null;
+  if (!tip?.fiberTargets && !tip?.polyphenolTargets && !tip?.plantDiversityTargets && !tip?.trackingTargets) return null;
 
-  const fiberTargets = (tip?.fiberTargets ?? []).filter((target: any) => target.period === 'daily');
-  const polyphenolTargets = (tip?.polyphenolTargets ?? []).filter((target: any) => target.period === 'daily');
-  const allTargets = [...fiberTargets, ...polyphenolTargets];
+  const fiberTargets = tip?.fiberTargets ?? [];
+  const polyphenolTargets = tip?.polyphenolTargets ?? [];
+  const plantDiversityTargets = tip?.plantDiversityTargets ?? [];
+  const trackingTargets = tip?.trackingTargets ?? [];
+  const allTargets = [...fiberTargets, ...polyphenolTargets, ...plantDiversityTargets, ...trackingTargets];
 
   if (!allTargets.length) return null;
 
-  const formatValue = (value: number, unit: 'g' | 'mg') => {
+  const formatValue = (value: number, unit: 'g' | 'mg' | 'plants' | 'items' | 'count') => {
+    if (unit === 'plants' || unit === 'items' || unit === 'count') {
+      return `${Math.round(value)} ${unit}`;
+    }
     const decimals = unit === 'g' ? 1 : 0;
     return `${value.toFixed(decimals)} ${unit}`;
   };
@@ -579,10 +584,13 @@ function NutritionTargetsSection({
   return (
     <AppBox title={t('nutritionLogger.nutritionTargetsTitle', { defaultValue: 'Nutrition targets' })}>
       {allTargets.map((target: any) => {
-        const labelGroup = target.unit === 'g' ? 'fiberLabels' : 'polyphenolLabels';
-        const label = t(`nutritionLogger.${labelGroup}.${target.tag}`);
+        const trackingKey = 'trackingKey' in target ? target.trackingKey : target.tag;
+        const labelGroup = target.unit === 'plants' || target.unit === 'items' || target.unit === 'count'
+          ? 'weeklyTrackingLabels'
+          : (target.unit === 'g' ? 'fiberLabels' : 'polyphenolLabels');
+        const label = t(`nutritionLogger.${labelGroup}.${trackingKey}`);
         return (
-          <View key={`target-${target.tag}`} style={{ marginBottom: 12 }}>
+          <View key={`target-${trackingKey}`} style={{ marginBottom: 12 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <ThemedText type="default" style={{ flex: 1 }}>
                 {label}

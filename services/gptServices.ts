@@ -44,7 +44,7 @@ export interface NutritionAnalysisResponse {
   message?: string;
 }
 
-type WeeklyTrackingTargetInput = {
+type TrackingTargetInput = {
   key: string;
   unit: 'items' | 'count';
   amount?: number;
@@ -60,7 +60,7 @@ type AnalyseParams = {
   prompt?: string;
   supplement?: string;
   locale?: 'sv' | 'en';
-  weeklyTrackingTargets?: WeeklyTrackingTargetInput[];
+  trackingTargets?: TrackingTargetInput[];
 };
 
 export const buildSystemPrompt = (plans: PlansByCategory, shareHealthPlan: boolean): string => {
@@ -296,8 +296,8 @@ export async function NutritionAnalyze(params: AnalyseParams): Promise<Nutrition
     form.append('prompt', promptWithLanguage);
     form.append('supplement', params.supplement ?? '');
     form.append('locale', effectiveLocale);
-    if (Array.isArray(params.weeklyTrackingTargets) && params.weeklyTrackingTargets.length > 0) {
-      form.append('weeklyTrackingTargets', JSON.stringify(params.weeklyTrackingTargets));
+    if (Array.isArray(params.trackingTargets) && params.trackingTargets.length > 0) {
+      form.append('trackingTargets', JSON.stringify(params.trackingTargets));
     }
 
     const resp = await fetch(ENDPOINTS.handleNutritionCheck, {

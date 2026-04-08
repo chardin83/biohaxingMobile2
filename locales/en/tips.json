@@ -1343,6 +1343,22 @@
     },
     "analyzePrompt": "Analyze the user's training intensity and recovery demands to determine whether astaxanthin is appropriate, and when it should be used relative to hard training sessions."
   },
+  "intermittent_fasting_12h": {
+    "title": "Intermittent fasting 12:12",
+    "description": "Fasting 12 hours per day (e.g., 19:00–07:00) is a mild form of intermittent fasting that can support digestion, blood sugar balance, and energy levels. It is easy to implement and suitable for most adults.",
+    "areas": {
+      "energy": "12-hour fasting can contribute to more stable energy levels by giving the body time to recover between meals.",
+      "digestiveHealth": "A longer overnight fast gives the digestive system a break and can improve gut health and metabolism."
+    }
+  },
+  "intermittent_fasting_16_8": {
+    "title": "Intermittent fasting 16:8",
+    "description": "16:8 means fasting for 16 hours and eating within an 8-hour window (e.g., 12:00–20:00). This method can promote fat burning, insulin sensitivity, and metabolic health. Suitable for those who want to take fasting a step further.",
+    "areas": {
+      "energy": "16:8 fasting can enhance the body's ability to use fat as fuel and provide more consistent energy throughout the day.",
+      "digestiveHealth": "A longer fasting window can give the gut more time to recover and support a healthy gut microbiome."
+    }
+  },
   "avoid_flat_hard_shoes": {
     "title": "Avoid hard flat shoes on flat surfaces",
     "description": "Wearing hard, flat shoes on flat ground can increase stress on the body, joints, muscles, and nervous system. Choose shoes with some cushioning or vary the surface to reduce overload risk and support more natural movement.",

@@ -4,6 +4,7 @@ import { t as i18nT } from 'i18next';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Icon } from 'react-native-paper';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
@@ -45,6 +46,7 @@ type MicrobiomeSupportEntry = {
 
 type WeeklyTrackingSignalValue = string[] | number;
 type WeeklyTrackingSignals = Record<string, WeeklyTrackingSignalValue>;
+type TipTargetIconName = 'fiber' | 'polyphenol' | 'target';
 
 const parseStringArray = (value: unknown): string[] => {
   if (Array.isArray(value)) {
@@ -585,12 +587,25 @@ const getConfidenceLabelKey = (confidence: ConfidenceLevel): string => {
   return 'nutritionLogger.confidenceUnknown';
 };
 
+const getTipTargetIconName = (unit: 'g' | 'mg' | 'plants' | 'items' | 'count'): TipTargetIconName => {
+  if (unit === 'g') return 'fiber';
+  if (unit === 'mg') return 'polyphenol';
+  return 'target';
+};
+
 const formatTargetValue = (value: number, unit: 'g' | 'mg' | 'plants' | 'items' | 'count') => {
   if (unit === 'plants' || unit === 'items' || unit === 'count') {
     return `${Math.round(value)} ${unit}`;
   }
   const decimals = unit === 'g' ? 1 : 0;
   return `${value.toFixed(decimals)} ${unit}`;
+};
+
+const formatTargetProgressValue = (value: number, unit: 'g' | 'mg' | 'plants' | 'items' | 'count') => {
+  if (unit === 'items' || unit === 'count') {
+    return `${Math.round(value)}`;
+  }
+  return formatTargetValue(value, unit);
 };
 
 const roundToOneDecimal = (value: number): number =>
@@ -916,12 +931,12 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
   const [editingMealId, setEditingMealId] = useState<string | null>(null);
   const [editingMealName, setEditingMealName] = useState('');
 
-  const activeWeeklyTrackingTargetsForAI = useMemo(() => {
+  const activeTrackingTargetsForAI = useMemo(() => {
     const byKey = new Map<string, { key: string; unit: 'items' | 'count'; amount?: number; aiInstruction?: string }>();
 
     (plans?.nutrition ?? []).forEach(planTip => {
       const tip = tips.find(candidate => candidate.id === planTip.tipId);
-      (tip?.weeklyTrackingTargets ?? []).forEach(target => {
+      (tip?.trackingTargets ?? []).forEach((target: { trackingKey: string; unit: 'items' | 'count'; amount?: number; aiInstruction?: string }) => {
         const key = target.trackingKey?.trim();
         if (!key) return;
 
@@ -939,12 +954,12 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
     return Array.from(byKey.values());
   }, [plans]);
 
-  const activeWeeklyTrackingKeys = useMemo(() => {
+  const activeTrackingKeys = useMemo(() => {
     const keys = new Set<string>();
 
     (plans?.nutrition ?? []).forEach(planTip => {
       const tip = tips.find(candidate => candidate.id === planTip.tipId);
-      (tip?.weeklyTrackingTargets ?? []).forEach(target => {
+      (tip?.trackingTargets ?? []).forEach((target: { trackingKey: string }) => {
         if (typeof target.trackingKey === 'string' && target.trackingKey.trim().length > 0) {
           keys.add(target.trackingKey.trim());
         }
@@ -955,17 +970,17 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
   }, [plans]);
 
   const trackingPromptForAI = useMemo(() => {
-    if (!activeWeeklyTrackingTargetsForAI.length) return 'nutrition_analysis';
+    if (!activeTrackingTargetsForAI.length) return 'nutrition_analysis';
 
-    const targetsJson = JSON.stringify(activeWeeklyTrackingTargetsForAI);
+    const targetsJson = JSON.stringify(activeTrackingTargetsForAI);
     return [
       'nutrition_analysis',
-      'weekly_tracking_targets_for_this_user:',
+      'tracking_targets_for_this_user:',
       targetsJson,
-      'Only return weeklyTrackingSignals keys that exist in weekly_tracking_targets_for_this_user.',
+      'Only return weeklyTrackingSignals keys that exist in tracking_targets_for_this_user.',
       'For unit=items return items[]. For unit=count return countIncrement.',
     ].join('\n');
-  }, [activeWeeklyTrackingTargetsForAI]);
+  }, [activeTrackingTargetsForAI]);
 
   useEffect(() => {
     setLastLoggedMeal(null);
@@ -1035,7 +1050,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
       if (!updatedMeals.length) {
         delete next[selectedDate];
 
-        const recalculatedWeekTracking = buildWeekTrackingFromSummaries(next, weekStartISO, weekEndISO, activeWeeklyTrackingKeys);
+        const recalculatedWeekTracking = buildWeekTrackingFromSummaries(next, weekStartISO, weekEndISO, activeTrackingKeys);
         setWeeklyTracking(previousWeeklyTracking => {
           const updatedWeeklyTracking = { ...previousWeeklyTracking };
           if (Object.keys(recalculatedWeekTracking).length > 0) {
@@ -1051,7 +1066,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
 
       next[selectedDate] = buildDailySummary(updatedMeals);
 
-      const recalculatedWeekTracking = buildWeekTrackingFromSummaries(next, weekStartISO, weekEndISO, activeWeeklyTrackingKeys);
+      const recalculatedWeekTracking = buildWeekTrackingFromSummaries(next, weekStartISO, weekEndISO, activeTrackingKeys);
       setWeeklyTracking(previousWeeklyTracking => {
         const updatedWeeklyTracking = { ...previousWeeklyTracking };
         if (Object.keys(recalculatedWeekTracking).length > 0) {
@@ -1162,7 +1177,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
         type: file.type,
         locale,
         prompt: trackingPromptForAI,
-        weeklyTrackingTargets: activeWeeklyTrackingTargetsForAI,
+        trackingTargets: activeTrackingTargetsForAI,
       });
 
       console.log('NutritionAnalyze payload:', data);
@@ -1272,7 +1287,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
           mergeWeeklyTrackingSignal(mergedSignals, key, value);
         });
 
-        const signalsToApply = Object.entries(mergedSignals).filter(([key]) => activeWeeklyTrackingKeys.has(key));
+        const signalsToApply = Object.entries(mergedSignals).filter(([key]) => activeTrackingKeys.has(key));
 
         const mealWeeklyTrackingSignals = signalsToApply.reduce((acc, [key, value]) => {
           acc[key] = value;
@@ -1329,6 +1344,19 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
   const dailyMineralsByType = summary ? sumTypedTotals(summary.meals, 'mineralsByType') : {};
   const dailyMineralConfidenceByType = summary ? mergeMineralConfidenceFromMeals(summary.meals) : {};
   const dailyMicrobiomeSupport = summary ? sumMicrobiomeSupport(summary.meals) : [];
+  const dailyTracking = React.useMemo(() => {
+    const aggregated: WeeklyTrackingSignals = {};
+    const meals = Array.isArray(summary?.meals) ? summary.meals : [];
+
+    meals.forEach(meal => {
+      const mealSignals = extractWeeklyTrackingSignals(meal, undefined);
+      Object.entries(mealSignals).forEach(([key, value]) => {
+        mergeWeeklyTrackingSignal(aggregated, key, value);
+      });
+    });
+
+    return aggregated;
+  }, [summary]);
 
   const selectedDateLocal = parseDateKeyLocal(selectedDate);
   const weekStartDate = getStartOfWeekMonday(selectedDateLocal);
@@ -1387,24 +1415,23 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
     const tip = tips.find(candidate => candidate.id === planTip.tipId);
     if (!tip) return [];
 
+    const tipPeriod = tip.targetPeriod;
     const fiberTargets = tip.fiberTargets ?? [];
     const polyphenolTargets = tip.polyphenolTargets ?? [];
     const plantDiversityTargets = tip.plantDiversityTargets ?? [];
-    const weeklyTrackingTargets = tip.weeklyTrackingTargets ?? [];
-    const allTargets = [...fiberTargets, ...polyphenolTargets, ...plantDiversityTargets, ...weeklyTrackingTargets].filter(
-      target => target.period === 'daily' || target.period === 'weekly'
-    );
+    const trackingTargets = tip.trackingTargets ?? [];
+    const allTargets = [...fiberTargets, ...polyphenolTargets, ...plantDiversityTargets, ...trackingTargets];
 
-    if (!allTargets.length) return [];
+    if (!tipPeriod || !allTargets.length) return [];
 
     const targets = allTargets.map(target => {
       const trackingKey = 'trackingKey' in target ? target.trackingKey : target.tag;
-      const actual = target.period === 'weekly'
+      const actual = tipPeriod === 'weekly'
         ? getWeeklyTargetValue(trackingKey, target.unit)
         : getDailyTargetValue(trackingKey, target.unit);
-      const weeklyTrackingValue = target.period === 'weekly' ? weeklyTracking[weekStartKey]?.[trackingKey] : undefined;
-      const trackedItems = Array.isArray(weeklyTrackingValue)
-        ? weeklyTrackingValue
+      const trackingValue = tipPeriod === 'weekly' ? weeklyTracking[weekStartKey]?.[trackingKey] : dailyTracking[trackingKey];
+      const trackedItems = Array.isArray(trackingValue)
+        ? trackingValue
             .map(item => item.trim())
             .filter(item => item.length > 0)
             .sort((a, b) => a.localeCompare(b))
@@ -1412,15 +1439,11 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
       const labelGroup = target.unit === 'plants' || target.unit === 'items' || target.unit === 'count'
         ? 'weeklyTrackingLabels'
         : (target.unit === 'g' ? 'fiberLabels' : 'polyphenolLabels');
-      const periodLabel = target.period === 'weekly'
-        ? t('nutritionLogger.periodWeekly')
-        : t('nutritionLogger.periodDaily');
 
       return {
         tag: trackingKey,
         unit: target.unit,
-        period: target.period,
-        periodLabel,
+        period: tipPeriod,
         amount: target.amount,
         actual,
         isMet: actual >= target.amount,
@@ -1437,6 +1460,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
       tipId: tip.id,
       title: tip.title,
       areaId: tip.areas[0]?.id,
+      period: tipPeriod,
       targets,
       metCount,
       totalCount,
@@ -1445,17 +1469,162 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
     }];
   });
 
+  const nutritionPlanTipProgressByPeriod = React.useMemo(() => {
+    const byPeriod = (period: 'daily' | 'weekly') => {
+      return nutritionPlanTipProgress
+        .filter(tipProgress => tipProgress.period === period)
+        .sort((left, right) => {
+          if (left.isFulfilled !== right.isFulfilled) {
+            return left.isFulfilled ? -1 : 1;
+          }
+
+          if (left.progress !== right.progress) {
+            return right.progress - left.progress;
+          }
+
+          return left.title.localeCompare(right.title);
+        });
+    };
+
+    return {
+      daily: byPeriod('daily'),
+      weekly: byPeriod('weekly'),
+    };
+  }, [nutritionPlanTipProgress]);
+
+  const renderTipProgressItems = (tipsForPeriod: (typeof nutritionPlanTipProgress)) => (
+    tipsForPeriod.map((tip, index) => (
+      <TouchableOpacity
+        key={`${tip.tipId}-${tip.planTipId ?? 'no-plan-tip-id'}-${index}`}
+        style={[
+          styles.planTipProgressRow,
+          tip.isFulfilled && styles.planTipProgressRowFulfilled,
+          tip.isFulfilled
+            ? {
+                backgroundColor: colors.accentVeryWeak,
+                borderColor: colors.accentMedium,
+              }
+            : {
+                borderBottomColor: colors.textMuted,
+              },
+        ]}
+        activeOpacity={0.8}
+        disabled={!tip.areaId}
+        onPress={() => {
+          if (!tip.areaId) return;
+          router.push({
+            pathname: `/dashboard/area/${tip.areaId}/details` as any,
+            params: {
+              tipId: tip.tipId,
+            },
+          });
+        }}
+      >
+        <View style={styles.planTipProgressHeader}>
+          <ThemedText type="defaultSemiBold" style={styles.fulfilledTipTextBlock}>{t(`tips:${tip.title}`)}</ThemedText>
+           {tip.isFulfilled && <Icon source="check-circle" size={34} color={colors.xp} />}
+        </View>
+        <ThemedText type="caption" style={styles.planTipStatusText}>
+          {t('nutritionLogger.fulfilledTargetsCount', { met: tip.metCount, total: tip.totalCount })}
+        </ThemedText>
+
+             <View
+          style={[
+            styles.progressTrack,
+            tip.isFulfilled && styles.progressTrackFulfilled,
+            {
+              backgroundColor: tip.isFulfilled ? colors.accentWeak : colors.secondaryBackground,
+            },
+          ]}
+        >
+          <View
+            style={[
+              styles.progressFill,
+              tip.isFulfilled && styles.progressFillFulfilled,
+              {
+                width: `${Math.round(tip.progress * 100)}%`,
+                backgroundColor: tip.isFulfilled ? colors.accentMedium : colors.icon,
+              },
+            ]}
+          />
+        </View>
+        {tip.targets.map(target => {
+          const hasTrackedItems = Array.isArray(target.trackedItems) && target.trackedItems.length > 0;
+          const trackedItems = target.trackedItems ?? [];
+          const targetIconName = getTipTargetIconName(target.unit);
+          const valueFormatter = hasTrackedItems ? formatTargetProgressValue : formatTargetValue;
+          const targetValueText = `${valueFormatter(target.actual, target.unit)} / ${valueFormatter(target.amount, target.unit)}`;
+
+          if (hasTrackedItems) {
+            return (
+              <View key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`} style={styles.planTipTargetCollapsibleRow}>
+                <Collapsible
+                  title={target.label}
+                  titleType="explainer"
+                  initialCollapsed
+                  leftContent={<IconSymbol name={targetIconName} size={14} color={colors.textMuted} />}
+                  rightContent={(
+                    <ThemedText type="explainer" style={[styles.planTipTargetValue, styles.planTipTargetCollapsibleValue]}>
+                      {targetValueText}
+                    </ThemedText>
+                  )}
+                >
+                  <View style={styles.planTipTargetItemsList}>
+                    {trackedItems.map(item => (
+                      <ThemedText key={`${target.tag}-${item}`} type="caption" style={styles.planTipTargetItem}>
+                        • {item}
+                      </ThemedText>
+                    ))}
+                  </View>
+                </Collapsible>
+              </View>
+            );
+          }
+
+          return (
+            <View key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`} style={styles.planTipTargetRow}>
+              <View style={styles.planTipTargetLabelRow}>
+                <IconSymbol name={targetIconName} size={14} color={colors.textMuted} />
+                <ThemedText type="explainer" style={styles.planTipTargetLabel}>
+                  {target.label}
+                </ThemedText>
+              </View>
+              <ThemedText
+                type="caption"
+                style={[
+                  styles.planTipTargetValue,
+                  { color: target.isMet ? colors.primary : colors.textMuted },
+                ]}
+              >
+                {targetValueText}
+              </ThemedText>
+            </View>
+          );
+        })}
+   
+      </TouchableOpacity>
+    ))
+  );
+
+  const renderTipProgressList = (tipsForPeriod: (typeof nutritionPlanTipProgress)) => {
+    const fulfilledTips = tipsForPeriod.filter(tip => tip.isFulfilled);
+    const inProgressTips = tipsForPeriod.filter(tip => !tip.isFulfilled);
+
+    return (
+      <>
+        {renderTipProgressItems(fulfilledTips)}
+        {renderTipProgressItems(inProgressTips)}
+      </>
+    );
+  };
+
   useEffect(() => {
     nutritionPlanTipProgress.forEach(tipProgress => {
+      if (!tipProgress.isFulfilled) return;
+
       const planTipId = tipProgress.planTipId ?? 'no-plan-tip-id';
 
-      const dailyTargets = tipProgress.targets.filter(target => target.period === 'daily');
-      const weeklyTargets = tipProgress.targets.filter(target => target.period === 'weekly');
-
-      const isDailyComplete = dailyTargets.length > 0 && dailyTargets.every(target => target.isMet);
-      const isWeeklyComplete = weeklyTargets.length > 0 && weeklyTargets.every(target => target.isMet);
-
-      if (isDailyComplete) {
+      if (tipProgress.period === 'daily') {
         claimNutritionTipCompletionXP?.({
           claimKey: `${planTipId}|${tipProgress.tipId}|daily|${selectedDate}`,
           tipId: tipProgress.tipId,
@@ -1466,7 +1635,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
         });
       }
 
-      if (isWeeklyComplete) {
+      if (tipProgress.period === 'weekly') {
         claimNutritionTipCompletionXP?.({
           claimKey: `${planTipId}|${tipProgress.tipId}|weekly|${weekStartKey}`,
           tipId: tipProgress.tipId,
@@ -1807,89 +1976,25 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
 
         <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
             <ThemedText type="title3">{t('nutritionLogger.fulfilledTipsTitle')}</ThemedText>
-            {nutritionPlanTipProgress.length > 0 ? (
-              nutritionPlanTipProgress.map((tip, index) => (
-                <TouchableOpacity
-                  key={`${tip.tipId}-${tip.planTipId ?? 'no-plan-tip-id'}-${index}`}
-                  style={[styles.planTipProgressRow, { borderBottomColor: colors.textMuted }]}
-                  activeOpacity={0.8}
-                  disabled={!tip.areaId}
-                  onPress={() => {
-                    if (!tip.areaId) return;
-                    router.push({
-                      pathname: `/dashboard/area/${tip.areaId}/details` as any,
-                      params: {
-                        tipId: tip.tipId,
-                      },
-                    });
-                  }}
-                > 
-                  <View style={styles.planTipProgressHeader}>
-                    <IconSymbol name={tip.isFulfilled ? 'checklist' : 'clock'} size={16} color={colors.textMuted} />
-                    <ThemedText type="defaultSemiBold" style={styles.fulfilledTipTextBlock}>{t(`tips:${tip.title}`)}</ThemedText>
+            {nutritionPlanTipProgressByPeriod.daily.length > 0 || nutritionPlanTipProgressByPeriod.weekly.length > 0 ? (
+              <>
+                {nutritionPlanTipProgressByPeriod.daily.length > 0 && (
+                  <View style={styles.periodSection}>
+                    <ThemedText type="title3" style={styles.periodSectionHeading}>
+                      {t('nutritionLogger.periodDaily')}
+                    </ThemedText>
+                    {renderTipProgressList(nutritionPlanTipProgressByPeriod.daily)}
                   </View>
-                  <ThemedText type="caption" style={styles.planTipStatusText}>
-                    {tip.isFulfilled
-                      ? t('nutritionLogger.tipStatusFulfilled')
-                      : t('nutritionLogger.tipStatusNotFulfilled')}
-                    {' • '}
-                    {t('nutritionLogger.fulfilledTargetsCount', { met: tip.metCount, total: tip.totalCount })}
-                  </ThemedText>
-                  {tip.targets.map(target => {
-                    const targetValueText = `${formatTargetValue(target.actual, target.unit)} / ${formatTargetValue(target.amount, target.unit)}`;
-                    const hasTrackedItems = Array.isArray(target.trackedItems) && target.trackedItems.length > 0;
-                    const trackedItems = target.trackedItems ?? [];
-
-                    if (hasTrackedItems) {
-                      return (
-                        <View key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`} style={styles.planTipTargetCollapsibleRow}>
-                          <Collapsible
-                            title={`${target.label} (${target.periodLabel}) • ${targetValueText}`}
-                            titleType="caption"
-                            initialCollapsed
-                          >
-                            <View style={styles.planTipTargetItemsList}>
-                              {trackedItems.map(item => (
-                                <ThemedText key={`${target.tag}-${item}`} type="caption" style={styles.planTipTargetItem}>
-                                  • {item}
-                                </ThemedText>
-                              ))}
-                            </View>
-                          </Collapsible>
-                        </View>
-                      );
-                    }
-
-                    return (
-                      <View key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`} style={styles.planTipTargetRow}>
-                        <ThemedText type="caption" style={styles.planTipTargetLabel}>
-                          {target.label} ({target.periodLabel})
-                        </ThemedText>
-                        <ThemedText
-                          type="caption"
-                          style={[
-                            styles.planTipTargetValue,
-                            { color: target.isMet ? colors.primary : colors.textMuted },
-                          ]}
-                        >
-                          {targetValueText}
-                        </ThemedText>
-                      </View>
-                    );
-                  })}
-                  <View style={[styles.progressTrack, { backgroundColor: colors.secondaryBackground }]}> 
-                    <View
-                      style={[
-                        styles.progressFill,
-                        {
-                          width: `${Math.round(tip.progress * 100)}%`,
-                          backgroundColor: tip.isFulfilled ? colors.primary : colors.icon,
-                        },
-                      ]}
-                    />
+                )}
+                {nutritionPlanTipProgressByPeriod.weekly.length > 0 && (
+                  <View style={styles.periodSection}>
+                    <ThemedText type="title3" style={styles.periodSectionHeading}>
+                      {t('nutritionLogger.periodWeekly')}
+                    </ThemedText>
+                    {renderTipProgressList(nutritionPlanTipProgressByPeriod.weekly)}
                   </View>
-                </TouchableOpacity>
-              ))
+                )}
+              </>
             ) : (
               <ThemedText type="caption" style={styles.noFulfilledTipsText}>
                 {t('nutritionLogger.noPlanTipsWithTargets')}
@@ -2011,14 +2116,40 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   planTipProgressRow: {
+    width: '100%',
+    alignSelf: 'stretch',
+    paddingTop: 8,
+    paddingHorizontal: 10,
     paddingBottom: 8,
     marginBottom: 8,
     borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  planTipProgressRowFulfilled: {
+    borderWidth: 1,
+    borderRadius: 12,
   },
   planTipProgressHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+  },
+  periodSection: {
+    marginTop: 6,
+  },
+  periodSectionHeading: {
+    marginBottom: 4,
+    opacity: 0.9,
+    textTransform: 'capitalize',
+  },
+  tipGroupHeading: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 4,
+    marginBottom: 8,
+  },
+  tipGroupHeadingText: {
+    opacity: 0.9,
   },
   planTipStatusText: {
     marginTop: 4,
@@ -2031,6 +2162,12 @@ const styles = StyleSheet.create({
     gap: 12,
     marginBottom: 4,
   },
+  planTipTargetLabelRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   planTipTargetCollapsibleRow: {
     marginBottom: 4,
     width: '100%',
@@ -2040,6 +2177,9 @@ const styles = StyleSheet.create({
   },
   planTipTargetValue: {
     textAlign: 'right',
+  },
+  planTipTargetCollapsibleValue: {
+    marginLeft: 'auto',
   },
   planTipTargetItemsList: {
     marginTop: 4,
@@ -2054,10 +2194,22 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     overflow: 'hidden',
     width: '100%',
+    marginBottom: 10,
+  },
+  progressTrackFulfilled: {
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 1,
   },
   progressFill: {
     height: '100%',
     borderRadius: 999,
+  },
+  progressFillFulfilled: {
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 0 },
   },
   noFulfilledTipsText: {
     marginTop: 8,

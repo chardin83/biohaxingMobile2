@@ -26,6 +26,8 @@ export type TimeOfDayRule =
 
 export type EvidenceConfidence = 'high' | 'medium' | 'low';
 
+export type TargetPeriod = 'daily' | 'weekly';
+
 export type FiberType =
   | 'fiber_total'
   | 'fiber_gel_forming'
@@ -98,7 +100,6 @@ export type FiberTarget = {
   tag: FiberType;
   amount: number;
   unit: 'g';
-  period: 'daily' | 'weekly';
   sourceBackedWeight?: number; // Default 1.0 when omitted
   inferredWeight?: number; // Default 0.7 when omitted
 };
@@ -107,7 +108,6 @@ export type PolyphenolTarget = {
   tag: PolyphenolType;
   amount: number;
   unit: 'mg';
-  period: 'daily' | 'weekly';
   sourceBackedWeight?: number; // Default 1.0 when omitted
   inferredWeight?: number; // Default 0.7 when omitted
 };
@@ -116,14 +116,12 @@ export type PlantDiversityTarget = {
   tag: 'plant_diversity';
   amount: number; // Number of unique plants to consume in the period
   unit: 'plants';
-  period: 'daily' | 'weekly';
 };
 
-export type WeeklyTrackingTarget = {
+export type TrackingTarget = {
   trackingKey: string; // e.g., 'unique_plants', 'vegetable_colors', 'fish_meals', 'fatty_fish_meals'
   amount: number; // Target value (e.g., 30 for plants, 3 for fish meals)
   unit: 'items' | 'count'; // 'items' for arrays, 'count' for numbers
-  period: 'weekly';
   aiInstruction?: string; // Optional dynamic guidance sent to AI for this key
 };
 
@@ -137,7 +135,7 @@ export type TipNutritionFood = {
   defaultConfidence?: EvidenceConfidence;
 };
 
-export type Tip = {
+type TipBase = {
   id: string;
   level?: number;
   xp?: number;
@@ -155,13 +153,27 @@ export type Tip = {
   timeRule?: TimeOfDayRule; // (tidsrestriktioner)
   planCategory?: PlanCategory[]; // Markerar övergripande plan-kategori
   nutritionFoods?: TipNutritionFood[]; // Rekommenderade livsmedel för nutritionstips
-  fiberTargets?: FiberTarget[]; // Fibermål som används för plan-uppföljning
-  polyphenolTargets?: PolyphenolTarget[]; // Polyfenolmål som används för plan-uppföljning
-  plantDiversityTargets?: PlantDiversityTarget[]; // Växtdiversitetsmål (antal unika växter per period)
-  weeklyTrackingTargets?: WeeklyTrackingTarget[]; // Flexibla veckomål (växter, färger, fisk, etc.)
   bodyParts?: string[]; // Rekommenderade delar av kroppen för detta tip
   microbiomeIds?: string[]; // Koppling till microbiome-bakterier
 };
+
+type TipWithoutTargets = {
+  targetPeriod?: never;
+  fiberTargets?: never;
+  polyphenolTargets?: never;
+  plantDiversityTargets?: never;
+  trackingTargets?: never;
+};
+
+type TipWithTargets = {
+  targetPeriod: TargetPeriod;
+  fiberTargets?: FiberTarget[]; // Fibermål som används för plan-uppföljning
+  polyphenolTargets?: PolyphenolTarget[]; // Polyfenolmål som används för plan-uppföljning
+  plantDiversityTargets?: PlantDiversityTarget[]; // Växtdiversitetsmål (antal unika växter per period)
+  trackingTargets?: TrackingTarget[]; // Flexibla tracking-mål (växter, färger, fisk, etc.)
+};
+
+export type Tip = TipBase & (TipWithoutTargets | TipWithTargets);
 
 const rawTips: Tip[] = [
   // Lågkolhydratkost
@@ -1322,8 +1334,9 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition'],
     isParent: true,
+    targetPeriod: 'daily',
     fiberTargets: [
-      { tag: 'fiber_total', amount: 25, unit: 'g', period: 'daily', sourceBackedWeight: 1, inferredWeight: 0.7 },
+      { tag: 'fiber_total', amount: 25, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
     ],
     nutritionFoods: [
       {
@@ -1386,9 +1399,10 @@ const rawTips: Tip[] = [
     preferredDayParts: ['afternoon', 'evening'],
     timeRule: 'anytime',
     planCategory: ['nutrition'],
+    targetPeriod: 'daily',
     fiberTargets: [
-      { tag: 'fiber_total', amount: 30, unit: 'g', period: 'daily', sourceBackedWeight: 1, inferredWeight: 0.7 },
-      { tag: 'fiber_fermentable', amount: 15, unit: 'g', period: 'daily', sourceBackedWeight: 1, inferredWeight: 0.7 },
+      { tag: 'fiber_total', amount: 30, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
+      { tag: 'fiber_fermentable', amount: 15, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
     ],
     nutritionFoods: [
       {
@@ -1451,9 +1465,10 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'afternoon'],
     timeRule: 'anytime',
     planCategory: ['nutrition'],
+    targetPeriod: 'daily',
     fiberTargets: [
-      { tag: 'fiber_total', amount: 30, unit: 'g', period: 'daily', sourceBackedWeight: 1, inferredWeight: 0.7 },
-      { tag: 'fiber_gel_forming', amount: 10, unit: 'g', period: 'daily', sourceBackedWeight: 1, inferredWeight: 0.7 },
+      { tag: 'fiber_total', amount: 30, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
+      { tag: 'fiber_gel_forming', amount: 10, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
     ],
     nutritionFoods: [
       {
@@ -1516,9 +1531,10 @@ const rawTips: Tip[] = [
     preferredDayParts: ['midday', 'evening'],
     timeRule: 'anytime',
     planCategory: ['nutrition'],
+    targetPeriod: 'daily',
     fiberTargets: [
-      { tag: 'fiber_total', amount: 30, unit: 'g', period: 'daily', sourceBackedWeight: 1, inferredWeight: 0.7 },
-      { tag: 'fiber_non_gel_forming', amount: 20, unit: 'g', period: 'daily', sourceBackedWeight: 1, inferredWeight: 0.7 },
+      { tag: 'fiber_total', amount: 30, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
+      { tag: 'fiber_non_gel_forming', amount: 20, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
     ],
     nutritionFoods: [
       {
@@ -1581,6 +1597,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday', 'evening'],
     timeRule: 'anytime',
     planCategory: ['nutrition'],
+    targetPeriod: 'weekly',
     nutritionFoods: [
       {
         key: 'legumes',
@@ -1624,19 +1641,17 @@ const rawTips: Tip[] = [
     ],
     bodyParts: ['digestiveSystem', 'immuneSystem'],
     microbiomeIds: ['Akkermansia', 'Roseburia', 'Faecalibacterium', 'Ruminococcus', 'Gordonibacter'],
-    weeklyTrackingTargets: [
+    trackingTargets: [
       {
         trackingKey: 'unique_plants',
         amount: 30,
         unit: 'items',
-        period: 'weekly',
         aiInstruction: 'List distinct plant foods visible in the meal. Do not include animal foods or sauces.',
       },
       {
         trackingKey: 'vegetable_colors',
         amount: 6,
         unit: 'items',
-        period: 'weekly',
         aiInstruction: 'Track only colors represented by visible vegetables. Never infer color from egg, pasta, dairy, meat, or dressing.',
       },
     ],
@@ -1656,19 +1671,18 @@ const rawTips: Tip[] = [
     preferredDayParts: ['midday', 'evening'],
     timeRule: 'anytime',
     planCategory: ['nutrition'],
-    weeklyTrackingTargets: [
+    targetPeriod: 'weekly',
+    trackingTargets: [
       {
         trackingKey: 'fish_meals',
         amount: 3,
         unit: 'count',
-        period: 'weekly',
         aiInstruction: 'Increment by 1 only when fish is clearly visible in the meal.',
       },
       {
         trackingKey: 'fatty_fish_meals',
         amount: 1,
         unit: 'count',
-        period: 'weekly',
         aiInstruction: 'Increment by 1 only when fatty fish is clearly visible (e.g., salmon, mackerel, herring, sardine, trout).',
       },
     ],
@@ -1706,10 +1720,11 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday', 'afternoon'],
     timeRule: 'anytime',
     planCategory: ['nutrition'],
+    targetPeriod: 'daily',
     polyphenolTargets: [
-      { tag: 'polyphenols_total', amount: 1000, unit: 'mg', period: 'daily', sourceBackedWeight: 1, inferredWeight: 0.5 },
-      { tag: 'flavonoids_total', amount: 500, unit: 'mg', period: 'daily', sourceBackedWeight: 1, inferredWeight: 0.5 },
-      { tag: 'anthocyanins', amount: 150, unit: 'mg', period: 'daily', sourceBackedWeight: 1, inferredWeight: 0.6 },
+      { tag: 'polyphenols_total', amount: 1000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.5 },
+      { tag: 'flavonoids_total', amount: 500, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.5 },
+      { tag: 'anthocyanins', amount: 150, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 },
     ],
     nutritionFoods: [
       {
