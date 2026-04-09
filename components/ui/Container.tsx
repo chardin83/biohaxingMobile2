@@ -1,6 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
+import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import { StyleSheet, View, ViewProps } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -21,7 +21,12 @@ type ContainerProps = ViewProps & {
   scrollable?: boolean;
 };
 
-const Container: React.FC<ContainerProps> = ({
+export type ContainerScrollRef = {
+  scrollToEnd(options?: { animated?: boolean }): void;
+  scrollTo(options: { x?: number; y?: number; animated?: boolean }): void;
+};
+
+const Container = forwardRef<ContainerScrollRef, ContainerProps>(({
   children,
   style,
   background = 'default',
@@ -33,7 +38,14 @@ const Container: React.FC<ContainerProps> = ({
   contentContainerStyle,
   scrollable = true,
   ...rest
-}) => {
+}, ref) => {
+  const internalScrollRef = useRef<ScrollView>(null);
+
+  useImperativeHandle(ref, () => ({
+    scrollToEnd: (options) => internalScrollRef.current?.scrollToEnd(options),
+    scrollTo: (options) => internalScrollRef.current?.scrollTo(options),
+  }));
+
   const { dark, colors } = useTheme();
 
   // Dynamic paddingTop based on backbutton
@@ -54,6 +66,7 @@ const Container: React.FC<ContainerProps> = ({
       )}
       {scrollable ? (
         <ScrollView
+          ref={internalScrollRef}
           style={style}
           contentContainerStyle={mergedContentContainerStyle}
           {...rest}
@@ -87,7 +100,7 @@ const Container: React.FC<ContainerProps> = ({
     );
   }
   return <View style={[globalStyles.flex1, { backgroundColor: themeBackground }]}>{content}</View>;
-};
+});
 
 const styles = StyleSheet.create({
   backButtonWrapper: {

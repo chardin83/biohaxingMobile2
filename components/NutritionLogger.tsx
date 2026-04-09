@@ -1,10 +1,23 @@
+import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
+import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { t as i18nT } from 'i18next';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  Animated,
+  KeyboardAvoidingView,
+  LayoutAnimation,
+  Platform,
+  Pressable,
+  StyleSheet,
+  TouchableOpacity,
+  UIManager,
+  View,
+} from 'react-native';
 import { Icon } from 'react-native-paper';
+import { FullWindowOverlay } from 'react-native-screens';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
@@ -26,6 +39,7 @@ import { SwipeableRow } from './ui/SwipeableRow';
 
 interface NutritionLoggerProps {
   selectedDate: string;
+  onTipCompleted?: (targetY?: number) => void;
 }
 
 type NutritionEvidence = {
@@ -47,6 +61,31 @@ type MicrobiomeSupportEntry = {
 type WeeklyTrackingSignalValue = string[] | number;
 type WeeklyTrackingSignals = Record<string, WeeklyTrackingSignalValue>;
 type TipTargetIconName = 'fiber' | 'polyphenol' | 'target';
+
+type TipProgressItem = {
+  planTipId: string;
+  tipId: string;
+  title: string;
+  areaId?: string;
+  period: 'daily' | 'weekly';
+  targets: Array<{
+    tag: string;
+    unit: 'g' | 'mg' | 'items' | 'count';
+    period: 'daily' | 'weekly';
+    amount: number;
+    actual: number;
+    isMet: boolean;
+    label: string;
+    trackedItems?: string[];
+  }>;
+  metCount: number;
+  totalCount: number;
+  isFulfilled: boolean;
+  progress: number;
+};
+
+const getTipProgressKey = (tip: TipProgressItem): string =>
+  `${tip.planTipId}|${tip.tipId}|${tip.period}`;
 
 const parseStringArray = (value: unknown): string[] => {
   if (Array.isArray(value)) {
@@ -186,6 +225,18 @@ type ParsedMacroAnalysis = {
   mineralsConfidenceByType: Record<string, ConfidenceLevel>;
   microbiomeSupport: MicrobiomeSupportEntry[];
 };
+
+type RecentMealOption = {
+  id: string;
+  date: string;
+  meal: any;
+  mealName: string;
+  sortOrder: number;
+};
+
+const BottomSheetOverlayContainer = ({ children }: { children?: React.ReactNode }) => (
+  <FullWindowOverlay>{children}</FullWindowOverlay>
+);
 
 const FIBER_TYPE_KEYS = ['fiber_total', 'fiber_gel_forming', 'fiber_non_gel_forming', 'fiber_fermentable'] as const;
 const POLYPHENOL_TYPE_KEYS = [
@@ -906,8 +957,14 @@ const extractWeeklyTrackingSignals = (data: any, parsedContent: any): WeeklyTrac
   return collected;
 };
 
+const getNormalizedMealName = (meal: any, fallbackName: string): string => (
+  typeof meal?.mealName === 'string' && meal.mealName.trim().length > 0
+    ? meal.mealName
+    : fallbackName
+);
 
-const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
+
+const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCompleted }) => {
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
   const router = useRouter();
@@ -930,6 +987,48 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
   const [isEditMealModalVisible, setIsEditMealModalVisible] = useState(false);
   const [editingMealId, setEditingMealId] = useState<string | null>(null);
   const [editingMealName, setEditingMealName] = useState('');
+  const previousFulfilledByKeyRef = useRef<Record<string, boolean>>({});
+  const hasInitializedFulfilledTrackingRef = useRef(false);
+  const completionAnimByKeyRef = useRef<Record<string, Animated.Value>>({});
+  const copyMealBottomSheetRef = useRef<BottomSheetModal | null>(null);
+  const fulfilledTipsSectionYRef = useRef(0);
+  const periodSectionYRef = useRef<Record<'daily' | 'weekly', number>>({ daily: 0, weekly: 0 });
+  const tipRowLocalYByKeyRef = useRef<Record<string, number>>({});
+  const tipRowPeriodByKeyRef = useRef<Record<string, 'daily' | 'weekly'>>({});
+  const pendingCompletionScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingCompletionAnimTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const COMPLETION_SCROLL_DELAY_MS = 80;
+  const COMPLETION_ANIMATION_DELAY_AFTER_SCROLL_MS = 180;
+
+  const getCompletionAnimValue = useCallback((tipKey: string): Animated.Value => {
+    if (!completionAnimByKeyRef.current[tipKey]) {
+      completionAnimByKeyRef.current[tipKey] = new Animated.Value(0);
+    }
+    return completionAnimByKeyRef.current[tipKey];
+  }, []);
+
+  const triggerLightHaptic = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
+  }, []);
+
+  const animateTipCompletion = useCallback((tipKey: string) => {
+    const anim = getCompletionAnimValue(tipKey);
+    anim.stopAnimation();
+    anim.setValue(0);
+
+    Animated.sequence([
+      Animated.timing(anim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(anim, {
+        toValue: 0,
+        duration: 450,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [getCompletionAnimValue]);
 
   const activeTrackingTargetsForAI = useMemo(() => {
     const byKey = new Map<string, { key: string; unit: 'items' | 'count'; amount?: number; aiInstruction?: string }>();
@@ -988,7 +1087,39 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
     setIsEditMealModalVisible(false);
     setEditingMealId(null);
     setEditingMealName('');
+    previousFulfilledByKeyRef.current = {};
+    hasInitializedFulfilledTrackingRef.current = false;
+    periodSectionYRef.current = { daily: 0, weekly: 0 };
+    tipRowLocalYByKeyRef.current = {};
+    tipRowPeriodByKeyRef.current = {};
+    if (pendingCompletionScrollTimeoutRef.current) {
+      clearTimeout(pendingCompletionScrollTimeoutRef.current);
+      pendingCompletionScrollTimeoutRef.current = null;
+    }
+    if (pendingCompletionAnimTimeoutRef.current) {
+      clearTimeout(pendingCompletionAnimTimeoutRef.current);
+      pendingCompletionAnimTimeoutRef.current = null;
+    }
   }, [selectedDate]);
+
+  useEffect(() => {
+    return () => {
+      if (pendingCompletionScrollTimeoutRef.current) {
+        clearTimeout(pendingCompletionScrollTimeoutRef.current);
+        pendingCompletionScrollTimeoutRef.current = null;
+      }
+      if (pendingCompletionAnimTimeoutRef.current) {
+        clearTimeout(pendingCompletionAnimTimeoutRef.current);
+        pendingCompletionAnimTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }, []);
 
   useEffect(() => {
     const todayKey = toDateKeyLocal(new Date());
@@ -1032,13 +1163,26 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
     };
   };
 
+  const syncWeekTrackingForDate = (nextSummaries: Record<string, any>, dateKey: string) => {
+    const { weekStartISO, weekEndISO } = getWeekBoundsFromDateKey(dateKey);
+    const recalculatedWeekTracking = buildWeekTrackingFromSummaries(nextSummaries, weekStartISO, weekEndISO, activeTrackingKeys);
+
+    setWeeklyTracking(previousWeeklyTracking => {
+      const updatedWeeklyTracking = { ...previousWeeklyTracking };
+      if (Object.keys(recalculatedWeekTracking).length > 0) {
+        updatedWeeklyTracking[weekStartISO] = recalculatedWeekTracking;
+      } else {
+        delete updatedWeeklyTracking[weekStartISO];
+      }
+      return updatedWeeklyTracking;
+    });
+  };
+
   const handleRemoveMeal = (mealId: string) => {
     if (mealId === selectedLoggedMealId) {
       setSelectedLoggedMealId(null);
       setLastLoggedMeal(null);
     }
-
-    const { weekStartISO, weekEndISO } = getWeekBoundsFromDateKey(selectedDate);
 
     setDailyNutritionSummaries(prev => {
       const existingSummary = prev[selectedDate];
@@ -1050,32 +1194,14 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
       if (!updatedMeals.length) {
         delete next[selectedDate];
 
-        const recalculatedWeekTracking = buildWeekTrackingFromSummaries(next, weekStartISO, weekEndISO, activeTrackingKeys);
-        setWeeklyTracking(previousWeeklyTracking => {
-          const updatedWeeklyTracking = { ...previousWeeklyTracking };
-          if (Object.keys(recalculatedWeekTracking).length > 0) {
-            updatedWeeklyTracking[weekStartISO] = recalculatedWeekTracking;
-          } else {
-            delete updatedWeeklyTracking[weekStartISO];
-          }
-          return updatedWeeklyTracking;
-        });
+        syncWeekTrackingForDate(next, selectedDate);
 
         return next;
       }
 
       next[selectedDate] = buildDailySummary(updatedMeals);
 
-      const recalculatedWeekTracking = buildWeekTrackingFromSummaries(next, weekStartISO, weekEndISO, activeTrackingKeys);
-      setWeeklyTracking(previousWeeklyTracking => {
-        const updatedWeeklyTracking = { ...previousWeeklyTracking };
-        if (Object.keys(recalculatedWeekTracking).length > 0) {
-          updatedWeeklyTracking[weekStartISO] = recalculatedWeekTracking;
-        } else {
-          delete updatedWeeklyTracking[weekStartISO];
-        }
-        return updatedWeeklyTracking;
-      });
+      syncWeekTrackingForDate(next, selectedDate);
 
       return next;
     });
@@ -1091,6 +1217,14 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
     setIsEditMealModalVisible(false);
     setEditingMealId(null);
     setEditingMealName('');
+  };
+
+  const handleOpenCopyMealModal = () => {
+    copyMealBottomSheetRef.current?.present();
+  };
+
+  const handleCloseCopyMealModal = () => {
+    copyMealBottomSheetRef.current?.dismiss();
   };
 
   const handleSaveMealName = () => {
@@ -1127,10 +1261,36 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
     handleCloseEditMealModal();
   };
 
+  const handleCopyMeal = (mealToCopy: any) => {
+    const copiedMeal = {
+      ...mealToCopy,
+      id: `${selectedDate}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      date: selectedDate,
+      mealName: getNormalizedMealName(mealToCopy, t('nutritionLogger.unnamedMeal')),
+    };
+
+    setDailyNutritionSummaries(prev => {
+      const existingMeals = prev[selectedDate]?.meals ?? [];
+
+      const next = {
+        ...prev,
+        [selectedDate]: buildDailySummary([...existingMeals, copiedMeal]),
+      };
+
+      syncWeekTrackingForDate(next, selectedDate);
+
+      return next;
+    });
+
+    setSelectedLoggedMealId(copiedMeal.id);
+    setLastLoggedMeal(toParsedMacroAnalysis(copiedMeal));
+    triggerLightHaptic();
+
+    handleCloseCopyMealModal();
+  };
+
   const toParsedMacroAnalysis = (meal: any): ParsedMacroAnalysis => ({
-    mealName: typeof meal?.mealName === 'string' && meal.mealName.trim().length > 0
-      ? meal.mealName
-      : t('nutritionLogger.unnamedMeal'),
+    mealName: getNormalizedMealName(meal, t('nutritionLogger.unnamedMeal')),
     protein: typeof meal?.protein === 'number' ? meal.protein : 0,
     calories: typeof meal?.calories === 'number' ? meal.calories : 0,
     carbohydrates: typeof meal?.carbohydrates === 'number' ? meal.carbohydrates : 0,
@@ -1320,6 +1480,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
 
       setLastLoggedMeal(analysis);
       setAnalysisResult('✅ Måltid loggad och analyserad!');
+      triggerLightHaptic();
     } catch (err) {
       console.error('Error analyzing image:', err);
       const errMsg = err instanceof Error ? err.message : '';
@@ -1338,6 +1499,37 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
   const summary = dailyNutritionSummaries[selectedDate];
   const todayKey = toDateKeyLocal(new Date());
   const isFutureSelectedDate = selectedDate > todayKey;
+  const recentMeals = useMemo<RecentMealOption[]>(() => (
+    Object.entries(dailyNutritionSummaries)
+      .flatMap(([dateKey, daySummary]) => {
+        const meals = Array.isArray(daySummary?.meals) ? daySummary.meals : [];
+        return meals.map((meal, index) => ({
+          id: typeof meal?.id === 'string' ? meal.id : `${dateKey}-${index}`,
+          date: dateKey,
+          meal,
+          mealName: getNormalizedMealName(meal, t('nutritionLogger.unnamedMeal')),
+          sortOrder: meals.length - index,
+        }));
+      })
+      .sort((left, right) => {
+        if (left.date !== right.date) {
+          return right.date.localeCompare(left.date);
+        }
+        return right.sortOrder - left.sortOrder;
+      })
+      .filter((meal, index, allMeals) => {
+        const mealCalories = roundToOneDecimal(typeof meal.meal?.calories === 'number' ? meal.meal.calories : 0);
+        const mealFiber = roundToOneDecimal(typeof meal.meal?.fiber === 'number' ? meal.meal.fiber : 0);
+        const uniquenessKey = `${meal.mealName.toLowerCase()}|${mealCalories}|${mealFiber}`;
+        return index === allMeals.findIndex(candidate => {
+          const candidateCalories = roundToOneDecimal(typeof candidate.meal?.calories === 'number' ? candidate.meal.calories : 0);
+          const candidateFiber = roundToOneDecimal(typeof candidate.meal?.fiber === 'number' ? candidate.meal.fiber : 0);
+          return `${candidate.mealName.toLowerCase()}|${candidateCalories}|${candidateFiber}` === uniquenessKey;
+        });
+      })
+        .slice(0, 20)
+  ), [dailyNutritionSummaries, t]);
+  const copyMealSheetSnapPoints = useMemo(() => ['45%', '75%'], []);
   const dailyFiberByType = summary ? sumTypedTotals(summary.meals, 'fiberByType') : {};
   const dailyFiberSubtypeTotals = summary ? sumTypedTotals(summary.meals, 'fiberSubtypeTotals') : {};
   const dailyPolyphenolByType = summary ? sumTypedTotals(summary.meals, 'polyphenolByType') : {};
@@ -1421,7 +1613,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
     return weeklyPolyphenolByType[tag] ?? 0;
   };
 
-  const nutritionPlanTipProgress = (plans?.nutrition ?? []).flatMap(planTip => {
+  const nutritionPlanTipProgress: TipProgressItem[] = (plans?.nutrition ?? []).flatMap(planTip => {
     const tip = tips.find(candidate => candidate.id === planTip.tipId);
     if (!tip) return [];
 
@@ -1466,7 +1658,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
     const totalCount = targets.length;
 
     return [{
-      planTipId: planTip.id,
+      planTipId: planTip.id ?? 'no-plan-tip-id',
       tipId: tip.id,
       title: tip.title,
       areaId: tip.areas[0]?.id,
@@ -1502,10 +1694,95 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
     };
   }, [nutritionPlanTipProgress]);
 
-  const renderTipProgressItems = (tipsForPeriod: (typeof nutritionPlanTipProgress)) => (
-    tipsForPeriod.map((tip, index) => (
+  useEffect(() => {
+    const nextFulfilledByKey: Record<string, boolean> = {};
+    const newlyFulfilledTipKeys: string[] = [];
+
+    nutritionPlanTipProgress.forEach(tipProgress => {
+      const tipKey = getTipProgressKey(tipProgress);
+      const wasFulfilled = previousFulfilledByKeyRef.current[tipKey] ?? false;
+      nextFulfilledByKey[tipKey] = tipProgress.isFulfilled;
+
+      if (tipProgress.isFulfilled && !wasFulfilled) {
+        newlyFulfilledTipKeys.push(tipKey);
+      }
+    });
+
+    if (!hasInitializedFulfilledTrackingRef.current) {
+      previousFulfilledByKeyRef.current = nextFulfilledByKey;
+      hasInitializedFulfilledTrackingRef.current = true;
+      return;
+    }
+
+    if (newlyFulfilledTipKeys.length > 0) {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
+      const firstNewlyFulfilledTip = newlyFulfilledTipKeys[0];
+      if (pendingCompletionScrollTimeoutRef.current) {
+        clearTimeout(pendingCompletionScrollTimeoutRef.current);
+      }
+      if (pendingCompletionAnimTimeoutRef.current) {
+        clearTimeout(pendingCompletionAnimTimeoutRef.current);
+      }
+
+      const computeTargetY = () => {
+        const period = tipRowPeriodByKeyRef.current[firstNewlyFulfilledTip];
+        const rowLocalY = tipRowLocalYByKeyRef.current[firstNewlyFulfilledTip];
+        const sectionY = fulfilledTipsSectionYRef.current;
+        const periodY = period ? periodSectionYRef.current[period] : 0;
+        if (period && typeof rowLocalY === 'number') {
+          return sectionY + periodY + rowLocalY;
+        }
+        return sectionY > 0 ? sectionY : undefined;
+      };
+
+      requestAnimationFrame(() => {
+        pendingCompletionScrollTimeoutRef.current = setTimeout(() => {
+          onTipCompleted?.(computeTargetY());
+          pendingCompletionScrollTimeoutRef.current = null;
+        }, COMPLETION_SCROLL_DELAY_MS);
+      });
+      pendingCompletionAnimTimeoutRef.current = setTimeout(() => {
+        newlyFulfilledTipKeys.forEach(key => animateTipCompletion(key));
+        pendingCompletionAnimTimeoutRef.current = null;
+      }, COMPLETION_SCROLL_DELAY_MS + COMPLETION_ANIMATION_DELAY_AFTER_SCROLL_MS);
+    }
+
+    previousFulfilledByKeyRef.current = nextFulfilledByKey;
+  }, [
+    animateTipCompletion,
+    nutritionPlanTipProgress,
+    onTipCompleted,
+  ]);
+
+  const renderTipProgressItems = (tipsForPeriod: TipProgressItem[]) => (
+    tipsForPeriod.map(tip => {
+      const tipKey = getTipProgressKey(tip);
+      const completionAnim = getCompletionAnimValue(tipKey);
+
+      return (
+      <View
+        key={tipKey}
+        onLayout={event => {
+          tipRowLocalYByKeyRef.current[tipKey] = event.nativeEvent.layout.y;
+          tipRowPeriodByKeyRef.current[tipKey] = tip.period;
+        }}
+      >
+      <Animated.View
+        style={[
+          {
+            transform: [
+              {
+                scale: completionAnim.interpolate({
+                  inputRange: [0, 0.4, 1],
+                  outputRange: [1, 1.03, 1],
+                }),
+              },
+            ],
+          },
+        ]}
+      >
       <TouchableOpacity
-        key={`${tip.tipId}-${tip.planTipId ?? 'no-plan-tip-id'}-${index}`}
         style={[
           styles.planTipProgressRow,
           tip.isFulfilled && styles.planTipProgressRowFulfilled,
@@ -1613,10 +1890,13 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
         })}
    
       </TouchableOpacity>
-    ))
+      </Animated.View>
+      </View>
+    );
+    })
   );
 
-  const renderTipProgressList = (tipsForPeriod: (typeof nutritionPlanTipProgress)) => {
+  const renderTipProgressList = (tipsForPeriod: TipProgressItem[]) => {
     const fulfilledTips = tipsForPeriod.filter(tip => tip.isFulfilled);
     const inProgressTips = tipsForPeriod.filter(tip => !tip.isFulfilled);
 
@@ -1667,6 +1947,21 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
           disabled={isFutureSelectedDate}
           style={styles.imagePickerButton}
         />
+        <TouchableOpacity
+          onPress={handleOpenCopyMealModal}
+          disabled={isFutureSelectedDate || recentMeals.length === 0}
+          activeOpacity={0.7}
+          style={styles.copyMealLink}
+        >
+          <ThemedText
+            type="caption"
+            style={[
+              { color: isFutureSelectedDate || recentMeals.length === 0 ? colors.textMuted : colors.primary },
+            ]}
+          >
+            {t('nutritionLogger.copyMealLink')}
+          </ThemedText>
+        </TouchableOpacity>
         {isFutureSelectedDate && (
           <ThemedText type="caption" style={[styles.futureDateHint, { color: colors.textMuted }]}> 
             {t('nutritionLogger.futureDateLocked')}
@@ -1984,12 +2279,22 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
           </Card>
         )}
 
+        <View
+          onLayout={event => {
+            fulfilledTipsSectionYRef.current = event.nativeEvent.layout.y;
+          }}
+        >
         <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
             <ThemedText type="title3">{t('nutritionLogger.fulfilledTipsTitle')}</ThemedText>
             {nutritionPlanTipProgressByPeriod.daily.length > 0 || nutritionPlanTipProgressByPeriod.weekly.length > 0 ? (
               <>
                 {nutritionPlanTipProgressByPeriod.daily.length > 0 && (
-                  <View style={styles.periodSection}>
+                  <View
+                    style={styles.periodSection}
+                    onLayout={event => {
+                      periodSectionYRef.current.daily = event.nativeEvent.layout.y;
+                    }}
+                  >
                     <ThemedText type="title3" style={styles.periodSectionHeading}>
                       {t('nutritionLogger.periodDaily')}
                     </ThemedText>
@@ -1997,7 +2302,12 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
                   </View>
                 )}
                 {nutritionPlanTipProgressByPeriod.weekly.length > 0 && (
-                  <View style={styles.periodSection}>
+                  <View
+                    style={styles.periodSection}
+                    onLayout={event => {
+                      periodSectionYRef.current.weekly = event.nativeEvent.layout.y;
+                    }}
+                  >
                     <ThemedText type="title3" style={styles.periodSectionHeading}>
                       {t('nutritionLogger.periodWeekly')}
                     </ThemedText>
@@ -2011,6 +2321,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
               </ThemedText>
             )}
           </Card>
+          </View>
 
         <ThemedModal
           visible={isEditMealModalVisible}
@@ -2029,6 +2340,68 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
             />
           </View>
         </ThemedModal>
+
+        <BottomSheetModal
+          ref={copyMealBottomSheetRef}
+          snapPoints={copyMealSheetSnapPoints}
+          enablePanDownToClose
+          animateOnMount
+          containerComponent={BottomSheetOverlayContainer}
+          backgroundStyle={{ backgroundColor: colors.background }}
+          handleIndicatorStyle={{ backgroundColor: colors.textMuted }}
+        >
+          <BottomSheetScrollView
+            style={styles.copyMealModalScroll}
+            contentContainerStyle={styles.copyMealModalContent}
+            showsVerticalScrollIndicator
+            keyboardShouldPersistTaps="handled"
+          >
+            <ThemedText type="title3" style={styles.copyMealSheetTitle}>
+              {t('nutritionLogger.copyMealModalTitle')}
+            </ThemedText>
+            {recentMeals.length > 0 ? (
+              recentMeals.map(option => (
+                <Pressable
+                  key={option.id}
+                  style={({ pressed }) => [
+                    styles.copyMealOption,
+                    {
+                      borderLeftWidth: pressed ? 3 : 0,
+                      borderLeftColor: colors.primary,
+                      backgroundColor: pressed ? colors.cardActive : colors.cardBackground,
+                      paddingLeft: pressed ? 9 : 12,
+                    },
+                  ]}
+                  onPress={() => handleCopyMeal(option.meal)}
+                >
+                  <View style={styles.copyMealStatsRow}>
+                    <ThemedText type="defaultSemiBold" style={styles.copyMealOptionName} numberOfLines={1}>
+                      {option.mealName}
+                    </ThemedText>
+                    <View style={styles.copyMealStatsGroup}>
+                      <View style={styles.copyMealStatItem}>
+                        <IconSymbol name="flame" size={14} color={colors.textLight} />
+                        <ThemedText type="caption" style={[styles.copyMealStatText, { color: colors.textLight }]}> 
+                          {roundToOneDecimal(typeof option.meal?.calories === 'number' ? option.meal.calories : 0)}
+                        </ThemedText>
+                      </View>
+                      <View style={styles.copyMealStatItem}>
+                        <IconSymbol name="fiber" size={14} color={colors.textLight} />
+                        <ThemedText type="caption" style={[styles.copyMealStatText, { color: colors.textLight }]}> 
+                          {roundToOneDecimal(typeof option.meal?.fiber === 'number' ? option.meal.fiber : 0)}
+                        </ThemedText>
+                      </View>
+                    </View>
+                  </View>
+                </Pressable>
+              ))
+            ) : (
+              <ThemedText type="caption" style={[styles.copyMealEmptyText, { color: colors.textMuted }]}>
+                {t('nutritionLogger.copyMealEmpty')}
+              </ThemedText>
+            )}
+          </BottomSheetScrollView>
+        </BottomSheetModal>
       </View>
     </KeyboardAvoidingView>
   );
@@ -2037,7 +2410,6 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
   },
   label: {
     fontSize: 16,
@@ -2056,6 +2428,13 @@ const styles = StyleSheet.create({
   imagePickerButton: {
     alignSelf: 'center',
     marginBottom: 16,
+  },
+  copyMealLink: {
+    alignSelf: 'center',
+    marginTop: -8,
+    marginBottom: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
   futureDateHint: {
     textAlign: 'center',
@@ -2121,6 +2500,52 @@ const styles = StyleSheet.create({
   },
   loggedMealsSection: {
     marginTop: 2,
+  },
+  copyMealModalContent: {
+    width: '100%',
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingBottom: 4,
+  },
+  copyMealSheetTitle: {
+    paddingTop: 8,
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  copyMealModalScroll: {
+    width: '100%',
+  },
+  copyMealOption: {
+    width: '100%',
+    borderRadius: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 1,
+  },
+  copyMealStatsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 12,
+  },
+  copyMealOptionName: {
+    flex: 1,
+    marginRight: 8,
+  },
+  copyMealStatsGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 18,
+  },
+  copyMealStatItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  copyMealStatText: {
+    fontSize: 13,
+  },
+  copyMealEmptyText: {
+    textAlign: 'center',
   },
   fulfilledTipTextBlock: {
     flex: 1,

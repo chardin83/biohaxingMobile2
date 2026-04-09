@@ -1,6 +1,6 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useTheme } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -18,9 +18,10 @@ import DropdownMenuButton from './ui/DropDownMenuButton';
 
 interface DayeEditProps {
   selectedDate: string;
+  onTipCompleted?: (targetY?: number) => void;
 }
 
-const DayEdit: React.FC<DayeEditProps> = ({ selectedDate }) => {
+const DayEdit: React.FC<DayeEditProps> = ({ selectedDate, onTipCompleted }) => {
   const [selectedTime, setSelectedTime] = useState<Date>(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [selectedSupplements, setSelectedSupplements] = useState<SupplementTime[]>([]);
@@ -33,8 +34,17 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate }) => {
   const { t } = useTranslation();
   const hasSupplementsToday = takenDates[selectedDate]?.length > 0;
   const hasMealsToday = useStorage().dailyNutritionSummaries[selectedDate]?.meals?.length > 0;
+  const mealLoggerOffsetYRef = useRef(0);
 
     const { colors } = useTheme();
+
+  const handleNutritionTipCompleted = useCallback((nutritionLoggerY?: number) => {
+    if (typeof nutritionLoggerY === 'number') {
+      onTipCompleted?.(mealLoggerOffsetYRef.current + nutritionLoggerY);
+      return;
+    }
+    onTipCompleted?.();
+  }, [onTipCompleted]);
     
   useEffect(() => {
     setSelectedSupplements(takenDates[selectedDate] ?? []);
@@ -263,7 +273,15 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate }) => {
           </>
         )}
 
-        {activeTab === 'meal' && <NutritionLogger selectedDate={selectedDate} />}
+        {activeTab === 'meal' && (
+          <View
+            onLayout={event => {
+              mealLoggerOffsetYRef.current = event.nativeEvent.layout.y;
+            }}
+          >
+            <NutritionLogger selectedDate={selectedDate} onTipCompleted={handleNutritionTipCompleted} />
+          </View>
+        )}
       </View>
     </KeyboardAvoidingView>
   );

@@ -1,6 +1,7 @@
 import 'react-native-reanimated';
 
 import { ThemeProvider } from '@react-navigation/native';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -56,56 +57,58 @@ export default function RootLayout() {
                 <StorageProvider>
                   <PaperProvider>
                     <MenuProvider>
-                      <GlobalLevelUpModal />
-                      <Stack
-                        screenOptions={{
-                          headerShown: false,
-                          headerTransparent: true,
-                          headerStyle: {
-                            backgroundColor: 'transparent',
-                          },
-                          headerTintColor: '#fff',
-                          headerTitleStyle: {
-                            fontWeight: 'bold',
-                          },
-                        }}
-                      >
-                        <Stack.Screen
-                          name="(tabs)"
-                          options={{
+                      <BottomSheetModalProvider>
+                        <GlobalLevelUpModal />
+                        <Stack
+                          screenOptions={{
                             headerShown: false,
-                            title: '',
-                            headerBackTitle: t('back'),
+                            headerTransparent: true,
+                            headerStyle: {
+                              backgroundColor: 'transparent',
+                            },
+                            headerTintColor: '#fff',
+                            headerTitleStyle: {
+                              fontWeight: 'bold',
+                            },
                           }}
-                        />
+                        >
+                          <Stack.Screen
+                            name="(tabs)"
+                            options={{
+                              headerShown: false,
+                              title: '',
+                              headerBackTitle: t('back'),
+                            }}
+                          />
 
-                        <Stack.Screen
-                          name="(manage)"
-                          options={{
-                            headerShown: false,
-                            title: '',
-                            headerBackTitle: t('back'),
-                          }}
-                        />
+                          <Stack.Screen
+                            name="(manage)"
+                            options={{
+                              headerShown: false,
+                              title: '',
+                              headerBackTitle: t('back'),
+                            }}
+                          />
 
-                        <Stack.Screen
-                          name="(onboarding)/onboardingsupplements"
-                          options={{
-                            headerShown: false,
-                            title: '',
-                            headerBackTitle: t('back'),
-                          }}
-                        />
-                        <Stack.Screen
-                          name="(onboarding)/onboardinggoals"
-                          options={{
-                            headerShown: true,
-                            title: '',
-                            headerBackTitle: t('back'),
-                          }}
-                        />
-                      </Stack>
-                      <StatusBar style="auto" />
+                          <Stack.Screen
+                            name="(onboarding)/onboardingsupplements"
+                            options={{
+                              headerShown: false,
+                              title: '',
+                              headerBackTitle: t('back'),
+                            }}
+                          />
+                          <Stack.Screen
+                            name="(onboarding)/onboardinggoals"
+                            options={{
+                              headerShown: true,
+                              title: '',
+                              headerBackTitle: t('back'),
+                            }}
+                          />
+                        </Stack>
+                        <StatusBar style="auto" />
+                      </BottomSheetModalProvider>
                     </MenuProvider>
                   </PaperProvider>
                 </StorageProvider>
