@@ -350,6 +350,178 @@
       }
     }
   },
+  "muscle_leucine": {
+    "title": "Leucine for muscle synthesis",
+    "description": "Leucine is the primary branched-chain amino acid that activates mTOR, the master regulator of muscle protein synthesis. Getting sufficient leucine, especially post-workout, is critical for building and maintaining muscle mass.",
+    "areas": {
+      "strength": "Leucine directly activates mTOR signaling, triggering muscle protein synthesis and recovery. A single dose of 3-5g post-workout stimulates muscle repair and growth by reducing protein breakdown."
+    },
+    "nutritionFoods": {
+      "title": "Leucine-rich foods",
+      "items": {
+        "beef": {
+          "name": "Beef",
+          "details": "120 g cooked lean beef provides about 2.5-3 g leucine."
+        },
+        "chicken": {
+          "name": "Chicken breast",
+          "details": "120 g cooked chicken breast contains roughly 2-2.5 g leucine."
+        },
+        "fish": {
+          "name": "Fish (salmon, tuna)",
+          "details": "120 g cooked fish supplies about 2-2.5 g leucine."
+        },
+        "eggs": {
+          "name": "Eggs",
+          "details": "3 large eggs provide about 1.8-2 g leucine."
+        },
+        "dairyProducts": {
+          "name": "Greek yogurt or cottage cheese",
+          "details": "150 g Greek yogurt contains approximately 2-2.5 g leucine."
+        },
+        "wheyProtein": {
+          "name": "Whey protein isolate",
+          "details": "30 g whey protein powder delivers roughly 2.5-3 g leucine."
+        }
+      }
+    }
+  },
+  "bcaa_complex": {
+    "title": "Branched-chain amino acids (BCAAs)",
+    "description": "BCAAs—leucine, isoleucine, and valine—are essential amino acids that bypass liver metabolism and go directly to muscle. They support muscle protein synthesis, reduce fatigue, and aid recovery. The optimal ratio is roughly 2:1:1 (leucine:isoleucine:valine).",
+    "areas": {
+      "strength": "The BCAA ratio of 2:1:1 maximizes muscle protein synthesis and recovery. Leucine triggers mTOR, while isoleucine and valine reduce muscle breakdown — helping maintain mass during intense training blocks.",
+      "cardioFitness": "BCAAs reduce central fatigue, spare muscle glycogen during endurance sessions, and accelerate recovery between workouts by reducing delayed-onset muscle soreness (DOMS)."
+    },
+    "nutritionFoods": {
+      "title": "BCAA-rich foods",
+      "items": {
+        "beef": {
+          "name": "Lean beef",
+          "details": "120 g lean beef contains a balanced BCAA profile (~5.5 g total BCAAs)."
+        },
+        "chicken": {
+          "name": "Chicken",
+          "details": "120 g chicken breast has about 4.5-5 g total BCAAs."
+        },
+        "eggs": {
+          "name": "Eggs",
+          "details": "3 large eggs supply roughly 4.5-5 g BCAAs."
+        },
+        "dairyProducts": {
+          "name": "Whey protein",
+          "details": "30 g whey protein provides about 6-7 g total BCAAs in the optimal 2:1:1 ratio."
+        }
+      }
+    }
+  },
+  "arginine_pump": {
+    "title": "Arginine for blood flow and pump",
+    "description": "Arginine is a semi-essential amino acid that boosts nitric oxide (NO) production, increasing blood flow, nutrient delivery, and the muscle pump. It's especially effective taken pre-workout to enhance performance and vascularity.",
+    "areas": {
+      "cardioFitness": "Arginine increases nitric oxide production, which relaxes blood vessel walls, improving blood flow and cardiovascular efficiency.",
+      "strength": "Better blood flow enhances oxygen and nutrient delivery to muscles during training, supporting performance, strength, and the muscle pump."
+    },
+    "nutritionFoods": {
+      "title": "Arginine-rich foods",
+      "items": {
+        "pumpkinSeeds": {
+          "name": "Pumpkin seeds",
+          "details": "30 g pumpkin seeds provide about 2-2.5 g arginine."
+        },
+        "sesameSeeds": {
+          "name": "Sesame seeds",
+          "details": "30 g sesame seeds contain roughly 1.5-2 g arginine."
+        },
+        "almonds": {
+          "name": "Almonds",
+          "details": "30 g almonds supply about 1-1.5 g arginine."
+        },
+        "pecans": {
+          "name": "Pecans",
+          "details": "30 g pecans provide roughly 1-1.2 g arginine."
+        },
+        "watermelon": {
+          "name": "Watermelon",
+          "details": "A slice of watermelon (200 g) contains about 250-350 mg arginine, plus citrulline which converts to arginine."
+        }
+      }
+    }
+  },
+  "whey_protein": {
+    "title": "Whey Protein for muscle growth",
+    "description": "Whey protein is a fast-digesting, complete protein derived from milk. It contains all essential amino acids, with an exceptionally high leucine content — the key amino acid that triggers muscle protein synthesis. Taking 25–30 g of whey post-workout maximizes the anabolic window and supports muscle repair and growth.",
+    "areas": {
+      "strength": "Whey delivers a rapid leucine spike (~2.5 g per 30 g serving) that activates the mTOR pathway, maximizing muscle protein synthesis and recovery after resistance training.",
+      "cardioFitness": "Adequate protein intake supports endurance performance by preserving muscle mass during long training blocks and accelerating recovery between sessions."
+    },
+    "nutritionFoods": {
+      "title": "High-quality protein sources",
+      "items": {
+        "chickenBreast": {
+          "name": "Chicken breast",
+          "details": "150 g chicken breast provides about 45 g protein with ~3.5 g leucine."
+        },
+        "tuna": {
+          "name": "Tuna",
+          "details": "150 g canned tuna delivers ~35 g protein with ~3 g leucine."
+        },
+        "eggs": {
+          "name": "Eggs",
+          "details": "3 large eggs supply ~18 g protein with ~1.5 g leucine."
+        },
+        "greekYogurt": {
+          "name": "Greek yogurt",
+          "details": "200 g Greek yogurt provides ~20 g protein with ~1.8 g leucine."
+        },
+        "cottageCheese": {
+          "name": "Cottage cheese",
+          "details": "200 g cottage cheese contains ~25 g protein with ~2 g leucine."
+        }
+      }
+    }
+  },
+  "homocysteine_methylation_cardio": {
+    "title": "Methylation and cardiovascular support (homocysteine)",
+    "description": "Homocysteine is a sulfur-containing amino acid formed during methionine metabolism. When chronically elevated, it is associated with higher cardiovascular risk and poorer vascular function. A practical strategy is to support methylation and redox balance through nutrients such as TMG (trimethylglycine), B vitamins (especially B6, folate/B9, and B12), glycine, NAC, and green tea catechins (EGCG; sometimes written as ICG by mistake), alongside folate-rich and choline-rich foods.",
+    "areas": {
+      "cardioFitness": "Keeping homocysteine in a healthy range supports endothelial function, nitric oxide signaling, and vascular resilience. TMG donates methyl groups for remethylation pathways, folate/B12 support homocysteine recycling, and B6 supports transsulfuration. NAC and glycine also support glutathione status and oxidative stress control.",
+      "longevity": "Methylation efficiency influences DNA maintenance, detox capacity, and inflammatory tone over time. Combining methyl donors (TMG, folate, B12) with cofactors such as B6 and glycine support helps balance one-carbon metabolism and can be useful in long-term prevention strategies."
+    },
+    "nutritionFoods": {
+      "title": "Foods that support methylation",
+      "items": {
+        "beets": {
+          "name": "Beets",
+          "details": "Beets are naturally rich in betaine (TMG precursor), which can help support homocysteine remethylation."
+        },
+        "spinach": {
+          "name": "Spinach",
+          "details": "Spinach provides folate needed for methylation pathways tied to homocysteine metabolism."
+        },
+        "eggs": {
+          "name": "Eggs",
+          "details": "Egg yolks contain choline, a key methyl donor supporting liver and methylation function."
+        },
+        "broccoli": {
+          "name": "Broccoli",
+          "details": "Broccoli contributes folate and sulfur compounds that support detoxification and redox balance."
+        },
+        "chickpeas": {
+          "name": "Chickpeas",
+          "details": "Chickpeas are a practical source of vitamin B6 and folate, both relevant for homocysteine metabolism."
+        },
+        "salmon": {
+          "name": "Salmon",
+          "details": "Salmon supplies methionine, B vitamins, and omega-3s that support cardiovascular health when balanced with methylation cofactors."
+        },
+        "greenTea": {
+          "name": "Green tea",
+          "details": "Green tea catechins (especially EGCG) provide antioxidant support relevant to vascular health."
+        }
+      }
+    }
+  },
   "collagen": {
     "title": "Collagen for connective tissue",
     "description": "Collagen is a structural protein that supports joints, tendons, ligaments, skin, and bone matrix. Collagen peptides can be a practical way to support connective tissue resilience, especially together with a protein-rich diet and adequate vitamin C intake.",

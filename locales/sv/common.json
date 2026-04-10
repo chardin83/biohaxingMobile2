@@ -176,6 +176,10 @@
     "addTrainingGoal": "Lägg till i träningsplan",
     "addNutritionGoal": "Lägg till i kostplan",
     "addOtherGoal": "Lägg till i Övrig plan",
+    "addedToPlan": "Tillagd i planen",
+    "addedToPlanTraining": "Tillagd i planen (träning)",
+    "addedToPlanNutrition": "Tillagd i planen (kost)",
+    "addedToPlanOther": "Tillagd i planen (övrigt)",
     "alreadyInPlan": "Finns redan i planen",
     "alreadyInPlanTraining": "Finns redan i planen (träning)",
     "alreadyInPlanNutrition": "Finns redan i planen (kost)",
@@ -932,6 +936,27 @@
       "phosphorus": "Fosfor",
       "copper": "Koppar",
       "manganese": "Mangan"
+    },
+    "aminoAcids": "Aminosyror ({{count}} spårade)",
+    "essentialAminoAcidsTitle": "Essentiella aminosyror",
+    "essentialAminoAcidsTotal": "Essentiella aminosyror totalt",
+    "otherAminoAcidsTitle": "Andra viktiga aminosyror",
+    "aminoAcidLabels": {
+      "histidine": "Histidin",
+      "isoleucine": "Isoleucin",
+      "leucine": "Leucin",
+      "lysine": "Lysin",
+      "methionine": "Metionin",
+      "phenylalanine": "Fenylalanin",
+      "threonine": "Treonin",
+      "tryptophan": "Tryptofan",
+      "valine": "Valin",
+      "arginine": "Arginin",
+      "cysteine": "Cystein",
+      "glutamine": "Glutamin",
+      "glycine": "Glycin",
+      "proline": "Prolin",
+      "tyrosine": "Tyrosin"
     },
     "plantDiversityLabels": {
       "plant_diversity": "Växtdiversitet"

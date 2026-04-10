@@ -223,6 +223,7 @@ type ParsedMacroAnalysis = {
   polyphenolByType: Record<string, number>;
   mineralsByType: Record<string, number>;
   mineralsConfidenceByType: Record<string, ConfidenceLevel>;
+  aminoAcidsByType: Record<string, number>;
   microbiomeSupport: MicrobiomeSupportEntry[];
 };
 
@@ -289,6 +290,35 @@ const emptyMineralTotals = (): Record<string, number> =>
 
 const emptyMineralConfidenceTotals = (): Record<string, ConfidenceLevel> =>
   MINERAL_TYPE_KEYS.reduce((acc, key) => ({ ...acc, [key]: 'unknown' }), {} as Record<string, ConfidenceLevel>);
+
+const ESSENTIAL_AMINO_ACID_KEYS = [
+  'histidine',
+  'isoleucine',
+  'leucine',
+  'lysine',
+  'methionine',
+  'phenylalanine',
+  'threonine',
+  'tryptophan',
+  'valine',
+] as const;
+
+const OTHER_AMINO_ACID_KEYS = [
+  'arginine',
+  'cysteine',
+  'glutamine',
+  'glycine',
+  'proline',
+  'tyrosine',
+] as const;
+
+const ALL_AMINO_ACID_KEYS: readonly string[] = [...ESSENTIAL_AMINO_ACID_KEYS, ...OTHER_AMINO_ACID_KEYS];
+
+const emptyAminoAcidTotals = (): Record<string, number> =>
+  ALL_AMINO_ACID_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
+
+const getEssentialAminoTotalMg = (values: Record<string, number>): number =>
+  ESSENTIAL_AMINO_ACID_KEYS.reduce((sum, key) => sum + (values[key] ?? 0), 0);
 
 const confidenceRank: Record<ConfidenceLevel, number> = {
   unknown: 0,
@@ -424,12 +454,14 @@ const applyMeasuredByTypeFromCandidate = (
   fiberSubtypeTotals: Record<string, number>,
   polyphenolByType: Record<string, number>,
   mineralsByType: Record<string, number>,
-  mineralsConfidenceByType: Record<string, ConfidenceLevel>
+  mineralsConfidenceByType: Record<string, ConfidenceLevel>,
+  aminoAcidsByType: Record<string, number>
 ) => {
   const fiberMap = candidate?.fiberByType;
   const fiberSubtypeMap = candidate?.fiberSubtypeTotals;
   const polyMap = candidate?.polyphenolByType;
   const mineralMap = candidate?.mineralsByType ?? candidate?.mineralByType;
+  const aminoMap = candidate?.aminoAcidsByType;
 
   if (fiberMap && typeof fiberMap === 'object') {
     FIBER_TYPE_KEYS.forEach(tag => addToTotals(fiberByType, tag, fiberMap?.[tag]));
@@ -452,6 +484,10 @@ const applyMeasuredByTypeFromCandidate = (
       }
     });
   }
+
+  if (aminoMap && typeof aminoMap === 'object') {
+    ALL_AMINO_ACID_KEYS.forEach(tag => addToTotals(aminoAcidsByType, tag, aminoMap?.[tag]));
+  }
 };
 
 const applyDetailsFromCandidate = (
@@ -460,7 +496,8 @@ const applyDetailsFromCandidate = (
   fiberSubtypeTotals: Record<string, number>,
   polyphenolByType: Record<string, number>,
   mineralsByType: Record<string, number>,
-  mineralsConfidenceByType: Record<string, ConfidenceLevel>
+  mineralsConfidenceByType: Record<string, ConfidenceLevel>,
+  aminoAcidsByType: Record<string, number>
 ) => {
   const details = candidate?.nutritionDetails;
   const fiberDetails = details?.fiber;
@@ -481,6 +518,21 @@ const applyDetailsFromCandidate = (
   const polyphenols = details?.polyphenols;
   if (polyphenols) {
     addToTotals(polyphenolByType, 'polyphenols_total', polyphenols?.totalMg ?? polyphenols?.total_mg);
+  }
+
+  const aminoAcids = details?.aminoAcids;
+  if (aminoAcids && typeof aminoAcids === 'object') {
+    ALL_AMINO_ACID_KEYS.forEach(tag => addToTotals(aminoAcidsByType, tag, aminoAcids[tag]));
+    const aminoRows = Array.isArray(aminoAcids?.items)
+      ? aminoAcids.items
+      : Array.isArray(aminoAcids?.list)
+        ? aminoAcids.list
+        : [];
+    aminoRows.forEach((item: any) => {
+      const normalizedKey = String(item?.name ?? item?.tag ?? '').toLowerCase().trim().replace(/\s+/g, '_');
+      if (!ALL_AMINO_ACID_KEYS.includes(normalizedKey)) return;
+      addToTotals(aminoAcidsByType, normalizedKey, item?.amountMg ?? item?.amount_mg ?? item?.amount);
+    });
   }
 
   const flavonoids = details?.flavonoids;
@@ -532,6 +584,7 @@ const extractTypedTotals = (data: any, parsedContent: any) => {
   const polyphenolByType = emptyPolyphenolTotals();
   const mineralsByType = emptyMineralTotals();
   const mineralsConfidenceByType = emptyMineralConfidenceTotals();
+  const aminoAcidsByType = emptyAminoAcidTotals();
 
   const candidates = [
     data,
@@ -552,7 +605,8 @@ const extractTypedTotals = (data: any, parsedContent: any) => {
       fiberSubtypeTotals,
       polyphenolByType,
       mineralsByType,
-      mineralsConfidenceByType
+      mineralsConfidenceByType,
+      aminoAcidsByType
     );
     applyDetailsFromCandidate(
       candidate,
@@ -560,11 +614,12 @@ const extractTypedTotals = (data: any, parsedContent: any) => {
       fiberSubtypeTotals,
       polyphenolByType,
       mineralsByType,
-      mineralsConfidenceByType
+      mineralsConfidenceByType,
+      aminoAcidsByType
     );
   }
 
-  return { fiberByType, fiberSubtypeTotals, polyphenolByType, mineralsByType, mineralsConfidenceByType };
+  return { fiberByType, fiberSubtypeTotals, polyphenolByType, mineralsByType, mineralsConfidenceByType, aminoAcidsByType };
 };
 
 const hasAnyTypedTotals = (values: Record<string, number>) =>
@@ -586,7 +641,7 @@ const getFiberSubtypeAmountsForCategory = (
     .filter(item => item.amount > 0);
 };
 
-const sumTypedTotals = (meals: Array<any>, key: 'fiberByType' | 'fiberSubtypeTotals' | 'polyphenolByType' | 'mineralsByType') =>
+const sumTypedTotals = (meals: Array<any>, key: 'fiberByType' | 'fiberSubtypeTotals' | 'polyphenolByType' | 'mineralsByType' | 'aminoAcidsByType') =>
   meals.reduce((acc, meal) => {
     const rawValue = meal?.[key];
     const source = typeof rawValue === 'object' && rawValue !== null ? rawValue : {};
@@ -637,6 +692,8 @@ const getConfidenceLabelKey = (confidence: ConfidenceLevel): string => {
   if (confidence === 'low') return 'nutritionLogger.confidenceLow';
   return 'nutritionLogger.confidenceUnknown';
 };
+
+const AMINO_ACID_TAG_SET = new Set<string>(ALL_AMINO_ACID_KEYS);
 
 const getTipTargetIconName = (unit: 'g' | 'mg' | 'plants' | 'items' | 'count'): TipTargetIconName => {
   if (unit === 'g') return 'fiber';
@@ -822,6 +879,7 @@ const extractFromCandidate = (candidate: any): ParsedMacroAnalysis | null => {
     polyphenolByType: emptyPolyphenolTotals(),
     mineralsByType: emptyMineralTotals(),
     mineralsConfidenceByType: emptyMineralConfidenceTotals(),
+    aminoAcidsByType: emptyAminoAcidTotals(),
     microbiomeSupport: [],
   };
 };
@@ -855,6 +913,7 @@ const extractFromText = (text: string): ParsedMacroAnalysis | null => {
     polyphenolByType: emptyPolyphenolTotals(),
     mineralsByType: emptyMineralTotals(),
     mineralsConfidenceByType: emptyMineralConfidenceTotals(),
+    aminoAcidsByType: emptyAminoAcidTotals(),
     microbiomeSupport: [],
   };
 };
@@ -1304,6 +1363,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
       typeof meal?.mineralsConfidenceByType === 'object' && meal.mineralsConfidenceByType !== null
         ? meal.mineralsConfidenceByType
         : {},
+    aminoAcidsByType: typeof meal?.aminoAcidsByType === 'object' && meal.aminoAcidsByType !== null ? meal.aminoAcidsByType : {},
     microbiomeSupport: Array.isArray(meal?.microbiomeSupport) ? meal.microbiomeSupport : [],
   });
 
@@ -1401,6 +1461,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
         polyphenolByType: typedTotals.polyphenolByType,
         mineralsByType: typedTotals.mineralsByType,
         mineralsConfidenceByType: typedTotals.mineralsConfidenceByType,
+        aminoAcidsByType: typedTotals.aminoAcidsByType,
         microbiomeSupport,
       };
 
@@ -1415,7 +1476,8 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
         hasAnyTypedTotals(typedTotals.fiberByType)
         || hasAnyTypedTotals(typedTotals.fiberSubtypeTotals)
         || hasAnyTypedTotals(typedTotals.polyphenolByType)
-        || hasAnyTypedTotals(typedTotals.mineralsByType);
+        || hasAnyTypedTotals(typedTotals.mineralsByType)
+        || hasAnyTypedTotals(typedTotals.aminoAcidsByType);
       const hasMicrobiomeData = microbiomeSupport.length > 0;
       const hasTrackingSignals = Object.keys(aiWeeklyTrackingSignals).length > 0;
 
@@ -1535,6 +1597,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
   const dailyPolyphenolByType = summary ? sumTypedTotals(summary.meals, 'polyphenolByType') : {};
   const dailyMineralsByType = summary ? sumTypedTotals(summary.meals, 'mineralsByType') : {};
   const dailyMineralConfidenceByType = summary ? mergeMineralConfidenceFromMeals(summary.meals) : {};
+  const dailyAminoAcidsByType = summary ? sumTypedTotals(summary.meals, 'aminoAcidsByType') : {};
   const dailyMicrobiomeSupport = summary ? sumMicrobiomeSupport(summary.meals) : [];
   const dailyTracking = React.useMemo(() => {
     const aggregated: WeeklyTrackingSignals = {};
@@ -1569,6 +1632,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
   const weeklyFiberByType = sumTypedTotals(weeklyMeals, 'fiberByType');
   const weeklyPolyphenolByType = sumTypedTotals(weeklyMeals, 'polyphenolByType');
   const weeklyMineralsByType = sumTypedTotals(weeklyMeals, 'mineralsByType');
+  const weeklyAminoAcidsByType = sumTypedTotals(weeklyMeals, 'aminoAcidsByType');
   const weeklyFiberTotal = weeklySummaries.reduce((sum, daySummary) => {
     const dayFiber = parseNumberValue(daySummary?.totals?.fiber) ?? 0;
     return sum + dayFiber;
@@ -1576,6 +1640,8 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
 
   const isMineralTargetTag = (tag: string): boolean =>
     MINERAL_TYPE_KEYS.includes(tag as MineralTypeKey);
+
+  const isAminoAcidTargetTag = (tag: string): boolean => AMINO_ACID_TAG_SET.has(tag);
 
   const getDailyTargetValue = (tag: string, unit: 'g' | 'mg' | 'plants' | 'items' | 'count'): number => {
     if (unit === 'plants') {
@@ -1589,6 +1655,9 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     if (unit === 'g') {
       if (tag === 'fiber_total') return summary?.totals.fiber ?? 0;
       return dailyFiberByType[tag] ?? 0;
+    }
+    if (isAminoAcidTargetTag(tag)) {
+      return dailyAminoAcidsByType[tag] ?? 0;
     }
     if (isMineralTargetTag(tag)) {
       return dailyMineralsByType[tag] ?? 0;
@@ -1607,6 +1676,9 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
       if (tag === 'fiber_total') return weeklyFiberTotal;
       return weeklyFiberByType[tag] ?? 0;
     }
+    if (isAminoAcidTargetTag(tag)) {
+      return weeklyAminoAcidsByType[tag] ?? 0;
+    }
     if (isMineralTargetTag(tag)) {
       return weeklyMineralsByType[tag] ?? 0;
     }
@@ -1621,8 +1693,9 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     const fiberTargets = tip.fiberTargets ?? [];
     const polyphenolTargets = tip.polyphenolTargets ?? [];
     const mineralTargets = tip.mineralTargets ?? [];
+    const aminoAcidTargets = tip.aminoAcidTargets ?? [];
     const trackingTargets = tip.trackingTargets ?? [];
-    const allTargets = [...fiberTargets, ...polyphenolTargets, ...mineralTargets, ...trackingTargets];
+    const allTargets = [...fiberTargets, ...polyphenolTargets, ...mineralTargets, ...aminoAcidTargets, ...trackingTargets];
 
     if (!tipPeriod || !allTargets.length) return [];
 
@@ -1638,9 +1711,16 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
             .filter(item => item.length > 0)
             .sort((a, b) => a.localeCompare(b))
         : undefined;
-      const labelGroup = target.unit === 'items' || target.unit === 'count'
-        ? 'weeklyTrackingLabels'
-        : (target.unit === 'g' ? 'fiberLabels' : (isMineralTargetTag(trackingKey) ? 'mineralLabels' : 'polyphenolLabels'));
+      let labelGroup: 'weeklyTrackingLabels' | 'fiberLabels' | 'aminoAcidLabels' | 'mineralLabels' | 'polyphenolLabels' = 'polyphenolLabels';
+      if (target.unit === 'items' || target.unit === 'count') {
+        labelGroup = 'weeklyTrackingLabels';
+      } else if (target.unit === 'g') {
+        labelGroup = 'fiberLabels';
+      } else if (isAminoAcidTargetTag(trackingKey)) {
+        labelGroup = 'aminoAcidLabels';
+      } else if (isMineralTargetTag(trackingKey)) {
+        labelGroup = 'mineralLabels';
+      }
 
       return {
         tag: trackingKey,
@@ -1985,10 +2065,53 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
               <IconSymbol name="flame" size={16} color={colors.textMuted} />
               <ThemedText type="default">{t('nutritionLogger.calories', { value: lastLoggedMeal.calories })}</ThemedText>
             </View>
-            <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
-              <IconSymbol name="protein" size={16} color={colors.textMuted} />
-              <ThemedText type="default">{t('nutritionLogger.protein', { value: lastLoggedMeal.protein })}</ThemedText>
-            </View>
+            {hasAnyTypedTotals(lastLoggedMeal.aminoAcidsByType) ? (
+              <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
+                <Collapsible
+                  title={t('nutritionLogger.protein', { value: lastLoggedMeal.protein })}
+                  titleType="default"
+                  initialCollapsed
+                  leftContent={<IconSymbol name="protein" size={14} color={colors.textMuted} />}
+                >
+                  <ThemedText type="caption" style={[styles.aminoGroupHeader, { color: colors.textMuted }]}>
+                    {t('nutritionLogger.essentialAminoAcidsTitle')}
+                  </ThemedText>
+                  <ThemedText type="default" style={{ color: colors.textMuted }}>
+                    • {t('nutritionLogger.essentialAminoAcidsTotal')}: {(getEssentialAminoTotalMg(lastLoggedMeal.aminoAcidsByType) / 1000).toFixed(1)} g
+                  </ThemedText>
+                  {ESSENTIAL_AMINO_ACID_KEYS.map(key => {
+                    const value = lastLoggedMeal.aminoAcidsByType[key] ?? 0;
+                    if (value <= 0) return null;
+                    return (
+                      <ThemedText key={key} type="default">
+                        • {t(`nutritionLogger.aminoAcidLabels.${key}`)}: {(value / 1000).toFixed(1)} g
+                      </ThemedText>
+                    );
+                  })}
+                  {OTHER_AMINO_ACID_KEYS.some(k => (lastLoggedMeal.aminoAcidsByType[k] ?? 0) > 0) && (
+                    <>
+                      <ThemedText type="caption" style={[styles.aminoGroupHeader, styles.aminoGroupHeaderSecond, { color: colors.textMuted }]}>
+                        {t('nutritionLogger.otherAminoAcidsTitle')}
+                      </ThemedText>
+                      {OTHER_AMINO_ACID_KEYS.map(key => {
+                        const value = lastLoggedMeal.aminoAcidsByType[key] ?? 0;
+                        if (value <= 0) return null;
+                        return (
+                          <ThemedText key={key} type="default">
+                            • {t(`nutritionLogger.aminoAcidLabels.${key}`)}: {(value / 1000).toFixed(1)} g
+                          </ThemedText>
+                        );
+                      })}
+                    </>
+                  )}
+                </Collapsible>
+              </View>
+            ) : (
+              <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
+                <IconSymbol name="protein" size={16} color={colors.textMuted} />
+                <ThemedText type="default">{t('nutritionLogger.protein', { value: lastLoggedMeal.protein })}</ThemedText>
+              </View>
+            )}
             <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
               <IconSymbol name="carbs" size={16} color={colors.textMuted} />
               <ThemedText type="default">{t('nutritionLogger.carbohydrates', { value: lastLoggedMeal.carbohydrates })}</ThemedText>
@@ -2122,10 +2245,53 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                 <IconSymbol name="flame" size={16} color={colors.textMuted} />
                 <ThemedText type="default">{t('nutritionLogger.calories', { value: summary.totals.calories })}</ThemedText>
               </View>
-              <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
-                <IconSymbol name="protein" size={16} color={colors.textMuted} />
-                <ThemedText type="default">{t('nutritionLogger.protein', { value: roundToOneDecimal(summary.totals.protein) })}</ThemedText>
-              </View>
+              {hasAnyTypedTotals(dailyAminoAcidsByType) ? (
+                <View style={[styles.nutrientRow, { borderBottomColor: colors.textMuted }]}>
+                  <Collapsible
+                    title={t('nutritionLogger.protein', { value: roundToOneDecimal(summary.totals.protein) })}
+                    titleType="default"
+                    initialCollapsed
+                    leftContent={<IconSymbol name="protein" size={14} color={colors.textMuted} />}
+                  >
+                    <ThemedText type="caption" style={[styles.aminoGroupHeader, { color: colors.textMuted }]}>
+                      {t('nutritionLogger.essentialAminoAcidsTitle')}
+                    </ThemedText>
+                    <ThemedText type="default" style={{ color: colors.textMuted }}>
+                      • {t('nutritionLogger.essentialAminoAcidsTotal')}: {(getEssentialAminoTotalMg(dailyAminoAcidsByType) / 1000).toFixed(1)} g
+                    </ThemedText>
+                    {ESSENTIAL_AMINO_ACID_KEYS.map(key => {
+                      const value = dailyAminoAcidsByType[key] ?? 0;
+                      if (value <= 0) return null;
+                      return (
+                        <ThemedText key={key} type="default">
+                          • {t(`nutritionLogger.aminoAcidLabels.${key}`)}: {(value / 1000).toFixed(1)} g
+                        </ThemedText>
+                      );
+                    })}
+                    {OTHER_AMINO_ACID_KEYS.some(k => (dailyAminoAcidsByType[k] ?? 0) > 0) && (
+                      <>
+                        <ThemedText type="caption" style={[styles.aminoGroupHeader, styles.aminoGroupHeaderSecond, { color: colors.textMuted }]}>
+                          {t('nutritionLogger.otherAminoAcidsTitle')}
+                        </ThemedText>
+                        {OTHER_AMINO_ACID_KEYS.map(key => {
+                          const value = dailyAminoAcidsByType[key] ?? 0;
+                          if (value <= 0) return null;
+                          return (
+                            <ThemedText key={key} type="default">
+                              • {t(`nutritionLogger.aminoAcidLabels.${key}`)}: {(value / 1000).toFixed(1)} g
+                            </ThemedText>
+                          );
+                        })}
+                      </>
+                    )}
+                  </Collapsible>
+                </View>
+              ) : (
+                <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
+                  <IconSymbol name="protein" size={16} color={colors.textMuted} />
+                  <ThemedText type="default">{t('nutritionLogger.protein', { value: roundToOneDecimal(summary.totals.protein) })}</ThemedText>
+                </View>
+              )}
               <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
                 <IconSymbol name="carbs" size={16} color={colors.textMuted} />
                 <ThemedText type="default">{t('nutritionLogger.carbohydrates', { value: roundToOneDecimal(summary.totals.carbohydrates) })}</ThemedText>
@@ -2471,6 +2637,14 @@ const styles = StyleSheet.create({
   },
   microbeRow: {
     marginBottom: 6,
+  },
+  aminoGroupHeader: {
+    marginTop: 4,
+    marginBottom: 2,
+    fontWeight: '600',
+  },
+  aminoGroupHeaderSecond: {
+    marginTop: 10,
   },
   loggedMealRow: {
     flexDirection: 'row',

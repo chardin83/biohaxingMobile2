@@ -317,6 +317,178 @@
       }
     }
   },
+  "muscle_leucine": {
+    "title": "Leucin för muskelsyntees",
+    "description": "Leucin är den viktigaste förgrenade aminosyran (BCAA) som aktiverar mTOR, masteromkopplaren för muskelsynteses. Att få tillräckligt med leucin, särskilt efter träning, är kritiskt för att bygga och bevara muskelmassa.",
+    "areas": {
+      "strength": "Leucin aktiverar direkt mTOR-signalering och utlöser muskelsyntes och återhämtning. En dos på 3-5g efter träning stimulerar muskelreparation och tillväxt genom att minska proteinabbrytnig."
+    },
+    "nutritionFoods": {
+      "title": "Leucin-rika livsmedel",
+      "items": {
+        "beef": {
+          "name": "Nötkött",
+          "details": "120 g tillagat magert nötkött ger omkring 2,5-3 g leucin."
+        },
+        "chicken": {
+          "name": "Kycklingbröst",
+          "details": "120 g tillagat kycklingbröst innehåller ungefär 2-2,5 g leucin."
+        },
+        "fish": {
+          "name": "Fisk (lax, tonfisk)",
+          "details": "120 g tillagad fisk ger omkring 2-2,5 g leucin."
+        },
+        "eggs": {
+          "name": "Ägg",
+          "details": "3 stora ägg ger omkring 1,8-2 g leucin."
+        },
+        "dairyProducts": {
+          "name": "Grekisk yoghurt eller cottage cheese",
+          "details": "150 g grekisk yoghurt innehåller ungefär 2-2,5 g leucin."
+        },
+        "wheyProtein": {
+          "name": "Vassleproteinpulver",
+          "details": "30 g vassleproteinpulver levererar ungefär 2,5-3 g leucin."
+        }
+      }
+    }
+  },
+  "bcaa_complex": {
+    "title": "Förgrenade aminosyror (BCAAs)",
+    "description": "BCAAs—leucin, isoleucin och valin—är essentiella aminosyror som går direkt till muskulaturen utan att passera genom levern. De stödjer muskelproteinsyntes, minskar trötthet och hjälper till med återhämtning. Det optimala förhållandet är ungefär 2:1:1 (leucin:isoleucin:valin).",
+    "areas": {
+      "strength": "BCAA-förhållandet 2:1:1 maximerar muskelsyntes och återhämtning. Leucin aktiverar mTOR medan isoleucin och valin minskar muskelnedbrytning — och hjälper till att bevara muskelmassa under intensiva träningsblock.",
+      "cardioFitness": "BCAAs minskar central trötthet, sparar muskelglykogen under uthållighetspass och påskyndar återhämtning mellan träningspass genom att minska försenade muskelömmor (DOMS)."
+    },
+    "nutritionFoods": {
+      "title": "BCAA-rika livsmedel",
+      "items": {
+        "beef": {
+          "name": "Magert nötkött",
+          "details": "120 g magert nötkött innehåller ett balanserat BCAA-profil (~5,5 g totalt BCAAs)."
+        },
+        "chicken": {
+          "name": "Kyckling",
+          "details": "120 g kycklingbröst har omkring 4,5-5 g totalt BCAAs."
+        },
+        "eggs": {
+          "name": "Ägg",
+          "details": "3 stora ägg ger ungefär 4,5-5 g BCAAs."
+        },
+        "dairyProducts": {
+          "name": "Vassleprotein",
+          "details": "30 g vassleprotein ger omkring 6-7 g totalt BCAAs i det optimala 2:1:1-förhållandet."
+        }
+      }
+    }
+  },
+  "arginine_pump": {
+    "title": "Arginin för blodflöde och pump",
+    "description": "Arginin är en semi-essentiell aminosyra som förbättrar kväveoxidproduktionen (NO), vilket ökar blodflödet, näringsämnesöverföringen och muskelpumpen. Det är särskilt effektivt intagit före träning för att förbättra prestationen och vaskuläriteten.",
+    "areas": {
+      "cardioFitness": "Arginin ökar kväveoxidproduktionen, vilket slappnar av blodkärlväggarna, förbättrar blodflödet och den kardiovaskulära effektiviteten.",
+      "strength": "Bättre blodflöde förbättrar syreöverföring och näringsleverans till musklerna under träning, vilket stödjer prestanda, styrka och muskelpumpen."
+    },
+    "nutritionFoods": {
+      "title": "Arginin-rika livsmedel",
+      "items": {
+        "pumpkinSeeds": {
+          "name": "Pumpakärnor",
+          "details": "30 g pumpakärnor ger omkring 2-2,5 g arginin."
+        },
+        "sesameSeeds": {
+          "name": "Sesamfrön",
+          "details": "30 g sesamfrön innehåller ungefär 1,5-2 g arginin."
+        },
+        "almonds": {
+          "name": "Mandlar",
+          "details": "30 g mandlar ger omkring 1-1,5 g arginin."
+        },
+        "pecans": {
+          "name": "Pekannötter",
+          "details": "30 g pekannötter ger ungefär 1-1,2 g arginin."
+        },
+        "watermelon": {
+          "name": "Vattenmelon",
+          "details": "En skiva vattenmelon (200 g) innehåller omkring 250-350 mg arginin, plus citrullin som omvandlas till arginin."
+        }
+      }
+    }
+  },
+  "whey_protein": {
+    "title": "Vassleprotein för muskelväxt",
+    "description": "Vassleprotein är ett snabbsmält komplett protein från mjölk. Det innehåller alla essentiella aminosyror med särskilt hög leucinhalt — den nyckeln aminosyra som utlöser muskelproteinsyntes. Att ta 25\u201330 g vassleprotein efter träning maximerar det anabola fönstret och stödjer muskelfler och -tillväxt.",
+    "areas": {
+      "strength": "Vassle ger en snabb leucintopp (~2,5 g per 30 g) som aktiverar mTOR-signalvägen och maximerar muskelproteinsyntes och återhämtning efter styrketräning.",
+      "cardioFitness": "Tillräckligt proteinintag stödjer uthållighetsprestanda genom att bevara muskelmassa under långa träningsblock och påskynda återhämtning mellan pass."
+    },
+    "nutritionFoods": {
+      "title": "Högkvalitativa proteinkällor",
+      "items": {
+        "chickenBreast": {
+          "name": "Kycklingbröst",
+          "details": "150 g kycklingbröst ger ungefär 45 g protein med ~3,5 g leucin."
+        },
+        "tuna": {
+          "name": "Tonfisk",
+          "details": "150 g konserverad tonfisk ger ~35 g protein med ~3 g leucin."
+        },
+        "eggs": {
+          "name": "Ägg",
+          "details": "3 stora ägg ger ~18 g protein med ~1,5 g leucin."
+        },
+        "greekYogurt": {
+          "name": "Grekisk yoghurt",
+          "details": "200 g grekisk yoghurt ger ~20 g protein med ~1,8 g leucin."
+        },
+        "cottageCheese": {
+          "name": "Keso",
+          "details": "200 g keso innehåller ~25 g protein med ~2 g leucin."
+        }
+      }
+    }
+  },
+  "homocysteine_methylation_cardio": {
+    "title": "Metylering och hjärt-kärlstöd (homocystein)",
+    "description": "Homocystein är en svavelhaltig aminosyra som bildas i metioninomsättningen. Om nivåerna är kroniskt förhöjda kopplas det till ökad kardiovaskulär risk och sämre kärlfunktion. En praktisk strategi är att stödja metylering och redoxbalans med näringsämnen som TMG (trimetylglycin), B-vitaminer (särskilt B6, folat/B9 och B12), glycin, NAC och grönt-te-katekiner (EGCG, ibland felaktigt kallat ICG), tillsammans med folat- och kolinrik mat.",
+    "areas": {
+      "cardioFitness": "Att hålla homocystein inom ett hälsosamt intervall stödjer endotelfunktion, kväveoxidsignalering och kärlens motståndskraft. TMG donerar metylgrupper, folat/B12 stödjer remetylering och B6 stödjer transsulfurering. NAC och glycin stödjer dessutom glutationstatus och kontroll av oxidativ stress.",
+      "longevity": "Metyleringseffektivitet påverkar DNA-underhåll, avgiftningskapacitet och inflammatorisk ton över tid. Kombinationen av metyldonatorer (TMG, folat, B12) med kofaktorer som B6 och glycin kan hjälpa till att balansera en-kolmetabolismen i ett långsiktigt preventivt upplägg."
+    },
+    "nutritionFoods": {
+      "title": "Livsmedel som stödjer metylering",
+      "items": {
+        "beets": {
+          "name": "Rödbetor",
+          "details": "Rödbetor är naturligt rika på betain (TMG-precursor) som kan stödja remetylering av homocystein."
+        },
+        "spinach": {
+          "name": "Spenat",
+          "details": "Spenat bidrar med folat som behövs i metyleringsvägar kopplade till homocysteinmetabolism."
+        },
+        "eggs": {
+          "name": "Ägg",
+          "details": "Äggulor innehåller kolin, en viktig metyldonator för lever- och metyleringsfunktion."
+        },
+        "broccoli": {
+          "name": "Broccoli",
+          "details": "Broccoli bidrar med folat och svavelföreningar som stödjer avgiftning och redoxbalans."
+        },
+        "chickpeas": {
+          "name": "Kikärtor",
+          "details": "Kikärtor är en praktisk källa till vitamin B6 och folat, båda relevanta för homocysteinmetabolismen."
+        },
+        "salmon": {
+          "name": "Lax",
+          "details": "Lax bidrar med metionin, B-vitaminer och omega-3 som stödjer hjärt-kärlhälsa när det balanseras med metyleringskofaktorer."
+        },
+        "greenTea": {
+          "name": "Grönt te",
+          "details": "Katekiner i grönt te (särskilt EGCG) ger antioxidantskydd som är relevant för kärlhälsa."
+        }
+      }
+    }
+  },
   "collagen": {
     "title": "Kollagen för bindväv",
     "description": "Kollagen är ett strukturprotein som stödjer leder, senor, ligament, hud och benvävnad. Kollagenpeptider som tillskott kan vara ett praktiskt sätt att stödja bindvävens hållfasthet, särskilt tillsammans med proteinrik kost och tillräckligt intag av vitamin C.",

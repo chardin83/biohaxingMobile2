@@ -176,6 +176,10 @@
     "addTrainingGoal": "Add to training plan",
     "addNutritionGoal": "Add to diet plan",
     "addOtherGoal": "Add to other plan",
+    "addedToPlan": "Added to plan",
+    "addedToPlanTraining": "Added to plan (training)",
+    "addedToPlanNutrition": "Added to plan (diet)",
+    "addedToPlanOther": "Added to plan (other)",
     "alreadyInPlan": "Already in plan",
     "alreadyInPlanTraining": "Already in plan (training)",
     "alreadyInPlanNutrition": "Already in plan (diet)",
@@ -922,6 +926,27 @@
       "phosphorus": "Phosphorus",
       "copper": "Copper",
       "manganese": "Manganese"
+    },
+    "aminoAcids": "Amino acids ({{count}} tracked)",
+    "essentialAminoAcidsTitle": "Essential amino acids",
+    "essentialAminoAcidsTotal": "Essential amino acids total",
+    "otherAminoAcidsTitle": "Other important amino acids",
+    "aminoAcidLabels": {
+      "histidine": "Histidine",
+      "isoleucine": "Isoleucine",
+      "leucine": "Leucine",
+      "lysine": "Lysine",
+      "methionine": "Methionine",
+      "phenylalanine": "Phenylalanine",
+      "threonine": "Threonine",
+      "tryptophan": "Tryptophan",
+      "valine": "Valine",
+      "arginine": "Arginine",
+      "cysteine": "Cysteine",
+      "glutamine": "Glutamine",
+      "glycine": "Glycine",
+      "proline": "Proline",
+      "tyrosine": "Tyrosine"
     },
     "plantDiversityLabels": {
       "plant_diversity": "Plant diversity"

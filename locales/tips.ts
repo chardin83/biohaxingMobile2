@@ -108,7 +108,24 @@ export type MineralType =
   | 'copper'
   | 'manganese';
 
-export type NutrientTag = FiberType | PolyphenolType | MineralType;
+export type AminoAcidType =
+  | 'histidine'
+  | 'isoleucine'
+  | 'leucine'
+  | 'lysine'
+  | 'methionine'
+  | 'phenylalanine'
+  | 'threonine'
+  | 'tryptophan'
+  | 'valine'
+  | 'arginine'
+  | 'cysteine'
+  | 'glutamine'
+  | 'glycine'
+  | 'proline'
+  | 'tyrosine';
+
+export type NutrientTag = FiberType | PolyphenolType | MineralType | AminoAcidType;
 
 type BaseTarget<TUnit extends string> = {
   amount: number;
@@ -130,6 +147,10 @@ export type PolyphenolTarget = {
 
 export type MineralTarget = {
   tag: MineralType;
+} & BaseTarget<'mg'> & WeightedTarget;
+
+export type AminoAcidTarget = {
+  tag: AminoAcidType;
 } & BaseTarget<'mg'> & WeightedTarget;
 
 export type TrackingTarget = {
@@ -175,6 +196,7 @@ type TipWithoutTargets = {
   fiberTargets?: never;
   polyphenolTargets?: never;
   mineralTargets?: never;
+  aminoAcidTargets?: never;
   trackingTargets?: never;
 };
 
@@ -183,6 +205,7 @@ type TipWithTargets = {
   fiberTargets?: FiberTarget[]; // Fibermål som används för plan-uppföljning
   polyphenolTargets?: PolyphenolTarget[]; // Polyfenolmål som används för plan-uppföljning
   mineralTargets?: MineralTarget[]; // Mineralmål som används för plan-uppföljning
+  aminoAcidTargets?: AminoAcidTarget[]; // Aminosyramål som används för plan-uppföljning
   trackingTargets?: TrackingTarget[]; // Flexibla tracking-mål (växter, färger, fisk, etc.)
 };
 
@@ -714,14 +737,167 @@ const rawTips: Tip[] = [
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
     planCategory: ['nutrition','supplement'],
+    targetPeriod: 'daily',
+    aminoAcidTargets: [
+      { tag: 'glycine', amount: 2000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 },
+    ],
     nutritionFoods: [
-      { key: 'boneBroth' },
-      { key: 'collagenCuts' },
-      { key: 'skinOnPoultry' },
-      { key: 'porkRinds' },
-      { key: 'legumes' },
+      { key: 'boneBroth', nutrientTags: ['glycine'] },
+      { key: 'collagenCuts', nutrientTags: ['glycine'] },
+      { key: 'skinOnPoultry', nutrientTags: ['glycine'] },
+      { key: 'porkRinds', nutrientTags: ['glycine'] },
+      { key: 'legumes', nutrientTags: ['glycine'] },
     ],
     bodyParts: ['nervousSystem', 'bloodVessels', 'bones' ],
+  },
+  {
+    id: 'muscle_leucine',
+    level: 7,
+    xp: 600,
+    areas: [
+      { id: 'strength', descriptionKey: 'muscle_leucine.areas.strength' },
+    ],
+    title: 'muscle_leucine.title',
+    descriptionKey: 'muscle_leucine.description',
+    supplements: [{ id: 'leucine' }],
+    trainingRelation: 'postWorkout',
+    preferredDayParts: ['midday', 'afternoon'],
+    timeRule: 'anytime',
+    planCategory: ['nutrition', 'supplement'],
+    targetPeriod: 'daily',
+    aminoAcidTargets: [
+      { tag: 'leucine', amount: 7000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.5 },
+    ],
+    nutritionFoods: [
+      { key: 'beef', nutrientTags: ['leucine'] },
+      { key: 'chicken', nutrientTags: ['leucine'] },
+      { key: 'fish', nutrientTags: ['leucine'] },
+      { key: 'eggs', nutrientTags: ['leucine'] },
+      { key: 'dairyProducts', nutrientTags: ['leucine'] },
+      { key: 'wheyProtein', nutrientTags: ['leucine'] },
+    ],
+    bodyParts: ['muscles', 'bones'],
+  },
+  {
+    id: 'bcaa_complex',
+    level: 8,
+    xp: 700,
+    areas: [
+      { id: 'strength', descriptionKey: 'bcaa_complex.areas.strength' },
+      { id: 'cardioFitness', descriptionKey: 'bcaa_complex.areas.cardioFitness' },
+    ],
+    title: 'bcaa_complex.title',
+    descriptionKey: 'bcaa_complex.description',
+    supplements: [{ id: 'bcaa' }],
+    trainingRelation: 'preWorkout',
+    preferredDayParts: ['morning', 'midday'],
+    timeRule: 'anytime',
+    planCategory: ['nutrition','supplement'],
+    targetPeriod: 'weekly',
+    aminoAcidTargets: [
+      { tag: 'leucine', amount: 35000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
+      { tag: 'isoleucine', amount: 17500, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 },
+      { tag: 'valine', amount: 17500, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 },
+    ],
+    bodyParts: ['muscles'],
+  },
+  {
+    id: 'arginine_pump',
+    level: 6,
+    xp: 500,
+    areas: [
+      { id: 'cardioFitness', descriptionKey: 'arginine_pump.areas.cardioFitness' },
+      { id: 'strength', descriptionKey: 'arginine_pump.areas.strength' },
+    ],
+    title: 'arginine_pump.title',
+    descriptionKey: 'arginine_pump.description',
+    supplements: [{ id: 'arginine' }],
+    trainingRelation: 'preWorkout',
+    preferredDayParts: ['midday', 'afternoon'],
+    timeRule: 'anytime',
+    planCategory: ['nutrition', 'supplement'],
+    targetPeriod: 'daily',
+    aminoAcidTargets: [
+      { tag: 'arginine', amount: 5000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.5 },
+    ],
+    nutritionFoods: [
+      { key: 'pumpkinSeeds', nutrientTags: ['arginine'] },
+      { key: 'sesameSeeds', nutrientTags: ['arginine'] },
+      { key: 'almonds', nutrientTags: ['arginine'] },
+      { key: 'pecans', nutrientTags: ['arginine'] },
+      { key: 'watermelon', nutrientTags: ['arginine'] },
+    ],
+    bodyParts: ['bloodVessels', 'muscles'],
+  },
+  {
+    id: 'whey_protein',
+    level: 3,
+    xp: 400,
+    areas: [
+      { id: 'strength', descriptionKey: 'whey_protein.areas.strength' },
+      { id: 'cardioFitness', descriptionKey: 'whey_protein.areas.cardioFitness' },
+    ],
+    title: 'whey_protein.title',
+    descriptionKey: 'whey_protein.description',
+    supplements: [{ id: 'wheyProtein' }],
+    trainingRelation: 'postWorkout',
+    preferredDayParts: ['morning', 'afternoon'],
+    timeRule: 'anytime',
+    planCategory: ['nutrition', 'supplement'],
+    targetPeriod: 'daily',
+    aminoAcidTargets: [
+      { tag: 'leucine', amount: 2500, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 },
+    ],
+    nutritionFoods: [
+      { key: 'chickenBreast', nutrientTags: ['leucine'] },
+      { key: 'tuna', nutrientTags: ['leucine'] },
+      { key: 'eggs', nutrientTags: ['leucine'] },
+      { key: 'greekYogurt', nutrientTags: ['leucine'] },
+      { key: 'cottageCheese', nutrientTags: ['leucine'] },
+    ],
+    bodyParts: ['muscles'],
+  },
+  {
+    id: 'homocysteine_methylation_cardio',
+    level: 8,
+    xp: 700,
+    areas: [
+      {
+        id: 'cardioFitness',
+        descriptionKey: 'homocysteine_methylation_cardio.areas.cardioFitness',
+      },
+      {
+        id: 'longevity',
+        descriptionKey: 'homocysteine_methylation_cardio.areas.longevity',
+      },
+    ],
+    title: 'homocysteine_methylation_cardio.title',
+    descriptionKey: 'homocysteine_methylation_cardio.description',
+    supplements: [
+      { id: 'tmg' },
+      { id: 'folicAcid' },
+      { id: 'vitaminB12' },
+      { id: 'glycine' },
+      { id: 'nac' },
+      { id: 'greenTeaExtract' },
+    ],
+    trainingRelation: 'anytime',
+    preferredDayParts: ['morning', 'midday'],
+    timeRule: 'anytime',
+    planCategory: ['nutrition', 'supplement'],
+    targetPeriod: 'daily',
+    aminoAcidTargets: [
+      { tag: 'glycine', amount: 3000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 },
+    ],
+    nutritionFoods: [
+      { key: 'beets' },
+      { key: 'spinach' },
+      { key: 'eggs' },
+      { key: 'broccoli' },
+      { key: 'salmon' },
+      { key: 'greenTea' },
+    ],
+    bodyParts: ['bloodVessels', 'heart', 'liver'],
   },
     {
       id: 'collagen',

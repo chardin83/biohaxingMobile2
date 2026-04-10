@@ -106,11 +106,19 @@ export default function AreaDetailScreen() {
   const isNutritionTip = availablePlanCategories.includes('nutrition');
   const isOtherTip = availablePlanCategories.includes('other');
   const effectiveTipId = tipId ?? tip?.id ?? null;
+  const [justAddedPlanCategory, setJustAddedPlanCategory] = React.useState<
+    'training' | 'nutrition' | 'other' | null
+  >(null);
+
+  React.useEffect(() => {
+    setJustAddedPlanCategory(null);
+  }, [effectiveTipId]);
 
   const handleAddTipPlanEntry = () => {
     if (!effectiveTipId) return;
     const targetCategory = getDefaultPlanCategory();
     if (!targetCategory) return;
+    setJustAddedPlanCategory(targetCategory);
     let listKey: keyof typeof plans;
     if (targetCategory === 'training') listKey = 'training';
     else if (targetCategory === 'nutrition') listKey = 'nutrition';
@@ -267,6 +275,15 @@ export default function AreaDetailScreen() {
 
 
   const planBadgeLabel = React.useMemo(() => {
+    if (justAddedPlanCategory === 'nutrition' && isTipInNutritionPlan) {
+      return t('goalDetails.addedToPlanNutrition');
+    }
+    if (justAddedPlanCategory === 'training' && isTipInTrainingPlan) {
+      return t('goalDetails.addedToPlanTraining');
+    }
+    if (justAddedPlanCategory === 'other' && isTipInOtherPlan) {
+      return t('goalDetails.addedToPlanOther');
+    }
     if (isNutritionTip && isTipInNutritionPlan) {
       return t('goalDetails.alreadyInPlanNutrition');
     }
@@ -280,7 +297,17 @@ export default function AreaDetailScreen() {
       return t('goalDetails.alreadyInPlanSupplement');
     }
     return t('goalDetails.alreadyInPlan');
-  }, [isNutritionTip, isTipInNutritionPlan, isTrainingTip, isTipInTrainingPlan, isOtherTip, isTipInOtherPlan, isTipSupplementScheduled, t]);
+  }, [
+    justAddedPlanCategory,
+    isNutritionTip,
+    isTipInNutritionPlan,
+    isTrainingTip,
+    isTipInTrainingPlan,
+    isOtherTip,
+    isTipInOtherPlan,
+    isTipSupplementScheduled,
+    t,
+  ]);
 
   const showTopPlanAction = React.useMemo(() => {
     if (isTrainingTip) return true;
@@ -409,7 +436,13 @@ export default function AreaDetailScreen() {
           <ThemedText type="caption" style={styles.metaText}>{timeRuleLabel}</ThemedText>
         </AppBox>
       )}
-      {isNutritionTip && (tip?.fiberTargets?.length || 0) + (tip?.polyphenolTargets?.length || 0) > 0 && (
+      {isNutritionTip && (
+        (tip?.fiberTargets?.length || 0)
+        + (tip?.polyphenolTargets?.length || 0)
+        + (tip?.mineralTargets?.length || 0)
+        + (tip?.aminoAcidTargets?.length || 0)
+        + (tip?.trackingTargets?.length || 0)
+      ) > 0 && (
         <NutritionTargetsSection tip={tip} colors={colors} t={t} />
       )}
       <NutritionFoodsSection
@@ -563,13 +596,14 @@ function NutritionTargetsSection({
   colors: any;
   t: any;
 }>) {
-  if (!tip?.fiberTargets && !tip?.polyphenolTargets && !tip?.mineralTargets && !tip?.trackingTargets) return null;
+  if (!tip?.fiberTargets && !tip?.polyphenolTargets && !tip?.mineralTargets && !tip?.aminoAcidTargets && !tip?.trackingTargets) return null;
 
   const fiberTargets = tip?.fiberTargets ?? [];
   const polyphenolTargets = tip?.polyphenolTargets ?? [];
   const mineralTargets = tip?.mineralTargets ?? [];
+  const aminoAcidTargets = tip?.aminoAcidTargets ?? [];
   const trackingTargets = tip?.trackingTargets ?? [];
-  const allTargets = [...fiberTargets, ...polyphenolTargets, ...mineralTargets, ...trackingTargets];
+  const allTargets = [...fiberTargets, ...polyphenolTargets, ...mineralTargets, ...aminoAcidTargets, ...trackingTargets];
 
   const mineralTags = new Set([
     'minerals_total',
@@ -586,6 +620,24 @@ function NutritionTargetsSection({
     'manganese',
   ]);
 
+  const aminoAcidTags = new Set([
+    'histidine',
+    'isoleucine',
+    'leucine',
+    'lysine',
+    'methionine',
+    'phenylalanine',
+    'threonine',
+    'tryptophan',
+    'valine',
+    'arginine',
+    'cysteine',
+    'glutamine',
+    'glycine',
+    'proline',
+    'tyrosine',
+  ]);
+
   if (!allTargets.length) return null;
 
   const formatValue = (value: number, unit: 'g' | 'mg' | 'plants' | 'items' | 'count') => {
@@ -600,9 +652,16 @@ function NutritionTargetsSection({
     <AppBox title={t('nutritionLogger.nutritionTargetsTitle', { defaultValue: 'Nutrition targets' })}>
       {allTargets.map((target: any) => {
         const trackingKey = 'trackingKey' in target ? target.trackingKey : target.tag;
-        const labelGroup = target.unit === 'plants' || target.unit === 'items' || target.unit === 'count'
-          ? 'weeklyTrackingLabels'
-          : (target.unit === 'g' ? 'fiberLabels' : (mineralTags.has(trackingKey) ? 'mineralLabels' : 'polyphenolLabels'));
+        let labelGroup: 'weeklyTrackingLabels' | 'fiberLabels' | 'aminoAcidLabels' | 'mineralLabels' | 'polyphenolLabels' = 'polyphenolLabels';
+        if (target.unit === 'plants' || target.unit === 'items' || target.unit === 'count') {
+          labelGroup = 'weeklyTrackingLabels';
+        } else if (target.unit === 'g') {
+          labelGroup = 'fiberLabels';
+        } else if (aminoAcidTags.has(trackingKey)) {
+          labelGroup = 'aminoAcidLabels';
+        } else if (mineralTags.has(trackingKey)) {
+          labelGroup = 'mineralLabels';
+        }
         const label = t(`nutritionLogger.${labelGroup}.${trackingKey}`);
         return (
           <View key={`target-${trackingKey}`} style={{ marginBottom: 12 }}>

@@ -77,6 +77,8 @@
         { "id": "nr", "name": "NR (Nicotinamide Riboside)", "quantity": "300", "unit": "mg", "description": "Bioavailable vitamin B3 form that raises NAD+ while being gentle on digestion." },
         { "id": "niacin", "name": "Niacin (Vitamin B3)", "quantity": "100", "unit": "mg", "description": "Classic B3 that can boost NAD+ production; use flush-free if needed." },
         { "id": "creatine", "name": "Creatine", "quantity": "5000", "unit": "mg" },
+        { "id": "bcaa", "name": "BCAA (Leucine/Isoleucine/Valine)", "quantity": "7000", "unit": "mg", "description": "Branched-chain amino acid blend, commonly used around training to support muscle protein synthesis and recovery." },
+        { "id": "wheyProtein", "name": "Whey Protein Isolate", "quantity": "30", "unit": "g", "description": "Fast-digesting complete protein with a high leucine content (~2.5 g per 30 g serving). Ideal post-workout to maximize muscle protein synthesis." },
         { "id": "betaAlanine", "name": "Beta-Alanine", "quantity": "3000", "unit": "mg" },
         { "id": "tongkatAli", "name": "Tongkat Ali (Eurycoma longifolia)", "quantity": "200", "unit": "mg" },
         { "id": "tudca", "name": "TUDCA (Tauroursodeoxycholic Acid)", "quantity": "250", "unit": "mg" },
