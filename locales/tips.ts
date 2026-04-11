@@ -108,6 +108,22 @@ export type MineralType =
   | 'copper'
   | 'manganese';
 
+export type VitaminType =
+  | 'vitamins_total'
+  | 'vitamin_a'
+  | 'vitamin_c'
+  | 'vitamin_d'
+  | 'vitamin_e'
+  | 'vitamin_k'
+  | 'vitamin_b1'
+  | 'vitamin_b2'
+  | 'vitamin_b3'
+  | 'vitamin_b5'
+  | 'vitamin_b6'
+  | 'vitamin_b7'
+  | 'vitamin_b9'
+  | 'vitamin_b12';
+
 export type AminoAcidType =
   | 'histidine'
   | 'isoleucine'
@@ -125,7 +141,7 @@ export type AminoAcidType =
   | 'proline'
   | 'tyrosine';
 
-export type NutrientTag = FiberType | PolyphenolType | MineralType | AminoAcidType;
+export type NutrientTag = FiberType | PolyphenolType | MineralType | VitaminType | AminoAcidType;
 
 type BaseTarget<TUnit extends string> = {
   amount: number;
@@ -147,6 +163,10 @@ export type PolyphenolTarget = {
 
 export type MineralTarget = {
   tag: MineralType;
+} & BaseTarget<'mg'> & WeightedTarget;
+
+export type VitaminTarget = {
+  tag: VitaminType;
 } & BaseTarget<'mg'> & WeightedTarget;
 
 export type AminoAcidTarget = {
@@ -196,6 +216,7 @@ type TipWithoutTargets = {
   fiberTargets?: never;
   polyphenolTargets?: never;
   mineralTargets?: never;
+  vitaminTargets?: never;
   aminoAcidTargets?: never;
   trackingTargets?: never;
 };
@@ -205,6 +226,7 @@ type TipWithTargets = {
   fiberTargets?: FiberTarget[]; // Fibermål som används för plan-uppföljning
   polyphenolTargets?: PolyphenolTarget[]; // Polyfenolmål som används för plan-uppföljning
   mineralTargets?: MineralTarget[]; // Mineralmål som används för plan-uppföljning
+  vitaminTargets?: VitaminTarget[]; // Vitaminmål som används för plan-uppföljning
   aminoAcidTargets?: AminoAcidTarget[]; // Aminosyramål som används för plan-uppföljning
   trackingTargets?: TrackingTarget[]; // Flexibla tracking-mål (växter, färger, fisk, etc.)
 };
@@ -886,6 +908,11 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition', 'supplement'],
     targetPeriod: 'daily',
+    vitaminTargets: [
+      { tag: 'vitamin_b6', amount: 1.7, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
+      { tag: 'vitamin_b9', amount: 0.4, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
+      { tag: 'vitamin_b12', amount: 0.0024, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
+    ],
     aminoAcidTargets: [
       { tag: 'glycine', amount: 3000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 },
     ],

@@ -440,6 +440,7 @@ export default function AreaDetailScreen() {
         (tip?.fiberTargets?.length || 0)
         + (tip?.polyphenolTargets?.length || 0)
         + (tip?.mineralTargets?.length || 0)
+        + (tip?.vitaminTargets?.length || 0)
         + (tip?.aminoAcidTargets?.length || 0)
         + (tip?.trackingTargets?.length || 0)
       ) > 0 && (
@@ -596,14 +597,15 @@ function NutritionTargetsSection({
   colors: any;
   t: any;
 }>) {
-  if (!tip?.fiberTargets && !tip?.polyphenolTargets && !tip?.mineralTargets && !tip?.aminoAcidTargets && !tip?.trackingTargets) return null;
+  if (!tip?.fiberTargets && !tip?.polyphenolTargets && !tip?.mineralTargets && !tip?.vitaminTargets && !tip?.aminoAcidTargets && !tip?.trackingTargets) return null;
 
   const fiberTargets = tip?.fiberTargets ?? [];
   const polyphenolTargets = tip?.polyphenolTargets ?? [];
   const mineralTargets = tip?.mineralTargets ?? [];
+  const vitaminTargets = tip?.vitaminTargets ?? [];
   const aminoAcidTargets = tip?.aminoAcidTargets ?? [];
   const trackingTargets = tip?.trackingTargets ?? [];
-  const allTargets = [...fiberTargets, ...polyphenolTargets, ...mineralTargets, ...aminoAcidTargets, ...trackingTargets];
+  const allTargets = [...fiberTargets, ...polyphenolTargets, ...mineralTargets, ...vitaminTargets, ...aminoAcidTargets, ...trackingTargets];
 
   const mineralTags = new Set([
     'minerals_total',
@@ -638,13 +640,41 @@ function NutritionTargetsSection({
     'tyrosine',
   ]);
 
+  const vitaminTags = new Set([
+    'vitamins_total',
+    'vitamin_a',
+    'vitamin_c',
+    'vitamin_d',
+    'vitamin_e',
+    'vitamin_k',
+    'vitamin_b1',
+    'vitamin_b2',
+    'vitamin_b3',
+    'vitamin_b5',
+    'vitamin_b6',
+    'vitamin_b7',
+    'vitamin_b9',
+    'vitamin_b12',
+  ]);
+
   if (!allTargets.length) return null;
 
   const formatValue = (value: number, unit: 'g' | 'mg' | 'plants' | 'items' | 'count') => {
     if (unit === 'plants' || unit === 'items' || unit === 'count') {
       return `${Math.round(value)} ${unit}`;
     }
-    const decimals = unit === 'g' ? 1 : 0;
+    let decimals = 1;
+    if (unit === 'mg') {
+      if (value < 0.01) {
+        decimals = 4;
+      } else if (value < 1) {
+        decimals = 3;
+      } else if (value < 10) {
+        decimals = 2;
+      } else {
+        decimals = 0;
+      }
+    }
     return `${value.toFixed(decimals)} ${unit}`;
   };
 
@@ -652,7 +682,7 @@ function NutritionTargetsSection({
     <AppBox title={t('nutritionLogger.nutritionTargetsTitle', { defaultValue: 'Nutrition targets' })}>
       {allTargets.map((target: any) => {
         const trackingKey = 'trackingKey' in target ? target.trackingKey : target.tag;
-        let labelGroup: 'weeklyTrackingLabels' | 'fiberLabels' | 'aminoAcidLabels' | 'mineralLabels' | 'polyphenolLabels' = 'polyphenolLabels';
+        let labelGroup: 'weeklyTrackingLabels' | 'fiberLabels' | 'aminoAcidLabels' | 'mineralLabels' | 'vitaminLabels' | 'polyphenolLabels' = 'polyphenolLabels';
         if (target.unit === 'plants' || target.unit === 'items' || target.unit === 'count') {
           labelGroup = 'weeklyTrackingLabels';
         } else if (target.unit === 'g') {
@@ -661,6 +691,8 @@ function NutritionTargetsSection({
           labelGroup = 'aminoAcidLabels';
         } else if (mineralTags.has(trackingKey)) {
           labelGroup = 'mineralLabels';
+        } else if (vitaminTags.has(trackingKey)) {
+          labelGroup = 'vitaminLabels';
         }
         const label = t(`nutritionLogger.${labelGroup}.${trackingKey}`);
         return (
