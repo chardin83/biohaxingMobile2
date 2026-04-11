@@ -30,6 +30,7 @@ import { NutritionAnalyze } from '@/services/gptServices';
 
 import { Collapsible } from './Collapsible';
 import ImagePickerButton from './ImagePickerButton';
+import ImageThumbnailWithDelete from './ImageThumbnailWithDelete';
 import { ThemedModal } from './ThemedModal';
 import { ThemedText } from './ThemedText';
 import { Card } from './ui/Card';
@@ -234,6 +235,12 @@ type RecentMealOption = {
   meal: any;
   mealName: string;
   sortOrder: number;
+};
+
+type SelectedImageFile = {
+  uri: string;
+  name: string;
+  type: string;
 };
 
 const BottomSheetOverlayContainer = ({ children }: { children?: React.ReactNode }) => (
@@ -1122,6 +1129,9 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [analysisEvidence, setAnalysisEvidence] = useState<string | null>(null);
   const [lastLoggedMeal, setLastLoggedMeal] = useState<ParsedMacroAnalysis | null>(null);
+  const [pendingMealImage, setPendingMealImage] = useState<SelectedImageFile | null>(null);
+  const [ingredientListImage, setIngredientListImage] = useState<SelectedImageFile | null>(null);
+  const [isPackagingModalVisible, setIsPackagingModalVisible] = useState(false);
   const [selectedLoggedMealId, setSelectedLoggedMealId] = useState<string | null>(null);
   const [isEditMealModalVisible, setIsEditMealModalVisible] = useState(false);
   const [editingMealId, setEditingMealId] = useState<string | null>(null);
@@ -1428,6 +1438,12 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     handleCloseCopyMealModal();
   };
 
+  const resetPackagingFlow = useCallback(() => {
+    setPendingMealImage(null);
+    setIngredientListImage(null);
+    setIsPackagingModalVisible(false);
+  }, []);
+
   const toParsedMacroAnalysis = (meal: any): ParsedMacroAnalysis => ({
     mealName: getNormalizedMealName(meal, t('nutritionLogger.unnamedMeal')),
     protein: typeof meal?.protein === 'number' ? meal.protein : 0,
@@ -1453,8 +1469,10 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     setLastLoggedMeal(toParsedMacroAnalysis(meal));
   };
 
-  // Ny: hantera lokal fil från ImagePickerButton via NutritionAnalyze
-  const handleImageSelected = async (file: { uri: string; name: string; type: string }) => {
+  const runNutritionImageAnalysis = async (
+    mealFile: SelectedImageFile,
+    ingredientFile?: SelectedImageFile | null,
+  ) => {
     const todayKey = toDateKeyLocal(new Date());
     if (selectedDate > todayKey) {
       setAnalysisResult(t('nutritionLogger.futureDateLocked'));
@@ -1473,9 +1491,12 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
 
     try {
       const data = await NutritionAnalyze({
-        uri: file.uri,
-        name: file.name,
-        type: file.type,
+        uri: mealFile.uri,
+        name: mealFile.name,
+        type: mealFile.type,
+        ingredientListUri: ingredientFile?.uri,
+        ingredientListName: ingredientFile?.name,
+        ingredientListType: ingredientFile?.type,
         locale,
         prompt: trackingPromptForAI,
         trackingTargets: activeTrackingTargetsForAI,
@@ -1639,6 +1660,45 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     } finally {
       setIsAnalyzing(false);
     }
+  };
+
+  const handleImageSelected = (file: SelectedImageFile) => {
+    const todayKey = toDateKeyLocal(new Date());
+    if (selectedDate > todayKey) {
+      setAnalysisResult(t('nutritionLogger.futureDateLocked'));
+      setAnalysisEvidence(null);
+      setLastLoggedMeal(null);
+      return;
+    }
+
+    setPendingMealImage(file);
+    setIngredientListImage(null);
+    setIsPackagingModalVisible(true);
+  };
+
+  const handleIngredientListImageSelected = (file: SelectedImageFile) => {
+    setIngredientListImage(file);
+  };
+
+  const handlePendingMealImageSelected = (file: SelectedImageFile) => {
+    setPendingMealImage(file);
+  };
+
+  const handleAnalyzePendingImages = () => {
+    if (!pendingMealImage) return;
+
+    const mealFile = pendingMealImage;
+    const ingredientFile = ingredientListImage;
+    resetPackagingFlow();
+    runNutritionImageAnalysis(mealFile, ingredientFile).catch(console.error);
+  };
+
+  const handleRemoveIngredientListImage = () => {
+    setIngredientListImage(null);
+  };
+
+  const handleRemovePendingMealImage = () => {
+    setPendingMealImage(null);
   };
 
   const summary = dailyNutritionSummaries[selectedDate];
@@ -2627,6 +2687,80 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
           </View>
 
         <ThemedModal
+          visible={isPackagingModalVisible}
+          title={t('nutritionLogger.packageFlowAnalyze')}
+          onClose={resetPackagingFlow}
+          onSave={handleAnalyzePendingImages}
+          onSaveDisabled={!pendingMealImage || isAnalyzing}
+          onSaveGlow
+          okLabel={t('nutritionLogger.packageFlowAnalyze')}
+        >
+          <View style={styles.packagingModalContent}>
+            {pendingMealImage ? (
+              <ImageThumbnailWithDelete
+                uri={pendingMealImage.uri}
+                onPress={handleRemovePendingMealImage}
+                accessibilityLabel={t('nutritionLogger.packageFlowRemoveMealImage')}
+                width={180}
+                height={120}
+                borderRadius={12}
+                badgeSize={30}
+                badgeIconSize={16}
+              />
+            ) : (
+              <ImagePickerButton
+                onImageSelected={handlePendingMealImageSelected}
+                isLoading={isAnalyzing}
+                label={t('nutritionLogger.packageFlowAddMealImage')}
+                style={styles.packagingModalPickerButton}
+              />
+            )}
+            <View
+              style={[
+                styles.packagingLabelBox,
+                {
+                  borderColor: colors.secondary,
+                  backgroundColor: colors.secondaryBackground,
+                },
+              ]}
+            >
+              <ThemedText
+                type="caption"
+                style={[
+                  styles.packagingLabelBoxTitle,
+                  {
+                    color: colors.textMuted,
+                    backgroundColor: colors.secondaryBackground,
+                  },
+                ]}
+              >
+                {t('nutritionLogger.packageFlowTitle')}
+              </ThemedText>
+              {ingredientListImage ? (
+                <ImageThumbnailWithDelete
+                  uri={ingredientListImage.uri}
+                  onPress={handleRemoveIngredientListImage}
+                  accessibilityLabel={t('nutritionLogger.packageFlowRemoveIngredientImage')}
+                />
+              ) : (
+                <>
+                  <ImagePickerButton
+                    onImageSelected={handleIngredientListImageSelected}
+                    isLoading={isAnalyzing}
+                    label={t('nutritionLogger.packageFlowAddIngredientImage')}
+                    buttonVariant="secondary"
+                    style={styles.packagingModalPickerButton}
+                  />
+                  <ThemedText type="explainer" style={styles.packagingModalHint}>
+                    {t('nutritionLogger.packageFlowHint')}
+                  </ThemedText>
+                </>
+              )}
+            </View>
+          </View>
+        </ThemedModal>
+
+        <ThemedModal
           visible={isEditMealModalVisible}
           title={t('nutritionLogger.editMealNameTitle')}
           onClose={handleCloseEditMealModal}
@@ -2746,6 +2880,45 @@ const styles = StyleSheet.create({
   },
   clearAllMealsButton: {
     marginBottom: 12,
+  },
+  packagingModalContent: {
+    width: '100%',
+    alignItems: 'stretch',
+    gap: 12,
+  },
+  packagingModalBody: {
+    textAlign: 'center',
+  },
+  packagingLabelBox: {
+    width: '100%',
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderRadius: 14,
+    marginTop: 12,
+    paddingHorizontal: 12,
+    paddingTop: 20,
+    paddingBottom: 12,
+    gap: 10,
+    alignItems: 'stretch',
+    position: 'relative',
+  },
+  packagingLabelBoxTitle: {
+    position: 'absolute',
+    top: -9,
+    left: 12,
+    paddingHorizontal: 6,
+    textAlign: 'left',
+  },
+  packagingModalStatus: {
+    textAlign: 'center',
+    opacity: 0.8,
+  },
+  packagingModalHint: {
+    textAlign: 'center',
+    opacity: 0.75,
+  },
+  packagingModalPickerButton: {
+    marginTop: 4,
   },
   nutrientRow: {
     paddingBottom: 6,

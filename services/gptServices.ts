@@ -65,6 +65,11 @@ type AnalyseParams = {
   type?: string;
   file_base64?: string;
   mime?: string;
+  ingredientListUri?: string;
+  ingredientListName?: string;
+  ingredientListType?: string;
+  ingredientListBase64?: string;
+  ingredientListMime?: string;
   prompt?: string;
   supplement?: string;
   locale?: 'sv' | 'en';
@@ -290,6 +295,20 @@ export async function NutritionAnalyze(params: AnalyseParams): Promise<Nutrition
       } as any);
     } else {
       throw new Error('No file data provided to NutritionAnalyze');
+    }
+
+    if (params.ingredientListBase64) {
+      const raw = params.ingredientListBase64.includes(',')
+        ? params.ingredientListBase64.split(',')[1]
+        : params.ingredientListBase64;
+      form.append('ingredient_list_base64', raw);
+      form.append('ingredient_list_mime', params.ingredientListMime ?? 'image/jpeg');
+    } else if (params.ingredientListUri) {
+      form.append('ingredient_list_file', {
+        uri: params.ingredientListUri,
+        name: params.ingredientListName ?? `ingredient_list_${Date.now()}.jpg`,
+        type: params.ingredientListType ?? 'image/jpeg',
+      } as any);
     }
 
     const activeLanguage = (i18n.resolvedLanguage ?? i18n.language ?? 'en').toLowerCase();

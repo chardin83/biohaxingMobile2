@@ -14,7 +14,9 @@ interface ThemedModalProps {
   title: string;
   onClose: () => void;
   onSave?: () => void;
+  onSaveDisabled?: boolean;
   okLabel?: string;
+  onSaveGlow?: boolean;
 
   onSecondarySave?: () => void;
   ok2Label?: string;
@@ -30,6 +32,8 @@ export const ThemedModal = ({
   title,
   onClose,
   onSave,
+  onSaveDisabled = false,
+  onSaveGlow = false,
   onSecondarySave,
   okLabel,
   ok2Label,
@@ -69,7 +73,15 @@ export const ThemedModal = ({
               {onSecondarySave && (
                 <AppButton onPress={onSecondarySave} title={ok2Label ?? t('general.secondary')} variant="primary" />
               )}
-              {onSave && <AppButton onPress={onSave} title={okLabel ?? t('general.save')} variant="primary" />}
+              {onSave && (
+                <AppButton
+                  onPress={onSave}
+                  title={okLabel ?? t('general.save')}
+                  variant="primary"
+                  disabled={onSaveDisabled}
+                  glow={onSaveGlow}
+                />
+              )}
               {showCancelButton && (
                 <AppButton onPress={onClose} title={cancelLabel ?? t('general.cancel')} variant="secondary" />
               )}
