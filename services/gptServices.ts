@@ -63,6 +63,7 @@ type AnalyseParams = {
   uri?: string;
   name?: string;
   type?: string;
+  mealDescription?: string;
   file_base64?: string;
   mime?: string;
   ingredientListUri?: string;
@@ -321,6 +322,7 @@ export async function NutritionAnalyze(params: AnalyseParams): Promise<Nutrition
     const promptWithLanguage = `${params.prompt ?? ''}\n${languageInstruction}`.trim();
 
     form.append('prompt', promptWithLanguage);
+    form.append('mealDescription', params.mealDescription ?? '');
     form.append('supplement', params.supplement ?? '');
     form.append('locale', effectiveLocale);
     if (Array.isArray(params.trackingTargets) && params.trackingTargets.length > 0) {

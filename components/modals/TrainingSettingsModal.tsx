@@ -68,6 +68,7 @@ const TrainingSettingsModal: React.FC<TrainingSettingsModalProps> = ({
             keyboardType="number-pad"
             placeholder={sessionsPlaceholder === sessionsLabel ? undefined : sessionsPlaceholder}
             value={sessionsValue}
+            isOptional={false}
             onChangeText={onChangeSessions}
             containerStyle={styles.fieldBlock}
             returnKeyType="done"
@@ -78,6 +79,7 @@ const TrainingSettingsModal: React.FC<TrainingSettingsModalProps> = ({
             keyboardType="number-pad"
             placeholder={durationPlaceholder === durationLabel ? undefined : durationPlaceholder}
             value={durationValue}
+            isOptional={false}
             onChangeText={onChangeDuration}
             containerStyle={styles.fieldBlock}
             returnKeyType="done"

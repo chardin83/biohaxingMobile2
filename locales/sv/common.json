@@ -874,6 +874,8 @@
     "loggedMealsTitle": "Loggade måltider",
     "futureDateLocked": "Du kan inte logga eller analysera måltider på framtida datum.",
     "packageFlowTitle": "Ingredienser",
+    "packageFlowDescriptionLabel": "Måltidsbeskrivning",
+    "packageFlowDescriptionPlaceholder": "Exempel: kycklingsallad med avokado, fetaost och pumpafrön",
     "packageFlowAnalyze": "Analysera måltid",
     "packageFlowAddMealImage": "Lägg till måltidsbild",
     "packageFlowRemoveMealImage": "Ta bort måltidsbild",
@@ -1005,5 +1007,9 @@
       "galactooligosaccharides": "Galaktooligosackarider (GOS)",
       "pectic_oligosaccharides": "Pektiska oligosackarider"
     }
+  },
+  "labeledInput": {
+    "optional": "valfritt",
+    "required": "obligatoriskt"
   }
 }

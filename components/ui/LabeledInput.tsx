@@ -1,5 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleProp, StyleSheet, TextInput, TextInputProps, TextStyle, View, ViewStyle } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
@@ -8,7 +9,8 @@ type Props = TextInputProps & {
   label: string;
   containerStyle?: StyleProp<ViewStyle>;
   inputStyle?: StyleProp<TextStyle>;
-  multilineInput?: boolean; // <-- ny prop
+  multilineInput?: boolean;
+  isOptional?: boolean; // <-- ny prop för optional/mandatory
 };
 
 const LabeledInput: React.FC<Props> = ({
@@ -16,38 +18,63 @@ const LabeledInput: React.FC<Props> = ({
   containerStyle,
   inputStyle,
   multilineInput = false,
+  isOptional,
   ...textInputProps
 }) => {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const { placeholder, ...restProps } = textInputProps;
-  const effectivePlaceholder = label ? undefined : placeholder;
   const [inputHeight, setInputHeight] = React.useState(40);
+  const textValue = typeof restProps.value === 'string' ? restProps.value : '';
 
   const height = multilineInput ? inputHeight : 40;
+
+  let suffix = '';
+  if (isOptional === true) {
+    suffix = ` (${t('labeledInput.optional')})`;
+  } else if (isOptional === false) {
+    suffix = ` (${t('labeledInput.required')})`;
+  }
+  const displayLabel = `${label}${suffix}`;
+
+  // Visa inte placeholder om det är samma som label
+  const effectivePlaceholder =
+    typeof placeholder === 'string' && placeholder.trim() === label.trim()
+      ? undefined
+      : placeholder;
+
+  const handleContentSizeChange: TextInputProps['onContentSizeChange'] = e => {
+    if (!multilineInput) return;
+
+    // Keep a compact single-line field until user has entered text.
+    if (textValue.trim().length === 0) {
+      setInputHeight(40);
+      return;
+    }
+
+    setInputHeight(Math.max(40, e.nativeEvent.contentSize.height));
+  };
 
   return (
     <View style={[styles.container, containerStyle]}>
       <ThemedText type="label">
-        {label}
+        {displayLabel}
       </ThemedText>
       <TextInput
         style={[
           styles.input,
+          multilineInput ? styles.inputMultiline : styles.inputSingleLine,
           {
             borderColor: colors.border,
             color: colors.text,
-            height: height,
+            height,
           },
           inputStyle,
         ]}
         placeholderTextColor={colors.textMuted}
         placeholder={effectivePlaceholder}
         multiline={multilineInput}
-        onContentSizeChange={
-          multilineInput
-            ? e => setInputHeight(Math.max(40, e.nativeEvent.contentSize.height))
-            : undefined
-        }
+        onContentSizeChange={handleContentSizeChange}
         {...restProps}
       />
     </View>
@@ -65,6 +92,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     minHeight: 40,
+  },
+  inputSingleLine: {
+    textAlignVertical: 'center',
+  },
+  inputMultiline: {
     textAlignVertical: 'top',
   },
 });

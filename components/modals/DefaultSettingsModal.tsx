@@ -69,6 +69,8 @@ const DefaultSettingsModal: React.FC<DefaultSettingsModalProps> = ({
             returnKeyType="done"
             blurOnSubmit
             multilineInput
+
+            isOptional={true}
           />
           {onDelete ? (
             <AppButton

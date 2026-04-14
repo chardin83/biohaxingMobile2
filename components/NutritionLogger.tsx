@@ -1130,6 +1130,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
   const [analysisEvidence, setAnalysisEvidence] = useState<string | null>(null);
   const [lastLoggedMeal, setLastLoggedMeal] = useState<ParsedMacroAnalysis | null>(null);
   const [pendingMealImage, setPendingMealImage] = useState<SelectedImageFile | null>(null);
+  const [pendingMealDescription, setPendingMealDescription] = useState('');
   const [ingredientListImage, setIngredientListImage] = useState<SelectedImageFile | null>(null);
   const [isPackagingModalVisible, setIsPackagingModalVisible] = useState(false);
   const [selectedLoggedMealId, setSelectedLoggedMealId] = useState<string | null>(null);
@@ -1440,6 +1441,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
 
   const resetPackagingFlow = useCallback(() => {
     setPendingMealImage(null);
+    setPendingMealDescription('');
     setIngredientListImage(null);
     setIsPackagingModalVisible(false);
   }, []);
@@ -1471,6 +1473,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
 
   const runNutritionImageAnalysis = async (
     mealFile: SelectedImageFile,
+    mealDescription?: string,
     ingredientFile?: SelectedImageFile | null,
   ) => {
     const todayKey = toDateKeyLocal(new Date());
@@ -1494,6 +1497,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
         uri: mealFile.uri,
         name: mealFile.name,
         type: mealFile.type,
+        mealDescription,
         ingredientListUri: ingredientFile?.uri,
         ingredientListName: ingredientFile?.name,
         ingredientListType: ingredientFile?.type,
@@ -1672,6 +1676,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     }
 
     setPendingMealImage(file);
+    setPendingMealDescription('');
     setIngredientListImage(null);
     setIsPackagingModalVisible(true);
   };
@@ -1688,9 +1693,10 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     if (!pendingMealImage) return;
 
     const mealFile = pendingMealImage;
+    const mealDescription = pendingMealDescription.trim();
     const ingredientFile = ingredientListImage;
     resetPackagingFlow();
-    runNutritionImageAnalysis(mealFile, ingredientFile).catch(console.error);
+    runNutritionImageAnalysis(mealFile, mealDescription || undefined, ingredientFile).catch(console.error);
   };
 
   const handleRemoveIngredientListImage = () => {
@@ -2715,6 +2721,17 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                 style={styles.packagingModalPickerButton}
               />
             )}
+            <LabeledInput
+              label={t('nutritionLogger.packageFlowDescriptionLabel')}
+              placeholder={t('nutritionLogger.packageFlowDescriptionPlaceholder')}
+              value={pendingMealDescription}
+              isOptional
+              onChangeText={setPendingMealDescription}
+              multilineInput
+              autoCapitalize="sentences"
+              autoCorrect={false}
+              containerStyle={styles.packagingDescriptionInput}
+            />
             <View
               style={[
                 styles.packagingLabelBox,
@@ -2916,6 +2933,9 @@ const styles = StyleSheet.create({
   packagingModalHint: {
     textAlign: 'center',
     opacity: 0.75,
+  },
+  packagingDescriptionInput: {
+    marginTop: 2,
   },
   packagingModalPickerButton: {
     marginTop: 4,

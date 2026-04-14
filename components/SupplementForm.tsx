@@ -43,6 +43,7 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
           label={t('supplementForm.dosage')}
           placeholder={t('supplementForm.dosage')}
           value={supplement?.quantity}
+          isOptional={false}
           onChangeText={text => setSupplement({ ...supplement, quantity: text } as Supplement)}
           containerStyle={styles.inputHalf}
         />
@@ -50,6 +51,7 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
           label={t('supplementForm.unit')}
           placeholder={t('supplementForm.unit')}
           value={supplement?.unit}
+          isOptional={true}
           onChangeText={text => setSupplement({ ...supplement, unit: text } as Supplement)}
           containerStyle={styles.inputHalf}
         />
