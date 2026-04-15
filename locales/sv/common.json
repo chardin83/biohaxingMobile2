@@ -159,6 +159,8 @@
     "unit": "Enhet"
   },
   "dayEdit": {
+    "tabSupplements": "Tillskott",
+    "tabMeal": "Måltid",
     "addSupplement": "Lägg till tillskott",
     "addFromPlan": "Lägg till från plan",
     "choosePlan": "Välj plan",
@@ -752,7 +754,10 @@
     "area": "Område",
     "level": "Level",
     "planCategory": "Plankategori",
-    "bodyPart": "Kroppsdel"
+    "bodyPart": "Kroppsdel",
+    "targets": "Mål",
+    "daily": "Dagliga",
+    "weekly": "Veckovisa"
   },
   "bodyParts": {
     "nervousSystem": "Nervsystem",
@@ -920,12 +925,16 @@
     "minerals": "Mineraler: {{value}} mg",
     "vitamins": "Vitaminer: {{value}} mg",
     "microbiomeYes": "Mikrobiom-support: Ja ({{count}})",
-    "fulfilledTipsTitle": "Nutritionstips med mål",
     "fulfilledTargetsCount": "{{met}}/{{total}} uppfyllda",
     "continueToday": "Fortsätt idag",
     "continueThisWeek": "Fortsätt denna vecka",
+    "targetsTitle": "Mål",
+    "targetsEmptyDescription": "Sätt dagliga eller veckovisa mål för att börja följa din progress.",
+    "addFirstTarget": "+ Lägg till ditt första mål",
+    "addDailyTarget": "+ Lägg till dagligt mål",
+    "addWeeklyTarget": "+ Lägg till veckomål",
     "periodDaily": "idag",
-    "periodWeekly": "den här veckan",
+    "periodWeekly": "denna vecka",
     "noPlanTipsWithTargets": "Du har inga plantips med näringsmål.",
     "noFulfilledTipsToday": "Inga plantips med näringsmål är uppfyllda idag.",
     "linkedNutrients": "Nutrienter",

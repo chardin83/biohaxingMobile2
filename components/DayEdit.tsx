@@ -29,14 +29,14 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate, onTipCompleted }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingSupplement, setEditingSupplement] = useState<SupplementTime | null>(null);
   const [isPlanPickerVisible, setIsPlanPickerVisible] = useState(false);
-  const [activeTab, setActiveTab] = useState<'supplements' | 'meal'>('supplements');
+  const [activeTab, setActiveTab] = useState<'supplements' | 'meal'>('meal');
   const { plans, takenDates, setTakenDates } = useStorage();
   const { t } = useTranslation();
   const hasSupplementsToday = takenDates[selectedDate]?.length > 0;
   const hasMealsToday = useStorage().dailyNutritionSummaries[selectedDate]?.meals?.length > 0;
   const mealLoggerOffsetYRef = useRef(0);
 
-    const { colors } = useTheme();
+  const { colors } = useTheme();
 
   const handleNutritionTipCompleted = useCallback((nutritionLoggerY?: number) => {
     if (typeof nutritionLoggerY === 'number') {
@@ -45,7 +45,7 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate, onTipCompleted }) => {
     }
     onTipCompleted?.();
   }, [onTipCompleted]);
-    
+
   useEffect(() => {
     setSelectedSupplements(takenDates[selectedDate] ?? []);
   }, [selectedDate, takenDates]);
@@ -123,27 +123,6 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate, onTipCompleted }) => {
           <TouchableOpacity
             style={[
               styles.tabWrapper,
-              activeTab === 'supplements' && { borderBottomColor: colors.primary }
-            ]}
-            onPress={() => setActiveTab('supplements')}
-          >
-            <View style={styles.tabContent}>
-              <ThemedText
-                type="title3"
-                uppercase
-                style={{ color: activeTab === 'supplements' ? colors.text : colors.textTertiary }}
-              >
-                Tillskott
-              </ThemedText>
-              {hasSupplementsToday && (
-                <View style={[styles.badge, { backgroundColor: colors.checkmarkSupplement }]} />
-              )}
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.tabWrapper,
               activeTab === 'meal' && { borderBottomColor: colors.primary }
             ]}
             onPress={() => setActiveTab('meal')}
@@ -154,11 +133,34 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate, onTipCompleted }) => {
                 uppercase
                 style={{ color: activeTab === 'meal' ? colors.text : colors.textTertiary }}
               >
-                Måltid
+                {t('dayEdit.tabMeal')}
               </ThemedText>
               {hasMealsToday && <View style={[styles.badge, { backgroundColor: colors.checkmarkMeal }]} />}
             </View>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.tabWrapper,
+              activeTab === 'supplements' && { borderBottomColor: colors.primary }
+            ]}
+            onPress={() => setActiveTab('supplements')}
+          >
+            <View style={styles.tabContent}>
+              <ThemedText
+                type="title3"
+                uppercase
+                style={{ color: activeTab === 'supplements' ? colors.text : colors.textTertiary }}
+              >
+                {t('dayEdit.tabSupplements')}
+              </ThemedText>
+              {hasSupplementsToday && (
+                <View style={[styles.badge, { backgroundColor: colors.checkmarkSupplement }]} />
+              )}
+            </View>
+          </TouchableOpacity>
+
+
         </View>
 
         {activeTab === 'supplements' && (

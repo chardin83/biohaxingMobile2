@@ -35,7 +35,7 @@ export default function Calendar() {
     <Container
       ref={containerRef}
       background="gradient"
-      gradientLocations={colors.gradients?.sunrise?.locations3 as any}
+      gradientLocations={colors.gradients?.sunrise?.locations1 as any}
     >
       <CalendarComponent onDayPress={handleDayPress} ref={calendarRef} />
       {selectedDate && (

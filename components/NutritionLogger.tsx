@@ -34,6 +34,7 @@ import ImageThumbnailWithDelete from './ImageThumbnailWithDelete';
 import NutritionBreakdown from './NutritionBreakdown';
 import { ThemedModal } from './ThemedModal';
 import { ThemedText } from './ThemedText';
+import AppButton from './ui/AppButton';
 import { Card } from './ui/Card';
 import { IconSymbol } from './ui/IconSymbol';
 import LabeledInput from './ui/LabeledInput';
@@ -2330,6 +2331,8 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
           isLoading={isAnalyzing}
           disabled={isFutureSelectedDate}
           style={styles.imagePickerButton}
+          label={t('nutritionLogger.packageFlowAnalyze')}
+          glow
         />
         <TouchableOpacity
           onPress={handleOpenCopyMealModal}
@@ -2471,40 +2474,97 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
           }}
         >
         <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
-            <ThemedText type="title3">{t('nutritionLogger.fulfilledTipsTitle')}</ThemedText>
-            {nutritionPlanTipProgressByPeriod.daily.length > 0 || nutritionPlanTipProgressByPeriod.weekly.length > 0 ? (
-              <>
-                {nutritionPlanTipProgressByPeriod.daily.length > 0 && (
-                  <View
-                    style={styles.periodSection}
-                    onLayout={event => {
-                      periodSectionYRef.current.daily = event.nativeEvent.layout.y;
-                    }}
-                  >
-                    <ThemedText type="title3" style={styles.periodSectionHeading}>
-                      {t('nutritionLogger.periodDaily')}
-                    </ThemedText>
-                    {renderTipProgressList(nutritionPlanTipProgressByPeriod.daily)}
-                  </View>
-                )}
-                {nutritionPlanTipProgressByPeriod.weekly.length > 0 && (
-                  <View
-                    style={styles.periodSection}
-                    onLayout={event => {
-                      periodSectionYRef.current.weekly = event.nativeEvent.layout.y;
-                    }}
-                  >
-                    <ThemedText type="title3" style={styles.periodSectionHeading}>
-                      {t('nutritionLogger.periodWeekly')}
-                    </ThemedText>
-                    {renderTipProgressList(nutritionPlanTipProgressByPeriod.weekly)}
-                  </View>
-                )}
-              </>
+            {nutritionPlanTipProgressByPeriod.daily.length === 0 && nutritionPlanTipProgressByPeriod.weekly.length === 0 ? (
+              <View style={styles.emptyTargetsContainer}>
+                <ThemedText type="title3" style={styles.emptyTargetsHeading}>
+                  {t('nutritionLogger.targetsTitle')}
+                </ThemedText>
+                <ThemedText type="caption" style={[styles.emptyTargetsText, { color: colors.textLight }]}>
+                  {t('nutritionLogger.targetsEmptyDescription')}
+                </ThemedText>
+                <AppButton
+                  title={t('nutritionLogger.addFirstTarget')}
+                  onPress={() => {
+                    router.push({
+                      pathname: '/(tabs)/search',
+                      params: {
+                        targetPeriods: 'daily,weekly',
+                      },
+                    });
+                  }}
+                  glow
+                  style={styles.addFirstTargetButton}
+                />
+              </View>
             ) : (
-              <ThemedText type="caption" style={styles.noFulfilledTipsText}>
-                {t('nutritionLogger.noPlanTipsWithTargets')}
-              </ThemedText>
+              <>
+                <View
+                  style={styles.periodSection}
+                  onLayout={event => {
+                    periodSectionYRef.current.daily = event.nativeEvent.layout.y;
+                  }}
+                >
+                  <ThemedText type="title3" style={styles.periodSectionHeading}>
+                    {t('nutritionLogger.periodDaily')}
+                  </ThemedText>
+                  {nutritionPlanTipProgressByPeriod.daily.length > 0 ? (
+                    renderTipProgressList(nutritionPlanTipProgressByPeriod.daily)
+                  ) : (
+                    <ThemedText type="caption" style={styles.noFulfilledTipsText}>
+                      {t('nutritionLogger.noPlanTipsWithTargets')}
+                    </ThemedText>
+                  )}
+                  <TouchableOpacity
+                    style={styles.addTargetButton}
+                    onPress={() => {
+                      router.push({
+                        pathname: '/(tabs)/search',
+                        params: {
+                          targetPeriods: 'daily',
+                        },
+                      });
+                    }}
+                    activeOpacity={0.6}
+                  >
+                    <ThemedText type="caption" style={[styles.addTargetButtonText, { color: colors.primary }]}>
+                      {t('nutritionLogger.addDailyTarget')}
+                    </ThemedText>
+                  </TouchableOpacity>
+                </View>
+                <View
+                  style={styles.periodSection}
+                  onLayout={event => {
+                    periodSectionYRef.current.weekly = event.nativeEvent.layout.y;
+                  }}
+                >
+                  <ThemedText type="title3" style={styles.periodSectionHeading}>
+                    {t('nutritionLogger.periodWeekly')}
+                  </ThemedText>
+                  {nutritionPlanTipProgressByPeriod.weekly.length > 0 ? (
+                    renderTipProgressList(nutritionPlanTipProgressByPeriod.weekly)
+                  ) : (
+                    <ThemedText type="caption" style={styles.noFulfilledTipsText}>
+                      {t('nutritionLogger.noPlanTipsWithTargets')}
+                    </ThemedText>
+                  )}
+                  <TouchableOpacity
+                    style={styles.addTargetButton}
+                    onPress={() => {
+                      router.push({
+                        pathname: '/(tabs)/search',
+                        params: {
+                          targetPeriods: 'weekly',
+                        },
+                      });
+                    }}
+                    activeOpacity={0.6}
+                  >
+                    <ThemedText type="caption" style={[styles.addTargetButtonText, { color: colors.primary }]}>
+                      {t('nutritionLogger.addWeeklyTarget')}
+                    </ThemedText>
+                  </TouchableOpacity>
+                </View>
+              </>
             )}
           </Card>
           </View>
@@ -2528,8 +2588,8 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                 height={120}
                 borderRadius={12}
                 badgeSize={30}
-                badgeIconSize={16}
-              />
+                            badgeIconSize={16}
+                          />
             ) : (
               <ImagePickerButton
                 onImageSelected={handlePendingMealImageSelected}
@@ -3101,6 +3161,33 @@ const styles = StyleSheet.create({
   },
   noFulfilledTipsText: {
     marginTop: 8,
+  },
+  emptyTargetsContainer: {
+    paddingVertical: 32,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    gap: 12,
+  },
+  emptyTargetsHeading: {
+    marginBottom: 8,
+  },
+  emptyTargetsText: {
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  addFirstTargetButton: {
+    marginTop: 12,
+  },
+  addTargetButton: {
+    marginTop: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addTargetButtonText: {
+    fontSize: 13,
+    fontWeight: '500',
   },
   editMealModalContent: {
     width: '100%',

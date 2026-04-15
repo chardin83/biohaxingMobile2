@@ -149,7 +149,7 @@ export default function DashboardScreen() {
     <Container
       background="gradient"
       gradientKey="sunrise"
-      gradientLocations={colors.gradients?.sunrise?.locations1 as any}
+      gradientLocations={colors.gradients?.sunrise?.locations3 as any}
       centerContent
     >
 

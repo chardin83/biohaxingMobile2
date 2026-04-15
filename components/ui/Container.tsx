@@ -52,7 +52,7 @@ const Container = forwardRef<ContainerScrollRef, ContainerProps>(({
   const defaultPaddingTop = showBackButton ? 100 : 35;
   // Merge user contentContainerStyle with centerContent and default paddings
   const mergedContentContainerStyle = [
-    { paddingHorizontal: 18, paddingBottom: 100, paddingTop: defaultPaddingTop },
+    { paddingHorizontal: 18, paddingBottom: 200, paddingTop: defaultPaddingTop },
     contentContainerStyle,
     centerContent ? styles.centerContent : null
   ];

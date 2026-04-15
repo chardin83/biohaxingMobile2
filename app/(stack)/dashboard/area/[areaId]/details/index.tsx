@@ -376,7 +376,7 @@ export default function AreaDetailScreen() {
   return (
     <Container
       background="gradient"
-      gradientLocations={colors.gradients?.sunrise?.locations3 as any}
+      gradientLocations={colors.gradients?.sunrise?.locations1 as any}
       showBackButton
     >
 

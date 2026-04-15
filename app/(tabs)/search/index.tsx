@@ -1,6 +1,6 @@
 import { useTheme } from '@react-navigation/native';
-import { router } from 'expo-router';
-import React, { useMemo, useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
@@ -10,18 +10,51 @@ import Container from '@/components/ui/Container';
 import LabeledInput from '@/components/ui/LabeledInput';
 import { PressableCard } from '@/components/ui/PressableCard';
 import { bodyParts as allBodyParts } from '@/locales/bodyParts';
-import { tips } from '@/locales/tips';
+import { TargetPeriod, tips } from '@/locales/tips';
 import { PlanCategory } from '@/types/planCategory';
 
 export default function TipsSearchScreen() {
     const { t } = useTranslation();
+    const params = useLocalSearchParams<{ targetPeriods?: string | string[] }>();
     const [query, setQuery] = useState('');
-    const [selectedArea, setSelectedArea] = useState<string | null>(null);
+    const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
     const [showFilter, setShowFilter] = useState(false);
-    const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
-    const [selectedPlanCategory, setSelectedPlanCategory] = useState<string | null>(null);
-    const [selectedBodyPart, setSelectedBodyPart] = useState<string | null>(null);
+    const [selectedLevels, setSelectedLevels] = useState<number[]>([]);
+    const [selectedPlanCategories, setSelectedPlanCategories] = useState<PlanCategory[]>([]);
+    const [selectedBodyParts, setSelectedBodyParts] = useState<string[]>([]);
+    const [selectedTargetPeriods, setSelectedTargetPeriods] = useState<TargetPeriod[]>([]);
     const { colors } = useTheme();
+
+    // Always collapse filter panel on navigation/param change
+    useEffect(() => {
+        setShowFilter(false);
+    }, [params.targetPeriods]);
+
+    const toggleSelection = <T,>(currentValues: T[], nextValue: T): T[] => (
+        currentValues.includes(nextValue)
+            ? currentValues.filter(value => value !== nextValue)
+            : [...currentValues, nextValue]
+    );
+
+    const initialTargetPeriods = useMemo(() => {
+        const rawValue = params.targetPeriods;
+        const joinedValue = Array.isArray(rawValue) ? rawValue.join(',') : rawValue;
+
+        if (!joinedValue) {
+            return [];
+        }
+
+        return joinedValue
+            .split(',')
+            .map(value => value.trim())
+            .filter((value): value is TargetPeriod => value === 'daily' || value === 'weekly');
+    }, [params.targetPeriods]);
+
+    useEffect(() => {
+        if (initialTargetPeriods.length > 0) {
+            setSelectedTargetPeriods(initialTargetPeriods);
+        }
+    }, [initialTargetPeriods]);
 
     const allPlanCategories = useMemo(
         () =>
@@ -34,10 +67,11 @@ export default function TipsSearchScreen() {
         const q = query.trim().toLowerCase();
         return tips
             .filter(tip =>
-                (!selectedArea || tip.areas.some(a => a.id === selectedArea)) &&
-                (!selectedLevel || (tip.level ?? 1) === selectedLevel) &&
-                (!selectedPlanCategory || (tip.planCategory ?? ['other' as PlanCategory]).includes(selectedPlanCategory as PlanCategory)) &&
-                (!selectedBodyPart || (tip.bodyParts ?? []).includes(selectedBodyPart)) &&
+                (selectedAreas.length === 0 || tip.areas.some(a => selectedAreas.includes(a.id))) &&
+                (selectedLevels.length === 0 || selectedLevels.includes(tip.level ?? 1)) &&
+                (selectedPlanCategories.length === 0 || (tip.planCategory ?? ['other' as PlanCategory]).some(category => selectedPlanCategories.includes(category))) &&
+                (selectedBodyParts.length === 0 || (tip.bodyParts ?? []).some(bodyPart => selectedBodyParts.includes(bodyPart))) &&
+                (selectedTargetPeriods.length === 0 || (tip.targetPeriod ? selectedTargetPeriods.includes(tip.targetPeriod) : false)) &&
                 (
                     !q ||
                     t('tips:' + tip.title).toLowerCase().includes(q) ||
@@ -47,20 +81,43 @@ export default function TipsSearchScreen() {
             .sort((a, b) =>
                 t('tips:' + a.title).localeCompare(t('tips:' + b.title))
             );
-    }, [query, t, selectedArea, selectedLevel, selectedPlanCategory, selectedBodyPart]);
+    }, [query, t, selectedAreas, selectedLevels, selectedPlanCategories, selectedBodyParts, selectedTargetPeriods]);
 
     const matchCount = filteredTips.length;
 
     const activeFilterCount =
-        (selectedArea ? 1 : 0) +
-        (selectedLevel ? 1 : 0) +
-        (selectedPlanCategory ? 1 : 0) +
-        (selectedBodyPart ? 1 : 0);
+        selectedAreas.length +
+        selectedLevels.length +
+        selectedPlanCategories.length +
+        selectedBodyParts.length +
+        selectedTargetPeriods.length;
 
     const allLevels = [...new Set(tips.map(tip => tip.level ?? 1))].sort((a, b) => a - b);
 
+    const selectedFilterLabels = useMemo(() => {
+        const labels = [
+            ...selectedAreas.map(areaId => t('areas:' + areaId + '.title')),
+            ...selectedLevels.map(level => `${t('common:filter.level')} ${level}`),
+            ...selectedPlanCategories.map(category => t('common:planCategory.' + category)),
+            ...selectedBodyParts.map(bodyPart => t('bodyParts.' + bodyPart)),
+            ...selectedTargetPeriods.map(period => t(`common:filter.${period}`)),
+        ];
+
+        return labels;
+    }, [selectedAreas, selectedLevels, selectedPlanCategories, selectedBodyParts, selectedTargetPeriods, t]);
+
+    const visibleSelectedFilterLabels = selectedFilterLabels.slice(0, 3);
+    const hiddenSelectedFilterCount = Math.max(0, selectedFilterLabels.length - visibleSelectedFilterLabels.length);
+
     return (
-        <Container background="gradient" gradientKey='sunrise' gradientLocations={colors.gradients.sunrise.locations1 as any} scrollable={false} style={styles.container} >
+        <Container
+            background="gradient"
+            gradientKey='sunrise'
+            gradientLocations={colors.gradients.sunrise.locations1 as any}
+            scrollable={false}
+            style={styles.container}
+            contentContainerStyle={styles.containerContentOverride}
+        >
             <LabeledInput
                 label={t('search.label')}
                 value={query}
@@ -84,9 +141,9 @@ export default function TipsSearchScreen() {
                                 variant="overlay"
                                 style={[
                                     styles.toggleBadge,
-                                    selectedArea === areaId && { backgroundColor: colors.accentDefault },
+                                    selectedAreas.includes(areaId) && { backgroundColor: colors.accentDefault },
                                 ]}
-                                onPress={() => setSelectedArea(selectedArea === areaId ? null : areaId)}
+                                onPress={() => setSelectedAreas(currentValues => toggleSelection(currentValues, areaId))}
                             >
                                 <ThemedText type="caption" style={styles.badgeLabel}>
                                     {t('areas:' + areaId + '.title')}
@@ -105,9 +162,9 @@ export default function TipsSearchScreen() {
                                 variant="overlay"
                                 style={[
                                     styles.toggleBadge,
-                                    selectedLevel === level && { backgroundColor: colors.accentDefault },
+                                    selectedLevels.includes(level) && { backgroundColor: colors.accentDefault },
                                 ]}
-                                onPress={() => setSelectedLevel(selectedLevel === level ? null : level)}
+                                onPress={() => setSelectedLevels(currentValues => toggleSelection(currentValues, level))}
                             >
                                 <ThemedText type="caption" style={styles.badgeLabel}>{`${level}`}</ThemedText>
                             </Badge>
@@ -124,9 +181,9 @@ export default function TipsSearchScreen() {
                                 variant="overlay"
                                 style={[
                                     styles.toggleBadge,
-                                    selectedPlanCategory === cat && { backgroundColor: colors.accentDefault },
+                                    selectedPlanCategories.includes(cat as PlanCategory) && { backgroundColor: colors.accentDefault },
                                 ]}
-                                onPress={() => setSelectedPlanCategory(selectedPlanCategory === cat ? null : cat)}
+                                onPress={() => setSelectedPlanCategories(currentValues => toggleSelection(currentValues, cat as PlanCategory))}
                             >
                                 <ThemedText type="caption" style={styles.badgeLabel}>{t('common:planCategory.' + cat)}</ThemedText>
                             </Badge>
@@ -143,20 +200,65 @@ export default function TipsSearchScreen() {
                                 variant="overlay"
                                 style={[
                                     styles.toggleBadge,
-                                    selectedBodyPart === bp.id && { backgroundColor: colors.accentDefault },
+                                    selectedBodyParts.includes(bp.id) && { backgroundColor: colors.accentDefault },
                                 ]}
-                                onPress={() => setSelectedBodyPart(selectedBodyPart === bp.id ? null : bp.id)}
+                                onPress={() => setSelectedBodyParts(currentValues => toggleSelection(currentValues, bp.id))}
                             >
                                 <ThemedText type="caption" style={styles.badgeLabel}>{t('bodyParts.' + bp.id)}</ThemedText>
+                            </Badge>
+                        ))}
+                    </View>
+                    <ThemedText type="label" style={styles.filterLabel}>
+                        {t('common:filter.targets')}
+                    </ThemedText>
+                    <View style={styles.filterView}>
+                        {(['daily', 'weekly'] as TargetPeriod[]).map(period => (
+                            <Badge
+                                key={period}
+                                variant="overlay"
+                                style={[
+                                    styles.toggleBadge,
+                                    selectedTargetPeriods.includes(period) && { backgroundColor: colors.accentDefault },
+                                ]}
+                                onPress={() => setSelectedTargetPeriods(currentValues => toggleSelection(currentValues, period))}
+                            >
+                                <ThemedText type="caption" style={styles.badgeLabel}>
+                                    {t(`common:filter.${period}`)}
+                                </ThemedText>
                             </Badge>
                         ))}
                     </View>
                 </ScrollView>
             )}
             <TouchableOpacity onPress={() => setShowFilter(v => !v)}>
-                <ThemedText type="default" style={[styles.filterButtonLabel, { color: colors.accentDefault }]}>
-                    {`Filter (${activeFilterCount}st)`}
+                <ThemedText type="default" style={[styles.filterButtonLabel, { color: colors.accentDefault }]}> 
+                    {showFilter ? `Filter (${activeFilterCount}st)` : 'Filter'}
                 </ThemedText>
+                {!showFilter && selectedFilterLabels.length > 0 && (
+                    <View style={styles.collapsedFilterPills}>
+                        {visibleSelectedFilterLabels.map((label, index) => (
+                            <Badge
+                                key={`${label}-${index}`}
+                                variant="overlay"
+                                style={[styles.toggleBadge, styles.collapsedFilterPill, { backgroundColor: colors.accentDefault }]}
+                            >
+                                <ThemedText type="caption" style={[styles.badgeLabel, styles.collapsedFilterPillLabel, { color: colors.textWhite }]}>
+                                    {label}
+                                </ThemedText>
+                            </Badge>
+                        ))}
+                        {hiddenSelectedFilterCount > 0 && (
+                            <Badge
+                                variant="overlay"
+                                style={[styles.toggleBadge, styles.collapsedFilterPill, { backgroundColor: colors.cardBorder }]}
+                            >
+                                <ThemedText type="caption" style={[styles.badgeLabel, styles.collapsedFilterOverflowLabel, { color: colors.textMuted }]}>
+                                    {`+${hiddenSelectedFilterCount}st`}
+                                </ThemedText>
+                            </Badge>
+                        )}
+                    </View>
+                )}
             </TouchableOpacity>
             <ThemedText type="default" style={styles.resultCount}>
                 {`Resultat: (${matchCount}st)`}
@@ -164,6 +266,7 @@ export default function TipsSearchScreen() {
             <FlatList
                 data={filteredTips}
                 keyExtractor={item => item.id}
+                contentContainerStyle={styles.resultsListContent}
                 renderItem={({ item }) => {
                     const firstAreaId = item.areas[0]?.id;
 
@@ -261,6 +364,13 @@ const styles = StyleSheet.create({
     empty: { textAlign: 'center', marginTop: 40 },
     inputMargin: { marginBottom: 20 },
     resultCount: { fontSize: 16, marginBottom: 12 },
+    resultsListContent: {
+        paddingBottom: 220,
+    },
+    containerContentOverride: {
+        paddingTop: 50,
+        paddingBottom: 0,
+    },
     filterButton: {
         position: 'absolute',
         top: 10,
@@ -291,5 +401,17 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16,
         paddingVertical: 8,
+    },
+    collapsedFilterPills: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        marginBottom: 8,
+    },
+    collapsedFilterPill: {
+        marginBottom: 6,
+    },
+    collapsedFilterPillLabel: {},
+    collapsedFilterOverflowLabel: {
+        fontWeight: '600',
     },
 });

@@ -159,6 +159,8 @@
     "unit": "Unit"
   },
   "dayEdit": {
+    "tabSupplements": "Supplements",
+    "tabMeal": "Meal",
     "addSupplement": "Add supplement",
     "addFromPlan": "Add from plan",
     "choosePlan": "Choose plan",
@@ -742,7 +744,10 @@
     "area": "Area",
     "level": "Level",
     "planCategory": "Plan category",
-    "bodyPart": "Body part"
+    "bodyPart": "Body part",
+    "targets": "Targets",
+    "daily": "Daily",
+    "weekly": "Weekly"
   },
   "bodyParts": {
     "nervousSystem": "Nervous System",
@@ -910,10 +915,14 @@
     "minerals": "Minerals: {{value}} mg",
     "vitamins": "Vitamins: {{value}} mg",
     "microbiomeYes": "Microbiome support: Yes ({{count}})",
-    "fulfilledTipsTitle": "Active nutrition tips with targets",
     "fulfilledTargetsCount": "{{met}}/{{total}} completed",
-    "continueToday": "Continue Today",
-    "continueThisWeek": "Continue This Week",
+    "continueToday": "Continue today",
+    "continueThisWeek": "Continue this week",
+    "targetsTitle": "Targets",
+    "targetsEmptyDescription": "Set daily or weekly targets to start tracking progress.",
+    "addFirstTarget": "+ Add your first target",
+    "addDailyTarget": "+ Add daily target",
+    "addWeeklyTarget": "+ Add weekly target",
     "periodDaily": "today",
     "periodWeekly": "this week",
     "noPlanTipsWithTargets": "You have no plan tips with nutrient targets.",

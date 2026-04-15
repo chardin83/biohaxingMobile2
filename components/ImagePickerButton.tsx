@@ -11,6 +11,7 @@ interface ImagePickerButtonProps {
   isLoading?: boolean;
   disabled?: boolean;
   label?: string;
+  glow?: boolean;
   buttonVariant?: 'primary' | 'secondary' | 'danger';
   style?: StyleProp<ViewStyle>;
 }
@@ -19,7 +20,8 @@ const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({
   onImageSelected,
   isLoading = false,
   disabled = false,
-  label = 'Välj bild',
+  label,
+  glow = false,
   buttonVariant = 'primary',
   style,
 }) => {
@@ -92,10 +94,11 @@ const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({
 
   return (
     <AppButton
-      title={isLoading ? t('dayEdit.analyzing') : label}
+      title={isLoading ? t('dayEdit.analyzing') : (label ?? t('dayEdit.pickImage'))}
       onPress={showOptions}
       disabled={isLoading || disabled}
       variant={buttonVariant}
+      glow={glow}
       icon="camera"
       style={style}
     />
