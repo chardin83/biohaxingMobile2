@@ -2,7 +2,6 @@ import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
-import { t as i18nT } from 'i18next';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -11,6 +10,7 @@ import {
   LayoutAnimation,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   TouchableOpacity,
   UIManager,
@@ -25,12 +25,13 @@ import {
   XP_FOR_NUTRITION_TIP_DAILY_COMPLETION,
   XP_FOR_NUTRITION_TIP_WEEKLY_COMPLETION,
 } from '@/constants/XP';
-import { FIBER_CATEGORY_SUBTYPES, type FiberSubtype,tips } from '@/locales/tips';
+import { FIBER_CATEGORY_SUBTYPES, type FiberSubtype, tips } from '@/locales/tips';
 import { NutritionAnalyze } from '@/services/gptServices';
 
 import { Collapsible } from './Collapsible';
 import ImagePickerButton from './ImagePickerButton';
 import ImageThumbnailWithDelete from './ImageThumbnailWithDelete';
+import NutritionBreakdown from './NutritionBreakdown';
 import { ThemedModal } from './ThemedModal';
 import { ThemedText } from './ThemedText';
 import { Card } from './ui/Card';
@@ -243,6 +244,15 @@ type SelectedImageFile = {
   type: string;
 };
 
+type PendingAnalysisReview = {
+  analysis: ParsedMacroAnalysis | null;
+  weeklyTrackingSignals: WeeklyTrackingSignals;
+  evidence: NutritionEvidence | null;
+  aiDescription: string | null;
+  evidenceMessage: string | null;
+  statusMessage: string | null;
+};
+
 const BottomSheetOverlayContainer = ({ children }: { children?: React.ReactNode }) => (
   <FullWindowOverlay>{children}</FullWindowOverlay>
 );
@@ -292,7 +302,6 @@ const VITAMIN_TYPE_KEYS = [
   'vitamin_b12',
 ] as const;
 
-type FiberTypeKey = (typeof FIBER_TYPE_KEYS)[number];
 type FiberSubtypeKey = FiberSubtype;
 type PolyphenolTypeKey = (typeof POLYPHENOL_TYPE_KEYS)[number];
 type MineralTypeKey = (typeof MINERAL_TYPE_KEYS)[number];
@@ -345,9 +354,6 @@ const ALL_AMINO_ACID_KEYS: readonly string[] = [...ESSENTIAL_AMINO_ACID_KEYS, ..
 
 const emptyAminoAcidTotals = (): Record<string, number> =>
   ALL_AMINO_ACID_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
-
-const getEssentialAminoTotalMg = (values: Record<string, number>): number =>
-  ESSENTIAL_AMINO_ACID_KEYS.reduce((sum, key) => sum + (values[key] ?? 0), 0);
 
 const confidenceRank: Record<ConfidenceLevel, number> = {
   unknown: 0,
@@ -690,22 +696,6 @@ const extractTypedTotals = (data: any, parsedContent: any) => {
 const hasAnyTypedTotals = (values: Record<string, number>) =>
   Object.values(values).some(value => (value ?? 0) > 0);
 
-const getFiberSubtypeAmountsForCategory = (
-  category: FiberTypeKey,
-  subtypeTotals: Record<string, number>
-): Array<{ subtype: FiberSubtypeKey; label: string; amount: number }> => {
-  if (category === 'fiber_total') return [];
-
-  const subtypes = FIBER_CATEGORY_SUBTYPES[category] ?? [];
-  return subtypes
-    .map(subtype => ({
-      subtype,
-      label: i18nT(`nutritionLogger.fiberSubtypeLabels.${subtype}`),
-      amount: subtypeTotals[subtype] ?? 0,
-    }))
-    .filter(item => item.amount > 0);
-};
-
 const sumTypedTotals = (
   meals: Array<any>,
   key: 'fiberByType' | 'fiberSubtypeTotals' | 'polyphenolByType' | 'mineralsByType' | 'vitaminsByType' | 'aminoAcidsByType'
@@ -728,22 +718,6 @@ const sumMicrobiomeSupport = (meals: Array<any>): MicrobiomeSupportEntry[] => {
   return mergeMicrobiomeSupportLists(allEntries as MicrobiomeSupportEntry[]);
 };
 
-const getMineralsTotal = (mineralsByType: Record<string, number>): number => {
-  const explicit = mineralsByType.minerals_total ?? 0;
-  if (explicit > 0) return explicit;
-  return MINERAL_TYPE_KEYS
-    .filter(key => key !== 'minerals_total')
-    .reduce((sum, key) => sum + (mineralsByType[key] ?? 0), 0);
-};
-
-const getVitaminsTotal = (vitaminsByType: Record<string, number>): number => {
-  const explicit = vitaminsByType.vitamins_total ?? 0;
-  if (explicit > 0) return explicit;
-  return VITAMIN_TYPE_KEYS
-    .filter(key => key !== 'vitamins_total')
-    .reduce((sum, key) => sum + (vitaminsByType[key] ?? 0), 0);
-};
-
 const mergeMineralConfidenceFromMeals = (meals: Array<any>): Record<string, ConfidenceLevel> => {
   const totals = emptyMineralConfidenceTotals();
 
@@ -760,13 +734,6 @@ const mergeMineralConfidenceFromMeals = (meals: Array<any>): Record<string, Conf
   });
 
   return totals;
-};
-
-const getConfidenceLabelKey = (confidence: ConfidenceLevel): string => {
-  if (confidence === 'high') return 'nutritionLogger.confidenceHigh';
-  if (confidence === 'medium') return 'nutritionLogger.confidenceMedium';
-  if (confidence === 'low') return 'nutritionLogger.confidenceLow';
-  return 'nutritionLogger.confidenceUnknown';
 };
 
 const AMINO_ACID_TAG_SET = new Set<string>(ALL_AMINO_ACID_KEYS);
@@ -1032,6 +999,51 @@ const extractStructuredAnalysis = (data: any, parsedContent: any): ParsedMacroAn
   return null;
 };
 
+const extractAIResponseDescription = (data: any, parsedContent: any): string | null => {
+  const candidates: unknown[] = [
+    parsedContent?.description,
+    parsedContent?.summary,
+    parsedContent?.analysis,
+    parsedContent?.reasoning,
+    parsedContent?.observation,
+    parsedContent?.observations,
+    data?.description,
+    data?.summary,
+    data?.analysis,
+    data?.reasoning,
+    data?.observation,
+    data?.observations,
+  ];
+
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.trim().length > 0) {
+      return candidate.trim();
+    }
+    if (Array.isArray(candidate)) {
+      const text = candidate
+        .filter((item): item is string => typeof item === 'string')
+        .map(item => item.trim())
+        .filter(item => item.length > 0)
+        .join('\n');
+      if (text.length > 0) return text;
+    }
+  }
+
+  if (typeof data?.content === 'string') {
+    const trimmed = data.content.trim();
+    if (!trimmed.startsWith('{') && !trimmed.startsWith('[') && trimmed.length > 0) {
+      return trimmed;
+    }
+  }
+
+  return null;
+};
+
+const hasPortionEstimateSignal = (value: string): boolean => {
+  const normalized = value.toLowerCase();
+  return /(portion|serving|estimate|estimated|approx|approximate|ca\.?|ungefar|storlek)/.test(normalized);
+};
+
 const mergeWeeklyTrackingSignal = (
   target: WeeklyTrackingSignals,
   key: string,
@@ -1127,11 +1139,13 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
   } = useStorage();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
-  const [analysisEvidence, setAnalysisEvidence] = useState<string | null>(null);
+  const [isAnalysisReviewModalVisible, setIsAnalysisReviewModalVisible] = useState(false);
+  const [pendingAnalysisReview, setPendingAnalysisReview] = useState<PendingAnalysisReview | null>(null);
   const [lastLoggedMeal, setLastLoggedMeal] = useState<ParsedMacroAnalysis | null>(null);
   const [pendingMealImage, setPendingMealImage] = useState<SelectedImageFile | null>(null);
   const [pendingMealDescription, setPendingMealDescription] = useState('');
   const [ingredientListImage, setIngredientListImage] = useState<SelectedImageFile | null>(null);
+  const lastAnalyzedFilesRef = useRef<{ mealFile: SelectedImageFile; mealDescription: string; ingredientFile: SelectedImageFile | null } | null>(null);
   const [isPackagingModalVisible, setIsPackagingModalVisible] = useState(false);
   const [selectedLoggedMealId, setSelectedLoggedMealId] = useState<string | null>(null);
   const [isEditMealModalVisible, setIsEditMealModalVisible] = useState(false);
@@ -1150,6 +1164,40 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
   const COMPLETION_SCROLL_DELAY_MS = 80;
   const COMPLETION_ANIMATION_DELAY_AFTER_SCROLL_MS = 180;
 
+  const interpretationItems = useMemo((): string[] | null => {
+    if (!pendingAnalysisReview) return null;
+
+    const aiText = pendingAnalysisReview.aiDescription?.trim();
+    if (aiText) {
+      const lines = aiText.split(/\r?\n+/g)
+        .map(line => line.replace(/^([•*-]\s+|\d+[.)]\s+)/, '').trim())
+        .filter(line => line.length > 0);
+      if (lines.length > 0) return lines;
+    }
+
+    const inferred = pendingAnalysisReview.evidence?.inferred ?? [];
+    if (inferred.length > 0) {
+      const items = inferred
+        .flatMap(item => item.split(/\r?\n+/g))
+        .map(item => item.replace(/^([•*-]\s+|\d+[.)]\s+)/, '').trim())
+        .filter(item => item.length > 0);
+      if (items.length > 0) return Array.from(new Set(items));
+    }
+
+    return [t('nutritionLogger.analysisNoStructuredData')];
+  }, [pendingAnalysisReview, t]);
+
+  const interpretationText = interpretationItems?.join('\n') ?? null;
+
+  const interpretationIsSourceBacked = (pendingAnalysisReview?.evidence?.sources?.length ?? 0) > 0;
+
+  const interpretationIsPortionEstimated = useMemo(() => {
+    const inferred = pendingAnalysisReview?.evidence?.inferred ?? [];
+    if (inferred.some(item => hasPortionEstimateSignal(item))) return true;
+    if (interpretationText && hasPortionEstimateSignal(interpretationText)) return true;
+    return false;
+  }, [pendingAnalysisReview, interpretationText]);
+
   const getCompletionAnimValue = useCallback((tipKey: string): Animated.Value => {
     if (!completionAnimByKeyRef.current[tipKey]) {
       completionAnimByKeyRef.current[tipKey] = new Animated.Value(0);
@@ -1160,6 +1208,11 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
   const triggerLightHaptic = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
   }, []);
+
+  useEffect(() => {
+    if (!isAnalysisReviewModalVisible) return;
+    Haptics.selectionAsync().catch(() => undefined);
+  }, [isAnalysisReviewModalVisible]);
 
   const animateTipCompletion = useCallback((tipKey: string) => {
     const anim = getCompletionAnimValue(tipKey);
@@ -1377,6 +1430,11 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     copyMealBottomSheetRef.current?.dismiss();
   };
 
+  const closeAnalysisReviewModal = useCallback(() => {
+    setIsAnalysisReviewModalVisible(false);
+    setPendingAnalysisReview(null);
+  }, []);
+
   const handleSaveMealName = () => {
     if (!editingMealId) {
       handleCloseEditMealModal();
@@ -1409,6 +1467,55 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     });
 
     handleCloseEditMealModal();
+  };
+
+  const handleSaveAnalyzedMeal = () => {
+    if (!pendingAnalysisReview?.analysis) {
+      closeAnalysisReviewModal();
+      return;
+    }
+
+    const analysis = pendingAnalysisReview.analysis;
+    const mealWeeklyTrackingSignals = pendingAnalysisReview.weeklyTrackingSignals;
+
+    setDailyNutritionSummaries(prev => {
+      const existing = prev[selectedDate]?.meals ?? [];
+      const newMeal = {
+        id: `${selectedDate}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        date: selectedDate,
+        ...analysis,
+        weeklyTrackingSignals: mealWeeklyTrackingSignals,
+      };
+
+      setSelectedLoggedMealId(newMeal.id);
+
+      const mealDateLocal = parseDateKeyLocal(selectedDate);
+      const weekStartDate = getStartOfWeekMonday(mealDateLocal);
+      const weekStartISO = toDateKeyLocal(weekStartDate);
+
+      Object.entries(mealWeeklyTrackingSignals)
+        .filter(([key]) => activeTrackingKeys.has(key))
+        .forEach(([key, value]) => {
+          if (Array.isArray(value)) {
+            value.forEach(item => addToWeeklyTracking(weekStartISO, key, item));
+            return;
+          }
+
+          const existingCount = weeklyTracking[weekStartISO]?.[key];
+          const nextCount = (typeof existingCount === 'number' ? existingCount : 0) + value;
+          addToWeeklyTracking(weekStartISO, key, nextCount);
+        });
+
+      return {
+        ...prev,
+        [selectedDate]: buildDailySummary([...existing, newMeal]),
+      };
+    });
+
+    setLastLoggedMeal(analysis);
+    setAnalysisResult('✅ Måltid loggad och analyserad!');
+    triggerLightHaptic();
+    closeAnalysisReviewModal();
   };
 
   const handleCopyMeal = (mealToCopy: any) => {
@@ -1479,7 +1586,6 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     const todayKey = toDateKeyLocal(new Date());
     if (selectedDate > todayKey) {
       setAnalysisResult(t('nutritionLogger.futureDateLocked'));
-      setAnalysisEvidence(null);
       setLastLoggedMeal(null);
       return;
     }
@@ -1489,7 +1595,8 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
 
     setIsAnalyzing(true);
     setAnalysisResult(null);
-    setAnalysisEvidence(null);
+    setPendingAnalysisReview(null);
+    setIsAnalysisReviewModalVisible(false);
     setLastLoggedMeal(null);
 
     try {
@@ -1523,9 +1630,15 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
         }
 
         setAnalysisResult(`❌ ${backendMessage}`);
-        if (rawDetails) {
-          setAnalysisEvidence(`Backend details: ${rawDetails}`);
-        }
+        setPendingAnalysisReview({
+          analysis: null,
+          weeklyTrackingSignals: {},
+          evidence: null,
+          aiDescription: typeof data?.content === 'string' ? data.content : null,
+          evidenceMessage: rawDetails ? `Backend details: ${rawDetails}` : null,
+          statusMessage: `❌ ${backendMessage}`,
+        });
+        setIsAnalysisReviewModalVisible(true);
         return;
       }
 
@@ -1547,15 +1660,26 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
       const typedTotals = extractTypedTotals(data, parsedContent);
       const microbiomeSupport = extractMicrobiomeSupport(data, parsedContent);
       const aiWeeklyTrackingSignals = extractWeeklyTrackingSignals(data, parsedContent);
+      const aiResponseDescription = extractAIResponseDescription(data, parsedContent);
 
       const evidence = extractEvidence(data, parsedContent);
-      setAnalysisEvidence(buildEvidenceMessage(evidence));
+      const evidenceMessage = buildEvidenceMessage(evidence);
 
       if (!analysis) {
         // Om vi inte fick strukturerad data, visa textinnehåll eller generellt meddelande
         const text =
           data?.content ?? t('dayEdit.analysisNoStructuredData') ?? 'Ingen strukturerad näringsdata hittades.';
-        setAnalysisResult(typeof text === 'string' ? text : JSON.stringify(text));
+        const statusMessage = typeof text === 'string' ? text : JSON.stringify(text);
+        setAnalysisResult(statusMessage);
+        setPendingAnalysisReview({
+          analysis: null,
+          weeklyTrackingSignals: {},
+          evidence,
+          aiDescription: aiResponseDescription,
+          evidenceMessage,
+          statusMessage,
+        });
+        setIsAnalysisReviewModalVisible(true);
         return;
       }
 
@@ -1593,73 +1717,68 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
         const text =
           data?.content
           ?? 'AI hittade ingen tillforlitlig macro-data i svaret. Prova en tydligare bild eller en narbild pa tallriken.';
-        setAnalysisResult(typeof text === 'string' ? text : JSON.stringify(text));
+        const statusMessage = typeof text === 'string' ? text : JSON.stringify(text);
+        setAnalysisResult(statusMessage);
+        setPendingAnalysisReview({
+          analysis,
+          weeklyTrackingSignals: {},
+          evidence,
+          aiDescription: aiResponseDescription,
+          evidenceMessage,
+          statusMessage,
+        });
+        setIsAnalysisReviewModalVisible(true);
         setLastLoggedMeal(null);
         return;
       }
 
-      // Uppdatera storage med verklig analys
-      setDailyNutritionSummaries(prev => {
-        const existing = prev[selectedDate]?.meals ?? [];
-        const newMeal = {
-          id: `${selectedDate}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-          date: selectedDate,
-          ...analysis,
-        };
-        setSelectedLoggedMealId(newMeal.id);
+      const mergedSignals: WeeklyTrackingSignals = {};
+      Object.entries(aiWeeklyTrackingSignals).forEach(([key, value]) => {
+        mergeWeeklyTrackingSignal(mergedSignals, key, value);
+      });
 
-        // Dynamic weekly tracking from AI backend signals only.
-        const mealDateLocal = parseDateKeyLocal(selectedDate);
-        const weekStartDate = getStartOfWeekMonday(mealDateLocal);
-        const weekStartISO = toDateKeyLocal(weekStartDate);
-        const mergedSignals: WeeklyTrackingSignals = {};
-        Object.entries(aiWeeklyTrackingSignals).forEach(([key, value]) => {
-          mergeWeeklyTrackingSignal(mergedSignals, key, value);
-        });
-
-        const signalsToApply = Object.entries(mergedSignals).filter(([key]) => activeTrackingKeys.has(key));
-
-        const mealWeeklyTrackingSignals = signalsToApply.reduce((acc, [key, value]) => {
+      const mealWeeklyTrackingSignals = Object.entries(mergedSignals)
+        .filter(([key]) => activeTrackingKeys.has(key))
+        .reduce((acc, [key, value]) => {
           acc[key] = value;
           return acc;
         }, {} as WeeklyTrackingSignals);
 
-        const newMealWithTracking = {
-          ...newMeal,
-          weeklyTrackingSignals: mealWeeklyTrackingSignals,
-        };
-
-        const updatedMealsWithTracking = [...existing, newMealWithTracking];
-
-        signalsToApply.forEach(([key, value]) => {
-          if (Array.isArray(value)) {
-            value.forEach(item => addToWeeklyTracking(weekStartISO, key, item));
-            return;
-          }
-
-          const existingCount = weeklyTracking[weekStartISO]?.[key];
-          const nextCount = (typeof existingCount === 'number' ? existingCount : 0) + value;
-          addToWeeklyTracking(weekStartISO, key, nextCount);
-        });
-
-        return {
-          ...prev,
-          [selectedDate]: buildDailySummary(updatedMealsWithTracking),
-        };
+      setPendingAnalysisReview({
+        analysis,
+        weeklyTrackingSignals: mealWeeklyTrackingSignals,
+        evidence,
+        aiDescription: aiResponseDescription,
+        evidenceMessage,
+        statusMessage: t('nutritionLogger.analysisReadyToSave'),
       });
-
-      setLastLoggedMeal(analysis);
-      setAnalysisResult('✅ Måltid loggad och analyserad!');
-      triggerLightHaptic();
+      setIsAnalysisReviewModalVisible(true);
+      setAnalysisResult(t('nutritionLogger.analysisReadyToSave'));
     } catch (err) {
       console.error('Error analyzing image:', err);
       const errMsg = err instanceof Error ? err.message : '';
       if (typeof errMsg === 'string' && errMsg.toLowerCase().includes('socket hang up')) {
         setAnalysisResult('❌ Backend tappade anslutning till AI (socket hang up). Prova igen med en mindre bild.');
+        setPendingAnalysisReview({
+          analysis: null,
+          weeklyTrackingSignals: {},
+          evidence: null,
+          aiDescription: null,
+          evidenceMessage: null,
+          statusMessage: '❌ Backend tappade anslutning till AI (socket hang up). Prova igen med en mindre bild.',
+        });
       } else {
         setAnalysisResult(t('dayEdit.analysisFailed') ?? '❌ Misslyckades med att analysera bilden.');
+        setPendingAnalysisReview({
+          analysis: null,
+          weeklyTrackingSignals: {},
+          evidence: null,
+          aiDescription: null,
+          evidenceMessage: null,
+          statusMessage: t('dayEdit.analysisFailed') ?? '❌ Misslyckades med att analysera bilden.',
+        });
       }
-      setAnalysisEvidence(null);
+      setIsAnalysisReviewModalVisible(true);
       setLastLoggedMeal(null);
     } finally {
       setIsAnalyzing(false);
@@ -1670,8 +1789,6 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     const todayKey = toDateKeyLocal(new Date());
     if (selectedDate > todayKey) {
       setAnalysisResult(t('nutritionLogger.futureDateLocked'));
-      setAnalysisEvidence(null);
-      setLastLoggedMeal(null);
       return;
     }
 
@@ -1695,9 +1812,18 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     const mealFile = pendingMealImage;
     const mealDescription = pendingMealDescription.trim();
     const ingredientFile = ingredientListImage;
+    lastAnalyzedFilesRef.current = { mealFile, mealDescription, ingredientFile };
     resetPackagingFlow();
     runNutritionImageAnalysis(mealFile, mealDescription || undefined, ingredientFile).catch(console.error);
   };
+
+  const handleReAnalyze = useCallback(() => {
+    const last = lastAnalyzedFilesRef.current;
+    if (!last) return;
+    closeAnalysisReviewModal();
+    runNutritionImageAnalysis(last.mealFile, last.mealDescription || undefined, last.ingredientFile).catch(console.error);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [closeAnalysisReviewModal]);
 
   const handleRemoveIngredientListImage = () => {
     setIngredientListImage(null);
@@ -2224,184 +2350,22 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
         {lastLoggedMeal && (
           <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
             <ThemedText type="title3">{t('nutritionLogger.mealTitleWithName', { name: lastLoggedMeal.mealName })}</ThemedText>
-            <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
-              <IconSymbol name="flame" size={16} color={colors.textMuted} />
-              <ThemedText type="default">{t('nutritionLogger.calories', { value: lastLoggedMeal.calories })}</ThemedText>
-            </View>
-            {hasAnyTypedTotals(lastLoggedMeal.aminoAcidsByType) ? (
-              <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
-                <Collapsible
-                  title={t('nutritionLogger.protein', { value: lastLoggedMeal.protein })}
-                  titleType="default"
-                  initialCollapsed
-                  leftContent={<IconSymbol name="protein" size={14} color={colors.textMuted} />}
-                >
-                  <ThemedText type="caption" style={[styles.aminoGroupHeader, { color: colors.textMuted }]}>
-                    {t('nutritionLogger.essentialAminoAcidsTitle')}
-                  </ThemedText>
-                  <ThemedText type="default" style={{ color: colors.textMuted }}>
-                    • {t('nutritionLogger.essentialAminoAcidsTotal')}: {(getEssentialAminoTotalMg(lastLoggedMeal.aminoAcidsByType) / 1000).toFixed(1)} g
-                  </ThemedText>
-                  {ESSENTIAL_AMINO_ACID_KEYS.map(key => {
-                    const value = lastLoggedMeal.aminoAcidsByType[key] ?? 0;
-                    if (value <= 0) return null;
-                    return (
-                      <ThemedText key={key} type="default">
-                        • {t(`nutritionLogger.aminoAcidLabels.${key}`)}: {(value / 1000).toFixed(1)} g
-                      </ThemedText>
-                    );
-                  })}
-                  {OTHER_AMINO_ACID_KEYS.some(k => (lastLoggedMeal.aminoAcidsByType[k] ?? 0) > 0) && (
-                    <>
-                      <ThemedText type="caption" style={[styles.aminoGroupHeader, styles.aminoGroupHeaderSecond, { color: colors.textMuted }]}>
-                        {t('nutritionLogger.otherAminoAcidsTitle')}
-                      </ThemedText>
-                      {OTHER_AMINO_ACID_KEYS.map(key => {
-                        const value = lastLoggedMeal.aminoAcidsByType[key] ?? 0;
-                        if (value <= 0) return null;
-                        return (
-                          <ThemedText key={key} type="default">
-                            • {t(`nutritionLogger.aminoAcidLabels.${key}`)}: {(value / 1000).toFixed(1)} g
-                          </ThemedText>
-                        );
-                      })}
-                    </>
-                  )}
-                </Collapsible>
-              </View>
-            ) : (
-              <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
-                <IconSymbol name="protein" size={16} color={colors.textMuted} />
-                <ThemedText type="default">{t('nutritionLogger.protein', { value: lastLoggedMeal.protein })}</ThemedText>
-              </View>
-            )}
-            <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
-              <IconSymbol name="carbs" size={16} color={colors.textMuted} />
-              <ThemedText type="default">{t('nutritionLogger.carbohydrates', { value: lastLoggedMeal.carbohydrates })}</ThemedText>
-            </View>
-            <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
-              <IconSymbol name="fat" size={16} color={colors.textMuted} />
-              <ThemedText type="default">{t('nutritionLogger.fat', { value: lastLoggedMeal.fat })}</ThemedText>
-            </View>
-            {hasAnyTypedTotals(lastLoggedMeal.fiberByType) ? (
-              <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
-                <Collapsible
-                  title={t('nutritionLogger.fiber', { value: lastLoggedMeal.fiber })}
-                  titleType="default"
-                  initialCollapsed
-                  leftContent={<IconSymbol name="fiber" size={14} color={colors.textMuted} />}
-                >
-                  {FIBER_TYPE_KEYS.map(key => {
-                    const value = lastLoggedMeal.fiberByType[key] ?? 0;
-                    if (value <= 0) return null;
-                    const subtypeRows = getFiberSubtypeAmountsForCategory(key, lastLoggedMeal.fiberSubtypeTotals);
-                    return (
-                      <View key={key} style={styles.fiberCategoryRow}>
-                        <ThemedText type="default">
-                          • {t(`nutritionLogger.fiberLabels.${key}`)}: {value.toFixed(1)} g
-                        </ThemedText>
-                        {subtypeRows.map(row => (
-                          <ThemedText key={`${key}_${row.subtype}`} type="caption" style={styles.fiberSubtypeText}>
-                            - {row.label}: {row.amount.toFixed(1)} g
-                          </ThemedText>
-                        ))}
-                      </View>
-                    );
-                  })}
-                </Collapsible>
-              </View>
-            ) : (
-              <ThemedText type="default">{t('nutritionLogger.fiber', { value: lastLoggedMeal.fiber })}</ThemedText>
-            )}
-
-            {hasAnyTypedTotals(lastLoggedMeal.polyphenolByType) && (
-              <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
-                <Collapsible
-                  title={t('nutritionLogger.polyphenols', { value: (lastLoggedMeal.polyphenolByType.polyphenols_total ?? 0).toFixed(1) })}
-                  titleType="default"
-                  initialCollapsed
-                  leftContent={<IconSymbol name="polyphenol" size={14} color={colors.textMuted} />}
-                >
-                  {POLYPHENOL_TYPE_KEYS.filter(key => key !== 'polyphenols_total').map(key => {
-                    const value = lastLoggedMeal.polyphenolByType[key] ?? 0;
-                    if (value <= 0) return null;
-                    return (
-                      <ThemedText key={key} type="default">
-                        • {t(`nutritionLogger.polyphenolLabels.${key}`)}: {value.toFixed(1)} mg
-                      </ThemedText>
-                    );
-                  })}
-                </Collapsible>
-              </View>
-            )}
-
-            {hasAnyTypedTotals(lastLoggedMeal.mineralsByType) && (
-              <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}> 
-                <Collapsible
-                  title={t('nutritionLogger.minerals', { value: getMineralsTotal(lastLoggedMeal.mineralsByType).toFixed(1) })}
-                  titleType="default"
-                  initialCollapsed
-                >
-                  {MINERAL_TYPE_KEYS.filter(key => key !== 'minerals_total').map(key => {
-                    const value = lastLoggedMeal.mineralsByType[key] ?? 0;
-                    if (value <= 0) return null;
-                    return (
-                      <ThemedText key={key} type="default">
-                        • {t(`nutritionLogger.mineralLabels.${key}`)}: {value.toFixed(1)} mg
-                        {' • '}
-                        {t(getConfidenceLabelKey(lastLoggedMeal.mineralsConfidenceByType[key] ?? 'unknown'))}
-                      </ThemedText>
-                    );
-                  })}
-                </Collapsible>
-              </View>
-            )}
-
-            {hasAnyTypedTotals(lastLoggedMeal.vitaminsByType) && (
-              <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}> 
-                <Collapsible
-                  title={t('nutritionLogger.vitamins', { value: getVitaminsTotal(lastLoggedMeal.vitaminsByType).toFixed(1) })}
-                  titleType="default"
-                  initialCollapsed
-                >
-                  {VITAMIN_TYPE_KEYS.filter(key => key !== 'vitamins_total').map(key => {
-                    const value = lastLoggedMeal.vitaminsByType[key] ?? 0;
-                    if (value <= 0) return null;
-                    return (
-                      <ThemedText key={key} type="default">
-                        • {t(`nutritionLogger.vitaminLabels.${key}`)}: {formatMilligramValue(value)} mg
-                      </ThemedText>
-                    );
-                  })}
-                </Collapsible>
-              </View>
-            )}
-
-            {lastLoggedMeal.microbiomeSupport.length > 0 && (
-
-                <Collapsible
-                  title={t('nutritionLogger.microbiomeYes', { count: lastLoggedMeal.microbiomeSupport.length })}
-                  titleType="default"
-                  initialCollapsed
-                  leftContent={<IconSymbol name="microbiome" size={14} color={colors.textMuted} />}
-                >
-                  {lastLoggedMeal.microbiomeSupport.map(item => (
-                    <View key={`meal_${item.microbe}`} style={styles.microbeRow}>
-                      <ThemedText type="default">• {item.microbe}: {item.supportLevel}</ThemedText>
-                      {item.linkedNutrients.length > 0 && (
-                        <ThemedText type="caption" style={styles.fiberSubtypeText}>
-                          {t('nutritionLogger.linkedNutrients')}: {item.linkedNutrients.join(', ')}
-                        </ThemedText>
-                      )}
-                      {item.likelyFoods.length > 0 && (
-                        <ThemedText type="caption" style={styles.fiberSubtypeText}>
-                          {t('nutritionLogger.sources')}: {item.likelyFoods.join(', ')}
-                        </ThemedText>
-                      )}
-                    </View>
-                  ))}
-                </Collapsible>
-            )}
+            <NutritionBreakdown
+              calories={lastLoggedMeal.calories}
+              protein={lastLoggedMeal.protein}
+              carbohydrates={lastLoggedMeal.carbohydrates}
+              fat={lastLoggedMeal.fat}
+              fiber={lastLoggedMeal.fiber}
+              fiberByType={lastLoggedMeal.fiberByType}
+              fiberSubtypeTotals={lastLoggedMeal.fiberSubtypeTotals}
+              polyphenolByType={lastLoggedMeal.polyphenolByType}
+              mineralsByType={lastLoggedMeal.mineralsByType}
+              mineralsConfidenceByType={lastLoggedMeal.mineralsConfidenceByType}
+              vitaminsByType={lastLoggedMeal.vitaminsByType}
+              aminoAcidsByType={lastLoggedMeal.aminoAcidsByType}
+              microbiomeSupport={lastLoggedMeal.microbiomeSupport}
+              keyPrefix="meal"
+            />
           </Card>
         )}
 
@@ -2424,184 +2388,22 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                 </View>
               }
             >
-              <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
-                <IconSymbol name="flame" size={16} color={colors.textMuted} />
-                <ThemedText type="default">{t('nutritionLogger.calories', { value: summary.totals.calories })}</ThemedText>
-              </View>
-              {hasAnyTypedTotals(dailyAminoAcidsByType) ? (
-                <View style={[styles.nutrientRow, { borderBottomColor: colors.textMuted }]}>
-                  <Collapsible
-                    title={t('nutritionLogger.protein', { value: roundToOneDecimal(summary.totals.protein) })}
-                    titleType="default"
-                    initialCollapsed
-                    leftContent={<IconSymbol name="protein" size={14} color={colors.textMuted} />}
-                  >
-                    <ThemedText type="caption" style={[styles.aminoGroupHeader, { color: colors.textMuted }]}>
-                      {t('nutritionLogger.essentialAminoAcidsTitle')}
-                    </ThemedText>
-                    <ThemedText type="default" style={{ color: colors.textMuted }}>
-                      • {t('nutritionLogger.essentialAminoAcidsTotal')}: {(getEssentialAminoTotalMg(dailyAminoAcidsByType) / 1000).toFixed(1)} g
-                    </ThemedText>
-                    {ESSENTIAL_AMINO_ACID_KEYS.map(key => {
-                      const value = dailyAminoAcidsByType[key] ?? 0;
-                      if (value <= 0) return null;
-                      return (
-                        <ThemedText key={key} type="default">
-                          • {t(`nutritionLogger.aminoAcidLabels.${key}`)}: {(value / 1000).toFixed(1)} g
-                        </ThemedText>
-                      );
-                    })}
-                    {OTHER_AMINO_ACID_KEYS.some(k => (dailyAminoAcidsByType[k] ?? 0) > 0) && (
-                      <>
-                        <ThemedText type="caption" style={[styles.aminoGroupHeader, styles.aminoGroupHeaderSecond, { color: colors.textMuted }]}>
-                          {t('nutritionLogger.otherAminoAcidsTitle')}
-                        </ThemedText>
-                        {OTHER_AMINO_ACID_KEYS.map(key => {
-                          const value = dailyAminoAcidsByType[key] ?? 0;
-                          if (value <= 0) return null;
-                          return (
-                            <ThemedText key={key} type="default">
-                              • {t(`nutritionLogger.aminoAcidLabels.${key}`)}: {(value / 1000).toFixed(1)} g
-                            </ThemedText>
-                          );
-                        })}
-                      </>
-                    )}
-                  </Collapsible>
-                </View>
-              ) : (
-                <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
-                  <IconSymbol name="protein" size={16} color={colors.textMuted} />
-                  <ThemedText type="default">{t('nutritionLogger.protein', { value: roundToOneDecimal(summary.totals.protein) })}</ThemedText>
-                </View>
-              )}
-              <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
-                <IconSymbol name="carbs" size={16} color={colors.textMuted} />
-                <ThemedText type="default">{t('nutritionLogger.carbohydrates', { value: roundToOneDecimal(summary.totals.carbohydrates) })}</ThemedText>
-              </View>
-              <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
-                <IconSymbol name="fat" size={16} color={colors.textMuted} />
-                <ThemedText type="default">{t('nutritionLogger.fat', { value: roundToOneDecimal(summary.totals.fat) })}</ThemedText>
-              </View>
-
-              {hasAnyTypedTotals(dailyFiberByType) ? (
-                <View style={[styles.nutrientRow, { borderBottomColor: colors.textMuted }]}> 
-                  <Collapsible
-                    title={t('nutritionLogger.fiber', { value: summary.totals.fiber })}
-                    titleType="default"
-                    initialCollapsed
-                    leftContent={<IconSymbol name="fiber" size={14} color={colors.textMuted} />}
-                  >
-                    {FIBER_TYPE_KEYS.map(key => {
-                      const value = dailyFiberByType[key] ?? 0;
-                      if (value <= 0) return null;
-                      const subtypeRows = getFiberSubtypeAmountsForCategory(key, dailyFiberSubtypeTotals);
-                      return (
-                        <View key={key} style={styles.fiberCategoryRow}>
-                          <ThemedText type="default">
-                            • {t(`nutritionLogger.fiberLabels.${key}`)}: {value.toFixed(1)} g
-                          </ThemedText>
-                          {subtypeRows.map(row => (
-                            <ThemedText key={`${key}_daily_${row.subtype}`} type="caption" style={styles.fiberSubtypeText}>
-                              - {row.label}: {row.amount.toFixed(1)} g
-                            </ThemedText>
-                          ))}
-                        </View>
-                      );
-                    })}
-                  </Collapsible>
-                </View>
-              ) : (
-                <ThemedText type="default">{t('nutritionLogger.fiber', { value: summary.totals.fiber })}</ThemedText>
-              )}
-
-              {hasAnyTypedTotals(dailyPolyphenolByType) && (
-                <View style={[styles.nutrientRow, { borderBottomColor: colors.textMuted }]}> 
-                  <Collapsible
-                    title={t('nutritionLogger.polyphenols', { value: (dailyPolyphenolByType.polyphenols_total ?? 0).toFixed(1) })}
-                    titleType="default"
-                    initialCollapsed
-                    leftContent={<IconSymbol name="polyphenol" size={14} color={colors.textMuted} />}
-                  >
-                    {POLYPHENOL_TYPE_KEYS.filter(key => key !== 'polyphenols_total').map(key => {
-                      const value = dailyPolyphenolByType[key] ?? 0;
-                      if (value <= 0) return null;
-                      return (
-                        <ThemedText key={key} type="default">
-                          • {t(`nutritionLogger.polyphenolLabels.${key}`)}: {value.toFixed(1)} mg
-                        </ThemedText>
-                      );
-                    })}
-                  </Collapsible>
-                </View>
-              )}
-
-              {hasAnyTypedTotals(dailyMineralsByType) && (
-                <View style={[styles.nutrientRow, { borderBottomColor: colors.textMuted }]}> 
-                  <Collapsible
-                    title={t('nutritionLogger.minerals', { value: getMineralsTotal(dailyMineralsByType).toFixed(1) })}
-                    titleType="default"
-                    initialCollapsed
-                  >
-                    {MINERAL_TYPE_KEYS.filter(key => key !== 'minerals_total').map(key => {
-                      const value = dailyMineralsByType[key] ?? 0;
-                      if (value <= 0) return null;
-                      return (
-                        <ThemedText key={key} type="default">
-                          • {t(`nutritionLogger.mineralLabels.${key}`)}: {value.toFixed(1)} mg
-                          {' • '}
-                          {t(getConfidenceLabelKey(dailyMineralConfidenceByType[key] ?? 'unknown'))}
-                        </ThemedText>
-                      );
-                    })}
-                  </Collapsible>
-                </View>
-              )}
-
-              {hasAnyTypedTotals(dailyVitaminsByType) && (
-                <View style={[styles.nutrientRow, { borderBottomColor: colors.textMuted }]}> 
-                  <Collapsible
-                    title={t('nutritionLogger.vitamins', { value: getVitaminsTotal(dailyVitaminsByType).toFixed(1) })}
-                    titleType="default"
-                    initialCollapsed
-                  >
-                    {VITAMIN_TYPE_KEYS.filter(key => key !== 'vitamins_total').map(key => {
-                      const value = dailyVitaminsByType[key] ?? 0;
-                      if (value <= 0) return null;
-                      return (
-                        <ThemedText key={key} type="default">
-                          • {t(`nutritionLogger.vitaminLabels.${key}`)}: {formatMilligramValue(value)} mg
-                        </ThemedText>
-                      );
-                    })}
-                  </Collapsible>
-                </View>
-              )}
-
-              {dailyMicrobiomeSupport.length > 0 && (
-                <Collapsible
-                  title={t('nutritionLogger.microbiomeYes', { count: dailyMicrobiomeSupport.length })}
-                  titleType="default"
-                  initialCollapsed
-                  leftContent={<IconSymbol name="microbiome" size={14} color={colors.textMuted} />}
-                >
-                  {dailyMicrobiomeSupport.map(item => (
-                    <View key={`day_${item.microbe}`} style={styles.microbeRow}>
-                      <ThemedText type="default">• {item.microbe}: {item.supportLevel}</ThemedText>
-                      {item.linkedNutrients.length > 0 && (
-                        <ThemedText type="caption" style={styles.fiberSubtypeText}>
-                          {t('nutritionLogger.linkedNutrients')}: {item.linkedNutrients.join(', ')}
-                        </ThemedText>
-                      )}
-                      {item.likelyFoods.length > 0 && (
-                        <ThemedText type="caption" style={styles.fiberSubtypeText}>
-                          {t('nutritionLogger.sources')}: {item.likelyFoods.join(', ')}
-                        </ThemedText>
-                      )}
-                    </View>
-                  ))}
-                </Collapsible>
-              )}
+              <NutritionBreakdown
+                calories={summary.totals.calories}
+                protein={roundToOneDecimal(summary.totals.protein)}
+                carbohydrates={roundToOneDecimal(summary.totals.carbohydrates)}
+                fat={roundToOneDecimal(summary.totals.fat)}
+                fiber={summary.totals.fiber}
+                fiberByType={dailyFiberByType}
+                fiberSubtypeTotals={dailyFiberSubtypeTotals}
+                polyphenolByType={dailyPolyphenolByType}
+                mineralsByType={dailyMineralsByType}
+                mineralsConfidenceByType={dailyMineralConfidenceByType}
+                vitaminsByType={dailyVitaminsByType}
+                aminoAcidsByType={dailyAminoAcidsByType}
+                microbiomeSupport={dailyMicrobiomeSupport}
+                keyPrefix="daily"
+              />
             </Collapsible>
 
           </Card>
@@ -2778,6 +2580,77 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
         </ThemedModal>
 
         <ThemedModal
+          visible={isAnalysisReviewModalVisible}
+          title={t('nutritionLogger.analysisReviewTitle')}
+          onClose={closeAnalysisReviewModal}
+          onSave={handleSaveAnalyzedMeal}
+          onSaveDisabled={!pendingAnalysisReview?.analysis}
+          okLabel={t('general.save')}
+          cancelLabel={t('general.cancel')}
+        >
+          <ScrollView
+            style={styles.analysisReviewScroll}
+            contentContainerStyle={styles.analysisReviewContent}
+            showsVerticalScrollIndicator
+          >
+            {pendingAnalysisReview?.statusMessage || analysisResult ? (
+              <ThemedText type="defaultSemiBold" style={styles.analysisReviewStatus}>
+                {pendingAnalysisReview?.statusMessage ?? analysisResult}
+              </ThemedText>
+            ) : null}
+
+            {interpretationItems?.length ? (
+              <View style={styles.analysisReviewSection}>
+                <ThemedText type="label">AI Interpretation</ThemedText>
+                {interpretationItems.map((item, index) => (
+                  <ThemedText key={`interp-${item.slice(0, 32)}`} type="default" style={styles.analysisReviewBody}>
+                    {`${index + 1}. ${item}`}
+                  </ThemedText>
+                ))}
+                <ThemedText type="caption" style={[styles.analysisReviewEvidence, styles.analysisInterpretationMeta]}>
+                  Source-backed: {interpretationIsSourceBacked ? 'Yes' : 'No'} • Portion estimated: {interpretationIsPortionEstimated ? 'Yes' : 'No'}
+                </ThemedText>
+              </View>
+            ) : null}
+
+            {lastAnalyzedFilesRef.current ? (
+              <Pressable onPress={handleReAnalyze} disabled={isAnalyzing}>
+                <ThemedText type="default" style={[styles.reAnalyzeText, { opacity: isAnalyzing ? 0.5 : 1 }]}>
+                  Not correct? <ThemedText type="defaultSemiBold">Re-analyze</ThemedText>
+                </ThemedText>
+              </Pressable>
+            ) : null}
+
+            {pendingAnalysisReview?.analysis ? (
+              <View style={styles.analysisReviewSection}>
+                <ThemedText type="label">{t('nutritionLogger.analysisReviewNutritionPreviewTitle')}</ThemedText>
+                <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
+                  <ThemedText type="title3">
+                    {t('nutritionLogger.mealTitleWithName', { name: pendingAnalysisReview.analysis.mealName })}
+                  </ThemedText>
+                  <NutritionBreakdown
+                    calories={pendingAnalysisReview.analysis.calories}
+                    protein={pendingAnalysisReview.analysis.protein}
+                    carbohydrates={pendingAnalysisReview.analysis.carbohydrates}
+                    fat={pendingAnalysisReview.analysis.fat}
+                    fiber={pendingAnalysisReview.analysis.fiber}
+                    fiberByType={pendingAnalysisReview.analysis.fiberByType}
+                    fiberSubtypeTotals={pendingAnalysisReview.analysis.fiberSubtypeTotals}
+                    polyphenolByType={pendingAnalysisReview.analysis.polyphenolByType}
+                    mineralsByType={pendingAnalysisReview.analysis.mineralsByType}
+                    mineralsConfidenceByType={pendingAnalysisReview.analysis.mineralsConfidenceByType}
+                    vitaminsByType={pendingAnalysisReview.analysis.vitaminsByType}
+                    aminoAcidsByType={pendingAnalysisReview.analysis.aminoAcidsByType}
+                    microbiomeSupport={pendingAnalysisReview.analysis.microbiomeSupport}
+                    keyPrefix="review"
+                  />
+                </Card>
+              </View>
+            ) : null}
+          </ScrollView>
+        </ThemedModal>
+
+        <ThemedModal
           visible={isEditMealModalVisible}
           title={t('nutritionLogger.editMealNameTitle')}
           onClose={handleCloseEditMealModal}
@@ -2936,6 +2809,34 @@ const styles = StyleSheet.create({
   },
   packagingDescriptionInput: {
     marginTop: 2,
+  },
+  analysisReviewScroll: {
+    maxHeight: 420,
+    width: '100%',
+  },
+  analysisReviewContent: {
+    gap: 12,
+    paddingBottom: 8,
+  },
+  analysisReviewStatus: {
+    marginBottom: 4,
+  },
+  analysisReviewSection: {
+    gap: 6,
+  },
+  analysisReviewBody: {
+    lineHeight: 20,
+  },
+  analysisReviewEvidence: {
+    lineHeight: 18,
+  },
+  analysisInterpretationMeta: {
+    marginTop: 2,
+    opacity: 0.9,
+  },
+  reAnalyzeText: {
+    color: '#C62828',
+    marginTop: 8,
   },
   packagingModalPickerButton: {
     marginTop: 4,
