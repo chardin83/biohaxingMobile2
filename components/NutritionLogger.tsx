@@ -1198,6 +1198,21 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     return false;
   }, [pendingAnalysisReview, interpretationText]);
 
+  const reAnalyzeTextStyle = useMemo(
+    () => [styles.reAnalyzeText, isAnalyzing && styles.reAnalyzeTextDisabled, { color: colors.textWhite }],
+    [isAnalyzing, colors.textWhite]
+  );
+
+  const reAnalyzePrefixStyle = useMemo(
+    () => [styles.reAnalyzePrefix, { color: colors.textWhite }],
+    [colors.textWhite]
+  );
+
+  const reAnalyzeHighlightStyle = useMemo(
+    () => [styles.reAnalyzeHighlight, { color: colors.showAllAccent }],
+    [colors.showAllAccent]
+  );
+
   const getCompletionAnimValue = useCallback((tipKey: string): Animated.Value => {
     if (!completionAnimByKeyRef.current[tipKey]) {
       completionAnimByKeyRef.current[tipKey] = new Animated.Value(0);
@@ -2607,16 +2622,43 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                     {`${index + 1}. ${item}`}
                   </ThemedText>
                 ))}
-                <ThemedText type="caption" style={[styles.analysisReviewEvidence, styles.analysisInterpretationMeta]}>
-                  Source-backed: {interpretationIsSourceBacked ? 'Yes' : 'No'} • Portion estimated: {interpretationIsPortionEstimated ? 'Yes' : 'No'}
+                <ThemedText
+                  type="caption"
+                  style={[
+                    styles.analysisReviewEvidence,
+                    styles.analysisInterpretationMeta,
+                    {
+                      color:
+                        pendingAnalysisReview?.evidence?.confidence === 'high'
+                          ? colors.surfaceGreenBorder
+                          : pendingAnalysisReview?.evidence?.confidence === 'medium'
+                          ? colors.successColor
+                          : pendingAnalysisReview?.evidence?.confidence === 'low'
+                          ? colors.warmColor
+                          : colors.textMuted,
+                    },
+                  ]}
+                >
+                  {`${t('general.confidence.label')}: ${t(`general.confidence.${pendingAnalysisReview?.evidence?.confidence ?? 'unknown'}`)}`}
                 </ThemedText>
               </View>
             ) : null}
 
             {lastAnalyzedFilesRef.current ? (
               <Pressable onPress={handleReAnalyze} disabled={isAnalyzing}>
-                <ThemedText type="default" style={[styles.reAnalyzeText, { opacity: isAnalyzing ? 0.5 : 1 }]}>
-                  Not correct? <ThemedText type="defaultSemiBold">Re-analyze</ThemedText>
+                <ThemedText type="default" style={reAnalyzeTextStyle}> 
+                  {`${t('general.reAnalyzePrompt.prefix')} `}
+                  <ThemedText type="defaultSemiBold" style={reAnalyzeHighlightStyle}>
+                    {t('general.reAnalyzePrompt.correct')}
+                  </ThemedText>
+                  {`${t('general.reAnalyzePrompt.question')} `}
+                  <ThemedText type="defaultSemiBold" style={reAnalyzePrefixStyle}>
+                    {t('general.reAnalyzePrompt.rePrefix')}
+                  </ThemedText>
+                  <ThemedText type="defaultSemiBold" style={reAnalyzeHighlightStyle}>
+                    {t('general.reAnalyzePrompt.analyze')}
+                  </ThemedText>
+                  {t('general.reAnalyzePrompt.suffix') ? ` ${t('general.reAnalyzePrompt.suffix')}` : ''}
                 </ThemedText>
               </Pressable>
             ) : null}
@@ -2835,8 +2877,14 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   reAnalyzeText: {
-    color: '#C62828',
     marginTop: 8,
+  },
+  reAnalyzeTextDisabled: {
+    opacity: 0.5,
+  },
+  reAnalyzePrefix: {
+  },
+  reAnalyzeHighlight: {
   },
   packagingModalPickerButton: {
     marginTop: 4,

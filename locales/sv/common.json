@@ -59,7 +59,22 @@
     "sleep": "sömn",
     "level": "level",
     "showAll": "Visa alla",
-    "showLess": "Visa mindre"
+    "showLess": "Visa mindre",
+    "confidence": {
+      "label": "Konfidens",
+      "high": "Hög",
+      "medium": "Medium",
+      "low": "Låg",
+      "unknown": "Okänd"
+    },
+    "reAnalyzePrompt": {
+      "prefix": "Inte",
+      "correct": "korrekt",
+      "question": "?",
+      "rePrefix": "Re-",
+      "analyze": "Analysera",
+      "suffix": "igen"
+    }
   },
   "layout": {
     "dashboard": "Dashboard",

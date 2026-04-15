@@ -58,7 +58,22 @@
     "countSuffix": "pcs",
     "level": "level",
     "showAll": "Show all",
-    "showLess": "Show less"
+    "showLess": "Show less",
+    "confidence": {
+      "label": "Confidence",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low",
+      "unknown": "Unknown"
+    },
+    "reAnalyzePrompt": {
+      "prefix": "Not",
+      "correct": "correct",
+      "question": "?",
+      "rePrefix": "Re-",
+      "analyze": "analyze",
+      "suffix": ""
+    }
   },
   "layout": {
     "dashboard": "Dashboard",

@@ -33,13 +33,6 @@ export interface NutritionAnalysisResponse {
     fiber?: number;
     [k: string]: any;
   };
-  vitaminTargets?: Array<{
-    tag: string;
-    amount: number;
-    unit: 'mg';
-    sourceBackedWeight?: number;
-    inferredWeight?: number;
-  }>;
   vitaminsByType?: Record<string, number>;
   weeklyTrackingSignals?: Record<string, string[] | number> | Array<{
     key?: string;
