@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
 import Badge from '@/components/ui/Badge';
 import Container from '@/components/ui/Container';
@@ -231,8 +232,8 @@ export default function TipsSearchScreen() {
                 </ScrollView>
             )}
             <TouchableOpacity onPress={() => setShowFilter(v => !v)}>
-                <ThemedText type="default" style={[styles.filterButtonLabel, { color: colors.accentDefault }]}> 
-                    {showFilter ? `Filter (${activeFilterCount}st)` : 'Filter'}
+                <ThemedText type="default" style={[styles.filterButtonLabel, { color: colors.accentDefault }]}>
+                    {showFilter ? `Filter (${activeFilterCount})` : 'Filter'}
                 </ThemedText>
                 {!showFilter && selectedFilterLabels.length > 0 && (
                     <View style={styles.collapsedFilterPills}>
@@ -253,7 +254,7 @@ export default function TipsSearchScreen() {
                                 style={[styles.toggleBadge, styles.collapsedFilterPill, { backgroundColor: colors.cardBorder }]}
                             >
                                 <ThemedText type="caption" style={[styles.badgeLabel, styles.collapsedFilterOverflowLabel, { color: colors.textMuted }]}>
-                                    {`+${hiddenSelectedFilterCount}st`}
+                                    {`+${hiddenSelectedFilterCount}`}
                                 </ThemedText>
                             </Badge>
                         )}
@@ -261,7 +262,7 @@ export default function TipsSearchScreen() {
                 )}
             </TouchableOpacity>
             <ThemedText type="default" style={styles.resultCount}>
-                {`Resultat: (${matchCount}st)`}
+                {`${matchCount} tips`}
             </ThemedText>
             <FlatList
                 data={filteredTips}
@@ -271,45 +272,84 @@ export default function TipsSearchScreen() {
                     const firstAreaId = item.areas[0]?.id;
 
                     return (
-                    <PressableCard
-                        onPress={() => {
-                            if (!firstAreaId) {
-                                return;
-                            }
+                        <PressableCard
+                            onPress={() => {
+                                if (!firstAreaId) {
+                                    return;
+                                }
 
-                            router.push({
-                                pathname: `/dashboard/area/${firstAreaId}/details` as any,
-                                params: {
-                                    tipId: item.id,
-                                    expandAreas: '1',
-                                },
-                            });
-                        }}
-                    >
-                        <View style={styles.titleRow}>
-                            <ThemedText type="title3" style={styles.title}>{t('tips:' + item.title)}</ThemedText>
-                            <Badge variant="overlay" style={[styles.toggleBadge, styles.levelBadge, { backgroundColor: colors.accentDefault }]}>
-                                <ThemedText type="caption" style={[styles.badgeLabel, styles.bold]}>
-                                    {`${t('common:filter.level')} ${item.level ?? 1}`}
-                                </ThemedText>
-                            </Badge>
-                        </View>
-                        <View style={styles.areaBadgeRow}>
-                            {item.areas.map(a => (
-                                <Badge
-                                    key={a.id}
-                                    variant="overlay"
-                                    style={styles.toggleBadge}
-                                >
-                                    <ThemedText type="caption" style={styles.badgeLabel}>
-                                        {t('areas:' + a.id + '.title')}
+                                router.push({
+                                    pathname: `/dashboard/area/${firstAreaId}/details` as any,
+                                    params: {
+                                        tipId: item.id,
+                                        expandAreas: '1',
+                                    },
+                                });
+                            }}
+                        >
+                            <View style={styles.badgeRow}>
+                                {item.targetPeriod ? (
+                                    <Badge
+                                        variant="overlay"
+                                        style={[styles.toggleBadge, styles.badgeTargetOpacity]}
+                                    >
+                                        <ThemedText type="pill" style={[styles.bold, { color: colors.textWhite }]}>
+                                            {t(`common:filter.${item.targetPeriod}`)}
+                                        </ThemedText>
+                                    </Badge>
+                                ) : <View style={styles.flex1width1} />}
+                                <View style={globalStyles.flex1} />
+                                <Badge variant="overlay" style={[styles.toggleBadge, styles.levelBadge, styles.badgeLevelOpacity, { backgroundColor: colors.accentDefault }]}>
+                                    <ThemedText type="pill" style={[styles.bold]}>
+                                        {`${t('common:filter.level')} ${item.level ?? 1}`}
                                     </ThemedText>
                                 </Badge>
-                            ))}
-                        </View>
-                        <ThemedText type="default" style={styles.desc}>{t('tips:' + item.descriptionKey)}</ThemedText>
-                    </PressableCard>
-                );
+                            </View>
+                            <View style={styles.titleRow}>
+                                <View style={styles.titleRowInner}>
+                                    <ThemedText
+                                        type="title3"
+                                        style={styles.title}
+                                        numberOfLines={1}
+                                        ellipsizeMode="tail"
+                                    >
+                                        {t('tips:' + item.title)}
+                                    </ThemedText>
+                                </View>
+                            </View>
+                            <View style={styles.areaBadgeRowNoWrap}>
+                                {item.areas.slice(0, 2).map(a => (
+                                    <Badge
+                                        key={a.id}
+                                        variant="overlay"
+                                        style={styles.toggleBadge}
+                                    >
+                                        <ThemedText type="pill" style={styles.badgeLabel}>
+                                            {t('areas:' + a.id + '.title')}
+                                        </ThemedText>
+                                    </Badge>
+                                ))}
+                                {item.areas.length > 2 && (
+                                    <Badge
+                                        variant="overlay"
+                                        style={[styles.badgeAreaOverflow, { backgroundColor: colors.cardBorder }]}
+                                    >
+                                        <ThemedText type="pill" style={styles.badgeAreaOverflowLabel}>
+                                            {`+${item.areas.length - 2}`}
+                                        </ThemedText>
+                                    </Badge>
+                                )}
+                            </View>
+                            <ThemedText
+                                type="default"
+                                style={styles.desc}
+                                numberOfLines={2}
+                                ellipsizeMode="tail"
+                            >
+                                {t('tips:' + item.descriptionKey)}
+                            </ThemedText>
+                        </PressableCard>
+                    );
                 }}
                 ListEmptyComponent={<ThemedText type="default" style={styles.empty}>Inga tips hittades.</ThemedText>}
             />
@@ -318,6 +358,25 @@ export default function TipsSearchScreen() {
 }
 
 const styles = StyleSheet.create({
+    badgeRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 2,
+    },
+    badgeTargetOpacity: {
+        opacity: 0.7,
+    },
+    badgeLevelOpacity: {
+        opacity: 0.8,
+    },
+    flex1width1: {
+        flex: 1,
+        width: 1,
+    },
+    titleRowInner: {
+        flex: 1,
+        minWidth: 0,
+    },
     container: {
         flex: 1,
         padding: 16,
@@ -326,16 +385,27 @@ const styles = StyleSheet.create({
     titleRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
         marginBottom: 4,
     },
-    title: { fontWeight: 'bold', fontSize: 16, marginBottom: 4 },
+    title: {
+        fontWeight: 'bold',
+        fontSize: 16,
+        marginBottom: 4,
+        flexShrink: 1,
+    },
     desc: { marginBottom: 4 },
-    areaBadgeRow: {
+    areaBadgeRowNoWrap: {
         flexDirection: 'row',
-        flexWrap: 'wrap',
-        marginTop: 4,
-        marginBottom: 8,
+        flexWrap: 'nowrap',
+        marginTop: 2,
+        marginBottom: 2,
+    },
+    badgeAreaOverflow: {
+        opacity: 0.5,
+        paddingHorizontal: 9,
+    },
+    badgeAreaOverflowLabel: {
+        opacity: 0.8,
     },
     badge: {
         marginRight: 6,
@@ -347,6 +417,9 @@ const styles = StyleSheet.create({
     badgeLabel: {
         fontSize: 12,
     },
+    badgeLabelSmall: {
+        fontSize: 11,
+    },
     bold: {
         fontWeight: 'bold',
     },
@@ -356,6 +429,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginRight: 8,
         marginBottom: 8,
+    },
+    targetBadge: {
+        marginLeft: 8,
     },
     levelBadge: {
         marginLeft: 8,

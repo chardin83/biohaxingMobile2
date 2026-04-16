@@ -6,9 +6,9 @@ import { AppTheme } from '@/app/theme/AppTheme';
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'title2' | 'title3' | 'defaultSemiBold' | 'subtitle' | 'link' | 'caption' | 'value' | 'label' | 'explainer';
+  type?: 'default' | 'title' | 'title2' | 'title3' | 'defaultSemiBold' | 'subtitle' | 'link' | 'caption' | 'value' | 'label' | 'explainer' | 'pill';
   uppercase?: boolean;
-  numberOfLines?: number; // Lägg till denna rad
+  numberOfLines?: number;
 };
 
 function getTextColor(
@@ -47,6 +47,8 @@ function getTextStyle(type: ThemedTextProps['type'], colors: AppTheme['colors'])
       return styles.label;
     case 'explainer':
       return styles.explainer;
+    case 'pill':
+      return styles.pill;
     default:
       return undefined;
   }
@@ -121,6 +123,10 @@ const styles = StyleSheet.create({
   explainer: {
     fontSize: 12,
     lineHeight: 16,
+  },
+  pill: {
+    fontSize: 10,
+    lineHeight: 14,
   },
   uppercase: {
     textTransform: 'uppercase',
