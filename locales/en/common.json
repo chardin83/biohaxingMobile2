@@ -163,13 +163,18 @@
     "tabMeal": "Meal",
     "addSupplement": "Add supplement",
     "addFromPlan": "Add from plan",
-    "choosePlan": "Choose plan",
+    "choosePlan": "How do you want to add supplements?",
     "editSupplement": "Edit supplements for",
-    "chooseTime": "Choose time",
     "pickImage": "Analyze meal",
     "analyzing": "Analyzing with AI",
     "analysisFailed": "Analysis failed. Please try again.",
     "nutritionSummary": "Nutrition summary"
+  },
+  "timePickerSection": {
+    "chooseTime": "Choose time"
+  },
+  "planSupplementsPicker": {
+    "chooseSupplementsFromPlan": "Choose supplements from"
   },
   "supplementDropdown": {
     "chooseSupplement": "Choose supplement",

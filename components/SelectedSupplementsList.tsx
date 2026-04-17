@@ -7,62 +7,65 @@ import { Supplement } from '@/app/domain/Supplement';
 import { SupplementTime } from '@/app/domain/SupplementTime';
 import { globalStyles } from '@/app/theme/globalStyles';
 
+import { Collapsible } from './Collapsible';
 import SupplementItem from './SupplementItem';
+import { Card } from './ui/Card';
 
 interface SelectedSupplementsListProps {
   supplements: SupplementTime[];
-  selectedDate: string;
   deleteSupplement: (supplement: string, time: string) => void;
   editSupplement: (supplement: string, time: string) => void;
 }
 
 const SelectedSupplementsList: React.FC<SelectedSupplementsListProps> = ({
   supplements,
-  selectedDate,
   deleteSupplement,
   editSupplement,
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
+  const supplementCount = supplements.length;
   return (
-    <View style={styles.selectedItemsContainer}>
-      <Text style={[styles.subLabel, { color: colors.textLight }]}>
-        {t('selectedSupplementList.choosenFor')} {''}
-        {selectedDate}:
-      </Text>
+    <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
+      <Collapsible
+        title={t('selectedSupplementList.choosenFor') + ` (${supplementCount})`}
+        initialCollapsed
+      >
+        <View style={styles.selectedItemsContainer}>
 
-      {Object.entries(
-        supplements.reduce((grouped: Record<string, Supplement[]>, supplement) => {
-          const { time } = supplement;
-          if (!grouped[time]) {
-            grouped[time] = [];
-          }
-          grouped[time].push(supplement);
-          return grouped;
-        }, {})
-      )
-        // Sort times in ascending order
-        .sort(([timeA], [timeB]) => {
-          const [hoursA, minutesA] = timeA.split(':').map(Number);
-          const [hoursB, minutesB] = timeB.split(':').map(Number);
-          return hoursA - hoursB || minutesA - minutesB;
-        })
-        .map(([time, supplementNames]) => (
-          <View key={time} style={globalStyles.marginTop16}>
-            <Text style={[styles.timeLabel, { color: colors.primary }]}>{time}:</Text>
-            {supplementNames.map(supplement => (
-              <SupplementItem
-                key={`${time}-${supplement.name}`}
-                planName={`${time}`}
-                supplement={supplement}
-                onRemoveSupplement={deleteSupplement}
-                onEditSupplement={editSupplement}
-              />
+          {Object.entries(
+            supplements.reduce((grouped: Record<string, Supplement[]>, supplement) => {
+              const { time } = supplement;
+              if (!grouped[time]) {
+                grouped[time] = [];
+              }
+              grouped[time].push(supplement);
+              return grouped;
+            }, {})
+          )
+            // Sort times in ascending order
+            .sort(([timeA], [timeB]) => {
+              const [hoursA, minutesA] = timeA.split(':').map(Number);
+              const [hoursB, minutesB] = timeB.split(':').map(Number);
+              return hoursA - hoursB || minutesA - minutesB;
+            })
+            .map(([time, supplementNames]) => (
+              <View key={time} style={globalStyles.marginTop16}>
+                <Text style={[styles.timeLabel, { color: colors.primary }]}>{time}:</Text>
+                {supplementNames.map(supplement => (
+                  <SupplementItem
+                    key={`${time}-${supplement.name}`}
+                    planName={`${time}`}
+                    supplement={supplement}
+                    onRemoveSupplement={deleteSupplement}
+                    onEditSupplement={editSupplement}
+                  />
+                ))}
+              </View>
             ))}
-          </View>
-        ))}
-    </View>
+        </View>
+      </Collapsible></Card>
   );
 };
 

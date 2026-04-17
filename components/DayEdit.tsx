@@ -1,20 +1,13 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { useTheme } from '@react-navigation/native';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
-import { Plan } from '@/app/domain/Plan';
-import { Supplement } from '@/app/domain/Supplement';
-import { SupplementTime } from '@/app/domain/SupplementTime';
 
 import NutritionLogger from './NutritionLogger';
-import SelectedSupplementsList from './SelectedSupplementsList';
-import SupplementForm from './SupplementForm';
+import { SupplementsTabSection } from './SupplementsTabSection';
 import { ThemedText } from './ThemedText';
-import AppButton from './ui/AppButton';
-import DropdownMenuButton from './ui/DropDownMenuButton';
 
 interface DayeEditProps {
   selectedDate: string;
@@ -22,15 +15,9 @@ interface DayeEditProps {
 }
 
 const DayEdit: React.FC<DayeEditProps> = ({ selectedDate, onTipCompleted }) => {
-  const [selectedTime, setSelectedTime] = useState<Date>(new Date());
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [selectedSupplements, setSelectedSupplements] = useState<SupplementTime[]>([]);
-  const [isFormVisible, setIsFormVisible] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingSupplement, setEditingSupplement] = useState<SupplementTime | null>(null);
-  const [isPlanPickerVisible, setIsPlanPickerVisible] = useState(false);
+
   const [activeTab, setActiveTab] = useState<'supplements' | 'meal'>('meal');
-  const { plans, takenDates, setTakenDates } = useStorage();
+  const {takenDates } = useStorage();
   const { t } = useTranslation();
   const hasSupplementsToday = takenDates[selectedDate]?.length > 0;
   const hasMealsToday = useStorage().dailyNutritionSummaries[selectedDate]?.meals?.length > 0;
@@ -45,76 +32,6 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate, onTipCompleted }) => {
     }
     onTipCompleted?.();
   }, [onTipCompleted]);
-
-  useEffect(() => {
-    setSelectedSupplements(takenDates[selectedDate] ?? []);
-  }, [selectedDate, takenDates]);
-
-  const saveToStorage = (supplements: SupplementTime[]) => {
-    setSelectedSupplements(supplements);
-    setTakenDates(prev => ({ ...prev, [selectedDate]: supplements }));
-  };
-
-  const deleteSupplement = (time: string, supplementName: string) => {
-    const updatedSupplements = selectedSupplements.filter(
-      item => !(item.name === supplementName && item.time === time)
-    );
-    saveToStorage(updatedSupplements);
-  };
-
-  const editSupplement = (time: string, supplementName: string) => {
-    setSelectedTime(new Date(`${selectedDate}T${time}`));
-    const isEditingSupplement = selectedSupplements.find(item => item.name === supplementName && item.time === time);
-    if (isEditingSupplement) {
-      setEditingSupplement(isEditingSupplement);
-      setIsEditing(true);
-      setIsFormVisible(true);
-    }
-  };
-
-  const saveSelectedSupplement = async (supplement: Supplement) => {
-    const time = selectedTime.toTimeString().slice(0, 5);
-    let updatedSupplements: SupplementTime[];
-
-    const supplementExists = selectedSupplements.some(
-      existingSupplement => existingSupplement.name === supplement.name && existingSupplement.time === time
-    );
-
-    if (supplementExists && !isEditing) return;
-
-    if (isEditing) {
-      updatedSupplements = selectedSupplements.map(existingSupplement =>
-        existingSupplement.name === supplement.name && existingSupplement.time === editingSupplement?.time
-          ? { ...existingSupplement, ...supplement, time }
-          : existingSupplement
-      );
-    } else {
-      updatedSupplements = [...selectedSupplements, { ...supplement, time } as SupplementTime];
-    }
-
-    saveToStorage(updatedSupplements);
-    setEditingSupplement(null);
-    setIsEditing(false);
-    setIsFormVisible(false);
-  };
-
-  const addSupplementsFromPlan = async (plan: Plan) => {
-    const updatedSupplements = [...selectedSupplements];
-    const time = selectedTime.toTimeString().slice(0, 5);
-
-    plan.supplements.forEach(supplement => {
-      const supplementExists = updatedSupplements.some(
-        existingSupplement => existingSupplement.name === supplement.name && existingSupplement.time === time
-      );
-
-      if (!supplementExists) {
-        updatedSupplements.push({ ...supplement, time } as SupplementTime);
-      }
-    });
-
-    saveToStorage(updatedSupplements);
-    setIsPlanPickerVisible(false);
-  };
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -164,115 +81,7 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate, onTipCompleted }) => {
         </View>
 
         {activeTab === 'supplements' && (
-          <>
-            <SelectedSupplementsList
-              selectedDate={selectedDate}
-              supplements={selectedSupplements}
-              deleteSupplement={deleteSupplement}
-              editSupplement={editSupplement}
-            />
-            {!isFormVisible && !isPlanPickerVisible && (
-              <DropdownMenuButton
-                title={t('general.add')}
-                items={[
-                  {
-                    text: t('dayEdit.addSupplement'),
-                    onSelect: () => {
-                      setEditingSupplement(null);
-                      setIsEditing(false);
-                      setIsFormVisible(true);
-                    },
-                  },
-                  {
-                    text: t('dayEdit.addFromPlan'),
-                    onSelect: () => setIsPlanPickerVisible(true),
-                  },
-                ]}
-              />
-            )}
-
-            {(isFormVisible || isPlanPickerVisible) && (
-              <>
-                <ThemedText type="title3" style={[styles.label]}>
-                  {t('dayEdit.editSupplement')} {selectedDate}:
-                </ThemedText>
-                <View style={styles.timePickerContainer}>
-                  <ThemedText type="label" style={[styles.label]}>{t('dayEdit.chooseTime')}</ThemedText>
-                  {Platform.OS === 'ios' ? (
-                    <DateTimePicker
-                      value={selectedTime}
-                      mode="time"
-                      is24Hour={true}
-                      display="spinner"
-                      onChange={(event, time) => {
-                        if (time) setSelectedTime(time);
-                      }}
-                      style={{ width: 120, alignSelf: 'flex-start' }}
-                    />
-                  ) : (
-                    <>
-                      <AppButton
-                        title={selectedTime.toTimeString().slice(0, 5)}
-                        onPress={() => setShowTimePicker(true)}
-                        variant="secondary"
-                      />
-                      {showTimePicker && (
-                        <DateTimePicker
-                          value={selectedTime}
-                          mode="time"
-                          is24Hour={true}
-                          display="default"
-                          onChange={(event, time) => {
-                            if (event.type === 'set' && time) {
-                              setSelectedTime(time);
-                            }
-                            setShowTimePicker(false);
-                          }}
-                        />
-                      )}
-                    </>
-                  )}
-                </View>
-              </>
-            )}
-
-            {isFormVisible && (
-              <SupplementForm
-                key={editingSupplement?.name ?? 'new'}
-                selectedTime={selectedTime}
-                isEditing={isEditing}
-                preselectedSupplement={editingSupplement}
-                onSave={saveSelectedSupplement}
-                onCancel={() => {
-                  setEditingSupplement(null);
-                  setIsEditing(false);
-                  setIsFormVisible(false);
-                }}
-              />
-            )}
-
-            {isPlanPickerVisible && (
-              <View style={styles.planPickerContainer}>
-                <Text style={[styles.modalTitle, { color: colors.text }]}>{t('dayEdit.choosePlan')}</Text>
-                {plans.supplements.map(plan => (
-                  <AppButton
-                    key={plan.name}
-                    title={plan.name}
-                    onPress={() => addSupplementsFromPlan(plan)}
-                    variant="primary"
-                    style={styles.planButton}
-                  />
-                ))}
-
-                <AppButton
-                  title={t('general.cancel')}
-                  onPress={() => setIsPlanPickerVisible(false)}
-                  variant="secondary"
-                  style={styles.cancelButton}
-                />
-              </View>
-            )}
-          </>
+          <SupplementsTabSection selectedDate={selectedDate} />
         )}
 
         {activeTab === 'meal' && (
@@ -296,24 +105,6 @@ const styles = StyleSheet.create({
   },
   label: {
     marginBottom: 10,
-  },
-  timePickerContainer: {
-    marginVertical: 40,
-  },
-  planPickerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 0,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  planButton: {
-    marginVertical: 6,
-    width: '100%',
   },
 
   tabContainer: {

@@ -163,13 +163,18 @@
     "tabMeal": "Måltid",
     "addSupplement": "Lägg till tillskott",
     "addFromPlan": "Lägg till från plan",
-    "choosePlan": "Välj plan",
+    "choosePlan": "Hur vill du lägga till tillskott?",
     "editSupplement": "Redigera tillskott för",
-    "chooseTime": "Välj tid",
     "pickImage": "Analysera måltid",
     "analyzing": "Analyserar med AI",
      "analysisFailed": "Analysen misslyckades. Försök igen.",
     "nutritionSummary": "Näringsöversikt"
+  },
+   "timePickerSection": {
+    "chooseTime": "Välj tid"
+  },
+  "planSupplementsPicker": {
+    "chooseSupplementsFromPlan": "Välj tillskott från"
   },
   "supplementDropdown": {
     "chooseSupplement": "Välj tillskott",

@@ -3,12 +3,13 @@ import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { Modal, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
 
 import AppButton from './ui/AppButton';
+import { CancelButton } from './ui/CancelButton';
 
 interface ThemedModalProps {
   visible: boolean;
@@ -79,16 +80,7 @@ export const ThemedModal = ({
                 pointerEvents="none"
               />
               {showCancelButton && (
-                <TouchableOpacity
-                  onPress={onClose}
-                  style={styles.cancelTextButton}
-                  accessibilityRole="button"
-                  accessibilityLabel={cancelLabel ?? t('general.cancel')}
-                >
-                  <ThemedText type="defaultSemiBold" style={[styles.cancelText, { color: colors.textLight }]}>
-                    {cancelLabel ?? t('general.cancel')}
-                  </ThemedText>
-                </TouchableOpacity>
+                <CancelButton onPress={onClose} />
               )}
               {onSecondarySave && (
                 <AppButton onPress={onSecondarySave} title={ok2Label ?? t('general.secondary')} variant="primary" />
