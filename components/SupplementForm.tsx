@@ -7,6 +7,7 @@ import SupplementDropdown from '@/components/SupplementsDropdown';
 import LabeledInput from '@/components/ui/LabeledInput';
 
 import AppButton from './ui/AppButton';
+import { CancelButton } from './ui/CancelButton';
 
 interface SupplementFormProps {
   selectedTime: Date;
@@ -45,8 +46,9 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
           value={supplement?.quantity}
           isOptional={false}
           onChangeText={text => setSupplement({ ...supplement, quantity: text } as Supplement)}
-          containerStyle={styles.inputHalf}
+          containerStyle={[styles.inputHalf, styles.inputSpacing]}
         />
+
         <LabeledInput
           label={t('supplementForm.unit')}
           placeholder={t('supplementForm.unit')}
@@ -56,31 +58,34 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
           containerStyle={styles.inputHalf}
         />
       </View>
-      <View style={styles.row}>
-        {/* Save Button */}
-        <View style={styles.button}>
-          <AppButton
-            title={isEditing ? t('general.save') : t('general.add')}
-            variant="primary"
-            onPress={() => {
-              if (supplement?.name && supplement?.quantity.trim() !== '') {
-                onSave(supplement);
-              }
-            }}
-          />
-        </View>
-        <View style={styles.button}>
-          <AppButton title={t('general.cancel')} variant="secondary" onPress={onCancel} />
-        </View>
+
+      <View style={styles.buttonColumn}>
+        <AppButton
+          title={isEditing ? t('general.save') : t('general.add')}
+          variant="primary"
+          onPress={() => {
+            if (supplement?.name && supplement?.quantity.trim() !== '') {
+              onSave(supplement);
+            }
+          }}
+        />
+        <CancelButton onPress={onCancel} />
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  buttonColumn: {
+    flexDirection: 'column',
+    marginTop: 24,
+    marginBottom: 10,
+  },
+  inputSpacing: {
+    marginRight: 12,
+  },
   inputHalf: {
     flex: 1,
-    marginHorizontal: 5,
   },
   dropdownWrapper: {
     width: '100%',
@@ -90,10 +95,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // Arrange inputs in a row
     justifyContent: 'space-between',
     marginBottom: 10,
-  },
-  button: {
-    flex: 1,
-    marginHorizontal: 5,
   },
 });
 

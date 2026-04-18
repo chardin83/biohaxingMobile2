@@ -6,7 +6,7 @@ import { AppTheme } from '@/app/theme/AppTheme';
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'title2' | 'title3' | 'defaultSemiBold' | 'subtitle' | 'link' | 'caption' | 'value' | 'label' | 'explainer' | 'pill';
+  type?: 'default' | 'title' | 'title2' | 'title3' | 'defaultSemiBold' | 'subtitle' | 'link' | 'caption' | 'value' | 'label' | 'explainer' | 'pill' | 'buttonText';
   uppercase?: boolean;
   numberOfLines?: number;
 };
@@ -22,6 +22,7 @@ function getTextColor(
   if (!dark && lightColor) return lightColor;
   if (type === 'label') return colors.textTertiary ?? colors.text;
   if (type === 'explainer') return colors.textMuted ?? colors.text;
+  if (type === 'buttonText') return colors.textSecondary ?? colors.text;
   return colors.text;
 }
 
@@ -49,6 +50,8 @@ function getTextStyle(type: ThemedTextProps['type'], colors: AppTheme['colors'])
       return styles.explainer;
     case 'pill':
       return styles.pill;
+    case 'buttonText':
+      return styles.buttonText;
     default:
       return undefined;
   }
@@ -127,6 +130,11 @@ const styles = StyleSheet.create({
   pill: {
     fontSize: 10,
     lineHeight: 14,
+  },
+  buttonText: {
+    fontSize: 13,
+    lineHeight: 20,
+    fontWeight: '500',
   },
   uppercase: {
     textTransform: 'uppercase',

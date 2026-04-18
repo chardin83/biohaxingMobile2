@@ -100,10 +100,10 @@
       "lunch": "Lunch",
       "dinner": "Middag"
     },
+    "noSupplementsInPlan": "Inga tillskott i {{plan}} ännu.",
     "supplementExists": "Tillskottet \"{{supplementName}}\" finns redan i vald plan.",
     "trainingHeader": "Träningsplan",
     "noActiveTraining": "Inga aktiva träningsmål ännu.",
-    "trainingActiveSince": "Aktiv sedan {{date}}",
     "trainingSettingsTitle": "Träningsinställningar",
     "trainingSessionsPlaceholder": "Pass per vecka",
     "trainingDurationPlaceholder": "Minuter per pass",
@@ -115,8 +115,6 @@
     "nutritionHeader": "Kostplan",
     "recommendedDose": "Rekommenderad dagsdos: {{dose}}",
     "supplementSectionTitle": "Kosttillskott",
-    "supplementCountLabel": "{{count}} tillskott",
-    "supplementCountLabel_plural": "{{count}} tillskott",
     "toggleNotifications": "Växla notiser",
     "toggleSupplements": "Visa eller dölj innehåll",
     "noSupplementSlots": "Inga tider skapade ännu.",
@@ -125,6 +123,12 @@
     "aiCreateDescription": "Låt AI skapa ett personligt förslag",
     "latestAiCommentTitle": "AI-kommentar",
     "otherHeader": "Övrigt"
+  },
+  "supplementTabSection": {
+    "addManually": "Lägg till manuellt"
+  },
+   "planMeta": {
+    "activeSince": "Aktiv sedan {{date}}"
   },
   "createPlan": {
     "title": "AI-plan",
@@ -162,7 +166,7 @@
     "tabSupplements": "Tillskott",
     "tabMeal": "Måltid",
     "addSupplement": "Lägg till tillskott",
-    "addFromPlan": "Lägg till från plan",
+    "addFromPlan": "Från plan",
     "choosePlan": "Hur vill du lägga till tillskott?",
     "editSupplement": "Redigera tillskott för",
     "pickImage": "Analysera måltid",

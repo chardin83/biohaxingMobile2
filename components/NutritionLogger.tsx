@@ -36,6 +36,7 @@ import { ThemedModal } from './ThemedModal';
 import { ThemedText } from './ThemedText';
 import AppButton from './ui/AppButton';
 import { Card } from './ui/Card';
+import DiscreetButton from './ui/DiscreetButton';
 import { IconSymbol } from './ui/IconSymbol';
 import LabeledInput from './ui/LabeledInput';
 import { SwipeableRow } from './ui/SwipeableRow';
@@ -1040,11 +1041,6 @@ const extractAIResponseDescription = (data: any, parsedContent: any): string | n
   return null;
 };
 
-const hasPortionEstimateSignal = (value: string): boolean => {
-  const normalized = value.toLowerCase();
-  return /(portion|serving|estimate|estimated|approx|approximate|ca\.?|ungefar|storlek)/.test(normalized);
-};
-
 const mergeWeeklyTrackingSignal = (
   target: WeeklyTrackingSignals,
   key: string,
@@ -1127,8 +1123,8 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
   const router = useRouter();
-  
-    
+
+
   const {
     dailyNutritionSummaries,
     setDailyNutritionSummaries,
@@ -1188,16 +1184,6 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     return [t('nutritionLogger.analysisNoStructuredData')];
   }, [pendingAnalysisReview, t]);
 
-  const interpretationText = interpretationItems?.join('\n') ?? null;
-
-  const interpretationIsSourceBacked = (pendingAnalysisReview?.evidence?.sources?.length ?? 0) > 0;
-
-  const interpretationIsPortionEstimated = useMemo(() => {
-    const inferred = pendingAnalysisReview?.evidence?.inferred ?? [];
-    if (inferred.some(item => hasPortionEstimateSignal(item))) return true;
-    if (interpretationText && hasPortionEstimateSignal(interpretationText)) return true;
-    return false;
-  }, [pendingAnalysisReview, interpretationText]);
 
   const reAnalyzeTextStyle = useMemo(
     () => [styles.reAnalyzeText, isAnalyzing && styles.reAnalyzeTextDisabled, { color: colors.textWhite }],
@@ -1838,7 +1824,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     if (!last) return;
     closeAnalysisReviewModal();
     runNutritionImageAnalysis(last.mealFile, last.mealDescription || undefined, last.ingredientFile).catch(console.error);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [closeAnalysisReviewModal]);
 
   const handleRemoveIngredientListImage = () => {
@@ -1880,7 +1866,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
           return `${candidate.mealName.toLowerCase()}|${candidateCalories}|${candidateFiber}` === uniquenessKey;
         });
       })
-        .slice(0, 20)
+      .slice(0, 20)
   ), [dailyNutritionSummaries, t]);
   const copyMealSheetSnapPoints = useMemo(() => ['45%', '75%'], []);
   const dailyFiberByType = summary ? sumTypedTotals(summary.meals, 'fiberByType') : {};
@@ -2010,9 +1996,9 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
       const trackingValue = tipPeriod === 'weekly' ? weeklyTracking[weekStartKey]?.[trackingKey] : dailyTracking[trackingKey];
       const trackedItems = Array.isArray(trackingValue)
         ? trackingValue
-            .map(item => item.trim())
-            .filter(item => item.length > 0)
-            .sort((a, b) => a.localeCompare(b))
+          .map(item => item.trim())
+          .filter(item => item.length > 0)
+          .sort((a, b) => a.localeCompare(b))
         : undefined;
       let labelGroup: 'weeklyTrackingLabels' | 'fiberLabels' | 'aminoAcidLabels' | 'mineralLabels' | 'vitaminLabels' | 'polyphenolLabels' = 'polyphenolLabels';
       if (target.unit === 'items' || target.unit === 'count') {
@@ -2146,138 +2132,138 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
       const completionAnim = getCompletionAnimValue(tipKey);
 
       return (
-      <View
-        key={tipKey}
-        onLayout={event => {
-          tipRowLocalYByKeyRef.current[tipKey] = event.nativeEvent.layout.y;
-          tipRowPeriodByKeyRef.current[tipKey] = tip.period;
-        }}
-      >
-      <Animated.View
-        style={[
-          {
-            transform: [
-              {
-                scale: completionAnim.interpolate({
-                  inputRange: [0, 0.4, 1],
-                  outputRange: [1, 1.03, 1],
-                }),
-              },
-            ],
-          },
-        ]}
-      >
-      <TouchableOpacity
-        style={[
-          styles.planTipProgressRow,
-          tip.isFulfilled && styles.planTipProgressRowFulfilled,
-          tip.isFulfilled
-            ? {
-                backgroundColor: colors.accentVeryWeak,
-                borderColor: colors.accentMedium,
-              }
-            : {
-                borderBottomColor: colors.textMuted,
-              },
-        ]}
-        activeOpacity={0.8}
-        disabled={!tip.areaId}
-        onPress={() => {
-          if (!tip.areaId) return;
-          router.push({
-            pathname: `/dashboard/area/${tip.areaId}/details` as any,
-            params: {
-              tipId: tip.tipId,
-            },
-          });
-        }}
-      >
-        <View style={styles.planTipProgressHeader}>
-          <ThemedText type="defaultSemiBold" style={styles.fulfilledTipTextBlock}>{t(`tips:${tip.title}`)}</ThemedText>
-           {tip.isFulfilled && <Icon source="check-circle" size={34} color={colors.xp} />}
-        </View>
-        <ThemedText type="caption" style={styles.planTipStatusText}>
-          {t('nutritionLogger.fulfilledTargetsCount', { met: tip.metCount, total: tip.totalCount })}
-        </ThemedText>
-
-             <View
-          style={[
-            styles.progressTrack,
-            tip.isFulfilled && styles.progressTrackFulfilled,
-            {
-              backgroundColor: tip.isFulfilled ? colors.accentWeak : colors.secondaryBackground,
-            },
-          ]}
+        <View
+          key={tipKey}
+          onLayout={event => {
+            tipRowLocalYByKeyRef.current[tipKey] = event.nativeEvent.layout.y;
+            tipRowPeriodByKeyRef.current[tipKey] = tip.period;
+          }}
         >
-          <View
+          <Animated.View
             style={[
-              styles.progressFill,
-              tip.isFulfilled && styles.progressFillFulfilled,
               {
-                width: `${Math.round(tip.progress * 100)}%`,
-                backgroundColor: tip.isFulfilled ? colors.accentMedium : colors.icon,
+                transform: [
+                  {
+                    scale: completionAnim.interpolate({
+                      inputRange: [0, 0.4, 1],
+                      outputRange: [1, 1.03, 1],
+                    }),
+                  },
+                ],
               },
             ]}
-          />
-        </View>
-        {tip.targets.map(target => {
-          const hasTrackedItems = Array.isArray(target.trackedItems) && target.trackedItems.length > 0;
-          const trackedItems = target.trackedItems ?? [];
-          const targetIconName = getTipTargetIconName(target.unit);
-          const valueFormatter = hasTrackedItems ? formatTargetProgressValue : formatTargetValue;
-          const targetValueText = `${valueFormatter(target.actual, target.unit)} / ${valueFormatter(target.amount, target.unit)}`;
-
-          if (hasTrackedItems) {
-            return (
-              <View key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`} style={styles.planTipTargetCollapsibleRow}>
-                <Collapsible
-                  title={target.label}
-                  titleType="explainer"
-                  initialCollapsed
-                  leftContent={<IconSymbol name={targetIconName} size={14} color={colors.textMuted} />}
-                  rightContent={(
-                    <ThemedText type="explainer" style={[styles.planTipTargetValue, styles.planTipTargetCollapsibleValue]}>
-                      {targetValueText}
-                    </ThemedText>
-                  )}
-                >
-                  <View style={styles.planTipTargetItemsList}>
-                    {trackedItems.map(item => (
-                      <ThemedText key={`${target.tag}-${item}`} type="caption" style={styles.planTipTargetItem}>
-                        • {item}
-                      </ThemedText>
-                    ))}
-                  </View>
-                </Collapsible>
+          >
+            <TouchableOpacity
+              style={[
+                styles.planTipProgressRow,
+                tip.isFulfilled && styles.planTipProgressRowFulfilled,
+                tip.isFulfilled
+                  ? {
+                    backgroundColor: colors.accentVeryWeak,
+                    borderColor: colors.accentMedium,
+                  }
+                  : {
+                    borderBottomColor: colors.textMuted,
+                  },
+              ]}
+              activeOpacity={0.8}
+              disabled={!tip.areaId}
+              onPress={() => {
+                if (!tip.areaId) return;
+                router.push({
+                  pathname: `/dashboard/area/${tip.areaId}/details` as any,
+                  params: {
+                    tipId: tip.tipId,
+                  },
+                });
+              }}
+            >
+              <View style={styles.planTipProgressHeader}>
+                <ThemedText type="defaultSemiBold" style={styles.fulfilledTipTextBlock}>{t(`tips:${tip.title}`)}</ThemedText>
+                {tip.isFulfilled && <Icon source="check-circle" size={34} color={colors.xp} />}
               </View>
-            );
-          }
+              <ThemedText type="caption" style={styles.planTipStatusText}>
+                {t('nutritionLogger.fulfilledTargetsCount', { met: tip.metCount, total: tip.totalCount })}
+              </ThemedText>
 
-          return (
-            <View key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`} style={styles.planTipTargetRow}>
-              <View style={styles.planTipTargetLabelRow}>
-                <IconSymbol name={targetIconName} size={14} color={colors.textMuted} />
-                <ThemedText type="explainer" style={styles.planTipTargetLabel}>
-                  {target.label}
-                </ThemedText>
-              </View>
-              <ThemedText
-                type="caption"
+              <View
                 style={[
-                  styles.planTipTargetValue,
-                  { color: target.isMet ? colors.primary : colors.textMuted },
+                  styles.progressTrack,
+                  tip.isFulfilled && styles.progressTrackFulfilled,
+                  {
+                    backgroundColor: tip.isFulfilled ? colors.accentWeak : colors.secondaryBackground,
+                  },
                 ]}
               >
-                {targetValueText}
-              </ThemedText>
-            </View>
-          );
-        })}
-   
-      </TouchableOpacity>
-      </Animated.View>
-      </View>
-    );
+                <View
+                  style={[
+                    styles.progressFill,
+                    tip.isFulfilled && styles.progressFillFulfilled,
+                    {
+                      width: `${Math.round(tip.progress * 100)}%`,
+                      backgroundColor: tip.isFulfilled ? colors.accentMedium : colors.icon,
+                    },
+                  ]}
+                />
+              </View>
+              {tip.targets.map(target => {
+                const hasTrackedItems = Array.isArray(target.trackedItems) && target.trackedItems.length > 0;
+                const trackedItems = target.trackedItems ?? [];
+                const targetIconName = getTipTargetIconName(target.unit);
+                const valueFormatter = hasTrackedItems ? formatTargetProgressValue : formatTargetValue;
+                const targetValueText = `${valueFormatter(target.actual, target.unit)} / ${valueFormatter(target.amount, target.unit)}`;
+
+                if (hasTrackedItems) {
+                  return (
+                    <View key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`} style={styles.planTipTargetCollapsibleRow}>
+                      <Collapsible
+                        title={target.label}
+                        titleType="explainer"
+                        initialCollapsed
+                        leftContent={<IconSymbol name={targetIconName} size={14} color={colors.textMuted} />}
+                        rightContent={(
+                          <ThemedText type="explainer" style={[styles.planTipTargetValue, styles.planTipTargetCollapsibleValue]}>
+                            {targetValueText}
+                          </ThemedText>
+                        )}
+                      >
+                        <View style={styles.planTipTargetItemsList}>
+                          {trackedItems.map(item => (
+                            <ThemedText key={`${target.tag}-${item}`} type="caption" style={styles.planTipTargetItem}>
+                              • {item}
+                            </ThemedText>
+                          ))}
+                        </View>
+                      </Collapsible>
+                    </View>
+                  );
+                }
+
+                return (
+                  <View key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`} style={styles.planTipTargetRow}>
+                    <View style={styles.planTipTargetLabelRow}>
+                      <IconSymbol name={targetIconName} size={14} color={colors.textMuted} />
+                      <ThemedText type="explainer" style={styles.planTipTargetLabel}>
+                        {target.label}
+                      </ThemedText>
+                    </View>
+                    <ThemedText
+                      type="caption"
+                      style={[
+                        styles.planTipTargetValue,
+                        { color: target.isMet ? colors.primary : colors.textMuted },
+                      ]}
+                    >
+                      {targetValueText}
+                    </ThemedText>
+                  </View>
+                );
+              })}
+
+            </TouchableOpacity>
+          </Animated.View>
+        </View>
+      );
     })
   );
 
@@ -2334,36 +2320,14 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
           label={t('nutritionLogger.packageFlowAnalyze')}
           glow
         />
-        <TouchableOpacity
-          onPress={handleOpenCopyMealModal}
-          disabled={isFutureSelectedDate || recentMeals.length === 0}
-          activeOpacity={0.7}
-          style={styles.copyMealLink}
-        >
-          <ThemedText
-            type="caption"
-            style={[
-              { color: isFutureSelectedDate || recentMeals.length === 0 ? colors.textMuted : colors.primary },
-            ]}
-          >
-            {t('nutritionLogger.copyMealLink')}
-          </ThemedText>
-        </TouchableOpacity>
+        <View style={styles.copyMealLinkContainer}>
+          <DiscreetButton onPress={handleOpenCopyMealModal} title={t('nutritionLogger.copyMealLink')}  disabled={isFutureSelectedDate || recentMeals.length === 0}/>
+          </View>
         {isFutureSelectedDate && (
-          <ThemedText type="caption" style={[styles.futureDateHint, { color: colors.textMuted }]}> 
+          <ThemedText type="caption" style={[styles.futureDateHint, { color: colors.textMuted }]}>
             {t('nutritionLogger.futureDateLocked')}
           </ThemedText>
         )}
-        {/*{Object.keys(dailyNutritionSummaries).length > 0 && (
-          <AppButton
-            title={t('nutritionLogger.clearAllMeals', { defaultValue: 'Rensa alla meals' })}
-            onPress={handleClearAllNutritionMeals}
-            label: t(`nutritionLogger.${labelGroup}.${trackingKey}`),
-            style={styles.clearAllMealsButton}
-          />
-        )}
-         {analysisResult && <ThemedText type="defaultSemiBold">{analysisResult}</ThemedText>}
-        {analysisEvidence && <ThemedText style={styles.evidenceText}>{analysisEvidence}</ThemedText>} */}
 
         {lastLoggedMeal && (
           <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
@@ -2455,7 +2419,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                       >
                         <View style={styles.loggedMealRow}>
                           <ThemedText type="default" style={styles.loggedMealName}>{mealName}</ThemedText>
-                          <ThemedText type="default" style={[styles.loggedMealIcon, { color: colors.textMuted }]}> 
+                          <ThemedText type="default" style={[styles.loggedMealIcon, { color: colors.textMuted }]}>
                             ⋮
                           </ThemedText>
                         </View>
@@ -2473,7 +2437,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
             fulfilledTipsSectionYRef.current = event.nativeEvent.layout.y;
           }}
         >
-        <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
+          <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
             {nutritionPlanTipProgressByPeriod.daily.length === 0 && nutritionPlanTipProgressByPeriod.weekly.length === 0 ? (
               <View style={styles.emptyTargetsContainer}>
                 <ThemedText type="title3" style={styles.emptyTargetsHeading}>
@@ -2510,12 +2474,12 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                   {nutritionPlanTipProgressByPeriod.daily.length > 0 ? (
                     renderTipProgressList(nutritionPlanTipProgressByPeriod.daily)
                   ) : (
-                    <ThemedText type="caption" style={styles.noFulfilledTipsText}>
+                    <ThemedText type="explainer" style={styles.noFulfilledTipsText}>
                       {t('nutritionLogger.noPlanTipsWithTargets')}
                     </ThemedText>
                   )}
-                  <TouchableOpacity
-                    style={styles.addTargetButton}
+                  <View style={styles.addTargetButton}>
+                  <DiscreetButton
                     onPress={() => {
                       router.push({
                         pathname: '/(tabs)/search',
@@ -2524,12 +2488,10 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                         },
                       });
                     }}
-                    activeOpacity={0.6}
-                  >
-                    <ThemedText type="caption" style={[styles.addTargetButtonText, { color: colors.primary }]}>
-                      {t('nutritionLogger.addDailyTarget')}
-                    </ThemedText>
-                  </TouchableOpacity>
+                    title={t('nutritionLogger.addDailyTarget')}
+                  />
+                  </View>
+
                 </View>
                 <View
                   style={styles.periodSection}
@@ -2543,12 +2505,13 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                   {nutritionPlanTipProgressByPeriod.weekly.length > 0 ? (
                     renderTipProgressList(nutritionPlanTipProgressByPeriod.weekly)
                   ) : (
-                    <ThemedText type="caption" style={styles.noFulfilledTipsText}>
+                    <ThemedText type="explainer" style={styles.noFulfilledTipsText}>
                       {t('nutritionLogger.noPlanTipsWithTargets')}
                     </ThemedText>
                   )}
-                  <TouchableOpacity
-                    style={styles.addTargetButton}
+
+                  <View style={styles.addTargetButton}>
+                  <DiscreetButton
                     onPress={() => {
                       router.push({
                         pathname: '/(tabs)/search',
@@ -2557,17 +2520,14 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                         },
                       });
                     }}
-                    activeOpacity={0.6}
-                  >
-                    <ThemedText type="caption" style={[styles.addTargetButtonText, { color: colors.primary }]}>
-                      {t('nutritionLogger.addWeeklyTarget')}
-                    </ThemedText>
-                  </TouchableOpacity>
+                    title={t('nutritionLogger.addWeeklyTarget')}
+                  />
+                  </View>
                 </View>
               </>
             )}
           </Card>
-          </View>
+        </View>
 
         <ThemedModal
           visible={isPackagingModalVisible}
@@ -2588,8 +2548,8 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                 height={120}
                 borderRadius={12}
                 badgeSize={30}
-                            badgeIconSize={16}
-                          />
+                badgeIconSize={16}
+              />
             ) : (
               <ImagePickerButton
                 onImageSelected={handlePendingMealImageSelected}
@@ -2692,10 +2652,10 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                         pendingAnalysisReview?.evidence?.confidence === 'high'
                           ? colors.surfaceGreenBorder
                           : pendingAnalysisReview?.evidence?.confidence === 'medium'
-                          ? colors.successColor
-                          : pendingAnalysisReview?.evidence?.confidence === 'low'
-                          ? colors.warmColor
-                          : colors.textMuted,
+                            ? colors.successColor
+                            : pendingAnalysisReview?.evidence?.confidence === 'low'
+                              ? colors.warmColor
+                              : colors.textMuted,
                     },
                   ]}
                 >
@@ -2706,7 +2666,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
 
             {lastAnalyzedFilesRef.current ? (
               <Pressable onPress={handleReAnalyze} disabled={isAnalyzing}>
-                <ThemedText type="default" style={reAnalyzeTextStyle}> 
+                <ThemedText type="default" style={reAnalyzeTextStyle}>
                   {`${t('general.reAnalyzePrompt.prefix')} `}
                   <ThemedText type="defaultSemiBold" style={reAnalyzeHighlightStyle}>
                     {t('general.reAnalyzePrompt.correct')}
@@ -2810,13 +2770,13 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                     <View style={styles.copyMealStatsGroup}>
                       <View style={styles.copyMealStatItem}>
                         <IconSymbol name="flame" size={14} color={colors.textLight} />
-                        <ThemedText type="caption" style={[styles.copyMealStatText, { color: colors.textLight }]}> 
+                        <ThemedText type="caption" style={[styles.copyMealStatText, { color: colors.textLight }]}>
                           {roundToOneDecimal(typeof option.meal?.calories === 'number' ? option.meal.calories : 0)}
                         </ThemedText>
                       </View>
                       <View style={styles.copyMealStatItem}>
                         <IconSymbol name="fiber" size={14} color={colors.textLight} />
-                        <ThemedText type="caption" style={[styles.copyMealStatText, { color: colors.textLight }]}> 
+                        <ThemedText type="caption" style={[styles.copyMealStatText, { color: colors.textLight }]}>
                           {roundToOneDecimal(typeof option.meal?.fiber === 'number' ? option.meal.fiber : 0)}
                         </ThemedText>
                       </View>
@@ -2858,12 +2818,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 16,
   },
-  copyMealLink: {
+  copyMealLinkContainer: {
     alignSelf: 'center',
-    marginTop: -8,
-    marginBottom: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    marginBottom: 20,
   },
   futureDateHint: {
     textAlign: 'center',
@@ -3018,7 +2975,7 @@ const styles = StyleSheet.create({
     width: '100%',
     gap: 10,
     paddingHorizontal: 16,
-    paddingBottom: 4,
+    paddingBottom: 50,
   },
   copyMealSheetTitle: {
     paddingTop: 8,
@@ -3179,15 +3136,8 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   addTargetButton: {
-    marginTop: 12,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  addTargetButtonText: {
-    fontSize: 13,
-    fontWeight: '500',
   },
   editMealModalContent: {
     width: '100%',

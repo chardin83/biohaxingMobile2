@@ -193,7 +193,6 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) =>
               <PlanMeta
                 startedAt={plan.startedAt}
                 createdBy={plan.createdBy}
-                t={t}
                 formatDate={formatDate}
               />
             )}

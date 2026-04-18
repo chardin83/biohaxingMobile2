@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { Supplement } from '@/app/domain/Supplement';
@@ -17,14 +18,12 @@ interface PlanSupplementsPickerProps {
     onCancel: () => void;
     selectedTime: Date;
     setSelectedTime: (d: Date) => void;
-    t: (key: string) => string;
-    selectedDate: string;
-    style?: any;
     planName: string;
 }
 
-const PlanSupplementsPicker: React.FC<PlanSupplementsPickerProps> = ({ supplements, onConfirm, onCancel, selectedTime, setSelectedTime, t, selectedDate, style, planName }) => {
+const PlanSupplementsPicker: React.FC<PlanSupplementsPickerProps> = ({ supplements, onConfirm, onCancel, selectedTime, setSelectedTime, planName }) => {
     const [checked, setChecked] = useState<boolean[]>(supplements.map(() => true));
+    const { t } = useTranslation();
 
     const toggle = (idx: number) => {
         setChecked(list => list.map((v, i) => (i === idx ? !v : v)));
@@ -38,8 +37,6 @@ const PlanSupplementsPicker: React.FC<PlanSupplementsPickerProps> = ({ supplemen
             <TimePickerSection
                 selectedTime={selectedTime}
                 setSelectedTime={setSelectedTime}
-                t={t}
-                selectedDate={selectedDate}
             />
 
 

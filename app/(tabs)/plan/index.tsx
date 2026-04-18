@@ -127,14 +127,11 @@ export default function Plans() {
     const isExpanded = !!expandedPlans[planKey];
     const supplements = plan.supplements ?? [];
     const supplementCount = supplements.length;
-    const baseTitle = `${plan.name} (${plan.prefferedTime})`;
+    const baseTitle = `${plan.name} ${plan.prefferedTime}`;
     const displayTitle =
-      !isExpanded && supplementCount > 0
-        ? `${baseTitle} - ${t('plan.supplementCountLabel', {
-          count: supplementCount,
-          defaultValue: `${supplementCount} tillskott`,
-        })}`
-        : baseTitle;
+      isExpanded
+      ? baseTitle
+        :`${baseTitle} (${supplementCount})`;
 
     const editLabel = t('plan.editTimeSlot', { defaultValue: 'Redigera' });
     const headerActions = (
@@ -167,7 +164,7 @@ export default function Plans() {
       >
         {isExpanded && (
           <View>
-            {Array.isArray(plan.supplements) &&
+            {plan.supplements.length > 0 ?
               plan.supplements.map(entry => (
                 <SupplementItem
                   key={`${plan.name}-${entry.supplement.id ?? entry.supplement.name}`}
@@ -176,7 +173,12 @@ export default function Plans() {
                   onRemoveSupplement={handleRemoveSupplement}
                   onEditSupplement={handleEditSupplement}
                 />
-              ))}
+              )) : (
+                <ThemedText type="explainer" style={styles.noSupplementsText}>
+                  {t('plan.noSupplementsInPlan', { plan: plan.name.toLowerCase() })}
+                </ThemedText>
+              )
+              }
             {errorMessage && <ThemedText type="caption" style={{ color: colors.error }}>{errorMessage}</ThemedText>}
             <View style={styles.planAddButtonWrapper}>
               <AppButton
@@ -268,18 +270,20 @@ export default function Plans() {
       <View style={styles.sectionsContainer}>
         <View style={styles.sectionBlock}>
           <Collapsible
-            title={t('plan.trainingHeader')}
+            title={`${t('plan.trainingHeader')} (${plans.training?.length ?? 0})`}
             contentStyle={styles.collapsibleContentFlush}
             titleType="title3"
+            initialCollapsed={true}
           >
             <TrainingPlanSection colors={colors} formatDate={formatDate} />
           </Collapsible>
         </View>
         <View style={styles.sectionBlock}>
           <Collapsible 
-            title={t('plan.nutritionHeader')} 
+            title={`${t('plan.nutritionHeader')} (${plans.nutrition?.length ?? 0})`} 
             contentStyle={styles.collapsibleContentFlush}
             titleType="title3"
+            initialCollapsed={true}
           >
             <NutritionPlanSection
               colors={colors}
@@ -289,9 +293,10 @@ export default function Plans() {
         </View>
         <View style={styles.sectionBlock}>
           <Collapsible 
-            title={t('plan.supplementSectionTitle')} 
+            title={`${t('plan.supplementSectionTitle')} (${plans.supplements?.length ?? 0})`} 
             contentStyle={styles.collapsibleContentFlush}
             titleType="title3"
+            initialCollapsed={true}
           >
             <View>{renderSupplementPlans()}</View>
             <View style={styles.addTimeSlotButtonWrapper}>
@@ -311,9 +316,10 @@ export default function Plans() {
         </View>
         <View style={styles.sectionBlock}>
           <Collapsible
-            title={t('plan.otherHeader')}
+            title={`${t('plan.otherHeader')} (${plans.other?.length ?? 0})`}
             contentStyle={styles.collapsibleContentFlush}
             titleType="title3"
+            initialCollapsed={true}
           >
             <OtherPlanSection formatDate={formatDate} />
           </Collapsible>
@@ -407,12 +413,13 @@ export default function Plans() {
               setSupplement(null);
             }}
           />
-          <PlanMeta
+          {isEditingSupplement && (  
+            <PlanMeta
             startedAt={supplement?.startedAt ?? ''}
             createdBy={supplement?.createdBy}
-            t={t}
             formatDate={formatDate}
-          />
+          />)}
+        
         </ThemedModal>
       )}
     </Container>
@@ -477,4 +484,8 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     marginBottom: 8,
   },
+  noSupplementsText: {
+    textAlign: 'center',
+    marginBottom: 18,
+  }
 });

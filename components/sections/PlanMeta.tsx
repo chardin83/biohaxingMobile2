@@ -1,5 +1,5 @@
-import { TFunction } from 'i18next';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
@@ -7,21 +7,23 @@ import { ThemedText } from '@/components/ThemedText';
 type PlanMetaProps = {
   startedAt: string;
   createdBy?: string;
-  t: TFunction;
   formatDate: (isoDate: string) => string;
 };
 
-export const PlanMeta: React.FC<PlanMetaProps> = ({ startedAt, createdBy, t, formatDate }) => (
-  <ThemedText type="caption" style={styles.trainingMeta}>
-    {t('plan.trainingActiveSince', {
-      date: formatDate(startedAt),
-    })}
-    {createdBy ? ` • ${t('plan.createdBy', { name: createdBy })}` : ''}
-  </ThemedText>
-);
+export const PlanMeta: React.FC<PlanMetaProps> = ({ startedAt, createdBy, formatDate }) => {
+  const { t } = useTranslation();
+  return (
+    <ThemedText type="explainer" style={styles.meta}>
+      {t('planMeta.activeSince', {
+        date: formatDate(startedAt),
+      })}
+      {createdBy ? ` • ${t('planMeta.createdBy', { name: createdBy })}` : ''}
+    </ThemedText>
+  );
+};
 
 const styles = StyleSheet.create({
-  trainingMeta: {
-    marginTop: -10,
+  meta: {
+        marginTop: -10,
   },
 });

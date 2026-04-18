@@ -163,7 +163,7 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
             title={tipTitle ?? t('plan.untitled')}
             headerRight={editAction}
           >
-            <PlanMeta startedAt={goal.startedAt} createdBy={goal.createdBy} t={t} formatDate={formatDate} />
+            <PlanMeta startedAt={goal.startedAt} createdBy={goal.createdBy} formatDate={formatDate} />
             <View style={styles.trainingSettingsContainer}>
               {trainingBadges.length ? (
                 <View style={styles.trainingBadgesRow}>
@@ -203,7 +203,7 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
           saveLabel={t('general.save')}
           cancelLabel={t('general.cancel')}
         />
-        <MetricsBottomSheet bottomSheetRef={metricsBottomSheetRef} tipId={selectedMetricsTipId} planTipId={selectedMetricsTipId} />
+        <MetricsBottomSheet bottomSheetRef={metricsBottomSheetRef} tipId={selectedMetricsTipId} planTipId={selectedMetricsTipId ?? undefined} />
       </Portal>
     </>
   );

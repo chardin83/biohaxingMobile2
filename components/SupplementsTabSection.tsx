@@ -14,6 +14,7 @@ import { ThemedText } from './ThemedText';
 import TimePickerSection from './TimePickerSection';
 import AppButton from './ui/AppButton';
 import { CancelButton } from './ui/CancelButton';
+import DiscreetButton from './ui/DiscreetButton';
 
 interface Props {
     selectedDate: string;
@@ -98,27 +99,37 @@ export const SupplementsTabSection = ({ selectedDate }: Props) => {
             {isPlanPickerVisible && (
                 <View style={styles.planPickerContainer}>
                     <Text style={[styles.modalTitle, { color: colors.text }]}>{t('dayEdit.choosePlan')}</Text>
-                    <AppButton
-                        title={"Select supplements manually"}
-                        onPress={() => { setIsSupplementFormVisible(true); setEditingSupplement(null); setIsPlanPickerVisible(false); }}
-                        variant="primary"
-                        style={styles.planButton}
-                    />
-                    <ThemedText type="title3">{t('dayEdit.addFromPlan')}</ThemedText>
-                    {plans.supplements.map(plan => (
-                        <AppButton
-                            key={plan.name}
-                            title={plan.name}
-                            onPress={() => {
-                                setSelectedTime(new Date(`${selectedDate}T${plan.prefferedTime}`));
-                                setPlanSupplementsToPick(plan.supplements.map(entry => entry.supplement));
-                                setIsPlanPickerVisible(false);
-                                setPlanName(plan.name);
-                            }}
-                            variant="primary"
-                            style={styles.planButton}
+                    <View style={styles.addManuallyTextContainer}>
+                        <DiscreetButton
+                            title={" + " + t('supplementTabSection.addManually')}
+                            onPress={() => { setIsSupplementFormVisible(true); setEditingSupplement(null); setIsPlanPickerVisible(false); }}
+                            larger
                         />
-                    ))}
+                    </View>
+
+                    <ThemedText type="label">{t('dayEdit.addFromPlan')}</ThemedText>
+                    {plans.supplements.map((plan) => {
+                        const isDisabled = !plan.supplements || plan.supplements.length === 0;
+                        return (
+                            <AppButton
+                                key={plan.name}
+                                title={plan.name}
+                                onPress={() => {
+                                    setSelectedTime(new Date(`${selectedDate}T${plan.prefferedTime}`));
+                                    setPlanSupplementsToPick(
+                                        plan.supplements.map((entry) => entry.supplement)
+                                    );
+                                    setIsPlanPickerVisible(false);
+                                    setPlanName(plan.name);
+                                }}
+                                variant="primary"
+                                style={styles.planButton}
+                                disabled={isDisabled}
+                                accessibilityLabel={plan.name}
+                                disabledText={isDisabled ? t('plan.noSupplementsInPlan', { plan: plan.name.toLowerCase() }) : undefined}
+                            />
+                        );
+                    })}
                     <CancelButton
                         onPress={() => {
                             setIsPlanPickerVisible(false);
@@ -133,9 +144,6 @@ export const SupplementsTabSection = ({ selectedDate }: Props) => {
                     planName={planName}
                     selectedTime={selectedTime}
                     setSelectedTime={setSelectedTime}
-                    t={t}
-                    selectedDate={selectedDate}
-                    style={styles}
                     onCancel={() => { setPlanSupplementsToPick(null); setIsAddButtonVisible(true); }}
                     onConfirm={(selectedSupps: Supplement[], time: Date) => {
                         const updatedSupplements = [...selectedSupplements];
@@ -162,9 +170,6 @@ export const SupplementsTabSection = ({ selectedDate }: Props) => {
                     <TimePickerSection
                         selectedTime={selectedTime}
                         setSelectedTime={setSelectedTime}
-                        t={t}
-                        selectedDate={selectedDate}
-                        style={styles}
                     />
                     <SupplementForm
                         key={editingSupplement?.name ?? 'new'}
@@ -206,6 +211,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 0,
     },
+    addManuallyTextContainer: {
+        marginBottom: 20,
+    },
     modalTitle: {
         fontSize: 18,
         fontWeight: 'bold',
@@ -221,5 +229,9 @@ const styles = StyleSheet.create({
     SelectedSupplementsList: {
         marginTop: 20,
     },
+    noSupplementsText: {
+        textAlign: 'center',
+        marginBottom: 18,
+    }
 });
 

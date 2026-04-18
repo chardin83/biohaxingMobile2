@@ -135,7 +135,6 @@ export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
             <PlanMeta
               startedAt={plan.startedAt}
               createdBy={plan.createdBy}
-              t={t}
               formatDate={formatDate}
             />
             {plan.comment ? (

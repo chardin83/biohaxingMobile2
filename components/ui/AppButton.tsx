@@ -19,6 +19,7 @@ interface AppButtonProps {
   accessibilityLabel?: string;
   accessibilityHint?: string;
   icon?: IconSymbolName;
+  disabledText?: string;
 }
 
 const AppButton: React.FC<AppButtonProps> = ({
@@ -31,6 +32,7 @@ const AppButton: React.FC<AppButtonProps> = ({
   accessibilityLabel,
   accessibilityHint,
   icon,
+  disabledText,
 }) => {
   const { colors } = useTheme();
 
@@ -59,57 +61,64 @@ const AppButton: React.FC<AppButtonProps> = ({
   const iconColor = disabled ? colors.textMuted : textColorStyle.color;
 
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[
-        styles.button,
-        buttonVariantStyle,
-        isPrimary && glow && {
-          backgroundColor: colors.buttonGlowBackground,
-          ...(Platform.OS === 'ios'
-            ? {
-                shadowColor: colors.buttonGlow,
-                shadowOffset: { width: 0, height: 0 },
-                shadowOpacity: 0.7,
-                shadowRadius: 8,
-              }
-            : {
-                elevation: 14,
-              }),
-        },
-        disabled && styles.disabled,
-        style,
-      ]}
-      disabled={disabled}
-      accessibilityLabel={accessibilityLabel || title}
-      accessibilityRole="button"
-      accessibilityState={{ disabled }}
-      accessibilityHint={accessibilityHint}
-      accessible={true}
-    >
-      <View style={styles.content}>
-        {icon && (
-          <IconSymbol name={icon} size={26} color={iconColor} />
-        )}
-        <ThemedText
-          type="defaultSemiBold"
-          style={[
-            styles.text,
-            textColorStyle,
-            icon && styles.textWithIcon,
-            isPrimary &&
-              glow &&
-              (Platform.OS === 'ios' || Platform.OS === 'android') &&
-              [
-                styles.textShadow,
-                { textShadowColor: colors.buttonTextGlow },
-              ],
-          ]}
-        >
-          {title}
+    <>
+      <TouchableOpacity
+        onPress={onPress}
+        style={[
+          styles.button,
+          buttonVariantStyle,
+          isPrimary && glow && {
+            backgroundColor: colors.buttonGlowBackground,
+            ...(Platform.OS === 'ios'
+              ? {
+                  shadowColor: colors.buttonGlow,
+                  shadowOffset: { width: 0, height: 0 },
+                  shadowOpacity: 0.7,
+                  shadowRadius: 8,
+                }
+              : {
+                  elevation: 14,
+                }),
+          },
+          disabled && styles.disabled,
+          style,
+        ]}
+        disabled={disabled}
+        accessibilityLabel={accessibilityLabel || title}
+        accessibilityRole="button"
+        accessibilityState={{ disabled }}
+        accessibilityHint={accessibilityHint}
+        accessible={true}
+      >
+        <View style={styles.content}>
+          {icon && (
+            <IconSymbol name={icon} size={26} color={iconColor} />
+          )}
+          <ThemedText
+            type="defaultSemiBold"
+            style={[
+              styles.text,
+              textColorStyle,
+              icon && styles.textWithIcon,
+              isPrimary &&
+                glow &&
+                (Platform.OS === 'ios' || Platform.OS === 'android') &&
+                [
+                  styles.textShadow,
+                  { textShadowColor: colors.buttonTextGlow },
+                ],
+            ]}
+          >
+            {title}
+          </ThemedText>
+        </View>
+      </TouchableOpacity>
+      {disabled && disabledText && (
+        <ThemedText type="explainer" style={styles.disabledText}>
+          {disabledText}
         </ThemedText>
-      </View>
-    </TouchableOpacity>
+      )}
+    </>
   );
 };
 
@@ -145,6 +154,11 @@ const styles = StyleSheet.create({
   textShadow: {
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 1,
+  },
+  disabledText: {
+    textAlign: 'center',
+    marginBottom: 18,
+    marginTop: 2,
   },
 });
 

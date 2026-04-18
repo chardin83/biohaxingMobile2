@@ -115,7 +115,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   container: {
-    paddingHorizontal: 20,
     paddingBottom: 20,
     zIndex: 1000,
   },
