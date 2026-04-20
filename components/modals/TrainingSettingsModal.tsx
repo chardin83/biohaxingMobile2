@@ -72,7 +72,6 @@ const TrainingSettingsModal: React.FC<TrainingSettingsModalProps> = ({
             onChangeText={onChangeSessions}
             containerStyle={styles.fieldBlock}
             returnKeyType="done"
-            blurOnSubmit
           />
           <LabeledInput
             label={durationLabel}
@@ -83,7 +82,6 @@ const TrainingSettingsModal: React.FC<TrainingSettingsModalProps> = ({
             onChangeText={onChangeDuration}
             containerStyle={styles.fieldBlock}
             returnKeyType="done"
-            blurOnSubmit
           />
         </View>
       </TouchableWithoutFeedback>
