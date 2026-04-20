@@ -3,7 +3,13 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
+import { ESSENTIAL_AMINO_ACID_KEYS, OTHER_AMINO_ACID_KEYS } from '@/constants/aminoAcids';
+import { FIBER_TYPE_KEYS } from '@/constants/fiber';
+import { MINERAL_TYPE_KEYS } from '@/constants/minerals';
+import { POLYPHENOL_TYPE_KEYS } from '@/constants/polyphenols';
+import { VITAMIN_TYPE_KEYS } from '@/constants/vitamins';
 import { FIBER_CATEGORY_SUBTYPES, type FiberSubtype } from '@/locales/tips';
+import type { MicrobiomeSupportEntry } from '@/types/microbiome';
 
 import { Collapsible } from './Collapsible';
 import { ThemedText } from './ThemedText';
@@ -11,12 +17,6 @@ import { IconSymbol } from './ui/IconSymbol';
 
 type ConfidenceLevel = 'high' | 'medium' | 'low' | 'unknown';
 
-type MicrobiomeSupportEntry = {
-  microbe: string;
-  supportLevel: 'high' | 'medium' | 'low' | 'unknown';
-  linkedNutrients: string[];
-  likelyFoods: string[];
-};
 
 type NutritionBreakdownProps = {
   calories: number;
@@ -34,68 +34,6 @@ type NutritionBreakdownProps = {
   microbiomeSupport: MicrobiomeSupportEntry[];
   keyPrefix: string;
 };
-
-const FIBER_TYPE_KEYS = ['fiber_total', 'fiber_gel_forming', 'fiber_non_gel_forming', 'fiber_fermentable'] as const;
-const POLYPHENOL_TYPE_KEYS = [
-  'polyphenols_total',
-  'flavonoids_total',
-  'flavonoids',
-  'anthocyanins',
-  'catechins',
-  'flavanols',
-  'flavonols',
-  'quercetin',
-  'ellagitannins',
-] as const;
-const MINERAL_TYPE_KEYS = [
-  'minerals_total',
-  'sodium',
-  'potassium',
-  'magnesium',
-  'calcium',
-  'iron',
-  'zinc',
-  'selenium',
-  'iodine',
-  'phosphorus',
-  'copper',
-  'manganese',
-] as const;
-const VITAMIN_TYPE_KEYS = [
-  'vitamins_total',
-  'vitamin_a',
-  'vitamin_c',
-  'vitamin_d',
-  'vitamin_e',
-  'vitamin_k',
-  'vitamin_b1',
-  'vitamin_b2',
-  'vitamin_b3',
-  'vitamin_b5',
-  'vitamin_b6',
-  'vitamin_b7',
-  'vitamin_b9',
-  'vitamin_b12',
-] as const;
-const ESSENTIAL_AMINO_ACID_KEYS = [
-  'histidine',
-  'isoleucine',
-  'leucine',
-  'lysine',
-  'methionine',
-  'phenylalanine',
-  'threonine',
-  'tryptophan',
-  'valine',
-] as const;
-const OTHER_AMINO_ACID_KEYS = [
-  'arginine',
-  'cysteine',
-  'glutamine',
-  'glycine',
-  'proline',
-  'tyrosine',
-] as const;
 
 const hasAnyTypedTotals = (values: Record<string, number>) =>
   Object.values(values).some(value => (value ?? 0) > 0);

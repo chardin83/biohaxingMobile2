@@ -1,4 +1,3 @@
-// Helper to extract and validate nutrition analysis data
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
@@ -26,17 +25,30 @@ import {
   XP_FOR_NUTRITION_TIP_DAILY_COMPLETION,
   XP_FOR_NUTRITION_TIP_WEEKLY_COMPLETION,
 } from '@/constants/XP';
-import { FIBER_CATEGORY_SUBTYPES, type FiberSubtype, tips } from '@/locales/tips';
+import { tips } from '@/locales/tips';
 import { NutritionAnalyze } from '@/services/gptServices';
+import { MicrobiomeSupportEntry } from '@/types/microbiome';
 
+import { ALL_AMINO_ACID_KEYS } from '../constants/aminoAcids';
+import { MINERAL_TYPE_KEYS, type MineralTypeKey } from '../constants/minerals';
+import { VITAMIN_TYPE_KEYS, type VitaminTypeKey } from '../constants/vitamins';
+import {
+  type ConfidenceLevel,
+  extractAndValidateNutritionAnalysis,
+  extractWeeklyTrackingSignals,
+  mergeWeeklyTrackingSignal,
+  type ParsedMacroAnalysis,
+  parseNumberValue,
+  roundToOneDecimal,
+  type WeeklyTrackingSignals,
+  type WeeklyTrackingSignalValue,
+} from '../utils/analyzeNutrition';
 import { Collapsible } from './Collapsible';
 import CopyMealBottomSheet from './CopyMealBottomSheet';
 import ImagePickerButton from './ImagePickerButton';
 import ImageThumbnailWithDelete from './ImageThumbnailWithDelete';
 import {
   handleGeneralError,
-  handleNoMacroData,
-  handleNoStructuredData,
   handleNutritionError,
   handleSocketError,
 } from './nutritionAnalysisHelpers';
@@ -50,143 +62,11 @@ import { IconSymbol } from './ui/IconSymbol';
 import LabeledInput from './ui/LabeledInput';
 import { SwipeableRow } from './ui/SwipeableRow';
 
-function extractAndValidateNutritionAnalysis({
-  data,
-  t,
-  activeTrackingKeys,
-  setAnalysisResult,
-  setPendingAnalysisReview,
-  setIsAnalysisReviewModalVisible,
-  setLastLoggedMeal,
-}: {
-  data: any,
-  t: any,
-  activeTrackingKeys: Set<string>,
-  setAnalysisResult: (val: any) => void,
-  setPendingAnalysisReview: (val: any) => void,
-  setIsAnalysisReviewModalVisible: (val: boolean) => void,
-  setLastLoggedMeal: (val: any) => void,
-}) {
-  let analysis: ParsedMacroAnalysis | null = null;
-  let parsedContent: any = null;
-  if (data?.content) {
-    try {
-      parsedContent = JSON.parse(data.content);
-    } catch {
-      // Not JSON, ignore
-    }
-  }
-  analysis = extractStructuredAnalysis(data, parsedContent);
-  const typedTotals = extractTypedTotals(data, parsedContent);
-  const microbiomeSupport = extractMicrobiomeSupport(data, parsedContent);
-  const aiWeeklyTrackingSignals = extractWeeklyTrackingSignals(data, parsedContent);
-  const aiResponseDescription = extractAIResponseDescription(data, parsedContent);
-  const evidence = extractEvidence(data, parsedContent);
-  const evidenceMessage = buildEvidenceMessage(evidence);
-
-  if (!analysis) {
-    handleNoStructuredData({
-      data,
-      t,
-      setAnalysisResult,
-      setPendingAnalysisReview,
-      setIsAnalysisReviewModalVisible,
-      evidence,
-      aiResponseDescription,
-      evidenceMessage,
-    });
-    return null;
-  }
-
-  analysis = {
-    ...analysis,
-    mealName: analysis.mealName || t('nutritionLogger.unnamedMeal'),
-    fiberByType: typedTotals.fiberByType,
-    fiberSubtypeTotals: typedTotals.fiberSubtypeTotals,
-    polyphenolByType: typedTotals.polyphenolByType,
-    mineralsByType: typedTotals.mineralsByType,
-    mineralsConfidenceByType: typedTotals.mineralsConfidenceByType,
-    vitaminsByType: typedTotals.vitaminsByType,
-    aminoAcidsByType: typedTotals.aminoAcidsByType,
-    microbiomeSupport,
-  };
-
-  const hasMacroData = !(
-    analysis.protein === 0 &&
-    analysis.calories === 0 &&
-    analysis.carbohydrates === 0 &&
-    analysis.fat === 0 &&
-    analysis.fiber === 0
-  );
-  const hasTypedNutritionData =
-    hasAnyTypedTotals(typedTotals.fiberByType) ||
-    hasAnyTypedTotals(typedTotals.fiberSubtypeTotals) ||
-    hasAnyTypedTotals(typedTotals.polyphenolByType) ||
-    hasAnyTypedTotals(typedTotals.mineralsByType) ||
-    hasAnyTypedTotals(typedTotals.vitaminsByType) ||
-    hasAnyTypedTotals(typedTotals.aminoAcidsByType);
-  const hasMicrobiomeData = microbiomeSupport.length > 0;
-  const hasTrackingSignals = Object.keys(aiWeeklyTrackingSignals).length > 0;
-
-  if (!hasMacroData && !hasTypedNutritionData && !hasMicrobiomeData && !hasTrackingSignals) {
-    handleNoMacroData({
-      data,
-      t,
-      setAnalysisResult,
-      setPendingAnalysisReview,
-      setIsAnalysisReviewModalVisible,
-      analysis,
-      evidence,
-      aiResponseDescription,
-      evidenceMessage,
-      setLastLoggedMeal,
-    });
-    return null;
-  }
-
-  const mergedSignals: Record<string, any> = {};
-  Object.entries(aiWeeklyTrackingSignals).forEach(([key, value]) => {
-    mergeWeeklyTrackingSignal(mergedSignals, key, value);
-  });
-  const mealWeeklyTrackingSignals = Object.entries(mergedSignals)
-    .filter(([key]) => activeTrackingKeys.has(key))
-    .reduce((acc: Record<string, any>, [key, value]) => {
-      acc[key] = value;
-      return acc;
-    }, {});
-
-  return {
-    analysis,
-    mealWeeklyTrackingSignals,
-    evidence,
-    aiResponseDescription,
-    evidenceMessage,
-  };
-}
-
 interface NutritionLoggerProps {
   selectedDate: string;
   onTipCompleted?: (targetY?: number) => void;
 }
 
-type NutritionEvidence = {
-  sources: string[];
-  inferred: string[];
-  confidence: 'high' | 'medium' | 'low' | 'unknown';
-};
-
-type ConfidenceLevel = NutritionEvidence['confidence'];
-
-type MicrobiomeSupportEntry = {
-  microbe: string;
-  supportLevel: 'high' | 'medium' | 'low' | 'unknown';
-  linkedNutrients: string[];
-  likelyFoods: string[];
-  rationale?: string;
-};
-
-type WeeklyTrackingSignalValue = string[] | number;
-type WeeklyTrackingSignals = Record<string, WeeklyTrackingSignalValue>;
 type TipTargetIconName = 'fiber' | 'polyphenol' | 'target';
 
 type TipProgressItem = {
@@ -214,147 +94,6 @@ type TipProgressItem = {
 const getTipProgressKey = (tip: TipProgressItem): string =>
   `${tip.planTipId}|${tip.tipId}|${tip.period}`;
 
-const parseStringArray = (value: unknown): string[] => {
-  if (Array.isArray(value)) {
-    return value.filter((item): item is string => typeof item === 'string' && item.trim().length > 0);
-  }
-  if (typeof value === 'string') {
-    return value
-      .split(',')
-      .map(item => item.trim())
-      .filter(item => item.length > 0);
-  }
-  return [];
-};
-
-const normalizeConfidence = (value: unknown): NutritionEvidence['confidence'] => {
-  if (typeof value === 'number' && Number.isFinite(value)) {
-    const normalizedScore = value > 1 && value <= 100 ? value / 100 : value;
-    if (normalizedScore >= 0.8) return 'high';
-    if (normalizedScore >= 0.5) return 'medium';
-    if (normalizedScore > 0) return 'low';
-    return 'unknown';
-  }
-  if (typeof value !== 'string') return 'unknown';
-  const normalized = value.toLowerCase().trim();
-  if (normalized.includes('high')) return 'high';
-  if (normalized.includes('medium')) return 'medium';
-  if (normalized.includes('low')) return 'low';
-  return 'unknown';
-};
-
-const pickConfidence = (labelValue: unknown, scoreValue: unknown): NutritionEvidence['confidence'] => {
-  const label = normalizeConfidence(labelValue);
-  if (label === 'unknown') {
-    return normalizeConfidence(scoreValue);
-  }
-  return label;
-};
-
-const extractEvidence = (data: any, parsedContent: any): NutritionEvidence => {
-  const fromNutrition = data?.nutrition ?? {};
-  const fromRaw = data?.raw ?? {};
-  const fromParsed = parsedContent ?? {};
-
-  const sources = [
-    ...parseStringArray(fromNutrition.sources),
-    ...parseStringArray(fromRaw.sources),
-    ...parseStringArray(fromParsed.sources),
-    ...parseStringArray(data?.sources),
-    ...parseStringArray(fromNutrition.foodSources),
-    ...parseStringArray(fromRaw.foodSources),
-    ...parseStringArray(fromParsed.foodSources),
-    ...parseStringArray(data?.foodSources),
-    ...parseStringArray(fromNutrition.food_sources),
-    ...parseStringArray(fromRaw.food_sources),
-    ...parseStringArray(fromParsed.food_sources),
-    ...parseStringArray(data?.food_sources),
-    ...parseStringArray(fromNutrition.referenceSources),
-    ...parseStringArray(fromRaw.referenceSources),
-    ...parseStringArray(fromParsed.referenceSources),
-    ...parseStringArray(data?.referenceSources),
-    ...parseStringArray(fromNutrition.reference_sources),
-    ...parseStringArray(fromRaw.reference_sources),
-    ...parseStringArray(fromParsed.reference_sources),
-    ...parseStringArray(data?.reference_sources),
-  ];
-
-  const inferred = [
-    ...parseStringArray(fromNutrition.inferred),
-    ...parseStringArray(fromRaw.inferred),
-    ...parseStringArray(fromParsed.inferred),
-    ...parseStringArray(data?.inferred),
-    ...parseStringArray(fromNutrition.aiAssumptions),
-    ...parseStringArray(fromRaw.aiAssumptions),
-    ...parseStringArray(fromParsed.aiAssumptions),
-    ...parseStringArray(data?.aiAssumptions),
-    ...parseStringArray(fromNutrition.ai_assumptions),
-    ...parseStringArray(fromRaw.ai_assumptions),
-    ...parseStringArray(fromParsed.ai_assumptions),
-    ...parseStringArray(data?.ai_assumptions),
-  ];
-
-  const nutritionConfidence = pickConfidence(fromNutrition.confidenceLabel, fromNutrition.confidence);
-  const rawConfidence = pickConfidence(fromRaw.confidenceLabel, fromRaw.confidence);
-  const parsedConfidence = pickConfidence(fromParsed.confidenceLabel, fromParsed.confidence);
-  const rootConfidence = pickConfidence(data?.confidenceLabel, data?.confidence);
-
-  let confidence: NutritionEvidence['confidence'] = 'unknown';
-  if (nutritionConfidence === 'high' || nutritionConfidence === 'medium' || nutritionConfidence === 'low') {
-    confidence = nutritionConfidence;
-  } else if (rawConfidence === 'high' || rawConfidence === 'medium' || rawConfidence === 'low') {
-    confidence = rawConfidence;
-  } else if (parsedConfidence === 'high' || parsedConfidence === 'medium' || parsedConfidence === 'low') {
-    confidence = parsedConfidence;
-  } else if (rootConfidence === 'high' || rootConfidence === 'medium' || rootConfidence === 'low') {
-    confidence = rootConfidence;
-  }
-
-  return {
-    sources: Array.from(new Set(sources)),
-    inferred: Array.from(new Set(inferred)),
-    confidence,
-  };
-};
-
-const buildEvidenceMessage = (evidence: NutritionEvidence): string => {
-  let confidenceLabel = 'Confidence okand';
-  if (evidence.confidence === 'high') {
-    confidenceLabel = 'Hog confidence';
-  } else if (evidence.confidence === 'medium') {
-    confidenceLabel = 'Medium confidence';
-  } else if (evidence.confidence === 'low') {
-    confidenceLabel = 'Lag confidence';
-  }
-
-  const sourceLine = evidence.sources.length
-    ? `Source-backed: ${evidence.sources.join(', ')}`
-    : 'Source-backed: inga explicita kallor angavs';
-
-  const inferredLine = evidence.inferred.length
-    ? `AI-inferred: ${evidence.inferred.join(', ')}`
-    : 'AI-inferred: inga extra inferenser angavs';
-
-  return `${confidenceLabel}\n${sourceLine}\n${inferredLine}`;
-};
-
-type ParsedMacroAnalysis = {
-  mealName: string;
-  protein: number;
-  calories: number;
-  carbohydrates: number;
-  fat: number;
-  fiber: number;
-  fiberByType: Record<string, number>;
-  fiberSubtypeTotals: Record<string, number>;
-  polyphenolByType: Record<string, number>;
-  mineralsByType: Record<string, number>;
-  mineralsConfidenceByType: Record<string, ConfidenceLevel>;
-  vitaminsByType: Record<string, number>;
-  aminoAcidsByType: Record<string, number>;
-  microbiomeSupport: MicrobiomeSupportEntry[];
-};
-
 type RecentMealOption = {
   id: string;
   date: string;
@@ -372,7 +111,11 @@ type SelectedImageFile = {
 type PendingAnalysisReview = {
   analysis: ParsedMacroAnalysis | null;
   weeklyTrackingSignals: WeeklyTrackingSignals;
-  evidence: NutritionEvidence | null;
+  evidence: {
+    sources: string[];
+    inferred: string[];
+    confidence: 'high' | 'medium' | 'low' | 'unknown';
+  } | null;
   aiDescription: string | null;
   evidenceMessage: string | null;
   statusMessage: string | null;
@@ -381,488 +124,6 @@ type PendingAnalysisReview = {
 const BottomSheetOverlayContainer = ({ children }: { children?: React.ReactNode }) => (
   <FullWindowOverlay>{children}</FullWindowOverlay>
 );
-
-const FIBER_TYPE_KEYS = ['fiber_total', 'fiber_gel_forming', 'fiber_non_gel_forming', 'fiber_fermentable'] as const;
-const POLYPHENOL_TYPE_KEYS = [
-  'polyphenols_total',
-  'flavonoids_total',
-  'flavonoids',
-  'anthocyanins',
-  'catechins',
-  'flavanols',
-  'flavonols',
-  'quercetin',
-  'ellagitannins',
-] as const;
-
-const MINERAL_TYPE_KEYS = [
-  'minerals_total',
-  'sodium',
-  'potassium',
-  'magnesium',
-  'calcium',
-  'iron',
-  'zinc',
-  'selenium',
-  'iodine',
-  'phosphorus',
-  'copper',
-  'manganese',
-] as const;
-
-const VITAMIN_TYPE_KEYS = [
-  'vitamins_total',
-  'vitamin_a',
-  'vitamin_c',
-  'vitamin_d',
-  'vitamin_e',
-  'vitamin_k',
-  'vitamin_b1',
-  'vitamin_b2',
-  'vitamin_b3',
-  'vitamin_b5',
-  'vitamin_b6',
-  'vitamin_b7',
-  'vitamin_b9',
-  'vitamin_b12',
-] as const;
-
-type FiberSubtypeKey = FiberSubtype;
-type PolyphenolTypeKey = (typeof POLYPHENOL_TYPE_KEYS)[number];
-type MineralTypeKey = (typeof MINERAL_TYPE_KEYS)[number];
-type VitaminTypeKey = (typeof VITAMIN_TYPE_KEYS)[number];
-
-const ALL_FIBER_SUBTYPES: FiberSubtypeKey[] = [
-  ...new Set(Object.values(FIBER_CATEGORY_SUBTYPES).flat()),
-] as FiberSubtypeKey[];
-
-const emptyFiberTotals = (): Record<string, number> =>
-  FIBER_TYPE_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
-
-const emptyFiberSubtypeTotals = (): Record<string, number> =>
-  ALL_FIBER_SUBTYPES.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
-
-const emptyPolyphenolTotals = (): Record<string, number> =>
-  POLYPHENOL_TYPE_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
-
-const emptyMineralTotals = (): Record<string, number> =>
-  MINERAL_TYPE_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
-
-const emptyMineralConfidenceTotals = (): Record<string, ConfidenceLevel> =>
-  MINERAL_TYPE_KEYS.reduce((acc, key) => ({ ...acc, [key]: 'unknown' }), {} as Record<string, ConfidenceLevel>);
-
-const emptyVitaminTotals = (): Record<string, number> =>
-  VITAMIN_TYPE_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
-
-const ESSENTIAL_AMINO_ACID_KEYS = [
-  'histidine',
-  'isoleucine',
-  'leucine',
-  'lysine',
-  'methionine',
-  'phenylalanine',
-  'threonine',
-  'tryptophan',
-  'valine',
-] as const;
-
-const OTHER_AMINO_ACID_KEYS = [
-  'arginine',
-  'cysteine',
-  'glutamine',
-  'glycine',
-  'proline',
-  'tyrosine',
-] as const;
-
-const ALL_AMINO_ACID_KEYS: readonly string[] = [...ESSENTIAL_AMINO_ACID_KEYS, ...OTHER_AMINO_ACID_KEYS];
-
-const emptyAminoAcidTotals = (): Record<string, number> =>
-  ALL_AMINO_ACID_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
-
-const confidenceRank: Record<ConfidenceLevel, number> = {
-  unknown: 0,
-  low: 1,
-  medium: 2,
-  high: 3,
-};
-
-const mergeConfidenceLevel = (current: ConfidenceLevel, next: ConfidenceLevel): ConfidenceLevel => {
-  return confidenceRank[next] > confidenceRank[current] ? next : current;
-};
-
-const setMineralConfidence = (
-  target: Record<string, ConfidenceLevel>,
-  key: string,
-  level: ConfidenceLevel
-) => {
-  const current = target[key] ?? 'unknown';
-  target[key] = mergeConfidenceLevel(current, level);
-};
-
-const addToTotals = (target: Record<string, number>, key: string, value: unknown) => {
-  const parsed = parseNumberValue(value);
-  if (parsed === null) return;
-  if (!Number.isFinite(parsed)) return;
-  target[key] = (target[key] ?? 0) + parsed;
-};
-
-const supportLevelScore = (value: MicrobiomeSupportEntry['supportLevel']): number => {
-  if (value === 'high') return 3;
-  if (value === 'medium') return 2;
-  if (value === 'low') return 1;
-  return 0;
-};
-
-const normalizeSupportLevel = (value: unknown): MicrobiomeSupportEntry['supportLevel'] => {
-  if (typeof value !== 'string') return 'unknown';
-  const raw = value.toLowerCase().trim();
-  if (raw === 'high' || raw === 'medium' || raw === 'low') return raw;
-  return 'unknown';
-};
-
-const mergeMicrobiomeSupportLists = (entries: MicrobiomeSupportEntry[]): MicrobiomeSupportEntry[] => {
-  const byMicrobe = new Map<string, MicrobiomeSupportEntry>();
-
-  entries.forEach(entry => {
-    const key = entry.microbe.toLowerCase().trim();
-    if (!key) return;
-
-    const existing = byMicrobe.get(key);
-    if (!existing) {
-      byMicrobe.set(key, {
-        microbe: entry.microbe,
-        supportLevel: entry.supportLevel,
-        linkedNutrients: Array.from(new Set(entry.linkedNutrients)),
-        likelyFoods: Array.from(new Set(entry.likelyFoods)),
-        rationale: entry.rationale,
-      });
-      return;
-    }
-
-    const nextLevel = supportLevelScore(entry.supportLevel) > supportLevelScore(existing.supportLevel)
-      ? entry.supportLevel
-      : existing.supportLevel;
-
-    byMicrobe.set(key, {
-      microbe: existing.microbe,
-      supportLevel: nextLevel,
-      linkedNutrients: Array.from(new Set([...existing.linkedNutrients, ...entry.linkedNutrients])),
-      likelyFoods: Array.from(new Set([...existing.likelyFoods, ...entry.likelyFoods])),
-      rationale: existing.rationale ?? entry.rationale,
-    });
-  });
-
-  return Array.from(byMicrobe.values());
-};
-
-const extractMicrobiomeSupport = (data: any, parsedContent: any): MicrobiomeSupportEntry[] => {
-  const candidates = [
-    data,
-    data?.nutrition,
-    data?.raw,
-    data?.result,
-    data?.result?.nutrition,
-    data?.result?.raw,
-    parsedContent,
-    parsedContent?.nutrition,
-    parsedContent?.raw,
-  ];
-
-  const entries: MicrobiomeSupportEntry[] = [];
-
-  candidates.forEach(candidate => {
-    const fromDetails = Array.isArray(candidate?.nutritionDetails?.microbiomeSupport)
-      ? candidate.nutritionDetails.microbiomeSupport
-      : [];
-    const fromRoot = Array.isArray(candidate?.microbiomeSupport) ? candidate.microbiomeSupport : [];
-    const merged = [...fromDetails, ...fromRoot];
-
-    merged.forEach((item: any) => {
-      const microbe = String(item?.microbe ?? '').trim();
-      if (!microbe) return;
-
-      entries.push({
-        microbe,
-        supportLevel: normalizeSupportLevel(item?.supportLevel ?? item?.support_level),
-        linkedNutrients: parseStringArray(item?.linkedNutrients ?? item?.linked_nutrients),
-        likelyFoods: parseStringArray(item?.likelyFoods ?? item?.likely_foods),
-        rationale: typeof item?.rationale === 'string' ? item.rationale : undefined,
-      });
-    });
-  });
-
-  return mergeMicrobiomeSupportLists(entries);
-};
-
-const normalizeFlavonoidClassTag = (value: unknown): PolyphenolTypeKey | null => {
-  if (typeof value !== 'string') return null;
-  const normalized = value.toLowerCase().trim();
-  if (normalized.includes('anthocyan')) return 'anthocyanins';
-  if (normalized.includes('catechin')) return 'catechins';
-  if (normalized.includes('flavanol')) return 'flavanols';
-  if (normalized.includes('flavonol')) return 'flavonols';
-  if (normalized.includes('quercetin')) return 'quercetin';
-  if (normalized.includes('ellagitannin')) return 'ellagitannins';
-  if (normalized.includes('flavonoid')) return 'flavonoids';
-  return null;
-};
-
-type TypedTotalsAccumulator = {
-  fiberByType: Record<string, number>;
-  fiberSubtypeTotals: Record<string, number>;
-  polyphenolByType: Record<string, number>;
-  mineralsByType: Record<string, number>;
-  mineralsConfidenceByType: Record<string, ConfidenceLevel>;
-  vitaminsByType: Record<string, number>;
-  aminoAcidsByType: Record<string, number>;
-};
-
-const applyMeasuredByTypeFromCandidate = (
-  candidate: any,
-  totals: TypedTotalsAccumulator
-) => {
-  const {
-    fiberByType,
-    fiberSubtypeTotals,
-    polyphenolByType,
-    mineralsByType,
-    mineralsConfidenceByType,
-    vitaminsByType,
-    aminoAcidsByType,
-  } = totals;
-
-  const fiberMap = candidate?.fiberByType;
-  const fiberSubtypeMap = candidate?.fiberSubtypeTotals;
-  const polyMap = candidate?.polyphenolByType;
-  const mineralMap = candidate?.mineralsByType ?? candidate?.mineralByType;
-  const vitaminMap = candidate?.vitaminsByType ?? candidate?.vitaminByType;
-  const aminoMap = candidate?.aminoAcidsByType;
-
-  if (fiberMap && typeof fiberMap === 'object') {
-    FIBER_TYPE_KEYS.forEach(tag => addToTotals(fiberByType, tag, fiberMap?.[tag]));
-  }
-
-  if (fiberSubtypeMap && typeof fiberSubtypeMap === 'object') {
-    ALL_FIBER_SUBTYPES.forEach(tag => addToTotals(fiberSubtypeTotals, tag, fiberSubtypeMap?.[tag]));
-  }
-
-  if (polyMap && typeof polyMap === 'object') {
-    POLYPHENOL_TYPE_KEYS.forEach(tag => addToTotals(polyphenolByType, tag, polyMap?.[tag]));
-  }
-
-  if (mineralMap && typeof mineralMap === 'object') {
-    MINERAL_TYPE_KEYS.forEach(tag => {
-      const before = mineralsByType[tag] ?? 0;
-      addToTotals(mineralsByType, tag, mineralMap?.[tag]);
-      if ((mineralsByType[tag] ?? 0) > before) {
-        setMineralConfidence(mineralsConfidenceByType, tag, 'medium');
-      }
-    });
-  }
-
-  if (vitaminMap && typeof vitaminMap === 'object') {
-    VITAMIN_TYPE_KEYS.forEach(tag => addToTotals(vitaminsByType, tag, vitaminMap?.[tag]));
-  }
-
-  if (aminoMap && typeof aminoMap === 'object') {
-    ALL_AMINO_ACID_KEYS.forEach(tag => addToTotals(aminoAcidsByType, tag, aminoMap?.[tag]));
-  }
-};
-
-const applyDetailsFromCandidate = (
-  candidate: any,
-  totals: TypedTotalsAccumulator
-) => {
-  const {
-    fiberByType,
-    fiberSubtypeTotals,
-    polyphenolByType,
-    mineralsByType,
-    mineralsConfidenceByType,
-    vitaminsByType,
-    aminoAcidsByType,
-  } = totals;
-
-  const details = candidate?.nutritionDetails;
-  const fiberDetails = details?.fiber;
-  if (fiberDetails) {
-    addToTotals(fiberByType, 'fiber_total', fiberDetails?.total);
-    addToTotals(fiberByType, 'fiber_gel_forming', fiberDetails?.gelForming ?? fiberDetails?.gel_forming ?? fiberDetails?.soluble);
-    addToTotals(fiberByType, 'fiber_non_gel_forming', fiberDetails?.nonGelForming ?? fiberDetails?.non_gel_forming ?? fiberDetails?.insoluble);
-    addToTotals(fiberByType, 'fiber_fermentable', fiberDetails?.fermentable ?? fiberDetails?.resistantStarch ?? fiberDetails?.resistant_starch);
-
-    const subtypeRows = Array.isArray(fiberDetails?.subtypes) ? fiberDetails.subtypes : [];
-    subtypeRows.forEach((item: any) => {
-      const subtype = String(item?.subtype ?? '').trim();
-      if (!ALL_FIBER_SUBTYPES.includes(subtype as FiberSubtypeKey)) return;
-      addToTotals(fiberSubtypeTotals, subtype, item?.amountG ?? item?.amount_g ?? item?.amount);
-    });
-  }
-
-  const polyphenols = details?.polyphenols;
-  if (polyphenols) {
-    addToTotals(polyphenolByType, 'polyphenols_total', polyphenols?.totalMg ?? polyphenols?.total_mg);
-  }
-
-  const aminoAcids = details?.aminoAcids;
-  if (aminoAcids && typeof aminoAcids === 'object') {
-    ALL_AMINO_ACID_KEYS.forEach(tag => addToTotals(aminoAcidsByType, tag, aminoAcids[tag]));
-    let aminoRows: any[] = [];
-    if (Array.isArray(aminoAcids?.items)) {
-      aminoRows = aminoAcids.items;
-    } else if (Array.isArray(aminoAcids?.list)) {
-      aminoRows = aminoAcids.list;
-    }
-    aminoRows.forEach((item: any) => {
-      const normalizedKey = String(item?.name ?? item?.tag ?? '').toLowerCase().trim().replaceAll(/\s+/g, '_');
-      if (!ALL_AMINO_ACID_KEYS.includes(normalizedKey)) return;
-      addToTotals(aminoAcidsByType, normalizedKey, item?.amountMg ?? item?.amount_mg ?? item?.amount);
-    });
-  }
-
-  const flavonoids = details?.flavonoids;
-  if (flavonoids) {
-    addToTotals(polyphenolByType, 'flavonoids_total', flavonoids?.totalMg ?? flavonoids?.total_mg);
-    const classes = Array.isArray(flavonoids?.classes) ? flavonoids.classes : [];
-    classes.forEach((item: any) => {
-      const classTag = normalizeFlavonoidClassTag(item?.name);
-      if (classTag) addToTotals(polyphenolByType, classTag, item?.amountMg ?? item?.amount_mg);
-    });
-  }
-
-  const minerals = details?.minerals;
-  if (minerals) {
-    MINERAL_TYPE_KEYS.forEach(tag => {
-      const before = mineralsByType[tag] ?? 0;
-      addToTotals(mineralsByType, tag, minerals?.[tag]);
-      if ((mineralsByType[tag] ?? 0) > before) {
-        setMineralConfidence(mineralsConfidenceByType, tag, 'high');
-      }
-    });
-
-    let mineralsRows: any[] = [];
-    if (Array.isArray(minerals?.items)) {
-      mineralsRows = minerals.items;
-    } else if (Array.isArray(minerals?.list)) {
-      mineralsRows = minerals.list;
-    }
-
-    mineralsRows.forEach((item: any) => {
-      const rawKey = String(item?.name ?? item?.tag ?? '').toLowerCase().trim();
-      const normalizedKey = rawKey.replaceAll(/\s+/g, '_');
-      if (!MINERAL_TYPE_KEYS.includes(normalizedKey as MineralTypeKey)) return;
-      const before = mineralsByType[normalizedKey] ?? 0;
-      addToTotals(
-        mineralsByType,
-        normalizedKey,
-        item?.amountMg ?? item?.amount_mg ?? item?.amount
-      );
-      if ((mineralsByType[normalizedKey] ?? 0) > before) {
-        setMineralConfidence(mineralsConfidenceByType, normalizedKey, 'high');
-      }
-    });
-  }
-
-  const vitamins = details?.vitamins;
-  if (vitamins) {
-    VITAMIN_TYPE_KEYS.forEach(tag => {
-      addToTotals(vitaminsByType, tag, vitamins?.[tag]);
-    });
-
-    let vitaminRows: any[] = [];
-    if (Array.isArray(vitamins?.items)) {
-      vitaminRows = vitamins.items;
-    } else if (Array.isArray(vitamins?.list)) {
-      vitaminRows = vitamins.list;
-    }
-
-    vitaminRows.forEach((item: any) => {
-      const rawKey = String(item?.name ?? item?.tag ?? '').toLowerCase().trim();
-      const normalizedKey = rawKey.replaceAll(/\s+/g, '_');
-      if (!VITAMIN_TYPE_KEYS.includes(normalizedKey as VitaminTypeKey)) return;
-      addToTotals(
-        vitaminsByType,
-        normalizedKey,
-        item?.amountMg ?? item?.amount_mg ?? item?.amount
-      );
-    });
-  }
-};
-
-const extractTypedTotals = (data: any, parsedContent: any) => {
-  const totals: TypedTotalsAccumulator = {
-    fiberByType: emptyFiberTotals(),
-    fiberSubtypeTotals: emptyFiberSubtypeTotals(),
-    polyphenolByType: emptyPolyphenolTotals(),
-    mineralsByType: emptyMineralTotals(),
-    mineralsConfidenceByType: emptyMineralConfidenceTotals(),
-    vitaminsByType: emptyVitaminTotals(),
-    aminoAcidsByType: emptyAminoAcidTotals(),
-  };
-
-  const candidates = [
-    data,
-    data?.nutrition,
-    data?.raw,
-    data?.result,
-    data?.result?.nutrition,
-    data?.result?.raw,
-    parsedContent,
-    parsedContent?.nutrition,
-    parsedContent?.raw,
-  ];
-
-  for (const candidate of candidates) {
-    applyMeasuredByTypeFromCandidate(candidate, totals);
-    applyDetailsFromCandidate(candidate, totals);
-  }
-
-  return totals;
-};
-
-const hasAnyTypedTotals = (values: Record<string, number>) =>
-  Object.values(values).some(value => (value ?? 0) > 0);
-
-const sumTypedTotals = (
-  meals: Array<any>,
-  key: 'fiberByType' | 'fiberSubtypeTotals' | 'polyphenolByType' | 'mineralsByType' | 'vitaminsByType' | 'aminoAcidsByType'
-) =>
-  meals.reduce((acc, meal) => {
-    const rawValue = meal?.[key];
-    const source = typeof rawValue === 'object' && rawValue !== null ? rawValue : {};
-    for (const [tag, value] of Object.entries(source)) {
-      const parsed = parseNumberValue(value);
-      if (parsed === null) continue;
-      acc[tag] = (acc[tag] ?? 0) + parsed;
-    }
-    return acc;
-  }, {} as Record<string, number>);
-
-const sumMicrobiomeSupport = (meals: Array<any>): MicrobiomeSupportEntry[] => {
-  const allEntries = meals.flatMap(meal =>
-    Array.isArray(meal?.microbiomeSupport) ? meal.microbiomeSupport : []
-  );
-  return mergeMicrobiomeSupportLists(allEntries as MicrobiomeSupportEntry[]);
-};
-
-const mergeMineralConfidenceFromMeals = (meals: Array<any>): Record<string, ConfidenceLevel> => {
-  const totals = emptyMineralConfidenceTotals();
-
-  meals.forEach(meal => {
-    const raw = meal?.mineralsConfidenceByType;
-    if (!raw || typeof raw !== 'object') return;
-
-    MINERAL_TYPE_KEYS.forEach(key => {
-      const value = raw[key];
-      if (value === 'high' || value === 'medium' || value === 'low' || value === 'unknown') {
-        totals[key] = mergeConfidenceLevel(totals[key], value);
-      }
-    });
-  });
-
-  return totals;
-};
 
 const AMINO_ACID_TAG_SET = new Set<string>(ALL_AMINO_ACID_KEYS);
 
@@ -898,9 +159,6 @@ const formatTargetProgressValue = (value: number, unit: TipTargetUnit) => {
   return formatTargetValue(value, unit);
 };
 
-const roundToOneDecimal = (value: number): number =>
-  Math.round((value + Number.EPSILON) * 10) / 10;
-
 const toDateKeyLocal = (date: Date): string => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -918,14 +176,16 @@ const parseDateKeyLocal = (dateKey: string): Date => {
 
 const getStartOfWeekMonday = (date: Date): Date => {
   const result = new Date(date);
-  const dayOfWeek = result.getDay(); // 0=Sun, 1=Mon, ...
+  const dayOfWeek = result.getDay();
   const diffToMonday = (dayOfWeek + 6) % 7;
   result.setDate(result.getDate() - diffToMonday);
   result.setHours(0, 0, 0, 0);
   return result;
 };
 
-const getWeekBoundsFromDateKey = (dateKey: string): { weekStartISO: string; weekEndISO: string } => {
+const getWeekBoundsFromDateKey = (
+  dateKey: string
+): { weekStartISO: string; weekEndISO: string } => {
   const date = parseDateKeyLocal(dateKey);
   const weekStartDate = getStartOfWeekMonday(date);
   const weekEndDate = new Date(weekStartDate);
@@ -1006,253 +266,123 @@ const pruneFutureNutritionSummaries = (
   return { changed, next };
 };
 
-const parseNumberValue = (value: unknown): number | null => {
-  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
-  if (typeof value !== 'string') return null;
-  const normalized = value.replace(',', '.');
-  const regex = /-?\d+(?:\.\d+)?/;
-  const match = regex.exec(normalized);
-  if (!match) return null;
-  const parsed = Number(match[0]);
-  return Number.isFinite(parsed) ? parsed : null;
+const sumTypedTotals = (
+  meals: Array<any>,
+  key:
+    | 'fiberByType'
+    | 'fiberSubtypeTotals'
+    | 'polyphenolByType'
+    | 'mineralsByType'
+    | 'vitaminsByType'
+    | 'aminoAcidsByType'
+) =>
+  meals.reduce((acc, meal) => {
+    const rawValue = meal?.[key];
+    const source = typeof rawValue === 'object' && rawValue !== null ? rawValue : {};
+    for (const [tag, value] of Object.entries(source)) {
+      const parsed = parseNumberValue(value);
+      if (parsed === null) continue;
+      acc[tag] = (acc[tag] ?? 0) + parsed;
+    }
+    return acc;
+  }, {} as Record<string, number>);
+
+const sumMicrobiomeSupport = (meals: Array<any>): MicrobiomeSupportEntry[] => {
+  const allEntries = meals.flatMap(meal =>
+    Array.isArray(meal?.microbiomeSupport) ? meal.microbiomeSupport : []
+  );
+
+  const byMicrobe = new Map<string, MicrobiomeSupportEntry>();
+
+  allEntries.forEach((entry: MicrobiomeSupportEntry) => {
+    const key = entry.microbe.toLowerCase().trim();
+    if (!key) return;
+
+    const existing = byMicrobe.get(key);
+    if (!existing) {
+      byMicrobe.set(key, {
+        microbe: entry.microbe,
+        supportLevel: entry.supportLevel,
+        linkedNutrients: Array.from(new Set(entry.linkedNutrients)),
+        likelyFoods: Array.from(new Set(entry.likelyFoods)),
+        rationale: entry.rationale,
+      });
+      return;
+    }
+
+    const supportLevelScore = (value: MicrobiomeSupportEntry['supportLevel']): number => {
+      if (value === 'high') return 3;
+      if (value === 'medium') return 2;
+      if (value === 'low') return 1;
+      return 0;
+    };
+
+    const nextLevel =
+      supportLevelScore(entry.supportLevel) > supportLevelScore(existing.supportLevel)
+        ? entry.supportLevel
+        : existing.supportLevel;
+
+    byMicrobe.set(key, {
+      microbe: existing.microbe,
+      supportLevel: nextLevel,
+      linkedNutrients: Array.from(new Set([...existing.linkedNutrients, ...entry.linkedNutrients])),
+      likelyFoods: Array.from(new Set([...existing.likelyFoods, ...entry.likelyFoods])),
+      rationale: existing.rationale ?? entry.rationale,
+    });
+  });
+
+  return Array.from(byMicrobe.values());
 };
 
-const pickFirstNumber = (candidate: any, keys: string[]): number | null => {
-  if (!candidate || typeof candidate !== 'object') return null;
-  for (const key of keys) {
-    const parsed = parseNumberValue(candidate?.[key]);
-    if (parsed !== null) return parsed;
-  }
-  return null;
-};
+const mergeMineralConfidenceFromMeals = (
+  meals: Array<any>
+): Record<string, ConfidenceLevel> => {
+  const totals: Record<string, ConfidenceLevel> = MINERAL_TYPE_KEYS.reduce(
+  (acc, key) => ({ ...acc, [key]: 'unknown' as ConfidenceLevel }),
+  {} as Record<string, ConfidenceLevel>
+);
 
-const extractFromCandidate = (candidate: any): ParsedMacroAnalysis | null => {
-  if (!candidate || typeof candidate !== 'object') return null;
-
-  const protein = pickFirstNumber(candidate, ['protein', 'protein_g', 'proteinGrams', 'proteins']);
-  const calories = pickFirstNumber(candidate, ['calories', 'kcal', 'energy_kcal', 'energy', 'kilocalories']);
-  const carbohydrates = pickFirstNumber(candidate, ['carbohydrates', 'carbs', 'carbohydrate_g', 'carbs_g']);
-  const fat = pickFirstNumber(candidate, ['fat', 'fats', 'fat_g', 'total_fat']);
-  const fiber = pickFirstNumber(candidate, ['fiber', 'fibre', 'fiber_g', 'dietary_fiber']);
-
-  if (protein === null && calories === null && carbohydrates === null && fat === null && fiber === null) {
-    return null;
-  }
-
-  let mealNameRaw = '';
-  if (typeof candidate?.mealName === 'string') {
-    mealNameRaw = candidate.mealName;
-  } else if (typeof candidate?.meal_name === 'string') {
-    mealNameRaw = candidate.meal_name;
-  } else if (typeof candidate?.name === 'string') {
-    mealNameRaw = candidate.name;
-  }
-  const mealName = mealNameRaw.trim();
-
-  return {
-    mealName,
-    protein: protein ?? 0,
-    calories: calories ?? 0,
-    carbohydrates: carbohydrates ?? 0,
-    fat: fat ?? 0,
-    fiber: fiber ?? 0,
-    fiberByType: emptyFiberTotals(),
-    fiberSubtypeTotals: emptyFiberSubtypeTotals(),
-    polyphenolByType: emptyPolyphenolTotals(),
-    mineralsByType: emptyMineralTotals(),
-    mineralsConfidenceByType: emptyMineralConfidenceTotals(),
-    vitaminsByType: emptyVitaminTotals(),
-    aminoAcidsByType: emptyAminoAcidTotals(),
-    microbiomeSupport: [],
+  const confidenceRank: Record<ConfidenceLevel, number> = {
+    unknown: 0,
+    low: 1,
+    medium: 2,
+    high: 3,
   };
-};
 
-const extractFromText = (text: string): ParsedMacroAnalysis | null => {
-  const read = (regex: RegExp): number | null => {
-    const match = regex.exec(text);
-    if (!match?.[1]) return null;
-    return parseNumberValue(match[1]);
+  const mergeConfidenceLevel = (
+    current: ConfidenceLevel,
+    next: ConfidenceLevel
+  ): ConfidenceLevel => {
+    return confidenceRank[next] > confidenceRank[current] ? next : current;
   };
 
-  const protein = read(/protein[^\d-]*(-?\d+(?:[.,]\d+)?)/i);
-  const calories = read(/(?:kalorier|calories|kcal|energy)[^\d-]*(-?\d+(?:[.,]\d+)?)/i);
-  const carbohydrates = read(/(?:kolhydrater|carbohydrates|carbs)[^\d-]*(-?\d+(?:[.,]\d+)?)/i);
-  const fat = read(/(?:fett|fat)[^\d-]*(-?\d+(?:[.,]\d+)?)/i);
-  const fiber = read(/(?:fibrer|fiber|fibre)[^\d-]*(-?\d+(?:[.,]\d+)?)/i);
+  meals.forEach(meal => {
+    const raw = meal?.mineralsConfidenceByType;
+    if (!raw || typeof raw !== 'object') return;
 
-  if (protein === null && calories === null && carbohydrates === null && fat === null && fiber === null) {
-    return null;
-  }
-
-  return {
-    mealName: '',
-    protein: protein ?? 0,
-    calories: calories ?? 0,
-    carbohydrates: carbohydrates ?? 0,
-    fat: fat ?? 0,
-    fiber: fiber ?? 0,
-    fiberByType: emptyFiberTotals(),
-    fiberSubtypeTotals: emptyFiberSubtypeTotals(),
-    polyphenolByType: emptyPolyphenolTotals(),
-    mineralsByType: emptyMineralTotals(),
-    mineralsConfidenceByType: emptyMineralConfidenceTotals(),
-    vitaminsByType: emptyVitaminTotals(),
-    aminoAcidsByType: emptyAminoAcidTotals(),
-    microbiomeSupport: [],
-  };
-};
-
-const extractStructuredAnalysis = (data: any, parsedContent: any): ParsedMacroAnalysis | null => {
-  const candidates = [
-    data?.nutrition,
-    data?.raw,
-    data?.raw?.macros,
-    data?.result,
-    data?.result?.nutrition,
-    data?.result?.raw,
-    data?.result?.raw?.macros,
-    parsedContent,
-    parsedContent?.nutrition,
-    parsedContent?.raw,
-    parsedContent?.macros,
-  ];
-
-  for (const candidate of candidates) {
-    const extracted = extractFromCandidate(candidate);
-    if (extracted) return extracted;
-  }
-
-  if (typeof data?.content === 'string') {
-    return extractFromText(data.content);
-  }
-
-  return null;
-};
-
-const extractAIResponseDescription = (data: any, parsedContent: any): string | null => {
-  const candidates: unknown[] = [
-    parsedContent?.description,
-    parsedContent?.summary,
-    parsedContent?.analysis,
-    parsedContent?.reasoning,
-    parsedContent?.observation,
-    parsedContent?.observations,
-    data?.description,
-    data?.summary,
-    data?.analysis,
-    data?.reasoning,
-    data?.observation,
-    data?.observations,
-  ];
-
-  for (const candidate of candidates) {
-    if (typeof candidate === 'string' && candidate.trim().length > 0) {
-      return candidate.trim();
-    }
-    if (Array.isArray(candidate)) {
-      const text = candidate
-        .filter((item): item is string => typeof item === 'string')
-        .map(item => item.trim())
-        .filter(item => item.length > 0)
-        .join('\n');
-      if (text.length > 0) return text;
-    }
-  }
-
-  if (typeof data?.content === 'string') {
-    const trimmed = data.content.trim();
-    if (!trimmed.startsWith('{') && !trimmed.startsWith('[') && trimmed.length > 0) {
-      return trimmed;
-    }
-  }
-
-  return null;
-};
-
-const mergeWeeklyTrackingSignal = (
-  target: WeeklyTrackingSignals,
-  key: string,
-  value: unknown
-) => {
-  if (!key || typeof key !== 'string') return;
-
-  if (Array.isArray(value)) {
-    const nextItems = value
-      .filter((item): item is string => typeof item === 'string')
-      .map(item => item.trim())
-      .filter(item => item.length > 0);
-    if (!nextItems.length) return;
-
-    const existing = target[key];
-    const existingItems = Array.isArray(existing) ? existing : [];
-    target[key] = Array.from(new Set([...existingItems, ...nextItems]));
-    return;
-  }
-
-  if (typeof value === 'number' && Number.isFinite(value)) {
-    const existing = target[key];
-    const existingNumber = typeof existing === 'number' ? existing : 0;
-    target[key] = existingNumber + value;
-  }
-};
-
-const extractWeeklyTrackingSignals = (data: any, parsedContent: any): WeeklyTrackingSignals => {
-  const collected: WeeklyTrackingSignals = {};
-  const candidates = [
-    data,
-    data?.nutrition,
-    data?.raw,
-    data?.result,
-    data?.result?.nutrition,
-    data?.result?.raw,
-    parsedContent,
-    parsedContent?.nutrition,
-    parsedContent?.raw,
-  ];
-
-  candidates.forEach(candidate => {
-    const fromObject = candidate?.weeklyTrackingSignals;
-    if (fromObject && typeof fromObject === 'object' && !Array.isArray(fromObject)) {
-      Object.entries(fromObject).forEach(([key, value]) => mergeWeeklyTrackingSignal(collected, key, value));
-    }
-
-    let fromRows: any[] = [];
-    if (Array.isArray(candidate?.weeklyTrackingSignals)) {
-      fromRows = candidate.weeklyTrackingSignals;
-    } else if (Array.isArray(candidate?.nutritionDetails?.weeklyTrackingSignals)) {
-      fromRows = candidate.nutritionDetails.weeklyTrackingSignals;
-    }
-
-    fromRows.forEach((row: any) => {
-      const key = String(row?.key ?? row?.trackingKey ?? '').trim();
-      if (!key) return;
-
-      if (Array.isArray(row?.items)) {
-        mergeWeeklyTrackingSignal(collected, key, row.items);
-      }
-
-      const increment = parseNumberValue(row?.countIncrement ?? row?.increment ?? row?.count);
-      if (increment !== null) {
-        mergeWeeklyTrackingSignal(collected, key, increment);
+    MINERAL_TYPE_KEYS.forEach(key => {
+      const value = raw[key];
+      if (value === 'high' || value === 'medium' || value === 'low' || value === 'unknown') {
+        totals[key] = mergeConfidenceLevel(totals[key], value);
       }
     });
   });
 
-  return collected;
+  return totals;
 };
 
-const getNormalizedMealName = (meal: any, fallbackName: string): string => (
+const getNormalizedMealName = (meal: any, fallbackName: string): string =>
   typeof meal?.mealName === 'string' && meal.mealName.trim().length > 0
     ? meal.mealName
-    : fallbackName
-);
+    : fallbackName;
 
-
-const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCompleted }) => {
+const NutritionLogger: React.FC<NutritionLoggerProps> = ({
+  selectedDate,
+  onTipCompleted,
+}) => {
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
   const router = useRouter();
-
 
   const {
     dailyNutritionSummaries,
@@ -1263,15 +393,21 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     addToWeeklyTracking,
     claimNutritionTipCompletionXP,
   } = useStorage();
+
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [isAnalysisReviewModalVisible, setIsAnalysisReviewModalVisible] = useState(false);
-  const [pendingAnalysisReview, setPendingAnalysisReview] = useState<PendingAnalysisReview | null>(null);
+  const [pendingAnalysisReview, setPendingAnalysisReview] =
+    useState<PendingAnalysisReview | null>(null);
   const [lastLoggedMeal, setLastLoggedMeal] = useState<ParsedMacroAnalysis | null>(null);
   const [pendingMealImage, setPendingMealImage] = useState<SelectedImageFile | null>(null);
   const [pendingMealDescription, setPendingMealDescription] = useState('');
   const [ingredientListImage, setIngredientListImage] = useState<SelectedImageFile | null>(null);
-  const lastAnalyzedFilesRef = useRef<{ mealFile: SelectedImageFile; mealDescription: string; ingredientFile: SelectedImageFile | null } | null>(null);
+  const lastAnalyzedFilesRef = useRef<{
+    mealFile: SelectedImageFile;
+    mealDescription: string;
+    ingredientFile: SelectedImageFile | null;
+  } | null>(null);
   const [isPackagingModalVisible, setIsPackagingModalVisible] = useState(false);
   const [selectedLoggedMealId, setSelectedLoggedMealId] = useState<string | null>(null);
   const [isEditMealModalVisible, setIsEditMealModalVisible] = useState(false);
@@ -1282,7 +418,10 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
   const completionAnimByKeyRef = useRef<Record<string, Animated.Value>>({});
   const copyMealBottomSheetRef = useRef<BottomSheetModal>(null);
   const fulfilledTipsSectionYRef = useRef(0);
-  const periodSectionYRef = useRef<Record<'daily' | 'weekly', number>>({ daily: 0, weekly: 0 });
+  const periodSectionYRef = useRef<Record<'daily' | 'weekly', number>>({
+    daily: 0,
+    weekly: 0,
+  });
   const tipRowLocalYByKeyRef = useRef<Record<string, number>>({});
   const tipRowPeriodByKeyRef = useRef<Record<string, 'daily' | 'weekly'>>({});
   const pendingCompletionScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -1295,7 +434,8 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
 
     const aiText = pendingAnalysisReview.aiDescription?.trim();
     if (aiText) {
-      const lines = aiText.split(/\r?\n+/g)
+      const lines = aiText
+        .split(/\r?\n+/g)
         .map(line => line.replaceAll(/^([•*-]\s+|\d+[.)]\s+)/, '').trim())
         .filter(line => line.length > 0);
       if (lines.length > 0) return lines;
@@ -1312,7 +452,6 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
 
     return [t('nutritionLogger.analysisNoStructuredData')];
   }, [pendingAnalysisReview, t]);
-
 
   const reAnalyzeTextStyle = useMemo(
     () => [styles.reAnalyzeText, isAnalyzing && styles.reAnalyzeTextDisabled, { color: colors.textWhite }],
@@ -1345,43 +484,56 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     Haptics.selectionAsync().catch(() => undefined);
   }, [isAnalysisReviewModalVisible]);
 
-  const animateTipCompletion = useCallback((tipKey: string) => {
-    const anim = getCompletionAnimValue(tipKey);
-    anim.stopAnimation();
-    anim.setValue(0);
+  const animateTipCompletion = useCallback(
+    (tipKey: string) => {
+      const anim = getCompletionAnimValue(tipKey);
+      anim.stopAnimation();
+      anim.setValue(0);
 
-    Animated.sequence([
-      Animated.timing(anim, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(anim, {
-        toValue: 0,
-        duration: 450,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [getCompletionAnimValue]);
+      Animated.sequence([
+        Animated.timing(anim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(anim, {
+          toValue: 0,
+          duration: 450,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    },
+    [getCompletionAnimValue]
+  );
 
   const activeTrackingTargetsForAI = useMemo(() => {
-    const byKey = new Map<string, { key: string; unit: 'items' | 'count'; amount?: number; aiInstruction?: string }>();
+    const byKey = new Map<
+      string,
+      { key: string; unit: 'items' | 'count'; amount?: number; aiInstruction?: string }
+    >();
 
     (plans?.nutrition ?? []).forEach(planTip => {
       const tip = tips.find(candidate => candidate.id === planTip.tipId);
-      (tip?.trackingTargets ?? []).forEach((target: { trackingKey: string; unit: 'items' | 'count'; amount?: number; aiInstruction?: string }) => {
-        const key = target.trackingKey?.trim();
-        if (!key) return;
+      (tip?.trackingTargets ?? []).forEach(
+        (target: {
+          trackingKey: string;
+          unit: 'items' | 'count';
+          amount?: number;
+          aiInstruction?: string;
+        }) => {
+          const key = target.trackingKey?.trim();
+          if (!key) return;
 
-        if (!byKey.has(key)) {
-          byKey.set(key, {
-            key,
-            unit: target.unit,
-            amount: target.amount,
-            aiInstruction: target.aiInstruction,
-          });
+          if (!byKey.has(key)) {
+            byKey.set(key, {
+              key,
+              unit: target.unit,
+              amount: target.amount,
+              aiInstruction: target.aiInstruction,
+            });
+          }
         }
-      });
+      );
     });
 
     return Array.from(byKey.values());
@@ -1499,7 +651,12 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
 
   const syncWeekTrackingForDate = (nextSummaries: Record<string, any>, dateKey: string) => {
     const { weekStartISO, weekEndISO } = getWeekBoundsFromDateKey(dateKey);
-    const recalculatedWeekTracking = buildWeekTrackingFromSummaries(nextSummaries, weekStartISO, weekEndISO, activeTrackingKeys);
+    const recalculatedWeekTracking = buildWeekTrackingFromSummaries(
+      nextSummaries,
+      weekStartISO,
+      weekEndISO,
+      activeTrackingKeys
+    );
 
     setWeeklyTracking(previousWeeklyTracking => {
       const updatedWeeklyTracking = { ...previousWeeklyTracking };
@@ -1527,14 +684,11 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
 
       if (!updatedMeals.length) {
         delete next[selectedDate];
-
         syncWeekTrackingForDate(next, selectedDate);
-
         return next;
       }
 
       next[selectedDate] = buildDailySummary(updatedMeals);
-
       syncWeekTrackingForDate(next, selectedDate);
 
       return next;
@@ -1577,18 +731,14 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
       if (!existingSummary) return prev;
 
       const nextMealName = editingMealName.trim() || t('nutritionLogger.unnamedMeal');
-      const updatedMeals = (existingSummary.meals ?? []).map(meal => (
-        meal?.id === editingMealId
-          ? { ...meal, mealName: nextMealName }
-          : meal
-      ));
+      const updatedMeals = (existingSummary.meals ?? []).map(meal =>
+        meal?.id === editingMealId ? { ...meal, mealName: nextMealName } : meal
+      );
 
       if (editingMealId === selectedLoggedMealId) {
-        setLastLoggedMeal(prevMeal => (
-          prevMeal
-            ? { ...prevMeal, mealName: nextMealName }
-            : prevMeal
-        ));
+        setLastLoggedMeal(prevMeal =>
+          prevMeal ? { ...prevMeal, mealName: nextMealName } : prevMeal
+        );
       }
 
       return {
@@ -1624,7 +774,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
       const weekStartDate = getStartOfWeekMonday(mealDateLocal);
       const weekStartISO = toDateKeyLocal(weekStartDate);
 
-      const handleWeeklyTrackingSignal = (key: string, value: any) => {
+      const handleWeeklyTrackingSignal = (key: string, value: WeeklyTrackingSignalValue) => {
         if (Array.isArray(value)) {
           for (const item of value) {
             addToWeeklyTracking(weekStartISO, key, item);
@@ -1697,15 +847,30 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     fat: typeof meal?.fat === 'number' ? meal.fat : 0,
     fiber: typeof meal?.fiber === 'number' ? meal.fiber : 0,
     fiberByType: typeof meal?.fiberByType === 'object' && meal.fiberByType !== null ? meal.fiberByType : {},
-    fiberSubtypeTotals: typeof meal?.fiberSubtypeTotals === 'object' && meal.fiberSubtypeTotals !== null ? meal.fiberSubtypeTotals : {},
-    polyphenolByType: typeof meal?.polyphenolByType === 'object' && meal.polyphenolByType !== null ? meal.polyphenolByType : {},
-    mineralsByType: typeof meal?.mineralsByType === 'object' && meal.mineralsByType !== null ? meal.mineralsByType : {},
+    fiberSubtypeTotals:
+      typeof meal?.fiberSubtypeTotals === 'object' && meal.fiberSubtypeTotals !== null
+        ? meal.fiberSubtypeTotals
+        : {},
+    polyphenolByType:
+      typeof meal?.polyphenolByType === 'object' && meal.polyphenolByType !== null
+        ? meal.polyphenolByType
+        : {},
+    mineralsByType:
+      typeof meal?.mineralsByType === 'object' && meal.mineralsByType !== null
+        ? meal.mineralsByType
+        : {},
     mineralsConfidenceByType:
       typeof meal?.mineralsConfidenceByType === 'object' && meal.mineralsConfidenceByType !== null
         ? meal.mineralsConfidenceByType
         : {},
-    vitaminsByType: typeof meal?.vitaminsByType === 'object' && meal.vitaminsByType !== null ? meal.vitaminsByType : {},
-    aminoAcidsByType: typeof meal?.aminoAcidsByType === 'object' && meal.aminoAcidsByType !== null ? meal.aminoAcidsByType : {},
+    vitaminsByType:
+      typeof meal?.vitaminsByType === 'object' && meal.vitaminsByType !== null
+        ? meal.vitaminsByType
+        : {},
+    aminoAcidsByType:
+      typeof meal?.aminoAcidsByType === 'object' && meal.aminoAcidsByType !== null
+        ? meal.aminoAcidsByType
+        : {},
     microbiomeSupport: Array.isArray(meal?.microbiomeSupport) ? meal.microbiomeSupport : [],
   });
 
@@ -1714,11 +879,10 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     setLastLoggedMeal(toParsedMacroAnalysis(meal));
   };
 
-
   const runNutritionImageAnalysis = async (
     mealFile: SelectedImageFile,
     mealDescription?: string,
-    ingredientFile?: SelectedImageFile | null,
+    ingredientFile?: SelectedImageFile | null
   ) => {
     const todayKey = toDateKeyLocal(new Date());
     if (selectedDate > todayKey) {
@@ -1753,7 +917,13 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
       console.log('NutritionAnalyze payload:', data);
 
       if (data?.type === 'error') {
-        handleNutritionError({ data, t, setAnalysisResult, setPendingAnalysisReview, setIsAnalysisReviewModalVisible });
+        handleNutritionError({
+          data,
+          t,
+          setAnalysisResult,
+          setPendingAnalysisReview,
+          setIsAnalysisReviewModalVisible,
+        });
         return;
       }
 
@@ -1766,6 +936,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
         setIsAnalysisReviewModalVisible,
         setLastLoggedMeal,
       });
+
       if (!result) return;
 
       setPendingAnalysisReview({
@@ -1782,9 +953,21 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
       console.error('Error analyzing image:', err);
       const errMsg = err instanceof Error ? err.message : '';
       if (typeof errMsg === 'string' && errMsg.toLowerCase().includes('socket hang up')) {
-        handleSocketError({ t, setAnalysisResult, setPendingAnalysisReview, setIsAnalysisReviewModalVisible, setLastLoggedMeal });
+        handleSocketError({
+          t,
+          setAnalysisResult,
+          setPendingAnalysisReview,
+          setIsAnalysisReviewModalVisible,
+          setLastLoggedMeal,
+        });
       } else {
-        handleGeneralError({ t, setAnalysisResult, setPendingAnalysisReview, setIsAnalysisReviewModalVisible, setLastLoggedMeal });
+        handleGeneralError({
+          t,
+          setAnalysisResult,
+          setPendingAnalysisReview,
+          setIsAnalysisReviewModalVisible,
+          setLastLoggedMeal,
+        });
       }
     } finally {
       setIsAnalyzing(false);
@@ -1820,14 +1003,20 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     const ingredientFile = ingredientListImage;
     lastAnalyzedFilesRef.current = { mealFile, mealDescription, ingredientFile };
     resetPackagingFlow();
-    runNutritionImageAnalysis(mealFile, mealDescription || undefined, ingredientFile).catch(console.error);
+    runNutritionImageAnalysis(mealFile, mealDescription || undefined, ingredientFile).catch(
+      console.error
+    );
   };
 
   const handleReAnalyze = useCallback(() => {
     const last = lastAnalyzedFilesRef.current;
     if (!last) return;
     closeAnalysisReviewModal();
-    runNutritionImageAnalysis(last.mealFile, last.mealDescription || undefined, last.ingredientFile).catch(console.error);
+    runNutritionImageAnalysis(
+      last.mealFile,
+      last.mealDescription || undefined,
+      last.ingredientFile
+    ).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [closeAnalysisReviewModal]);
 
@@ -1842,37 +1031,56 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
   const summary = dailyNutritionSummaries[selectedDate];
   const todayKey = toDateKeyLocal(new Date());
   const isFutureSelectedDate = selectedDate > todayKey;
-  const recentMeals = useMemo<RecentMealOption[]>(() => (
-    Object.entries(dailyNutritionSummaries)
-      .flatMap(([dateKey, daySummary]) => {
-        const meals = Array.isArray(daySummary?.meals) ? daySummary.meals : [];
-        return meals.map((meal, index) => ({
-          id: typeof meal?.id === 'string' ? meal.id : `${dateKey}-${index}`,
-          date: dateKey,
-          meal,
-          mealName: getNormalizedMealName(meal, t('nutritionLogger.unnamedMeal')),
-          sortOrder: meals.length - index,
-        }));
-      })
-      .sort((left, right) => {
-        if (left.date !== right.date) {
-          return right.date.localeCompare(left.date);
-        }
-        return right.sortOrder - left.sortOrder;
-      })
-      .filter((meal, index, allMeals) => {
-        const mealCalories = roundToOneDecimal(typeof meal.meal?.calories === 'number' ? meal.meal.calories : 0);
-        const mealFiber = roundToOneDecimal(typeof meal.meal?.fiber === 'number' ? meal.meal.fiber : 0);
-        const uniquenessKey = `${meal.mealName.toLowerCase()}|${mealCalories}|${mealFiber}`;
-        return index === allMeals.findIndex(candidate => {
-          const candidateCalories = roundToOneDecimal(typeof candidate.meal?.calories === 'number' ? candidate.meal.calories : 0);
-          const candidateFiber = roundToOneDecimal(typeof candidate.meal?.fiber === 'number' ? candidate.meal.fiber : 0);
-          return `${candidate.mealName.toLowerCase()}|${candidateCalories}|${candidateFiber}` === uniquenessKey;
-        });
-      })
-      .slice(0, 20)
-  ), [dailyNutritionSummaries, t]);
+
+  const recentMeals = useMemo<RecentMealOption[]>(
+    () =>
+      Object.entries(dailyNutritionSummaries)
+        .flatMap(([dateKey, daySummary]) => {
+          const meals = Array.isArray(daySummary?.meals) ? daySummary.meals : [];
+          return meals.map((meal, index) => ({
+            id: typeof meal?.id === 'string' ? meal.id : `${dateKey}-${index}`,
+            date: dateKey,
+            meal,
+            mealName: getNormalizedMealName(meal, t('nutritionLogger.unnamedMeal')),
+            sortOrder: meals.length - index,
+          }));
+        })
+        .sort((left, right) => {
+          if (left.date !== right.date) {
+            return right.date.localeCompare(left.date);
+          }
+          return right.sortOrder - left.sortOrder;
+        })
+        .filter((meal, index, allMeals) => {
+          const mealCalories = roundToOneDecimal(
+            typeof meal.meal?.calories === 'number' ? meal.meal.calories : 0
+          );
+          const mealFiber = roundToOneDecimal(
+            typeof meal.meal?.fiber === 'number' ? meal.meal.fiber : 0
+          );
+          const uniquenessKey = `${meal.mealName.toLowerCase()}|${mealCalories}|${mealFiber}`;
+          return (
+            index ===
+            allMeals.findIndex(candidate => {
+              const candidateCalories = roundToOneDecimal(
+                typeof candidate.meal?.calories === 'number' ? candidate.meal.calories : 0
+              );
+              const candidateFiber = roundToOneDecimal(
+                typeof candidate.meal?.fiber === 'number' ? candidate.meal.fiber : 0
+              );
+              return (
+                `${candidate.mealName.toLowerCase()}|${candidateCalories}|${candidateFiber}` ===
+                uniquenessKey
+              );
+            })
+          );
+        })
+        .slice(0, 20),
+    [dailyNutritionSummaries, t]
+  );
+
   const copyMealSheetSnapPoints = useMemo(() => ['45%', '75%'], []);
+
   const dailyFiberByType = summary ? sumTypedTotals(summary.meals, 'fiberByType') : {};
   const dailyFiberSubtypeTotals = summary ? sumTypedTotals(summary.meals, 'fiberSubtypeTotals') : {};
   const dailyPolyphenolByType = summary ? sumTypedTotals(summary.meals, 'polyphenolByType') : {};
@@ -1881,6 +1089,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
   const dailyVitaminsByType = summary ? sumTypedTotals(summary.meals, 'vitaminsByType') : {};
   const dailyAminoAcidsByType = summary ? sumTypedTotals(summary.meals, 'aminoAcidsByType') : {};
   const dailyMicrobiomeSupport = summary ? sumMicrobiomeSupport(summary.meals) : [];
+
   const dailyTracking = React.useMemo(() => {
     const aggregated: WeeklyTrackingSignals = {};
     const meals = Array.isArray(summary?.meals) ? summary.meals : [];
@@ -1929,13 +1138,14 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
 
   const isAminoAcidTargetTag = (tag: string): boolean => AMINO_ACID_TAG_SET.has(tag);
 
-  const getDailyTargetValue = (tag: string, unit: 'g' | 'mg' | 'plants' | 'items' | 'count'): number => {
+  const getDailyTargetValue = (
+    tag: string,
+    unit: 'g' | 'mg' | 'plants' | 'items' | 'count'
+  ): number => {
     if (unit === 'plants') {
-      // Daily plant diversity not currently tracked, only weekly
       return 0;
     }
     if (unit === 'items' || unit === 'count') {
-      // Weekly tracking metrics are only evaluated on weekly targets.
       return 0;
     }
     if (unit === 'g') {
@@ -1954,7 +1164,10 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     return dailyPolyphenolByType[tag] ?? 0;
   };
 
-  const getWeeklyTargetValue = (tag: string, unit: 'g' | 'mg' | 'plants' | 'items' | 'count'): number => {
+  const getWeeklyTargetValue = (
+    tag: string,
+    unit: 'g' | 'mg' | 'plants' | 'items' | 'count'
+  ): number => {
     if (unit === 'plants' || unit === 'items' || unit === 'count') {
       const value = weeklyTracking[weekStartKey]?.[tag];
       if (typeof value === 'number') return value;
@@ -1988,23 +1201,42 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     const vitaminTargets = tip.vitaminTargets ?? [];
     const aminoAcidTargets = tip.aminoAcidTargets ?? [];
     const trackingTargets = tip.trackingTargets ?? [];
-    const allTargets = [...fiberTargets, ...polyphenolTargets, ...mineralTargets, ...vitaminTargets, ...aminoAcidTargets, ...trackingTargets];
+    const allTargets = [
+      ...fiberTargets,
+      ...polyphenolTargets,
+      ...mineralTargets,
+      ...vitaminTargets,
+      ...aminoAcidTargets,
+      ...trackingTargets,
+    ];
 
     if (!tipPeriod || !allTargets.length) return [];
 
     const targets = allTargets.map(target => {
       const trackingKey = 'trackingKey' in target ? target.trackingKey : target.tag;
-      const actual = tipPeriod === 'weekly'
-        ? getWeeklyTargetValue(trackingKey, target.unit)
-        : getDailyTargetValue(trackingKey, target.unit);
-      const trackingValue = tipPeriod === 'weekly' ? weeklyTracking[weekStartKey]?.[trackingKey] : dailyTracking[trackingKey];
+      const actual =
+        tipPeriod === 'weekly'
+          ? getWeeklyTargetValue(trackingKey, target.unit)
+          : getDailyTargetValue(trackingKey, target.unit);
+      const trackingValue =
+        tipPeriod === 'weekly'
+          ? weeklyTracking[weekStartKey]?.[trackingKey]
+          : dailyTracking[trackingKey];
       const trackedItems = Array.isArray(trackingValue)
         ? trackingValue
-          .map(item => item.trim())
-          .filter(item => item.length > 0)
-          .sort((a, b) => a.localeCompare(b))
+            .map(item => item.trim())
+            .filter(item => item.length > 0)
+            .sort((a, b) => a.localeCompare(b))
         : undefined;
-      let labelGroup: 'weeklyTrackingLabels' | 'fiberLabels' | 'aminoAcidLabels' | 'mineralLabels' | 'vitaminLabels' | 'polyphenolLabels' = 'polyphenolLabels';
+
+      let labelGroup:
+        | 'weeklyTrackingLabels'
+        | 'fiberLabels'
+        | 'aminoAcidLabels'
+        | 'mineralLabels'
+        | 'vitaminLabels'
+        | 'polyphenolLabels' = 'polyphenolLabels';
+
       if (target.unit === 'items' || target.unit === 'count') {
         labelGroup = 'weeklyTrackingLabels';
       } else if (target.unit === 'g') {
@@ -2032,18 +1264,20 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     const metCount = targets.reduce((count, target) => count + (target.isMet ? 1 : 0), 0);
     const totalCount = targets.length;
 
-    return [{
-      planTipId: planTip.id ?? 'no-plan-tip-id',
-      tipId: tip.id,
-      title: tip.title,
-      areaId: tip.areas[0]?.id,
-      period: tipPeriod,
-      targets,
-      metCount,
-      totalCount,
-      isFulfilled: metCount === totalCount,
-      progress: totalCount > 0 ? metCount / totalCount : 0,
-    }];
+    return [
+      {
+        planTipId: planTip.id ?? 'no-plan-tip-id',
+        tipId: tip.id,
+        title: tip.title,
+        areaId: tip.areas[0]?.id,
+        period: tipPeriod,
+        targets,
+        metCount,
+        totalCount,
+        isFulfilled: metCount === totalCount,
+        progress: totalCount > 0 ? metCount / totalCount : 0,
+      },
+    ];
   });
 
   const nutritionPlanTipProgressByPeriod = React.useMemo(() => {
@@ -2093,6 +1327,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
       const firstNewlyFulfilledTip = newlyFulfilledTipKeys[0];
+
       if (pendingCompletionScrollTimeoutRef.current) {
         clearTimeout(pendingCompletionScrollTimeoutRef.current);
       }
@@ -2117,6 +1352,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
           pendingCompletionScrollTimeoutRef.current = null;
         }, COMPLETION_SCROLL_DELAY_MS);
       });
+
       pendingCompletionAnimTimeoutRef.current = setTimeout(() => {
         newlyFulfilledTipKeys.forEach(key => animateTipCompletion(key));
         pendingCompletionAnimTimeoutRef.current = null;
@@ -2124,13 +1360,9 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
     }
 
     previousFulfilledByKeyRef.current = nextFulfilledByKey;
-  }, [
-    animateTipCompletion,
-    nutritionPlanTipProgress,
-    onTipCompleted,
-  ]);
+  }, [animateTipCompletion, nutritionPlanTipProgress, onTipCompleted]);
 
-  const renderTipProgressItems = (tipsForPeriod: TipProgressItem[]) => (
+  const renderTipProgressItems = (tipsForPeriod: TipProgressItem[]) =>
     tipsForPeriod.map(tip => {
       const tipKey = getTipProgressKey(tip);
       const completionAnim = getCompletionAnimValue(tipKey);
@@ -2163,12 +1395,12 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                 tip.isFulfilled && styles.planTipProgressRowFulfilled,
                 tip.isFulfilled
                   ? {
-                    backgroundColor: colors.accentVeryWeak,
-                    borderColor: colors.accentMedium,
-                  }
+                      backgroundColor: colors.accentVeryWeak,
+                      borderColor: colors.accentMedium,
+                    }
                   : {
-                    borderBottomColor: colors.textMuted,
-                  },
+                      borderBottomColor: colors.textMuted,
+                    },
               ]}
               activeOpacity={0.8}
               disabled={!tip.areaId}
@@ -2183,11 +1415,17 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
               }}
             >
               <View style={styles.planTipProgressHeader}>
-                <ThemedText type="defaultSemiBold" style={styles.fulfilledTipTextBlock}>{t(`tips:${tip.title}`)}</ThemedText>
+                <ThemedText type="defaultSemiBold" style={styles.fulfilledTipTextBlock}>
+                  {t(`tips:${tip.title}`)}
+                </ThemedText>
                 {tip.isFulfilled && <Icon source="check-circle" size={34} color={colors.xp} />}
               </View>
+
               <ThemedText type="caption" style={styles.planTipStatusText}>
-                {t('nutritionLogger.fulfilledTargetsCount', { met: tip.metCount, total: tip.totalCount })}
+                {t('nutritionLogger.fulfilledTargetsCount', {
+                  met: tip.metCount,
+                  total: tip.totalCount,
+                })}
               </ThemedText>
 
               <View
@@ -2195,7 +1433,9 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                   styles.progressTrack,
                   tip.isFulfilled && styles.progressTrackFulfilled,
                   {
-                    backgroundColor: tip.isFulfilled ? colors.accentWeak : colors.secondaryBackground,
+                    backgroundColor: tip.isFulfilled
+                      ? colors.accentWeak
+                      : colors.secondaryBackground,
                   },
                 ]}
               >
@@ -2210,30 +1450,49 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                   ]}
                 />
               </View>
+
               {tip.targets.map(target => {
-                const hasTrackedItems = Array.isArray(target.trackedItems) && target.trackedItems.length > 0;
+                const hasTrackedItems =
+                  Array.isArray(target.trackedItems) && target.trackedItems.length > 0;
                 const trackedItems = target.trackedItems ?? [];
                 const targetIconName = getTipTargetIconName(target.unit);
-                const valueFormatter = hasTrackedItems ? formatTargetProgressValue : formatTargetValue;
-                const targetValueText = `${valueFormatter(target.actual, target.unit)} / ${valueFormatter(target.amount, target.unit)}`;
+                const valueFormatter = hasTrackedItems
+                  ? formatTargetProgressValue
+                  : formatTargetValue;
+                const targetValueText = `${valueFormatter(target.actual, target.unit)} / ${valueFormatter(
+                  target.amount,
+                  target.unit
+                )}`;
 
                 if (hasTrackedItems) {
                   return (
-                    <View key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`} style={styles.planTipTargetCollapsibleRow}>
+                    <View
+                      key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`}
+                      style={styles.planTipTargetCollapsibleRow}
+                    >
                       <Collapsible
                         title={target.label}
                         titleType="explainer"
                         initialCollapsed
-                        leftContent={<IconSymbol name={targetIconName} size={14} color={colors.textMuted} />}
-                        rightContent={(
-                          <ThemedText type="explainer" style={[styles.planTipTargetValue, styles.planTipTargetCollapsibleValue]}>
+                        leftContent={
+                          <IconSymbol name={targetIconName} size={14} color={colors.textMuted} />
+                        }
+                        rightContent={
+                          <ThemedText
+                            type="explainer"
+                            style={[styles.planTipTargetValue, styles.planTipTargetCollapsibleValue]}
+                          >
                             {targetValueText}
                           </ThemedText>
-                        )}
+                        }
                       >
                         <View style={styles.planTipTargetItemsList}>
                           {trackedItems.map(item => (
-                            <ThemedText key={`${target.tag}-${item}`} type="caption" style={styles.planTipTargetItem}>
+                            <ThemedText
+                              key={`${target.tag}-${item}`}
+                              type="caption"
+                              style={styles.planTipTargetItem}
+                            >
                               • {item}
                             </ThemedText>
                           ))}
@@ -2244,7 +1503,10 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                 }
 
                 return (
-                  <View key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`} style={styles.planTipTargetRow}>
+                  <View
+                    key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`}
+                    style={styles.planTipTargetRow}
+                  >
                     <View style={styles.planTipTargetLabelRow}>
                       <IconSymbol name={targetIconName} size={14} color={colors.textMuted} />
                       <ThemedText type="explainer" style={styles.planTipTargetLabel}>
@@ -2263,13 +1525,11 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                   </View>
                 );
               })}
-
             </TouchableOpacity>
           </Animated.View>
         </View>
       );
-    })
-  );
+    });
 
   const renderTipProgressList = (tipsForPeriod: TipProgressItem[]) => {
     const fulfilledTips = tipsForPeriod.filter(tip => tip.isFulfilled);
@@ -2314,7 +1574,10 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
   }, [claimNutritionTipCompletionXP, nutritionPlanTipProgress, selectedDate, weekStartKey]);
 
   return (
-    <KeyboardAvoidingView style={globalStyles.flex1} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView
+      style={globalStyles.flex1}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
       <View style={styles.container}>
         <ImagePickerButton
           onImageSelected={handleImageSelected}
@@ -2324,9 +1587,15 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
           label={t('nutritionLogger.packageFlowAnalyze')}
           glow
         />
+
         <View style={styles.copyMealLinkContainer}>
-          <DiscreetButton onPress={handleOpenCopyMealModal} title={t('nutritionLogger.copyMealLink')} disabled={isFutureSelectedDate || recentMeals.length === 0} />
+          <DiscreetButton
+            onPress={handleOpenCopyMealModal}
+            title={t('nutritionLogger.copyMealLink')}
+            disabled={isFutureSelectedDate || recentMeals.length === 0}
+          />
         </View>
+
         {isFutureSelectedDate && (
           <ThemedText type="caption" style={[styles.futureDateHint, { color: colors.textMuted }]}>
             {t('nutritionLogger.futureDateLocked')}
@@ -2335,7 +1604,9 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
 
         {lastLoggedMeal && (
           <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
-            <ThemedText type="title3">{t('nutritionLogger.mealTitleWithName', { name: lastLoggedMeal.mealName })}</ThemedText>
+            <ThemedText type="title3">
+              {t('nutritionLogger.mealTitleWithName', { name: lastLoggedMeal.mealName })}
+            </ThemedText>
             <NutritionBreakdown
               calories={lastLoggedMeal.calories}
               protein={lastLoggedMeal.protein}
@@ -2391,7 +1662,6 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                 keyPrefix="daily"
               />
             </Collapsible>
-
           </Card>
         )}
 
@@ -2404,10 +1674,12 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                 initialCollapsed
               >
                 {summary.meals.map((meal, index) => {
-                  const mealName = typeof meal?.mealName === 'string' && meal.mealName.trim().length > 0
-                    ? meal.mealName
-                    : t('nutritionLogger.unnamedMeal');
-                  const mealId = typeof meal?.id === 'string' ? meal.id : `${selectedDate}-fallback-${index}`;
+                  const mealName =
+                    typeof meal?.mealName === 'string' && meal.mealName.trim().length > 0
+                      ? meal.mealName
+                      : t('nutritionLogger.unnamedMeal');
+                  const mealId =
+                    typeof meal?.id === 'string' ? meal.id : `${selectedDate}-fallback-${index}`;
 
                   return (
                     <SwipeableRow
@@ -2422,8 +1694,13 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                         activeOpacity={0.8}
                       >
                         <View style={styles.loggedMealRow}>
-                          <ThemedText type="default" style={styles.loggedMealName}>{mealName}</ThemedText>
-                          <ThemedText type="default" style={[styles.loggedMealIcon, { color: colors.textMuted }]}>
+                          <ThemedText type="default" style={styles.loggedMealName}>
+                            {mealName}
+                          </ThemedText>
+                          <ThemedText
+                            type="default"
+                            style={[styles.loggedMealIcon, { color: colors.textMuted }]}
+                          >
                             ⋮
                           </ThemedText>
                         </View>
@@ -2476,6 +1753,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                 style={styles.packagingModalPickerButton}
               />
             )}
+
             <LabeledInput
               label={t('nutritionLogger.packageFlowDescriptionLabel')}
               placeholder={t('nutritionLogger.packageFlowDescriptionPlaceholder')}
@@ -2487,6 +1765,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
               autoCorrect={false}
               containerStyle={styles.packagingDescriptionInput}
             />
+
             <View
               style={[
                 styles.packagingLabelBox,
@@ -2508,6 +1787,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
               >
                 {t('nutritionLogger.packageFlowTitle')}
               </ThemedText>
+
               {ingredientListImage ? (
                 <ImageThumbnailWithDelete
                   uri={ingredientListImage.uri}
@@ -2556,10 +1836,15 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
               <View style={styles.analysisReviewSection}>
                 <ThemedText type="label">AI Interpretation</ThemedText>
                 {interpretationItems.map((item, index) => (
-                  <ThemedText key={`interp-${item.slice(0, 32)}`} type="default" style={styles.analysisReviewBody}>
+                  <ThemedText
+                    key={`interp-${item.slice(0, 32)}`}
+                    type="default"
+                    style={styles.analysisReviewBody}
+                  >
                     {`${index + 1}. ${item}`}
                   </ThemedText>
                 ))}
+
                 {(() => {
                   let confidenceColor = colors.textMuted;
                   if (pendingAnalysisReview?.evidence?.confidence === 'high') {
@@ -2569,10 +1854,12 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                   } else if (pendingAnalysisReview?.evidence?.confidence === 'low') {
                     confidenceColor = colors.warmColor;
                   }
+
                   const confidenceKey =
                     'general.confidence.' + (pendingAnalysisReview?.evidence?.confidence ?? 'unknown');
                   const confidenceText =
                     t('general.confidence.label') + ': ' + t(confidenceKey);
+
                   return (
                     <ThemedText
                       type="caption"
@@ -2603,17 +1890,23 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                   <ThemedText type="defaultSemiBold" style={reAnalyzeHighlightStyle}>
                     {t('general.reAnalyzePrompt.analyze')}
                   </ThemedText>
-                  {t('general.reAnalyzePrompt.suffix') ? ` ${t('general.reAnalyzePrompt.suffix')}` : ''}
+                  {t('general.reAnalyzePrompt.suffix')
+                    ? ` ${t('general.reAnalyzePrompt.suffix')}`
+                    : ''}
                 </ThemedText>
               </Pressable>
             ) : null}
 
             {pendingAnalysisReview?.analysis ? (
               <View style={styles.analysisReviewSection}>
-                <ThemedText type="label">{t('nutritionLogger.analysisReviewNutritionPreviewTitle')}</ThemedText>
+                <ThemedText type="label">
+                  {t('nutritionLogger.analysisReviewNutritionPreviewTitle')}
+                </ThemedText>
                 <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
                   <ThemedText type="title3">
-                    {t('nutritionLogger.mealTitleWithName', { name: pendingAnalysisReview.analysis.mealName })}
+                    {t('nutritionLogger.mealTitleWithName', {
+                      name: pendingAnalysisReview.analysis.mealName,
+                    })}
                   </ThemedText>
                   <NutritionBreakdown
                     calories={pendingAnalysisReview.analysis.calories}
@@ -2625,7 +1918,9 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
                     fiberSubtypeTotals={pendingAnalysisReview.analysis.fiberSubtypeTotals}
                     polyphenolByType={pendingAnalysisReview.analysis.polyphenolByType}
                     mineralsByType={pendingAnalysisReview.analysis.mineralsByType}
-                    mineralsConfidenceByType={pendingAnalysisReview.analysis.mineralsConfidenceByType}
+                    mineralsConfidenceByType={
+                      pendingAnalysisReview.analysis.mineralsConfidenceByType
+                    }
                     vitaminsByType={pendingAnalysisReview.analysis.vitaminsByType}
                     aminoAcidsByType={pendingAnalysisReview.analysis.aminoAcidsByType}
                     microbiomeSupport={pendingAnalysisReview.analysis.microbiomeSupport}
@@ -2655,7 +1950,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({ selectedDate, onTipCo
           </View>
         </ThemedModal>
 
-                <CopyMealBottomSheet
+        <CopyMealBottomSheet
           copyMealBottomSheetRef={copyMealBottomSheetRef}
           copyMealSheetSnapPoints={copyMealSheetSnapPoints}
           BottomSheetOverlayContainer={BottomSheetOverlayContainer}
@@ -2774,10 +2069,8 @@ const styles = StyleSheet.create({
   reAnalyzeTextDisabled: {
     opacity: 0.5,
   },
-  reAnalyzePrefix: {
-  },
-  reAnalyzeHighlight: {
-  },
+  reAnalyzePrefix: {},
+  reAnalyzeHighlight: {},
   packagingModalPickerButton: {
     marginTop: 4,
   },
