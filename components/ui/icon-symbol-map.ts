@@ -99,6 +99,10 @@ export const ICON_SYMBOLS = {
     sf: 'circle.grid.cross',
     material: 'bubble-chart',
   },
+  'chart': {
+    sf: 'chart.xyaxis.line',
+    material: 'insights',
+  },
 } as const;
 
 export type IconSymbolName = keyof typeof ICON_SYMBOLS;

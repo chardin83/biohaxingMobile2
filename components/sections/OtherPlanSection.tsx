@@ -1,7 +1,7 @@
 import BottomSheet from '@gorhom/bottom-sheet';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Portal } from 'react-native-paper';
 
 import { PlanTipEntry, useStorage } from '@/app/context/StorageContext';
@@ -10,7 +10,8 @@ import { MetricsBottomSheet } from '@/components/sections/MetricsBottomSheet';
 import { PlanMeta } from '@/components/sections/PlanMeta';
 import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
-import PlanEditActions from '@/components/ui/PlanEditActions';
+
+import { PlanHeaderActions } from './PlanHeaderActions';
 
 type Props = {
   formatDate: (isoDate: string) => string;
@@ -18,7 +19,7 @@ type Props = {
 
 export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
-  const { plans, setPlans, getMetricsForPlanTip } = useStorage();
+  const { plans, setPlans } = useStorage();
 
   const otherPlans = plans.other;
 
@@ -101,29 +102,17 @@ export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
         const tipTitle = plan.tipId
           ? t(`tips:${plan.tipId}.title`)
           : t('plan.untitled');
-        const metricCount = plan.tipId ? getMetricsForPlanTip(plan.tipId).length : 0;
-        const hasTipId = Boolean(plan.tipId);
-        const metricsLabel = metricCount > 0 ? `📊 ${metricCount}` : '📊';
 
         const editAction = (
-          <View style={styles.headerActionsContainer}>
-            {hasTipId && (
-              <TouchableOpacity
-                onPress={() => openMetricsSheet(plan.tipId)}
-                style={styles.chartButton}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              >
-                <ThemedText style={[styles.chartEmoji, metricCount === 0 && styles.chartEmojiDisabled]}>
-                  {metricsLabel}
-                </ThemedText>
-              </TouchableOpacity>
-            )}
-            <PlanEditActions
-              onEdit={() => handleEditOther(plan)}
-              editLabel={t('otherPlanSection.editOtherSettings')}
-              style={styles.planHeaderActions}
-            />
-          </View>
+          <PlanHeaderActions
+            tipId={plan.tipId}
+            trainingSettingsKey={plan.tipId ?? ''}
+            tipTitle={tipTitle}
+            t={t}
+            openMetricsSheet={openMetricsSheet}
+            openTrainingSettingsModal={() => handleEditOther(plan)}
+            styles={styles}
+          />
         );
 
         return (

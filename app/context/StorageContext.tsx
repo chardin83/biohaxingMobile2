@@ -9,7 +9,7 @@ import {
   XP_PER_CHAT_MESSAGE,
   type XpSource,
 } from '@/constants/XP';
-import { tipMetricLinks } from '@/locales/metrics';
+import { MetricId } from '@/locales/metrics';
 import { PlanCategory } from '@/types/planCategory';
 import { VerdictValue } from '@/types/verdict';
 
@@ -77,12 +77,11 @@ export type ReasonSummary = {
 };
 
 export type MetricEntry = {
-  metricId: string;
+  metricId: MetricId;
   value: number;
   unit: string;
   recordedAt: string;
   notes?: string;
-  planTipId?: string; // Referens till vilken plan/tip detta mätvärde är kopplat till
 };
 
 export type PlansByCategory = {
@@ -197,9 +196,7 @@ interface StorageContextType {
   ) => void;
   addMetricEntry: (entry: MetricEntry) => void;
   upsertMetricEntries: (entries: MetricEntry[]) => void;
-  getMetricHistory: (metricId: string, planTipId?: string) => MetricEntry[];
-  getMetricsForPlanTip: (planTipId: string) => MetricEntry[];
-  getRelevantTipsForMetrics: (metricIds: string[]) => Array<{ tipId: string; matchCount: number; matchingMetrics: string[] }>;
+  getMetricHistory: (metricId: MetricId, planTipId?: string) => MetricEntry[];
   weeklyTracking: Record<string, Record<string, string[] | number>>;
   setWeeklyTracking: (
     updater: Record<string, Record<string, string[] | number>> | ((prev: Record<string, Record<string, string[] | number>>) => Record<string, Record<string, string[] | number>>)
@@ -586,42 +583,13 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     });
   }, []);
 
-  const getMetricHistory = useCallback((metricId: string, planTipId?: string): MetricEntry[] => {
+  const getMetricHistory = useCallback((metricId: MetricId): MetricEntry[] => {
     return metricEntriesState.filter(entry => {
       const matchesMetric = entry.metricId === metricId;
-      if (planTipId) {
-        return matchesMetric && entry.planTipId === planTipId;
-      }
       return matchesMetric;
     });
   }, [metricEntriesState]);
 
-  const getMetricsForPlanTip = useCallback((planTipId: string): MetricEntry[] => {
-    return metricEntriesState.filter(entry => entry.planTipId === planTipId);
-  }, [metricEntriesState]);
-
-  const getRelevantTipsForMetrics = useCallback((metricIds: string[]) => {
-    const results: Array<{ tipId: string; matchCount: number; matchingMetrics: string[] }> = [];
-
-    // Gå igenom varje tip i tipMetricLinks
-    Object.entries(tipMetricLinks).forEach(([tipId, metricLinks]) => {
-      // Hitta vilka av de inmatade metricIds som finns i denna tips metricLinks
-      const matchingMetrics = metricLinks
-        .filter(link => metricIds.includes(link.metricId))
-        .map(link => link.metricId);
-
-      if (matchingMetrics.length > 0) {
-        results.push({
-          tipId,
-          matchCount: matchingMetrics.length,
-          matchingMetrics,
-        });
-      }
-    });
-
-    // Sort by matchCount - mest relevanta först
-    return results.sort((a, b) => b.matchCount - a.matchCount);
-  }, []);
 
   const addTipView = useCallback((_areaId: string, tipId: string): number => {
     const existing = viewedTipsState.find(v => v.tipId === tipId);

@@ -9,7 +9,7 @@ import { RegisterMetricBottomSheet } from '@/components/RegisterMetricBottomShee
 import { MetricValuesTableSection } from '@/components/sections/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { metrics, tipMetricLinks } from '@/locales/metrics';
+import { MetricId, metrics, tipMetricLinks } from '@/locales/metrics';
 
 type MetricsBottomSheetProps = {
   bottomSheetRef: React.RefObject<BottomSheet | null>;
@@ -28,11 +28,11 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
   const { colors } = useTheme();
   const { addMetricEntry, getMetricHistory, getMetricsForPlanTip, setMetricEntries } = useStorage();
   const registerBottomSheetRef = useRef<BottomSheet>(null);
-  const [selectedMetricId, setSelectedMetricId] = useState<string | null>(null); // For detail view
+  const [selectedMetricId, setSelectedMetricId] = useState<MetricId | null>(null); // For detail view
   const [sheetIndex, setSheetIndex] = useState(1);
   const [isRegisterSheetVisible, setIsRegisterSheetVisible] = useState(false);
   const [editingEntry, setEditingEntry] = useState<MetricEntry | null>(null);
-  const [metricDraftId, setMetricDraftId] = useState<string | null>(null);
+  const [metricDraftId, setMetricDraftId] = useState<MetricId | null>(null);
   const [metricValue, setMetricValue] = useState('');
   const [metricUnit, setMetricUnit] = useState('');
   const [metricNotes, setMetricNotes] = useState('');
@@ -40,7 +40,7 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
 
   const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
 
-  const getRegisteredEntries = (metricId: string) => {
+  const getRegisteredEntries = (metricId: MetricId) => {
     if (isGlobalMetric(metricId)) {
       return getMetricHistory(metricId);
     }
@@ -52,7 +52,7 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
     return getMetricsForPlanTip(planTipId).filter(entry => entry.metricId === metricId);
   };
 
-  const handleOpenAddMetricSheet = (metricId: string) => {
+  const handleOpenAddMetricSheet = (metricId: MetricId) => {
     setEditingEntry(null);
     setMetricDraftId(metricId);
     const metric = metrics[metricId];
@@ -271,7 +271,7 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
                       </ThemedText>
                     )}
                   </View>
-                  {unit.precision !== undefined && (
+                  {'precision' in unit && (
                     <ThemedText type="caption" style={[styles.metaTextSpacing, { color: colors.textMuted }]}>
                       Precision: {unit.precision} decimaler
                     </ThemedText>

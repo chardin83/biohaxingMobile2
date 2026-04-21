@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
-import { ThemedText } from '@/components/ThemedText';
+
+import { ThemedText } from '../ThemedText';
 
 interface VO2MaxMetricProps {
   trend?: number; // Percentage change

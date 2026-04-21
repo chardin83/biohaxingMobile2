@@ -1,17 +1,17 @@
 import BottomSheet from '@gorhom/bottom-sheet';
 import React, { useCallback,useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
 import { PlanTipEntry, useStorage } from '@/app/context/StorageContext';
 import DefaultSettingsModal from '@/components/modals/DefaultSettingsModal';
 import { MetricsBottomSheet } from '@/components/sections/MetricsBottomSheet';
+import { PlanHeaderActions } from '@/components/sections/PlanHeaderActions';
 import { PlanMeta } from '@/components/sections/PlanMeta';
 import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
 import Badge from '@/components/ui/Badge';
-import PlanEditActions from '@/components/ui/PlanEditActions';
 import { useSupplementMap } from '@/locales/supplements';
 import { Tip,tips } from '@/locales/tips';
 
@@ -169,22 +169,15 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) =>
         const arrowRotation = isExpanded ? '-90deg' : '0deg';
 
         const editAction = (
-          <View style={styles.headerActionsContainer}>
-            <TouchableOpacity
-              onPress={() => openMetricsSheet(tipId)}
-              style={styles.chartButton}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            >
-              <ThemedText style={[styles.chartEmoji, metricCount === 0 && styles.chartEmojiDisabled]}>
-                {metricsLabel}
-              </ThemedText>
-            </TouchableOpacity>
-            <PlanEditActions
-              onEdit={() => handleEditNutrition(plan, tipId, tipTitle)}
-              editLabel={t('nutritionPlanSection.editNutritionSettings')}
-              style={styles.planHeaderActions}
-            />
-          </View>
+          <PlanHeaderActions
+            tipId={tipId}
+            trainingSettingsKey={tipId}
+            tipTitle={tipTitle}
+            t={t}
+            openMetricsSheet={openMetricsSheet}
+            openTrainingSettingsModal={(_key, _title) => handleEditNutrition(plan, tipId, tipTitle)}
+            styles={styles}
+          />
         );
 
         return (

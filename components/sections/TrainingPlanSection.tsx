@@ -1,7 +1,7 @@
 import BottomSheet from '@gorhom/bottom-sheet';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
 import { useStorage } from '@/app/context/StorageContext';
@@ -12,7 +12,8 @@ import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
 import Badge from '@/components/ui/Badge';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import PlanEditActions from '@/components/ui/PlanEditActions';
+
+import { PlanHeaderActions } from './PlanHeaderActions';
 
 type Props = {
   colors: any;
@@ -21,7 +22,7 @@ type Props = {
 
 export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
-  const { plans, trainingPlanSettings, setTrainingPlanSettings, getMetricsForPlanTip } = useStorage();
+  const { plans, trainingPlanSettings, setTrainingPlanSettings } = useStorage();
 
   const trainingPlanGoals = plans.training;
 
@@ -137,24 +138,16 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
           });
         }
 
-        // Count metric registrations for this planTipId
-        const metricCount = getMetricsForPlanTip(trainingSettingsKey).length;
-
         const editAction = (
-          <View style={styles.headerActionsContainer}>
-            <TouchableOpacity
-              onPress={() => openMetricsSheet(trainingSettingsKey)}
-              style={styles.chartButton}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            >
-              <ThemedText style={[styles.chartEmoji, metricCount === 0 && styles.chartEmojiDisabled]}>📊{metricCount > 0 ? ` ${metricCount}` : ''}</ThemedText>
-            </TouchableOpacity>
-            <PlanEditActions
-              onEdit={() => openTrainingSettingsModal(trainingSettingsKey, tipTitle)}
-              editLabel={t('plan.editTrainingSettings')}
-              style={styles.planHeaderActions}
-            />
-          </View>
+          <PlanHeaderActions
+            tipId={goal.tipId}
+            trainingSettingsKey={trainingSettingsKey}
+            tipTitle={tipTitle}
+            t={t}
+            openMetricsSheet={openMetricsSheet}
+            openTrainingSettingsModal={openTrainingSettingsModal}
+            styles={styles}
+          />
         );
 
         return (

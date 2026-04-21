@@ -27,7 +27,8 @@ export type MetricUnit =
   | 'min'
   | 'min_from_midnight'
   | 'hours'
-  | 'bss'; // Bristol Stool Scale
+  | 'bss'
+  | 'ml/kg/min'; // Bristol Stool Scale
 
 export type MetricSource = 'lab' | 'home' | 'wearable' | 'questionnaire';
 
@@ -50,13 +51,7 @@ export type MetricDefinition = {
   source: MetricSource;
   suggestedFrequency?: 'daily' | 'weekly' | 'monthly' | 'perTest';
 };
-
-export type TipMetricLink = {
-  metricId: string;
-  kind: 'primary' | 'secondary' | 'subjective' | 'safety';
-};
-
-export const metrics: Record<string, MetricDefinition> = {
+export const metrics = {
   // ---------------- LIPIDS ----------------
 
   ldl: {
@@ -466,6 +461,19 @@ export const metrics: Record<string, MetricDefinition> = {
     ]
   },
 
+  body_battery: {
+    id: 'body_battery',
+    emoji: '🔋',
+    nameKey: 'body_battery.name',
+    descriptionKey: 'body_battery.description',
+    canonicalUnit: '%',
+    source: 'wearable',
+    suggestedFrequency: 'daily',
+    units: [
+      { unit: '%', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
+  },
+
   stress: {
     id: 'stress',
     emoji: '😰',
@@ -490,7 +498,27 @@ export const metrics: Record<string, MetricDefinition> = {
     units: [
       { unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
-  }
+  },
+    vo2_max: {
+    id: 'vo2_max',
+    emoji: '🫁',
+    nameKey: 'vo2_max.name',
+    descriptionKey: 'vo2_max.description',
+    canonicalUnit: 'ml/kg/min',
+    source: 'wearable',
+    suggestedFrequency: 'weekly',
+    units: [
+      { unit: 'ml/kg/min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 }
+    ]
+  },
+} satisfies Record<string, MetricDefinition>;
+
+export type MetricId = keyof typeof metrics;
+
+
+export type TipMetricLink = {
+  metricId: MetricId;
+  kind: 'primary' | 'secondary' | 'subjective' | 'safety';
 };
 
 export const tipMetricLinks: Record<string, TipMetricLink[]> = {
@@ -622,15 +650,12 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
 
     // --- Training Tips ---
     neuromuscular_training: [
-        { metricId: 'strength', kind: 'primary' },
         { metricId: 'hrv', kind: 'secondary' },
         { metricId: 'resting_hr', kind: 'secondary' },
-        { metricId: 'muscle_mass', kind: 'primary' },
         { metricId: 'energy', kind: 'subjective' },
     ],
     lactate_threshold_training: [
         { metricId: 'vo2_max', kind: 'primary' },
-        { metricId: 'heart_rate_max', kind: 'secondary' },
         { metricId: 'systolic_bp', kind: 'secondary' },
         { metricId: 'diastolic_bp', kind: 'secondary' },
         { metricId: 'focus', kind: 'subjective' },
