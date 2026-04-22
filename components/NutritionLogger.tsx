@@ -70,7 +70,6 @@ interface NutritionLoggerProps {
 type TipTargetIconName = 'fiber' | 'polyphenol' | 'target';
 
 type TipProgressItem = {
-  planTipId: string;
   tipId: string;
   title: string;
   areaId?: string;
@@ -92,7 +91,7 @@ type TipProgressItem = {
 };
 
 const getTipProgressKey = (tip: TipProgressItem): string =>
-  `${tip.planTipId}|${tip.tipId}|${tip.period}`;
+  `${tip.tipId}|${tip.period}`;
 
 type RecentMealOption = {
   id: string;
@@ -1266,7 +1265,6 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({
 
     return [
       {
-        planTipId: planTip.id ?? 'no-plan-tip-id',
         tipId: tip.id,
         title: tip.title,
         areaId: tip.areas[0]?.id,
@@ -1547,13 +1545,11 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({
     nutritionPlanTipProgress.forEach(tipProgress => {
       if (!tipProgress.isFulfilled) return;
 
-      const planTipId = tipProgress.planTipId ?? 'no-plan-tip-id';
 
       if (tipProgress.period === 'daily') {
         claimNutritionTipCompletionXP?.({
-          claimKey: `${planTipId}|${tipProgress.tipId}|daily|${selectedDate}`,
+          claimKey: `${tipProgress.tipId}|daily|${selectedDate}`,
           tipId: tipProgress.tipId,
-          planTipId,
           period: 'daily',
           periodKey: selectedDate,
           amount: XP_FOR_NUTRITION_TIP_DAILY_COMPLETION,
@@ -1562,9 +1558,8 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({
 
       if (tipProgress.period === 'weekly') {
         claimNutritionTipCompletionXP?.({
-          claimKey: `${planTipId}|${tipProgress.tipId}|weekly|${weekStartKey}`,
+          claimKey: `${tipProgress.tipId}|weekly|${weekStartKey}`,
           tipId: tipProgress.tipId,
-          planTipId,
           period: 'weekly',
           periodKey: weekStartKey,
           amount: XP_FOR_NUTRITION_TIP_WEEKLY_COMPLETION,

@@ -24,7 +24,7 @@ type Props = {
 
 export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
-  const { plans, setPlans, getMetricsForPlanTip } = useStorage();
+  const { plans, setPlans } = useStorage();
   const supplementMap = useSupplementMap();
 
   const nutritionPlans = plans.nutrition;
@@ -143,8 +143,6 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) =>
         const recommendedDoseLabel = getRecommendedDoseLabel(tip);
 
         const plan = nutritionPlans.find(g => g.tipId === tipId);
-  const metricCount = getMetricsForPlanTip(tipId).length;
-        const metricsLabel = metricCount > 0 ? `📊 ${metricCount}` : '📊';
 
         const foodItems = (tip?.nutritionFoods ?? []).map(food => {
           const itemKey = food.key;
@@ -257,7 +255,7 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) =>
           cancelLabel={t('general.cancel')}
           deleteLabel={t('general.delete')}
         />
-        <MetricsBottomSheet bottomSheetRef={metricsBottomSheetRef} tipId={selectedMetricsTipId} planTipId={selectedMetricsTipId ?? undefined} />
+        <MetricsBottomSheet bottomSheetRef={metricsBottomSheetRef} tipId={selectedMetricsTipId} />
       </Portal>
     </>
   );

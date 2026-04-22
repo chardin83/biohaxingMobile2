@@ -12,7 +12,7 @@ import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
 import { DateTimeInput } from '@/components/ui/DateTimeInput';
 import { SwipeableRow } from '@/components/ui/SwipeableRow';
-import { metrics } from '@/locales/metrics';
+import { MetricId, metrics } from '@/locales/metrics';
 
 type MetricValueEntry = MetricEntry;
 
@@ -147,7 +147,7 @@ export function MetricValuesTableSection({
 
 type MetricValuesBottomSheetProps = {
   bottomSheetRef: React.RefObject<BottomSheet | null>;
-  metricId: string | null;
+  metricId: MetricId | null;
   metricName?: string;
 };
 
@@ -391,7 +391,6 @@ export function MetricValuesBottomSheet({ bottomSheetRef, metricId, metricName }
       && left.value === right.value
       && left.unit === right.unit
       && (left.notes ?? '') === (right.notes ?? '')
-      && (left.planTipId ?? '') === (right.planTipId ?? '')
     );
   }, []);
 
@@ -451,7 +450,6 @@ export function MetricValuesBottomSheet({ bottomSheetRef, metricId, metricName }
       unit: metricUnit || metric?.canonicalUnit || '',
       recordedAt: recordedAt.toISOString(),
       notes: metricNotes || undefined,
-      planTipId: editingEntry?.planTipId,
     };
 
     if (editingEntry) {

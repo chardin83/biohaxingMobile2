@@ -196,7 +196,7 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
           saveLabel={t('general.save')}
           cancelLabel={t('general.cancel')}
         />
-        <MetricsBottomSheet bottomSheetRef={metricsBottomSheetRef} tipId={selectedMetricsTipId} planTipId={selectedMetricsTipId ?? undefined} />
+        <MetricsBottomSheet bottomSheetRef={metricsBottomSheetRef} tipId={selectedMetricsTipId} />
       </Portal>
     </>
   );

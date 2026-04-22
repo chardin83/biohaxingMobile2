@@ -61,7 +61,6 @@ export type DailyNutritionSummary = {
 // PlanCategory is shared from types/planCategory.ts
 
 export type PlanTipEntry = {
-  id: string; // Unikt ID för att länka till mätvärden
   startedAt: string;
   createdBy: string;
   editedAt: string;
@@ -124,7 +123,6 @@ export type NutritionXpClaim = {
   period: 'daily' | 'weekly';
   periodKey: string;
   tipId: string;
-  planTipId: string;
 };
 
 interface StorageContextType {
@@ -174,7 +172,6 @@ interface StorageContextType {
   claimNutritionTipCompletionXP?: (input: {
     claimKey: string;
     tipId: string;
-    planTipId: string;
     period: 'daily' | 'weekly';
     periodKey: string;
     amount: number;
@@ -196,7 +193,7 @@ interface StorageContextType {
   ) => void;
   addMetricEntry: (entry: MetricEntry) => void;
   upsertMetricEntries: (entries: MetricEntry[]) => void;
-  getMetricHistory: (metricId: MetricId, planTipId?: string) => MetricEntry[];
+  getMetricHistory: (metricId: MetricId) => MetricEntry[];
   weeklyTracking: Record<string, Record<string, string[] | number>>;
   setWeeklyTracking: (
     updater: Record<string, Record<string, string[] | number>> | ((prev: Record<string, Record<string, string[] | number>>) => Record<string, Record<string, string[] | number>>)
@@ -560,11 +557,11 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       const existingIndexByKey = new Map<string, number>();
 
       next.forEach((entry, index) => {
-        existingIndexByKey.set(`${entry.metricId}|${entry.recordedAt}|${entry.planTipId ?? ''}`, index);
+        existingIndexByKey.set(`${entry.metricId}|${entry.recordedAt}`, index);
       });
 
       entries.forEach(entry => {
-        const key = `${entry.metricId}|${entry.recordedAt}|${entry.planTipId ?? ''}`;
+        const key = `${entry.metricId}|${entry.recordedAt}`;
         const existingIndex = existingIndexByKey.get(key);
 
         if (existingIndex === undefined) {
@@ -700,12 +697,11 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     (input: {
       claimKey: string;
       tipId: string;
-      planTipId: string;
       period: 'daily' | 'weekly';
       periodKey: string;
       amount: number;
     }): number => {
-      const { claimKey, tipId, planTipId, period, periodKey, amount } = input;
+      const { claimKey, tipId, period, periodKey, amount } = input;
       if (!claimKey || !Number.isFinite(amount) || amount <= 0) {
         return 0;
       }
@@ -727,7 +723,6 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
             period,
             periodKey,
             tipId,
-            planTipId,
           },
         };
 
@@ -842,14 +837,12 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       addMetricEntry,
       upsertMetricEntries,
       getMetricHistory,
-      getMetricsForPlanTip,
-      getRelevantTipsForMetrics,
       weeklyTracking: weeklyTrackingState,
       setWeeklyTracking,
       addToWeeklyTracking,
       getWeeklyTrackingValue,
     }),
-    [plansState, setPlans, activeGoals, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState, trainingPlanSettingsState, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, getMetricsForPlanTip, getRelevantTipsForMetrics, weeklyTrackingState, addToWeeklyTracking, getWeeklyTrackingValue]
+    [plansState, setPlans, activeGoals, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState, trainingPlanSettingsState, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, weeklyTrackingState, addToWeeklyTracking, getWeeklyTrackingValue]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

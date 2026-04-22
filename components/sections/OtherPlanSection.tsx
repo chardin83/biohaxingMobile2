@@ -150,7 +150,7 @@ export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
           cancelLabel={t('general.cancel')}
           deleteLabel={t('general.delete')}
         />
-        <MetricsBottomSheet bottomSheetRef={metricsBottomSheetRef} tipId={selectedMetricsTipId} planTipId={selectedMetricsTipId ?? undefined} />
+        <MetricsBottomSheet bottomSheetRef={metricsBottomSheetRef} tipId={selectedMetricsTipId} />
       </Portal>
     </>
   );

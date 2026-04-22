@@ -14,19 +14,14 @@ import { MetricId, metrics, tipMetricLinks } from '@/locales/metrics';
 type MetricsBottomSheetProps = {
   bottomSheetRef: React.RefObject<BottomSheet | null>;
   tipId: string | null;
-  planTipId?: string;
 };
 
-const GLOBAL_METRIC_IDS = new Set(['hrv', 'resting_hr']);
 
-function isGlobalMetric(metricId: string): boolean {
-  return GLOBAL_METRIC_IDS.has(metricId);
-}
 
-export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSheetRef, tipId, planTipId }) => {
+export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSheetRef, tipId }) => {
   const { t } = useTranslation(['metrics', 'common']);
   const { colors } = useTheme();
-  const { addMetricEntry, getMetricHistory, getMetricsForPlanTip, setMetricEntries } = useStorage();
+  const { addMetricEntry, getMetricHistory, setMetricEntries } = useStorage();
   const registerBottomSheetRef = useRef<BottomSheet>(null);
   const [selectedMetricId, setSelectedMetricId] = useState<MetricId | null>(null); // For detail view
   const [sheetIndex, setSheetIndex] = useState(1);
@@ -41,15 +36,7 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
   const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
 
   const getRegisteredEntries = (metricId: MetricId) => {
-    if (isGlobalMetric(metricId)) {
       return getMetricHistory(metricId);
-    }
-
-    if (!planTipId) {
-      return [];
-    }
-
-    return getMetricsForPlanTip(planTipId).filter(entry => entry.metricId === metricId);
   };
 
   const handleOpenAddMetricSheet = (metricId: MetricId) => {
@@ -73,13 +60,6 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
     const value = Number.parseFloat(metricValue);
     if (Number.isNaN(value)) return;
 
-    let targetPlanTipId = planTipId;
-    if (isGlobalMetric(metricDraftId)) {
-      targetPlanTipId = undefined;
-    }
-    if (editingEntry) {
-      targetPlanTipId = editingEntry.planTipId;
-    }
 
     const nextEntry: MetricEntry = {
       metricId: metricDraftId,
@@ -87,7 +67,6 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
       unit: metricUnit,
       recordedAt: recordedAt.toISOString(),
       notes: metricNotes || undefined,
-      planTipId: targetPlanTipId,
     };
 
     if (editingEntry) {
@@ -101,7 +80,6 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
             && entry.value === editingEntry.value
             && entry.unit === editingEntry.unit
             && (entry.notes ?? '') === (editingEntry.notes ?? '')
-            && (entry.planTipId ?? '') === (editingEntry.planTipId ?? '')
           ) {
             replaced = true;
             return nextEntry;
@@ -156,7 +134,6 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
           && current.value === entry.value
           && current.unit === entry.unit
           && (current.notes ?? '') === (entry.notes ?? '')
-          && (current.planTipId ?? '') === (entry.planTipId ?? '')
         ) {
           removed = true;
           return false;
@@ -212,7 +189,7 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
     const metric = metrics[selectedMetricId];
     if (metric) {
       const registeredEntries = getRegisteredEntries(selectedMetricId);
-      console.log('registeredEntries', registeredEntries, 'planTipId', planTipId, 'selectedMetricId', selectedMetricId);
+      console.log('registeredEntries', registeredEntries, 'selectedMetricId', selectedMetricId);
       detailView = (
         <BottomSheet
           ref={bottomSheetRef}
