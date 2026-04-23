@@ -338,6 +338,20 @@ export const metrics = {
     ]
   },
 
+  sleep_wake: {
+    id: 'sleep_wake',
+    emoji: '⏰',
+    nameKey: 'sleep_wake.name',
+    descriptionKey: 'sleep_wake.description',
+    canonicalUnit: 'min_from_midnight',
+    source: 'wearable',
+    suggestedFrequency: 'daily',
+    units: [
+      { unit: 'min_from_midnight', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
+  },
+
+
   sleep_quality: {
     id: 'sleep_quality',
     emoji: '🌙',
@@ -599,6 +613,11 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
     sunlight_circadian: [
         { metricId: 'sleep_latency', kind: 'primary' },
         { metricId: 'sleep_quality', kind: 'secondary' },
+        { metricId: 'energy', kind: 'subjective' },
+    ],
+    sleep_optimization_recovery: [
+        { metricId: 'sleep_quality', kind: 'primary' },
+        { metricId: 'hrv', kind: 'secondary' },
         { metricId: 'energy', kind: 'subjective' },
     ],
 

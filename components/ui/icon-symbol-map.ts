@@ -35,6 +35,10 @@ export const ICON_SYMBOLS = {
     sf: 'clock',
     material: 'schedule',
   },
+  'alarm': {
+    sf: 'alarm',
+    material: 'alarm',
+  },
   'checklist': {
     sf: 'checklist',
     material: 'checklist',

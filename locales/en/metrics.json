@@ -132,6 +132,10 @@
         "name": "REM sleep",
         "description": "The sleep phase supporting memory, learning, and emotional processing."
     },
+    "sleep_wake": {
+        "name": "Wake time",
+        "description": "The time you wake up in the morning."
+    },
     "sleep_quality": {
         "name": "Sleep quality",
         "description": "Your perceived sleep quality."

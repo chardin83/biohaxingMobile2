@@ -132,6 +132,10 @@
         "name": "REM-sömn",
         "description": "Sömnfasen som stödjer minne, inlärning och emotionell bearbetning."
     },
+    "sleep_wake": {
+        "name": "Vaknade",
+        "description": "Tidpunkt då du vaknade på morgonen."
+    },
     "sleep_quality": {
         "name": "Sömnkvalitet",
         "description": "Upplevd kvalitet på sömnen."

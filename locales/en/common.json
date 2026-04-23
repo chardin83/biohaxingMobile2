@@ -54,11 +54,14 @@
     "cancel": "Cancel",
     "close": "Close",
     "save": "Save",
+    "saveAll": "Save all",
     "delete": "Delete",
     "countSuffix": "pcs",
     "level": "level",
     "showAll": "Show all",
     "showLess": "Show less",
+    "date": "Date",
+    "time": "Time",
     "confidence": {
       "label": "Confidence",
       "high": "High",
@@ -836,14 +839,14 @@
     }
   },
   "mindTrendsChart": {
-      "title": "Cognitive metrics",
-      "explainer": "Tap different metrics to view their trends over time.",
-      "explainers": {
-        "body_battery": "The Body Battery trend shows how your energy reserves change over time. Higher and more stable levels are often linked to better mental stamina and focus.",
-        "sleep_duration": "Sleep duration in hours and minutes shows your recovery baseline. A stable level night after night supports memory, concentration, and emotional regulation.",
-        "steps": "The steps trend reflects your daily movement volume. Consistent everyday activity supports brain blood flow and can improve cognitive sharpness.",
-        "intensity_minutes": "Intensity minutes show how much pulse-raising activity you get. The right weekly dose can improve stress resilience and mental performance."
-      }
+    "title": "Cognitive metrics",
+    "explainer": "Tap different metrics to view their trends over time.",
+    "explainers": {
+      "body_battery": "The Body Battery trend shows how your energy reserves change over time. Higher and more stable levels are often linked to better mental stamina and focus.",
+      "sleep_duration": "Sleep duration in hours and minutes shows your recovery baseline. A stable level night after night supports memory, concentration, and emotional regulation.",
+      "steps": "The steps trend reflects your daily movement volume. Consistent everyday activity supports brain blood flow and can improve cognitive sharpness.",
+      "intensity_minutes": "Intensity minutes show how much pulse-raising activity you get. The right weekly dose can improve stress resilience and mental performance."
+    }
   },
   "immuneTrendsChart": {
     "title": "Immune status",
@@ -886,6 +889,18 @@
       "unit": "Unit",
       "notes": "Note"
     }
+  },
+  "metricValuesTableSection": {
+    "addButton": "Register new value",
+    "addSleepBatchButton": "Register all sleep values"
+  },
+  "sleepBatchBottomSheet": {
+    "title": "Register sleep values",
+    "durationHint": "Adjusted automatically but you can edit if needed",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "notesLabel": "Notes",
+    "notesPlaceholder": "Dog slept in bed, woke up often, etc."
   },
   "nutritionLogger": {
     "mealTitle": "Logged meal",

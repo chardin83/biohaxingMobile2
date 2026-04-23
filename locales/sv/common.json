@@ -54,12 +54,14 @@
     "cancel": "Avbryt",
     "close": "Stäng",
     "save": "Spara",
+    "saveAll": "Spara alla",
     "delete": "Ta bort",
     "countSuffix": "st",
-    "sleep": "sömn",
     "level": "level",
     "showAll": "Visa alla",
     "showLess": "Visa mindre",
+    "date": "Datum",
+    "time": "Tid",
     "confidence": {
       "label": "Konfidens",
       "high": "Hög",
@@ -127,7 +129,7 @@
   "supplementTabSection": {
     "addManually": "Lägg till manuellt"
   },
-   "planMeta": {
+  "planMeta": {
     "activeSince": "Aktiv sedan {{date}}"
   },
   "createPlan": {
@@ -171,10 +173,10 @@
     "editSupplement": "Redigera tillskott för",
     "pickImage": "Analysera måltid",
     "analyzing": "Analyserar med AI",
-     "analysisFailed": "Analysen misslyckades. Försök igen.",
+    "analysisFailed": "Analysen misslyckades. Försök igen.",
     "nutritionSummary": "Näringsöversikt"
   },
-   "timePickerSection": {
+  "timePickerSection": {
     "chooseTime": "Välj tid"
   },
   "planSupplementsPicker": {
@@ -885,7 +887,6 @@
     }
   },
   "metricValuesBottomSheet": {
-    "addButton": "Registrera nytt värde",
     "registeredValuesTitle": "Registrerade värden",
     "confirmDeleteTitle": "Ta bort mätvärde?",
     "confirmDeleteMessage": "Det här går inte att ångra.",
@@ -896,6 +897,18 @@
       "unit": "Enhet",
       "notes": "Notering"
     }
+  },
+  "metricValuesTableSection": {
+    "addButton": "Registrera nytt värde",
+    "addSleepBatchButton": "Registrera samtliga sömnvärden"
+  },
+  "sleepBatchBottomSheet": {
+    "title": "Registrera sömnvärden",
+    "durationHint": "Justeras automatiskt men du kan redigera vid behov",
+    "hours": "Timmar",
+    "minutes": "Minuter",
+    "notesLabel": "Noteringar",
+    "notesPlaceholder": "Hunden sov i sängen, vaknade ofta, etc."
   },
   "nutritionLogger": {
     "mealTitle": "Loggad måltid",

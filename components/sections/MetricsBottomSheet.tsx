@@ -6,10 +6,11 @@ import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { type MetricEntry, useStorage } from '@/app/context/StorageContext';
 import { RegisterMetricBottomSheet } from '@/components/RegisterMetricBottomSheet';
-import { MetricValuesTableSection } from '@/components/sections/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { MetricId, metrics, tipMetricLinks } from '@/locales/metrics';
+
+import { MetricValuesTableSection } from './MetricValuesTableSection';
 
 type MetricsBottomSheetProps = {
   bottomSheetRef: React.RefObject<BottomSheet | null>;
@@ -225,7 +226,6 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
               onAddPress={() => handleOpenAddMetricSheet(selectedMetricId)}
               onEditEntry={handleEditMetricEntry}
               onDeleteEntry={handleDeleteMetricEntry}
-              addButtonTitle={t('common:metricValuesBottomSheet.addButton')}
               registeredValuesTitle={t('common:metricValuesBottomSheet.registeredValuesTitle')}
               dateLabel={t('common:metricValuesBottomSheet.columns.date')}
               valueLabel={t('common:metricValuesBottomSheet.columns.value')}
