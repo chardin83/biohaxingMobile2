@@ -1,7 +1,7 @@
 import { useTheme } from '@react-navigation/native';
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Platform,StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 
 import { useStorage } from '@/app/context/StorageContext';
@@ -146,8 +146,20 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
   const hasMealOnSelectedDay = (dailyNutritionSummaries[selectedDate]?.meals?.length ?? 0) > 0;
   const hasSupplementsOnSelectedDay = (takenDates[selectedDate]?.length ?? 0) > 0;
 
+  // Only show shadow/glow on iOS
+  const containerShadow = Platform.OS === 'ios'
+    ? {
+        shadowColor: colors.buttonGlow,
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.4,
+        shadowRadius: 8,
+      }
+    : {
+        elevation: 6,
+      };
+
   return (
-    <View style={[styles.container, { backgroundColor: colors.cardBackground, shadowColor: colors.buttonGlow }]}>
+    <View style={[styles.container, { backgroundColor: colors.cardBackground }, containerShadow]}> 
       <View style={styles.headerRow}>
         {!isExpanded ? (
           <View style={styles.dayNavRow}>

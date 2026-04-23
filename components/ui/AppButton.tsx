@@ -68,17 +68,18 @@ const AppButton: React.FC<AppButtonProps> = ({
           styles.button,
           buttonVariantStyle,
           isPrimary && glow && {
-            backgroundColor: colors.buttonGlowBackground,
             ...(Platform.OS === 'ios'
               ? {
-                  shadowColor: colors.buttonGlow,
-                  shadowOffset: { width: 0, height: 0 },
-                  shadowOpacity: 0.7,
-                  shadowRadius: 8,
-                }
+                backgroundColor: colors.buttonGlowBackground,
+                shadowColor: colors.buttonGlow,
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.7,
+                shadowRadius: 8,
+              }
               : {
-                  elevation: 14,
-                }),
+                elevation: 20,
+                shadowColor: colors.buttonGlow,
+              }),
           },
           disabled && styles.disabled,
           style,
@@ -100,13 +101,6 @@ const AppButton: React.FC<AppButtonProps> = ({
               styles.text,
               textColorStyle,
               icon && styles.textWithIcon,
-              isPrimary &&
-                glow &&
-                (Platform.OS === 'ios' || Platform.OS === 'android') &&
-                [
-                  styles.textShadow,
-                  { textShadowColor: colors.buttonTextGlow },
-                ],
             ]}
           >
             {title}
@@ -147,6 +141,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textTransform: 'uppercase',
     letterSpacing: 1,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   textWithIcon: {
     marginLeft: 4,
