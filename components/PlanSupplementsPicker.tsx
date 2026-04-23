@@ -6,10 +6,10 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { Supplement } from '@/app/domain/Supplement';
 
 import { ThemedText } from './ThemedText';
-import TimePickerSection from './TimePickerSection';
 import AppButton from './ui/AppButton';
 import { CancelButton } from './ui/CancelButton';
 import { Checkbox } from './ui/Checkbox';
+import { DateTimeInput } from './ui/DateTimeInput';
 
 
 interface PlanSupplementsPickerProps {
@@ -34,9 +34,11 @@ const PlanSupplementsPicker: React.FC<PlanSupplementsPickerProps> = ({ supplemen
             <View style={styles.titleRow}>
                 <ThemedText type="title3">{planName.charAt(0).toUpperCase() + planName.slice(1).toLowerCase()} </ThemedText>
             </View>
-            <TimePickerSection
-                selectedTime={selectedTime}
-                setSelectedTime={setSelectedTime}
+            <DateTimeInput
+                value={selectedTime}
+                onChange={setSelectedTime}
+                showDate={false}
+                showTime={true}
             />
 
 

@@ -176,9 +176,6 @@
     "analysisFailed": "Analysen misslyckades. Försök igen.",
     "nutritionSummary": "Näringsöversikt"
   },
-  "timePickerSection": {
-    "chooseTime": "Välj tid"
-  },
   "planSupplementsPicker": {
     "chooseSupplementsFromPlan": "Välj tillskott från"
   },

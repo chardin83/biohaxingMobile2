@@ -177,9 +177,6 @@
     "analysisFailed": "Analysis failed. Please try again.",
     "nutritionSummary": "Nutrition summary"
   },
-  "timePickerSection": {
-    "chooseTime": "Choose time"
-  },
   "planSupplementsPicker": {
     "chooseSupplementsFromPlan": "Choose supplements from"
   },

@@ -11,9 +11,9 @@ import PlanSupplementsPicker from './PlanSupplementsPicker';
 import SelectedSupplementsList from './SelectedSupplementsList';
 import SupplementForm from './SupplementForm';
 import { ThemedText } from './ThemedText';
-import TimePickerSection from './TimePickerSection';
 import AppButton from './ui/AppButton';
 import { CancelButton } from './ui/CancelButton';
+import { DateTimeInput } from './ui/DateTimeInput';
 import DiscreetButton from './ui/DiscreetButton';
 
 interface Props {
@@ -167,9 +167,12 @@ export const SupplementsTabSection = ({ selectedDate }: Props) => {
             )}
             {isSupplementFormVisible && (
                 <>
-                    <TimePickerSection
-                        selectedTime={selectedTime}
-                        setSelectedTime={setSelectedTime}
+                    <DateTimeInput
+                        value={selectedTime}
+                        onChange={setSelectedTime}
+                        showTime
+                        showDate={false}
+                        buttonIcon="clock"
                     />
                     <SupplementForm
                         key={editingSupplement?.name ?? 'new'}

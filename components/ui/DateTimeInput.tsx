@@ -39,14 +39,14 @@ export function DateTimeInput({
   if (!timeLabel) timeLabel = t('general.time');
 
   const [showPicker, setShowPicker] = React.useState(false);
-  const [showDatePicker, setShowDatePicker] = React.useState(false);
-  const [showTimePicker, setShowTimePicker] = React.useState(false);
+  const [showDatePicker, setShowDatePicker] = React.useState(showDate);
+  const [showTimePicker, setShowTimePicker] = React.useState(showTime);
 
   const locale = i18n.language || 'sv-SE';
-  const formattedDate = value.toLocaleDateString(locale);
-  const formattedTime = formatClockTime(value, locale);
 
-  // Generera knappens titel automatiskt, alltid från aktuellt value
+  const minimumDateProp = minDate ? { minimumDate: minDate } : {};
+  const maximumDateProp = maxDate ? { maximumDate: maxDate } : {};
+
   const buttonTitle = React.useMemo(() => {
     if (showDate && showTime) {
       return `${value.toLocaleDateString(locale)} ${formatClockTime(value, locale)}`;
@@ -61,6 +61,11 @@ export function DateTimeInput({
   const handleDateChange = (_event: unknown, selectedDate?: Date) => {
     if (Platform.OS === 'android') {
       setShowDatePicker(false);
+      // Om både showDate och showTime: öppna time-picker direkt
+      if (showDate && showTime) {
+        setShowTimePicker(true);
+        return;
+      }
     }
 
     if (!selectedDate) {
@@ -73,7 +78,6 @@ export function DateTimeInput({
       return;
     }
 
-    // Annars: bygg nytt Date-objekt med datum från selectedDate och tid från value
     const nextValue = new Date(
       selectedDate.getFullYear(),
       selectedDate.getMonth(),
@@ -95,7 +99,6 @@ export function DateTimeInput({
       return;
     }
 
-    // Skapa alltid ett nytt Date-objekt med både datum och tid från value/selectedTime
     const nextValue = new Date(
       value.getFullYear(),
       value.getMonth(),
@@ -109,73 +112,70 @@ export function DateTimeInput({
   };
 
 
-  if (Platform.OS === 'ios') {
-    return (
-      <View style={styles.container}>
-        <AppButton
-          title={buttonTitle}
-          icon={buttonIcon}
-          onPress={() => setShowPicker((v) => !v)}
-          variant="secondary"
-        />
-        {showPicker && (
-          <>
-            {showDate && (
-              <View style={styles.group}>
-                <ThemedText type="default" style={styles.label}>
-                  {dateLabel}
-                </ThemedText>
-                <View style={[styles.pickerContainer, { borderColor: colors.border }]}> 
+  return (
+    <View style={styles.container}>
+      <AppButton
+        title={buttonTitle}
+        icon={buttonIcon}
+        onPress={() => setShowPicker((v) => !v)}
+        variant="secondary"
+      />
+      {showPicker && (
+        <>
+          {showDatePicker && (
+            <View style={styles.group}>
+              <ThemedText type="default" style={styles.label}>
+                {dateLabel}
+              </ThemedText>
+
+              {Platform.OS === 'ios' ? (
+                <View style={[styles.pickerContainer, { borderColor: colors.border }]}>
                   <DateTimePicker
                     value={value}
                     mode={showTime && showDate ? 'datetime' : 'date'}
-                    display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                    display="spinner"
                     is24Hour
                     onChange={handleDateChange}
-                    minimumDate={minDate}
-                    maximumDate={maxDate}
+                    {...minimumDateProp}
+                    {...maximumDateProp}
                   />
                 </View>
-              </View>
-            )}
-            {showTime && !showDate && (
-              <View style={styles.group}>
-                <ThemedText type="default" style={styles.label}>
-                  {timeLabel}
-                </ThemedText>
-                <View style={[styles.pickerContainer, { borderColor: colors.border }]}> 
-                  <DateTimePicker value={value} mode="time" display="spinner" is24Hour onChange={handleTimeChange} minimumDate={minDate} maximumDate={maxDate} />
+              ) : (
+                <View style={[styles.pickerContainer, { borderColor: colors.border }]}>
+                  <DateTimePicker
+                    value={value}
+                    mode="date"
+                    display="default"
+                    is24Hour
+                    onChange={handleDateChange}
+                    {...minimumDateProp}
+                    {...maximumDateProp}
+                  />
                 </View>
-              </View>
-            )}
-          </>
-        )}
-      </View>
-    );
-  }
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.group}>
-        <ThemedText type="default" style={styles.label}>
-          {dateLabel}
-        </ThemedText>
-        <AppButton title={formattedDate} onPress={() => setShowDatePicker(true)} variant="secondary" />
-        {showDatePicker && (
-          <DateTimePicker value={value} mode="date" display="default" onChange={handleDateChange} minimumDate={minDate} maximumDate={maxDate} />
-        )}
-      </View>
-
-      {showTime && (
-        <View style={styles.group}>
-          <ThemedText type="default" style={styles.label}>
-            {timeLabel}
-          </ThemedText>
-          <AppButton title={formattedTime} onPress={() => setShowTimePicker(true)} variant="secondary" />
-          {showTimePicker && (
-            <DateTimePicker value={value} mode="time" display="default" is24Hour onChange={handleTimeChange} minimumDate={minDate} maximumDate={maxDate} />
+              )}
+            </View>
           )}
-        </View>
+
+          {showTimePicker && !showDatePicker && (
+            <View style={styles.group}>
+              <ThemedText type="default" style={styles.label}>
+                {timeLabel}
+              </ThemedText>
+
+              <View style={[styles.pickerContainer, { borderColor: colors.border }]}>
+                <DateTimePicker
+                  value={value}
+                  mode="time"
+                  display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                  is24Hour
+                  onChange={handleTimeChange}
+                  {...minimumDateProp}
+                  {...maximumDateProp}
+                />
+              </View>
+            </View>
+          )}
+        </>
       )}
     </View>
   );
@@ -184,6 +184,7 @@ export function DateTimeInput({
 const styles = StyleSheet.create({
   container: {
     gap: 16,
+    marginBottom: 16,
   },
   group: {
     gap: 8,
