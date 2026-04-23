@@ -71,6 +71,8 @@ export const Colors = {
 
     cardActive: '#E6FFFA',
 
+    // Tab bar background for Android
+    tabBarBackground: 'rgba(255,246,229,0.92)',
     // Gradients
     gradients: {
       sunrise: {
@@ -215,6 +217,7 @@ export const Colors = {
     cardActive: '#223B50',
 
     // Gradients
+    tabBarBackground: 'rgba(255,142,83,0.92)',
     gradients: {
       sunrise: {
         colors: ['#0B1021', '#1F3150', '#FF8E53'],

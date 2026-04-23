@@ -32,12 +32,13 @@ export default function TabLayout() {
       // initialRouteName="dashboard" // kan lämnas bort om du vill att dashboard ska vara först
       screenOptions={{
         tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
+        tabBarBackground: Platform.OS === 'ios' ? TabBarBackground : undefined,
         tabBarStyle: Platform.select({
           ios: { position: 'absolute', backgroundColor: 'transparent' },
-          default: {},
+          default: { backgroundColor: colors.tabBarBackground },
         }),
       }}
     >
