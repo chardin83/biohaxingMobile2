@@ -147,7 +147,7 @@ export default function TipCard({ tip, tipProgress, onPress, areaId, locked=fals
       )}
 
       <ThemedText type="caption" style={[styles.tapHint, { color: colors.accentStrong }]}>
-        {isStarted ? t('common:goalDetails.continueExploring') : t('common:goalDetails.startExploring')}
+        {isStarted ? t('common:tipCard.continueExploring') : t('common:tipCard.startExploring')}
       </ThemedText>
     </PressableCard>
   );

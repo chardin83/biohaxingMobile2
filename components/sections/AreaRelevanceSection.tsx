@@ -40,7 +40,7 @@ const AreaRelevanceSection: React.FC<AreaRelevanceSectionProps> = ({
     <>
       <View style={styles.rowWithGap}>
         <ThemedText type="subtitle" style={[styles.relevanceHeading, { color: colors.textPrimary }]}>
-          {t('common:goalDetails.relevance')}
+          {t('common:areaRelevanceSection.relevance')}
         </ThemedText>
       </View>
       {(showAllAreas ? tip.areas : tip.areas.filter(a => a.id === areaId)).map(a => {

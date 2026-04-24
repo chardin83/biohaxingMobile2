@@ -3,11 +3,11 @@ import { render, waitFor } from '@testing-library/react-native';
 import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 
+import AreaDetailScreen from '@/app/(stack)/dashboard/area/[areaId]/details';
 import * as useSupplementsModule from '@/locales/supplements';
 import { AllProviders } from '@/test-utils/Providers';
 
 import * as StorageContext from '../../../../context/StorageContext';
-import GoalDetailScreen from '../../../../(stack)/dashboard/area/areaComponents/details';
 
 jest.mock('@/components/VerdictSelector', () => 'VerdictSelector');
 
@@ -53,19 +53,19 @@ jest.mock('react-i18next', () => ({
       'areas:info.text': 'info.text',
       'areas:info.author': 'info.author',
       'areas:Do something': 'Do something',
-      'common:goalDetails.taskInfo': 'Task Info',
-      'common:goalDetails.start': 'start',
-      'common:goalDetails.finish': 'finish',
-      'common:goalDetails.analyze': 'analyze',
-      'common:goalDetails.skip': 'skip',
-      'common:goalDetails.analyzeHint': 'analyzeHint',
-      'common:goalDetails.information': 'information',
-      'common:goalDetails.aiInsights': 'aiInsights',
+      'common:tipDetails.taskInfo': 'Task Info',
+      'common:tipDetails.start': 'start',
+      'common:tipDetails.finish': 'finish',
+      'common:tipDetails.analyze': 'analyze',
+      'common:tipDetails.skip': 'skip',
+      'common:tipDetails.analyzeHint': 'analyzeHint',
+      'common:tipDetails.information': 'information',
+      'common:tipDetails.aiInsights': 'aiInsights',
       'common:general.areYouSure': 'areYouSure',
-      'common:goalDetails.skipConfirmYes': 'skipConfirmYes',
-      'common:goalDetails.skipConfirmBody': 'skipConfirmBody',
+      'common:tipDetails.skipConfirmYes': 'skipConfirmYes',
+      'common:tipDetails.skipConfirmBody': 'skipConfirmBody',
       'common:selectGoal.description': 'Beskrivning',
-      'common:goalDetails.durationUnits.days': 'dagar',
+      'common:tipDetails.durationUnits.days': 'dagar',
     };
     return {
       t: (key: string) => translations[key] ?? key,
@@ -151,7 +151,7 @@ describe('GoalDetailScreen', () => {
     render(ui, { wrapper: AllProviders });
 
   it('renders goal details', async () => {
-    const { getAllByText } = renderWithProviders(<GoalDetailScreen />);
+    const { getAllByText } = renderWithProviders(<AreaDetailScreen />);
     await waitFor(() => {
       expect(getAllByText(/Main Goal/i).length).toBeGreaterThan(0);
       expect(getAllByText(/Supp 1/i).length).toBeGreaterThan(0);
@@ -165,20 +165,20 @@ describe('GoalDetailScreen', () => {
       ...fullMockStorageContext,
     });
      await waitFor(() => {
-      const { getByText } = renderWithProviders(<GoalDetailScreen />);
+      const { getByText } = renderWithProviders(<AreaDetailScreen />);
       expect(getByText(/Goal not found/i)).toBeTruthy();
     });
   });
   
   it('renders without crashing (smoke test)', async () => {
-    const { toJSON } = renderWithProviders(<GoalDetailScreen />);
+    const { toJSON } = renderWithProviders(<AreaDetailScreen />);
     await waitFor(() => {
       expect(toJSON()).toBeTruthy();
     });
   });
 
   it('matches snapshot', async () => {
-    const { toJSON } = renderWithProviders(<GoalDetailScreen />);
+    const { toJSON } = renderWithProviders(<AreaDetailScreen />);
     await waitFor(() => {
       expect(toJSON()).toMatchSnapshot();
     });

@@ -7,6 +7,7 @@ import { Icon } from 'react-native-paper';
 import CreateTimeSlotModal, { CreatePlanData } from '@/components/modals/CreateTimeSlotModal';
 import { ThemedModal } from '@/components/ThemedModal';
 import { ThemedText } from '@/components/ThemedText';
+import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
 import { useSupplementSaver } from '@/hooks/useSupplementSaver';
 
@@ -76,53 +77,56 @@ const SupplementList: React.FC<SupplementListProps> = ({
         const isExpanded = !!supplement.description && expandedSupplements.includes(supplementId);
 
         return (
-          <View key={supplementId} style={[styles.supplementContainer, { borderBottomColor: colors.borderLight }]}>
-            <View style={styles.supplementRow}>
-              <View style={styles.supplementNameColumn}>
-                <ThemedText
-                  type="default"
-                  style={[{ color: colors.textLight }]}
-                  numberOfLines={isExpanded ? undefined : 1}
-                  ellipsizeMode="tail"
-                >
-                  {supplement.name}
-                </ThemedText>
-                {supplement.description ? (
-                  <Pressable
-                    accessibilityRole="button"
-                    onPress={() => toggleSupplementInfo(supplementId)}
-                    style={styles.supplementInfoRow}
+
+          <AppBox key={supplementId} title={t('common:tipDetails.supplements')}>
+            <View  style={[styles.supplementContainer, { borderBottomColor: colors.borderLight }]}>
+              <View style={styles.supplementRow}>
+                <View style={styles.supplementNameColumn}>
+                  <ThemedText
+                    type="default"
+                    style={[{ color: colors.textLight }]}
+                    numberOfLines={isExpanded ? undefined : 1}
+                    ellipsizeMode="tail"
                   >
-                    <Icon
-                      source={isExpanded ? 'information' : 'information-outline'}
-                      size={14}
-                      color={colors.primary}
-                    />
-                    <ThemedText type="caption" style={[styles.supplementInfoText, { color: colors.primary }]}>
-                      {isExpanded ? t('common:goalDetails.lessInfo') : t('common:goalDetails.moreInfo')}
-                    </ThemedText>
-                  </Pressable>
-                ) : null}
-              </View>
-              {alreadyPlanned ? (
-                <View style={styles.supplementCheck}>
-                  <Icon source="check" size={22} color={colors.primary} />
+                    {supplement.name}
+                  </ThemedText>
+                  {supplement.description ? (
+                    <Pressable
+                      accessibilityRole="button"
+                      onPress={() => toggleSupplementInfo(supplementId)}
+                      style={styles.supplementInfoRow}
+                    >
+                      <Icon
+                        source={isExpanded ? 'information' : 'information-outline'}
+                        size={14}
+                        color={colors.primary}
+                      />
+                      <ThemedText type="caption" style={[styles.supplementInfoText, { color: colors.primary }]}>
+                        {isExpanded ? t('common:supplementList.lessInfo') : t('common:supplementList.moreInfo')}
+                      </ThemedText>
+                    </Pressable>
+                  ) : null}
                 </View>
-              ) : (
-                <AppButton
-                  title="+"
-                  accessibilityLabel={t('common:goalDetails.addToPlan')}
-                  onPress={() => handleOpenAddToPlan(supplement)}
-                  variant="primary"
-                />
+                {alreadyPlanned ? (
+                  <View style={styles.supplementCheck}>
+                    <Icon source="check" size={22} color={colors.primary} />
+                  </View>
+                ) : (
+                  <AppButton
+                    title="+"
+                    accessibilityLabel={t('common:supplementList.addToPlan')}
+                    onPress={() => handleOpenAddToPlan(supplement)}
+                    variant="primary"
+                  />
+                )}
+              </View>
+              {supplement.description && isExpanded && (
+                <ThemedText type="default">
+                  {supplement.description}
+                </ThemedText>
               )}
             </View>
-            {supplement.description && isExpanded && (
-              <ThemedText type="default">
-                {supplement.description}
-              </ThemedText>
-            )}
-          </View>
+          </AppBox>
         );
       })}
 
@@ -138,7 +142,7 @@ const SupplementList: React.FC<SupplementListProps> = ({
       >
         <View>
           <ThemedText type="default">
-            {t('dayEdit.chooseTime')}
+            {t('supplementList.chooseTime')}
           </ThemedText>
           {supplementPlans.map(p => (
             <View key={p.name} style={styles.supplementPlanItem}>

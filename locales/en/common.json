@@ -103,7 +103,6 @@
       "dinner": "Dinner"
     },
     "noSupplementsInPlan": "No supplements in {{plan}} yet.",
-    "supplements": [],
     "supplementExists": "The supplement \"{{supplementName}}\" already exists in the selected plan.",
     "trainingHeader": "Training plan",
     "noActiveTraining": "No active training goals yet.",
@@ -214,8 +213,6 @@
     "taskInfo": "Task",
     "information": "Information",
     "aiInsights": "AI Insights",
-    "startExploring": "Start exploring",
-    "continueExploring": "Continue exploring",
     "skip": "Skip",
     "start": "Start",
     "analyze": "Analyze",
@@ -258,12 +255,9 @@
     "verdictAlreadyWorks": "Already tested - works",
     "verdictNoResearch": "No research support",
     "verdictTestedFailed": "Already tested - didn't work",
-    "relevance": "Areas impacted",
     "whatAreTheRisks": "What are the risks?",
     "whatStudiesExist": "What studies exist?",
     "whoAreTheExperts": "Who are the experts?",
-    "supplements": "Supplements",
-    "addToPlan": "Add to plan",
     "fullyExplored": "Fully explored!",
     "trainingRelation": {
       "title": "Workout timing",
@@ -292,9 +286,21 @@
       "avoidNight": "Avoid night"
     },
     "metricsTitle": "Related metrics",
-    "metricsExplainer": "These metrics are related to your tip and can help you track your progress.",
+    "metricsExplainer": "These metrics are related to your tip and can help you track your progress."
+  },
+  "areaRelevanceSection": {
+    "relevance": "Areas impacted"
+  },
+  "tipCard": {
+    "startExploring": "Start exploring",
+    "continueExploring": "Continue exploring"
+  },
+  "supplementList": {
+    "title": "Supplements",
     "moreInfo": "More info",
-    "lessInfo": "Hide info"
+    "lessInfo": "Hide info",
+    "addToPlan": "Add to plan",
+    "chooseTime": "Choose time"
   },
   "cardioOverview": {
     "title": "Cardiovascular Health",

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`GoalDetailScreen matches snapshot 1`] = `
+exports[`AreaDetailScreen matches snapshot 1`] = `
 <ViewManagerAdapter_ExpoLinearGradient
   colors={
     [
@@ -603,7 +603,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
             ]
           }
         >
-          common:goalDetails.relevance
+          common:tipDetails.relevance
         </Text>
       </View>
       <View
@@ -862,7 +862,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
           >
             📚
              
-            common:goalDetails.whatStudiesExist
+            common:tipDetails.whatStudiesExist
              (+5 XP)
           </Text>
         </View>
@@ -929,7 +929,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
           >
             👥
              
-            common:goalDetails.whoAreTheExperts
+            common:tipDetails.whoAreTheExperts
              (+5 XP)
           </Text>
         </View>
@@ -996,7 +996,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
           >
             ⚠️
              
-            common:goalDetails.whatAreTheRisks
+            common:tipDetails.whatAreTheRisks
              (+5 XP)
           </Text>
         </View>
@@ -1068,7 +1068,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
                 ]
               }
             >
-              common:goalDetails.supplements
+              common:tipDetails.supplements
             </Text>
           </View>
         </View>
@@ -1129,7 +1129,7 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
               </Text>
             </View>
             <View
-              accessibilityLabel="common:goalDetails.addToPlan"
+              accessibilityLabel="common:tipDetails.addToPlan"
               accessibilityRole="button"
               accessibilityState={
                 {
@@ -1207,3 +1207,5 @@ exports[`GoalDetailScreen matches snapshot 1`] = `
   </RCTScrollView>
 </ViewManagerAdapter_ExpoLinearGradient>
 `;
+
+exports[`tipDetailscreen matches snapshot 1`] = `<tipDetailscreen />`;

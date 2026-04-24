@@ -479,13 +479,11 @@ export default function AreaDetailScreen() {
         resolvedSupplements.length > 0 ||
         (supplementPlans?.some(p => Array.isArray(p.supplements) && p.supplements.length > 0))
       ) && (
-          <AppBox title={t('common:tipDetails.supplements')}>
-            <SupplementList
-              supplements={resolvedSupplements}
-              plannedSupplements={plannedSupplements}
-              supplementPlans={supplementPlans}
-            />
-          </AppBox>
+          <SupplementList
+            supplements={resolvedSupplements}
+            plannedSupplements={plannedSupplements}
+            supplementPlans={supplementPlans}
+          />
         )}
     </Container>
   );
@@ -538,11 +536,11 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginBottom: 8,
   },
-  nutritionTagContainer: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
+  nutritionTagContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8, 
+    marginBottom: 8,
   },
   nutritionDetailText: {
     opacity: 0.8,
@@ -593,9 +591,9 @@ function NutritionFoodsSection({
       <View style={[styles.planActionContainer, styles.nutritionPlanAction]}>
         {isTipInPlan ? (
           <>
-            <View style={[styles.planActionAdded, { backgroundColor: colors.accentVeryWeak }]}> 
+            <View style={[styles.planActionAdded, { backgroundColor: colors.accentVeryWeak }]}>
               <Icon source="check" size={18} color={colors.primary} />
-              <ThemedText type="caption" style={[styles.planActionAddedText, { color: colors.primary }]}> 
+              <ThemedText type="caption" style={[styles.planActionAddedText, { color: colors.primary }]}>
                 {planBadgeLabel}
               </ThemedText>
             </View>
@@ -683,13 +681,13 @@ function NutritionTargetsSection({
         }
         const label = t(`nutritionLogger.${labelGroup}.${trackingKey}`);
         return (
-            <View key={`target-${trackingKey}`} style={ styles.nutritionTagContainer }>
-              <ThemedText type="default" style={globalStyles.flex1}>
-                {label}
-              </ThemedText>
-              <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                {formatValue(target.amount, target.unit)}
-              </ThemedText>
+          <View key={`target-${trackingKey}`} style={styles.nutritionTagContainer}>
+            <ThemedText type="default" style={globalStyles.flex1}>
+              {label}
+            </ThemedText>
+            <ThemedText type="caption" style={{ color: colors.textMuted }}>
+              {formatValue(target.amount, target.unit)}
+            </ThemedText>
           </View>
         );
       })}

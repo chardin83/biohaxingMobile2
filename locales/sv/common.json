@@ -213,8 +213,6 @@
     "taskInfo": "Uppgift",
     "information": "Information",
     "aiInsights": "AI-insikter",
-    "startExploring": "Börja utforska",
-    "continueExploring": "Fortsätt utforska",
     "skip": "Skippa",
     "start": "Starta",
     "analyze": "Analysera",
@@ -261,12 +259,10 @@
     "verdictAlreadyWorks": "Redan testad - funkar",
     "verdictNoResearch": "Inte stöd i forskning",
     "verdictTestedFailed": "Redan testad - funkade inte",
-    "relevance": "Områden som påverkas",
     "whatAreTheRisks": "Vilka risker finns?",
     "whatStudiesExist": "Vilka studier finns?",
     "whoAreTheExperts": "Vilka experter finns?",
     "supplements": "Tillskott",
-    "addToPlan": "Lägg till i plan",
     "fullyExplored": "Fullt utforskat!",
     "trainingRelation": {
       "title": "Relation till träning",
@@ -295,9 +291,21 @@
       "avoidNight": "Undvik nattetid"
     },
     "metricsTitle": "Relaterade mätvärden",
-    "metricsExplainer": "Dessa mätvärden är relaterade till ditt tips och kan hjälpa dig att följa din utveckling.",
+    "metricsExplainer": "Dessa mätvärden är relaterade till ditt tips och kan hjälpa dig att följa din utveckling."
+  },
+  "areaRelevanceSection": {
+    "relevance": "Områden som påverkas"
+  },
+  "tipCard": {
+    "startExploring": "Börja utforska",
+    "continueExploring": "Fortsätt utforska"
+  },
+  "supplementList": {
+    "title": "Kosttillskott",
     "moreInfo": "Mer info",
-    "lessInfo": "Dölj info"
+    "lessInfo": "Dölj info",
+    "addToPlan": "Lägg till i plan",
+    "chooseTime": "Välj tid"
   },
   "cardioOverview": {
     "title": "Kardiovaskulär hälsa",
