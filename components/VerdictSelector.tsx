@@ -28,11 +28,11 @@ const getSubOptionLabel = (verdict: VerdictValue, t: any): string => {
   const labels: Record<VerdictValue, string> = {
     interested: '',
     notInterested: '',
-    startNow: t('common:goalDetails.verdictStartNow'),
-    wantMore: t('common:goalDetails.verdictWantMore'),
-    alreadyWorks: t('common:goalDetails.verdictAlreadyWorks'),
-    noResearch: t('common:goalDetails.verdictNoResearch'),
-    testedFailed: t('common:goalDetails.verdictTestedFailed'),
+    startNow: t('common:tipDetails.verdictStartNow'),
+    wantMore: t('common:tipDetails.verdictWantMore'),
+    alreadyWorks: t('common:tipDetails.verdictAlreadyWorks'),
+    noResearch: t('common:tipDetails.verdictNoResearch'),
+    testedFailed: t('common:tipDetails.verdictTestedFailed'),
   };
   return labels[verdict] || '';
 };
@@ -70,7 +70,7 @@ export default function VerdictSelector({ currentVerdict, onVerdictPress }: Prop
             <View style={styles.iconContainer}>{icon}</View>
           )}
           <View style={styles.verdictCardText}>
-            <Text style={styles.verdictCardTitle}>{t(`common:goalDetails.${titleKey}`)}</Text>
+            <Text style={styles.verdictCardTitle}>{t(`common:tipDetails.${titleKey}`)}</Text>
           </View>
         </View>
         <Text style={styles.verdictCardXP}>{xpLabel}</Text>
@@ -91,7 +91,7 @@ export default function VerdictSelector({ currentVerdict, onVerdictPress }: Prop
         <View style={styles.verdictCardContent}>
           <Text style={styles.verdictCardIcon}>{icon}</Text>
           <View style={styles.verdictCardText}>
-            <Text style={styles.verdictCardTitle}>{t(`common:goalDetails.${titleKey}`)}</Text>
+            <Text style={styles.verdictCardTitle}>{t(`common:tipDetails.${titleKey}`)}</Text>
             {subLabel && <Text style={styles.subOptionLabel}>{subLabel}</Text>}
           </View>
         </View>
@@ -103,7 +103,7 @@ export default function VerdictSelector({ currentVerdict, onVerdictPress }: Prop
   // Initial state: show two main options, optionally with selected sub-option
   if (!selectedCategory) {
     return (
-      <AppBox title={t('common:goalDetails.verdict')}>
+      <AppBox title={t('common:tipDetails.verdict')}>
         {getCategoryButtonWithLabel(
           <StarIcon width={ICON_SIZE} height={ICON_SIZE} color={Colors.dark.accentStrong} />,
           'verdictInterested',
@@ -121,7 +121,7 @@ export default function VerdictSelector({ currentVerdict, onVerdictPress }: Prop
   // Interested path: 3 options
   if (selectedCategory === 'interested') {
     return (
-      <AppBox title={t('common:goalDetails.verdict')}>
+      <AppBox title={t('common:tipDetails.verdict')}>
         <Pressable style={styles.backButton} onPress={() => setSelectedCategory(null)}>
           <Text style={styles.backButtonText}>{t('back')}</Text>
         </Pressable>
@@ -147,7 +147,7 @@ export default function VerdictSelector({ currentVerdict, onVerdictPress }: Prop
   // Not interested path: 2 options
   if (selectedCategory === 'notInterested') {
     return (
-      <AppBox title={t('common:goalDetails.verdict')}>
+      <AppBox title={t('common:tipDetails.verdict')}>
         <Pressable style={styles.backButton} onPress={() => setSelectedCategory(null)}>
           <Text style={styles.backButtonText}>{t('back')}</Text>
         </Pressable>

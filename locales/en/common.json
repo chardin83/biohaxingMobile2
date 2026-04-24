@@ -195,7 +195,7 @@
   "selectArea": {
     "description": "Different tips and supplements can help you achieve your health goals. Select one for more information"
   },
-  "goalDetails": {
+  "tipDetails": {
     "lockedTipInfo": "This is a more advanced tip. Explore the basics for best results.",
     "basicTipInfo": "This is a basic tip that helps you build a solid foundation.",
     "unlockedTipInfo": "This is an in-depth tip. Builds on the foundation.",

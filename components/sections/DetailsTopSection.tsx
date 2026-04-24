@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet,View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Icon } from 'react-native-paper';
 
 import { Supplement } from "@/app/domain/Supplement";
@@ -10,6 +10,7 @@ import { Tip } from "@/locales/tips";
 import { ThemedText } from "../ThemedText";
 import AppButton from "../ui/AppButton";
 import Badge from "../ui/Badge";
+import DiscreetButton from "../ui/DiscreetButton";
 import { InfoButtonWithText } from "../ui/InfoButtonWithText";
 import ProgressBarWithLabel from "../ui/ProgressbarWithLabel";
 
@@ -61,6 +62,7 @@ type DetailsTopSectionProps = {
   planBadgeLabel: string;
   addPlanButtonTitle: string;
   handleAddPlanEntry: () => void;
+  showSupplementDiscreetButton: boolean;
 };
 
 const DetailsTopSection: React.FC<DetailsTopSectionProps> = ({
@@ -82,6 +84,7 @@ const DetailsTopSection: React.FC<DetailsTopSectionProps> = ({
   planBadgeLabel,
   addPlanButtonTitle,
   handleAddPlanEntry,
+  showSupplementDiscreetButton,
 }) => {
   const { t } = useTranslation();
 
@@ -128,7 +131,7 @@ const DetailsTopSection: React.FC<DetailsTopSectionProps> = ({
           ))}
         </View>
         {/* Stor ikon för aktuell area */}
-        <View style={[ styles.iconWrapper, { borderColor: colors.borderLight, backgroundColor: colors.background }]}>
+        <View style={[styles.iconWrapper, { borderColor: colors.borderLight, backgroundColor: colors.background }]}>
           <Icon
             source={mainArea?.icon ?? "help-circle"}
             size={ICON_SIZE_MAIN}
@@ -188,7 +191,7 @@ const DetailsTopSection: React.FC<DetailsTopSectionProps> = ({
       <ThemedText type="caption">
         {totalXpEarned} XP earned
       </ThemedText>
-      <ThemedText type="explainer" style={[styles.xpSplitText, { color: colors.textMuted }]}> 
+      <ThemedText type="explainer" style={[styles.xpSplitText, { color: colors.textMuted }]}>
         {t('common:dashboard.xpBreakdown', {
           education: educationXpEarned,
           nutrition: nutritionXpEarned,
@@ -205,6 +208,7 @@ const DetailsTopSection: React.FC<DetailsTopSectionProps> = ({
         showTopPlanAction={showTopPlanAction}
         isTipInPlan={isTipInPlan}
         planBadgeLabel={planBadgeLabel}
+        showSupplementDiscreetButton={showSupplementDiscreetButton}
         addPlanButtonTitle={addPlanButtonTitle}
         handleAddPlanEntry={handleAddPlanEntry}
         colors={colors}
@@ -214,6 +218,10 @@ const DetailsTopSection: React.FC<DetailsTopSectionProps> = ({
 };
 
 const styles = StyleSheet.create({
+  centeredDiscreetButton: {
+    alignItems: 'center',
+    marginTop: 8,
+  },
   topSection: {
     alignItems: 'center',
     marginBottom: 16,
@@ -337,17 +345,28 @@ function PlanActionSection({
   addPlanButtonTitle,
   handleAddPlanEntry,
   colors,
-}: Readonly<PlanActionSectionProps>) {
+  showSupplementDiscreetButton,
+}: Readonly<PlanActionSectionProps & { showSupplementDiscreetButton: boolean }>) {
   if (!showTopPlanAction) return null;
   return (
     <View style={styles.planActionSection}>
       {isTipInPlan ? (
-        <View style={[styles.planBadgeRow, { backgroundColor: colors.accentVeryWeak }]}>
-          <Icon source="check" size={18} color={colors.primary} />
-          <ThemedText type="caption" style={[styles.planBadgeLabel, { color: colors.primary }]}>
-            {planBadgeLabel}
-          </ThemedText>
-        </View>
+        <>
+          <View style={[styles.planBadgeRow, { backgroundColor: colors.accentVeryWeak }]}> 
+            <Icon source="check" size={18} color={colors.primary} />
+            <ThemedText type="caption" style={[styles.planBadgeLabel, { color: colors.primary }]}> 
+              {planBadgeLabel}
+            </ThemedText>
+          </View>
+          {showSupplementDiscreetButton && (
+            <View style={styles.centeredDiscreetButton}>
+              <DiscreetButton
+                title={`+ ${addPlanButtonTitle}`}
+                onPress={handleAddPlanEntry}
+              />
+            </View>
+          )}
+        </>
       ) : (
         <AppButton
           title={addPlanButtonTitle}

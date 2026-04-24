@@ -16,9 +16,13 @@ import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
 import Container from '@/components/ui/Container';
+import DiscreetButton from '@/components/ui/DiscreetButton';
 import { NotFound } from '@/components/ui/NotFound';
 import VerdictSelector from '@/components/VerdictSelector';
 import { AIPromptKey, AIPrompts } from '@/constants/AIPrompts';
+import { ALL_AMINO_ACID_KEYS } from '@/constants/aminoAcids';
+import { MINERAL_TYPE_KEYS } from '@/constants/minerals';
+import { VITAMIN_TYPE_KEYS } from '@/constants/vitamins';
 import { XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW } from '@/constants/XP';
 import { areas } from '@/locales/areas';
 import { metrics, tipMetricLinks } from '@/locales/metrics';
@@ -66,13 +70,13 @@ export default function AreaDetailScreen() {
 
   let infoText = '';
   if (myLevel < (tip?.level ?? 0)) {
-    infoText = t('goalDetails.lockedTipInfo');
+    infoText = t('tipDetails.lockedTipInfo');
   } else if (tip?.level === 1) {
-    infoText = t('goalDetails.basicTipInfo');
+    infoText = t('tipDetails.basicTipInfo');
   } else {
-    infoText = t('goalDetails.unlockedTipInfo'); // Lägg till denna översättning!
+    infoText = t('tipDetails.unlockedTipInfo'); // Lägg till denna översättning!
   }
-  
+
   const notFound = !mainArea || !tip;
 
   const descriptionKey = tip?.descriptionKey;
@@ -146,11 +150,11 @@ export default function AreaDetailScreen() {
 
   let addPlanButtonTitle = '';
   if (isTrainingTip) {
-    addPlanButtonTitle = t('goalDetails.addTrainingGoal');
+    addPlanButtonTitle = t('tipDetails.addTrainingGoal');
   } else if (isNutritionTip) {
-    addPlanButtonTitle = t('goalDetails.addNutritionGoal');
+    addPlanButtonTitle = t('tipDetails.addNutritionGoal');
   } else if (isOtherTip) {
-    addPlanButtonTitle = t('goalDetails.addOtherGoal'); // Lägg till denna översättning!
+    addPlanButtonTitle = t('tipDetails.addOtherGoal'); // Lägg till denna översättning!
   }
 
   const getDefaultPlanCategory = React.useCallback(() => {
@@ -206,13 +210,13 @@ export default function AreaDetailScreen() {
   }, [currentVerdict, positiveVerdicts]);
 
   const trainingRelationLabel = tip?.trainingRelation
-    ? t(`common:goalDetails.trainingRelation.${tip.trainingRelation}`)
+    ? t(`common:tipDetails.trainingRelation.${tip.trainingRelation}`)
     : null;
   const preferredDayPartLabels = React.useMemo(() => {
     if (!tip?.preferredDayParts?.length) return [] as string[];
-    return tip.preferredDayParts.map(part => t(`common:goalDetails.preferredDayParts.${part}`));
+    return tip.preferredDayParts.map(part => t(`common:tipDetails.preferredDayParts.${part}`));
   }, [tip?.preferredDayParts, t]);
-  const timeRuleLabel = tip?.timeRule ? t(`common:goalDetails.timeRules.${tip.timeRule}`) : null;
+  const timeRuleLabel = tip?.timeRule ? t(`common:tipDetails.timeRules.${tip.timeRule}`) : null;
   const nutritionFoodsTitle = React.useMemo(() => {
     if (!tip?.id || !tip.nutritionFoods?.length) return null;
     return t(`tips:${tip.id}.nutritionFoods.title`, {
@@ -265,6 +269,7 @@ export default function AreaDetailScreen() {
     return refs.some(ref => ref?.id && plannedSupplements.ids.has(ref.id));
   }, [tip?.supplements, plannedSupplements.ids]);
 
+
   const isTipInPlan = React.useMemo(() => {
     if (isTrainingTip && isTipInTrainingPlan) return true;
     if (isNutritionTip && isTipInNutritionPlan) return true;
@@ -273,30 +278,34 @@ export default function AreaDetailScreen() {
     return false;
   }, [isTrainingTip, isNutritionTip, isTipInTrainingPlan, isTipInNutritionPlan, isOtherTip, isTipInOtherPlan, isTipSupplementScheduled]);
 
+  // Show DiscreetButton only if supplement is scheduled and not in any other plan
+  const showSupplementDiscreetButton = isTipSupplementScheduled &&
+    !isTipInTrainingPlan && !isTipInNutritionPlan && !isTipInOtherPlan;
+
 
   const planBadgeLabel = React.useMemo(() => {
     if (justAddedPlanCategory === 'nutrition' && isTipInNutritionPlan) {
-      return t('goalDetails.addedToPlanNutrition');
+      return t('tipDetails.addedToPlanNutrition');
     }
     if (justAddedPlanCategory === 'training' && isTipInTrainingPlan) {
-      return t('goalDetails.addedToPlanTraining');
+      return t('tipDetails.addedToPlanTraining');
     }
     if (justAddedPlanCategory === 'other' && isTipInOtherPlan) {
-      return t('goalDetails.addedToPlanOther');
+      return t('tipDetails.addedToPlanOther');
     }
     if (isNutritionTip && isTipInNutritionPlan) {
-      return t('goalDetails.alreadyInPlanNutrition');
+      return t('tipDetails.alreadyInPlanNutrition');
     }
     if (isTrainingTip && isTipInTrainingPlan) {
-      return t('goalDetails.alreadyInPlanTraining');
+      return t('tipDetails.alreadyInPlanTraining');
     }
     if (isOtherTip && isTipInOtherPlan) {
-      return t('goalDetails.alreadyInPlanOther');
+      return t('tipDetails.alreadyInPlanOther');
     }
     if (isTipSupplementScheduled) {
-      return t('goalDetails.alreadyInPlanSupplement');
+      return t('tipDetails.alreadyInPlanSupplement');
     }
-    return t('goalDetails.alreadyInPlan');
+    return t('tipDetails.alreadyInPlan');
   }, [
     justAddedPlanCategory,
     isNutritionTip,
@@ -332,7 +341,7 @@ export default function AreaDetailScreen() {
   const progress = Math.min(educationXpEarned / maxEducationXp, 1);
   const progressLabel =
     educationXpEarned >= maxEducationXp
-      ? `${t('common:goalDetails.fullyExplored')} 🎉`
+      ? `${t('common:tipDetails.fullyExplored')} 🎉`
       : `${educationXpEarned}/${maxEducationXp} XP`;
 
   const handleAIInsightPress = (questionKey: AIPromptKey) => {
@@ -399,31 +408,32 @@ export default function AreaDetailScreen() {
         planBadgeLabel={planBadgeLabel}
         addPlanButtonTitle={addPlanButtonTitle}
         handleAddPlanEntry={handleAddTipPlanEntry}
+        showSupplementDiscreetButton={showSupplementDiscreetButton}
       />
 
       {descriptionKey && (
-        <AppBox title={t('common:goalDetails.information')}>
+        <AppBox title={t('common:tipDetails.information')}>
           <ThemedText type="explainer" style={styles.descriptionText}>
             {t(`tips:${descriptionKey}`)}
           </ThemedText>
         </AppBox>
       )}
-          <AreaRelevanceSection
+      <AreaRelevanceSection
         tip={tip}
         areaId={areaId}
         showAllAreas={showAllAreas}
         setShowAllAreas={setShowAllAreas}
-            expandAreas={shouldExpandAreas}
+        expandAreas={shouldExpandAreas}
         effectiveTipId={effectiveTipId}
         colors={colors}
       />
       {!!(trainingRelationLabel) && (
-        <AppBox title={t('common:goalDetails.trainingRelation.title')}>
+        <AppBox title={t('common:tipDetails.trainingRelation.title')}>
           <ThemedText type="caption" style={styles.metaText}>{trainingRelationLabel}</ThemedText>
         </AppBox>
       )}
       {preferredDayPartLabels.length > 0 && (
-        <AppBox title={t('common:goalDetails.preferredDayParts.title')}>
+        <AppBox title={t('common:tipDetails.preferredDayParts.title')}>
           {preferredDayPartLabels.map(label => (
             <ThemedText key={label} type="caption" style={styles.metaText}>
               • {label}
@@ -432,7 +442,7 @@ export default function AreaDetailScreen() {
         </AppBox>
       )}
       {!!(timeRuleLabel) && (
-        <AppBox title={t('common:goalDetails.timeRules.title')}>
+        <AppBox title={t('common:tipDetails.timeRules.title')}>
           <ThemedText type="caption" style={styles.metaText}>{timeRuleLabel}</ThemedText>
         </AppBox>
       )}
@@ -444,14 +454,15 @@ export default function AreaDetailScreen() {
         + (tip?.aminoAcidTargets?.length || 0)
         + (tip?.trackingTargets?.length || 0)
       ) > 0 && (
-        <NutritionTargetsSection tip={tip} colors={colors} t={t} />
-      )}
+          <NutritionTargetsSection tip={tip} colors={colors} t={t} />
+        )}
       <NutritionFoodsSection
         tip={tip}
         nutritionFoodItems={nutritionFoodItems}
         nutritionFoodsTitle={nutritionFoodsTitle}
         isTipInPlan={isTipInPlan}
         planBadgeLabel={planBadgeLabel}
+        showSupplementDiscreetButton={showSupplementDiscreetButton}
         handleAddTipPlanEntry={handleAddTipPlanEntry}
         styles={styles}
         colors={colors}
@@ -468,7 +479,7 @@ export default function AreaDetailScreen() {
         resolvedSupplements.length > 0 ||
         (supplementPlans?.some(p => Array.isArray(p.supplements) && p.supplements.length > 0))
       ) && (
-          <AppBox title={t('common:goalDetails.supplements')}>
+          <AppBox title={t('common:tipDetails.supplements')}>
             <SupplementList
               supplements={resolvedSupplements}
               plannedSupplements={plannedSupplements}
@@ -527,6 +538,12 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginBottom: 8,
   },
+  nutritionTagContainer: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center',
+    marginBottom: 8, 
+  },
   nutritionDetailText: {
     opacity: 0.8,
     fontSize: 14,
@@ -536,6 +553,10 @@ const styles = StyleSheet.create({
   descriptionText: {
     marginBottom: 8,
   },
+  centeredDiscreetButton: {
+    alignItems: 'center',
+    marginTop: 8,
+  },
 });
 
 function NutritionFoodsSection({
@@ -544,6 +565,7 @@ function NutritionFoodsSection({
   nutritionFoodsTitle,
   isTipInPlan,
   planBadgeLabel,
+  showSupplementDiscreetButton,
   handleAddTipPlanEntry,
   styles,
   colors,
@@ -553,6 +575,7 @@ function NutritionFoodsSection({
   nutritionFoodsTitle: string | null;
   isTipInPlan: boolean;
   planBadgeLabel: string;
+  showSupplementDiscreetButton: boolean;
   handleAddTipPlanEntry: () => void;
   styles: { [key: string]: any };
   colors: any;
@@ -569,15 +592,25 @@ function NutritionFoodsSection({
       ))}
       <View style={[styles.planActionContainer, styles.nutritionPlanAction]}>
         {isTipInPlan ? (
-          <View style={[styles.planActionAdded, { backgroundColor: colors.accentVeryWeak }]}>
-            <Icon source="check" size={18} color={colors.primary} />
-            <ThemedText type="caption" style={[styles.planActionAddedText, { color: colors.primary }]}>
-              {planBadgeLabel}
-            </ThemedText>
-          </View>
+          <>
+            <View style={[styles.planActionAdded, { backgroundColor: colors.accentVeryWeak }]}> 
+              <Icon source="check" size={18} color={colors.primary} />
+              <ThemedText type="caption" style={[styles.planActionAddedText, { color: colors.primary }]}> 
+                {planBadgeLabel}
+              </ThemedText>
+            </View>
+            {showSupplementDiscreetButton && (
+              <View style={styles.centeredDiscreetButton}>
+                <DiscreetButton
+                  title={`+ ${t('tipDetails.addNutritionGoal')}`}
+                  onPress={handleAddTipPlanEntry}
+                />
+              </View>
+            )}
+          </>
         ) : (
           <AppButton
-            title={t('goalDetails.addNutritionGoal')}
+            title={t('tipDetails.addNutritionGoal')}
             onPress={handleAddTipPlanEntry}
             variant="primary"
             style={styles.planActionButton}
@@ -607,55 +640,9 @@ function NutritionTargetsSection({
   const trackingTargets = tip?.trackingTargets ?? [];
   const allTargets = [...fiberTargets, ...polyphenolTargets, ...mineralTargets, ...vitaminTargets, ...aminoAcidTargets, ...trackingTargets];
 
-  const mineralTags = new Set([
-    'minerals_total',
-    'sodium',
-    'potassium',
-    'magnesium',
-    'calcium',
-    'iron',
-    'zinc',
-    'selenium',
-    'iodine',
-    'phosphorus',
-    'copper',
-    'manganese',
-  ]);
-
-  const aminoAcidTags = new Set([
-    'histidine',
-    'isoleucine',
-    'leucine',
-    'lysine',
-    'methionine',
-    'phenylalanine',
-    'threonine',
-    'tryptophan',
-    'valine',
-    'arginine',
-    'cysteine',
-    'glutamine',
-    'glycine',
-    'proline',
-    'tyrosine',
-  ]);
-
-  const vitaminTags = new Set([
-    'vitamins_total',
-    'vitamin_a',
-    'vitamin_c',
-    'vitamin_d',
-    'vitamin_e',
-    'vitamin_k',
-    'vitamin_b1',
-    'vitamin_b2',
-    'vitamin_b3',
-    'vitamin_b5',
-    'vitamin_b6',
-    'vitamin_b7',
-    'vitamin_b9',
-    'vitamin_b12',
-  ]);
+  const mineralTags = new Set(MINERAL_TYPE_KEYS);
+  const aminoAcidTags = new Set(ALL_AMINO_ACID_KEYS);
+  const vitaminTags = new Set(VITAMIN_TYPE_KEYS);
 
   if (!allTargets.length) return null;
 
@@ -696,15 +683,13 @@ function NutritionTargetsSection({
         }
         const label = t(`nutritionLogger.${labelGroup}.${trackingKey}`);
         return (
-          <View key={`target-${trackingKey}`} style={{ marginBottom: 12 }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <ThemedText type="default" style={{ flex: 1 }}>
+            <View key={`target-${trackingKey}`} style={ styles.nutritionTagContainer }>
+              <ThemedText type="default" style={globalStyles.flex1}>
                 {label}
               </ThemedText>
               <ThemedText type="caption" style={{ color: colors.textMuted }}>
                 {formatValue(target.amount, target.unit)}
               </ThemedText>
-            </View>
           </View>
         );
       })}
@@ -716,12 +701,12 @@ function MetricsSection({ tipId }: Readonly<{ tipId: string | null }>) {
   const { colors } = useTheme();
   const { t } = useTranslation(['common', 'metrics']);
   if (!tipId) return null;
-  
+
   const metricLinks = tipMetricLinks[tipId];
   if (!metricLinks || metricLinks.length === 0) return null;
 
   return (
-    <AppBox title={t('common:goalDetails.metricsTitle')}>
+    <AppBox title={t('common:tipDetails.metricsTitle')}>
       {metricLinks.map(link => {
         const metric = metrics[link.metricId];
         if (!metric) return null;
@@ -730,13 +715,13 @@ function MetricsSection({ tipId }: Readonly<{ tipId: string | null }>) {
             {metric.emoji} {t(`metrics:${link.metricId}.name`)}
           </ThemedText>
         );
-        })}
-        <ThemedText type="explainer" style={[
-                    globalStyles.explainer,
-                    {  borderTopColor: colors.borderLight }
-                  ]}>
-          {t('common:goalDetails.metricsExplainer')}
-        </ThemedText>
+      })}
+      <ThemedText type="explainer" style={[
+        globalStyles.explainer,
+        { borderTopColor: colors.borderLight }
+      ]}>
+        {t('common:tipDetails.metricsExplainer')}
+      </ThemedText>
     </AppBox>
   );
 }
@@ -754,7 +739,7 @@ function AIInsightsSection({
 }>) {
   const { t } = useTranslation();
   return (
-    <AppBox title={t(`common:goalDetails.aiInsights`)}>
+    <AppBox title={t(`common:tipDetails.aiInsights`)}>
       <Pressable
         onPress={() => handleAIInsightPress('insights.studies')}
         style={[
@@ -764,7 +749,7 @@ function AIInsightsSection({
         ]}
       >
         <ThemedText type="caption" style={[styles.insightText, { color: colors.textLight }]}>
-          {isQuestionAsked('studies') ? '✅' : '📚'} {t('common:goalDetails.whatStudiesExist')}
+          {isQuestionAsked('studies') ? '✅' : '📚'} {t('common:tipDetails.whatStudiesExist')}
           {!isQuestionAsked('studies') && ' (+5 XP)'}
         </ThemedText>
       </Pressable>
@@ -777,7 +762,7 @@ function AIInsightsSection({
         ]}
       >
         <ThemedText type="caption" style={[styles.insightText, { color: colors.textLight }]}>
-          {isQuestionAsked('experts') ? '✅' : '👥'} {t('common:goalDetails.whoAreTheExperts')}
+          {isQuestionAsked('experts') ? '✅' : '👥'} {t('common:tipDetails.whoAreTheExperts')}
           {!isQuestionAsked('experts') && ' (+5 XP)'}
         </ThemedText>
       </Pressable>
@@ -790,7 +775,7 @@ function AIInsightsSection({
         ]}
       >
         <ThemedText type="caption" style={[styles.insightText, { color: colors.textLight }]}>
-          {isQuestionAsked('risks') ? '✅' : '⚠️'} {t('common:goalDetails.whatAreTheRisks')}
+          {isQuestionAsked('risks') ? '✅' : '⚠️'} {t('common:tipDetails.whatAreTheRisks')}
           {!isQuestionAsked('risks') && ' (+5 XP)'}
         </ThemedText>
       </Pressable>

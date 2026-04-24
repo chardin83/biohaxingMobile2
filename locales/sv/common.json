@@ -194,7 +194,7 @@
   "selectArea": {
     "description": "Olika tips och tillskott kan hjälpa dig nå dina hälsomål. Välj ett för mer information"
   },
-  "goalDetails": {
+  "tipDetails": {
     "lockedTipInfo": "Detta är ett mer avancerat tips. Utforska grunderna för bäst effekt.",
     "basicTipInfo": "Detta är en del av grunden. Har du säkrat basen?",
     "unlockedTipInfo": "Detta är ett fördjupningsområde. Bygger vidare på grunden.",
