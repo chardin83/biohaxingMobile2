@@ -744,7 +744,7 @@
     "noFavorites": "Inga favoriter än",
     "editAreas": "Redigera Områden",
     "checkCoverage": "Min plan-täckning",
-    "myProgress": "Min kunskapsnivå",
+    "myProgress": "Min XP",
     "xpBreakdown": "Kunskaps-XP: {{education}} • Nutrition-XP: {{nutrition}}",
     "noPlanned": "Inget planerat",
     "xpInfo": "XP mäter din utveckling i appen. Kunskaps-XP får du när du utforskar tips och frågor. Nutrition-XP får du när du uppfyller nutritionstips (dagliga/veckovisa mål).\n\nNuvarande uppdelning:\n Kunskaps-XP: {{education}} • Nutrition-XP: {{nutrition}}."

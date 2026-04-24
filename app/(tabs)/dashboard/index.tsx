@@ -25,7 +25,8 @@ function addAreaIdsToSupplementMap(
   areaIds: string[]
 ) {
   if (!map.has(refId)) map.set(refId, new Set<string>());
-  const set = map.get(refId)!;
+  const set = map.get(refId);
+  if (!set) return;
   areaIds.forEach(id => set.add(id));
 }
 
@@ -80,45 +81,53 @@ export default function DashboardScreen() {
       return map;
     }, []);
   
-    const getPlannedTipsForArea = React.useCallback((areaId: string) => {
-      // Tips från planer
-      const plannedTipIds = [
-        ...plans.training,
-        ...plans.nutrition,
-        ...plans.other,
-      ]
-        .map(entry => entry.tipId)
-        .filter(Boolean);
-  
-      // Tips från supplements
-      const supplementTipIds = (plans.supplements || [])
-        .flatMap(plan =>
-          (plan.supplements || [])
-            .map(entry => entry?.supplement?.id)
-            .filter(Boolean)
-            .flatMap(supId => {
-              // Hämta tips som har detta supplement och täcker areaId
-              const areaSet = supplementAreasMap.get(supId);
-              if (areaSet?.has(areaId)) {
-                // Hitta alla tips som har detta supplement och areaId
-                return tips
-                  .filter(
-                    tip =>
-                      (tip.supplements || []).some(s => s.id === supId) &&
-                      (tip.areas || []).some(a => a.id === areaId)
-                  )
-                  .map(tip => tip.id);
-              }
-              return [];
-            })
-        );
-  
-      // Slå ihop och ta bort dubbletter
-      const allTipIds = Array.from(new Set([...plannedTipIds, ...supplementTipIds]));
-  
-      return allTipIds
-        .map(tipId => t(`tips:${tipId}.title`));
-    }, [plans, t, supplementAreasMap]);
+    const getTipIdsForSupplementAndArea = React.useCallback(
+  (supId: string, areaId: string) => {
+    const areaSet = supplementAreasMap.get(supId);
+
+    if (!areaSet?.has(areaId)) {
+      return [];
+    }
+
+    return tips
+      .filter(tip => {
+        const hasSupplement = (tip.supplements || []).some(s => s.id === supId);
+        const hasArea = (tip.areas || []).some(a => a.id === areaId);
+
+        return hasSupplement && hasArea;
+      })
+      .map(tip => tip.id);
+  },
+  [supplementAreasMap]
+);
+
+const getPlannedTipsForArea = React.useCallback(
+  (areaId: string) => {
+    const plannedTipIds = [
+      ...plans.training,
+      ...plans.nutrition,
+      ...plans.other,
+    ]
+      .map(entry => entry.tipId)
+      .filter(Boolean)
+      .filter(tipId => {
+        const areaIds = tipAreasMap.get(tipId);
+        return areaIds?.has(areaId);
+      });
+
+    const supplementTipIds = (plans.supplements || []).flatMap(plan =>
+      (plan.supplements || [])
+        .map(entry => entry?.supplement?.id)
+        .filter(Boolean)
+        .flatMap(supId => getTipIdsForSupplementAndArea(supId, areaId))
+    );
+
+    const allTipIds = Array.from(new Set([...plannedTipIds, ...supplementTipIds]));
+
+    return allTipIds.map(tipId => t(`tips:${tipId}.title`));
+  },
+  [plans, t, tipAreasMap, getTipIdsForSupplementAndArea]
+);
 
  /* useEffect(() => {
     setMyXP(600); // Sätt en hög XP för att testa nivå 3

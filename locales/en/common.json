@@ -736,7 +736,7 @@
     "noPlanned": "Nothing planned",
     "editAreas": "Edit Areas",
     "checkCoverage": "Plan coverage",
-    "myProgress": "My education level",
+    "myProgress": "My XP",
     "xpBreakdown": "Education XP: {{education}} • Nutrition XP: {{nutrition}}",
     "xpInfo": "XP tracks your progress in the app. Education XP comes from exploring tips and questions. Nutrition XP comes from completing nutrition tips (daily/weekly targets).\n\nCurrent breakdown: \n Education XP: {{education}} • Nutrition XP: {{nutrition}}."
   },
