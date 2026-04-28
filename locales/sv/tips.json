@@ -979,8 +979,8 @@
     "description": "Sikta på 3 fiskåtagningar per vecka, med minst 1 fet fisk rik på EPA och DHA omega-3-fettsyror. Omega-3-fettsyror stödjer kardiovaskulär hälsa, minskar inflammation och främjar hjärnfunktion. Fet fisk som lax, makrill och sardiner är de mest biovärfbara källorna.",
     "areas": {
       "cardioFitness": "Omega-3-fettsyror minskar triglycerider, stödjer ett sunt blodtryck och förbättrar endotelial funktion för kardiovaskulär motståndskraft.",
-      "brainHealth": "EPA och DHA är strukturella komponenter i hjärncellets membran och stödjer kognitiv funktion, humörreglering och neuroprotection.",
-      "inflammation": "Omega-3-fettsyror minskar aktivt systemisk inflammation genom att modulera immunsignalering och skifta inflammationsbalansen mot upplösning."
+      "mind": "EPA och DHA är strukturella komponenter i hjärncellets membran och stödjer kognitiv funktion, humörreglering och neuroprotection.",
+      "immuneSupport": "Omega-3-fettsyror minskar aktivt systemisk inflammation genom att modulera immunsignalering och skifta inflammationsbalansen mot upplösning."
     },
     "nutritionFoods": {
       "title": "Fisk för omega-3",

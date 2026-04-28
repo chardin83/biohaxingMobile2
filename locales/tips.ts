@@ -1881,9 +1881,9 @@ const rawTips: Tip[] = [
     level: 2,
     xp: 400,
     areas: [
-      { id: 'heartHealth', descriptionKey: 'fish_omega3_weekly.areas.heartHealth' },
-      { id: 'brainHealth', descriptionKey: 'fish_omega3_weekly.areas.brainHealth' },
-      { id: 'inflammation', descriptionKey: 'fish_omega3_weekly.areas.inflammation' },
+      { id: 'cardioFitness', descriptionKey: 'fish_omega3_weekly.areas.cardioFitness' },
+      { id: 'mind', descriptionKey: 'fish_omega3_weekly.areas.mind' },
+      { id: 'immuneSupport', descriptionKey: 'fish_omega3_weekly.areas.immuneSupport' },
     ],
     title: 'fish_omega3_weekly.title',
     descriptionKey: 'fish_omega3_weekly.description',

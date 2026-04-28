@@ -1076,8 +1076,8 @@
     "description": "Aim for 3 fish meals per week, with at least 1 fatty fish meal rich in EPA and DHA omega-3 fats. Omega-3 fatty acids support cardiovascular health, reduce inflammation, and promote brain function. Fatty fish like salmon, mackerel, and sardines are the most bioavailable sources.",
     "areas": {
       "cardioFitness": "Omega-3 fats reduce triglycerides, support healthy blood pressure, and improve endothelial function for cardiovascular resilience.",
-      "brainHealth": "EPA and DHA are structural components of brain cell membranes and support cognitive function, mood regulation, and neuroprotection.",
-      "inflammation": "Omega-3 fats actively reduce systemic inflammation by modulating immune signaling and shifting the inflammatory balance toward resolution."
+      "mind": "EPA and DHA are structural components of brain cell membranes and support cognitive function, mood regulation, and neuroprotection.",
+      "immuneSupport": "Omega-3 fats actively reduce systemic inflammation by modulating immune signaling and shifting the inflammatory balance toward resolution."
     },
     "nutritionFoods": {
       "title": "Fish for omega-3s",
