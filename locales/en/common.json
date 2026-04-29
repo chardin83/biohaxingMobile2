@@ -259,6 +259,14 @@
     "whatStudiesExist": "What studies exist?",
     "whoAreTheExperts": "Who are the experts?",
     "fullyExplored": "Fully explored!",
+    "metricsTitle": "Related metrics",
+    "metricsExplainer": "These metrics are related to your tip and can help you track your progress."
+  },
+  "areaRelevanceSection": {
+    "relevance": "Areas impacted"
+  },
+  "timingInfoSection": {
+    "title": "Timing",
     "trainingRelation": {
       "title": "Workout timing",
       "anytime": "No special workout timing",
@@ -278,18 +286,17 @@
     },
     "timeRules": {
       "title": "Timing cautions",
-      "anytime": "Any time of day",
+      "anytime": "No, any time of day",
       "avoidLateEvening": "Avoid late evening",
       "avoidEvening": "Avoid evening",
       "avoidAfternoon": "Avoid afternoon",
       "avoidMorning": "Avoid morning",
       "avoidNight": "Avoid night"
-    },
-    "metricsTitle": "Related metrics",
-    "metricsExplainer": "These metrics are related to your tip and can help you track your progress."
+    }
   },
-  "areaRelevanceSection": {
-    "relevance": "Areas impacted"
+  "nutritionTargetSection": {
+    "title": "Nutrition targets",
+    "description": "These are the key nutrition targets related to this tip. Tracking these can help you see how well you're implementing the tip and its impact on your health."
   },
   "tipCard": {
     "startExploring": "Start exploring",

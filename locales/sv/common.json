@@ -263,6 +263,14 @@
     "whatStudiesExist": "Vilka studier finns?",
     "whoAreTheExperts": "Vilka experter finns?",
     "fullyExplored": "Fullt utforskat!",
+    "metricsTitle": "Relaterade mätvärden",
+    "metricsExplainer": "Dessa mätvärden är relaterade till ditt tips och kan hjälpa dig att följa din utveckling."
+  },
+  "areaRelevanceSection": {
+    "relevance": "Områden som påverkas"
+  },
+  "timingInfoSection": {
+    "title": "Tidsrekommendationer",
     "trainingRelation": {
       "title": "Relation till träning",
       "anytime": "Kan tas oavsett träning",
@@ -281,19 +289,18 @@
       "night": "Natt"
     },
     "timeRules": {
-      "title": "Undvik tid",
+      "title": "Tidsregler",
       "anytime": "Kan tas när som helst",
       "avoidLateEvening": "Undvik sena kvällar",
       "avoidEvening": "Undvik kvällstid",
       "avoidAfternoon": "Undvik eftermiddag",
       "avoidMorning": "Undvik morgon",
       "avoidNight": "Undvik nattetid"
-    },
-    "metricsTitle": "Relaterade mätvärden",
-    "metricsExplainer": "Dessa mätvärden är relaterade till ditt tips och kan hjälpa dig att följa din utveckling."
+    }
   },
-  "areaRelevanceSection": {
-    "relevance": "Områden som påverkas"
+  "nutritionTargetSection": {
+    "title": "Näringsmål",
+    "description": "Dessa är de viktigaste näringsmålen relaterade till detta tips. Att följa dessa kan hjälpa dig att se hur väl du implementerar tipset och dess påverkan på din hälsa."
   },
   "tipCard": {
     "startExploring": "Börja utforska",

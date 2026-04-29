@@ -6,7 +6,7 @@ import { AppTheme } from '@/app/theme/AppTheme';
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'title2' | 'title3' | 'defaultSemiBold' | 'subtitle' | 'link' | 'caption' | 'value' | 'label' | 'explainer' | 'pill' | 'buttonText';
+  type?: 'default' | 'defaultLarge' |  'title' | 'title2' | 'title3' | 'defaultSemiBold' | 'subtitle' | 'link' | 'caption' | 'value' | 'label' | 'explainer' | 'pill' | 'buttonText';
   uppercase?: boolean;
   numberOfLines?: number;
 };
@@ -30,6 +30,8 @@ function getTextStyle(type: ThemedTextProps['type'], colors: AppTheme['colors'])
   switch (type) {
     case 'default':
       return styles.default;
+    case 'defaultLarge':
+      return styles.defaultLarge;
     case 'title':
       return styles.title;
     case 'title2':
@@ -72,6 +74,7 @@ export function ThemedText({ style, lightColor, darkColor, type = 'default', upp
         style,
       ]}
       numberOfLines={numberOfLines} // Lägg till denna rad
+      selectable={true}
       {...rest}
     />
   );
@@ -81,6 +84,10 @@ const styles = StyleSheet.create({
   default: {
     fontSize: 14,
     lineHeight: 20,
+  },
+   defaultLarge: {
+    fontSize: 16,
+    lineHeight: 24,
   },
   defaultSemiBold: {
     fontSize: 14,

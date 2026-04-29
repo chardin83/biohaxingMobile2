@@ -13,6 +13,9 @@ export const globalStyles = StyleSheet.create({
   marginTop16: {
     marginTop: 16,
   },
+  marginBottom16: {
+    marginBottom: 16,
+  },
   borders: {
     borderRadius: BORDER_RADIUS_SMALL,
   },

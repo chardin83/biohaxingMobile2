@@ -20,9 +20,6 @@ import DiscreetButton from '@/components/ui/DiscreetButton';
 import { NotFound } from '@/components/ui/NotFound';
 import VerdictSelector from '@/components/VerdictSelector';
 import { AIPromptKey, AIPrompts } from '@/constants/AIPrompts';
-import { ALL_AMINO_ACID_KEYS } from '@/constants/aminoAcids';
-import { MINERAL_TYPE_KEYS } from '@/constants/minerals';
-import { VITAMIN_TYPE_KEYS } from '@/constants/vitamins';
 import { XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW } from '@/constants/XP';
 import { areas } from '@/locales/areas';
 import { metrics, tipMetricLinks } from '@/locales/metrics';
@@ -30,6 +27,9 @@ import { useSupplements } from '@/locales/supplements';
 import { tips } from '@/locales/tips';
 import { PlanCategory } from '@/types/planCategory';
 import { POSITIVE_VERDICTS } from '@/types/verdict';
+
+import NutritionTargetsSection from './sections/NutritionTargetsSection';
+import TimingInfoSection from './sections/TimingInfoSection';
 
 export default function AreaDetailScreen() {
   const { t } = useTranslation();
@@ -209,14 +209,6 @@ export default function AreaDetailScreen() {
     return positiveVerdicts.has(currentVerdict as any);
   }, [currentVerdict, positiveVerdicts]);
 
-  const trainingRelationLabel = tip?.trainingRelation
-    ? t(`common:tipDetails.trainingRelation.${tip.trainingRelation}`)
-    : null;
-  const preferredDayPartLabels = React.useMemo(() => {
-    if (!tip?.preferredDayParts?.length) return [] as string[];
-    return tip.preferredDayParts.map(part => t(`common:tipDetails.preferredDayParts.${part}`));
-  }, [tip?.preferredDayParts, t]);
-  const timeRuleLabel = tip?.timeRule ? t(`common:tipDetails.timeRules.${tip.timeRule}`) : null;
   const nutritionFoodsTitle = React.useMemo(() => {
     if (!tip?.id || !tip.nutritionFoods?.length) return null;
     return t(`tips:${tip.id}.nutritionFoods.title`, {
@@ -427,25 +419,9 @@ export default function AreaDetailScreen() {
         effectiveTipId={effectiveTipId}
         colors={colors}
       />
-      {!!(trainingRelationLabel) && (
-        <AppBox title={t('common:tipDetails.trainingRelation.title')}>
-          <ThemedText type="caption" style={styles.metaText}>{trainingRelationLabel}</ThemedText>
-        </AppBox>
-      )}
-      {preferredDayPartLabels.length > 0 && (
-        <AppBox title={t('common:tipDetails.preferredDayParts.title')}>
-          {preferredDayPartLabels.map(label => (
-            <ThemedText key={label} type="caption" style={styles.metaText}>
-              • {label}
-            </ThemedText>
-          ))}
-        </AppBox>
-      )}
-      {!!(timeRuleLabel) && (
-        <AppBox title={t('common:tipDetails.timeRules.title')}>
-          <ThemedText type="caption" style={styles.metaText}>{timeRuleLabel}</ThemedText>
-        </AppBox>
-      )}
+      <TimingInfoSection
+        tip={tip}
+      />
       {isNutritionTip && (
         (tip?.fiberTargets?.length || 0)
         + (tip?.polyphenolTargets?.length || 0)
@@ -528,18 +504,8 @@ const styles = StyleSheet.create({
     gap: 16,
     marginTop: 'auto',
   },
-  metaText: {
-    fontSize: 16,
-    marginBottom: 4,
-  },
   nutritionItem: {
     alignSelf: 'flex-start',
-    marginBottom: 8,
-  },
-  nutritionTagContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     marginBottom: 8,
   },
   nutritionDetailText: {
@@ -584,7 +550,7 @@ function NutritionFoodsSection({
     <AppBox title={nutritionFoodsTitle}>
       {nutritionFoodItems.map(({ key, name, details }) => (
         <View key={key} style={styles.nutritionItem}>
-          <ThemedText type="caption" style={styles.metaText}>• {name}</ThemedText>
+          <ThemedText type="defaultLarge">• {name}</ThemedText>
           {details ? <ThemedText type="caption" style={styles.nutritionDetailText}>{details}</ThemedText> : null}
         </View>
       ))}
@@ -619,81 +585,6 @@ function NutritionFoodsSection({
   );
 }
 
-function NutritionTargetsSection({
-  tip,
-  colors,
-  t,
-}: Readonly<{
-  tip: any;
-  colors: any;
-  t: any;
-}>) {
-  if (!tip?.fiberTargets && !tip?.polyphenolTargets && !tip?.mineralTargets && !tip?.vitaminTargets && !tip?.aminoAcidTargets && !tip?.trackingTargets) return null;
-
-  const fiberTargets = tip?.fiberTargets ?? [];
-  const polyphenolTargets = tip?.polyphenolTargets ?? [];
-  const mineralTargets = tip?.mineralTargets ?? [];
-  const vitaminTargets = tip?.vitaminTargets ?? [];
-  const aminoAcidTargets = tip?.aminoAcidTargets ?? [];
-  const trackingTargets = tip?.trackingTargets ?? [];
-  const allTargets = [...fiberTargets, ...polyphenolTargets, ...mineralTargets, ...vitaminTargets, ...aminoAcidTargets, ...trackingTargets];
-
-  const mineralTags = new Set(MINERAL_TYPE_KEYS);
-  const aminoAcidTags = new Set(ALL_AMINO_ACID_KEYS);
-  const vitaminTags = new Set(VITAMIN_TYPE_KEYS);
-
-  if (!allTargets.length) return null;
-
-  const formatValue = (value: number, unit: 'g' | 'mg' | 'plants' | 'items' | 'count') => {
-    if (unit === 'plants' || unit === 'items' || unit === 'count') {
-      return `${Math.round(value)} ${unit}`;
-    }
-    let decimals = 1;
-    if (unit === 'mg') {
-      if (value < 0.01) {
-        decimals = 4;
-      } else if (value < 1) {
-        decimals = 3;
-      } else if (value < 10) {
-        decimals = 2;
-      } else {
-        decimals = 0;
-      }
-    }
-    return `${value.toFixed(decimals)} ${unit}`;
-  };
-
-  return (
-    <AppBox title={t('nutritionLogger.nutritionTargetsTitle', { defaultValue: 'Nutrition targets' })}>
-      {allTargets.map((target: any) => {
-        const trackingKey = 'trackingKey' in target ? target.trackingKey : target.tag;
-        let labelGroup: 'weeklyTrackingLabels' | 'fiberLabels' | 'aminoAcidLabels' | 'mineralLabels' | 'vitaminLabels' | 'polyphenolLabels' = 'polyphenolLabels';
-        if (target.unit === 'plants' || target.unit === 'items' || target.unit === 'count') {
-          labelGroup = 'weeklyTrackingLabels';
-        } else if (target.unit === 'g') {
-          labelGroup = 'fiberLabels';
-        } else if (aminoAcidTags.has(trackingKey)) {
-          labelGroup = 'aminoAcidLabels';
-        } else if (mineralTags.has(trackingKey)) {
-          labelGroup = 'mineralLabels';
-        } else if (vitaminTags.has(trackingKey)) {
-          labelGroup = 'vitaminLabels';
-        }
-        const label = t(`nutritionLogger.${labelGroup}.${trackingKey}`);
-        return (
-          <View key={`target-${trackingKey}`} style={styles.nutritionTagContainer}>
-            <ThemedText type="default" style={globalStyles.flex1}>
-              {label}
-            </ThemedText>
-            <ThemedText type="caption" style={{ color: colors.textMuted }}>
-              {formatValue(target.amount, target.unit)}
-            </ThemedText>
-          </View>
-        );
-      })}
-    </AppBox>
-  );
-}
 
 function MetricsSection({ tipId }: Readonly<{ tipId: string | null }>) {
   const { colors } = useTheme();
