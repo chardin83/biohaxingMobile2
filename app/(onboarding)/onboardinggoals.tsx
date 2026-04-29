@@ -22,7 +22,6 @@ export default function OnboardingGoals() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.title, { color: colors.primary }]}>{t('common:areas.selectAreas')}</Text>
       <Areas />
 
       <AppButton title={t('common:onboarding.continue')} onPress={handleNext} variant="primary" />
@@ -33,8 +32,8 @@ export default function OnboardingGoals() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    paddingTop: 60,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 22,
