@@ -4,8 +4,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, Pressable,StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import DarkSmart from '@/assets/images/dark_orange.png';
-import LightSmart from '@/assets/images/light_teal2.png';
+import DarkSmart from '@/assets/images/dark_orange1024.png';
+import LightSmart from '@/assets/images/light_teal1024.png';
 import { ThemedText } from '@/components/ThemedText';
 import AppCard from '@/components/ui/AppCard';
 import Container from '@/components/ui/Container';

@@ -5,5 +5,6 @@ export interface Plan {
   prefferedTime: string;
   supplements: SupplementPlanEntry[];
   notify: boolean;
+  notificationId?: string;
   reason?: string;
 }

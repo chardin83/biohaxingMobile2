@@ -1,4 +1,8 @@
+
+
 import { useTheme } from '@react-navigation/native';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,10 +31,63 @@ import { PressableCard } from '@/components/ui/PressableCard';
 import { useSupplementSaver } from '@/hooks/useSupplementSaver';
 
 import { Plan } from '../../domain/Plan';
+// Helper: Request notification permissions
+async function requestNotificationPermission() {
+  if (Device.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    return finalStatus === 'granted';
+  }
+  return false;
+}
+
+// Helper: Cancel a notification by id
+async function cancelNotificationById(notificationId?: string) {
+  if (notificationId) {
+    try {
+      await Notifications.cancelScheduledNotificationAsync(notificationId);
+    } catch {}
+  }
+}
+
+// Helper: Schedule notification for a supplement plan and return notificationId
+async function scheduleSupplementNotification(plan: Plan): Promise<string | undefined> {
+  if (!plan.notify) return undefined;
+  const [hours, minutes] = plan.prefferedTime.split(':').map(Number);
+  const supplementList = (plan.supplements && plan.supplements.length > 0)
+    ? plan.supplements.map(s => s.supplement.name).join(', ')
+    : 'Inga tillskott';
+  try {
+    const id = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: `Dags för tillskott ${plan.name}:`,
+        body: `${supplementList}`,
+        sound: true,
+      },
+      trigger: {
+        hour: hours,
+        minute: minutes,
+        repeats: true,
+        type: 'daily',
+      } as Notifications.DailyTriggerInput,
+    });
+    return id;
+  } catch {
+    return undefined;
+  }
+}
 
 // Plan category mapping not currently used; remove to avoid unused warnings
 
 export default function Plans() {
+    // Request notification permissions on mount
+    useEffect(() => {
+      requestNotificationPermission();
+    }, []);
   const params = useLocalSearchParams<{ openCreate?: string }>();
   const { colors } = useTheme();
 
@@ -110,8 +167,23 @@ export default function Plans() {
     setModalVisible(true); // Open the modal
   };
 
-  const handleNotify = (plan: Plan) => {
-    const updatedPlans = supplementPlans.map(p => (p.name === plan.name ? { ...p, notify: !p.notify } : p));
+  // Toggle notification for a plan (and handle time changes)
+  const handleNotify = async (plan: Plan) => {
+    const updatedPlans = await Promise.all(
+      supplementPlans.map(async p => {
+        if (p.name === plan.name) {
+          // Avboka ev. gammal notis
+          await cancelNotificationById(p.notificationId);
+          const newNotify = !p.notify;
+          let notificationId: string | undefined;
+          if (newNotify) {
+            notificationId = await scheduleSupplementNotification({ ...p, notify: true });
+          }
+          return { ...p, notify: newNotify, notificationId };
+        }
+        return p;
+      })
+    );
     savePlans(updatedPlans);
   };
 
@@ -331,13 +403,26 @@ export default function Plans() {
           onClose={() => setModalVisible(false)}
           initialName={isEditingPlan && selectedPlan ? selectedPlan.name : ''}
           initialTime={isEditingPlan && selectedPlan ? timeStringToDate(selectedPlan.prefferedTime) : new Date()}
-          onCreate={planData => {
+          onCreate={async planData => {
             if (isEditingPlan && selectedPlan) {
               // Uppdatera befintlig plan
-              const updatedPlans = supplementPlans.map(plan =>
-                plan.name === selectedPlan.name && plan.prefferedTime === selectedPlan.prefferedTime
-                  ? { ...plan, name: planData.name, prefferedTime: planData.prefferedTime }
-                  : plan
+              const updatedPlans = await Promise.all(
+                supplementPlans.map(async plan => {
+                  if (plan.name === selectedPlan.name && plan.prefferedTime === selectedPlan.prefferedTime) {
+                    // Avboka ev. gammal notis
+                    await cancelNotificationById(plan.notificationId);
+                    let notificationId = plan.notificationId;
+                    if (plan.notify) {
+                      notificationId = await scheduleSupplementNotification({
+                        ...plan,
+                        name: planData.name,
+                        prefferedTime: planData.prefferedTime,
+                      });
+                    }
+                    return { ...plan, name: planData.name, prefferedTime: planData.prefferedTime, notificationId };
+                  }
+                  return plan;
+                })
               );
               savePlans(updatedPlans);
             } else {
@@ -348,7 +433,11 @@ export default function Plans() {
                 prefferedTime: planData.prefferedTime,
                 notify: planData.notify,
               };
-              const updatedPlans = [...supplementPlans, newPlan];
+              let notificationId;
+              if (planData.notify) {
+                notificationId = await scheduleSupplementNotification({ ...newPlan, notificationId: undefined });
+              }
+              const updatedPlans = [...supplementPlans, { ...newPlan, notificationId }];
               savePlans(updatedPlans);
             }
             setModalVisible(false);
