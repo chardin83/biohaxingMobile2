@@ -1067,7 +1067,8 @@
       "fructooligosaccharides": "Fruktooligosackarider (FOS)",
       "galactooligosaccharides": "Galaktooligosackarider (GOS)",
       "pectic_oligosaccharides": "Pektiska oligosackarider"
-    }
+    },
+    "seeProgress": "Se utveckling"
   },
   "labeledInput": {
     "optional": "valfritt",

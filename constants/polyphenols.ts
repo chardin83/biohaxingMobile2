@@ -10,4 +10,4 @@ export const POLYPHENOL_TYPE_KEYS = [
   'ellagitannins',
 ] as const;
 
-export type PolyphenolTypeKey = typeof POLYPHENOL_TYPE_KEYS[number];
+export type PolyphenolType = typeof POLYPHENOL_TYPE_KEYS[number];

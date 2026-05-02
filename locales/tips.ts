@@ -1,3 +1,9 @@
+import { AminoAcidType } from '@/constants/aminoAcids';
+import { FiberSubtype, FiberType } from '@/constants/fiber';
+import { MineralType } from '@/constants/minerals';
+import { PolyphenolType } from '@/constants/polyphenols';
+import { VitaminType } from '@/constants/vitamins';
+import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
 import { PlanCategory } from '@/types/planCategory';
 
 type SupplementReference = {
@@ -26,30 +32,7 @@ export type TimeOfDayRule =
 
 export type EvidenceConfidence = 'high' | 'medium' | 'low';
 
-export type TargetPeriod = 'daily' | 'weekly';
-
-export type FiberType =
-  | 'fiber_total'
-  | 'fiber_gel_forming'
-  | 'fiber_non_gel_forming'
-  | 'fiber_fermentable';
-
-export type FiberCategory = Exclude<FiberType, 'fiber_total'>;
-
-export type FiberSubtype =
-  | 'beta_glucans'
-  | 'pectin'
-  | 'psyllium'
-  | 'mucilage'
-  | 'cellulose'
-  | 'hemicellulose'
-  | 'lignin'
-  | 'arabinoxylan'
-  | 'resistant_starch'
-  | 'inulin'
-  | 'fructooligosaccharides'
-  | 'galactooligosaccharides'
-  | 'pectic_oligosaccharides';
+export type TargetPeriod = NutritionTargetPeriod;
 
 export const FIBER_SUBTYPE_LABELS: Record<FiberSubtype, string> = {
   beta_glucans: 'Beta-glukaner',
@@ -66,80 +49,6 @@ export const FIBER_SUBTYPE_LABELS: Record<FiberSubtype, string> = {
   galactooligosaccharides: 'Galaktooligosackarider (GOS)',
   pectic_oligosaccharides: 'Pektiska oligosackarider',
 };
-
-// Canonical mapping: vilka fibertyper som hör till respektive kategori.
-export const FIBER_CATEGORY_SUBTYPES: Record<FiberCategory, FiberSubtype[]> = {
-  fiber_gel_forming: ['beta_glucans', 'pectin', 'psyllium', 'mucilage'],
-  fiber_non_gel_forming: ['cellulose', 'hemicellulose', 'lignin', 'arabinoxylan'],
-  fiber_fermentable: [
-    'resistant_starch',
-    'inulin',
-    'fructooligosaccharides',
-    'galactooligosaccharides',
-    'pectic_oligosaccharides',
-    'beta_glucans',
-    'pectin',
-    'mucilage',
-  ],
-};
-
-export type PolyphenolType =
-  | 'polyphenols_total'
-  | 'flavonoids_total'
-  | 'flavonoids' // parent category marker when exact subclass is unknown
-  | 'anthocyanins'
-  | 'catechins'
-  | 'flavanols'
-  | 'flavonols'
-  | 'quercetin'
-  | 'ellagitannins';
-
-export type MineralType =
-  | 'minerals_total'
-  | 'sodium'
-  | 'potassium'
-  | 'magnesium'
-  | 'calcium'
-  | 'iron'
-  | 'zinc'
-  | 'selenium'
-  | 'iodine'
-  | 'phosphorus'
-  | 'copper'
-  | 'manganese';
-
-export type VitaminType =
-  | 'vitamins_total'
-  | 'vitamin_a'
-  | 'vitamin_c'
-  | 'vitamin_d'
-  | 'vitamin_e'
-  | 'vitamin_k'
-  | 'vitamin_b1'
-  | 'vitamin_b2'
-  | 'vitamin_b3'
-  | 'vitamin_b5'
-  | 'vitamin_b6'
-  | 'vitamin_b7'
-  | 'vitamin_b9'
-  | 'vitamin_b12';
-
-export type AminoAcidType =
-  | 'histidine'
-  | 'isoleucine'
-  | 'leucine'
-  | 'lysine'
-  | 'methionine'
-  | 'phenylalanine'
-  | 'threonine'
-  | 'tryptophan'
-  | 'valine'
-  | 'arginine'
-  | 'cysteine'
-  | 'glutamine'
-  | 'glycine'
-  | 'proline'
-  | 'tyrosine';
 
 export type NutrientTag = FiberType | PolyphenolType | MineralType | VitaminType | AminoAcidType;
 

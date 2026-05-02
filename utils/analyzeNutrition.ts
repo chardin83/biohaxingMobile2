@@ -1,9 +1,12 @@
-import { ALL_AMINO_ACID_KEYS, AminoAcidKey } from '@/constants/aminoAcids';
-import { FIBER_TYPE_KEYS } from '@/constants/fiber';
-import { MINERAL_TYPE_KEYS, MineralTypeKey } from '@/constants/minerals';
-import { POLYPHENOL_TYPE_KEYS, PolyphenolTypeKey } from '@/constants/polyphenols';
-import { VITAMIN_TYPE_KEYS, VitaminTypeKey } from '@/constants/vitamins';
-import { FIBER_CATEGORY_SUBTYPES, type FiberSubtype } from '@/locales/tips';
+import { ALL_AMINO_ACID_KEYS, AminoAcidType } from '@/constants/aminoAcids';
+import {
+  FIBER_CATEGORY_SUBTYPES,
+  FIBER_TYPE_KEYS,
+  type FiberSubtype,
+} from '@/constants/fiber';
+import { MINERAL_TYPE_KEYS, MineralType } from '@/constants/minerals';
+import { POLYPHENOL_TYPE_KEYS, PolyphenolType } from '@/constants/polyphenols';
+import { VITAMIN_TYPE_KEYS, VitaminType } from '@/constants/vitamins';
 import { MicrobiomeSupportEntry } from '@/types/microbiome';
 
 import {
@@ -275,7 +278,7 @@ export const extractMicrobiomeSupport = (
   return mergeMicrobiomeSupportLists(entries);
 };
 
-const normalizeFlavonoidClassTag = (value: unknown): PolyphenolTypeKey | null => {
+const normalizeFlavonoidClassTag = (value: unknown): PolyphenolType | null => {
   if (typeof value !== 'string') return null;
 
   const normalized = value.toLowerCase().trim();
@@ -418,7 +421,7 @@ const applyDetailsFromCandidate = (
         .trim()
         .replaceAll(/\s+/g, '_');
 
-      if (!ALL_AMINO_ACID_KEYS.includes(normalizedKey as AminoAcidKey)) return;
+      if (!ALL_AMINO_ACID_KEYS.includes(normalizedKey as AminoAcidType)) return;
 
       addToTotals(
         aminoAcidsByType,
@@ -462,7 +465,7 @@ const applyDetailsFromCandidate = (
       const rawKey = String(item?.name ?? item?.tag ?? '').toLowerCase().trim();
       const normalizedKey = rawKey.replaceAll(/\s+/g, '_');
 
-      if (!MINERAL_TYPE_KEYS.includes(normalizedKey as MineralTypeKey)) return;
+      if (!MINERAL_TYPE_KEYS.includes(normalizedKey as MineralType)) return;
 
       const before = mineralsByType[normalizedKey] ?? 0;
       addToTotals(
@@ -494,7 +497,7 @@ const applyDetailsFromCandidate = (
       const rawKey = String(item?.name ?? item?.tag ?? '').toLowerCase().trim();
       const normalizedKey = rawKey.replaceAll(/\s+/g, '_');
 
-      if (!VITAMIN_TYPE_KEYS.includes(normalizedKey as VitaminTypeKey)) return;
+      if (!VITAMIN_TYPE_KEYS.includes(normalizedKey as VitaminType)) return;
 
       addToTotals(
         vitaminsByType,

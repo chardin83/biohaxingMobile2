@@ -5,10 +5,10 @@ import { StyleSheet, View } from 'react-native';
 
 import { ESSENTIAL_AMINO_ACID_KEYS, OTHER_AMINO_ACID_KEYS } from '@/constants/aminoAcids';
 import { FIBER_TYPE_KEYS } from '@/constants/fiber';
+import { FIBER_CATEGORY_SUBTYPES, type FiberSubtype } from '@/constants/fiber';
 import { MINERAL_TYPE_KEYS } from '@/constants/minerals';
 import { POLYPHENOL_TYPE_KEYS } from '@/constants/polyphenols';
 import { VITAMIN_TYPE_KEYS } from '@/constants/vitamins';
-import { FIBER_CATEGORY_SUBTYPES, type FiberSubtype } from '@/locales/tips';
 import type { MicrobiomeSupportEntry } from '@/types/microbiome';
 
 import { Collapsible } from './Collapsible';

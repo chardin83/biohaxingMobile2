@@ -1058,7 +1058,8 @@
       "fructooligosaccharides": "Fructooligosaccharides (FOS)",
       "galactooligosaccharides": "Galactooligosaccharides (GOS)",
       "pectic_oligosaccharides": "Pectic oligosaccharides"
-    }
+    },
+    "seeProgress": "See progress"
   },
   "labeledInput": {
     "optional": "optional",

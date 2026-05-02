@@ -10,6 +10,7 @@ import {
   type XpSource,
 } from '@/constants/XP';
 import { MetricId } from '@/locales/metrics';
+import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
 import { PlanCategory } from '@/types/planCategory';
 import { VerdictValue } from '@/types/verdict';
 
@@ -120,7 +121,7 @@ export type XpBreakdown = {
 export type NutritionXpClaim = {
   xp: number;
   awardedAt: string;
-  period: 'daily' | 'weekly';
+  period: NutritionTargetPeriod;
   periodKey: string;
   tipId: string;
 };
@@ -172,7 +173,7 @@ interface StorageContextType {
   claimNutritionTipCompletionXP?: (input: {
     claimKey: string;
     tipId: string;
-    period: 'daily' | 'weekly';
+    period: NutritionTargetPeriod;
     periodKey: string;
     amount: number;
   }) => number;
@@ -697,7 +698,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     (input: {
       claimKey: string;
       tipId: string;
-      period: 'daily' | 'weekly';
+      period: NutritionTargetPeriod;
       periodKey: string;
       amount: number;
     }): number => {

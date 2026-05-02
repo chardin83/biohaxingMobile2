@@ -13,4 +13,7 @@ export const MINERAL_TYPE_KEYS = [
   'manganese',
 ] as const;
 
-export type MineralTypeKey = (typeof MINERAL_TYPE_KEYS)[number];
+export type MineralType = (typeof MINERAL_TYPE_KEYS)[number];
+
+export const isMineralTargetTag = (tag: string): boolean =>
+  MINERAL_TYPE_KEYS.includes(tag as MineralType);
