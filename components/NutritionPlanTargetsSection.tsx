@@ -407,18 +407,13 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                   }}
                   title={t('nutritionLogger.addWeeklyTarget')}
                 />
-                <DiscreetButton
-                  onPress={() => {
-                    router.push({
-                      pathname: '/(tabs)/search',
-                      params: {
-                        targetPeriods: 'weekly',
-                      },
-                    });
-                  }}
-                  title={t('nutritionLogger.seeProgress') + ' →'}
-                />
               </View>
+            </View>
+            <View style={styles.seeProgressButton}>
+              <DiscreetButton
+                onPress={() => router.push('/(stack)/calendar/progress' as any)}
+                title={t('nutritionLogger.seeProgress') + ' →'}
+              />
             </View>
           </>
         )}
@@ -549,6 +544,11 @@ const styles = StyleSheet.create({
   addTargetButton: {
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  seeProgressButton: {
+    alignItems: 'center',
+    marginTop: 4,
+    marginBottom: 8,
   },
 });
 

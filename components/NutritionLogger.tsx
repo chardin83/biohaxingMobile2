@@ -163,50 +163,6 @@ const buildWeekTrackingFromSummaries = (
   return aggregated;
 };
 
-const pruneFutureNutritionSummaries = (
-  summaries: Record<string, any>,
-  todayKey: string,
-  protectedDateKey?: string
-): { changed: boolean; next: Record<string, any> } => {
-  let changed = false;
-  const next: Record<string, any> = {};
-
-  Object.entries(summaries).forEach(([dateKey, daySummary]) => {
-    const keepDate = protectedDateKey && dateKey === protectedDateKey;
-
-    if (dateKey > todayKey && !keepDate) {
-      changed = true;
-      return;
-    }
-
-    const meals = Array.isArray(daySummary?.meals) ? daySummary.meals : [];
-    const safeMeals: any[] = [];
-
-    meals.forEach((meal: any) => {
-      const mealDate = typeof meal?.date === 'string' ? meal.date : dateKey;
-      const keepMeal = protectedDateKey && mealDate === protectedDateKey;
-      if (mealDate > todayKey && !keepMeal) {
-        changed = true;
-        return;
-      }
-      safeMeals.push(meal);
-    });
-
-    if (!safeMeals.length) {
-      if (meals.length > 0 || daySummary) changed = true;
-      return;
-    }
-
-    next[dateKey] = {
-      ...daySummary,
-      date: dateKey,
-      meals: safeMeals,
-    };
-  });
-
-  return { changed, next };
-};
-
 const sumTypedTotals = (
   meals: Array<any>,
   key:
@@ -550,13 +506,13 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({
   );
 
   const reAnalyzeTextStyle = useMemo(
-    () => [styles.reAnalyzeText, isAnalyzing && styles.reAnalyzeTextDisabled, { color: colors.textWhite }],
-    [isAnalyzing, colors.textWhite]
+    () => [styles.reAnalyzeText, isAnalyzing && styles.reAnalyzeTextDisabled, { color: colors.text }],
+    [isAnalyzing, colors.text]
   );
 
   const reAnalyzePrefixStyle = useMemo(
-    () => [styles.reAnalyzePrefix, { color: colors.textWhite }],
-    [colors.textWhite]
+    () => [styles.reAnalyzePrefix, { color: colors.text }],
+    [colors.text]
   );
 
   const reAnalyzeHighlightStyle = useMemo(
@@ -702,14 +658,6 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
   }, []);
-
-  useEffect(() => {
-    const todayKey = toDateKeyLocal(new Date());
-    setDailyNutritionSummaries(prev => {
-      const { changed, next } = pruneFutureNutritionSummaries(prev, todayKey, selectedDate);
-      return changed ? next : prev;
-    });
-  }, [selectedDate, setDailyNutritionSummaries]);
 
   const syncWeekTrackingForDate = (nextSummaries: Record<string, any>, dateKey: string) => {
     const { weekStartISO, weekEndISO } = getWeekBoundsFromDateKey(dateKey);

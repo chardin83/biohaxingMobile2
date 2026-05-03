@@ -1073,5 +1073,14 @@
   "labeledInput": {
     "optional": "valfritt",
     "required": "obligatoriskt"
+  },
+  "progress": {
+    "title": "Utveckling",
+    "last4Weeks": "Senaste 4 veckorna",
+    "thisWeek": "Denna vecka",
+    "noTargets": "Inga mål inställda ännu.",
+    "days": "dagar",
+    "currentStreak": "Nuvarande streak: ",
+    "currentStreakDays": "{{count}} dagar"
   }
 }

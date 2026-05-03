@@ -1064,5 +1064,14 @@
   "labeledInput": {
     "optional": "optional",
     "required": "required"
+  },
+  "progress": {
+    "title": "Progress",
+    "last4Weeks": "Last 4 weeks",
+    "thisWeek": "This week",
+    "noTargets": "No targets set yet.",
+    "days": "days",
+    "currentStreak": "Current streak: ",
+    "currentStreakDays": "{{count}} days"
   }
 }

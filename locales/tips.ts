@@ -1777,12 +1777,6 @@ const rawTips: Tip[] = [
         unit: 'items',
         aiInstruction: 'List distinct plant foods visible in the meal. Do not include animal foods or sauces.',
       },
-      {
-        trackingKey: 'vegetable_colors',
-        amount: 6,
-        unit: 'items',
-        aiInstruction: 'Track only colors represented by visible vegetables. Never infer color from egg, pasta, dairy, meat, or dressing.',
-      },
     ],
   },
   {
@@ -2344,6 +2338,15 @@ const rawTips: Tip[] = [
       { key: 'bluePurpleVeggies' },
     ],
     bodyParts: ['digestiveSystem' ],
+    targetPeriod: 'weekly',
+    trackingTargets: [
+      {
+        trackingKey: 'vegetable_colors',
+        amount: 6,
+        unit: 'items',
+        aiInstruction: 'Track only colors represented by visible vegetables. Never infer color from egg, pasta, dairy, meat, or dressing.',
+      },
+    ],
   },
   {
     id: 'near_infrared_red_light',
