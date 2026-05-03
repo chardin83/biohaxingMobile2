@@ -9,10 +9,11 @@ import { ThemedText } from '@/components/ThemedText';
 import Badge from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import { isAminoAcidTargetTag } from '@/constants/aminoAcids';
 import { isMineralTargetTag } from '@/constants/minerals';
 import { isVitaminTargetTag } from '@/constants/vitamins';
-import { tips } from '@/locales/tips';
+import { getTipTargetIconName, tips } from '@/locales/tips';
 import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
 
 // ── Date helpers ───────────────────────────────────────────────────────────────
@@ -193,6 +194,11 @@ export default function NutritionProgressScreen() {
     return (
     <View key={tip.tipId} style={styles.tipBlock}>
       <View style={styles.tipHeader}>
+        {getTipTargetIconName(tip.tipId) && (
+          <View style={[styles.iconCircle, { backgroundColor: colors.accentWeak }]}>
+            <IconSymbol name={getTipTargetIconName(tip.tipId)!} size={20} color={colors.textMuted} />
+          </View>
+        )}
         <ThemedText type="defaultSemiBold" style={styles.tipTitle}>
           {tip.title}
         </ThemedText>
@@ -436,6 +442,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 8,
+    gap: 8,
+  },
+  iconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   tipCount: {
     marginRight: 2,

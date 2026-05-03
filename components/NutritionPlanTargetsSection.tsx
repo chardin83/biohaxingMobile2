@@ -6,6 +6,7 @@ import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 
 import { globalStyles } from '@/app/theme/globalStyles';
+import { getTipTargetIconName } from '@/locales/tips';
 import {
   type NutritionTargetPeriod,
   type NutritionTargetUnit,
@@ -22,7 +23,6 @@ import { IconSymbol } from './ui/IconSymbol';
 
 export type TipTargetUnit = NutritionTargetUnit;
 export type TipTargetPeriod = NutritionTargetPeriod;
-type TipTargetIconName = 'fiber' | 'polyphenol' | 'target';
 
 export type TipProgressItem = {
   tipId: string;
@@ -53,12 +53,6 @@ type ThemeColors = ReturnType<typeof useTheme>['colors'];
 
 export const getTipProgressKey = (tip: TipProgressItem): string =>
   `${tip.tipId}|${tip.period}`;
-
-const getTipTargetIconName = (unit: TipTargetUnit): TipTargetIconName => {
-  if (unit === 'g') return 'fiber';
-  if (unit === 'mg') return 'polyphenol';
-  return 'target';
-};
 
 const formatMilligramValue = (value: number): string => {
   if (value < 0.01) return value.toFixed(4);
@@ -94,7 +88,7 @@ const renderTrackedItems = (targetTag: string, trackedItems: string[]) =>
 const renderTipTarget = (tip: TipProgressItem, target: TipTarget, colors: ThemeColors) => {
   const hasTrackedItems = Array.isArray(target.trackedItems) && target.trackedItems.length > 0;
   const trackedItems = target.trackedItems ?? [];
-  const targetIconName = getTipTargetIconName(target.unit);
+  const targetIconName = getTipTargetIconName(tip.tipId) ?? 'target';
   const valueFormatter = hasTrackedItems ? formatTargetProgressValue : formatTargetValue;
   const targetValueText = `${valueFormatter(target.actual, target.unit)} / ${valueFormatter(
     target.amount,

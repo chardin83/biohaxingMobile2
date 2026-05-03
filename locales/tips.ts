@@ -1,3 +1,4 @@
+import { type IconSymbolName } from '@/components/ui/icon-symbol-map';
 import { AminoAcidType } from '@/constants/aminoAcids';
 import { FiberSubtype, FiberType } from '@/constants/fiber';
 import { MineralType } from '@/constants/minerals';
@@ -31,6 +32,19 @@ export type TimeOfDayRule =
   | 'avoidNight'; // ännu striktare om du vill
 
 export type EvidenceConfidence = 'high' | 'medium' | 'low';
+export type TipTargetIconName = Extract<
+  IconSymbolName,
+  | 'fiber'
+  | 'polyphenol'
+  | 'mineral'
+  | 'vitamin'
+  | 'protein'
+  | 'carbs'
+  | 'fat'
+  | 'microbiome'
+  | 'target'
+  | 'chart'
+>;
 
 export type TargetPeriod = NutritionTargetPeriod;
 
@@ -115,6 +129,7 @@ type TipBase = {
   preferredDayParts?: DayPart[]; // (när på dagen det passar)
   timeRule?: TimeOfDayRule; // (tidsrestriktioner)
   planCategory?: PlanCategory[]; // Markerar övergripande plan-kategori
+  targetIconName?: TipTargetIconName; // Valfri ikon för target-rader i UI
   nutritionFoods?: TipNutritionFood[]; // Rekommenderade livsmedel för nutritionstips
   bodyParts?: string[]; // Rekommenderade delar av kroppen för detta tip
   microbiomeIds?: string[]; // Koppling till microbiome-bakterier
@@ -451,6 +466,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition','supplement'],
     targetPeriod: 'daily',
+    targetIconName: 'mineral',
     mineralTargets: [
       { tag: 'magnesium', amount: 320, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
     ],
@@ -669,6 +685,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition','supplement'],
     targetPeriod: 'daily',
+    targetIconName: 'protein',
     aminoAcidTargets: [
       { tag: 'glycine', amount: 2000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 },
     ],
@@ -696,6 +713,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition', 'supplement'],
     targetPeriod: 'daily',
+    targetIconName: 'protein',
     aminoAcidTargets: [
       { tag: 'leucine', amount: 7000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.5 },
     ],
@@ -725,6 +743,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition','supplement'],
     targetPeriod: 'weekly',
+    targetIconName: 'protein',
     aminoAcidTargets: [
       { tag: 'leucine', amount: 35000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
       { tag: 'isoleucine', amount: 17500, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 },
@@ -748,6 +767,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition', 'supplement'],
     targetPeriod: 'daily',
+    targetIconName: 'protein',
     aminoAcidTargets: [
       { tag: 'arginine', amount: 5000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.5 },
     ],
@@ -776,6 +796,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition', 'supplement'],
     targetPeriod: 'daily',
+    targetIconName: 'protein',
     aminoAcidTargets: [
       { tag: 'leucine', amount: 2500, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 },
     ],
@@ -817,6 +838,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition', 'supplement'],
     targetPeriod: 'daily',
+    targetIconName: 'vitamin',
     vitaminTargets: [
       { tag: 'vitamin_b6', amount: 1.7, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
       { tag: 'vitamin_b9', amount: 0.4, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
@@ -1464,6 +1486,7 @@ const rawTips: Tip[] = [
     planCategory: ['nutrition'],
     isParent: true,
     targetPeriod: 'daily',
+    targetIconName: 'fiber',
     fiberTargets: [
       { tag: 'fiber_total', amount: 25, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
     ],
@@ -1529,6 +1552,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition'],
     targetPeriod: 'daily',
+    targetIconName: 'fiber',
     fiberTargets: [
       { tag: 'fiber_total', amount: 30, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
       { tag: 'fiber_fermentable', amount: 15, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
@@ -1595,6 +1619,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition'],
     targetPeriod: 'daily',
+    targetIconName: 'fiber',
     fiberTargets: [
       { tag: 'fiber_total', amount: 30, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
       { tag: 'fiber_gel_forming', amount: 10, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
@@ -1661,6 +1686,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition'],
     targetPeriod: 'daily',
+    targetIconName: 'fiber',
     fiberTargets: [
       { tag: 'fiber_total', amount: 30, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
       { tag: 'fiber_non_gel_forming', amount: 20, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
@@ -1770,6 +1796,7 @@ const rawTips: Tip[] = [
     ],
     bodyParts: ['digestiveSystem', 'immuneSystem'],
     microbiomeIds: ['Akkermansia', 'Roseburia', 'Faecalibacterium', 'Ruminococcus', 'Gordonibacter'],
+    targetIconName: 'target',
     trackingTargets: [
       {
         trackingKey: 'unique_plants',
@@ -1795,6 +1822,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition'],
     targetPeriod: 'weekly',
+    targetIconName: 'target',
     trackingTargets: [
       {
         trackingKey: 'fish_meals',
@@ -1844,6 +1872,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['nutrition'],
     targetPeriod: 'daily',
+    targetIconName: 'polyphenol',
     polyphenolTargets: [
       { tag: 'polyphenols_total', amount: 1000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.5 },
       { tag: 'flavonoids_total', amount: 500, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.5 },
@@ -2339,6 +2368,7 @@ const rawTips: Tip[] = [
     ],
     bodyParts: ['digestiveSystem' ],
     targetPeriod: 'weekly',
+    targetIconName: 'target',
     trackingTargets: [
       {
         trackingKey: 'vegetable_colors',
@@ -2476,3 +2506,8 @@ export const tips: Tip[] = rawTips.map(tip => {
     planCategory,
   };
 });
+
+const tipById = new Map(tips.map(tip => [tip.id, tip]));
+
+export const getTipTargetIconName = (tipId?: string): TipTargetIconName | undefined =>
+  tipId ? tipById.get(tipId)?.targetIconName : undefined;

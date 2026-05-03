@@ -99,6 +99,14 @@ export const ICON_SYMBOLS = {
     sf: 'flask',
     material: 'science',
   },
+  'mineral': {
+    sf: 'sparkles',
+    material: 'diamond',
+  },
+  'vitamin': {
+    sf: 'sun.max.fill',
+    material: 'wb-sunny',
+  },
   'microbiome': {
     sf: 'circle.grid.cross',
     material: 'bubble-chart',
