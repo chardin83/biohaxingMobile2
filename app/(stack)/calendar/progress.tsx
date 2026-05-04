@@ -6,6 +6,7 @@ import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { type DailyNutritionSummary,useStorage } from '@/app/context/StorageContext';
 import { ThemedText } from '@/components/ThemedText';
+import TipTarget from '@/components/TipTarget';
 import Badge from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
@@ -110,6 +111,36 @@ const getDayRatioForTip = (
   return totalRatio / allTargets.length;
 };
 
+const getWeeklyProgressText = (
+  tipId: string,
+  weekStartISO: string,
+  weeklyTracking: Record<string, Record<string, string[] | number>>
+): string | null => {
+  const tip = tips.find(t => t.id === tipId);
+  if (!tip) return null;
+
+  const trackingTargets = (tip.trackingTargets ?? []).filter(target =>
+    Number.isFinite(target.amount) && (target.amount ?? 0) > 0
+  );
+  if (!trackingTargets.length) return null;
+
+  const weekData = weeklyTracking[weekStartISO] ?? {};
+  const getActual = (trackingKey: string): number => {
+    const value = weekData[trackingKey];
+    if (Array.isArray(value)) return value.length;
+    if (typeof value === 'number' && Number.isFinite(value)) return value;
+    return 0;
+  };
+
+  const preferredTarget =
+    trackingTargets.find(target => getActual(target.trackingKey) < (target.amount ?? 0)) ??
+    trackingTargets[0];
+
+  const amount = preferredTarget.amount ?? 0;
+  const actual = getActual(preferredTarget.trackingKey);
+  return `${Math.round(actual)}/${Math.round(amount)}`;
+};
+
 // ── Types ──────────────────────────────────────────────────────────────────────
 
 type TipHistoryItem = {
@@ -134,9 +165,8 @@ export default function NutritionProgressScreen() {
   const router = useRouter();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { plans, nutritionXpClaims, dailyNutritionSummaries } = useStorage();
+  const { plans, nutritionXpClaims, dailyNutritionSummaries, weeklyTracking } = useStorage();
 
-  const currentWeekStart = useMemo(() => toDateKey(getWeekStartMonday(new Date())), []);
   const [weekOffset, setWeekOffset] = useState(0);
   const pastWeeks = useMemo(() => getLast4Weeks(weekOffset), [weekOffset]);
   const todayKey = useMemo(() => toDateKey(new Date()), []);
@@ -321,30 +351,102 @@ export default function NutritionProgressScreen() {
   };
 
   const renderWeeklyTip = (tip: TipHistoryItem) => {
-    const fulfilled = isClaimed(tip.tipId, 'weekly', currentWeekStart);
+    const selectedWeek = getSelectedWeek();
+    const weekData = weeklyTracking[selectedWeek.start] ?? {};
+    const tipObj = tips.find(candidate => candidate.id === tip.tipId);
+    const summaryTargets: Array<{
+      tag: string;
+      unit: 'items' | 'count';
+      period: 'weekly';
+      amount: number;
+      actual: number;
+      isMet: boolean;
+      label: string;
+      trackedItems?: string[];
+    }> = [];
+
+    for (const target of tipObj?.trackingTargets ?? []) {
+      const value = weekData[target.trackingKey];
+      let actual = 0;
+      if (Array.isArray(value)) {
+        actual = value.length;
+      } else if (typeof value === 'number' && Number.isFinite(value)) {
+        actual = value;
+      }
+
+      const amount = target.amount ?? 0;
+      if (amount <= 0) {
+        continue;
+      }
+
+      summaryTargets.push({
+        tag: target.trackingKey,
+        unit: target.unit,
+        period: 'weekly',
+        amount,
+        actual,
+        isMet: actual >= amount,
+        label: t(`nutritionLogger.weeklyTrackingLabels.${target.trackingKey}`),
+        trackedItems: Array.isArray(value) ? value : undefined,
+      });
+    }
+
     return (
       <View key={tip.tipId} style={[styles.tipBlock, { borderBottomColor: colors.borderLight }]}>
         <ThemedText type="defaultSemiBold" style={styles.tipTitle}>
           {tip.title}
         </ThemedText>
         <View style={styles.weekStatusRow}>
-          <View style={styles.weekStatusColumn}>
-            <ThemedText type="caption" style={[styles.weekStatusLabel, { color: colors.textMuted }]}>
-              {t('progress.thisWeek')}
-            </ThemedText>
-            <View
-              style={[
-                styles.weekStatusCell,
-                styles.weekStatusCellBorder,
-                { backgroundColor: fulfilled ? colors.accentMedium : colors.secondaryBackground, borderColor: colors.primary },
-              ]}
-            >
-              <ThemedText style={[styles.weekStatusIcon, { color: fulfilled ? colors.background : colors.textMuted }]}>
-                {fulfilled ? '✓' : '✗'}
-              </ThemedText>
-            </View>
-          </View>
+          {pastWeeks.map(week => {
+            const fulfilled = Boolean(isClaimed(tip.tipId, 'weekly', week.start));
+            const weekProgressText = getWeeklyProgressText(tip.tipId, week.start, weeklyTracking);
+            const isSelected = (selectedWeekStart ?? pastWeeks[3].start) === week.start;
+            return (
+              <TouchableOpacity
+                key={`${tip.tipId}-${week.start}`}
+                onPress={() => setSelectedWeekStart(week.start)}
+                style={[
+                  styles.weekStatusCell,
+                  { backgroundColor: colors.secondaryBackground },
+                  isSelected && styles.weekStatusCellSelected,
+                  isSelected && { borderColor: colors.primary },
+                ]}
+              >
+                <ThemedText type="caption" style={[styles.weekStatusDate, { color: colors.textMuted }]}> 
+                  {week.label}
+                </ThemedText>
+                <View
+                  style={[
+                    styles.weekStatusIconRing,
+                    {
+                      backgroundColor: fulfilled ? colors.accentWeak : colors.cardBackground,
+                    },
+                  ]}
+                >
+                  <ThemedText
+                    style={[styles.weekStatusIcon, { color: fulfilled ? colors.primary : colors.textMuted }]}
+                  >
+                    {fulfilled ? '✓' : '✗'}
+                  </ThemedText>
+                </View>
+                  <ThemedText type="explainer" style={[styles.weekStatusProgress, { color: colors.textMuted }]}> 
+                    {weekProgressText}
+                  </ThemedText>
+              </TouchableOpacity>
+            );
+          })}
         </View>
+    
+          <View style={styles.weekSummaryBlock}>
+            {summaryTargets.map(target => (
+              <TipTarget
+                key={`${tip.tipId}-${target.tag}-${target.period}`}
+                tip={tip}
+                target={target}
+                colors={colors}
+              />
+            ))}
+          </View>
       </View>
     );
   };
@@ -554,26 +656,43 @@ const styles = StyleSheet.create({
   },
   weekStatusRow: {
     flexDirection: 'row',
-  },
-  weekStatusColumn: {
-    alignItems: 'center',
-    gap: 4,
-  },
-  weekStatusLabel: {
-    fontSize: 10,
+    gap: 6,
+    marginTop: 8,
   },
   weekStatusCell: {
-    width: 64,
-    height: 64,
-    borderRadius: 12,
+    flex: 1,
+    minHeight: 72,
+    borderRadius: 8,
+    paddingHorizontal: 4,
+    paddingVertical: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  weekStatusDate: {
+    fontSize: 9,
+    textAlign: 'center',
+  },
+  weekStatusCellSelected: {
+    borderWidth: 1.5,
+  },
+  weekStatusIconRing: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  weekStatusCellBorder: {
-    borderWidth: 1.5,
-  },
   weekStatusIcon: {
-    fontSize: 28,
+    fontSize: 16,
     fontWeight: '700',
+  },
+  weekStatusProgress: {
+    fontSize: 10,
+    marginTop: -2,
+  },
+  weekSummaryBlock: {
+    marginTop: 10,
+    gap: 4,
   },
 });

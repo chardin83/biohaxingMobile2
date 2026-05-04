@@ -6,18 +6,16 @@ import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 
 import { globalStyles } from '@/app/theme/globalStyles';
-import { getTipTargetIconName } from '@/locales/tips';
+import TipTarget from '@/components/TipTarget';
 import {
   type NutritionTargetPeriod,
   type NutritionTargetUnit,
 } from '@/types/nutritionTargets';
 
-import { Collapsible } from './Collapsible';
 import { ThemedText } from './ThemedText';
 import AppButton from './ui/AppButton';
 import { Card } from './ui/Card';
 import DiscreetButton from './ui/DiscreetButton';
-import { IconSymbol } from './ui/IconSymbol';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -46,106 +44,12 @@ export type TipProgressItem = {
 };
 
 type CurrentRef<T> = { current: T };
-type TipTarget = TipProgressItem['targets'][number];
 type ThemeColors = ReturnType<typeof useTheme>['colors'];
 
 // ── Module-level helpers ───────────────────────────────────────────────────────
 
 export const getTipProgressKey = (tip: TipProgressItem): string =>
   `${tip.tipId}|${tip.period}`;
-
-const formatMilligramValue = (value: number): string => {
-  if (value < 0.01) return value.toFixed(4);
-  if (value < 1) return value.toFixed(3);
-  if (value < 10) return value.toFixed(2);
-  return value.toFixed(0);
-};
-
-const formatTargetValue = (value: number, unit: TipTargetUnit): string => {
-  if (unit === 'plants' || unit === 'items' || unit === 'count') {
-    return `${Math.round(value)} ${unit}`;
-  }
-  if (unit === 'mg') {
-    return `${formatMilligramValue(value)} ${unit}`;
-  }
-  return `${value.toFixed(1)} ${unit}`;
-};
-
-const formatTargetProgressValue = (value: number, unit: TipTargetUnit): string => {
-  if (unit === 'items' || unit === 'count') {
-    return `${Math.round(value)}`;
-  }
-  return formatTargetValue(value, unit);
-};
-
-const renderTrackedItems = (targetTag: string, trackedItems: string[]) =>
-  trackedItems.map(item => (
-    <ThemedText key={`${targetTag}-${item}`} type="caption" style={styles.planTipTargetItem}>
-      • {item}
-    </ThemedText>
-  ));
-
-const renderTipTarget = (tip: TipProgressItem, target: TipTarget, colors: ThemeColors) => {
-  const hasTrackedItems = Array.isArray(target.trackedItems) && target.trackedItems.length > 0;
-  const trackedItems = target.trackedItems ?? [];
-  const targetIconName = getTipTargetIconName(tip.tipId) ?? 'target';
-  const valueFormatter = hasTrackedItems ? formatTargetProgressValue : formatTargetValue;
-  const targetValueText = `${valueFormatter(target.actual, target.unit)} / ${valueFormatter(
-    target.amount,
-    target.unit
-  )}`;
-
-  if (hasTrackedItems) {
-    return (
-      <View
-        key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`}
-        style={styles.planTipTargetCollapsibleRow}
-      >
-        <Collapsible
-          title={target.label}
-          titleType="explainer"
-          initialCollapsed
-          leftContent={<IconSymbol name={targetIconName} size={14} color={colors.textMuted} />}
-          rightContent={
-            <ThemedText
-              type="explainer"
-              style={[styles.planTipTargetValue, styles.planTipTargetCollapsibleValue]}
-            >
-              {targetValueText}
-            </ThemedText>
-          }
-        >
-          <View style={styles.planTipTargetItemsList}>
-            {renderTrackedItems(target.tag, trackedItems)}
-          </View>
-        </Collapsible>
-      </View>
-    );
-  }
-
-  return (
-    <View
-      key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`}
-      style={styles.planTipTargetRow}
-    >
-      <View style={styles.planTipTargetLabelRow}>
-        <IconSymbol name={targetIconName} size={14} color={colors.textMuted} />
-        <ThemedText type="explainer" style={styles.planTipTargetLabel}>
-          {target.label}
-        </ThemedText>
-      </View>
-      <ThemedText
-        type="caption"
-        style={[
-          styles.planTipTargetValue,
-          { color: target.isMet ? colors.primary : colors.textMuted },
-        ]}
-      >
-        {targetValueText}
-      </ThemedText>
-    </View>
-  );
-};
 
 // ── Props ──────────────────────────────────────────────────────────────────────
 
@@ -264,7 +168,14 @@ const TipProgressRow: React.FC<TipProgressRowProps> = ({
             />
           </View>
 
-          {tip.targets.map(target => renderTipTarget(tip, target, colors))}
+          {tip.targets.map(target => (
+            <TipTarget
+              key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`}
+              tip={tip}
+              target={target}
+              colors={colors}
+            />
+          ))}
         </TouchableOpacity>
       </Animated.View>
     </View>
@@ -459,40 +370,6 @@ const styles = StyleSheet.create({
   planTipStatusText: {
     marginTop: 4,
     marginBottom: 6,
-  },
-  planTipTargetRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 4,
-  },
-  planTipTargetLabelRow: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  planTipTargetCollapsibleRow: {
-    marginBottom: 4,
-    width: '100%',
-  },
-  planTipTargetLabel: {
-    flex: 1,
-  },
-  planTipTargetValue: {
-    textAlign: 'right',
-  },
-  planTipTargetCollapsibleValue: {
-    marginLeft: 'auto',
-  },
-  planTipTargetItemsList: {
-    marginTop: 4,
-    marginLeft: 4,
-    gap: 2,
-  },
-  planTipTargetItem: {
-    opacity: 0.9,
   },
   progressTrack: {
     height: 6,
