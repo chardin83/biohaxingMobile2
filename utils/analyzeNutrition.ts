@@ -86,6 +86,14 @@ const emptyVitaminTotals = (): Record<string, number> =>
 const emptyAminoAcidTotals = (): Record<string, number> =>
   ALL_AMINO_ACID_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
 
+export const normalizeItemName = (item: string): string => {
+  return item
+    .trim()
+    .toLowerCase()
+    .replaceAll(/[\s_-]+/g, ' ')
+    .replaceAll(/^\s+|\s+$/g, '');
+};
+
 export const parseStringArray = (value: unknown): string[] => {
   if (Array.isArray(value)) {
     return value.filter((item): item is string => typeof item === 'string' && item.trim().length > 0);
@@ -716,7 +724,7 @@ export const mergeWeeklyTrackingSignal = (
   if (Array.isArray(value)) {
     const nextItems = value
       .filter((item): item is string => typeof item === 'string')
-      .map(item => item.trim())
+      .map(item => normalizeItemName(item))
       .filter(item => item.length > 0);
 
     if (!nextItems.length) return;

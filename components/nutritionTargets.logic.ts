@@ -138,7 +138,6 @@ const normalizeTrackedItems = (
   if (!Array.isArray(value)) return undefined;
 
   return value
-    .map(item => item.trim())
     .filter(item => item.length > 0)
     .sort((a, b) => a.localeCompare(b));
 };
