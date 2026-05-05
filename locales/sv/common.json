@@ -966,8 +966,8 @@
     "addFirstTarget": "+ Lägg till ditt första mål",
     "addDailyTarget": "+ Lägg till dagligt mål",
     "addWeeklyTarget": "+ Lägg till veckomål",
-    "periodDaily": "idag",
-    "periodWeekly": "denna vecka",
+    "periodDaily": "Idag",
+    "periodWeekly": "Denna vecka",
     "noPlanTipsWithTargets": "Du har inga plantips med näringsmål.",
     "noFulfilledTipsToday": "Inga plantips med näringsmål är uppfyllda idag.",
     "linkedNutrients": "Nutrienter",
@@ -1081,6 +1081,7 @@
     "noTargets": "Inga mål inställda ännu.",
     "days": "dagar",
     "currentStreak": "Nuvarande streak: ",
-    "currentStreakDays": "{{count}} dagar"
+    "currentStreakDays": "{{count}} dagar",
+    "streakReminder": "Glöm inte logga din måltid idag för att hålla streaken vid liv!"
   }
 }

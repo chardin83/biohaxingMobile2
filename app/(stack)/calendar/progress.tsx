@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { type DailyNutritionSummary,useStorage } from '@/app/context/StorageContext';
+import { Collapsible } from '@/components/Collapsible';
 import { ThemedText } from '@/components/ThemedText';
 import TipTarget from '@/components/TipTarget';
 import Badge from '@/components/ui/Badge';
@@ -40,6 +41,18 @@ const addDays = (d: Date, n: number): Date => {
   return result;
 };
 
+const fromDateKey = (dateKey: string): Date => {
+  const [y, m, d] = dateKey.split('-').map(Number);
+  return new Date(y, (m ?? 1) - 1, d ?? 1);
+};
+
+const formatMonthDayRange = (start: Date, end: Date): string => {
+  if (start.getMonth() === end.getMonth()) {
+    return `${MONTH_ABBRS[start.getMonth()]} ${start.getDate()}\u2013${end.getDate()}`;
+  }
+  return `${MONTH_ABBRS[start.getMonth()]} ${start.getDate()}\u2013${MONTH_ABBRS[end.getMonth()]} ${end.getDate()}`;
+};
+
 const getCurrentWeek = (): string[] => {
   const weekStart = getWeekStartMonday(new Date());
   return Array.from({ length: 7 }, (_v, j) => toDateKey(addDays(weekStart, j)));
@@ -57,11 +70,7 @@ const getLast4Weeks = (offsetWeeks = 0): PastWeek[] => {
   return Array.from({ length: 4 }, (_, i) => {
     const weekStart = addDays(currentWeekStart, (-(3 - i) + offsetWeeks) * 7);
     const weekEnd = addDays(weekStart, 6);
-    const s = weekStart;
-    const e = weekEnd;
-    const label = s.getMonth() === e.getMonth()
-      ? `${MONTH_ABBRS[s.getMonth()]} ${s.getDate()}\u2013${e.getDate()}`
-      : `${MONTH_ABBRS[s.getMonth()]} ${s.getDate()}\u2013${MONTH_ABBRS[e.getMonth()]} ${e.getDate()}`;
+    const label = formatMonthDayRange(weekStart, weekEnd);
     return {
       start: toDateKey(weekStart),
       end: toDateKey(weekEnd),
@@ -170,6 +179,11 @@ export default function NutritionProgressScreen() {
   const [weekOffset, setWeekOffset] = useState(0);
   const pastWeeks = useMemo(() => getLast4Weeks(weekOffset), [weekOffset]);
   const todayKey = useMemo(() => toDateKey(new Date()), []);
+  const dateRangeLabel = useMemo(() => {
+    const start = fromDateKey(pastWeeks[0].start);
+    const end = fromDateKey(pastWeeks[3].end);
+    return formatMonthDayRange(start, end);
+  }, [pastWeeks]);
 
   const goBackWeeks = () => {
     setWeekOffset(prev => prev - 4);
@@ -198,29 +212,54 @@ export default function NutritionProgressScreen() {
   const isClaimed = (tipId: string, period: NutritionTargetPeriod, key: string) =>
     !!nutritionXpClaims?.[`${tipId}|${period}|${key}`];
 
+  const getProgressColor = (actual: number, total: number): string => {
+    if (!Number.isFinite(actual) || !Number.isFinite(total) || total <= 0 || actual <= 0) {
+      return colors.textMuted;
+    }
+    if (actual < total) return colors.goldSoft;
+    return colors.accentColor;
+  };
+
   const [selectedWeekStart, setSelectedWeekStart] = useState<string | null>(null);
 
   const getSelectedWeek = (): PastWeek =>
     pastWeeks.find(w => w.start === selectedWeekStart) ?? pastWeeks[3];
 
-  const getStreak = (tipId: string): number => {
+  const getStreakStatus = (tipId: string): { streak: number; isYesterdayStreak: boolean } => {
+    const today = new Date();
+    const todayDateKey = toDateKey(today);
+
+    const startFrom = new Date(today);
+    let isYesterdayStreak = false;
+
+    if (!isClaimed(tipId, 'daily', todayDateKey)) {
+      startFrom.setDate(startFrom.getDate() - 1);
+      const yesterdayKey = toDateKey(startFrom);
+      if (!isClaimed(tipId, 'daily', yesterdayKey)) {
+        return { streak: 0, isYesterdayStreak: false };
+      }
+      isYesterdayStreak = true;
+    }
+
     let streak = 0;
-    const cursor = new Date();
+    const cursor = new Date(startFrom);
     while (true) {
       const key = toDateKey(cursor);
       if (!isClaimed(tipId, 'daily', key)) break;
       streak++;
       cursor.setDate(cursor.getDate() - 1);
     }
-    return streak;
+
+    return { streak, isYesterdayStreak };
   };
 
   const renderDailyTip = (tip: TipHistoryItem) => {
     const selectedWeek = getSelectedWeek();
-    const streak = getStreak(tip.tipId);
+    const { streak, isYesterdayStreak } = getStreakStatus(tip.tipId);
     const visibleDays = selectedWeek.days.filter((d: string) => d <= todayKey);
     const claimedDays = visibleDays.filter((d: string) => isClaimed(tip.tipId, 'daily', d));
     const claimedCount = claimedDays.length;
+    const countColor = getProgressColor(claimedCount, visibleDays.length);
     return (
     <View key={tip.tipId} style={styles.tipBlock}>
       <View style={styles.tipHeader}>
@@ -232,7 +271,7 @@ export default function NutritionProgressScreen() {
         <ThemedText type="defaultSemiBold" style={styles.tipTitle}>
           {tip.title}
         </ThemedText>
-        <ThemedText type="title3" style={[styles.tipCount, { color: colors.primary } ]}>
+        <ThemedText type="title3" style={[styles.tipCount, { color: countColor }]}>
           {`${claimedCount}`}
         </ThemedText>
         <ThemedText type="caption" style={[ { color: colors.textMuted }]}>
@@ -253,20 +292,24 @@ export default function NutritionProgressScreen() {
           let iconChar = '\u2717';
           if (fulfilled) iconChar = '\u2713';
           if (isFuture) iconChar = '';
+          const isMutedDay = isFuture || !fulfilled;
           return (
-            <View key={dateKey} style={styles.dayColumn}>
+            <View
+              key={dateKey}
+              style={styles.dayColumn}
+            >
               <ThemedText
                 type="caption"
-                style={[styles.dayLabel, { color: isToday ? colors.primary : colors.textMuted }]}
+                style={[styles.dayLabel, { color: isToday ? colors.accentColor : colors.textMuted }]}
               >
                 {DAY_LABELS[i].label}
               </ThemedText>
               <View
                 style={[
                   styles.dayCell,
-                  { backgroundColor: fulfilled && !isFuture ? colors.accentMedium : colors.secondaryBackground },
+                  { backgroundColor: isMutedDay ? colors.overlayLight : colors.accentColor },
                   isToday && styles.dayCellToday,
-                  isToday && { borderColor: colors.primary },
+                  isToday && { borderColor: colors.accentColor },
                 ]}
               >
                 <ThemedText style={[styles.dayCellIcon, { color: iconColor }]}>
@@ -279,12 +322,19 @@ export default function NutritionProgressScreen() {
       </View>
       {streak > 0 && (
         <Badge style={[styles.streakBadge, { backgroundColor: colors.accentWeak }]}>
-          <ThemedText type="explainer" style={styles.streakBadgeText}>
-            {'🔥 '}{t('common:progress.currentStreak')}
-          </ThemedText>
-           <ThemedText type="default" style={[styles.streakBadgeText, { color: colors.primary }]}>
-            {t('common:progress.currentStreakDays', { count: streak })}
-          </ThemedText>
+          <View style={styles.streakMainRow}>
+            <ThemedText type="explainer" style={styles.streakBadgeText}>
+              {'🔥 '}{t('common:progress.currentStreak')}
+            </ThemedText>
+            <ThemedText type="default" style={[styles.streakBadgeText, { color: colors.primary }]}>
+              {t('common:progress.currentStreakDays', { count: streak })}
+            </ThemedText>
+          </View>
+          {isYesterdayStreak && (
+            <ThemedText type="explainer" style={[styles.streakReminderText, { color: colors.textMuted }]}> 
+              {t('common:progress.streakReminder')}
+            </ThemedText>
+          )}
         </Badge>
       )}
       <ThemedText type="caption" style={[styles.pastWeeksHeading, { color: colors.textMuted }]}>
@@ -296,21 +346,24 @@ export default function NutritionProgressScreen() {
           const count = pastDays.filter((d: string) => isClaimed(tip.tipId, 'daily', d)).length;
           const total = pastDays.length;
           const isSelected = (selectedWeekStart ?? pastWeeks[3].start) === week.start;
+          const pastCountColor = getProgressColor(count, total);
           return (
             <TouchableOpacity
               key={week.start}
               onPress={() => setSelectedWeekStart(week.start)}
               style={[
                 styles.pastWeekCell,
-                { backgroundColor: colors.secondaryBackground },
+                {
+                  backgroundColor: isSelected ? colors.background : colors.secondaryBackground,
+                  borderColor: isSelected ? colors.primary : colors.textWeak,
+                },
                 isSelected && styles.pastWeekCellCurrent,
-                isSelected && { borderColor: colors.primary },
               ]}
             >
               <ThemedText type="caption" style={[styles.pastWeekLabel, { color: colors.textMuted }]}>
                 {week.label}
               </ThemedText>
-              <ThemedText type="title3" style={[styles.pastWeekCount, { color: count >= 7 ? colors.primary : colors.textMuted }]}>
+              <ThemedText type="title3" style={[styles.pastWeekCount, { color: pastCountColor }]}>
                 {`${count}/${total}`}
               </ThemedText>
               <ThemedText type="explainer" style={styles.pastWeekDaysLabel}>
@@ -400,6 +453,13 @@ export default function NutritionProgressScreen() {
           {pastWeeks.map(week => {
             const fulfilled = Boolean(isClaimed(tip.tipId, 'weekly', week.start));
             const weekProgressText = getWeeklyProgressText(tip.tipId, week.start, weeklyTracking);
+            let weekProgressColor = colors.textMuted;
+            if (weekProgressText) {
+              const [actualRaw, amountRaw] = weekProgressText.split('/');
+              const actual = Number(actualRaw);
+              const amount = Number(amountRaw);
+              weekProgressColor = getProgressColor(actual, amount);
+            }
             const isSelected = (selectedWeekStart ?? pastWeeks[3].start) === week.start;
             return (
               <TouchableOpacity
@@ -407,7 +467,7 @@ export default function NutritionProgressScreen() {
                 onPress={() => setSelectedWeekStart(week.start)}
                 style={[
                   styles.weekStatusCell,
-                  { backgroundColor: colors.secondaryBackground },
+                  { backgroundColor: isSelected ? colors.background : colors.secondaryBackground, borderColor: colors.textWeak },
                   isSelected && styles.weekStatusCellSelected,
                   isSelected && { borderColor: colors.primary },
                 ]}
@@ -419,7 +479,7 @@ export default function NutritionProgressScreen() {
                   style={[
                     styles.weekStatusIconRing,
                     {
-                      backgroundColor: fulfilled ? colors.accentWeak : colors.cardBackground,
+                      backgroundColor: fulfilled ? colors.accentWeak : colors.overlayLight,
                     },
                   ]}
                 >
@@ -429,7 +489,7 @@ export default function NutritionProgressScreen() {
                     {fulfilled ? '✓' : '✗'}
                   </ThemedText>
                 </View>
-                  <ThemedText type="explainer" style={[styles.weekStatusProgress, { color: colors.textMuted }]}> 
+                  <ThemedText type="explainer" style={[styles.weekStatusProgress, { color: weekProgressColor }]}> 
                     {weekProgressText}
                   </ThemedText>
               </TouchableOpacity>
@@ -452,43 +512,37 @@ export default function NutritionProgressScreen() {
   };
 
   return (
-    <Container background="gradient" showBackButton onBackPress={() => router.back()}>
+    <Container background="default" showBackButton onBackPress={() => router.back()}>
       <ScrollView contentContainerStyle={styles.content}>
-        <ThemedText type="title3" style={styles.heading}>
+        <ThemedText type="title2" style={styles.heading}>
           {t('progress.title')}
         </ThemedText>
         <View style={styles.dateRangeRow}>
           <TouchableOpacity onPress={goBackWeeks} style={styles.navArrow}>
-            <ThemedText type="caption" style={{ color: colors.primary }}>{'\u2039'}</ThemedText>
+            <ThemedText type="title" style={{ color: colors.primary }}>{'\u2039'}</ThemedText>
           </TouchableOpacity>
           <ThemedText type="caption" style={[styles.dateRange, { color: colors.textMuted }]}>
-            {`${pastWeeks[0].label.split('\u2013')[0].trim()} \u2013 ${pastWeeks[3].label.split('\u2013')[1]?.trim() ?? pastWeeks[3].end}`}
+            {dateRangeLabel}
           </ThemedText>
           <TouchableOpacity onPress={goForwardWeeks} style={styles.navArrow} disabled={weekOffset === 0}>
-            <ThemedText type="caption" style={{ color: weekOffset === 0 ? colors.border : colors.primary }}>{'\u203a'}</ThemedText>
+            <ThemedText type="title" style={{ color: weekOffset === 0 ? colors.border : colors.primary }}>{'\u203a'}</ThemedText>
           </TouchableOpacity>
         </View>
 
         {dailyTips.length > 0 && (
-          <>
-            <ThemedText type="title3" style={[styles.periodHeading, { color: colors.textMuted }]}>
-              {t('nutritionLogger.periodDaily')}
-            </ThemedText>
-            <Card style={styles.card}>
+          <Collapsible title={t('nutritionLogger.periodDaily')} titleType="title3" contentStyle={styles.collapsibleContent}>
+            <Card style={styles.card} transparent={false}>
               {dailyTips.map(renderDailyTip)}
             </Card>
-          </>
+          </Collapsible>
         )}
 
         {weeklyTips.length > 0 && (
-          <>
-            <ThemedText type="title3" style={[styles.periodHeading, { color: colors.textMuted }]}>
-              {t('nutritionLogger.periodWeekly')}
-            </ThemedText>
-            <Card style={styles.card}>
+          <Collapsible title={t('nutritionLogger.periodWeekly')} titleType="title3" contentStyle={styles.collapsibleContent}>
+            <Card style={styles.card} transparent={false}>
               {weeklyTips.map(renderWeeklyTip)}
             </Card>
-          </>
+          </Collapsible>
         )}
 
         {trackedTips.length === 0 && (
@@ -507,7 +561,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   heading: {
-    marginBottom: 2,
+    marginBottom: -18,
     textAlign: 'center',
   },
   dateRangeRow: {
@@ -527,6 +581,10 @@ const styles = StyleSheet.create({
   periodHeading: {
     marginTop: 8,
     textTransform: 'capitalize',
+  },
+  collapsibleContent: {
+    marginLeft: 0,
+    marginTop: 4,
   },
   card: {
     gap: 0,
@@ -600,8 +658,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 6,
     marginTop: 8,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
   },
   streakBadgeText: {
+  },
+  streakMainRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  streakReminderText: {
+    marginTop: 6,
   },
   pastWeeksRow: {
     flexDirection: 'row',
@@ -611,6 +679,7 @@ const styles = StyleSheet.create({
   pastWeekCell: {
     flex: 1,
     borderRadius: 8,
+    borderWidth: 1,
     paddingVertical: 6,
     paddingHorizontal: 4,
     alignItems: 'center',
@@ -663,6 +732,7 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 72,
     borderRadius: 8,
+    borderWidth: 1,
     paddingHorizontal: 4,
     paddingVertical: 6,
     alignItems: 'center',

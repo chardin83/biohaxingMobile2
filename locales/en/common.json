@@ -957,8 +957,8 @@
     "addFirstTarget": "+ Add your first target",
     "addDailyTarget": "+ Add daily target",
     "addWeeklyTarget": "+ Add weekly target",
-    "periodDaily": "today",
-    "periodWeekly": "this week",
+    "periodDaily": "Today",
+    "periodWeekly": "This week",
     "noPlanTipsWithTargets": "You have no plan tips with nutrient targets.",
     "noFulfilledTipsToday": "No plan tips with nutrient targets are completed today.",
     "linkedNutrients": "Nutrients",
@@ -1072,6 +1072,7 @@
     "noTargets": "No targets set yet.",
     "days": "days",
     "currentStreak": "Current streak: ",
-    "currentStreakDays": "{{count}} days"
+    "currentStreakDays": "{{count}} days",
+     "streakReminder": "Don't forget to log your meal today to keep your streak alive!"
   }
 }

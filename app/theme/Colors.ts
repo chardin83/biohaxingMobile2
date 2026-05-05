@@ -34,7 +34,7 @@ export const Colors = {
     readinessRed: 'rgba(255,120,100,0.95)',
 
     // Core colors
-    accentColor: 'rgba(0,191,174,1)', // Cyan - primary accent
+    accentColor: 'rgba(25,140,128,1)', // Cyan - primary accent
     warmColor: 'rgba(255,100,100,1)', // Red - sympathetic/stress
     successColor: 'rgba(255,215,0,1)', // Gold - relevant/success
     infoColor: 'rgba(0,150,255,1)', // Blue - information
@@ -178,7 +178,7 @@ export const Colors = {
     readinessRed: 'rgba(255,120,100,0.95)', // Lägg till denna rad
 
     // Core colors
-    accentColor: 'rgba(120,255,220,1)', // Cyan - primary accent
+    accentColor: 'rgba(75,190,168,1)', // Cyan - primary accent
     warmColor: 'rgba(255,100,100,1)', // Red - sympathetic/stress
     successColor: 'rgba(255,215,0,1)', // Gold - relevant/success
     infoColor: 'rgba(120,200,255,1)', // Blue - information
