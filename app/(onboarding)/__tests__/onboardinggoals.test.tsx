@@ -115,16 +115,16 @@ const mockStorageContext = {
 describe('OnboardingGoals', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(StorageContext, 'useStorage').mockReturnValue(mockStorageContext);
+    jest.spyOn(StorageContext, 'useStorage').mockReturnValue(mockStorageContext as any);
   });
 
   const renderWithProviders = (ui: React.ReactElement) =>
     render(ui, { wrapper: AllProviders });
 
-  it('renders the screen title correctly', async () => {
-    const { getByText } = renderWithProviders(<OnboardingGoals />);
+  it('renders onboarding areas section', async () => {
+    const { getByTestId } = renderWithProviders(<OnboardingGoals />);
     await waitFor(() => {
-      expect(getByText('Select Areas')).toBeTruthy();
+      expect(getByTestId('area-card-energy')).toBeTruthy();
     });
   });
 
@@ -148,31 +148,19 @@ describe('OnboardingGoals', () => {
   });
 
   it('has proper layout structure', async () => {
-    const { getByText } = renderWithProviders(<OnboardingGoals />);
+    const { getByTestId, getByText } = renderWithProviders(<OnboardingGoals />);
     await waitFor(() => {
-      // Check that all elements are present
-      expect(getByText('Select Areas')).toBeTruthy();
+      expect(getByTestId('area-card-energy')).toBeTruthy();
       expect(getByText('Continue')).toBeTruthy();
     });
   });
 
-  it('applies correct styling to the title', async () => {
-    const { getByText } = renderWithProviders(<OnboardingGoals />);
-    const titleElement = getByText('Select Areas');
-
-    // Slå ihop alla style-objekt i arrayen
-    const mergedStyle = Array.isArray(titleElement.props.style)
-      ? Object.assign({}, ...titleElement.props.style)
-      : titleElement.props.style;
-
+  it('renders multiple onboarding area cards', async () => {
+    const { getByTestId } = renderWithProviders(<OnboardingGoals />);
     await waitFor(() => {
-      expect(mergedStyle).toEqual(
-        expect.objectContaining({
-          fontSize: 22,
-          fontWeight: 'bold',
-          marginBottom: 20,
-        })
-      );
+      expect(getByTestId('area-card-energy')).toBeTruthy();
+      expect(getByTestId('area-card-sleepQuality')).toBeTruthy();
+      expect(getByTestId('area-card-longevity')).toBeTruthy();
     });
   });
 

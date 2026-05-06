@@ -4,7 +4,7 @@
     "strict": true,
     "resolveJsonModule": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
+    "types": ["jest", "node"],
     "paths": {
       "@/*": ["./*"]
     }

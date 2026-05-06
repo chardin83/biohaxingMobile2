@@ -5,7 +5,6 @@ import { AllProviders } from '@/test-utils/Providers';
 
 import Calendar from '../calendar';
 
-// Lägg till överst i testfilen:
 export const addMarkForDateMock = jest.fn();
 
 jest.mock('react-i18next', () => ({
@@ -24,30 +23,30 @@ jest.mock('react-i18next', () => ({
 
 // Mock CalendarComponent
 jest.mock('@/components/CalendarComponent', () => {
-  const React = require('react');
+  const mockReact = require('react');
   const { View, Text, TouchableOpacity } = require('react-native');
 
   return {
     __esModule: true,
-    default: React.forwardRef(function MockCalendarComponent({ onDayPress }: any, ref: any) {
-      React.useImperativeHandle(ref, () => ({
+    default: mockReact.forwardRef(function MockCalendarComponent({ onDayPress }: any, ref: any) {
+      mockReact.useImperativeHandle(ref, () => ({
         addMarkForDate: jest.fn(),
         removeMarkForDate: jest.fn(),
       }));
-      
-      return React.createElement(
+
+      return mockReact.createElement(
         View,
         { testID: 'calendar-component' },
-        React.createElement(Text, null, 'Mock Calendar'),
-        React.createElement(
+        mockReact.createElement(Text, null, 'Mock Calendar'),
+        mockReact.createElement(
           TouchableOpacity,
           { testID: 'day-2024-01-15', onPress: () => onDayPress?.({ dateString: '2024-01-15' }) },
-          React.createElement(Text, null, 'Jan 15')
+          mockReact.createElement(Text, null, 'Jan 15')
         ),
-        React.createElement(
+        mockReact.createElement(
           TouchableOpacity,
           { testID: 'day-2024-01-16', onPress: () => onDayPress?.({ dateString: '2024-01-16' }) },
-          React.createElement(Text, null, 'Jan 16')
+          mockReact.createElement(Text, null, 'Jan 16')
         )
       );
     }),
@@ -56,23 +55,23 @@ jest.mock('@/components/CalendarComponent', () => {
 
 // Mock DayEdit component
 jest.mock('@/components/DayEdit', () => {
-  const React = require('react');
+  const mockReact = require('react');
   const { View, Text } = require('react-native');
 
   return function MockDayEdit({ selectedDate, selectedSupplement }: any) {
     const dateString = typeof selectedDate === 'string' ? selectedDate : selectedDate?.dateString || '';
-    
-    return React.createElement(
+
+    return mockReact.createElement(
       View,
       { testID: 'day-edit' },
-      React.createElement(Text, { testID: 'selected-date' }, 'Date: ', dateString),
-      React.createElement(Text, { testID: 'selected-supplement' }, 'Supplement: ', selectedSupplement || 'None')
+      mockReact.createElement(Text, { testID: 'selected-date' }, 'Date: ', dateString),
+      mockReact.createElement(Text, { testID: 'selected-supplement' }, 'Supplement: ', selectedSupplement || 'None')
     );
   };
 });
 
-  const renderWithProviders = (ui: React.ReactElement) =>
-    render(ui, { wrapper: AllProviders });
+const renderWithProviders = (ui: React.ReactElement) =>
+  render(ui, { wrapper: AllProviders });
 
 describe('Calendar', () => {
   beforeEach(() => {
@@ -83,14 +82,14 @@ describe('Calendar', () => {
     const { getByTestId } = renderWithProviders(<Calendar />);
 
     await waitFor(() => {
-    expect(getByTestId('calendar-component')).toBeTruthy();
+      expect(getByTestId('calendar-component')).toBeTruthy();
     });
   });
 
-  it('does not show DayEdit initially', async () => {
-    const { queryByTestId } = renderWithProviders(<Calendar />);
+  it('shows DayEdit initially for today', async () => {
+    const { getByTestId } = renderWithProviders(<Calendar />);
     await waitFor(() => {
-      expect(queryByTestId('day-edit')).toBeNull();
+      expect(getByTestId('day-edit')).toBeTruthy();
     });
   });
 
@@ -106,7 +105,7 @@ describe('Calendar', () => {
   });
 
   it('displays selected date in DayEdit', async () => {
-    const { getByTestId } = renderWithProviders(<Calendar />);    
+    const { getByTestId } = renderWithProviders(<Calendar />);
     const dayButton = getByTestId('day-2024-01-15');
     fireEvent.press(dayButton);
 

@@ -25,14 +25,41 @@ const formatDayLabel = (dateString: string, language: string) => {
   });
 };
 
-const configureCalendarLocale = (language: string, t: any) => {
-  const localeConfig = {
-    monthNames: t('monthNames', { returnObjects: true }),
-    monthNamesShort: t('monthNamesShort', { returnObjects: true }),
-    dayNames: t('dayNames', { returnObjects: true }),
-    dayNamesShort: t('dayNamesShort', { returnObjects: true }),
-    today: t('today'),
+const buildIntlCalendarLocale = (language: string, todayLabel: string) => {
+  const baseYear = 2024;
+  const normalizeShort = (value: string) => value.replaceAll('.', '');
+
+  const monthNames = Array.from({ length: 12 }, (_v, monthIndex) =>
+    new Intl.DateTimeFormat(language, { month: 'long' }).format(new Date(baseYear, monthIndex, 1))
+  );
+
+  const monthNamesShort = Array.from({ length: 12 }, (_v, monthIndex) =>
+    normalizeShort(new Intl.DateTimeFormat(language, { month: 'short' }).format(new Date(baseYear, monthIndex, 1)))
+  );
+
+  // LocaleConfig expects Sunday-first weekday ordering.
+  const firstSunday = new Date(baseYear, 0, 7);
+  const dayNames = Array.from({ length: 7 }, (_v, i) =>
+    new Intl.DateTimeFormat(language, { weekday: 'long' }).format(new Date(baseYear, 0, firstSunday.getDate() + i))
+  );
+
+  const dayNamesShort = Array.from({ length: 7 }, (_v, i) =>
+    normalizeShort(
+      new Intl.DateTimeFormat(language, { weekday: 'short' }).format(new Date(baseYear, 0, firstSunday.getDate() + i))
+    )
+  );
+
+  return {
+    monthNames,
+    monthNamesShort,
+    dayNames,
+    dayNamesShort,
+    today: todayLabel,
   };
+};
+
+const configureCalendarLocale = (language: string, t: any) => {
+  const localeConfig = buildIntlCalendarLocale(language, t('today'));
   LocaleConfig.locales[language] = localeConfig;
   LocaleConfig.defaultLocale = language;
 };
@@ -143,9 +170,6 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
     arrowColor: colors.primary,
   };
 
-  const hasMealOnSelectedDay = (dailyNutritionSummaries[selectedDate]?.meals?.length ?? 0) > 0;
-  const hasSupplementsOnSelectedDay = (takenDates[selectedDate]?.length ?? 0) > 0;
-
   // Only show shadow/glow on iOS
   const containerShadow = Platform.OS === 'ios'
     ? {
@@ -161,7 +185,17 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
   return (
     <View style={[styles.container, { backgroundColor: colors.cardBackground }, containerShadow]}> 
       <View style={styles.headerRow}>
-        {!isExpanded ? (
+        {isExpanded ? (
+          <TouchableOpacity
+            style={styles.toggleButton}
+            onPress={() => setIsExpanded(false)}
+            accessibilityRole="button"
+            accessibilityState={{ expanded: true }}
+            accessibilityLabel="Collapse calendar"
+          >
+            <IconSymbol name="calendar" size={20} color={colors.primary} />
+          </TouchableOpacity>
+        ) : (
           <View style={styles.dayNavRow}>
             <TouchableOpacity
               onPress={goToPreviousDay}
@@ -195,16 +229,6 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
               <IconSymbol name="chevron.right" size={20} color={colors.primary} />
             </TouchableOpacity>
           </View>
-        ) : (
-          <TouchableOpacity
-            style={styles.toggleButton}
-            onPress={() => setIsExpanded(false)}
-            accessibilityRole="button"
-            accessibilityState={{ expanded: true }}
-            accessibilityLabel="Collapse calendar"
-          >
-            <IconSymbol name="calendar" size={20} color={colors.primary} />
-          </TouchableOpacity>
         )}
       </View>
 

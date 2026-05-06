@@ -46,11 +46,13 @@ const fromDateKey = (dateKey: string): Date => {
   return new Date(y, (m ?? 1) - 1, d ?? 1);
 };
 
-const formatMonthDayRange = (start: Date, end: Date): string => {
-  if (start.getMonth() === end.getMonth()) {
-    return `${MONTH_ABBRS[start.getMonth()]} ${start.getDate()}\u2013${end.getDate()}`;
-  }
-  return `${MONTH_ABBRS[start.getMonth()]} ${start.getDate()}\u2013${MONTH_ABBRS[end.getMonth()]} ${end.getDate()}`;
+const formatMonthDayRange = (start: Date, end: Date, language: string): string => {
+  return `${formatMonthDay(start, language)}\u2013${formatMonthDay(end, language)}`;
+};
+
+const formatMonthDay = (date: Date, language: string): string => {
+  const formatted = new Intl.DateTimeFormat(language, { day: 'numeric', month: 'short' }).format(date);
+  return formatted.replaceAll('.', '');
 };
 
 const getCurrentWeek = (): string[] => {
@@ -61,16 +63,14 @@ const getCurrentWeek = (): string[] => {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _getCurrentWeek = getCurrentWeek;
 
-const MONTH_ABBRS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
 type PastWeek = { start: string; end: string; label: string; days: string[]; isCurrent: boolean };
 
-const getLast4Weeks = (offsetWeeks = 0): PastWeek[] => {
+const getLast4Weeks = (offsetWeeks = 0, language = 'en'): PastWeek[] => {
   const currentWeekStart = getWeekStartMonday(new Date());
   return Array.from({ length: 4 }, (_, i) => {
     const weekStart = addDays(currentWeekStart, (-(3 - i) + offsetWeeks) * 7);
     const weekEnd = addDays(weekStart, 6);
-    const label = formatMonthDayRange(weekStart, weekEnd);
+    const label = formatMonthDayRange(weekStart, weekEnd, language);
     return {
       start: toDateKey(weekStart),
       end: toDateKey(weekEnd),
@@ -156,6 +156,7 @@ type TipHistoryItem = {
   tipId: string;
   title: string;
   period: NutritionTargetPeriod;
+  startedAt: string;
 };
 
 // ── Component ──────────────────────────────────────────────────────────────────
@@ -170,20 +171,23 @@ const DAY_LABELS = [
   { key: 'sun', label: 'Sun' },
 ];
 
+const isDateKeyBefore = (a: string, b: string): boolean => a < b;
+
 export default function NutritionProgressScreen() {
   const router = useRouter();
   const { colors } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { plans, nutritionXpClaims, dailyNutritionSummaries, weeklyTracking } = useStorage();
+  const language = i18n.resolvedLanguage ?? i18n.language;
 
   const [weekOffset, setWeekOffset] = useState(0);
-  const pastWeeks = useMemo(() => getLast4Weeks(weekOffset), [weekOffset]);
+  const pastWeeks = useMemo(() => getLast4Weeks(weekOffset, language), [weekOffset, language]);
   const todayKey = useMemo(() => toDateKey(new Date()), []);
   const dateRangeLabel = useMemo(() => {
     const start = fromDateKey(pastWeeks[0].start);
     const end = fromDateKey(pastWeeks[3].end);
-    return formatMonthDayRange(start, end);
-  }, [pastWeeks]);
+    return formatMonthDayRange(start, end, language);
+  }, [pastWeeks, language]);
 
   const goBackWeeks = () => {
     setWeekOffset(prev => prev - 4);
@@ -202,6 +206,7 @@ export default function NutritionProgressScreen() {
         tipId: entry.tipId,
         title: t(`tips:${entry.tipId}.title`),
         period: tip.targetPeriod as NutritionTargetPeriod,
+        startedAt: entry.startedAt,
       }];
     });
   }, [plans, t]);
@@ -255,8 +260,14 @@ export default function NutritionProgressScreen() {
 
   const renderDailyTip = (tip: TipHistoryItem) => {
     const selectedWeek = getSelectedWeek();
+    const startDateKey = toDateKey(new Date(tip.startedAt));
+    const weekBeforeStart = isDateKeyBefore(selectedWeek.end, startDateKey);
+    const startLabel = formatMonthDay(fromDateKey(startDateKey), language);
+    const isStartWeek = selectedWeek.start <= startDateKey && startDateKey <= selectedWeek.end;
     const { streak, isYesterdayStreak } = getStreakStatus(tip.tipId);
-    const visibleDays = selectedWeek.days.filter((d: string) => d <= todayKey);
+    const visibleDays = selectedWeek.days.filter(
+      (d: string) => d <= todayKey && !isDateKeyBefore(d, startDateKey)
+    );
     const claimedDays = visibleDays.filter((d: string) => isClaimed(tip.tipId, 'daily', d));
     const claimedCount = claimedDays.length;
     const countColor = getProgressColor(claimedCount, visibleDays.length);
@@ -271,28 +282,44 @@ export default function NutritionProgressScreen() {
         <ThemedText type="defaultSemiBold" style={styles.tipTitle}>
           {tip.title}
         </ThemedText>
-        <ThemedText type="title3" style={[styles.tipCount, { color: countColor }]}>
-          {`${claimedCount}`}
-        </ThemedText>
-        <ThemedText type="caption" style={[ { color: colors.textMuted }]}>
-          {`/ ${visibleDays.length} ${t('common:progress.days')}`}
-        </ThemedText>
+        {!weekBeforeStart && (
+          <>
+            <ThemedText type="title3" style={[styles.tipCount, { color: countColor }]}>
+              {`${claimedCount}`}
+            </ThemedText>
+            <ThemedText type="caption" style={[ { color: colors.textMuted }]}> 
+              {`/ ${visibleDays.length} ${t('common:progress.days')}`}
+            </ThemedText>
+          </>
+        )}
       </View>
       <ThemedText type="caption" style={[styles.selectedWeekRange, { color: colors.textMuted }]}>
         {selectedWeek.label}
+        {isStartWeek && (
+          <ThemedText type="pill" style={{ color: colors.goldSuperSoft }}>
+            {` • ${t('common:progress.startsOn', { date: startLabel })}`}
+          </ThemedText>
+        )}
       </ThemedText>
+      {weekBeforeStart ? (
+        <ThemedText type="default" style={[styles.notActiveText, { color: colors.textMuted }]}> 
+          {t('common:progress.notActiveStarts', { date: startLabel })}
+        </ThemedText>
+      ) : (
       <View style={styles.weekRow}>
         {selectedWeek.days.map((dateKey: string, i: number) => {
           const fulfilled = isClaimed(tip.tipId, 'daily', dateKey);
           const isToday = dateKey === todayKey;
           const isFuture = dateKey > todayKey;
+          const isBeforeStart = isDateKeyBefore(dateKey, startDateKey);
+          const isStartDay = dateKey === startDateKey;
           let iconColor = colors.textMuted;
           if (fulfilled) iconColor = colors.background;
-          if (isFuture) iconColor = colors.secondaryBackground;
+          if (isFuture || isBeforeStart) iconColor = colors.secondaryBackground;
           let iconChar = '\u2717';
           if (fulfilled) iconChar = '\u2713';
-          if (isFuture) iconChar = '';
-          const isMutedDay = isFuture || !fulfilled;
+          if (isFuture || isBeforeStart) iconChar = '';
+          const isMutedDay = isFuture || isBeforeStart || !fulfilled;
           return (
             <View
               key={dateKey}
@@ -308,6 +335,9 @@ export default function NutritionProgressScreen() {
                 style={[
                   styles.dayCell,
                   { backgroundColor: isMutedDay ? colors.overlayLight : colors.accentColor },
+                  isBeforeStart && styles.dayCellBeforeStart,
+                  isStartDay && styles.dayCellStartDay,
+                  isStartDay && { borderColor: colors.goldSoft },
                   isToday && styles.dayCellToday,
                   isToday && { borderColor: colors.accentColor },
                 ]}
@@ -320,7 +350,8 @@ export default function NutritionProgressScreen() {
           );
         })}
       </View>
-      {streak > 0 && (
+      )}
+      {!weekBeforeStart && streak > 0 && (
         <Badge style={[styles.streakBadge, { backgroundColor: colors.accentWeak }]}>
           <View style={styles.streakMainRow}>
             <ThemedText type="explainer" style={styles.streakBadgeText}>
@@ -337,7 +368,7 @@ export default function NutritionProgressScreen() {
           )}
         </Badge>
       )}
-      <ThemedText type="caption" style={[styles.pastWeeksHeading, { color: colors.textMuted }]}>
+      <ThemedText type="caption" style={[styles.pastWeeksHeading, { color: colors.textMuted }]}> 
         {t('progress.last4Weeks')}
       </ThemedText>
       <View style={styles.pastWeeksRow}>
@@ -619,6 +650,9 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     marginTop: -10,
   },
+  notActiveText: {
+    marginBottom: 10,
+  },
   weekRow: {
     flexDirection: 'row',
     gap: 6,
@@ -642,6 +676,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   dayCellToday: {
+    borderWidth: 1.5,
+  },
+  dayCellBeforeStart: {
+    opacity: 0.6,
+  },
+  dayCellStartDay: {
     borderWidth: 1.5,
   },
   dayCellIcon: {

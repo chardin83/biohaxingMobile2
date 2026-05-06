@@ -101,6 +101,7 @@ export const Colors = {
 
     gold: 'rgba(255,215,100,0.95)',
     goldSoft: 'rgba(255,215,100,0.75)',
+    goldSuperSoft: 'rgba(255,215,100,0.55)',
     surfaceRed: 'rgba(217, 83, 79, 0.12)',
     surfaceRedBorder: 'rgba(217, 83, 79, 0.9)',
     surfaceGreen: 'rgba(60, 179, 113, 0.12)',
@@ -244,6 +245,7 @@ export const Colors = {
     
     gold: 'rgba(255,215,100,0.95)',
     goldSoft: 'rgba(255,215,100,0.75)',
+    goldSuperSoft: 'rgba(255,215,100,0.55)',
     surfaceRed: 'rgba(255,100,100,0.12)',
     surfaceRedBorder: 'rgba(255,100,100,0.3)',
     surfaceGreen: 'rgba(100,255,150,0.12)',
