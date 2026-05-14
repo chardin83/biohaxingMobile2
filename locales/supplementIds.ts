@@ -73,7 +73,6 @@ export const supplementIds = {
   niacin: 'niacin',
   creatine: 'creatine',
   bcaa: 'bcaa',
-  wheyProtein: 'wheyProtein',
   betaAlanine: 'betaAlanine',
   tongkatAli: 'tongkatAli',
   tudca: 'tudca',

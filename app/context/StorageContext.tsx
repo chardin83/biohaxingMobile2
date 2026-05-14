@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { type MineralType } from '@/constants/minerals';
 import {
   levels,
   XP_FOR_CHAT_QUESTION,
@@ -10,6 +11,7 @@ import {
   type XpSource,
 } from '@/constants/XP';
 import { MetricId } from '@/locales/metrics';
+import { type NutritionComposition } from '@/types/nutritionProfile';
 import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
 import { PlanCategory } from '@/types/planCategory';
 import { VerdictValue } from '@/types/verdict';
@@ -17,27 +19,11 @@ import { VerdictValue } from '@/types/verdict';
 import { Plan } from '../domain/Plan';
 import { SupplementTime } from '../domain/SupplementTime';
 
-export type MealNutrition = {
+export type MealNutrition = NutritionComposition & {
   id?: string;
   date: string; // YYYY-MM-DD
   mealName?: string;
-  protein: number;
-  calories: number;
-  carbohydrates: number;
-  fat: number;
-  fiber: number;
-  fiberByType?: Record<string, number>;
-  fiberSubtypeTotals?: Record<string, number>;
-  polyphenolByType?: Record<string, number>;
-  mineralsByType?: Record<string, number>;
-  mineralsConfidenceByType?: Record<string, 'high' | 'medium' | 'low' | 'unknown'>;
-  microbiomeSupport?: Array<{
-    microbe: string;
-    supportLevel: 'high' | 'medium' | 'low' | 'unknown';
-    linkedNutrients: string[];
-    likelyFoods: string[];
-    rationale?: string;
-  }>;
+  mineralsConfidenceByType?: Partial<Record<MineralType, 'high' | 'medium' | 'low' | 'unknown'>>;
 };
 
 export type DailyNutritionSummary = {

@@ -1,5 +1,6 @@
 import { TFunction } from 'i18next';
 
+import { type SupplementTime } from '@/app/domain/SupplementTime';
 import { tips } from '@/locales/tips';
 import {
   type NutritionTargetPeriod,
@@ -28,6 +29,7 @@ type PlanTarget = {
   trackingKey?: string;
   unit: NutritionTargetUnit;
   amount: number;
+  supplementIds?: string[];
 };
 
 type PlanTip = {
@@ -38,9 +40,11 @@ export type NutritionPlanProgressContext = {
   plans: any;
   summary: any;
   t: TFunction;
+  selectedDateKey: string;
   weekStartKey: string;
   dailyTracking: WeeklyTrackingSignals;
   weeklyTracking: Record<string, WeeklyTrackingSignals>;
+  takenDates: Record<string, SupplementTime[]>;
   dailyFiberByType: Record<string, number>;
   dailyPolyphenolByType: Record<string, number>;
   dailyMineralsByType: Record<string, number>;
@@ -132,6 +136,133 @@ const getAllTipTargets = (tip: any): PlanTarget[] => {
   ];
 };
 
+const normalizeSupplementKey = (value: string | undefined): string =>
+  (value ?? '').trim().toLowerCase();
+
+const parseDateKeyLocal = (dateKey: string): Date => {
+  const [yearRaw, monthRaw, dayRaw] = dateKey.split('-');
+  const year = Number(yearRaw);
+  const month = Number(monthRaw);
+  const day = Number(dayRaw);
+  return new Date(year, month - 1, day);
+};
+
+const toDateKeyLocal = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const getWeekEndFromStartKey = (weekStartKey: string): string => {
+  const weekStartDate = parseDateKeyLocal(weekStartKey);
+  const weekEndDate = new Date(weekStartDate);
+  weekEndDate.setDate(weekStartDate.getDate() + 6);
+  return toDateKeyLocal(weekEndDate);
+};
+
+const parseQuantity = (value: string | undefined): number | null => {
+  const parsed = Number.parseFloat((value ?? '').replace(',', '.'));
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+const normalizeUnit = (value: string | undefined): string =>
+  (value ?? '').trim().toLowerCase();
+
+const toMilligrams = (quantity: number, unit: string): number | null => {
+  if (unit === 'mg') return quantity;
+  if (unit === 'g') return quantity * 1000;
+  if (unit === 'mcg' || unit === 'ug' || unit === 'μg') return quantity / 1000;
+  return null;
+};
+
+const toGrams = (quantity: number, unit: string): number | null => {
+  if (unit === 'g') return quantity;
+  if (unit === 'mg') return quantity / 1000;
+  if (unit === 'mcg' || unit === 'ug' || unit === 'μg') return quantity / 1_000_000;
+  return null;
+};
+
+type MatchedSupplement = {
+  id?: string;
+  name?: string;
+  quantity?: string;
+  unit?: string;
+};
+
+const getMatchedSupplementsForTarget = (
+  tip: any,
+  target: PlanTarget,
+  tipPeriod: NutritionTargetPeriod,
+  context: NutritionPlanProgressContext
+): MatchedSupplement[] => {
+  const tipSupplementIds = (tip?.supplements ?? [])
+    .map((entry: { id?: string }) => normalizeSupplementKey(entry.id))
+    .filter(Boolean);
+
+  const explicitTargetSupplementIds = (target.supplementIds ?? [])
+    .map(id => normalizeSupplementKey(id))
+    .filter(Boolean);
+
+  const matchedSupplementIds =
+    explicitTargetSupplementIds.length > 0 ? explicitTargetSupplementIds : tipSupplementIds;
+
+  if (!matchedSupplementIds.length) {
+    return [];
+  }
+
+  const matchedSet = new Set(matchedSupplementIds);
+  const weekEndKey = getWeekEndFromStartKey(context.weekStartKey);
+  const dateEntries = Object.entries(context.takenDates ?? {}).filter(([dateKey]) =>
+    tipPeriod === 'weekly'
+      ? dateKey >= context.weekStartKey && dateKey <= weekEndKey
+      : dateKey === context.selectedDateKey
+  );
+
+  const matchedSupplements: MatchedSupplement[] = [];
+  dateEntries.forEach(([, supplements]) => {
+    (supplements ?? []).forEach(entry => {
+      const idKey = normalizeSupplementKey(entry.id);
+      const nameKey = normalizeSupplementKey(entry.name);
+      if (matchedSet.has(idKey) || matchedSet.has(nameKey)) {
+        matchedSupplements.push(entry);
+      }
+    });
+  });
+
+  return matchedSupplements;
+};
+
+const getSupplementContributionForTarget = (
+  supplements: MatchedSupplement[],
+  unit: NutritionTargetUnit
+): { value: number; names: string[] } => {
+  if (unit === 'items' || unit === 'count') {
+    return {
+      value: supplements.length,
+      names: supplements.map(item => item.name || item.id || 'supplement'),
+    };
+  }
+
+  if (unit !== 'mg' && unit !== 'g') {
+    return { value: 0, names: [] };
+  }
+
+  let sum = 0;
+  const names: string[] = [];
+  supplements.forEach(item => {
+    const quantity = parseQuantity(item.quantity);
+    if (quantity === null) return;
+    const sourceUnit = normalizeUnit(item.unit);
+    const converted = unit === 'mg' ? toMilligrams(quantity, sourceUnit) : toGrams(quantity, sourceUnit);
+    if (converted === null) return;
+    sum += converted;
+    names.push(item.name || item.id || 'supplement');
+  });
+
+  return { value: sum, names };
+};
+
 const normalizeTrackedItems = (
   value: WeeklyTrackingSignalValue | undefined
 ): string[] | undefined => {
@@ -144,19 +275,26 @@ const normalizeTrackedItems = (
 
 const buildTipTargetProgress = (
   target: PlanTarget,
+  tip: any,
   tipPeriod: NutritionTargetPeriod,
   context: NutritionPlanProgressContext
 ) => {
   const trackingKey = target.trackingKey ?? target.tag ?? '';
-  const actual =
+  const baseActual =
     tipPeriod === 'weekly'
       ? getWeeklyTargetValueFromContext(trackingKey, target.unit, context)
       : getDailyTargetValueFromContext(trackingKey, target.unit, context);
+  const matchedSupplements = getMatchedSupplementsForTarget(tip, target, tipPeriod, context);
+  const supplementContribution = getSupplementContributionForTarget(matchedSupplements, target.unit);
+  const actual = baseActual + supplementContribution.value;
   const trackingValue =
     tipPeriod === 'weekly'
       ? context.weeklyTracking[context.weekStartKey]?.[trackingKey]
       : context.dailyTracking[trackingKey];
-  const trackedItems = normalizeTrackedItems(trackingValue);
+  const trackedItems = [
+    ...(normalizeTrackedItems(trackingValue) ?? []),
+    ...supplementContribution.names,
+  ];
   const labelGroup = getTipLabelGroup(target.unit, trackingKey);
 
   return {
@@ -165,9 +303,12 @@ const buildTipTargetProgress = (
     period: tipPeriod,
     amount: target.amount,
     actual,
+    foodActual: baseActual,
+    supplementActual: supplementContribution.value,
     isMet: actual >= target.amount,
     label: context.t(`nutritionLogger.${labelGroup}.${trackingKey}`),
-    trackedItems,
+    trackedItems: trackedItems.length ? Array.from(new Set(trackedItems)).sort((a, b) => a.localeCompare(b)) : undefined,
+    supplementIds: target.supplementIds,
   };
 };
 
@@ -182,7 +323,7 @@ const buildTipProgressFromPlanTip = (
   const allTargets = getAllTipTargets(tip);
   if (!tipPeriod || !allTargets.length) return [];
 
-  const targets = allTargets.map(target => buildTipTargetProgress(target, tipPeriod, context));
+  const targets = allTargets.map(target => buildTipTargetProgress(target, tip, tipPeriod, context));
   const metCount = targets.reduce((count, target) => count + (target.isMet ? 1 : 0), 0);
   const totalCount = targets.length;
 
@@ -191,6 +332,7 @@ const buildTipProgressFromPlanTip = (
       tipId: tip.id,
       title: tip.title,
       areaId: tip.areas[0]?.id,
+      dateKey: context.selectedDateKey,
       period: tipPeriod,
       targets,
       metCount,

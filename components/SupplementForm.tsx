@@ -1,9 +1,11 @@
+import { useTheme } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { Supplement } from '@/app/domain/Supplement';
 import SupplementDropdown from '@/components/SupplementsDropdown';
+import { ThemedText } from '@/components/ThemedText';
 import LabeledInput from '@/components/ui/LabeledInput';
 
 import AppButton from './ui/AppButton';
@@ -25,7 +27,9 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
   onCancel,
 }) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const [supplement, setSupplement] = useState<Supplement | null>(preselectedSupplement);
+  const hasFixedUnit = Boolean(supplement?.id && supplement.unit?.trim());
 
   return (
     <View>
@@ -44,19 +48,31 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
           label={t('supplementForm.dosage')}
           placeholder={t('supplementForm.dosage')}
           value={supplement?.quantity}
+          keyboardType="decimal-pad"
           isOptional={false}
           onChangeText={text => setSupplement({ ...supplement, quantity: text } as Supplement)}
           containerStyle={[styles.inputHalf, styles.inputSpacing]}
         />
 
-        <LabeledInput
-          label={t('supplementForm.unit')}
-          placeholder={t('supplementForm.unit')}
-          value={supplement?.unit}
-          isOptional={true}
-          onChangeText={text => setSupplement({ ...supplement, unit: text } as Supplement)}
-          containerStyle={styles.inputHalf}
-        />
+        {hasFixedUnit ? (
+          <View style={styles.inputHalf}>
+            <ThemedText type="label">{t('supplementForm.unit')}</ThemedText>
+            <View style={[styles.lockedUnitRow, { backgroundColor: colors.secondaryBackground }]}> 
+              <ThemedText type="defaultSemiBold">{supplement?.unit}</ThemedText>
+              <ThemedText type="explainer" style={{ color: colors.textMuted }}>
+                {t('general.fixed', { defaultValue: 'Fast' })}
+              </ThemedText>
+            </View>
+          </View>
+        ) : (
+          <LabeledInput
+            label={t('supplementForm.unit')}
+            placeholder={t('supplementForm.unit')}
+            value={supplement?.unit}
+            onChangeText={text => setSupplement({ ...supplement, unit: text } as Supplement)}
+            containerStyle={styles.inputHalf}
+          />
+        )}
       </View>
 
       <View style={styles.buttonColumn}>
@@ -95,6 +111,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // Arrange inputs in a row
     justifyContent: 'space-between',
     marginBottom: 10,
+  },
+  lockedUnitRow: {
+    borderRadius: 8,
+    minHeight: 40,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
   },
 });
 

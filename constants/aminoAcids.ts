@@ -17,6 +17,7 @@ export const OTHER_AMINO_ACID_KEYS = [
   'glycine',
   'proline',
   'tyrosine',
+  'citrulline',
 ] as const;
 
 export const ALL_AMINO_ACID_KEYS = [
@@ -28,7 +29,7 @@ export type EssentialAminoAcidType = typeof ESSENTIAL_AMINO_ACID_KEYS[number];
 export type OtherAminoAcidType = typeof OTHER_AMINO_ACID_KEYS[number];
 export type AminoAcidType = typeof ALL_AMINO_ACID_KEYS[number];
 
-export const isAminoAcidTargetTag = (tag: string): boolean =>
+export const isAminoAcidTargetTag = (tag: string): tag is AminoAcidType =>
   ALL_AMINO_ACID_KEYS.includes(tag as AminoAcidType);
 
 

@@ -78,7 +78,6 @@
         { "id": "niacin", "name": "Niacin (Vitamin B3)", "quantity": "100", "unit": "mg", "description": "Klassisk B3 som kan höja NAD+-produktionen; välj flush-fri variant vid behov." },
         { "id": "creatine", "name": "Kreatin", "quantity": "5000", "unit": "mg" },
         { "id": "bcaa", "name": "BCAA (Leucin/Isoleucin/Valin)", "quantity": "7000", "unit": "mg", "description": "Förgrenade aminosyror som ofta används kring träning för att stödja muskelproteinsyntes och återhämtning." },
-        { "id": "wheyProtein", "name": "Vassleprotein Isolat", "quantity": "30", "unit": "g", "description": "Snabbsmält komplett protein med hög leucinhalt (~2,5 g per 30 g). Idealiskt efter träning för att maximera muskelproteinsyntes." },
         { "id": "betaAlanine", "name": "Beta-Alanin", "quantity": "3000", "unit": "mg" },
         { "id": "tongkatAli", "name": "Tongkat Ali (Eurycoma longifolia)", "quantity": "200", "unit": "mg" },
         { "id": "tudca", "name": "TUDCA (Tauroursodeoxycholic Acid)", "quantity": "250", "unit": "mg" },

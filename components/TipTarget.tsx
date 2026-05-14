@@ -1,5 +1,7 @@
+import { useRouter } from 'expo-router';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { getTipTargetIconName } from '@/locales/tips';
 import {
@@ -17,13 +19,16 @@ type TipTargetItem = {
   period: NutritionTargetPeriod;
   amount: number;
   actual: number;
+  foodActual?: number;
+  supplementActual?: number;
   isMet: boolean;
   label: string;
   trackedItems?: string[];
+  supplementIds?: string[];
 };
 
 type TipTargetProps = {
-  tip: { tipId: string };
+  tip: { tipId: string; title?: string; dateKey?: string };
   target: TipTargetItem;
   colors: {
     primary: string;
@@ -63,15 +68,40 @@ const renderTrackedItems = (targetTag: string, trackedItems: string[]) =>
   ));
 
 const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
-  const hasTrackedItems = Array.isArray(target.trackedItems) && target.trackedItems.length > 0;
-  const trackedItems = target.trackedItems ?? [];
+  const router = useRouter();
+  const { t } = useTranslation();
   const usesDiscreteUnit = target.unit === 'items' || target.unit === 'count';
+  const trackedItems = target.trackedItems ?? [];
+  const hasTrackedItems = usesDiscreteUnit && trackedItems.length > 0;
   const targetIconName = getTipTargetIconName(tip.tipId) ?? 'target';
-  const valueFormatter = hasTrackedItems || usesDiscreteUnit ? formatTargetProgressValue : formatTargetValue;
+  const valueFormatter = usesDiscreteUnit ? formatTargetProgressValue : formatTargetValue;
+  const resolvedTipTitle =
+    tip.title?.includes('.') ? t(`tips:${tip.title}`) : (tip.title ?? tip.tipId);
   const targetValueText = `${valueFormatter(target.actual, target.unit)} / ${valueFormatter(
     target.amount,
     target.unit
-  )}`;
+  )}${target.isMet ? ' 🥇' : ''}`;
+
+  const dateKey = tip.dateKey ?? new Date().toISOString().split('T')[0];
+
+  const openTargetDetails = () => {
+    router.push({
+      pathname: '/(stack)/calendar/tip-target-details',
+      params: {
+        tipId: tip.tipId,
+        tipTitle: resolvedTipTitle,
+        targetLabel: target.label,
+        targetTag: target.tag,
+        hasMedal: target.isMet ? '1' : '0',
+        foodActual: String(target.foodActual ?? target.actual),
+        supplementActual: String(target.supplementActual ?? 0),
+        targetAmount: String(target.amount),
+        targetUnit: target.unit,
+        dateKey,
+        targetSupplementIds: (target.supplementIds ?? []).join(','),
+      },
+    });
+  };
 
   if (hasTrackedItems) {
     return (
@@ -82,12 +112,19 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
           initialCollapsed
           leftContent={<IconSymbol name={targetIconName} size={14} color={colors.textMuted} />}
           rightContent={
-            <ThemedText
-              type="explainer"
-              style={[styles.planTipTargetValue, styles.planTipTargetCollapsibleValue]}
+            <TouchableOpacity
+              onPress={openTargetDetails}
+              activeOpacity={0.8}
+              accessibilityRole="button"
+              accessibilityLabel={`Open details for ${target.label}`}
             >
-              {targetValueText}
-            </ThemedText>
+              <ThemedText
+                type="explainer"
+                style={[styles.planTipTargetValue, styles.planTipTargetCollapsibleValue]}
+              >
+                {targetValueText}
+              </ThemedText>
+            </TouchableOpacity>
           }
         >
           <View style={styles.planTipTargetItemsList}>
@@ -99,7 +136,13 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
   }
 
   return (
-    <View style={styles.planTipTargetRow}>
+    <TouchableOpacity
+      style={styles.planTipTargetRow}
+      onPress={openTargetDetails}
+      activeOpacity={0.85}
+      accessibilityRole="button"
+      accessibilityLabel={`Open details for ${target.label}`}
+    >
       <View style={styles.planTipTargetLabelRow}>
         <IconSymbol name={targetIconName} size={14} color={colors.textMuted} />
         <ThemedText type="explainer" style={styles.planTipTargetLabel}>
@@ -112,7 +155,7 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
       >
         {targetValueText}
       </ThemedText>
-    </View>
+    </TouchableOpacity>
   );
 };
 

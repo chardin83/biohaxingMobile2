@@ -6,6 +6,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useStorage } from '@/app/context/StorageContext';
 import { Supplement } from '@/app/domain/Supplement';
 import { SupplementTime } from '@/app/domain/SupplementTime';
+import { useSupplementMap } from '@/locales/supplements';
 
 import PlanSupplementsPicker from './PlanSupplementsPicker';
 import SelectedSupplementsList from './SelectedSupplementsList';
@@ -18,12 +19,14 @@ import DiscreetButton from './ui/DiscreetButton';
 
 interface Props {
     selectedDate: string;
+    preselectedSupplementId?: string;
 }
 
-export const SupplementsTabSection = ({ selectedDate }: Props) => {
+export const SupplementsTabSection = ({ selectedDate, preselectedSupplementId }: Props) => {
     const { plans, takenDates, setTakenDates } = useStorage();
     const { t } = useTranslation();
     const { colors } = useTheme();
+    const supplementMap = useSupplementMap();
 
     const [selectedTime, setSelectedTime] = useState<Date>(new Date());
     const [selectedSupplements, setSelectedSupplements] = useState<SupplementTime[]>([]);
@@ -34,10 +37,25 @@ export const SupplementsTabSection = ({ selectedDate }: Props) => {
     const [isPlanPickerVisible, setIsPlanPickerVisible] = useState(false);
     const [planSupplementsToPick, setPlanSupplementsToPick] = useState<Supplement[] | null>(null);
     const [planName, setPlanName] = useState<string>('');
+    const [prefilledSupplement, setPrefilledSupplement] = useState<Supplement | null>(null);
 
     useEffect(() => {
         setSelectedSupplements(takenDates[selectedDate] ?? []);
     }, [selectedDate, takenDates]);
+
+    useEffect(() => {
+        if (!preselectedSupplementId) return;
+        const supplement = supplementMap.get(preselectedSupplementId);
+        if (!supplement) return;
+        setSelectedTime(new Date(`${selectedDate}T08:00`));
+        setEditingSupplement(null);
+        setIsEditing(false);
+        setPlanSupplementsToPick(null);
+        setIsPlanPickerVisible(false);
+        setIsAddButtonVisible(false);
+        setPrefilledSupplement(supplement);
+        setIsSupplementFormVisible(true);
+    }, [preselectedSupplementId, selectedDate, supplementMap]);
 
     const saveToStorage = (supplements: SupplementTime[]) => {
         setSelectedSupplements(supplements);
@@ -81,6 +99,7 @@ export const SupplementsTabSection = ({ selectedDate }: Props) => {
         saveToStorage(updatedSupplements);
         setEditingSupplement(null);
         setIsEditing(false);
+        setPrefilledSupplement(null);
         setIsSupplementFormVisible(false);
     };
 
@@ -102,7 +121,12 @@ export const SupplementsTabSection = ({ selectedDate }: Props) => {
                     <View style={styles.addManuallyTextContainer}>
                         <DiscreetButton
                             title={" + " + t('supplementTabSection.addManually')}
-                            onPress={() => { setIsSupplementFormVisible(true); setEditingSupplement(null); setIsPlanPickerVisible(false); }}
+                            onPress={() => {
+                                setIsSupplementFormVisible(true);
+                                setEditingSupplement(null);
+                                setPrefilledSupplement(null);
+                                setIsPlanPickerVisible(false);
+                            }}
                             larger
                         />
                     </View>
@@ -119,6 +143,7 @@ export const SupplementsTabSection = ({ selectedDate }: Props) => {
                                     setPlanSupplementsToPick(
                                         plan.supplements.map((entry) => entry.supplement)
                                     );
+                                    setPrefilledSupplement(null);
                                     setIsPlanPickerVisible(false);
                                     setPlanName(plan.name);
                                 }}
@@ -175,20 +200,22 @@ export const SupplementsTabSection = ({ selectedDate }: Props) => {
                         buttonIcon="clock"
                     />
                     <SupplementForm
-                        key={editingSupplement?.name ?? 'new'}
+                        key={editingSupplement?.name ?? prefilledSupplement?.name ?? 'new'}
                         selectedTime={selectedTime}
                         isEditing={isEditing}
-                        preselectedSupplement={editingSupplement}
+                        preselectedSupplement={editingSupplement ?? prefilledSupplement}
                         onSave={supplement => {
                             // Convert Supplement to SupplementTime
                             const time = selectedTime.toTimeString().slice(0, 5);
                             saveSelectedSupplement({ ...supplement, time });
+                            setPrefilledSupplement(null);
                             setIsSupplementFormVisible(false);
                             setIsAddButtonVisible(true);
                         }}
                         onCancel={() => {
                             setEditingSupplement(null);
                             setIsEditing(false);
+                            setPrefilledSupplement(null);
                             setIsSupplementFormVisible(false);
                             setIsAddButtonVisible(true);
                         }}

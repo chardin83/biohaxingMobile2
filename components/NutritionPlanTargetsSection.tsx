@@ -26,6 +26,7 @@ export type TipProgressItem = {
   tipId: string;
   title: string;
   areaId?: string;
+  dateKey?: string;
   period: TipTargetPeriod;
   targets: Array<{
     tag: string;
@@ -33,9 +34,12 @@ export type TipProgressItem = {
     period: TipTargetPeriod;
     amount: number;
     actual: number;
+    foodActual?: number;
+    supplementActual?: number;
     isMet: boolean;
     label: string;
     trackedItems?: string[];
+    supplementIds?: string[];
   }>;
   metCount: number;
   totalCount: number;

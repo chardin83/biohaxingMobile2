@@ -12,11 +12,18 @@ import { ThemedText } from './ThemedText';
 interface DayeEditProps {
   selectedDate: string;
   onTipCompleted?: (targetY?: number) => void;
+  initialTab?: 'supplements' | 'meal';
+  preselectedSupplementId?: string;
 }
 
-const DayEdit: React.FC<DayeEditProps> = ({ selectedDate, onTipCompleted }) => {
+const DayEdit: React.FC<DayeEditProps> = ({
+  selectedDate,
+  onTipCompleted,
+  initialTab,
+  preselectedSupplementId,
+}) => {
 
-  const [activeTab, setActiveTab] = useState<'supplements' | 'meal'>('meal');
+  const [activeTab, setActiveTab] = useState<'supplements' | 'meal'>(initialTab ?? 'meal');
   const {takenDates } = useStorage();
   const { t } = useTranslation();
   const hasSupplementsToday = takenDates[selectedDate]?.length > 0;
@@ -32,6 +39,12 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate, onTipCompleted }) => {
     }
     onTipCompleted?.();
   }, [onTipCompleted]);
+
+  React.useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -81,7 +94,10 @@ const DayEdit: React.FC<DayeEditProps> = ({ selectedDate, onTipCompleted }) => {
         </View>
 
         {activeTab === 'supplements' && (
-          <SupplementsTabSection selectedDate={selectedDate} />
+          <SupplementsTabSection
+            selectedDate={selectedDate}
+            preselectedSupplementId={preselectedSupplementId}
+          />
         )}
 
         {activeTab === 'meal' && (

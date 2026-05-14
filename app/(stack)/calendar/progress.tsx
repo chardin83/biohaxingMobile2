@@ -13,7 +13,9 @@ import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { isAminoAcidTargetTag } from '@/constants/aminoAcids';
+import { isFiberTargetTag } from '@/constants/fiber';
 import { isMineralTargetTag } from '@/constants/minerals';
+import { isPolyphenolTargetTag } from '@/constants/polyphenols';
 import { isVitaminTargetTag } from '@/constants/vitamins';
 import { getTipTargetIconName, tips } from '@/locales/tips';
 import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
@@ -87,9 +89,10 @@ const sumMealsForTag = (meals: DailyNutritionSummary['meals'], tag: string): num
   let total = 0;
   for (const meal of meals) {
     if (isMineralTargetTag(tag)) total += meal.mineralsByType?.[tag] ?? 0;
-    else if (isVitaminTargetTag(tag)) total += meal.polyphenolByType?.[tag] ?? 0;
-    else if (isAminoAcidTargetTag(tag)) total += meal.fiberByType?.[tag] ?? 0;
-    else total += meal.polyphenolByType?.[tag] ?? 0;
+    else if (isVitaminTargetTag(tag)) total += meal.vitaminsByType?.[tag] ?? 0;
+    else if (isAminoAcidTargetTag(tag)) total += meal.aminoAcidsByType?.[tag] ?? 0;
+    else if (isFiberTargetTag(tag)) total += meal.fiberByType?.[tag] ?? 0;
+    else if (isPolyphenolTargetTag(tag)) total += meal.polyphenolByType?.[tag] ?? 0;
   }
   return total;
 };
@@ -259,6 +262,8 @@ export default function NutritionProgressScreen() {
   };
 
   const renderDailyTip = (tip: TipHistoryItem) => {
+    const tipObj = tips.find(candidate => candidate.id === tip.tipId);
+    const isSupplementTip = (tipObj?.supplements?.length ?? 0) > 0;
     const selectedWeek = getSelectedWeek();
     const startDateKey = toDateKey(new Date(tip.startedAt));
     const weekBeforeStart = isDateKeyBefore(selectedWeek.end, startDateKey);
@@ -317,7 +322,7 @@ export default function NutritionProgressScreen() {
           if (fulfilled) iconColor = colors.background;
           if (isFuture || isBeforeStart) iconColor = colors.secondaryBackground;
           let iconChar = '\u2717';
-          if (fulfilled) iconChar = '\u2713';
+          if (fulfilled) iconChar = isSupplementTip ? '🥇' : '\u2713';
           if (isFuture || isBeforeStart) iconChar = '';
           const isMutedDay = isFuture || isBeforeStart || !fulfilled;
           return (
@@ -438,6 +443,7 @@ export default function NutritionProgressScreen() {
     const selectedWeek = getSelectedWeek();
     const weekData = weeklyTracking[selectedWeek.start] ?? {};
     const tipObj = tips.find(candidate => candidate.id === tip.tipId);
+    const isSupplementTip = (tipObj?.supplements?.length ?? 0) > 0;
     const summaryTargets: Array<{
       tag: string;
       unit: 'items' | 'count';
@@ -492,6 +498,10 @@ export default function NutritionProgressScreen() {
               weekProgressColor = getProgressColor(actual, amount);
             }
             const isSelected = (selectedWeekStart ?? pastWeeks[3].start) === week.start;
+            let weekStatusIcon = '✗';
+            if (fulfilled) {
+              weekStatusIcon = isSupplementTip ? '🥇' : '✓';
+            }
             return (
               <TouchableOpacity
                 key={`${tip.tipId}-${week.start}`}
@@ -517,7 +527,7 @@ export default function NutritionProgressScreen() {
                   <ThemedText
                     style={[styles.weekStatusIcon, { color: fulfilled ? colors.primary : colors.textMuted }]}
                   >
-                    {fulfilled ? '✓' : '✗'}
+                    {weekStatusIcon}
                   </ThemedText>
                 </View>
                   <ThemedText type="explainer" style={[styles.weekStatusProgress, { color: weekProgressColor }]}> 

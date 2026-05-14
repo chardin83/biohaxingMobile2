@@ -4,6 +4,7 @@ import { initReactI18next } from 'react-i18next';
 
 import enAreas from '../locales/en/areas.json';
 import enCommon from '../locales/en/common.json';
+import enFood from '../locales/en/food.json';
 import enGenes from '../locales/en/genes.json';
 import enLevels from '../locales/en/levels.json';
 import enMetrics from '../locales/en/metrics.json';
@@ -13,6 +14,7 @@ import enSupplements from '../locales/en/supplements.json';
 import enTips from '../locales/en/tips.json';
 import svAreas from '../locales/sv/areas.json';
 import svCommon from '../locales/sv/common.json';
+import svFood from '../locales/sv/food.json';
 import svGenes from '../locales/sv/genes.json';
 import svLevels from '../locales/sv/levels.json';
 import svMetrics from '../locales/sv/metrics.json';
@@ -25,6 +27,7 @@ import svTips from '../locales/sv/tips.json';
 const resources = {
   en: {
     common: enCommon,
+    food: enFood,
     tips: enTips,
     supplements: enSupplements,
     areas: enAreas,
@@ -36,6 +39,7 @@ const resources = {
   },
   sv: {
     common: svCommon,
+    food: svFood,
     tips: svTips,
     supplements: svSupplements,
     areas: svAreas,
@@ -74,7 +78,7 @@ i18next
     fallbackLng: 'en',
     debug: false,
     defaultNS: 'common', // Default namespace
-    ns: ['common', 'tips', 'supplements', 'areas', 'levels', 'prompts', 'genes', 'metrics', 'microbiome'], // Available namespaces
+    ns: ['common', 'food', 'tips', 'supplements', 'areas', 'levels', 'prompts', 'genes', 'metrics', 'microbiome'], // Available namespaces
     interpolation: {
       escapeValue: false, // Not needed for React
     },

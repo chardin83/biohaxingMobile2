@@ -9,25 +9,11 @@
     "nutritionFoods": {
       "title": "Low-carb foods",
       "items": {
-        "leafyGreens": {
-          "name": "Leafy greens",
-          "details": "Spinach, kale, lettuce, and other greens are low in carbs and high in nutrients."
-        },
-        "meat": {
-          "name": "Meat",
-          "details": "Beef, chicken, pork, and other meats are naturally low in carbohydrates."
-        },
         "eggs": {
-          "name": "Eggs",
           "details": "Eggs are a versatile, low-carb source of protein and healthy fats."
         },
-        "cheese": {
-          "name": "Cheese",
-          "details": "Most cheeses are low in carbs and provide calcium and protein."
-        },
-        "nuts": {
-          "name": "Nuts",
-          "details": "Almonds, walnuts, and other nuts are low in carbs and high in healthy fats."
+        "kale": {
+          "details": "Spinach, kale, lettuce, and other greens are low in carbs and high in nutrients."
         }
       }
     }
@@ -44,24 +30,16 @@
       "title": "Keto-friendly foods",
       "items": {
         "avocado": {
-          "name": "Avocado",
           "details": "Avocados are high in healthy fats and fiber, and very low in carbs."
         },
         "coconutOil": {
-          "name": "Coconut oil",
           "details": "Coconut oil is a source of medium-chain triglycerides (MCTs) that support ketosis."
         },
-        "fattyFish": {
-          "name": "Fatty fish",
+        "sardines": {
           "details": "Salmon, mackerel, and sardines are rich in omega-3 fats and low in carbs."
         },
         "eggs": {
-          "name": "Eggs",
           "details": "Eggs are a staple in ketogenic diets for their protein and fat content."
-        },
-        "cheese": {
-          "name": "Cheese",
-          "details": "Cheese is low in carbs and high in fat, making it ideal for keto."
         }
       }
     }
@@ -99,25 +77,20 @@
     "nutritionFoods": {
       "title": "Colorful vegetables",
       "items": {
-        "redVeggies": {
-          "name": "Red vegetables (tomato, bell pepper, beetroot)",
-          "details": "Red vegetables are rich in lycopene and anthocyanins, supporting heart health and immunity."
+        "orange": {
+          "details": "Oranges provide vitamin C, hesperidin and fiber that support immunity, blood vessels and gut health."
         },
-        "orangeVeggies": {
-          "name": "Orange vegetables (carrot, pumpkin, sweet potato)",
-          "details": "Orange vegetables contain beta-carotene, which converts to vitamin A and supports vision and skin."
+        "strawberries": {
+          "details": "Strawberries provide vitamin C and polyphenols such as anthocyanins that help protect cells."
         },
-        "yellowVeggies": {
-          "name": "Yellow vegetables (yellow pepper, corn)",
-          "details": "Yellow vegetables are high in lutein and zeaxanthin, supporting eye health."
+        "blackCurrants": {
+          "details": "Black currants are rich in anthocyanins and vitamin C, offering strong antioxidant support."
         },
-        "greenVeggies": {
-          "name": "Green vegetables (spinach, broccoli, peas)",
-          "details": "Green vegetables contain chlorophyll, folate, and magnesium, supporting energy and nervous system."
+        "kale": {
+          "details": "Kale contains folate, vitamin K and minerals that support metabolic and immune function."
         },
-        "bluePurpleVeggies": {
-          "name": "Blue/purple vegetables (blueberries, red cabbage, eggplant)",
-          "details": "Blue and purple vegetables are rich in anthocyanins, protecting cells and supporting brain function."
+        "broccoli": {
+          "details": "Broccoli contributes fiber, vitamin C and sulfur compounds that support detox and gut health."
         }
       }
     }
@@ -134,21 +107,17 @@
     "nutritionFoods": {
       "title": "Vitamin D food sources",
       "items": {
-        "fattyFish": {
-          "name": "Fatty fish (salmon, mackerel, sardines)",
+        "sardines": {
           "details": "Aim for a 120 g serving of salmon or mackerel 2-3 times per week (~400-600 IU vitamin D)."
         },
-        "eggYolks": {
-          "name": "Egg yolks",
-          "details": "Two egg yolks supply roughly 80-100 IU vitamin D."
+        "eggs": {
+          "details": "Two whole eggs supply roughly 80-100 IU vitamin D."
         },
         "fortifiedDairy": {
-          "name": "Fortified dairy or plant milks",
           "details": "A 250 ml glass of fortified milk or plant milk delivers about 100-130 IU vitamin D."
         },
-        "mushrooms": {
-          "name": "Sun-exposed mushrooms",
-          "details": "100 g sun-exposed mushrooms can provide roughly 400 IU vitamin D."
+        "chanterelles": {
+          "details": "100 g chanterelles provide around 400 IU vitamin D and are rich in potassium and iron."
         }
       }
     }
@@ -173,24 +142,19 @@
     "nutritionFoods": {
       "title": "CoQ10-rich foods",
       "items": {
-        "organMeats": {
-          "name": "Organ meats (heart, liver)",
-          "details": "An 85 g serving of beef heart or liver supplies around 10-15 mg CoQ10."
+        "liver": {
+          "details": "An 85 g serving of beef liver supplies around 10-15 mg CoQ10."
         },
-        "fattyFish": {
-          "name": "Fatty fish (sardines, mackerel)",
+        "sardines": {
           "details": "120 g sardines or mackerel delivers roughly 6 mg CoQ10."
         },
         "beef": {
-          "name": "Beef and bison",
           "details": "120 g lean beef offers about 3 mg CoQ10."
         },
         "spinach": {
-          "name": "Spinach",
           "details": "1 cup cooked spinach (~180 g) provides about 2 mg CoQ10."
         },
         "broccoli": {
-          "name": "Broccoli",
           "details": "1 cup steamed broccoli (~150 g) yields roughly 1 mg CoQ10."
         }
       }
@@ -250,21 +214,11 @@
     "nutritionFoods": {
       "title": "Electrolyte-supporting foods and drinks",
       "items": {
-        "mineralWater": {
-          "name": "Mineral water",
-          "details": "Mineral-rich water can provide sodium, magnesium, and other electrolytes, especially after sweating."
-        },
         "coconutWater": {
-          "name": "Coconut water",
           "details": "A glass of coconut water provides potassium and fluid, useful after heat or light training."
         },
         "potatoes": {
-          "name": "Potatoes or root vegetables",
           "details": "Potatoes are rich in potassium, one of the key minerals involved in muscle and nerve function."
-        },
-        "saltedMeals": {
-          "name": "Mineral-rich salt, salted meals, or broth",
-          "details": "Mineral-rich salt or a properly salted broth can help restore sodium losses after prolonged sweating. Regular table salt should not be overused, since higher intake can contribute to elevated blood pressure in some people."
         }
       }
     }
@@ -286,25 +240,17 @@
     "nutritionFoods": {
       "title": "Vitamin C-rich foods",
       "items": {
-        "citrusFruits": {
-          "name": "Citrus fruits (oranges, grapefruit, lemon)",
-          "details": "One medium orange (~130 g) yields about 70 mg vitamin C."
-        },
-        "berries": {
-          "name": "Berries (strawberries, blackcurrants)",
-          "details": "1 cup mixed berries (~150 g) supplies roughly 80 mg vitamin C."
+        "orange": {
+          "details": "One medium orange (~130 g) provides about 69 mg vitamin C and 3.1 g fiber (including 1.6 g fermentable fiber supporting Faecalibacterium)."
         },
         "bellPeppers": {
-          "name": "Bell peppers",
           "details": "Half a cup raw red pepper (~75 g) gives about 95 mg vitamin C."
         },
         "kiwi": {
-          "name": "Kiwi fruit",
           "details": "One large kiwi (~75 g) provides about 70 mg vitamin C."
         },
-        "fermentedCabbage": {
-          "name": "Fermented cabbage (sauerkraut, kimchi)",
-          "details": "Half a cup sauerkraut (~70 g) offers around 20 mg vitamin C."
+        "blackCurrants": {
+          "details": "Half a cup black currants (~85 g) provides roughly 40 mg vitamin C."
         }
       }
     }
@@ -327,24 +273,13 @@
     "nutritionFoods": {
       "title": "Glycine-rich foods",
       "items": {
-        "boneBroth": {
-          "name": "Bone broth",
-          "details": "A 250 ml cup of long-simmered bone broth gives about 2-3 g glycine."
-        },
-        "collagenCuts": {
-          "name": "Collagen-rich cuts (brisket, shank)",
+        "beefShank": {
           "details": "120 g braised brisket or shank supplies roughly 3 g glycine-rich collagen."
         },
-        "skinOnPoultry": {
-          "name": "Skin-on poultry",
-          "details": "100 g roasted chicken with skin provides about 2 g glycine."
-        },
-        "porkRinds": {
-          "name": "Pork rinds or cracklings",
-          "details": "30 g pork rinds contain around 2.5 g glycine."
+        "chickenWings": {
+          "details": "100 g chicken wings with skin provides about 2 g glycine."
         },
         "legumes": {
-          "name": "Legumes (soy, beans, lentils)",
           "details": "1 cup cooked soybeans or lentils (~180 g) offers about 2 g glycine."
         }
       }
@@ -360,27 +295,18 @@
       "title": "Leucine-rich foods",
       "items": {
         "beef": {
-          "name": "Beef",
           "details": "120 g cooked lean beef provides about 2.5-3 g leucine."
         },
-        "chicken": {
-          "name": "Chicken breast",
+        "chickenBreast": {
           "details": "120 g cooked chicken breast contains roughly 2-2.5 g leucine."
         },
-        "fish": {
-          "name": "Fish (salmon, tuna)",
-          "details": "120 g cooked fish supplies about 2-2.5 g leucine."
-        },
         "eggs": {
-          "name": "Eggs",
           "details": "3 large eggs provide about 1.8-2 g leucine."
         },
-        "dairyProducts": {
-          "name": "Greek yogurt or cottage cheese",
+        "greekYogurt": {
           "details": "150 g Greek yogurt contains approximately 2-2.5 g leucine."
         },
         "wheyProtein": {
-          "name": "Whey protein isolate",
           "details": "30 g whey protein powder delivers roughly 2.5-3 g leucine."
         }
       }
@@ -397,20 +323,16 @@
       "title": "BCAA-rich foods",
       "items": {
         "beef": {
-          "name": "Lean beef",
           "details": "120 g lean beef contains a balanced BCAA profile (~5.5 g total BCAAs)."
         },
         "chicken": {
-          "name": "Chicken",
           "details": "120 g chicken breast has about 4.5-5 g total BCAAs."
         },
         "eggs": {
-          "name": "Eggs",
           "details": "3 large eggs supply roughly 4.5-5 g BCAAs."
         },
-        "dairyProducts": {
-          "name": "Whey protein",
-          "details": "30 g whey protein provides about 6-7 g total BCAAs in the optimal 2:1:1 ratio."
+        "greekYogurt": {
+          "details": "200 g Greek yogurt provides a strong BCAA profile, typically around 3.5-4.5 g total BCAAs."
         }
       }
     }
@@ -426,56 +348,43 @@
       "title": "Arginine-rich foods",
       "items": {
         "pumpkinSeeds": {
-          "name": "Pumpkin seeds",
           "details": "30 g pumpkin seeds provide about 2-2.5 g arginine."
         },
         "sesameSeeds": {
-          "name": "Sesame seeds",
           "details": "30 g sesame seeds contain roughly 1.5-2 g arginine."
         },
         "almonds": {
-          "name": "Almonds",
           "details": "30 g almonds supply about 1-1.5 g arginine."
         },
-        "pecans": {
-          "name": "Pecans",
-          "details": "30 g pecans provide roughly 1-1.2 g arginine."
-        },
         "watermelon": {
-          "name": "Watermelon",
           "details": "A slice of watermelon (200 g) contains about 250-350 mg arginine, plus citrulline which converts to arginine."
         }
       }
     }
   },
-  "whey_protein": {
-    "title": "Whey Protein for muscle growth",
-    "description": "Whey protein is a fast-digesting, complete protein derived from milk. It contains all essential amino acids, with an exceptionally high leucine content — the key amino acid that triggers muscle protein synthesis. Taking 25–30 g of whey post-workout maximizes the anabolic window and supports muscle repair and growth.",
+  "leucine_rich_food": {
+    "title": "Leucine-rich whole foods",
+    "description": "Leucine is the key amino acid that triggers muscle protein synthesis via the mTOR pathway. Getting enough leucine from whole foods — chicken, fish, dairy, and eggs — is a practical way to support muscle building and recovery without relying solely on supplements.",
     "areas": {
-      "strength": "Whey delivers a rapid leucine spike (~2.5 g per 30 g serving) that activates the mTOR pathway, maximizing muscle protein synthesis and recovery after resistance training.",
-      "cardioFitness": "Adequate protein intake supports endurance performance by preserving muscle mass during long training blocks and accelerating recovery between sessions."
+      "strength": "A leucine threshold of roughly 2.5–3 g per meal activates mTOR and maximizes the anabolic response. Whole food sources like chicken breast, canned tuna, and Greek yogurt can reach this threshold in a normal serving.",
+      "cardioFitness": "Consistent leucine intake from whole foods preserves muscle mass during endurance training blocks and supports recovery between sessions."
     },
     "nutritionFoods": {
-      "title": "High-quality protein sources",
+      "title": "Leucine-rich whole foods",
       "items": {
         "chickenBreast": {
-          "name": "Chicken breast",
           "details": "150 g chicken breast provides about 45 g protein with ~3.5 g leucine."
         },
-        "tuna": {
-          "name": "Tuna",
+        "canTuna": {
           "details": "150 g canned tuna delivers ~35 g protein with ~3 g leucine."
         },
         "eggs": {
-          "name": "Eggs",
           "details": "3 large eggs supply ~18 g protein with ~1.5 g leucine."
         },
         "greekYogurt": {
-          "name": "Greek yogurt",
           "details": "200 g Greek yogurt provides ~20 g protein with ~1.8 g leucine."
         },
         "cottageCheese": {
-          "name": "Cottage cheese",
           "details": "200 g cottage cheese contains ~25 g protein with ~2 g leucine."
         }
       }
@@ -492,32 +401,22 @@
       "title": "Foods that support methylation",
       "items": {
         "beets": {
-          "name": "Beets",
           "details": "Beets are naturally rich in betaine (TMG precursor), which can help support homocysteine remethylation."
         },
         "spinach": {
-          "name": "Spinach",
           "details": "Spinach provides folate needed for methylation pathways tied to homocysteine metabolism."
         },
         "eggs": {
-          "name": "Eggs",
           "details": "Egg yolks contain choline, a key methyl donor supporting liver and methylation function."
         },
         "broccoli": {
-          "name": "Broccoli",
           "details": "Broccoli contributes folate and sulfur compounds that support detoxification and redox balance."
         },
         "chickpeas": {
-          "name": "Chickpeas",
           "details": "Chickpeas are a practical source of vitamin B6 and folate, both relevant for homocysteine metabolism."
         },
         "salmon": {
-          "name": "Salmon",
           "details": "Salmon supplies methionine, B vitamins, and omega-3s that support cardiovascular health when balanced with methylation cofactors."
-        },
-        "greenTea": {
-          "name": "Green tea",
-          "details": "Green tea catechins (especially EGCG) provide antioxidant support relevant to vascular health."
         }
       }
     }
@@ -531,17 +430,11 @@
     "nutritionFoods": {
       "title": "Collagen-rich foods",
       "items": {
-        "boneBroth": {
-          "name": "Bone broth",
-          "details": "300 ml long-simmered bone broth can provide a few grams of collagen-derived amino acids depending on preparation."
-        },
-        "collagenCuts": {
-          "name": "Collagen-rich cuts (brisket, shank)",
+        "beefShank": {
           "details": "120 g braised brisket or shank supplies roughly 3 g glycine-rich collagen."
         },
-        "skinOnPoultry": {
-          "name": "Chicken with skin or fish skin",
-          "details": "A serving with skin contributes collagen-rich connective tissue proteins."
+        "chickenWings": {
+          "details": "A serving of chicken wings contributes collagen-rich connective tissue proteins."
         }
       }
     }
@@ -557,15 +450,9 @@
       "title": "Foods containing citrulline",
       "items": {
         "watermelon": {
-          "name": "Watermelon",
           "details": "Watermelon is the best-known food source of citrulline, with the highest concentrations typically found in the white rind close to the peel."
         },
-        "cantaloupe": {
-          "name": "Cantaloupe and other melons",
-          "details": "Other melons also contain citrulline, though usually in smaller amounts than watermelon."
-        },
         "cucumber": {
-          "name": "Cucumber",
           "details": "Cucumber contains small amounts of citrulline and can modestly contribute as part of a plant-rich diet."
         }
       }
@@ -582,15 +469,12 @@
       "title": "Foods that support glutathione status",
       "items": {
         "broccoli": {
-          "name": "Broccoli and other cruciferous vegetables",
           "details": "Cruciferous vegetables provide sulfur compounds that support the body's own glutathione production."
         },
         "avocado": {
-          "name": "Avocado",
           "details": "Avocado provides antioxidant nutrients that can help maintain glutathione status."
         },
         "spinach": {
-          "name": "Spinach",
           "details": "Spinach contributes folate and plant antioxidants that support cellular redox balance."
         }
       }
@@ -870,25 +754,17 @@
     "nutritionFoods": {
       "title": "Probiotic foods",
       "items": {
-        "yogurt": {
-          "name": "Yogurt",
-          "details": "200 ml live-culture yogurt delivers roughly 5-10 billion CFU."
+        "greekYogurt": {
+          "details": "200 g live-culture Greek yogurt delivers roughly 5-10 billion CFU."
         },
         "kefir": {
-          "name": "Kefir",
           "details": "200 ml kefir offers about 10-20 billion CFU with diverse strains."
         },
         "sauerkraut": {
-          "name": "Sauerkraut",
           "details": "Half a cup raw sauerkraut (~70 g) supplies live lactic acid bacteria."
         },
         "kimchi": {
-          "name": "Kimchi",
           "details": "Half a cup kimchi (~85 g) provides probiotics plus prebiotic vegetables."
-        },
-        "miso": {
-          "name": "Miso",
-          "details": "One tablespoon miso stirred into warm (not boiling) broth preserves enzymes."
         }
       }
     }
@@ -913,24 +789,13 @@
       "title": "High-fiber foods",
       "items": {
         "oats": {
-          "name": "Oats and barley",
           "details": "Half a cup dry rolled oats (~40 g) gives around 4 g beta-glucan fiber."
         },
         "legumes": {
-          "name": "Legumes (lentils, chickpeas, beans)",
           "details": "1 cup cooked beans or lentils (~180 g) supplies about 15 g fiber."
         },
         "chiaSeeds": {
-          "name": "Chia or flax seeds",
           "details": "Two tablespoons chia seeds (~28 g) deliver roughly 10 g fiber."
-        },
-        "berries": {
-          "name": "Berries",
-          "details": "1 cup raspberries (~120 g) provides about 8 g fiber."
-        },
-        "cruciferousVeg": {
-          "name": "Cruciferous vegetables (broccoli, Brussels sprouts)",
-          "details": "1 cup steamed broccoli or cauliflower (~150 g) offers around 5 g fiber."
         }
       }
     }
@@ -947,23 +812,18 @@
       "title": "Fermentable fiber foods",
       "items": {
         "oats": {
-          "name": "Oats",
           "details": "Half a cup dry oats (~40 g) provides roughly 4 g beta-glucan, fueling butyrate-producing bacteria."
         },
         "legumes": {
-          "name": "Legumes (chickpeas, lentils, beans)",
           "details": "1 cup cooked legumes (~180 g) delivers 8-15 g fermentable fiber including resistant starch and GOS."
         },
         "greenBanana": {
-          "name": "Green (unripe) banana",
           "details": "One medium green banana (~120 g) contains 5-6 g resistant starch, which drops sharply on ripening."
         },
         "chicoryRoot": {
-          "name": "Chicory root and Jerusalem artichoke",
           "details": "100 g chicory root supplies 35-40 g inulin and FOS, among the richest sources of fermentable fiber."
         },
         "cookedCooledPotato": {
-          "name": "Cooked and cooled potato or rice",
           "details": "Cooling cooked starchy foods overnight increases resistant starch content by 2-4 g per 100 g."
         }
       }
@@ -981,23 +841,18 @@
       "title": "Gel-forming fiber foods",
       "items": {
         "oats": {
-          "name": "Oats and barley",
           "details": "Beta-glucans in oats and barley are classic gel-forming fibers with well-documented LDL-lowering effects."
         },
         "psylliumHusk": {
-          "name": "Psyllium husk",
           "details": "1 tablespoon psyllium (~9 g) is rich in gel-forming fiber and is one of the most effective dietary tools to lower LDL cholesterol."
         },
         "chiaSeeds": {
-          "name": "Chia seeds",
           "details": "Chia forms a mucilage gel in contact with water and contributes both total and gel-forming fiber."
         },
         "apples": {
-          "name": "Apples",
           "details": "Apples are rich in pectin, a gel-forming fiber associated with better stool consistency and microbiome support."
         },
         "okra": {
-          "name": "Okra",
           "details": "Okra contains mucilage and pectin that contribute to gel formation and gut comfort."
         }
       }
@@ -1015,24 +870,13 @@
       "title": "Non-gel-forming fiber foods",
       "items": {
         "wheatBran": {
-          "name": "Wheat bran",
           "details": "Wheat bran is rich in arabinoxylan and insoluble fibers that efficiently increase stool bulk."
         },
-        "cruciferousVeg": {
-          "name": "Cruciferous vegetables",
-          "details": "Broccoli, cabbage, and Brussels sprouts contribute cellulose and hemicellulose."
-        },
-        "leafyGreens": {
-          "name": "Leafy greens",
-          "details": "Leafy greens provide insoluble structural fibers that support bowel movement regularity."
-        },
-        "nuts": {
-          "name": "Nuts and seeds",
-          "details": "Nuts contribute cellulose and lignin, helping increase stool mass and satiety."
-        },
         "wholeGrainRye": {
-          "name": "Whole-grain rye",
           "details": "Whole rye products contain arabinoxylan-rich bran fractions that support regular transit."
+        },
+        "kale": {
+          "details": "Leafy greens provide insoluble structural fibers that support bowel movement regularity."
         }
       }
     }
@@ -1049,24 +893,10 @@
       "title": "How to reach 30/week",
       "items": {
         "legumes": {
-          "name": "Build around legumes",
           "details": "Use 2-3 different legumes weekly (for example lentils, chickpeas, black beans). Each counts as one unique plant."
         },
-        "berries": {
-          "name": "Use mixed berries and fruit",
-          "details": "Rotate berry and fruit types across the week. Frozen mixes are an easy way to add 3-5 unique plants quickly."
-        },
-        "leafyGreens": {
-          "name": "Rotate leafy greens",
+        "kale": {
           "details": "Swap between spinach, kale, arugula, romaine, and herbs instead of repeating one green every day."
-        },
-        "nuts": {
-          "name": "Mix nuts and seeds",
-          "details": "Use mixed nuts/seeds (for example walnuts, almonds, pumpkin seeds, chia) and count each type separately."
-        },
-        "freshHerbs": {
-          "name": "Treat herbs as plants that count",
-          "details": "Parsley, dill, cilantro, basil, mint, and similar herbs all count toward the weekly 30 target."
         }
       }
     }
@@ -1082,24 +912,17 @@
     "nutritionFoods": {
       "title": "Fish for omega-3s",
       "items": {
-        "fattyFish": {
-          "name": "Fatty fish (salmon, mackerel, sardines, herring, trout)",
-          "details": "100 g wild salmon provides ~2 g EPA+DHA; mackerel provides ~1.5 g per 100 g. Highest bioavailable omega-3 sources."
+        "sardines": {
+          "details": "100 g sardines provides about ~1.5 g EPA+DHA; excellent omega-3 source with easy canned options."
         },
-        "leanFish": {
-          "name": "Lean fish (cod, haddock, flounder)",
-          "details": "100 g provides ~0.2 g omega-3s. Excellent protein source and easier to prepare than fatty fish."
-        },
+
         "canTuna": {
-          "name": "Canned fish (sardines, mackerel)",
           "details": "Convenient option with similar omega-3 content to fresh fish. Often packed in oil for added omega-3s."
         },
         "preparation": {
-          "name": "Best preparation methods",
           "details": "Baking, steaming, or poaching preserve omega-3s. Frying at high heat can damage delicate fats; use moderate heat or eat raw (sushi)."
         },
         "quantity": {
-          "name": "Portion recommendation",
           "details": "120–150 g fish meal (roughly a palm-sized fillet) provides meaningful omega-3 intake. Higher frequency compensates for smaller portions."
         }
       }
@@ -1116,24 +939,16 @@
     "nutritionFoods": {
       "title": "High-polyphenol foods",
       "items": {
-        "berries": {
-          "name": "Berries (blueberries, raspberries, blackberries)",
-          "details": "1 cup blueberries (~150 g) provides roughly 400–600 mg polyphenols including anthocyanins."
-        },
         "darkChocolate": {
-          "name": "Dark chocolate (70–85% cacao)",
           "details": "30 g dark chocolate supplies approximately 200–400 mg polyphenols, mainly flavanols and catechins."
         },
+        "blackCurrants": {
+          "details": "Half a cup black currants (~85 g) supplies roughly 300-400 mg polyphenols including anthocyanins and flavonoids."
+        },
         "pomegranate": {
-          "name": "Pomegranate",
           "details": "Half a pomegranate (~150 g) contains around 400 mg polyphenols including ellagitannins."
         },
-        "greenTea": {
-          "name": "Green tea",
-          "details": "2 cups green tea (~500 ml) provides about 200–400 mg catechins and other flavonoids."
-        },
         "extraVirginOliveOil": {
-          "name": "Extra virgin olive oil (EVOO)",
           "details": "2 tablespoons EVOO (~30 ml) supply roughly 30–50 mg polyphenols including oleocanthal."
         }
       }
@@ -1209,29 +1024,23 @@
     "nutritionFoods": {
       "title": "Magnesium-rich foods",
       "items": {
-        "leafyGreens": {
-          "name": "Dark leafy greens (spinach, chard, kale)",
-          "details": "1 cup cooked spinach (~180 g) provides about 150 mg magnesium."
-        },
         "pumpkinSeeds": {
-          "name": "Pumpkin or sunflower seeds",
           "details": "30 g roasted pumpkin seeds give around 150 mg magnesium."
         },
         "almonds": {
-          "name": "Almonds and other nuts",
           "details": "30 g almonds contribute roughly 80 mg magnesium."
         },
         "darkChocolate": {
-          "name": "Dark chocolate (70-85% cacao)",
           "details": "30 g 70-85% cacao dark chocolate supplies about 65 mg magnesium."
         },
         "blackBeans": {
-          "name": "Black beans, chickpeas, or lentils",
           "details": "1 cup cooked black beans (~170 g) yields about 120 mg magnesium."
         },
         "avocado": {
-          "name": "Avocado",
           "details": "One medium avocado offers roughly 60 mg magnesium."
+        },
+        "spinach": {
+          "details": "1 cup cooked spinach (~180 g) provides about 150 mg magnesium."
         }
       }
     }
@@ -1248,23 +1057,18 @@
       "title": "Zinc-rich foods",
       "items": {
         "oysters": {
-          "name": "Oysters",
           "details": "Three medium oysters deliver about 30 mg zinc."
         },
         "beef": {
-          "name": "Beef and lamb",
           "details": "A 120 g portion of beef provides roughly 5 mg zinc."
         },
         "pumpkinSeeds": {
-          "name": "Pumpkin seeds",
           "details": "30 g pumpkin seeds add about 2-3 mg zinc."
         },
         "chickpeas": {
-          "name": "Chickpeas and lentils",
           "details": "1 cup cooked chickpeas (~170 g) gives around 2.5 mg zinc."
         },
         "cashews": {
-          "name": "Cashews",
           "details": "30 g cashews supply roughly 1.6 mg zinc."
         }
       }
@@ -1282,23 +1086,18 @@
       "title": "Selenium-rich foods",
       "items": {
         "brazilNuts": {
-          "name": "Brazil nuts",
           "details": "One Brazil nut delivers 60-90 mcg selenium; limit to 1-2 per day."
         },
         "sardines": {
-          "name": "Sardines and salmon",
           "details": "100 g sardines provide about 45 mcg selenium."
         },
         "eggs": {
-          "name": "Eggs",
           "details": "Two eggs supply roughly 28 mcg selenium."
         },
         "shiitakeMushrooms": {
-          "name": "Shiitake mushrooms",
           "details": "100 g cooked shiitake mushrooms give around 20 mcg selenium."
         },
         "sunflowerSeeds": {
-          "name": "Sunflower seeds",
           "details": "30 g sunflower seeds add about 18 mcg selenium."
         }
       }
@@ -1315,24 +1114,16 @@
     "nutritionFoods": {
       "title": "Iodine-rich foods",
       "items": {
-        "seaweed": {
-          "name": "Seaweed (kombu, nori, wakame)",
-          "details": "One 5 g sheet of dried seaweed can supply 150-300 mcg iodine; use sparingly."
+        "iodizedSeaSalt": {
+          "details": "Half a teaspoon of iodized sea salt provides close to 150 mcg iodine."
         },
-        "iodizedSalt": {
-          "name": "Iodized salt",
-          "details": "Half a teaspoon of iodized salt provides close to 150 mcg iodine."
-        },
-        "dairy": {
-          "name": "Dairy products",
-          "details": "A 250 ml glass of milk or yogurt delivers about 50 mcg iodine."
+        "fortifiedDairy": {
+          "details": "A 250 ml glass of fortified milk or fortified plant milk can deliver around 40-60 mcg iodine."
         },
         "eggs": {
-          "name": "Eggs",
           "details": "Two eggs provide roughly 50 mcg iodine."
         },
         "cod": {
-          "name": "Cod and other white fish",
           "details": "A 120 g cod fillet offers about 110 mcg iodine."
         }
       }
@@ -1604,43 +1395,19 @@
       "title": "Foods that may increase urolithin A",
       "items": {
         "pomegranate": {
-          "name": "Pomegranate",
           "details": "Rich in ellagitannins, which are converted to urolithin A by gut bacteria."
         },
         "walnuts": {
-          "name": "Walnuts",
           "details": "Contain ellagitannins that may contribute to urolithin A formation."
         },
         "strawberries": {
-          "name": "Strawberries",
           "details": "Provide ellagitannins and other polyphenols that support gut health and urolithin A production."
         },
         "raspberries": {
-          "name": "Raspberries",
           "details": "A source of ellagitannins and may help with urolithin A formation."
-        }
-      }
-    }
-  },
-  "eat_pomegranate": {
-    "title": "Eat pomegranate",
-    "description": "Pomegranate provides ellagitannins and polyphenols that can support gut health and, with the right gut bacteria, contribute to urolithin A formation. It is a practical food-first way to support both the microbiome and cellular energy pathways.",
-    "areas": {
-      "digestiveHealth": "Pomegranate polyphenols may support a healthier gut environment and microbiome balance.",
-      "energy": "Pomegranate provides compounds that can feed into urolithin A-related energy pathways when the microbiome is able to convert them."
-    },
-    "nutritionFoods": {
-      "title": "Ways to get more pomegranate",
-      "items": {
-        "pomegranate": {
-          "name": "Pomegranate",
-          "details": "Rich in ellagitannins and polyphenols that support gut health and may contribute to urolithin A formation."
-        },
-        "pomegranateJuice": {
-          "name": "Unsweetened pomegranate juice",
-          "details": "A convenient option when whole pomegranate is impractical. Choose unsweetened juice to keep the focus on polyphenols."
         }
       }
     }
   }
 }
+

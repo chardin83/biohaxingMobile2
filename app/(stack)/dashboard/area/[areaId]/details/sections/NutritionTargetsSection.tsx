@@ -62,7 +62,7 @@ export default function NutritionTargetsSection({ tip, colors, t }: Readonly<{ t
                 }
                 const label = t(`nutritionLogger.${labelGroup}.${trackingKey}`);
                 return (
-                    <>
+                    <View key={`target-${trackingKey}`}>
                         <View key={`target-${trackingKey}`} style={styles.nutritionTagContainer}>
                             <ThemedText type="default" style={globalStyles.flex1}>
                                 {label}
@@ -78,7 +78,7 @@ export default function NutritionTargetsSection({ tip, colors, t }: Readonly<{ t
                         ]}>
                             {t('nutritionTargetSection.description')}
                         </ThemedText>
-                    </>
+                    </View>
                 );
             })}
         </AppBox>

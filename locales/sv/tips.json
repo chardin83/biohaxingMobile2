@@ -9,25 +9,11 @@
     "nutritionFoods": {
       "title": "Livsmedel för lågkolhydratkost",
       "items": {
-        "leafyGreens": {
-          "name": "Bladgrönsaker",
-          "details": "Spenat, grönkål, sallad och andra bladgrönsaker är näringsrika och låga på kolhydrater."
-        },
-        "meat": {
-          "name": "Kött",
-          "details": "Nötkött, kyckling, fläsk och annat kött är naturligt lågt på kolhydrater."
-        },
         "eggs": {
-          "name": "Ägg",
           "details": "Ägg är ett mångsidigt, lågkolhydrat protein och fettkälla."
         },
-        "cheese": {
-          "name": "Ost",
-          "details": "De flesta ostar är låga på kolhydrater och ger kalcium och protein."
-        },
-        "nuts": {
-          "name": "Nötter",
-          "details": "Mandel, valnötter och andra nötter är låga på kolhydrater och rika på nyttiga fetter."
+        "kale": {
+          "details": "Spenat, grönkål, sallad och andra bladgrönsaker är näringsrika och låga på kolhydrater."
         }
       }
     }
@@ -44,24 +30,16 @@
       "title": "Livsmedel för ketogen kost",
       "items": {
         "avocado": {
-          "name": "Avokado",
           "details": "Avokado är rik på nyttiga fetter och fiber, och mycket låg på kolhydrater."
         },
         "coconutOil": {
-          "name": "Kokosolja",
           "details": "Kokosolja är en källa till MCT-fetter som stödjer ketos."
         },
-        "fattyFish": {
-          "name": "Fet fisk",
+        "sardines": {
           "details": "Lax, makrill och sardiner är rika på omega-3 och låga på kolhydrater."
         },
         "eggs": {
-          "name": "Ägg",
           "details": "Ägg är en bas i ketogen kost tack vare sitt protein- och fettinnehåll."
-        },
-        "cheese": {
-          "name": "Ost",
-          "details": "Ost är låg på kolhydrater och hög på fett, vilket gör den idealisk för keto."
         }
       }
     }
@@ -101,21 +79,17 @@
     "nutritionFoods": {
       "title": "Livsmedel rika på D-vitamin",
       "items": {
-        "fattyFish": {
-          "name": "Fet fisk (lax, makrill, sardiner)",
+        "sardines": {
           "details": "Sikta på en portion 120 g lax eller makrill 2-3 gånger i veckan (~400-600 IE D-vitamin)."
         },
-        "eggYolks": {
-          "name": "Äggulor",
-          "details": "Två äggulor ger cirka 80-100 IE D-vitamin."
+        "eggs": {
+          "details": "Två hela ägg ger cirka 80-100 IE D-vitamin."
         },
         "fortifiedDairy": {
-          "name": "Berikade mejeri- eller växtdrycker",
           "details": "Ett glas 250 ml berikad mjölk eller växtdryck ger omkring 100-130 IE D-vitamin."
         },
-        "mushrooms": {
-          "name": "Svamp som fått solljus",
-          "details": "100 g solljusbehandlad svamp kan ge ungefär 400 IE D-vitamin."
+        "chanterelles": {
+          "details": "100 g kantareller ger ungefär 400 IE D-vitamin och är rika på kalium och järn."
         }
       }
     }
@@ -140,24 +114,19 @@
     "nutritionFoods": {
       "title": "Livsmedel rika på CoQ10",
       "items": {
-        "organMeats": {
-          "name": "Inälvsmat (hjärta, lever)",
-          "details": "85 g nötlever eller hjärta ger omkring 10-15 mg CoQ10."
+        "liver": {
+          "details": "85 g nötlever ger omkring 10-15 mg CoQ10."
         },
-        "fattyFish": {
-          "name": "Fet fisk (sardiner, makrill)",
+        "sardines": {
           "details": "120 g sardiner eller makrill ger cirka 6 mg CoQ10."
         },
         "beef": {
-          "name": "Nötkött och bison",
           "details": "120 g magert nötkött ger ungefär 3 mg CoQ10."
         },
         "spinach": {
-          "name": "Spenat",
           "details": "1 kopp kokt spenat (~180 g) ger cirka 2 mg CoQ10."
         },
         "broccoli": {
-          "name": "Broccoli",
           "details": "1 kopp ångad broccoli (~150 g) ger runt 1 mg CoQ10."
         }
       }
@@ -217,21 +186,11 @@
     "nutritionFoods": {
       "title": "Livsmedel och drycker som stödjer elektrolytbalans",
       "items": {
-        "mineralWater": {
-          "name": "Mineralvatten",
-          "details": "Mineralrikt vatten kan ge natrium, magnesium och andra elektrolyter, särskilt efter svettning."
-        },
         "coconutWater": {
-          "name": "Kokosvatten",
           "details": "Ett glas kokosvatten ger kalium och vätska, vilket kan vara användbart efter värme eller lättare träning."
         },
         "potatoes": {
-          "name": "Potatis eller rotfrukter",
           "details": "Potatis är rik på kalium, ett av de viktigaste mineralerna för muskel- och nervfunktion."
-        },
-        "saltedMeals": {
-          "name": "Mineralrikt salt, saltad mat eller buljong",
-          "details": "Mineralrikt salt eller en ordentligt saltad buljong kan hjälpa till att återställa natriumförluster efter långvarig svettning. Vanligt bordssalt bör inte överdrivas, eftersom högt intag kan bidra till ökat blodtryck hos vissa."
         }
       }
     }
@@ -253,25 +212,17 @@
     "nutritionFoods": {
       "title": "Livsmedel rika på C-vitamin",
       "items": {
-        "citrusFruits": {
-          "name": "Citrusfrukter (apelsin, grapefrukt, citron)",
-          "details": "En medelstor apelsin (~130 g) ger cirka 70 mg C-vitamin."
-        },
-        "berries": {
-          "name": "Bär (jordgubbar, svarta vinbär)",
-          "details": "1 kopp blandade bär (~150 g) ger runt 80 mg C-vitamin."
+        "orange": {
+          "details": "En medelstor apelsin (~130 g) ger ungefär 69 mg C-vitamin och 3,1 g fiber (inklusive 1,6 g fermenterbara fiber som stödjer Faecalibacterium)."
         },
         "bellPeppers": {
-          "name": "Paprika",
           "details": "1/2 kopp rå röd paprika (~75 g) ger cirka 95 mg C-vitamin."
         },
         "kiwi": {
-          "name": "Kiwi",
           "details": "En stor kiwi (~75 g) ger omkring 70 mg C-vitamin."
         },
-        "fermentedCabbage": {
-          "name": "Fermenterad kål (surkål, kimchi)",
-          "details": "1/2 kopp surkål (~70 g) ger ungefär 20 mg C-vitamin."
+        "blackCurrants": {
+          "details": "1/2 kopp svarta vinbär (~85 g) ger ungefär 40 mg C-vitamin."
         }
       }
     }
@@ -294,24 +245,13 @@
     "nutritionFoods": {
       "title": "Livsmedel rika på glycin",
       "items": {
-        "boneBroth": {
-          "name": "Benbuljong",
-          "details": "En 250 ml kopp långkokt benbuljong ger ca 2-3 g glycin."
-        },
-        "collagenCuts": {
-          "name": "Collagenrika köttbitar (bringa, lägg)",
+        "beefShank": {
           "details": "120 g långkokt bringa eller lägg ger ungefär 3 g glycinrikt kollagen."
         },
-        "skinOnPoultry": {
-          "name": "Fågel med skinn",
-          "details": "100 g ugnsstekt kyckling med skinn ger omkring 2 g glycin."
-        },
-        "porkRinds": {
-          "name": "Fläsksvålar",
-          "details": "30 g fläsksvålar innehåller runt 2,5 g glycin."
+        "chickenWings": {
+          "details": "100 g kycklingvingar med skinn ger ungefär 2 g glycin."
         },
         "legumes": {
-          "name": "Baljväxter (sojabönor, bönor, linser)",
           "details": "1 kopp kokta sojabönor eller linser (~180 g) ger cirka 2 g glycin."
         }
       }
@@ -327,27 +267,18 @@
       "title": "Leucin-rika livsmedel",
       "items": {
         "beef": {
-          "name": "Nötkött",
           "details": "120 g tillagat magert nötkött ger omkring 2,5-3 g leucin."
         },
-        "chicken": {
-          "name": "Kycklingbröst",
+        "chickenBreast": {
           "details": "120 g tillagat kycklingbröst innehåller ungefär 2-2,5 g leucin."
         },
-        "fish": {
-          "name": "Fisk (lax, tonfisk)",
-          "details": "120 g tillagad fisk ger omkring 2-2,5 g leucin."
-        },
         "eggs": {
-          "name": "Ägg",
           "details": "3 stora ägg ger omkring 1,8-2 g leucin."
         },
-        "dairyProducts": {
-          "name": "Grekisk yoghurt eller cottage cheese",
+        "greekYogurt": {
           "details": "150 g grekisk yoghurt innehåller ungefär 2-2,5 g leucin."
         },
         "wheyProtein": {
-          "name": "Vassleproteinpulver",
           "details": "30 g vassleproteinpulver levererar ungefär 2,5-3 g leucin."
         }
       }
@@ -364,20 +295,16 @@
       "title": "BCAA-rika livsmedel",
       "items": {
         "beef": {
-          "name": "Magert nötkött",
           "details": "120 g magert nötkött innehåller ett balanserat BCAA-profil (~5,5 g totalt BCAAs)."
         },
         "chicken": {
-          "name": "Kyckling",
           "details": "120 g kycklingbröst har omkring 4,5-5 g totalt BCAAs."
         },
         "eggs": {
-          "name": "Ägg",
           "details": "3 stora ägg ger ungefär 4,5-5 g BCAAs."
         },
-        "dairyProducts": {
-          "name": "Vassleprotein",
-          "details": "30 g vassleprotein ger omkring 6-7 g totalt BCAAs i det optimala 2:1:1-förhållandet."
+        "greekYogurt": {
+          "details": "200 g grekisk yoghurt ger en stark BCAA-profil, vanligtvis omkring 3,5-4,5 g totalt BCAAs."
         }
       }
     }
@@ -393,56 +320,43 @@
       "title": "Arginin-rika livsmedel",
       "items": {
         "pumpkinSeeds": {
-          "name": "Pumpakärnor",
           "details": "30 g pumpakärnor ger omkring 2-2,5 g arginin."
         },
         "sesameSeeds": {
-          "name": "Sesamfrön",
           "details": "30 g sesamfrön innehåller ungefär 1,5-2 g arginin."
         },
         "almonds": {
-          "name": "Mandlar",
           "details": "30 g mandlar ger omkring 1-1,5 g arginin."
         },
-        "pecans": {
-          "name": "Pekannötter",
-          "details": "30 g pekannötter ger ungefär 1-1,2 g arginin."
-        },
         "watermelon": {
-          "name": "Vattenmelon",
           "details": "En skiva vattenmelon (200 g) innehåller omkring 250-350 mg arginin, plus citrullin som omvandlas till arginin."
         }
       }
     }
   },
-  "whey_protein": {
-    "title": "Vassleprotein för muskelväxt",
-    "description": "Vassleprotein är ett snabbsmält komplett protein från mjölk. Det innehåller alla essentiella aminosyror med särskilt hög leucinhalt — den nyckeln aminosyra som utlöser muskelproteinsyntes. Att ta 25\u201330 g vassleprotein efter träning maximerar det anabola fönstret och stödjer muskelfler och -tillväxt.",
+  "leucine_rich_food": {
+    "title": "Leucinrika livsmedel",
+    "description": "Leucin är den aminosyra som aktiverar muskelproteinsyntesen via mTOR-signalvägen. Att få i sig tillräckligt med leucin från vanlig mat — kyckling, fisk, mejeriprodukter och ägg — är ett praktiskt sätt att stödja muskeltillväxt och återhämtning utan att vara beroende av tillskott.",
     "areas": {
-      "strength": "Vassle ger en snabb leucintopp (~2,5 g per 30 g) som aktiverar mTOR-signalvägen och maximerar muskelproteinsyntes och återhämtning efter styrketräning.",
-      "cardioFitness": "Tillräckligt proteinintag stödjer uthållighetsprestanda genom att bevara muskelmassa under långa träningsblock och påskynda återhämtning mellan pass."
+      "strength": "En leucintröskel på ungefär 2,5–3 g per måltid aktiverar mTOR och maximerar den anabola responsen. Vanliga livsmedelskällor som kycklingbröst, tonfisk och grekisk yoghurt kan nå denna nivå med en normal portion.",
+      "cardioFitness": "Konsekvent leucinintag från vanlig mat bevarar muskelmassa under uthållighetsträning och påskyndar återhämtning mellan pass."
     },
     "nutritionFoods": {
-      "title": "Högkvalitativa proteinkällor",
+      "title": "Leucinrika livsmedel",
       "items": {
         "chickenBreast": {
-          "name": "Kycklingbröst",
           "details": "150 g kycklingbröst ger ungefär 45 g protein med ~3,5 g leucin."
         },
-        "tuna": {
-          "name": "Tonfisk",
+        "canTuna": {
           "details": "150 g konserverad tonfisk ger ~35 g protein med ~3 g leucin."
         },
         "eggs": {
-          "name": "Ägg",
           "details": "3 stora ägg ger ~18 g protein med ~1,5 g leucin."
         },
         "greekYogurt": {
-          "name": "Grekisk yoghurt",
           "details": "200 g grekisk yoghurt ger ~20 g protein med ~1,8 g leucin."
         },
         "cottageCheese": {
-          "name": "Keso",
           "details": "200 g keso innehåller ~25 g protein med ~2 g leucin."
         }
       }
@@ -459,32 +373,22 @@
       "title": "Livsmedel som stödjer metylering",
       "items": {
         "beets": {
-          "name": "Rödbetor",
           "details": "Rödbetor är naturligt rika på betain (TMG-precursor) som kan stödja remetylering av homocystein."
         },
         "spinach": {
-          "name": "Spenat",
           "details": "Spenat bidrar med folat som behövs i metyleringsvägar kopplade till homocysteinmetabolism."
         },
         "eggs": {
-          "name": "Ägg",
           "details": "Äggulor innehåller kolin, en viktig metyldonator för lever- och metyleringsfunktion."
         },
         "broccoli": {
-          "name": "Broccoli",
           "details": "Broccoli bidrar med folat och svavelföreningar som stödjer avgiftning och redoxbalans."
         },
         "chickpeas": {
-          "name": "Kikärtor",
           "details": "Kikärtor är en praktisk källa till vitamin B6 och folat, båda relevanta för homocysteinmetabolismen."
         },
         "salmon": {
-          "name": "Lax",
           "details": "Lax bidrar med metionin, B-vitaminer och omega-3 som stödjer hjärt-kärlhälsa när det balanseras med metyleringskofaktorer."
-        },
-        "greenTea": {
-          "name": "Grönt te",
-          "details": "Katekiner i grönt te (särskilt EGCG) ger antioxidantskydd som är relevant för kärlhälsa."
         }
       }
     }
@@ -498,17 +402,11 @@
     "nutritionFoods": {
       "title": "Kollagenrika livsmedel",
       "items": {
-        "boneBroth": {
-          "name": "Benbuljong",
-          "details": "300 ml långkokt benbuljong kan ge några gram kollagenhärledda aminosyror beroende på tillagning."
-        },
-        "collagenCuts": {
-          "name": "Collagenrika köttbitar (bringa, lägg)",
+        "beefShank": {
           "details": "120 g långkokt bringa eller lägg ger ungefär 3 g glycinrikt kollagen."
         },
-        "skinOnPoultry": {
-          "name": "Kyckling med skinn eller fiskskinn",
-          "details": "En portion med skinn bidrar med kollagenrika bindvävsproteiner."
+        "chickenWings": {
+          "details": "En portion kycklingvingar bidrar med kollagenrika bindvävsproteiner."
         }
       }
     }
@@ -524,15 +422,9 @@
       "title": "Livsmedel som innehåller citrullin",
       "items": {
         "watermelon": {
-          "name": "Vattenmelon",
           "details": "Vattenmelon är den mest kända matkällan till citrullin, och de högsta halterna finns ofta i det vita fruktköttet närmast skalet."
         },
-        "cantaloupe": {
-          "name": "Cantaloupe och andra meloner",
-          "details": "Andra meloner innehåller också citrullin, men vanligtvis i mindre mängder än vattenmelon."
-        },
         "cucumber": {
-          "name": "Gurka",
           "details": "Gurka innehåller små mängder citrullin och kan bidra lite som del av en växtrik kost."
         }
       }
@@ -549,15 +441,12 @@
       "title": "Livsmedel som stödjer glutationstatus",
       "items": {
         "broccoli": {
-          "name": "Broccoli och andra korsblommiga grönsaker",
           "details": "Korsblommiga grönsaker ger svavelföreningar som stödjer kroppens egen produktion av glutation."
         },
         "avocado": {
-          "name": "Avokado",
           "details": "Avokado bidrar med antioxidativa näringsämnen som kan hjälpa till att upprätthålla glutationstatus."
         },
         "spinach": {
-          "name": "Spenat",
           "details": "Spenat bidrar med folat och växtantioxidanter som stödjer cellernas redoxbalans."
         }
       }
@@ -773,25 +662,17 @@
     "nutritionFoods": {
       "title": "Probiotiska livsmedel",
       "items": {
-        "yogurt": {
-          "name": "Yoghurt med levande kulturer",
-          "details": "200 ml yoghurt med levande kultur ger ungefär 5-10 miljarder CFU."
+        "greekYogurt": {
+          "details": "200 g grekisk yoghurt med levande kultur ger ungefär 5-10 miljarder CFU."
         },
         "kefir": {
-          "name": "Kefir",
           "details": "200 ml kefir ger ca 10-20 miljarder CFU av olika stammar."
         },
         "sauerkraut": {
-          "name": "Surkål",
           "details": "1/2 kopp rå surkål (~70 g) ger levande mjölksyrabakterier."
         },
         "kimchi": {
-          "name": "Kimchi",
           "details": "1/2 kopp kimchi (~85 g) ger probiotika plus prebiotiska grönsaker."
-        },
-        "miso": {
-          "name": "Miso",
-          "details": "1 matsked miso i varm (inte kokande) buljong bevarar enzymerna."
         }
       }
     }
@@ -816,24 +697,13 @@
       "title": "Fiberrika livsmedel",
       "items": {
         "oats": {
-          "name": "Havre och korn",
           "details": "1/2 kopp havregryn (~40 g) ger omkring 4 g betaglukanfiber."
         },
         "legumes": {
-          "name": "Baljväxter (linser, kikärtor, bönor)",
           "details": "1 kopp kokta bönor eller linser (~180 g) ger ca 15 g fiber."
         },
         "chiaSeeds": {
-          "name": "Chia- eller linfrön",
           "details": "2 matskedar chiafrön (~28 g) ger ungefär 10 g fiber."
-        },
-        "berries": {
-          "name": "Bär",
-          "details": "1 kopp hallon (~120 g) ger omkring 8 g fiber."
-        },
-        "cruciferousVeg": {
-          "name": "Korsblommiga grönsaker (broccoli, brysselkål)",
-          "details": "1 kopp ångad broccoli eller blomkål (~150 g) ger ca 5 g fiber."
         }
       }
     }
@@ -850,23 +720,18 @@
       "title": "Fermenterbara fiberkällor",
       "items": {
         "oats": {
-          "name": "Havre",
           "details": "En halv kopp torrhavre (~40 g) ger ~4 g betaglukan, en fermenterbar fiber som stimulerar butyratproducerande bakterier."
         },
         "legumes": {
-          "name": "Baljväxter (kikärtor, linser, bönor)",
           "details": "1 kopp kokta baljväxter (~180 g) ger 8-15 g fermenterbara fibrer inklusive resistent stärkelse och GOS."
         },
         "greenBanana": {
-          "name": "Grön (omogen) banan",
           "details": "En medelstor grön banan (~120 g) innehåller 5-6 g resistent stärkelse, vilket sjunker kraftigt vid mogning."
         },
         "chicoryRoot": {
-          "name": "Cikoriarot och jordärtskocka",
           "details": "100 g cikoriarot innehåller 35-40 g inulin och FOS, bland de rikaste kostmässiga källorna till fermenterbara fibrer."
         },
         "cookedCooledPotato": {
-          "name": "Kokta och kylda potatisar eller ris",
           "details": "Att kyla kokta stärkelserika livsmedel över natten ökar innehållet av resistent stärkelse med 2-4 g per 100 g."
         }
       }
@@ -884,23 +749,18 @@
       "title": "Livsmedel med gelbildande fibrer",
       "items": {
         "oats": {
-          "name": "Havre och korn",
           "details": "Betaglukaner i havre och korn är klassiska gelbildande fibrer med väldokumenterad LDL-sänkande effekt."
         },
         "psylliumHusk": {
-          "name": "Psylliumfröskal",
           "details": "1 matsked psyllium (~9 g) är rik på gelbildande fibrer och är ett av de mest effektiva kostverktygen för att sänka LDL-kolesterol."
         },
         "chiaSeeds": {
-          "name": "Chiafrön",
           "details": "Chia bildar ett mucilage-gel i kontakt med vatten och bidrar både med totalfiber och gelbildande fiber."
         },
         "apples": {
-          "name": "Äpplen",
           "details": "Äpplen innehåller pektin, en gelbildande fiber kopplad till bättre avföringskonsistens och mikrobiomstöd."
         },
         "okra": {
-          "name": "Okra",
           "details": "Okra innehåller mucilage och pektin som bidrar till gelbildning och bättre tarmkomfort."
         }
       }
@@ -918,24 +778,13 @@
       "title": "Livsmedel med icke-gelbildande fibrer",
       "items": {
         "wheatBran": {
-          "name": "Vetekli",
           "details": "Vetekli är rikt på arabinoxylan och olösliga fibrer som effektivt ökar avföringsvolymen."
         },
-        "cruciferousVeg": {
-          "name": "Korsblommiga grönsaker",
-          "details": "Broccoli, kål och brysselkål bidrar med cellulosa och hemicellulosa."
-        },
-        "leafyGreens": {
-          "name": "Bladgrönsaker",
-          "details": "Bladgrönsaker innehåller olösliga strukturfibrer som stödjer regelbunden tarmtömning."
-        },
-        "nuts": {
-          "name": "Nötter och frön",
-          "details": "Nötter bidrar med cellulosa och lignin, vilket hjälper till att öka avföringsmassa och mättnad."
-        },
         "wholeGrainRye": {
-          "name": "Fullkornsråg",
           "details": "Fullkornsråg innehåller kli-fraktioner rika på arabinoxylan som stödjer regelbunden passagetid."
+        },
+        "kale": {
+          "details": "Bladgrönsaker innehåller olösliga strukturfibrer som stödjer regelbunden tarmtömning."
         }
       }
     }
@@ -952,24 +801,13 @@
       "title": "Så når du 30/vecka",
       "items": {
         "legumes": {
-          "name": "Bygg måltider kring baljväxter",
           "details": "Använd 2-3 olika baljväxter per vecka (t.ex. linser, kikärtor, svarta bönor). Varje sort räknas som en unik växt."
         },
-        "berries": {
-          "name": "Variera bär och frukt",
-          "details": "Rotera olika bär och frukter över veckan. Frysta blandningar är ett enkelt sätt att få in 3-5 unika växter snabbt."
-        },
-        "leafyGreens": {
-          "name": "Rotera bladgrönt",
-          "details": "Växla mellan spenat, grönkål, ruccola, romansallad och örter i stället för samma gröna varje dag."
-        },
         "nuts": {
-          "name": "Blanda nötter och frön",
           "details": "Använd blandade nötter/frön (t.ex. valnötter, mandlar, pumpafrön, chia) och räkna varje sort separat."
         },
-        "freshHerbs": {
-          "name": "Räkna färska örter",
-          "details": "Persilja, dill, koriander, basilika, mynta och liknande örter räknas också mot målet 30 per vecka."
+        "kale": {
+          "details": "Växla mellan spenat, grönkål, ruccola, romansallad och örter i stället för samma gröna varje dag."
         }
       }
     }
@@ -985,24 +823,17 @@
     "nutritionFoods": {
       "title": "Fisk för omega-3",
       "items": {
-        "fattyFish": {
-          "name": "Fet fisk (lax, makrill, sardiner, sill, öring)",
-          "details": "100 g vild lax ger ~2 g EPA+DHA; makrill ger ~1,5 g per 100 g. Högsta biovärfbara omega-3-kilder."
+        "sardines": {
+          "details": "100 g sardiner ger cirka ~1,5 g EPA+DHA; mycket bra omega-3-källa och enkel att använda på burk."
         },
-        "leanFish": {
-          "name": "Vit fisk (torsk, kolja, skrubbskädda)",
-          "details": "100 g ger ~0,2 g omega-3. Utmärkt proteinkälla och lättare att förbereda än fet fisk."
-        },
+
         "canTuna": {
-          "name": "Konserverad fisk (sardiner, makrill)",
           "details": "Bekväm alternativ med liknande omega-3-innehål som färsk fisk. Ofta konserverad i olja för extra omega-3."
         },
         "preparation": {
-          "name": "Bästa tillredningsmetoder",
           "details": "Ugn, ångning eller pochering bevarar omega-3. Stekt på högt värme kan skada känsliga fettsyror; använd måttlig värme eller ät rå (sushi)."
         },
         "quantity": {
-          "name": "Portionrekommendation",
           "details": "120–150 g fiskåtagning (ungefär handflatans stora filé) ger meningsfull omega-3-intag. Högre frekvens kompenserar för mindre portioner."
         }
       }
@@ -1019,24 +850,16 @@
     "nutritionFoods": {
       "title": "Polyfenolrika livsmedel",
       "items": {
-        "berries": {
-          "name": "Bär (blåbär, hallon, björnbär)",
-          "details": "1 kopp blåbär (~150 g) ger ungefär 400–600 mg polyfenoler inklusive antocyaniner."
-        },
         "darkChocolate": {
-          "name": "Mörk choklad (70–85% kakao)",
           "details": "30 g mörk choklad ger ca 200–400 mg polyfenoler, framför allt flavanoler och katekin."
         },
+        "blackCurrants": {
+          "details": "1/2 kopp svarta vinbär (~85 g) ger ungefär 300–400 mg polyfenoler inklusive antocyaniner och flavonoider."
+        },
         "pomegranate": {
-          "name": "Granatäpple",
           "details": "Halvt granatäpple (~150 g) innehåller ca 400 mg polyfenoler inklusive ellagitanniner."
         },
-        "greenTea": {
-          "name": "Grönt te",
-          "details": "2 koppar grönt te (~500 ml) ger ca 200–400 mg katekin och andra flavonoider."
-        },
         "extraVirginOliveOil": {
-          "name": "Kallpressad olivolja (EVOO)",
           "details": "2 matskedar EVOO (~30 ml) ger ca 30–50 mg polyfenoler inklusive oleocanthal."
         }
       }
@@ -1112,29 +935,23 @@
     "nutritionFoods": {
       "title": "Magnesiumrika livsmedel",
       "items": {
-        "leafyGreens": {
-          "name": "Mörkgröna blad (spenat, mangold, grönkål)",
-          "details": "Ca 180 g kokt spenat (motsvarar 1 kopp) ger runt 150 mg magnesium."
-        },
         "pumpkinSeeds": {
-          "name": "Pumpa- eller solrosfrön",
           "details": "30 g rostade pumpafrön ger ungefär 150 mg magnesium."
         },
         "almonds": {
-          "name": "Mandlar och andra nötter",
           "details": "30 g mandlar bidrar med cirka 80 mg magnesium."
         },
         "darkChocolate": {
-          "name": "Mörk choklad (70–85 % kakao)",
           "details": "30 g mörk choklad (70-85 % kakao) ger omkring 65 mg magnesium."
         },
         "blackBeans": {
-          "name": "Svarta bönor, kikärtor eller linser",
           "details": "1 kopp kokta svarta bönor (~170 g) ger ca 120 mg magnesium."
         },
         "avocado": {
-          "name": "Avokado",
           "details": "1 medelstor avokado ger ungefär 60 mg magnesium."
+        },
+        "spinach": {
+          "details": "Ca 180 g kokt spenat (motsvarar 1 kopp) ger runt 150 mg magnesium."
         }
       }
     }
@@ -1151,23 +968,18 @@
       "title": "Livsmedel rika på zink",
       "items": {
         "oysters": {
-          "name": "Ostron",
           "details": "Tre medelstora ostron ger ungefär 30 mg zink."
         },
         "beef": {
-          "name": "Nötkött och lamm",
           "details": "En portion 120 g nötkött ger runt 5 mg zink."
         },
         "pumpkinSeeds": {
-          "name": "Pumpafrön",
           "details": "30 g pumpafrön ger cirka 2-3 mg zink."
         },
         "chickpeas": {
-          "name": "Kikärtor och linser",
           "details": "1 kopp kokta kikärtor (~170 g) ger omkring 2,5 mg zink."
         },
         "cashews": {
-          "name": "Cashewnötter",
           "details": "30 g cashewnötter ger ungefär 1,6 mg zink."
         }
       }
@@ -1185,23 +997,18 @@
       "title": "Livsmedel rika på selen",
       "items": {
         "brazilNuts": {
-          "name": "Paranötter",
           "details": "En paranöt ger 60-90 mikrogram selen; begränsa intaget till 1-2 per dag."
         },
         "sardines": {
-          "name": "Sardiner och lax",
           "details": "100 g sardiner ger cirka 45 mikrogram selen."
         },
         "eggs": {
-          "name": "Ägg",
           "details": "Två ägg ger runt 28 mikrogram selen."
         },
         "shiitakeMushrooms": {
-          "name": "Shiitake-svamp",
           "details": "100 g kokt shiitake ger ungefär 20 mikrogram selen."
         },
         "sunflowerSeeds": {
-          "name": "Solrosfrön",
           "details": "30 g solrosfrön ger ca 18 mikrogram selen."
         }
       }
@@ -1218,24 +1025,16 @@
     "nutritionFoods": {
       "title": "Jodrika livsmedel",
       "items": {
-        "seaweed": {
-          "name": "Sjögräs (kombu, nori, wakame)",
-          "details": "Ett ark torkat sjögräs (ca 5 g) kan ge 150-300 mikrogram jod; använd sparsamt."
+        "iodizedSeaSalt": {
+          "details": "1/2 tesked joderat havssalt ger nära 150 mikrogram jod."
         },
-        "iodizedSalt": {
-          "name": "Joderat salt",
-          "details": "1/2 tesked joderat salt ger nära 150 mikrogram jod."
-        },
-        "dairy": {
-          "name": "Mejeriprodukter",
-          "details": "Ett glas 250 ml mjölk eller yoghurt ger omkring 50 mikrogram jod."
+        "fortifiedDairy": {
+          "details": "Ett glas (250 ml) berikad mjölk eller berikad växtdryck kan ge omkring 40-60 mikrogram jod."
         },
         "eggs": {
-          "name": "Ägg",
           "details": "Två ägg ger ungefär 50 mikrogram jod."
         },
         "cod": {
-          "name": "Torsk och annan vit fisk",
           "details": "En 120 g torskfilé ger ca 110 mikrogram jod."
         }
       }
@@ -1516,25 +1315,20 @@
     "nutritionFoods": {
       "title": "Färgglada grönsaker",
       "items": {
-        "redVeggies": {
-          "name": "Röda grönsaker (tomat, paprika, rödbeta)",
-          "details": "Röda grönsaker är rika på lykopen och antocyaniner som stödjer hjärthälsa och immunförsvar."
+        "orange": {
+          "details": "Apelsin ger C-vitamin, hesperidin och fiber som stödjer immunförsvar, blodkärl och tarmhälsa."
         },
-        "orangeVeggies": {
-          "name": "Orange grönsaker (morot, pumpa, sötpotatis)",
-          "details": "Orange grönsaker innehåller betakaroten som omvandlas till A-vitamin och stärker syn och hud."
+        "strawberries": {
+          "details": "Jordgubbar bidrar med C-vitamin och polyfenoler som antocyaniner, vilket hjälper till att skydda celler."
         },
-        "yellowVeggies": {
-          "name": "Gula grönsaker (gul paprika, majs)",
-          "details": "Gula grönsaker är rika på lutein och zeaxantin som stödjer ögonhälsa."
+        "blackCurrants": {
+          "details": "Svarta vinbär är rika på antocyaniner och C-vitamin och ger starkt antioxidantstöd."
         },
-        "greenVeggies": {
-          "name": "Gröna grönsaker (spenat, broccoli, ärtor)",
-          "details": "Gröna grönsaker innehåller klorofyll, folat och magnesium som stödjer energi och nervsystem."
+        "kale": {
+          "details": "Grönkål innehåller folat, vitamin K och mineraler som stödjer metabolism och immunfunktion."
         },
-        "bluePurpleVeggies": {
-          "name": "Blå/lila grönsaker (blåbär, rödkål, aubergine)",
-          "details": "Blå och lila grönsaker är rika på antocyaniner som skyddar celler och stödjer hjärnans funktion."
+        "broccoli": {
+          "details": "Broccoli bidrar med fiber, C-vitamin och svavelföreningar som stödjer avgiftning och tarmhälsa."
         }
       }
     }
@@ -1604,43 +1398,19 @@
       "title": "Livsmedel som kan öka urolithin A",
       "items": {
         "pomegranate": {
-          "name": "Granatäpple",
           "details": "Rik på ellagitanniner som omvandlas till urolithin A av tarmbakterier."
         },
         "walnuts": {
-          "name": "Valnötter",
           "details": "Innehåller ellagitanniner som kan bidra till bildning av urolithin A."
         },
         "strawberries": {
-          "name": "Jordgubbar",
           "details": "Ger ellagitanniner och andra polyfenoler som stödjer tarmhälsa och urolithin A-produktion."
         },
         "raspberries": {
-          "name": "Hallon",
           "details": "Hallon är en källa till ellagitanniner och kan bidra till urolithin A-bildning."
-        }
-      }
-    }
-  },
-  "eat_pomegranate": {
-    "title": "Ät granatäpple",
-    "description": "Granatäpple innehåller ellagitanniner och polyfenoler som kan stödja tarmhälsan och, med rätt tarmbakterier, bidra till bildning av urolithin A. Det är ett enkelt matbaserat sätt att stödja både microbiomet och energirelaterade processer i cellerna.",
-    "areas": {
-      "digestiveHealth": "Polyfenolerna i granatäpple kan stödja en bättre tarmmiljö och balans i microbiomet.",
-      "energy": "Granatäpple ger ämnen som kan bidra till urolithin A-relaterade energiprocesser när microbiomet kan omvandla dem."
-    },
-    "nutritionFoods": {
-      "title": "Sätt att få i sig mer granatäpple",
-      "items": {
-        "pomegranate": {
-          "name": "Granatäpple",
-          "details": "Rikt på ellagitanniner och polyfenoler som stödjer tarmhälsa och kan bidra till bildning av urolithin A."
-        },
-        "pomegranateJuice": {
-          "name": "Osötad granatäpplejuice",
-          "details": "Ett praktiskt alternativ när helt granatäpple är opraktiskt. Välj osötad juice så att fokus ligger på polyfenolerna."
         }
       }
     }
   }
 }
+

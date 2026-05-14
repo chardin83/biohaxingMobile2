@@ -28,6 +28,9 @@ export type FiberFermentable = (typeof FIBER_FERMENTABLE_SUBTYPES)[number];
 
 export type FiberSubtype = FiberGelForming | FiberNonGelForming | FiberFermentable;
 
+export const isFiberTargetTag = (tag: string): tag is FiberType =>
+  FIBER_TYPE_KEYS.includes(tag as FiberType);
+
 export const FIBER_CATEGORY_SUBTYPES: Record<FiberCategory, FiberSubtype[]> = {
   fiber_gel_forming: [...FIBER_GEL_FORMING_SUBTYPES],
   fiber_non_gel_forming: [...FIBER_NON_GEL_FORMING_SUBTYPES],

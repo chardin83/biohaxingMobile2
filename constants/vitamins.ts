@@ -17,5 +17,5 @@ export const VITAMIN_TYPE_KEYS = [
 
 export type VitaminType = (typeof VITAMIN_TYPE_KEYS)[number];
 
-export const isVitaminTargetTag = (tag: string): boolean =>
+export const isVitaminTargetTag = (tag: string): tag is VitaminType =>
   VITAMIN_TYPE_KEYS.includes(tag as VitaminType);

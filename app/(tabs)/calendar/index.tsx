@@ -1,5 +1,6 @@
 import { useTheme } from '@react-navigation/native';
-import React, { useRef, useState } from 'react';
+import { useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useRef, useState } from 'react';
 
 import CalendarComponent from '@/components/CalendarComponent';
 import DayEdit from '@/components/DayEdit';
@@ -13,8 +14,14 @@ const toLocalDateKey = (date: Date): string => {
 };
 
 export default function Calendar() {
+  const params = useLocalSearchParams<{
+    selectedDate?: string;
+    openTab?: 'supplements' | 'meal';
+    supplementId?: string;
+  }>();
   const today = toLocalDateKey(new Date());
-  const [selectedDate, setSelectedDate] = useState<string | null>(today);
+  const initialDate = params.selectedDate ?? today;
+  const [selectedDate, setSelectedDate] = useState<string | null>(initialDate);
   const calendarRef = useRef<any>(null);
   const containerRef = useRef<ContainerScrollRef>(null);
   const { colors } = useTheme();
@@ -31,6 +38,12 @@ export default function Calendar() {
     containerRef.current?.scrollToEnd({ animated: true });
   };
 
+  useEffect(() => {
+    if (params.selectedDate) {
+      setSelectedDate(params.selectedDate);
+    }
+  }, [params.selectedDate]);
+
   return (
     <Container
       ref={containerRef}
@@ -39,7 +52,12 @@ export default function Calendar() {
     >
       <CalendarComponent onDayPress={handleDayPress} ref={calendarRef} />
       {selectedDate && (
-        <DayEdit selectedDate={selectedDate} onTipCompleted={handleTipCompleted} />
+        <DayEdit
+          selectedDate={selectedDate}
+          onTipCompleted={handleTipCompleted}
+          initialTab={params.openTab}
+          preselectedSupplementId={params.supplementId}
+        />
 
       )}
     </Container>

@@ -1,0 +1,206 @@
+{
+  "servingSizes": {
+    "halfCup": "1/2 kopp",
+    "oneCup": "1 kopp",
+    "twoCups": "2 koppar",
+    "halfAvocado": "1/2 avokado",
+    "oneAvocado": "1 avokado",
+    "twoAvocados": "2 avokador"
+  },
+  "units": {
+    "gramsShort": "g"
+  },
+  "foods": {
+    "almonds": {
+      "name": "Mandlar"
+    },
+    "apples": {
+      "name": "Äpplen"
+    },
+    "avocado": {
+      "name": "Avokado"
+    },
+    "beef": {
+      "name": "Nötkött"
+    },
+    "beets": {
+      "name": "Rödbetor"
+    },
+    "bellPeppers": {
+      "name": "Paprika"
+    },
+    "blackBeans": {
+      "name": "Svarta bönor"
+    },
+    "brazilNuts": {
+      "name": "Paranötter"
+    },
+    "broccoli": {
+      "name": "Broccoli"
+    },
+    "canTuna": {
+      "name": "Konserverad tonfisk"
+    },
+    "cashews": {
+      "name": "Cashewnötter"
+    },
+    "chiaSeeds": {
+      "name": "Chiafrön"
+    },
+    "chickenBreast": {
+      "name": "Kycklingbröst"
+    },
+    "chickpeas": {
+      "name": "Kikärtor"
+    },
+    "chicoryRoot": {
+      "name": "Cikoriarot och jordärtskocka"
+    },
+    "orange": {
+      "name": "Apelsin"
+    },
+    "coconutOil": {
+      "name": "Kokosolja"
+    },
+    "coconutWater": {
+      "name": "Kokosvatten"
+    },
+    "cod": {
+      "name": "Torsk och annan vit fisk"
+    },
+    "beefShank": {
+      "name": "Nötlägg (långkokt)"
+    },
+    "cookedCooledPotato": {
+      "name": "Kokt och kyld potatis eller ris"
+    },
+    "cottageCheese": {
+      "name": "Keso"
+    },
+
+    "cucumber": {
+      "name": "Gurka"
+    },
+    "darkChocolate": {
+      "name": "Mörk choklad (70–85% kakao)"
+    },
+    "eggs": {
+      "name": "Ägg"
+    },
+    "extraVirginOliveOil": {
+      "name": "Kallpressad olivolja (EVOO)"
+    },
+    "fortifiedDairy": {
+      "name": "Berikade mejeri- eller växtdrycker"
+    },
+    "greekYogurt": {
+      "name": "Grekisk yoghurt"
+    },
+    "greenBanana": {
+      "name": "Grön (omogen) banan"
+    },
+    "iodizedSeaSalt": {
+      "name": "Joderat havssalt"
+    },
+    "kefir": {
+      "name": "Kefir"
+    },
+    "kimchi": {
+      "name": "Kimchi"
+    },
+    "kiwi": {
+      "name": "Kiwi"
+    },
+    "chard": {
+      "name": "Mangold"
+    },
+    "kale": {
+      "name": "Grönkål"
+    },
+
+    "legumes": {
+      "name": "Baljväxter (linser, kikärtor, bönor)"
+    },
+    "chanterelles": {
+      "name": "Kantareller"
+    },
+    "oats": {
+      "name": "Havre"
+    },
+    "okra": {
+      "name": "Okra"
+    },
+    "liver": {
+      "name": "Lever"
+    },
+    "oysters": {
+      "name": "Ostron"
+    },
+    "pomegranate": {
+      "name": "Granatäpple"
+    },
+    "potatoes": {
+      "name": "Potatis eller rotfrukter"
+    },
+    "psylliumHusk": {
+      "name": "Psylliumfröskal"
+    },
+    "pumpkinSeeds": {
+      "name": "Pumpakärnor"
+    },
+    "raspberries": {
+      "name": "Hallon"
+    },
+    "salmon": {
+      "name": "Lax"
+    },
+    "sardines": {
+      "name": "Sardiner"
+    },
+    "sauerkraut": {
+      "name": "Surkål"
+    },
+    "sesameSeeds": {
+      "name": "Sesamfrön"
+    },
+    "shiitakeMushrooms": {
+      "name": "Shiitake-svamp"
+    },
+    "chickenWings": {
+      "name": "Kycklingvingar"
+    },
+    "spinach": {
+      "name": "Spenat"
+    },
+    "strawberries": {
+      "name": "Jordgubbar"
+    },
+    "blackCurrants": {
+      "name": "Svarta vinbär"
+    },
+    "sunflowerSeeds": {
+      "name": "Solrosfrön"
+    },
+    "walnuts": {
+      "name": "Valnötter"
+    },
+    "watermelon": {
+      "name": "Vattenmelon"
+    },
+    "wheatBran": {
+      "name": "Vetekli"
+    },
+    "wheyProtein": {
+      "name": "Vassleproteinpulver"
+    },
+    "wholeGrainRye": {
+      "name": "Fullkornsråg"
+    },
+    "preparation": {
+      "name": "Bästa tillredningsmetoder"
+    },
+    "quantity": {
+      "name": "Portionrekommendation"
+    }
+  }
+}

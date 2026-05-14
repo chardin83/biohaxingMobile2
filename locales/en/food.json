@@ -1,0 +1,206 @@
+{
+  "servingSizes": {
+    "halfCup": "1/2 cup",
+    "oneCup": "1 cup",
+    "twoCups": "2 cups",
+    "halfAvocado": "1/2 avocado",
+    "oneAvocado": "1 avocado",
+    "twoAvocados": "2 avocados"
+  },
+  "units": {
+    "gramsShort": "g"
+  },
+  "foods": {
+    "almonds": {
+      "name": "Almonds"
+    },
+    "apples": {
+      "name": "Apples"
+    },
+    "avocado": {
+      "name": "Avocado"
+    },
+    "beef": {
+      "name": "Beef"
+    },
+    "beets": {
+      "name": "Beets"
+    },
+    "bellPeppers": {
+      "name": "Bell peppers"
+    },
+    "blackBeans": {
+      "name": "Black beans"
+    },
+    "brazilNuts": {
+      "name": "Brazil nuts"
+    },
+    "broccoli": {
+      "name": "Broccoli"
+    },
+    "canTuna": {
+      "name": "Canned tuna"
+    },
+    "cashews": {
+      "name": "Cashews"
+    },
+    "chiaSeeds": {
+      "name": "Chia seeds"
+    },
+    "chickenBreast": {
+      "name": "Chicken breast"
+    },
+    "chickpeas": {
+      "name": "Chickpeas"
+    },
+    "chicoryRoot": {
+      "name": "Chicory root and Jerusalem artichoke"
+    },
+    "orange": {
+      "name": "Orange"
+    },
+    "coconutOil": {
+      "name": "Coconut oil"
+    },
+    "coconutWater": {
+      "name": "Coconut water"
+    },
+    "cod": {
+      "name": "Cod and other white fish"
+    },
+    "beefShank": {
+      "name": "Beef shank (slow-cooked)"
+    },
+    "cookedCooledPotato": {
+      "name": "Cooked and cooled potato or rice"
+    },
+    "cottageCheese": {
+      "name": "Cottage cheese"
+    },
+
+    "cucumber": {
+      "name": "Cucumber"
+    },
+    "darkChocolate": {
+      "name": "Dark chocolate (70–85% cacao)"
+    },
+    "eggs": {
+      "name": "Eggs"
+    },
+    "extraVirginOliveOil": {
+      "name": "Extra virgin olive oil (EVOO)"
+    },
+    "fortifiedDairy": {
+      "name": "Fortified dairy or plant milks"
+    },
+    "greekYogurt": {
+      "name": "Greek yogurt"
+    },
+    "greenBanana": {
+      "name": "Green (unripe) banana"
+    },
+    "iodizedSeaSalt": {
+      "name": "Iodized sea salt"
+    },
+    "kefir": {
+      "name": "Kefir"
+    },
+    "kimchi": {
+      "name": "Kimchi"
+    },
+    "kiwi": {
+      "name": "Kiwi fruit"
+    },
+    "chard": {
+      "name": "Swiss chard"
+    },
+    "kale": {
+      "name": "Kale"
+    },
+
+    "legumes": {
+      "name": "Legumes (lentils, chickpeas, beans)"
+    },
+    "chanterelles": {
+      "name": "Chanterelles"
+    },
+    "oats": {
+      "name": "Oats"
+    },
+    "okra": {
+      "name": "Okra"
+    },
+    "liver": {
+      "name": "Liver"
+    },
+    "oysters": {
+      "name": "Oysters"
+    },
+    "pomegranate": {
+      "name": "Pomegranate"
+    },
+    "potatoes": {
+      "name": "Potatoes or root vegetables"
+    },
+    "psylliumHusk": {
+      "name": "Psyllium husk"
+    },
+    "pumpkinSeeds": {
+      "name": "Pumpkin seeds"
+    },
+    "raspberries": {
+      "name": "Raspberries"
+    },
+    "salmon": {
+      "name": "Salmon"
+    },
+    "sardines": {
+      "name": "Sardines"
+    },
+    "sauerkraut": {
+      "name": "Sauerkraut"
+    },
+    "sesameSeeds": {
+      "name": "Sesame seeds"
+    },
+    "shiitakeMushrooms": {
+      "name": "Shiitake mushrooms"
+    },
+    "chickenWings": {
+      "name": "Chicken wings"
+    },
+    "spinach": {
+      "name": "Spinach"
+    },
+    "strawberries": {
+      "name": "Strawberries"
+    },
+    "blackCurrants": {
+      "name": "Black currants"
+    },
+    "sunflowerSeeds": {
+      "name": "Sunflower seeds"
+    },
+    "walnuts": {
+      "name": "Walnuts"
+    },
+    "watermelon": {
+      "name": "Watermelon"
+    },
+    "wheatBran": {
+      "name": "Wheat bran"
+    },
+    "wheyProtein": {
+      "name": "Whey protein isolate"
+    },
+    "wholeGrainRye": {
+      "name": "Whole-grain rye"
+    },
+    "preparation": {
+      "name": "Best preparation methods"
+    },
+    "quantity": {
+      "name": "Portion recommendation"
+    }
+  }
+}

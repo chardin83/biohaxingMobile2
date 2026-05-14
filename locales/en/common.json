@@ -987,7 +987,8 @@
       "glutamine": "Glutamine",
       "glycine": "Glycine",
       "proline": "Proline",
-      "tyrosine": "Tyrosine"
+      "tyrosine": "Tyrosine",
+      "citrulline": "Citrulline"
     },
     "plantDiversityLabels": {
       "plant_diversity": "Plant diversity"
