@@ -3,7 +3,7 @@ import { useTheme } from '@react-navigation/native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { FullWindowOverlay } from 'react-native-screens';
 import Svg, { Circle } from 'react-native-svg';
 
@@ -14,12 +14,19 @@ import Container from '@/components/ui/Container';
 import DiscreetButton from '@/components/ui/DiscreetButton';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { isAminoAcidTargetTag } from '@/constants/aminoAcids';
+import { isFiberTargetTag } from '@/constants/fiber';
+import { isMineralTargetTag } from '@/constants/minerals';
+import { isPolyphenolTargetTag } from '@/constants/polyphenols';
+import { isVitaminTargetTag } from '@/constants/vitamins';
 import {
+  FOOD_IMAGES,
   FOOD_NUTRIENT_PROFILES,
   FoodNutrientProfile,
+  type FoodServing as FoodCatalogServing,
 } from '@/locales/foodCatalog';
 import { useSupplementMap } from '@/locales/supplements';
-import { getTipTargetIconName, tips } from '@/locales/tips';
+import { getTipTargetIconName, type NutrientTag, tips } from '@/locales/tips';
+import { formatWithUnit } from '@/utils/formatters';
 
 const BottomSheetOverlayContainer = ({ children }: { children?: React.ReactNode }) => (
   <FullWindowOverlay>{children}</FullWindowOverlay>
@@ -73,20 +80,6 @@ const formatDateLabel = (dateKey: string): string => {
     month: 'long',
     year: 'numeric',
   });
-};
-
-const formatAmount = (value: number): string => {
-  if (value === 0) return '0';
-  if (value < 1) return value.toFixed(2);
-  if (value < 10) return value.toFixed(1);
-  return value.toFixed(0);
-};
-
-const formatWithUnit = (value: number, unit: string): string => {
-  const amount = formatAmount(value);
-  if (!unit) return amount;
-  if (unit === 'mg' || unit === 'g') return `${amount}${unit}`;
-  return `${amount} ${unit}`;
 };
 
 const buildDailySummary = (meals: Array<any>, selectedDate: string) => {
@@ -175,6 +168,19 @@ const scaleFrom100 = (value: number | undefined, grams: number): number => {
   return Number(((value * grams) / 100).toFixed(2));
 };
 
+const getProfileValueForTag = (
+  profile: FoodNutrientProfile | null,
+  targetTag: string
+): number | undefined => {
+  if (!profile || !targetTag) return undefined;
+  if (isMineralTargetTag(targetTag)) return profile.mineralsByType?.[targetTag];
+  if (isVitaminTargetTag(targetTag)) return profile.vitaminsByType?.[targetTag];
+  if (isAminoAcidTargetTag(targetTag)) return profile.aminoAcidsByType?.[targetTag];
+  if (isFiberTargetTag(targetTag)) return profile.fiberByType?.[targetTag];
+  if (isPolyphenolTargetTag(targetTag)) return profile.polyphenolByType?.[targetTag];
+  return undefined;
+};
+
 const scaleMapFrom100 = <K extends string>(
   map: Partial<Record<K, number>> | undefined,
   grams: number
@@ -184,6 +190,9 @@ const scaleMapFrom100 = <K extends string>(
     Object.entries(map as Record<string, number | undefined>).map(([key, value]) => [key, scaleFrom100(value, grams)])
   );
 };
+
+const isFoodProfileKey = (key: string): key is keyof typeof FOOD_NUTRIENT_PROFILES =>
+  key in FOOD_NUTRIENT_PROFILES;
 
 export default function TipTargetDetailsScreen() {
   const router = useRouter();
@@ -213,7 +222,10 @@ export default function TipTargetDetailsScreen() {
   const tipId = params.tipId ?? '';
   const tipMeta = tips.find(candidate => candidate.id === tipId);
   const targetTagParam = (Array.isArray(params.targetTag) ? params.targetTag[0] : params.targetTag) ?? '';
-  const targetSupplementIds = new Set(parseCommaSeparated(params.targetSupplementIds));
+  const targetSupplementIds = useMemo(
+    () => new Set(parseCommaSeparated(params.targetSupplementIds)),
+    [params.targetSupplementIds]
+  );
   const listedSupplements = (tipMeta?.supplements ?? [])
     .filter(reference =>
       targetSupplementIds.size > 0 ? targetSupplementIds.has(reference.id) : true
@@ -221,9 +233,18 @@ export default function TipTargetDetailsScreen() {
     .map(reference => supplementMap.get(reference.id))
     .filter((supplement): supplement is NonNullable<typeof supplement> => Boolean(supplement));
   const nutritionFoodItems = useMemo(() => {
-    if (!tipMeta?.nutritionFoods?.length || !tipMeta.id) return [] as { key: string; name: string; details: string }[];
+    if (!tipMeta?.nutritionFoods?.length || !tipMeta.id) {
+      return [] as { key: string; foodKey: string; name: string; details: string }[];
+    }
 
-    return tipMeta.nutritionFoods.map(food => {
+    const matchingFoods = targetTagParam
+      ? tipMeta.nutritionFoods.filter(food =>
+          food.nutrientTags?.includes(targetTagParam as NutrientTag)
+        )
+      : [];
+    const foodsToRender = matchingFoods.length > 0 ? matchingFoods : tipMeta.nutritionFoods;
+
+    return foodsToRender.map(food => {
       const itemKey = food.key;
       const detailKey = food.detailsKey ?? itemKey;
       const name = t(`tips:${tipMeta.id}.nutritionFoods.items.${itemKey}.name`, {
@@ -234,11 +255,12 @@ export default function TipTargetDetailsScreen() {
       });
       return {
         key: `${itemKey}:${detailKey}`,
+        foodKey: itemKey,
         name,
         details,
       };
     });
-  }, [t, tipMeta?.id, tipMeta?.nutritionFoods]);
+  }, [t, tipMeta?.id, tipMeta?.nutritionFoods, targetTagParam]);
   const tipTitle = params.tipTitle ?? tipId;
   const targetLabel = params.targetLabel ?? '';
   const today = new Date().toISOString().split('T')[0];
@@ -253,9 +275,13 @@ export default function TipTargetDetailsScreen() {
 
   const { foodAmount, supplementAmount } = useMemo(() => {
     const mealsSummary = dailyNutritionSummaries[selectedDateKey];
-    const supplementsForDay = takenDates[selectedDateKey] ?? [];
+    const allSupplementsForDay = takenDates[selectedDateKey] ?? [];
+    const supplementsForDay =
+      targetSupplementIds.size > 0
+        ? allSupplementsForDay.filter(s => targetSupplementIds.has(s.id))
+        : allSupplementsForDay;
     return calculateDailyIntakeForTarget(targetTagParam, amountUnitParam, mealsSummary, supplementsForDay);
-  }, [selectedDateKey, dailyNutritionSummaries, takenDates, targetTagParam, amountUnitParam]);
+  }, [selectedDateKey, dailyNutritionSummaries, takenDates, targetTagParam, amountUnitParam, targetSupplementIds]);
 
   const foodActual = foodAmount;
   const supplementActual = supplementAmount;
@@ -435,22 +461,22 @@ export default function TipTargetDetailsScreen() {
             )}
             {medalType === 'gold' && (
               <ThemedText type="default" style={{ color: colors.primary }}>
-                🥇 Medalj upplast
+                {t('common:tip-target-details.medal.gold')}
               </ThemedText>
             )}
             {medalType === 'silver' && (
               <ThemedText type="default" style={{ color: colors.textMuted }}>
-                🥈 Medalj upplast
+                {t('common:tip-target-details.medal.silver')}
               </ThemedText>
             )}
             {medalType === 'bronze' && (
               <ThemedText type="default" style={{ color: colors.textMuted }}>
-                🥉 Medalj upplast
+                {t('common:tip-target-details.medal.bronze')}
               </ThemedText>
             )}
             {!medalType && (
               <ThemedText type="default" style={{ color: colors.textMuted }}>
-                Ingen medalj än
+                {t('common:tip-target-details.medal.none')}
               </ThemedText>
             )}
           </View>
@@ -501,7 +527,7 @@ export default function TipTargetDetailsScreen() {
                 {`${goalProgress.percent}%`}
               </ThemedText>
               <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                {`${formatAmount(totalActual)}/${formatAmount(targetAmount)}`}
+                {`${formatWithUnit(totalActual, amountUnit, targetTagParam)}/${formatWithUnit(targetAmount, amountUnit, targetTagParam)}`}
               </ThemedText>
             </View>
           </View>
@@ -510,27 +536,27 @@ export default function TipTargetDetailsScreen() {
             {hasData ? (
               <>
                 <ThemedText type="defaultSemiBold" style={{ color: foodColor }}>
-                  {`${split.fromFood}% via mat`}
+                  {t('common:tip-target-details.breakdown.viaFood', { percent: split.fromFood })}
                 </ThemedText>
                 <ThemedText type="defaultSemiBold" style={{ color: supplementColor }}>
-                  {`${split.fromSupplement}% via supplement`}
+                  {t('common:tip-target-details.breakdown.viaSupplement', { percent: split.fromSupplement })}
                 </ThemedText>
               </>
             ) : (
               <ThemedText type="defaultSemiBold" style={{ color: colors.textMuted }}>
-                Ingen data
+                {t('common:tip-target-details.noData')}
               </ThemedText>
             )}
           </View>
         </View>
 
         <View style={[styles.dateSection, { borderColor: colors.borderLight ?? colors.border }]}> 
-          <ThemedText type="defaultSemiBold">Datum</ThemedText>
+          <ThemedText type="defaultSemiBold">{t('common:tip-target-details.date.title')}</ThemedText>
           <View style={styles.dateNavRow}>
             <TouchableOpacity
               onPress={() => setSelectedDateKey(prev => addDays(prev, -1))}
               accessibilityRole="button"
-              accessibilityLabel="Föregående dag"
+              accessibilityLabel={t('common:tip-target-details.date.previousDay')}
             >
               <IconSymbol name="chevron.left" size={20} color={colors.primary} />
             </TouchableOpacity>
@@ -543,7 +569,7 @@ export default function TipTargetDetailsScreen() {
               }}
               disabled={!canGoForward}
               accessibilityRole="button"
-              accessibilityLabel="Nästa dag"
+              accessibilityLabel={t('common:tip-target-details.date.nextDay')}
             >
               <IconSymbol
                 name="chevron.right"
@@ -556,37 +582,37 @@ export default function TipTargetDetailsScreen() {
 
         <View style={[styles.detailsSection, { borderColor: colors.borderLight ?? colors.border }]}> 
           <ThemedText type="title3" style={styles.detailsHeading}>
-            Detaljer
+            {t('common:tip-target-details.details.title')}
           </ThemedText>
           {hasData ? (
             <>
               <View style={styles.detailRow}>
-                <ThemedText type="default">Totalt intag:</ThemedText>
-                <ThemedText type="defaultSemiBold">{formatWithUnit(totalActual, amountUnit)}</ThemedText>
+                <ThemedText type="default">{t('common:tip-target-details.details.totalIntake')}</ThemedText>
+                <ThemedText type="defaultSemiBold">{formatWithUnit(totalActual, amountUnit, targetTagParam)}</ThemedText>
               </View>
               <View style={styles.detailRow}>
-                <ThemedText type="default">Från mat:</ThemedText>
-                <ThemedText type="defaultSemiBold">{formatWithUnit(foodActual, amountUnit)}</ThemedText>
+                <ThemedText type="default">{t('common:tip-target-details.details.fromFood')}</ThemedText>
+                <ThemedText type="defaultSemiBold">{formatWithUnit(foodActual, amountUnit, targetTagParam)}</ThemedText>
               </View>
               <View style={styles.detailRow}>
-                <ThemedText type="default">Från kosttillskott:</ThemedText>
-                <ThemedText type="defaultSemiBold">{formatWithUnit(supplementActual, amountUnit)}</ThemedText>
+                <ThemedText type="default">{t('common:tip-target-details.details.fromSupplements')}</ThemedText>
+                <ThemedText type="defaultSemiBold">{formatWithUnit(supplementActual, amountUnit, targetTagParam)}</ThemedText>
               </View>
             </>
           ) : (
             <ThemedText type="caption" style={{ color: colors.textMuted }}>
-              Ingen data för denna dag
+              {t('common:tip-target-details.details.noDataForDay')}
             </ThemedText>
           )}
           <View style={styles.detailRow}>
-            <ThemedText type="default">Mål</ThemedText>
-            <ThemedText type="defaultSemiBold">{formatWithUnit(targetAmount, amountUnit)}</ThemedText>
+            <ThemedText type="default">{t('common:tip-target-details.details.goal')}</ThemedText>
+            <ThemedText type="defaultSemiBold">{formatWithUnit(targetAmount, amountUnit, targetTagParam)}</ThemedText>
           </View>
         </View>
 
         <View style={[styles.supplementSection, { borderColor: colors.borderLight ?? colors.border }]}> 
           <ThemedText type="title3" style={styles.supplementHeading}>
-            Supplements
+            {t('common:tip-target-details.supplements.title')}
           </ThemedText>
           {listedSupplements.length > 0 ? (
             <View style={styles.supplementList}>
@@ -596,7 +622,7 @@ export default function TipTargetDetailsScreen() {
                     {`• ${supplement.name} (${supplement.quantity} ${supplement.unit})`}
                   </ThemedText>
                   <DiscreetButton
-                    title="Lägg till"
+                    title={t('common:tip-target-details.addButton')}
                     onPress={() => {
                       router.push({
                         pathname: '/(tabs)/calendar',
@@ -613,21 +639,27 @@ export default function TipTargetDetailsScreen() {
             </View>
           ) : (
             <ThemedText type="caption" style={{ color: colors.textMuted }}>
-              Inga supplements listade för detta tips.
+              {t('common:tip-target-details.supplements.noneListed')}
             </ThemedText>
           )}
         </View>
 
         <View style={[styles.foodSourceSection, { borderColor: colors.borderLight ?? colors.border }]}> 
           <ThemedText type="title3" style={styles.supplementHeading}>
-            Lägg till mat
+            {t('common:tip-target-details.foodSources.title')}
           </ThemedText>
           {nutritionFoodItems.length > 0 ? (
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.foodSourceScrollContent}>
-              {nutritionFoodItems.map(({ key, name, details }) => {
-                const foodSourceKey = key.split(':')[0];
-                const foodProfile = FOOD_NUTRIENT_PROFILES[foodSourceKey] ?? null;
-                const servingOptions = foodProfile?.defaultServings ?? [];
+              {nutritionFoodItems.map(({ key, foodKey, name, details }) => {
+                const foodSourceKey = foodKey;
+                const foodProfile = isFoodProfileKey(foodSourceKey)
+                  ? FOOD_NUTRIENT_PROFILES[foodSourceKey]
+                  : null;
+                const foodImage = isFoodProfileKey(foodSourceKey)
+                  ? FOOD_IMAGES[foodSourceKey]
+                  : undefined;
+                const servingOptions: FoodCatalogServing[] = foodProfile?.defaultServings ?? [];
+                const nutrientPer100 = getProfileValueForTag(foodProfile, targetTagParam);
                 const servingSizes = servingOptions.map(serving => ({
                   grams: serving.grams,
                   label: serving.labelKey
@@ -635,18 +667,26 @@ export default function TipTargetDetailsScreen() {
                         defaultValue: String(serving.grams),
                       })
                     : `${serving.grams} ${t('food:units.gramsShort', { defaultValue: 'g' })}`,
+                  nutrientAmount:
+                    typeof nutrientPer100 === 'number'
+                      ? scaleFrom100(nutrientPer100, serving.grams)
+                      : undefined,
+                  nutrientUnit: amountUnitParam || undefined,
+                  nutrientLabel: targetLabel || targetTagParam || undefined,
                 }));
                 return (
                   <View key={key} style={[styles.foodSourceCard, { borderColor: colors.borderLight ?? colors.border }]}> 
+                    {!!foodImage && (
+                      <Image
+                        source={foodImage}
+                        style={styles.foodSourceImage}
+                        resizeMode="cover"
+                      />
+                    )}
                     <View style={styles.foodSourceTextBlock}>
                       <ThemedText type="defaultSemiBold" numberOfLines={2}>
                         {name}
                       </ThemedText>
-                      {!!details && (
-                        <ThemedText type="caption" style={{ color: colors.textMuted }} numberOfLines={2}>
-                          {details}
-                        </ThemedText>
-                      )}
                     </View>
                     <Pressable
                       onPress={() => {
@@ -663,7 +703,7 @@ export default function TipTargetDetailsScreen() {
                         }
                       }}
                       accessibilityRole="button"
-                      accessibilityLabel={`Lägg till ${name}`}
+                      accessibilityLabel={t('common:tip-target-details.foodSources.addSource', { name })}
                       style={({ pressed }) => [
                         styles.foodSourceAddButton,
                         {
@@ -682,7 +722,7 @@ export default function TipTargetDetailsScreen() {
             </ScrollView>
           ) : (
             <ThemedText type="caption" style={{ color: colors.textMuted }}>
-              Inga matkällor listade för detta tips.
+              {t('common:tip-target-details.foodSources.noneListed')}
             </ThemedText>
           )}
         </View>
@@ -808,22 +848,26 @@ const styles = StyleSheet.create({
     paddingRight: 4,
   },
   foodSourceCard: {
-    width: 160,
+    width: 110,
     borderWidth: 1,
     borderRadius: 14,
-    padding: 12,
-    gap: 12,
+    paddingBottom: 8,
+    gap: 2,
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   foodSourceTextBlock: {
-    gap: 4,
+    gap: 1,
   },
   foodSourceAddButton: {
-    alignSelf: 'flex-start',
     width: 34,
     height: 34,
     borderRadius: 17,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  foodSourceImage: {
+    width: 80,
+    height: 80,
   },
 });

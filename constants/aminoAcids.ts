@@ -18,6 +18,7 @@ export const OTHER_AMINO_ACID_KEYS = [
   'proline',
   'tyrosine',
   'citrulline',
+  'tmg',
 ] as const;
 
 export const ALL_AMINO_ACID_KEYS = [

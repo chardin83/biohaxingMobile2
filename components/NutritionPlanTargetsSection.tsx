@@ -112,7 +112,7 @@ const TipProgressRow: React.FC<TipProgressRowProps> = ({
           },
         ]}
       >
-        <TouchableOpacity
+        <View
           style={[
             styles.planTipProgressRow,
             tip.isFulfilled && styles.planTipProgressRowFulfilled,
@@ -125,22 +125,26 @@ const TipProgressRow: React.FC<TipProgressRowProps> = ({
                   borderBottomColor: colors.textMuted,
                 },
           ]}
-          activeOpacity={0.8}
-          disabled={!tip.areaId}
-          onPress={() => {
-            if (!tip.areaId) return;
-            router.push({
-              pathname: `/dashboard/area/${tip.areaId}/details` as any,
-              params: {
-                tipId: tip.tipId,
-              },
-            });
-          }}
         >
           <View style={styles.planTipProgressHeader}>
-            <ThemedText type="defaultSemiBold" style={styles.fulfilledTipTextBlock}>
-              {t(`tips:${tip.title}`)}
-            </ThemedText>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              disabled={!tip.areaId}
+              onPress={() => {
+                if (!tip.areaId) return;
+                router.push({
+                  pathname: `/dashboard/area/${tip.areaId}/details` as any,
+                  params: {
+                    tipId: tip.tipId,
+                  },
+                });
+              }}
+              style={styles.tipTitleButton}
+            >
+              <ThemedText type="defaultSemiBold" style={styles.fulfilledTipTextBlock}>
+                {t(`tips:${tip.title}`)}
+              </ThemedText>
+            </TouchableOpacity>
             {tip.isFulfilled && <Icon source="check-circle" size={34} color={colors.xp} />}
           </View>
 
@@ -180,7 +184,7 @@ const TipProgressRow: React.FC<TipProgressRowProps> = ({
               colors={colors}
             />
           ))}
-        </TouchableOpacity>
+        </View>
       </Animated.View>
     </View>
   );
@@ -352,6 +356,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+  },
+  tipTitleButton: {
+    flex: 1,
   },
   periodSection: {
     marginTop: 6,

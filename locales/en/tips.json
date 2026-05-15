@@ -869,11 +869,11 @@
     "nutritionFoods": {
       "title": "Non-gel-forming fiber foods",
       "items": {
-        "wheatBran": {
-          "details": "Wheat bran is rich in arabinoxylan and insoluble fibers that efficiently increase stool bulk."
+        "almonds": {
+          "details": "Almonds are rich in insoluble fibers that support regular bowel movements and overall digestive health."
         },
-        "wholeGrainRye": {
-          "details": "Whole rye products contain arabinoxylan-rich bran fractions that support regular transit."
+        "broccoli": {
+          "details": "Broccoli contains insoluble fibers that support regular bowel movements and overall digestive health."
         },
         "kale": {
           "details": "Leafy greens provide insoluble structural fibers that support bowel movement regularity."

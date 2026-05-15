@@ -19,3 +19,20 @@ export type VitaminType = (typeof VITAMIN_TYPE_KEYS)[number];
 
 export const isVitaminTargetTag = (tag: string): tag is VitaminType =>
   VITAMIN_TYPE_KEYS.includes(tag as VitaminType);
+
+export const VITAMIN_DISPLAY_UNITS: Record<VitaminType, string> = {
+  vitamins_total: 'mg',
+  vitamin_a: 'mg',
+  vitamin_c: 'mg',
+  vitamin_d: 'mcg',
+  vitamin_e: 'mg',
+  vitamin_k: 'mg',
+  vitamin_b1: 'mg',
+  vitamin_b2: 'mg',
+  vitamin_b3: 'mg',
+  vitamin_b5: 'mg',
+  vitamin_b6: 'mg',
+  vitamin_b7: 'mg',
+  vitamin_b9: 'mcg',
+  vitamin_b12: 'mcg',
+};

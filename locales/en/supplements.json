@@ -23,6 +23,7 @@
         { "id": "probiotics", "name": "Probiotics", "quantity": "10 billion", "unit": "CFU" },
         { "id": "folicAcid", "name": "Folic Acid", "quantity": "400", "unit": "mcg" },
         { "id": "multivitamin", "name": "Multivitamin", "quantity": "1", "unit": "tablet" },
+        { "id": "vitaminB6", "name": "Vitamin B6", "quantity": "1.7", "unit": "mg" },
         { "id": "vitaminB12", "name": "Vitamin B12", "quantity": "2.4", "unit": "mcg" },
         { "id": "coenzymeQ10", "name": "Coenzyme Q10", "quantity": "100", "unit": "mg" },
         { "id": "collagen", "name": "Collagen", "quantity": "10", "unit": "g" },

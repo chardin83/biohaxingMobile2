@@ -1,5 +1,6 @@
 import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from './ThemedText';
@@ -8,6 +9,9 @@ import { IconSymbol } from './ui/IconSymbol';
 export type FoodServing = {
   grams: number;
   label: string;
+  nutrientAmount?: number;
+  nutrientUnit?: string;
+  nutrientLabel?: string;
 };
 
 export type FoodPortionBottomSheetProps = {
@@ -30,7 +34,24 @@ const FoodPortionBottomSheet: React.FC<FoodPortionBottomSheetProps> = ({
   foodDetails,
   servingSizes,
   onSelectServing,
-}) => (
+}) => {
+  const { t } = useTranslation();
+  const formatAmount = (value: number): string => {
+    if (value === 0) return '0';
+    if (value < 1) return value.toFixed(2);
+    if (value < 10) return value.toFixed(1);
+    return value.toFixed(0);
+  };
+  const isLabelSameAsGrams = (serving: FoodServing): boolean => {
+    const normalizedLabel = Array.from(serving.label)
+      .filter(char => !/\s/.test(char))
+      .join('')
+      .toLowerCase();
+    const normalizedGrams = `${serving.grams}g`;
+    return normalizedLabel === normalizedGrams;
+  };
+
+  return (
   <BottomSheetModal
     ref={foodPortionBottomSheetRef}
     snapPoints={snapPoints}
@@ -54,12 +75,12 @@ const FoodPortionBottomSheet: React.FC<FoodPortionBottomSheetProps> = ({
       </ThemedText>
 
       <ThemedText type="defaultSemiBold" style={styles.sectionTitle}>
-        Välj portion
+        {t('common:foodPortionBottomSheet.selectPortion')}
       </ThemedText>
 
-      {servingSizes.map((serving, index) => (
+      {servingSizes.map(serving => (
         <Pressable
-          key={index}
+          key={serving.label}
           style={({ pressed }) => [
             styles.option,
             {
@@ -76,12 +97,21 @@ const FoodPortionBottomSheet: React.FC<FoodPortionBottomSheetProps> = ({
         >
           <View style={styles.optionRow}>
             <View style={styles.optionTextBlock}>
-              <ThemedText type="defaultSemiBold" numberOfLines={1}>
-                {serving.label}
-              </ThemedText>
-              <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                {serving.grams}g
-              </ThemedText>
+              <View style={styles.inlineLabelRow}>
+                <ThemedText type="defaultSemiBold" numberOfLines={1} style={styles.inlineLabelMain}>
+                  {serving.label}
+                </ThemedText>
+                {!isLabelSameAsGrams(serving) && (
+                  <ThemedText type="explainer" numberOfLines={1} style={styles.inlineLabelMeta}>
+                    {` · ${serving.grams}g`}
+                  </ThemedText>
+                )}
+              </View>
+              {typeof serving.nutrientAmount === 'number' && serving.nutrientUnit && serving.nutrientLabel && (
+                <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                  {`${formatAmount(serving.nutrientAmount)}${serving.nutrientUnit} ${serving.nutrientLabel.toLowerCase()}`}
+                </ThemedText>
+              )}
             </View>
             <IconSymbol name="chevron.right" size={18} color={colors.textLight ?? colors.primary} />
           </View>
@@ -89,7 +119,8 @@ const FoodPortionBottomSheet: React.FC<FoodPortionBottomSheetProps> = ({
       ))}
     </BottomSheetScrollView>
   </BottomSheetModal>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   sheetScroll: {
@@ -128,6 +159,16 @@ const styles = StyleSheet.create({
   optionTextBlock: {
     flex: 1,
     gap: 2,
+  },
+  inlineLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
+  inlineLabelMain: {
+    flexShrink: 1,
+  },
+  inlineLabelMeta: {
+    flexShrink: 0,
   },
 });
 

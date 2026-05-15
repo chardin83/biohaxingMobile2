@@ -997,7 +997,8 @@
       "glycine": "Glycin",
       "proline": "Prolin",
       "tyrosine": "Tyrosin",
-      "citrulline": "Citrullin"
+      "citrulline": "Citrullin",
+      "tmg": "Trimethylglycin (TMG)"
     },
     "plantDiversityLabels": {
       "plant_diversity": "Växtdiversitet"
@@ -1028,6 +1029,45 @@
   "labeledInput": {
     "optional": "valfritt",
     "required": "obligatoriskt"
+  },
+  "foodPortionBottomSheet": {
+    "selectPortion": "Välj portion"
+  },
+  "tip-target-details": {
+    "addButton": "Lägg till",
+    "noData": "Ingen data",
+    "medal": {
+      "gold": "🥇 Medalj upplåst",
+      "silver": "🥈 Medalj upplåst",
+      "bronze": "🥉 Medalj upplåst",
+      "none": "Ingen medalj än"
+    },
+    "breakdown": {
+      "viaFood": "{{percent}}% via mat",
+      "viaSupplement": "{{percent}}% via supplement"
+    },
+    "date": {
+      "title": "Datum",
+      "previousDay": "Föregående dag",
+      "nextDay": "Nästa dag"
+    },
+    "details": {
+      "title": "Detaljer",
+      "totalIntake": "Totalt intag:",
+      "fromFood": "Från mat:",
+      "fromSupplements": "Från kosttillskott:",
+      "noDataForDay": "Ingen data för denna dag",
+      "goal": "Mål"
+    },
+    "supplements": {
+      "title": "Supplements",
+      "noneListed": "Inga supplements listade för detta tips."
+    },
+    "foodSources": {
+      "title": "Lägg till mat",
+      "addSource": "Lägg till {{name}}",
+      "noneListed": "Inga matkällor listade för detta tips."
+    }
   },
   "progress": {
     "title": "Utveckling",

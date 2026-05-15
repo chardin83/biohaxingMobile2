@@ -777,11 +777,11 @@
     "nutritionFoods": {
       "title": "Livsmedel med icke-gelbildande fibrer",
       "items": {
-        "wheatBran": {
-          "details": "Vetekli är rikt på arabinoxylan och olösliga fibrer som effektivt ökar avföringsvolymen."
+        "almonds": {
+          "details": "Mandel är rik på olösliga fibrer som stödjer regelbunden tarmtömning och övergripande matsmältningshälsa."
         },
-        "wholeGrainRye": {
-          "details": "Fullkornsråg innehåller kli-fraktioner rika på arabinoxylan som stödjer regelbunden passagetid."
+        "broccoli": {
+          "details": "Broccoli innehåller olösliga fibrer som stödjer regelbunden tarmtömning och övergripande matsmältningshälsa."
         },
         "kale": {
           "details": "Bladgrönsaker innehåller olösliga strukturfibrer som stödjer regelbunden tarmtömning."

@@ -696,7 +696,7 @@ const rawTips: Tip[] = [
     nutritionFoods: [
       { key: 'beefShank', nutrientTags: ['glycine'] },
       { key: 'chickenWings', nutrientTags: ['glycine'] },
-      { key: 'legumes', nutrientTags: ['glycine'] },
+      { key: 'soybeans', nutrientTags: ['glycine'] },
     ],
     bodyParts: ['nervousSystem', 'bloodVessels', 'bones'],
   },
@@ -828,6 +828,7 @@ const rawTips: Tip[] = [
     supplements: [
       { id: 'tmg' },
       { id: 'folicAcid' },
+      { id: 'vitaminB6' },
       { id: 'vitaminB12' },
       { id: 'glycine' },
       { id: 'nac' },
@@ -840,19 +841,20 @@ const rawTips: Tip[] = [
     targetPeriod: 'daily',
     targetIconName: 'vitamin',
     vitaminTargets: [
-      { tag: 'vitamin_b6', amount: 1.7, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
-      { tag: 'vitamin_b9', amount: 0.4, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
-      { tag: 'vitamin_b12', amount: 0.0024, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
+      { tag: 'vitamin_b6', amount: 1.7, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7, supplementIds: ['vitaminB6'] },
+      { tag: 'vitamin_b9', amount: 0.4, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7, supplementIds: ['folicAcid'] },
+      { tag: 'vitamin_b12', amount: 0.0024, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7, supplementIds: ['vitaminB12'] },
     ],
     aminoAcidTargets: [
-      { tag: 'glycine', amount: 3000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 },
+      { tag: 'tmg', amount: 2.5, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7, supplementIds: ['tmg'] },
+      { tag: 'glycine', amount: 3000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6, supplementIds: ['glycine'] },
     ],
     nutritionFoods: [
-      { key: 'beets' },
-      { key: 'spinach' },
-      { key: 'eggs' },
-      { key: 'broccoli' },
-      { key: 'salmon' },
+      { key: 'beets', nutrientTags: ['tmg', 'vitamin_b9'] },
+      { key: 'spinach', nutrientTags: ['tmg', 'vitamin_b6', 'vitamin_b9'] },
+      { key: 'eggs', nutrientTags: ['tmg', 'vitamin_b12', 'glycine'] },
+      { key: 'broccoli', nutrientTags: ['tmg', 'vitamin_b6', 'vitamin_b9'] },
+      { key: 'salmon', nutrientTags: ['tmg', 'vitamin_b6', 'vitamin_b12', 'glycine'] },
     ],
     bodyParts: ['bloodVessels', 'heart', 'liver'],
   },
@@ -1502,7 +1504,7 @@ const rawTips: Tip[] = [
         defaultConfidence: 'high',
       },
       {
-        key: 'legumes',
+        key: 'soybeans',
         nutrientTags: ['fiber_total'],
         fiberSubtypes: ['pectin', 'cellulose', 'hemicellulose'],
         microbiomeSupport: ['Akkermansia', 'Roseburia', 'Ruminococcus'],
@@ -1554,7 +1556,7 @@ const rawTips: Tip[] = [
         defaultConfidence: 'high',
       },
       {
-        key: 'legumes',
+        key: 'soybeans',
         nutrientTags: ['fiber_total', 'fiber_fermentable'],
         fiberSubtypes: ['resistant_starch', 'galactooligosaccharides', 'inulin'],
         microbiomeSupport: ['Roseburia', 'Faecalibacterium', 'Ruminococcus'],
@@ -1680,12 +1682,7 @@ const rawTips: Tip[] = [
     ],
     nutritionFoods: [
       {
-        key: 'wheatBran',
-        nutrientTags: ['fiber_total', 'fiber_non_gel_forming'],
-        fiberSubtypes: ['arabinoxylan', 'hemicellulose', 'cellulose'],
-        microbiomeSupport: ['Ruminococcus', 'Faecalibacterium'],
-        sourceRefs: ['USDA FoodData Central'],
-        defaultConfidence: 'high',
+        key: 'almonds',
       },
 
       {
@@ -1697,12 +1694,7 @@ const rawTips: Tip[] = [
         defaultConfidence: 'high',
       },
       {
-        key: 'wholeGrainRye',
-        nutrientTags: ['fiber_total', 'fiber_non_gel_forming'],
-        fiberSubtypes: ['arabinoxylan', 'cellulose', 'hemicellulose'],
-        microbiomeSupport: ['Ruminococcus', 'Roseburia'],
-        sourceRefs: ['USDA FoodData Central'],
-        defaultConfidence: 'high',
+        key: 'broccoli',
       },
     ],
     bodyParts: ['digestiveSystem'],
@@ -1727,7 +1719,7 @@ const rawTips: Tip[] = [
     targetPeriod: 'weekly',
     nutritionFoods: [
       {
-        key: 'legumes',
+        key: 'soybeans',
         nutrientTags: ['fiber_total', 'fiber_fermentable'],
         fiberSubtypes: ['resistant_starch', 'galactooligosaccharides'],
         microbiomeSupport: ['Roseburia', 'Faecalibacterium', 'Akkermansia'],

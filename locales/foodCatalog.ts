@@ -69,6 +69,36 @@ const CUP_STRAWBERRY_75_150_300: FoodServing[] = [
   { grams: 300, labelKey: 'twoCups' },
 ];
 
+const BELL_PEPPER_60_120_240: FoodServing[] = [
+  { grams: 60, labelKey: 'halfBellPepper' },
+  { grams: 120, labelKey: 'oneBellPepper' },
+  { grams: 240, labelKey: 'twoBellPeppers' },
+];
+
+const KIWI_38_76_152: FoodServing[] = [
+  { grams: 38, labelKey: 'halfKiwi' },
+  { grams: 76, labelKey: 'oneKiwi' },
+  { grams: 152, labelKey: 'twoKiwis' },
+];
+
+const OATS_40_80_160: FoodServing[] = [
+  { grams: 40, labelKey: 'halfCup' },
+  { grams: 80, labelKey: 'oneCup' },
+  { grams: 160, labelKey: 'twoCups' },
+];
+
+const CHIA_SEEDS_12_24_48: FoodServing[] = [
+  { grams: 12, labelKey: 'oneTablespoon' },
+  { grams: 24, labelKey: 'twoTablespoons' },
+  { grams: 48, labelKey: 'fourTablespoons' },
+];
+
+const WALNUTS_30_60_120: FoodServing[] = [
+  { grams: 30, labelKey: 'quarterCup' },
+  { grams: 60, labelKey: 'halfCup' },
+  { grams: 120, labelKey: 'oneCup' },
+];
+
 const CUP_DRINK_120_240_480: FoodServing[] = [
   { grams: 120, labelKey: 'halfCup' },
   { grams: 240, labelKey: 'oneCup' },
@@ -83,7 +113,7 @@ const GRAM_150_300_450: FoodServing[] = [
 
 // Unit reminder for all values below (per 100g):
 // macros/fiber in grams, vitamins/minerals/amino acids/polyphenols in mg.
-export const FOOD_NUTRIENT_PROFILES: Record<string, FoodNutrientProfile> = {
+export const FOOD_NUTRIENT_PROFILES = {
   kale: {
     calories: 49,
     protein: 4.3,
@@ -290,17 +320,17 @@ export const FOOD_NUTRIENT_PROFILES: Record<string, FoodNutrientProfile> = {
     fiberByType: { fiber_total: 10.6, fiber_fermentable: 5.2, fiber_gel_forming: 4.2 },
     aminoAcidsByType: { leucine: 1.28, valine: 0.94, methionine: 0.31 },
     mineralsByType: { magnesium: 177, iron: 4.7, zinc: 4 },
-    defaultServings: GRAM_30_60_90,
+    defaultServings: OATS_40_80_160,
   },
-  legumes: {
-    calories: 130,
-    protein: 8.5,
-    carbohydrates: 22,
-    fat: 0.9,
-    fiber: 8.5,
-    fiberByType: { fiber_total: 8.5, fiber_fermentable: 4.4, fiber_non_gel_forming: 3.1 },
-    aminoAcidsByType: { leucine: 0.66, lysine: 0.61, valine: 0.38 },
-    mineralsByType: { magnesium: 45, iron: 2.5, zinc: 1.4, potassium: 310 },
+  soybeans: {
+    calories: 173,
+    protein: 16.6,
+    carbohydrates: 9.9,
+    fat: 9,
+    fiber: 6,
+    fiberByType: { fiber_total: 6, fiber_fermentable: 2.4, fiber_non_gel_forming: 2.6, fiber_gel_forming: 1 },
+    aminoAcidsByType: { leucine: 1.33, lysine: 1.27, valine: 0.84, methionine: 0.26, arginine: 1.26 },
+    mineralsByType: { magnesium: 86, iron: 5.1, zinc: 1.15, potassium: 515, phosphorus: 245, manganese: 1 },
     defaultServings: CUP_BEANS_85_170_340,
   },
   chiaSeeds: {
@@ -373,7 +403,7 @@ export const FOOD_NUTRIENT_PROFILES: Record<string, FoodNutrientProfile> = {
         likelyFoods: ['chiaSeeds'],
       },
     ],
-    defaultServings: GRAM_30_60_90,
+    defaultServings: CHIA_SEEDS_12_24_48,
   },
   greenBanana: {
     calories: 90,
@@ -435,26 +465,6 @@ export const FOOD_NUTRIENT_PROFILES: Record<string, FoodNutrientProfile> = {
     mineralsByType: { magnesium: 57, calcium: 82, potassium: 299 },
     defaultServings: CUP_OKRA_80_160_320,
   },
-  wheatBran: {
-    calories: 216,
-    protein: 15.6,
-    carbohydrates: 64.5,
-    fat: 4.3,
-    fiber: 42.8,
-    fiberByType: { fiber_total: 42.8, fiber_non_gel_forming: 34 },
-    mineralsByType: { magnesium: 611, iron: 10.6, zinc: 7.3 },
-    defaultServings: GRAM_30_60_90,
-  },
-  wholeGrainRye: {
-    calories: 335,
-    protein: 10.3,
-    carbohydrates: 75.9,
-    fat: 1.8,
-    fiber: 14.6,
-    fiberByType: { fiber_total: 14.6, fiber_non_gel_forming: 10.4, fiber_fermentable: 3.2 },
-    mineralsByType: { magnesium: 110, iron: 2.7, zinc: 2.6 },
-    defaultServings: GRAM_50_100_200,
-  },
   beets: {
     calories: 43,
     protein: 1.6,
@@ -462,6 +472,7 @@ export const FOOD_NUTRIENT_PROFILES: Record<string, FoodNutrientProfile> = {
     fat: 0.2,
     fiber: 2.8,
     fiberByType: { fiber_total: 2.8 },
+    aminoAcidsByType: { tmg: 129 },
     mineralsByType: { potassium: 325, magnesium: 23, manganese: 0.3 },
     vitaminsByType: { vitamin_b9: 0.109 },
     polyphenolByType: { polyphenols_total: 120, flavonoids_total: 40 },
@@ -488,7 +499,7 @@ export const FOOD_NUTRIENT_PROFILES: Record<string, FoodNutrientProfile> = {
     },
     mineralsByType: { magnesium: 79, iron: 2.7, potassium: 558, calcium: 99 },
     polyphenolByType: { polyphenols_total: 120, flavonoids_total: 60, flavonols: 35, quercetin: 2 },
-    aminoAcidsByType: { leucine: 0.2, valine: 0.17, lysine: 0.17 },
+    aminoAcidsByType: { leucine: 0.2, valine: 0.17, lysine: 0.17, tmg: 600 },
     defaultServings: CUP_SPINACH_90_180_360,
   },
   eggs: {
@@ -512,6 +523,7 @@ export const FOOD_NUTRIENT_PROFILES: Record<string, FoodNutrientProfile> = {
       glutamine: 1.8,
       proline: 0.5,
       glycine: 0.42,
+      tmg: 30,
     },
     vitaminsByType: {
       vitamin_a: 0.16,
@@ -610,6 +622,7 @@ export const FOOD_NUTRIENT_PROFILES: Record<string, FoodNutrientProfile> = {
       glycine: 0.11,
       proline: 0.13,
       tyrosine: 0.08,
+      tmg: 130,
     },
     polyphenolByType: {
       polyphenols_total: 180,
@@ -665,6 +678,7 @@ export const FOOD_NUTRIENT_PROFILES: Record<string, FoodNutrientProfile> = {
       glycine: 0.9,
       proline: 0.7,
       tyrosine: 0.75,
+      tmg: 180,
     },
     mineralsByType: {
       selenium: 0.036,
@@ -809,7 +823,7 @@ export const FOOD_NUTRIENT_PROFILES: Record<string, FoodNutrientProfile> = {
         likelyFoods: ['bellPeppers'],
       },
     ],
-    defaultServings: GRAM_50_100_200,
+    defaultServings: BELL_PEPPER_60_120_240,
   },
   blackCurrants: {
     calories: 63,
@@ -1082,7 +1096,8 @@ export const FOOD_NUTRIENT_PROFILES: Record<string, FoodNutrientProfile> = {
       },
     ],
     defaultServings: [
-      { grams: 130, labelKey: 'mediumOrange' },
+      { grams: 65, labelKey: 'halfOrange' },
+      { grams: 130, labelKey: 'oneOrange' },
       { grams: 260, labelKey: 'twoOranges' },
     ],
   },
@@ -1716,7 +1731,7 @@ export const FOOD_NUTRIENT_PROFILES: Record<string, FoodNutrientProfile> = {
         likelyFoods: ['kiwi'],
       },
     ],
-    defaultServings: GRAM_50_100_200,
+    defaultServings: KIWI_38_76_152,
   },
   chanterelles: {
     calories: 38,
@@ -2517,7 +2532,7 @@ export const FOOD_NUTRIENT_PROFILES: Record<string, FoodNutrientProfile> = {
         likelyFoods: ['walnuts'],
       },
     ],
-    defaultServings: GRAM_30_60_90,
+    defaultServings: WALNUTS_30_60_120,
   },
   watermelon: {
     calories: 30,
@@ -2649,5 +2664,40 @@ export const FOOD_NUTRIENT_PROFILES: Record<string, FoodNutrientProfile> = {
     },
     defaultServings: GRAM_30_60_90,
   },
+} satisfies Record<string, FoodNutrientProfile>;
+
+export type FoodImageSourceMap = Partial<Record<keyof typeof FOOD_NUTRIENT_PROFILES, ReturnType<typeof require>>>;
+
+export const FOOD_IMAGES: FoodImageSourceMap = {
+  bellPeppers: require('@/assets/images/food/bellPepper.png'),
+  orange: require('@/assets/images/food/orange.png'),
+  blackCurrants: require('@/assets/images/food/blackCurrant.png'),
+  kiwi: require('@/assets/images/food/kiwi.png'),
+  pomegranate: require('@/assets/images/food/pomegranate.png'),
+  extraVirginOliveOil: require('@/assets/images/food/oliveOil.png'),
+  walnuts: require('@/assets/images/food/walnuts.png'),
+  strawberries: require('@/assets/images/food/strawberries.png'),
+  raspberries: require('@/assets/images/food/raspberry.png'),
+  pumpkinSeeds: require('@/assets/images/food/pumpkinSeeds.png'),
+  spinach: require('@/assets/images/food/spinach.png'),
+  almonds: require('@/assets/images/food/almonds.png'),
+  blackBeans: require('@/assets/images/food/blackBeans.png'),
+  avocado: require('@/assets/images/food/avocado.png'),
+  darkChocolate: require('@/assets/images/food/darkChocolate.png'),
+  potatoes: require('@/assets/images/food/potatoes.png'),
+  coconutWater: require('@/assets/images/food/coconutWater.png'),
+  kale: require('@/assets/images/food/kale.png'),
+  soybeans: require('@/assets/images/food/soybeans.png'),
+  chiaSeeds: require('@/assets/images/food/chiaSeeds.png'),
+  oats: require('@/assets/images/food/oats.png'),
+  watermelon: require('@/assets/images/food/watermelon.png'),
+  cucumber: require('@/assets/images/food/cucumber.png'),
+  beets: require('@/assets/images/food/beets.png'),
+  eggs: require('@/assets/images/food/eggs.png'),
+  broccoli: require('@/assets/images/food/broccoli.png'), 
+  beefShank: require('@/assets/images/food/beefShank.png'),
+  chickenWings: require('@/assets/images/food/chickenWings.png'),
+  salmon: require('@/assets/images/food/salmon.png'),
+  //sardines: require('@/assets/images/food/sardines.png'),
 };
 

@@ -8,6 +8,7 @@ import {
   type NutritionTargetPeriod,
   type NutritionTargetUnit,
 } from '@/types/nutritionTargets';
+import { formatWithUnit } from '@/utils/formatters';
 
 import { Collapsible } from './Collapsible';
 import { ThemedText } from './ThemedText';
@@ -36,28 +37,18 @@ type TipTargetProps = {
   };
 };
 
-const formatMilligramValue = (value: number): string => {
-  if (value < 0.01) return value.toFixed(4);
-  if (value < 1) return value.toFixed(3);
-  if (value < 10) return value.toFixed(2);
-  return value.toFixed(0);
-};
-
-const formatTargetValue = (value: number, unit: NutritionTargetUnit): string => {
+const formatTargetValue = (value: number, unit: NutritionTargetUnit, tag: string): string => {
   if (unit === 'plants' || unit === 'items' || unit === 'count') {
     return `${Math.round(value)} ${unit}`;
   }
-  if (unit === 'mg') {
-    return `${formatMilligramValue(value)} ${unit}`;
-  }
-  return `${value.toFixed(1)} ${unit}`;
+  return formatWithUnit(value, unit, tag);
 };
 
-const formatTargetProgressValue = (value: number, unit: NutritionTargetUnit): string => {
+const formatTargetProgressValue = (value: number, unit: NutritionTargetUnit, tag: string): string => {
   if (unit === 'items' || unit === 'count') {
     return `${Math.round(value)}`;
   }
-  return formatTargetValue(value, unit);
+  return formatTargetValue(value, unit, tag);
 };
 
 const renderTrackedItems = (targetTag: string, trackedItems: string[]) =>
@@ -77,9 +68,10 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
   const valueFormatter = usesDiscreteUnit ? formatTargetProgressValue : formatTargetValue;
   const resolvedTipTitle =
     tip.title?.includes('.') ? t(`tips:${tip.title}`) : (tip.title ?? tip.tipId);
-  const targetValueText = `${valueFormatter(target.actual, target.unit)} / ${valueFormatter(
+  const targetValueText = `${valueFormatter(target.actual, target.unit, target.tag)} / ${valueFormatter(
     target.amount,
-    target.unit
+    target.unit,
+    target.tag
   )}${target.isMet ? ' 🥇' : ''}`;
 
   const dateKey = tip.dateKey ?? new Date().toISOString().split('T')[0];

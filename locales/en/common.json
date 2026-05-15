@@ -988,7 +988,8 @@
       "glycine": "Glycine",
       "proline": "Proline",
       "tyrosine": "Tyrosine",
-      "citrulline": "Citrulline"
+      "citrulline": "Citrulline",
+      "tmg": "Trimethylglycine (TMG)"
     },
     "plantDiversityLabels": {
       "plant_diversity": "Plant diversity"
@@ -1019,6 +1020,45 @@
   "labeledInput": {
     "optional": "optional",
     "required": "required"
+  },
+  "foodPortionBottomSheet": {
+    "selectPortion": "Choose portion"
+  },
+  "tip-target-details": {
+    "addButton": "Add",
+    "noData": "No data",
+    "medal": {
+      "gold": "🥇 Medal unlocked",
+      "silver": "🥈 Medal unlocked",
+      "bronze": "🥉 Medal unlocked",
+      "none": "No medal yet"
+    },
+    "breakdown": {
+      "viaFood": "{{percent}}% via food",
+      "viaSupplement": "{{percent}}% via supplement"
+    },
+    "date": {
+      "title": "Date",
+      "previousDay": "Previous day",
+      "nextDay": "Next day"
+    },
+    "details": {
+      "title": "Details",
+      "totalIntake": "Total intake:",
+      "fromFood": "From food:",
+      "fromSupplements": "From supplements:",
+      "noDataForDay": "No data for this day",
+      "goal": "Goal"
+    },
+    "supplements": {
+      "title": "Supplements",
+      "noneListed": "No supplements listed for this tip."
+    },
+    "foodSources": {
+      "title": "Add food",
+      "addSource": "Add {{name}}",
+      "noneListed": "No food sources listed for this tip."
+    }
   },
   "progress": {
     "title": "Progress",

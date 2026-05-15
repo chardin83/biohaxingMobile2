@@ -1,11 +1,24 @@
 {
   "servingSizes": {
+    "oneTablespoon": "1 matsked",
+    "twoTablespoons": "2 matskedar",
+    "fourTablespoons": "4 matskedar",
+    "quarterCup": "1/4 kopp",
     "halfCup": "1/2 kopp",
     "oneCup": "1 kopp",
     "twoCups": "2 koppar",
     "halfAvocado": "1/2 avokado",
     "oneAvocado": "1 avokado",
-    "twoAvocados": "2 avokador"
+    "twoAvocados": "2 avokador",
+    "halfBellPepper": "1/2 paprika",
+    "oneBellPepper": "1 paprika",
+    "twoBellPeppers": "2 paprikor",
+    "halfOrange": "1/2 apelsin",
+    "oneOrange": "1 apelsin",
+    "twoOranges": "2 apelsiner",
+    "halfKiwi": "1/2 kiwi",
+    "oneKiwi": "1 kiwi",
+    "twoKiwis": "2 kiwis"
   },
   "units": {
     "gramsShort": "g"
@@ -118,8 +131,8 @@
       "name": "Grönkål"
     },
 
-    "legumes": {
-      "name": "Baljväxter (linser, kikärtor, bönor)"
+    "soybeans": {
+      "name": "Sojabönor"
     },
     "chanterelles": {
       "name": "Kantareller"
@@ -140,7 +153,7 @@
       "name": "Granatäpple"
     },
     "potatoes": {
-      "name": "Potatis eller rotfrukter"
+      "name": "Potatis"
     },
     "psylliumHusk": {
       "name": "Psylliumfröskal"
@@ -187,14 +200,8 @@
     "watermelon": {
       "name": "Vattenmelon"
     },
-    "wheatBran": {
-      "name": "Vetekli"
-    },
     "wheyProtein": {
       "name": "Vassleproteinpulver"
-    },
-    "wholeGrainRye": {
-      "name": "Fullkornsråg"
     },
     "preparation": {
       "name": "Bästa tillredningsmetoder"

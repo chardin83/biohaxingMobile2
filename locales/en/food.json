@@ -1,11 +1,24 @@
 {
   "servingSizes": {
+    "oneTablespoon": "1 tablespoon",
+    "twoTablespoons": "2 tablespoons",
+    "fourTablespoons": "4 tablespoons",
+    "quarterCup": "1/4 cup",
     "halfCup": "1/2 cup",
     "oneCup": "1 cup",
     "twoCups": "2 cups",
     "halfAvocado": "1/2 avocado",
     "oneAvocado": "1 avocado",
-    "twoAvocados": "2 avocados"
+    "twoAvocados": "2 avocados",
+    "halfBellPepper": "1/2 bell pepper",
+    "oneBellPepper": "1 bell pepper",
+    "twoBellPeppers": "2 bell peppers",
+    "halfOrange": "1/2 orange",
+    "oneOrange": "1 orange",
+    "twoOranges": "2 oranges",
+    "halfKiwi": "1/2 kiwi",
+    "oneKiwi": "1 kiwi",
+    "twoKiwis": "2 kiwis"
   },
   "units": {
     "gramsShort": "g"
@@ -118,8 +131,8 @@
       "name": "Kale"
     },
 
-    "legumes": {
-      "name": "Legumes (lentils, chickpeas, beans)"
+    "soybeans": {
+      "name": "Soybeans"
     },
     "chanterelles": {
       "name": "Chanterelles"
@@ -140,7 +153,7 @@
       "name": "Pomegranate"
     },
     "potatoes": {
-      "name": "Potatoes or root vegetables"
+      "name": "Potatoes"
     },
     "psylliumHusk": {
       "name": "Psyllium husk"
@@ -187,14 +200,8 @@
     "watermelon": {
       "name": "Watermelon"
     },
-    "wheatBran": {
-      "name": "Wheat bran"
-    },
     "wheyProtein": {
       "name": "Whey protein isolate"
-    },
-    "wholeGrainRye": {
-      "name": "Whole-grain rye"
     },
     "preparation": {
       "name": "Best preparation methods"
