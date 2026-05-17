@@ -22,6 +22,10 @@ export const Colors = {
     textWhite: '#fff',
     checkmarkMeal: '#2EC4B6',//'#00FFC8',
     checkmarkSupplement: '#8EDB6D',//'#CBEA3C',
+
+    progressPartialIcon: '#8A6200', // djup brons
+    progressSuccessIcon: '#0B1B14',
+    progressSuccessCell: '#67E8C0',
     xp:'#CBEA3C',
 
     buttonGlowBackground: 'rgba(31, 174, 158, 0.18)',
@@ -169,6 +173,10 @@ export const Colors = {
     textWhite: '#fff',
     checkmarkMeal: '#00FFC8',
     checkmarkSupplement: '#C3FF00',
+
+    progressPartialIcon: 'rgba(255,215,100,0.95)',
+    progressSuccessIcon: '#0B1B14',
+    progressSuccessCell: '#67E8C0',
     xp:'#B6F000',
     buttonGlowBackground: 'rgba(4,26,34,0.2)',
     buttonGlow: '#00ffffcc',

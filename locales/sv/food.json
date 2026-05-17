@@ -18,7 +18,12 @@
     "twoOranges": "2 apelsiner",
     "halfKiwi": "1/2 kiwi",
     "oneKiwi": "1 kiwi",
-    "twoKiwis": "2 kiwis"
+    "twoKiwis": "2 kiwis",
+    "oneEgg": "1 ägg",
+    "twoEggs": "2 ägg",
+    "threeEggs": "3 ägg",
+    "oneBrazilNut": "1 paranöt",
+    "twoBrazilNuts": "2 paranötter",
   },
   "units": {
     "gramsShort": "g"

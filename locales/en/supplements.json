@@ -1,7 +1,7 @@
 {
     "supplements": [
         { "id": "vitaminD", "name": "Vitamin D", "quantity": "1000", "unit": "IU", "description": "Core D3 dose supporting bone health, immunity, and mood." },
-        { "id": "vitaminDWithK2", "name": "Vitamin D3 + K2", "quantity": "1000 IU / 90", "unit": "IU/mcg", "description": "Convenient combo pairing D3 with K2 to direct calcium to bones and protect soft tissues." },
+        { "id": "vitaminDWithK2", "name": "Vitamin D3 + K2", "quantity": "1000 IU / 90", "unit": "IU/μg", "description": "Convenient combo pairing D3 with K2 to direct calcium to bones and protect soft tissues." },
         { "id": "vitaminE", "name": "Vitamin E", "quantity": "200", "unit": "IU", "description": "Baseline alpha-tocopherol support for antioxidant and cardiovascular health." },
         { "id": "vitaminEMixedTocopherols", "name": "Vitamin E Mixed Tocopherols", "quantity": "200", "unit": "IU", "description": "Blend of alpha, beta, gamma, and delta tocopherols that offsets the imbalance from isolated alpha doses." },
         { "id": "vitaminETocotrienols", "name": "Vitamin E Tocotrienols", "quantity": "125", "unit": "mg", "description": "Tocotrienol-rich complex that is gentler than high-dose alpha-tocopherol while supporting lipid balance and cellular resilience." },
@@ -17,14 +17,14 @@
         { "id": "zincPicolinate", "name": "Zinc Picolinate", "quantity": "15", "unit": "mg", "description": "Highly bioavailable form that supports immune signaling and skin repair." },
         { "id": "zincBisglycinate", "name": "Zinc Bisglycinate", "quantity": "15", "unit": "mg", "description": "Gentle chelated form designed for sensitive digestion while maintaining absorption." },
         { "id": "zincCitrate", "name": "Zinc Citrate", "quantity": "15", "unit": "mg", "description": "Citrate-bound zinc aimed at balancing stomach acidity and daily maintenance." },
-        { "id": "selenium", "name": "Selenium", "quantity": "200", "unit": "mcg", "description": "Supports thyroid hormone conversion, antioxidant defenses, and immune resilience." },
+        { "id": "selenium", "name": "Selenium", "quantity": "200", "unit": "μg", "description": "Supports thyroid hormone conversion, antioxidant defenses, and immune resilience." },
         { "id": "iron", "name": "Iron", "quantity": "18", "unit": "mg" },
         { "id": "calcium", "name": "Calcium", "quantity": "1000", "unit": "mg" },
         { "id": "probiotics", "name": "Probiotics", "quantity": "10 billion", "unit": "CFU" },
-        { "id": "folicAcid", "name": "Folic Acid", "quantity": "400", "unit": "mcg" },
+        { "id": "folicAcid", "name": "Folic Acid", "quantity": "400", "unit": "μg" },
         { "id": "multivitamin", "name": "Multivitamin", "quantity": "1", "unit": "tablet" },
         { "id": "vitaminB6", "name": "Vitamin B6", "quantity": "1.7", "unit": "mg" },
-        { "id": "vitaminB12", "name": "Vitamin B12", "quantity": "2.4", "unit": "mcg" },
+        { "id": "vitaminB12", "name": "Vitamin B12", "quantity": "2.4", "unit": "μg" },
         { "id": "coenzymeQ10", "name": "Coenzyme Q10", "quantity": "100", "unit": "mg" },
         { "id": "collagen", "name": "Collagen", "quantity": "10", "unit": "g" },
         { "id": "glutathione", "name": "Glutathione", "quantity": "250", "unit": "mg", "description": "Core intracellular antioxidant support, often used when oxidative load or recovery demands are high." },
@@ -42,9 +42,9 @@
         { "id": "chlorella", "name": "Chlorella", "quantity": "3", "unit": "g" },
         { "id": "spirulina", "name": "Spirulina", "quantity": "3", "unit": "g" },
         { "id": "aloeVera", "name": "Aloe Vera", "quantity": "50", "unit": "ml" },
-        { "id": "biotin", "name": "Biotin", "quantity": "30", "unit": "mcg" },
+        { "id": "biotin", "name": "Biotin", "quantity": "30", "unit": "μg" },
         { "id": "hyaluronicAcid", "name": "Hyaluronic Acid", "quantity": "120", "unit": "mg" },
-        { "id": "kelp", "name": "Kelp (Iodine)", "quantity": "150", "unit": "mcg" },
+        { "id": "kelp", "name": "Kelp (Iodine)", "quantity": "150", "unit": "μg" },
         { "id": "lArginine", "name": "L-Arginine", "quantity": "5", "unit": "g" },
         { "id": "citrulline", "name": "L-Citrulline", "quantity": "3000", "unit": "mg", "description": "Amino acid precursor to arginine and nitric oxide, sometimes used to support circulation and gut barrier resilience." },
         { "id": "lCarnitine", "name": "L-Carnitine", "quantity": "500", "unit": "mg" },
@@ -60,7 +60,7 @@
         { "id": "bacopaMonnieri", "name": "Bacopa Monnieri", "quantity": "300", "unit": "mg" },
         { "id": "cranberryExtract", "name": "Cranberry Extract", "quantity": "500", "unit": "mg" },
         { "id": "garlicExtract", "name": "Garlic Extract", "quantity": "600", "unit": "mg" },
-        { "id": "vitaminK2", "name": "Vitamin K2", "quantity": "90", "unit": "mcg", "description": "Supports calcium utilization and vascular health; often stacked with vitamin D." },
+        { "id": "vitaminK2", "name": "Vitamin K2", "quantity": "90", "unit": "μg", "description": "Supports calcium utilization and vascular health; often stacked with vitamin D." },
         { "id": "pomegranateExtract", "name": "Pomegranate Extract", "quantity": "500", "unit": "mg", "description": "Extract of pomegranate rich in ellagitannins, which can be converted to urolithin A by the right gut bacteria." },
         { "id": "urolithinA", "name": "Urolithin A", "quantity": "250", "unit": "mg", "description": "Direct supplement of urolithin A for those lacking the right gut bacteria, supporting mitochondrial health." },
         { "id": "astaxanthin", "name": "Astaxanthin", "quantity": "4", "unit": "mg" },
@@ -94,6 +94,8 @@
         { "id": "chaga", "name": "Chaga", "quantity": "500", "unit": "mg", "description": "Antioxidant-rich mushroom traditionally used for immune support and cellular protection." },
         { "id": "cordyceps", "name": "Cordyceps", "quantity": "", "unit": "" },
         { "id": "caffeine", "name": "Caffeine", "quantity": "200", "unit": "mg" },
-        { "id": "beetrootExtract", "name": "Beetroot extract (nitrates)", "quantity": "500", "unit": "mg" }
+        { "id": "beetrootExtract", "name": "Beetroot extract (nitrates)", "quantity": "500", "unit": "mg" },
+        { "id": "selenium", "name": "Selenium", "quantity": "110", "unit": "µg" },
+        { "id": "vitaminB6", "name": "Vitamin B6", "quantity": "50", "unit": "mg" }
       ]
 }

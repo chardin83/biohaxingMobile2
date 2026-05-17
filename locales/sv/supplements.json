@@ -1,7 +1,7 @@
 {
     "supplements": [
         { "id": "vitaminD", "name": "Vitamin D", "quantity": "1000", "unit": "IU", "description": "Kärndos av D3 som stödjer skelett, immunförsvar och humör." },
-        { "id": "vitaminDWithK2", "name": "Vitamin D3 + K2", "quantity": "1000 IU / 90", "unit": "IU/mcg", "description": "Praktisk kombination som kopplar D3 med K2 för att styra kalcium till skelettet och skydda mjukvävnad." },
+        { "id": "vitaminDWithK2", "name": "Vitamin D3 + K2", "quantity": "1000 IU / 90", "unit": "IU/μg", "description": "Praktisk kombination som kopplar D3 med K2 för att styra kalcium till skelettet och skydda mjukvävnad." },
         { "id": "vitaminE", "name": "Vitamin E", "quantity": "200", "unit": "IU", "description": "Basnivå av alfa-tokoferol som stödjer antioxidant- och hjärtkärlhälsa." },
         { "id": "vitaminEMixedTocopherols", "name": "Vitamin E blandade tokoferoler", "quantity": "200", "unit": "IU", "description": "Blandning av alfa-, beta-, gamma- och delta-tokoferoler som balanserar effekten av isolerat alfa." },
         { "id": "vitaminETocotrienols", "name": "Vitamin E tokotrienoler", "quantity": "125", "unit": "mg", "description": "Tokotrienolrikt komplex som är skonsammare än höga doser alfa-tokoferol men stödjer lipidbalans och cellresiliens." },
@@ -17,14 +17,14 @@
         { "id": "zincPicolinate", "name": "Zinkpikolinat", "quantity": "15", "unit": "mg", "description": "Mycket biotillgänglig form som stödjer immunrespons och hudläkning." },
         { "id": "zincBisglycinate", "name": "Zinkbisglycinat", "quantity": "15", "unit": "mg", "description": "Skonsam kelaterad form som är snäll mot magen men bibehåller upptag." },
         { "id": "zincCitrate", "name": "Zinkcitrat", "quantity": "15", "unit": "mg", "description": "Citratbunden zink som balanserar magsyra och ger dagligt underhåll." },
-        { "id": "selenium", "name": "Selen", "quantity": "200", "unit": "mcg", "description": "Stödjer omvandling av sköldkörtelhormoner, antioxidantförsvar och immunresiliens." },
+        { "id": "selenium", "name": "Selen", "quantity": "200", "unit": "μg", "description": "Stödjer omvandling av sköldkörtelhormoner, antioxidantförsvar och immunresiliens." },
         { "id": "iron", "name": "Järn", "quantity": "18", "unit": "mg" },
         { "id": "calcium", "name": "Kalcium", "quantity": "1000", "unit": "mg" },
         { "id": "probiotics", "name": "Probiotika", "quantity": "10 miljarder", "unit": "CFU" },
-        { "id": "folicAcid", "name": "Folsyra", "quantity": "400", "unit": "mcg" },
+        { "id": "folicAcid", "name": "Folsyra", "quantity": "400", "unit": "μg" },
         { "id": "multivitamin", "name": "Multivitamin", "quantity": "1", "unit": "tablett" },
         { "id": "vitaminB6", "name": "Vitamin B6", "quantity": "1.7", "unit": "mg" },
-        { "id": "vitaminB12", "name": "Vitamin B12", "quantity": "2.4", "unit": "mcg" },
+        { "id": "vitaminB12", "name": "Vitamin B12", "quantity": "2.4", "unit": "μg" },
         { "id": "coenzymeQ10", "name": "Koenzym Q10", "quantity": "100", "unit": "mg" },
         { "id": "collagen", "name": "Kollagen", "quantity": "10", "unit": "g" },
         { "id": "glutathione", "name": "Glutation", "quantity": "250", "unit": "mg", "description": "Grundläggande intracellulärt antioxidantstöd, ofta använt när oxidativ belastning eller återhämtningskrav är höga." },
@@ -42,9 +42,9 @@
         { "id": "chlorella", "name": "Chlorella", "quantity": "3", "unit": "g" },
         { "id": "spirulina", "name": "Spirulina", "quantity": "3", "unit": "g" },
         { "id": "aloeVera", "name": "Aloe Vera", "quantity": "50", "unit": "ml" },
-        { "id": "biotin", "name": "Biotin", "quantity": "30", "unit": "mcg" },
+        { "id": "biotin", "name": "Biotin", "quantity": "30", "unit": "μg" },
         { "id": "hyaluronicAcid", "name": "Hyaluronsyra", "quantity": "120", "unit": "mg" },
-        { "id": "kelp", "name": "Kelp (Jod)", "quantity": "150", "unit": "mcg" },
+        { "id": "kelp", "name": "Kelp (Jod)", "quantity": "150", "unit": "μg" },
         { "id": "lArginine", "name": "L-Arginin", "quantity": "5", "unit": "g" },
         { "id": "citrulline", "name": "L-Citrullin", "quantity": "3000", "unit": "mg", "description": "Aminosyra som fungerar som prekursor till arginin och kväveoxid, och som ibland används för att stödja cirkulation och tarmbarriärens motståndskraft." },
         { "id": "lCarnitine", "name": "L-Karnitin", "quantity": "500", "unit": "mg" },
@@ -60,7 +60,7 @@
         { "id": "bacopaMonnieri", "name": "Bacopa Monnieri", "quantity": "300", "unit": "mg" },
         { "id": "cranberryExtract", "name": "Tranbärsextrakt", "quantity": "500", "unit": "mg" },
         { "id": "garlicExtract", "name": "Vitlöksextrakt", "quantity": "600", "unit": "mg" },
-        { "id": "vitaminK2", "name": "Vitamin K2", "quantity": "90", "unit": "mcg", "description": "Stödjer kalciumanvändning och kärlhälsa; kombineras ofta med vitamin D." },
+        { "id": "vitaminK2", "name": "Vitamin K2", "quantity": "90", "unit": "μg", "description": "Stödjer kalciumanvändning och kärlhälsa; kombineras ofta med vitamin D." },
         { "id": "pomegranateExtract", "name": "Granatäppleextrakt", "quantity": "500", "unit": "mg", "description": "Extrakt av granatäpple som är rik på ellagitanniner, vilka kan omvandlas till urolithin A av rätt tarmbakterier." },
         { "id": "urolithinA", "name": "Urolithin A", "quantity": "250", "unit": "mg", "description": "Direkt supplement av urolithin A för de som saknar rätt tarmbakterier och vill stödja mitokondriell hälsa." },
         { "id": "astaxanthin", "name": "Astaxantin", "quantity": "4", "unit": "mg" },
@@ -94,6 +94,8 @@
         { "id": "chaga", "name": "Chaga", "quantity": "500", "unit": "mg", "description": "Antioxidant-rik svamp som traditionellt används för immunstöd och cellskydd." },
         { "id": "cordyceps", "name": "Cordyceps", "quantity": "", "unit": "" },
         { "id": "caffeine", "name": "Caffeine", "quantity": "200", "unit": "mg" },
-        { "id": "beetrootExtract", "name": "Beetroot extract (nitrates)", "quantity": "500", "unit": "mg" }
+        { "id": "beetrootExtract", "name": "Beetroot extract (nitrates)", "quantity": "500", "unit": "mg" },
+        { "id": "selenium", "name": "Selenium", "quantity": "110", "unit": "µg" },
+        { "id": "vitaminB6", "name": "Vitamin B6", "quantity": "50", "unit": "mg" }
       ]   
     }   

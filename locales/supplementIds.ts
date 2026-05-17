@@ -86,4 +86,6 @@ export const supplementIds = {
   reishi: 'reishi',
   lionsMane: 'lionsMane',
   chaga: 'chaga',
+  selenium: 'selenium',
+  vitaminB6: 'vitaminB6',
 };

@@ -7,6 +7,8 @@ import { VitaminType } from '@/constants/vitamins';
 import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
 import { PlanCategory } from '@/types/planCategory';
 
+import { supplementIds } from './supplementIds';
+
 type SupplementReference = {
   id: string;
 };
@@ -69,7 +71,7 @@ export type NutrientTag = FiberType | PolyphenolType | MineralType | VitaminType
 type BaseTarget<TUnit extends string> = {
   amount: number;
   unit: TUnit;
-  supplementIds?: string[]; // Optional explicit mapping when a target should only be fulfilled by specific supplements
+  supplementIds?: (keyof typeof supplementIds)[]; // Optional explicit mapping when a target should only be fulfilled by specific supplements
 };
 
 type WeightedTarget = {
@@ -833,6 +835,7 @@ const rawTips: Tip[] = [
       { id: 'glycine' },
       { id: 'nac' },
       { id: 'greenTeaExtract' },
+      { id: 'selenium' },
     ],
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday'],
@@ -846,15 +849,20 @@ const rawTips: Tip[] = [
       { tag: 'vitamin_b12', amount: 0.0024, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7, supplementIds: ['vitaminB12'] },
     ],
     aminoAcidTargets: [
-      { tag: 'tmg', amount: 2.5, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7, supplementIds: ['tmg'] },
+      { tag: 'tmg', amount: 500, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7, supplementIds: ['tmg'] },
       { tag: 'glycine', amount: 3000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6, supplementIds: ['glycine'] },
+      { tag: 'cysteine', amount: 600, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6, supplementIds: ['nac'] },
+    ],
+    mineralTargets: [
+      { tag: 'selenium', amount: 0.055, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7, supplementIds: ['selenium'] },
     ],
     nutritionFoods: [
       { key: 'beets', nutrientTags: ['tmg', 'vitamin_b9'] },
       { key: 'spinach', nutrientTags: ['tmg', 'vitamin_b6', 'vitamin_b9'] },
-      { key: 'eggs', nutrientTags: ['tmg', 'vitamin_b12', 'glycine'] },
-      { key: 'broccoli', nutrientTags: ['tmg', 'vitamin_b6', 'vitamin_b9'] },
+      { key: 'eggs', nutrientTags: ['tmg', 'vitamin_b12', 'glycine', 'selenium', 'cysteine'] },
+      { key: 'broccoli', nutrientTags: ['tmg', 'vitamin_b6', 'vitamin_b9', 'cysteine'] },
       { key: 'salmon', nutrientTags: ['tmg', 'vitamin_b6', 'vitamin_b12', 'glycine'] },
+      { key: 'brazilNuts', nutrientTags: ['selenium'] },
     ],
     bodyParts: ['bloodVessels', 'heart', 'liver'],
   },

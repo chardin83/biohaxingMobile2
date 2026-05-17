@@ -1,4 +1,5 @@
-import { isVitaminTargetTag, VITAMIN_DISPLAY_UNITS, type VitaminType } from '@/constants/vitamins';
+import { isMineralTargetTag, MINERAL_DISPLAY_UNITS } from '@/constants/minerals';
+import { isVitaminTargetTag, VITAMIN_DISPLAY_UNITS } from '@/constants/vitamins';
 
 export const formatAmount = (value: number): string => {
   if (value === 0) return '0';
@@ -16,8 +17,8 @@ export const formatMilligramAmount = (value: number): string => {
   return value.toFixed(0);
 };
 
-export const formatVitaminValue = (valueMg: number, displayUnit: string): string => {
-  if (displayUnit === 'mcg') {
+export const formatValue = (valueMg: number, displayUnit: string): string => {
+  if (displayUnit === 'μg') {
     const mcgValue = valueMg * 1000;
     if (mcgValue === 0) return `0${displayUnit}`;
     if (mcgValue < 10) return `${mcgValue.toFixed(2)}${displayUnit}`;
@@ -30,8 +31,14 @@ export const formatVitaminValue = (valueMg: number, displayUnit: string): string
 export const formatWithUnit = (value: number, unit: string, tag?: string): string => {
   // Check if this is a vitamin with a custom display unit
   if (tag && isVitaminTargetTag(tag)) {
-    const displayUnit = VITAMIN_DISPLAY_UNITS[tag as VitaminType];
-    return formatVitaminValue(value, displayUnit);
+    const displayUnit = VITAMIN_DISPLAY_UNITS[tag];
+    return formatValue(value, displayUnit);
+  }
+
+  // Check if this is a mineral with a custom display unit
+  if (tag && isMineralTargetTag(tag)) {
+    const displayUnit = MINERAL_DISPLAY_UNITS[tag];
+    return formatValue(value, displayUnit);
   }
 
   const amount = unit === 'mg' ? formatMilligramAmount(value) : formatAmount(value);

@@ -9,6 +9,7 @@ import {
   type NutritionTargetUnit,
 } from '@/types/nutritionTargets';
 import { formatWithUnit } from '@/utils/formatters';
+import { getNutritionTargetMedalEmoji, getNutritionTargetMedalType } from '@/utils/medals';
 
 import { Collapsible } from './Collapsible';
 import { ThemedText } from './ThemedText';
@@ -34,6 +35,7 @@ type TipTargetProps = {
   colors: {
     primary: string;
     textMuted: string;
+    overlayLight: string;
   };
 };
 
@@ -66,13 +68,18 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
   const hasTrackedItems = usesDiscreteUnit && trackedItems.length > 0;
   const targetIconName = getTipTargetIconName(tip.tipId) ?? 'target';
   const valueFormatter = usesDiscreteUnit ? formatTargetProgressValue : formatTargetValue;
+  const translatedTipKey = tip.title?.includes('.') ? 'tips:' + tip.title : null;
   const resolvedTipTitle =
-    tip.title?.includes('.') ? t(`tips:${tip.title}`) : (tip.title ?? tip.tipId);
-  const targetValueText = `${valueFormatter(target.actual, target.unit, target.tag)} / ${valueFormatter(
-    target.amount,
-    target.unit,
-    target.tag
-  )}${target.isMet ? ' 🥇' : ''}`;
+    translatedTipKey ? t(translatedTipKey) : (tip.title ?? tip.tipId);
+  const medalType = getNutritionTargetMedalType({
+    actual: target.actual,
+    targetAmount: target.amount,
+    foodActual: target.foodActual,
+  });
+  const medalEmoji = getNutritionTargetMedalEmoji(medalType);
+  const currentValueText = valueFormatter(target.actual, target.unit, target.tag);
+  const amountValueText = valueFormatter(target.amount, target.unit, target.tag);
+  const targetValueText = `${currentValueText} / ${amountValueText}` + (medalEmoji ? ` ${medalEmoji}` : '');
 
   const dateKey = tip.dateKey ?? new Date().toISOString().split('T')[0];
 
@@ -97,7 +104,7 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
 
   if (hasTrackedItems) {
     return (
-      <View style={styles.planTipTargetCollapsibleRow}>
+      <View style={[styles.planTipTargetContainer, { backgroundColor: colors.overlayLight }]}>
         <Collapsible
           title={target.label}
           titleType="explainer"
@@ -128,36 +135,47 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
   }
 
   return (
-    <TouchableOpacity
-      style={styles.planTipTargetRow}
-      onPress={openTargetDetails}
-      activeOpacity={0.85}
-      accessibilityRole="button"
-      accessibilityLabel={`Open details for ${target.label}`}
-    >
-      <View style={styles.planTipTargetLabelRow}>
-        <IconSymbol name={targetIconName} size={14} color={colors.textMuted} />
-        <ThemedText type="explainer" style={styles.planTipTargetLabel}>
-          {target.label}
-        </ThemedText>
-      </View>
-      <ThemedText
-        type="caption"
-        style={[styles.planTipTargetValue, { color: target.isMet ? colors.primary : colors.textMuted }]}
+    <View style={[styles.planTipTargetContainer, { backgroundColor: colors.overlayLight }]}>
+      <TouchableOpacity
+        style={styles.planTipTargetRow}
+        onPress={openTargetDetails}
+        activeOpacity={0.85}
+        accessibilityRole="button"
+        accessibilityLabel={`Open details for ${target.label}`}
       >
-        {targetValueText}
-      </ThemedText>
-    </TouchableOpacity>
+      
+        <View style={styles.planTipTargetLabelRow}>
+          <IconSymbol name={targetIconName} size={14} color={colors.textMuted} />
+          <ThemedText type="explainer" style={styles.planTipTargetLabel}>
+            {target.label}
+          </ThemedText>
+        </View>
+        <ThemedText
+          type="caption"
+          style={[styles.planTipTargetValue, { color: target.isMet ? colors.primary : colors.textMuted }]}
+        >
+          {targetValueText}
+        </ThemedText>
+          <ThemedText type="explainer" style={[styles.planTipTargetChevron, { color: colors.textMuted }]}>
+          {'›'}
+        </ThemedText>
+      </TouchableOpacity>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  planTipTargetContainer: {
+    borderRadius: 6,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    marginBottom: 4,
+  },
   planTipTargetRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 12,
-    marginBottom: 4,
   },
   planTipTargetLabelRow: {
     flex: 1,
@@ -165,10 +183,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-  planTipTargetCollapsibleRow: {
-    marginBottom: 4,
-    width: '100%',
+  planTipTargetChevron: {
+    marginRight: 4,
+    fontSize: 16,
   },
+
   planTipTargetLabel: {
     flex: 1,
   },

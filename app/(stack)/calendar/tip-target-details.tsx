@@ -27,6 +27,7 @@ import {
 import { useSupplementMap } from '@/locales/supplements';
 import { getTipTargetIconName, type NutrientTag, tips } from '@/locales/tips';
 import { formatWithUnit } from '@/utils/formatters';
+import { getNutritionTargetMedalType } from '@/utils/medals';
 
 const BottomSheetOverlayContainer = ({ children }: { children?: React.ReactNode }) => (
   <FullWindowOverlay>{children}</FullWindowOverlay>
@@ -165,7 +166,7 @@ const calculateDailyIntakeForTarget = (
 
 const scaleFrom100 = (value: number | undefined, grams: number): number => {
   if (typeof value !== 'number') return 0;
-  return Number(((value * grams) / 100).toFixed(2));
+  return Number(((value * grams) / 100).toFixed(3));
 };
 
 const getProfileValueForTag = (
@@ -222,6 +223,7 @@ export default function TipTargetDetailsScreen() {
   const tipId = params.tipId ?? '';
   const tipMeta = tips.find(candidate => candidate.id === tipId);
   const targetTagParam = (Array.isArray(params.targetTag) ? params.targetTag[0] : params.targetTag) ?? '';
+  const selectedFoodImage = isFoodProfileKey(selectedFoodSourceKey) ? FOOD_IMAGES[selectedFoodSourceKey] : undefined;
   const targetSupplementIds = useMemo(
     () => new Set(parseCommaSeparated(params.targetSupplementIds)),
     [params.targetSupplementIds]
@@ -329,17 +331,14 @@ export default function TipTargetDetailsScreen() {
     };
   }, [targetAmount, foodActual, supplementActual]);
 
-  const foodPercentOfGoal = useMemo(() => {
-    if (targetAmount <= 0) return 0;
-    return (foodActual / targetAmount) * 100;
-  }, [foodActual, targetAmount]);
-
   const medalType = useMemo(() => {
-    if (!hasData || targetAmount <= 0 || totalActual < targetAmount) return null;
-    if (foodPercentOfGoal >= 80) return 'gold';
-    if (foodPercentOfGoal >= 50) return 'silver';
-    return 'bronze';
-  }, [hasData, totalActual, targetAmount, foodPercentOfGoal]);
+    if (!hasData) return null;
+    return getNutritionTargetMedalType({
+      actual: totalActual,
+      targetAmount,
+      foodActual,
+    });
+  }, [hasData, totalActual, targetAmount, foodActual]);
 
   const amountUnit = amountUnitParam || '';
 
@@ -672,7 +671,8 @@ export default function TipTargetDetailsScreen() {
                       ? scaleFrom100(nutrientPer100, serving.grams)
                       : undefined,
                   nutrientUnit: amountUnitParam || undefined,
-                  nutrientLabel: targetLabel || targetTagParam || undefined,
+                  nutrientLabel: targetLabel || undefined,
+                  nutrientTag: targetTagParam || undefined,
                 }));
                 return (
                   <View key={key} style={[styles.foodSourceCard, { borderColor: colors.borderLight ?? colors.border }]}> 
@@ -734,6 +734,7 @@ export default function TipTargetDetailsScreen() {
           colors={colors}
           foodName={selectedFoodName}
           foodDetails={selectedFoodDetails}
+          foodImage={selectedFoodImage}
           servingSizes={selectedFoodServings}
           onSelectServing={handleSelectServing}
         />

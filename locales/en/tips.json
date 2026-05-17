@@ -407,10 +407,10 @@
           "details": "Spinach provides folate needed for methylation pathways tied to homocysteine metabolism."
         },
         "eggs": {
-          "details": "Egg yolks contain choline, a key methyl donor supporting liver and methylation function."
+          "details": "Egg yolks contain choline, a key methyl donor supporting liver and methylation function. Eggs also provide vitamin B12, cysteine, and selenium."
         },
         "broccoli": {
-          "details": "Broccoli contributes folate and sulfur compounds that support detoxification and redox balance."
+          "details": "Broccoli contributes folate and sulfur compounds that support detoxification and redox balance. Broccoli also contains magnesium, B6, and cysteine, which are relevant for homocysteine metabolism."
         },
         "chickpeas": {
           "details": "Chickpeas are a practical source of vitamin B6 and folate, both relevant for homocysteine metabolism."
@@ -1086,19 +1086,19 @@
       "title": "Selenium-rich foods",
       "items": {
         "brazilNuts": {
-          "details": "One Brazil nut delivers 60-90 mcg selenium; limit to 1-2 per day."
+          "details": "One Brazil nut delivers 60-90 μg selenium; limit to 1-2 per day."
         },
         "sardines": {
-          "details": "100 g sardines provide about 45 mcg selenium."
+          "details": "100 g sardines provide about 45 μg selenium."
         },
         "eggs": {
-          "details": "Two eggs supply roughly 28 mcg selenium."
+          "details": "Two eggs supply roughly 28 μg selenium."
         },
         "shiitakeMushrooms": {
-          "details": "100 g cooked shiitake mushrooms give around 20 mcg selenium."
+          "details": "100 g cooked shiitake mushrooms give around 20 μg selenium."
         },
         "sunflowerSeeds": {
-          "details": "30 g sunflower seeds add about 18 mcg selenium."
+          "details": "30 g sunflower seeds add about 18 μg selenium."
         }
       }
     }
@@ -1115,16 +1115,16 @@
       "title": "Iodine-rich foods",
       "items": {
         "iodizedSeaSalt": {
-          "details": "Half a teaspoon of iodized sea salt provides close to 150 mcg iodine."
+          "details": "Half a teaspoon of iodized sea salt provides close to 150 μg iodine."
         },
         "fortifiedDairy": {
-          "details": "A 250 ml glass of fortified milk or fortified plant milk can deliver around 40-60 mcg iodine."
+          "details": "A 250 ml glass of fortified milk or fortified plant milk can deliver around 40-60 μg iodine."
         },
         "eggs": {
-          "details": "Two eggs provide roughly 50 mcg iodine."
+          "details": "Two eggs provide roughly 50 μg iodine."
         },
         "cod": {
-          "details": "A 120 g cod fillet offers about 110 mcg iodine."
+          "details": "A 120 g cod fillet offers about 110 μg iodine."
         }
       }
     }

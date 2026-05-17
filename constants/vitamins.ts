@@ -24,7 +24,7 @@ export const VITAMIN_DISPLAY_UNITS: Record<VitaminType, string> = {
   vitamins_total: 'mg',
   vitamin_a: 'mg',
   vitamin_c: 'mg',
-  vitamin_d: 'mcg',
+  vitamin_d: 'μg',
   vitamin_e: 'mg',
   vitamin_k: 'mg',
   vitamin_b1: 'mg',
@@ -33,6 +33,6 @@ export const VITAMIN_DISPLAY_UNITS: Record<VitaminType, string> = {
   vitamin_b5: 'mg',
   vitamin_b6: 'mg',
   vitamin_b7: 'mg',
-  vitamin_b9: 'mcg',
-  vitamin_b12: 'mcg',
+  vitamin_b9: 'μg',
+  vitamin_b12: 'μg',
 };
