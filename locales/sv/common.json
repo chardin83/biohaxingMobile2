@@ -1034,12 +1034,9 @@
     "selectPortion": "Välj portion"
   },
   "tip-target-details": {
-    "addButton": "Lägg till",
     "noData": "Ingen data",
     "medal": {
-      "gold": "🥇 Medalj upplåst",
-      "silver": "🥈 Medalj upplåst",
-      "bronze": "🥉 Medalj upplåst",
+      "unlocked": "Medalj upplåst",
       "none": "Ingen medalj än"
     },
     "breakdown": {

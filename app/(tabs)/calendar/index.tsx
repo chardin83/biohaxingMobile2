@@ -50,9 +50,10 @@ export default function Calendar() {
       background="gradient"
       gradientLocations={colors.gradients?.sunrise?.locations1 as any}
     >
-      <CalendarComponent onDayPress={handleDayPress} ref={calendarRef} />
+      <CalendarComponent onDayPress={handleDayPress} selectedDate={selectedDate ?? undefined} ref={calendarRef} />
       {selectedDate && (
         <DayEdit
+          key={selectedDate}
           selectedDate={selectedDate}
           onTipCompleted={handleTipCompleted}
           initialTab={params.openTab}

@@ -3,6 +3,7 @@ import { useTheme } from '@react-navigation/native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { ImageSourcePropType } from 'react-native';
 import { Image, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { FullWindowOverlay } from 'react-native-screens';
 import Svg, { Circle } from 'react-native-svg';
@@ -27,7 +28,7 @@ import {
 import { useSupplementMap } from '@/locales/supplements';
 import { getTipTargetIconName, type NutrientTag, tips } from '@/locales/tips';
 import { formatWithUnit } from '@/utils/formatters';
-import { getNutritionTargetMedalType } from '@/utils/medals';
+import { getNutritionTargetMedalEmoji, getNutritionTargetMedalType } from '@/utils/medals';
 
 const BottomSheetOverlayContainer = ({ children }: { children?: React.ReactNode }) => (
   <FullWindowOverlay>{children}</FullWindowOverlay>
@@ -223,7 +224,10 @@ export default function TipTargetDetailsScreen() {
   const tipId = params.tipId ?? '';
   const tipMeta = tips.find(candidate => candidate.id === tipId);
   const targetTagParam = (Array.isArray(params.targetTag) ? params.targetTag[0] : params.targetTag) ?? '';
-  const selectedFoodImage = isFoodProfileKey(selectedFoodSourceKey) ? FOOD_IMAGES[selectedFoodSourceKey] : undefined;
+  const selectedFoodImage: ImageSourcePropType | undefined =
+    isFoodProfileKey(selectedFoodSourceKey)
+      ? (FOOD_IMAGES[selectedFoodSourceKey] as ImageSourcePropType | undefined)
+      : undefined;
   const targetSupplementIds = useMemo(
     () => new Set(parseCommaSeparated(params.targetSupplementIds)),
     [params.targetSupplementIds]
@@ -340,6 +344,7 @@ export default function TipTargetDetailsScreen() {
       unit: amountUnitParam as 'g' | 'mg' | 'plants' | 'items' | 'count',
     });
   }, [hasData, totalActual, targetAmount, foodActual, amountUnitParam]);
+  const medalEmoji = getNutritionTargetMedalEmoji(medalType);
 
   const amountUnit = amountUnitParam || '';
 
@@ -459,22 +464,11 @@ export default function TipTargetDetailsScreen() {
                 {targetLabel}
               </ThemedText>
             )}
-            {medalType === 'gold' && (
-              <ThemedText type="default" style={{ color: colors.primary }}>
-                {t('common:tip-target-details.medal.gold')}
+            {medalType ? (
+              <ThemedText type="default" style={{ color: medalType === 'gold' ? colors.primary : colors.textMuted }}>
+                {`${medalEmoji} ${t('common:tip-target-details.medal.unlocked')}`}
               </ThemedText>
-            )}
-            {medalType === 'silver' && (
-              <ThemedText type="default" style={{ color: colors.textMuted }}>
-                {t('common:tip-target-details.medal.silver')}
-              </ThemedText>
-            )}
-            {medalType === 'bronze' && (
-              <ThemedText type="default" style={{ color: colors.textMuted }}>
-                {t('common:tip-target-details.medal.bronze')}
-              </ThemedText>
-            )}
-            {!medalType && (
+            ) : (
               <ThemedText type="default" style={{ color: colors.textMuted }}>
                 {t('common:tip-target-details.medal.none')}
               </ThemedText>
@@ -622,7 +616,7 @@ export default function TipTargetDetailsScreen() {
                     {`• ${supplement.name} (${supplement.quantity} ${supplement.unit})`}
                   </ThemedText>
                   <DiscreetButton
-                    title={t('common:tip-target-details.addButton')}
+                    title={t('general.add')}
                     onPress={() => {
                       router.push({
                         pathname: '/(tabs)/calendar',
@@ -655,8 +649,8 @@ export default function TipTargetDetailsScreen() {
                 const foodProfile = isFoodProfileKey(foodSourceKey)
                   ? FOOD_NUTRIENT_PROFILES[foodSourceKey]
                   : null;
-                const foodImage = isFoodProfileKey(foodSourceKey)
-                  ? FOOD_IMAGES[foodSourceKey]
+                const foodImage: ImageSourcePropType | undefined = isFoodProfileKey(foodSourceKey)
+                  ? (FOOD_IMAGES[foodSourceKey] as ImageSourcePropType | undefined)
                   : undefined;
                 const servingOptions: FoodCatalogServing[] = foodProfile?.defaultServings ?? [];
                 const nutrientPer100 = getProfileValueForTag(foodProfile, targetTagParam);

@@ -842,7 +842,6 @@
     }
   },
   "metricValuesBottomSheet": {
-    "addButton": "Register new value",
     "registeredValuesTitle": "Registered values",
     "confirmDeleteTitle": "Delete metric value?",
     "confirmDeleteMessage": "This action cannot be undone.",
@@ -1025,12 +1024,9 @@
     "selectPortion": "Choose portion"
   },
   "tip-target-details": {
-    "addButton": "Add",
     "noData": "No data",
     "medal": {
-      "gold": "🥇 Medal unlocked",
-      "silver": "🥈 Medal unlocked",
-      "bronze": "🥉 Medal unlocked",
+      "unlocked": "Medal unlocked",
       "none": "No medal yet"
     },
     "breakdown": {

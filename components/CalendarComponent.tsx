@@ -15,6 +15,8 @@ const addDays = (dateString: string, days: number) => {
   return date.toISOString().split('T')[0];
 };
 
+const isAfterDate = (dateString: string, maxDate: string) => dateString > maxDate;
+
 const formatDayLabel = (dateString: string, language: string) => {
   const date = new Date(`${dateString}T12:00:00`);
   return date.toLocaleDateString(language, {
@@ -66,6 +68,7 @@ const configureCalendarLocale = (language: string, t: any) => {
 
 interface CalendarComponentProps {
   onDayPress?: (date: string) => void;
+  selectedDate?: string;
 }
 
 interface CalendarComponentRef {
@@ -73,7 +76,7 @@ interface CalendarComponentRef {
   removeMarkForDate: (date: string) => void;
 }
 
-const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProps>(({ onDayPress }, ref) => {
+const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProps>(({ onDayPress, selectedDate: selectedDateProp }, ref) => {
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
   const { takenDates, setTakenDates } = useStorage();
@@ -104,7 +107,14 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
     setIsLocaleReady(true);
   }, [i18n.language, t, colors.background]);
 
+  useEffect(() => {
+    if (selectedDateProp && selectedDateProp !== selectedDate) {
+      setSelectedDate(selectedDateProp);
+    }
+  }, [selectedDateProp, selectedDate]);
+
   const handleDayPress = (day: { dateString: string }) => {
+    if (isAfterDate(day.dateString, today)) return;
     setSelectedDate(day.dateString);
     setIsExpanded(false);
     onDayPress?.(day.dateString);
@@ -119,10 +129,13 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
 
   const goToNextDay = () => {
     const nextDate = addDays(selectedDate, 1);
+    if (isAfterDate(nextDate, today)) return;
     setSelectedDate(nextDate);
     setIsExpanded(false);
     onDayPress?.(nextDate);
   };
+
+  const canGoToNextDay = !isAfterDate(addDays(selectedDate, 1), today);
 
   if (!isLocaleReady) return null;
 
@@ -223,10 +236,16 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
             <TouchableOpacity
               onPress={goToNextDay}
               style={styles.dayNavButton}
+              disabled={!canGoToNextDay}
               accessibilityRole="button"
               accessibilityLabel="Next day"
+              accessibilityState={{ disabled: !canGoToNextDay }}
             >
-              <IconSymbol name="chevron.right" size={20} color={colors.primary} />
+              <IconSymbol
+                name="chevron.right"
+                size={20}
+                color={canGoToNextDay ? colors.primary : colors.textMuted}
+              />
             </TouchableOpacity>
           </View>
         )}
@@ -241,6 +260,8 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
           markedDates={dynamicMarkedDates}
           theme={calendarTheme}
           style={styles.calendar}
+          maxDate={today}
+          disableAllTouchEventsForDisabledDays
           enableSwipeMonths
         />
       ) : null}
