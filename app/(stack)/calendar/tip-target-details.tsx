@@ -337,8 +337,9 @@ export default function TipTargetDetailsScreen() {
       actual: totalActual,
       targetAmount,
       foodActual,
+      unit: amountUnitParam as 'g' | 'mg' | 'plants' | 'items' | 'count',
     });
-  }, [hasData, totalActual, targetAmount, foodActual]);
+  }, [hasData, totalActual, targetAmount, foodActual, amountUnitParam]);
 
   const amountUnit = amountUnitParam || '';
 

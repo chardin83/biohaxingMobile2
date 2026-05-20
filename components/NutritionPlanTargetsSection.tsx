@@ -323,10 +323,34 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
               </View>
             </View>
             <View style={styles.seeProgressButton}>
-              <DiscreetButton
+              <TouchableOpacity
                 onPress={() => router.push('/(stack)/calendar/progress' as any)}
-                title={t('nutritionLogger.seeProgress') + ' →'}
-              />
+                activeOpacity={0.85}
+                style={[
+                  styles.seeProgressCta,
+                  {
+                    backgroundColor: colors.secondaryBackground,
+                    borderColor: colors.border,
+                  },
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={t('nutritionLogger.seeProgress')}
+              >
+                <View style={styles.seeProgressCtaContent}>
+                  <View
+                    style={[
+                      styles.seeProgressIconWrap,
+                      { backgroundColor: colors.accentVeryWeak },
+                    ]}
+                  >
+                    <Icon source="chart-line" size={20} color={colors.primary} />
+                  </View>
+                  <ThemedText type="title3" style={styles.seeProgressCtaText}>
+                    {t('nutritionLogger.seeProgress')}
+                  </ThemedText>
+                </View>
+                <Icon source="chevron-right" size={22} color={colors.accentColor} />
+              </TouchableOpacity>
             </View>
           </>
         )}
@@ -428,9 +452,34 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   seeProgressButton: {
-    alignItems: 'center',
     marginTop: 4,
     marginBottom: 8,
+  },
+  seeProgressCta: {
+    width: '100%',
+    minHeight: 56,
+    borderWidth: 1,
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  seeProgressCtaContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    flex: 1,
+  },
+  seeProgressIconWrap: {
+    width: 34,
+    height: 34,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  seeProgressCtaText: {
+    flexShrink: 1,
   },
 });
 

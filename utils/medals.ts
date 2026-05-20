@@ -1,17 +1,23 @@
+import { type NutritionTargetUnit } from '@/types/nutritionTargets';
+
 export type NutritionMedalType = 'gold' | 'silver' | 'bronze';
 
 type NutritionMedalInput = {
   actual: number;
   targetAmount: number;
   foodActual?: number;
+  unit?: NutritionTargetUnit;
 };
 
 export const getNutritionTargetMedalType = ({
   actual,
   targetAmount,
   foodActual = 0,
+  unit,
 }: NutritionMedalInput): NutritionMedalType | null => {
   if (targetAmount <= 0 || actual < targetAmount) return null;
+
+  if (unit && unit !== 'g' && unit !== 'mg') return 'gold';
 
   const foodPercentOfGoal = (foodActual / targetAmount) * 100;
 

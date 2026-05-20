@@ -75,6 +75,7 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
     actual: target.actual,
     targetAmount: target.amount,
     foodActual: target.foodActual,
+    unit: target.unit,
   });
   const medalEmoji = getNutritionTargetMedalEmoji(medalType);
   const currentValueText = valueFormatter(target.actual, target.unit, target.tag);
