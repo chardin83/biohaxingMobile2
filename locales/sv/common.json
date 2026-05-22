@@ -1036,8 +1036,29 @@
   "tip-target-details": {
     "noData": "Ingen data",
     "medal": {
-      "unlocked": "Medalj upplåst",
-      "none": "Ingen medalj än"
+      "goldLabel": "Guldmedalj",
+      "silverLabel": "Silvermedalj",
+      "bronzeLabel": "Bronsmedalj",
+      "none": "Ingen medalj än",
+      "infoButton": "Visa hur medaljer fungerar",
+      "infoTitle": "Hur medaljer fungerar",
+      "infoIntro": "För gram- och milligrammål måste målet först vara uppnått. Därefter avgör hur stor andel som kommer från mat vilken medalj du får.",
+      "goldRule": {
+        "title": "🥇 Guld",
+        "body": "Målet är nått och minst 80% av intaget kommer från mat."
+      },
+      "silverRule": {
+        "title": "🥈 Silver",
+        "body": "Målet är nått och minst 50% av intaget kommer från mat."
+      },
+      "bronzeRule": {
+        "title": "🥉 Brons",
+        "body": "Målet är nått, men mindre än 50% av intaget kommer från mat."
+      },
+      "discreteRule": {
+        "title": "Items, count och plants",
+        "body": "För mål som inte använder g eller mg blir medaljen alltid guld när målet är uppnått."
+      }
     },
     "breakdown": {
       "viaFood": "{{percent}}% via mat",
@@ -1056,9 +1077,13 @@
       "noDataForDay": "Ingen data för denna dag",
       "goal": "Mål"
     },
+    "meals": {
+      "title": "Bidragande måltider",
+      "noneContributed": "Inga måltider bidrog till detta mål denna dag."
+    },
     "supplements": {
-      "title": "Supplements",
-      "noneListed": "Inga supplements listade för detta tips."
+      "title": "Kosttillskott",
+      "noneListed": "Inga kosttillskott listade för detta tips."
     },
     "foodSources": {
       "title": "Lägg till mat",

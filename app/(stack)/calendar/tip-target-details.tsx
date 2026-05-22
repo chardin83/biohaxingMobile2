@@ -1,4 +1,4 @@
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo, useRef, useState } from 'react';
@@ -124,46 +124,98 @@ const calculateDailyIntakeForTarget = (
   mealsSummary: any,
   supplementsForDay: any[]
 ): { foodAmount: number; supplementAmount: number } => {
-  let foodAmount = 0;
-  let supplementAmount = 0;
-
-  if (targetUnit === 'mg' || targetUnit === 'g') {
-    const meals = Array.isArray(mealsSummary?.meals) ? mealsSummary.meals : [];
-    const isMineralKey = targetTag.includes('mineral') || /magnesium|calcium|iron|zinc|copper|manganese|molybdenum|chromium|phosphorus|iodine|selenium/.test(targetTag.toLowerCase());
-    const isVitaminKey = targetTag.includes('vitamin') || /vitamina|vitaminb|vitaminc|vitamind|vitamine|vitamink/.test(targetTag.toLowerCase());
-    const isAminoAcidKey = isAminoAcidTargetTag(targetTag);
-
-    meals.forEach((meal: any) => {
-      if (isMineralKey && meal?.mineralsByType?.[targetTag]) {
-        foodAmount += Number(meal.mineralsByType[targetTag]) || 0;
-      } else if (isVitaminKey && meal?.vitaminsByType?.[targetTag]) {
-        foodAmount += Number(meal.vitaminsByType[targetTag]) || 0;
-      } else if (isAminoAcidKey && meal?.aminoAcidsByType?.[targetTag]) {
-        foodAmount += Number(meal.aminoAcidsByType[targetTag]) || 0;
-      } else if (meal?.fiberByType?.[targetTag]) {
-        foodAmount += Number(meal.fiberByType[targetTag]) || 0;
-      }
-    });
-
-    supplementsForDay.forEach((supp: any) => {
-      const suppQuantity = Number(supp.quantity) || 0;
-      const suppUnit = (supp.unit || '').toLowerCase();
-      if (!suppQuantity) return;
-
-      if (targetUnit === 'mg') {
-        if (suppUnit === 'mg') supplementAmount += suppQuantity;
-        else if (suppUnit === 'g') supplementAmount += suppQuantity * 1000;
-        else if (suppUnit === 'mcg' || suppUnit === 'μg' || suppUnit === 'ug') supplementAmount += suppQuantity / 1000;
-      } else if (targetUnit === 'g') {
-        if (suppUnit === 'g') supplementAmount += suppQuantity;
-        else if (suppUnit === 'mg') supplementAmount += suppQuantity / 1000;
-        else if (suppUnit === 'mcg' || suppUnit === 'μg' || suppUnit === 'ug') supplementAmount += suppQuantity / 1_000_000;
-      }
-    });
+  if (targetUnit !== 'mg' && targetUnit !== 'g') {
+    return { foodAmount: 0, supplementAmount: 0 };
   }
+
+  const meals = Array.isArray(mealsSummary?.meals) ? mealsSummary.meals : [];
+  const foodAmount = meals.reduce(
+    (sum: number, meal: any) => sum + getMealContributionForTarget(meal, targetTag, targetUnit),
+    0
+  );
+  const supplementAmount = supplementsForDay.reduce(
+    (sum: number, supp: any) =>
+      sum + getSupplementContributionForTargetUnit(Number(supp.quantity) || 0, (supp.unit || '').toLowerCase(), targetUnit),
+    0
+  );
 
   return { foodAmount: Math.max(0, foodAmount), supplementAmount: Math.max(0, supplementAmount) };
 };
+
+const getSupplementContributionForTargetUnit = (
+  quantity: number,
+  unit: string,
+  targetUnit: string
+): number => {
+  if (!quantity) return 0;
+
+  if (targetUnit === 'mg') {
+    if (unit === 'mg') return quantity;
+    if (unit === 'g') return quantity * 1000;
+    if (unit === 'mcg' || unit === 'μg' || unit === 'ug') return quantity / 1000;
+    return 0;
+  }
+
+  if (targetUnit === 'g') {
+    if (unit === 'g') return quantity;
+    if (unit === 'mg') return quantity / 1000;
+    if (unit === 'mcg' || unit === 'μg' || unit === 'ug') return quantity / 1_000_000;
+  }
+
+  return 0;
+};
+
+const getMealContributionForTarget = (
+  meal: any,
+  targetTag: string,
+  targetUnit: string
+): number => {
+  if (targetUnit !== 'mg' && targetUnit !== 'g') return 0;
+
+  const isMineralKey =
+    targetTag.includes('mineral') ||
+    /magnesium|calcium|iron|zinc|copper|manganese|molybdenum|chromium|phosphorus|iodine|selenium/.test(
+      targetTag.toLowerCase()
+    );
+  const isVitaminKey =
+    targetTag.includes('vitamin') ||
+    /vitamina|vitaminb|vitaminc|vitamind|vitamine|vitamink/.test(targetTag.toLowerCase());
+  const isAminoAcidKey = isAminoAcidTargetTag(targetTag);
+
+  if (isMineralKey && meal?.mineralsByType?.[targetTag]) {
+    return Number(meal.mineralsByType[targetTag]) || 0;
+  }
+  if (isVitaminKey && meal?.vitaminsByType?.[targetTag]) {
+    return Number(meal.vitaminsByType[targetTag]) || 0;
+  }
+  if (isAminoAcidKey && meal?.aminoAcidsByType?.[targetTag]) {
+    return Number(meal.aminoAcidsByType[targetTag]) || 0;
+  }
+  if (meal?.fiberByType?.[targetTag]) {
+    return Number(meal.fiberByType[targetTag]) || 0;
+  }
+
+  return 0;
+};
+
+const getContributingMealsForTarget = (
+  meals: any[],
+  selectedDateKey: string,
+  targetTag: string,
+  targetUnit: string,
+  t: (key: string) => string
+) =>
+  meals
+    .map((meal: any, index: number) => ({
+      id: typeof meal?.id === 'string' ? meal.id : `${selectedDateKey}-meal-${index}`,
+      name:
+        typeof meal?.mealName === 'string' && meal.mealName.trim().length > 0
+          ? meal.mealName
+          : t('nutritionLogger.unnamedMeal'),
+      amount: getMealContributionForTarget(meal, targetTag, targetUnit),
+    }))
+    .filter(meal => meal.amount > 0)
+    .sort((left, right) => right.amount - left.amount);
 
 const scaleFrom100 = (value: number | undefined, grams: number): number => {
   if (typeof value !== 'number') return 0;
@@ -196,12 +248,60 @@ const scaleMapFrom100 = <K extends string>(
 const isFoodProfileKey = (key: string): key is keyof typeof FOOD_NUTRIENT_PROFILES =>
   key in FOOD_NUTRIENT_PROFILES;
 
+const ContributingMealsSection = ({
+  colors,
+  t,
+  contributingMeals,
+  amountUnit,
+  targetTagParam,
+}: {
+  colors: any;
+  t: (key: string) => string;
+  contributingMeals: Array<{ id: string; name: string; amount: number }>;
+  amountUnit: string;
+  targetTagParam: string;
+}) => {
+  if (contributingMeals.length === 0) {
+    return (
+      <View style={[styles.mealsSection, { borderColor: colors.borderLight ?? colors.border }]}> 
+        <ThemedText type="title3" style={styles.supplementHeading}>
+          {t('common:tip-target-details.meals.title')}
+        </ThemedText>
+        <ThemedText type="caption" style={{ color: colors.textMuted }}>
+          {t('common:tip-target-details.meals.noneContributed')}
+        </ThemedText>
+      </View>
+    );
+  }
+
+  return (
+    <View style={[styles.mealsSection, { borderColor: colors.borderLight ?? colors.border }]}> 
+      <ThemedText type="title3" style={styles.supplementHeading}>
+        {t('common:tip-target-details.meals.title')}
+      </ThemedText>
+      <View style={styles.mealsList}>
+        {contributingMeals.map(meal => (
+          <View key={meal.id} style={styles.detailRow}>
+            <ThemedText type="default" style={styles.supplementText}>
+              {meal.name}
+            </ThemedText>
+            <ThemedText type="defaultSemiBold">
+              {formatWithUnit(meal.amount, amountUnit, targetTagParam)}
+            </ThemedText>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+};
+
 export default function TipTargetDetailsScreen() {
   const router = useRouter();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const supplementMap = useSupplementMap();
   const foodPortionBottomSheetRef = useRef<BottomSheetModal>(null);
+  const medalInfoBottomSheetRef = useRef<BottomSheetModal | null>(null);
   const [selectedFoodName, setSelectedFoodName] = useState<string>('');
   const [selectedFoodDetails, setSelectedFoodDetails] = useState<string>('');
   const [selectedFoodSourceKey, setSelectedFoodSourceKey] = useState<string>('');
@@ -292,6 +392,13 @@ export default function TipTargetDetailsScreen() {
   const foodActual = foodAmount;
   const supplementActual = supplementAmount;
   const totalActual = foodActual + supplementActual;
+  const contributingMeals = useMemo(() => {
+    const meals = Array.isArray(dailyNutritionSummaries[selectedDateKey]?.meals)
+      ? dailyNutritionSummaries[selectedDateKey].meals
+      : [];
+
+    return getContributingMealsForTarget(meals, selectedDateKey, targetTagParam, amountUnitParam, t);
+  }, [dailyNutritionSummaries, selectedDateKey, t, targetTagParam, amountUnitParam]);
 
   const hasData = foodActual + supplementActual > 0;
 
@@ -345,6 +452,17 @@ export default function TipTargetDetailsScreen() {
     });
   }, [hasData, totalActual, targetAmount, foodActual, amountUnitParam]);
   const medalEmoji = getNutritionTargetMedalEmoji(medalType);
+  const medalInfoSnapPoints = useMemo(() => ['42%', '62%'], []);
+  const medalLabelKey = medalType
+    ? {
+        gold: 'common:tip-target-details.medal.goldLabel',
+        silver: 'common:tip-target-details.medal.silverLabel',
+        bronze: 'common:tip-target-details.medal.bronzeLabel',
+      }[medalType]
+    : null;
+  const medalAccessibilityLabel = medalLabelKey
+    ? `${t(medalLabelKey)}. ${t('common:tip-target-details.medal.infoButton')}`
+    : `${t('common:tip-target-details.medal.none')}. ${t('common:tip-target-details.medal.infoButton')}`;
 
   const amountUnit = amountUnitParam || '';
 
@@ -448,6 +566,10 @@ export default function TipTargetDetailsScreen() {
     ]
   );
 
+  const handleOpenMedalInfo = React.useCallback(() => {
+    medalInfoBottomSheetRef.current?.present();
+  }, []);
+
   return (
     <Container background="default" showBackButton onBackPress={() => router.back()}>
       <View style={styles.content}>
@@ -464,15 +586,28 @@ export default function TipTargetDetailsScreen() {
                 {targetLabel}
               </ThemedText>
             )}
-            {medalType ? (
-              <ThemedText type="default" style={{ color: medalType === 'gold' ? colors.primary : colors.textMuted }}>
-                {`${medalEmoji} ${t('common:tip-target-details.medal.unlocked')}`}
-              </ThemedText>
-            ) : (
-              <ThemedText type="default" style={{ color: colors.textMuted }}>
-                {t('common:tip-target-details.medal.none')}
-              </ThemedText>
-            )}
+            <TouchableOpacity
+              onPress={handleOpenMedalInfo}
+              activeOpacity={0.8}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              accessibilityRole="button"
+              accessibilityLabel={medalAccessibilityLabel}
+              style={[
+                styles.medalButton,
+                { backgroundColor: colors.secondaryBackground, borderColor: colors.borderLight ?? colors.border },
+              ]}
+            >
+              {medalType ? (
+                <ThemedText type="default" style={{ color: medalType === 'gold' ? colors.primary : colors.textMuted }}>
+                  {medalEmoji}
+                </ThemedText>
+              ) : (
+                <ThemedText type="default" style={{ color: colors.textMuted }}>
+                  {t('common:tip-target-details.medal.none')}
+                </ThemedText> 
+              )}
+              <IconSymbol name="chevron.right" size={14} color={colors.textMuted} />
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -604,6 +739,14 @@ export default function TipTargetDetailsScreen() {
           </View>
         </View>
 
+        <ContributingMealsSection
+          colors={colors}
+          t={t}
+          contributingMeals={contributingMeals}
+          amountUnit={amountUnit}
+          targetTagParam={targetTagParam}
+        />
+
         <View style={[styles.supplementSection, { borderColor: colors.borderLight ?? colors.border }]}> 
           <ThemedText type="title3" style={styles.supplementHeading}>
             {t('common:tip-target-details.supplements.title')}
@@ -612,9 +755,12 @@ export default function TipTargetDetailsScreen() {
             <View style={styles.supplementList}>
               {listedSupplements.map(supplement => (
                 <View key={supplement.id} style={styles.supplementRow}>
-                  <ThemedText type="default" style={[styles.supplementText, { color: colors.text }]}> 
-                    {`• ${supplement.name} (${supplement.quantity} ${supplement.unit})`}
-                  </ThemedText>
+                  <View style={styles.supplementInfoRow}>
+                    <IconSymbol name="pill" size={16} color={colors.textLight} />
+                    <ThemedText type="default" style={[styles.supplementText]}> 
+                      {`${supplement.name} (${supplement.quantity} ${supplement.unit})`}
+                    </ThemedText>
+                  </View>
                   <DiscreetButton
                     title={t('general.add')}
                     onPress={() => {
@@ -733,6 +879,65 @@ export default function TipTargetDetailsScreen() {
           servingSizes={selectedFoodServings}
           onSelectServing={handleSelectServing}
         />
+
+        <BottomSheetModal
+          ref={medalInfoBottomSheetRef}
+          snapPoints={medalInfoSnapPoints}
+          enablePanDownToClose
+          animateOnMount
+          containerComponent={BottomSheetOverlayContainer}
+          backgroundStyle={{ backgroundColor: colors.background }}
+          handleIndicatorStyle={{ backgroundColor: colors.textMuted }}
+        >
+          <BottomSheetScrollView
+            style={styles.medalInfoScroll}
+            contentContainerStyle={styles.medalInfoContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            <ThemedText type="title3">
+              {t('common:tip-target-details.medal.infoTitle')}
+            </ThemedText>
+            <ThemedText type="caption" style={{ color: colors.textMuted }}>
+              {t('common:tip-target-details.medal.infoIntro')}
+            </ThemedText>
+
+            <View style={styles.medalInfoList}>
+              <View style={styles.medalInfoRow}>
+                <ThemedText type="defaultSemiBold">{t('common:tip-target-details.medal.goldRule.title')}</ThemedText>
+                <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                  {t('common:tip-target-details.medal.goldRule.body')}
+                </ThemedText>
+              </View>
+              <View style={styles.medalInfoRow}>
+                <ThemedText type="defaultSemiBold">{t('common:tip-target-details.medal.silverRule.title')}</ThemedText>
+                <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                  {t('common:tip-target-details.medal.silverRule.body')}
+                </ThemedText>
+              </View>
+              <View style={styles.medalInfoRow}>
+                <ThemedText type="defaultSemiBold">{t('common:tip-target-details.medal.bronzeRule.title')}</ThemedText>
+                <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                  {t('common:tip-target-details.medal.bronzeRule.body')}
+                </ThemedText>
+              </View>
+            </View>
+
+            <View
+              style={[
+                styles.medalInfoNote,
+                { backgroundColor: colors.accentVeryWeak ?? colors.cardBackground },
+              ]}
+            >
+              <ThemedText type="defaultSemiBold">
+                {t('common:tip-target-details.medal.discreteRule.title')}
+              </ThemedText>
+              <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                {t('common:tip-target-details.medal.discreteRule.body')}
+              </ThemedText>
+            </View>
+          </BottomSheetScrollView>
+        </BottomSheetModal>
       </View>
     </Container>
   );
@@ -757,6 +962,19 @@ const styles = StyleSheet.create({
   topTextBlock: {
     flex: 1,
     gap: 2,
+  },
+  medalButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 6,
+    alignSelf: 'flex-start',
+    minHeight: 36,
+    minWidth: 150,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderRadius: 999,
   },
   titleText: {
     marginBottom: 0,
@@ -785,6 +1003,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   supplementSection: {
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 12,
+    gap: 12,
+  },
+  mealsSection: {
     borderWidth: 1,
     borderRadius: 12,
     padding: 12,
@@ -829,6 +1053,9 @@ const styles = StyleSheet.create({
   supplementList: {
     gap: 6,
   },
+  mealsList: {
+    gap: 8,
+  },
   supplementRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -837,6 +1064,12 @@ const styles = StyleSheet.create({
   },
   supplementText: {
     flex: 1,
+  },
+  supplementInfoRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   foodSourceScrollContent: {
     gap: 10,
@@ -865,5 +1098,24 @@ const styles = StyleSheet.create({
   foodSourceImage: {
     width: 80,
     height: 80,
+  },
+  medalInfoScroll: {
+    flex: 1,
+  },
+  medalInfoContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 28,
+    gap: 14,
+  },
+  medalInfoList: {
+    gap: 12,
+  },
+  medalInfoRow: {
+    gap: 4,
+  },
+  medalInfoNote: {
+    borderRadius: 12,
+    padding: 12,
+    gap: 4,
   },
 });

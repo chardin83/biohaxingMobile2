@@ -107,6 +107,10 @@ export const ICON_SYMBOLS = {
     sf: 'sun.max.fill',
     material: 'wb-sunny',
   },
+  'pill': {
+    sf: 'pills.fill',
+    material: 'medication',
+  },
   'microbiome': {
     sf: 'circle.grid.cross',
     material: 'bubble-chart',

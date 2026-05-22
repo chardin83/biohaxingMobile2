@@ -1026,8 +1026,29 @@
   "tip-target-details": {
     "noData": "No data",
     "medal": {
-      "unlocked": "Medal unlocked",
-      "none": "No medal yet"
+      "goldLabel": "Gold medal",
+      "silverLabel": "Silver medal",
+      "bronzeLabel": "Bronze medal",
+      "none": "No medal yet",
+      "infoButton": "Show how medals work",
+      "infoTitle": "How medals work",
+      "infoIntro": "For gram and milligram targets, the goal must first be reached. After that, the share coming from food determines which medal you get.",
+      "goldRule": {
+        "title": "🥇 Gold",
+        "body": "The goal is met and at least 80% of the intake comes from food."
+      },
+      "silverRule": {
+        "title": "🥈 Silver",
+        "body": "The goal is met and at least 50% of the intake comes from food."
+      },
+      "bronzeRule": {
+        "title": "🥉 Bronze",
+        "body": "The goal is met, but less than 50% of the intake comes from food."
+      },
+      "discreteRule": {
+        "title": "Items, count and plants",
+        "body": "For targets that do not use g or mg, the medal is always gold once the goal is met."
+      }
     },
     "breakdown": {
       "viaFood": "{{percent}}% via food",
@@ -1045,6 +1066,10 @@
       "fromSupplements": "From supplements:",
       "noDataForDay": "No data for this day",
       "goal": "Goal"
+    },
+    "meals": {
+      "title": "Contributing meals",
+      "noneContributed": "No meals contributed to this target on this day."
     },
     "supplements": {
       "title": "Supplements",
