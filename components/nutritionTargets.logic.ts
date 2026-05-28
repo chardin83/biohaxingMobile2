@@ -1,5 +1,6 @@
 import { TFunction } from 'i18next';
 
+import { PlanTipEntry } from '@/app/context/StorageContext';
 import { type SupplementTime } from '@/app/domain/SupplementTime';
 import { tips } from '@/locales/tips';
 import {
@@ -30,10 +31,6 @@ type PlanTarget = {
   unit: NutritionTargetUnit;
   amount: number;
   supplementIds?: string[];
-};
-
-type PlanTip = {
-  tipId: string;
 };
 
 export type NutritionPlanProgressContext = {
@@ -313,7 +310,7 @@ const buildTipTargetProgress = (
 };
 
 const buildTipProgressFromPlanTip = (
-  planTip: PlanTip,
+  planTip: PlanTipEntry,
   context: NutritionPlanProgressContext
 ): TipProgressItem[] => {
   const tip = tips.find(candidate => candidate.id === planTip.tipId);
@@ -333,6 +330,7 @@ const buildTipProgressFromPlanTip = (
       title: tip.title,
       areaId: tip.areas[0]?.id,
       dateKey: context.selectedDateKey,
+      startedAt: planTip.startedAt,
       period: tipPeriod,
       targets,
       metCount,

@@ -19,15 +19,9 @@ import { isPolyphenolTargetTag } from '@/constants/polyphenols';
 import { isVitaminTargetTag } from '@/constants/vitamins';
 import { getTipTargetIconName, tips } from '@/locales/tips';
 import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
+import { formatMonthDay, formatMonthDayRange, fromDateKey, toDateKey } from '@/utils/dateUtils';
 
 // ── Date helpers ───────────────────────────────────────────────────────────────
-
-const toDateKey = (d: Date): string => {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-};
 
 const getWeekStartMonday = (d: Date): Date => {
   const result = new Date(d);
@@ -41,20 +35,6 @@ const addDays = (d: Date, n: number): Date => {
   const result = new Date(d);
   result.setDate(result.getDate() + n);
   return result;
-};
-
-const fromDateKey = (dateKey: string): Date => {
-  const [y, m, d] = dateKey.split('-').map(Number);
-  return new Date(y, (m ?? 1) - 1, d ?? 1);
-};
-
-const formatMonthDayRange = (start: Date, end: Date, language: string): string => {
-  return `${formatMonthDay(start, language)}\u2013${formatMonthDay(end, language)}`;
-};
-
-const formatMonthDay = (date: Date, language: string): string => {
-  const formatted = new Intl.DateTimeFormat(language, { day: 'numeric', month: 'short' }).format(date);
-  return formatted.replaceAll('.', '');
 };
 
 const getCurrentWeek = (): string[] => {

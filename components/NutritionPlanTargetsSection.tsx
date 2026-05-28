@@ -11,6 +11,7 @@ import {
   type NutritionTargetPeriod,
   type NutritionTargetUnit,
 } from '@/types/nutritionTargets';
+import { formatMonthDay, toDateKey } from '@/utils/dateUtils';
 
 import { ThemedText } from './ThemedText';
 import AppButton from './ui/AppButton';
@@ -27,6 +28,7 @@ export type TipProgressItem = {
   title: string;
   areaId?: string;
   dateKey?: string;
+  startedAt?: string;
   period: TipTargetPeriod;
   targets: Array<{
     tag: string;
@@ -49,8 +51,6 @@ export type TipProgressItem = {
 
 type CurrentRef<T> = { current: T };
 type ThemeColors = ReturnType<typeof useTheme>['colors'];
-
-// ── Module-level helpers ───────────────────────────────────────────────────────
 
 export const getTipProgressKey = (tip: TipProgressItem): string =>
   `${tip.tipId}|${tip.period}`;
@@ -76,6 +76,7 @@ type TipProgressRowProps = {
   tipRowPeriodByKeyRef: CurrentRef<Record<string, TipTargetPeriod>>;
   colors: ThemeColors;
   t: ReturnType<typeof useTranslation>['t'];
+  language: string;
   router: ReturnType<typeof useRouter>;
 };
 
@@ -86,10 +87,19 @@ const TipProgressRow: React.FC<TipProgressRowProps> = ({
   tipRowPeriodByKeyRef,
   colors,
   t,
+  language,
   router,
 }) => {
   const tipKey = getTipProgressKey(tip);
   const completionAnim = getCompletionAnimValue(tipKey);
+  const dateKey = tip.dateKey ?? toDateKey(new Date());
+  const startDateKey = tip.startedAt ? toDateKey(new Date(tip.startedAt)) : '';
+  const isNotActiveYet = Boolean(startDateKey) && dateKey < startDateKey;
+  const inactiveText = isNotActiveYet
+    ? t('common:progress.notActiveStarts', {
+        date: formatMonthDay(new Date(tip.startedAt!), language),
+      })
+    : null;
 
   return (
     <View
@@ -176,14 +186,20 @@ const TipProgressRow: React.FC<TipProgressRowProps> = ({
             />
           </View>
 
-          {tip.targets.map(target => (
-            <TipTarget
-              key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`}
-              tip={tip}
-              target={target}
-              colors={colors}
-            />
-          ))}
+          {isNotActiveYet ? (
+            <ThemedText type="explainer" style={[styles.notActiveText, { color: colors.textMuted }]}>
+              {inactiveText}
+            </ThemedText>
+          ) : (
+            tip.targets.map(target => (
+              <TipTarget
+                key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`}
+                tip={tip}
+                target={target}
+                colors={colors}
+              />
+            ))
+          )}
         </View>
       </Animated.View>
     </View>
@@ -200,7 +216,7 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
   tipRowLocalYByKeyRef,
   tipRowPeriodByKeyRef,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { colors } = useTheme();
   const router = useRouter();
 
@@ -215,6 +231,7 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
           tipRowPeriodByKeyRef={tipRowPeriodByKeyRef}
           colors={colors}
           t={t}
+          language={i18n.language}
           router={router}
         />
       );
@@ -430,6 +447,10 @@ const styles = StyleSheet.create({
   },
   noFulfilledTipsText: {
     marginTop: 8,
+  },
+  notActiveText: {
+    marginTop: 2,
+    marginBottom: 2,
   },
   emptyTargetsContainer: {
     paddingVertical: 32,

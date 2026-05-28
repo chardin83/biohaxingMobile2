@@ -157,7 +157,7 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
         >
           {targetValueText}
         </ThemedText>
-          <ThemedText type="explainer" style={[styles.planTipTargetChevron, { color: colors.textMuted }]}>
+        <ThemedText type="explainer" style={[styles.planTipTargetChevron, { color: colors.textMuted }]}>
           {'›'}
         </ThemedText>
       </TouchableOpacity>
