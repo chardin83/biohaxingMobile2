@@ -64,6 +64,7 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
   const router = useRouter();
   const { t } = useTranslation();
   const usesDiscreteUnit = target.unit === 'items' || target.unit === 'count';
+  const showsDetailsChevron = target.period === 'weekly';
   const trackedItems = target.trackedItems ?? [];
   const hasTrackedItems = usesDiscreteUnit && trackedItems.length > 0;
   const targetIconName = getTipTargetIconName(tip.tipId) ?? 'target';
@@ -92,6 +93,7 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
         tipTitle: resolvedTipTitle,
         targetLabel: target.label,
         targetTag: target.tag,
+        targetPeriod: target.period,
         hasMedal: target.isMet ? '1' : '0',
         foodActual: String(target.foodActual ?? target.actual),
         supplementActual: String(target.supplementActual ?? 0),
@@ -117,13 +119,24 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
               activeOpacity={0.8}
               accessibilityRole="button"
               accessibilityLabel={`Open details for ${target.label}`}
+              style={styles.planTipTargetDetailsButton}
             >
-              <ThemedText
-                type="explainer"
-                style={[styles.planTipTargetValue, styles.planTipTargetCollapsibleValue]}
-              >
-                {targetValueText}
-              </ThemedText>
+              <View style={styles.planTipTargetDetailsContent}>
+                <ThemedText
+                  type="explainer"
+                  style={[styles.planTipTargetValue, styles.planTipTargetCollapsibleValue]}
+                >
+                  {targetValueText}
+                </ThemedText>
+                {showsDetailsChevron ? (
+                  <ThemedText
+                    type="explainer"
+                    style={[styles.planTipTargetChevron, { color: colors.textMuted }]}
+                  >
+                    {'›'}
+                  </ThemedText>
+                ) : null}
+              </View>
             </TouchableOpacity>
           }
         >
@@ -195,8 +208,16 @@ const styles = StyleSheet.create({
   planTipTargetValue: {
     textAlign: 'right',
   },
-  planTipTargetCollapsibleValue: {
+  planTipTargetDetailsButton: {
     marginLeft: 'auto',
+  },
+  planTipTargetDetailsContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  planTipTargetCollapsibleValue: {
+    textAlign: 'right',
   },
   planTipTargetItemsList: {
     marginTop: 4,

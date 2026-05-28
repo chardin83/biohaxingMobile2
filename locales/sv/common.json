@@ -11,6 +11,14 @@
     "saveAll": "Spara alla",
     "delete": "Ta bort",
     "countSuffix": "st",
+    "targetUnits": {
+      "mg": "mg",
+      "g": "g",
+      "μg": "μg",
+      "items": "st",
+      "count": "st",
+      "plants": "växter"
+    },
     "level": "level",
     "showAll": "Visa alla",
     "showLess": "Visa mindre",
@@ -1067,7 +1075,9 @@
     "date": {
       "title": "Datum",
       "previousDay": "Föregående dag",
-      "nextDay": "Nästa dag"
+      "nextDay": "Nästa dag",
+      "previousWeek": "Föregående vecka",
+      "nextWeek": "Nästa vecka"
     },
     "details": {
       "title": "Detaljer",
@@ -1075,11 +1085,13 @@
       "fromFood": "Från mat:",
       "fromSupplements": "Från kosttillskott:",
       "noDataForDay": "Ingen data för denna dag",
+      "noDataForWeek": "Ingen data för denna vecka",
       "goal": "Mål"
     },
     "meals": {
       "title": "Bidragande måltider",
-      "noneContributed": "Inga måltider bidrog till detta mål denna dag."
+      "noneContributed": "Inga måltider bidrog till detta mål denna dag.",
+      "noneContributedWeek": "Inga måltider bidrog till detta mål denna vecka."
     },
     "supplements": {
       "title": "Kosttillskott",

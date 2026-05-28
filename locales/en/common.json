@@ -11,6 +11,14 @@
     "saveAll": "Save all",
     "delete": "Delete",
     "countSuffix": "pcs",
+    "targetUnits": {
+      "mg": "mg",
+      "g": "g",
+      "μg": "μg",
+      "items": "pcs",
+      "count": "pcs",
+      "plants": "plants"
+    },
     "level": "level",
     "showAll": "Show all",
     "showLess": "Show less",
@@ -1057,7 +1065,9 @@
     "date": {
       "title": "Date",
       "previousDay": "Previous day",
-      "nextDay": "Next day"
+      "nextDay": "Next day",
+      "previousWeek": "Previous week",
+      "nextWeek": "Next week"
     },
     "details": {
       "title": "Details",
@@ -1065,11 +1075,13 @@
       "fromFood": "From food:",
       "fromSupplements": "From supplements:",
       "noDataForDay": "No data for this day",
+      "noDataForWeek": "No data for this week",
       "goal": "Goal"
     },
     "meals": {
       "title": "Contributing meals",
-      "noneContributed": "No meals contributed to this target on this day."
+      "noneContributed": "No meals contributed to this target on this day.",
+      "noneContributedWeek": "No meals contributed to this target during this week."
     },
     "supplements": {
       "title": "Supplements",

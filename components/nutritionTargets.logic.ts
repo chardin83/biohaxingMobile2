@@ -234,13 +234,6 @@ const getSupplementContributionForTarget = (
   supplements: MatchedSupplement[],
   unit: NutritionTargetUnit
 ): { value: number; names: string[] } => {
-  if (unit === 'items' || unit === 'count') {
-    return {
-      value: supplements.length,
-      names: supplements.map(item => item.name || item.id || 'supplement'),
-    };
-  }
-
   if (unit !== 'mg' && unit !== 'g') {
     return { value: 0, names: [] };
   }
@@ -344,7 +337,7 @@ const buildTipProgressFromPlanTip = (
 export const buildNutritionPlanTipProgress = (
   context: NutritionPlanProgressContext
 ): TipProgressItem[] => {
-  return (context.plans?.nutrition ?? []).flatMap((planTip: PlanTip) =>
+  return (context.plans?.nutrition ?? []).flatMap((planTip: PlanTipEntry) =>
     buildTipProgressFromPlanTip(planTip, context)
   );
 };
