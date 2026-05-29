@@ -13,6 +13,7 @@ import {
 } from '@/types/nutritionTargets';
 import { formatMonthDay, toDateKey } from '@/utils/dateUtils';
 
+import { type WeeklyTrackingItem } from './nutritionTargets.logic';
 import { ThemedText } from './ThemedText';
 import AppButton from './ui/AppButton';
 import { Card } from './ui/Card';
@@ -40,7 +41,7 @@ export type TipProgressItem = {
     supplementActual?: number;
     isMet: boolean;
     label: string;
-    trackedItems?: string[];
+    trackedItems?: WeeklyTrackingItem[];
     supplementIds?: string[];
   }>;
   metCount: number;

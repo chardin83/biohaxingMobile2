@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { WeeklyTrackingItem } from '@/components/nutritionTargets.logic';
 import { type MineralType } from '@/constants/minerals';
 import {
   levels,
@@ -181,12 +182,12 @@ interface StorageContextType {
   addMetricEntry: (entry: MetricEntry) => void;
   upsertMetricEntries: (entries: MetricEntry[]) => void;
   getMetricHistory: (metricId: MetricId) => MetricEntry[];
-  weeklyTracking: Record<string, Record<string, string[] | number>>;
+  weeklyTracking: Record<string, Record<string, WeeklyTrackingItem[] | number>>;
   setWeeklyTracking: (
-    updater: Record<string, Record<string, string[] | number>> | ((prev: Record<string, Record<string, string[] | number>>) => Record<string, Record<string, string[] | number>>)
+    updater: Record<string, Record<string, WeeklyTrackingItem[] | number>> | ((prev: Record<string, Record<string, WeeklyTrackingItem[] | number>>) => Record<string, Record<string, WeeklyTrackingItem[] | number>>)
   ) => void;
-  addToWeeklyTracking: (weekStartISO: string, key: string, value: string | number) => void;
-  getWeeklyTrackingValue: (weekStartISO: string, key: string) => string[] | number | undefined;
+  addToWeeklyTracking: (weekStartISO: string, key: string, value: WeeklyTrackingItem | number) => void;
+  getWeeklyTrackingValue: (weekStartISO: string, key: string) => WeeklyTrackingItem[] | number | undefined;
 }
 
 const STORAGE_KEYS = {
@@ -234,7 +235,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const [showMusicState, setShowMusicState] = useState(true);
   const [tempPlans, setTempPlans] = useState<PlansByCategory | null>(null);
   const [metricEntriesState, setMetricEntriesState] = useState<MetricEntry[]>([]);
-  const [weeklyTrackingState, setWeeklyTrackingState] = useState<Record<string, Record<string, string[] | number>>>({});
+  const [weeklyTrackingState, setWeeklyTrackingState] = useState<Record<string, Record<string, WeeklyTrackingItem[] | number>>>({});
   const [nutritionXpClaimsState, setNutritionXpClaimsState] = useState<Record<string, NutritionXpClaim>>({});
 
   const normalizeReasonSummary = (value: any): ReasonSummary => {
@@ -725,7 +726,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   );
 
   const setWeeklyTracking = (
-    updater: Record<string, Record<string, string[] | number>> | ((prev: Record<string, Record<string, string[] | number>>) => Record<string, Record<string, string[] | number>>)
+    updater: Record<string, Record<string, WeeklyTrackingItem[] | number>> | ((prev: Record<string, Record<string, WeeklyTrackingItem[] | number>>) => Record<string, Record<string, WeeklyTrackingItem[] | number>>)
   ) => {
     setWeeklyTrackingState(prev => {
       const updated = typeof updater === 'function' ? updater(prev) : updater;
@@ -734,7 +735,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     });
   };
 
-  const addToWeeklyTracking = useCallback((weekStartISO: string, key: string, value: string | number) => {
+  const addToWeeklyTracking = useCallback((weekStartISO: string, key: string, value: WeeklyTrackingItem | number) => {
     setWeeklyTracking(prev => {
       const updated = { ...prev };
       if (!updated[weekStartISO]) {
@@ -742,20 +743,20 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       }
       const weekData = updated[weekStartISO];
 
-      // If value is a string, treat as array (for collecting items like plants, colors)
-      if (typeof value === 'string') {
+      if (typeof value === 'number') {
+        // If value is a number, just set/overwrite (for counts)
+        weekData[key] = value;
+      } else {
+        // If value is a WeeklyTrackingItem, treat as array
         const existing = weekData[key];
         if (Array.isArray(existing)) {
-          // Only add if not already present (unique constraint)
-          if (!existing.includes(value)) {
+          // Only add if not already present (unique constraint by id or value)
+          if (!existing.some((item: WeeklyTrackingItem) => JSON.stringify(item) === JSON.stringify(value))) {
             weekData[key] = [...existing, value];
           }
         } else {
           weekData[key] = [value];
         }
-      } else {
-        // If value is a number, just set/overwrite (for counts)
-        weekData[key] = value;
       }
 
       return updated;
@@ -763,7 +764,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   }, []);
 
   const getWeeklyTrackingValue = useCallback(
-    (weekStartISO: string, key: string): string[] | number | undefined => {
+    (weekStartISO: string, key: string): WeeklyTrackingItem[] | number | undefined => {
       return weeklyTrackingState[weekStartISO]?.[key];
     },
     [weeklyTrackingState]

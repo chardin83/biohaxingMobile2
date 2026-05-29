@@ -1,6 +1,6 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 
-import { handleNutritionAnalyze } from "./handleNutritionAnalyze.fixed";
+import { handleNutritionAnalyze } from "./handleNutritionAnalyze";
 
 export async function nutritionEntryPoint(
   request: HttpRequest,
@@ -20,12 +20,15 @@ export async function nutritionEntryPoint(
     const file = form.get("file") as unknown as File | undefined;
     const ingredientListFile = form.get("ingredient_list_file") as unknown as File | undefined;
     const prompt = form.get("prompt")?.toString() ?? "";
+    const mealDescription = form.get("mealDescription")?.toString() ?? "";
     const supplement = form.get("supplement")?.toString() ?? "";
     const rawLocale = form.get("locale")?.toString() ?? "";
     const locale: "sv" | "en" = rawLocale === "en" ? "en" : "sv";
     const ingredientListBase64 = form.get("ingredient_list_base64")?.toString() ?? "";
     const ingredientListMime = form.get("ingredient_list_mime")?.toString() ?? "";
     const trackingTargetsRaw = form.get("trackingTargets")?.toString() ?? form.get("weeklyTrackingTargets")?.toString();
+    // Log input for debugging
+    console.log('[nutritionEntryPoint] trackingTargetsRaw:', trackingTargetsRaw);
 
     let trackingTargets: Array<{ key: string; unit: "items" | "count"; amount?: number; aiInstruction?: string }> | undefined;
     if (trackingTargetsRaw) {
@@ -42,7 +45,10 @@ export async function nutritionEntryPoint(
             }))
             .filter(item => item.key.length > 0);
         }
-      } catch {
+        // Log output for debugging
+        console.log('[nutritionEntryPoint] trackingTargets:', trackingTargets);
+      } catch (e) {
+        console.log('[nutritionEntryPoint] trackingTargets parse error:', e);
         trackingTargets = undefined;
       }
     }
@@ -75,6 +81,7 @@ export async function nutritionEntryPoint(
       ingredientListRawBuffer: ingredientListBuffer,
       ingredientListBase64: ingredientListBase64 || undefined,
       ingredientListMime: ingredientListMime || ingredientListFile?.type || undefined,
+      mealDescription: mealDescription || undefined,
       prompt,
       supplement,
       locale,

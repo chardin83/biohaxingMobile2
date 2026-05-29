@@ -12,6 +12,7 @@ import { formatWithUnit } from '@/utils/formatters';
 import { getNutritionTargetMedalEmoji, getNutritionTargetMedalType } from '@/utils/medals';
 
 import { Collapsible } from './Collapsible';
+import { type WeeklyTrackingItem } from './nutritionTargets.logic';
 import { ThemedText } from './ThemedText';
 import { IconSymbol } from './ui/IconSymbol';
 
@@ -25,7 +26,7 @@ type TipTargetItem = {
   supplementActual?: number;
   isMet: boolean;
   label: string;
-  trackedItems?: string[];
+  trackedItems?: WeeklyTrackingItem[];
   supplementIds?: string[];
 };
 
@@ -53,20 +54,21 @@ const formatTargetProgressValue = (value: number, unit: NutritionTargetUnit, tag
   return formatTargetValue(value, unit, tag);
 };
 
-const renderTrackedItems = (targetTag: string, trackedItems: string[]) =>
+const renderTrackedItems = (targetTag: string, trackedItems: WeeklyTrackingItem[], language: string) =>
   trackedItems.map(item => (
-    <ThemedText key={`${targetTag}-${item}`} type="caption" style={styles.planTipTargetItem}>
-      • {item}
+    <ThemedText key={`${targetTag}-${item.en}`} type="caption" style={styles.planTipTargetItem}>
+      • {language !== 'en' ? item.local : item.en}
     </ThemedText>
   ));
 
 const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const usesDiscreteUnit = target.unit === 'items' || target.unit === 'count';
   const showsDetailsChevron = target.period === 'weekly';
   const trackedItems = target.trackedItems ?? [];
   const hasTrackedItems = usesDiscreteUnit && trackedItems.length > 0;
+  const language = i18n.language || 'en';
   const targetIconName = getTipTargetIconName(tip.tipId) ?? 'target';
   const valueFormatter = usesDiscreteUnit ? formatTargetProgressValue : formatTargetValue;
   const translatedTipKey = tip.title?.includes('.') ? 'tips:' + tip.title : null;
@@ -141,7 +143,7 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
           }
         >
           <View style={styles.planTipTargetItemsList}>
-            {renderTrackedItems(target.tag, trackedItems)}
+            {renderTrackedItems(target.tag, trackedItems, language)}
           </View>
         </Collapsible>
       </View>

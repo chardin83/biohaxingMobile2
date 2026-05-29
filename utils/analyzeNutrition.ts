@@ -1,3 +1,4 @@
+import { WeeklyTrackingItem } from '@/components/nutritionTargets.logic';
 import { ALL_AMINO_ACID_KEYS, AminoAcidType } from '@/constants/aminoAcids';
 import {
   FIBER_CATEGORY_SUBTYPES,
@@ -22,7 +23,8 @@ export type NutritionEvidence = {
 
 export type ConfidenceLevel = NutritionEvidence['confidence'];
 
-export type WeeklyTrackingSignalValue = string[] | number;
+
+export type WeeklyTrackingSignalValue = WeeklyTrackingItem[] | number;
 export type WeeklyTrackingSignals = Record<string, WeeklyTrackingSignalValue>;
 
 export type ParsedMacroAnalysis = {
@@ -722,16 +724,27 @@ export const mergeWeeklyTrackingSignal = (
   if (!key || typeof key !== 'string') return;
 
   if (Array.isArray(value)) {
-    const nextItems = value
-      .filter((item): item is string => typeof item === 'string')
-      .map(item => normalizeItemName(item))
-      .filter(item => item.length > 0);
+    // Convert all items to WeeklyTrackingItem
+    const nextItems: WeeklyTrackingItem[] = value
+      .map((item): WeeklyTrackingItem | null => {
+        if (typeof item === 'object' && item && typeof item.en === 'string' && typeof item.local === 'string') {
+          return { en: item.en, local: item.local };
+        } else if (typeof item === 'string') {
+          const norm = item.trim();
+          return norm.length > 0 ? { en: norm, local: norm } : null;
+        }
+        return null;
+      })
+      .filter((item): item is WeeklyTrackingItem => !!item);
 
     if (!nextItems.length) return;
 
     const existing = target[key];
-    const existingItems = Array.isArray(existing) ? existing : [];
-    target[key] = Array.from(new Set([...existingItems, ...nextItems]));
+    const existingItems: WeeklyTrackingItem[] = Array.isArray(existing) ? existing : [];
+    // Only add unique {en, local} pairs
+    const all = [...existingItems, ...nextItems];
+    const deduped = Array.from(new Map(all.map(i => [i.en + '|' + i.local, i])).values());
+    target[key] = deduped;
     return;
   }
 
@@ -760,9 +773,15 @@ export const extractWeeklyTrackingSignals = (
     parsedContent?.raw,
   ];
 
-  candidates.forEach(candidate => {
+  candidates.forEach((candidate, idx) => {
+    try {
+      console.log(`[extractWeeklyTrackingSignals] Kandidat #${idx}:`, candidate);
+    } catch (e) {}
     const fromObject = candidate?.weeklyTrackingSignals;
     if (fromObject && typeof fromObject === 'object' && !Array.isArray(fromObject)) {
+      try {
+        console.log(`[extractWeeklyTrackingSignals] Kandidat #${idx} weeklyTrackingSignals:`, fromObject);
+      } catch (e) {}
       Object.entries(fromObject).forEach(([key, value]) =>
         mergeWeeklyTrackingSignal(collected, key, value)
       );
@@ -791,6 +810,10 @@ export const extractWeeklyTrackingSignals = (
       }
     });
   });
+
+  try {
+    console.log('[extractWeeklyTrackingSignals] Extraherade signals:', collected);
+  } catch (e) {}
 
   return collected;
 };

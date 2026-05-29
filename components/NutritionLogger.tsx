@@ -54,7 +54,7 @@ import NutritionPlanTargetsSection, {
   getTipProgressKey,
   TipProgressItem,
 } from './NutritionPlanTargetsSection';
-import { buildNutritionPlanTipProgress } from './nutritionTargets.logic';
+import { buildNutritionPlanTipProgress, WeeklyTrackingItem } from './nutritionTargets.logic';
 import { ThemedModal } from './ThemedModal';
 import { ThemedText } from './ThemedText';
 import { Card } from './ui/Card';
@@ -143,7 +143,7 @@ const buildWeekTrackingFromSummaries = (
   weekStartISO: string,
   weekEndISO: string,
   allowedKeys: Set<string>
-): Record<string, string[] | number> => {
+): Record<string, WeeklyTrackingItem[] | number> => {
   const aggregated: WeeklyTrackingSignals = {};
 
   Object.entries(summaries)

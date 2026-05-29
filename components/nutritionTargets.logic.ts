@@ -17,6 +17,9 @@ import {
 } from '../utils/analyzeNutrition';
 import { type TipProgressItem } from './NutritionPlanTargetsSection';
 
+
+export type WeeklyTrackingItem = { en: string; local: string };
+
 type TipLabelGroup =
   | 'weeklyTrackingLabels'
   | 'fiberLabels'
@@ -96,7 +99,15 @@ const getWeeklyTargetValueFromContext = (
   if (unit === 'plants' || unit === 'items' || unit === 'count') {
     const value = context.weeklyTracking[context.weekStartKey]?.[tag];
     if (typeof value === 'number') return value;
-    if (Array.isArray(value)) return value.length;
+    if (Array.isArray(value)) {
+      // Hantera både string[] och { en, local }[]
+      const arr = value as Array<any>;
+      const ens = arr.map(item =>
+        typeof item === 'object' && item && typeof item.en === 'string' ? item.en : typeof item === 'string' ? item : ''
+      ).filter(Boolean);
+      const deduped = Array.from(new Set(ens));
+      return deduped.length;
+    }
     return 0;
   }
   if (unit === 'g') {
@@ -255,12 +266,23 @@ const getSupplementContributionForTarget = (
 
 const normalizeTrackedItems = (
   value: WeeklyTrackingSignalValue | undefined
-): string[] | undefined => {
+): WeeklyTrackingItem[] | undefined => {
   if (!Array.isArray(value)) return undefined;
-
-  return value
-    .filter(item => item.length > 0)
-    .sort((a, b) => a.localeCompare(b));
+  // Hantera { en, local }[] eller string[] (legacy)
+  const arr = value as Array<any>;
+  const items: WeeklyTrackingItem[] = arr
+    .map(item => {
+      if (typeof item === 'object' && item && typeof item.en === 'string' && typeof item.local === 'string') {
+        return { en: item.en.trim(), local: item.local.trim() };
+      } else if (typeof item === 'string') {
+        return { en: item.trim(), local: item.trim() };
+      }
+      return null;
+    })
+    .filter((item): item is WeeklyTrackingItem => !!item && item.en.length > 0 && item.local.length > 0);
+  // Deduplicera på en-fältet
+  const deduped = Array.from(new Map(items.map(i => [i.en, i])).values());
+  return deduped.length ? deduped : undefined;
 };
 
 const buildTipTargetProgress = (
@@ -277,15 +299,33 @@ const buildTipTargetProgress = (
   const matchedSupplements = getMatchedSupplementsForTarget(tip, target, tipPeriod, context);
   const supplementContribution = getSupplementContributionForTarget(matchedSupplements, target.unit);
   const actual = baseActual + supplementContribution.value;
-  const trackingValue =
-    tipPeriod === 'weekly'
-      ? context.weeklyTracking[context.weekStartKey]?.[trackingKey]
-      : context.dailyTracking[trackingKey];
-  const trackedItems = [
-    ...(normalizeTrackedItems(trackingValue) ?? []),
-    ...supplementContribution.names,
-  ];
   const labelGroup = getTipLabelGroup(target.unit, trackingKey);
+
+  // Only discrete/weekly targets use trackedItems and logging
+  let trackedItems: WeeklyTrackingItem[] | undefined;
+  let trackingValue: any;
+  if (target.unit === 'items' || target.unit === 'count' || target.unit === 'plants') {
+    const weekObj = context.weeklyTracking[context.weekStartKey] ?? {};
+    // Extra debug: log weekStartKey and all weeklyTracking keys
+    try {
+      console.log('[buildTipTargetProgress] weekStartKey:', context.weekStartKey);
+      console.log('[buildTipTargetProgress] all weeklyTracking keys:', Object.keys(context.weeklyTracking));
+      console.log('[buildTipTargetProgress] weeklyTracking[weekStartKey]:', weekObj);
+    } catch (e) {}
+    trackingValue = tipPeriod === 'weekly'
+      ? weekObj[trackingKey]
+      : context.dailyTracking[trackingKey];
+    trackedItems = normalizeTrackedItems(trackingValue) ?? [];
+    // DEBUG LOGGING
+    try {
+      console.log('[buildTipTargetProgress] trackingKey:', trackingKey);
+      console.log('[buildTipTargetProgress] available weeklyTracking keys:', Object.keys(weekObj));
+      console.log('[buildTipTargetProgress] trackingValue:', trackingValue);
+      console.log('[buildTipTargetProgress] trackedItems:', trackedItems);
+    } catch (e) {
+      console.log('[buildTipTargetProgress] Log error:', e);
+    }
+  }
 
   return {
     tag: trackingKey,
@@ -297,7 +337,7 @@ const buildTipTargetProgress = (
     supplementActual: supplementContribution.value,
     isMet: actual >= target.amount,
     label: context.t(`nutritionLogger.${labelGroup}.${trackingKey}`),
-    trackedItems: trackedItems.length ? Array.from(new Set(trackedItems)).sort((a, b) => a.localeCompare(b)) : undefined,
+    trackedItems: trackedItems && trackedItems.length ? trackedItems : undefined,
     supplementIds: target.supplementIds,
   };
 };
@@ -313,7 +353,16 @@ const buildTipProgressFromPlanTip = (
   const allTargets = getAllTipTargets(tip);
   if (!tipPeriod || !allTargets.length) return [];
 
-  const targets = allTargets.map(target => buildTipTargetProgress(target, tip, tipPeriod, context));
+  // Deduplicate targets by trackingKey/unit/period
+  const seen = new Set<string>();
+  const dedupedTargets = allTargets.filter(target => {
+    const key = `${target.trackingKey ?? target.tag ?? ''}|${target.unit}|${tipPeriod}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  const targets = dedupedTargets.map(target => buildTipTargetProgress(target, tip, tipPeriod, context));
   const metCount = targets.reduce((count, target) => count + (target.isMet ? 1 : 0), 0);
   const totalCount = targets.length;
 
@@ -334,10 +383,29 @@ const buildTipProgressFromPlanTip = (
   ];
 };
 
+
 export const buildNutritionPlanTipProgress = (
   context: NutritionPlanProgressContext
 ): TipProgressItem[] => {
-  return (context.plans?.nutrition ?? []).flatMap((planTip: PlanTipEntry) =>
+  // Collect all tips' progress items
+  const allTipProgress = (context.plans?.nutrition ?? []).flatMap((planTip: PlanTipEntry) =>
     buildTipProgressFromPlanTip(planTip, context)
   );
+
+  // Deduplicate targets globally by trackingKey/unit/period
+  const seen = new Set<string>();
+  const deduped: TipProgressItem[] = [];
+  for (const tipProgress of allTipProgress) {
+    const uniqueTargets = [];
+    for (const target of tipProgress.targets) {
+      const key = `${target.tag}|${target.unit}|${target.period}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      uniqueTargets.push(target);
+    }
+    if (uniqueTargets.length) {
+      deduped.push({ ...tipProgress, targets: uniqueTargets, totalCount: uniqueTargets.length, metCount: uniqueTargets.filter(t => t.isMet).length, isFulfilled: uniqueTargets.every(t => t.isMet), progress: uniqueTargets.length > 0 ? uniqueTargets.filter(t => t.isMet).length / uniqueTargets.length : 0 });
+    }
+  }
+  return deduped;
 };
