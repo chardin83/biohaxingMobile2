@@ -11,6 +11,7 @@ type Props = TextInputProps & {
   inputStyle?: StyleProp<TextStyle>;
   multilineInput?: boolean;
   isOptional?: boolean; // <-- ny prop för optional/mandatory
+  disabled?: boolean;
 };
 
 const LabeledInput: React.FC<Props> = ({
@@ -19,6 +20,7 @@ const LabeledInput: React.FC<Props> = ({
   inputStyle,
   multilineInput = false,
   isOptional,
+  disabled = false,
   ...textInputProps
 }) => {
   const { colors } = useTheme();
@@ -55,7 +57,7 @@ const LabeledInput: React.FC<Props> = ({
     setInputHeight(Math.max(40, e.nativeEvent.contentSize.height));
   };
 
-  return (
+    return (
     <View style={[styles.container, containerStyle]}>
       <ThemedText type="label">
         {displayLabel}
@@ -63,7 +65,8 @@ const LabeledInput: React.FC<Props> = ({
       <TextInput
         style={[
           styles.input,
-          multilineInput ? styles.inputMultiline : styles.inputSingleLine,
+          disabled && styles.disabledInput,
+           multilineInput ? styles.inputMultiline : styles.inputSingleLine,
           {
             borderColor: colors.border,
             color: colors.text,
@@ -75,7 +78,9 @@ const LabeledInput: React.FC<Props> = ({
         placeholder={effectivePlaceholder}
         multiline={multilineInput}
         onContentSizeChange={handleContentSizeChange}
+        editable={!disabled}
         {...restProps}
+        value={textValue}
       />
     </View>
   );
@@ -92,6 +97,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     minHeight: 40,
+  },
+  disabledInput: {
+    opacity: 0.5,
   },
   inputSingleLine: {
     textAlignVertical: 'center',

@@ -2,9 +2,10 @@ import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet,View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
+import { globalStyles } from '@/app/theme/globalStyles';
 import { Collapsible } from '@/components/Collapsible';
 import { GradientText } from '@/components/GradientText';
 import ShowAllButton from '@/components/ShowAllButton';
@@ -14,14 +15,19 @@ import { Card } from '@/components/ui/Card';
 import { Checkbox } from '@/components/ui/Checkbox';
 import Container from '@/components/ui/Container';
 import { GoldenGlowButton } from '@/components/ui/GoldenGlowButton';
+import LabeledInput from '@/components/ui/LabeledInput';
 import { tips } from '@/locales/tips';
 import { createPlan } from '@/services/gptServices';
+
 
 export default function CreatePlanScreen() {
     const router = useRouter();
     const { colors } = useTheme();
     const { t, i18n } = useTranslation(['common', 'plan']);
     const { plans, tempPlans, setTempPlans, setPlans, myGoals, myLevel } = useStorage();
+
+    const [selectedGoals, setSelectedGoals] = React.useState<string[]>([]);
+    const [customGoal, setCustomGoal] = React.useState('');
 
     const [loading, setLoading] = React.useState(false);
     const [showAllReason, setShowAllReason] = React.useState(false);
@@ -344,7 +350,15 @@ export default function CreatePlanScreen() {
         setLoading(true);
         const activeLanguage = (i18n.resolvedLanguage ?? i18n.language ?? 'en').toLowerCase();
         const locale: 'sv' | 'en' = activeLanguage.startsWith('sv') ? 'sv' : 'en';
-        createPlan(plans, myGoals, myLevel, locale)
+        // Kombinera valda mål och fritext (om ej tom och ej redan vald)
+        let goals = selectedGoals;
+        if (customGoal.trim().length > 0 && !goals.includes(customGoal.trim())) {
+            goals = [...goals, customGoal.trim()];
+        }
+
+        console.log('[createPlan] goals:', goals);
+        // Skicka både goals och myGoals till backend
+        createPlan(plans, goals, myLevel, locale, myGoals)
             .then(res => setTempPlans(res.plans))
             .finally(() => setLoading(false));
     };
@@ -407,6 +421,44 @@ export default function CreatePlanScreen() {
                         {t('createPlan.title')}
                     </GradientText>
                 </View>
+
+                {/* Målval */}
+
+                <ThemedText type="label" style={globalStyles.marginBottom8}>{t('common:createPlan.goals.title')}</ThemedText>
+                {(t('common:createPlan.goals.suggestions', { returnObjects: true }) as string[]).map(goal => (
+                    <Checkbox
+                        key={goal}
+                        checked={selectedGoals.includes(goal)}
+                        onPress={() => {
+                            setSelectedGoals(prev =>
+                                prev.includes(goal)
+                                    ? prev.filter(g => g !== goal)
+                                    : [...prev, goal]
+                            );
+                        }}
+                        label={goal}
+                        style={globalStyles.marginBottom8}
+                        disabled={!!tempPlans || loading} // Disable checkbox when tempPlans or loading is true
+                    />
+                ))}
+                <LabeledInput
+                    containerStyle={globalStyles.marginBottom16}
+                    inputStyle={{ backgroundColor: colors.overlayLight, borderColor: colors.cardBorder }}
+                    placeholder={t('common:createPlan.goals.customPlaceholder')}
+                    placeholderTextColor={colors.text + '99'}
+                    value={customGoal}
+                    onChangeText={setCustomGoal}
+                    onSubmitEditing={() => {
+                        if (customGoal.trim().length > 0 && !selectedGoals.includes(customGoal.trim())) {
+                            setSelectedGoals(prev => [...prev, customGoal.trim()]);
+                            setCustomGoal('');
+                        }
+                    }}
+                    label=""
+                    returnKeyType="done"
+                    disabled={!!tempPlans || loading} // Disable TextInput when tempPlans or loading is true
+                />
+
                 <GoldenGlowButton
                     style={styles.noMarginBottom}
                     title={t('createPlan.createAIPlan')}

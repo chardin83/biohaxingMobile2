@@ -120,7 +120,20 @@
     "untitled": "Utan titel",
     "showAll": "Visa allt",
     "creatingAIPlan": "Skapar AI-plan",
-    "duplicateWarning": "AI-planen innehaller {{count}} dubbletter som redan finns i din plan."
+    "duplicateWarning": "AI-planen innehaller {{count}} dubbletter som redan finns i din plan.",
+    "goals": {
+      "title": "Vad är ditt/dina mål?",
+      "suggestions": [
+        "Bygga muskler",
+        "Gå ner i vikt",
+        "Få mer energi",
+        "Förbättra konditionen",
+        "Må bättre",
+        "Bli starkare",
+        "Bättre matvanor"
+      ],
+      "customPlaceholder": "Eget mål..."
+    }
   },
   "supplementForm": {
     "dosage": "Dos",

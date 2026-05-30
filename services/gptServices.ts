@@ -414,9 +414,10 @@ function normalizeReasonSummary(value: any): ReasonSummary {
 
 export async function createPlan(
   plans: PlansByCategory,
-  userAreas: string[],
+  goals: string[],
   myLevel: number,
   locale: 'sv' | 'en',
+  userAreas: string[]
 ): Promise<CreatePlanResponse> {
   const filteredTips = tips.filter(tip => (tip.level ?? 1) <= myLevel);
 
@@ -429,13 +430,14 @@ export async function createPlan(
   }));
 
   log('[createPlan] tips (first 3):', translatedTips.slice(0, 3));
+  console.log('[createPlan] goals:', goals);
   log('[createPlan] userAreas:', userAreas);
   log('[createPlan] myLevel:', myLevel);
 
   const response = await fetch(ENDPOINTS.createPlan, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ tips: translatedTips, plans, userAreas, locale }),
+    body: JSON.stringify({ tips: translatedTips, plans, goals, userAreas, locale }),
   });
 
   const text = await response.text();

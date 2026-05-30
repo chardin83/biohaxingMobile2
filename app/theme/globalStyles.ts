@@ -13,6 +13,9 @@ export const globalStyles = StyleSheet.create({
   marginTop16: {
     marginTop: 16,
   },
+  marginBottom8: {
+    marginBottom: 8,
+  },
   marginBottom16: {
     marginBottom: 16,
   },

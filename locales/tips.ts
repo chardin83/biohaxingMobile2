@@ -1752,7 +1752,7 @@ const rawTips: Tip[] = [
         trackingKey: 'unique_plants',
         amount: 30,
         unit: 'items',
-        aiInstruction: 'List distinct plant foods visible in the meal. For each, return an object with the English name as en and the translation in the user\'s language as local, e.g. { en: "kale", local: "grönkål" }. Do not include animal foods or sauces.',
+        aiInstruction: 'List distinct plant foods visible in the meal. For each, return an object with the English name as en and the translation in the user\'s language as local, e.g. { en: "kale", local: "grönkål" }. Do not include animal foods or sauces. If you see something containing wheat, only say "wheat" not for example "wheat (pasta)".',
       },
     ],
   },

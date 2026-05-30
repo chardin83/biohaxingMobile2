@@ -120,7 +120,20 @@
     "untitled": "Untitled",
     "showAll": "Show all",
     "creatingAIPlan": "Creating AI plan",
-    "duplicateWarning": "The AI plan includes {{count}} duplicates already in your plan."
+    "duplicateWarning": "The AI plan includes {{count}} duplicates already in your plan.",
+    "goals": {
+    "title": "What is your goal/goals?",
+      "suggestions": [
+        "Build muscle",
+        "Lose weight",
+        "Get more energy",
+        "Improve fitness",
+        "Feel better",
+        "Get stronger",
+        "Better eating habits"
+      ],
+      "customPlaceholder": "Custom goal..."
+    }
   },
   "supplementForm": {
     "dosage": "Dosage",

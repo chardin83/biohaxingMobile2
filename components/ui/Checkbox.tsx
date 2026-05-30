@@ -10,20 +10,22 @@ type CheckboxProps = {
   style?: StyleProp<ViewStyle>;
   testID?: string;
   label?: string;
+  disabled?: boolean;
 };
 
-export const Checkbox: React.FC<CheckboxProps> = ({ checked, onPress, style, testID, label }) => {
+export const Checkbox: React.FC<CheckboxProps> = ({ checked, onPress, style, testID, label, disabled }) => {
   const { colors } = useTheme();
 
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={disabled ? undefined : onPress}
       style={[styles.row, style]}
       accessibilityRole="checkbox"
       accessibilityState={{ checked }}
       testID={testID}
       hitSlop={8}
       activeOpacity={0.7}
+      disabled={disabled}
     >
       <View
         style={[
