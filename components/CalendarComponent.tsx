@@ -79,14 +79,13 @@ interface CalendarComponentRef {
 const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProps>(({ onDayPress, selectedDate: selectedDateProp }, ref) => {
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
-  const { takenDates, setTakenDates } = useStorage();
+  const { takenDates, setTakenDates, dailyNutritionSummaries, trainingEntries } = useStorage();
   const today = new Date().toISOString().split('T')[0];
 
   const [calendarKey, setCalendarKey] = useState(i18n.language + colors.background);
   const [isLocaleReady, setIsLocaleReady] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>(today);
   const [isExpanded, setIsExpanded] = useState(false);
-  const { dailyNutritionSummaries } = useStorage();
 
   useImperativeHandle(ref, () => ({
     addMarkForDate: (date: string) => {
@@ -143,6 +142,7 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
   const dynamicMarkedDates = Object.keys({
     ...dailyNutritionSummaries,
     ...takenDates,
+    ...trainingEntries,
   }).reduce(
     (acc, date) => {
       const dots = [];
@@ -153,6 +153,10 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
 
       if (takenDates[date]?.length > 0) {
         dots.push({ key: 'supplement', color: colors.checkmarkSupplement });
+      }
+
+      if ((trainingEntries[date]?.length ?? 0) > 0) {
+        dots.push({ key: 'training', color: colors.checkmarkTraining });
       }
 
       acc[date] = {

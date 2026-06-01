@@ -26,10 +26,16 @@ const LabeledInput: React.FC<Props> = ({
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { placeholder, ...restProps } = textInputProps;
-  const [inputHeight, setInputHeight] = React.useState(40);
+  const flattenedInputStyle = StyleSheet.flatten(inputStyle) as TextStyle | undefined;
+  const baseMinHeight =
+    multilineInput && typeof flattenedInputStyle?.minHeight === 'number'
+      ? flattenedInputStyle.minHeight
+      : 40;
+
+  const [inputHeight, setInputHeight] = React.useState(baseMinHeight);
   const textValue = typeof restProps.value === 'string' ? restProps.value : '';
 
-  const height = multilineInput ? inputHeight : 40;
+  const height = multilineInput ? Math.max(baseMinHeight, inputHeight) : 40;
 
   let suffix = '';
   if (isOptional === true) {
@@ -50,11 +56,11 @@ const LabeledInput: React.FC<Props> = ({
 
     // Keep a compact single-line field until user has entered text.
     if (textValue.trim().length === 0) {
-      setInputHeight(40);
+      setInputHeight(baseMinHeight);
       return;
     }
 
-    setInputHeight(Math.max(40, e.nativeEvent.contentSize.height));
+    setInputHeight(Math.max(baseMinHeight, e.nativeEvent.contentSize.height));
   };
 
     return (

@@ -8,6 +8,7 @@ import { useStorage } from '@/app/context/StorageContext';
 import NutritionLogger from './NutritionLogger';
 import { SupplementsTabSection } from './SupplementsTabSection';
 import { ThemedText } from './ThemedText';
+import { TrainingDaySection } from './TrainingDaySection';
 
 interface DayeEditProps {
   selectedDate: string;
@@ -23,11 +24,16 @@ const DayEdit: React.FC<DayeEditProps> = ({
   preselectedSupplementId,
 }) => {
 
-  const [activeTab, setActiveTab] = useState<'supplements' | 'meal'>(initialTab ?? 'meal');
-  const {takenDates } = useStorage();
+  const [activeTab, setActiveTab] = useState<'supplements' | 'meal' | 'training'>(initialTab ?? 'meal');
+  const {
+    takenDates,
+    dailyNutritionSummaries,
+    trainingEntries,
+  } = useStorage();
   const { t } = useTranslation();
   const hasSupplementsToday = takenDates[selectedDate]?.length > 0;
-  const hasMealsToday = useStorage().dailyNutritionSummaries[selectedDate]?.meals?.length > 0;
+  const hasMealsToday = dailyNutritionSummaries[selectedDate]?.meals?.length > 0;
+  const hasTrainingToday = (trainingEntries[selectedDate]?.length ?? 0) > 0;
   const mealLoggerOffsetYRef = useRef(0);
 
   const { colors } = useTheme();
@@ -90,6 +96,27 @@ const DayEdit: React.FC<DayeEditProps> = ({
             </View>
           </TouchableOpacity>
 
+          <TouchableOpacity
+            style={[
+              styles.tabWrapper,
+              activeTab === 'training' && { borderBottomColor: colors.primary }
+            ]}
+            onPress={() => setActiveTab('training')}
+          >
+            <View style={styles.tabContent}>
+              <ThemedText
+                type="title3"
+                uppercase
+                style={{ color: activeTab === 'training' ? colors.text : colors.textTertiary }}
+              >
+                {t('dayEdit.tabTraining')}
+              </ThemedText>
+              {hasTrainingToday && (
+                <View style={[styles.badge, { backgroundColor: colors.checkmarkTraining }]} />
+              )}
+            </View>
+          </TouchableOpacity>
+
 
         </View>
 
@@ -108,6 +135,10 @@ const DayEdit: React.FC<DayeEditProps> = ({
           >
             <NutritionLogger selectedDate={selectedDate} onTipCompleted={handleNutritionTipCompleted} />
           </View>
+        )}
+
+        {activeTab === 'training' && (
+          <TrainingDaySection selectedDate={selectedDate} />
         )}
       </View>
     </KeyboardAvoidingView>

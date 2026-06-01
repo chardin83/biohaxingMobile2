@@ -119,6 +119,22 @@ export const ICON_SYMBOLS = {
     sf: 'chart.xyaxis.line',
     material: 'insights',
   },
+  'trainingRunning': {
+    sf: 'figure.run',
+    material: 'directions-run',
+  },
+  'trainingGym': {
+    sf: 'dumbbell',
+    material: 'fitness-center',
+  },
+  'trainingCycling': {
+    sf: 'bicycle',
+    material: 'directions-bike',
+  },
+  'trainingWalking': {
+    sf: 'figure.walk',
+    material: 'directions-walk',
+  },
 } as const;
 
 export type IconSymbolName = keyof typeof ICON_SYMBOLS;

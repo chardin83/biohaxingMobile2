@@ -10,6 +10,7 @@ export const Colors = {
     //tabIconDefault: '#687076',
     //tabIconSelected: tintColorLight,
     primary: '#1FAE9E',
+    primaryVeryWeak: 'rgba(31, 174, 158, 0.08)',
     secondary: 'rgba(17,24,28,0.35)',
     secondaryBackground: '#F7FAFC',
     border: 'rgba(255,184,80,0.28)',
@@ -22,6 +23,7 @@ export const Colors = {
     textWhite: '#fff',
     checkmarkMeal: '#2EC4B6',//'#00FFC8',
     checkmarkSupplement: '#8EDB6D',//'#CBEA3C',
+    checkmarkTraining: '#5ECF91',
 
     progressPartialIcon: '#8A6200', // djup brons
     progressSuccessIcon: '#0B1B14',
@@ -164,6 +166,7 @@ export const Colors = {
     //tabIconDefault: '#9BA1A6',
     //tabIconSelected: tintColorDark,
     primary: '#32D1A6',
+    primaryVeryWeak: 'rgba(50, 209, 166, 0.10)',
     secondary: 'rgba(255,255,255,0.5)',
     secondaryBackground: '#122033',
     border: '#013255',
@@ -173,6 +176,7 @@ export const Colors = {
     textWhite: '#fff',
     checkmarkMeal: '#00FFC8',
     checkmarkSupplement: '#C3FF00',
+    checkmarkTraining: '#62FF64',
 
     progressPartialIcon: 'rgba(255,215,100,0.95)',
     progressSuccessIcon: '#0B1B14',
