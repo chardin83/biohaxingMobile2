@@ -15,6 +15,7 @@ import { MetricId } from '@/locales/metrics';
 import { type NutritionComposition } from '@/types/nutritionProfile';
 import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
 import { PlanCategory } from '@/types/planCategory';
+import { type TrainingActivityFilter, type TrainingActivityType, type TrainingIntensity, type TrainingIntensityFilter } from '@/types/training';
 import { VerdictValue } from '@/types/verdict';
 
 import { Plan } from '../domain/Plan';
@@ -90,10 +91,9 @@ const EMPTY_PLANS: PlansByCategory = {
 export type TrainingPlanSettings = {
   sessionsPerWeek?: number;
   sessionDurationMinutes?: number;
+  activityType?: TrainingActivityFilter;
+  minimumIntensity?: TrainingIntensityFilter;
 };
-
-export type TrainingActivityType = 'running' | 'gym' | 'cycling' | 'walking';
-export type TrainingIntensity = 'low' | 'medium' | 'high';
 
 export type TrainingLogEntry = {
   id: string;

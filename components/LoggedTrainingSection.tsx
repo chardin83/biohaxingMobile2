@@ -8,6 +8,7 @@ import { globalStyles } from '@/app/theme/globalStyles';
 
 import { Collapsible } from './Collapsible';
 import { ThemedText } from './ThemedText';
+import { TRAINING_ACTIVITY_LABEL_KEYS } from './trainingActivityOptions';
 import { Card } from './ui/Card';
 import { SwipeableRow } from './ui/SwipeableRow';
 
@@ -21,24 +22,19 @@ export const LoggedTrainingSection: React.FC<LoggedTrainingSectionProps> = ({ en
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const formatTrainingActivity = (activity: TrainingLogEntry['activityType']) => {
-    if (activity === 'running') return t('dayEdit.trainingTypeRunning');
-    if (activity === 'gym') return t('dayEdit.trainingTypeGym');
-    if (activity === 'cycling') return t('dayEdit.trainingTypeCycling');
-    return t('dayEdit.trainingTypeWalking');
-  };
+  const formatTrainingActivity = (activity: TrainingLogEntry['activityType']) => t(TRAINING_ACTIVITY_LABEL_KEYS[activity]);
 
   const formatTrainingIntensity = (value: TrainingLogEntry['intensity']) => {
-    if (value === 'low') return t('dayEdit.trainingIntensityLow');
-    if (value === 'medium') return t('dayEdit.trainingIntensityMedium');
-    return t('dayEdit.trainingIntensityHigh');
+    if (value === 'low') return t('training:trainingIntensityLow');
+    if (value === 'medium') return t('training:trainingIntensityMedium');
+    return t('training:trainingIntensityHigh');
   };
 
   return (
     <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
       <View style={styles.loggedTrainingSection}>
         <Collapsible
-          title={`${t('dayEdit.trainingListTitle')} (${entries.length})`}
+          title={`${t('training:trainingListTitle')} (${entries.length})`}
           titleType="default"
           initialCollapsed
         >
@@ -60,7 +56,7 @@ export const LoggedTrainingSection: React.FC<LoggedTrainingSectionProps> = ({ en
                       {formatTrainingActivity(entry.activityType)}
                     </ThemedText>
                     <ThemedText type="explainer" style={{ color: colors.textTertiary }}>
-                      {entry.durationMinutes} {t('dayEdit.trainingMinutesUnit')} • {formatTrainingIntensity(entry.intensity)}
+                      {entry.durationMinutes} {t('training:trainingMinutesUnit')} • {formatTrainingIntensity(entry.intensity)}
                     </ThemedText>
                     {typeof entry.distanceKm === 'number' && (
                       <ThemedText type="explainer" style={{ color: colors.textTertiary }}>

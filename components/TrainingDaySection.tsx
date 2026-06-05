@@ -3,13 +3,15 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { type TrainingActivityType, type TrainingIntensity, useStorage } from '@/app/context/StorageContext';
+import { useStorage } from '@/app/context/StorageContext';
+import { type TrainingActivityType, type TrainingIntensity } from '@/types/training';
+import { DEFAULT_TRAINING_ACTIVITY, TRAINING_ACTIVITY_OPTIONS } from '@/types/trainingActivityOptions';
 
 import { LoggedTrainingSection } from './LoggedTrainingSection';
 import { ThemedText } from './ThemedText';
+import { TrainingPlanTargetsSection } from './TrainingPlanTargetsSection';
 import AppButton from './ui/AppButton';
 import { CancelButton } from './ui/CancelButton';
-import { type IconSymbolName } from './ui/icon-symbol-map';
 import { IconSymbol } from './ui/IconSymbol';
 import LabeledInput from './ui/LabeledInput';
 import LabeledStepperInput from './ui/LabeledStepperInput';
@@ -23,7 +25,7 @@ export const TrainingDaySection: React.FC<TrainingDaySectionProps> = ({ selected
   const { colors } = useTheme();
   const { trainingEntries, addTrainingEntry, setTrainingEntries } = useStorage();
 
-  const [selectedTrainingType, setSelectedTrainingType] = useState('running' as TrainingActivityType);
+  const [selectedTrainingType, setSelectedTrainingType] = useState<TrainingActivityType>(DEFAULT_TRAINING_ACTIVITY);
   const [durationMinutes, setDurationMinutes] = useState('');
   const [distanceKm, setDistanceKm] = useState('');
   const [intensity, setIntensity] = useState('medium' as TrainingIntensity);
@@ -32,17 +34,15 @@ export const TrainingDaySection: React.FC<TrainingDaySectionProps> = ({ selected
   const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  const trainingOptions: Array<{ key: TrainingActivityType; label: string; icon: IconSymbolName }> = [
-    { key: 'running', label: t('dayEdit.trainingTypeRunning'), icon: 'trainingRunning' },
-    { key: 'gym', label: t('dayEdit.trainingTypeGym'), icon: 'trainingGym' },
-    { key: 'cycling', label: t('dayEdit.trainingTypeCycling'), icon: 'trainingCycling' },
-    { key: 'walking', label: t('dayEdit.trainingTypeWalking'), icon: 'trainingWalking' },
-  ];
+  const trainingOptions = useMemo(
+    () => TRAINING_ACTIVITY_OPTIONS.map(option => ({ ...option, label: t(option.labelKey) })),
+    [t]
+  );
 
   const intensityOptions: Array<{ key: TrainingIntensity; label: string }> = [
-    { key: 'low', label: t('dayEdit.trainingIntensityLow') },
-    { key: 'medium', label: t('dayEdit.trainingIntensityMedium') },
-    { key: 'high', label: t('dayEdit.trainingIntensityHigh') },
+    { key: 'low', label: t('training:trainingIntensityLow') },
+    { key: 'medium', label: t('training:trainingIntensityMedium') },
+    { key: 'high', label: t('training:trainingIntensityHigh') },
   ];
 
   const selectedChipStyle = {
@@ -58,7 +58,7 @@ export const TrainingDaySection: React.FC<TrainingDaySectionProps> = ({ selected
   const dayTrainingEntries = useMemo(() => trainingEntries[selectedDate] ?? [], [selectedDate, trainingEntries]);
 
   const resetForm = useCallback(() => {
-    setSelectedTrainingType('running');
+    setSelectedTrainingType(DEFAULT_TRAINING_ACTIVITY);
     setDurationMinutes('');
     setDistanceKm('');
     setTrainingNotes('');
@@ -71,7 +71,7 @@ export const TrainingDaySection: React.FC<TrainingDaySectionProps> = ({ selected
   const handleSaveTraining = useCallback(() => {
     const parsedDuration = Number.parseInt(durationMinutes, 10);
     if (!Number.isFinite(parsedDuration) || parsedDuration <= 0) {
-      setTrainingFormError(t('dayEdit.trainingDurationError'));
+      setTrainingFormError(t('training:trainingDurationError'));
       return;
     }
 
@@ -79,8 +79,8 @@ export const TrainingDaySection: React.FC<TrainingDaySectionProps> = ({ selected
     const normalizedDistance = distanceKm.replace(',', '.').trim();
     if (normalizedDistance) {
       const distanceValue = Number.parseFloat(normalizedDistance);
-      if (!Number.isFinite(distanceValue) || distanceValue < 0) {
-        setTrainingFormError(t('dayEdit.trainingDistanceError'));
+        if (!Number.isFinite(distanceValue) || distanceValue < 0) {
+        setTrainingFormError(t('training:trainingDistanceError'));
         return;
       }
       parsedDistance = distanceValue;
@@ -155,17 +155,10 @@ export const TrainingDaySection: React.FC<TrainingDaySectionProps> = ({ selected
 
   return (
     <View style={styles.trainingContainer}>
-      {!isFormOpen ? (
-        <AppButton
-          title={t('dayEdit.trainingOpenFormButton')}
-          onPress={() => setIsFormOpen(true)}
-          icon="trainingRunning"
-          style={styles.openFormButton}
-        />
-      ) : (
-        <>
+      {isFormOpen ? (
+        <View style={styles.formContent}>
           <ThemedText type="label" style={styles.sectionLabel}>
-            {t('dayEdit.trainingTypeLabel')}
+            {t('training:trainingTypeLabel')}
           </ThemedText>
           <View style={styles.activityRow}>
             {trainingOptions.map(option => (
@@ -196,12 +189,12 @@ export const TrainingDaySection: React.FC<TrainingDaySectionProps> = ({ selected
           </View>
 
           <LabeledStepperInput
-            label={t('dayEdit.trainingDurationLabel')}
+            label={t('training:trainingDurationLabel')}
             value={durationMinutes}
             onChangeText={setDurationMinutes}
             icon="clock"
-            unit={t('dayEdit.trainingMinutesUnit')}
-            placeholder={t('dayEdit.trainingDurationPlaceholder')}
+            unit={t('training:trainingMinutesUnit')}
+            placeholder={t('training:trainingDurationPlaceholder')}
             keyboardType="number-pad"
             step={5}
             decimals={0}
@@ -210,12 +203,12 @@ export const TrainingDaySection: React.FC<TrainingDaySectionProps> = ({ selected
           />
 
           <LabeledStepperInput
-            label={t('dayEdit.trainingDistanceLabel')}
+            label={t('training:trainingDistanceLabel')}
             value={distanceKm}
             onChangeText={setDistanceKm}
             icon="chart"
             unit="km"
-            placeholder={t('dayEdit.trainingDistancePlaceholder')}
+            placeholder={t('training:trainingDistancePlaceholder')}
             keyboardType="decimal-pad"
             step={0.5}
             decimals={1}
@@ -224,7 +217,7 @@ export const TrainingDaySection: React.FC<TrainingDaySectionProps> = ({ selected
           />
 
           <ThemedText type="label" style={styles.sectionLabel}>
-            {t('dayEdit.trainingIntensityLabel')}
+            {t('training:trainingIntensityLabel')}
           </ThemedText>
           <View style={styles.chipRow}>
             {intensityOptions.map(option => (
@@ -242,11 +235,11 @@ export const TrainingDaySection: React.FC<TrainingDaySectionProps> = ({ selected
           </View>
 
           <LabeledInput
-            label={t('dayEdit.trainingNotesLabel')}
+            label={t('training:trainingNotesLabel')}
             inputStyle={[styles.input, styles.notesInput]}
             value={trainingNotes}
             onChangeText={setTrainingNotes}
-            placeholder={t('dayEdit.trainingNotesPlaceholder')}
+            placeholder={t('training:trainingNotesPlaceholder')}
             multilineInput
             isOptional
           />
@@ -258,18 +251,25 @@ export const TrainingDaySection: React.FC<TrainingDaySectionProps> = ({ selected
           ) : null}
 
           <AppButton
-            title={t('dayEdit.trainingSaveButton')}
+            title={t('training:trainingSaveButton')}
             onPress={handleSaveTraining}
             style={styles.saveButton}
           />
 
           <CancelButton onPress={resetForm} />
-        </>
+        </View>
+      ) : (
+        <AppButton
+          title={t('training:trainingOpenFormButton')}
+          onPress={() => setIsFormOpen(true)}
+          icon="trainingRunning"
+          style={styles.openFormButton}
+        />
       )}
 
       {dayTrainingEntries.length === 0 ? (
         <ThemedText style={{ color: colors.textTertiary }}>
-          {t('dayEdit.trainingEmpty')}
+          {t('training:trainingEmpty')}
         </ThemedText>
       ) : (
         <LoggedTrainingSection
@@ -278,12 +278,17 @@ export const TrainingDaySection: React.FC<TrainingDaySectionProps> = ({ selected
           onDelete={handleDeleteTraining}
         />
       )}
+
+      <TrainingPlanTargetsSection selectedDate={selectedDate} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   trainingContainer: {
+    gap: 10,
+  },
+  formContent: {
     gap: 10,
   },
   sectionLabel: {

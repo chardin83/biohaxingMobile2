@@ -59,7 +59,7 @@ export const PlanHeaderActions: React.FC<PlanHeaderActionsProps> = ({
       </TouchableOpacity>
       <PlanEditActions
         onEdit={() => openTrainingSettingsModal(trainingSettingsKey, tipTitle)}
-        editLabel={t('plan.editTrainingSettings')}
+        editLabel={t('plan.editTrainingTargets')}
         style={styles.planHeaderActions}
       />
     </View>

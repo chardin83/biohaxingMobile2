@@ -12,6 +12,11 @@ import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
 import Badge from '@/components/ui/Badge';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import {
+  type TrainingActivityFilter,
+  type TrainingBadgeItem,
+  type TrainingIntensityFilter,
+} from '@/types/training';
 
 import { PlanHeaderActions } from './PlanHeaderActions';
 
@@ -19,6 +24,8 @@ type Props = {
   colors: any;
   formatDate: (isoDate: string) => string;
 };
+
+const toLabelSuffix = (value: string) => `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
 
 export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
@@ -31,8 +38,55 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
   const [trainingSettingsTitle, setTrainingSettingsTitle] = useState<string | null>(null);
   const [trainingSessionsInput, setTrainingSessionsInput] = useState('');
   const [trainingDurationInput, setTrainingDurationInput] = useState('');
+  const [trainingActivityTypeInput, setTrainingActivityTypeInput] = useState('any' as TrainingActivityFilter);
+  const [trainingMinimumIntensityInput, setTrainingMinimumIntensityInput] = useState('any' as TrainingIntensityFilter);
   const [selectedMetricsTipId, setSelectedMetricsTipId] = useState<string | null>(null);
   const metricsBottomSheetRef = useRef<BottomSheet>(null);
+
+  const buildTrainingBadges = (
+    trainingSettingsKey: string,
+    userSettings: (typeof trainingPlanSettings)[string]
+  ): TrainingBadgeItem[] => {
+    const badges: TrainingBadgeItem[] = [];
+
+    if (typeof userSettings.sessionsPerWeek === 'number' && !Number.isNaN(userSettings.sessionsPerWeek)) {
+      badges.push({
+        key: `${trainingSettingsKey}-sessions`,
+        label: t('plan.trainingSessionsPerWeek', {
+          count: userSettings.sessionsPerWeek,
+        }),
+        icon: 'calendar',
+      });
+    }
+
+    if (typeof userSettings.sessionDurationMinutes === 'number' && !Number.isNaN(userSettings.sessionDurationMinutes)) {
+      badges.push({
+        key: `${trainingSettingsKey}-duration`,
+        label: t('plan.trainingDurationMinutes', {
+          minutes: userSettings.sessionDurationMinutes,
+        }),
+        icon: 'clock',
+      });
+    }
+
+    if (userSettings.activityType && userSettings.activityType !== 'any') {
+      badges.push({
+        key: `${trainingSettingsKey}-activity`,
+        label: t(`training:trainingType${toLabelSuffix(userSettings.activityType)}`),
+        icon: 'trainingRunning',
+      });
+    }
+
+    if (userSettings.minimumIntensity && userSettings.minimumIntensity !== 'any') {
+      badges.push({
+        key: `${trainingSettingsKey}-intensity`,
+        label: t(`training:trainingIntensity${toLabelSuffix(userSettings.minimumIntensity)}`),
+        icon: 'flame',
+      });
+    }
+
+    return badges;
+  };
 
   const openTrainingSettingsModal = (tipId: string, trainingTitle?: string | null) => {
     const existing = trainingPlanSettings[tipId];
@@ -40,6 +94,8 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
     setTrainingDurationInput(
       typeof existing?.sessionDurationMinutes === 'number' ? existing.sessionDurationMinutes.toString() : ''
     );
+    setTrainingActivityTypeInput(existing?.activityType ?? 'any');
+    setTrainingMinimumIntensityInput(existing?.minimumIntensity ?? 'any');
     setTrainingSettingsTipId(tipId);
     setTrainingSettingsTitle(trainingTitle ?? null);
     setTrainingSettingsVisible(true);
@@ -51,6 +107,8 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
     setTrainingSettingsTitle(null);
     setTrainingSessionsInput('');
     setTrainingDurationInput('');
+    setTrainingActivityTypeInput('any');
+    setTrainingMinimumIntensityInput('any');
   };
 
   const openMetricsSheet = (tipId: string) => {
@@ -77,15 +135,25 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
 
     const sessionsValue = parseNumericInput(trainingSessionsInput);
     const durationValue = parseNumericInput(trainingDurationInput);
+    const activityTypeValue = trainingActivityTypeInput === 'any' ? undefined : trainingActivityTypeInput;
+    const minimumIntensityValue =
+      trainingMinimumIntensityInput === 'any' ? undefined : trainingMinimumIntensityInput;
 
     setTrainingPlanSettings(prev => {
       const next = { ...prev };
-      if (sessionsValue === undefined && durationValue === undefined) {
+      if (
+        sessionsValue === undefined &&
+        durationValue === undefined &&
+        activityTypeValue === undefined &&
+        minimumIntensityValue === undefined
+      ) {
         delete next[trainingSettingsTipId];
       } else {
         next[trainingSettingsTipId] = {
           sessionsPerWeek: sessionsValue,
           sessionDurationMinutes: durationValue,
+          activityType: activityTypeValue,
+          minimumIntensity: minimumIntensityValue,
         };
       }
       return next;
@@ -108,35 +176,7 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
         const tipTitle = goal.tipId ? t(`tips:${goal.tipId}.title`) : null;
         const trainingSettingsKey = goal.tipId ?? 'unknown';
         const userSettings = trainingPlanSettings[trainingSettingsKey] ?? {};
-
-        const trainingBadges: Array<{
-          key: string;
-          label: string;
-          icon: 'calendar' | 'clock';
-        }> = [];
-
-        if (typeof userSettings.sessionsPerWeek === 'number' && !Number.isNaN(userSettings.sessionsPerWeek)) {
-          trainingBadges.push({
-            key: `${trainingSettingsKey}-sessions`,
-            label: t('plan.trainingSessionsPerWeek', {
-              count: userSettings.sessionsPerWeek,
-            }),
-            icon: 'calendar',
-          });
-        }
-
-        if (
-          typeof userSettings.sessionDurationMinutes === 'number' &&
-          !Number.isNaN(userSettings.sessionDurationMinutes)
-        ) {
-          trainingBadges.push({
-            key: `${trainingSettingsKey}-duration`,
-            label: t('plan.trainingDurationMinutes', {
-              minutes: userSettings.sessionDurationMinutes,
-            }),
-            icon: 'clock',
-          });
-        }
+        const trainingBadges = buildTrainingBadges(trainingSettingsKey, userSettings);
 
         const editAction = (
           <PlanHeaderActions
@@ -171,7 +211,7 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
                 </View>
               ) : (
                 <ThemedText type="default" style={styles.trainingSettingsText}>
-                  {t('plan.trainingSettingsUnset')}
+                  {t('plan.trainingTargetsUnset')}
                 </ThemedText>
               )}
             </View>
@@ -181,7 +221,7 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
       <Portal>
         <TrainingSettingsModal
           visible={trainingSettingsVisible}
-          title={t('plan.trainingSettingsTitle')}
+          title={t('plan.trainingTargetsTitle')}
           trainingTitle={trainingSettingsTitle}
           sessionsPlaceholder={t('plan.trainingSessionsPlaceholder')}
           durationPlaceholder={t('plan.trainingDurationPlaceholder')}
@@ -189,8 +229,12 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
           durationLabel={t('plan.trainingDurationPlaceholder')}
           sessionsValue={trainingSessionsInput}
           durationValue={trainingDurationInput}
+          activityTypeValue={trainingActivityTypeInput}
+          minimumIntensityValue={trainingMinimumIntensityInput}
           onChangeSessions={setTrainingSessionsInput}
           onChangeDuration={setTrainingDurationInput}
+          onChangeActivityType={setTrainingActivityTypeInput}
+          onChangeMinimumIntensity={setTrainingMinimumIntensityInput}
           onSave={handleSaveTrainingSettings}
           onClose={closeTrainingSettingsModal}
           saveLabel={t('general.save')}
