@@ -1,0 +1,6 @@
+{
+  "healthSync": {
+    "title": "Health-synk",
+    "description": "När du aktiverar detta kan appen läsa din sömnhistorik från Apple Health för att förbättra sömnstatistik. Data lagras lokalt och delas inte utan ditt uttryckliga tillstånd."
+  }
+}

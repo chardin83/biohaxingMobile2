@@ -44,8 +44,10 @@
     "dashboard": "Dashboard",
     "calendar": "Kalender",
     "plan": "Plan",
+    "settings": "Inställningar",
     "areas": "Områden"
   },
+  
   "selectedSupplementList": {
     "choosenFor": "Tagna kosttillskott"
   },

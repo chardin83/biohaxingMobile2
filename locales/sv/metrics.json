@@ -115,8 +115,9 @@
     "sleepStages": {
       "title": "Sömnfaser",
       "deepSleep": {
-        "title": "Djup sömn",
-        "minutes": "minuter"
+                "title": "Djup sömn",
+                "minutes": "minuter",
+                "syncFromHealth": "Synka från Apple Health"
       },
       "remSleep": {
         "title": "REM-sömn",

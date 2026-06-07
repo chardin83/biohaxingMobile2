@@ -218,6 +218,8 @@ interface StorageContextType {
   ) => void;
   addToWeeklyTracking: (weekStartISO: string, key: string, value: WeeklyTrackingItem | number) => void;
   getWeeklyTrackingValue: (weekStartISO: string, key: string) => WeeklyTrackingItem[] | number | undefined;
+  healthSyncEnabled: boolean;
+  setHealthSyncEnabled: (val: boolean) => void;
 }
 
 const STORAGE_KEYS = {
@@ -239,6 +241,7 @@ const STORAGE_KEYS = {
   METRIC_ENTRIES: 'metricEntries',
   WEEKLY_TRACKING: 'weeklyTracking',
   NUTRITION_XP_CLAIMS: 'nutritionXpClaims',
+  HEALTH_SYNC_ENABLED: 'healthSyncEnabled',
 };
 
 const StorageContext = createContext<StorageContextType | undefined>(undefined);
@@ -267,6 +270,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const [showMusicState, setShowMusicState] = useState(true);
   const [tempPlans, setTempPlans] = useState<PlansByCategory | null>(null);
   const [metricEntriesState, setMetricEntriesState] = useState<MetricEntry[]>([]);
+  const [healthSyncEnabledState, setHealthSyncEnabledState] = useState(false);
   const [weeklyTrackingState, setWeeklyTrackingState] = useState<Record<string, Record<string, WeeklyTrackingItem[] | number>>>({});
   const [nutritionXpClaimsState, setNutritionXpClaimsState] = useState<Record<string, NutritionXpClaim>>({});
 
@@ -321,6 +325,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
           metricEntriesRaw,
           weeklyTrackingRaw,
           nutritionXpClaimsRaw,
+          healthSyncEnabledRaw,
         ] = await Promise.all([
           AsyncStorage.getItem(STORAGE_KEYS.PLANS),
           AsyncStorage.getItem(STORAGE_KEYS.HAS_VISITED_CHAT),
@@ -339,6 +344,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
           AsyncStorage.getItem(STORAGE_KEYS.METRIC_ENTRIES),
           AsyncStorage.getItem(STORAGE_KEYS.WEEKLY_TRACKING),
           AsyncStorage.getItem(STORAGE_KEYS.NUTRITION_XP_CLAIMS),
+          AsyncStorage.getItem(STORAGE_KEYS.HEALTH_SYNC_ENABLED),
         ]);
 
         const normalizePlans = (raw: string | null): PlansByCategory => {
@@ -396,6 +402,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
         if (metricEntriesRaw) setMetricEntriesState(JSON.parse(metricEntriesRaw));
         if (weeklyTrackingRaw) setWeeklyTrackingState(JSON.parse(weeklyTrackingRaw));
         if (nutritionXpClaimsRaw) setNutritionXpClaimsState(JSON.parse(nutritionXpClaimsRaw));
+        if (healthSyncEnabledRaw === 'true') setHealthSyncEnabledState(true);
       } catch (err) {
         console.error('Kunde inte ladda från AsyncStorage:', err);
       } finally {
@@ -591,6 +598,11 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       AsyncStorage.setItem(STORAGE_KEYS.METRIC_ENTRIES, JSON.stringify(updated));
       return updated;
     });
+  };
+
+  const setHealthSyncEnabled = (val: boolean) => {
+    setHealthSyncEnabledState(val);
+    AsyncStorage.setItem(STORAGE_KEYS.HEALTH_SYNC_ENABLED, val ? 'true' : 'false');
   };
 
   const addMetricEntry = useCallback((entry: MetricEntry) => {
@@ -894,8 +906,10 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       setWeeklyTracking,
       addToWeeklyTracking,
       getWeeklyTrackingValue,
+      healthSyncEnabled: healthSyncEnabledState,
+      setHealthSyncEnabled,
     }),
-    [plansState, setPlans, activeGoals, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState, trainingPlanSettingsState, trainingEntriesState, addTrainingEntry, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, weeklyTrackingState, addToWeeklyTracking, getWeeklyTrackingValue]
+    [plansState, setPlans, activeGoals, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState, trainingPlanSettingsState, trainingEntriesState, addTrainingEntry, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, weeklyTrackingState, addToWeeklyTracking, getWeeklyTrackingValue, healthSyncEnabledState, setHealthSyncEnabled]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

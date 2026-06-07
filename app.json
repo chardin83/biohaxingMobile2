@@ -11,8 +11,15 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "Appen behöver kameratillgång för att du ska kunna ta bilder av tillskott."
-      }
+        "NSCameraUsageDescription": "Appen behöver kameratillgång för att du ska kunna ta bilder av tillskott.",
+        "NSHealthShareUsageDescription": "Appen behöver åtkomst till din sömnhistorik för att synkronisera sömndata.",
+        "NSHealthUpdateUsageDescription": "Appen behöver åtkomst för att uppdatera hälsodata vid synkronisering.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "entitlements": {
+        "com.apple.developer.healthkit": true
+      },
+      "bundleIdentifier": "com.anonymous.Biohaxing"
     },
     "android": {
       "permissions": [
@@ -41,6 +48,13 @@
           "backgroundColor": "#ffffff"
         }
       ],
+      [
+        "expo-notifications",
+        {
+          "enableBackgroundRemoteNotifications": false,
+          "enablePushNotificationsEntitlement": false
+        }
+      ],
       "@react-native-community/datetimepicker",
       "expo-font",
       "expo-localization",
@@ -48,6 +62,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "f3062d6b-7e15-4ec5-911e-fb43f22de839"
+      }
     }
   }
 }

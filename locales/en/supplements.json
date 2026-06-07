@@ -95,7 +95,6 @@
         { "id": "cordyceps", "name": "Cordyceps", "quantity": "", "unit": "" },
         { "id": "caffeine", "name": "Caffeine", "quantity": "200", "unit": "mg" },
         { "id": "beetrootExtract", "name": "Beetroot extract (nitrates)", "quantity": "500", "unit": "mg" },
-        { "id": "selenium", "name": "Selenium", "quantity": "110", "unit": "µg" },
         { "id": "vitaminB6", "name": "Vitamin B6", "quantity": "50", "unit": "mg" }
       ]
 }

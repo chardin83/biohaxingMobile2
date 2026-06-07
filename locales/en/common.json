@@ -44,8 +44,10 @@
     "dashboard": "Dashboard",
     "calendar": "Calendar",
     "plan": "Plan",
+    "settings": "Settings",
     "areas": "Areas"
   },
+  
   "selectedSupplementList": {
     "choosenFor": "Supplements taken"
   },

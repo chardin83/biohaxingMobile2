@@ -1,0 +1,6 @@
+{
+  "healthSync": {
+    "title": "Health sync",
+    "description": "When enabled the app can read your sleep history from Apple Health to improve sleep statistics. Data is stored locally and is not shared without your explicit consent."
+  }
+}

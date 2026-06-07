@@ -80,6 +80,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="search" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="settings/index"
+        options={{
+          title: t('layout.settings', { defaultValue: 'Settings' }),
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="settings" color={color} />,
+        }}
+      />
     </Tabs>
   );
 }

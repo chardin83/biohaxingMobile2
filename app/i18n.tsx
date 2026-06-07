@@ -10,8 +10,10 @@ import enLevels from '../locales/en/levels.json';
 import enMetrics from '../locales/en/metrics.json';
 import enMicrobiome from '../locales/en/microbiome.json';
 import enPrompts from '../locales/en/prompts.json';
+import enSettings from '../locales/en/settings.json';
 import enSupplements from '../locales/en/supplements.json';
 import enTips from '../locales/en/tips.json';
+import enTraining from '../locales/en/training.json';
 import svAreas from '../locales/sv/areas.json';
 import svCommon from '../locales/sv/common.json';
 import svFood from '../locales/sv/food.json';
@@ -20,8 +22,10 @@ import svLevels from '../locales/sv/levels.json';
 import svMetrics from '../locales/sv/metrics.json';
 import svMicrobiome from '../locales/sv/microbiome.json';
 import svPrompts from '../locales/sv/prompts.json';
+import svSettings from '../locales/sv/settings.json';
 import svSupplements from '../locales/sv/supplements.json';
 import svTips from '../locales/sv/tips.json';
+import svTraining from '../locales/sv/training.json';
 
 // Define resources for i18n
 const resources = {
@@ -36,6 +40,8 @@ const resources = {
     genes: enGenes,
     metrics: enMetrics,
     microbiome: enMicrobiome,
+      settings: enSettings,
+      training: enTraining,
   },
   sv: {
     common: svCommon,
@@ -48,6 +54,8 @@ const resources = {
     genes: svGenes,
     metrics: svMetrics,
     microbiome: svMicrobiome,
+      settings: svSettings,
+      training: svTraining,
   },
 };
 
@@ -78,7 +86,7 @@ i18next
     fallbackLng: 'en',
     debug: false,
     defaultNS: 'common', // Default namespace
-    ns: ['common', 'food', 'tips', 'supplements', 'areas', 'levels', 'prompts', 'genes', 'metrics', 'microbiome'], // Available namespaces
+    ns: ['common', 'food', 'tips', 'supplements', 'areas', 'levels', 'prompts', 'genes', 'metrics', 'microbiome', 'settings', 'training'], // Available namespaces
     interpolation: {
       escapeValue: false, // Not needed for React
     },

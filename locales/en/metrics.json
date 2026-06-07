@@ -116,7 +116,8 @@
         "title": "Sleep stages",
         "deepSleep": {
             "title": "Deep sleep",
-            "minutes": "minutes"
+            "minutes": "minutes",
+            "syncFromHealth": "Sync from Health"
         },
         "remSleep": {
             "title": "REM sleep",

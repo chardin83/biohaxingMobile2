@@ -1,0 +1,70 @@
+diff --git a/node_modules/expo-notifications/plugin/build/withNotificationsIOS.js b/node_modules/expo-notifications/plugin/build/withNotificationsIOS.js
+index a5f3bb8..e294a89 100644
+--- a/node_modules/expo-notifications/plugin/build/withNotificationsIOS.js
++++ b/node_modules/expo-notifications/plugin/build/withNotificationsIOS.js
+@@ -6,10 +6,15 @@ const config_plugins_1 = require("expo/config-plugins");
+ const fs_1 = require("fs");
+ const path_1 = require("path");
+ const ERROR_MSG_PREFIX = 'An error occurred while configuring iOS notifications. ';
+-const withNotificationsIOS = (config, { mode = 'development', sounds = [], enableBackgroundRemoteNotifications }) => {
++const withNotificationsIOS = (config, { mode = 'development', sounds = [], enableBackgroundRemoteNotifications, enablePushNotificationsEntitlement = true }) => {
+     config = (0, config_plugins_1.withEntitlementsPlist)(config, (config) => {
+-        if (!config.modResults['aps-environment']) {
+-            config.modResults['aps-environment'] = mode;
++        if (enablePushNotificationsEntitlement) {
++            if (!config.modResults['aps-environment']) {
++                config.modResults['aps-environment'] = mode;
++            }
++        }
++        else {
++            delete config.modResults['aps-environment'];
+         }
+         return config;
+     });
+diff --git a/node_modules/expo-notifications/plugin/src/withNotifications.ts b/node_modules/expo-notifications/plugin/src/withNotifications.ts
+index e2685c6..15ab13d 100644
+--- a/node_modules/expo-notifications/plugin/src/withNotifications.ts
++++ b/node_modules/expo-notifications/plugin/src/withNotifications.ts
+@@ -43,6 +43,14 @@ export type NotificationsPluginProps = {
+    * @platform ios
+    */
+   enableBackgroundRemoteNotifications?: boolean;
++
++  /**
++   * Whether to add the `aps-environment` entitlement for remote push notifications.
++   * Set to `false` if you only use local notifications on iOS.
++   * @default true
++   * @platform ios
++   */
++  enablePushNotificationsEntitlement?: boolean;
+ };
+ 
+ const withNotifications: ConfigPlugin<NotificationsPluginProps | void> = (config, props) => {
+diff --git a/node_modules/expo-notifications/plugin/src/withNotificationsIOS.ts b/node_modules/expo-notifications/plugin/src/withNotificationsIOS.ts
+index 66ff5fb..9d71bcb 100644
+--- a/node_modules/expo-notifications/plugin/src/withNotificationsIOS.ts
++++ b/node_modules/expo-notifications/plugin/src/withNotificationsIOS.ts
+@@ -15,11 +15,20 @@ const ERROR_MSG_PREFIX = 'An error occurred while configuring iOS notifications.
+ 
+ export const withNotificationsIOS: ConfigPlugin<NotificationsPluginProps> = (
+   config,
+-  { mode = 'development', sounds = [], enableBackgroundRemoteNotifications }
++  {
++    mode = 'development',
++    sounds = [],
++    enableBackgroundRemoteNotifications,
++    enablePushNotificationsEntitlement = true,
++  }
+ ) => {
+   config = withEntitlementsPlist(config, (config) => {
+-    if (!config.modResults['aps-environment']) {
+-      config.modResults['aps-environment'] = mode;
++    if (enablePushNotificationsEntitlement) {
++      if (!config.modResults['aps-environment']) {
++        config.modResults['aps-environment'] = mode;
++      }
++    } else {
++      delete config.modResults['aps-environment'];
+     }
+     return config;
+   });

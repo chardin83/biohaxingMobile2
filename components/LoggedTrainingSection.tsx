@@ -5,10 +5,10 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { type TrainingLogEntry } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
+import { TRAINING_ACTIVITY_LABEL_KEYS } from '@/types/trainingActivityOptions';
 
 import { Collapsible } from './Collapsible';
 import { ThemedText } from './ThemedText';
-import { TRAINING_ACTIVITY_LABEL_KEYS } from './trainingActivityOptions';
 import { Card } from './ui/Card';
 import { SwipeableRow } from './ui/SwipeableRow';
 

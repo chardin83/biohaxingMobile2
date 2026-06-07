@@ -135,6 +135,10 @@ export const ICON_SYMBOLS = {
     sf: 'figure.walk',
     material: 'directions-walk',
   },
+  'settings': {
+    sf: 'gearshape',
+    material: 'settings',
+  },
 } as const;
 
 export type IconSymbolName = keyof typeof ICON_SYMBOLS;
