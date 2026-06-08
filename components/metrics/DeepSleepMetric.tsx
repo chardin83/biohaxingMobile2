@@ -67,9 +67,15 @@ export function DeepSleepMetric({
           metricId: 'deep_sleep' as const,
           value: s.stages?.deepMinutes ?? 0,
           unit: 'min' as const,
-          recordedAt: `${s.date}T00:00:00.000Z`,
+          // Use the sample endTime (wake time) if available so the metric is recorded
+          // on the waking date. Fall back to startTime or midnight of the summary date.
+          recordedAt: s.endTime ?? s.startTime ?? `${s.date}T00:00:00.000Z`,
           notes: 'healthkit_sync',
         }));
+
+      // Small debug output to inspect what's being imported (can be removed later)
+       
+      console.debug('[DeepSleepMetric] imported entries preview', entries.slice(0, 5));
 
       if (entries.length > 0) {
         upsertMetricEntries(entries as any);
