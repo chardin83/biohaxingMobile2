@@ -1,19 +1,53 @@
 import { useTheme } from '@react-navigation/native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { AdapterStatus } from '@/wearables/types';
+import { useStorage } from '@/app/context/StorageContext';
+import HealthKitAdapter from '@/wearables/healthkitAdapter';
+import { syncWearableMetricsToStorage } from '@/wearables/syncMetricsToStorage';
+import { AdapterStatus, SleepSummary } from '@/wearables/types';
 
 interface WearableStatusProps {
   readonly status: AdapterStatus;
   readonly style?: any;
+  readonly onSync?: (data: SleepSummary[]) => void;
 }
 
-export function WearableStatus({ status, style }: WearableStatusProps) {
+export function WearableStatus({ status, style, onSync }: WearableStatusProps) {
   const { colors } = useTheme();
-  const formattedLastSync = status.lastSyncAt
-    ? new Date(status.lastSyncAt).toLocaleString()
-    : null;
+  const [localLastSync, setLocalLastSync] = useState<string | null>(null);
+  const { upsertMetricEntries, healthSyncEnabled, setErrorMessage } = useStorage();
+  let formattedLastSync: string | null = null;
+  if (status.lastSyncAt) {
+    formattedLastSync = new Date(status.lastSyncAt).toLocaleString();
+  } else if (localLastSync) {
+    formattedLastSync = new Date(localLastSync).toLocaleString();
+  }
+
+  useEffect(() => {
+    let mounted = true;
+    const adapter = new HealthKitAdapter();
+
+    (async () => {
+      try {
+        if (!healthSyncEnabled) {
+          return;
+        }
+
+        await syncWearableMetricsToStorage(adapter, upsertMetricEntries, 7);
+        if (!mounted) return;
+        setLocalLastSync(new Date().toISOString());
+        if (onSync) onSync([]); // optional: consumer callback — no payload by default
+      } catch (e) {
+        console.debug('[WearableStatus] HealthKit sync failed', e);
+        if (setErrorMessage) setErrorMessage(e instanceof Error ? e.message : String(e));
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [healthSyncEnabled, upsertMetricEntries, setErrorMessage, onSync]);
 
   const getStatusColor = () => {
     switch (status.state) {

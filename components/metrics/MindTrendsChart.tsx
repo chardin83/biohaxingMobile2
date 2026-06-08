@@ -13,12 +13,13 @@ import { SleepMetric } from '@/components/metrics/SleepMetric';
 import { StepsMetric } from '@/components/metrics/StepsMetric';
 import { MetricValuesBottomSheet } from '@/components/sections/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
+import { MetricId } from '@/locales/metrics';
 import { buildTrendData } from '@/utils/metrics';
 
 import { Card } from '../ui/Card';
 
 
-export type MindMetricKey = 'body_battery' | 'sleep_duration' | 'steps' | 'intensity_minutes';
+export type MindMetricKey = Extract<MetricId, 'body_battery' | 'sleep_duration' | 'steps' | 'intensity_minutes'>;
 
 function formatSleepDuration(valueInMinutes: number) {
     const roundedMinutes = Math.max(0, Math.round(valueInMinutes));

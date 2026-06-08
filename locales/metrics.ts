@@ -447,6 +447,18 @@ export const metrics = {
       { unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
+  steps: {
+    id: 'steps',
+    emoji: '👣',
+    nameKey: 'steps.name',
+    descriptionKey: 'steps.description',
+    canonicalUnit: 'count',
+    source: 'wearable',
+    suggestedFrequency: 'daily',
+    units: [
+      { unit: 'count', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
+  },
   intensity_minutes: {
     id: 'intensity_minutes',
     emoji: '🔥',

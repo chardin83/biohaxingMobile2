@@ -6,6 +6,17 @@ export const WEARABLE_SYNC_INTERVAL_MS = 5 * 60 * 1000;
 
 type UpsertMetricEntries = (entries: MetricEntry[]) => void;
 
+// Narrowing helpers so TS understands the filters guarantee numeric values
+function hasDeep(entry: any): entry is (typeof entry & { stages: { deepMinutes: number } }) {
+  return typeof entry?.stages?.deepMinutes === 'number';
+}
+function hasRem(entry: any): entry is (typeof entry & { stages: { remMinutes: number } }) {
+  return typeof entry?.stages?.remMinutes === 'number';
+}
+function hasBedtime(entry: any): entry is (typeof entry & { bedtimeMinutes: number }) {
+  return typeof entry?.bedtimeMinutes === 'number';
+}
+
 function toRecordedAt(date: string) {
   return `${date}T00:00:00.000Z`;
 }
@@ -53,6 +64,21 @@ export async function syncWearableMetricsToStorage(
     adapter.getEnergySignal(range),
   ]);
 
+  // Determine notes label after fetching sleep so adapter.vendor (set in getSleep) is available
+  const detectedVendor = (adapter as any)?.vendor;
+  const vendorSuffix = detectedVendor ? ` (${detectedVendor})` : '';
+  const notesLabel = adapter.source === 'healthkit'
+    ? `AppleHealth${vendorSuffix}`
+    : 'wearable_sync';
+
+  // fetch HRV / resting heart rate summaries if available
+  let hrvs: any[] = [];
+  try {
+    hrvs = await adapter.getHRV(range);
+  } catch {
+    // ignore
+  }
+
   const entries: MetricEntry[] = [
     ...sleep
       .filter(entry => typeof entry.durationMinutes === 'number')
@@ -61,39 +87,39 @@ export async function syncWearableMetricsToStorage(
         value: entry.durationMinutes,
         unit: 'min',
         recordedAt: toRecordedAt(entry.date),
-        notes: 'wearable_sync',
-      })),
+        notes: notesLabel,
+      }) satisfies MetricEntry),
     ...sleep
-      .filter(entry => typeof entry.stages?.deepMinutes === 'number')
+      .filter(hasDeep)
       .map(entry => ({
         metricId: 'deep_sleep',
-        value: entry.stages?.deepMinutes,
+        value: entry.stages.deepMinutes,
         unit: 'min',
         recordedAt: toRecordedAt(entry.date),
-        notes: 'wearable_sync',
-      })),
+        notes: notesLabel,
+      }) satisfies MetricEntry),
     ...sleep
-      .filter(entry => typeof entry.stages?.remMinutes === 'number')
+      .filter(hasRem)
       .map(entry => ({
         metricId: 'rem_sleep',
-        value: entry.stages?.remMinutes,
+        value: entry.stages.remMinutes,
         unit: 'min',
         recordedAt: toRecordedAt(entry.date),
-        notes: 'wearable_sync',
-      })),
+        notes: notesLabel,
+      }) satisfies MetricEntry),
     ...sleep
       .map(entry => ({
         date: entry.date,
         bedtimeMinutes: toBedtimeMinutes(entry.startTime),
       }))
-      .filter(entry => typeof entry.bedtimeMinutes === 'number')
+      .filter(hasBedtime)
       .map(entry => ({
         metricId: 'sleep_bedtime',
         value: entry.bedtimeMinutes,
         unit: 'min_from_midnight',
         recordedAt: toRecordedAt(entry.date),
-        notes: 'wearable_sync',
-      })),
+        notes: notesLabel,
+      }) satisfies MetricEntry),
     ...activity
       .filter(entry => typeof entry.steps === 'number')
       .map(entry => ({
@@ -101,8 +127,8 @@ export async function syncWearableMetricsToStorage(
         value: entry.steps,
         unit: 'count',
         recordedAt: toRecordedAt(entry.date),
-        notes: 'wearable_sync',
-      })),
+        notes: notesLabel,
+      }) satisfies MetricEntry),
     ...activity
       .filter(entry => typeof entry.activeMinutes === 'number')
       .map(entry => ({
@@ -110,7 +136,7 @@ export async function syncWearableMetricsToStorage(
         value: entry.activeMinutes as number,
         unit: 'min',
         recordedAt: toRecordedAt(entry.date),
-        notes: 'wearable_sync',
+        notes: notesLabel,
       })),
     ...activity
       .filter(entry => typeof entry.intensityMinutes === 'number')
@@ -119,7 +145,7 @@ export async function syncWearableMetricsToStorage(
         value: entry.intensityMinutes,
         unit: 'min',
         recordedAt: toRecordedAt(entry.date),
-        notes: 'wearable_sync',
+        notes: notesLabel,
       })),
     ...energy
       .filter(entry => typeof entry.bodyBatteryLevel === 'number')
@@ -128,11 +154,20 @@ export async function syncWearableMetricsToStorage(
         value: entry.bodyBatteryLevel,
         unit: '%',
         recordedAt: toRecordedAt(entry.date),
-        notes: 'wearable_sync',
+        notes: notesLabel,
+      })),
+    // Resting heart rate
+    ...hrvs
+      .filter((h: any) => typeof h.avgRestingHrBpm === 'number')
+      .map((h: any) => ({
+        metricId: 'resting_hr',
+        value: h.avgRestingHrBpm,
+        unit: 'bpm',
+        recordedAt: toRecordedAt(h.date),
+        notes: notesLabel,
       })),
   ];
-
-  upsertMetricEntries(entries);
+    upsertMetricEntries(entries);
 
   return {
     entryCount: entries.length,

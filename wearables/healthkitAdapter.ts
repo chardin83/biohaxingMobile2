@@ -1,4 +1,4 @@
-import { SleepSummary,TimeRange, WearableAdapter } from './types';
+import { HRVSummary,SleepSummary,TimeRange, WearableAdapter } from './types';
 
 type HealthKitModule = {
   initHealthKit?: (...args: any[]) => any;
@@ -16,7 +16,13 @@ function getInitOptions() {
 
   return {
     permissions: {
-      read: [permissions?.SleepAnalysis ?? 'SleepAnalysis'],
+      // Request Sleep plus common heart-rate related reads so we can fetch resting HR / HRV
+      read: [
+        permissions?.SleepAnalysis ?? 'SleepAnalysis',
+        permissions?.RestingHeartRate ?? 'RestingHeartRate',
+        permissions?.HeartRate ?? 'HeartRate',
+        permissions?.HeartRateVariability ?? 'HeartRateVariability',
+      ],
       write: [],
     },
   };
@@ -58,7 +64,43 @@ type RawSleepSample = {
   metadata?: Record<string, unknown> | string | null;
   startDate?: string;
   endDate?: string;
+  sourceId?: string;
+  sourceName?: string;
 };
+
+function detectVendorFromSamples(samples: any[]): string | null {
+  if (!samples?.length) {
+    return null;
+  }
+
+  const vendors = [
+    { name: 'Garmin', keywords: ['garmin'] },
+    { name: 'Fitbit', keywords: ['fitbit'] },
+    { name: 'Apple', keywords: ['apple', 'health'] },
+    { name: 'Samsung', keywords: ['samsung'] },
+  ];
+
+  for (const sample of samples) {
+    const source = [
+      sample?.sourceId,
+      sample?.source,
+      sample?.sourceName,
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
+
+    const vendor = vendors.find(({ keywords }) =>
+      keywords.some(keyword => source.includes(keyword)),
+    );
+
+    if (vendor) {
+      return vendor.name;
+    }
+  }
+
+  return null;
+}
 
 function getStageKeyForSample(sample: RawSleepSample): 'deep' | 'rem' | 'light' | 'awake' {
   const rawValue = sample.value;
@@ -187,6 +229,13 @@ function finalizeAggregates(byDate: Record<string, SleepDayAggregate>) {
   });
 }
 
+// Preferred HealthKit sample method order for resting HR / HRV
+const HRV_SAMPLE_METHODS = [
+  'getRestingHeartRateSamples',
+  'getHeartRateSamples',
+  'getHeartRateVariabilitySamples',
+] as const;
+
 export class HealthKitAdapter implements WearableAdapter {
   source = 'healthkit' as const;
   private initialized = false;
@@ -244,8 +293,18 @@ export class HealthKitAdapter implements WearableAdapter {
         );
       });
 
+      // Detect vendor from raw samples (e.g. Garmin/Fitbit) and store on adapter instance
+      try {
+        const vendor = detectVendorFromSamples(samples as any[]);
+        if (vendor) {
+          (this as any).vendor = vendor;
+        }
+      } catch {
+        /* ignore */
+      }
+
       // Log full raw samples (for debugging external analysis)
-      console.debug('[HealthKitAdapter] raw sleep samples', samples);
+      //console.debug('[HealthKitAdapter] raw sleep samples', samples);
 
       // No targeted logging — only full raw samples are logged above
 
@@ -315,8 +374,125 @@ export class HealthKitAdapter implements WearableAdapter {
     }
   }
 
-  // Minimal implementations for other methods
-  async getHRV(): Promise<any[]> { return []; }
+
+
+async getHRV(range: TimeRange): Promise<HRVSummary[]> {
+  try {
+    await this.ensureInit();
+
+    if (!AppleHealthKit) {
+      return [];
+    }
+
+    const samples = await this.fetchFirstAvailableHRVSamples(AppleHealthKit, range);
+
+    if (!samples.length) {
+      console.debug('[HealthKitAdapter] getHRV no samples found');
+      return [];
+    }
+
+    return this.toHRVSummaries(samples);
+  } catch {
+    return [];
+  }
+}
+
+private async fetchFirstAvailableHRVSamples(
+  health: typeof AppleHealthKit,
+  range: TimeRange,
+): Promise<any[]> {
+  for (const methodName of HRV_SAMPLE_METHODS) {
+    const samples = await this.tryFetchHRVSamples(health, methodName, range);
+
+    if (samples.length) {
+      return samples;
+    }
+  }
+
+  // No method returned samples — log available keys to help debugging
+  try {
+    console.debug('[HealthKitAdapter] getHRV availableKeys', Object.keys(health || {}).sort());
+  } catch {
+    /* ignore */
+  }
+
+  return [];
+}
+
+private async tryFetchHRVSamples(
+  health: typeof AppleHealthKit,
+  methodName: typeof HRV_SAMPLE_METHODS[number],
+  range: TimeRange,
+): Promise<any[]> {
+  const fn = (health as any)[methodName];
+
+  if (typeof fn !== 'function') {
+    console.debug('[HealthKitAdapter] getHRV missing', methodName);
+    return [];
+  }
+
+  console.debug('[HealthKitAdapter] getHRV trying', methodName);
+
+  const samples = await new Promise<any[]>((resolve, reject) => {
+    fn.call(
+      health,
+      { startDate: range.start, endDate: range.end },
+      (err: any, results: any) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        resolve(results ?? []);
+      },
+    );
+  });
+
+  console.debug(
+    '[HealthKitAdapter] getHRV fetched',
+    methodName,
+    'count',
+    samples.length,
+  );
+
+  if (samples.length) {
+    try { console.debug('[HealthKitAdapter] getHRV sample0', samples[0]); } catch {}
+  }
+
+  return samples;
+}
+
+private toHRVSummaries(samples: any[]): HRVSummary[] {
+  const byDate = this.groupHRVSamplesByDate(samples);
+
+  return Object.entries(byDate).map(([date, values]) => {
+    const sum = values.reduce((a, b) => a + b, 0);
+    const avg = values.length ? sum / values.length : 0;
+    return {
+      source: this.source,
+      date,
+      avgRestingHrBpm: Math.round(avg),
+    } satisfies HRVSummary;
+  });
+}
+
+private groupHRVSamplesByDate(samples: any[]): Record<string, number[]> {
+  return samples.reduce<Record<string, number[]>>((acc, sample) => {
+    const value = Number(sample.value);
+
+    if (!Number.isFinite(value)) {
+      return acc;
+    }
+
+    const date = new Date(sample.endDate ?? sample.startDate ?? 0).toISOString();
+    const dateKey = toLocalDateISO(date);
+
+    acc[dateKey] ??= [];
+    acc[dateKey].push(value);
+
+    return acc;
+  }, {});
+}
   async getDailyActivity(): Promise<any[]> { return []; }
   async getEnergySignal(): Promise<any[]> { return []; }
 }
