@@ -1,10 +1,11 @@
 import { useTheme } from '@react-navigation/native';
 import { t } from 'i18next';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Switch, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { useSession } from '@/app/context/SessionStorage';
 import { useStorage } from '@/app/context/StorageContext';
+import ThemedSwitch from '@/components/ui/ThemedSwitch';
 
 import { ThemedModal } from './ThemedModal';
 
@@ -69,24 +70,25 @@ const AIInfoPopup: React.FC<AIInfoPopupProps> = ({ visible, setVisible }) => {
 
         <View style={styles.row}>
           <Text style={[styles.label, { color: colors.textLight }]}>Hälsoplan och tillskott</Text>
-          <Switch
-            value={healthPlanEnabled}
-            onValueChange={setHealthPlanEnabled}
-            trackColor={{
-              false: colors.secondary,
-              true: colors.progressBar,
-            }}
-          />
+          <ThemedSwitch value={healthPlanEnabled} onValueChange={setHealthPlanEnabled} />
         </View>
 
         <View style={styles.row}>
           <Text style={[styles.label, { color: colors.textLight }]}>Kalender (delas inte)</Text>
-          <Switch value={false} disabled />
+          <ThemedSwitch
+            value={false}
+            onValueChange={() => {}}
+            disabled
+          />
         </View>
 
         <View style={styles.row}>
           <Text style={[styles.label, { color: colors.textLight }]}>Chatt-historik (sparas inte)</Text>
-          <Switch value={false} disabled />
+          <ThemedSwitch
+            value={false}
+            onValueChange={() => {}}
+            disabled
+          />
         </View>
 
         <Text style={[styles.disclaimer, { color: colors.text }]}>

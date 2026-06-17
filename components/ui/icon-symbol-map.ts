@@ -159,6 +159,10 @@ export const ICON_SYMBOLS = {
     sf: 'gearshape',
     material: 'settings',
   },
+  'applelogo': {
+    sf: 'applelogo',
+    material: 'favorite',
+  },
 } as const;
 
 export type IconSymbolName = keyof typeof ICON_SYMBOLS;

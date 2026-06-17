@@ -7,7 +7,7 @@ import { StyleSheet, View } from 'react-native';
 import HealthSyncSettings from '@/components/HealthSyncSettings';
 import { ThemedText } from '@/components/ThemedText';
 import Container from '@/components/ui/Container';
-import { SettingsCard } from '@/components/ui/SettingsCard';
+import { SettingsCardLink } from '@/components/ui/SettingsCardLink';
 import { LANGUAGE_DISPLAY } from '@/constants/languages';
 
 const STORAGE_KEY = 'preferredLanguage';
@@ -68,7 +68,7 @@ export default function SettingsPage() {
         {t('settings.preferences')}
       </ThemedText>
 
-      <SettingsCard
+      <SettingsCardLink
         rows={[
           {
             key: 'language',

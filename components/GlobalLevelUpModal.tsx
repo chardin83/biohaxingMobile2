@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Switch, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+import ThemedSwitch from '@/components/ui/ThemedSwitch';
 
 import { useStorage } from '@/app/context/StorageContext';
 
@@ -51,7 +52,7 @@ export default function GlobalLevelUpModal() {
       </Text>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 16, justifyContent: 'center' }}>
         <Text style={{ color: 'white', marginRight: 8 }}>Musik</Text>
-        <Switch value={showMusic} onValueChange={handleToggleMusic} />
+        <ThemedSwitch value={showMusic} onValueChange={handleToggleMusic} />
       </View>
     </ThemedModal>
   );
