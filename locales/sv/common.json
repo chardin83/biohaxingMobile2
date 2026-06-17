@@ -52,8 +52,15 @@
     "subtitle": "Välj ditt föredragna språk",
     "device": "Mobilens språk"
   },
+  "themeSelector": {
+    "title": "Tema",
+    "subtitle": "Använd enhetens inställning",
+    "device": "Använd enhetens inställning",
+    "light": "Ljust",
+    "dark": "Mörkt"
+  },
   "settings": {
-    "preferences": "Inställningar"
+    "preferences": "Utseende"
   },
   
   "selectedSupplementList": {

@@ -139,6 +139,14 @@ export const ICON_SYMBOLS = {
     sf: 'iphone',
     material: 'smartphone',
   },
+  'moon': {
+    sf: 'moon.fill',
+    material: 'dark_mode',
+  },
+  'sunny': {
+    sf: 'sun.max.fill',
+    material: 'wb-sunny',
+  },
   'public': {
     sf: 'globe',
     material: 'public',

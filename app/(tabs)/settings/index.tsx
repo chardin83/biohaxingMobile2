@@ -16,6 +16,7 @@ export default function SettingsPage() {
   const { t } = useTranslation();
   const router = useRouter();
   const [selectedLabel, setSelectedLabel] = React.useState<string>('');
+  const [themeLabel, setThemeLabel] = React.useState<string>(t('themeSelector.device'));
 
   React.useEffect(() => {
     const load = async () => {
@@ -39,6 +40,20 @@ export default function SettingsPage() {
     load();
   }, [t]);
 
+  React.useEffect(() => {
+    const loadTheme = async () => {
+      try {
+        const v = await AsyncStorage.getItem('preferredTheme');
+        if (v === 'light') setThemeLabel(t('themeSelector.light'));
+        else if (v === 'dark') setThemeLabel(t('themeSelector.dark'));
+        else setThemeLabel(t('themeSelector.device'));
+      } catch {
+        // ignore
+      }
+    };
+    loadTheme();
+  }, [t]);
+
   const onPressLanguage = () => {
     router.push('/(stack)/settings/language');
   };
@@ -54,10 +69,22 @@ export default function SettingsPage() {
       </ThemedText>
 
       <SettingsCard
-        title={t('languageSelector.title', { defaultValue: 'Language' })}
-        subtitle={selectedLabel}
-        iconName="public"
-        onPress={onPressLanguage}
+        rows={[
+          {
+            key: 'language',
+            title: t('languageSelector.title', { defaultValue: 'Language' }),
+            value: selectedLabel,
+            iconName: 'public',
+            onPress: onPressLanguage,
+          },
+          {
+            key: 'theme',
+            title: t('themeSelector.title', { defaultValue: 'Theme' }),
+            value: themeLabel,
+            iconName: 'settings',
+            onPress: () => router.push('/(stack)/settings/theme'),
+          },
+        ]}
       />
 
       {/* language selection handled on separate screen */}

@@ -1,13 +1,13 @@
 import 'react-native-reanimated';
 
-import { ThemeProvider } from '@react-navigation/native';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { t } from 'i18next';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PaperProvider } from 'react-native-paper';
@@ -19,9 +19,12 @@ import Sparks from '@/components/Sparks';
 import { SparksProvider, useSparks } from '@/components/SparksContext';
 import { WearableProvider } from '@/wearables/wearableProvider';
 
+// ThemeProvider value computed below (reads stored preferred theme)
 import { SessionProvider } from './context/SessionStorage';
 import { StorageProvider } from './context/StorageContext';
+import { getStoredPreferredTheme,subscribe } from './context/themeEvents';
 import { MyDarkTheme, MyLightTheme } from './theme/AppTheme';
+// Themes are provided by AppThemeProvider
 import { globalStyles } from './theme/globalStyles';
 
 SplashScreen.preventAutoHideAsync();
@@ -32,10 +35,28 @@ function SparksOverlay() {
 }
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme()
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+
+  const colorScheme = useColorScheme();
+  const [preferredTheme, setPreferredTheme] = React.useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const stored = await getStoredPreferredTheme();
+      if (mounted) setPreferredTheme(stored);
+    })();
+
+    const unsub = subscribe(s => setPreferredTheme(s));
+    return () => {
+      mounted = false;
+      unsub();
+    };
+  }, []);
+
+  const theme = preferredTheme === 'light' ? MyLightTheme : preferredTheme === 'dark' ? MyDarkTheme : colorScheme === 'dark' ? MyDarkTheme : MyLightTheme;
 
   useEffect(() => {
     if (loaded) {
@@ -48,7 +69,7 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={globalStyles.flex1}>
-      <ThemeProvider value={colorScheme === 'dark' ? MyDarkTheme : MyLightTheme}>
+      <ThemeProvider value={theme}>
         <SparksProvider>
           <SparksOverlay />
           <MusicProvider>

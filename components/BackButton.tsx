@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
+import { getBlurSettings } from '@/components/ui/tabbarUtils';
 
 interface BackButtonProps {
   readonly onPress?: () => void;
@@ -25,9 +26,9 @@ export default function BackButton({ onPress, style }: BackButtonProps) {
     }
   };
 
-  // Use a solid background on Android for better appearance
-  const backgroundColor =
-    Platform.OS === 'ios' ? 'transparent' : colors.background;
+  // On iOS we rely on BlurView for the visual background (avoid solid orange fill);
+  // on Android use the tabBarBackground color.
+  const backgroundColor = Platform.OS === 'ios' ? 'transparent' : colors.tabBarBackground ?? colors.background;
 
   return (
     <Pressable
@@ -39,13 +40,11 @@ export default function BackButton({ onPress, style }: BackButtonProps) {
         { backgroundColor },
       ]}
     >
-      {Platform.OS === 'ios' && (
-        <BlurView
-          tint="systemChromeMaterial"
-          intensity={100}
-          style={StyleSheet.absoluteFill}
-        />
-      )}
+      {Platform.OS === 'ios' && (() => {
+        const bg = String(colors.tabBarBackground ?? colors.background ?? '');
+        const { tint, intensity } = getBlurSettings(bg);
+        return <BlurView tint={tint} intensity={intensity} style={StyleSheet.absoluteFill} />;
+      })()}
       <View style={styles.buttonContent} pointerEvents="box-none">
         <ThemedText type="defaultSemiBold">
           <ThemedText type="title2" style={[{ color: colors.primary }]}>

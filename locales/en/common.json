@@ -52,6 +52,13 @@
     "subtitle": "Choose your preferred language",
     "device": "Use device language"
   },
+  "themeSelector": {
+    "title": "Theme",
+    "subtitle": "Use device setting",
+    "device": "Use device setting",
+    "light": "Light",
+    "dark": "Dark"
+  },
   "settings": {
     "preferences": "Preferences"
   },
