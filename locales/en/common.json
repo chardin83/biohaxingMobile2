@@ -49,6 +49,7 @@
   },
   "languageSelector": {
     "title": "Language",
+    "subtitle": "Choose your preferred language",
     "device": "Use device language"
   },
   

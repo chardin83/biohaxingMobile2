@@ -135,6 +135,18 @@ export const ICON_SYMBOLS = {
     sf: 'figure.walk',
     material: 'directions-walk',
   },
+  'smartphone': {
+    sf: 'iphone',
+    material: 'smartphone',
+  },
+  'public': {
+    sf: 'globe',
+    material: 'public',
+  },
+  'check': {
+    sf: 'checkmark',
+    material: 'check',
+  },
   'settings': {
     sf: 'gearshape',
     material: 'settings',
