@@ -52,6 +52,9 @@
     "subtitle": "Choose your preferred language",
     "device": "Use device language"
   },
+  "settings": {
+    "preferences": "Preferences"
+  },
   
   "selectedSupplementList": {
     "choosenFor": "Supplements taken"

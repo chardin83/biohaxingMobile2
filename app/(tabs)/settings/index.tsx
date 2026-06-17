@@ -8,6 +8,7 @@ import HealthSyncSettings from '@/components/HealthSyncSettings';
 import { ThemedText } from '@/components/ThemedText';
 import Container from '@/components/ui/Container';
 import { SettingsCard } from '@/components/ui/SettingsCard';
+import { LANGUAGE_DISPLAY } from '@/constants/languages';
 
 const STORAGE_KEY = 'preferredLanguage';
 
@@ -27,12 +28,12 @@ export default function SettingsPage() {
         if (stored === 'device') {
           setSelectedLabel(t('languageSelector.device'));
         } else if (stored === 'sv') {
-          setSelectedLabel('Svenska');
+          setSelectedLabel(LANGUAGE_DISPLAY.sv);
         } else {
-          setSelectedLabel('English');
+          setSelectedLabel(LANGUAGE_DISPLAY.en);
         }
-      } catch (e) {
-        // ignore
+      } catch {
+        // handle without using an identifier
       }
     };
     load();
@@ -47,6 +48,10 @@ export default function SettingsPage() {
       <View style={styles.headerRow}>
         <ThemedText type="title2">{t('layout.settings')}</ThemedText>
       </View>
+
+      <ThemedText type="label" style={styles.title} uppercase>
+        {t('settings.preferences')}
+      </ThemedText>
 
       <SettingsCard
         title={t('languageSelector.title', { defaultValue: 'Language' })}
@@ -68,7 +73,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   title: {
-    fontSize: 20,
     fontWeight: '700',
   },
   row: {}, // Removed custom styles for the row

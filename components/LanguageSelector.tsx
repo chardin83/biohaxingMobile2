@@ -8,16 +8,12 @@ import { Pressable, StyleSheet, Text,View } from 'react-native';
 import i18n from '@/app/i18n';
 import { ThemedText } from '@/components/ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { LANGUAGE_DISPLAY, LanguageCode } from '@/constants/languages';
 
 const STORAGE_KEY = 'preferredLanguage';
 
-const languages: string[] = ['device', 'en', 'sv'];
+const languages: LanguageCode[] = ['device', 'en', 'sv'];
 
-const LANGUAGE_LABELS: Record<string, string | ((t: (k: string) => string) => string)> = {
-  device: t => t('languageSelector.device'),
-  sv: 'Svenska',
-  en: 'English',
-};
 
 const detectDeviceLang = (): 'sv' | 'en' => {
   const locales = Localization.getLocales();
@@ -40,13 +36,14 @@ const getFlagEmoji = (lang: string) => {
 export default function LanguageSelector() {
   const { t } = useTranslation('common');
   const { colors } = useTheme();
-  const [selected, setSelected] = React.useState<string>('device');
+  const [selected, setSelected] = React.useState<LanguageCode>('device');
   const borderColor = colors.border;
 
   React.useEffect(() => {
     const load = async () => {
       try {
         const stored = await AsyncStorage.getItem(STORAGE_KEY);
+        // Validate stored value to match LanguageCode
         if (!stored) {
           setSelected('device');
           const device = detectDeviceLang();
@@ -54,13 +51,16 @@ export default function LanguageSelector() {
           return;
         }
 
-        if (stored === 'device') {
+        const isValid = stored === 'device' || stored === 'en' || stored === 'sv';
+        const value: LanguageCode = isValid ? (stored as LanguageCode) : 'device';
+
+        if (value === 'device') {
           setSelected('device');
           const device = detectDeviceLang();
           i18n.changeLanguage(device).catch(error => console.warn('LanguageSelector: changeLanguage failed', error));
         } else {
-          setSelected(stored);
-          i18n.changeLanguage(stored).catch(error => console.warn('LanguageSelector: changeLanguage failed', error));
+          setSelected(value);
+          i18n.changeLanguage(value).catch(error => console.warn('LanguageSelector: changeLanguage failed', error));
         }
       } catch (e) {
         console.warn('LanguageSelector: load failed', e);
@@ -69,7 +69,7 @@ export default function LanguageSelector() {
     load();
   }, []);
 
-  const onSelect = async (code: string) => {
+  const onSelect = async (code: LanguageCode) => {
     try {
       setSelected(code);
       await AsyncStorage.setItem(STORAGE_KEY, code);
@@ -86,9 +86,11 @@ export default function LanguageSelector() {
 
   return (
     <View style={[styles.container, styles.card, { backgroundColor: colors.cardBackground, borderColor }]}> 
-      {languages.map((lang, idx) => {
-        const raw = LANGUAGE_LABELS[lang];
-        const label = typeof raw === 'function' ? raw(t) : raw ?? lang;
+      {languages.map((lang: LanguageCode, idx: number) => {
+        const label =
+          lang === 'device'
+            ? t('languageSelector.device')
+            : (LANGUAGE_DISPLAY[lang as keyof typeof LANGUAGE_DISPLAY] ?? lang);
         const isLast = idx === languages.length - 1;
         const flag = getFlagEmoji(lang);
         let leftIcon: React.ReactNode;

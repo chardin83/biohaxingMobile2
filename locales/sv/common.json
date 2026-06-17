@@ -52,6 +52,9 @@
     "subtitle": "Välj ditt föredragna språk",
     "device": "Mobilens språk"
   },
+  "settings": {
+    "preferences": "Inställningar"
+  },
   
   "selectedSupplementList": {
     "choosenFor": "Tagna kosttillskott"
