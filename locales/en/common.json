@@ -47,6 +47,10 @@
     "settings": "Settings",
     "areas": "Areas"
   },
+  "languageSelector": {
+    "title": "Language",
+    "device": "Use device language"
+  },
   
   "selectedSupplementList": {
     "choosenFor": "Supplements taken"

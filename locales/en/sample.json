@@ -1,0 +1,1233 @@
+
+[ 
+    {
+        "endDate": "2026-06-07T09:33:22.000+0200",
+        "id": "48C1D614-AFDE-427E-B47A-8D35CC97DC48",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T22:57:22.000+0200",
+        "value": "INBED"
+    },
+    {
+        "endDate": "2026-06-07T09:33:22.000+0200",
+        "id": "7BB4100D-8AF1-4EE7-93F4-7A4768FBC1D0",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T09:05:22.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-07T09:05:22.000+0200",
+        "id": "A0265A14-F253-4404-BC75-D375DE16AB76",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T08:29:22.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-07T08:29:22.000+0200",
+        "id": "1E434BBE-09F2-4A0A-9CF9-E1E7A328F8EB",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T08:02:22.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-07T08:02:22.000+0200",
+        "id": "7D410A2E-0528-4F68-8E03-A7A223F16177",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T06:52:22.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-07T06:52:22.000+0200",
+        "id": "1AE73271-B242-4CF0-ADE7-1183D00D35B5",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T06:21:22.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-07T06:21:22.000+0200",
+        "id": "9CD4BA78-85D5-4978-88DC-A48110231355",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T04:56:22.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-07T04:56:22.000+0200",
+        "id": "B8D4EAE1-49C7-401E-A8F4-6FF3FDEE425F",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T04:55:22.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-07T04:55:22.000+0200",
+        "id": "153E7E2A-3EBA-419A-9994-AED2229A5F93",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T04:35:22.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-07T04:35:22.000+0200",
+        "id": "D169F9E9-8734-454A-ACF1-28C96DBEF5A8",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T03:42:22.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-07T03:42:22.000+0200",
+        "id": "B549D76E-1244-4073-912A-6F3A7714304A",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T03:26:22.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-07T03:26:22.000+0200",
+        "id": "4D7F8AFF-96C2-4828-AB1C-BFA235A868BF",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T03:15:22.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-07T03:15:22.000+0200",
+        "id": "089DDA81-B47E-4F18-A01E-940F29A8309A",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T02:57:22.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-07T02:57:22.000+0200",
+        "id": "A4AE94DC-21BE-4944-91F7-35CB4C2CB12F",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T02:36:22.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-07T02:36:22.000+0200",
+        "id": "390274D3-2E29-4A1D-89B7-ED2E6DB41D92",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T02:35:22.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-07T02:35:22.000+0200",
+        "id": "3346826E-C905-40FF-B317-39884117AADD",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T02:01:22.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-07T02:01:22.000+0200",
+        "id": "94D3734A-88CE-4756-8AF1-06CB6B64FCF9",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T01:46:22.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-07T01:46:22.000+0200",
+        "id": "FBE83646-393E-4736-863E-18AB526E1E6B",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T01:27:22.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-07T01:27:22.000+0200",
+        "id": "AFAA8605-9B1A-401D-8491-F72104BB0C7F",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T01:26:22.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-07T01:26:22.000+0200",
+        "id": "F1694247-5787-49D7-9C26-C61F7D7925F1",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T00:31:22.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-07T00:31:22.000+0200",
+        "id": "FF91531E-70F1-4CA9-96D0-F257A28A86EB",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T00:21:22.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-07T00:21:22.000+0200",
+        "id": "251B76A1-3D66-4C3B-A0D0-7157EA76DB8B",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-07T00:13:22.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-07T00:13:22.000+0200",
+        "id": "D996D8F9-559F-450E-91A3-8BD7568811E9",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T23:07:22.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-06T23:07:22.000+0200",
+        "id": "BE260E57-D0C0-4DDB-A299-D7E6F68DE9EE",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T22:57:23.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-06T07:57:56.000+0200",
+        "id": "D7E4A39E-444A-4183-B3C0-E1CB750B9DFB",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T00:36:56.000+0200",
+        "value": "INBED"
+    },
+    {
+        "endDate": "2026-06-06T07:57:56.000+0200",
+        "id": "55F83776-66D5-4BFD-8232-D80033133C10",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T07:47:56.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-06T07:47:56.000+0200",
+        "id": "AF541CC2-4BE4-4C77-A2A4-76B98EE4B8A2",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T07:33:56.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-06T07:33:56.000+0200",
+        "id": "4EE7A97A-89E4-4592-AE07-37081EF86E6B",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T07:12:56.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-06T07:12:56.000+0200",
+        "id": "BF1A2CBC-1C9A-4017-84B0-B9374F0777B8",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T07:10:56.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-06T07:10:56.000+0200",
+        "id": "184BCF3E-FF18-4FD2-A345-EBE52350C45D",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T06:26:56.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-06T06:26:56.000+0200",
+        "id": "870463DB-590E-4C27-BB35-82DAB516460E",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T05:46:56.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-06T05:46:56.000+0200",
+        "id": "0D603D7F-BA45-4C13-8787-2CC3439859EF",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T05:36:56.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-06T05:36:56.000+0200",
+        "id": "7FDAA3A5-84EE-48F4-BC64-E7B4E04DB4A7",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T05:15:56.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-06T05:15:56.000+0200",
+        "id": "E41B8CC4-DAC4-4895-8BBD-A5556068AAE2",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T04:42:56.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-06T04:42:56.000+0200",
+        "id": "45AE930C-A89B-4BEB-AA31-D783078684D9",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T03:34:56.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-06T03:34:56.000+0200",
+        "id": "99DE8CD3-C561-4BA8-BE49-4F1002CF7B7C",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T03:13:56.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-06T03:13:56.000+0200",
+        "id": "41657EA5-0A76-4D8A-B129-297908820BE9",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T02:43:56.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-06T02:43:56.000+0200",
+        "id": "394AAB35-769F-467F-983B-3E2A538723EB",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T02:36:56.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-06T02:36:56.000+0200",
+        "id": "510E0219-B78F-46F4-B091-A2D96D090125",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T02:32:56.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-06T02:32:56.000+0200",
+        "id": "1EC3CEC3-B2D0-445F-AF77-7D108FEFC29F",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T02:30:56.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-06T02:30:56.000+0200",
+        "id": "3CF3767C-C620-4605-8932-63A522223C94",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T02:28:56.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-06T02:28:56.000+0200",
+        "id": "FF4FFF21-F928-4140-B34F-95D0A4FDF7C2",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T02:17:56.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-06T02:17:56.000+0200",
+        "id": "34F2FAB4-35D8-4B90-B4D3-E0F21B36CD8B",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T02:16:56.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-06T02:16:56.000+0200",
+        "id": "4C7E6603-25E4-4D2B-B75E-7D4885CF4B47",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T02:15:56.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-06T02:15:56.000+0200",
+        "id": "3F904DE9-9D67-403D-B105-C555944382AC",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T01:49:56.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-06T01:49:56.000+0200",
+        "id": "866622A0-C152-48AC-9CF7-15F44F1F7383",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T01:40:56.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-06T01:40:56.000+0200",
+        "id": "5BBD5AFB-2578-4FDF-BA3F-4FA418AC2CF0",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T01:39:56.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-06T01:39:56.000+0200",
+        "id": "D9AD191D-F493-4795-B5EB-B0CC85AB4059",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T01:03:56.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-06T01:03:56.000+0200",
+        "id": "B674A1DA-11F2-4D7E-AA59-96D42CB1EBFC",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T01:01:56.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-06T01:01:56.000+0200",
+        "id": "4D42CDA4-0D28-4347-AD07-9F9E31B66AE9",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T01:00:56.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-06T01:00:56.000+0200",
+        "id": "2E66725D-9799-4AFB-8742-FF4C444AFD48",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T00:45:56.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-06T00:45:56.000+0200",
+        "id": "6FCC55DD-D53B-46FD-9808-01275C88074E",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-06T00:36:57.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-05T07:14:14.000+0200",
+        "id": "02C13405-1080-4546-BAB8-F18CA4967725",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-04T22:49:14.000+0200",
+        "value": "INBED"
+    },
+    {
+        "endDate": "2026-06-05T07:14:14.000+0200",
+        "id": "2727CBB8-C32A-4C67-A8D2-7407C3A0C901",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-05T06:54:14.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-05T06:54:14.000+0200",
+        "id": "1F7EC102-6D6D-4232-8014-21DAEC15CB61",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-05T06:10:14.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-05T06:10:14.000+0200",
+        "id": "D93E929D-5B94-4127-B3A4-0EE522F77539",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-05T06:05:14.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-05T06:05:14.000+0200",
+        "id": "FAE02F47-A5F1-42C6-B2A0-FC8BE59B9B2B",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-05T05:58:14.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-05T05:58:14.000+0200",
+        "id": "F9387A89-8600-42F9-87E2-1797DCE116E1",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-05T05:12:14.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-05T05:12:14.000+0200",
+        "id": "EA291B2D-1975-4683-846F-A1C3E31131CA",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-05T05:05:14.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-05T05:05:14.000+0200",
+        "id": "ED5796EB-4A80-4FF0-A391-4F58F306D54B",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-05T04:25:14.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-05T04:25:14.000+0200",
+        "id": "CA2B6BD2-F9FC-4C5F-8774-3658DAE1DB39",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-05T03:00:14.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-05T03:00:14.000+0200",
+        "id": "13694CF4-E921-4CF4-877A-5CA1E15FDC38",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-05T02:26:14.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-05T02:26:14.000+0200",
+        "id": "4D4F2E62-4941-4778-9AE5-6FBD24383EE0",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-05T02:13:14.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-05T02:13:14.000+0200",
+        "id": "53B5E430-9668-4927-BFAE-76057341CD9F",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-05T02:00:14.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-05T02:00:14.000+0200",
+        "id": "6F6509F1-687A-4ADE-BF20-92A28C66B5C6",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-05T01:22:14.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-05T01:22:14.000+0200",
+        "id": "03D4A926-56F2-4DB3-B2FE-CEE78012D9E1",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-05T01:09:14.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-05T01:09:14.000+0200",
+        "id": "C87EBC64-85D7-4A37-BECB-7CA2781CD524",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-05T00:08:14.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-05T00:08:14.000+0200",
+        "id": "F6B276E6-4545-45D5-885C-731E5E044B31",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-04T23:44:14.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-04T23:44:14.000+0200",
+        "id": "5D037A7E-E282-437D-833D-2F1511EFADF6",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-04T23:33:14.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-04T23:33:14.000+0200",
+        "id": "0AA7EF35-684A-4568-8654-265C59D10298",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-04T23:03:14.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-04T23:03:14.000+0200",
+        "id": "090A988C-A932-43D6-AA7D-F1B0A36787BE",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-04T22:49:15.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-04T07:03:27.000+0200",
+        "id": "98BFEC77-7988-4E6E-9C8A-1BEF3904EC85",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T23:03:27.000+0200",
+        "value": "INBED"
+    },
+    {
+        "endDate": "2026-06-04T07:03:27.000+0200",
+        "id": "57B9385A-B0BC-4FA2-87EA-E6C4DAAEE812",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-04T06:51:27.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-04T06:51:27.000+0200",
+        "id": "79B40B4F-498E-4BD7-9860-FDAD8F0EE996",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-04T05:57:27.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-04T05:57:27.000+0200",
+        "id": "2C80C32E-DACC-4239-B92E-B9EF9250292B",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-04T05:08:27.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-04T05:08:27.000+0200",
+        "id": "2BE37B73-54CE-4623-9812-AA46550EC3F3",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-04T03:34:27.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-04T03:34:27.000+0200",
+        "id": "2E603570-7A2C-463E-978B-3D9BA4779265",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-04T03:04:27.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-04T03:04:27.000+0200",
+        "id": "171CC00A-B992-4C6A-AE00-06DD552B0A83",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-04T01:36:27.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-04T01:36:27.000+0200",
+        "id": "3B6D8BFF-EE6A-4752-BDF9-DD8E15278284",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-04T01:08:27.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-04T01:08:27.000+0200",
+        "id": "4DF687CC-7F40-45AF-AA68-FC8F2DCEF587",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-04T00:44:27.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-04T00:44:27.000+0200",
+        "id": "275987F4-724E-463B-B580-A75DB90E6A78",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-04T00:20:27.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-04T00:20:27.000+0200",
+        "id": "13BE6845-926E-4D38-B185-2057E9FE4ADB",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-04T00:09:27.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-04T00:09:27.000+0200",
+        "id": "BC6BB813-E21F-4B06-9D49-81465EB14D84",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T23:59:27.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-03T23:59:27.000+0200",
+        "id": "170DCF28-8DC5-4AAB-9A42-8C7322EF471C",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T23:44:27.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-03T23:44:27.000+0200",
+        "id": "39B925A5-300E-4B23-BD11-82C5C82114AB",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T23:04:27.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-03T23:04:27.000+0200",
+        "id": "16BB1A20-8A1F-4EB6-8E07-33312346FF10",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T23:03:28.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-03T06:34:13.000+0200",
+        "id": "487F12A4-5CD7-48A8-A97E-9DEA7787DD15",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-02T23:32:13.000+0200",
+        "value": "INBED"
+    },
+    {
+        "endDate": "2026-06-03T06:34:13.000+0200",
+        "id": "12F207C5-FC1E-4661-9CE1-03B8933AD481",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T06:28:13.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-03T06:28:13.000+0200",
+        "id": "887C1F95-C7D2-4661-A236-8D698C3D01D1",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T05:45:13.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-03T05:45:13.000+0200",
+        "id": "17579565-F849-4ACE-8BEA-E1B982C6F546",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T05:39:13.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-03T05:39:13.000+0200",
+        "id": "937294C3-E8AC-419D-AB08-91FC5D88BA9B",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T05:28:13.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-03T05:28:13.000+0200",
+        "id": "89467832-6E49-4002-A49D-1AD48E88997E",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T04:15:13.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-03T04:15:13.000+0200",
+        "id": "DE5870BD-C830-4A03-8EA3-4D598F04B91B",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T03:55:13.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-03T03:55:13.000+0200",
+        "id": "F16AEB17-6D28-4961-AC7D-11D5655AC644",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T03:45:13.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-03T03:45:13.000+0200",
+        "id": "B308E96C-3256-4860-9123-6A305C6ABC3A",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T03:40:13.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-03T03:40:13.000+0200",
+        "id": "F7BE221E-4113-49F2-97AB-5A65A6933057",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T03:02:13.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-03T03:02:13.000+0200",
+        "id": "C50712F4-4080-4B38-BE6F-3CEE7D18FB85",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T03:01:13.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-03T03:01:13.000+0200",
+        "id": "0A4AD859-D9B7-4700-876E-E50109A4D483",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T02:27:13.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-03T02:27:13.000+0200",
+        "id": "1405F2BD-600A-441B-B18E-0A601D32AE99",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T01:56:13.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-03T01:56:13.000+0200",
+        "id": "0587456F-91D0-47FC-9B72-CBE9A4CAFD5A",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T01:35:13.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-03T01:35:13.000+0200",
+        "id": "664DC47B-FCF4-480A-BB7F-79DC35FC33B1",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T01:19:13.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-03T01:19:13.000+0200",
+        "id": "AA995609-F1FF-486E-B957-7006178F824B",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T01:10:13.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-03T01:10:13.000+0200",
+        "id": "766AE58A-95EB-44EB-AC08-E57623308601",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T01:09:13.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-03T01:09:13.000+0200",
+        "id": "87C8563F-BF4A-4546-9587-8C51B80CF54A",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T00:49:13.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-03T00:49:13.000+0200",
+        "id": "4B5CA4FE-DC75-463B-BA03-443DA5362DCB",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T00:04:13.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-03T00:04:13.000+0200",
+        "id": "ECB3D2CF-D9C4-465F-975D-D9CB18413B1E",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-03T00:03:13.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-03T00:03:13.000+0200",
+        "id": "FE13352B-4014-4514-B57A-CFBC738AD7E7",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-02T23:42:13.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-02T23:42:13.000+0200",
+        "id": "A88AE0D8-9382-4BDA-B31B-8A849E1138D9",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-02T23:32:14.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-02T06:20:20.000+0200",
+        "id": "0F8A6638-AA19-4CD9-BA7F-388779A515A3",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T23:13:20.000+0200",
+        "value": "INBED"
+    },
+    {
+        "endDate": "2026-06-02T06:20:20.000+0200",
+        "id": "E11DA02D-EFF5-4F8E-8FD9-1F193AFA58C6",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-02T06:07:20.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-02T06:07:20.000+0200",
+        "id": "584B05F1-D4DA-44F3-8060-B5E2A81DF74F",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-02T05:40:20.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-02T05:40:20.000+0200",
+        "id": "3C0BC8CC-2F03-4471-9F94-5D6C0475B807",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-02T04:37:20.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-02T04:37:20.000+0200",
+        "id": "DED94E6A-A136-427D-BDA1-1AE86F241BC8",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-02T04:06:20.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-02T04:06:20.000+0200",
+        "id": "C8676703-F7FA-4F80-BFAA-CA5043E56B3B",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-02T03:32:20.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-02T03:32:20.000+0200",
+        "id": "E95C9738-B3CE-46A1-A23E-0F4AB317400D",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-02T03:21:20.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-02T03:21:20.000+0200",
+        "id": "2AE1C193-B9BA-4226-AB40-DF7A8209E075",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-02T02:55:20.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-02T02:55:20.000+0200",
+        "id": "AA520407-B8BC-4488-88E4-86945F1DCC19",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-02T02:28:20.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-02T02:28:20.000+0200",
+        "id": "CC532024-F2CC-4253-8EB0-DDA8DFF07403",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-02T02:18:20.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-02T02:18:20.000+0200",
+        "id": "EDC79F8A-FFC1-4A55-8282-86A51B7C2D8A",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-02T02:00:20.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-02T02:00:20.000+0200",
+        "id": "EF650284-2393-41E5-A093-ECAB71D67BA3",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-02T01:49:20.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-02T01:49:20.000+0200",
+        "id": "903B3BFC-E34C-48C0-8485-E023288B3705",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-02T01:33:20.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-02T01:33:20.000+0200",
+        "id": "28E2EFC3-BA08-45E2-9935-43FAFA4913CA",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-02T01:03:20.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-02T01:03:20.000+0200",
+        "id": "D3B6CD33-E7D7-4D97-B811-20D234D1D609",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-02T00:27:20.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-02T00:27:20.000+0200",
+        "id": "131FE867-EDD3-432E-98DA-F9DE0CA8F573",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-02T00:21:20.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-02T00:21:20.000+0200",
+        "id": "8964F307-E8A3-4453-8458-502C04092C53",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T23:23:20.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-01T23:23:20.000+0200",
+        "id": "C2719204-3CFF-4562-B0F8-CBC413760209",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T23:13:21.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-01T07:25:50.000+0200",
+        "id": "BADCFFF7-2D22-4B23-AF69-99E3E01CD4A7",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T00:08:50.000+0200",
+        "value": "INBED"
+    },
+    {
+        "endDate": "2026-06-01T07:25:50.000+0200",
+        "id": "70C1444D-D765-4539-8951-3249E51F034A",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T06:33:50.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-01T06:33:50.000+0200",
+        "id": "243EDE29-D1F2-40D7-9EBE-8EA3169C3C49",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T06:31:50.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-01T06:31:50.000+0200",
+        "id": "2E212E29-E579-49DA-8859-721EBB6351C4",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T06:15:50.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-01T06:15:50.000+0200",
+        "id": "CE53C0A8-679C-4D2C-BC50-14E931AAE7BA",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T06:02:50.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-01T06:02:50.000+0200",
+        "id": "5034B679-10BA-4733-8746-BBAA184DD2B7",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T05:45:50.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-01T05:45:50.000+0200",
+        "id": "40C84631-31DE-429F-9CCC-887CCD9751B9",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T05:15:50.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-01T05:15:50.000+0200",
+        "id": "D700B175-625B-4823-BC33-72B123B0C2A4",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T04:00:50.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-01T04:00:50.000+0200",
+        "id": "553A9BC0-9B58-446D-BD36-0E6B6A210D98",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T03:39:50.000+0200",
+        "value": "REM"
+    },
+    {
+        "endDate": "2026-06-01T03:39:50.000+0200",
+        "id": "7A38228F-4AC9-4FC2-904C-57036B39A793",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T02:58:50.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-01T02:58:50.000+0200",
+        "id": "5AF88FB4-4121-4088-AF0D-FD10006EE6C9",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T02:57:50.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-01T02:57:50.000+0200",
+        "id": "EDB2D194-914D-471C-8B63-AC251ED5D161",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T02:15:50.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-01T02:15:50.000+0200",
+        "id": "25583722-D5E6-454E-A438-E734257D9162",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T02:01:50.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-01T02:01:50.000+0200",
+        "id": "9CF0F212-4FBB-4ABE-A65D-58E7F10527C3",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T01:48:50.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-01T01:48:50.000+0200",
+        "id": "C9D4A3BB-37AB-4281-A053-2AC35AF6FA47",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T01:43:50.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-01T01:43:50.000+0200",
+        "id": "48673FB9-D208-4774-BEBE-52ECECE30825",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T01:03:50.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-01T01:03:50.000+0200",
+        "id": "36E33261-64FC-495C-80CE-0EAB32CEF6F6",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T01:02:50.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-01T01:02:50.000+0200",
+        "id": "B2F9567D-D3E8-4CD3-9093-0675800B37DE",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T00:50:50.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-01T00:50:50.000+0200",
+        "id": "0FFABD33-F8E9-439E-81F4-05AA1520A889",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T00:48:50.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-01T00:48:50.000+0200",
+        "id": "2F9FD3B4-C3CD-4C8E-BE66-AB45F46C45ED",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T00:47:50.000+0200",
+        "value": "AWAKE"
+    },
+    {
+        "endDate": "2026-06-01T00:47:50.000+0200",
+        "id": "A17676A8-7654-4B05-ABAC-77B4E5A4B530",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T00:45:50.000+0200",
+        "value": "CORE"
+    },
+    {
+        "endDate": "2026-06-01T00:45:50.000+0200",
+        "id": "2634D0D3-9B7B-476A-94B1-F5E1CF248DCC",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T00:18:50.000+0200",
+        "value": "DEEP"
+    },
+    {
+        "endDate": "2026-06-01T00:18:50.000+0200",
+        "id": "BE8CA1D7-03D2-4D10-96D4-55D910782E68",
+        "sourceId": "com.garmin.connect.mobile",
+        "sourceName": "Connect",
+        "startDate": "2026-06-01T00:08:51.000+0200",
+        "value": "CORE"
+    }
+]
+
+[
+    {
+        "metricId": "deep_sleep",
+        "notes": "healthkit_sync",
+        "recordedAt": "2026-06-07T09:33:22.000+0200",
+        "unit": "min",
+        "value": 66
+    },
+    {
+        "metricId": "deep_sleep",
+        "notes": "healthkit_sync",
+        "recordedAt": "2026-06-06T23:07:22.000+0200",
+        "unit": "min",
+        "value": 50
+    },
+    {
+        "metricId": "deep_sleep",
+        "notes": "healthkit_sync",
+        "recordedAt": "2026-06-05T07:14:14.000+0200",
+        "unit": "min",
+        "value": 50
+    },
+    {
+        "metricId": "deep_sleep",
+        "notes": "healthkit_sync",
+        "recordedAt": "2026-06-04T23:44:14.000+0200",
+        "unit": "min",
+        "value": 68
+    },
+    {
+        "metricId": "deep_sleep",
+        "notes": "healthkit_sync",
+        "recordedAt": "2026-06-03T23:59:27.000+0200",
+        "unit": "min",
+        "value": 97
+    }
+]

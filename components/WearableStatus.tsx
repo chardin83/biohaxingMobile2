@@ -52,13 +52,13 @@ export function WearableStatus({ status, style, onSync }: WearableStatusProps) {
   const getStatusColor = () => {
     switch (status.state) {
       case 'connected':
-        return colors.surfaceGreenBorder || 'rgba(100,255,150,0.9)';
+        return colors.surfaceGreenBorder;
       case 'disconnected':
         return colors.gold;
       case 'error':
-        return colors.error || 'rgba(255,100,100,0.9)';
+        return colors.error;
       default:
-        return colors.textMuted || 'rgba(255,255,255,0.5)';
+        return colors.textMuted;
     }
   };
 

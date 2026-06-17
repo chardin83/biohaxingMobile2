@@ -49,7 +49,7 @@ const Container = forwardRef<ContainerScrollRef, ContainerProps>(({
   const { dark, colors } = useTheme();
 
   // Dynamic paddingTop based on backbutton
-  const defaultPaddingTop = showBackButton ? 100 : 35;
+  const defaultPaddingTop = showBackButton ? 100 : 40;
   // Merge user contentContainerStyle with centerContent and default paddings
   const mergedContentContainerStyle = [
     { paddingHorizontal: 18, paddingBottom: 200, paddingTop: defaultPaddingTop },

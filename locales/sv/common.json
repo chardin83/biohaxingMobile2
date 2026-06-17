@@ -47,6 +47,10 @@
     "settings": "Inställningar",
     "areas": "Områden"
   },
+  "languageSelector": {
+    "title": "Välj språk",
+    "device": "Mobilens språk"
+  },
   
   "selectedSupplementList": {
     "choosenFor": "Tagna kosttillskott"
