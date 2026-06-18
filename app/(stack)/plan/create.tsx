@@ -2,10 +2,11 @@ import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, StyleSheet,View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
+import AIInfoPopup from '@/components/AllInfoPopup';
 import { Collapsible } from '@/components/Collapsible';
 import { GradientText } from '@/components/GradientText';
 import ShowAllButton from '@/components/ShowAllButton';
@@ -24,10 +25,12 @@ export default function CreatePlanScreen() {
     const router = useRouter();
     const { colors } = useTheme();
     const { t, i18n } = useTranslation(['common', 'plan']);
-    const { plans, tempPlans, setTempPlans, setPlans, myGoals, myLevel } = useStorage();
+    const { plans, tempPlans, setTempPlans, setPlans, myGoals, myLevel, shareHealthPlan } = useStorage();
 
     const [selectedGoals, setSelectedGoals] = React.useState<string[]>([]);
     const [customGoal, setCustomGoal] = React.useState('');
+    const [showAIPopup, setShowAIPopup] = React.useState(false);
+    const [AIPopUpOpened, setAIPopUpOpened] = React.useState(false);
 
     const [loading, setLoading] = React.useState(false);
     const [showAllReason, setShowAllReason] = React.useState(false);
@@ -347,20 +350,27 @@ export default function CreatePlanScreen() {
     };
 
     const handleCreatePlan = () => {
-        setLoading(true);
-        const activeLanguage = (i18n.resolvedLanguage ?? i18n.language ?? 'en').toLowerCase();
-        const locale: 'sv' | 'en' = activeLanguage.startsWith('sv') ? 'sv' : 'en';
-        // Kombinera valda mål och fritext (om ej tom och ej redan vald)
-        let goals = selectedGoals;
-        if (customGoal.trim().length > 0 && !goals.includes(customGoal.trim())) {
-            goals = [...goals, customGoal.trim()];
-        }
 
-        console.log('[createPlan] goals:', goals);
-        // Skicka både goals och myGoals till backend
-        createPlan(plans, goals, myLevel, locale, myGoals)
-            .then(res => setTempPlans(res.plans))
-            .finally(() => setLoading(false));
+        if (shareHealthPlan) {
+            setLoading(true);
+            const activeLanguage = (i18n.resolvedLanguage ?? i18n.language ?? 'en').toLowerCase();
+            const locale: 'sv' | 'en' = activeLanguage.startsWith('sv') ? 'sv' : 'en';
+            // Kombinera valda mål och fritext (om ej tom och ej redan vald)
+            let goals = selectedGoals;
+            if (customGoal.trim().length > 0 && !goals.includes(customGoal.trim())) {
+                goals = [...goals, customGoal.trim()];
+            }
+
+            console.log('[createPlan] goals:', goals);
+            // Skicka både goals och myGoals till backend
+            createPlan(plans, goals, myLevel, locale, myGoals)
+                .then(res => setTempPlans(res.plans))
+                .finally(() => setLoading(false));
+        }
+        else {
+            setShowAIPopup(true);
+            setAIPopUpOpened(true);
+        }
     };
 
     const buildSectionTitle = React.useCallback(
@@ -472,6 +482,9 @@ export default function CreatePlanScreen() {
                     }
                     disabled={!!tempPlans || loading}
                 />
+                <ThemedText type="error" style={styles.sectionSpacer}>
+                    {!shareHealthPlan && AIPopUpOpened ? t('createPlan.sharePlanError') : ''}
+                </ThemedText>
                 {loading && (
                     <View style={styles.loadingWrapper}>
                         <View style={styles.loadingRow}>
@@ -492,13 +505,12 @@ export default function CreatePlanScreen() {
                         {t('createPlan.intro')}
                     </ThemedText>
                 )}
-                {tempPlans && tempPlans.reasonSummary?.text && (
+                {tempPlans?.reasonSummary?.text && (
                     <>
                         <ThemedText type="label">{t('createPlan.aiCommentTitle')}</ThemedText>
                         <ThemedText
                             type="default"
                             style={styles.reasonText}
-                            accessibilityLabel={`AI-planens sammanfattning: ${tempPlans.reasonSummary.text}`}
                             numberOfLines={showAllReason ? undefined : 5}
                         >
                             {tempPlans.reasonSummary.text}
@@ -619,6 +631,7 @@ export default function CreatePlanScreen() {
                 )}
 
             </Card>
+            <AIInfoPopup visible={showAIPopup} setVisible={setShowAIPopup} sharePlanText={t('createPlan.sharePlanText')} />
         </Container>
     );
 }

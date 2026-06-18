@@ -323,9 +323,6 @@ export default function ChatWithGPT4o(): JSX.Element {
           </ScrollView>
           <View style={[styles.inputContainer, { bottom: inputContainerBottom, borderColor: colors.border, backgroundColor: colors.background }]}>
             <View style={[styles.inputRow]}>
-              <TouchableOpacity onPress={() => setShowAIPopup(true)} style={styles.iconButton}>
-                <MaterialCommunityIcons name="shield-check-outline" size={24} color={colors.secondary} />
-              </TouchableOpacity>
               <LabeledInput
                 label=""
                 value={input}

@@ -1,3 +1,13 @@
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+
+type MaterialIconName =
+  React.ComponentProps<typeof MaterialIcons>['name'];
+
+type IconDefinition = {
+  sf: string;
+  material: MaterialIconName;
+};
+
 export const ICON_SYMBOLS = {
   'pencil': {
     sf: 'pencil',
@@ -141,7 +151,7 @@ export const ICON_SYMBOLS = {
   },
   'moon': {
     sf: 'moon.fill',
-    material: 'dark_mode',
+    material: 'dark-mode',
   },
   'sunny': {
     sf: 'sun.max.fill',
@@ -159,10 +169,14 @@ export const ICON_SYMBOLS = {
     sf: 'gearshape',
     material: 'settings',
   },
+  'privacy': {
+    sf: 'hand.raised.fill',
+    material: 'privacy-tip',
+  },
   'applelogo': {
     sf: 'applelogo',
     material: 'favorite',
   },
-} as const;
+} as const satisfies Record<string, IconDefinition>;
 
 export type IconSymbolName = keyof typeof ICON_SYMBOLS;

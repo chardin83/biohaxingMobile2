@@ -85,11 +85,25 @@ export default function SettingsPage() {
             onPress: () => router.push('/(stack)/settings/theme'),
           },
         ]}
+        style={styles.cardSpacing}
       />
 
-      {/* language selection handled on separate screen */}
+      <ThemedText type="label" style={styles.title} uppercase>
+        {t('settings.integrations')}
+      </ThemedText>
 
-      <HealthSyncSettings />
+      <HealthSyncSettings style={styles.cardSpacing} />
+      <ThemedText type="label" style={styles.title} uppercase>
+        {t('settings.privacy')}
+      </ThemedText>
+
+      <SettingsCardLink
+        title={t('settings.privacy')}
+        subtitle={t('settings.privacySubtitle')}
+        iconName="privacy"
+        onPress={() => router.push('/(stack)/settings/privacy')}
+        style={styles.cardSpacing}
+      />
     </Container>
   );
 }
@@ -98,6 +112,10 @@ const styles = StyleSheet.create({
   headerRow: {
     paddingVertical: 8,
     paddingHorizontal: 16,
+  },
+  cardSpacing: {
+    marginTop: 8,
+    marginBottom: 16,
   },
   title: {
     fontWeight: '700',

@@ -60,7 +60,18 @@
     "dark": "Dark"
   },
   "settings": {
-    "preferences": "Preferences"
+    "preferences": "Preferences",
+    "integrations": "Integrations",
+    "privacy": "Privacy",
+    "privacySubtitle": "Manage data, AI shares and privacy settings"
+  },
+  "aiSharing": {
+    "description": "Choose what information the AI may use to provide you personalized health advice:",
+    "healthPlan": "Health plan and supplements",
+    "calendar": "Calendar (not shared)"
+  },
+  "privacy": {
+    "disclaimer": "We never share your identity (name or email) with the AI."
   },
   
   "selectedSupplementList": {
@@ -164,7 +175,9 @@
         "Better eating habits"
       ],
       "customPlaceholder": "Custom goal..."
-    }
+    },
+    "sharePlanText": "Required to generate an AI plan.",
+    "sharePlanError": "You must share your health plan to generate an AI plan."
   },
   "supplementForm": {
     "dosage": "Dosage",

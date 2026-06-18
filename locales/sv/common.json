@@ -60,7 +60,18 @@
     "dark": "Mörkt"
   },
   "settings": {
-    "preferences": "Utseende"
+    "preferences": "Utseende",
+    "integrations": "Integrationer",
+    "privacy": "Integritet",
+    "privacySubtitle": "Hantera data, AI-delningar och integritetsinställningar"
+  },
+  "aiSharing": {
+    "description": "Välj vilken information AI:n får använda för att ge dig personliga hälsoråd:",
+    "healthPlan": "Hälsoplan och tillskott",
+    "calendar": "Kalender (delas inte)"
+  },
+  "privacy": {
+    "disclaimer": "Vi delar aldrig din identitet (som namn eller e-post) med AI:n."
   },
   
   "selectedSupplementList": {
@@ -164,7 +175,9 @@
         "Bättre matvanor"
       ],
       "customPlaceholder": "Eget mål..."
-    }
+    },
+    "sharePlanText": "Obligatoriskt för att generera en AI-plan.",
+    "sharePlanError": "Du måste dela din hälsoplan för att generera AI-plan."
   },
   "supplementForm": {
     "dosage": "Dos",

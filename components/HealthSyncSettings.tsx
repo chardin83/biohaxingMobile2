@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import SettingIcon from '@/components/ui/SettingIcon';
@@ -9,12 +9,12 @@ import ThemedSwitch from '@/components/ui/ThemedSwitch';
 import { ThemedText } from './ThemedText';
 import SettingsCard from './ui/SettingsCard';
 
-export function HealthSyncSettings() {
+export function HealthSyncSettings({ style }: Readonly<{ style?: StyleProp<ViewStyle> }>) {
   const { t } = useTranslation();
   const { healthSyncEnabled, setHealthSyncEnabled } = useStorage();
 
   return (
-    <SettingsCard style={styles.cardSpacing}>
+    <SettingsCard style={[styles.cardSpacing, style]}>
       <View style={styles.container}>
         <View style={styles.row}>
           <View style={styles.leftWrap}>
@@ -37,7 +37,7 @@ export default HealthSyncSettings;
 
 const styles = StyleSheet.create({
   cardSpacing: {
-    marginTop: 12,
+    marginTop: 8,
   },
   container: {
     padding: 12,

@@ -9,13 +9,13 @@ export function IconSymbol({
   color,
   style,
   weight = 'regular',
-}: {
+}:  Readonly<{
   name: IconSymbolName;
   size?: number;
   color: string;
   style?: StyleProp<ViewStyle>;
   weight?: 'regular' | 'bold';
-}) {
+}>) {
   const sfName = ICON_SYMBOLS[name]?.sf ?? 'questionmark.circle';
 
   return (
