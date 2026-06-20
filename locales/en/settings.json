@@ -1,6 +1,8 @@
 {
-  "healthSync": {
-    "title": "Health sync",
-    "description": "When enabled the app can read your sleep history from Apple Health to improve sleep statistics. Data is stored locally and is not shared without your explicit consent."
+   "healthSync": {
+    "appleTitle": "Apple Health",
+    "androidTitle": "Health Connect",
+    "appleDescription": "When enabled, the app can read health data from Apple Health...",
+    "androidDescription": "When enabled, the app can read health data from Health Connect..."
   }
 }

@@ -58,6 +58,11 @@ export async function syncWearableMetricsToStorage(
     end: new Date().toISOString(),
   };
 
+  console.log('Sleep range start:', range.start);
+console.log('Sleep range end:', range.end);
+
+  console.log('[sync] before getSleep');
+
   const [sleep, activity, energy] = await Promise.all([
     adapter.getSleep(range),
     adapter.getDailyActivity(range),

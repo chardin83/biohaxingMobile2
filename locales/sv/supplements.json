@@ -94,7 +94,6 @@
         { "id": "chaga", "name": "Chaga", "quantity": "500", "unit": "mg", "description": "Antioxidant-rik svamp som traditionellt används för immunstöd och cellskydd." },
         { "id": "cordyceps", "name": "Cordyceps", "quantity": "", "unit": "" },
         { "id": "caffeine", "name": "Caffeine", "quantity": "200", "unit": "mg" },
-        { "id": "beetrootExtract", "name": "Beetroot extract (nitrates)", "quantity": "500", "unit": "mg" },
-        { "id": "vitaminB6", "name": "Vitamin B6", "quantity": "50", "unit": "mg" }
+        { "id": "beetrootExtract", "name": "Beetroot extract (nitrates)", "quantity": "500", "unit": "mg" }
       ]   
     }   

@@ -1,10 +1,10 @@
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useTheme } from '@react-navigation/native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { t } from 'i18next';
 import React, { JSX, useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
 import AIInfoPopup from '@/components/AllInfoPopup';
@@ -22,7 +22,7 @@ import { Message } from '../../domain/Message';
 function createMessage(message: Omit<Message, 'id'> & { id?: string }): Message & { id: string } {
   return {
     ...message,
-    id: message.id ?? `${message.role}-${Math.random().toString(36).substr(2, 9)}-${Date.now()}`,
+    id: message.id ?? `${message.role}-${Math.random().toString(36).slice(2, 11)}-${Date.now()}`,
   };
 }
 

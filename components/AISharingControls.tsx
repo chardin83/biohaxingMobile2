@@ -1,4 +1,3 @@
-import { useTheme } from '@react-navigation/native';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -7,7 +6,6 @@ import { useStorage } from '@/app/context/StorageContext';
 import ThemedSwitch from '@/components/ui/ThemedSwitch';
 
 import { ThemedText } from './ThemedText';
-import { IconSymbol } from './ui/IconSymbol';
 import SettingIcon from './ui/SettingIcon';
 
 interface AISharingControlsProps {
@@ -16,7 +14,6 @@ interface AISharingControlsProps {
 
 export default function AISharingControls({ sharePlanText }: Readonly<AISharingControlsProps>) {
   const { t } = useTranslation('common');
-  const { colors } = useTheme();
   const { shareHealthPlan, setShareHealthPlan } = useStorage();
 
   const healthPlanEnabled = !!shareHealthPlan;

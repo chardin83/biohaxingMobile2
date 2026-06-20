@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
-import HealthKitAdapter from '@/wearables/healthkitAdapter';
 import { syncWearableMetricsToStorage } from '@/wearables/syncMetricsToStorage';
 import { AdapterStatus, SleepSummary } from '@/wearables/types';
+import { createWearableAdapter } from '@/wearables/wearableAdapter';
 
 interface WearableStatusProps {
   readonly status: AdapterStatus;
@@ -26,7 +26,11 @@ export function WearableStatus({ status, style, onSync }: WearableStatusProps) {
 
   useEffect(() => {
     let mounted = true;
-    const adapter = new HealthKitAdapter();
+    const adapter = createWearableAdapter();
+
+    if (!adapter) {
+      return;
+    }
 
     (async () => {
       try {
@@ -34,7 +38,7 @@ export function WearableStatus({ status, style, onSync }: WearableStatusProps) {
           return;
         }
 
-        await syncWearableMetricsToStorage(adapter, upsertMetricEntries, 7);
+        await syncWearableMetricsToStorage(adapter, upsertMetricEntries, 90);
         if (!mounted) return;
         setLocalLastSync(new Date().toISOString());
         if (onSync) onSync([]); // optional: consumer callback — no payload by default

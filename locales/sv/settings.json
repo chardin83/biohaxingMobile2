@@ -1,6 +1,8 @@
 {
   "healthSync": {
-    "title": "Health-synk",
-    "description": "När du aktiverar detta kan appen läsa din sömnhistorik från Apple Health för att förbättra sömnstatistik. Data lagras lokalt och delas inte utan ditt uttryckliga tillstånd."
+    "appleTitle": "Apple Health",
+    "androidTitle": "Health Connect",
+    "appleDescription": "När du aktiverar detta kan appen läsa hälsodata från Apple Health för att förbättra hälsostatistik. Data lagras lokalt och delas inte utan ditt uttryckliga tillstånd.",
+    "androidDescription": "När du aktiverar detta kan appen läsa hälsodata från Health Connect för att förbättra hälsostatistik. Data lagras lokalt och delas inte utan ditt uttryckliga tillstånd."
   }
 }

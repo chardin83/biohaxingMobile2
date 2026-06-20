@@ -18,16 +18,6 @@ import StrengthOverview from './strengthOverview';
 
 export default function AreaRootScreen() {
   const { areaId } = useLocalSearchParams<{ areaId: string }>();
-  const segments = useSegments();
-  const pathname = usePathname?.() ?? '';
-  const navState = useNavigationState(state => state);
-
-  useEffect(() => {
-    console.log('route segments:', segments);
-    console.log('pathname:', pathname);
-    console.log('areaId:', areaId);
-    console.log('NAVIGATION STACK:', navState);
-  }, [segments, pathname, areaId, navState]);
 
   return (
     <Container background="gradient" gradientLocations={Colors.dark.gradients.sunrise.locations2 as any} onBackPress={() => router.back()} showBackButton>
