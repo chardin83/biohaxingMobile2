@@ -19,7 +19,6 @@ export function HealthSyncSettings({
   const isIOS = Platform.OS === 'ios';
 
  const handleHealthSyncChange = async (enabled: boolean) => {
-  console.log('Health sync toggled:', enabled);
 
   if (!enabled) {
     setHealthSyncEnabled(false);

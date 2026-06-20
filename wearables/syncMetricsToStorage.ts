@@ -58,11 +58,6 @@ export async function syncWearableMetricsToStorage(
     end: new Date().toISOString(),
   };
 
-  console.log('Sleep range start:', range.start);
-console.log('Sleep range end:', range.end);
-
-  console.log('[sync] before getSleep');
-
   const [sleep, activity, energy] = await Promise.all([
     adapter.getSleep(range),
     adapter.getDailyActivity(range),
@@ -129,7 +124,7 @@ console.log('Sleep range end:', range.end);
       .filter(entry => typeof entry.steps === 'number')
       .map(entry => ({
         metricId: 'steps',
-        value: entry.steps,
+        value: entry.steps as number,
         unit: 'count',
         recordedAt: toRecordedAt(entry.date),
         notes: notesLabel,
@@ -142,35 +137,35 @@ console.log('Sleep range end:', range.end);
         unit: 'min',
         recordedAt: toRecordedAt(entry.date),
         notes: notesLabel,
-      })),
+      }) satisfies MetricEntry),
     ...activity
       .filter(entry => typeof entry.intensityMinutes === 'number')
       .map(entry => ({
         metricId: 'intensity_minutes',
-        value: entry.intensityMinutes,
+        value: entry.intensityMinutes as number,
         unit: 'min',
         recordedAt: toRecordedAt(entry.date),
         notes: notesLabel,
-      })),
+      }) satisfies MetricEntry),
     ...energy
       .filter(entry => typeof entry.bodyBatteryLevel === 'number')
       .map(entry => ({
         metricId: 'body_battery',
-        value: entry.bodyBatteryLevel,
+        value: entry.bodyBatteryLevel as number,
         unit: '%',
         recordedAt: toRecordedAt(entry.date),
         notes: notesLabel,
-      })),
+      }) satisfies MetricEntry),
     // Resting heart rate
     ...hrvs
       .filter((h: any) => typeof h.avgRestingHrBpm === 'number')
       .map((h: any) => ({
         metricId: 'resting_hr',
-        value: h.avgRestingHrBpm,
+        value: h.avgRestingHrBpm as number,
         unit: 'bpm',
         recordedAt: toRecordedAt(h.date),
         notes: notesLabel,
-      })),
+      }) satisfies MetricEntry),
   ];
     upsertMetricEntries(entries);
 

@@ -1,17 +1,9 @@
-import { Platform } from 'react-native';
 import {
-  getGrantedPermissions,
   getSdkStatus,
   initialize,
   requestPermission,
   SdkAvailabilityStatus,
 } from 'react-native-health-connect';
-
-const HEALTH_CONNECT_PERMISSIONS = [
-  { accessType: 'read', recordType: 'SleepSession' },
-  { accessType: 'read', recordType: 'HeartRate' },
-  { accessType: 'read', recordType: 'Steps' },
-] as const;
 
 export async function requestHealthConnectPermissions(): Promise<boolean> {
   const status = await getSdkStatus();

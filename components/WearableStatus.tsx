@@ -38,7 +38,7 @@ export function WearableStatus({ status, style, onSync }: WearableStatusProps) {
           return;
         }
 
-        await syncWearableMetricsToStorage(adapter, upsertMetricEntries, 90);
+        await syncWearableMetricsToStorage(adapter, upsertMetricEntries, 7);
         if (!mounted) return;
         setLocalLastSync(new Date().toISOString());
         if (onSync) onSync([]); // optional: consumer callback — no payload by default

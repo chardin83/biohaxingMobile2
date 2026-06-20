@@ -8,7 +8,7 @@ import {
   SdkAvailabilityStatus,
 } from 'react-native-health-connect';
 
-import { HRVSummary, SleepSummary, TimeRange, WearableAdapter } from './types';
+import { DailyActivity, HRVSummary, SleepSummary, TimeRange, WearableAdapter } from './types';
 
 const PERMISSIONS: Permission[] = [
   { accessType: 'read', recordType: 'SleepSession' },
@@ -98,62 +98,77 @@ export class HealthConnectAdapter implements WearableAdapter {
   }
 
   async getSleep(range: TimeRange): Promise<SleepSummary[]> {
-  try {
-    await this.ensureInit();
+    try {
+      await this.ensureInit();
 
-    const permissions = await getGrantedPermissions();
-console.log('Permissions:', permissions);
-
-    const result = await readRecords('SleepSession', {
-      timeRangeFilter: {
-        operator: 'between',
-        startTime: range.start,
-        endTime: range.end,
-      },
-    });
-
-    console.log('Sleep records:', JSON.stringify(result.records, null, 2));
-    
-
-    return result.records.map(record => {
-      const stages = record.stages ?? [];
-
-      const sumStageMinutes = (stageType: number) =>
-        stages
-          .filter(stage => stage.stage === stageType)
-          .reduce(
-            (sum, stage) =>
-              sum + minutesBetween(stage.startTime, stage.endTime),
-            0
-          );
-
-      return {
-        source: this.source,
-        date: toLocalDateISO(record.endTime),
-        startTime: record.startTime,
-        endTime: record.endTime,
-        durationMinutes: minutesBetween(record.startTime, record.endTime),
-        stages: {
-          deepMinutes: sumStageMinutes(SLEEP_STAGE.deep),
-          remMinutes: sumStageMinutes(SLEEP_STAGE.rem),
-          lightMinutes: sumStageMinutes(SLEEP_STAGE.light),
-          awakeMinutes: sumStageMinutes(SLEEP_STAGE.awake),
+      const result = await readRecords('SleepSession', {
+        timeRangeFilter: {
+          operator: 'between',
+          startTime: range.start,
+          endTime: range.end,
         },
-      };
-    });
-  } catch (err) {
-    console.warn('[HealthConnectAdapter] getSleep failed', err);
-    return [];
+      });
+
+      return result.records.map(record => {
+        const stages = record.stages ?? [];
+
+        const sumStageMinutes = (stageType: number) =>
+          stages
+            .filter(stage => stage.stage === stageType)
+            .reduce(
+              (sum, stage) =>
+                sum + minutesBetween(stage.startTime, stage.endTime),
+              0
+            );
+
+        return {
+          source: this.source,
+          date: toLocalDateISO(record.endTime),
+          startTime: record.startTime,
+          endTime: record.endTime,
+          durationMinutes: minutesBetween(record.startTime, record.endTime),
+          stages: {
+            deepMinutes: sumStageMinutes(SLEEP_STAGE.deep),
+            remMinutes: sumStageMinutes(SLEEP_STAGE.rem),
+            lightMinutes: sumStageMinutes(SLEEP_STAGE.light),
+            awakeMinutes: sumStageMinutes(SLEEP_STAGE.awake),
+          },
+        };
+      });
+    } catch (err) {
+      console.warn('[HealthConnectAdapter] getSleep failed', err);
+      return [];
+    }
   }
-}
 
   async getHRV(_range: TimeRange): Promise<HRVSummary[]> {
     return [];
   }
 
-  async getDailyActivity(): Promise<any[]> {
-    return [];
+async getDailyActivity(range: TimeRange): Promise<DailyActivity[]> {
+  await this.ensureInit();
+
+  const result = await readRecords('Steps', {
+    timeRangeFilter: {
+      operator: 'between',
+      startTime: range.start,
+      endTime: range.end,
+    },
+  });
+
+  const stepsByDay = new Map<string, number>();
+
+  for (const record of result.records) {
+    const date = toLocalDateISO(record.endTime);
+    stepsByDay.set(date, (stepsByDay.get(date) ?? 0) + record.count);
   }
+
+  return [...stepsByDay.entries()].map(([date, steps]) => ({
+    source: this.source,
+    date,
+    steps,
+  }));
+}
 
   async getEnergySignal(): Promise<any[]> {
     return [];
