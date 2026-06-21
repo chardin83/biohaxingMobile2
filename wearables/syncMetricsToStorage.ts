@@ -79,6 +79,8 @@ export async function syncWearableMetricsToStorage(
     // ignore
   }
 
+  console.log('Activity from adapter:', activity);
+
   const entries: MetricEntry[] = [
     ...sleep
       .filter(entry => typeof entry.durationMinutes === 'number')

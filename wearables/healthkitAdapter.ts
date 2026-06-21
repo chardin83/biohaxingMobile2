@@ -1,8 +1,9 @@
-import { HRVSummary,SleepSummary,TimeRange, WearableAdapter } from './types';
+import { DailyActivity, HRVSummary, SleepSummary, TimeRange, WearableAdapter } from './types';
 
 type HealthKitModule = {
   initHealthKit?: (...args: any[]) => any;
   getSleepSamples?: (...args: any[]) => any;
+  getDailyStepCountSamples?: (...args: any[]) => any;
   Constants?: { Permissions?: Record<string, string> };
   default?: any;
   AppleHealthKit?: any;
@@ -22,6 +23,7 @@ function getInitOptions() {
         permissions?.RestingHeartRate ?? 'RestingHeartRate',
         permissions?.HeartRate ?? 'HeartRate',
         permissions?.HeartRateVariability ?? 'HeartRateVariability',
+        permissions?.StepCount ?? 'StepCount',
       ],
       write: [],
     },
@@ -376,125 +378,173 @@ export class HealthKitAdapter implements WearableAdapter {
 
 
 
-async getHRV(range: TimeRange): Promise<HRVSummary[]> {
-  try {
-    await this.ensureInit();
+  async getHRV(range: TimeRange): Promise<HRVSummary[]> {
+    try {
+      await this.ensureInit();
 
-    if (!AppleHealthKit) {
+      if (!AppleHealthKit) {
+        return [];
+      }
+
+      const samples = await this.fetchFirstAvailableHRVSamples(AppleHealthKit, range);
+
+      if (!samples.length) {
+        console.debug('[HealthKitAdapter] getHRV no samples found');
+        return [];
+      }
+
+      return this.toHRVSummaries(samples);
+    } catch {
       return [];
     }
+  }
 
-    const samples = await this.fetchFirstAvailableHRVSamples(AppleHealthKit, range);
+  private async fetchFirstAvailableHRVSamples(
+    health: typeof AppleHealthKit,
+    range: TimeRange,
+  ): Promise<any[]> {
+    for (const methodName of HRV_SAMPLE_METHODS) {
+      const samples = await this.tryFetchHRVSamples(health, methodName, range);
 
-    if (!samples.length) {
-      console.debug('[HealthKitAdapter] getHRV no samples found');
-      return [];
+      if (samples.length) {
+        return samples;
+      }
     }
 
-    return this.toHRVSummaries(samples);
-  } catch {
+    // No method returned samples — log available keys to help debugging
+    try {
+      console.debug('[HealthKitAdapter] getHRV availableKeys', Object.keys(health || {}).sort());
+    } catch {
+      /* ignore */
+    }
+
     return [];
   }
-}
 
-private async fetchFirstAvailableHRVSamples(
-  health: typeof AppleHealthKit,
-  range: TimeRange,
-): Promise<any[]> {
-  for (const methodName of HRV_SAMPLE_METHODS) {
-    const samples = await this.tryFetchHRVSamples(health, methodName, range);
+  private async tryFetchHRVSamples(
+    health: typeof AppleHealthKit,
+    methodName: typeof HRV_SAMPLE_METHODS[number],
+    range: TimeRange,
+  ): Promise<any[]> {
+    const fn = (health as any)[methodName];
+
+    if (typeof fn !== 'function') {
+      console.debug('[HealthKitAdapter] getHRV missing', methodName);
+      return [];
+    }
+
+    console.debug('[HealthKitAdapter] getHRV trying', methodName);
+
+    const samples = await new Promise<any[]>((resolve, reject) => {
+      fn.call(
+        health,
+        { startDate: range.start, endDate: range.end },
+        (err: any, results: any) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+
+          resolve(results ?? []);
+        },
+      );
+    });
+
+    console.debug(
+      '[HealthKitAdapter] getHRV fetched',
+      methodName,
+      'count',
+      samples.length,
+    );
 
     if (samples.length) {
-      return samples;
+      try { console.debug('[HealthKitAdapter] getHRV sample0', samples[0]); } catch { }
     }
+
+    return samples;
   }
 
-  // No method returned samples — log available keys to help debugging
-  try {
-    console.debug('[HealthKitAdapter] getHRV availableKeys', Object.keys(health || {}).sort());
-  } catch {
-    /* ignore */
+  private toHRVSummaries(samples: any[]): HRVSummary[] {
+    const byDate = this.groupHRVSamplesByDate(samples);
+
+    return Object.entries(byDate).map(([date, values]) => {
+      const sum = values.reduce((a, b) => a + b, 0);
+      const avg = values.length ? sum / values.length : 0;
+      return {
+        source: this.source,
+        date,
+        avgRestingHrBpm: Math.round(avg),
+      } satisfies HRVSummary;
+    });
   }
 
-  return [];
-}
+  private groupHRVSamplesByDate(samples: any[]): Record<string, number[]> {
+    return samples.reduce<Record<string, number[]>>((acc, sample) => {
+      const value = Number(sample.value);
 
-private async tryFetchHRVSamples(
-  health: typeof AppleHealthKit,
-  methodName: typeof HRV_SAMPLE_METHODS[number],
-  range: TimeRange,
-): Promise<any[]> {
-  const fn = (health as any)[methodName];
+      if (!Number.isFinite(value)) {
+        return acc;
+      }
 
-  if (typeof fn !== 'function') {
-    console.debug('[HealthKitAdapter] getHRV missing', methodName);
-    return [];
-  }
+      const date = new Date(sample.endDate ?? sample.startDate ?? 0).toISOString();
+      const dateKey = toLocalDateISO(date);
 
-  console.debug('[HealthKitAdapter] getHRV trying', methodName);
+      acc[dateKey] ??= [];
+      acc[dateKey].push(value);
 
-  const samples = await new Promise<any[]>((resolve, reject) => {
-    fn.call(
-      health,
-      { startDate: range.start, endDate: range.end },
-      (err: any, results: any) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        resolve(results ?? []);
-      },
-    );
-  });
-
-  console.debug(
-    '[HealthKitAdapter] getHRV fetched',
-    methodName,
-    'count',
-    samples.length,
-  );
-
-  if (samples.length) {
-    try { console.debug('[HealthKitAdapter] getHRV sample0', samples[0]); } catch {}
-  }
-
-  return samples;
-}
-
-private toHRVSummaries(samples: any[]): HRVSummary[] {
-  const byDate = this.groupHRVSamplesByDate(samples);
-
-  return Object.entries(byDate).map(([date, values]) => {
-    const sum = values.reduce((a, b) => a + b, 0);
-    const avg = values.length ? sum / values.length : 0;
-    return {
-      source: this.source,
-      date,
-      avgRestingHrBpm: Math.round(avg),
-    } satisfies HRVSummary;
-  });
-}
-
-private groupHRVSamplesByDate(samples: any[]): Record<string, number[]> {
-  return samples.reduce<Record<string, number[]>>((acc, sample) => {
-    const value = Number(sample.value);
-
-    if (!Number.isFinite(value)) {
       return acc;
+    }, {});
+  }
+  async getDailyActivity(range: TimeRange): Promise<DailyActivity[]> {
+    try {
+      await this.ensureInit();
+
+      const health = AppleHealthKit;
+      if (!health || typeof (health.getDailyStepCountSamples as any) !== 'function') {
+        throw new Error('AppleHealthKit.getDailyStepCountSamples is not available');
+      }
+
+      const samples: RawSleepSample[] = await new Promise((resolve, reject) => {
+        (health.getDailyStepCountSamples as any)(
+          { startDate: range.start, endDate: range.end },
+          (err: any, results: any) => {
+            if (err) return reject(err);
+            resolve(results || []);
+          }
+        );
+      });
+
+      /*console.log(
+        '[HealthKitAdapter] step samples',
+        JSON.stringify(samples, null, 2)
+      );*/
+
+      const stepsByDay = new Map<string, number>();
+
+      for (const sample of samples) {
+        const date = toLocalDateISO(sample.startDate ?? sample.endDate ?? range.end);
+        const steps = Number(sample.value ?? 0);
+
+        if (Number.isFinite(steps)) {
+          stepsByDay.set(date, (stepsByDay.get(date) ?? 0) + steps);
+        }
+      }
+
+      return [...stepsByDay.entries()].map(([date, steps]) => ({
+        source: this.source,
+        date,
+        steps: Math.round(steps),
+      }));
+    } catch (err) {
+      console.warn('[HealthKitAdapter] getDailyActivity failed', err);
+      return [];
     }
+  }
 
-    const date = new Date(sample.endDate ?? sample.startDate ?? 0).toISOString();
-    const dateKey = toLocalDateISO(date);
-
-    acc[dateKey] ??= [];
-    acc[dateKey].push(value);
-
-    return acc;
-  }, {});
+    async getEnergySignal(): Promise<any[]> { return []; }
+    
 }
-  async getDailyActivity(): Promise<any[]> { return []; }
-  async getEnergySignal(): Promise<any[]> { return []; }
-}
+
+
 
 export default HealthKitAdapter;
