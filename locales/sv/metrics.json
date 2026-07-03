@@ -116,8 +116,7 @@
       "title": "Sömnfaser",
       "deepSleep": {
                 "title": "Djup sömn",
-                "minutes": "minuter",
-                "syncFromHealth": "Synka från Apple Health"
+                "minutes": "minuter"
       },
       "remSleep": {
         "title": "REM-sömn",
@@ -181,7 +180,8 @@
     "intensityMinutes": {
         "name": "Intensiva minuter",
         "shortName": "Intensiva min",
-        "description": "Totalt antal minuter av högintensiv fysisk aktivitet."
+        "description": "Totalt antal minuter av högintensiv fysisk aktivitet.",
+        "missingMaxHeartRate": "Maxpuls saknas"
     },
     "todaysSteps":{
       "name": "Dagens steg",

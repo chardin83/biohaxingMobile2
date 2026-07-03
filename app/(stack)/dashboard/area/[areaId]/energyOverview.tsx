@@ -91,6 +91,9 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
             {/* Energy Production Factors */}
       <EnergyProductionCharts />
 
+            {/* Activity Tracking */}
+      <TodaysActivityCharts />
+
       {/* Mitochondrial Health Information */}
       <Card title={t('energyOverview.mitochondrialHealth.title')}>
         <View style={globalStyles.infoSection}>
@@ -270,9 +273,6 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
 
       {/* Tips Card */}
       <TipsList areaId={mainGoalId} />
-
-      {/* Activity Tracking */}
-      <TodaysActivityCharts />
    </>
   );
 }

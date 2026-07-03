@@ -169,6 +169,10 @@ export const ICON_SYMBOLS = {
     sf: 'gearshape',
     material: 'settings',
   },
+  'person': {
+    sf: 'person.fill',
+    material: 'person',
+  },
   'privacy': {
     sf: 'hand.raised.fill',
     material: 'privacy-tip',
@@ -176,6 +180,10 @@ export const ICON_SYMBOLS = {
   'applelogo': {
     sf: 'applelogo',
     material: 'favorite',
+  },
+  'heart': {
+    sf: 'heart',
+    material: 'health-and-safety',
   },
 } as const satisfies Record<string, IconDefinition>;
 

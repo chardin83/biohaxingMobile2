@@ -63,7 +63,14 @@
     "preferences": "Utseende",
     "integrations": "Integrationer",
     "privacy": "Integritet",
-    "privacySubtitle": "Hantera data, AI-delningar och integritetsinställningar"
+    "privacySubtitle": "Hantera data, AI-delningar och integritetsinställningar",
+    "person": {
+      "title": "Personlig information",
+      "subtitle": "Redigera din personliga information och hälsodata",
+      "birthday": "Födelsedag",
+      "training": "Träning",
+      "maxHeartRate": "Maxpuls"
+    }
   },
   "aiSharing": {
     "description": "Välj vilken information AI:n får använda för att ge dig personliga hälsoråd:",

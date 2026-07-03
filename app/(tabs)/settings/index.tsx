@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import HealthSyncSettings from '@/components/HealthSyncSettings';
 import { ThemedText } from '@/components/ThemedText';
@@ -93,6 +93,18 @@ export default function SettingsPage() {
       </ThemedText>
       
       <HealthSyncSettings style={styles.cardSpacing} />
+
+       <ThemedText type="label" style={styles.title} uppercase>
+        {t('settings.person.title')}
+      </ThemedText>
+
+      <SettingsCardLink
+        title={t('settings.person.title')}
+        subtitle={t('settings.person.subtitle')}
+        iconName="person"
+        onPress={() => router.push('/(stack)/settings/person')}
+        style={styles.cardSpacing}
+      />
 
       <ThemedText type="label" style={styles.title} uppercase>
         {t('settings.privacy')}

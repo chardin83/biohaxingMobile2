@@ -2,11 +2,12 @@ import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet,View } from 'react-native';
 
+import { IconSymbolName } from './icon-symbol-map';
 import { IconSymbol } from './IconSymbol';
 
 type Props = Readonly<{
   size?: number;
-  iconName?: string;
+  iconName?: IconSymbolName;
 }>;
 
 export default function SettingIcon({ size = 40, iconName = 'public' }: Props) {

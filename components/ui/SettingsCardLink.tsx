@@ -5,20 +5,22 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import SettingIcon from '@/components/ui/SettingIcon';
 import { SettingsCard as CardContainer } from '@/components/ui/SettingsCard';
+
+import { IconSymbolName } from './icon-symbol-map';
 import { IconSymbol } from './IconSymbol.ios';
 
 type Row = {
   key: string;
   title: string;
   value?: string;
-  iconName?: string;
+  iconName?: IconSymbolName;
   onPress?: () => void;
 };
 
 type Props = {
   title?: string;
   subtitle?: string;
-  iconName?: string;
+  iconName?: IconSymbolName;
   onPress?: () => void;
   style?: any;
   value?: string;
@@ -59,7 +61,7 @@ export const SettingsCardLink: React.FC<Props> = ({ title, subtitle, iconName = 
             </View>
             <View style={styles.rightColumn}>
               {r.value ? (
-                <ThemedText type="caption" style={styles.value} numberOfLines={1}>
+                <ThemedText type="default" style={[styles.value, { color: colors.textMuted }]} numberOfLines={1}>
                   {r.value}
                 </ThemedText>
               ) : null}
@@ -114,11 +116,9 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   title: {
-    fontSize: 16,
   },
   subtitle: {
     marginTop: 2,
-    fontSize: 14,
   },
   rightColumn: {
     marginRight: 8,
@@ -127,8 +127,6 @@ const styles = StyleSheet.create({
     maxWidth: '60%'
   },
   value: {
-    fontSize: 14,
-    color: '#6b6b6b'
   }
   ,
   cardContainer: {

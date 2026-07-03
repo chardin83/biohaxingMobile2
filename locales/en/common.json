@@ -63,7 +63,14 @@
     "preferences": "Preferences",
     "integrations": "Integrations",
     "privacy": "Privacy",
-    "privacySubtitle": "Manage data, AI shares and privacy settings"
+    "privacySubtitle": "Manage data, AI shares and privacy settings",
+    "person": {
+      "title": "Personal information",
+      "subtitle": "Edit your personal information and health data",
+      "birthday": "Birthday",
+      "training": "Training",
+      "maxHeartRate": "Max heart rate"
+    }
   },
   "aiSharing": {
     "description": "Choose what information the AI may use to provide you personalized health advice:",

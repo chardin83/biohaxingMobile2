@@ -97,16 +97,6 @@ export function DeepSleepMetric({
         <ThemedText type={labelType}>{t('metrics:sleepStages.deepSleep.title')}</ThemedText>
         <ThemedText type={valueType}>{latestDeepSleep ?? '—'}</ThemedText>
         <ThemedText type="caption">{t('metrics:sleepStages.deepSleep.minutes')}</ThemedText>
-        <View style={{ marginTop: 8 }}>
-            <TouchableOpacity
-              onPress={handleSyncFromHealth}
-              accessibilityLabel="Sync from Health"
-              accessibilityRole="button"
-              testID="deepSleepSyncButton"
-            >
-              <ThemedText type="label">{t('metrics:sleepStages.deepSleep.syncFromHealth')}</ThemedText>
-            </TouchableOpacity>
-        </View>
     </MetricContainer>
   );
 }

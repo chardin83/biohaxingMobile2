@@ -116,8 +116,7 @@
         "title": "Sleep stages",
         "deepSleep": {
             "title": "Deep sleep",
-            "minutes": "minutes",
-            "syncFromHealth": "Sync from Health"
+            "minutes": "minutes"
         },
         "remSleep": {
             "title": "REM sleep",
@@ -181,7 +180,8 @@
     "intensityMinutes": {
         "name": "Intensity minutes",
         "description": "Total minutes of high-intensity physical activity. Includes all intensity levels.",
-        "shortName": "Intensity min"
+        "shortName": "Intensity min",
+        "missingMaxHeartRate": "Max heart rate missing"
     },
     "todaysSteps":{
         "name": "Today's steps",

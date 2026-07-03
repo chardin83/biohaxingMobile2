@@ -20,7 +20,6 @@ export type ActivityMetricKey = 'active_minutes' | 'steps' | 'intensity_minutes'
 
 export function TodaysActivityCharts() {
   const { getMetricHistory } = useStorage();
-  const activityData = undefined;
   const { colors } = useTheme();
   const { t } = useTranslation();
   const [selectedMetric, setSelectedMetric] = React.useState<ActivityMetricKey | null>(null);
@@ -90,9 +89,9 @@ export function TodaysActivityCharts() {
     <Card title={t('todaysActivityCharts.title')}>
       {/* Metric selection UI */}
       <View style={globalStyles.row}>
-        <TotalActivityMetric activityData={activityData} showDivider onPress={() => toggleMetric('active_minutes')} isSelected={selectedMetric === 'active_minutes'} />
-        <StepsMetric activityData={activityData} showDivider onPress={() => toggleMetric('steps')} isSelected={selectedMetric === 'steps'} />
-        <IntensityMinutesMetric activityData={activityData} onPress={() => toggleMetric('intensity_minutes')} isSelected={selectedMetric === 'intensity_minutes'} />
+        <TotalActivityMetric showDivider onPress={() => toggleMetric('active_minutes')} isSelected={selectedMetric === 'active_minutes'} />
+        <StepsMetric showDivider onPress={() => toggleMetric('steps')} isSelected={selectedMetric === 'steps'} />
+        <IntensityMinutesMetric onPress={() => toggleMetric('intensity_minutes')} isSelected={selectedMetric === 'intensity_minutes'} />
       </View>
       {selectedMetricConfig && (
         <MetricTrendChart
