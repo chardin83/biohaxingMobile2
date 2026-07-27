@@ -27,8 +27,9 @@ export default function BackButton({ onPress, style }: BackButtonProps) {
   };
 
   // On iOS we rely on BlurView for the visual background (avoid solid orange fill);
-  // on Android use the tabBarBackground color.
-  const backgroundColor = Platform.OS === 'ios' ? 'transparent' : colors.tabBarBackground ?? colors.background;
+  // on Android use a dark-blue from the sunrise gradient (fallback to tabBarBackground).
+  const androidBg = colors.backButtonBackground;
+  const backgroundColor = Platform.OS === 'ios' ? 'transparent' : androidBg;
 
   return (
     <Pressable
@@ -40,11 +41,14 @@ export default function BackButton({ onPress, style }: BackButtonProps) {
         { backgroundColor },
       ]}
     >
-      {Platform.OS === 'ios' && (() => {
+      {Platform.OS === 'ios' ? (() => {
         const bg = String(colors.tabBarBackground ?? colors.background ?? '');
         const { tint, intensity } = getBlurSettings(bg);
         return <BlurView tint={tint} intensity={intensity} style={StyleSheet.absoluteFill} />;
-      })()}
+      })() : (
+        // Android: solid dark-blue background
+        <View style={[StyleSheet.absoluteFill, { backgroundColor: androidBg }]} />
+      )}
       <View style={styles.buttonContent} pointerEvents="box-none">
         <ThemedText type="defaultSemiBold">
           <ThemedText type="title2" style={[{ color: colors.primary }]}>

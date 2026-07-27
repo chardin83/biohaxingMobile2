@@ -1,4 +1,4 @@
-import { useNavigationState } from '@react-navigation/native';
+import { useNavigationState , useTheme } from '@react-navigation/native';
 import { router, useLocalSearchParams, usePathname, useSegments } from 'expo-router';
 import { useEffect } from 'react';
 
@@ -18,9 +18,11 @@ import StrengthOverview from './strengthOverview';
 
 export default function AreaRootScreen() {
   const { areaId } = useLocalSearchParams<{ areaId: string }>();
+  const { dark } = useTheme();
+  const themeGradients = dark ? Colors.dark.gradients : Colors.light.gradients;
 
   return (
-    <Container background="gradient" gradientLocations={Colors.dark.gradients.sunrise.locations2 as any} onBackPress={() => router.back()} showBackButton>
+    <Container background="gradient" gradientLocations={themeGradients.sunrise.locations2 as any} onBackPress={() => router.back()} showBackButton>
       {areaId === 'nervousSystem' && <NervousSystemOverview mainGoalId={areaId} />}
       {areaId === 'sleepQuality' && <SleepOverview mainGoalId={areaId} />}
       {areaId === 'energy' && <EnergyOverview mainGoalId={areaId} />}

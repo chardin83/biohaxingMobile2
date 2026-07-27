@@ -1,3 +1,4 @@
+import { useTheme } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -40,6 +41,16 @@ const getSubOptionLabel = (verdict: VerdictValue, t: any): string => {
 export default function VerdictSelector({ currentVerdict, onVerdictPress }: Props) {
   const { t } = useTranslation();
   const [selectedCategory, setSelectedCategory] = useState<'interested' | 'notInterested' | null>(null);
+  const { colors } = useTheme();
+  const dyn = {
+    verdictCard: { backgroundColor: colors.accentVeryWeak, borderColor: colors.accentWeak },
+    verdictCardSelected: { backgroundColor: colors.accentWeak, borderColor: colors.accentDefault },
+    verdictCardTitle: { color: colors.primary },
+    verdictCardXP: { color: colors.primary },
+    backButton: { backgroundColor: colors.accentVeryWeak, borderColor: colors.accentWeak },
+    backButtonText: { color: colors.accentStrong },
+    subOptionLabel: { color: colors.textLight },
+  };
 
   const mainCategory = currentVerdict ? getMainCategory(currentVerdict) : null;
   const showMainCategory = selectedCategory || mainCategory;
@@ -57,7 +68,7 @@ export default function VerdictSelector({ currentVerdict, onVerdictPress }: Prop
 
     return (
       <Pressable
-        style={[styles.verdictCard, isSelectedInCategory(verdictValue) && styles.verdictCardSelected]}
+        style={[styles.verdictCard, dyn.verdictCard, isSelectedInCategory(verdictValue) && [styles.verdictCardSelected, dyn.verdictCardSelected]]}
         onPress={() => {
           onVerdictPress(verdictValue);
           setSelectedCategory(null);
@@ -70,10 +81,10 @@ export default function VerdictSelector({ currentVerdict, onVerdictPress }: Prop
             <View style={styles.iconContainer}>{icon}</View>
           )}
           <View style={styles.verdictCardText}>
-            <Text style={styles.verdictCardTitle}>{t(`common:tipDetails.${titleKey}`)}</Text>
+            <Text style={[styles.verdictCardTitle, dyn.verdictCardTitle]}>{t(`common:tipDetails.${titleKey}`)}</Text>
           </View>
         </View>
-        <Text style={styles.verdictCardXP}>{xpLabel}</Text>
+        <Text style={[styles.verdictCardXP, dyn.verdictCardXP]}>{xpLabel}</Text>
       </Pressable>
     );
   };
@@ -85,17 +96,17 @@ export default function VerdictSelector({ currentVerdict, onVerdictPress }: Prop
 
     return (
       <Pressable
-        style={[styles.verdictCard, showMainCategory === category && styles.verdictCardSelected]}
+        style={[styles.verdictCard, dyn.verdictCard, showMainCategory === category && [styles.verdictCardSelected, dyn.verdictCardSelected]]}
         onPress={() => (selectedCategory ? setSelectedCategory(null) : setSelectedCategory(category))}
       >
         <View style={styles.verdictCardContent}>
           <Text style={styles.verdictCardIcon}>{icon}</Text>
           <View style={styles.verdictCardText}>
             <Text style={styles.verdictCardTitle}>{t(`common:tipDetails.${titleKey}`)}</Text>
-            {subLabel && <Text style={styles.subOptionLabel}>{subLabel}</Text>}
+            {subLabel && <Text style={[styles.subOptionLabel, dyn.subOptionLabel]}>{subLabel}</Text>}
           </View>
         </View>
-        <Text style={styles.verdictCardXP}>{showMainCategory === category && currentVerdict ? '✓' : '+5 XP'}</Text>
+        <Text style={[styles.verdictCardXP, dyn.verdictCardXP]}>{showMainCategory === category && currentVerdict ? '✓' : '+5 XP'}</Text>
       </Pressable>
     );
   };
@@ -104,17 +115,17 @@ export default function VerdictSelector({ currentVerdict, onVerdictPress }: Prop
   if (!selectedCategory) {
     return (
       <AppBox title={t('common:tipDetails.verdict')}>
-        {getCategoryButtonWithLabel(
-          <StarIcon width={ICON_SIZE} height={ICON_SIZE} color={Colors.dark.accentStrong} />,
-          'verdictInterested',
-          'interested'
-        )}
-        {getCategoryButtonWithLabel(
-          <ProhibitionIcon width={ICON_SIZE} height={ICON_SIZE} color={Colors.dark.accentStrong} />,
-          'verdictNotInterested',
-          'notInterested'
-        )}
-      </AppBox>
+          {getCategoryButtonWithLabel(
+            <StarIcon width={ICON_SIZE} height={ICON_SIZE} color={colors.accentStrong} />,
+            'verdictInterested',
+            'interested'
+          )}
+          {getCategoryButtonWithLabel(
+            <ProhibitionIcon width={ICON_SIZE} height={ICON_SIZE} color={colors.accentStrong} />,
+            'verdictNotInterested',
+            'notInterested'
+          )}
+        </AppBox>
     );
   }
 
@@ -122,21 +133,21 @@ export default function VerdictSelector({ currentVerdict, onVerdictPress }: Prop
   if (selectedCategory === 'interested') {
     return (
       <AppBox title={t('common:tipDetails.verdict')}>
-        <Pressable style={styles.backButton} onPress={() => setSelectedCategory(null)}>
-          <Text style={styles.backButtonText}>{t('back')}</Text>
+        <Pressable style={[styles.backButton, dyn.backButton]} onPress={() => setSelectedCategory(null)}>
+          <Text style={[styles.backButtonText, dyn.backButtonText]}>{t('back')}</Text>
         </Pressable>
         {getSubOption(
-          <PlayIcon width={ICON_SIZE} height={ICON_SIZE} color={Colors.dark.accentStrong} />,
+          <PlayIcon width={ICON_SIZE} height={ICON_SIZE} color={colors.accentStrong} />,
           'verdictStartNow',
           'startNow'
         )}
         {getSubOption(
-          <SearchIcon width={ICON_SIZE} height={ICON_SIZE} color={Colors.dark.accentStrong} />,
+          <SearchIcon width={ICON_SIZE} height={ICON_SIZE} color={colors.accentStrong} />,
           'verdictWantMore',
           'wantMore'
         )}
         {getSubOption(
-          <CheckIcon width={ICON_SIZE} height={ICON_SIZE} color={Colors.dark.accentStrong} />,
+          <CheckIcon width={ICON_SIZE} height={ICON_SIZE} color={colors.accentStrong} />,
           'verdictAlreadyWorks',
           'alreadyWorks'
         )}
@@ -168,14 +179,10 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 16,
     marginBottom: 12,
-    backgroundColor: Colors.dark.accentVeryWeak,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: Colors.dark.accentWeak,
   },
   verdictCardSelected: {
-    backgroundColor: Colors.dark.accentWeak,
-    borderColor: Colors.dark.accentDefault,
     borderWidth: 2,
   },
   verdictCardContent: {

@@ -1,3 +1,4 @@
+import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +12,7 @@ import { XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW } from '@/constants/X
 import { tips } from '@/locales/tips';
 import { NEGATIVE_VERDICTS, POSITIVE_VERDICTS, VerdictValue } from '@/types/verdict';
 
+import { ThemedText } from '../ThemedText';
 import TipCard from './TipCard';
 
 interface TipsListProps {
@@ -20,6 +22,7 @@ interface TipsListProps {
 export default function TipsList({ areaId }: Readonly<TipsListProps>) {
   const { t } = useTranslation();
   const router = useRouter();
+  const { colors } = useTheme();
   const { viewedTips, myLevel, nutritionXpClaims } = useStorage();
   const [showAllTips, setShowAllTips] = React.useState(false);
 
@@ -149,12 +152,12 @@ export default function TipsList({ areaId }: Readonly<TipsListProps>) {
         const viewedTip = viewedTips?.find(v => v.tipId === tip.id);
         return viewedTip?.verdict && negativeVerdicts.has(viewedTip.verdict);
       }) && (
-          <Pressable style={styles.showAllButton} onPress={() => setShowAllTips(!showAllTips)}>
-            <Text style={styles.showAllText}>
+          <Pressable style={[styles.showAllButton, { borderTopColor: colors.textWeak }]} onPress={() => setShowAllTips(!showAllTips)}>
+            <ThemedText type='defaultSemiBold' style={[{ color: colors.accentDefault }] }>
               {showAllTips
                 ? t('tipsList.hideNotInterested')
                 : t('tipsList.showAll', { count: hiddenTipsCount })}
-            </Text>
+            </ThemedText>
           </Pressable>
         )}
     </Card>
@@ -167,11 +170,5 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: Colors.dark.textWeak,
-  },
-  showAllText: {
-    color: Colors.dark.accentDefault,
-    fontSize: 14,
-    fontWeight: '600',
   },
 });

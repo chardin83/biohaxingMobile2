@@ -1,8 +1,8 @@
+import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Keyboard, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 
-import { Colors } from '@/app/theme/Colors';
 import { ThemedModal } from '@/components/ThemedModal';
 import { ThemedText } from '@/components/ThemedText';
 import LabeledInput from '@/components/ui/LabeledInput';
@@ -53,6 +53,7 @@ const TrainingSettingsModal: React.FC<TrainingSettingsModalProps> = ({
   trainingTitle,
 }) => {
   const { t } = useTranslation('common');
+  const { colors } = useTheme();
 
   const activityTypeOptions: Array<{ key: TrainingActivityFilter; label: string }> = useMemo(
     () => [
@@ -90,7 +91,7 @@ const TrainingSettingsModal: React.FC<TrainingSettingsModalProps> = ({
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.content}>
           {trainingTitle ? (
-            <ThemedText type="defaultSemiBold" style={styles.trainingTitle}>
+            <ThemedText type="defaultSemiBold" style={[styles.trainingTitle]}>
               {trainingTitle}
             </ThemedText>
           ) : null}
@@ -122,10 +123,10 @@ const TrainingSettingsModal: React.FC<TrainingSettingsModalProps> = ({
                 const isSelected = activityTypeValue === option.key;
                 return (
                   <TouchableOpacity
-                    key={option.key}
-                    style={[styles.optionChip, isSelected && styles.optionChipSelected]}
-                    onPress={() => onChangeActivityType(option.key)}
-                  >
+                      key={option.key}
+                      style={[styles.optionChip, { borderColor: colors.borderLight }, isSelected && [styles.optionChipSelected, { borderColor: colors.primary, backgroundColor: colors.primaryVeryWeak }]]}
+                      onPress={() => onChangeActivityType(option.key)}
+                    >
                     <ThemedText type="explainer">{option.label}</ThemedText>
                   </TouchableOpacity>
                 );
@@ -140,10 +141,10 @@ const TrainingSettingsModal: React.FC<TrainingSettingsModalProps> = ({
                 const isSelected = minimumIntensityValue === option.key;
                 return (
                   <TouchableOpacity
-                    key={option.key}
-                    style={[styles.optionChip, isSelected && styles.optionChipSelected]}
-                    onPress={() => onChangeMinimumIntensity(option.key)}
-                  >
+                      key={option.key}
+                      style={[styles.optionChip, { borderColor: colors.borderLight }, isSelected && [styles.optionChipSelected, { borderColor: colors.primary, backgroundColor: colors.primaryVeryWeak }]]}
+                      onPress={() => onChangeMinimumIntensity(option.key)}
+                    >
                     <ThemedText type="explainer">{option.label}</ThemedText>
                   </TouchableOpacity>
                 );
@@ -161,7 +162,6 @@ export default TrainingSettingsModal;
 const styles = StyleSheet.create({
   trainingTitle: {
     marginBottom: 4,
-    color: Colors.dark.text,
   },
   content: {
     width: '100%',
@@ -181,10 +181,8 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingHorizontal: 10,
     paddingVertical: 7,
-    borderColor: Colors.dark.borderLight,
   },
   optionChipSelected: {
-    borderColor: Colors.dark.primary,
-    backgroundColor: 'rgba(50, 209, 166, 0.10)',
+    // colors applied inline from theme
   },
 });

@@ -79,6 +79,7 @@ export const Colors = {
 
     // Tab bar background for Android
     tabBarBackground: 'rgba(255,246,229,0.92)',
+    backButtonBackground: 'rgba(255,249,240,0.9)',
     // Gradients
     gradients: {
       sunrise: {
@@ -231,6 +232,7 @@ export const Colors = {
 
     // Gradients
     tabBarBackground: 'rgba(255,142,83,0.92)',
+    backButtonBackground: 'rgba(20,28,45,0.9)',
     gradients: {
       sunrise: {
         colors: ['#0B1021', '#1F3150', '#FF8E53'],
