@@ -76,6 +76,17 @@ export const Colors = {
     infoWeak: 'rgba(0,150,255,0.06)',
 
     cardActive: '#E6FFFA',
+    planSectionIcon: '#2B8A3E',
+    planSectionIconTint: 'rgba(43, 138, 62, 0.14)',
+    planSectionNutritionIcon: '#C65D00',
+    planSectionNutritionTint: 'rgba(198, 93, 0, 0.14)',
+    planSectionSupplementIcon: '#6A40C9',
+    planSectionSupplementTint: 'rgba(106, 64, 201, 0.14)',
+    planSectionOtherIcon: '#6B7280',
+    planSectionOtherTint: 'rgba(107, 114, 128, 0.16)',
+    planSectionBadgeBackground: 'rgba(255, 255, 255, 0.12)',
+    planSectionBadgeBorder: 'rgba(255, 255, 255, 0.22)',
+    planSectionBadgeText: '#FFFFFF',
 
     // Tab bar background for Android
     tabBarBackground: 'rgba(255,246,229,0.92)',
@@ -229,6 +240,17 @@ export const Colors = {
     infoWeak: 'rgba(120,200,255,0.06)',
 
     cardActive: '#223B50',
+    planSectionIcon: '#5ECF91',
+    planSectionIconTint: 'rgba(94, 207, 145, 0.16)',
+    planSectionNutritionIcon: '#FFB36B',
+    planSectionNutritionTint: 'rgba(255, 179, 107, 0.16)',
+    planSectionSupplementIcon: '#A78BFA',
+    planSectionSupplementTint: 'rgba(167, 139, 250, 0.16)',
+    planSectionOtherIcon: '#9CA3AF',
+    planSectionOtherTint: 'rgba(156, 163, 175, 0.16)',
+    planSectionBadgeBackground: 'rgba(255, 255, 255, 0.12)',
+    planSectionBadgeBorder: 'rgba(255, 255, 255, 0.22)',
+    planSectionBadgeText: '#FFFFFF',
 
     // Gradients
     tabBarBackground: 'rgba(255,142,83,0.92)',

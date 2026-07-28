@@ -31,6 +31,31 @@ import { PressableCard } from '@/components/ui/PressableCard';
 import { useSupplementSaver } from '@/hooks/useSupplementSaver';
 
 import { Plan } from '../../domain/Plan';
+
+type SectionIconProps = {
+  readonly name: React.ComponentProps<typeof IconSymbol>['name'];
+  readonly color: string;
+  readonly tint: string;
+};
+
+const sectionIconBadgeBaseStyle = {
+  width: 30,
+  height: 30,
+  borderRadius: 999,
+  borderWidth: 1,
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginRight: 2,
+} as const;
+
+function SectionIconBadge({ name, color, tint }: SectionIconProps) {
+  return (
+    <View style={[sectionIconBadgeBaseStyle, { borderColor: color, backgroundColor: tint }]}> 
+      <IconSymbol name={name} size={20} color={color} />
+    </View>
+  );
+}
+
 // Helper: Request notification permissions
 async function requestNotificationPermission() {
   if (Device.isDevice) {
@@ -90,6 +115,87 @@ export default function Plans() {
     }, []);
   const params = useLocalSearchParams<{ openCreate?: string }>();
   const { colors } = useTheme();
+
+  const styles = StyleSheet.create({
+    sectionCountBadge: {
+      minWidth: 28,
+      height: 28,
+      borderRadius: 999,
+      paddingHorizontal: 9,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.planSectionBadgeBackground,
+      borderWidth: 1,
+      borderColor: colors.planSectionBadgeBorder,
+      marginRight: 6,
+    },
+    sectionCountBadgeText: {
+      color: colors.planSectionBadgeText,
+      fontWeight: '800',
+      fontSize: 12,
+    },
+    sectionsContainer: {
+      paddingTop: 20,
+      paddingHorizontal: 20,
+      paddingBottom: 24,
+    },
+    collapsibleContentFlush: {
+      marginLeft: 0,
+    },
+    planHeaderActions: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    planHeaderButton: {
+      marginLeft: 12,
+      padding: 4,
+    },
+    sectionBlock: {
+      marginBottom: 18,
+    },
+    scrollContent: {
+      paddingBottom: 80,
+    },
+    planAddButtonWrapper: {
+      marginTop: 15,
+    },
+    addTimeSlotButtonWrapper: {
+      marginTop: 20,
+      marginBottom: 50,
+      width: '80%',
+      alignSelf: 'center',
+    },
+    recommendedDose: {
+      marginBottom: 8,
+    },
+    reasonText: {
+      marginBottom: 6,
+    },
+    aiCard: {
+      marginTop: 60,
+    },
+    aiCardText: {
+      textAlign: 'center',
+      paddingHorizontal: 16,
+    },
+    aiCardDescription: {
+      textAlign: 'center',
+      opacity: 0.7,
+      marginTop: 4,
+    },
+    reasonSummaryText: {
+      opacity: 0.75,
+      marginTop: 4,
+    },
+    showAllButton: {
+      alignSelf: 'flex-end',
+      marginBottom: 8,
+    },
+    noSupplementsText: {
+      textAlign: 'center',
+      marginBottom: 18,
+    }
+  });
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
@@ -342,7 +448,16 @@ export default function Plans() {
       <View style={styles.sectionsContainer}>
         <View style={styles.sectionBlock}>
           <Collapsible
-            title={`${t('plan.trainingHeader')} (${plans.training?.length ?? 0})`}
+            title={`${t('plan.trainingHeader')}`}
+            leftContent={<SectionIconBadge name="trainingGym" color={colors.planSectionIcon} tint={colors.planSectionIconTint} />}
+            rightContent={
+              <View style={styles.sectionCountBadge}>
+                <ThemedText type="caption">
+                  {plans.training?.length ?? 0}
+                </ThemedText>
+              </View>
+            }
+            chevronPosition="right"
             contentStyle={styles.collapsibleContentFlush}
             titleType="title3"
             initialCollapsed={true}
@@ -352,7 +467,16 @@ export default function Plans() {
         </View>
         <View style={styles.sectionBlock}>
           <Collapsible 
-            title={`${t('plan.nutritionHeader')} (${plans.nutrition?.length ?? 0})`} 
+            title={`${t('plan.nutritionHeader')}`} 
+            leftContent={<SectionIconBadge name="flame" color={colors.planSectionNutritionIcon} tint={colors.planSectionNutritionTint} />}
+            rightContent={
+              <View style={styles.sectionCountBadge}>
+                <ThemedText type="caption">
+                  {plans.nutrition?.length ?? 0}
+                </ThemedText>
+              </View>
+            }
+            chevronPosition="right"
             contentStyle={styles.collapsibleContentFlush}
             titleType="title3"
             initialCollapsed={true}
@@ -365,7 +489,16 @@ export default function Plans() {
         </View>
         <View style={styles.sectionBlock}>
           <Collapsible 
-            title={`${t('plan.supplementSectionTitle')} (${plans.supplements?.length ?? 0})`} 
+            title={`${t('plan.supplementSectionTitle')}`} 
+            leftContent={<SectionIconBadge name="pill" color={colors.planSectionSupplementIcon} tint={colors.planSectionSupplementTint} />}
+            rightContent={
+              <View style={styles.sectionCountBadge}>
+                <ThemedText type="caption">
+                  {plans.supplements?.length ?? 0}
+                </ThemedText>
+              </View>
+            }
+            chevronPosition="right"
             contentStyle={styles.collapsibleContentFlush}
             titleType="title3"
             initialCollapsed={true}
@@ -388,7 +521,16 @@ export default function Plans() {
         </View>
         <View style={styles.sectionBlock}>
           <Collapsible
-            title={`${t('plan.otherHeader')} (${plans.other?.length ?? 0})`}
+            title={`${t('plan.otherHeader')}`}
+            leftContent={<SectionIconBadge name="ellipsis" color={colors.planSectionOtherIcon} tint={colors.planSectionOtherTint} />}
+            rightContent={
+              <View style={styles.sectionCountBadge}>
+                <ThemedText type="caption">
+                  {plans.other?.length ?? 0}
+                </ThemedText>
+              </View>
+            }
+            chevronPosition="right"
             contentStyle={styles.collapsibleContentFlush}
             titleType="title3"
             initialCollapsed={true}
@@ -515,66 +657,3 @@ export default function Plans() {
   );
 }
 
-const styles = StyleSheet.create({
-  sectionsContainer: {
-    paddingTop: 20,
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-  },
-  collapsibleContentFlush: {
-    marginLeft: 0,
-  },
-  planHeaderActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  planHeaderButton: {
-    marginLeft: 12,
-    padding: 4,
-  },
-  sectionBlock: {
-    marginBottom: 18,
-  },
-  scrollContent: {
-    paddingBottom: 80,
-  },
-  planAddButtonWrapper: {
-    marginTop: 15,
-  },
-  addTimeSlotButtonWrapper: {
-    marginTop: 20,
-    marginBottom: 50,
-    width: '80%',
-    alignSelf: 'center',
-  },
-  recommendedDose: {
-    marginBottom: 8,
-  },
-  reasonText: {
-    marginBottom: 6,
-  },
-  aiCard: {
-    marginTop: 60,
-  },
-  aiCardText: {
-    textAlign: 'center',
-    paddingHorizontal: 16,
-  },
-  aiCardDescription: {
-    textAlign: 'center',
-    opacity: 0.7,
-    marginTop: 4,
-  },
-  reasonSummaryText: {
-    opacity: 0.75,
-    marginTop: 4,
-  },
-  showAllButton: {
-    alignSelf: 'flex-end',
-    marginBottom: 8,
-  },
-  noSupplementsText: {
-    textAlign: 'center',
-    marginBottom: 18,
-  }
-});

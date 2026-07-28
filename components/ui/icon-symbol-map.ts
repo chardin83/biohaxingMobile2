@@ -73,6 +73,10 @@ export const ICON_SYMBOLS = {
     sf: 'bubble.left.and.bubble.right.fill',
     material: 'chat',
   },
+  'ellipsis': {
+    sf: 'ellipsis',
+    material: 'more-horiz',
+  },
   'expandMore': {
     sf: 'chevron.down', // valfritt SF-symbolnamn
     material: 'expand-more',

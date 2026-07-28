@@ -10,6 +10,7 @@ export function Collapsible({
   title,
   leftContent,
   rightContent,
+  chevronPosition = 'left',
   contentStyle,
   accessibilityLabel,
   accessibilityHint,
@@ -19,6 +20,7 @@ export function Collapsible({
   title: string;
   leftContent?: React.ReactNode;
   rightContent?: React.ReactNode;
+  chevronPosition?: 'left' | 'right';
   contentStyle?: StyleProp<ViewStyle>;
   accessibilityLabel?: string;
   accessibilityHint?: string;
@@ -27,6 +29,14 @@ export function Collapsible({
 }) {
   const [isOpen, setIsOpen] = useState(!initialCollapsed);
   const { colors } = useTheme();
+  const chevron = (
+    <IconSymbol
+      name="chevron.right"
+      size={18}
+      color={colors.icon}
+      style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}
+    />
+  );
 
   return (
     <>
@@ -39,17 +49,13 @@ export function Collapsible({
         accessibilityHint={accessibilityHint}
         accessibilityState={{ expanded: isOpen }}
       >
-        <IconSymbol
-          name="chevron.right"
-          size={18}
-          color={colors.icon}
-          style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}
-        />
+        {chevronPosition === 'left' && chevron}
         {leftContent}
-        <ThemedText type={titleType}>
+        <ThemedText type={titleType} style={styles.title}>
           {title}
         </ThemedText>
         {rightContent}
+        {chevronPosition === 'right' && chevron}
       </TouchableOpacity>
       {isOpen && <View style={[styles.content, contentStyle]}>{children}</View>}
       </>
@@ -61,6 +67,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+  },
+  title: {
+    flex: 1,
   },
   content: {
     marginTop: 6,
