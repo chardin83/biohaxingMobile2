@@ -2,6 +2,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Portal } from 'react-native-paper';
 
 import { useStorage } from '@/app/context/StorageContext';
@@ -29,6 +30,7 @@ const toLabelSuffix = (value: string) => `${value.charAt(0).toUpperCase()}${valu
 
 export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
+  const router = useRouter();
   const { plans, trainingPlanSettings, setTrainingPlanSettings } = useStorage();
 
   const trainingPlanGoals = plans.training;
@@ -120,6 +122,28 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
     }, 100);
   };
 
+  const openPlanDetails = (goal: (typeof trainingPlanGoals)[number], badges: TrainingBadgeItem[]) => {
+    if (!goal.tipId) return;
+    const title = t(`tips:${goal.tipId}.title`);
+    const cardData = JSON.stringify({
+      badges: badges.map(badge => ({ label: badge.label, icon: badge.icon })),
+      comment: goal.comment ?? '',
+    });
+
+    router.push({
+      pathname: '/plan/[tipId]',
+      params: {
+        tipId: goal.tipId,
+        title,
+        startedAt: goal.startedAt,
+        createdBy: goal.createdBy,
+        comment: goal.comment ?? '',
+        planCategory: 'training',
+        cardData,
+      },
+    });
+  };
+
   const handleSaveTrainingSettings = () => {
     if (!trainingSettingsTipId) {
       closeTrainingSettingsModal();
@@ -195,6 +219,7 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
             key={goal.tipId}
             title={tipTitle ?? t('plan.untitled')}
             headerRight={editAction}
+            onPressHeader={() => openPlanDetails(goal, trainingBadges)}
           >
             <PlanMeta startedAt={goal.startedAt} createdBy={goal.createdBy} formatDate={formatDate} />
             <View style={styles.trainingSettingsContainer}>

@@ -2,6 +2,7 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Portal } from 'react-native-paper';
 
 import { PlanTipEntry, useStorage } from '@/app/context/StorageContext';
@@ -19,6 +20,7 @@ type Props = {
 
 export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
+  const router = useRouter();
   const { plans, setPlans } = useStorage();
 
   const otherPlans = plans.other;
@@ -59,6 +61,26 @@ export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
       ),
     }));
     closeOtherSettingsModal();
+  };
+
+  const openPlanDetails = (plan: PlanTipEntry, title?: string | null) => {
+    if (!plan.tipId) return;
+    const cardData = JSON.stringify({
+      comment: plan.comment ?? '',
+    });
+
+    router.push({
+      pathname: '/plan/[tipId]',
+      params: {
+        tipId: plan.tipId,
+        title: title ?? t(`tips:${plan.tipId}.title`),
+        startedAt: plan.startedAt,
+        createdBy: plan.createdBy,
+        comment: plan.comment ?? '',
+        planCategory: 'other',
+        cardData,
+      },
+    });
   };
 
   const handleDeleteOther = () => {
@@ -120,6 +142,7 @@ export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
             key={plan.tipId ?? `other-${index}`}
             title={tipTitle}
             headerRight={editAction}
+            onPressHeader={() => openPlanDetails(plan, tipTitle)}
           >
             <PlanMeta
               startedAt={plan.startedAt}

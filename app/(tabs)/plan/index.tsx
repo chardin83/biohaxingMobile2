@@ -13,6 +13,7 @@ import { useStorage } from '@/app/context/StorageContext';
 import { SupplementPlanEntry } from '@/app/domain/SupplementPlanEntry';
 import { Collapsible } from '@/components/Collapsible';
 import CreateTimeSlotModal from '@/components/modals/CreateTimeSlotModal';
+import PlanCategoryIcon from '@/components/plan/PlanCategoryIcon';
 import { NutritionPlanSection } from '@/components/sections/NutritionPlanSection';
 import { OtherPlanSection } from '@/components/sections/OtherPlanSection';
 import { PlanMeta } from '@/components/sections/PlanMeta';
@@ -31,30 +32,6 @@ import { PressableCard } from '@/components/ui/PressableCard';
 import { useSupplementSaver } from '@/hooks/useSupplementSaver';
 
 import { Plan } from '../../domain/Plan';
-
-type SectionIconProps = {
-  readonly name: React.ComponentProps<typeof IconSymbol>['name'];
-  readonly color: string;
-  readonly tint: string;
-};
-
-const sectionIconBadgeBaseStyle = {
-  width: 30,
-  height: 30,
-  borderRadius: 999,
-  borderWidth: 1,
-  alignItems: 'center',
-  justifyContent: 'center',
-  marginRight: 2,
-} as const;
-
-function SectionIconBadge({ name, color, tint }: SectionIconProps) {
-  return (
-    <View style={[sectionIconBadgeBaseStyle, { borderColor: color, backgroundColor: tint }]}> 
-      <IconSymbol name={name} size={20} color={color} />
-    </View>
-  );
-}
 
 // Helper: Request notification permissions
 async function requestNotificationPermission() {
@@ -300,6 +277,28 @@ export default function Plans() {
     }));
   };
 
+  const openPlanDetails = (plan: Plan, planCategory: 'supplement' | 'training' | 'nutrition' | 'other' = 'supplement') => {
+    const tipId = plan.supplements?.[0]?.supplement?.id ?? '';
+    const planTitle = `${plan.name} ${plan.prefferedTime}`;
+    const cardData = JSON.stringify({
+      supplementNames: (plan.supplements ?? []).map(item => item.supplement?.name).filter(Boolean),
+      comment: plan.reason ?? '',
+    });
+
+    router.push({
+      pathname: '/plan/[tipId]',
+      params: {
+        tipId,
+        title: planTitle,
+        startedAt: plan.supplements?.[0]?.startedAt ?? '',
+        createdBy: plan.supplements?.[0]?.createdBy ?? '',
+        comment: plan.reason ?? '',
+        planCategory,
+        cardData,
+      },
+    });
+  };
+
   const renderPlanRow = (plan: Plan) => {
     const planKey = `${plan.name}-${plan.prefferedTime}`;
     const isExpanded = !!expandedPlans[planKey];
@@ -327,7 +326,13 @@ export default function Plans() {
       <AppBox
         title={displayTitle}
         headerRight={headerActions}
-        onPressHeader={() => togglePlanExpanded(planKey)}
+        onPressHeader={() => {
+          if (plan.supplements?.length) {
+            togglePlanExpanded(planKey);
+          } else {
+            openPlanDetails(plan, 'supplement');
+          }
+        }}
         headerAccessibilityLabel={t('plan.toggleSupplements', {
           defaultValue: 'Visa eller dölj innehåll',
         })}
@@ -449,7 +454,7 @@ export default function Plans() {
         <View style={styles.sectionBlock}>
           <Collapsible
             title={`${t('plan.trainingHeader')}`}
-            leftContent={<SectionIconBadge name="trainingGym" color={colors.planSectionIcon} tint={colors.planSectionIconTint} />}
+            leftContent={<PlanCategoryIcon category="training" />}
             rightContent={
               <View style={styles.sectionCountBadge}>
                 <ThemedText type="caption">
@@ -468,7 +473,7 @@ export default function Plans() {
         <View style={styles.sectionBlock}>
           <Collapsible 
             title={`${t('plan.nutritionHeader')}`} 
-            leftContent={<SectionIconBadge name="flame" color={colors.planSectionNutritionIcon} tint={colors.planSectionNutritionTint} />}
+            leftContent={<PlanCategoryIcon category="nutrition" />}
             rightContent={
               <View style={styles.sectionCountBadge}>
                 <ThemedText type="caption">
@@ -490,7 +495,7 @@ export default function Plans() {
         <View style={styles.sectionBlock}>
           <Collapsible 
             title={`${t('plan.supplementSectionTitle')}`} 
-            leftContent={<SectionIconBadge name="pill" color={colors.planSectionSupplementIcon} tint={colors.planSectionSupplementTint} />}
+            leftContent={<PlanCategoryIcon category="supplement" />}
             rightContent={
               <View style={styles.sectionCountBadge}>
                 <ThemedText type="caption">
@@ -522,7 +527,7 @@ export default function Plans() {
         <View style={styles.sectionBlock}>
           <Collapsible
             title={`${t('plan.otherHeader')}`}
-            leftContent={<SectionIconBadge name="ellipsis" color={colors.planSectionOtherIcon} tint={colors.planSectionOtherTint} />}
+            leftContent={<PlanCategoryIcon category="other" />}
             rightContent={
               <View style={styles.sectionCountBadge}>
                 <ThemedText type="caption">

@@ -189,6 +189,10 @@ export const ICON_SYMBOLS = {
     sf: 'heart',
     material: 'health-and-safety',
   },
+  'lightbulb': {
+    sf: 'lightbulb',
+    material: 'lightbulb',
+  },
 } as const satisfies Record<string, IconDefinition>;
 
 export type IconSymbolName = keyof typeof ICON_SYMBOLS;

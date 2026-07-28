@@ -1,4 +1,5 @@
 import BottomSheet from '@gorhom/bottom-sheet';
+import { useRouter } from 'expo-router';
 import React, { useCallback,useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -24,6 +25,7 @@ type Props = {
 
 export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
+  const router = useRouter();
   const { plans, setPlans } = useStorage();
   const supplementMap = useSupplementMap();
 
@@ -102,6 +104,28 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) =>
     closeNutritionSettingsModal();
   };
 
+  const openPlanDetails = (tipId: string, plan?: PlanTipEntry, title?: string | null, foodItems?: Array<{ name: string; details?: string; imageKey?: string }>, recommendedDoseLabel?: string | null) => {
+    if (!tipId) return;
+    const cardData = JSON.stringify({
+      foodItems: foodItems ?? [],
+      recommendedDoseLabel: recommendedDoseLabel ?? undefined,
+      comment: plan?.comment ?? '',
+    });
+
+    router.push({
+      pathname: '/plan/[tipId]',
+      params: {
+        tipId,
+        title: title ?? t(`tips:${tipId}.title`),
+        startedAt: plan?.startedAt ?? '',
+        createdBy: plan?.createdBy ?? '',
+        comment: plan?.comment ?? '',
+        planCategory: 'nutrition',
+        cardData,
+      },
+    });
+  };
+
   const handleDeleteNutrition = () => {
     if (!nutritionEditTipId) {
       closeNutritionSettingsModal();
@@ -148,7 +172,7 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) =>
           const itemKey = food.key;
           const detailKey = food.detailsKey ?? itemKey;
           const name = t(`tips:${tipId}.nutritionFoods.items.${itemKey}.name`, {
-            defaultValue: itemKey,
+            defaultValue: t(`food:foods.${itemKey}.name`, { defaultValue: itemKey }),
           });
           const details = t(`tips:${tipId}.nutritionFoods.items.${detailKey}.details`, {
             defaultValue: '',
@@ -157,6 +181,9 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) =>
             key: `${tipId}-${itemKey}-${detailKey}`,
             name,
             details,
+            imageKey: itemKey,
+            foodKey: itemKey,
+            detailsKey: detailKey,
           };
         });
         const maxVisibleFoods = 2;
@@ -179,7 +206,7 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) =>
         );
 
         return (
-          <AppBox key={tipId} title={tipTitle} headerRight={editAction}>
+          <AppBox key={tipId} title={tipTitle} headerRight={editAction} onPressHeader={() => openPlanDetails(tipId, plan, tipTitle, foodItems, recommendedDoseLabel)}>
             {plan?.startedAt && (
               <PlanMeta
                 startedAt={plan.startedAt}
