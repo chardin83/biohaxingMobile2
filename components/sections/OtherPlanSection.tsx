@@ -1,16 +1,20 @@
 import BottomSheet from '@gorhom/bottom-sheet';
+import { useTheme } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
 import { PlanTipEntry, useStorage } from '@/app/context/StorageContext';
+import { globalStyles } from '@/app/theme/globalStyles';
 import DefaultSettingsModal from '@/components/modals/DefaultSettingsModal';
 import { MetricsBottomSheet } from '@/components/sections/MetricsBottomSheet';
 import { PlanMeta } from '@/components/sections/PlanMeta';
 import { ThemedText } from '@/components/ThemedText';
-import AppBox from '@/components/ui/AppBox';
+import { Card } from '@/components/ui/Card';
+import DiscreetButton from '@/components/ui/DiscreetButton';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 import { PlanHeaderActions } from './PlanHeaderActions';
 
@@ -20,6 +24,7 @@ type Props = {
 
 export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
+  const { colors } = useTheme();
   const router = useRouter();
   const { plans, setPlans } = useStorage();
 
@@ -138,12 +143,26 @@ export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
         );
 
         return (
-          <AppBox
+          <Card
             key={plan.tipId ?? `other-${index}`}
-            title={tipTitle}
-            headerRight={editAction}
-            onPressHeader={() => openPlanDetails(plan, tipTitle)}
+            style={[
+              styles.otherGoalCard,
+              { borderLeftColor: colors.planSectionOtherIcon },
+            ]}
           >
+            <View style={styles.otherCardHeaderRow}>
+              <TouchableOpacity
+                style={styles.otherCardHeaderMain}
+                onPress={() => openPlanDetails(plan, tipTitle)}
+                activeOpacity={0.85}
+              >
+                <IconSymbol name="ellipsis" size={18} color={colors.planSectionOtherIcon} />
+                <ThemedText type="title3" style={[styles.otherCardTitle, { color: colors.planSectionOtherIcon }]}>
+                  {tipTitle}
+                </ThemedText>
+              </TouchableOpacity>
+              <View style={styles.otherCardHeaderRight}>{editAction}</View>
+            </View>
             <PlanMeta
               startedAt={plan.startedAt}
               createdBy={plan.createdBy}
@@ -154,9 +173,22 @@ export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
                 {plan.comment}
               </ThemedText>
             ) : null}
-          </AppBox>
+          </Card>
         );
       })}
+      <View style={styles.addOtherButtonWrap}>
+        <DiscreetButton
+          title={`+ ${t('general.add', { defaultValue: 'Lagg till' })}`}
+          onPress={() => {
+            router.push({
+              pathname: '/(tabs)/search',
+              params: {
+                planCategories: 'other',
+              },
+            });
+          }}
+        />
+      </View>
       <Portal>
         <DefaultSettingsModal
           visible={otherSettingsVisible}
@@ -180,6 +212,31 @@ export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
 };
 
 const styles = StyleSheet.create({
+  otherGoalCard: {
+    borderWidth: 0,
+    borderLeftWidth: 6,
+    borderRadius: globalStyles.borders.borderRadius,
+    paddingLeft: 12,
+  },
+  otherCardHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  otherCardHeaderMain: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    paddingVertical: 2,
+  },
+  otherCardTitle: {
+    textTransform: 'uppercase',
+  },
+  otherCardHeaderRight: {
+    marginLeft: 12,
+  },
   headerActionsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -199,5 +256,9 @@ const styles = StyleSheet.create({
   },
   commentText: {
     marginBottom: 8,
+  },
+  addOtherButtonWrap: {
+    marginTop: 4,
+    alignItems: 'center',
   },
 });

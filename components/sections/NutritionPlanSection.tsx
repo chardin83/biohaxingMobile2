@@ -2,17 +2,19 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
 import React, { useCallback,useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
 import { PlanTipEntry, useStorage } from '@/app/context/StorageContext';
+import { globalStyles } from '@/app/theme/globalStyles';
 import DefaultSettingsModal from '@/components/modals/DefaultSettingsModal';
 import { MetricsBottomSheet } from '@/components/sections/MetricsBottomSheet';
 import { PlanHeaderActions } from '@/components/sections/PlanHeaderActions';
 import { PlanMeta } from '@/components/sections/PlanMeta';
 import { ThemedText } from '@/components/ThemedText';
-import AppBox from '@/components/ui/AppBox';
 import Badge from '@/components/ui/Badge';
+import { Card } from '@/components/ui/Card';
+import DiscreetButton from '@/components/ui/DiscreetButton';
 import { useSupplementMap } from '@/locales/supplements';
 import { Tip,tips } from '@/locales/tips';
 
@@ -206,7 +208,26 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) =>
         );
 
         return (
-          <AppBox key={tipId} title={tipTitle} headerRight={editAction} onPressHeader={() => openPlanDetails(tipId, plan, tipTitle, foodItems, recommendedDoseLabel)}>
+          <Card
+            key={tipId}
+            style={[
+              styles.nutritionGoalCard,
+              { borderLeftColor: colors.planSectionNutritionIcon },
+            ]}
+          >
+            <View style={styles.nutritionCardHeaderRow}>
+              <TouchableOpacity
+                style={styles.nutritionCardHeaderMain}
+                onPress={() => openPlanDetails(tipId, plan, tipTitle, foodItems, recommendedDoseLabel)}
+                activeOpacity={0.85}
+              >
+                <IconSymbol name="flame" size={18} color={colors.planSectionNutritionIcon} />
+                <ThemedText type="title3" style={[styles.nutritionCardTitle, { color: colors.planSectionNutritionIcon }]}>
+                  {tipTitle}
+                </ThemedText>
+              </TouchableOpacity>
+              <View style={styles.nutritionCardHeaderRight}>{editAction}</View>
+            </View>
             {plan?.startedAt && (
               <PlanMeta
                 startedAt={plan.startedAt}
@@ -263,9 +284,22 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) =>
                 )}
               </View>
             )}
-          </AppBox>
+          </Card>
         );
       })}
+      <View style={styles.addNutritionButtonWrap}>
+        <DiscreetButton
+          title={`+ ${t('general.add', { defaultValue: 'Lagg till' })}`}
+          onPress={() => {
+            router.push({
+              pathname: '/(tabs)/search',
+              params: {
+                planCategories: 'nutrition',
+              },
+            });
+          }}
+        />
+      </View>
       <Portal>
         <DefaultSettingsModal
           visible={nutritionSettingsVisible}
@@ -289,6 +323,31 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) =>
 };
 
 const styles = StyleSheet.create({
+  nutritionGoalCard: {
+    borderWidth: 0,
+    borderLeftWidth: 6,
+    borderRadius: globalStyles.borders.borderRadius,
+    paddingLeft: 12,
+  },
+  nutritionCardHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  nutritionCardHeaderMain: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    paddingVertical: 2,
+  },
+  nutritionCardTitle: {
+    textTransform: 'uppercase',
+  },
+  nutritionCardHeaderRight: {
+    marginLeft: 12,
+  },
   headerActionsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -327,5 +386,9 @@ const styles = StyleSheet.create({
   },
   toggleBadgeIcon: {
     marginLeft: 6,
+  },
+  addNutritionButtonWrap: {
+    marginTop: 4,
+    alignItems: 'center',
   },
 });

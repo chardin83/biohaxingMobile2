@@ -16,7 +16,7 @@ import { PlanCategory } from '@/types/planCategory';
 
 export default function TipsSearchScreen() {
     const { t } = useTranslation();
-    const params = useLocalSearchParams<{ targetPeriods?: string | string[] }>();
+    const params = useLocalSearchParams<{ targetPeriods?: string | string[]; planCategories?: string | string[] }>();
     const [query, setQuery] = useState('');
     const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
     const [showFilter, setShowFilter] = useState(false);
@@ -29,7 +29,7 @@ export default function TipsSearchScreen() {
     // Always collapse filter panel on navigation/param change
     useEffect(() => {
         setShowFilter(false);
-    }, [params.targetPeriods]);
+    }, [params.targetPeriods, params.planCategories]);
 
     const toggleSelection = <T,>(currentValues: T[], nextValue: T): T[] => (
         currentValues.includes(nextValue)
@@ -51,11 +51,31 @@ export default function TipsSearchScreen() {
             .filter((value): value is TargetPeriod => value === 'daily' || value === 'weekly');
     }, [params.targetPeriods]);
 
+    const initialPlanCategories = useMemo(() => {
+        const rawValue = params.planCategories;
+        const joinedValue = Array.isArray(rawValue) ? rawValue.join(',') : rawValue;
+
+        if (!joinedValue) {
+            return [];
+        }
+
+        return joinedValue
+            .split(',')
+            .map(value => value.trim())
+            .filter((value): value is PlanCategory => value === 'nutrition' || value === 'training' || value === 'supplement' || value === 'other');
+    }, [params.planCategories]);
+
     useEffect(() => {
         if (initialTargetPeriods.length > 0) {
             setSelectedTargetPeriods(initialTargetPeriods);
         }
     }, [initialTargetPeriods]);
+
+    useEffect(() => {
+        if (initialPlanCategories.length > 0) {
+            setSelectedPlanCategories(initialPlanCategories);
+        }
+    }, [initialPlanCategories]);
 
     const allPlanCategories = useMemo(
         () =>

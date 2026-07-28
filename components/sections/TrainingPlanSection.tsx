@@ -1,17 +1,19 @@
 import BottomSheet from '@gorhom/bottom-sheet';
+import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
 import { useStorage } from '@/app/context/StorageContext';
+import { globalStyles } from '@/app/theme/globalStyles';
 import TrainingSettingsModal from '@/components/modals/TrainingSettingsModal';
 import { MetricsBottomSheet } from '@/components/sections/MetricsBottomSheet';
 import { PlanMeta } from '@/components/sections/PlanMeta';
 import { ThemedText } from '@/components/ThemedText';
-import AppBox from '@/components/ui/AppBox';
 import Badge from '@/components/ui/Badge';
+import { Card } from '@/components/ui/Card';
+import DiscreetButton from '@/components/ui/DiscreetButton';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import {
   type TrainingActivityFilter,
@@ -215,12 +217,26 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
         );
 
         return (
-          <AppBox
+          <Card
             key={goal.tipId}
-            title={tipTitle ?? t('plan.untitled')}
-            headerRight={editAction}
-            onPressHeader={() => openPlanDetails(goal, trainingBadges)}
+            style={[
+              styles.trainingGoalCard,
+              { borderLeftColor: colors.planSectionIcon },
+            ]}
           >
+            <View style={styles.trainingCardHeaderRow}>
+              <TouchableOpacity
+                style={styles.trainingCardHeaderMain}
+                onPress={() => openPlanDetails(goal, trainingBadges)}
+                activeOpacity={0.85}
+              >
+                <IconSymbol name="trainingGym" size={18} color={colors.planSectionIcon} />
+                <ThemedText type="title3" style={[styles.trainingCardTitle, { color: colors.planSectionIcon }]}>
+                  {tipTitle ?? t('plan.untitled')}
+                </ThemedText>
+              </TouchableOpacity>
+              <View style={styles.trainingCardHeaderRight}>{editAction}</View>
+            </View>
             <PlanMeta startedAt={goal.startedAt} createdBy={goal.createdBy} formatDate={formatDate} />
             <View style={styles.trainingSettingsContainer}>
               {trainingBadges.length ? (
@@ -240,9 +256,22 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
                 </ThemedText>
               )}
             </View>
-          </AppBox>
+          </Card>
         );
       })}
+      <View style={styles.addTrainingButtonWrap}>
+        <DiscreetButton
+          title={`+ ${t('general.add', { defaultValue: 'Lagg till' })}`}
+          onPress={() => {
+            router.push({
+              pathname: '/(tabs)/search',
+              params: {
+                planCategories: 'training',
+              },
+            });
+          }}
+        />
+      </View>
       <Portal>
         <TrainingSettingsModal
           visible={trainingSettingsVisible}
@@ -272,6 +301,31 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
 };
 
 const styles = StyleSheet.create({
+  trainingGoalCard: {
+    borderWidth: 0,
+    borderLeftWidth: 6,
+    borderRadius: globalStyles.borders.borderRadius,
+    paddingLeft: 12,
+  },
+  trainingCardHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  trainingCardHeaderMain: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    paddingVertical: 2,
+  },
+  trainingCardTitle: {
+    textTransform: 'uppercase',
+  },
+  trainingCardHeaderRight: {
+    marginLeft: 12,
+  },
   planHeaderActions: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -309,5 +363,9 @@ const styles = StyleSheet.create({
   },
   chartEmojiDisabled: {
     opacity: 0.4,
+  },
+  addTrainingButtonWrap: {
+    marginTop: 4,
+    alignItems: 'center',
   },
 });

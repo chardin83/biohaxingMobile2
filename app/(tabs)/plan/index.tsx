@@ -6,7 +6,7 @@ import * as Notifications from 'expo-notifications';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
 import { useStorage } from '@/app/context/StorageContext';
@@ -25,7 +25,9 @@ import { ThemedModal } from '@/components/ThemedModal';
 import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
+import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
+import DiscreetButton from '@/components/ui/DiscreetButton';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import PlanEditActions from '@/components/ui/PlanEditActions';
 import { PressableCard } from '@/components/ui/PressableCard';
@@ -83,6 +85,16 @@ async function scheduleSupplementNotification(plan: Plan): Promise<string | unde
   }
 }
 
+const getSupplementTimeIcon = (preferredTime: string): React.ComponentProps<typeof IconSymbol>['name'] => {
+  const hour = Number.parseInt((preferredTime || '').split(':')[0] ?? '', 10);
+
+  if (!Number.isFinite(hour)) return 'pill';
+  if (hour >= 5 && hour < 11) return 'alarm';
+  if (hour >= 11 && hour < 19) return 'sunny';
+  if (hour >= 19 && hour < 22) return 'moon';
+  return 'moon';
+};
+
 // Plan category mapping not currently used; remove to avoid unused warnings
 
 export default function Plans() {
@@ -134,7 +146,9 @@ export default function Plans() {
       paddingBottom: 80,
     },
     planAddButtonWrapper: {
-      marginTop: 15,
+      marginTop: 10,
+      marginLeft: -10,
+      alignSelf: 'center',
     },
     addTimeSlotButtonWrapper: {
       marginTop: 20,
@@ -171,7 +185,36 @@ export default function Plans() {
     noSupplementsText: {
       textAlign: 'center',
       marginBottom: 18,
-    }
+    },
+    supplementGoalCard: {
+      borderWidth: 0,
+      borderLeftWidth: 6,
+      borderRadius: 16,
+      paddingLeft: 12,
+    },
+    supplementCardHeaderRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      justifyContent: 'space-between',
+      marginBottom: 6,
+    },
+    supplementCardHeaderMain: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: 8,
+      paddingVertical: 2,
+    },
+    supplementCardTitle: {
+      textTransform: 'uppercase',
+      flexShrink: 1,
+    },
+    supplementCardHeaderRight: {
+      marginLeft: 12,
+    },
+    supplementChevron: {
+      marginTop: 1,
+    },
   });
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -277,28 +320,6 @@ export default function Plans() {
     }));
   };
 
-  const openPlanDetails = (plan: Plan, planCategory: 'supplement' | 'training' | 'nutrition' | 'other' = 'supplement') => {
-    const tipId = plan.supplements?.[0]?.supplement?.id ?? '';
-    const planTitle = `${plan.name} ${plan.prefferedTime}`;
-    const cardData = JSON.stringify({
-      supplementNames: (plan.supplements ?? []).map(item => item.supplement?.name).filter(Boolean),
-      comment: plan.reason ?? '',
-    });
-
-    router.push({
-      pathname: '/plan/[tipId]',
-      params: {
-        tipId,
-        title: planTitle,
-        startedAt: plan.supplements?.[0]?.startedAt ?? '',
-        createdBy: plan.supplements?.[0]?.createdBy ?? '',
-        comment: plan.reason ?? '',
-        planCategory,
-        cardData,
-      },
-    });
-  };
-
   const renderPlanRow = (plan: Plan) => {
     const planKey = `${plan.name}-${plan.prefferedTime}`;
     const isExpanded = !!expandedPlans[planKey];
@@ -309,6 +330,7 @@ export default function Plans() {
       isExpanded
       ? baseTitle
         :`${baseTitle} (${supplementCount})`;
+    const supplementTimeIcon = getSupplementTimeIcon(plan.prefferedTime);
 
     const editLabel = t('plan.editTimeSlot', { defaultValue: 'Redigera' });
     const headerActions = (
@@ -323,28 +345,36 @@ export default function Plans() {
     );
 
     return (
-      <AppBox
-        title={displayTitle}
-        headerRight={headerActions}
-        onPressHeader={() => {
-          if (plan.supplements?.length) {
-            togglePlanExpanded(planKey);
-          } else {
-            openPlanDetails(plan, 'supplement');
-          }
-        }}
-        headerAccessibilityLabel={t('plan.toggleSupplements', {
-          defaultValue: 'Visa eller dölj innehåll',
-        })}
-        leading={
-          <IconSymbol
-            name="chevron.right"
-            size={16}
-            color={colors.icon}
-            style={{ transform: [{ rotate: isExpanded ? '90deg' : '0deg' }] }}
-          />
-        }
+      <Card
+        style={[
+          styles.supplementGoalCard,
+          { borderLeftColor: colors.planSectionSupplementIcon },
+        ]}
       >
+        <View style={styles.supplementCardHeaderRow}>
+          <TouchableOpacity
+            style={styles.supplementCardHeaderMain}
+            onPress={() => {
+              togglePlanExpanded(planKey);
+            }}
+            activeOpacity={0.85}
+            accessibilityLabel={t('plan.toggleSupplements', {
+              defaultValue: 'Visa eller dölj innehåll',
+            })}
+          >
+            <IconSymbol
+              name="chevron.right"
+              size={16}
+              color={colors.icon}
+              style={[styles.supplementChevron, { transform: [{ rotate: isExpanded ? '90deg' : '0deg' }] }]}
+            />
+            <IconSymbol name={supplementTimeIcon} size={18} color={colors.planSectionSupplementIcon} />
+            <ThemedText type="title3" style={[styles.supplementCardTitle, { color: colors.planSectionSupplementIcon }]}>
+              {displayTitle}
+            </ThemedText>
+          </TouchableOpacity>
+          <View style={styles.supplementCardHeaderRight}>{headerActions}</View>
+        </View>
         {isExpanded && (
           <View>
             {plan.supplements.length > 0 ?
@@ -364,18 +394,17 @@ export default function Plans() {
               }
             {errorMessage && <ThemedText type="caption" style={{ color: colors.error }}>{errorMessage}</ThemedText>}
             <View style={styles.planAddButtonWrapper}>
-              <AppButton
-                title={t('plan.addSupplement')}
+              <DiscreetButton
+                title={`+ ${t('plan.addSupplement')}`}
                 onPress={() => {
                   setIsEditingSupplement(false);
                   setPlanForSupplementEdit(plan);
                 }}
-                variant="primary"
               />
             </View>
           </View>
         )}
-      </AppBox>
+      </Card>
     );
   };
 
