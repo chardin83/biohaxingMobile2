@@ -7,6 +7,7 @@ import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { type MetricEntry, useStorage } from '@/app/context/StorageContext';
 import { RegisterMetricBottomSheet } from '@/components/RegisterMetricBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
+import { useBottomSheetDesign } from '@/components/ui/BottomSheetDesign';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { MetricId, metrics, tipMetricLinks } from '@/locales/metrics';
 
@@ -22,6 +23,7 @@ type MetricsBottomSheetProps = {
 export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSheetRef, tipId }) => {
   const { t } = useTranslation(['metrics', 'common']);
   const { colors } = useTheme();
+  const sheetDesign = useBottomSheetDesign(colors);
   const { addMetricEntry, getMetricHistory, setMetricEntries } = useStorage();
   const registerBottomSheetRef = useRef<BottomSheet>(null);
   const [selectedMetricId, setSelectedMetricId] = useState<MetricId | null>(null); // For detail view
@@ -196,7 +198,8 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
           ref={bottomSheetRef}
           snapPoints={snapPoints}
           enablePanDownToClose
-          backgroundStyle={{ backgroundColor: colors.background }}
+          backgroundStyle={sheetDesign.backgroundStyle}
+          handleComponent={sheetDesign.handleComponent}
           animateOnMount
           index={-1}
           onChange={handleSheetChange}
@@ -292,7 +295,8 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
           ref={bottomSheetRef}
           snapPoints={snapPoints}
           enablePanDownToClose
-          backgroundStyle={{ backgroundColor: colors.background }}
+          backgroundStyle={sheetDesign.backgroundStyle}
+          handleComponent={sheetDesign.handleComponent}
           animateOnMount
           index={-1}
           onChange={handleSheetChange}

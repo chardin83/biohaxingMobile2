@@ -8,6 +8,7 @@ import { Portal } from 'react-native-paper';
 import { type MetricEntry, useStorage } from '@/app/context/StorageContext';
 import { RegisterMetricBottomSheet } from '@/components/RegisterMetricBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
+import { useBottomSheetDesign } from '@/components/ui/BottomSheetDesign';
 import { MetricId, metrics } from '@/locales/metrics';
 
 import { MetricValuesTableSection } from './MetricValuesTableSection';
@@ -25,6 +26,7 @@ type MetricValuesBottomSheetProps = {
 
 export function MetricValuesBottomSheet({ bottomSheetRef, metricId, metricName }: Readonly<MetricValuesBottomSheetProps>) {
   const { colors } = useTheme();
+  const sheetDesign = useBottomSheetDesign(colors);
   const { t } = useTranslation(['common', 'metrics']);
   const { addMetricEntry, getMetricHistory, setMetricEntries } = useStorage();
 
@@ -199,7 +201,8 @@ export function MetricValuesBottomSheet({ bottomSheetRef, metricId, metricName }
         ref={bottomSheetRef}
         snapPoints={snapPoints}
         enablePanDownToClose
-        backgroundStyle={{ backgroundColor: colors.background }}
+        backgroundStyle={sheetDesign.backgroundStyle}
+        handleComponent={sheetDesign.handleComponent}
         animateOnMount
         index={-1}
         onChange={handleSheetChange}

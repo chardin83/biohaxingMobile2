@@ -8,6 +8,7 @@ import { formatWithUnit } from '@/utils/formatters';
 
 import { ThemedText } from './ThemedText';
 import { IconSymbol } from './ui/IconSymbol';
+import { useBottomSheetDesign } from './ui/BottomSheetDesign';
 
 export type FoodServing = {
   grams: number;
@@ -42,6 +43,7 @@ const FoodPortionBottomSheet: React.FC<FoodPortionBottomSheetProps> = ({
   onSelectServing,
 }) => {
   const { t } = useTranslation();
+  const sheetDesign = useBottomSheetDesign(colors);
   
   const isLabelSameAsGrams = (serving: FoodServing): boolean => {
     const normalizedLabel = Array.from(serving.label)
@@ -59,8 +61,8 @@ const FoodPortionBottomSheet: React.FC<FoodPortionBottomSheetProps> = ({
     enablePanDownToClose
     animateOnMount
     containerComponent={BottomSheetOverlayContainer}
-    backgroundStyle={{ backgroundColor: colors.background }}
-    handleIndicatorStyle={{ backgroundColor: colors.textMuted }}
+    backgroundStyle={sheetDesign.backgroundStyle}
+    handleComponent={sheetDesign.handleComponent}
   >
     <BottomSheetScrollView
       style={styles.sheetScroll}

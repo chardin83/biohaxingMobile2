@@ -7,6 +7,7 @@ import { Platform, StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
 import { DateTimeInput } from '@/components/ui/DateTimeInput';
+import { useBottomSheetDesign } from '@/components/ui/BottomSheetDesign';
 
 interface RegisterMetricBottomSheetProps {
   bottomSheetRef: React.RefObject<BottomSheet | null>;
@@ -50,6 +51,7 @@ export function RegisterMetricBottomSheet({
   onClose,
 }: Readonly<RegisterMetricBottomSheetProps>) {
   const snapPoints = useMemo(() => providedSnapPoints ?? ['25%', '50%', '90%'], [providedSnapPoints]);
+  const sheetDesign = useBottomSheetDesign(colors);
   const uniqueUnits = useMemo(() => {
     if (!units || units.length === 0) {
       return [];
@@ -266,7 +268,8 @@ export function RegisterMetricBottomSheet({
       ref={bottomSheetRef}
       snapPoints={snapPoints}
       enablePanDownToClose
-      backgroundStyle={{ backgroundColor: colors.background }}
+      backgroundStyle={sheetDesign.backgroundStyle}
+      handleComponent={sheetDesign.handleComponent}
       animateOnMount
       index={initialSnapIndex}
       onChange={handleSheetChange}

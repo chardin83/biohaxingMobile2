@@ -1,6 +1,7 @@
+import { Ionicons } from '@expo/vector-icons';
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, View } from "react-native";
+import { Pressable,StyleSheet, View } from "react-native";
 import { Icon } from 'react-native-paper';
 
 import { Supplement } from "@/app/domain/Supplement";
@@ -43,6 +44,14 @@ const ICON_SIZE_MAIN = 50;
 const ICON_SIZE_SECONDARY = 26;
 const ICON_BORDER = 36; // diameter för små ikoner
 
+const VERDICT_ICON_BY_VALUE: Record<string, React.ComponentProps<typeof Ionicons>['name']> = {
+  startNow: 'play-circle-outline',
+  interested: 'repeat-outline',
+  alreadyWorks: 'checkmark-circle-outline',
+  testedFailed: 'close-circle-outline',
+  notInterested: 'remove-circle-outline',
+};
+
 type DetailsTopSectionProps = {
   areaId: string;
   colors: any;
@@ -63,6 +72,8 @@ type DetailsTopSectionProps = {
   addPlanButtonTitle: string;
   handleAddPlanEntry: () => void;
   showSupplementDiscreetButton: boolean;
+  currentVerdict?: string | null;
+  onOpenVerdict?: () => void;
 };
 
 const DetailsTopSection: React.FC<DetailsTopSectionProps> = ({
@@ -85,6 +96,8 @@ const DetailsTopSection: React.FC<DetailsTopSectionProps> = ({
   addPlanButtonTitle,
   handleAddPlanEntry,
   showSupplementDiscreetButton,
+  currentVerdict,
+  onOpenVerdict,
 }) => {
   const { t } = useTranslation();
 
@@ -98,12 +111,27 @@ const DetailsTopSection: React.FC<DetailsTopSectionProps> = ({
   const rightAreas = otherAreas.filter((_, i) => i % 2 === 1);
 
   const mainArea = areas.find(a => a.id === areaId);
+  const verdictIconName = currentVerdict ? VERDICT_ICON_BY_VALUE[currentVerdict] : undefined;
 
   return (
     <View style={styles.topSection}>
-      <ThemedText type="title" style={{ color: colors.primary }}>
-        {t(`areas:${areaId}.title`)}
+      <View style={styles.titleRow}>
+           <ThemedText type="title" style={{ color: colors.primary }}>
+        {resolvedSupplements[0]?.name ?? t(`tips:${titleKey}`)}
       </ThemedText>
+        <ThemedText type="subtitle" style={{ color: colors.primary }} >
+          {t(`areas:${areaId}.title`)}
+        </ThemedText>
+        {onOpenVerdict && (
+          <Pressable onPress={onOpenVerdict} style={styles.verdictIconButton}>
+            {verdictIconName ? (
+              <Ionicons name={verdictIconName} size={20} color={colors.primary} />
+            ) : (
+              <Icon source="help-circle" size={20} color={colors.primary} />
+            )}
+          </Pressable>
+        )}
+      </View>
       <View style={[styles.iconRow, { borderColor: colors.borderLight }]}>
         {/* Vänster små ikoner */}
         <View style={styles.iconColumn}>
@@ -178,9 +206,7 @@ const DetailsTopSection: React.FC<DetailsTopSectionProps> = ({
           ))}
         </View>
       </View>
-      <ThemedText type="subtitle" style={{ color: colors.primary }}>
-        {resolvedSupplements[0]?.name ?? t(`tips:${titleKey}`)}
-      </ThemedText>
+   
       {isFavorite && (
         <View style={[styles.favoriteChip, { backgroundColor: colors.accentWeak }]}>
           <ThemedText type="caption" style={[styles.favoriteText, { color: colors.primary }]}>
@@ -223,6 +249,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   topSection: {
+    position: 'relative',
     alignItems: 'center',
     marginBottom: 16,
   },
@@ -276,10 +303,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 10,
   },
+  titleRow: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  verdictIconButton: {
+    position: 'absolute',
+    top: -50,
+    right: 0,
+    padding: 6,
+  },
   levelBadge: {
     position: 'absolute',
     bottom: -24,
-    zIndex: 2,
   },
   levelBadgeLocked: {
     minWidth: 120,

@@ -7,6 +7,7 @@ import { View } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
 import { DateTimeInput } from '@/components/ui/DateTimeInput';
+import { useBottomSheetDesign } from '@/components/ui/BottomSheetDesign';
 import { minutesFromMidnight } from '@/utils/sleepTimeUtils';
 
 // Props for the SleepBatchBottomSheet
@@ -30,6 +31,7 @@ export function SleepBatchBottomSheet({
     handleCloseSleepBatchSheet,
   }: Readonly<SleepBatchBottomSheetProps>) {
     const { t } = useTranslation();
+    const sheetDesign = useBottomSheetDesign(colors);
     const [sleepBatchNotes, setSleepBatchNotes] = React.useState('');
     const [sleepBatchWakeTime, setSleepBatchWakeTime] = React.useState(() => {
       const next = new Date();
@@ -190,7 +192,8 @@ export function SleepBatchBottomSheet({
         ref={bottomSheetRef}
         snapPoints={['35%', '65%', '95%']}
         enablePanDownToClose
-        backgroundStyle={{ backgroundColor: colors.background }}
+        backgroundStyle={sheetDesign.backgroundStyle}
+        handleComponent={sheetDesign.handleComponent}
         animateOnMount
         index={sheetIndex}
         onClose={handleCloseSleepBatchSheet}

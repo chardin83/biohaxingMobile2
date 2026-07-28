@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-shadow */
+import BottomSheet from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-paper';
+import { FullWindowOverlay } from 'react-native-screens';
 
 import SupplementList from '@/app/components/SupplementList';
 import { useStorage } from '@/app/context/StorageContext';
@@ -18,7 +20,7 @@ import AppButton from '@/components/ui/AppButton';
 import Container from '@/components/ui/Container';
 import DiscreetButton from '@/components/ui/DiscreetButton';
 import { NotFound } from '@/components/ui/NotFound';
-import VerdictSelector from '@/components/VerdictSelector';
+import VerdictBottomSheet from '@/components/VerdictBottomSheet';
 import { AIPromptKey, AIPrompts } from '@/constants/AIPrompts';
 import { XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW } from '@/constants/XP';
 import { areas } from '@/locales/areas';
@@ -203,6 +205,7 @@ export default function AreaDetailScreen() {
   }, [nutritionXpClaims, tip?.id]);
   const totalXpEarned = educationXpEarned + nutritionXpEarned;
   const currentVerdict = currentTip?.verdict;
+  const verdictSheetRef = React.useRef<BottomSheet>(null);
   const positiveVerdicts = React.useMemo(() => new Set(POSITIVE_VERDICTS), []);
   const isFavorite = React.useMemo(() => {
     if (!currentVerdict) return false;
@@ -329,6 +332,15 @@ export default function AreaDetailScreen() {
     }
   };
 
+  const openVerdictSheet = React.useCallback(() => {
+    console.log('openVerdictSheet called, ref=', !!verdictSheetRef.current);
+    try {
+      verdictSheetRef.current?.expand();
+    } catch (err) {
+      console.warn('Failed to open verdict sheet', err);
+    }
+  }, []);
+
   const maxEducationXp = XP_FOR_VIEW + XP_FOR_CHAT_QUESTION * 3 + XP_FOR_VERDICT;
   const progress = Math.min(educationXpEarned / maxEducationXp, 1);
   const progressLabel =
@@ -401,6 +413,8 @@ export default function AreaDetailScreen() {
         addPlanButtonTitle={addPlanButtonTitle}
         handleAddPlanEntry={handleAddTipPlanEntry}
         showSupplementDiscreetButton={showSupplementDiscreetButton}
+        currentVerdict={currentVerdict}
+        onOpenVerdict={openVerdictSheet}
       />
 
       {descriptionKey && (
@@ -450,7 +464,13 @@ export default function AreaDetailScreen() {
         colors={colors}
       />
       <MetricsSection tipId={effectiveTipId} />
-      <VerdictSelector currentVerdict={currentVerdict} onVerdictPress={handleVerdictPress} />
+      <VerdictBottomSheet
+        verdictSheetRef={verdictSheetRef}
+        snapPoints={["85%", "35%"]}
+        colors={colors}
+        currentVerdict={currentVerdict}
+        onVerdictPress={(v: any) => handleVerdictPress(v as any)}
+      />
       {(
         resolvedSupplements.length > 0 ||
         (supplementPlans?.some(p => Array.isArray(p.supplements) && p.supplements.length > 0))

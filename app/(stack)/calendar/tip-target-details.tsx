@@ -12,6 +12,7 @@ import { useStorage } from '@/app/context/StorageContext';
 import { Collapsible } from '@/components/Collapsible';
 import FoodPortionBottomSheet, { FoodServing } from '@/components/FoodPortionBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
+import { useBottomSheetDesign } from '@/components/ui/BottomSheetDesign';
 import Container from '@/components/ui/Container';
 import DiscreetButton from '@/components/ui/DiscreetButton';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -581,6 +582,7 @@ const getPeriodPresentation = ({
 export default function TipTargetDetailsScreen() {
   const router = useRouter();
   const { colors } = useTheme();
+  const sheetDesign = useBottomSheetDesign(colors);
   const { t, i18n } = useTranslation();
   const supplementMap = useSupplementMap();
   const foodPortionBottomSheetRef = useRef<BottomSheetModal>(null);
@@ -1193,8 +1195,8 @@ export default function TipTargetDetailsScreen() {
           enablePanDownToClose
           animateOnMount
           containerComponent={BottomSheetOverlayContainer}
-          backgroundStyle={{ backgroundColor: colors.background }}
-          handleIndicatorStyle={{ backgroundColor: colors.textMuted }}
+          backgroundStyle={sheetDesign.backgroundStyle}
+          handleComponent={sheetDesign.handleComponent}
         >
           <BottomSheetScrollView
             style={styles.medalInfoScroll}
