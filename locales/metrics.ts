@@ -378,6 +378,19 @@ export const metrics = {
     ]
   },
 
+  stress_score: {
+    id: 'stress_score',
+    emoji: '😰',
+    nameKey: 'stress_score.name',
+    descriptionKey: 'stress_score.description',
+    canonicalUnit: 'score_0_10',
+    source: 'questionnaire',
+    suggestedFrequency: 'daily',
+    units: [
+      { unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
+    ]
+  },
+
   // ---------------- BODY ----------------
 
   weight: {

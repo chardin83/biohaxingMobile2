@@ -4,95 +4,46 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
-import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { MetricValuesBottomSheet } from '@/components/sections/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
-import { buildTrendData } from '@/utils/metrics';
 
 import { HRVMetric } from './HRVMetric';
+import {
+  type DigestiveTrendMetricKey,
+  useMetricConfig,
+} from './metricChartConfig';
 import { MetricTrendChart } from './MetricTrendChart';
 import { SleepMetric } from './SleepMetric';
 import { TotalActivityMetric } from './TotalActivityMetric';
 
-type DigestiveTrendMetricKey = 'hrv' | 'sleep_duration' | 'active_minutes';
-
-function formatSleepDuration(valueInMinutes: number) {
-  const roundedMinutes = Math.max(0, Math.round(valueInMinutes));
-  const hours = Math.floor(roundedMinutes / 60);
-  const minutes = roundedMinutes % 60;
-  return `${hours}h ${String(minutes).padStart(2, '0')}m`;
-}
-
 export function DigestiveTrendsChart() {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { getMetricHistory } = useStorage();
-  const [selectedMetric, setSelectedMetric] = React.useState<DigestiveTrendMetricKey | null>(null);
-  const metricValuesBottomSheetRef = React.useRef<BottomSheet>(null);
 
-  const hrvTrendData = React.useMemo(() => buildTrendData(getMetricHistory('hrv')), [getMetricHistory]);
-  const sleepTrendData = React.useMemo(
-    () =>
-      buildTrendData(getMetricHistory('sleep_duration'), (value, unit) => {
-        if (unit === 'hours') {
-          return Math.round(value * 60);
-        }
-        return Math.round(value);
-      }),
-    [getMetricHistory]
+  const [selectedMetric, setSelectedMetric] =
+    React.useState<DigestiveTrendMetricKey | null>(null);
+
+  const metricValuesBottomSheetRef =
+    React.useRef<BottomSheet>(null);
+
+  const toggleMetric = React.useCallback(
+    (metric: DigestiveTrendMetricKey) => {
+      setSelectedMetric(current =>
+        current === metric ? null : metric,
+      );
+    },
+    [],
   );
-  const activityTrendData = React.useMemo(() => buildTrendData(getMetricHistory('active_minutes')), [getMetricHistory]);
-
-  const toggleMetric = React.useCallback((metric: DigestiveTrendMetricKey) => {
-    setSelectedMetric(current => (current === metric ? null : metric));
-  }, []);
 
   const openMetricValuesTable = React.useCallback(() => {
     metricValuesBottomSheetRef.current?.snapToIndex(1);
   }, []);
 
-  const selectedConfig = React.useMemo(() => {
-    if (!selectedMetric) {
-      return null;
-    }
-
-    switch (selectedMetric) {
-      case 'sleep_duration':
-        return {
-          metricName: t('metrics:sleep_duration.name'),
-          unit: undefined,
-          valueFormatter: formatSleepDuration,
-          data: sleepTrendData,
-          accentColor: colors.chart.sleepDuration,
-        };
-      case 'active_minutes':
-        return {
-          metricName: t('metrics:activeMinutes.name'),
-          unit: 'min',
-          data: activityTrendData,
-          accentColor: colors.chart.activeMinutes,
-        };
-      case 'hrv':
-      default:
-        return {
-          metricName: t('metrics:hrv.name'),
-          unit: 'ms',
-          data: hrvTrendData,
-          accentColor: colors.chart.hrv,
-        };
-    }
-  }, [
-    selectedMetric,
-    t,
-    sleepTrendData,
-    activityTrendData,
-    hrvTrendData,
-    colors.chart.sleepDuration,
-    colors.chart.activeMinutes,
-    colors.chart.hrv,
-  ]);
+  const selectedConfig = useMetricConfig({
+    metricId: selectedMetric,
+  });
 
   return (
     <Card title={t('digestiveTrendsChart.title')}>
@@ -102,14 +53,24 @@ export function DigestiveTrendsChart() {
           onPress={() => toggleMetric('hrv')}
           isSelected={selectedMetric === 'hrv'}
         />
+
         <SleepMetric
           showDivider
-          onPress={() => toggleMetric('sleep_duration')}
-          isSelected={selectedMetric === 'sleep_duration'}
+          onPress={() =>
+            toggleMetric('sleep_duration')
+          }
+          isSelected={
+            selectedMetric === 'sleep_duration'
+          }
         />
+
         <TotalActivityMetric
-          onPress={() => toggleMetric('active_minutes')}
-          isSelected={selectedMetric === 'active_minutes'}
+          onPress={() =>
+            toggleMetric('active_minutes')
+          }
+          isSelected={
+            selectedMetric === 'active_minutes'
+          }
         />
       </View>
 
@@ -118,22 +79,50 @@ export function DigestiveTrendsChart() {
           data={selectedConfig.data}
           metricName={selectedConfig.metricName}
           unit={selectedConfig.unit}
-          valueFormatter={selectedConfig.valueFormatter}
-          accentColor={selectedConfig.accentColor}
-          onViewRegisteredValues={openMetricValuesTable}
+          daysToShow={selectedConfig.daysToShow}
+          valueFormatter={
+            selectedConfig.valueFormatter
+          }
+          accentColor={
+            selectedConfig.accentColor
+          }
+          xAxisLabelFormatter={
+            selectedConfig.xAxisLabelFormatter
+          }
+          referenceLines={
+            selectedConfig.referenceLines
+          }
+          onViewRegisteredValues={
+            openMetricValuesTable
+          }
         />
       )}
 
-      <ThemedText type="explainer" style={[globalStyles.explainer, { borderColor: colors.borderLight }]}>
+      <ThemedText
+        type="explainer"
+        style={[
+          globalStyles.explainer,
+          {
+            borderColor: colors.borderLight,
+          },
+        ]}
+      >
         {selectedMetric
-          ? t(`digestiveTrendsChart.explainers.${selectedMetric}`, {
-              defaultValue: t('digestiveTrendsChart.explainer'),
-            })
+          ? t(
+              `digestiveTrendsChart.explainers.${selectedMetric}`,
+              {
+                defaultValue: t(
+                  'digestiveTrendsChart.explainer',
+                ),
+              },
+            )
           : t('digestiveTrendsChart.explainer')}
       </ThemedText>
 
       <MetricValuesBottomSheet
-        bottomSheetRef={metricValuesBottomSheetRef}
+        bottomSheetRef={
+          metricValuesBottomSheetRef
+        }
         metricId={selectedMetric}
         metricName={selectedConfig?.metricName}
       />

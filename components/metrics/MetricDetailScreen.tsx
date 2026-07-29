@@ -5,101 +5,41 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { useStorage } from '@/app/context/StorageContext';
 import { Colors } from '@/app/theme/Colors';
 import { ThemedText } from '@/components/ThemedText';
 import Container from '@/components/ui/Container';
 import { type MetricId,metrics } from '@/locales/metrics';
-import { buildTrendData } from '@/utils/metrics';
-import { buildWeeklyTrainingLoadTrendData, getIsoWeekInfo } from '@/utils/trainingLoad';
 
 import { MetricValuesBottomSheet } from '../sections/MetricValuesBottomSheet';
+import { useMetricConfig } from './metricChartConfig';
 import { MetricTrendChart } from './MetricTrendChart';
 
-type MetricDetailKey = 'vo2_max' | 'resting_hr' | 'training_load';
+
 type TimeWindowOption = 7 | 30 | 90;
 
-function formatWeekLabel(date: string) {
-  const { isoYear, isoWeek } = getIsoWeekInfo(date);
-  const shortYear = String(isoYear).slice(-2);
-  return `v${isoWeek} '${shortYear}`;
-}
 
 export default function MetricDetailScreen() {
   const router = useRouter();
   const { colors, dark } = useTheme();
   const { t } = useTranslation();
-  const { getMetricHistory } = useStorage();
   const { metricId } = useLocalSearchParams<{ metricId?: string | string[] }>();
   const [selectedDays, setSelectedDays] = React.useState<TimeWindowOption>(30);
 
-  const resolvedMetricId = React.useMemo(() => {
-    if (Array.isArray(metricId)) return metricId[0];
-    return metricId;
-  }, [metricId]);
+const resolvedMetricId = React.useMemo<MetricId | null>(() => {
+  const value = Array.isArray(metricId)
+    ? metricId[0]
+    : metricId;
 
-  const selectedMetric = React.useMemo<MetricDetailKey | null>(() => {
-    if (resolvedMetricId === 'vo2_max' || resolvedMetricId === 'resting_hr' || resolvedMetricId === 'training_load') {
-      return resolvedMetricId;
-    }
+  if (!value || !Object.hasOwn(metrics, value)) {
     return null;
-  }, [resolvedMetricId]);
+  }
 
-  const isKnownMetric = React.useMemo(() => {
-    if (!resolvedMetricId) return false;
-    return Object.hasOwn(metrics, resolvedMetricId);
-  }, [resolvedMetricId]);
+  return value as MetricId;
+}, [metricId]);
 
-  const selectedConfig = React.useMemo(() => {
-    if (!resolvedMetricId) return null;
-
-    const vo2TrendData = buildTrendData(getMetricHistory('vo2_max'));
-    const restingHrTrendData = buildTrendData(getMetricHistory('resting_hr'));
-    const trainingLoadTrendData = buildWeeklyTrainingLoadTrendData(
-      getMetricHistory('active_minutes').map(entry => ({ recordedAt: entry.recordedAt, value: entry.value, unit: entry.unit })),
-      getMetricHistory('intensity_minutes').map(entry => ({ recordedAt: entry.recordedAt, value: entry.value, unit: entry.unit }))
-    );
-
-    switch (selectedMetric) {
-      case 'resting_hr':
-        return {
-          metricName: t('metrics:resting_hr.shortName'),
-          unit: 'bpm',
-          data: restingHrTrendData,
-          accentColor: colors.chart.restingHr,
-        };
-      case 'training_load':
-        return {
-          metricName: t('metrics:trainingLoad.name'),
-          unit: '',
-          daysToShow: 35,
-          data: trainingLoadTrendData,
-          xAxisLabelFormatter: formatWeekLabel,
-          accentColor: colors.area.cardio,
-          referenceLines: [
-            { value: 150, label: '150', color: colors.infoColor },
-            { value: 300, label: '300', color: colors.successColor },
-          ],
-        };
-      case 'vo2_max':
-        return {
-          metricName: t('metrics:vo2_max.shortName'),
-          unit: '',
-          data: vo2TrendData,
-          accentColor: colors.chart.vo2Max,
-        };
-      default:
-        if (!isKnownMetric) return null;
-
-        return {
-          metricName: t(`metrics:${resolvedMetricId}.name`),
-          unit: '',
-          data: buildTrendData(getMetricHistory(resolvedMetricId as MetricId)),
-          accentColor: colors.primary,
-        };
-    }
-  }, [colors.area.cardio, colors.chart.restingHr, colors.chart.vo2Max, colors.infoColor, colors.primary, colors.successColor, getMetricHistory, isKnownMetric, resolvedMetricId, selectedMetric, t]);
- 
+const selectedConfig = useMetricConfig({
+  metricId: resolvedMetricId,
+});
   const metricValuesBottomSheetRef = React.useRef<BottomSheet>(null);
   const openMetricValuesTable = React.useCallback(() => {
     metricValuesBottomSheetRef.current?.snapToIndex(1);
@@ -117,6 +57,13 @@ export default function MetricDetailScreen() {
 
   const themeGradients = dark ? Colors.dark.gradients : Colors.light.gradients;
 
+  const description = t(
+  `metrics:${resolvedMetricId}.description`,
+  {
+    defaultValue: '',
+  },
+);
+
   return (
     <Container
       background="default"
@@ -129,9 +76,7 @@ export default function MetricDetailScreen() {
           {selectedConfig.metricName}
         </ThemedText>
         <ThemedText type="subtitle" style={styles.subtitle}>
-          {selectedMetric
-            ? t(`cardioTrendsChart.explainers.${selectedMetric}`)
-            : t(`metrics:${resolvedMetricId}.description`)}
+          {description}
         </ThemedText>
 
         <View style={styles.timeWindowRow}>
