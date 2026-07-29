@@ -1,12 +1,14 @@
+import BottomSheet from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ImageSourcePropType } from 'react-native';
-import { Image, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import PlanCategoryIcon, { type PlanCategory } from '@/components/plan/PlanCategoryIcon';
+import { MetricsBottomSheet } from '@/components/sections/MetricsBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import TipTarget from '@/components/TipTarget';
 import AppBox from '@/components/ui/AppBox';
@@ -20,6 +22,7 @@ import { ALL_AMINO_ACID_KEYS } from '@/constants/aminoAcids';
 import { MINERAL_TYPE_KEYS } from '@/constants/minerals';
 import { VITAMIN_TYPE_KEYS } from '@/constants/vitamins';
 import { FOOD_IMAGES } from '@/locales/foodCatalog';
+import { type MetricId, metrics, tipMetricLinks } from '@/locales/metrics';
 import { tips } from '@/locales/tips';
 import { type TrainingIntensity } from '@/types/training';
 
@@ -77,9 +80,11 @@ export default function PlanDetailsScreen() {
   const { t } = useTranslation(['common', 'areas', 'tips']);
   const params = useLocalSearchParams<PlanDetailsParams>();
   const { setPlans, trainingPlanSettings, trainingEntries } = useStorage();
+  const metricsBottomSheetRef = React.useRef<BottomSheet>(null);
 
   const [isEditingComment, setIsEditingComment] = React.useState(false);
   const [commentDraft, setCommentDraft] = React.useState(params.comment ?? '');
+  const [selectedRelatedMetricId, setSelectedRelatedMetricId] = React.useState<MetricId | null>(null);
 
   const tip = React.useMemo(() => {
     if (!params.tipId) return undefined;
@@ -282,6 +287,11 @@ export default function PlanDetailsScreen() {
     return date.toLocaleDateString('sv-SE', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
+  const relatedMetricLinks = React.useMemo(() => {
+    if (!params.tipId) return [];
+    return tipMetricLinks[params.tipId] ?? [];
+  }, [params.tipId]);
+
   return (
     <Container background="default" showBackButton onBackPress={() => router.back()}>
       <View style={styles.content}>
@@ -460,6 +470,40 @@ export default function PlanDetailsScreen() {
           </AppBox>
         ) : null}
 
+        {relatedMetricLinks.length ? (
+          <AppBox
+            title={t('plan.relatedMetricsTitle', { defaultValue: 'Relaterade matvarden' })}
+            leading={<IconSymbol name="chart" size={18} color={colors.primary} />}
+          >
+            <View style={styles.relatedMetricsList}>
+              {relatedMetricLinks.map(link => {
+                const metric = metrics[link.metricId];
+                if (!metric) return null;
+
+                return (
+                  <TouchableOpacity
+                    key={link.metricId}
+                    onPress={() => {
+                      router.push({
+                        pathname: '/(stack)/plan/[tipId]/metric/[metricId]',
+                        params: { tipId: params.tipId, metricId: link.metricId },
+                      });
+                    }}
+                    activeOpacity={0.8}
+                    style={[styles.relatedMetricItem, { borderColor: colors.borderLight, backgroundColor: colors.cardBackground }]}
+                  >
+                    <View style={styles.relatedMetricItemText}>
+                      <ThemedText type="defaultSemiBold">{t(`metrics:${link.metricId}.name`)}</ThemedText>
+                      <ThemedText type="caption" style={styles.relatedMetricKind}>{link.kind}</ThemedText>
+                    </View>
+                    <IconSymbol name="chevron.right" size={18} color={colors.textMuted} />
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </AppBox>
+        ) : null}
+
         {tip ? (
           <PressableCard
             onPress={() => {
@@ -560,6 +604,11 @@ export default function PlanDetailsScreen() {
           </PressableCard>
         ) : null}
       </View>
+      <MetricsBottomSheet
+        bottomSheetRef={metricsBottomSheetRef}
+        tipId={params.tipId ?? null}
+        forcedMetricId={selectedRelatedMetricId}
+      />
     </Container>
   );
 }
@@ -702,5 +751,26 @@ const styles = StyleSheet.create({
   },
   targetList: {
     gap: 6,
+  },
+  relatedMetricsList: {
+    gap: 8,
+  },
+  relatedMetricItem: {
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  relatedMetricItemText: {
+    flex: 1,
+  },
+  relatedMetricKind: {
+    marginTop: 2,
+    opacity: 0.75,
+    textTransform: 'capitalize',
   },
 });

@@ -16,11 +16,12 @@ import { MetricValuesTableSection } from './MetricValuesTableSection';
 type MetricsBottomSheetProps = {
   bottomSheetRef: React.RefObject<BottomSheet | null>;
   tipId: string | null;
+  forcedMetricId?: MetricId | null;
 };
 
 
 
-export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSheetRef, tipId }) => {
+export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSheetRef, tipId, forcedMetricId }) => {
   const { t } = useTranslation(['metrics', 'common']);
   const { colors } = useTheme();
   const sheetDesign = useBottomSheetDesign(colors);
@@ -35,6 +36,7 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
   const [metricUnit, setMetricUnit] = useState('');
   const [metricNotes, setMetricNotes] = useState('');
   const [recordedAt, setRecordedAt] = useState(() => new Date());
+  const isForcedMetricMode = forcedMetricId !== undefined;
 
   const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
 
@@ -175,6 +177,11 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
     console.log('[MetricsBottomSheet] tipId changed:', tipId);
   }, [tipId]);
 
+  React.useEffect(() => {
+    if (!isForcedMetricMode) return;
+    setSelectedMetricId(forcedMetricId ?? null);
+  }, [forcedMetricId, isForcedMetricMode]);
+
   if (!tipId) {
     console.log('[MetricsBottomSheet] tipId is null, returning null');
     return null;
@@ -206,13 +213,15 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
         >
           <BottomSheetView style={[styles.contentContainer, { backgroundColor: colors.background }]}> 
             <View style={styles.headerWithBack}>
-              <TouchableOpacity
-                onPress={() => setSelectedMetricId(null)}
-                style={styles.backButton}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              >
-                <IconSymbol name="chevron.left" size={24} color={colors.text} />
-              </TouchableOpacity>
+              {!isForcedMetricMode ? (
+                <TouchableOpacity
+                  onPress={() => setSelectedMetricId(null)}
+                  style={styles.backButton}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <IconSymbol name="chevron.left" size={24} color={colors.text} />
+                </TouchableOpacity>
+              ) : null}
               <ThemedText type="title3" style={styles.title}>
                 {t(`metrics:${selectedMetricId}.name`)}
               </ThemedText>
@@ -290,7 +299,7 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
 
   return (
     <>
-      {selectedMetricId ? detailView : (
+      {selectedMetricId ? detailView : (!isForcedMetricMode ? (
         <BottomSheet
           ref={bottomSheetRef}
           snapPoints={snapPoints}
@@ -335,7 +344,7 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
             </View>
           </BottomSheetView>
         </BottomSheet>
-      )}
+      ) : null)}
       <RegisterMetricBottomSheet
         bottomSheetRef={registerBottomSheetRef}
         isVisible={isRegisterSheetVisible}
