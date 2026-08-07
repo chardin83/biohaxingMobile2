@@ -56,6 +56,14 @@ export type AdapterStatus = (
   | { state: 'error'; message: string }
 ) & AdapterStatusMeta;
 
+
+export interface BloodPressureReading {
+  recordedAt: string;
+  systolic: number;
+  diastolic: number;
+  sourceName?: string;
+}
+
 export interface WearableAdapter {
   source: SourceId;
 
@@ -70,4 +78,7 @@ export interface WearableAdapter {
   getHRV(range: TimeRange): Promise<HRVSummary[]>;
   getDailyActivity(range: TimeRange): Promise<DailyActivity[]>;
   getEnergySignal(range: TimeRange): Promise<EnergySignal[]>;
+  getBloodPressure(
+    range: TimeRange,
+  ): Promise<BloodPressureReading[]>;
 }

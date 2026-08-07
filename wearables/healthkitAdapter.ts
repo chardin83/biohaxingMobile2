@@ -1,6 +1,6 @@
 import { getUserProfile } from '@/app/context/userProfileEvents';
 
-import { DailyActivity, HRVSummary, SleepSummary, TimeRange, WearableAdapter } from './types';
+import { BloodPressureReading, DailyActivity, HRVSummary, SleepSummary, TimeRange, WearableAdapter } from './types';
 
 type HealthKitModule = {
   initHealthKit?: (...args: any[]) => any;
@@ -8,7 +8,10 @@ type HealthKitModule = {
   getDailyStepCountSamples?: (...args: any[]) => any;
   getSamples?: (...args: any[]) => any;
   getHeartRateSamples?: (...args: any[]) => any;
-  Constants?: { Permissions?: Record<string, string> };
+  getBloodPressureSamples?: (...args: any[]) => any;
+  Constants?: {
+    Permissions?: Record<string, string>;
+  };
   default?: any;
   AppleHealthKit?: any;
   RNAppleHealthKit?: any;
@@ -17,19 +20,28 @@ type HealthKitModule = {
 let AppleHealthKit: HealthKitModule | null = null;
 
 function getInitOptions() {
-  const permissions = AppleHealthKit?.Constants?.Permissions;
+  const permissions =
+    AppleHealthKit?.Constants?.Permissions;
 
   return {
     permissions: {
-      // Request Sleep plus common heart-rate related reads so we can fetch resting HR / HRV
       read: [
-        permissions?.SleepAnalysis ?? 'SleepAnalysis',
-        permissions?.RestingHeartRate ?? 'RestingHeartRate',
-        permissions?.HeartRate ?? 'HeartRate',
-        permissions?.HeartRateVariability ?? 'HeartRateVariability',
-        permissions?.StepCount ?? 'StepCount',
-        permissions?.Workout ?? 'Workout',
-        //permissions?.AppleExerciseTime ?? 'AppleExerciseTime',
+        permissions?.SleepAnalysis ??
+          'SleepAnalysis',
+        permissions?.RestingHeartRate ??
+          'RestingHeartRate',
+        permissions?.HeartRate ??
+          'HeartRate',
+        permissions?.HeartRateVariability ??
+          'HeartRateVariability',
+        permissions?.BloodPressureSystolic ??
+          'BloodPressureSystolic',
+        permissions?.BloodPressureDiastolic ??
+          'BloodPressureDiastolic',
+        permissions?.StepCount ??
+          'StepCount',
+        permissions?.Workout ??
+          'Workout',
       ],
       write: [],
     },
@@ -98,7 +110,14 @@ type RawWorkoutSample = {
   activityId?: number;
 };
 
-
+type RawBloodPressureSample = {
+  bloodPressureSystolicValue?: number;
+  bloodPressureDiastolicValue?: number;
+  startDate?: string;
+  endDate?: string;
+  sourceId?: string;
+  sourceName?: string;
+};
 
 type RawHeartRateSample = {
   startDate?: string;
@@ -416,6 +435,108 @@ export class HealthKitAdapter implements WearableAdapter {
       return [];
     }
   }
+
+
+async getBloodPressure(
+  range: TimeRange,
+): Promise<BloodPressureReading[]> {
+  try {
+    await this.ensureInit();
+
+    const health = AppleHealthKit;
+
+    if (
+      !health ||
+      typeof health.getBloodPressureSamples !==
+        'function'
+    ) {
+      throw new Error(
+        'AppleHealthKit.getBloodPressureSamples is not available',
+      );
+    }
+
+    const samples =
+      await new Promise<
+        RawBloodPressureSample[]
+      >((resolve, reject) => {
+        health.getBloodPressureSamples!(
+          {
+            unit: 'mmhg',
+            startDate: range.start,
+            endDate: range.end,
+            ascending: true,
+          },
+          (
+            err: unknown,
+            results:
+              | RawBloodPressureSample[]
+              | undefined,
+          ) => {
+            if (err) {
+              reject(err);
+              return;
+            }
+
+            resolve(results ?? []);
+          },
+        );
+      });
+
+    const vendor =
+      detectVendorFromSamples(samples);
+
+    if (vendor) {
+      (
+        this as HealthKitAdapter & {
+          vendor?: string;
+        }
+      ).vendor = vendor;
+    }
+
+    return samples.flatMap(sample => {
+      const systolic = Number(
+        sample.bloodPressureSystolicValue,
+      );
+
+      const diastolic = Number(
+        sample.bloodPressureDiastolicValue,
+      );
+
+      const recordedAt =
+        sample.startDate ??
+        sample.endDate;
+
+      if (
+        !Number.isFinite(systolic) ||
+        !Number.isFinite(diastolic) ||
+        !recordedAt ||
+        Number.isNaN(
+          new Date(recordedAt).getTime(),
+        )
+      ) {
+        return [];
+      }
+
+      return [
+        {
+          systolic,
+          diastolic,
+          recordedAt,
+          sourceName:
+            sample.sourceName ??
+            sample.sourceId,
+        } satisfies BloodPressureReading,
+      ];
+    });
+  } catch (error) {
+    console.warn(
+      '[HealthKitAdapter] getBloodPressure failed',
+      error,
+    );
+
+    return [];
+  }
+}
 
 
 
