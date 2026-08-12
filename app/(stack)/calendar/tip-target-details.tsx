@@ -160,7 +160,7 @@ const buildDailySummary = (meals: Array<any>, selectedDate: string) => {
 const getDiscreteTrackingAmounts = (
   _targetUnit: string,
   _supplementsForPeriod: any[],
-  trackingValue?: string[] | number
+  trackingValue?: WeeklyTrackingSignalValue
 ): { foodAmount: number; supplementAmount: number } => {
   let foodAmount = 0;
   if (typeof trackingValue === 'number') {
@@ -180,7 +180,7 @@ const calculateIntakeForTarget = (
   targetUnit: NutritionTargetUnit,
   mealSummaries: any[],
   supplementsForPeriod: any[],
-  trackingValue?: string[] | number
+  trackingValue?: WeeklyTrackingSignalValue
 ): { foodAmount: number; supplementAmount: number } => {
   if (targetUnit === 'items' || targetUnit === 'count' || targetUnit === 'plants') {
     return getDiscreteTrackingAmounts(targetUnit, supplementsForPeriod, trackingValue);
@@ -258,6 +258,7 @@ const getMealTrackedItemsForTarget = (
   }
 
   return trackingValue
+    .map(item => (typeof item === 'string' ? item : item.en))
     .filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
     .map(item => item.trim())
     .sort((left, right) => left.localeCompare(right));
@@ -857,8 +858,9 @@ export default function TipTargetDetailsScreen() {
 
       setDailyNutritionSummaries(prev => {
         const existingMeals = prev[selectedDateKey]?.meals ?? [];
+        const nextMealIndex = existingMeals.length + 1;
         const newMeal = {
-          id: `${selectedDateKey}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          id: `${selectedDateKey}-${Date.now()}-${nextMealIndex}`,
           date: selectedDateKey,
           mealName,
           protein: scaleFrom100(selectedFoodProfile?.protein, serving.grams),

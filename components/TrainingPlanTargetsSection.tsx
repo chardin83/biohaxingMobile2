@@ -6,7 +6,8 @@ import { Icon } from 'react-native-paper';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
-import { type TrainingBadgeItem, type TrainingIntensity } from '@/types/training';
+import { type TrainingBadgeItem } from '@/types/training';
+import { calculateTrainingWeeklyProgress } from '@/utils/trainingProgress';
 
 import { ThemedText } from './ThemedText';
 import Badge from './ui/Badge';
@@ -28,12 +29,6 @@ type TrainingTipProgress = {
 
 const toDateKey = (date: Date) => date.toISOString().slice(0, 10);
 const toLabelSuffix = (value: string) => `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
-const TRAINING_INTENSITY_RANK: Record<TrainingIntensity, number> = {
-  low: 1,
-  medium: 2,
-  high: 3,
-};
-
 export const TrainingPlanTargetsSection: React.FC<TrainingPlanTargetsSectionProps> = ({ selectedDate }) => {
   const { t } = useTranslation(['common', 'tips']);
   const { colors } = useTheme();
@@ -74,39 +69,18 @@ export const TrainingPlanTargetsSection: React.FC<TrainingPlanTargetsSectionProp
       const tipId = goal.tipId;
       const target = trainingPlanSettings[tipId] ?? {};
 
-      const matchingEntries = weekEntries.filter(entry => {
-        const hasDurationThreshold =
-          typeof target.sessionDurationMinutes === 'number' && Number.isFinite(target.sessionDurationMinutes);
-        const meetsDuration = !hasDurationThreshold || entry.durationMinutes >= (target.sessionDurationMinutes as number);
-
-        const hasActivityFilter = Boolean(target.activityType && target.activityType !== 'any');
-        const matchesActivity = !hasActivityFilter || entry.activityType === target.activityType;
-
-        const hasIntensityFilter = Boolean(target.minimumIntensity && target.minimumIntensity !== 'any');
-        const matchesIntensity =
-          !hasIntensityFilter ||
-          TRAINING_INTENSITY_RANK[entry.intensity] >=
-            TRAINING_INTENSITY_RANK[target.minimumIntensity as TrainingIntensity];
-
-        return meetsDuration && matchesActivity && matchesIntensity;
+      const progressInfo = calculateTrainingWeeklyProgress({
+        entries: weekEntries,
+        target,
       });
-
-      const targetSessions =
-        typeof target.sessionsPerWeek === 'number' && Number.isFinite(target.sessionsPerWeek) && target.sessionsPerWeek > 0
-          ? target.sessionsPerWeek
-          : 1;
-
-      const actual = matchingEntries.length;
-      const progress = Math.min(actual / targetSessions, 1);
-      const isFulfilled = actual >= targetSessions;
 
       return {
         tipId,
         title: t(`tips:${tipId}.title`),
-        progress,
-        isFulfilled,
-        actual,
-        target: targetSessions,
+        progress: progressInfo.progress,
+        isFulfilled: progressInfo.isFulfilled,
+        actual: progressInfo.actual,
+        target: progressInfo.target,
       };
     });
 

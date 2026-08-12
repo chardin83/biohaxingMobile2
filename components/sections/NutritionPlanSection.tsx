@@ -22,10 +22,9 @@ import { IconSymbol } from '../ui/IconSymbol';
 
 type Props = {
   colors: any;
-  formatDate: (isoDate: string) => string;
 };
 
-export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) => {
+export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
   const router = useRouter();
   const { plans, setPlans } = useStorage();
@@ -232,7 +231,6 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) =>
               <PlanMeta
                 startedAt={plan.startedAt}
                 createdBy={plan.createdBy}
-                formatDate={formatDate}
               />
             )}
             {recommendedDoseLabel && (
@@ -289,7 +287,7 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors, formatDate }) =>
       })}
       <View style={styles.addNutritionButtonWrap}>
         <DiscreetButton
-          title={`+ ${t('general.add', { defaultValue: 'Lagg till' })}`}
+          title={`+ ${t('general.add')}`}
           onPress={() => {
             router.push({
               pathname: '/(tabs)/search',

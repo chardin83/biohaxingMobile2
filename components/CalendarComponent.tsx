@@ -8,6 +8,7 @@ import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { getFirstDayOfWeek, getLocalizedWeekdayLabels } from '@/utils/dateUtils';
 
 const addDays = (dateString: string, days: number) => {
   const date = new Date(`${dateString}T12:00:00`);
@@ -40,16 +41,16 @@ const buildIntlCalendarLocale = (language: string, todayLabel: string) => {
   );
 
   // LocaleConfig expects Sunday-first weekday ordering.
-  const firstSunday = new Date(baseYear, 0, 7);
-  const dayNames = Array.from({ length: 7 }, (_v, i) =>
-    new Intl.DateTimeFormat(language, { weekday: 'long' }).format(new Date(baseYear, 0, firstSunday.getDate() + i))
-  );
+  const dayNames = getLocalizedWeekdayLabels(language, {
+    format: 'long',
+    weekStartsOn: 'sunday',
+  });
 
-  const dayNamesShort = Array.from({ length: 7 }, (_v, i) =>
-    normalizeShort(
-      new Intl.DateTimeFormat(language, { weekday: 'short' }).format(new Date(baseYear, 0, firstSunday.getDate() + i))
-    )
-  );
+  const dayNamesShort = getLocalizedWeekdayLabels(language, {
+    format: 'short',
+    weekStartsOn: 'sunday',
+    stripDots: true,
+  }).map(normalizeShort);
 
   return {
     monthNames,
@@ -86,6 +87,7 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
   const [isLocaleReady, setIsLocaleReady] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>(today);
   const [isExpanded, setIsExpanded] = useState(false);
+  const firstDay = getFirstDayOfWeek(i18n.language);
 
   useImperativeHandle(ref, () => ({
     addMarkForDate: (date: string) => {
@@ -259,6 +261,7 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
         <Calendar
           key={`${calendarKey}-month`}
           current={selectedDate}
+          firstDay={firstDay}
           onDayPress={handleDayPress}
           markingType="multi-dot"
           markedDates={dynamicMarkedDates}

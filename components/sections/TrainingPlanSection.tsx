@@ -25,12 +25,11 @@ import { PlanHeaderActions } from './PlanHeaderActions';
 
 type Props = {
   colors: any;
-  formatDate: (isoDate: string) => string;
 };
 
 const toLabelSuffix = (value: string) => `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
 
-export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => {
+export const TrainingPlanSection: React.FC<Props> = ({ colors }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
   const router = useRouter();
   const { plans, trainingPlanSettings, setTrainingPlanSettings } = useStorage();
@@ -237,7 +236,7 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors, formatDate }) => 
               </TouchableOpacity>
               <View style={styles.trainingCardHeaderRight}>{editAction}</View>
             </View>
-            <PlanMeta startedAt={goal.startedAt} createdBy={goal.createdBy} formatDate={formatDate} />
+            <PlanMeta startedAt={goal.startedAt} createdBy={goal.createdBy} />
             <View style={styles.trainingSettingsContainer}>
               {trainingBadges.length ? (
                 <View style={styles.trainingBadgesRow}>

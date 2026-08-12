@@ -18,11 +18,9 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 
 import { PlanHeaderActions } from './PlanHeaderActions';
 
-type Props = {
-  formatDate: (isoDate: string) => string;
-};
+type Props = {};
 
-export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
+export const OtherPlanSection: React.FC<Props> = () => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
   const { colors } = useTheme();
   const router = useRouter();
@@ -166,7 +164,6 @@ export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
             <PlanMeta
               startedAt={plan.startedAt}
               createdBy={plan.createdBy}
-              formatDate={formatDate}
             />
             {plan.comment ? (
               <ThemedText type="default" style={styles.commentText}>
@@ -178,7 +175,7 @@ export const OtherPlanSection: React.FC<Props> = ({ formatDate }) => {
       })}
       <View style={styles.addOtherButtonWrap}>
         <DiscreetButton
-          title={`+ ${t('general.add', { defaultValue: 'Lagg till' })}`}
+          title={`+ ${t('general.add')}`}
           onPress={() => {
             router.push({
               pathname: '/(tabs)/search',

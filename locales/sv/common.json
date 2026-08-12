@@ -6,6 +6,7 @@
     "areYouSure": "Är du säker?",
     "add": "Lägg till",
     "cancel": "Avbryt",
+    "you": "dig",
     "close": "Stäng",
     "save": "Spara",
     "saveAll": "Spara alla",
@@ -105,6 +106,18 @@
     "noActiveTraining": "Inga aktiva träningsmål ännu.",
     "trainingSettingsTitle": "Träningsinställningar",
     "trainingTargetsTitle": "Träningsmål",
+    "whyImportantTitle": "Varför är detta viktigt för dig?",
+    "editComment": "Redigera kommentar",
+    "noComment": "Ingen kommentar",
+    "untitled": "Plan",
+    "noTipDetails": "Ingen ytterligare information finns tillgänglig för denna plan.",
+    "targetsTitle": "Mål",
+    "targetsProgressInfoDailyWeekly": "Visar dagens och veckans progress för dessa mål.",
+    "targetsProgressInfoWeekly": "Visar veckans progress för dessa mål.",
+    "targetsProgressInfoDaily": "Visar dagens progress för dessa mål.",
+    "relatedMetricsTitle": "Relaterade matvärden",
+    "tipInformation": "Information från tipset",
+    "cardDetails": "Rekommenderade livsmedel",
     "trainingSessionsPlaceholder": "Pass per vecka",
     "trainingDurationPlaceholder": "Minuter per pass",
     "trainingSessionsPerWeek": "{{count}} pass/vecka",
@@ -141,7 +154,8 @@
     "addManually": "Lägg till manuellt"
   },
   "planMeta": {
-    "activeSince": "Aktiv sedan {{date}}"
+    "activeSince": "Aktiv sedan {{date}}",
+    "createdBy": "Skapad av {{name}}"
   },
   "createPlan": {
     "title": "AI-plan",

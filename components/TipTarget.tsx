@@ -16,7 +16,7 @@ import { type WeeklyTrackingItem } from './nutritionTargets.logic';
 import { ThemedText } from './ThemedText';
 import { IconSymbol } from './ui/IconSymbol';
 
-type TipTargetItem = {
+export type TipTargetItem = {
   tag: string;
   unit: NutritionTargetUnit;
   period: NutritionTargetPeriod;
@@ -29,6 +29,11 @@ type TipTargetItem = {
   trackedItems?: WeeklyTrackingItem[];
   supplementIds?: string[];
 };
+
+export type TipTargetProgress = Pick<
+  TipTargetItem,
+  'tag' | 'unit' | 'period' | 'actual' | 'foodActual' | 'supplementActual' | 'isMet' | 'trackedItems' | 'supplementIds'
+>;
 
 type TipTargetProps = {
   tip: { tipId: string; title?: string; dateKey?: string };

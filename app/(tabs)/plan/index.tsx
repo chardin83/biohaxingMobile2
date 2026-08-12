@@ -32,6 +32,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import PlanEditActions from '@/components/ui/PlanEditActions';
 import { PressableCard } from '@/components/ui/PressableCard';
 import { useSupplementSaver } from '@/hooks/useSupplementSaver';
+import { formatDate } from '@/utils/dateUtils';
 
 import { Plan } from '../../domain/Plan';
 
@@ -332,14 +333,14 @@ export default function Plans() {
         :`${baseTitle} (${supplementCount})`;
     const supplementTimeIcon = getSupplementTimeIcon(plan.prefferedTime);
 
-    const editLabel = t('plan.editTimeSlot', { defaultValue: 'Redigera' });
+    const editLabel = t('plan.editTimeSlot');
     const headerActions = (
       <PlanEditActions
         onEdit={() => handleEditPlan(plan)}
         editLabel={editLabel}
         onNotifyToggle={() => handleNotify(plan)}
         notifyActive={plan.notify}
-        notifyLabel={t('plan.toggleNotifications', { defaultValue: 'Växla notiser' })}
+        notifyLabel={t('plan.toggleNotifications')}
         style={styles.planHeaderActions}
       />
     );
@@ -358,9 +359,7 @@ export default function Plans() {
               togglePlanExpanded(planKey);
             }}
             activeOpacity={0.85}
-            accessibilityLabel={t('plan.toggleSupplements', {
-              defaultValue: 'Visa eller dölj innehåll',
-            })}
+              accessibilityLabel={t('plan.toggleSupplements')}
           >
             <IconSymbol
               name="chevron.right"
@@ -412,27 +411,12 @@ export default function Plans() {
     if (!supplementPlans.length) {
       return (
         <ThemedText type="default">
-          {t('plan.noSupplementSlots', {
-            defaultValue: 'Inga tider skapade ännu.',
-          })}
+          {t('plan.noSupplementSlots')}
         </ThemedText>
       );
     }
 
     return supplementPlans.map(plan => <View key={`${plan.name}-${plan.prefferedTime}`}>{renderPlanRow(plan)}</View>);
-  };
-
-  const formatDate = (isoDate: string) => {
-    const date = new Date(isoDate);
-    if (Number.isNaN(date.getTime())) {
-      return isoDate;
-    }
-    // Anpassa språkkod efter användarens språk om du har det i din app, annars 'sv-SE'
-    return date.toLocaleDateString('sv-SE', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    });
   };
 
   const reasonSummary = plans.reasonSummary?.text ?? '';
@@ -496,7 +480,7 @@ export default function Plans() {
             titleType="title3"
             initialCollapsed={true}
           >
-            <TrainingPlanSection colors={colors} formatDate={formatDate} />
+            <TrainingPlanSection colors={colors} />
           </Collapsible>
         </View>
         <View style={styles.sectionBlock}>
@@ -517,7 +501,6 @@ export default function Plans() {
           >
             <NutritionPlanSection
               colors={colors}
-              formatDate={formatDate}
             />
           </Collapsible>
         </View>
@@ -569,7 +552,7 @@ export default function Plans() {
             titleType="title3"
             initialCollapsed={true}
           >
-            <OtherPlanSection formatDate={formatDate} />
+            <OtherPlanSection />
           </Collapsible>
         </View>
       </View>
@@ -682,7 +665,6 @@ export default function Plans() {
             <PlanMeta
             startedAt={supplement?.startedAt ?? ''}
             createdBy={supplement?.createdBy}
-            formatDate={formatDate}
           />)}
         
         </ThemedModal>
