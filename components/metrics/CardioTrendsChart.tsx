@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
-import { MetricValuesBottomSheet } from '@/components/sections/MetricValuesBottomSheet';
+import { MetricValuesBottomSheet } from '@/components/sections/metrics/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 

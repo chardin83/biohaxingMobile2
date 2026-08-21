@@ -11,7 +11,7 @@ import { HRVMetric } from '@/components/metrics/HRVMetric';
 import { MetricTrendChart, type MetricTrendPoint } from '@/components/metrics/MetricTrendChart';
 import { RestingHRMetric } from '@/components/metrics/RestingHRMetric';
 import { VO2MaxMetric } from '@/components/metrics/VO2MaxMetric';
-import { MetricValuesBottomSheet } from '@/components/sections/MetricValuesBottomSheet';
+import { MetricValuesBottomSheet } from '@/components/sections/metrics/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { useStoredHRVData } from '@/hooks/useStoredHRVData';

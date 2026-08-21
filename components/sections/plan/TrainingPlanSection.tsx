@@ -7,7 +7,7 @@ import { Portal } from 'react-native-paper';
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import TrainingSettingsModal from '@/components/modals/TrainingSettingsModal';
-import { PlanMeta } from '@/components/sections/PlanMeta';
+import { PlanMeta } from '@/components/sections/plan/PlanMeta';
 import { ThemedText } from '@/components/ThemedText';
 import Badge from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';

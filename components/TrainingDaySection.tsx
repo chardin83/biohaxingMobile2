@@ -8,8 +8,8 @@ import { type TrainingActivityType, type TrainingIntensity } from '@/types/train
 import { DEFAULT_TRAINING_ACTIVITY, TRAINING_ACTIVITY_OPTIONS } from '@/types/trainingActivityOptions';
 
 import { LoggedTrainingSection } from './LoggedTrainingSection';
+import { TrainingWeeklyTargetsSection } from './sections/plan/TrainingWeeklyTargetsSection';
 import { ThemedText } from './ThemedText';
-import { TrainingPlanTargetsSection } from './TrainingPlanTargetsSection';
 import AppButton from './ui/AppButton';
 import { CancelButton } from './ui/CancelButton';
 import { IconSymbol } from './ui/IconSymbol';
@@ -279,7 +279,7 @@ export const TrainingDaySection: React.FC<TrainingDaySectionProps> = ({ selected
         />
       )}
 
-      <TrainingPlanTargetsSection selectedDate={selectedDate} />
+      <TrainingWeeklyTargetsSection selectedDate={selectedDate} />
     </View>
   );
 };

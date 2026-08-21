@@ -10,7 +10,7 @@ import { ThemedText } from '@/components/ThemedText';
 import Container from '@/components/ui/Container';
 import { type MetricId,metrics } from '@/locales/metrics';
 
-import { MetricValuesBottomSheet } from '../sections/MetricValuesBottomSheet';
+import { MetricValuesBottomSheet } from '../sections/metrics/MetricValuesBottomSheet';
 import { useMetricConfig } from './metricChartConfig';
 import { MetricTrendChart } from './MetricTrendChart';
 

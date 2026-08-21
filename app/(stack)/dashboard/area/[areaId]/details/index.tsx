@@ -6,14 +6,13 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { FullWindowOverlay } from 'react-native-screens';
 
 import SupplementList from '@/app/components/SupplementList';
 import { useStorage } from '@/app/context/StorageContext';
 import { Supplement } from '@/app/domain/Supplement';
 import { globalStyles } from '@/app/theme/globalStyles';
-import AreaRelevanceSection from '@/components/sections/AreaRelevanceSection';
-import DetailsTopSection from '@/components/sections/DetailsTopSection';
+import AreaRelevanceSection from '@/components/sections/details/AreaRelevanceSection';
+import DetailsTopSection from '@/components/sections/details/DetailsTopSection';
 import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';

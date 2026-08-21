@@ -7,16 +7,15 @@ import { Portal } from 'react-native-paper';
 import { PlanTipEntry, useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import DefaultSettingsModal from '@/components/modals/DefaultSettingsModal';
-import { PlanHeaderActions } from '@/components/sections/PlanHeaderActions';
-import { PlanMeta } from '@/components/sections/PlanMeta';
+import { PlanHeaderActions } from '@/components/sections/plan/PlanHeaderActions';
+import { PlanMeta } from '@/components/sections/plan/PlanMeta';
 import { ThemedText } from '@/components/ThemedText';
 import Badge from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import DiscreetButton from '@/components/ui/DiscreetButton';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useSupplementMap } from '@/locales/supplements';
 import { Tip,tips } from '@/locales/tips';
-
-import { IconSymbol } from '../ui/IconSymbol';
 
 type Props = {
   colors: any;

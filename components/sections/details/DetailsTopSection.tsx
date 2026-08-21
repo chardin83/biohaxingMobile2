@@ -5,15 +5,14 @@ import { Pressable,StyleSheet, View } from "react-native";
 import { Icon } from 'react-native-paper';
 
 import { Supplement } from "@/app/domain/Supplement";
+import { ThemedText } from "@/components/ThemedText";
+import AppButton from "@/components/ui/AppButton";
+import Badge from "@/components/ui/Badge";
+import DiscreetButton from "@/components/ui/DiscreetButton";
+import { InfoButtonWithText } from "@/components/ui/InfoButtonWithText";
+import ProgressBarWithLabel from '@/components/ui/ProgressbarWithLabel';
 import { areas } from "@/locales/areas";
 import { Tip } from "@/locales/tips";
-
-import { ThemedText } from "../ThemedText";
-import AppButton from "../ui/AppButton";
-import Badge from "../ui/Badge";
-import DiscreetButton from "../ui/DiscreetButton";
-import { InfoButtonWithText } from "../ui/InfoButtonWithText";
-import ProgressBarWithLabel from "../ui/ProgressbarWithLabel";
 
 function getAreaIconColor(areaId: string, colors: any) {
   switch (areaId) {

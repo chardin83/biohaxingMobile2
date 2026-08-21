@@ -11,7 +11,7 @@ import { IntensityMinutesMetric } from '@/components/metrics/IntensityMinutesMet
 import { MetricTrendChart, type MetricTrendPoint } from '@/components/metrics/MetricTrendChart';
 import { SleepMetric } from '@/components/metrics/SleepMetric';
 import { StepsMetric } from '@/components/metrics/StepsMetric';
-import { MetricValuesBottomSheet } from '@/components/sections/MetricValuesBottomSheet';
+import { MetricValuesBottomSheet } from '@/components/sections/metrics/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import { MetricId } from '@/locales/metrics';
 import { buildTrendData } from '@/utils/metrics';

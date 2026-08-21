@@ -8,7 +8,7 @@ import { Portal } from 'react-native-paper';
 import { PlanTipEntry, useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import DefaultSettingsModal from '@/components/modals/DefaultSettingsModal';
-import { PlanMeta } from '@/components/sections/PlanMeta';
+import { PlanMeta } from '@/components/sections/plan/PlanMeta';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import DiscreetButton from '@/components/ui/DiscreetButton';

@@ -9,7 +9,7 @@ import { Image, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from
 import { useStorage } from '@/app/context/StorageContext';
 import { buildNutritionPlanTipProgress } from '@/components/nutritionTargets.logic';
 import PlanCategoryIcon, { type PlanCategory } from '@/components/plan/PlanCategoryIcon';
-import { MetricsBottomSheet } from '@/components/sections/MetricsBottomSheet';
+import { MetricsBottomSheet } from '@/components/sections/metrics/MetricsBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import TipTarget, { type TipTargetProgress } from '@/components/TipTarget';
 import AppBox from '@/components/ui/AppBox';

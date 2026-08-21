@@ -12,7 +12,7 @@ import { RemSleepMetric } from '@/components/metrics/RemSleepMetric';
 import { SleepConsistencyLabel } from '@/components/metrics/SleepConsistencyLabel';
 import { SleepConsistencyMetric } from '@/components/metrics/SleepConsistencyMetric';
 import { SleepMetric } from '@/components/metrics/SleepMetric';
-import { MetricValuesBottomSheet } from '@/components/sections/MetricValuesBottomSheet';
+import { MetricValuesBottomSheet } from '@/components/sections/metrics/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import { buildTrendData } from '@/utils/metrics';
 

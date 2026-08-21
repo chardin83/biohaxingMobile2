@@ -6,7 +6,7 @@ import { View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
-import { MetricValuesBottomSheet } from '@/components/sections/MetricValuesBottomSheet';
+import { MetricValuesBottomSheet } from '@/components/sections/metrics/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { useStoredHRVData } from '@/hooks/useStoredHRVData';
