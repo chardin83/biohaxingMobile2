@@ -6,6 +6,40 @@
         "optimal": "Optimal",
         "high": "Hög"
     },
+    "units": {
+        "miu_l": "mIU/L",
+        "uiu_ml": "µIU/mL",
+        "pmol_l": "pmol/L",
+        "nmol_l": "nmol/L",
+        "mmol_l": "mmol/L",
+        "mmol_mol": "mmol/mol",
+        "percent": "%",
+        "g_l": "g/L",
+        "mg_dl": "mg/dL",
+        "ng_ml": "ng/mL",
+        "pg_ml": "pg/mL",
+        "ng_dl": "ng/dL",
+        "mmhg": "mmHg",
+        "bpm": "slag/min",
+        "ms": "ms",
+        "kg": "kg",
+        "lb": "lb",
+        "cm": "cm",
+        "in": "tum",
+        "score_0_10": "Poäng (0-10)",
+        "count": "antal",
+        "min": "min",
+        "min_from_midnight": "min från midnatt",
+        "hours": "timmar",
+        "bss": "Bristol-skala",
+        "ml_kg_min": "ml/kg/min"
+    },
+    "kinds": {
+        "primary": "Primär",
+        "secondary": "Sekundär",
+        "subjective": "Subjektiv",
+        "safety": "Säkerhet"
+    },
     "ldl": {
         "name": "LDL-kolesterol",
         "description": "Det \"onda\" kolesterolet som är starkt kopplat till hjärt-kärlrisk."
@@ -78,7 +112,6 @@
         "description": "Mått på nervsystemets balans och kroppens återhämtning.",
         "trendTitle": "HRV-trend",
         "trendSubtitle": "Senaste {{count}} registreringarna",
-        "trendEmpty": "Registrera HRV minst två dagar för att se utvecklingen över tid.",
         "latestLabel": "Senast",
         "lowLabel": "Lägst",
         "highLabel": "Högst"
@@ -90,6 +123,7 @@
         "subtitleDays_other": "Senaste {{count}} dagarna",
         "subtitleWeeks_one": "Senaste veckan",
         "subtitleWeeks_other": "Senaste {{count}} veckorna",
+        "emptyTitle": "Inte tillräckligt med data ännu",
         "empty": "Registrera {{metric}} minst två dagar för att se utvecklingen över tid.",
         "latestLabel": "Senast",
         "lowLabel": "Lägst",

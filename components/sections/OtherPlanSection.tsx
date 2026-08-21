@@ -1,7 +1,6 @@
-import BottomSheet from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
@@ -9,7 +8,6 @@ import { Portal } from 'react-native-paper';
 import { PlanTipEntry, useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import DefaultSettingsModal from '@/components/modals/DefaultSettingsModal';
-import { MetricsBottomSheet } from '@/components/sections/MetricsBottomSheet';
 import { PlanMeta } from '@/components/sections/PlanMeta';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
@@ -32,8 +30,6 @@ export const OtherPlanSection: React.FC<Props> = () => {
   const [otherSettingsTitle, setOtherSettingsTitle] = useState<string | null>(null);
   const [otherCommentInput, setOtherCommentInput] = useState('');
   const [otherEditTipId, setOtherEditTipId] = useState<string | null>(null);
-  const [selectedMetricsTipId, setSelectedMetricsTipId] = useState<string | null>(null);
-  const metricsBottomSheetRef = useRef<BottomSheet>(null);
 
   const openOtherSettingsModal = (tipId: string, otherTitle?: string | null) => {
     setOtherEditTipId(tipId);
@@ -104,14 +100,7 @@ export const OtherPlanSection: React.FC<Props> = () => {
       ? t(`tips:${plan.tipId}.title`)
       : t('plan.untitled');
     openOtherSettingsModal(plan.tipId, title);
-  };
-
-  const openMetricsSheet = (tipId: string) => {
-    setSelectedMetricsTipId(tipId);
-    setTimeout(() => {
-      metricsBottomSheetRef.current?.snapToIndex(1);
-    }, 100);
-  };
+    };
 
   if (!otherPlans.length) {
     return (
@@ -130,11 +119,9 @@ export const OtherPlanSection: React.FC<Props> = () => {
 
         const editAction = (
           <PlanHeaderActions
-            tipId={plan.tipId}
             trainingSettingsKey={plan.tipId ?? ''}
             tipTitle={tipTitle}
             t={t}
-            openMetricsSheet={openMetricsSheet}
             openTrainingSettingsModal={() => handleEditOther(plan)}
             styles={styles}
           />
@@ -158,6 +145,7 @@ export const OtherPlanSection: React.FC<Props> = () => {
                 <ThemedText type="title3" style={[styles.otherCardTitle, { color: colors.planSectionOtherIcon }]}>
                   {tipTitle}
                 </ThemedText>
+                <IconSymbol name="chevron.right" size={16} color={colors.icon} />
               </TouchableOpacity>
               <View style={styles.otherCardHeaderRight}>{editAction}</View>
             </View>
@@ -202,7 +190,6 @@ export const OtherPlanSection: React.FC<Props> = () => {
           cancelLabel={t('general.cancel')}
           deleteLabel={t('general.delete')}
         />
-        <MetricsBottomSheet bottomSheetRef={metricsBottomSheetRef} tipId={selectedMetricsTipId} />
       </Portal>
     </>
   );

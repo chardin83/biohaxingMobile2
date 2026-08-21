@@ -58,12 +58,14 @@ export const getLocalizedWeekdayLabels = (
   const stripDots = options?.stripDots ?? false;
   const weekStartsOn = options?.weekStartsOn ?? 'monday';
   const firstSunday = new Date(2024, 0, 7);
-  const startOffset =
-    typeof weekStartsOn === 'number'
-      ? ((weekStartsOn % 7) + 7) % 7
-      : weekStartsOn === 'sunday'
-        ? 0
-        : 1;
+
+  let startOffset: number;
+
+  if (typeof weekStartsOn === 'number') {
+    startOffset = ((weekStartsOn % 7) + 7) % 7;
+  } else {
+    startOffset = weekStartsOn === 'sunday' ? 0 : 1;
+  }
 
   return Array.from({ length: 7 }, (_v, index) => {
     const date = new Date(2024, 0, firstSunday.getDate() + startOffset + index);

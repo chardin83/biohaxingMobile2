@@ -27,8 +27,8 @@ export type MetricUnit =
   | 'min'
   | 'min_from_midnight'
   | 'hours'
-  | 'bss'
-  | 'ml/kg/min'; // Bristol Stool Scale
+  | 'bss' // Bristol Stool Scale
+  | 'ml/kg/min'; 
 
 export type MetricSource = 'lab' | 'home' | 'wearable' | 'questionnaire';
 

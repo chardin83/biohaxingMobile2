@@ -1,6 +1,5 @@
-import BottomSheet from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
-import React, { useCallback,useMemo, useRef, useState } from 'react';
+import React, { useCallback,useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
@@ -8,7 +7,6 @@ import { Portal } from 'react-native-paper';
 import { PlanTipEntry, useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import DefaultSettingsModal from '@/components/modals/DefaultSettingsModal';
-import { MetricsBottomSheet } from '@/components/sections/MetricsBottomSheet';
 import { PlanHeaderActions } from '@/components/sections/PlanHeaderActions';
 import { PlanMeta } from '@/components/sections/PlanMeta';
 import { ThemedText } from '@/components/ThemedText';
@@ -37,8 +35,6 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
   const [nutritionSettingsTitle, setNutritionSettingsTitle] = useState<string | null>(null);
   const [nutritionCommentInput, setNutritionCommentInput] = useState('');
   const [nutritionEditTipId, setNutritionEditTipId] = useState<string | null>(null);
-  const [selectedMetricsTipId, setSelectedMetricsTipId] = useState<string | null>(null);
-  const metricsBottomSheetRef = useRef<BottomSheet>(null);
 
   const nutritionGroups = useMemo(() => {
     const tipIds = new Set<string>();
@@ -139,13 +135,6 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
     closeNutritionSettingsModal();
   };
 
-  const openMetricsSheet = (tipId: string) => {
-    setSelectedMetricsTipId(tipId);
-    setTimeout(() => {
-      metricsBottomSheetRef.current?.snapToIndex(1);
-    }, 100);
-  };
-
   if (!nutritionGroups.length) {
     return (
       <ThemedText type="default">
@@ -196,11 +185,9 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
 
         const editAction = (
           <PlanHeaderActions
-            tipId={tipId}
             trainingSettingsKey={tipId}
             tipTitle={tipTitle}
             t={t}
-            openMetricsSheet={openMetricsSheet}
             openTrainingSettingsModal={(_key, _title) => handleEditNutrition(plan, tipId, tipTitle)}
             styles={styles}
           />
@@ -221,9 +208,10 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
                 activeOpacity={0.85}
               >
                 <IconSymbol name="flame" size={18} color={colors.planSectionNutritionIcon} />
-                <ThemedText type="title3" style={[styles.nutritionCardTitle, { color: colors.planSectionNutritionIcon }]}>
-                  {tipTitle}
-                </ThemedText>
+                  <ThemedText type="title3" style={[styles.nutritionCardTitle, { color: colors.planSectionNutritionIcon }]}>
+                    {tipTitle}
+                  </ThemedText>
+                <IconSymbol name="chevron.right" size={16} color={colors.icon} />
               </TouchableOpacity>
               <View style={styles.nutritionCardHeaderRight}>{editAction}</View>
             </View>
@@ -314,7 +302,6 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
           cancelLabel={t('general.cancel')}
           deleteLabel={t('general.delete')}
         />
-        <MetricsBottomSheet bottomSheetRef={metricsBottomSheetRef} tipId={selectedMetricsTipId} />
       </Portal>
     </>
   );

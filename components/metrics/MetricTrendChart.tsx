@@ -6,6 +6,7 @@ import Svg, { Circle, Defs, Line, LinearGradient, Path, Stop, Text as SvgText } 
 
 import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 export interface MetricTrendPoint {
   readonly date: string;
@@ -49,6 +50,13 @@ const CHART_FRAME_OFFSET = CHART_ROW_MARGIN_LEFT + Y_AXIS_COLUMN_WIDTH + Y_AXIS_
 const Y_AXIS_LABEL_LINE_HEIGHT = 20;
 const Y_AXIS_LABEL_OFFSET = Y_AXIS_LABEL_LINE_HEIGHT / 2;
 const X_AXIS_LABEL_WIDTH = 44;
+const EMPTY_GRID_LINE_COUNT = 3;
+
+type EmptyChartLabel = {
+  readonly id: 'start' | 'mid' | 'end';
+  readonly left: number;
+  readonly textAlign: 'left' | 'center' | 'right';
+};
 
 function formatShortDate(date: string) {
   const [, month, day] = date.split('-');
@@ -117,12 +125,15 @@ export function MetricTrendChart({
         subtitleText: {
           color: colors.textMuted,
         },
-        emptyState: {
-          backgroundColor: colors.overlayLight,
-          borderColor: colors.borderLight,
-        },
         emptyText: {
           color: colors.textMuted,
+          textAlign: 'center',
+        },
+        emptyTitle: {
+          color: colors.text,
+        },
+        emptyIconFrame: {
+          borderColor: colors.primary,
         },
         chartRow: {
           marginLeft: -20,
@@ -145,7 +156,7 @@ export function MetricTrendChart({
           color: colors.textMuted,
         },
       }),
-    [colors.borderLight, colors.overlayLight, colors.textMuted, height]
+    [colors.borderLight, colors.overlayLight, colors.primary, colors.text, colors.textMuted, height]
   );
 
   const chartData = React.useMemo<MetricTrendPoint[]>(() => {
@@ -272,6 +283,13 @@ export function MetricTrendChart({
   );
 
   if (chartData.length < 2) {
+    const emptyGridLineRows = Array.from({ length: EMPTY_GRID_LINE_COUNT }, (_, index) => index);
+    const emptyAxisLabels: EmptyChartLabel[] = [
+      { id: 'start', left: CHART_PADDING.left, textAlign: 'left' },
+      { id: 'mid', left: chartWidth / 2, textAlign: 'center' },
+      { id: 'end', left: Math.max(chartWidth - CHART_PADDING.right, CHART_PADDING.left), textAlign: 'right' },
+    ];
+
     return (
       <View style={[styles.container, dynamicStyles.containerBorder]}> 
         <View style={styles.header}>
@@ -280,11 +298,97 @@ export function MetricTrendChart({
             {subtitleText}
           </ThemedText>
         </View>
-        <View style={[styles.emptyState, dynamicStyles.emptyState]}> 
-          <ThemedText type="explainer" style={dynamicStyles.emptyText}>
-            {t('metrics:trendChart.empty', { metric: metricName })}
-          </ThemedText>
+
+        <View style={[styles.chartRow, dynamicStyles.chartRow]}>
+          <View style={[styles.yAxisColumn, dynamicStyles.yAxisColumn]}>
+            {!!unit && (
+              <ThemedText
+                type="caption"
+                style={[styles.yAxisUnit, dynamicStyles.yAxisUnit]}
+              >
+                {unit}
+              </ThemedText>
+            )}
+            {emptyGridLineRows.map(index => (
+              <ThemedText
+                key={`empty-y-${index}`}
+                type="caption"
+                style={[
+                  styles.yAxisValue,
+                  dynamicStyles.yAxisValue,
+                  {
+                    top: CHART_PADDING.top + ((height - CHART_PADDING.top - CHART_PADDING.bottom) * index) / (EMPTY_GRID_LINE_COUNT - 1) - Y_AXIS_LABEL_OFFSET,
+                  },
+                ]}
+              >
+                -
+              </ThemedText>
+            ))}
+          </View>
+
+          <View onLayout={handleLayout} style={[styles.chartFrame, dynamicStyles.chartFrame, styles.emptyChartFrame]}> 
+            {chartWidth > 0 && (
+              <Svg width={chartWidth} height={height}>
+                {emptyGridLineRows.map(index => {
+                  const y = CHART_PADDING.top + ((height - CHART_PADDING.top - CHART_PADDING.bottom) * index) / (EMPTY_GRID_LINE_COUNT - 1);
+                  return (
+                    <Line
+                      key={`empty-grid-${index}`}
+                      x1={CHART_PADDING.left}
+                      x2={chartWidth - CHART_PADDING.right}
+                      y1={y}
+                      y2={y}
+                      stroke={colors.borderLight}
+                      strokeDasharray="4 6"
+                      strokeWidth={1}
+                    />
+                  );
+                })}
+              </Svg>
+            )}
+
+            <View style={styles.emptyState}> 
+              <View style={[styles.emptyIconFrame, dynamicStyles.emptyIconFrame]}>
+                <IconSymbol name="chart" size={22} color={colors.primary} />
+              </View>
+              <ThemedText type="defaultSemiBold" style={dynamicStyles.emptyTitle}>
+                {t('metrics:trendChart.emptyTitle')}
+              </ThemedText>
+              <ThemedText type="explainer" style={dynamicStyles.emptyText}>
+                {t('metrics:trendChart.empty', { metric: metricName })}
+              </ThemedText>
+            </View>
+          </View>
         </View>
+
+        <View style={styles.axisLabels}>
+          {emptyAxisLabels.map(label => {
+            let labelLeft = CHART_FRAME_OFFSET + label.left - X_AXIS_LABEL_WIDTH;
+
+            if (label.id === 'start') {
+              labelLeft = CHART_FRAME_OFFSET + CHART_PADDING.left;
+            } else if (label.id === 'mid') {
+              labelLeft = CHART_FRAME_OFFSET + label.left - X_AXIS_LABEL_WIDTH / 2;
+            }
+
+            return (
+              <View
+                key={label.id}
+                style={[
+                  styles.axisLabelItem,
+                  {
+                    left: labelLeft,
+                  },
+                ]}
+              >
+                <ThemedText type="caption" style={[styles.axisLabelText, dynamicStyles.axisLabelText, { textAlign: label.textAlign }]}>
+                  -
+                </ThemedText>
+              </View>
+            );
+          })}
+        </View>
+
         {!!onViewRegisteredValues && (
           <AppButton
             onPress={onViewRegisteredValues}
@@ -522,9 +626,21 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   emptyState: {
-    borderWidth: 1,
-    borderRadius: 18,
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 12,
     paddingHorizontal: 16,
-    paddingVertical: 18,
+  },
+  emptyIconFrame: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyChartFrame: {
+    justifyContent: 'center',
   },
 });

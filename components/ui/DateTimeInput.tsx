@@ -46,6 +46,7 @@ export function DateTimeInput({
 
   const minimumDateProp = minDate ? { minimumDate: minDate } : {};
   const maximumDateProp = maxDate ? { maximumDate: maxDate } : {};
+  const hasPickerMode = showDate || showTime;
 
   const buttonTitle = React.useMemo(() => {
     if (showDate && showTime) {
@@ -111,13 +112,30 @@ export function DateTimeInput({
     onChange(nextValue);
   };
 
+  const handleTogglePicker = () => {
+    if (!hasPickerMode) {
+      return;
+    }
+
+    setShowPicker(prev => {
+      const next = !prev;
+
+      if (next) {
+        setShowDatePicker(showDate);
+        setShowTimePicker(showTime);
+      }
+
+      return next;
+    });
+  };
+
 
   return (
     <View style={styles.container}>
       <AppButton
         title={buttonTitle}
         icon={buttonIcon}
-        onPress={() => setShowPicker((v) => !v)}
+        onPress={handleTogglePicker}
         variant="secondary"
       />
       {showPicker && (

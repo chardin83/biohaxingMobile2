@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Crypto from 'expo-crypto';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { WeeklyTrackingItem } from '@/components/nutritionTargets.logic';
@@ -304,29 +305,108 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       .filter((item): item is ViewedTip => Boolean(item));
   };
 
+  const normalizePlans = useCallback((raw: string | null): PlansByCategory => {
+    if (!raw) return EMPTY_PLANS;
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return { ...EMPTY_PLANS, supplements: parsed };
+      }
+
+      const supplements = Array.isArray(parsed?.supplements) ? parsed.supplements : [];
+      const training = Array.isArray(parsed?.training) ? parsed.training : [];
+      const nutrition = Array.isArray(parsed?.nutrition) ? parsed.nutrition : [];
+      const other = Array.isArray(parsed?.other) ? parsed.other : [];
+
+      return {
+        supplements,
+        training,
+        nutrition,
+        other,
+        reasonSummary: normalizeReasonSummary(parsed.reasonSummary),
+      };
+    } catch (error) {
+      console.warn('Failed to parse plans', error);
+      return EMPTY_PLANS;
+    }
+  }, []);
+
+  const setBooleanIfTrue = useCallback(
+    (raw: string | null, setter: React.Dispatch<React.SetStateAction<boolean>>) => {
+      if (raw === 'true') setter(true);
+    },
+    []
+  );
+
+  const setJsonIfPresent = useCallback(
+    <T,>(raw: string | null, setter: React.Dispatch<React.SetStateAction<T>>) => {
+      if (!raw) return;
+      setter(JSON.parse(raw) as T);
+    },
+    []
+  );
+
+  const setNumberIfPresent = useCallback(
+    (raw: string | null, setter: React.Dispatch<React.SetStateAction<number>>, fallback = 0) => {
+      if (!raw) return;
+      const value = Number.parseInt(raw, 10);
+      setter(Number.isFinite(value) ? value : fallback);
+    },
+    []
+  );
+
+  const hydrateStoredState = useCallback((loaded: {
+    plansRaw: string | null;
+    visitedRaw: string | null;
+    shareRaw: string | null;
+    takenRaw: string | null;
+    myGoalsRaw: string | null;
+    onboardingRaw: string | null;
+    onboardingStepRaw: string | null;
+    myXPRaw: string | null;
+    xpBreakdownRaw: string | null;
+    myLevelRaw: string | null;
+    dailyNutritionRaw: string | null;
+    viewedTipsRaw: string | null;
+    trainingSettingsRaw: string | null;
+    trainingEntriesRaw: string | null;
+    metricEntriesRaw: string | null;
+    weeklyTrackingRaw: string | null;
+    nutritionXpClaimsRaw: string | null;
+    healthSyncEnabledRaw: string | null;
+  }) => {
+    setPlansState(normalizePlans(loaded.plansRaw));
+    setBooleanIfTrue(loaded.visitedRaw, setHasVisitedChatState);
+    setBooleanIfTrue(loaded.shareRaw, setShareHealthPlanState);
+    setJsonIfPresent<Record<string, SupplementTime[]>>(loaded.takenRaw, setTakenDatesState);
+    setJsonIfPresent<string[]>(loaded.myGoalsRaw, setMyGoalsState);
+    setBooleanIfTrue(loaded.onboardingRaw, setHasCompletedOnboardingState);
+    setNumberIfPresent(loaded.onboardingStepRaw, setOnboardingStepState);
+    setNumberIfPresent(loaded.myXPRaw, setMyXPState);
+    if (loaded.xpBreakdownRaw) {
+      const parsed = JSON.parse(loaded.xpBreakdownRaw);
+      setXpBreakdownState({
+        education: Number.isFinite(parsed?.education) ? parsed.education : 0,
+        nutrition: Number.isFinite(parsed?.nutrition) ? parsed.nutrition : 0,
+      });
+    }
+    setNumberIfPresent(loaded.myLevelRaw, setMyLevelState);
+    setJsonIfPresent<Record<string, DailyNutritionSummary>>(loaded.dailyNutritionRaw, setDailyNutritionSummariesState);
+    if (loaded.viewedTipsRaw) {
+      setViewedTipsState(normalizeViewedTips(JSON.parse(loaded.viewedTipsRaw)));
+    }
+    setJsonIfPresent<Record<string, TrainingPlanSettings>>(loaded.trainingSettingsRaw, setTrainingPlanSettingsState);
+    setJsonIfPresent<Record<string, TrainingLogEntry[]>>(loaded.trainingEntriesRaw, setTrainingEntriesState);
+    setJsonIfPresent<MetricEntry[]>(loaded.metricEntriesRaw, setMetricEntriesState);
+    setJsonIfPresent<Record<string, Record<string, WeeklyTrackingItem[] | number>>>(loaded.weeklyTrackingRaw, setWeeklyTrackingState);
+    setJsonIfPresent<Record<string, NutritionXpClaim>>(loaded.nutritionXpClaimsRaw, setNutritionXpClaimsState);
+    setBooleanIfTrue(loaded.healthSyncEnabledRaw, setHealthSyncEnabledState);
+  }, [normalizePlans, setBooleanIfTrue, setJsonIfPresent, setNumberIfPresent]);
+
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [
-          plansRaw,
-          visitedRaw,
-          shareRaw,
-          takenRaw,
-          myGoalsRaw,
-          onboardingRaw,
-          onboardingStepRaw,
-          myXPRaw,
-          xpBreakdownRaw,
-          myLevelRaw,
-          dailyNutritionRaw,
-          viewedTipsRaw,
-          trainingSettingsRaw,
-          trainingEntriesRaw,
-          metricEntriesRaw,
-          weeklyTrackingRaw,
-          nutritionXpClaimsRaw,
-          healthSyncEnabledRaw,
-        ] = await Promise.all([
+        const loaded = await Promise.all([
           AsyncStorage.getItem(STORAGE_KEYS.PLANS),
           AsyncStorage.getItem(STORAGE_KEYS.HAS_VISITED_CHAT),
           AsyncStorage.getItem(STORAGE_KEYS.SHARE_HEALTH_PLAN),
@@ -347,70 +427,35 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
           AsyncStorage.getItem(STORAGE_KEYS.HEALTH_SYNC_ENABLED),
         ]);
 
-        const normalizePlans = (raw: string | null): PlansByCategory => {
-          if (!raw) return EMPTY_PLANS;
-          try {
-            const parsed = JSON.parse(raw);
-            if (Array.isArray(parsed)) {
-              return { ...EMPTY_PLANS, supplements: parsed };
-            }
-
-            const supplements = Array.isArray(parsed?.supplements) ? parsed.supplements : [];
-            const training = Array.isArray(parsed?.training) ? parsed.training : [];
-            const nutrition = Array.isArray(parsed?.nutrition) ? parsed.nutrition : [];
-            const other = Array.isArray(parsed?.other) ? parsed.other : [];
-
-            return {
-              supplements,
-              training,
-              nutrition,
-              other,
-              reasonSummary: normalizeReasonSummary(parsed.reasonSummary),
-            };
-          } catch (error) {
-            console.warn('Failed to parse plans', error);
-            return EMPTY_PLANS;
-          }
-        };
-
-        setPlansState(normalizePlans(plansRaw));
-        if (visitedRaw === 'true') setHasVisitedChatState(true);
-        if (shareRaw === 'true') setShareHealthPlanState(true);
-        if (takenRaw) setTakenDatesState(JSON.parse(takenRaw));
-        if (myGoalsRaw) setMyGoalsState(JSON.parse(myGoalsRaw));
-        if (onboardingRaw === 'true') setHasCompletedOnboardingState(true);
-        if (onboardingStepRaw) setOnboardingStepState(Number.parseInt(onboardingStepRaw, 10));
-        // Ladda XP och level direkt utan att trigga level-up-logik vid initial laddning
-        if (myXPRaw) {
-          const parsedXp = Number.parseInt(myXPRaw, 10);
-          setMyXPState(Number.isFinite(parsedXp) ? parsedXp : 0);
-        }
-        if (xpBreakdownRaw) {
-          const parsed = JSON.parse(xpBreakdownRaw);
-          setXpBreakdownState({
-            education: Number.isFinite(parsed?.education) ? parsed.education : 0,
-            nutrition: Number.isFinite(parsed?.nutrition) ? parsed.nutrition : 0,
-          });
-        }
-        if (myLevelRaw) setMyLevelState(Number.parseInt(myLevelRaw, 10));
-        if (dailyNutritionRaw) setDailyNutritionSummariesState(JSON.parse(dailyNutritionRaw));
-        if (viewedTipsRaw) {
-          setViewedTipsState(normalizeViewedTips(JSON.parse(viewedTipsRaw)));
-        }
-        if (trainingSettingsRaw) setTrainingPlanSettingsState(JSON.parse(trainingSettingsRaw));
-        if (trainingEntriesRaw) setTrainingEntriesState(JSON.parse(trainingEntriesRaw));
-        if (metricEntriesRaw) setMetricEntriesState(JSON.parse(metricEntriesRaw));
-        if (weeklyTrackingRaw) setWeeklyTrackingState(JSON.parse(weeklyTrackingRaw));
-        if (nutritionXpClaimsRaw) setNutritionXpClaimsState(JSON.parse(nutritionXpClaimsRaw));
-        if (healthSyncEnabledRaw === 'true') setHealthSyncEnabledState(true);
+        hydrateStoredState({
+          plansRaw: loaded[0],
+          visitedRaw: loaded[1],
+          shareRaw: loaded[2],
+          takenRaw: loaded[3],
+          myGoalsRaw: loaded[4],
+          onboardingRaw: loaded[5],
+          onboardingStepRaw: loaded[6],
+          myXPRaw: loaded[7],
+          xpBreakdownRaw: loaded[8],
+          myLevelRaw: loaded[9],
+          dailyNutritionRaw: loaded[10],
+          viewedTipsRaw: loaded[11],
+          trainingSettingsRaw: loaded[12],
+          trainingEntriesRaw: loaded[13],
+          metricEntriesRaw: loaded[14],
+          weeklyTrackingRaw: loaded[15],
+          nutritionXpClaimsRaw: loaded[16],
+          healthSyncEnabledRaw: loaded[17],
+        });
       } catch (err) {
         console.error('Kunde inte ladda från AsyncStorage:', err);
       } finally {
-        setIsInitialized(true); // ✅ sätt när allt är laddat
+        setIsInitialized(true);
       }
     };
+
     loadData();
-  }, []);
+  }, [hydrateStoredState]);
 
   const setPlans = useCallback(
     (update: PlansByCategory | ((prev: PlansByCategory) => PlansByCategory)) => {
@@ -570,9 +615,10 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     });
   };
 
-  const addTrainingEntry = useCallback((entry: TrainingLogInput): TrainingLogEntry => {
+const addTrainingEntry = useCallback(
+  (entry: TrainingLogInput): TrainingLogEntry => {
     const nextEntry: TrainingLogEntry = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+      id: Crypto.randomUUID(),
       createdAt: new Date().toISOString(),
       ...entry,
     };
@@ -583,7 +629,9 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     }));
 
     return nextEntry;
-  }, []);
+  },
+  []
+);
 
   const setShowMusic = (val: boolean) => {
     setShowMusicState(val);
@@ -600,10 +648,10 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     });
   };
 
-  const setHealthSyncEnabled = (val: boolean) => {
+  const setHealthSyncEnabled = useCallback((val: boolean) => {
     setHealthSyncEnabledState(val);
     AsyncStorage.setItem(STORAGE_KEYS.HEALTH_SYNC_ENABLED, val ? 'true' : 'false');
-  };
+  }, []);
 
   const addMetricEntry = useCallback((entry: MetricEntry) => {
     setMetricEntries(prev => [...prev, entry]);
@@ -651,10 +699,10 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
 
 
   const addTipView = useCallback((_areaId: string, tipId: string): number => {
-    const existing = viewedTipsState.find(v => v.tipId === tipId);
+    const hasExistingTip = viewedTipsState.some(v => v.tipId === tipId);
     const xpForView = XP_FOR_VIEW;
 
-    if (!existing) {
+    if (!hasExistingTip) {
       const newView: ViewedTip = {
         tipId,
         viewedAt: new Date().toISOString(),

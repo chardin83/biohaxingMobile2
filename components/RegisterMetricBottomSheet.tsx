@@ -1,13 +1,14 @@
 import BottomSheet, { BottomSheetScrollView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import React, { useMemo } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
-import { DateTimeInput } from '@/components/ui/DateTimeInput';
 import { useBottomSheetDesign } from '@/components/ui/BottomSheetDesign';
+import { DateTimeInput } from '@/components/ui/DateTimeInput';
+import { translateMetricUnit } from '@/utils/translateMetricUnit';
 
 interface RegisterMetricBottomSheetProps {
   bottomSheetRef: React.RefObject<BottomSheet | null>;
@@ -50,6 +51,7 @@ export function RegisterMetricBottomSheet({
   onSave,
   onClose,
 }: Readonly<RegisterMetricBottomSheetProps>) {
+  const { t } = useTranslation('metrics');
   const snapPoints = useMemo(() => providedSnapPoints ?? ['25%', '50%', '90%'], [providedSnapPoints]);
   const sheetDesign = useBottomSheetDesign(colors);
   const uniqueUnits = useMemo(() => {
@@ -70,7 +72,6 @@ export function RegisterMetricBottomSheet({
   const hasMetricName = Boolean(metricName);
   const hasMultipleUnits = uniqueUnits.length > 1;
   const hasSingleUnit = uniqueUnits.length === 1;
-  const [showBedtimePicker, setShowBedtimePicker] = React.useState(false);
   const isSleepDurationMetric = metricId === 'sleep_duration';
   const isSleepStageDurationMetric = metricId === 'deep_sleep' || metricId === 'rem_sleep';
   const isSleepMinutesMetric = isSleepDurationMetric || isSleepStageDurationMetric;
@@ -100,10 +101,6 @@ export function RegisterMetricBottomSheet({
     nextValue.setHours(hours, minutes, 0, 0);
     return nextValue;
   }, [parsedSleepDurationMinutes, recordedAt]);
-  const formattedBedtime = bedtimePickerValue.toLocaleTimeString('sv-SE', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
 
   const updateSleepDurationValue = React.useCallback((nextHoursRaw: string, nextMinutesRaw: string) => {
     const normalizedHours = nextHoursRaw.replaceAll(/\D/g, '');
@@ -119,15 +116,7 @@ export function RegisterMetricBottomSheet({
     setMetricValue(String(hours * 60 + minutes));
   }, [setMetricValue]);
 
-  const handleBedtimeChange = React.useCallback((_event: unknown, selectedDate?: Date) => {
-    if (Platform.OS === 'android') {
-      setShowBedtimePicker(false);
-    }
-
-    if (!selectedDate) {
-      return;
-    }
-
+  const handleBedtimeChange = React.useCallback((selectedDate: Date) => {
     const minutesFromMidnight = selectedDate.getHours() * 60 + selectedDate.getMinutes();
     setMetricValue(String(minutesFromMidnight));
   }, [setMetricValue]);
@@ -154,7 +143,7 @@ export function RegisterMetricBottomSheet({
           {uniqueUnits.map(unit => (
             <Picker.Item
               key={`${unit.system}-${unit.unit}`}
-              label={unit.unit + (unit.system ? ` (${unit.system})` : '')}
+              label={translateMetricUnit(unit.unit, t) + (unit.system ? ` (${unit.system})` : '')}
               value={unit.unit}
             />
           ))}
@@ -164,7 +153,7 @@ export function RegisterMetricBottomSheet({
   } else if (hasSingleUnit) {
     unitField = (
       <View style={[styles.input, styles.singleUnitContainer, { borderColor: colors.border }]}> 
-        <ThemedText type="defaultSemiBold">{uniqueUnits[0].unit}</ThemedText>
+        <ThemedText type="defaultSemiBold">{translateMetricUnit(uniqueUnits[0].unit, t)}</ThemedText>
       </View>
     );
   }
@@ -224,38 +213,15 @@ export function RegisterMetricBottomSheet({
   }
 
   if (isSleepBedtimeMetric) {
-    let bedtimePickerControl = (
-      <>
-        <AppButton title={formattedBedtime} onPress={() => setShowBedtimePicker(true)} variant="secondary" />
-        {showBedtimePicker && (
-          <DateTimePicker
-            value={bedtimePickerValue}
-            mode="time"
-            display="default"
-            is24Hour
-            onChange={handleBedtimeChange}
-          />
-        )}
-      </>
-    );
-
-    if (Platform.OS === 'ios') {
-      bedtimePickerControl = (
-        <View style={[styles.pickerContainer, { borderColor: colors.border }]}> 
-          <DateTimePicker
-            value={bedtimePickerValue}
-            mode="time"
-            display="spinner"
-            is24Hour
-            onChange={handleBedtimeChange}
-          />
-        </View>
-      );
-    }
-
     valueField = (
       <View style={styles.inputGroup}>
-        {bedtimePickerControl}
+        <DateTimeInput
+          value={bedtimePickerValue}
+          onChange={handleBedtimeChange}
+          showDate={false}
+          showTime
+          timeLabel="Laggtid"
+        />
         <View style={[styles.input, styles.singleUnitContainer, { borderColor: colors.border }]}> 
           <ThemedText type="default">Använder klockslag (HH:mm)</ThemedText>
         </View>
@@ -304,7 +270,7 @@ export function RegisterMetricBottomSheet({
           </View>
         )}
 
-        <DateTimeInput value={recordedAt} onChange={setRecordedAt} showTime={false} />
+        <DateTimeInput value={recordedAt} onChange={setRecordedAt} showDate showTime={false} />
 
         <View style={styles.inputGroup}>
           <ThemedText type="default" style={styles.inputLabel}>

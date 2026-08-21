@@ -1,6 +1,5 @@
-import BottomSheet from '@gorhom/bottom-sheet';
 import { useRouter } from 'expo-router';
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
@@ -8,7 +7,6 @@ import { Portal } from 'react-native-paper';
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import TrainingSettingsModal from '@/components/modals/TrainingSettingsModal';
-import { MetricsBottomSheet } from '@/components/sections/MetricsBottomSheet';
 import { PlanMeta } from '@/components/sections/PlanMeta';
 import { ThemedText } from '@/components/ThemedText';
 import Badge from '@/components/ui/Badge';
@@ -43,8 +41,6 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors }) => {
   const [trainingDurationInput, setTrainingDurationInput] = useState('');
   const [trainingActivityTypeInput, setTrainingActivityTypeInput] = useState('any' as TrainingActivityFilter);
   const [trainingMinimumIntensityInput, setTrainingMinimumIntensityInput] = useState('any' as TrainingIntensityFilter);
-  const [selectedMetricsTipId, setSelectedMetricsTipId] = useState<string | null>(null);
-  const metricsBottomSheetRef = useRef<BottomSheet>(null);
 
   const buildTrainingBadges = (
     trainingSettingsKey: string,
@@ -112,15 +108,6 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors }) => {
     setTrainingDurationInput('');
     setTrainingActivityTypeInput('any');
     setTrainingMinimumIntensityInput('any');
-  };
-
-  const openMetricsSheet = (tipId: string) => {
-    console.log('[TrainingPlanSection] openMetricsSheet called with tipId:', tipId);
-    setSelectedMetricsTipId(tipId);
-    setTimeout(() => {
-      console.log('[TrainingPlanSection] calling snapToIndex');
-      metricsBottomSheetRef.current?.snapToIndex(1);
-    }, 100);
   };
 
   const openPlanDetails = (goal: (typeof trainingPlanGoals)[number], badges: TrainingBadgeItem[]) => {
@@ -205,11 +192,9 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors }) => {
 
         const editAction = (
           <PlanHeaderActions
-            tipId={goal.tipId}
             trainingSettingsKey={trainingSettingsKey}
             tipTitle={tipTitle}
             t={t}
-            openMetricsSheet={openMetricsSheet}
             openTrainingSettingsModal={openTrainingSettingsModal}
             styles={styles}
           />
@@ -233,6 +218,7 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors }) => {
                 <ThemedText type="title3" style={[styles.trainingCardTitle, { color: colors.planSectionIcon }]}>
                   {tipTitle ?? t('plan.untitled')}
                 </ThemedText>
+                <IconSymbol name="chevron.right" size={16} color={colors.icon} />
               </TouchableOpacity>
               <View style={styles.trainingCardHeaderRight}>{editAction}</View>
             </View>
@@ -293,7 +279,6 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors }) => {
           saveLabel={t('general.save')}
           cancelLabel={t('general.cancel')}
         />
-        <MetricsBottomSheet bottomSheetRef={metricsBottomSheetRef} tipId={selectedMetricsTipId} />
       </Portal>
     </>
   );

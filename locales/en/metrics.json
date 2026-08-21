@@ -6,6 +6,40 @@
         "optimal": "Optimal",
         "high": "High"
     },
+    "units": {
+        "miu_l": "mIU/L",
+        "uiu_ml": "uIU/mL",
+        "pmol_l": "pmol/L",
+        "nmol_l": "nmol/L",
+        "mmol_l": "mmol/L",
+        "mmol_mol": "mmol/mol",
+        "percent": "%",
+        "g_l": "g/L",
+        "mg_dl": "mg/dL",
+        "ng_ml": "ng/mL",
+        "pg_ml": "pg/mL",
+        "ng_dl": "ng/dL",
+        "mmhg": "mmHg",
+        "bpm": "beats/min",
+        "ms": "ms",
+        "kg": "kg",
+        "lb": "lb",
+        "cm": "cm",
+        "in": "in",
+        "score_0_10": "Score (0-10)",
+        "count": "count",
+        "min": "min",
+        "min_from_midnight": "min from midnight",
+        "hours": "hours",
+        "bss": "Bristol scale",
+        "ml_kg_min": "ml/kg/min"
+    },
+    "kinds": {
+        "primary": "Primary",
+        "secondary": "Secondary",
+        "subjective": "Subjective",
+        "safety": "Safety"
+    },
     "ldl": {
         "name": "LDL cholesterol",
         "description": "The \"bad\" cholesterol strongly linked to cardiovascular risk."
@@ -78,7 +112,6 @@
         "description": "Measure of nervous system balance and recovery capacity.",
         "trendTitle": "HRV trend",
         "trendSubtitle": "Last {{count}} registrations",
-        "trendEmpty": "Register HRV on at least two days to see the trend over time.",
         "latestLabel": "Latest",
         "lowLabel": "Low",
         "highLabel": "High"
@@ -90,6 +123,7 @@
         "subtitleDays_other": "Last {{count}} days",
         "subtitleWeeks_one": "Last week",
         "subtitleWeeks_other": "Last {{count}} weeks",
+        "emptyTitle": "Not enough data yet",
         "empty": "Register {{metric}} on at least two days to see the trend over time.",
         "latestLabel": "Latest",
         "lowLabel": "Low",

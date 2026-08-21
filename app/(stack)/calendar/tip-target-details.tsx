@@ -858,9 +858,9 @@ export default function TipTargetDetailsScreen() {
 
       setDailyNutritionSummaries(prev => {
         const existingMeals = prev[selectedDateKey]?.meals ?? [];
-        const nextMealIndex = existingMeals.length + 1;
+
         const newMeal = {
-          id: `${selectedDateKey}-${Date.now()}-${nextMealIndex}`,
+          id: crypto.randomUUID(),
           date: selectedDateKey,
           mealName,
           protein: scaleFrom100(selectedFoodProfile?.protein, serving.grams),

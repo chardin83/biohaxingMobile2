@@ -590,7 +590,9 @@ export default function PlanDetailsScreen() {
                   >
                     <View style={styles.relatedMetricItemText}>
                       <ThemedText type="defaultSemiBold">{t(`metrics:${link.metricId}.name`)}</ThemedText>
-                      <ThemedText type="caption" style={styles.relatedMetricKind}>{link.kind}</ThemedText>
+                      <ThemedText type="caption" style={styles.relatedMetricKind}>
+                        {t(`metrics:kinds.${link.kind}`, { defaultValue: link.kind })}
+                      </ThemedText>
                     </View>
                     <IconSymbol name="chevron.right" size={18} color={colors.textMuted} />
                   </TouchableOpacity>
