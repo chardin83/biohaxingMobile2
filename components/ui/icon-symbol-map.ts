@@ -57,6 +57,10 @@ export const ICON_SYMBOLS = {
     sf: 'trash',
     material: 'delete-sweep',
   },
+  'archive': {
+    sf: 'archivebox',
+    material: 'archive',
+  },
   'bell.fill': {
     sf: 'bell.fill',
     material: 'notifications-active',

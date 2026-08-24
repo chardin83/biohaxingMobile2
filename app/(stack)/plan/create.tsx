@@ -1,4 +1,5 @@
 import { useTheme } from '@react-navigation/native';
+import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -260,6 +261,7 @@ export default function CreatePlanScreen() {
                     return approved !== false;
                 }).map(tip => ({
                     ...tip,
+                    id: tip.id ?? Crypto.randomUUID(),
                     startedAt: tip.startedAt ?? now,
                 })),
                 nutrition: (tempPlans.nutrition ?? []).filter(tip => {
@@ -268,6 +270,7 @@ export default function CreatePlanScreen() {
                     return approved !== false;
                 }).map(tip => ({
                     ...tip,
+                    id: tip.id ?? Crypto.randomUUID(),
                     startedAt: tip.startedAt ?? now,
                 })),
                 other: (tempPlans.other ?? []).filter(tip => {
@@ -276,6 +279,7 @@ export default function CreatePlanScreen() {
                     return approved !== false;
                 }).map(tip => ({
                     ...tip,
+                    id: tip.id ?? Crypto.randomUUID(),
                     startedAt: tip.startedAt ?? now,
                 })),
             };

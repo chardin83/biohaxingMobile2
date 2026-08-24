@@ -149,6 +149,15 @@
     "aiCreateDescription": "Låt AI skapa ett personligt förslag",
     "latestAiCommentTitle": "AI-kommentar",
     "otherHeader": "Övrigt"
+    ,"planActionsPromptTitle": "Vad vill du göra med planen?"
+    ,"planActionsPromptDescription": "Du kan avsluta planen och spara den bland tidigare planer, eller radera planperioden permanent. Loggade måltider, trackingdata och intjänad XP påverkas inte."
+    ,"planActionsArchiveTitle": "Avsluta planen"
+    ,"planActionsArchiveDescription": "Planperioden sparas bland tidigare planer tillsammans med start- och slutdatum."
+    ,"planActionsDeleteTitle": "Radera planen"
+    ,"planActionsDeleteDescription": "Planperioden tas bort permanent. Loggade måltider, trackingdata och intjänad XP sparas."
+    ,"planActionsDeleteConfirmTitle": "Ta bort permanent?"
+    ,"planActionsDeleteConfirmMessage": "Planperioden tas bort permanent. Loggade måltider, trackingdata och intjänad XP påverkas inte. Detta går inte att ångra."
+    ,"planActionsDeleteConfirmAction": "Ta bort permanent"
   },
   "supplementTabSection": {
     "addManually": "Lägg till manuellt"

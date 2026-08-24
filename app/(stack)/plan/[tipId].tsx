@@ -11,10 +11,12 @@ import { buildNutritionPlanTipProgress } from '@/components/nutritionTargets.log
 import PlanCategoryIcon, { type PlanCategory } from '@/components/plan/PlanCategoryIcon';
 import { MetricsBottomSheet } from '@/components/sections/metrics/MetricsBottomSheet';
 import { NutritionPlanDetailsSection } from '@/components/sections/plan/NutritionPlanDetailsSection';
+import { PlanActionsBottomSheet } from '@/components/sections/plan/PlanActionsBottomSheet';
 import { TrainingPlanDetailsSection } from '@/components/sections/plan/TrainingPlanDetailsSection';
 import { ThemedText } from '@/components/ThemedText';
 import { type TipTargetProgress } from '@/components/TipTarget';
 import AppBox from '@/components/ui/AppBox';
+import AppButton from '@/components/ui/AppButton';
 import Badge from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
@@ -24,11 +26,12 @@ import { PressableCard } from '@/components/ui/PressableCard';
 import { FOOD_IMAGES } from '@/locales/foodCatalog';
 import { metrics, tipMetricLinks } from '@/locales/metrics';
 import { tips } from '@/locales/tips';
-import { extractWeeklyTrackingSignals, mergeWeeklyTrackingSignal, parseNumberValue,type WeeklyTrackingSignals } from '@/utils/analyzeNutrition';
+import { extractWeeklyTrackingSignals, mergeWeeklyTrackingSignal, parseNumberValue, type WeeklyTrackingSignals } from '@/utils/analyzeNutrition';
 import { formatDate, toDateKey } from '@/utils/dateUtils';
 
 type PlanDetailsParams = {
   tipId?: string;
+  planId?: string;
   title?: string;
   startedAt?: string;
   createdBy?: string;
@@ -56,6 +59,8 @@ type CardData = {
   foodItems?: CardFoodItem[];
   supplementNames?: string[];
 };
+
+type DeletablePlanCategory = 'training' | 'nutrition' | 'other';
 
 const sumTypedTotals = (
   meals: Array<any>,
@@ -95,11 +100,18 @@ export default function PlanDetailsScreen() {
   const { colors } = useTheme();
   const { t, i18n } = useTranslation(['common', 'areas', 'tips']);
   const params = useLocalSearchParams<PlanDetailsParams>();
-  const { setPlans, plans, dailyNutritionSummaries, weeklyTracking, takenDates } = useStorage();
+  const { archivePlan, plans, dailyNutritionSummaries, weeklyTracking, takenDates, setPlans, setTrainingPlanSettings } = useStorage();
   const metricsBottomSheetRef = React.useRef<BottomSheet>(null);
+  const planActionsBottomSheetRef = React.useRef<BottomSheet>(null);
 
   const [isEditingComment, setIsEditingComment] = React.useState(false);
   const [commentDraft, setCommentDraft] = React.useState(params.comment ?? '');
+  const [isPlanActionsSheetMounted, setIsPlanActionsSheetMounted] = React.useState(false);
+
+  const planTipId = React.useMemo(
+    () => (typeof params.tipId === 'string' ? params.tipId : undefined),
+    [params.tipId]
+  );
 
   const tip = React.useMemo(() => {
     if (!params.tipId) return undefined;
@@ -222,6 +234,70 @@ export default function PlanDetailsScreen() {
     cardData?.badges?.length || cardData?.recommendedDoseLabel || cardData?.foodItems?.length || cardData?.supplementNames?.length
   );
 
+  const canDeletePlan =
+    Boolean(planTipId) &&
+    (resolvedPlanCategory === 'training' || resolvedPlanCategory === 'nutrition' || resolvedPlanCategory === 'other');
+
+  const planActionSnapPoints = React.useMemo(() => ['44%'], []);
+
+  const closePlanActionsSheet = React.useCallback(() => {
+    planActionsBottomSheetRef.current?.close();
+  }, []);
+
+  const openPlanActionsSheet = React.useCallback(() => {
+    setIsPlanActionsSheetMounted(true);
+  }, []);
+
+  React.useEffect(() => {
+    if (!isPlanActionsSheetMounted) return;
+
+    const frame = requestAnimationFrame(() => {
+      planActionsBottomSheetRef.current?.expand();
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [isPlanActionsSheetMounted]);
+
+  const handleArchivePlan = React.useCallback(() => {
+    const tipId = planTipId;
+    if (!tipId || !canDeletePlan) {
+      closePlanActionsSheet();
+      return;
+    }
+
+    const category = resolvedPlanCategory as DeletablePlanCategory;
+    archivePlan(category, typeof params.planId === 'string' ? params.planId : undefined, tipId);
+    closePlanActionsSheet();
+    router.back();
+  }, [archivePlan, canDeletePlan, closePlanActionsSheet, params.planId, planTipId, resolvedPlanCategory, router]);
+
+  const handleDeletePlanPermanently = React.useCallback(() => {
+    const tipId = planTipId;
+    if (!tipId || !canDeletePlan) {
+      closePlanActionsSheet();
+      return;
+    }
+
+    const category = resolvedPlanCategory as DeletablePlanCategory;
+    setPlans(prev => ({
+      ...prev,
+      [category]: prev[category].filter(entry =>
+        params.planId ? entry.id !== params.planId : entry.tipId !== tipId
+      ),
+    }));
+
+    if (category === 'training') {
+      setTrainingPlanSettings(prev => {
+        const next = { ...prev };
+        delete next[tipId];
+        return next;
+      });
+    }
+
+    closePlanActionsSheet();
+    router.back();
+  }, [canDeletePlan, closePlanActionsSheet, params.planId, planTipId, resolvedPlanCategory, router, setPlans, setTrainingPlanSettings]);
+
   return (
     <Container background="default" showBackButton onBackPress={() => router.back()}>
       <View style={styles.content}>
@@ -265,7 +341,7 @@ export default function PlanDetailsScreen() {
               onBlur={() => {
                 setIsEditingComment(false);
                 if (!params.tipId || !params.planCategory) return;
-                const category = params.planCategory as 'training' | 'nutrition' | 'other';
+                const category = params.planCategory as DeletablePlanCategory;
                 setPlans(prev => ({
                   ...prev,
                   [category]: prev[category].map((entry: { tipId: string }) =>
@@ -438,7 +514,28 @@ export default function PlanDetailsScreen() {
         )}
           </PressableCard>
         )}
+
+        {canDeletePlan && (
+          <View style={styles.deletePlanWrap}>
+            <AppButton
+              title="Avsluta / Ta bort planen"
+              variant="danger"
+              onPress={openPlanActionsSheet}
+            />
+          </View>
+        )}
       </View>
+
+      {isPlanActionsSheetMounted && (
+        <PlanActionsBottomSheet
+          bottomSheetRef={planActionsBottomSheetRef}
+          snapPoints={planActionSnapPoints}
+          onArchivePlan={handleArchivePlan}
+          onDeletePlan={handleDeletePlanPermanently}
+          onCancel={closePlanActionsSheet}
+        />
+      )}
+
       <MetricsBottomSheet
         bottomSheetRef={metricsBottomSheetRef}
         tipId={params.tipId ?? null}
@@ -579,5 +676,8 @@ const styles = StyleSheet.create({
     marginTop: 2,
     opacity: 0.75,
     textTransform: 'capitalize',
+  },
+  deletePlanWrap: {
+    marginTop: 8,
   },
 });

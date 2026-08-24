@@ -72,6 +72,7 @@ export const OtherPlanSection: React.FC<Props> = () => {
       pathname: '/plan/[tipId]',
       params: {
         tipId: plan.tipId,
+        planId: plan.id,
         title: title ?? t(`tips:${plan.tipId}.title`),
         startedAt: plan.startedAt,
         createdBy: plan.createdBy,

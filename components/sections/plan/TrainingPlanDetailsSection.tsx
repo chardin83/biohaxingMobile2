@@ -2,12 +2,16 @@ import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
+import { Portal } from 'react-native-paper';
 
 import { useStorage } from '@/app/context/StorageContext';
+import TrainingSettingsModal from '@/components/modals/TrainingSettingsModal';
 import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
 import Badge from '@/components/ui/Badge';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import PlanEditActions from '@/components/ui/PlanEditActions';
+import { type TrainingActivityFilter, type TrainingIntensityFilter } from '@/types/training';
 import { toDateKey } from '@/utils/dateUtils';
 import { calculateTrainingWeeklyProgress } from '@/utils/trainingProgress';
 
@@ -40,7 +44,79 @@ export const TrainingPlanDetailsSection: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
   const { colors } = useTheme();
-  const { trainingPlanSettings, trainingEntries } = useStorage();
+  const { trainingPlanSettings, trainingEntries, setTrainingPlanSettings } = useStorage();
+  const [trainingSettingsVisible, setTrainingSettingsVisible] = React.useState(false);
+  const [trainingSessionsInput, setTrainingSessionsInput] = React.useState('');
+  const [trainingDurationInput, setTrainingDurationInput] = React.useState('');
+  const [trainingActivityTypeInput, setTrainingActivityTypeInput] = React.useState('any' as TrainingActivityFilter);
+  const [trainingMinimumIntensityInput, setTrainingMinimumIntensityInput] = React.useState('any' as TrainingIntensityFilter);
+
+  const trainingTitle = React.useMemo(() => {
+    if (!tipId) return null;
+    return t(`tips:${tipId}.title`);
+  }, [t, tipId]);
+
+  const openTrainingSettingsModal = React.useCallback(() => {
+    if (!tipId) return;
+
+    const existing = trainingPlanSettings[tipId];
+    setTrainingSessionsInput(existing?.sessionsPerWeek === undefined ? '' : existing.sessionsPerWeek.toString());
+    setTrainingDurationInput(
+      typeof existing?.sessionDurationMinutes === 'number' ? existing.sessionDurationMinutes.toString() : ''
+    );
+    setTrainingActivityTypeInput(existing?.activityType ?? 'any');
+    setTrainingMinimumIntensityInput(existing?.minimumIntensity ?? 'any');
+    setTrainingSettingsVisible(true);
+  }, [tipId, trainingPlanSettings]);
+
+  const closeTrainingSettingsModal = React.useCallback(() => {
+    setTrainingSettingsVisible(false);
+    setTrainingSessionsInput('');
+    setTrainingDurationInput('');
+    setTrainingActivityTypeInput('any');
+    setTrainingMinimumIntensityInput('any');
+  }, []);
+
+  const handleSaveTrainingSettings = React.useCallback(() => {
+    if (!tipId) {
+      closeTrainingSettingsModal();
+      return;
+    }
+
+    const parseNumericInput = (value: string) => {
+      const trimmed = value.trim();
+      if (!trimmed) return undefined;
+      const parsed = Number.parseInt(trimmed, 10);
+      return Number.isNaN(parsed) ? undefined : parsed;
+    };
+
+    const sessionsValue = parseNumericInput(trainingSessionsInput);
+    const durationValue = parseNumericInput(trainingDurationInput);
+    const activityTypeValue = trainingActivityTypeInput === 'any' ? undefined : trainingActivityTypeInput;
+    const minimumIntensityValue = trainingMinimumIntensityInput === 'any' ? undefined : trainingMinimumIntensityInput;
+
+    setTrainingPlanSettings(prev => {
+      const next = { ...prev };
+      if (
+        sessionsValue === undefined &&
+        durationValue === undefined &&
+        activityTypeValue === undefined &&
+        minimumIntensityValue === undefined
+      ) {
+        delete next[tipId];
+      } else {
+        next[tipId] = {
+          sessionsPerWeek: sessionsValue,
+          sessionDurationMinutes: durationValue,
+          activityType: activityTypeValue,
+          minimumIntensity: minimumIntensityValue,
+        };
+      }
+      return next;
+    });
+
+    closeTrainingSettingsModal();
+  }, [closeTrainingSettingsModal, setTrainingPlanSettings, tipId, trainingActivityTypeInput, trainingDurationInput, trainingMinimumIntensityInput, trainingSessionsInput]);
 
   const trainingWeeklyProgress = React.useMemo<TrainingPlanDetailsProgress | null>(() => {
     if (!tipId) return null;
@@ -90,10 +166,17 @@ export const TrainingPlanDetailsSection: React.FC<Props> = ({
   const shouldShowTrainingTargetsUnset = !cardData?.badges?.length && !trainingWeeklyProgress;
 
   return (
-    <AppBox
-      title={t('plan.trainingTargetsTitle')}
-      leading={<IconSymbol name="target" size={18} color={colors.primary} />}
-    >
+    <>
+      <AppBox
+        title={t('plan.trainingTargetsTitle')}
+        leading={<IconSymbol name="target" size={18} color={colors.primary} />}
+        headerRight={tipId ? (
+          <PlanEditActions
+            onEdit={openTrainingSettingsModal}
+            editLabel={t('plan.editTrainingTargets')}
+          />
+        ) : undefined}
+      >
       {!!cardData?.badges?.length && (
         <View style={styles.badgeRow}>
           {cardData.badges.map(badge => (
@@ -145,7 +228,32 @@ export const TrainingPlanDetailsSection: React.FC<Props> = ({
           {t('plan.trainingTargetsUnset')}
         </ThemedText>
       )}
-    </AppBox>
+      </AppBox>
+
+      <Portal>
+        <TrainingSettingsModal
+          visible={trainingSettingsVisible}
+          title={t('plan.trainingTargetsTitle')}
+          trainingTitle={trainingTitle}
+          sessionsPlaceholder={t('plan.trainingSessionsPlaceholder')}
+          durationPlaceholder={t('plan.trainingDurationPlaceholder')}
+          sessionsLabel={t('plan.trainingSessionsPlaceholder')}
+          durationLabel={t('plan.trainingDurationPlaceholder')}
+          sessionsValue={trainingSessionsInput}
+          durationValue={trainingDurationInput}
+          activityTypeValue={trainingActivityTypeInput}
+          minimumIntensityValue={trainingMinimumIntensityInput}
+          onChangeSessions={setTrainingSessionsInput}
+          onChangeDuration={setTrainingDurationInput}
+          onChangeActivityType={setTrainingActivityTypeInput}
+          onChangeMinimumIntensity={setTrainingMinimumIntensityInput}
+          onSave={handleSaveTrainingSettings}
+          onClose={closeTrainingSettingsModal}
+          saveLabel={t('general.save')}
+          cancelLabel={t('general.cancel')}
+        />
+      </Portal>
+    </>
   );
 };
 

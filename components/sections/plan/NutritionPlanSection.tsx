@@ -2,12 +2,9 @@ import { useRouter } from 'expo-router';
 import React, { useCallback,useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Portal } from 'react-native-paper';
 
 import { PlanTipEntry, useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
-import DefaultSettingsModal from '@/components/modals/DefaultSettingsModal';
-import { PlanHeaderActions } from '@/components/sections/plan/PlanHeaderActions';
 import { PlanMeta } from '@/components/sections/plan/PlanMeta';
 import { ThemedText } from '@/components/ThemedText';
 import Badge from '@/components/ui/Badge';
@@ -24,16 +21,12 @@ type Props = {
 export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
   const router = useRouter();
-  const { plans, setPlans } = useStorage();
+  const { plans } = useStorage();
   const supplementMap = useSupplementMap();
 
   const nutritionPlans = plans.nutrition;
 
   const [expandedNutritionTips, setExpandedNutritionTips] = useState<Record<string, boolean>>({});
-  const [nutritionSettingsVisible, setNutritionSettingsVisible] = useState(false);
-  const [nutritionSettingsTitle, setNutritionSettingsTitle] = useState<string | null>(null);
-  const [nutritionCommentInput, setNutritionCommentInput] = useState('');
-  const [nutritionEditTipId, setNutritionEditTipId] = useState<string | null>(null);
 
   const nutritionGroups = useMemo(() => {
     const tipIds = new Set<string>();
@@ -69,36 +62,6 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
     }));
   }, []);
 
-  const openNutritionSettingsModal = (tipId: string, nutritionTitle?: string | null) => {
-    setNutritionEditTipId(tipId);
-    setNutritionSettingsTitle(nutritionTitle ?? null);
-    const plan = nutritionPlans.find(g => g.tipId === tipId);
-    setNutritionCommentInput(plan?.comment ?? '');
-    setNutritionSettingsVisible(true);
-  };
-
-  const closeNutritionSettingsModal = () => {
-    setNutritionSettingsVisible(false);
-    setNutritionSettingsTitle(null);
-    setNutritionCommentInput('');
-    setNutritionEditTipId(null);
-  };
-
-  const handleSaveNutritionSettings = () => {
-    if (!nutritionEditTipId) {
-      closeNutritionSettingsModal();
-      return;
-    }
-    setPlans(prev => ({
-      ...prev,
-      nutrition: prev.nutrition.map(plan =>
-        plan.tipId === nutritionEditTipId
-          ? { ...plan, comment: nutritionCommentInput, editedAt: new Date().toISOString(), editedBy: 'you' }
-          : plan
-      ),
-    }));
-    closeNutritionSettingsModal();
-  };
 
   const openPlanDetails = (tipId: string, plan?: PlanTipEntry, title?: string | null, foodItems?: Array<{ name: string; details?: string; imageKey?: string }>, recommendedDoseLabel?: string | null) => {
     if (!tipId) return;
@@ -112,6 +75,7 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
       pathname: '/plan/[tipId]',
       params: {
         tipId,
+        planId: plan?.id,
         title: title ?? t(`tips:${tipId}.title`),
         startedAt: plan?.startedAt ?? '',
         createdBy: plan?.createdBy ?? '',
@@ -122,18 +86,6 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
     });
   };
 
-  const handleDeleteNutrition = () => {
-    if (!nutritionEditTipId) {
-      closeNutritionSettingsModal();
-      return;
-    }
-    setPlans(prev => ({
-      ...prev,
-      nutrition: prev.nutrition.filter(plan => plan.tipId !== nutritionEditTipId),
-    }));
-    closeNutritionSettingsModal();
-  };
-
   if (!nutritionGroups.length) {
     return (
       <ThemedText type="default">
@@ -142,9 +94,7 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
     );
   }
 
-  function handleEditNutrition(plan: PlanTipEntry | undefined, tipId: string, title?: string | null): void {
-    openNutritionSettingsModal(tipId, title ?? plan?.tipId ?? null);
-  }
+
 
   return (
     <>
@@ -182,16 +132,6 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
         const hasExtraFoods = hiddenCount > 0;
         const arrowRotation = isExpanded ? '-90deg' : '0deg';
 
-        const editAction = (
-          <PlanHeaderActions
-            trainingSettingsKey={tipId}
-            tipTitle={tipTitle}
-            t={t}
-            openTrainingSettingsModal={(_key, _title) => handleEditNutrition(plan, tipId, tipTitle)}
-            styles={styles}
-          />
-        );
-
         return (
           <Card
             key={tipId}
@@ -212,7 +152,6 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
                   </ThemedText>
                 <IconSymbol name="chevron.right" size={16} color={colors.icon} />
               </TouchableOpacity>
-              <View style={styles.nutritionCardHeaderRight}>{editAction}</View>
             </View>
             {plan?.startedAt && (
               <PlanMeta
@@ -285,23 +224,6 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
           }}
         />
       </View>
-      <Portal>
-        <DefaultSettingsModal
-          visible={nutritionSettingsVisible}
-          title={t('nutritionPlanSection.nutritionSettingsTitle')}
-          nutritionTitle={nutritionSettingsTitle}
-          commentPlaceholder={t('nutritionPlanSection.nutritionCommentPlaceholder')}
-          commentLabel={t('nutritionPlanSection.nutritionCommentLabel')}
-          commentValue={nutritionCommentInput}
-          onChangeComment={setNutritionCommentInput}
-          onSave={handleSaveNutritionSettings}
-          onClose={closeNutritionSettingsModal}
-          onDelete={handleDeleteNutrition}
-          saveLabel={t('general.save')}
-          cancelLabel={t('general.cancel')}
-          deleteLabel={t('general.delete')}
-        />
-      </Portal>
     </>
   );
 };
@@ -331,23 +253,6 @@ const styles = StyleSheet.create({
   },
   nutritionCardHeaderRight: {
     marginLeft: 12,
-  },
-  headerActionsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  planHeaderActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  chartButton: {
-    marginRight: 6,
-  },
-  chartEmoji: {
-    fontSize: 16,
-  },
-  chartEmojiDisabled: {
-    opacity: 0.55,
   },
   recommendedDose: {
     marginBottom: 8,

@@ -147,7 +147,16 @@
     "aiCreateTitle": "Create a plan with AI",
     "aiCreateDescription": "Let AI create a personalized suggestion",
     "latestAiCommentTitle": "AI comment",
-    "otherHeader": "Other"
+    "otherHeader": "Other",
+    "planActionsPromptTitle": "What do you want to do with this plan?",
+    "planActionsPromptDescription": "You can end the plan and save it under previous plans, or permanently delete the plan period. Logged meals, tracking data, and earned XP are not affected.",
+    "planActionsArchiveTitle": "End plan",
+    "planActionsArchiveDescription": "The plan period is saved under previous plans with its start and end dates.",
+    "planActionsDeleteTitle": "Delete plan",
+    "planActionsDeleteDescription": "The plan period is removed permanently. Logged meals, tracking data, and earned XP are kept.",
+    "planActionsDeleteConfirmTitle": "Delete permanently?",
+    "planActionsDeleteConfirmMessage": "The plan period will be removed permanently. Logged meals, tracking data, and earned XP are not affected. This cannot be undone.",
+    "planActionsDeleteConfirmAction": "Delete permanently"
   },
   "supplementTabSection": {
     "addManually": "Add manually"
