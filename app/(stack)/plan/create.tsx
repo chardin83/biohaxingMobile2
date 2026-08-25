@@ -5,7 +5,7 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
-import { useStorage } from '@/app/context/StorageContext';
+import { PlanTipEntry, useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import AIInfoPopup from '@/components/AllInfoPopup';
 import { Collapsible } from '@/components/Collapsible';
@@ -284,9 +284,15 @@ export default function CreatePlanScreen() {
                 })),
             };
 
-            const mergeTips = (existing: typeof filteredPlans.training, incoming: typeof filteredPlans.training) => {
+            const mergeTips = (existing: PlanTipEntry[], incoming: PlanTipEntry[]): PlanTipEntry[] => {
                 const seen = new Set(existing.map(item => item.tipId));
-                return [...existing, ...incoming.filter(item => !seen.has(item.tipId))];
+                const merged: PlanTipEntry[] = [...existing];
+                incoming.forEach(item => {
+                    if (!seen.has(item.tipId)) {
+                        merged.push(item);
+                    }
+                });
+                return merged;
             };
 
             const mergeSupplementPlans = (existing: typeof filteredPlans.supplements, incoming: typeof filteredPlans.supplements) => {

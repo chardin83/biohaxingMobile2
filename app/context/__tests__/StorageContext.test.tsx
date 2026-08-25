@@ -77,42 +77,6 @@ describe('StorageContext', () => {
     });
   });
 
-  it('derives activeGoals from training and nutrition plans', async () => {
-    let contextValues: any = {};
-
-    render(
-      <StorageProvider>
-        <TestComponent
-          callback={ctx => {
-            contextValues = ctx;
-          }}
-        />
-      </StorageProvider>
-    );
-
-    // Vänta på initialisering
-    await waitFor(() => {
-      expect(contextValues.activeGoals).toBeDefined();
-    });
-
-    const entry = {
-      mainGoalId: 'main1',
-      tipId: 'tip1',
-      startedAt: new Date().toISOString(),
-      planCategory: 'training' as const,
-    };
-
-    // Uppdatera plans
-    act(() => {
-      contextValues.setPlans({ supplements: [], training: [entry], nutrition: [], other: [] });
-    });
-
-    // Vänta på uppdateringen
-    await waitFor(() => {
-      expect(contextValues.activeGoals).toEqual([entry]);
-    });
-  });
-
   it('can set and get XP and level', async () => {
     let contextValues: any = {};
 

@@ -157,6 +157,10 @@ export default function Plans() {
       width: '80%',
       alignSelf: 'center',
     },
+    archivedPlansButtonWrapper: {
+      marginHorizontal: 20,
+      marginBottom: 24,
+    },
     recommendedDose: {
       marginBottom: 8,
     },
@@ -555,6 +559,14 @@ export default function Plans() {
             <OtherPlanSection />
           </Collapsible>
         </View>
+      </View>
+      <View style={styles.archivedPlansButtonWrapper}>
+        <AppButton
+          title={t('plan.previousPlans')}
+          icon="archive"
+          variant="secondary"
+          onPress={() => router.push('/plan/archive')}
+        />
       </View>
       <Portal>
         <CreateTimeSlotModal

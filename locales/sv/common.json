@@ -149,6 +149,16 @@
     "aiCreateDescription": "Låt AI skapa ett personligt förslag",
     "latestAiCommentTitle": "AI-kommentar",
     "otherHeader": "Övrigt"
+    ,"previousPlans": "Tidigare planer"
+    ,"previousPlansTitle": "Tidigare planer"
+    ,"previousPlansEmpty": "Inga tidigare planer ännu."
+    ,"previousPlansEmptyTraining": "Inga träningsmål har arkiverats."
+    ,"previousPlansEmptyNutrition": "Inga kostmål har arkiverats."
+    ,"previousPlansEmptyOther": "Inga övriga planer har arkiverats."
+    ,"previousPlansStarted": "Startade {{date}}"
+    ,"previousPlansEnded": "Avslutades {{date}}"
+    ,"previousPlansDuration": "{{count}} dag"
+    ,"previousPlansDuration_plural": "{{count}} dagar"
     ,"planActionsPromptTitle": "Vad vill du göra med planen?"
     ,"planActionsPromptDescription": "Du kan avsluta planen och spara den bland tidigare planer, eller radera planperioden permanent. Loggade måltider, trackingdata och intjänad XP påverkas inte."
     ,"planActionsArchiveTitle": "Avsluta planen"

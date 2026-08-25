@@ -36,33 +36,35 @@ const getIconName = (category: PlanCategory): React.ComponentProps<typeof IconSy
   }
 };
 
-const getIconColors = (category: PlanCategory, colors: any) => {
+export const getPlanCategoryIconColor = (category: PlanCategory, colors: any) => {
   switch (category) {
     case 'training':
-      return {
-        iconColor: colors.planSectionIcon,
-        tintColor: colors.planSectionIconTint,
-      };
+      return colors.planSectionIcon;
     case 'nutrition':
-      return {
-        iconColor: colors.planSectionNutritionIcon,
-        tintColor: colors.planSectionNutritionTint,
-      };
+      return colors.planSectionNutritionIcon;
     case 'supplement':
-      return {
-        iconColor: colors.planSectionSupplementIcon,
-        tintColor: colors.planSectionSupplementTint,
-      };
+      return colors.planSectionSupplementIcon;
     case 'other':
-      return {
-        iconColor: colors.planSectionOtherIcon,
-        tintColor: colors.planSectionOtherTint,
-      };
+      return colors.planSectionOtherIcon;
     default:
-      return {
-        iconColor: colors.icon,
-        tintColor: colors.overlayLight,
-      };
+      return colors.icon;
+  }
+};
+
+const getIconColors = (category: PlanCategory, colors: any) => {
+  const iconColor = getPlanCategoryIconColor(category, colors);
+
+  switch (category) {
+    case 'training':
+      return { iconColor, tintColor: colors.planSectionIconTint };
+    case 'nutrition':
+      return { iconColor, tintColor: colors.planSectionNutritionTint };
+    case 'supplement':
+      return { iconColor, tintColor: colors.planSectionSupplementTint };
+    case 'other':
+      return { iconColor, tintColor: colors.planSectionOtherTint };
+    default:
+      return { iconColor, tintColor: colors.overlayLight };
   }
 };
 

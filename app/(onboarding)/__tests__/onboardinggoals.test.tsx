@@ -68,7 +68,6 @@ const mockStorageContext = {
   setTakenDates: jest.fn(),
   myGoals: [],
   setMyGoals: jest.fn(),
-  activeGoals: [],
   errorMessage: null,
   setErrorMessage: jest.fn(),
   hasCompletedOnboarding: false,

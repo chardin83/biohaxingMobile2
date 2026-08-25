@@ -33,6 +33,18 @@ export const formatDate = (isoDate?: string, language?: string): string => {
   }
 };
 
+export const getInclusiveDayCount = (startDate?: string, endDate?: string): number => {
+  if (!startDate || !endDate) return 0;
+
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return 0;
+
+  const startDay = Date.UTC(start.getFullYear(), start.getMonth(), start.getDate());
+  const endDay = Date.UTC(end.getFullYear(), end.getMonth(), end.getDate());
+  return Math.max(1, Math.floor((endDay - startDay) / 86_400_000) + 1);
+};
+
 export const formatMonthDay = (date: Date, language: string): string => {
   const formatted = new Intl.DateTimeFormat(language, {
     day: 'numeric',

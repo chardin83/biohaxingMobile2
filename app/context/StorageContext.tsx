@@ -61,6 +61,10 @@ export type PlanTipEntry = {
   comment?: string;
 };
 
+export type ArchivedPlanTipEntry = PlanTipEntry & {
+  endedAt: string;
+};
+
 export type ReasonSummary = {
   text: string;
   createdAt: string;
@@ -83,9 +87,9 @@ export type PlansByCategory = {
 };
 
 export type ArchivedPlansByCategory = {
-  training: PlanTipEntry[];
-  nutrition: PlanTipEntry[];
-  other: PlanTipEntry[];
+  training: ArchivedPlanTipEntry[];
+  nutrition: ArchivedPlanTipEntry[];
+  other: ArchivedPlanTipEntry[];
 };
 
 const EMPTY_PLANS: PlansByCategory = {
@@ -155,7 +159,6 @@ interface StorageContextType {
   setPlans: (plans: PlansByCategory | ((prev: PlansByCategory) => PlansByCategory)) => void;
   archivedPlans: ArchivedPlansByCategory;
   archivePlan: (category: keyof ArchivedPlansByCategory, planId: string | undefined, tipId: string) => void;
-  activeGoals: PlanTipEntry[];
   hasVisitedChat: boolean;
   setHasVisitedChat: (val: boolean) => void;
   shareHealthPlan: boolean;
@@ -676,7 +679,7 @@ const addTrainingEntry = useCallback(
         const index = activePlans.findIndex(plan => (planId ? plan.id === planId : plan.tipId === tipId));
         if (index < 0) return prev;
 
-        const archivedPlan = { ...activePlans[index], endedAt: new Date().toISOString() };
+        const archivedPlan: ArchivedPlanTipEntry = { ...activePlans[index], endedAt: new Date().toISOString() };
         const nextPlans = { ...prev, [category]: activePlans.filter((_, itemIndex) => itemIndex !== index) };
         const nextArchivedPlans = {
           ...archivedPlansState,
@@ -950,10 +953,7 @@ const addTrainingEntry = useCallback(
     [weeklyTrackingState]
   );
 
-  const activeGoals = useMemo(
-    () => [...plansState.training, ...plansState.nutrition, ...plansState.other],
-    [plansState.nutrition, plansState.other, plansState.training]
-  );
+
 
   const value = useMemo(
     () => ({
@@ -961,7 +961,6 @@ const addTrainingEntry = useCallback(
       setPlans,
       archivedPlans: archivedPlansState,
       archivePlan,
-      activeGoals,
       hasVisitedChat: hasVisitedChatState,
       setHasVisitedChat,
       shareHealthPlan: shareHealthPlanState,
@@ -1017,7 +1016,7 @@ const addTrainingEntry = useCallback(
       healthSyncEnabled: healthSyncEnabledState,
       setHealthSyncEnabled,
     }),
-    [plansState, setPlans, archivedPlansState, archivePlan, activeGoals, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState, trainingPlanSettingsState, trainingEntriesState, addTrainingEntry, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, weeklyTrackingState, addToWeeklyTracking, getWeeklyTrackingValue, healthSyncEnabledState, setHealthSyncEnabled]
+    [plansState, setPlans, archivedPlansState, archivePlan, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState, trainingPlanSettingsState, trainingEntriesState, addTrainingEntry, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, weeklyTrackingState, addToWeeklyTracking, getWeeklyTrackingValue, healthSyncEnabledState, setHealthSyncEnabled]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

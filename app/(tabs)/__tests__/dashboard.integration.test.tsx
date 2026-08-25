@@ -15,7 +15,6 @@ jest.mock('react-i18next', () => ({
         'common:dashboard.level': 'Level',
         'common:dashboard.xp': 'XP',
         'common:dashboard.goals': 'Goals',
-        'common:dashboard.activeGoals': 'Active Goals',
         'common:dashboard.completedGoals': 'Completed Goals',
         'levels:biohacker': 'Biohacker',
         'levels:advanced_biohacker': 'Advanced Biohacker',
