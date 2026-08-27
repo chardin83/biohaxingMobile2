@@ -148,26 +148,41 @@
     "aiCreateTitle": "Skapa plan med AI",
     "aiCreateDescription": "Låt AI skapa ett personligt förslag",
     "latestAiCommentTitle": "AI-kommentar",
-    "otherHeader": "Övrigt"
-    ,"previousPlans": "Tidigare planer"
-    ,"previousPlansTitle": "Tidigare planer"
-    ,"previousPlansEmpty": "Inga tidigare planer ännu."
-    ,"previousPlansEmptyTraining": "Inga träningsmål har arkiverats."
-    ,"previousPlansEmptyNutrition": "Inga kostmål har arkiverats."
-    ,"previousPlansEmptyOther": "Inga övriga planer har arkiverats."
-    ,"previousPlansStarted": "Startade {{date}}"
-    ,"previousPlansEnded": "Avslutades {{date}}"
-    ,"previousPlansDuration": "{{count}} dag"
-    ,"previousPlansDuration_plural": "{{count}} dagar"
-    ,"planActionsPromptTitle": "Vad vill du göra med planen?"
-    ,"planActionsPromptDescription": "Du kan avsluta planen och spara den bland tidigare planer, eller radera planperioden permanent. Loggade måltider, trackingdata och intjänad XP påverkas inte."
-    ,"planActionsArchiveTitle": "Avsluta planen"
-    ,"planActionsArchiveDescription": "Planperioden sparas bland tidigare planer tillsammans med start- och slutdatum."
-    ,"planActionsDeleteTitle": "Radera planen"
-    ,"planActionsDeleteDescription": "Planperioden tas bort permanent. Loggade måltider, trackingdata och intjänad XP sparas."
-    ,"planActionsDeleteConfirmTitle": "Ta bort permanent?"
-    ,"planActionsDeleteConfirmMessage": "Planperioden tas bort permanent. Loggade måltider, trackingdata och intjänad XP påverkas inte. Detta går inte att ångra."
-    ,"planActionsDeleteConfirmAction": "Ta bort permanent"
+    "otherHeader": "Övrigt",
+    "previousPlans": "Tidigare planer",
+    "previousPlansTitle": "Tidigare planer",
+    "previousPlansEmpty": "Inga tidigare planer ännu.",
+    "previousPlansEmptyTraining": "Inga träningsmål har arkiverats.",
+    "previousPlansEmptyNutrition": "Inga kostmål har arkiverats.",
+    "previousPlansEmptyOther": "Inga övriga planer har arkiverats.",
+    "previousPlansEmptySupplement": "Inga kosttillskott har arkiverats.",
+    "previousPlansStarted": "Startade {{date}}",
+    "previousPlansEnded": "Avslutades {{date}}",
+    "previousPlansNoDates": "Inga datum tillgängliga",
+    "previousPlansDuration": "{{count}} dag",
+    "previousPlansDuration_plural": "{{count}} dagar",
+    "planActionsPromptTitle": "Vad vill du göra med planen?",
+    "planActionsPromptDescription": "Du kan avsluta planen och spara den bland tidigare planer, eller radera planperioden permanent. Loggade måltider, trackingdata och intjänad XP påverkas inte.",
+    "planActionsArchiveTitle": "Avsluta planen",
+    "planActionsArchiveDescription": "Planperioden sparas bland tidigare planer tillsammans med start- och slutdatum.",
+    "planActionsDeleteTitle": "Radera planen",
+    "planActionsDeleteDescription": "Planperioden tas bort permanent. Loggade måltider, trackingdata och intjänad XP sparas.",
+    "planActionsDeleteConfirmTitle": "Ta bort permanent?",
+    "planActionsDeleteConfirmMessage": "Planperioden tas bort permanent. Loggade måltider, trackingdata och intjänad XP påverkas inte. Detta går inte att ångra.",
+    "planActionsDeleteConfirmAction": "Ta bort permanent",
+    "supplementActionsPromptTitle": "Avsluta kosttillskott?",
+    "supplementActionsPromptDescription": "Vad vill du göra med kosttillskottet?",
+    "supplementActionsPromptDescriptionWithName": "Vad vill du göra med {{name}}?",
+
+    "supplementActionsArchiveTitle": "Arkivera",
+    "supplementActionsArchiveDescription": "Markera kosttillskottet som avslutat och behåll historiken.",
+
+    "supplementActionsDeleteTitle": "Ta bort permanent",
+    "supplementActionsDeleteDescription": "Ta bort kosttillskottet och dess historik helt.",
+
+    "supplementActionsDeleteConfirmTitle": "Ta bort kosttillskott?",
+    "supplementActionsDeleteConfirmMessage": "Vill du verkligen ta bort {{name}} permanent? Detta går inte att ångra.",
+    "supplementActionsDeleteConfirmAction": "Ta bort"
   },
   "supplementTabSection": {
     "addManually": "Lägg till manuellt"

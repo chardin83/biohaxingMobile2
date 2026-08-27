@@ -3,26 +3,49 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
-import { useStorage } from '@/app/context/StorageContext';
+import { type ArchivedPlanTipEntry, useStorage } from '@/app/context/StorageContext';
 import { type PlanCategory } from '@/components/plan/PlanCategoryIcon';
-import ArchivedPlanSection from '@/components/sections/plan/ArchivedPlanSection';
+import ArchivedPlanSection, { type ArchivedSupplementGroup } from '@/components/sections/plan/ArchivedPlanSection';
 import { ThemedText } from '@/components/ThemedText';
 import Container from '@/components/ui/Container';
 
-const categories: Array<Exclude<PlanCategory, 'supplement'>> = ['training', 'nutrition', 'other'];
+const categories: PlanCategory[] = ['training', 'nutrition', 'supplement', 'other'];
+
+type ArchivedPlanGroup =
+  | { category: 'supplement'; plans: ArchivedSupplementGroup[] }
+  | { category: 'training' | 'nutrition' | 'other'; plans: ArchivedPlanTipEntry[] };
 
 export default function ArchivedPlansScreen() {
   const { t } = useTranslation(['common', 'tips']);
   const { archivedPlans } = useStorage();
 
   const archivedPlanGroups = useMemo(
-    () =>
-      categories.map(category => ({
+    (): ArchivedPlanGroup[] => categories.map(category => {
+      if (category === 'supplement') {
+        const groups = new Map<string, ArchivedSupplementGroup>();
+        archivedPlans.supplements.forEach(entry => {
+          const key = entry.supplement.id;
+          const existing = groups.get(key);
+          if (existing) {
+            existing.entries.push(entry);
+          } else {
+            groups.set(key, { supplement: entry.supplement, entries: [entry] });
+          }
+        });
+
+        return {
+          category,
+          plans: Array.from(groups.values()),
+        };
+      }
+
+      return {
         category,
-        plans: [...(archivedPlans[category] ?? [])].sort((left, right) =>
-          (right.endedAt ?? right.startedAt).localeCompare(left.endedAt ?? left.startedAt)
+        plans: [...archivedPlans[category]].sort((left, right) =>
+          right.endedAt.localeCompare(left.endedAt)
         ),
-      })),
+      };
+    }),
     [archivedPlans]
   );
 

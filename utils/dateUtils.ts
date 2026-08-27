@@ -33,6 +33,57 @@ export const formatDate = (isoDate?: string, language?: string): string => {
   }
 };
 
+export const formatDateRange = (
+  startIsoDate?: string,
+  endIsoDate?: string,
+  language?: string
+): string => {
+  if (!startIsoDate || !endIsoDate) return '';
+
+  const startDate = new Date(startIsoDate);
+  const endDate = new Date(endIsoDate);
+
+  if (
+    Number.isNaN(startDate.getTime()) ||
+    Number.isNaN(endDate.getTime())
+  ) {
+    return '';
+  }
+
+  const locale = language?.trim() || undefined;
+  const sameYear = startDate.getFullYear() === endDate.getFullYear();
+
+  try {
+    const start = new Intl.DateTimeFormat(locale, {
+      day: 'numeric',
+      month: 'short',
+      ...(!sameYear && { year: 'numeric' }),
+    }).format(startDate);
+
+    const end = new Intl.DateTimeFormat(locale, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    }).format(endDate);
+
+    return `${start} – ${end}`;
+  } catch {
+    const start = new Intl.DateTimeFormat(undefined, {
+      day: 'numeric',
+      month: 'short',
+      ...(!sameYear && { year: 'numeric' }),
+    }).format(startDate);
+
+    const end = new Intl.DateTimeFormat(undefined, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    }).format(endDate);
+
+    return `${start} – ${end}`;
+  }
+};
+
 export const getInclusiveDayCount = (startDate?: string, endDate?: string): number => {
   if (!startDate || !endDate) return 0;
 

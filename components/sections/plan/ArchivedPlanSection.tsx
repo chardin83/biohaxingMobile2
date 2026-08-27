@@ -4,26 +4,32 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { type ArchivedPlanTipEntry } from '@/app/context/StorageContext';
+import { type ArchivedPlanTipEntry, type ArchivedSupplementPlanEntry } from '@/app/context/StorageContext';
 import { Collapsible } from '@/components/Collapsible';
 import PlanCategoryIcon, { getPlanCategoryIconColor, type PlanCategory } from '@/components/plan/PlanCategoryIcon';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { IconSymbol } from '@/components/ui/IconSymbol.ios';
-import { formatDate, getInclusiveDayCount } from '@/utils/dateUtils';
+import { formatDate, formatDateRange, getInclusiveDayCount } from '@/utils/dateUtils';
 
 type ArchivedPlanSectionProps = {
-  category: Exclude<PlanCategory, 'supplement'>;
-  plans: ArchivedPlanTipEntry[];
+  category: PlanCategory;
+  plans: ArchivedPlanTipEntry[] | ArchivedSupplementGroup[];
+};
+
+export type ArchivedSupplementGroup = {
+  supplement: ArchivedSupplementPlanEntry['supplement'];
+  entries: ArchivedSupplementPlanEntry[];
 };
 
 export function ArchivedPlanSection({ category, plans }: Readonly<ArchivedPlanSectionProps>) {
   const { colors } = useTheme();
   const { t, i18n } = useTranslation(['common', 'tips']);
+  const categoryTitle = category === 'supplement' ? t('plan.supplementSectionTitle') : t(`plan.${category}Header`);
 
   return (
     <Collapsible
-      title={t(`plan.${category}Header`)}
+      title={categoryTitle}
       leftContent={<PlanCategoryIcon category={category} />}
       rightContent={
         <View style={[styles.countBadge, { backgroundColor: colors.planSectionBadgeBackground, borderColor: colors.planSectionBadgeBorder }]}>
@@ -39,48 +45,77 @@ export function ArchivedPlanSection({ category, plans }: Readonly<ArchivedPlanSe
       {plans.length ? (
         <View style={styles.plansList}>
           {plans.map(plan => (
+            (() => {
+              const supplementGroup = plan as ArchivedSupplementGroup;
+              const dates = category === 'supplement'
+                ? { startedAt: supplementGroup.entries[0]?.startedAt ?? '', endedAt: supplementGroup.entries[0]?.endedAt ?? '' }
+                : { startedAt: (plan as ArchivedPlanTipEntry).startedAt, endedAt: (plan as ArchivedPlanTipEntry).endedAt ?? '' };
+              const tipPlan = plan as ArchivedPlanTipEntry;
+              const tipTitle = t(`tips:${tipPlan.tipId}.title`, { defaultValue: tipPlan.tipId });
+              const cardKey = category === 'supplement'
+                ? [supplementGroup.supplement.id, supplementGroup.supplement.name].join('-')
+                : tipPlan.id ?? [tipPlan.tipId, dates.startedAt].join('-');
+
+              return (
             <Card
-              key={plan.id ?? `${plan.tipId}-${plan.startedAt}`}
+              key={cardKey}
               style={[styles.planCard, { borderLeftColor: getPlanCategoryIconColor(category, colors) }]}
             >
               <TouchableOpacity
                 style={styles.planCardButton}
-                onPress={() =>
+                onPress={() => {
+                  if (category === 'supplement') return;
                   router.push({
                     pathname: '/plan/[tipId]',
                     params: {
-                      tipId: plan.tipId,
-                      planId: plan.id,
-                      title: t(`tips:${plan.tipId}.title`, { defaultValue: plan.tipId }),
-                      startedAt: plan.startedAt,
-                      createdBy: plan.createdBy,
-                      comment: plan.comment ?? '',
-                      planCategory: plan.planCategory,
+                      tipId: tipPlan.tipId,
+                      planId: tipPlan.id,
+                      title: t(`tips:${tipPlan.tipId}.title`, { defaultValue: tipPlan.tipId }),
+                      startedAt: tipPlan.startedAt,
+                      createdBy: tipPlan.createdBy,
+                      comment: tipPlan.comment ?? '',
+                      planCategory: tipPlan.planCategory,
                     },
-                  })
-                }
+                  });
+                }}
                 activeOpacity={0.85}
                 accessibilityRole="button"
-                accessibilityLabel={t(`tips:${plan.tipId}.title`, { defaultValue: plan.tipId })}
+                accessibilityLabel={category === 'supplement' ? supplementGroup.supplement.name : tipTitle}
               >
                 <View style={styles.titleRow}>
                   <ThemedText type="title3" style={styles.planTitle}>
-                    {t(`tips:${plan.tipId}.title`, { defaultValue: plan.tipId })}
+                    {category === 'supplement'
+                      ? supplementGroup.supplement.name
+                      : tipTitle}
                   </ThemedText>
 
-                  <IconSymbol name="chevron.right" size={16} color={colors.icon} />
+                  {category !== 'supplement' && <IconSymbol name="chevron.right" size={16} color={colors.icon} />}
                 </View>
-                <ThemedText type="caption" style={styles.dateRange}>
-                  {formatDate(plan.startedAt, i18n.language)} - {formatDate(plan.endedAt, i18n.language)}
-                  {' · '}
-                  {(() => {
-                    const dayCount = getInclusiveDayCount(plan.startedAt, plan.endedAt);
-                    const durationKey = dayCount > 1 ? 'plan.previousPlansDuration_plural' : 'plan.previousPlansDuration';
-                    return t(durationKey, { count: dayCount });
-                  })()}
-                </ThemedText>
+                {category === 'supplement'
+                  ? supplementGroup.entries.map(entry => {
+                      const dayCount = getInclusiveDayCount(entry.startedAt, entry.endedAt);
+                      const durationKey = dayCount > 1 ? 'plan.previousPlansDuration_plural' : 'plan.previousPlansDuration';
+                      return (
+                        <ThemedText key={`${entry.startedAt}-${entry.endedAt}`} type="caption" style={styles.dateRange}>
+                          {formatDateRange(entry.startedAt, entry.endedAt, i18n.language)} · {t(durationKey, { count: dayCount })} <IconSymbol name="clock" size={12} color={colors.icon} /> {entry.prefferedTime}
+                        </ThemedText>
+                      );
+                    })
+                  : (
+                    <ThemedText type="caption" style={styles.dateRange}>
+                      {dates.startedAt && dates.endedAt
+                        ? `${formatDateRange(dates.startedAt, dates.endedAt, i18n.language)} · ${(() => {
+                            const dayCount = getInclusiveDayCount(dates.startedAt, dates.endedAt);
+                            const durationKey = dayCount > 1 ? 'plan.previousPlansDuration_plural' : 'plan.previousPlansDuration';
+                            return t(durationKey, { count: dayCount });
+                          })()}`
+                        : t('plan.previousPlansNoDates')}
+                    </ThemedText>
+                  )}
               </TouchableOpacity>
             </Card>
+              );
+            })()
           ))}
         </View>
       ) : (

@@ -12,16 +12,18 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 type Props = {
   bottomSheetRef: React.RefObject<BottomSheet | null>;
   snapPoints: string[];
-  onArchivePlan: () => void;
-  onDeletePlan: () => void;
+  supplementName?: string;
+  onArchiveSupplement: () => void;
+  onDeleteSupplement: () => void;
   onCancel: () => void;
 };
 
-export const PlanActionsBottomSheet: React.FC<Props> = ({
+export const SupplementActionsBottomSheet: React.FC<Props> = ({
   bottomSheetRef,
   snapPoints,
-  onArchivePlan,
-  onDeletePlan,
+  supplementName,
+  onArchiveSupplement,
+  onDeleteSupplement,
   onCancel,
 }) => {
   const { t } = useTranslation('common');
@@ -30,21 +32,23 @@ export const PlanActionsBottomSheet: React.FC<Props> = ({
 
   const handleDeletePress = React.useCallback(() => {
     Alert.alert(
-      t('plan.planActionsDeleteConfirmTitle'),
-      t('plan.planActionsDeleteConfirmMessage'),
+      t('plan.supplementActionsDeleteConfirmTitle'),
+      t('plan.supplementActionsDeleteConfirmMessage', {
+        name: supplementName,
+      }),
       [
         {
           text: t('general.cancel'),
           style: 'cancel',
         },
         {
-          text: t('plan.planActionsDeleteConfirmAction'),
+          text: t('plan.supplementActionsDeleteConfirmAction'),
           style: 'destructive',
-          onPress: onDeletePlan,
+          onPress: onDeleteSupplement,
         },
       ]
     );
-  }, [onDeletePlan, t]);
+  }, [onDeleteSupplement, supplementName, t]);
 
   return (
     <BottomSheet
@@ -59,74 +63,138 @@ export const PlanActionsBottomSheet: React.FC<Props> = ({
         if (index === -1) {
           onCancel();
         }
-  }}
+      }}
     >
       <BottomSheetView
         style={[
-          styles.planActionsSheetContent,
+          styles.supplementActionsSheetContent,
           { backgroundColor: colors.background },
-        ]}>
-        <View style={[styles.topIconCircle, { borderColor: colors.primary }]}>
-          <IconSymbol name="trash" size={22} color={colors.primary} />
+        ]}
+      >
+        <View
+          style={[
+            styles.topIconCircle,
+            { borderColor: colors.primary },
+          ]}
+        >
+          <IconSymbol
+            name="pill"
+            size={22}
+            color={colors.primary}
+          />
         </View>
 
         <View style={styles.topTextWrap}>
           <ThemedText type="title3" style={styles.topTitle}>
-            {t('plan.planActionsPromptTitle')}
+            {t('plan.supplementActionsPromptTitle')}
           </ThemedText>
+
           <ThemedText type="default" style={styles.topDescription}>
-            {t('plan.planActionsPromptDescription')}
+            {supplementName
+              ? t('plan.supplementActionsPromptDescriptionWithName', {
+                  name: supplementName,
+                })
+              : t('plan.supplementActionsPromptDescription')}
           </ThemedText>
         </View>
 
         <TouchableOpacity
-          style={[styles.planActionRow, { borderColor: colors.primary, backgroundColor: colors.cardBackground }]}
-          onPress={onArchivePlan}
+          style={[
+            styles.supplementActionRow,
+            {
+              borderColor: colors.primary,
+              backgroundColor: colors.cardBackground,
+            },
+          ]}
+          onPress={onArchiveSupplement}
           accessibilityRole="button"
-          accessibilityLabel={t('plan.planActionsArchiveTitle')}
+          accessibilityLabel={t('plan.supplementActionsArchiveTitle')}
         >
           <IconSymbol name="archive" size={20} color={colors.icon} />
-          <View style={styles.planActionTextWrap}>
-            <ThemedText type="defaultSemiBold" style={{ color: colors.primary }}>{t('plan.planActionsArchiveTitle')}</ThemedText>
+
+          <View style={styles.supplementActionTextWrap}>
+            <ThemedText
+              type="defaultSemiBold"
+              style={{ color: colors.primary }}
+            >
+              {t('plan.supplementActionsArchiveTitle')}
+            </ThemedText>
+
             <View style={styles.subtitleRow}>
-              <ThemedText type="caption" style={styles.planActionSubtitle}>
-                {t('plan.planActionsArchiveDescription')}
+              <ThemedText
+                type="caption"
+                style={styles.supplementActionSubtitle}
+              >
+                {t('plan.supplementActionsArchiveDescription')}
               </ThemedText>
-              <IconSymbol name="chevron.right" size={16} color={colors.primary} />
+
+              <IconSymbol
+                name="chevron.right"
+                size={16}
+                color={colors.primary}
+              />
             </View>
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.planActionRow, styles.planActionDanger, { borderColor: colors.error, backgroundColor: colors.cardBackground }]}
+          style={[
+            styles.supplementActionRow,
+            styles.supplementActionDanger,
+            {
+              borderColor: colors.error,
+              backgroundColor: colors.cardBackground,
+            },
+          ]}
           onPress={handleDeletePress}
           accessibilityRole="button"
-          accessibilityLabel={t('plan.planActionsDeleteTitle')}
+          accessibilityLabel={t('plan.supplementActionsDeleteTitle')}
         >
           <IconSymbol name="trash" size={20} color={colors.error} />
-          <View style={styles.planActionTextWrap}>
-            <ThemedText type="defaultSemiBold" style={{ color: colors.error }}>{t('plan.planActionsDeleteTitle')}</ThemedText>
+
+          <View style={styles.supplementActionTextWrap}>
+            <ThemedText
+              type="defaultSemiBold"
+              style={{ color: colors.error }}
+            >
+              {t('plan.supplementActionsDeleteTitle')}
+            </ThemedText>
+
             <View style={styles.subtitleRow}>
-              <ThemedText type="caption" style={styles.planActionSubtitle}>
-                {t('plan.planActionsDeleteDescription')}
+              <ThemedText
+                type="caption"
+                style={styles.supplementActionSubtitle}
+              >
+                {t('plan.supplementActionsDeleteDescription')}
               </ThemedText>
-              <IconSymbol name="chevron.right" size={16} color={colors.error} />
+
+              <IconSymbol
+                name="chevron.right"
+                size={16}
+                color={colors.error}
+              />
             </View>
           </View>
         </TouchableOpacity>
 
-        <AppButton title={t('general.cancel')} variant="secondary" onPress={onCancel} style={styles.cancelActionButton} />
+        <AppButton
+          title={t('general.cancel')}
+          variant="secondary"
+          onPress={onCancel}
+          style={styles.cancelActionButton}
+        />
       </BottomSheetView>
     </BottomSheet>
   );
 };
 
 const styles = StyleSheet.create({
-  planActionsSheetContent: {
+  supplementActionsSheetContent: {
     flex: 1,
     padding: 16,
     gap: 12,
   },
+
   topIconCircle: {
     alignSelf: 'center',
     width: 48,
@@ -137,20 +205,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 2,
   },
+
   topTextWrap: {
     alignItems: 'center',
     marginBottom: 2,
   },
+
   topTitle: {
     textAlign: 'center',
   },
+
   topDescription: {
     textAlign: 'center',
     opacity: 0.82,
     lineHeight: 20,
     marginTop: 2,
   },
-  planActionRow: {
+
+  supplementActionRow: {
     borderWidth: 1,
     borderRadius: 12,
     paddingVertical: 20,
@@ -159,26 +231,31 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: 10,
   },
-  planActionTextWrap: {
+
+  supplementActionTextWrap: {
     flex: 1,
     gap: 2,
   },
-  planActionSubtitle: {
+
+  supplementActionSubtitle: {
     flex: 1,
     opacity: 0.8,
     lineHeight: 18,
   },
+
   subtitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
   },
-  planActionDanger: {
+
+  supplementActionDanger: {
     borderWidth: 1.5,
   },
+
   cancelActionButton: {
     marginTop: 4,
   },
 });
 
-export default PlanActionsBottomSheet;
+export default SupplementActionsBottomSheet;

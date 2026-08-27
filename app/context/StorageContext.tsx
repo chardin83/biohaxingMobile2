@@ -20,6 +20,7 @@ import { type TrainingActivityFilter, type TrainingActivityType, type TrainingIn
 import { VerdictValue } from '@/types/verdict';
 
 import { Plan } from '../domain/Plan';
+import { type SupplementPlanEntry } from '../domain/SupplementPlanEntry';
 import { SupplementTime } from '../domain/SupplementTime';
 
 export type MealNutrition = NutritionComposition & {
@@ -65,6 +66,10 @@ export type ArchivedPlanTipEntry = PlanTipEntry & {
   endedAt: string;
 };
 
+export type ArchivedSupplementPlanEntry = SupplementPlanEntry & {
+  endedAt: string;
+};
+
 export type ReasonSummary = {
   text: string;
   createdAt: string;
@@ -90,6 +95,7 @@ export type ArchivedPlansByCategory = {
   training: ArchivedPlanTipEntry[];
   nutrition: ArchivedPlanTipEntry[];
   other: ArchivedPlanTipEntry[];
+  supplements: ArchivedSupplementPlanEntry[];
 };
 
 const EMPTY_PLANS: PlansByCategory = {
@@ -104,6 +110,7 @@ const EMPTY_ARCHIVED_PLANS: ArchivedPlansByCategory = {
   training: [],
   nutrition: [],
   other: [],
+  supplements: [],
 };
 
 export type TrainingPlanSettings = {
@@ -158,7 +165,9 @@ interface StorageContextType {
   plans: PlansByCategory;
   setPlans: (plans: PlansByCategory | ((prev: PlansByCategory) => PlansByCategory)) => void;
   archivedPlans: ArchivedPlansByCategory;
-  archivePlan: (category: keyof ArchivedPlansByCategory, planId: string | undefined, tipId: string) => void;
+  archivePlan: (category: Exclude<keyof ArchivedPlansByCategory, 'supplements'>, planId: string | undefined, tipId: string) => void;
+  archiveSupplementPlan: (planName: string, preferredTime: string) => void;
+  archiveSupplement: (supplementName: string, planName: string, endedAt: string) => void;
   hasVisitedChat: boolean;
   setHasVisitedChat: (val: boolean) => void;
   shareHealthPlan: boolean;
@@ -355,10 +364,21 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     if (!raw) return EMPTY_ARCHIVED_PLANS;
     try {
       const parsed = JSON.parse(raw);
+      const storedSupplements = Array.isArray(parsed?.supplements) ? parsed.supplements : [];
+      const supplements = storedSupplements.flatMap((item: any) =>
+        Array.isArray(item?.supplements)
+          ? item.supplements.map((supplement: any) => ({
+              ...supplement,
+              endedAt: supplement.endedAt ?? item.endedAt ?? new Date().toISOString(),
+            }))
+          : item
+      );
+
       return {
         training: Array.isArray(parsed?.training) ? parsed.training : [],
         nutrition: Array.isArray(parsed?.nutrition) ? parsed.nutrition : [],
         other: Array.isArray(parsed?.other) ? parsed.other : [],
+        supplements,
       };
     } catch (error) {
       console.warn('Failed to parse archived plans', error);
@@ -673,7 +693,7 @@ const addTrainingEntry = useCallback(
 );
 
   const archivePlan = useCallback(
-    (category: keyof ArchivedPlansByCategory, planId: string | undefined, tipId: string) => {
+    (category: Exclude<keyof ArchivedPlansByCategory, 'supplements'>, planId: string | undefined, tipId: string) => {
       setPlansState(prev => {
         const activePlans = prev[category];
         const index = activePlans.findIndex(plan => (planId ? plan.id === planId : plan.tipId === tipId));
@@ -693,6 +713,111 @@ const addTrainingEntry = useCallback(
     },
     [archivedPlansState]
   );
+
+ const archiveSupplement = useCallback(
+  (supplementName: string, planName: string, preferredTime: string) => {
+    setPlansState(previous => {
+      const planIndex = previous.supplements.findIndex(
+        plan =>
+          plan.name === planName &&
+          plan.prefferedTime === preferredTime
+      );
+
+      if (planIndex < 0) return previous;
+
+      const plan = previous.supplements[planIndex];
+
+      const supplementIndex = plan.supplements.findIndex(
+        supplement => supplement.supplement.name === supplementName
+      );
+
+      if (supplementIndex < 0) return previous;
+
+      const endedAt = new Date().toISOString();
+
+      const archivedSupplement: ArchivedSupplementPlanEntry = {
+        ...plan.supplements[supplementIndex],
+        endedAt,
+      };
+
+      const remainingSupplements = plan.supplements.filter(
+        (_, index) => index !== supplementIndex
+      );
+
+      const nextSupplementPlans =
+        remainingSupplements.length === 0
+          ? previous.supplements.filter(
+              (_, index) => index !== planIndex
+            )
+          : previous.supplements.map((item, index) =>
+              index === planIndex
+                ? {
+                    ...item,
+                    supplements: remainingSupplements,
+                  }
+                : item
+            );
+
+      const nextPlans = {
+        ...previous,
+        supplements: nextSupplementPlans,
+      };
+
+      setArchivedPlansState(previousArchived => {
+        const nextArchivedPlans = {
+          ...previousArchived,
+          supplements: [
+            ...previousArchived.supplements,
+            archivedSupplement,
+          ],
+        };
+
+        AsyncStorage.setItem(
+          STORAGE_KEYS.ARCHIVED_PLANS,
+          JSON.stringify(nextArchivedPlans)
+        );
+
+        return nextArchivedPlans;
+      });
+
+      AsyncStorage.setItem(
+        STORAGE_KEYS.PLANS,
+        JSON.stringify(nextPlans)
+      );
+
+      return nextPlans;
+    });
+  },
+  []
+);
+
+  const archiveSupplementPlan = useCallback((planName: string, preferredTime: string) => {
+    setPlansState(previous => {
+      const index = previous.supplements.findIndex(
+        plan => plan.name === planName && plan.prefferedTime === preferredTime
+      );
+      if (index < 0) return previous;
+
+      const endedAt = new Date().toISOString();
+      const archivedSupplements: ArchivedSupplementPlanEntry[] = previous.supplements[index].supplements.map(supplement => ({
+        ...supplement,
+        endedAt,
+      }));
+      const nextPlans = {
+        ...previous,
+        supplements: previous.supplements.filter((_, planIndex) => planIndex !== index),
+      };
+      const nextArchivedPlans = {
+        ...archivedPlansState,
+        supplements: [...archivedPlansState.supplements, ...archivedSupplements],
+      };
+
+      setArchivedPlansState(nextArchivedPlans);
+      AsyncStorage.setItem(STORAGE_KEYS.ARCHIVED_PLANS, JSON.stringify(nextArchivedPlans));
+      AsyncStorage.setItem(STORAGE_KEYS.PLANS, JSON.stringify(nextPlans));
+      return nextPlans;
+    });
+  }, [archivedPlansState]);
 
   const setShowMusic = (val: boolean) => {
     setShowMusicState(val);
@@ -961,6 +1086,8 @@ const addTrainingEntry = useCallback(
       setPlans,
       archivedPlans: archivedPlansState,
       archivePlan,
+      archiveSupplementPlan,
+      archiveSupplement,
       hasVisitedChat: hasVisitedChatState,
       setHasVisitedChat,
       shareHealthPlan: shareHealthPlanState,
@@ -1016,7 +1143,7 @@ const addTrainingEntry = useCallback(
       healthSyncEnabled: healthSyncEnabledState,
       setHealthSyncEnabled,
     }),
-    [plansState, setPlans, archivedPlansState, archivePlan, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState, trainingPlanSettingsState, trainingEntriesState, addTrainingEntry, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, weeklyTrackingState, addToWeeklyTracking, getWeeklyTrackingValue, healthSyncEnabledState, setHealthSyncEnabled]
+    [plansState, setPlans, archivedPlansState, archivePlan, archiveSupplementPlan, archiveSupplement, hasVisitedChatState, shareHealthPlanState, takenDatesState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState, trainingPlanSettingsState, trainingEntriesState, addTrainingEntry, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, weeklyTrackingState, addToWeeklyTracking, getWeeklyTrackingValue, healthSyncEnabledState, setHealthSyncEnabled]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

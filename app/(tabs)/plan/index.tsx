@@ -1,5 +1,6 @@
 
 
+import BottomSheet from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
@@ -16,7 +17,9 @@ import CreateTimeSlotModal from '@/components/modals/CreateTimeSlotModal';
 import PlanCategoryIcon from '@/components/plan/PlanCategoryIcon';
 import { NutritionPlanSection } from '@/components/sections/plan/NutritionPlanSection';
 import { OtherPlanSection } from '@/components/sections/plan/OtherPlanSection';
+import PlanActionsBottomSheet from '@/components/sections/plan/PlanActionsBottomSheet';
 import { PlanMeta } from '@/components/sections/plan/PlanMeta';
+import SupplementActionsBottomSheet from '@/components/sections/plan/SupplementActionsBottomSheet';
 import { TrainingPlanSection } from '@/components/sections/plan/TrainingPlanSection';
 import ShowAllButton from '@/components/ShowAllButton';
 import SupplementForm from '@/components/SupplementForm';
@@ -229,12 +232,16 @@ export default function Plans() {
   const [planForSupplementEdit, setPlanForSupplementEdit] = useState<Plan | null>(null);
   const [expandedPlans, setExpandedPlans] = useState<Record<string, boolean>>({});
   const [showAllReason, setShowAllReason] = useState(false);
+  const [planActionsTarget, setPlanActionsTarget] = useState<Plan | null>(null);
+  const [supplementActionsTarget, setSupplementActionsTarget] = useState<SupplementPlanEntry | null>(null);
+  const planActionsBottomSheetRef = React.useRef<BottomSheet>(null);
+  const supplementActionsBottomSheetRef = React.useRef<BottomSheet>(null);
 
   const { saveSupplementToPlan } = useSupplementSaver();
 
   const [supplement, setSupplement] = useState<SupplementPlanEntry | null>(null);
 
-  const { plans, setPlans, errorMessage } = useStorage();
+  const { archiveSupplementPlan, archiveSupplement, plans, setPlans, errorMessage } = useStorage();
 
   const handleGoToCreatePlan = () => {
     router.push('/plan/create');
@@ -259,21 +266,18 @@ export default function Plans() {
 
   // Removed unused handleSavePlan; CreateTimeSlotModal handles creation flow
 
-  const handleRemovePlan = (planName: string) => {
-    console.log('Removing plan:', planName);
-    const updatedPlans = supplementPlans.filter(plan => plan.name !== planName);
-    savePlans(updatedPlans);
-  };
 
-  const handleRemoveSupplement = (planName: string, supplementName: string) => {
+
+    const deleteSelectedSupplement = () => {
     const updatedPlans = supplementPlans.map(plan =>
-      plan.name === planName
+      plan.name === supplementActionsTarget?.planName
         ? {
           ...plan,
-          supplements: plan.supplements.filter(sup => sup.supplement.name !== supplementName),
+          supplements: plan.supplements.filter(sup => sup.supplement.name !== supplementActionsTarget?.supplement.name),
         }
         : plan
     );
+    setSupplementActionsTarget(null);
     savePlans(updatedPlans);
   };
 
@@ -323,6 +327,61 @@ export default function Plans() {
       ...prev,
       [planKey]: !prev[planKey],
     }));
+  };
+
+  const openPlanActions = (plan: Plan) => {
+    setPlanActionsTarget(plan);
+  };
+
+  const closePlanActions = () => {
+    planActionsBottomSheetRef.current?.close();
+    setPlanActionsTarget(null);
+    setIsEditingPlan(false);
+    setSelectedPlan(null);
+  };
+
+  const closeSupplementActions = () => {
+    supplementActionsBottomSheetRef.current?.close();
+    setSupplementActionsTarget(null);
+  };
+
+useEffect(() => {
+  if (!planActionsTarget) return;
+
+  const frame = requestAnimationFrame(() => {
+    planActionsBottomSheetRef.current?.snapToIndex(1);
+  });
+
+  return () => cancelAnimationFrame(frame);
+}, [planActionsTarget]);
+
+  /*useEffect(() => {
+    if (!isPlanActionsSheetMounted) return;
+    const frame = requestAnimationFrame(() => planActionsBottomSheetRef.current?.expand());
+    return () => cancelAnimationFrame(frame);
+  }, [isPlanActionsSheetMounted]);*/
+
+  const archiveSelectedPlan = () => {
+    if (!planActionsTarget) return;
+    archiveSupplementPlan(planActionsTarget.name, planActionsTarget.prefferedTime);
+    closePlanActions();
+  };
+
+  const deleteSelectedPlan = () => {
+    if (!planActionsTarget) return;
+    const planName = planActionsTarget.name;
+    const preferredTime = planActionsTarget.prefferedTime;
+    setPlans(prev => ({
+      ...prev,
+      supplements: prev.supplements.filter(plan => plan.name !== planName || plan.prefferedTime !== preferredTime),
+    }));
+    closePlanActions();
+  };
+
+  const archiveSelectedSupplement = () => {
+    if (!supplementActionsTarget) return;
+    archiveSupplement(supplementActionsTarget.supplement.name, supplementActionsTarget.planName, supplementActionsTarget.prefferedTime);
+    closeSupplementActions();
   };
 
   const renderPlanRow = (plan: Plan) => {
@@ -386,7 +445,7 @@ export default function Plans() {
                   key={`${plan.name}-${entry.supplement.id ?? entry.supplement.name}`}
                   planName={plan.name}
                   supplement={entry.supplement} // <-- skicka hela SupplementPlanEntry
-                  onRemoveSupplement={handleRemoveSupplement}
+                  onRemoveSupplement={() => setSupplementActionsTarget(entry)}
                   onEditSupplement={handleEditSupplement}
                 />
               )) : (
@@ -568,7 +627,29 @@ export default function Plans() {
           onPress={() => router.push('/plan/archive')}
         />
       </View>
+
       <Portal>
+      {
+        planActionsTarget && (
+        <PlanActionsBottomSheet
+          bottomSheetRef={planActionsBottomSheetRef}
+          snapPoints={['44%', '60%']}
+          onArchivePlan={archiveSelectedPlan}
+          onDeletePlan={deleteSelectedPlan}
+          onCancel={closePlanActions}
+        />
+      )}
+      {
+        supplementActionsTarget && (
+        <SupplementActionsBottomSheet
+          bottomSheetRef={supplementActionsBottomSheetRef}
+          snapPoints={['44%', '60%']}
+          onArchiveSupplement={archiveSelectedSupplement}
+          onDeleteSupplement={deleteSelectedSupplement}
+          onCancel={closeSupplementActions}
+        />
+      )}
+      
         <CreateTimeSlotModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
@@ -618,10 +699,8 @@ export default function Plans() {
           onDelete={
             isEditingPlan && selectedPlan
               ? () => {
-                handleRemovePlan(selectedPlan.name);
                 setModalVisible(false);
-                setIsEditingPlan(false);
-                setSelectedPlan(null);
+                openPlanActions(selectedPlan);
               }
               : undefined
           }

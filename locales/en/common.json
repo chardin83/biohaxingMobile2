@@ -154,8 +154,10 @@
     "previousPlansEmptyTraining": "No training goals have been archived.",
     "previousPlansEmptyNutrition": "No nutrition goals have been archived.",
     "previousPlansEmptyOther": "No other plans have been archived.",
+    "previousPlansEmptySupplement": "No supplements have been archived.",
     "previousPlansStarted": "Started {{date}}",
     "previousPlansEnded": "Ended {{date}}",
+    "previousPlansNoDates": "No dates available",
     "previousPlansDuration": "{{count}} day",
     "previousPlansDuration_plural": "{{count}} days",
     "planActionsPromptTitle": "What do you want to do with this plan?",
@@ -166,7 +168,20 @@
     "planActionsDeleteDescription": "The plan period is removed permanently. Logged meals, tracking data, and earned XP are kept.",
     "planActionsDeleteConfirmTitle": "Delete permanently?",
     "planActionsDeleteConfirmMessage": "The plan period will be removed permanently. Logged meals, tracking data, and earned XP are not affected. This cannot be undone.",
-    "planActionsDeleteConfirmAction": "Delete permanently"
+    "planActionsDeleteConfirmAction": "Delete permanently",
+    "supplementActionsPromptTitle": "Delete supplement?",
+    "supplementActionsPromptDescription": "What do you want to do with the supplement?",
+    "supplementActionsPromptDescriptionWithName": "What do you want to do with {{name}}?",
+
+    "supplementActionsArchiveTitle": "Archive supplement",
+    "supplementActionsArchiveDescription": "Mark the supplement as completed and keep its history.",
+
+    "supplementActionsDeleteTitle": "Delete permanently",
+    "supplementActionsDeleteDescription": "Delete the supplement and its history completely.",
+
+    "supplementActionsDeleteConfirmTitle": "Delete supplement?",
+    "supplementActionsDeleteConfirmMessage": "Are you sure you want to permanently delete {{name}}? This cannot be undone.",
+    "supplementActionsDeleteConfirmAction": "Delete"
   },
   "supplementTabSection": {
     "addManually": "Add manually"
