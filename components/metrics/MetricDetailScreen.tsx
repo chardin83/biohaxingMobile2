@@ -368,48 +368,25 @@ export default function MetricDetailScreen() {
    *
    * Magnesium kan lika gärna ha kommit från mat.
    */
-  const targetMetDates = React.useMemo(() => {
-    if (!tip?.id) return [];
-
-    return datesInRange.filter(dateKey => {
-      const progress =
-        buildTipProgressForDate(dateKey);
-
-      const tipProgress =
-        progress.find(
-          item => item.tipId === tip.id,
-        );
-
-      /*
-       * Bara första targeten tills vidare.
-       */
-      const firstTarget =
-        tipProgress?.targets?.[0];
-
-      return firstTarget?.isMet === true;
-    });
-  }, [
-    buildTipProgressForDate,
-    datesInRange,
-    tip?.id,
-  ]);
-
-  /*
-   * Hämtar första targeten för att kunna få en vettig
-   * label i grafen.
-   *
-   * Progress för idag räcker här eftersom vi framför allt
-   * behöver targetens tag.
-   */
-  const firstTarget = React.useMemo(() => {
-    if (!tip || datesInRange.length === 0) {
-      return undefined;
+  const targetEventSeries = React.useMemo(() => {
+    if (!tip?.id || datesInRange.length === 0) {
+      return [];
     }
 
     /*
-     * Leta från senaste datum bakåt tills vi hittar
-     * target-definitionen.
+     * Samla alla targets som finns för tipset.
+     *
+     * Vi letar bakifrån eftersom senaste dagen sannolikt
+     * har den aktuella target-definitionen.
      */
+    let targetDefinitions:
+      | Array<{
+        tag: string;
+        unit: string;
+        period: string;
+      }>
+      | undefined;
+
     for (
       let index = datesInRange.length - 1;
       index >= 0;
@@ -425,52 +402,92 @@ export default function MetricDetailScreen() {
           item => item.tipId === tip.id,
         );
 
-      const target =
-        tipProgress?.targets?.[0];
+      if (tipProgress?.targets?.length) {
+        targetDefinitions =
+          tipProgress.targets.map(target => ({
+            tag: target.tag,
+            unit: target.unit,
+            period: target.period,
+          }));
 
-      if (target) {
-        return target;
+        break;
       }
     }
 
-    return undefined;
-  }, [
-    buildTipProgressForDate,
-    datesInRange,
-    tip,
-  ]);
-
-  /*
-   * Exempel:
-   *
-   * magnesium -> "Magnesium"
-   *
-   * Om översättningen saknas används taggen som fallback.
-   */
-  const targetLabel = React.useMemo(() => {
-    if (!firstTarget?.tag) {
-      return t('common:general.targetReached', {
-        defaultValue: 'Mål uppnått',
-      });
+    if (!targetDefinitions?.length) {
+      return [];
     }
 
-    const translatedTarget =
-      t(
-        `common:nutrition.${firstTarget.tag}`,
-        {
-          defaultValue: firstTarget.tag,
-        },
-      );
+    /*
+     * Bygg en serie per target.
+     */
+    return targetDefinitions.map(
+      (targetDefinition, targetIndex) => {
+        const dates = datesInRange.filter(dateKey => {
+          const progress =
+            buildTipProgressForDate(dateKey);
 
-    return t(
-      'common:general.targetReachedWithName',
-      {
-        name: translatedTarget,
-        defaultValue:
-          `${translatedTarget} – mål uppnått`,
+          const tipProgress =
+            progress.find(
+              item => item.tipId === tip.id,
+            );
+
+          const target =
+            tipProgress?.targets?.find(
+              candidate =>
+                candidate.tag ===
+                targetDefinition.tag &&
+                candidate.unit ===
+                targetDefinition.unit &&
+                candidate.period ===
+                targetDefinition.period,
+            );
+
+          return target?.isMet === true;
+        });
+
+        const translatedTarget = t(
+          `common:nutrition.${targetDefinition.tag}`,
+          {
+            defaultValue:
+              targetDefinition.tag,
+          },
+        );
+
+        return {
+          label: t(
+            'common:general.targetReachedWithName',
+            {
+              name: translatedTarget,
+              defaultValue:
+                `${translatedTarget} – mål uppnått`,
+            },
+          ),
+
+          dates,
+
+          /*
+           * Tillfälliga färger.
+           * Kan senare flyttas till en riktig palette.
+           */
+          color:
+            targetIndex === 0
+              ? colors.warmColor
+              : targetIndex === 1
+                ? colors.primary
+                : colors.accentStrong,
+        };
       },
     );
-  }, [firstTarget?.tag, t]);
+  }, [
+    buildTipProgressForDate,
+    colors.accentStrong,
+    colors.primary,
+    colors.warmColor,
+    datesInRange,
+    t,
+    tip?.id,
+  ]);
 
   const selectedConfig = useMetricConfig({
     metricId: resolvedMetricId,
@@ -538,7 +555,7 @@ export default function MetricDetailScreen() {
         </ThemedText>
 
         <View style={styles.timeWindowRow}>
-          {([7, 30, 90] as const).map(days => {
+          {([7, 30] as const).map(days => {
             const isActive =
               selectedDays === days;
 
@@ -600,13 +617,9 @@ export default function MetricDetailScreen() {
             openMetricValuesTable
           }
           eventSeries={
-            tip && firstTarget
-              ? {
-                  label: targetLabel,
-                  dates: targetMetDates,
-                  color: colors.warmColor,
-                }
-              : undefined
+            targetEventSeries.length > 0
+    ? targetEventSeries
+    : undefined
           }
         />
       </View>

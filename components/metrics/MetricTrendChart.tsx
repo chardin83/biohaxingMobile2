@@ -39,7 +39,7 @@ interface MetricTrendChartProps {
     label?: string;
     color?: string;
   }>;
-  readonly eventSeries?: ChartEventSeries;
+  readonly eventSeries?: ChartEventSeries[];
 }
 
 const CHART_PADDING = {
@@ -290,16 +290,20 @@ export function MetricTrendChart({
       return { x, y };
     });
 
-    const eventPoints = (eventSeries?.dates ?? [])
-      .filter(date => {
-        const ts = toDateTimestamp(date);
+    const eventSeriesPoints = (eventSeries ?? []).map(series => ({
+      label: series.label,
+      color: series.color,
+      points: series.dates
+        .filter(date => {
+          const ts = toDateTimestamp(date);
 
-        return ts >= windowStartTs && ts <= todayTs;
-      })
-      .map(date => ({
-        date,
-        x: getXForDate(date),
-      }));
+          return ts >= windowStartTs && ts <= todayTs;
+        })
+        .map(date => ({
+          date,
+          x: getXForDate(date),
+        })),
+    }));
 
     const xAxisPoints = xAxisDates.map(date => ({
       date,
@@ -312,10 +316,10 @@ export function MetricTrendChart({
       chartBottom: CHART_PADDING.top + innerHeight,
       gridLines,
       referenceLinePoints,
-      eventPoints,
+      eventSeriesPoints,
       xAxisPoints,
     };
-  }, [chartData, chartWidth, daysToShow, eventSeries?.dates, height, referenceLines, xAxisDates]);
+  }, [chartData, chartWidth, daysToShow, eventSeries, height, referenceLines, xAxisDates]);
 
 
 
@@ -545,15 +549,6 @@ export function MetricTrendChart({
                 );
               })}
               <Path d={buildAreaPath(chartGeometry.points, chartGeometry.chartBottom)} fill="url(#hrvAreaGradient)" />
-              {chartGeometry.eventPoints.map(event => (
-                <Circle
-                  key={`event-${event.date}`}
-                  cx={event.x}
-                  cy={chartGeometry.chartBottom - 8}
-                  r={4}
-                  fill={eventSeries?.color ?? colors.primary}
-                />
-              ))}
               <Path
                 d={buildPath(chartGeometry.points)}
                 fill="none"
@@ -582,14 +577,14 @@ export function MetricTrendChart({
       </View>
 
       {!!chartGeometry && (
-        <View style={styles.axisLabels}>
-          {chartGeometry.xAxisPoints.map(
-            point => {
+        <>
+          <View style={styles.axisLabels}>
+            {chartGeometry.xAxisPoints.map(point => {
               const label = xAxisLabelFormatter
                 ? xAxisLabelFormatter(point.date)
                 : formatShortDate(point.date);
 
-              let left =
+              const left =
                 point.x - X_AXIS_LABEL_WIDTH / 2;
 
               return (
@@ -611,11 +606,35 @@ export function MetricTrendChart({
                   </ThemedText>
                 </View>
               );
-            },
-          )}
-        </View>
-      )}
+            })}
+          </View>
 
+          {!!eventSeries?.length && (
+  <View style={styles.eventRows}>
+    {chartGeometry.eventSeriesPoints.map((series, seriesIndex) => (
+      <View
+        key={`${series.label}-${seriesIndex}`}
+        style={styles.eventRow}
+      >
+        {series.points.map(event => (
+          <View
+            key={`${series.label}-${event.date}`}
+            style={[
+              styles.eventDot,
+              {
+                left: event.x - 4,
+                backgroundColor:
+                  series.color ?? colors.primary,
+              },
+            ]}
+          />
+        ))}
+      </View>
+    ))}
+  </View>
+)}
+        </>
+      )}
       <View style={styles.legend}>
         <View style={styles.legendItem}>
           <View
@@ -630,22 +649,26 @@ export function MetricTrendChart({
           </ThemedText>
         </View>
 
-        {eventSeries && (
-          <View style={styles.legendItem}>
-            <View
-              style={[
-                styles.legendDot,
-                {
-                  backgroundColor:
-                    eventSeries.color,
-                },
-              ]}
-            />
-            <ThemedText type="caption">
-              {eventSeries.label}
-            </ThemedText>
-          </View>
-        )}
+        {eventSeries?.map((series, index) => (
+  <View
+    key={`${series.label}-${index}`}
+    style={styles.legendItem}
+  >
+    <View
+      style={[
+        styles.legendDot,
+        {
+          backgroundColor:
+            series.color ?? colors.primary,
+        },
+      ]}
+    />
+
+    <ThemedText type="caption">
+      {series.label}
+    </ThemedText>
+  </View>
+))}
       </View>
 
       {!!onViewRegisteredValues && (
@@ -742,13 +765,14 @@ const styles = StyleSheet.create({
   emptyChartFrame: {
     justifyContent: 'center',
   },
-  legend: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 18,
-    marginTop: 8,
-  },
+ legend: {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 12,
+  marginTop: 8,
+},
 
   legendItem: {
     flexDirection: 'row',
@@ -761,4 +785,22 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
   },
+  eventRows: {
+  marginLeft: CHART_FRAME_OFFSET,
+  marginTop: 4,
+  gap: 4,
+},
+
+eventRow: {
+  position: 'relative',
+  height: 12,
+},
+
+eventDot: {
+  position: 'absolute',
+  top: 2,
+  width: 8,
+  height: 8,
+  borderRadius: 4,
+},
 });
