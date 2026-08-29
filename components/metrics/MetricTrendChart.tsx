@@ -161,6 +161,35 @@ export function MetricTrendChart({
     [colors.borderLight, colors.overlayLight, colors.primary, colors.text, colors.textMuted, height]
   );
 
+
+  const getTargetLabel = React.useCallback(
+  (tag: string) => {
+    const keys = [
+      `common:nutritionLogger.mineralLabels.${tag}`,
+      `common:nutritionLogger.polyphenolLabels.${tag}`,
+      `common:nutritionLogger.vitaminLabels.${tag}`,
+      `common:nutritionLogger.fiberLabels.${tag}`,
+      `common:nutritionLogger.aminoAcidLabels.${tag}`,
+      `common:nutritionLogger.plantDiversityLabels.${tag}`,
+      `common:nutritionLogger.weeklyTrackingLabels.${tag}`,
+      `common:nutritionLogger.fiberSubtypeLabels.${tag}`,
+    ];
+
+    for (const key of keys) {
+      const translated = t(key, {
+        defaultValue: '',
+      });
+
+      if (translated) {
+        return translated;
+      }
+    }
+
+    return tag;
+  },
+  [t],
+);
+
   const chartData = React.useMemo<MetricTrendPoint[]>(() => {
     const MS_PER_DAY = 24 * 60 * 60 * 1000;
     const todayTs = toDateTimestamp(getTodayUtcDateString());
@@ -610,29 +639,29 @@ export function MetricTrendChart({
           </View>
 
           {!!eventSeries?.length && (
-  <View style={styles.eventRows}>
-    {chartGeometry.eventSeriesPoints.map((series, seriesIndex) => (
-      <View
-        key={`${series.label}-${seriesIndex}`}
-        style={styles.eventRow}
-      >
-        {series.points.map(event => (
-          <View
-            key={`${series.label}-${event.date}`}
-            style={[
-              styles.eventDot,
-              {
-                left: event.x - 4,
-                backgroundColor:
-                  series.color ?? colors.primary,
-              },
-            ]}
-          />
-        ))}
-      </View>
-    ))}
-  </View>
-)}
+            <View style={styles.eventRows}>
+              {chartGeometry.eventSeriesPoints.map((series, seriesIndex) => (
+                <View
+                  key={`${series.label}-${seriesIndex}`}
+                  style={styles.eventRow}
+                >
+                  {series.points.map(event => (
+                    <View
+                      key={`${series.label}-${event.date}`}
+                      style={[
+                        styles.eventDot,
+                        {
+                          left: event.x - 4,
+                          backgroundColor:
+                            series.color ?? colors.primary,
+                        },
+                      ]}
+                    />
+                  ))}
+                </View>
+              ))}
+            </View>
+          )}
         </>
       )}
       <View style={styles.legend}>
@@ -650,25 +679,25 @@ export function MetricTrendChart({
         </View>
 
         {eventSeries?.map((series, index) => (
-  <View
-    key={`${series.label}-${index}`}
-    style={styles.legendItem}
-  >
-    <View
-      style={[
-        styles.legendDot,
-        {
-          backgroundColor:
-            series.color ?? colors.primary,
-        },
-      ]}
-    />
+          <View
+            key={`${series.label}-${index}`}
+            style={styles.legendItem}
+          >
+            <View
+              style={[
+                styles.legendDot,
+                {
+                  backgroundColor:
+                    series.color ?? colors.primary,
+                },
+              ]}
+            />
 
-    <ThemedText type="caption">
-      {series.label}
-    </ThemedText>
-  </View>
-))}
+            <ThemedText type="caption">
+              {getTargetLabel(series.label)}
+            </ThemedText>
+          </View>
+        ))}
       </View>
 
       {!!onViewRegisteredValues && (
@@ -765,14 +794,13 @@ const styles = StyleSheet.create({
   emptyChartFrame: {
     justifyContent: 'center',
   },
- legend: {
-  flexDirection: 'row',
-  flexWrap: 'wrap',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: 12,
-  marginTop: 8,
-},
+  legend: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    gap: 12,
+    marginTop: 8,
+  },
 
   legendItem: {
     flexDirection: 'row',
@@ -786,21 +814,21 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   eventRows: {
-  marginLeft: CHART_FRAME_OFFSET,
-  marginTop: 4,
-  gap: 4,
-},
+    marginLeft: CHART_FRAME_OFFSET,
+    marginTop: 4,
+    gap: 4,
+  },
 
-eventRow: {
-  position: 'relative',
-  height: 12,
-},
+  eventRow: {
+    position: 'relative',
+    height: 12,
+  },
 
-eventDot: {
-  position: 'absolute',
-  top: 2,
-  width: 8,
-  height: 8,
-  borderRadius: 4,
-},
+  eventDot: {
+    position: 'absolute',
+    top: 2,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
 });

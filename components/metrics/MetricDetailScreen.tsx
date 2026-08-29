@@ -460,7 +460,7 @@ export default function MetricDetailScreen() {
             {
               name: translatedTarget,
               defaultValue:
-                `${translatedTarget} – mål uppnått`,
+                `${translatedTarget}`,
             },
           ),
 
