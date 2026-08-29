@@ -13,6 +13,12 @@ export interface MetricTrendPoint {
   readonly value: number;
 }
 
+type ChartEventSeries = {
+  label: string;
+  dates: string[];
+  color?: string;
+};
+
 type AxisEntry = {
   readonly id: 'max' | 'mid' | 'min';
   readonly value: number;
@@ -33,6 +39,7 @@ interface MetricTrendChartProps {
     label?: string;
     color?: string;
   }>;
+  readonly eventSeries?: ChartEventSeries;
 }
 
 const CHART_PADDING = {
@@ -72,12 +79,6 @@ function getTodayUtcDateString() {
   return new Date().toISOString().slice(0, 10);
 }
 
-function getLabelTextAnchor(index: number, lastIndex: number): 'start' | 'middle' | 'end' {
-  if (index === 0) return 'start';
-  if (index === lastIndex) return 'end';
-  return 'middle';
-}
-
 function buildPath(points: { x: number; y: number }[]) {
   return points
     .map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`)
@@ -111,6 +112,7 @@ export function MetricTrendChart({
   onViewRegisteredValues,
   xAxisLabelFormatter,
   referenceLines,
+  eventSeries,
 }: Readonly<MetricTrendChartProps>) {
   const { colors } = useTheme();
   const { t } = useTranslation('metrics');
@@ -203,6 +205,32 @@ export function MetricTrendChart({
     setChartWidth(currentWidth => (currentWidth === nextWidth ? currentWidth : nextWidth));
   }, []);
 
+  const xAxisDates = React.useMemo(() => {
+    const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+    const todayTs = toDateTimestamp(getTodayUtcDateString());
+    const windowStartTs =
+      todayTs - (daysToShow - 1) * MS_PER_DAY;
+
+    const getDateString = (timestamp: number) =>
+      new Date(timestamp).toISOString().slice(0, 10);
+
+    if (daysToShow <= 7) {
+      return Array.from({ length: daysToShow }, (_, index) =>
+        getDateString(windowStartTs + index * MS_PER_DAY),
+      );
+    }
+
+    const middleTs =
+      windowStartTs + (todayTs - windowStartTs) / 2;
+
+    return [
+      getDateString(windowStartTs),
+      getDateString(middleTs),
+      getDateString(todayTs),
+    ];
+  }, [daysToShow]);
+
   const chartGeometry = React.useMemo(() => {
     if (chartWidth === 0 || chartData.length === 0) {
       return null;
@@ -230,26 +258,52 @@ export function MetricTrendChart({
       CHART_PADDING.top + ((paddedMax - value) / paddedRange) * innerHeight
     );
 
-    const timestamps = chartData.map(entry => toDateTimestamp(entry.date));
-    const minTs = Math.min(...timestamps);
-    const maxTs = Math.max(...timestamps);
-    const tsRange = Math.max(maxTs - minTs, 1);
-
-    const points = chartData.map((entry) => {
-      const ts = toDateTimestamp(entry.date);
-      const x = chartData.length === 1
-        ? CHART_PADDING.left + innerWidth / 2
-        : CHART_PADDING.left + ((ts - minTs) / tsRange) * innerWidth;
-      const y = CHART_PADDING.top + ((paddedMax - entry.value) / paddedRange) * innerHeight;
-
-      return { x, y };
-    });
-
     const referenceLinePoints = (referenceLines ?? []).map(line => ({
       y: CHART_PADDING.top + ((paddedMax - line.value) / paddedRange) * innerHeight,
       value: line.value,
       label: line.label,
       color: line.color,
+    }));
+
+    const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+    const todayTs = toDateTimestamp(getTodayUtcDateString());
+    const windowStartTs = todayTs - (daysToShow - 1) * MS_PER_DAY;
+    const windowRange = Math.max(todayTs - windowStartTs, 1);
+
+    const getXForDate = (date: string) => {
+      const ts = toDateTimestamp(date);
+
+      return (
+        CHART_PADDING.left +
+        ((ts - windowStartTs) / windowRange) * innerWidth
+      );
+    };
+
+    const points = chartData.map(entry => {
+      const x = getXForDate(entry.date);
+
+      const y =
+        CHART_PADDING.top +
+        ((paddedMax - entry.value) / paddedRange) * innerHeight;
+
+      return { x, y };
+    });
+
+    const eventPoints = (eventSeries?.dates ?? [])
+      .filter(date => {
+        const ts = toDateTimestamp(date);
+
+        return ts >= windowStartTs && ts <= todayTs;
+      })
+      .map(date => ({
+        date,
+        x: getXForDate(date),
+      }));
+
+    const xAxisPoints = xAxisDates.map(date => ({
+      date,
+      x: getXForDate(date),
     }));
 
     return {
@@ -258,16 +312,12 @@ export function MetricTrendChart({
       chartBottom: CHART_PADDING.top + innerHeight,
       gridLines,
       referenceLinePoints,
+      eventPoints,
+      xAxisPoints,
     };
-  }, [chartData, chartWidth, height, referenceLines]);
+  }, [chartData, chartWidth, daysToShow, eventSeries?.dates, height, referenceLines, xAxisDates]);
 
-  const labelIndices = React.useMemo(() => {
-    if (chartData.length === 0) {
-      return [] as number[];
-    }
 
-    return Array.from(new Set([0, Math.floor((chartData.length - 1) / 2), chartData.length - 1]));
-  }, [chartData.length]);
 
   const yAxisEntries = chartGeometry?.axisEntries ?? [];
   const yAxisLabelStyles = React.useMemo(
@@ -291,7 +341,7 @@ export function MetricTrendChart({
     ];
 
     return (
-      <View style={[styles.container, dynamicStyles.containerBorder]}> 
+      <View style={[styles.container, dynamicStyles.containerBorder]}>
         <View style={styles.header}>
           <ThemedText type="title3">{t('metrics:trendChart.title', { metric: metricName })}</ThemedText>
           <ThemedText type="caption" style={dynamicStyles.subtitleText}>
@@ -326,7 +376,7 @@ export function MetricTrendChart({
             ))}
           </View>
 
-          <View onLayout={handleLayout} style={[styles.chartFrame, dynamicStyles.chartFrame, styles.emptyChartFrame]}> 
+          <View onLayout={handleLayout} style={[styles.chartFrame, dynamicStyles.chartFrame, styles.emptyChartFrame]}>
             {chartWidth > 0 && (
               <Svg width={chartWidth} height={height}>
                 {emptyGridLineRows.map(index => {
@@ -347,7 +397,7 @@ export function MetricTrendChart({
               </Svg>
             )}
 
-            <View style={styles.emptyState}> 
+            <View style={styles.emptyState}>
               <View style={[styles.emptyIconFrame, dynamicStyles.emptyIconFrame]}>
                 <IconSymbol name="chart" size={22} color={colors.primary} />
               </View>
@@ -402,164 +452,213 @@ export function MetricTrendChart({
   }
 
   return (
-  <View style={[styles.container, dynamicStyles.containerBorder]}> 
-    <View style={styles.header}>
-      <View>
-        <ThemedText type="title3">{t('metrics:trendChart.title', { metric: metricName })}</ThemedText>
-        <ThemedText type="caption" style={dynamicStyles.subtitleText}>
-          {subtitleText}
-        </ThemedText>
-      </View>
-      <View style={styles.summary}>
-        <View style={styles.summaryItem}>
-          <ThemedText type="caption" style={dynamicStyles.subtitleText}>{t('metrics:trendChart.latestLabel')}</ThemedText>
-          <ThemedText type="defaultSemiBold">{latestValue == null ? '—' : formatValue(latestValue)}</ThemedText>
-        </View>
-        <View style={styles.summaryItem}>
-          <ThemedText type="caption" style={dynamicStyles.subtitleText}>{t('metrics:trendChart.lowLabel')}</ThemedText>
-          <ThemedText type="defaultSemiBold">{minValue == null ? '—' : formatValue(minValue)}</ThemedText>
-        </View>
-        <View style={styles.summaryItem}>
-          <ThemedText type="caption" style={dynamicStyles.subtitleText}>{t('metrics:trendChart.highLabel')}</ThemedText>
-          <ThemedText type="defaultSemiBold">{maxValue == null ? '—' : formatValue(maxValue)}</ThemedText>
-        </View>
-      </View>
-    </View>
-
-    <View style={[styles.chartRow, dynamicStyles.chartRow]}>
-      <View style={[styles.yAxisColumn, dynamicStyles.yAxisColumn]}>
-        {!!unit && (
-          <ThemedText
-            type="caption"
-            style={[styles.yAxisUnit, dynamicStyles.yAxisUnit]}
-          >
-            {unit}
+    <View style={[styles.container, dynamicStyles.containerBorder]}>
+      <View style={styles.header}>
+        <View>
+          <ThemedText type="title3">{t('metrics:trendChart.title', { metric: metricName })}</ThemedText>
+          <ThemedText type="caption" style={dynamicStyles.subtitleText}>
+            {subtitleText}
           </ThemedText>
-        )}
-        {yAxisEntries.map(({ id, value }, index) => (
-          <ThemedText
-            key={id}
-            type="caption"
-            style={[styles.yAxisValue, dynamicStyles.yAxisValue, yAxisLabelStyles[index]]}
-          >
-            {valueFormatter ? valueFormatter(value) : value.toFixed(1)}
-          </ThemedText>
-        ))}
+        </View>
+        <View style={styles.summary}>
+          <View style={styles.summaryItem}>
+            <ThemedText type="caption" style={dynamicStyles.subtitleText}>{t('metrics:trendChart.latestLabel')}</ThemedText>
+            <ThemedText type="defaultSemiBold">{latestValue == null ? '—' : formatValue(latestValue)}</ThemedText>
+          </View>
+          <View style={styles.summaryItem}>
+            <ThemedText type="caption" style={dynamicStyles.subtitleText}>{t('metrics:trendChart.lowLabel')}</ThemedText>
+            <ThemedText type="defaultSemiBold">{minValue == null ? '—' : formatValue(minValue)}</ThemedText>
+          </View>
+          <View style={styles.summaryItem}>
+            <ThemedText type="caption" style={dynamicStyles.subtitleText}>{t('metrics:trendChart.highLabel')}</ThemedText>
+            <ThemedText type="defaultSemiBold">{maxValue == null ? '—' : formatValue(maxValue)}</ThemedText>
+          </View>
+        </View>
       </View>
-      <View
-        onLayout={handleLayout}
-        style={[styles.chartFrame, dynamicStyles.chartFrame]}
-      >
-        {chartGeometry && (
-          <Svg width={chartWidth} height={height}>
-            <Defs>
-              <LinearGradient id="hrvAreaGradient" x1="0" y1="0" x2="0" y2="1">
-                <Stop offset="0" stopColor={lineColor} stopOpacity="0.28" />
-                <Stop offset="1" stopColor={lineColor} stopOpacity="0.04" />
-              </LinearGradient>
-            </Defs>
-            {chartGeometry.gridLines.map((gridY, index) => (
-              <Line
-                key={chartGeometry.axisEntries[index]?.id ?? `grid-${gridY}`}
-                x1={CHART_PADDING.left}
-                x2={chartWidth - CHART_PADDING.right}
-                y1={gridY}
-                y2={gridY}
-                stroke={colors.borderLight}
-                strokeDasharray="4 6"
-                strokeWidth={1}
-              />
-            ))}
-            {chartGeometry.referenceLinePoints.map(referenceLine => {
-              const color = referenceLine.color ?? colors.textMuted;
-              return (
-                <React.Fragment key={`reference-${referenceLine.value}`}>
-                  <Line
-                    x1={CHART_PADDING.left}
-                    x2={chartWidth - CHART_PADDING.right}
-                    y1={referenceLine.y}
-                    y2={referenceLine.y}
-                    stroke={color}
-                    strokeDasharray="3 4"
-                    strokeWidth={1.5}
-                  />
-                  <SvgText
-                    x={CHART_PADDING.left + 2}
-                    y={referenceLine.y - 4}
-                    fontSize="10"
-                    fill={color}
-                  >
-                    {referenceLine.label ?? String(referenceLine.value)}
-                  </SvgText>
-                </React.Fragment>
-              );
-            })}
-            <Path d={buildAreaPath(chartGeometry.points, chartGeometry.chartBottom)} fill="url(#hrvAreaGradient)" />
-            <Path
-              d={buildPath(chartGeometry.points)}
-              fill="none"
-              stroke={lineColor}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={3}
-            />
-            {chartGeometry.points.map((point, index) => {
-              const isLatestPoint = index === chartGeometry.points.length - 1;
-              return (
-                <Circle
-                  key={`${chartData[index].date}-${chartData[index].value}`}
-                  cx={point.x}
-                  cy={point.y}
-                  r={isLatestPoint ? 5 : 4}
-                  fill={isLatestPoint ? lineColor : colors.cardBackground}
-                  stroke={lineColor}
-                  strokeWidth={2}
-                />
-              );
-            })}
-          </Svg>
-        )}
-      </View>
-    </View>
 
-    {!!chartGeometry && (
-      <View style={styles.axisLabels}>
-        {labelIndices.map((index) => {
-          const point = chartGeometry.points[index];
-          const label = xAxisLabelFormatter
-            ? xAxisLabelFormatter(chartData[index].date)
-            : formatShortDate(chartData[index].date);
-          const textAnchor = getLabelTextAnchor(index, chartData.length - 1);
-          let left = point.x - X_AXIS_LABEL_WIDTH / 2;
-          if (textAnchor === 'start') {
-            left = point.x;
-          } else if (textAnchor === 'end') {
-            left = point.x - X_AXIS_LABEL_WIDTH;
-          }
-
-          return (
-            <View
-              key={`xlabel-${chartData[index].date}`}
-              style={[styles.axisLabelItem, { left }]}
+      <View style={[styles.chartRow, dynamicStyles.chartRow]}>
+        <View style={[styles.yAxisColumn, dynamicStyles.yAxisColumn]}>
+          {!!unit && (
+            <ThemedText
+              type="caption"
+              style={[styles.yAxisUnit, dynamicStyles.yAxisUnit]}
             >
-              <ThemedText type="caption" style={[styles.axisLabelText, dynamicStyles.axisLabelText]}>{label}</ThemedText>
-            </View>
-          );
-        })}
+              {unit}
+            </ThemedText>
+          )}
+          {yAxisEntries.map(({ id, value }, index) => (
+            <ThemedText
+              key={id}
+              type="caption"
+              style={[styles.yAxisValue, dynamicStyles.yAxisValue, yAxisLabelStyles[index]]}
+            >
+              {valueFormatter ? valueFormatter(value) : value.toFixed(1)}
+            </ThemedText>
+          ))}
+        </View>
+        <View
+          onLayout={handleLayout}
+          style={[styles.chartFrame, dynamicStyles.chartFrame]}
+        >
+          {chartGeometry && (
+            <Svg width={chartWidth} height={height}>
+              <Defs>
+                <LinearGradient id="hrvAreaGradient" x1="0" y1="0" x2="0" y2="1">
+                  <Stop offset="0" stopColor={lineColor} stopOpacity="0.28" />
+                  <Stop offset="1" stopColor={lineColor} stopOpacity="0.04" />
+                </LinearGradient>
+              </Defs>
+              {chartGeometry.gridLines.map((gridY, index) => (
+                <Line
+                  key={chartGeometry.axisEntries[index]?.id ?? `grid-${gridY}`}
+                  x1={CHART_PADDING.left}
+                  x2={chartWidth - CHART_PADDING.right}
+                  y1={gridY}
+                  y2={gridY}
+                  stroke={colors.borderLight}
+                  strokeDasharray="4 6"
+                  strokeWidth={1}
+                />
+              ))}
+              {chartGeometry.referenceLinePoints.map(referenceLine => {
+                const color = referenceLine.color ?? colors.textMuted;
+                return (
+                  <React.Fragment key={`reference-${referenceLine.value}`}>
+                    <Line
+                      x1={CHART_PADDING.left}
+                      x2={chartWidth - CHART_PADDING.right}
+                      y1={referenceLine.y}
+                      y2={referenceLine.y}
+                      stroke={color}
+                      strokeDasharray="3 4"
+                      strokeWidth={1.5}
+                    />
+                    <SvgText
+                      x={CHART_PADDING.left + 2}
+                      y={referenceLine.y - 4}
+                      fontSize="10"
+                      fill={color}
+                    >
+                      {referenceLine.label ?? String(referenceLine.value)}
+                    </SvgText>
+                  </React.Fragment>
+                );
+              })}
+              <Path d={buildAreaPath(chartGeometry.points, chartGeometry.chartBottom)} fill="url(#hrvAreaGradient)" />
+              {chartGeometry.eventPoints.map(event => (
+                <Circle
+                  key={`event-${event.date}`}
+                  cx={event.x}
+                  cy={chartGeometry.chartBottom - 8}
+                  r={4}
+                  fill={eventSeries?.color ?? colors.primary}
+                />
+              ))}
+              <Path
+                d={buildPath(chartGeometry.points)}
+                fill="none"
+                stroke={lineColor}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={3}
+              />
+              {chartGeometry.points.map((point, index) => {
+                const isLatestPoint = index === chartGeometry.points.length - 1;
+                return (
+                  <Circle
+                    key={`${chartData[index].date}-${chartData[index].value}`}
+                    cx={point.x}
+                    cy={point.y}
+                    r={isLatestPoint ? 5 : 4}
+                    fill={isLatestPoint ? lineColor : colors.cardBackground}
+                    stroke={lineColor}
+                    strokeWidth={2}
+                  />
+                );
+              })}
+            </Svg>
+          )}
+        </View>
       </View>
-    )}
 
-    {!!onViewRegisteredValues && (
-      <AppButton
-        onPress={onViewRegisteredValues}
-        title={t('trendChart.viewRegisteredValues')}
-        variant="secondary"
-        style={styles.ctaButton}
-      />
-    )}
+      {!!chartGeometry && (
+        <View style={styles.axisLabels}>
+          {chartGeometry.xAxisPoints.map(
+            point => {
+              const label = xAxisLabelFormatter
+                ? xAxisLabelFormatter(point.date)
+                : formatShortDate(point.date);
 
-  </View>
-);
+              let left =
+                point.x - X_AXIS_LABEL_WIDTH / 2;
+
+              return (
+                <View
+                  key={`xlabel-${point.date}`}
+                  style={[
+                    styles.axisLabelItem,
+                    { left },
+                  ]}
+                >
+                  <ThemedText
+                    type="caption"
+                    style={[
+                      styles.axisLabelText,
+                      dynamicStyles.axisLabelText,
+                    ]}
+                  >
+                    {label}
+                  </ThemedText>
+                </View>
+              );
+            },
+          )}
+        </View>
+      )}
+
+      <View style={styles.legend}>
+        <View style={styles.legendItem}>
+          <View
+            style={[
+              styles.legendDot,
+              { backgroundColor: colors.primary },
+            ]}
+          />
+          <ThemedText type="caption">
+            {metricName}
+            {unit ? ` (${unit})` : ''}
+          </ThemedText>
+        </View>
+
+        {eventSeries && (
+          <View style={styles.legendItem}>
+            <View
+              style={[
+                styles.legendDot,
+                {
+                  backgroundColor:
+                    eventSeries.color,
+                },
+              ]}
+            />
+            <ThemedText type="caption">
+              {eventSeries.label}
+            </ThemedText>
+          </View>
+        )}
+      </View>
+
+      {!!onViewRegisteredValues && (
+        <AppButton
+          onPress={onViewRegisteredValues}
+          title={t('trendChart.viewRegisteredValues')}
+          variant="secondary"
+          style={styles.ctaButton}
+        />
+      )}
+
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -642,5 +741,24 @@ const styles = StyleSheet.create({
   },
   emptyChartFrame: {
     justifyContent: 'center',
+  },
+  legend: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 18,
+    marginTop: 8,
+  },
+
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+
+  legendDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
 });

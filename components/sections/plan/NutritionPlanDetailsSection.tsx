@@ -11,20 +11,21 @@ import { ALL_AMINO_ACID_KEYS } from '@/constants/aminoAcids';
 import { MINERAL_TYPE_KEYS } from '@/constants/minerals';
 import { VITAMIN_TYPE_KEYS } from '@/constants/vitamins';
 import type { Tip } from '@/locales/tips';
+import { NutritionTargetPeriod, NutritionTargetUnit } from '@/types/nutritionTargets';
 
 export type NutritionPlanDetailsTarget = {
   key: string;
   tag: string;
-  unit: 'g' | 'mg' | 'plants' | 'items' | 'count';
-  period: 'daily' | 'weekly';
+  unit: NutritionTargetUnit;
+  period: NutritionTargetPeriod;
   amount: number;
   label: string;
 };
 
 type NutritionTargetSource = {
   tag: string;
-  unit: 'g' | 'mg' | 'plants' | 'items' | 'count';
-  period?: 'daily' | 'weekly';
+  unit: NutritionTargetUnit;
+  period?: NutritionTargetPeriod;
   amount: number;
   trackingKey?: string;
 };
@@ -70,7 +71,7 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({
     const aminoAcidTags = new Set<string>(ALL_AMINO_ACID_KEYS);
     const vitaminTags = new Set<string>(VITAMIN_TYPE_KEYS);
 
-    const formatValue = (value: number, unit: 'g' | 'mg' | 'plants' | 'items' | 'count') => {
+    const formatValue = (value: number, unit: NutritionTargetUnit) => {
       if (unit === 'plants' || unit === 'items' || unit === 'count') {
         return `${Math.round(value)} ${unit}`;
       }

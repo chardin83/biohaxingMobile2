@@ -10,7 +10,7 @@ import PlanCategoryIcon, { getPlanCategoryIconColor, type PlanCategory } from '@
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { IconSymbol } from '@/components/ui/IconSymbol.ios';
-import { formatDate, formatDateRange, getInclusiveDayCount } from '@/utils/dateUtils';
+import { formatDateRange, getInclusiveDayCount } from '@/utils/dateUtils';
 
 type ArchivedPlanSectionProps = {
   category: PlanCategory;

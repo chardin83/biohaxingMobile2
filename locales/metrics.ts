@@ -712,4 +712,16 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
         { metricId: 'weight', kind: 'secondary' },
         { metricId: 'energy', kind: 'subjective' },
     ],
+    fish_omega3_weekly: [
+      { metricId: 'triglycerides', kind: 'primary' },
+      { metricId: 'hdl', kind: 'secondary' },
+      { metricId: 'ldl', kind: 'safety' },
+      { metricId: 'systolic_bp', kind: 'secondary' },
+      { metricId: 'diastolic_bp', kind: 'secondary' },
+    ],
+    polyphenol_microbiome: [
+      { metricId: 'bss', kind: 'primary' },
+      { metricId: 'bloating', kind: 'primary' },
+      { metricId: 'energy', kind: 'subjective' },
+    ],
 };

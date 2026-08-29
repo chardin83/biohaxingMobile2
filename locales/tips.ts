@@ -1818,9 +1818,9 @@ const rawTips: Tip[] = [
     targetPeriod: 'daily',
     targetIconName: 'polyphenol',
     polyphenolTargets: [
-      { tag: 'polyphenols_total', amount: 1000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.5 },
-      { tag: 'flavonoids_total', amount: 500, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.5 },
-      { tag: 'anthocyanins', amount: 150, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 },
+      { tag: 'polyphenols_total', amount: 500, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.5 },
+      { tag: 'flavonoids_total', amount: 200, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.5 },
+      { tag: 'anthocyanins', amount: 50, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 },
     ],
     nutritionFoods: [
 
