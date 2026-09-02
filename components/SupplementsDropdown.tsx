@@ -30,6 +30,7 @@ const SupplementDropdown: React.FC<SupplementDropdownProps> = ({
   const [lastSelectedValue, setLastSelectedValue] = useState<string | null>(preselectedSupplement);
 
   const supplements = useSupplements();
+  const selectedSupplement = items.find(item => item.value === value)?.supplement as Supplement | undefined;
 
   useEffect(() => {
     const formattedItems = Array.isArray(supplements)
@@ -102,6 +103,11 @@ const SupplementDropdown: React.FC<SupplementDropdownProps> = ({
               listMode="SCROLLVIEW"
               autoScroll
             />
+            {selectedSupplement?.description ? (
+              <ThemedText type="caption" style={[styles.description, { color: colors.textLight }]}>
+                {selectedSupplement.description}
+              </ThemedText>
+            ) : null}
           </>
         )}
       </View>
@@ -129,6 +135,9 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     fontStyle: 'italic',
+  },
+  description: {
+    marginTop: 8,
   },
 });
 

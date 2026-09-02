@@ -37,14 +37,13 @@ export const formatValue = (valueMg: number, displayUnit: string): string => {
 };
 
 export const formatWithUnit = (value: number, unit: string, tag?: string): string => {
-  // Check if this is a vitamin with a custom display unit
-  if (tag && isVitaminTargetTag(tag)) {
+  // Nutrition totals are stored in mg; target values already use their declared unit.
+  if (unit === 'mg' && tag && isVitaminTargetTag(tag)) {
     const displayUnit = VITAMIN_DISPLAY_UNITS[tag];
     return formatValue(value, displayUnit);
   }
 
-  // Check if this is a mineral with a custom display unit
-  if (tag && isMineralTargetTag(tag)) {
+  if (unit === 'mg' && tag && isMineralTargetTag(tag)) {
     const displayUnit = MINERAL_DISPLAY_UNITS[tag];
     return formatValue(value, displayUnit);
   }
@@ -57,6 +56,6 @@ export const formatWithUnit = (value: number, unit: string, tag?: string): strin
 
   const amount = unit === 'mg' ? formatMilligramAmount(value) : formatAmount(value);
   if (!unit) return amount;
-  if (unit === 'mg' || unit === 'g') return `${amount}${getTranslatedUnit(unit)}`;
+  if (unit === 'mg' || unit === 'g' || unit === 'μg') return `${amount}${getTranslatedUnit(unit)}`;
   return `${amount} ${unit}`;
 };

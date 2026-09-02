@@ -6,7 +6,12 @@ import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { type DailyNutritionSummary, useStorage } from '@/app/context/StorageContext';
 import { Collapsible } from '@/components/Collapsible';
-import { type WeeklyTrackingItem } from '@/components/nutritionTargets.logic';
+import {
+  toGrams,
+  toMicrograms,
+  toMilligrams,
+  type WeeklyTrackingItem,
+} from '@/components/nutritionTargets.logic';
 import { ThemedText } from '@/components/ThemedText';
 import TipTarget, { type TipTargetItem } from '@/components/TipTarget';
 import Badge from '@/components/ui/Badge';
@@ -19,7 +24,10 @@ import { isMineralTargetTag } from '@/constants/minerals';
 import { isPolyphenolTargetTag } from '@/constants/polyphenols';
 import { isVitaminTargetTag } from '@/constants/vitamins';
 import { getTipTargetIconName, tips } from '@/locales/tips';
-import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
+import {
+  type NutritionTargetPeriod,
+  type NutritionTargetUnit,
+} from '@/types/nutritionTargets';
 import { type WeeklyTrackingSignals,type WeeklyTrackingSignalValue } from '@/utils/analyzeNutrition';
 import {
   formatMonthDay,
@@ -108,7 +116,10 @@ const getDayRatioForTip = (
   for (const target of allTargets) {
     const tag = (target as { tag?: string }).tag ?? '';
     if (!tag || !target.amount) continue;
-    totalRatio += Math.min(sumMealsForTag(meals, tag) / target.amount, 1);
+    const foodActual = sumMealsForTag(meals, tag);
+    const targetUnit = target.unit;
+    const targetUnitActual = targetUnit === 'μg' ? foodActual * 1000 : foodActual;
+    totalRatio += Math.min(targetUnitActual / target.amount, 1);
   }
   return totalRatio / allTargets.length;
 };
@@ -153,7 +164,7 @@ type TipHistoryItem = {
 };
 
 type DailyTargetSummary = TipTargetItem & {
-  unit: 'mg' | 'g';
+  unit: Extract<NutritionTargetUnit, 'mg' | 'g' | 'μg'>;
   period: 'daily';
 };
 
@@ -172,21 +183,7 @@ const parseQuantity = (value: string | undefined): number | null => {
 const normalizeUnit = (value: string | undefined): string =>
   (value ?? '').trim().toLowerCase();
 
-const toMilligrams = (quantity: number, unit: string): number | null => {
-  if (unit === 'mg') return quantity;
-  if (unit === 'g') return quantity * 1000;
-  if (unit === 'mcg' || unit === 'ug' || unit === 'μg') return quantity / 1000;
-  return null;
-};
-
-const toGrams = (quantity: number, unit: string): number | null => {
-  if (unit === 'g') return quantity;
-  if (unit === 'mg') return quantity / 1000;
-  if (unit === 'mcg' || unit === 'ug' || unit === 'μg') return quantity / 1_000_000;
-  return null;
-};
-
-const getNutritionLabelGroup = (tag: string, unit: 'mg' | 'g'):
+const getNutritionLabelGroup = (tag: string, unit: Extract<NutritionTargetUnit, 'mg' | 'g' | 'μg'>):
   | 'aminoAcidLabels'
   | 'mineralLabels'
   | 'vitaminLabels'
@@ -325,7 +322,9 @@ export default function NutritionProgressScreen() {
       ...(tip.aminoAcidTargets ?? []),
       ...(tip.polyphenolTargets ?? []),
       ...(tip.fiberTargets ?? []),
-    ].filter(target => (target.unit === 'mg' || target.unit === 'g') && Number.isFinite(target.amount));
+    ].filter(target => (
+      target.unit === 'mg' || target.unit === 'g' || target.unit === 'μg'
+    ) && Number.isFinite(target.amount));
 
     const tipSupplementIds = (tip.supplements ?? [])
       .map(entry => normalizeSupplementKey(entry.id))
@@ -336,7 +335,8 @@ export default function NutritionProgressScreen() {
     return targetConfigs.map(target => {
       const tag = (target as { tag?: string }).tag ?? '';
       const amount = target.amount ?? 0;
-      const foodActual = tag ? sumMealsForTag(dailyNutritionSummaries[dateKey]?.meals ?? [], tag) : 0;
+      const mealValue = tag ? sumMealsForTag(dailyNutritionSummaries[dateKey]?.meals ?? [], tag) : 0;
+      const foodActual = target.unit === 'μg' ? mealValue * 1000 : mealValue;
 
       const explicitTargetSupplementIds = ((target as { supplementIds?: string[] }).supplementIds ?? [])
         .map(id => normalizeSupplementKey(id))
@@ -360,8 +360,10 @@ export default function NutritionProgressScreen() {
         let converted: number | null;
         if (target.unit === 'mg') {
           converted = toMilligrams(quantity, sourceUnit);
-        } else {
+        } else if (target.unit === 'g') {
           converted = toGrams(quantity, sourceUnit);
+        } else {
+          converted = toMicrograms(quantity, sourceUnit);
         }
         if (converted === null) return;
 

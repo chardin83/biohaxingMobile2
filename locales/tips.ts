@@ -93,7 +93,7 @@ export type MineralTarget = {
 
 export type VitaminTarget = {
   tag: VitaminType;
-} & BaseTarget<'mg'> & WeightedTarget;
+} & BaseTarget<'mg' | 'μg'> & WeightedTarget;
 
 export type AminoAcidTarget = {
   tag: AminoAcidType;
@@ -349,6 +349,12 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
+    targetPeriod: 'daily',
+    targetIconName: 'vitamin',
+    vitaminTargets: [
+      { tag: 'vitamin_d', amount: 10, unit: 'μg', supplementIds: ['vitaminD'] },
+      { tag: 'vitamin_k', amount: 0.1, unit: 'mg', supplementIds: ['vitaminK2'] },
+    ],
     planCategory: ['nutrition'],
     nutritionFoods: [{ key: 'sardines' }, { key: 'eggs' }, { key: 'fortifiedDairy' }, { key: 'chanterelles' }],
     bodyParts: ['immuneSystem', 'muscles', 'nervousSystem', 'bones'],

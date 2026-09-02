@@ -1,6 +1,6 @@
 {
     "supplements": [
-        { "id": "vitaminD", "name": "Vitamin D", "quantity": "1000", "unit": "IU", "description": "Core D3 dose supporting bone health, immunity, and mood." },
+        { "id": "vitaminD", "name": "Vitamin D", "quantity": "25", "unit": "μg", "description": "1,000 IU of vitamin D3 equals 25 μg. This core dose supports bone health, immunity, and mood." },
         { "id": "vitaminDWithK2", "name": "Vitamin D3 + K2", "quantity": "1000 IU / 90", "unit": "IU/μg", "description": "Convenient combo pairing D3 with K2 to direct calcium to bones and protect soft tissues." },
         { "id": "vitaminE", "name": "Vitamin E", "quantity": "200", "unit": "IU", "description": "Baseline alpha-tocopherol support for antioxidant and cardiovascular health." },
         { "id": "vitaminEMixedTocopherols", "name": "Vitamin E Mixed Tocopherols", "quantity": "200", "unit": "IU", "description": "Blend of alpha, beta, gamma, and delta tocopherols that offsets the imbalance from isolated alpha doses." },

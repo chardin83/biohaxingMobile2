@@ -67,6 +67,11 @@ const getTipLabelGroup = (unit: string, trackingKey: string): TipLabelGroup => {
   return 'polyphenolLabels';
 };
 
+const getTargetValueFromMilligrams = (value: number, unit: NutritionTargetUnit): number => {
+  if (unit === 'μg') return value * 1000;
+  return value;
+};
+
 const getDailyTargetValueFromContext = (
   tag: string,
   unit: NutritionTargetUnit,
@@ -80,15 +85,15 @@ const getDailyTargetValueFromContext = (
     return context.dailyFiberByType[tag] ?? 0;
   }
   if (isAminoAcidTargetTag(tag)) {
-    return context.dailyAminoAcidsByType[tag] ?? 0;
+    return getTargetValueFromMilligrams(context.dailyAminoAcidsByType[tag] ?? 0, unit);
   }
   if (isMineralTargetTag(tag)) {
-    return context.dailyMineralsByType[tag] ?? 0;
+    return getTargetValueFromMilligrams(context.dailyMineralsByType[tag] ?? 0, unit);
   }
   if (isVitaminTargetTag(tag)) {
-    return context.dailyVitaminsByType[tag] ?? 0;
+    return getTargetValueFromMilligrams(context.dailyVitaminsByType[tag] ?? 0, unit);
   }
-  return context.dailyPolyphenolByType[tag] ?? 0;
+  return getTargetValueFromMilligrams(context.dailyPolyphenolByType[tag] ?? 0, unit);
 };
 
 const getWeeklyTargetValueFromContext = (
@@ -115,15 +120,15 @@ const getWeeklyTargetValueFromContext = (
     return context.weeklyFiberByType[tag] ?? 0;
   }
   if (isAminoAcidTargetTag(tag)) {
-    return context.weeklyAminoAcidsByType[tag] ?? 0;
+    return getTargetValueFromMilligrams(context.weeklyAminoAcidsByType[tag] ?? 0, unit);
   }
   if (isMineralTargetTag(tag)) {
-    return context.weeklyMineralsByType[tag] ?? 0;
+    return getTargetValueFromMilligrams(context.weeklyMineralsByType[tag] ?? 0, unit);
   }
   if (isVitaminTargetTag(tag)) {
-    return context.weeklyVitaminsByType[tag] ?? 0;
+    return getTargetValueFromMilligrams(context.weeklyVitaminsByType[tag] ?? 0, unit);
   }
-  return context.weeklyPolyphenolByType[tag] ?? 0;
+  return getTargetValueFromMilligrams(context.weeklyPolyphenolByType[tag] ?? 0, unit);
 };
 
 const getAllTipTargets = (tip: any): PlanTarget[] => {
@@ -177,14 +182,28 @@ const parseQuantity = (value: string | undefined): number | null => {
 const normalizeUnit = (value: string | undefined): string =>
   (value ?? '').trim().toLowerCase();
 
-const toMilligrams = (quantity: number, unit: string): number | null => {
+export const toMilligrams = (quantity: number, unit: string): number | null => {
   if (unit === 'mg') return quantity;
   if (unit === 'g') return quantity * 1000;
   if (unit === 'mcg' || unit === 'ug' || unit === 'μg') return quantity / 1000;
   return null;
 };
 
-const toGrams = (quantity: number, unit: string): number | null => {
+export const toMicrograms = (quantity: number, unit: string): number | null => {
+  if (unit === 'g') return quantity * 1_000_000;
+  if (unit === 'mg') return quantity * 1000;
+  if (unit === 'mcg' || unit === 'ug' || unit === 'μg') return quantity;
+  return null;
+};
+
+const toTargetUnit = (quantity: number, sourceUnit: string, target: PlanTarget): number | null => {
+  if (target.unit === 'mg') return toMilligrams(quantity, sourceUnit);
+  if (target.unit === 'g') return toGrams(quantity, sourceUnit);
+  if (target.unit === 'μg') return toMicrograms(quantity, sourceUnit);
+  return null;
+};
+
+export const toGrams = (quantity: number, unit: string): number | null => {
   if (unit === 'g') return quantity;
   if (unit === 'mg') return quantity / 1000;
   if (unit === 'mcg' || unit === 'ug' || unit === 'μg') return quantity / 1_000_000;
@@ -243,9 +262,9 @@ const getMatchedSupplementsForTarget = (
 
 const getSupplementContributionForTarget = (
   supplements: MatchedSupplement[],
-  unit: NutritionTargetUnit
+  target: PlanTarget
 ): { value: number; names: string[] } => {
-  if (unit !== 'mg' && unit !== 'g') {
+  if (target.unit !== 'mg' && target.unit !== 'g' && target.unit !== 'μg') {
     return { value: 0, names: [] };
   }
 
@@ -255,7 +274,7 @@ const getSupplementContributionForTarget = (
     const quantity = parseQuantity(item.quantity);
     if (quantity === null) return;
     const sourceUnit = normalizeUnit(item.unit);
-    const converted = unit === 'mg' ? toMilligrams(quantity, sourceUnit) : toGrams(quantity, sourceUnit);
+    const converted = toTargetUnit(quantity, sourceUnit, target);
     if (converted === null) return;
     sum += converted;
     names.push(item.name || item.id || 'supplement');
@@ -297,7 +316,7 @@ const buildTipTargetProgress = (
       ? getWeeklyTargetValueFromContext(trackingKey, target.unit, context)
       : getDailyTargetValueFromContext(trackingKey, target.unit, context);
   const matchedSupplements = getMatchedSupplementsForTarget(tip, target, tipPeriod, context);
-  const supplementContribution = getSupplementContributionForTarget(matchedSupplements, target.unit);
+  const supplementContribution = getSupplementContributionForTarget(matchedSupplements, target);
   const actual = baseActual + supplementContribution.value;
   const labelGroup = getTipLabelGroup(target.unit, trackingKey);
 

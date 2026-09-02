@@ -11,6 +11,7 @@ import Svg, { Circle } from 'react-native-svg';
 import { useStorage } from '@/app/context/StorageContext';
 import { Collapsible } from '@/components/Collapsible';
 import FoodPortionBottomSheet, { FoodServing } from '@/components/FoodPortionBottomSheet';
+import { toGrams, toMicrograms, toMilligrams } from '@/components/nutritionTargets.logic';
 import { ThemedText } from '@/components/ThemedText';
 import { useBottomSheetDesign } from '@/components/ui/BottomSheetDesign';
 import Container from '@/components/ui/Container';
@@ -59,14 +60,14 @@ const parseCommaSeparated = (value: RouteParamValue): string[] => {
 
 const parseTargetUnit = (value: RouteParamValue): NutritionTargetUnit | null => {
   const raw = (Array.isArray(value) ? value[0] : value)?.toLowerCase();
-  if (raw === 'mg' || raw === 'g' || raw === 'plants' || raw === 'items' || raw === 'count') {
+  if (raw === 'mg' || raw === 'g' || raw === 'μg' || raw === 'plants' || raw === 'items' || raw === 'count') {
     return raw;
   }
   return null;
 };
 
-const isSupplementEligibleUnit = (unit: NutritionTargetUnit): unit is 'mg' | 'g' =>
-  unit === 'mg' || unit === 'g';
+const isSupplementEligibleUnit = (unit: NutritionTargetUnit): unit is 'mg' | 'g' | 'μg' =>
+  unit === 'mg' || unit === 'g' || unit === 'μg';
 
 const addDays = (dateKey: string, days: number): string => {
   const nextDate = fromDateKey(dateKey);
@@ -209,25 +210,16 @@ const calculateIntakeForTarget = (
 const getSupplementContributionForTargetUnit = (
   quantity: number,
   unit: string,
-  targetUnit: 'mg' | 'g'
+  targetUnit: 'mg' | 'g' | 'μg'
 ): number => {
   if (!quantity) return 0;
-
-  if (targetUnit === 'mg') {
-    if (unit === 'mg') return quantity;
-    if (unit === 'g') return quantity * 1000;
-    if (unit === 'mcg' || unit === 'μg' || unit === 'ug') return quantity / 1000;
-    return 0;
-  }
-
-  if (targetUnit === 'g') {
-    if (unit === 'g') return quantity;
-    if (unit === 'mg') return quantity / 1000;
-    if (unit === 'mcg' || unit === 'μg' || unit === 'ug') return quantity / 1_000_000;
-  }
-
-  return 0;
+  if (targetUnit === 'mg') return toMilligrams(quantity, unit) ?? 0;
+  if (targetUnit === 'g') return toGrams(quantity, unit) ?? 0;
+  return toMicrograms(quantity, unit) ?? 0;
 };
+
+const getTargetValueFromMilligrams = (value: number, targetUnit: NutritionTargetUnit): number =>
+  targetUnit === 'μg' ? value * 1000 : value;
 
 const getDiscreteTrackingValueAmount = (
   trackingValue: WeeklyTrackingSignalValue | undefined
@@ -275,19 +267,19 @@ const getMealContributionForTarget = (
   }
 
   if (isMineralTargetTag(targetTag) && meal?.mineralsByType?.[targetTag]) {
-    return Number(meal.mineralsByType[targetTag]) || 0;
+    return getTargetValueFromMilligrams(Number(meal.mineralsByType[targetTag]) || 0, targetUnit);
   }
   if (isVitaminTargetTag(targetTag) && meal?.vitaminsByType?.[targetTag]) {
-    return Number(meal.vitaminsByType[targetTag]) || 0;
+    return getTargetValueFromMilligrams(Number(meal.vitaminsByType[targetTag]) || 0, targetUnit);
   }
   if (isAminoAcidTargetTag(targetTag) && meal?.aminoAcidsByType?.[targetTag]) {
-    return Number(meal.aminoAcidsByType[targetTag]) || 0;
+    return getTargetValueFromMilligrams(Number(meal.aminoAcidsByType[targetTag]) || 0, targetUnit);
   }
   if (isFiberTargetTag(targetTag) && meal?.fiberByType?.[targetTag]) {
     return Number(meal.fiberByType[targetTag]) || 0;
   }
   if (isPolyphenolTargetTag(targetTag) && meal?.polyphenolByType?.[targetTag]) {
-    return Number(meal.polyphenolByType[targetTag]) || 0;
+    return getTargetValueFromMilligrams(Number(meal.polyphenolByType[targetTag]) || 0, targetUnit);
   }
 
   return 0;

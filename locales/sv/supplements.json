@@ -1,6 +1,6 @@
 {
     "supplements": [
-        { "id": "vitaminD", "name": "Vitamin D", "quantity": "1000", "unit": "IU", "description": "Kärndos av D3 som stödjer skelett, immunförsvar och humör." },
+        { "id": "vitaminD", "name": "Vitamin D", "quantity": "25", "unit": "μg", "description": "1 000 IE (IU) vitamin D3 motsvarar 25 μg. Denna kärndos stödjer skelett, immunförsvar och humör." },
         { "id": "vitaminDWithK2", "name": "Vitamin D3 + K2", "quantity": "1000 IU / 90", "unit": "IU/μg", "description": "Praktisk kombination som kopplar D3 med K2 för att styra kalcium till skelettet och skydda mjukvävnad." },
         { "id": "vitaminE", "name": "Vitamin E", "quantity": "200", "unit": "IU", "description": "Basnivå av alfa-tokoferol som stödjer antioxidant- och hjärtkärlhälsa." },
         { "id": "vitaminEMixedTocopherols", "name": "Vitamin E blandade tokoferoler", "quantity": "200", "unit": "IU", "description": "Blandning av alfa-, beta-, gamma- och delta-tokoferoler som balanserar effekten av isolerat alfa." },
