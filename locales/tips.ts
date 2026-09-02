@@ -340,7 +340,6 @@ const rawTips: Tip[] = [
     descriptionKey: 'vitamin_d.description',
     supplements: [
       { id: 'vitaminD' },
-      { id: 'vitaminDWithK2' },
       { id: 'codLiverOil' },
       { id: 'vitaminK2' },
       { id: 'magnesiumGlycinate' },

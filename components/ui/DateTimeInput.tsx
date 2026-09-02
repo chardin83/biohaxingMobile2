@@ -20,6 +20,7 @@ interface DateTimeInputProps {
   buttonIcon?: IconSymbolName;
   minDate?: Date;
   maxDate?: Date;
+  disabled?: boolean;
 }
 
 export function DateTimeInput({
@@ -32,6 +33,7 @@ export function DateTimeInput({
   buttonIcon = 'clock',
   minDate,
   maxDate,
+  disabled = false,
 }: Readonly<DateTimeInputProps>) {
   const { colors } = useTheme();
   const { t, i18n } = useTranslation();
@@ -113,7 +115,7 @@ export function DateTimeInput({
   };
 
   const handleTogglePicker = () => {
-    if (!hasPickerMode) {
+    if (!hasPickerMode || disabled) {
       return;
     }
 
@@ -137,6 +139,7 @@ export function DateTimeInput({
         icon={buttonIcon}
         onPress={handleTogglePicker}
         variant="secondary"
+        disabled={disabled}
       />
       {showPicker && (
         <>

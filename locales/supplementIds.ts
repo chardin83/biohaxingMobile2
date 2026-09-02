@@ -6,7 +6,6 @@ export const supplementIds = {
   vitaminC: 'vitaminC',
   omega3: 'omega3',
   magnesium: 'magnesium',
-  vitaminDWithK2: 'vitaminDWithK2',
   magnesiumGlycinate: 'magnesiumGlycinate',
   magnesiumCitrate: 'magnesiumCitrate',
   magnesiumMalate: 'magnesiumMalate',

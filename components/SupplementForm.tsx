@@ -1,5 +1,6 @@
+import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
@@ -9,12 +10,16 @@ import { ThemedText } from '@/components/ThemedText';
 import LabeledInput from '@/components/ui/LabeledInput';
 
 import AppButton from './ui/AppButton';
+import { useBottomSheetDesign } from './ui/BottomSheetDesign';
 import { CancelButton } from './ui/CancelButton';
+import { DateTimeInput } from './ui/DateTimeInput';
 
 interface SupplementFormProps {
   selectedTime: Date;
   isEditing: boolean;
   preselectedSupplement: Supplement | null;
+  onSelectedTimeChange?: (time: Date) => void;
+  footer?: React.ReactNode;
   onSave: (supplement: Supplement) => void;
   onCancel: () => void;
 }
@@ -23,75 +28,116 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
   selectedTime,
   isEditing,
   preselectedSupplement,
+  onSelectedTimeChange,
+  footer,
   onSave,
   onCancel,
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const sheetDesign = useBottomSheetDesign(colors);
   const [supplement, setSupplement] = useState<Supplement | null>(preselectedSupplement);
   const hasFixedUnit = Boolean(supplement?.id && supplement.unit?.trim());
+  const canEditSelectedTime = Boolean(onSelectedTimeChange);
+
+  useEffect(() => {
+    bottomSheetRef.current?.present();
+  }, []);
+
+  const closeForm = () => {
+    bottomSheetRef.current?.dismiss();
+  };
 
   return (
-    <View>
-      {/* Supplement Dropdown */}
-      <View style={[styles.dropdownWrapper, styles.row]}>
-        <SupplementDropdown
-          selectedTime={selectedTime}
-          onSupplementSelect={(selectedSupplement: Supplement) => setSupplement(selectedSupplement)}
-          preselectedSupplement={supplement?.name ?? null}
-          disabled={isEditing}
+    <BottomSheetModal
+      ref={bottomSheetRef}
+      snapPoints={['65%', '90%']}
+      enablePanDownToClose
+      backgroundStyle={sheetDesign.backgroundStyle}
+      handleComponent={sheetDesign.handleComponent}
+      onDismiss={onCancel}
+    >
+      <BottomSheetScrollView
+        contentContainerStyle={styles.sheetContent}
+        keyboardShouldPersistTaps="handled"
+      >
+        <DateTimeInput
+          value={selectedTime}
+          onChange={onSelectedTimeChange ?? (() => undefined)}
+          showTime
+          showDate={false}
+          buttonIcon="clock"
+          disabled={!canEditSelectedTime}
         />
-      </View>
-      {/* Dosage and Unit Inputs on the same row */}
-      <View style={styles.row}>
-        <LabeledInput
-          label={t('supplementForm.dosage')}
-          placeholder={t('supplementForm.dosage')}
-          value={supplement?.quantity}
-          keyboardType="decimal-pad"
-          isOptional={false}
-          onChangeText={text => setSupplement({ ...supplement, quantity: text } as Supplement)}
-          containerStyle={[styles.inputHalf, styles.inputSpacing]}
-        />
-
-        {hasFixedUnit ? (
-          <View style={styles.inputHalf}>
-            <ThemedText type="label">{t('supplementForm.unit')}</ThemedText>
-            <View style={[styles.lockedUnitRow, { backgroundColor: colors.secondaryBackground }]}> 
-              <ThemedText type="defaultSemiBold">{supplement?.unit}</ThemedText>
-              <ThemedText type="explainer" style={{ color: colors.textMuted }}>
-                {t('general.fixed', { defaultValue: 'Fast' })}
-              </ThemedText>
-            </View>
-          </View>
-        ) : (
-          <LabeledInput
-            label={t('supplementForm.unit')}
-            placeholder={t('supplementForm.unit')}
-            value={supplement?.unit}
-            onChangeText={text => setSupplement({ ...supplement, unit: text } as Supplement)}
-            containerStyle={styles.inputHalf}
+        <View style={[styles.dropdownWrapper, styles.row]}>
+          <SupplementDropdown
+            selectedTime={selectedTime}
+            onSupplementSelect={(selectedSupplement: Supplement) => setSupplement(selectedSupplement)}
+            preselectedSupplement={supplement?.name ?? null}
+            disabled={isEditing}
           />
-        )}
-      </View>
+        </View>
+        <View style={styles.row}>
+          <LabeledInput
+            label={t('supplementForm.dosage')}
+            placeholder={t('supplementForm.dosage')}
+            value={supplement?.quantity}
+            keyboardType="decimal-pad"
+            isOptional={false}
+            onChangeText={text => setSupplement({ ...supplement, quantity: text } as Supplement)}
+            containerStyle={[styles.inputHalf, styles.inputSpacing]}
+          />
 
-      <View style={styles.buttonColumn}>
-        <AppButton
-          title={isEditing ? t('general.save') : t('general.add')}
-          variant="primary"
-          onPress={() => {
-            if (supplement?.name && supplement?.quantity.trim() !== '') {
-              onSave(supplement);
-            }
-          }}
-        />
-        <CancelButton onPress={onCancel} />
-      </View>
-    </View>
+          {hasFixedUnit ? (
+            <View style={styles.inputHalf}>
+              <ThemedText type="label">{t('supplementForm.unit')}</ThemedText>
+              <View
+                style={[styles.lockedUnitRow, { backgroundColor: colors.secondaryBackground }]}
+              >
+                <ThemedText type="defaultSemiBold">{supplement?.unit}</ThemedText>
+                <ThemedText type="explainer" style={{ color: colors.textMuted }}>
+                  {t('general.fixed', { defaultValue: 'Fast' })}
+                </ThemedText>
+              </View>
+            </View>
+          ) : (
+            <LabeledInput
+              label={t('supplementForm.unit')}
+              placeholder={t('supplementForm.unit')}
+              value={supplement?.unit}
+              onChangeText={text => setSupplement({ ...supplement, unit: text } as Supplement)}
+              containerStyle={styles.inputHalf}
+            />
+          )}
+        </View>
+
+        <View style={styles.buttonColumn}>
+          <AppButton
+            title={isEditing ? t('general.save') : t('general.add')}
+            variant="primary"
+            onPress={() => {
+              if (supplement?.name && supplement?.quantity.trim() !== '') {
+                onSave(supplement);
+                closeForm();
+              }
+            }}
+          />
+          <CancelButton onPress={closeForm} />
+        </View>
+        {footer}
+      </BottomSheetScrollView>
+    </BottomSheetModal>
   );
 };
 
 const styles = StyleSheet.create({
+  sheetContent: {
+    paddingTop: 20,
+    paddingHorizontal: 16,
+    paddingBottom: 40,
+    gap: 12,
+  },
   buttonColumn: {
     flexDirection: 'column',
     marginTop: 24,

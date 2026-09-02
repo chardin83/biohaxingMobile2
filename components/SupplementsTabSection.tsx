@@ -14,7 +14,6 @@ import SupplementForm from './SupplementForm';
 import { ThemedText } from './ThemedText';
 import AppButton from './ui/AppButton';
 import { CancelButton } from './ui/CancelButton';
-import { DateTimeInput } from './ui/DateTimeInput';
 import DiscreetButton from './ui/DiscreetButton';
 
 interface Props {
@@ -125,7 +124,6 @@ export const SupplementsTabSection = ({ selectedDate, preselectedSupplementId }:
                                 setIsSupplementFormVisible(true);
                                 setEditingSupplement(null);
                                 setPrefilledSupplement(null);
-                                setIsPlanPickerVisible(false);
                             }}
                             larger
                         />
@@ -146,6 +144,7 @@ export const SupplementsTabSection = ({ selectedDate, preselectedSupplementId }:
                                     setPrefilledSupplement(null);
                                     setIsPlanPickerVisible(false);
                                     setPlanName(plan.name);
+                                    setIsSupplementFormVisible(false);
                                 }}
                                 variant="primary"
                                 style={styles.planButton}
@@ -191,19 +190,12 @@ export const SupplementsTabSection = ({ selectedDate, preselectedSupplementId }:
                 />
             )}
             {isSupplementFormVisible && (
-                <>
-                    <DateTimeInput
-                        value={selectedTime}
-                        onChange={setSelectedTime}
-                        showTime
-                        showDate={false}
-                        buttonIcon="clock"
-                    />
                     <SupplementForm
                         key={editingSupplement?.name ?? prefilledSupplement?.name ?? 'new'}
                         selectedTime={selectedTime}
                         isEditing={isEditing}
                         preselectedSupplement={editingSupplement ?? prefilledSupplement}
+                        onSelectedTimeChange={setSelectedTime}
                         onSave={supplement => {
                             // Convert Supplement to SupplementTime
                             const time = selectedTime.toTimeString().slice(0, 5);
@@ -217,10 +209,8 @@ export const SupplementsTabSection = ({ selectedDate, preselectedSupplementId }:
                             setIsEditing(false);
                             setPrefilledSupplement(null);
                             setIsSupplementFormVisible(false);
-                            setIsAddButtonVisible(true);
                         }}
                     />
-                </>
             )}
 
             <View style={styles.SelectedSupplementsList}>

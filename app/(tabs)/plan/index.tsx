@@ -24,7 +24,6 @@ import { TrainingPlanSection } from '@/components/sections/plan/TrainingPlanSect
 import ShowAllButton from '@/components/ShowAllButton';
 import SupplementForm from '@/components/SupplementForm';
 import SupplementItem from '@/components/SupplementItem';
-import { ThemedModal } from '@/components/ThemedModal';
 import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
@@ -707,27 +706,21 @@ useEffect(() => {
         />
       </Portal>
 
-      {/* Modal för att lägga till supplement */}
+      {/* Lägg till eller redigera supplement */}
       {planForSupplementEdit && (
-        <ThemedModal
-          visible={!!planForSupplementEdit}
-          title={
-            isEditingSupplement
-              ? `${t('plan.editSupplementFor')} ${planForSupplementEdit.name}`
-              : `${t('plan.addSupplementFor')} ${planForSupplementEdit.name}`
-          }
-          onClose={() => {
-            setPlanForSupplementEdit(null);
-            setSupplement(null);
-          }}
-          okLabel={t('general.save')}
-          onSave={undefined} // SupplementForm hanterar save
-          showCancelButton={false}
-        >
+        <>
           <SupplementForm
             selectedTime={timeStringToDate(planForSupplementEdit.prefferedTime || '00:00')}
             isEditing={isEditingSupplement}
             preselectedSupplement={supplement?.supplement ?? null}
+            footer={
+              isEditingSupplement ? (
+                <PlanMeta
+                  startedAt={supplement?.startedAt ?? ''}
+                  createdBy={supplement?.createdBy}
+                />
+              ) : null
+            }
             onSave={savedSupplement => {
               // Skapa SupplementPlanEntry här
               const entry: SupplementPlanEntry = {
@@ -752,13 +745,7 @@ useEffect(() => {
               setSupplement(null);
             }}
           />
-          {isEditingSupplement && (  
-            <PlanMeta
-            startedAt={supplement?.startedAt ?? ''}
-            createdBy={supplement?.createdBy}
-          />)}
-        
-        </ThemedModal>
+        </>
       )}
     </Container>
   );
