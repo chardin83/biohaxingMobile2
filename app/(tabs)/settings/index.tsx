@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import HealthSyncSettings from '@/components/HealthSyncSettings';
+import MyMultivitaminsCard from '@/components/MyMultivitaminsCard';
 import { ThemedText } from '@/components/ThemedText';
 import Container from '@/components/ui/Container';
 import { SettingsCardLink } from '@/components/ui/SettingsCardLink';
@@ -93,6 +94,12 @@ export default function SettingsPage() {
       </ThemedText>
       
       <HealthSyncSettings style={styles.cardSpacing} />
+
+      <ThemedText type="label" style={styles.title} uppercase>
+        {t('settings.myData')}
+      </ThemedText>
+
+      <MyMultivitaminsCard />
 
        <ThemedText type="label" style={styles.title} uppercase>
         {t('settings.person.title')}

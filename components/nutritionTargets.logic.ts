@@ -253,7 +253,16 @@ const getMatchedSupplementsForTarget = (
       const nameKey = normalizeSupplementKey(entry.name);
       if (matchedSet.has(idKey) || matchedSet.has(nameKey)) {
         matchedSupplements.push(entry);
+        return;
       }
+
+      (entry.components ?? []).forEach(component => {
+        const componentIdKey = normalizeSupplementKey(component.id);
+        const componentNameKey = normalizeSupplementKey(component.name);
+        if (matchedSet.has(componentIdKey) || matchedSet.has(componentNameKey)) {
+          matchedSupplements.push(component);
+        }
+      });
     });
   });
 

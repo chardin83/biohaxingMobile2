@@ -11,10 +11,12 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
 import { useStorage } from '@/app/context/StorageContext';
+import { type Supplement } from '@/app/domain/Supplement';
 import { SupplementPlanEntry } from '@/app/domain/SupplementPlanEntry';
 import { Collapsible } from '@/components/Collapsible';
 import CreateTimeSlotModal from '@/components/modals/CreateTimeSlotModal';
 import PlanCategoryIcon from '@/components/plan/PlanCategoryIcon';
+import SaveMultivitaminBottomSheet from '@/components/SaveMultivitaminBottomSheet';
 import { NutritionPlanSection } from '@/components/sections/plan/NutritionPlanSection';
 import { OtherPlanSection } from '@/components/sections/plan/OtherPlanSection';
 import PlanActionsBottomSheet from '@/components/sections/plan/PlanActionsBottomSheet';
@@ -57,7 +59,7 @@ async function cancelNotificationById(notificationId?: string) {
   if (notificationId) {
     try {
       await Notifications.cancelScheduledNotificationAsync(notificationId);
-    } catch {}
+    } catch { }
   }
 }
 
@@ -101,10 +103,10 @@ const getSupplementTimeIcon = (preferredTime: string): React.ComponentProps<type
 // Plan category mapping not currently used; remove to avoid unused warnings
 
 export default function Plans() {
-    // Request notification permissions on mount
-    useEffect(() => {
-      requestNotificationPermission();
-    }, []);
+  // Request notification permissions on mount
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
   const params = useLocalSearchParams<{ openCreate?: string }>();
   const { colors } = useTheme();
 
@@ -149,6 +151,17 @@ export default function Plans() {
       paddingBottom: 80,
     },
     planAddButtonWrapper: {
+      alignSelf: 'center',
+      borderWidth: 1,
+      borderRadius: 8,
+      borderColor: colors.textWeak,
+      height: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+
+    },
+    planCreateMultiButtonWrapper: {
       marginTop: 10,
       marginLeft: -10,
       alignSelf: 'center',
@@ -233,6 +246,7 @@ export default function Plans() {
   const [showAllReason, setShowAllReason] = useState(false);
   const [planActionsTarget, setPlanActionsTarget] = useState<Plan | null>(null);
   const [supplementActionsTarget, setSupplementActionsTarget] = useState<SupplementPlanEntry | null>(null);
+  const [planForMultivitamin, setPlanForMultivitamin] = useState<Plan | null>(null);
   const planActionsBottomSheetRef = React.useRef<BottomSheet>(null);
   const supplementActionsBottomSheetRef = React.useRef<BottomSheet>(null);
 
@@ -240,7 +254,15 @@ export default function Plans() {
 
   const [supplement, setSupplement] = useState<SupplementPlanEntry | null>(null);
 
-  const { archiveSupplementPlan, archiveSupplement, plans, setPlans, errorMessage } = useStorage();
+  const {
+    archiveSupplementPlan,
+    archiveSupplement,
+    customSupplements,
+    plans,
+    setCustomSupplements,
+    setPlans,
+    errorMessage,
+  } = useStorage();
 
   const handleGoToCreatePlan = () => {
     router.push('/plan/create');
@@ -267,7 +289,7 @@ export default function Plans() {
 
 
 
-    const deleteSelectedSupplement = () => {
+  const deleteSelectedSupplement = () => {
     const updatedPlans = supplementPlans.map(plan =>
       plan.name === supplementActionsTarget?.planName
         ? {
@@ -286,6 +308,49 @@ export default function Plans() {
     const sup = plan?.supplements.find(s => s.supplement.name === supplementTitle) || null;
     setSupplement(sup || null);
     setIsEditingSupplement(true);
+  };
+
+  const savePlanAsMultivitamin = (plan: Plan, name: string, components: Supplement[]) => {
+    const existingMultivitamin = plan.supplements.find(entry => entry.supplement.components)?.supplement;
+    const multivitamin = {
+      id: existingMultivitamin?.id ?? `custom-multivitamin-${Date.now()}`,
+      name,
+      quantity: '1',
+      unit: 'tablet',
+      description: components.map(item => item.name).join(', '),
+      components,
+    };
+    setCustomSupplements(existingMultivitamin
+      ? customSupplements.map(item => item.id === multivitamin.id ? multivitamin : item)
+      : [...customSupplements, multivitamin]
+    );
+    savePlans(supplementPlans.map(candidate => (
+      candidate === plan
+        ? {
+          ...candidate,
+          supplements: [
+            ...candidate.supplements.filter(entry => (
+              entry.supplement.id !== existingMultivitamin?.id
+              && !components.some(component => component.id === entry.supplement.id)
+            )),
+            existingMultivitamin
+              ? {
+                ...candidate.supplements.find(entry => entry.supplement.id === existingMultivitamin.id)!,
+                supplement: multivitamin,
+              }
+              : {
+                supplement: multivitamin,
+                startedAt: new Date().toISOString(),
+                createdBy: 'you',
+                planName: candidate.name,
+                prefferedTime: candidate.prefferedTime,
+                notify: candidate.notify,
+              },
+          ],
+        }
+        : candidate
+    )));
+    setPlanForMultivitamin(null);
   };
 
   const timeStringToDate = (timeString: string): Date => {
@@ -344,15 +409,15 @@ export default function Plans() {
     setSupplementActionsTarget(null);
   };
 
-useEffect(() => {
-  if (!planActionsTarget) return;
+  useEffect(() => {
+    if (!planActionsTarget) return;
 
-  const frame = requestAnimationFrame(() => {
-    planActionsBottomSheetRef.current?.snapToIndex(1);
-  });
+    const frame = requestAnimationFrame(() => {
+      planActionsBottomSheetRef.current?.snapToIndex(1);
+    });
 
-  return () => cancelAnimationFrame(frame);
-}, [planActionsTarget]);
+    return () => cancelAnimationFrame(frame);
+  }, [planActionsTarget]);
 
   /*useEffect(() => {
     if (!isPlanActionsSheetMounted) return;
@@ -391,9 +456,10 @@ useEffect(() => {
     const baseTitle = `${plan.name} ${plan.prefferedTime}`;
     const displayTitle =
       isExpanded
-      ? baseTitle
-        :`${baseTitle} (${supplementCount})`;
+        ? baseTitle
+        : `${baseTitle} (${supplementCount})`;
     const supplementTimeIcon = getSupplementTimeIcon(plan.prefferedTime);
+    const multivitamin = supplements.find(entry => entry.supplement.components)?.supplement;
 
     const editLabel = t('plan.editTimeSlot');
     const headerActions = (
@@ -421,7 +487,7 @@ useEffect(() => {
               togglePlanExpanded(planKey);
             }}
             activeOpacity={0.85}
-              accessibilityLabel={t('plan.toggleSupplements')}
+            accessibilityLabel={t('plan.toggleSupplements')}
           >
             <IconSymbol
               name="chevron.right"
@@ -452,7 +518,7 @@ useEffect(() => {
                   {t('plan.noSupplementsInPlan', { plan: plan.name.toLowerCase() })}
                 </ThemedText>
               )
-              }
+            }
             {errorMessage && <ThemedText type="caption" style={{ color: colors.error }}>{errorMessage}</ThemedText>}
             <View style={styles.planAddButtonWrapper}>
               <DiscreetButton
@@ -461,6 +527,14 @@ useEffect(() => {
                   setIsEditingSupplement(false);
                   setPlanForSupplementEdit(plan);
                 }}
+              />
+
+            </View>
+            <View style={styles.planCreateMultiButtonWrapper}>
+              <DiscreetButton
+                title={t(multivitamin ? 'plan.editMultivitamin' : 'plan.saveAsMultivitamin')}
+                onPress={() => setPlanForMultivitamin(plan)}
+                disabled={plan.supplements.length === 0}
               />
             </View>
           </View>
@@ -487,7 +561,7 @@ useEffect(() => {
   // PlanMeta moved outside of Plans component below
 
 
-  
+
 
 
   return (
@@ -506,8 +580,8 @@ useEffect(() => {
         >
           <>
             <ThemedText type="explainer">{formatDate(plans.reasonSummary.createdAt)}</ThemedText>
-            <ThemedText 
-              type="caption" 
+            <ThemedText
+              type="caption"
               style={styles.reasonSummaryText}
               numberOfLines={showAllReason ? undefined : 5}
             >
@@ -546,8 +620,8 @@ useEffect(() => {
           </Collapsible>
         </View>
         <View style={styles.sectionBlock}>
-          <Collapsible 
-            title={`${t('plan.nutritionHeader')}`} 
+          <Collapsible
+            title={`${t('plan.nutritionHeader')}`}
             leftContent={<PlanCategoryIcon category="nutrition" />}
             rightContent={
               <View style={styles.sectionCountBadge}>
@@ -567,8 +641,8 @@ useEffect(() => {
           </Collapsible>
         </View>
         <View style={styles.sectionBlock}>
-          <Collapsible 
-            title={`${t('plan.supplementSectionTitle')}`} 
+          <Collapsible
+            title={`${t('plan.supplementSectionTitle')}`}
             leftContent={<PlanCategoryIcon category="supplement" />}
             rightContent={
               <View style={styles.sectionCountBadge}>
@@ -628,27 +702,27 @@ useEffect(() => {
       </View>
 
       <Portal>
-      {
-        planActionsTarget && (
-        <PlanActionsBottomSheet
-          bottomSheetRef={planActionsBottomSheetRef}
-          snapPoints={['44%', '60%']}
-          onArchivePlan={archiveSelectedPlan}
-          onDeletePlan={deleteSelectedPlan}
-          onCancel={closePlanActions}
-        />
-      )}
-      {
-        supplementActionsTarget && (
-        <SupplementActionsBottomSheet
-          bottomSheetRef={supplementActionsBottomSheetRef}
-          snapPoints={['44%', '60%']}
-          onArchiveSupplement={archiveSelectedSupplement}
-          onDeleteSupplement={deleteSelectedSupplement}
-          onCancel={closeSupplementActions}
-        />
-      )}
-      
+        {
+          planActionsTarget && (
+            <PlanActionsBottomSheet
+              bottomSheetRef={planActionsBottomSheetRef}
+              snapPoints={['44%', '60%']}
+              onArchivePlan={archiveSelectedPlan}
+              onDeletePlan={deleteSelectedPlan}
+              onCancel={closePlanActions}
+            />
+          )}
+        {
+          supplementActionsTarget && (
+            <SupplementActionsBottomSheet
+              bottomSheetRef={supplementActionsBottomSheetRef}
+              snapPoints={['44%', '60%']}
+              onArchiveSupplement={archiveSelectedSupplement}
+              onDeleteSupplement={deleteSelectedSupplement}
+              onCancel={closeSupplementActions}
+            />
+          )}
+
         <CreateTimeSlotModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
@@ -708,44 +782,59 @@ useEffect(() => {
 
       {/* Lägg till eller redigera supplement */}
       {planForSupplementEdit && (
-        <>
-          <SupplementForm
-            selectedTime={timeStringToDate(planForSupplementEdit.prefferedTime || '00:00')}
-            isEditing={isEditingSupplement}
-            preselectedSupplement={supplement?.supplement ?? null}
-            footer={
-              isEditingSupplement ? (
-                <PlanMeta
-                  startedAt={supplement?.startedAt ?? ''}
-                  createdBy={supplement?.createdBy}
-                />
-              ) : null
-            }
-            onSave={savedSupplement => {
-              // Skapa SupplementPlanEntry här
-              const entry: SupplementPlanEntry = {
-                supplement: savedSupplement,
-                startedAt: isEditingSupplement
-                  ? supplement?.startedAt ?? new Date().toISOString()
-                  : new Date().toISOString(),
-                createdBy: isEditingSupplement ? supplement?.createdBy ?? 'you' : 'you',
-                editedAt: isEditingSupplement ? new Date().toISOString() : '',
-                editedBy: isEditingSupplement ? 'you' : '',
-                planName: planForSupplementEdit.name,
-                prefferedTime: planForSupplementEdit.prefferedTime,
-                notify: planForSupplementEdit.notify,
-                reason: planForSupplementEdit.reason,
-              };
-              saveSupplementToPlan(planForSupplementEdit, entry, isEditingSupplement);
-              setSupplement(null);
-              setPlanForSupplementEdit(null);
-            }}
-            onCancel={() => {
-              setPlanForSupplementEdit(null);
-              setSupplement(null);
-            }}
-          />
-        </>
+        <SupplementForm
+          selectedTime={timeStringToDate(planForSupplementEdit.prefferedTime || '00:00')}
+          isEditing={isEditingSupplement}
+          preselectedSupplement={supplement?.supplement ?? null}
+          footer={
+            isEditingSupplement ? (
+              <PlanMeta
+                startedAt={supplement?.startedAt ?? ''}
+                createdBy={supplement?.createdBy}
+              />
+            ) : null
+          }
+          onSave={savedSupplement => {
+            // Skapa SupplementPlanEntry här
+            const entry: SupplementPlanEntry = {
+              supplement: savedSupplement,
+              startedAt: isEditingSupplement
+                ? supplement?.startedAt ?? new Date().toISOString()
+                : new Date().toISOString(),
+              createdBy: isEditingSupplement ? supplement?.createdBy ?? 'you' : 'you',
+              editedAt: isEditingSupplement ? new Date().toISOString() : '',
+              editedBy: isEditingSupplement ? 'you' : '',
+              planName: planForSupplementEdit.name,
+              prefferedTime: planForSupplementEdit.prefferedTime,
+              notify: planForSupplementEdit.notify,
+              reason: planForSupplementEdit.reason,
+            };
+            saveSupplementToPlan(planForSupplementEdit, entry, isEditingSupplement);
+            setSupplement(null);
+            setPlanForSupplementEdit(null);
+          }}
+          onCancel={() => {
+            setPlanForSupplementEdit(null);
+            setSupplement(null);
+          }}
+        />
+      )}
+      {planForMultivitamin && (
+        <SaveMultivitaminBottomSheet
+          supplements={Array.from(
+            new Map(
+              [
+                ...(planForMultivitamin.supplements.find(entry => entry.supplement.components)?.supplement.components ?? []),
+                ...planForMultivitamin.supplements
+                  .map(entry => entry.supplement)
+                  .filter(item => !item.components),
+              ].map(item => [item.id, item])
+            ).values()
+          )}
+          multivitamin={planForMultivitamin.supplements.find(entry => entry.supplement.components)?.supplement}
+          onSave={(name, components) => savePlanAsMultivitamin(planForMultivitamin, name, components)}
+          onCancel={() => setPlanForMultivitamin(null)}
+        />
       )}
     </Container>
   );

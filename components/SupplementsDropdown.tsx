@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
+import { useStorage } from '@/app/context/StorageContext';
 import { Supplement } from '@/app/domain/Supplement';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
@@ -30,18 +31,19 @@ const SupplementDropdown: React.FC<SupplementDropdownProps> = ({
   const [lastSelectedValue, setLastSelectedValue] = useState<string | null>(preselectedSupplement);
 
   const supplements = useSupplements();
+  const { customSupplements } = useStorage();
   const selectedSupplement = items.find(item => item.value === value)?.supplement as Supplement | undefined;
 
   useEffect(() => {
-    const formattedItems = Array.isArray(supplements)
-      ? supplements.map((item: Supplement) => ({
+    const catalog = Array.isArray(supplements) ? [...supplements, ...customSupplements] : customSupplements;
+    const formattedItems = catalog
+      .map((item: Supplement) => ({
           label: `${item.name} (${item.quantity} ${item.unit}) / ${t('supplementDropdown.day')}`,
           value: item.name,
           supplement: item,
         }))
-      : [];
     setItems(formattedItems);
-  }, [i18n.language, supplements, t]);
+  }, [customSupplements, i18n.language, supplements, t]);
 
   useEffect(() => {
     setValue(preselectedSupplement);

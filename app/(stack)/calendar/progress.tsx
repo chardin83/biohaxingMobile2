@@ -349,25 +349,28 @@ export default function NutritionProgressScreen() {
 
       let supplementActual = 0;
       supplementsForDay.forEach(supplement => {
-        const idKey = normalizeSupplementKey(supplement.id);
-        const nameKey = normalizeSupplementKey(supplement.name);
-        if (!matchedSet.has(idKey) && !matchedSet.has(nameKey)) return;
+        const componentSupplements = supplement.components?.length ? supplement.components : [supplement];
+        componentSupplements.forEach(component => {
+          const idKey = normalizeSupplementKey(component.id);
+          const nameKey = normalizeSupplementKey(component.name);
+          if (!matchedSet.has(idKey) && !matchedSet.has(nameKey)) return;
 
-        const quantity = parseQuantity(supplement.quantity);
-        if (quantity === null) return;
+          const quantity = parseQuantity(component.quantity);
+          if (quantity === null) return;
 
-        const sourceUnit = normalizeUnit(supplement.unit);
-        let converted: number | null;
-        if (target.unit === 'mg') {
-          converted = toMilligrams(quantity, sourceUnit);
-        } else if (target.unit === 'g') {
-          converted = toGrams(quantity, sourceUnit);
-        } else {
-          converted = toMicrograms(quantity, sourceUnit);
-        }
-        if (converted === null) return;
+          const sourceUnit = normalizeUnit(component.unit);
+          let converted: number | null;
+          if (target.unit === 'mg') {
+            converted = toMilligrams(quantity, sourceUnit);
+          } else if (target.unit === 'g') {
+            converted = toGrams(quantity, sourceUnit);
+          } else {
+            converted = toMicrograms(quantity, sourceUnit);
+          }
+          if (converted === null) return;
 
-        supplementActual += converted;
+          supplementActual += converted;
+        });
       });
 
       const labelGroup = getNutritionLabelGroup(tag, target.unit);

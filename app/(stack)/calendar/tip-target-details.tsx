@@ -686,9 +686,12 @@ export default function TipTargetDetailsScreen() {
     const mealSummaries = selectedDateKeys.map(dateKey => dailyNutritionSummaries[dateKey]);
     const supplementsForPeriod = selectedDateKeys.flatMap(dateKey => {
       const supplementsForDay = takenDates[dateKey] ?? [];
+      const componentSupplements = supplementsForDay.flatMap(supplement => (
+        supplement.components?.length ? supplement.components : [supplement]
+      ));
       return targetSupplementIds.size > 0
-        ? supplementsForDay.filter(s => targetSupplementIds.has(s.id))
-        : supplementsForDay;
+        ? componentSupplements.filter(supplement => targetSupplementIds.has(supplement.id))
+        : componentSupplements;
     });
 
     return calculateIntakeForTarget(

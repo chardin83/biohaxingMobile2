@@ -4,4 +4,5 @@ export interface Supplement {
   quantity: string; // Quantity of the supplement
   unit: string; // Unit of the supplement (e.g., mg, IU, g)
   description?: string; // Optional human-readable description or differentiator
+  components?: Supplement[]; // Ingredients included in a custom combined supplement
 }
