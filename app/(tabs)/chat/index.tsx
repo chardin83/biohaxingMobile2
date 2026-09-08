@@ -7,6 +7,7 @@ import React, { JSX, useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
+import { subscribeToChatClear } from '@/app/context/chatEvents';
 import AIInfoPopup from '@/components/AllInfoPopup';
 import BackButton from '@/components/BackButton';
 import { ThemedText } from '@/components/ThemedText';
@@ -56,6 +57,8 @@ export default function ChatWithGPT4o(): JSX.Element {
   const scrollRef = useRef<ScrollView>(null);
   const isNearBottom = useRef(true); // Håll koll på om användaren är nära botten
   const { plans, errorMessage, shareHealthPlan, addChatMessageXP } = useStorage();
+
+  useEffect(() => subscribeToChatClear(() => setMessages([])), []);
 
   // Parse returnParams för att få tillgång till mainGoalId, tipId
   const tipContext = returnParams ? JSON.parse(returnParams) : null;

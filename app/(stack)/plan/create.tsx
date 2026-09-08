@@ -26,7 +26,7 @@ export default function CreatePlanScreen() {
     const router = useRouter();
     const { colors } = useTheme();
     const { t, i18n } = useTranslation(['common', 'plan']);
-    const { plans, tempPlans, setTempPlans, setPlans, myGoals, myLevel, shareHealthPlan } = useStorage();
+    const { plans, tempPlans, setTempPlans, setPlans, myAreas, myLevel, shareHealthPlan } = useStorage();
 
     const [selectedGoals, setSelectedGoals] = React.useState<string[]>([]);
     const [customGoal, setCustomGoal] = React.useState('');
@@ -372,8 +372,8 @@ export default function CreatePlanScreen() {
             }
 
             console.log('[createPlan] goals:', goals);
-            // Skicka både goals och myGoals till backend
-            createPlan(plans, goals, myLevel, locale, myGoals)
+            // Skicka både goals och myAreas till backend
+            createPlan(plans, goals, myLevel, locale, myAreas)
                 .then(res => setTempPlans(res.plans))
                 .finally(() => setLoading(false));
         }

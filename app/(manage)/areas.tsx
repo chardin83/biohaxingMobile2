@@ -1,42 +1,20 @@
 import { useTheme } from '@react-navigation/native';
-import { t } from 'i18next';
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
 
-import { useStorage } from '@/app/context/StorageContext';
-import AppCard from '@/components/ui/AppCard';
+import Areas from '@/components/Areas';
 import Container from '@/components/ui/Container';
-import { Area, areas } from '@/locales/areas';
 
-
-export default function Areas() {
-  const { myGoals, setMyGoals } = useStorage();
+export default function AreasRoute() {
   const { colors } = useTheme();
 
-  const handlePress = (area: Area) => {
-    setMyGoals(prev => (prev.includes(area.id) ? prev.filter(id => id !== area.id) : [...prev, area.id]));
-  };
   return (
-    <Container background="default" centerContent showBackButton>
-      <Text style={[styles.title, { color: colors.primary }]}>{t('common:areas.selectAreas')}</Text>
-      {areas.map(item => (
-        <AppCard
-          key={item.id}
-          testID={`area-card-${item.id}`}
-          title={t(`areas:${item.id}.title`)}
-          description={t(`areas:${item.id}.description`)}
-          isActive={myGoals.includes(item.id)}
-          onPress={() => handlePress(item)}
-        />
-      ))}
+    <Container
+      background="default"
+      centerContent
+      showBackButton
+      gradientLocations={colors.gradients?.sunrise?.locations2 as any}
+    >
+      <Areas />
     </Container>
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-});

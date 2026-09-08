@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import HealthSyncSettings from '@/components/HealthSyncSettings';
-import MyMultivitaminsCard from '@/components/MyMultivitaminsCard';
 import { ThemedText } from '@/components/ThemedText';
 import Container from '@/components/ui/Container';
 import { SettingsCardLink } from '@/components/ui/SettingsCardLink';
@@ -99,19 +98,12 @@ export default function SettingsPage() {
         {t('settings.myData')}
       </ThemedText>
 
-      <MyMultivitaminsCard />
-
-       <ThemedText type="label" style={styles.title} uppercase>
-        {t('settings.person.title')}
-      </ThemedText>
-
-      <SettingsCardLink
-        title={t('settings.person.title')}
-        subtitle={t('settings.person.subtitle')}
-        iconName="person"
-        onPress={() => router.push('/(stack)/settings/person')}
-        style={styles.cardSpacing}
-      />
+       <SettingsCardLink
+             title={t('settings.myMultivitamins')}
+             subtitle={t('settings.myMultivitaminsSubtitle')}
+             iconName="pill"
+             onPress={() => router.push('/(stack)/settings/multivitamins')}
+             style={styles.cardSpacing} />
 
       <ThemedText type="label" style={styles.title} uppercase>
         {t('settings.privacy')}

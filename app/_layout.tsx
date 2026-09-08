@@ -112,7 +112,7 @@ export default function RootLayout() {
                           />
 
                           <Stack.Screen
-                            name="(onboarding)/onboardingsupplements"
+                            name="(onboarding)/onboardingwelcome"
                             options={{
                               headerShown: false,
                               title: '',
@@ -120,11 +120,17 @@ export default function RootLayout() {
                             }}
                           />
                           <Stack.Screen
+                            name="(onboarding)/onboardingsupplements"
+                            options={{
+                              headerShown: false,
+                              title: '',
+                            }}
+                          />
+                          <Stack.Screen
                             name="(onboarding)/onboardinggoals"
                             options={{
-                              headerShown: true,
+                              headerShown: false,
                               title: '',
-                              headerBackTitle: t('back'),
                             }}
                           />
                         </Stack>

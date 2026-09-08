@@ -66,18 +66,16 @@ describe('AppCard', () => {
   });
 
   it('renders icon when provided', async () => {
-    const { getByTestId } = renderWithProviders(<AppCard {...defaultProps} icon="home" />);
+    const { getByText } = renderWithProviders(<AppCard {...defaultProps} icon="home" />);
     await waitFor(() => {
-      const iconElement = getByTestId('icon');
-      expect(iconElement).toBeTruthy();
-      expect(iconElement.props.children).toBe('home');
+      expect(getByText('home')).toBeTruthy();
     });
   });
 
   it('does not render icon when not provided', async () => {
-    const { queryByTestId } = renderWithProviders(<AppCard {...defaultProps} />);
+    const { queryByText } = renderWithProviders(<AppCard {...defaultProps} />);
     await waitFor(() => {
-      expect(queryByTestId('icon')).toBeNull();
+      expect(queryByText('home')).toBeNull();
     });
   });
 
@@ -110,7 +108,7 @@ describe('AppCard', () => {
   });
 
   it('shows check icon when isActive is true', async () => {
-    const { getByText } = renderWithProviders(<AppCard {...defaultProps} isActive={true} />);
+    const { getByText } = renderWithProviders(<AppCard {...defaultProps} isActive={true} showCheckbox />);
 
     await waitFor(() => {
       expect(getByText('check-circle')).toBeTruthy();
@@ -118,16 +116,17 @@ describe('AppCard', () => {
   });
 
   it('does not show check icon when isActive is false', async () => {
-    const { queryByText } = renderWithProviders(<AppCard {...defaultProps} isActive={false} />);
+    const { queryByText, getByText } = renderWithProviders(<AppCard {...defaultProps} isActive={false} showCheckbox />);
 
     await waitFor(() => {
       expect(queryByText('check-circle')).toBeNull();
+      expect(getByText('checkbox-blank-outline')).toBeTruthy();
     });
   });
 
   it('renders with all props together', async () => {
     const { getByText } = renderWithProviders(
-      <AppCard {...defaultProps} icon="star" description="Full card test" isActive={true} />
+      <AppCard {...defaultProps} icon="star" description="Full card test" isActive={true} showCheckbox />
     );
 
     await waitFor(() => {

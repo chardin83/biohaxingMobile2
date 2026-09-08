@@ -2,10 +2,11 @@ import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { t } from 'i18next';
 import React, { useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text } from 'react-native';
 
 import AppButton from '@/components/ui/AppButton';
 import AppCard from '@/components/ui/AppCard';
+import Container from '@/components/ui/Container';
 import { defaultPlans } from '@/locales/defaultPlans';
 import { useSupplements } from '@/locales/supplements';
 
@@ -52,25 +53,45 @@ export default function OnboardingSupplements() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <Container
+      background="gradient"
+      gradientKey="sunrise"
+      gradientLocations={colors.gradients?.sunrise?.locations3 as any}
+      centerContent
+      showBackButton
+      currentStep={1}
+      totalSteps={2}
+      onBackPress={() => router.replace('/(onboarding)/onboardingwelcome')}
+      scrollable={false}
+      contentContainerStyle={styles.container}
+      footer={
+        <AppButton
+          title={t('common:onboarding.continue')}
+          onPress={handleNext}
+          variant="primary"
+          icon="chevron.right"
+          iconPosition="right"
+        />
+      }
+    >
       <Text style={[styles.title, { color: colors.primary }]}> {t('common:onboarding.whatSupplementDoYouTakeAlready')}</Text>
 
       <FlatList
         data={supplements}
         keyExtractor={item => item.id}
+        style={styles.listContainer}
         renderItem={({ item }) => (
           <AppCard
             title={item.name}
             description={item.description}
             isActive={selectedIds.includes(item.id)}
+            showCheckbox
             onPress={() => toggleSelection(item.id)}
           />
         )}
         contentContainerStyle={styles.list}
       />
-
-      <AppButton title={t('common:onboarding.continue')} onPress={handleNext} variant="primary" />
-    </View>
+    </Container>
   );
 }
 
@@ -80,6 +101,7 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 40,
     paddingTop: 70,
+    width: '100%',
   },
   title: {
     fontSize: 22,
@@ -87,6 +109,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   list: {
-    paddingBottom: 40,
+    paddingBottom: 100,
+  },
+  listContainer: {
+    flex: 1,
+    width: '100%',
   },
 });

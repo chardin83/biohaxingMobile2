@@ -166,6 +166,7 @@ interface StorageContextType {
   plans: PlansByCategory;
   setPlans: (plans: PlansByCategory | ((prev: PlansByCategory) => PlansByCategory)) => void;
   archivedPlans: ArchivedPlansByCategory;
+  clearArchivedPlans: () => void;
   archivePlan: (category: Exclude<keyof ArchivedPlansByCategory, 'supplements'>, planId: string | undefined, tipId: string) => void;
   archiveSupplementPlan: (planName: string, preferredTime: string) => void;
   archiveSupplement: (supplementName: string, planName: string, endedAt: string) => void;
@@ -183,8 +184,8 @@ interface StorageContextType {
       | Record<string, SupplementTime[]>
       | ((prev: Record<string, SupplementTime[]>) => Record<string, SupplementTime[]>)
   ) => void;
-  myGoals: string[];
-  setMyGoals: (goals: string[] | ((prev: string[]) => string[])) => void;
+  myAreas: string[];
+  setMyAreas: (areas: string[] | ((prev: string[]) => string[])) => void;
   errorMessage: string | null;
   setErrorMessage: (msg: string | null) => void;
   hasCompletedOnboarding: boolean;
@@ -194,6 +195,8 @@ interface StorageContextType {
   setOnboardingStep: (val: number) => void;
   myXP: number;
   setMyXP: (xp: number | ((prev: number) => number)) => void;
+  clearNutritionXP: () => void;
+  clearEducationXP: () => void;
   xpBreakdown?: XpBreakdown;
   myLevel: number;
   setMyLevel: (level: number) => void;
@@ -262,7 +265,7 @@ const STORAGE_KEYS = {
   SHARE_HEALTH_PLAN: 'shareHealthPlan',
   TAKEN_DATES: 'takenDates',
   CUSTOM_SUPPLEMENTS: 'customSupplements',
-  MY_GOALS: 'myGoals',
+  MY_AREAS: 'myAreas',
   HAS_COMPLETED_ONBOARDING: 'hasCompletedOnboarding',
   ONBOARDING_STEP: 'onBoardingStep',
   MY_XP: 'myXP',
@@ -288,7 +291,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const [shareHealthPlanState, setShareHealthPlanState] = useState(false);
   const [takenDatesState, setTakenDatesState] = useState<Record<string, SupplementTime[]>>({});
   const [customSupplementsState, setCustomSupplementsState] = useState<Supplement[]>([]);
-  const [myGoalsState, setMyGoalsState] = useState<string[]>([]);
+  const [myAreasState, setMyAreasState] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [hasCompletedOnboardingState, setHasCompletedOnboardingState] = useState(false);
   const [onboardingStepState, setOnboardingStepState] = useState(0);
@@ -424,7 +427,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     shareRaw: string | null;
     takenRaw: string | null;
     customSupplementsRaw: string | null;
-    myGoalsRaw: string | null;
+    myAreasRaw: string | null;
     onboardingRaw: string | null;
     onboardingStepRaw: string | null;
     myXPRaw: string | null;
@@ -445,7 +448,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     setBooleanIfTrue(loaded.shareRaw, setShareHealthPlanState);
     setJsonIfPresent<Record<string, SupplementTime[]>>(loaded.takenRaw, setTakenDatesState);
     setJsonIfPresent<Supplement[]>(loaded.customSupplementsRaw, setCustomSupplementsState);
-    setJsonIfPresent<string[]>(loaded.myGoalsRaw, setMyGoalsState);
+    setJsonIfPresent<string[]>(loaded.myAreasRaw, setMyAreasState);
     setBooleanIfTrue(loaded.onboardingRaw, setHasCompletedOnboardingState);
     setNumberIfPresent(loaded.onboardingStepRaw, setOnboardingStepState);
     setNumberIfPresent(loaded.myXPRaw, setMyXPState);
@@ -479,7 +482,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
           AsyncStorage.getItem(STORAGE_KEYS.SHARE_HEALTH_PLAN),
           AsyncStorage.getItem(STORAGE_KEYS.TAKEN_DATES),
           AsyncStorage.getItem(STORAGE_KEYS.CUSTOM_SUPPLEMENTS),
-          AsyncStorage.getItem(STORAGE_KEYS.MY_GOALS),
+          AsyncStorage.getItem(STORAGE_KEYS.MY_AREAS),
           AsyncStorage.getItem(STORAGE_KEYS.HAS_COMPLETED_ONBOARDING),
           AsyncStorage.getItem(STORAGE_KEYS.ONBOARDING_STEP),
           AsyncStorage.getItem(STORAGE_KEYS.MY_XP),
@@ -502,7 +505,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
           shareRaw: loaded[3],
           takenRaw: loaded[4],
           customSupplementsRaw: loaded[5],
-          myGoalsRaw: loaded[6],
+          myAreasRaw: loaded[6],
           onboardingRaw: loaded[7],
           onboardingStepRaw: loaded[8],
           myXPRaw: loaded[9],
@@ -574,16 +577,21 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     await AsyncStorage.setItem(STORAGE_KEYS.HAS_VISITED_CHAT, val ? 'true' : 'false');
   };
 
+  const clearArchivedPlans = useCallback(() => {
+    setArchivedPlansState(EMPTY_ARCHIVED_PLANS);
+    AsyncStorage.setItem(STORAGE_KEYS.ARCHIVED_PLANS, JSON.stringify(EMPTY_ARCHIVED_PLANS));
+  }, []);
+
   const setShareHealthPlan = async (val: boolean) => {
     setShareHealthPlanState(val);
     await AsyncStorage.setItem(STORAGE_KEYS.SHARE_HEALTH_PLAN, val ? 'true' : 'false');
   };
 
-  const setMyGoals = (update: string[] | ((prev: string[]) => string[])) => {
-    setMyGoalsState(prev => {
-      const newGoals = typeof update === 'function' ? update(prev) : update;
-      AsyncStorage.setItem(STORAGE_KEYS.MY_GOALS, JSON.stringify(newGoals));
-      return newGoals;
+  const setMyAreas = (update: string[] | ((prev: string[]) => string[])) => {
+    setMyAreasState(prev => {
+      const newAreas = typeof update === 'function' ? update(prev) : update;
+      AsyncStorage.setItem(STORAGE_KEYS.MY_AREAS, JSON.stringify(newAreas));
+      return newAreas;
     });
   };
 
@@ -1054,6 +1062,37 @@ const addTrainingEntry = useCallback(
     [awardXP, nutritionXpClaimsState]
   );
 
+  const clearNutritionXP = useCallback(() => {
+    const nutritionXP = xpBreakdownState.nutrition;
+
+    setNutritionXpClaimsState({});
+    AsyncStorage.setItem(STORAGE_KEYS.NUTRITION_XP_CLAIMS, JSON.stringify({}));
+
+    setXpBreakdownState(prev => {
+      const next = { ...prev, nutrition: 0 };
+      AsyncStorage.setItem(STORAGE_KEYS.XP_BREAKDOWN, JSON.stringify(next));
+      return next;
+    });
+
+    if (nutritionXP > 0) {
+      setMyXP(prev => Math.max(0, prev - nutritionXP));
+    }
+  }, [setMyXP, xpBreakdownState.nutrition]);
+
+  const clearEducationXP = useCallback(() => {
+    const educationXP = xpBreakdownState.education;
+
+    setXpBreakdownState(prev => {
+      const next = { ...prev, education: 0 };
+      AsyncStorage.setItem(STORAGE_KEYS.XP_BREAKDOWN, JSON.stringify(next));
+      return next;
+    });
+
+    if (educationXP > 0) {
+      setMyXP(prev => Math.max(0, prev - educationXP));
+    }
+  }, [setMyXP, xpBreakdownState.education]);
+
   const setWeeklyTracking = (
     updater: Record<string, Record<string, WeeklyTrackingItem[] | number>> | ((prev: Record<string, Record<string, WeeklyTrackingItem[] | number>>) => Record<string, Record<string, WeeklyTrackingItem[] | number>>)
   ) => {
@@ -1106,6 +1145,7 @@ const addTrainingEntry = useCallback(
       plans: plansState,
       setPlans,
       archivedPlans: archivedPlansState,
+      clearArchivedPlans,
       archivePlan,
       archiveSupplementPlan,
       archiveSupplement,
@@ -1117,8 +1157,8 @@ const addTrainingEntry = useCallback(
       customSupplements: customSupplementsState,
       setCustomSupplements,
       setTakenDates,
-      myGoals: myGoalsState,
-      setMyGoals,
+      myAreas: myAreasState,
+      setMyAreas,
       errorMessage,
       setErrorMessage,
       hasCompletedOnboarding: hasCompletedOnboardingState,
@@ -1144,6 +1184,8 @@ const addTrainingEntry = useCallback(
       addChatMessageXP,
       setTipVerdict,
       claimNutritionTipCompletionXP,
+      clearNutritionXP,
+      clearEducationXP,
       nutritionXpClaims: nutritionXpClaimsState,
       trainingPlanSettings: trainingPlanSettingsState,
       setTrainingPlanSettings,
@@ -1166,7 +1208,7 @@ const addTrainingEntry = useCallback(
       healthSyncEnabled: healthSyncEnabledState,
       setHealthSyncEnabled,
     }),
-    [plansState, setPlans, archivedPlansState, archivePlan, archiveSupplementPlan, archiveSupplement, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, myGoalsState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState, trainingPlanSettingsState, trainingEntriesState, addTrainingEntry, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, weeklyTrackingState, addToWeeklyTracking, getWeeklyTrackingValue, healthSyncEnabledState, setHealthSyncEnabled]
+    [plansState, setPlans, archivedPlansState, clearArchivedPlans, archivePlan, archiveSupplementPlan, archiveSupplement, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, clearNutritionXP, clearEducationXP, nutritionXpClaimsState, trainingPlanSettingsState, trainingEntriesState, addTrainingEntry, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, weeklyTrackingState, addToWeeklyTracking, getWeeklyTrackingValue, healthSyncEnabledState, setHealthSyncEnabled]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

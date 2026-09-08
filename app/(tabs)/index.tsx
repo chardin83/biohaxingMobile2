@@ -18,7 +18,7 @@ export default function IndexRedirector() {
     } else {
       switch (onboardingStep) {
         case 0:
-          router.push('/(onboarding)/onboardingsupplements');
+          router.push('/(onboarding)/onboardingwelcome');
           break;
         case 1:
           router.push('/(onboarding)/onboardinggoals');

@@ -64,3 +64,12 @@ export const updateUserProfile = async (
     console.warn('userProfileStorage: failed to update', err);
   }
 };
+
+export const clearUserProfile = async () => {
+  try {
+    await AsyncStorage.removeItem(STORAGE_KEY);
+    emit({});
+  } catch (err) {
+    console.warn('userProfileStorage: failed to clear', err);
+  }
+};

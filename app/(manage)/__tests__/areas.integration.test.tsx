@@ -101,16 +101,10 @@ const renderWithProviders = (children: React.ReactNode) => {
   return render(<>{children}</>, { wrapper: AllProviders });
 };
 
-describe('Goals Integration Tests', () => {
+describe('Areas Integration Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-
-  // Removed obsolete test: renders goals page with real MyGoalsSelector integration
-
-  // Removed redundant test: integrates with storage context for goal persistence
-
-  // Removed redundant test: allows goal selection through MyGoalsSelector
 
   it('persists selected goals in storage context', async () => {
     const { getByTestId, rerender } = renderWithProviders(<Areas />);

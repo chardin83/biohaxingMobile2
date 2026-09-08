@@ -8,11 +8,14 @@ import { IconSymbol } from './IconSymbol';
 type Props = Readonly<{
   size?: number;
   iconName?: IconSymbolName;
+  iconColor?: string;
 }>;
 
-export default function SettingIcon({ size = 40, iconName = 'public' }: Props) {
+export default function SettingIcon({ size = 40, iconName = 'public', iconColor }: Props) {
   const { colors } = useTheme();
   const iconSize = Math.round(size * 0.5);
+  const resolvedIconColor = iconColor ?? colors.icon;
+
   return (
     <View
       style={[
@@ -24,7 +27,7 @@ export default function SettingIcon({ size = 40, iconName = 'public' }: Props) {
         },
       ]}
     >
-      <IconSymbol name={iconName as any} size={iconSize} color={colors.icon} />
+      <IconSymbol name={iconName as any} size={iconSize} color={resolvedIconColor} />
     </View>
   );
 }

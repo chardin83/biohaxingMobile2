@@ -36,26 +36,26 @@ const handleMaxHeartRateChange = async (value: number) => {
   return (
     <Container background="default" showBackButton>
       <View style={styles.headerRow}>
-        <ThemedText type="title2">{t('settings.person.title')}</ThemedText>
+        <ThemedText type="title2">{t('privacy.person.title')}</ThemedText>
       </View>
 
       <ThemedText type="label" style={styles.title} uppercase>
-        {t('settings.person.title')}
+        {t('privacy.person.title')}
       </ThemedText>
 
 
-      <SettingsCardLink iconName='calendar' title={t('settings.person.birthday')} style={styles.cardSpacing} />
+      <SettingsCardLink iconName='calendar' title={t('privacy.person.birthday')} style={styles.cardSpacing} />
 
 
       <ThemedText type="label" style={styles.title} uppercase>
-        {t('settings.person.training')}
+        {t('privacy.person.training')}
       </ThemedText>
       <SettingsCard style={styles.cardSpacing}>
         <View style={styles.row}>
           <View style={styles.labelContainer}>
             <SettingIcon size={36} iconName="heart" />
             <ThemedText type="title3" style={styles.titleText}>
-              {t('settings.person.maxHeartRate')}
+              {t('privacy.person.maxHeartRate')}
             </ThemedText>
           </View>
 

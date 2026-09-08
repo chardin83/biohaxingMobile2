@@ -72,14 +72,7 @@
     "deleteMultivitaminUsedMessage": "Used in {{count}} plans. If you delete it, it will also be removed from those plans. Already logged supplements will not be affected.",
     "deleteMultivitaminAction": "Delete permanently",
     "privacy": "Privacy",
-    "privacySubtitle": "Manage data, AI shares and privacy settings",
-    "person": {
-      "title": "Personal information",
-      "subtitle": "Edit your personal information and health data",
-      "birthday": "Birthday",
-      "training": "Training",
-      "maxHeartRate": "Max heart rate"
-    }
+    "privacySubtitle": "Manage data, AI shares and privacy settings"
   },
   "aiSharing": {
     "description": "Choose what information the AI may use to provide you personalized health advice:",
@@ -87,7 +80,46 @@
     "calendar": "Calendar (not shared)"
   },
   "privacy": {
-    "disclaimer": "We never share your identity (name or email) with the AI."
+    "disclaimer": "We never share your identity (name or email) with the AI.",
+    "dataSharing": {
+      "title": "Data sharing",
+      "subtitle": "Control what is shared with AI services"
+    },
+    "deleteData": {
+      "title": "Delete app data",
+      "subtitle": "Choose what to remove",
+      "selectAll": "Select all",
+      "removeSelected": "Delete selected",
+      "plans": "Plans",
+      "plansDescription": "Your health plans and settings",
+      "supplements": "My multivitamins",
+      "supplementsDescription": "Custom multivitamins",
+      "healthData": "Health data",
+      "healthDataDescription": "Imported and manually entered health data",
+      "logs": "Logged meals and activity",
+      "logsDescription": "Meals, training, and other activity",
+      "logsXpNotice": "XP you have earned for these logs will also be deleted.",
+      "knowledge": "Knowledge and selections",
+      "knowledgeDescription": "My areas, saved favorites and viewed knowledge",
+      "knowledgeXpNotice": "XP you have earned for this will also be deleted.",
+      "personal": "Personal information",
+      "personalDescription": "Your personal information and settings",
+      "sharing": "Data sharing",
+      "sharingDescription": "AI sharing, chat status, and chat history",
+      "helper": "{{count}} selected",
+      "confirmTitle": "Delete the selected data?",
+      "confirmMessage": "This removes the selected items from your app. This action cannot be undone.",
+      "biometricPrompt": "Confirm deletion of app data",
+      "biometricUnavailableTitle": "Biometric verification unavailable",
+      "biometricUnavailableMessage": "This device does not support Face ID or Touch ID, or no biometric authentication is enrolled."
+    },
+    "person": {
+      "title": "Personal information",
+      "subtitle": "Manage your personal data",      
+      "birthday": "Birthday",
+      "training": "Training",
+      "maxHeartRate": "Max heart rate"
+    }
   },
   
   "selectedSupplementList": {
@@ -822,8 +854,12 @@
     "askToAddSupplements": "Do you want me to add these supplements to your plan? Reply 'yes' or 'no'."
   },
   "onboarding": {
+    "welcomeTo": "Welcome to",
+    "discoverHealth": "Discover what can improve your health.",
+    "getStarted": "Get started",
     "whatSupplementDoYouTakeAlready": "What supplements do you take already?",
-    "continue": "Continue"
+    "continue": "Continue",
+    "stepOf": "Step {{current}} of {{total}}"
   },
   "imagePicker": {
     "title": "Select Image",

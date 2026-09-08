@@ -93,10 +93,10 @@ describe('StorageContext Integration', () => {
   });
 
   it('should persist and load goals from real AsyncStorage', async () => {
-    const testGoals = ['goal1', 'goal2'];
+    const testAreas = ['area1', 'area2'];
     const planEntry = {
       mainGoalId: 'main1',
-      tipId: 'goal1',
+      tipId: 'tip1',
       startedAt: new Date().toISOString(),
       planCategory: 'training' as const,
     };
@@ -112,21 +112,21 @@ describe('StorageContext Integration', () => {
     });
 
     act(() => {
-      contextValuesRef.current.setMyGoals(testGoals);
+      contextValuesRef.current.setMyAreas(testAreas);
       contextValuesRef.current.setPlans({ supplements: [], training: [planEntry], nutrition: [], other: [] });
     });
 
     await waitFor(() => {
-      expect(contextValuesRef.current.myGoals).toEqual(testGoals);
+      expect(contextValuesRef.current.myAreas).toEqual(testAreas);
       expect(contextValuesRef.current.plans.training).toEqual([planEntry]);
     });
 
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    const storedGoals = await AsyncStorage.getItem('myGoals');
+    const storedGoals = await AsyncStorage.getItem('myAreas');
     const storedPlans = await AsyncStorage.getItem('plans');
 
-    expect(JSON.parse(storedGoals || '[]')).toEqual(testGoals);
+    expect(JSON.parse(storedGoals || '[]')).toEqual(testAreas);
     expect(JSON.parse(storedPlans || '[]')).toEqual({
       supplements: [],
       training: [planEntry],
@@ -174,10 +174,10 @@ describe('StorageContext Integration', () => {
       other: [],
       reasonSummary: { text: '', createdAt: '' },
     };
-    const existingGoals = ['existing-goal'];
+    const existingAreas = ['existing-area'];
 
     await AsyncStorage.setItem('plans', JSON.stringify(existingPlans));
-    await AsyncStorage.setItem('myGoals', JSON.stringify(existingGoals));
+    await AsyncStorage.setItem('myAreas', JSON.stringify(existingAreas));
     await AsyncStorage.setItem('myXP', '50');
 
     render(
@@ -190,7 +190,7 @@ describe('StorageContext Integration', () => {
     await waitFor(() => {
       expect(contextValuesRef.current.isInitialized).toBe(true);
       expect(contextValuesRef.current.plans).toEqual(existingPlans);
-      expect(contextValuesRef.current.myGoals).toEqual(existingGoals);
+      expect(contextValuesRef.current.myAreas).toEqual(existingAreas);
       expect(contextValuesRef.current.myXP).toBe(50);
     });
   });

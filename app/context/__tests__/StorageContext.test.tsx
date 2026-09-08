@@ -48,7 +48,7 @@ describe('StorageContext', () => {
     });
   });
 
-  it('can set and get myGoals', async () => {
+  it('can set and get myAreas', async () => {
     let contextValues: any = {};
 
     render(
@@ -63,17 +63,17 @@ describe('StorageContext', () => {
 
     // Vänta på initialisering
     await waitFor(() => {
-      expect(contextValues.myGoals).toBeDefined();
+      expect(contextValues.myAreas).toBeDefined();
     });
 
-    // Uppdatera myGoals
+    // Uppdatera myAreas
     act(() => {
-      contextValues.setMyGoals(['goal1', 'goal2']);
+      contextValues.setMyAreas(['area1', 'area2']);
     });
 
     // Vänta på uppdateringen
     await waitFor(() => {
-      expect(contextValues.myGoals).toEqual(['goal1', 'goal2']);
+      expect(contextValues.myAreas).toEqual(['area1', 'area2']);
     });
   });
 

@@ -72,14 +72,7 @@
     "deleteMultivitaminUsedMessage": "Används i {{count}} planer. Om du tar bort den tas den även bort ur dessa planer. Redan tagna tillskott påverkas inte.",
     "deleteMultivitaminAction": "Ta bort permanent",
     "privacy": "Integritet",
-    "privacySubtitle": "Hantera data, AI-delningar och integritetsinställningar",
-    "person": {
-      "title": "Personlig information",
-      "subtitle": "Redigera din personliga information och hälsodata",
-      "birthday": "Födelsedag",
-      "training": "Träning",
-      "maxHeartRate": "Maxpuls"
-    }
+    "privacySubtitle": "Hantera data, AI-delningar och integritetsinställningar"
   },
   "aiSharing": {
     "description": "Välj vilken information AI:n får använda för att ge dig personliga hälsoråd:",
@@ -87,7 +80,46 @@
     "calendar": "Kalender (delas inte)"
   },
   "privacy": {
-    "disclaimer": "Vi delar aldrig din identitet (som namn eller e-post) med AI:n."
+    "disclaimer": "Vi delar aldrig din identitet (som namn eller e-post) med AI:n.",
+    "dataSharing": {
+      "title": "Datadelning",
+      "subtitle": "Styr vad som delas med AI-tjänster"
+    },
+    "deleteData": {
+      "title": "Radera appdata",
+      "subtitle": "Välj vad som ska tas bort",
+      "selectAll": "Markera allt",
+      "removeSelected": "Radera markerat",
+      "plans": "Planer",
+      "plansDescription": "Dina hälsoplaner och inställningar",
+      "supplements": "Mina multivitaminer",
+      "supplementsDescription": "Egna multivitaminer",
+      "healthData": "Hälsodata",
+      "healthDataDescription": "Importerade hälsodata samt manuella",
+      "logs": "Loggade måltider och aktivitet",
+      "logsDescription": "Måltider, träning och annan aktivitet",
+      "logsXpNotice": "XP som du fått för dessa loggar tas också bort.",
+      "knowledge": "Kunskap och val",
+      "knowledgeDescription": "Mina områden, sparade favoriter och visad kunskap",
+      "knowledgeXpNotice": "XP som du fått för detta tas också bort.",
+      "personal": "Personuppgifter",
+      "personalDescription": "Dina personliga uppgifter och inställningar",
+      "sharing": "Datadelning",
+      "sharingDescription": "AI-delning, chatstatus och chatthistorik",
+      "helper": "{{count}} valda",
+      "confirmTitle": "Radera den markerade datan?",
+      "confirmMessage": "Det här tar bort de markerade delarna från din app. Den här åtgärden kan inte ångras.",
+      "biometricPrompt": "Bekräfta radering av appdata",
+      "biometricUnavailableTitle": "Biometrisk verifiering saknas",
+      "biometricUnavailableMessage": "Det här enheten stöder inte Face ID eller Touch ID, eller så har ingen biometrisk autentisering registrerats."
+    },
+    "person": {
+      "title": "Personuppgifter",
+      "subtitle": "Hantera din personliga information",
+      "birthday": "Födelsedag",
+      "training": "Träning",
+      "maxHeartRate": "Maxpuls"
+    }
   },
   
   "selectedSupplementList": {
@@ -833,8 +865,12 @@
     "systemPromptNoPlan": "⚠️ Användaren har inte delat sin plan.\n\nDu är en professionell hälsocoach inom biohacking. När du svarar:\n\n1. Ange fördelar med varje tillskott.\n2. Ange lämplig tidpunkt att ta varje tillskott.\n3. Ange eventuella varningar.\n\nSvara på svenska, gärna i punktform."
   },
   "onboarding": {
+    "welcomeTo": "Välkommen till",
+    "discoverHealth": "Upptäck vad som kan förbättra din hälsa.",
+    "getStarted": "Kom igång",
     "whatSupplementDoYouTakeAlready": "Vilka tillskott tar du redan?",
-    "continue": "Fortsätt"
+    "continue": "Fortsätt",
+    "stepOf": "Steg {{current}} av {{total}}"
   },
   "imagePicker": {
     "title": "Välj en bild",

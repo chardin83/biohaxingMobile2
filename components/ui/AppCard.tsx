@@ -12,12 +12,22 @@ interface AppCardProps {
   title: string;
   description?: string;
   isActive?: boolean;
+  showCheckbox?: boolean;
   xp?: number;
   onPress: () => void;
   testID?: string;
 }
 
-const AppCard: React.FC<AppCardProps> = ({ icon, title, description, isActive = false, xp, onPress, testID }) => {
+const AppCard: React.FC<AppCardProps> = ({
+  icon,
+  title,
+  description,
+  isActive = false,
+  showCheckbox = false,
+  xp,
+  onPress,
+  testID,
+}) => {
   const { colors } = useTheme();
 
   return (
@@ -64,9 +74,13 @@ const AppCard: React.FC<AppCardProps> = ({ icon, title, description, isActive = 
               </ThemedText>
             </View>
           )}
-          {isActive && (
+          {(isActive || showCheckbox) && (
             <View style={styles.checkIcon}>
-              <Icon source="check-circle" size={34} color={colors.xp} />
+              <Icon
+                source={isActive ? 'check-circle' : 'checkbox-blank-outline'}
+                size={34}
+                color={isActive ? colors.xp : colors.textMuted}
+              />
             </View>
           )}
         </View>

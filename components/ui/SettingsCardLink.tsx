@@ -21,6 +21,7 @@ type Props = {
   title?: string;
   subtitle?: string;
   iconName?: IconSymbolName;
+  iconColor?: string;
   onPress?: () => void;
   style?: any;
   value?: string;
@@ -28,7 +29,7 @@ type Props = {
   rows?: Row[];
 };
 
-export const SettingsCardLink: React.FC<Props> = ({ title, subtitle, iconName = 'public', onPress, style, value, accessory, rows }: Props) => {
+export const SettingsCardLink: React.FC<Props> = ({ title, subtitle, iconName = 'public', iconColor, onPress, style, value, accessory, rows }: Props) => {
   const { colors } = useTheme();
 
   let rightAccessory: React.ReactNode = null;
@@ -77,7 +78,7 @@ export const SettingsCardLink: React.FC<Props> = ({ title, subtitle, iconName = 
     <CardContainer style={style}>
       <Pressable onPress={onPress} style={styles.container}>
         <View style={styles.leftRow}>
-          <SettingIcon size={40} iconName={iconName} />
+          <SettingIcon size={40} iconName={iconName} iconColor={iconColor} />
           <View style={styles.textColumn}>
             <ThemedText type="title3" style={styles.title}>
               {title}

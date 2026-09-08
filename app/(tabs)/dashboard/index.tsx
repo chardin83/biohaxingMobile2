@@ -32,7 +32,7 @@ function addAreaIdsToSupplementMap(
 
 export default function DashboardScreen() {
   const { t } = useTranslation(['common', 'areas', 'levels']);
-  const { myGoals, myXP, myLevel, viewedTips, plans, xpBreakdown, nutritionXpClaims } = useStorage();
+  const { myAreas, myXP, myLevel, viewedTips, plans, xpBreakdown, nutritionXpClaims } = useStorage();
   const safeXpBreakdown = xpBreakdown ?? { education: 0, nutrition: 0 };
   const router = useRouter();
   const { colors, dark } = useTheme();
@@ -218,7 +218,7 @@ const getPlannedTipsForArea = React.useCallback(
       </View>
 
       {areas
-        .filter(item => myGoals.includes(item.id))
+        .filter(item => myAreas.includes(item.id))
         .map(item => {
           const areaId = item.id;
           const favoriteTipsList = getFavoriteTipsForArea(areaId);

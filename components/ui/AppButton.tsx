@@ -19,6 +19,7 @@ interface AppButtonProps {
   accessibilityLabel?: string;
   accessibilityHint?: string;
   icon?: IconSymbolName;
+  iconPosition?: 'left' | 'right';
   disabledText?: string;
 }
 
@@ -32,6 +33,7 @@ const AppButton: React.FC<AppButtonProps> = ({
   accessibilityLabel,
   accessibilityHint,
   icon,
+  iconPosition = 'left',
   disabledText,
 }) => {
   const { colors } = useTheme();
@@ -92,7 +94,7 @@ const AppButton: React.FC<AppButtonProps> = ({
         accessible={true}
       >
         <View style={styles.content}>
-          {icon && (
+          {icon && iconPosition === 'left' && (
             <IconSymbol name={icon} size={26} color={iconColor} />
           )}
           <ThemedText
@@ -105,6 +107,9 @@ const AppButton: React.FC<AppButtonProps> = ({
           >
             {title}
           </ThemedText>
+          {icon && iconPosition === 'right' && (
+            <IconSymbol name={icon} size={16} color={iconColor} />
+          )}
         </View>
       </TouchableOpacity>
       {disabled && disabledText && (
