@@ -6,8 +6,9 @@ import { useTranslation } from 'react-i18next';
 import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { clearChat } from '@/app/context/chatEvents';
-import { type PlansByCategory, useStorage } from '@/app/context/StorageContext';
-import { clearUserProfile } from '@/app/context/userProfileEvents';
+import { PlansByCategory } from '@/app/context/storage/plans/planTypes';
+import { clearUserProfile } from '@/app/context/storage/userProfile/userProfileStore';
+import { useStorage } from '@/app/context/StorageContext';
 import { type Supplement } from '@/app/domain/Supplement';
 import { type SupplementPlanEntry } from '@/app/domain/SupplementPlanEntry';
 import { ThemedText } from '@/components/ThemedText';

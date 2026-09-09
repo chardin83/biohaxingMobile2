@@ -3,7 +3,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useStorage } from '@/app/context/StorageContext';
-import { getUserProfile } from '@/app/context/userProfileEvents';
 import { ThemedText } from '@/components/ThemedText';
 
 import { MetricContainer } from './MetricContainer';
@@ -21,15 +20,13 @@ export function IntensityMinutesMetric({
 }: Readonly<IntensityMinutesMetricProps>) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { getMetricHistory } = useStorage();
+  const { getMetricHistory, userProfile } = useStorage();
 
   const [hasMaxHeartRate, setHasMaxHeartRate] = React.useState(true);
 
   React.useEffect(() => {
-    getUserProfile().then(profile => {
-      setHasMaxHeartRate(typeof profile.maxHeartRate === 'number');
-    });
-  }, []);
+    setHasMaxHeartRate(typeof userProfile.maxHeartRate === 'number');
+  }, [userProfile.maxHeartRate]);
 
 
   const intensityFromStorage = React.useMemo(() => {

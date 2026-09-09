@@ -52,7 +52,7 @@ export const PlanActionsBottomSheet: React.FC<Props> = ({
       snapPoints={snapPoints}
       enableDynamicSizing={false}
       enablePanDownToClose
-      index={1}
+      index={Math.min(1, snapPoints.length - 1)}
       backgroundStyle={sheetDesign.backgroundStyle}
       handleComponent={sheetDesign.handleComponent}
       onChange={(index) => {

@@ -1,7 +1,10 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Crypto from 'expo-crypto';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { subscribeArchivedPlans, subscribePlans } from '@/app/context/storage/plans/planEvents';
+import { getArchivedPlans, getPlans } from '@/app/context/storage/plans/planStorage';
+import { archivePlan, archiveSupplement, archiveSupplementPlan, clearArchivedPlans, saveSupplementToPlan as saveSupplementToPlanStore, updatePlans } from '@/app/context/storage/plans/planStore';
+import { type ArchivedPlansByCategory, EMPTY_ARCHIVED_PLANS, EMPTY_PLANS, type PlansByCategory} from '@/app/context/storage/plans/planTypes';
 import { WeeklyTrackingItem } from '@/components/nutritionTargets.logic';
 import { type MineralType } from '@/constants/minerals';
 import {
@@ -15,14 +18,53 @@ import {
 import { MetricId } from '@/locales/metrics';
 import { type NutritionComposition } from '@/types/nutritionProfile';
 import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
-import { PlanCategory } from '@/types/planCategory';
 import { type TrainingActivityFilter, type TrainingActivityType, type TrainingIntensity, type TrainingIntensityFilter } from '@/types/training';
 import { VerdictValue } from '@/types/verdict';
 
 import { Plan } from '../domain/Plan';
 import { type Supplement } from '../domain/Supplement';
-import { type SupplementPlanEntry } from '../domain/SupplementPlanEntry';
+import { SupplementPlanEntry } from '../domain/SupplementPlanEntry';
 import { SupplementTime } from '../domain/SupplementTime';
+import {
+  getAppStorage,
+  saveHasCompletedOnboarding,
+  saveHasVisitedChat,
+  saveHealthSyncEnabled,
+  saveMyAreas,
+  saveOnboardingStep,
+  saveShareHealthPlan,
+  saveShowMusic,
+} from './storage/app/appStorage';
+import {
+  getMetricEntries,
+  saveMetricEntries,
+} from './storage/metrics/metricStorage';
+import {
+  getNutritionStorage,
+  saveDailyNutritionSummaries,
+  saveWeeklyTracking,
+} from './storage/nutrition/nutritionStorage';
+import {
+  getSupplementStorage,
+  saveCustomSupplements,
+  saveTakenDates,
+} from './storage/supplements/supplementStorage';
+import {
+  getTrainingStorage,
+  saveTrainingEntries,
+  saveTrainingPlanSettings,
+} from './storage/training/trainingStorage';
+import { subscribeUserProfile } from './storage/userProfile/userProfileEvents';
+import {  clearUserProfile as clearUserProfileStore, getUserProfile, saveUserProfile as saveUserProfileStore, updateUserProfile as updateUserProfileStore } from './storage/userProfile/userProfileStore';
+import { UserProfile } from './storage/userProfile/userProfileTypes';
+import {
+  getXpStorage,
+  saveLevel,
+  saveNutritionXpClaims,
+  saveViewedTips,
+  saveXP,
+  saveXpBreakdown,
+} from './storage/xp/xpStorage';
 
 export type MealNutrition = NutritionComposition & {
   id?: string;
@@ -50,27 +92,6 @@ export type DailyNutritionSummary = {
   };
 };
 
-// PlanCategory is shared from types/planCategory.ts
-
-export type PlanTipEntry = {
-  startedAt: string;
-  id?: string;
-  createdBy: string;
-  editedAt: string;
-  editedBy: string;
-  tipId: string;
-  planCategory: Exclude<PlanCategory, 'supplement'>;
-  comment?: string;
-};
-
-export type ArchivedPlanTipEntry = PlanTipEntry & {
-  endedAt: string;
-};
-
-export type ArchivedSupplementPlanEntry = SupplementPlanEntry & {
-  endedAt: string;
-};
-
 export type ReasonSummary = {
   text: string;
   createdAt: string;
@@ -82,36 +103,6 @@ export type MetricEntry = {
   unit: string;
   recordedAt: string;
   notes?: string;
-};
-
-export type PlansByCategory = {
-  supplements: Plan[];
-  training: PlanTipEntry[];
-  nutrition: PlanTipEntry[];
-  other: PlanTipEntry[];
-  reasonSummary: ReasonSummary;
-};
-
-export type ArchivedPlansByCategory = {
-  training: ArchivedPlanTipEntry[];
-  nutrition: ArchivedPlanTipEntry[];
-  other: ArchivedPlanTipEntry[];
-  supplements: ArchivedSupplementPlanEntry[];
-};
-
-const EMPTY_PLANS: PlansByCategory = {
-  supplements: [],
-  training: [],
-  nutrition: [],
-  other: [],
-  reasonSummary: { text: '', createdAt: '' },
-};
-
-const EMPTY_ARCHIVED_PLANS: ArchivedPlansByCategory = {
-  training: [],
-  nutrition: [],
-  other: [],
-  supplements: [],
 };
 
 export type TrainingPlanSettings = {
@@ -164,12 +155,43 @@ export type NutritionXpClaim = {
 
 interface StorageContextType {
   plans: PlansByCategory;
-  setPlans: (plans: PlansByCategory | ((prev: PlansByCategory) => PlansByCategory)) => void;
+
+  setPlans: (
+    plans:
+      | PlansByCategory
+      | ((prev: PlansByCategory) => PlansByCategory)
+  ) => void;
+
+  saveSupplementToPlan: (
+  selectedPlan: Plan,
+  supplement: SupplementPlanEntry,
+  isEditingSupplement: boolean
+) => Promise<Plan | null>;
+
   archivedPlans: ArchivedPlansByCategory;
-  clearArchivedPlans: () => void;
-  archivePlan: (category: Exclude<keyof ArchivedPlansByCategory, 'supplements'>, planId: string | undefined, tipId: string) => void;
-  archiveSupplementPlan: (planName: string, preferredTime: string) => void;
-  archiveSupplement: (supplementName: string, planName: string, endedAt: string) => void;
+
+  clearArchivedPlans: () => Promise<void>;
+
+  archivePlan: (
+    category: Exclude<
+      keyof ArchivedPlansByCategory,
+      'supplements'
+    >,
+    planId: string | undefined,
+    tipId: string
+  ) => Promise<unknown>;
+
+  archiveSupplementPlan: (
+    planName: string,
+    preferredTime: string
+  ) => Promise<unknown>;
+
+  archiveSupplement: (
+    supplementName: string,
+    planName: string,
+    preferredTime: string
+  ) => Promise<unknown>;
+
   hasVisitedChat: boolean;
   setHasVisitedChat: (val: boolean) => void;
   shareHealthPlan: boolean;
@@ -256,31 +278,11 @@ interface StorageContextType {
   getWeeklyTrackingValue: (weekStartISO: string, key: string) => WeeklyTrackingItem[] | number | undefined;
   healthSyncEnabled: boolean;
   setHealthSyncEnabled: (val: boolean) => void;
+  userProfile: UserProfile;
+  updateUserProfile: (updates: Partial<UserProfile>) => Promise<UserProfile>;
+  saveUserProfile: (profile: UserProfile) => Promise<UserProfile>;
+  clearUserProfile: () => Promise<void>;
 }
-
-const STORAGE_KEYS = {
-  PLANS: 'plans',
-  ARCHIVED_PLANS: 'archivedPlans',
-  HAS_VISITED_CHAT: 'hasVisitedChat',
-  SHARE_HEALTH_PLAN: 'shareHealthPlan',
-  TAKEN_DATES: 'takenDates',
-  CUSTOM_SUPPLEMENTS: 'customSupplements',
-  MY_AREAS: 'myAreas',
-  HAS_COMPLETED_ONBOARDING: 'hasCompletedOnboarding',
-  ONBOARDING_STEP: 'onBoardingStep',
-  MY_XP: 'myXP',
-  XP_BREAKDOWN: 'xpBreakdown',
-  MY_LEVEL: 'myLevel',
-  DAILY_NUTRITION: 'dailyNutritionSummary',
-  VIEWED_TIPS: 'viewedTips',
-  TRAINING_PLAN_SETTINGS: 'trainingPlanSettings',
-  TRAINING_ENTRIES: 'trainingEntries',
-  SHOW_MUSIC: 'showMusic',
-  METRIC_ENTRIES: 'metricEntries',
-  WEEKLY_TRACKING: 'weeklyTracking',
-  NUTRITION_XP_CLAIMS: 'nutritionXpClaims',
-  HEALTH_SYNC_ENABLED: 'healthSyncEnabled',
-};
 
 const StorageContext = createContext<StorageContextType | undefined>(undefined);
 
@@ -313,88 +315,8 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const [healthSyncEnabledState, setHealthSyncEnabledState] = useState(false);
   const [weeklyTrackingState, setWeeklyTrackingState] = useState<Record<string, Record<string, WeeklyTrackingItem[] | number>>>({});
   const [nutritionXpClaimsState, setNutritionXpClaimsState] = useState<Record<string, NutritionXpClaim>>({});
+  const [userProfileState, setUserProfileState] = useState<UserProfile>({});
 
-  const normalizeReasonSummary = (value: any): ReasonSummary => {
-    if (!value) return { text: '', createdAt: '' };
-    if (typeof value === 'string') {
-      return { text: value, createdAt: new Date().toISOString() };
-    }
-    const text = typeof value.text === 'string' ? value.text : '';
-    const createdAt = typeof value.createdAt === 'string' ? value.createdAt : '';
-    return { text, createdAt };
-  };
-
-  const normalizeViewedTips = (value: unknown): ViewedTip[] => {
-    if (!Array.isArray(value)) return [];
-    return value
-      .map((item: any) => {
-        const tipId = typeof item?.tipId === 'string' ? item.tipId : '';
-        if (!tipId) return null;
-
-        return {
-          tipId,
-          viewedAt: typeof item?.viewedAt === 'string' ? item.viewedAt : new Date().toISOString(),
-          askedQuestions: Array.isArray(item?.askedQuestions)
-            ? item.askedQuestions.filter((q: unknown) => typeof q === 'string')
-            : [],
-          xpEarned: Number.isFinite(item?.xpEarned) ? item.xpEarned : 0,
-          verdict: item?.verdict,
-        } as ViewedTip;
-      })
-      .filter((item): item is ViewedTip => Boolean(item));
-  };
-
-  const normalizePlans = useCallback((raw: string | null): PlansByCategory => {
-    if (!raw) return EMPTY_PLANS;
-    try {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
-        return { ...EMPTY_PLANS, supplements: parsed };
-      }
-
-      const supplements = Array.isArray(parsed?.supplements) ? parsed.supplements : [];
-      const training = Array.isArray(parsed?.training) ? parsed.training : [];
-      const nutrition = Array.isArray(parsed?.nutrition) ? parsed.nutrition : [];
-      const other = Array.isArray(parsed?.other) ? parsed.other : [];
-
-      return {
-        supplements,
-        training,
-        nutrition,
-        other,
-        reasonSummary: normalizeReasonSummary(parsed.reasonSummary),
-      };
-    } catch (error) {
-      console.warn('Failed to parse plans', error);
-      return EMPTY_PLANS;
-    }
-  }, []);
-
-  const normalizeArchivedPlans = useCallback((raw: string | null): ArchivedPlansByCategory => {
-    if (!raw) return EMPTY_ARCHIVED_PLANS;
-    try {
-      const parsed = JSON.parse(raw);
-      const storedSupplements = Array.isArray(parsed?.supplements) ? parsed.supplements : [];
-      const supplements = storedSupplements.flatMap((item: any) =>
-        Array.isArray(item?.supplements)
-          ? item.supplements.map((supplement: any) => ({
-              ...supplement,
-              endedAt: supplement.endedAt ?? item.endedAt ?? new Date().toISOString(),
-            }))
-          : item
-      );
-
-      return {
-        training: Array.isArray(parsed?.training) ? parsed.training : [],
-        nutrition: Array.isArray(parsed?.nutrition) ? parsed.nutrition : [],
-        other: Array.isArray(parsed?.other) ? parsed.other : [],
-        supplements,
-      };
-    } catch (error) {
-      console.warn('Failed to parse archived plans', error);
-      return EMPTY_ARCHIVED_PLANS;
-    }
-  }, []);
 
   const setBooleanIfTrue = useCallback(
     (raw: string | null, setter: React.Dispatch<React.SetStateAction<boolean>>) => {
@@ -420,135 +342,204 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     []
   );
 
-  const hydrateStoredState = useCallback((loaded: {
-    plansRaw: string | null;
-    archivedPlansRaw: string | null;
-    visitedRaw: string | null;
-    shareRaw: string | null;
-    takenRaw: string | null;
-    customSupplementsRaw: string | null;
-    myAreasRaw: string | null;
-    onboardingRaw: string | null;
-    onboardingStepRaw: string | null;
-    myXPRaw: string | null;
-    xpBreakdownRaw: string | null;
-    myLevelRaw: string | null;
-    dailyNutritionRaw: string | null;
-    viewedTipsRaw: string | null;
-    trainingSettingsRaw: string | null;
-    trainingEntriesRaw: string | null;
-    metricEntriesRaw: string | null;
-    weeklyTrackingRaw: string | null;
-    nutritionXpClaimsRaw: string | null;
-    healthSyncEnabledRaw: string | null;
-  }) => {
-    setPlansState(normalizePlans(loaded.plansRaw));
-    setArchivedPlansState(normalizeArchivedPlans(loaded.archivedPlansRaw));
-    setBooleanIfTrue(loaded.visitedRaw, setHasVisitedChatState);
-    setBooleanIfTrue(loaded.shareRaw, setShareHealthPlanState);
-    setJsonIfPresent<Record<string, SupplementTime[]>>(loaded.takenRaw, setTakenDatesState);
-    setJsonIfPresent<Supplement[]>(loaded.customSupplementsRaw, setCustomSupplementsState);
-    setJsonIfPresent<string[]>(loaded.myAreasRaw, setMyAreasState);
-    setBooleanIfTrue(loaded.onboardingRaw, setHasCompletedOnboardingState);
-    setNumberIfPresent(loaded.onboardingStepRaw, setOnboardingStepState);
-    setNumberIfPresent(loaded.myXPRaw, setMyXPState);
-    if (loaded.xpBreakdownRaw) {
-      const parsed = JSON.parse(loaded.xpBreakdownRaw);
-      setXpBreakdownState({
-        education: Number.isFinite(parsed?.education) ? parsed.education : 0,
-        nutrition: Number.isFinite(parsed?.nutrition) ? parsed.nutrition : 0,
-      });
-    }
-    setNumberIfPresent(loaded.myLevelRaw, setMyLevelState);
-    setJsonIfPresent<Record<string, DailyNutritionSummary>>(loaded.dailyNutritionRaw, setDailyNutritionSummariesState);
-    if (loaded.viewedTipsRaw) {
-      setViewedTipsState(normalizeViewedTips(JSON.parse(loaded.viewedTipsRaw)));
-    }
-    setJsonIfPresent<Record<string, TrainingPlanSettings>>(loaded.trainingSettingsRaw, setTrainingPlanSettingsState);
-    setJsonIfPresent<Record<string, TrainingLogEntry[]>>(loaded.trainingEntriesRaw, setTrainingEntriesState);
-    setJsonIfPresent<MetricEntry[]>(loaded.metricEntriesRaw, setMetricEntriesState);
-    setJsonIfPresent<Record<string, Record<string, WeeklyTrackingItem[] | number>>>(loaded.weeklyTrackingRaw, setWeeklyTrackingState);
-    setJsonIfPresent<Record<string, NutritionXpClaim>>(loaded.nutritionXpClaimsRaw, setNutritionXpClaimsState);
-    setBooleanIfTrue(loaded.healthSyncEnabledRaw, setHealthSyncEnabledState);
-  }, [normalizeArchivedPlans, normalizePlans, setBooleanIfTrue, setJsonIfPresent, setNumberIfPresent]);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const loaded = await Promise.all([
-          AsyncStorage.getItem(STORAGE_KEYS.PLANS),
-          AsyncStorage.getItem(STORAGE_KEYS.ARCHIVED_PLANS),
-          AsyncStorage.getItem(STORAGE_KEYS.HAS_VISITED_CHAT),
-          AsyncStorage.getItem(STORAGE_KEYS.SHARE_HEALTH_PLAN),
-          AsyncStorage.getItem(STORAGE_KEYS.TAKEN_DATES),
-          AsyncStorage.getItem(STORAGE_KEYS.CUSTOM_SUPPLEMENTS),
-          AsyncStorage.getItem(STORAGE_KEYS.MY_AREAS),
-          AsyncStorage.getItem(STORAGE_KEYS.HAS_COMPLETED_ONBOARDING),
-          AsyncStorage.getItem(STORAGE_KEYS.ONBOARDING_STEP),
-          AsyncStorage.getItem(STORAGE_KEYS.MY_XP),
-          AsyncStorage.getItem(STORAGE_KEYS.XP_BREAKDOWN),
-          AsyncStorage.getItem(STORAGE_KEYS.MY_LEVEL),
-          AsyncStorage.getItem(STORAGE_KEYS.DAILY_NUTRITION),
-          AsyncStorage.getItem(STORAGE_KEYS.VIEWED_TIPS),
-          AsyncStorage.getItem(STORAGE_KEYS.TRAINING_PLAN_SETTINGS),
-          AsyncStorage.getItem(STORAGE_KEYS.TRAINING_ENTRIES),
-          AsyncStorage.getItem(STORAGE_KEYS.METRIC_ENTRIES),
-          AsyncStorage.getItem(STORAGE_KEYS.WEEKLY_TRACKING),
-          AsyncStorage.getItem(STORAGE_KEYS.NUTRITION_XP_CLAIMS),
-          AsyncStorage.getItem(STORAGE_KEYS.HEALTH_SYNC_ENABLED),
+    let mounted = true;
+
+    const loadPlans = async () => {
+      const [plans, archivedPlans] =
+        await Promise.all([
+          getPlans(),
+          getArchivedPlans(),
         ]);
 
-        hydrateStoredState({
-          plansRaw: loaded[0],
-          archivedPlansRaw: loaded[1],
-          visitedRaw: loaded[2],
-          shareRaw: loaded[3],
-          takenRaw: loaded[4],
-          customSupplementsRaw: loaded[5],
-          myAreasRaw: loaded[6],
-          onboardingRaw: loaded[7],
-          onboardingStepRaw: loaded[8],
-          myXPRaw: loaded[9],
-          xpBreakdownRaw: loaded[10],
-          myLevelRaw: loaded[11],
-          dailyNutritionRaw: loaded[12],
-          viewedTipsRaw: loaded[13],
-          trainingSettingsRaw: loaded[14],
-          trainingEntriesRaw: loaded[15],
-          metricEntriesRaw: loaded[16],
-          weeklyTrackingRaw: loaded[17],
-          nutritionXpClaimsRaw: loaded[18],
-          healthSyncEnabledRaw: loaded[19],
-        });
-      } catch (err) {
-        console.error('Kunde inte ladda från AsyncStorage:', err);
-      } finally {
-        setIsInitialized(true);
+      if (!mounted) {
+        return;
       }
+
+      setPlansState(plans);
+      setArchivedPlansState(archivedPlans);
     };
 
-    loadData();
-  }, [hydrateStoredState]);
+    loadPlans();
+
+    const unsubscribePlans = subscribePlans(
+      plans => {
+        setPlansState(plans);
+      }
+    );
+
+    const unsubscribeArchivedPlans =
+      subscribeArchivedPlans(
+        archivedPlans => {
+          setArchivedPlansState(archivedPlans);
+        }
+      );
+
+    return () => {
+      mounted = false;
+
+      unsubscribePlans();
+      unsubscribeArchivedPlans();
+    };
+  }, []);
+
+  useEffect(() => {
+  let mounted = true;
+
+  const loadUserProfile = async () => {
+    const profile = await getUserProfile();
+
+    if (mounted) {
+      setUserProfileState(profile);
+    }
+  };
+
+  loadUserProfile();
+
+  const unsubscribe =
+    subscribeUserProfile(profile => {
+      setUserProfileState(profile);
+    });
+
+  return () => {
+    mounted = false;
+    unsubscribe();
+  };
+}, []);
+
+useEffect(() => {
+  const loadData = async () => {
+    try {
+      const [
+        app,
+        supplements,
+        nutrition,
+        xp,
+        training,
+        metrics,
+      ] = await Promise.all([
+        getAppStorage(),
+        getSupplementStorage(),
+        getNutritionStorage(),
+        getXpStorage(),
+        getTrainingStorage(),
+        getMetricEntries(),
+      ]);
+
+      setHasVisitedChatState(
+        app.hasVisitedChat
+      );
+      setShareHealthPlanState(
+        app.shareHealthPlan
+      );
+      setMyAreasState(app.myAreas);
+      setHasCompletedOnboardingState(
+        app.hasCompletedOnboarding
+      );
+      setOnboardingStepState(
+        app.onboardingStep
+      );
+      setShowMusicState(app.showMusic);
+      setHealthSyncEnabledState(
+        app.healthSyncEnabled
+      );
+
+      setTakenDatesState(
+        supplements.takenDates
+      );
+      setCustomSupplementsState(
+        supplements.customSupplements
+      );
+
+      setDailyNutritionSummariesState(
+        nutrition.dailyNutritionSummaries
+      );
+      setWeeklyTrackingState(
+        nutrition.weeklyTracking
+      );
+
+      setMyXPState(xp.myXP);
+      setXpBreakdownState(
+        xp.xpBreakdown
+      );
+      setMyLevelState(xp.myLevel);
+      setViewedTipsState(
+        xp.viewedTips
+      );
+      setNutritionXpClaimsState(
+        xp.nutritionXpClaims
+      );
+
+      setTrainingPlanSettingsState(
+        training.trainingPlanSettings
+      );
+      setTrainingEntriesState(
+        training.trainingEntries
+      );
+
+      setMetricEntriesState(metrics);
+    } catch (err) {
+      console.error(
+        'Kunde inte ladda storage:',
+        err
+      );
+    } finally {
+      setIsInitialized(true);
+    }
+  };
+
+  loadData();
+}, []);
 
   const setPlans = useCallback(
-    (update: PlansByCategory | ((prev: PlansByCategory) => PlansByCategory)) => {
-      setPlansState(prev => {
-        const newPlans = typeof update === 'function' ? update(prev) : update;
-        const normalizedPlans: PlansByCategory = {
-          ...EMPTY_PLANS,
-          ...newPlans,
-          supplements: newPlans.supplements ?? [],
-          training: newPlans.training ?? [],
-          nutrition: newPlans.nutrition ?? [],
-          other: (newPlans as any).other ?? [],
-          reasonSummary: normalizeReasonSummary((newPlans as any).reasonSummary),
-        };
-        AsyncStorage.setItem(STORAGE_KEYS.PLANS, JSON.stringify(normalizedPlans));
-        return normalizedPlans;
-      });
+    (
+      update:
+        | PlansByCategory
+        | ((prev: PlansByCategory) => PlansByCategory)
+    ) => {
+      if (typeof update === 'function') {
+        updatePlans(current =>
+          update(current)
+        ).catch(() => {});
+
+        return;
+      }
+
+      updatePlans(update).catch(() => {});
     },
     []
   );
+
+  const saveSupplementToPlan = useCallback(
+  async (
+    selectedPlan: Plan,
+    supplement: SupplementPlanEntry,
+    isEditingSupplement: boolean
+  ): Promise<Plan | null> => {
+    try {
+      return await saveSupplementToPlanStore(
+        selectedPlan,
+        supplement,
+        isEditingSupplement
+      );
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'Kunde inte spara tillskottet.';
+
+      setErrorMessage(message);
+
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+
+      return null;
+    }
+  },
+  []
+);
 
   const setTakenDates = (
     update:
@@ -557,7 +548,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   ) => {
     setTakenDatesState(prev => {
       const newDates = typeof update === 'function' ? update(prev) : update;
-      AsyncStorage.setItem(STORAGE_KEYS.TAKEN_DATES, JSON.stringify(newDates));
+      saveTakenDates(newDates);
       return newDates;
     });
   };
@@ -567,42 +558,37 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   ) => {
     setCustomSupplementsState(prev => {
       const nextSupplements = typeof updater === 'function' ? updater(prev) : updater;
-      AsyncStorage.setItem(STORAGE_KEYS.CUSTOM_SUPPLEMENTS, JSON.stringify(nextSupplements));
+      saveCustomSupplements(nextSupplements);
       return nextSupplements;
     });
   };
 
   const setHasVisitedChat = async (val: boolean) => {
     setHasVisitedChatState(val);
-    await AsyncStorage.setItem(STORAGE_KEYS.HAS_VISITED_CHAT, val ? 'true' : 'false');
+    await saveHasVisitedChat(val);
   };
-
-  const clearArchivedPlans = useCallback(() => {
-    setArchivedPlansState(EMPTY_ARCHIVED_PLANS);
-    AsyncStorage.setItem(STORAGE_KEYS.ARCHIVED_PLANS, JSON.stringify(EMPTY_ARCHIVED_PLANS));
-  }, []);
 
   const setShareHealthPlan = async (val: boolean) => {
     setShareHealthPlanState(val);
-    await AsyncStorage.setItem(STORAGE_KEYS.SHARE_HEALTH_PLAN, val ? 'true' : 'false');
+    await saveShareHealthPlan(val);
   };
 
   const setMyAreas = (update: string[] | ((prev: string[]) => string[])) => {
     setMyAreasState(prev => {
       const newAreas = typeof update === 'function' ? update(prev) : update;
-      AsyncStorage.setItem(STORAGE_KEYS.MY_AREAS, JSON.stringify(newAreas));
+      saveMyAreas(newAreas);
       return newAreas;
     });
   };
 
   const setHasCompletedOnboarding = (val: boolean) => {
     setHasCompletedOnboardingState(val);
-    AsyncStorage.setItem(STORAGE_KEYS.HAS_COMPLETED_ONBOARDING, val ? 'true' : 'false');
+    saveHasCompletedOnboarding(val);
   };
 
   const setOnboardingStep = (val: number) => {
     setOnboardingStepState(val);
-    AsyncStorage.setItem(STORAGE_KEYS.ONBOARDING_STEP, val.toString());
+    saveOnboardingStep(val);
   };
 
   const setMyXP = useCallback((update: number | ((prev: number) => number)) => {
@@ -620,14 +606,14 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
         setMyLevel(newLevel);
         setNewLevelReached(newLevel);
         setLevelUpModalVisible(true);
-        AsyncStorage.setItem(STORAGE_KEYS.MY_LEVEL, newLevel.toString());
+        saveLevel(newLevel);
       } else if (newLevel !== myLevelState) {
         // Om man inte gått upp, men XP ändå ökat, säkerställ att nivå stämmer
         setMyLevel(newLevel);
-        AsyncStorage.setItem(STORAGE_KEYS.MY_LEVEL, newLevel.toString());
+        saveLevel(newLevel);
       }
 
-      AsyncStorage.setItem(STORAGE_KEYS.MY_XP, newXP.toString());
+      saveXP(newXP);
       return newXP;
     });
   }, [myLevelState]);
@@ -641,7 +627,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
           ...prev,
           [source]: (prev[source] ?? 0) + amount,
         };
-        AsyncStorage.setItem(STORAGE_KEYS.XP_BREAKDOWN, JSON.stringify(next));
+        saveXpBreakdown(next);
         return next;
       });
 
@@ -652,7 +638,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
 
   const setMyLevel = (level: number) => {
     setMyLevelState(level);
-    AsyncStorage.setItem(STORAGE_KEYS.MY_LEVEL, level.toString());
+    saveLevel(level);
   };
 
   const clearNewLevelReached = () => {
@@ -666,7 +652,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   ) => {
     setDailyNutritionSummariesState(prev => {
       const updated = typeof updater === 'function' ? updater(prev) : updater;
-      AsyncStorage.setItem(STORAGE_KEYS.DAILY_NUTRITION, JSON.stringify(updated));
+      saveDailyNutritionSummaries(updated);
       return updated;
     });
   };
@@ -674,7 +660,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const setViewedTips = useCallback((update: ViewedTip[] | ((prev: ViewedTip[]) => ViewedTip[])) => {
     setViewedTipsState(prev => {
       const newTips = typeof update === 'function' ? update(prev) : update;
-      AsyncStorage.setItem(STORAGE_KEYS.VIEWED_TIPS, JSON.stringify(newTips));
+      saveViewedTips(newTips);
       return newTips;
     });
   }, []);
@@ -686,7 +672,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   ) => {
     setTrainingPlanSettingsState(prev => {
       const updated = typeof updater === 'function' ? updater(prev) : updater;
-      AsyncStorage.setItem(STORAGE_KEYS.TRAINING_PLAN_SETTINGS, JSON.stringify(updated));
+      saveTrainingPlanSettings(updated);
       return updated;
     });
   };
@@ -698,159 +684,32 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   ) => {
     setTrainingEntriesState(prev => {
       const updated = typeof updater === 'function' ? updater(prev) : updater;
-      AsyncStorage.setItem(STORAGE_KEYS.TRAINING_ENTRIES, JSON.stringify(updated));
+      saveTrainingEntries(updated);
       return updated;
     });
   };
 
-const addTrainingEntry = useCallback(
-  (entry: TrainingLogInput): TrainingLogEntry => {
-    const nextEntry: TrainingLogEntry = {
-      id: Crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-      ...entry,
-    };
-
-    setTrainingEntries(prev => ({
-      ...prev,
-      [entry.date]: [...(prev[entry.date] ?? []), nextEntry],
-    }));
-
-    return nextEntry;
-  },
-  []
-);
-
-  const archivePlan = useCallback(
-    (category: Exclude<keyof ArchivedPlansByCategory, 'supplements'>, planId: string | undefined, tipId: string) => {
-      setPlansState(prev => {
-        const activePlans = prev[category];
-        const index = activePlans.findIndex(plan => (planId ? plan.id === planId : plan.tipId === tipId));
-        if (index < 0) return prev;
-
-        const archivedPlan: ArchivedPlanTipEntry = { ...activePlans[index], endedAt: new Date().toISOString() };
-        const nextPlans = { ...prev, [category]: activePlans.filter((_, itemIndex) => itemIndex !== index) };
-        const nextArchivedPlans = {
-          ...archivedPlansState,
-          [category]: [...archivedPlansState[category], archivedPlan],
-        };
-        setArchivedPlansState(nextArchivedPlans);
-        AsyncStorage.setItem(STORAGE_KEYS.ARCHIVED_PLANS, JSON.stringify(nextArchivedPlans));
-        AsyncStorage.setItem(STORAGE_KEYS.PLANS, JSON.stringify(nextPlans));
-        return nextPlans;
-      });
-    },
-    [archivedPlansState]
-  );
-
- const archiveSupplement = useCallback(
-  (supplementName: string, planName: string, preferredTime: string) => {
-    setPlansState(previous => {
-      const planIndex = previous.supplements.findIndex(
-        plan =>
-          plan.name === planName &&
-          plan.prefferedTime === preferredTime
-      );
-
-      if (planIndex < 0) return previous;
-
-      const plan = previous.supplements[planIndex];
-
-      const supplementIndex = plan.supplements.findIndex(
-        supplement => supplement.supplement.name === supplementName
-      );
-
-      if (supplementIndex < 0) return previous;
-
-      const endedAt = new Date().toISOString();
-
-      const archivedSupplement: ArchivedSupplementPlanEntry = {
-        ...plan.supplements[supplementIndex],
-        endedAt,
+  const addTrainingEntry = useCallback(
+    (entry: TrainingLogInput): TrainingLogEntry => {
+      const nextEntry: TrainingLogEntry = {
+        id: Crypto.randomUUID(),
+        createdAt: new Date().toISOString(),
+        ...entry,
       };
 
-      const remainingSupplements = plan.supplements.filter(
-        (_, index) => index !== supplementIndex
-      );
-
-      const nextSupplementPlans =
-        remainingSupplements.length === 0
-          ? previous.supplements.filter(
-              (_, index) => index !== planIndex
-            )
-          : previous.supplements.map((item, index) =>
-              index === planIndex
-                ? {
-                    ...item,
-                    supplements: remainingSupplements,
-                  }
-                : item
-            );
-
-      const nextPlans = {
-        ...previous,
-        supplements: nextSupplementPlans,
-      };
-
-      setArchivedPlansState(previousArchived => {
-        const nextArchivedPlans = {
-          ...previousArchived,
-          supplements: [
-            ...previousArchived.supplements,
-            archivedSupplement,
-          ],
-        };
-
-        AsyncStorage.setItem(
-          STORAGE_KEYS.ARCHIVED_PLANS,
-          JSON.stringify(nextArchivedPlans)
-        );
-
-        return nextArchivedPlans;
-      });
-
-      AsyncStorage.setItem(
-        STORAGE_KEYS.PLANS,
-        JSON.stringify(nextPlans)
-      );
-
-      return nextPlans;
-    });
-  },
-  []
-);
-
-  const archiveSupplementPlan = useCallback((planName: string, preferredTime: string) => {
-    setPlansState(previous => {
-      const index = previous.supplements.findIndex(
-        plan => plan.name === planName && plan.prefferedTime === preferredTime
-      );
-      if (index < 0) return previous;
-
-      const endedAt = new Date().toISOString();
-      const archivedSupplements: ArchivedSupplementPlanEntry[] = previous.supplements[index].supplements.map(supplement => ({
-        ...supplement,
-        endedAt,
+      setTrainingEntries(prev => ({
+        ...prev,
+        [entry.date]: [...(prev[entry.date] ?? []), nextEntry],
       }));
-      const nextPlans = {
-        ...previous,
-        supplements: previous.supplements.filter((_, planIndex) => planIndex !== index),
-      };
-      const nextArchivedPlans = {
-        ...archivedPlansState,
-        supplements: [...archivedPlansState.supplements, ...archivedSupplements],
-      };
 
-      setArchivedPlansState(nextArchivedPlans);
-      AsyncStorage.setItem(STORAGE_KEYS.ARCHIVED_PLANS, JSON.stringify(nextArchivedPlans));
-      AsyncStorage.setItem(STORAGE_KEYS.PLANS, JSON.stringify(nextPlans));
-      return nextPlans;
-    });
-  }, [archivedPlansState]);
+      return nextEntry;
+    },
+    []
+  );
 
   const setShowMusic = (val: boolean) => {
     setShowMusicState(val);
-    AsyncStorage.setItem(STORAGE_KEYS.SHOW_MUSIC, val ? 'true' : 'false');
+    saveShowMusic(val);
   };
 
   const setMetricEntries = (
@@ -858,14 +717,14 @@ const addTrainingEntry = useCallback(
   ) => {
     setMetricEntriesState(prev => {
       const updated = typeof updater === 'function' ? updater(prev) : updater;
-      AsyncStorage.setItem(STORAGE_KEYS.METRIC_ENTRIES, JSON.stringify(updated));
+      saveMetricEntries(updated);
       return updated;
     });
   };
 
   const setHealthSyncEnabled = useCallback((val: boolean) => {
     setHealthSyncEnabledState(val);
-    AsyncStorage.setItem(STORAGE_KEYS.HEALTH_SYNC_ENABLED, val ? 'true' : 'false');
+    saveHealthSyncEnabled(val);
   }, []);
 
   const addMetricEntry = useCallback((entry: MetricEntry) => {
@@ -1051,7 +910,7 @@ const addTrainingEntry = useCallback(
           },
         };
 
-        AsyncStorage.setItem(STORAGE_KEYS.NUTRITION_XP_CLAIMS, JSON.stringify(next));
+        saveNutritionXpClaims(next);
         return next;
       });
 
@@ -1066,11 +925,11 @@ const addTrainingEntry = useCallback(
     const nutritionXP = xpBreakdownState.nutrition;
 
     setNutritionXpClaimsState({});
-    AsyncStorage.setItem(STORAGE_KEYS.NUTRITION_XP_CLAIMS, JSON.stringify({}));
+    saveNutritionXpClaims({});
 
     setXpBreakdownState(prev => {
       const next = { ...prev, nutrition: 0 };
-      AsyncStorage.setItem(STORAGE_KEYS.XP_BREAKDOWN, JSON.stringify(next));
+      saveXpBreakdown(next);
       return next;
     });
 
@@ -1084,7 +943,7 @@ const addTrainingEntry = useCallback(
 
     setXpBreakdownState(prev => {
       const next = { ...prev, education: 0 };
-      AsyncStorage.setItem(STORAGE_KEYS.XP_BREAKDOWN, JSON.stringify(next));
+      saveXpBreakdown(next);
       return next;
     });
 
@@ -1098,7 +957,7 @@ const addTrainingEntry = useCallback(
   ) => {
     setWeeklyTrackingState(prev => {
       const updated = typeof updater === 'function' ? updater(prev) : updater;
-      AsyncStorage.setItem(STORAGE_KEYS.WEEKLY_TRACKING, JSON.stringify(updated));
+      saveWeeklyTracking(updated);
       return updated;
     });
   };
@@ -1138,12 +997,34 @@ const addTrainingEntry = useCallback(
     [weeklyTrackingState]
   );
 
+  const saveUserProfile = useCallback(
+  async (profile: UserProfile) => {
+    return saveUserProfileStore(profile);
+  },
+  []
+);
+
+const updateUserProfile = useCallback(
+  async (updates: Partial<UserProfile>) => {
+    return updateUserProfileStore(updates);
+  },
+  []
+);
+
+const clearUserProfile = useCallback(
+  async () => {
+    await clearUserProfileStore();
+  },
+  []
+);
+
 
 
   const value = useMemo(
     () => ({
       plans: plansState,
       setPlans,
+      saveSupplementToPlan,
       archivedPlans: archivedPlansState,
       clearArchivedPlans,
       archivePlan,
@@ -1207,8 +1088,12 @@ const addTrainingEntry = useCallback(
       getWeeklyTrackingValue,
       healthSyncEnabled: healthSyncEnabledState,
       setHealthSyncEnabled,
+      userProfile: userProfileState,
+      saveUserProfile,
+      updateUserProfile,
+      clearUserProfile,
     }),
-    [plansState, setPlans, archivedPlansState, clearArchivedPlans, archivePlan, archiveSupplementPlan, archiveSupplement, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, clearNutritionXP, clearEducationXP, nutritionXpClaimsState, trainingPlanSettingsState, trainingEntriesState, addTrainingEntry, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, weeklyTrackingState, addToWeeklyTracking, getWeeklyTrackingValue, healthSyncEnabledState, setHealthSyncEnabled]
+       [plansState, setPlans,saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, clearNutritionXP, clearEducationXP, nutritionXpClaimsState, trainingPlanSettingsState, trainingEntriesState, addTrainingEntry, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, weeklyTrackingState, addToWeeklyTracking, getWeeklyTrackingValue, healthSyncEnabledState, setHealthSyncEnabled, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

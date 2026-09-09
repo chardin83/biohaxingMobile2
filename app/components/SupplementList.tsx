@@ -9,8 +9,8 @@ import { ThemedModal } from '@/components/ThemedModal';
 import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
-import { useSupplementSaver } from '@/hooks/useSupplementSaver';
 
+import { useStorage } from '../context/StorageContext';
 import { Supplement } from '../domain/Supplement';
 import { SupplementPlanEntry } from '../domain/SupplementPlanEntry';
 
@@ -26,7 +26,7 @@ const SupplementList: React.FC<SupplementListProps> = ({
   supplementPlans,
 }) => {
   const { t } = useTranslation();
-  const { saveSupplementToPlan } = useSupplementSaver();
+  const { saveSupplementToPlan } = useStorage();
   const { colors } = useTheme();
   const [expandedSupplements, setExpandedSupplements] = React.useState<string[]>([]);
   const [addToPlanVisible, setAddToPlanVisible] = React.useState(false);

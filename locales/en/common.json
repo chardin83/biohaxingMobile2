@@ -851,7 +851,8 @@
   "chat": {
     "welcomeMessage": "Hi! I'm your personal health coach – specialized in biohacking and supplements. Ask me about daily routines or optimizing your health. 💪🌿",
     "introPrompt": "I just added a new health goal ({{goal}}). It includes these supplements: {{supplements}}. Do you have any tips or warnings?",
-    "askToAddSupplements": "Do you want me to add these supplements to your plan? Reply 'yes' or 'no'."
+    "askToAddSupplements": "Do you want me to add these supplements to your plan? Reply 'yes' or 'no'.",
+    "supplementNotFound": "⚠️ I couldn't find {{supplement}} in the list of supplements."
   },
   "onboarding": {
     "welcomeTo": "Welcome to",

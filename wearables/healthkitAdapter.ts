@@ -1,4 +1,4 @@
-import { getUserProfile } from '@/app/context/userProfileEvents';
+import { getUserProfile } from '@/app/context/storage/userProfile/userProfileStore';
 
 import { BloodPressureReading, DailyActivity, HRVSummary, SleepSummary, TimeRange, WearableAdapter } from './types';
 
@@ -795,8 +795,8 @@ async getBloodPressure(
 
         const heartRateSamples = await this.getHeartRateSamples(range);
 
-        const profile = await getUserProfile();
-        const maxHeartRate = profile.maxHeartRate;
+        const userProfile = await getUserProfile();
+        const maxHeartRate = userProfile.maxHeartRate;
 
         if (maxHeartRate) {
           const intensityHrThreshold = maxHeartRate * 0.7;

@@ -862,7 +862,8 @@
     "introPrompt": "Jag har precis lagt till ett nytt hälsomål: {{goal}}. Det innehåller dessa tillskott: {{supplements}}. Kan du gå igenom varje tillskott, ge råd om fördelar, tidpunkt att ta det, och varningar om det behövs?",
     "askToAddSupplements": "Vill du att jag lägger till dessa tillskott i din plan?",
     "systemPromptWithPlan": "📝 Användaren har följande plan:\n{{plan}}\n\nDu är en professionell hälsocoach med expertis inom biohacking och kosttillskott. När du svarar:\n\n1. Ange fördelar med varje tillskott.\n2. Ange lämplig tidpunkt på dagen att ta varje tillskott.\n3. Ange eventuella varningar.\n4. Om användaren har en plan: föreslå endast tillskott som passar tider som ännu inte är upptagna.\n5. Avsluta med en fråga om du ska lägga till tillskotten i användarens plan.\n\nSvara tydligt på svenska, gärna i punktform.",
-    "systemPromptNoPlan": "⚠️ Användaren har inte delat sin plan.\n\nDu är en professionell hälsocoach inom biohacking. När du svarar:\n\n1. Ange fördelar med varje tillskott.\n2. Ange lämplig tidpunkt att ta varje tillskott.\n3. Ange eventuella varningar.\n\nSvara på svenska, gärna i punktform."
+    "systemPromptNoPlan": "⚠️ Användaren har inte delat sin plan.\n\nDu är en professionell hälsocoach inom biohacking. När du svarar:\n\n1. Ange fördelar med varje tillskott.\n2. Ange lämplig tidpunkt att ta varje tillskott.\n3. Ange eventuella varningar.\n\nSvara på svenska, gärna i punktform.",
+    "supplementNotFound": "⚠️ Jag kunde inte hitta {{supplement}} i listan över kosttillskott."
   },
   "onboarding": {
     "welcomeTo": "Välkommen till",

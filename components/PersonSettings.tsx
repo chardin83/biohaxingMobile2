@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import { getUserProfile, updateUserProfile } from '@/app/context/userProfileEvents';
+import { useStorage } from '@/app/context/StorageContext';
 import { ThemedText } from '@/components/ThemedText';
 import Container from '@/components/ui/Container';
 import SettingsCard from '@/components/ui/SettingsCard';
@@ -16,14 +16,16 @@ export default function PersonSettings() {
   const { t } = useTranslation('common');
 
   const [maxHeartRate, setMaxHeartRate] = React.useState(195);
+  const {
+  userProfile,
+  updateUserProfile,
+} = useStorage();
 
 React.useEffect(() => {
-  getUserProfile().then(profile => {
-    if (profile.maxHeartRate) {
-      setMaxHeartRate(profile.maxHeartRate);
-    }
-  });
-}, []);
+  if (userProfile.maxHeartRate) {
+    setMaxHeartRate(userProfile.maxHeartRate);
+  }
+}, [userProfile.maxHeartRate]);
 
 const handleMaxHeartRateChange = async (value: number) => {
   setMaxHeartRate(value);

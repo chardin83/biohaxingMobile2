@@ -9,7 +9,9 @@ const clearSubscribers = new Set<ChatClearSubscriber>();
 
 export const subscribeToChatClear = (subscriber: ChatClearSubscriber) => {
   clearSubscribers.add(subscriber);
-  return () => clearSubscribers.delete(subscriber);
+  return () => {
+    clearSubscribers.delete(subscriber);
+  };
 };
 
 export const clearChat = async () => {

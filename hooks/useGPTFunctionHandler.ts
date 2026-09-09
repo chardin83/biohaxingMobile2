@@ -3,16 +3,17 @@ import { useCallback } from 'react';
 
 import { useSession } from '@/app/context/SessionStorage';
 import { useStorage } from '@/app/context/StorageContext';
+import { Message } from '@/app/domain/Message';
 import { Plan } from '@/app/domain/Plan';
 import { Supplement } from '@/app/domain/Supplement';
-
-import { useSupplementSaver } from './useSupplementSaver';
+import { SupplementPlanEntry } from '@/app/domain/SupplementPlanEntry';
+import { useSupplements } from '@/locales/supplements';
 
 export function useGPTFunctionHandler() {
-  const { plans, setPlans, shareHealthPlan } = useStorage();
-  const { saveSupplementToPlan } = useSupplementSaver();
+  const { plans, setPlans, shareHealthPlan, saveSupplementToPlan } = useStorage();
   const { setForceOpenPopup } = useSession();
   const supplementPlans = plans.supplements;
+  const supplementCatalog = useSupplements();
 
   const handleGPTFunctionCall = useCallback(
     async (
@@ -56,7 +57,7 @@ export function useGPTFunctionHandler() {
         setPlans(prev => ({ ...prev, supplements: [...prev.supplements, createdPlan] }));
       }
 
-      const alreadyExists = matchingPlan.supplements.some(s => s.name.toLowerCase() === supplement.toLowerCase());
+      const alreadyExists = matchingPlan.supplements.some(s => s.supplement.name.toLowerCase() === supplement.toLowerCase());
 
       if (alreadyExists) {
         setMessages?.(prev => [
@@ -69,13 +70,36 @@ export function useGPTFunctionHandler() {
         return;
       }
 
+      const catalogMatch = supplementCatalog.find(s => s.name.toLowerCase() === supplement.toLowerCase());
+
+      if (!catalogMatch) {
+        setMessages?.(prev => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: t('chat.supplementNotFound', { supplement }),
+          },
+        ]);
+        return;
+      }
+
       const newSupplement: Supplement = {
+        id: catalogMatch.id,
         name: supplement,
         quantity,
         unit,
       };
 
-      saveSupplementToPlan(matchingPlan, newSupplement, false);
+      const newEntry: SupplementPlanEntry = {
+        supplement: newSupplement,
+        startedAt: new Date().toISOString(),
+        createdBy: 'you',
+        planName: matchingPlan.name,
+        prefferedTime: matchingPlan.prefferedTime,
+        notify: matchingPlan.notify,
+      };
+
+      saveSupplementToPlan(matchingPlan, newEntry, false);
 
       setMessages?.(prev => [
         ...prev,
@@ -88,7 +112,7 @@ export function useGPTFunctionHandler() {
         },
       ]);
     },
-    [shareHealthPlan, setForceOpenPopup, setPlans, supplementPlans, saveSupplementToPlan]
+    [shareHealthPlan, setForceOpenPopup, setPlans, supplementPlans, supplementCatalog, saveSupplementToPlan]
   );
 
   return { handleGPTFunctionCall };

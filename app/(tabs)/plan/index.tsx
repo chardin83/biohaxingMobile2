@@ -35,7 +35,6 @@ import DiscreetButton from '@/components/ui/DiscreetButton';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import PlanEditActions from '@/components/ui/PlanEditActions';
 import { PressableCard } from '@/components/ui/PressableCard';
-import { useSupplementSaver } from '@/hooks/useSupplementSaver';
 import { formatDate } from '@/utils/dateUtils';
 
 import { Plan } from '../../domain/Plan';
@@ -250,13 +249,12 @@ export default function Plans() {
   const planActionsBottomSheetRef = React.useRef<BottomSheet>(null);
   const supplementActionsBottomSheetRef = React.useRef<BottomSheet>(null);
 
-  const { saveSupplementToPlan } = useSupplementSaver();
-
   const [supplement, setSupplement] = useState<SupplementPlanEntry | null>(null);
 
   const {
     archiveSupplementPlan,
     archiveSupplement,
+    saveSupplementToPlan,
     customSupplements,
     plans,
     setCustomSupplements,
