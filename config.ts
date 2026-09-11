@@ -5,7 +5,7 @@ export const BASE_URL = `http://${BASE_IP}:${API_PORT}`;
 
 export const ENDPOINTS = {
   askAIv2: `${BASE_URL}/api/askAIv2`,
-  handleSupplementCheck: `${BASE_URL}/api/handleSupplementCheck`,
+  //handleSupplementCheck: `${BASE_URL}/api/handleSupplementCheck`,  //TODO: delete from backend
   handleNutritionCheck: `${BASE_URL}/api/handleNutritionCheck`,
   handleAnalyze: `${BASE_URL}/api/handleAnalyze`,
   createPlan: `${BASE_URL}/api/createPlan`,

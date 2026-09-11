@@ -727,14 +727,6 @@
     },
     "warning": "Creatine supplementation may affect kidney function in individuals with pre-existing conditions."
   },
-  "betaalanine_endurance": {
-    "title": "Beta-alanine for endurance",
-    "description": "Beta-alanine is a non-essential amino acid that increases carnosine levels in muscles, buffering lactic acid and delaying fatigue during high-intensity exercise. It's particularly effective for activities lasting 1-4 minutes.",
-    "areas": {
-      "strength": "Beta-alanine increases muscle carnosine levels, reducing fatigue and improving performance during high-intensity exercise.",
-      "cardioFitness": "By buffering lactic acid, beta-alanine extends endurance capacity and allows for longer, more intense cardiovascular training sessions."
-    }
-  },
   "shilajit_performance": {
     "title": "Shilajit for performance",
     "description": "Shilajit is a mineral-rich substance found in the Himalayas that supports mitochondrial function, enhances energy production, and improves physical performance. It contains fulvic acid and over 85 minerals in ionic form.",
@@ -971,24 +963,6 @@
       "longevity": "Higher VO2 max is one of the strongest predictors of long-term health and survival, making HIIT a valuable longevity stimulus when recovery is managed well."
     }
   },
-  "vo2max_4x4_intervals": {
-    "title": "VO2max 4x4 intervals",
-    "description": "A classic protocol for improving VO2 max is 4 x 4 minutes at high but controlled intensity (about 85-95% of max heart rate), with 3 minutes easy recovery between intervals. Performed 1-2 times per week, this can effectively raise oxygen uptake capacity, stroke volume, and performance.",
-    "areas": {
-      "cardioFitness": "4x4 intervals provide a strong central cardiovascular stimulus and are one of the most evidence-based methods for increasing VO2 max.",
-      "energy": "Improved oxygen delivery and utilization supports higher sustainable output and better energetic capacity in daily life.",
-      "longevity": "Maintaining high aerobic capacity over time is closely associated with healthier aging and lower cardiometabolic risk."
-    }
-  },
-  "vo2max_hill_intervals": {
-    "title": "Hill intervals for VO2 max",
-    "description": "Uphill intervals (for example 6-10 repeats of 45-90 seconds) are an efficient way to improve VO2 max while also building lower-body strength and running economy. Hills reduce impact speed while increasing force demand, making them a practical high-intensity option.",
-    "areas": {
-      "cardioFitness": "Hill intervals challenge oxygen transport and heart-lung capacity, supporting improvements in VO2 max and endurance performance.",
-      "strength": "Uphill work increases force production in glutes, calves, and posterior chain, improving strength-endurance transfer.",
-      "longevity": "Combining aerobic intensity and musculoskeletal loading supports both cardiovascular resilience and functional capacity with age."
-    }
-  },
   "running_volume_aerobic": {
     "title": "Running volume for aerobic capacity",
     "description": "Running volume is about the total amount of running you accumulate over a week. In practice, a large share of that volume should still be done in Zone 2, otherwise the total stress can become too high for recovery, joints, and the nervous system. Unlike Zone 2, which mainly describes the intensity of an individual session, running volume is more about building durability, tissue tolerance, and aerobic capacity through consistent total workload over time. When increased gradually, it can also strengthen tendons, ligaments, and tissue tolerance around the joints.",
@@ -1219,49 +1193,31 @@
       "cardioFitness": "When kept low intensity, this can improve aerobic robustness without compromising quality in high-intensity sessions when periodized correctly."
     }
   },
-  "lactate_threshold_training": {
-    "title": "Threshold training for 10K–10 miles",
-    "description": "Threshold training (tempo just below lactate threshold) makes you faster without accumulating fatigue as quickly. It’s a key driver for 10K and longer races because you can sustain a high pace with controlled effort.",
+  "vigorous_exercise_lactate": {
+    "title": "Vigorous exercise and lactate",
+    "description": "Brief periods of vigorous exercise can rapidly increase lactate production. Lactate is not simply a waste product – it can be used as fuel and also acts as a signaling molecule throughout the body. Short bouts of higher-intensity activity can therefore be a valuable complement to moderate aerobic exercise for cardiovascular, metabolic and brain health.",
     "areas": {
-      "cardioFitness": "Threshold sessions raise the pace you can sustain before lactate accumulates too quickly, improving race performance over 5–10K distances.",
-      "energy": "Improved lactate clearance and more efficient energy systems let you produce more work with less perceived fatigue at higher speeds.",
-      "mind": "Lactate have neurological effects that can improve focus and mental toughness during hard efforts, helping you push through. It also has neuroprotective effects that may support brain health and resilience under stress."
+      "cardioFitness": "Vigorous activity provides a strong stimulus to the heart and circulatory system in a short amount of time and can help maintain or improve cardiorespiratory fitness and cardiovascular health.",
+      "energy": "As exercise intensity increases, lactate production rises. Lactate can be transported between tissues and used as fuel, making it an important part of energy metabolism during physical activity.",
+      "mind": "Exercise-generated lactate can be used as fuel by the brain and also acts as a signaling molecule. Lactate signaling has been linked to BDNF and processes involved in neuroplasticity, which may be one mechanism through which exercise supports brain health."
     },
-    "analyzePrompt": "Analyze the user's current fitness and recommend a threshold structure (e.g., 20–40 minutes continuous or broken into blocks) that matches their capacity."
+    "analyzePrompt": "Analyze the user's current activity level and fitness and suggest a safe way to incorporate brief periods of vigorous activity that can increase lactate production. Focus on cardiovascular, metabolic and brain health rather than athletic performance."
   },
-  "running_economy_drills": {
-    "title": "Running economy: technique, drills, and strides",
-    "description": "Running economy is how little energy you need for a given pace. Short technique drills and strides (brief controlled accelerations) improve neuromuscular efficiency so you can run faster at the same effort.",
+  "coffee_polyphenols_longevity": {
+    "title": "Coffee and polyphenols for long-term health",
+    "description": "Coffee is a significant source of polyphenols, particularly chlorogenic acids. Regular coffee consumption has been associated with lower risk of several chronic diseases and reduced mortality in large observational studies. The benefits do not appear to be solely due to caffeine, as decaffeinated coffee has also been linked to health benefits.",
     "areas": {
-      "strength": "Strides and drills improve force application and elastic recoil, making your stride more efficient and feel ‘lighter’.",
-      "nervousSystem": "Short speed exposures train coordination and muscle fiber recruitment, improving movement efficiency.",
-      "cardioFitness": "Better running economy lowers the oxygen cost at a given pace, improving endurance performance."
-    }
-  },
-  "stride_frequency_optimization": {
-    "title": "Cadence and stride frequency",
-    "description": "Optimizing cadence (stride frequency) can reduce braking forces and improve running economy. For many runners, an efficient cadence often falls around 170–185 steps/min at moderate to higher speeds, but the optimal cadence is individual.",
-    "areas": {
-      "strength": "A more efficient cadence can reduce overload by lowering impact per step and improving control of stride length.",
-      "nervousSystem": "Cadence work improves rhythm, coordination, and timing, increasing movement efficiency.",
-      "energy": "Improved mechanics can reduce energy ‘leaks’ and help you hold pace at a lower overall energy cost."
-    }
-  },
-  "caffeine": {
-    "title": "Caffeine",
-    "description": "Caffeine can improve performance by increasing alertness, lowering perceived effort, and supporting higher output during hard sessions. It’s especially useful before intervals, threshold runs, and races.",
-    "areas": {
-      "energy": "Caffeine can increase performance by influencing adenosine receptors and improving work capacity under effort.",
-      "mind": "Koffein ökar vakenhet och mental skärpa, vilket kan förbättra koncentration, reaktionsförmåga och fokus under krävande mentala uppgifter.",
-      "cardioFitness": "By improving effort tolerance, you can sustain higher intensity longer, strengthening the training stimulus for VO2 and threshold."
+      "cardioFitness": "Moderate coffee consumption has been associated with lower risk of cardiovascular disease in observational studies. Coffee polyphenols may affect vascular function, inflammation, and oxidative stress, although caffeine can temporarily raise blood pressure in some individuals.",
+      "energy": "Coffee contains bioactive compounds such as chlorogenic acids that can influence glucose and energy metabolism. Regular coffee consumption has also been linked to lower risk of type 2 diabetes in observational studies.",
+      "mind": "Regular coffee consumption has been associated with lower risk of certain neurodegenerative diseases in observational studies. Coffee contains several bioactive compounds beyond caffeine, and both caffeine and polyphenols may contribute to the effects."
     }
   },
   "nitrate_no_efficiency": {
-    "title": "Nitrates (beetroot) for oxygen efficiency",
-    "description": "Dietary nitrates from beetroot can increase nitric oxide (NO), improving blood flow and muscular oxygen efficiency. Often used as a performance aid before hard sessions or races.",
+    "title": "Nitrate and nitric oxide for vascular health",
+    "description": "Nitrate from sources such as beetroot and green leafy vegetables can be converted to nitrite and then to nitric oxide (NO). Nitric oxide helps blood vessels dilate and plays an important role in blood flow, blood pressure regulation, and vascular function.",
     "areas": {
-      "cardioFitness": "Higher NO availability can improve blood flow and reduce oxygen cost at a given intensity, potentially benefiting 5–10K performance.",
-      "energy": "Improved muscular efficiency can increase output per liter of oxygen and reduce energy loss at higher workloads."
+      "cardioFitness": "Higher availability of nitric oxide can improve blood vessel dilation and may contribute to lower blood pressure and better vascular function. Dietary nitrate has been particularly linked to a reduction in systolic blood pressure in studies.",
+      "energy": "Improved blood flow can help oxygen and nutrients reach working tissues more efficiently. Nitric oxide may also influence how efficiently muscles use oxygen during physical activity."
     }
   },
   "l_carnitine_fat_transport": {

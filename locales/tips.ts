@@ -2,6 +2,7 @@ import { type IconSymbolName } from '@/components/ui/icon-symbol-map';
 import { AminoAcidType } from '@/constants/aminoAcids';
 import { FiberSubtype, FiberType } from '@/constants/fiber';
 import { MineralType } from '@/constants/minerals';
+import { NutrientType } from '@/constants/nutrients';
 import { PolyphenolType } from '@/constants/polyphenols';
 import { VitaminType } from '@/constants/vitamins';
 import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
@@ -99,11 +100,45 @@ export type AminoAcidTarget = {
   tag: AminoAcidType;
 } & BaseTarget<'mg'> & WeightedTarget;
 
+export type NutrientTarget = {
+  tag: NutrientType;
+} & BaseTarget<'mg'> & WeightedTarget;
+
+
 export type TrackingTarget = {
   trackingKey: string; // e.g., 'unique_plants', 'vegetable_colors', 'fish_meals', 'fatty_fish_meals'
   // Optional dynamic guidance sent to AI for this key
   aiInstruction?: string; // Optional dynamic guidance sent to AI for this key
 } & BaseTarget<'items' | 'count'>;
+
+export type HydrationTarget = {
+  trackingKey: 'water_intake';
+} & BaseTarget<'ml'>;
+
+export type ActivityTarget = {
+  trackingKey:
+    | 'zone2_minutes'
+    | 'zone2_sessions'
+    | 'running_minutes'
+    | 'running_distance'
+    | 'hiit_sessions'
+    | 'interval_sessions'
+    | 'hill_interval_sessions'
+    | 'running_drill_sessions'
+    | 'neuromuscular_sessions'
+    | 'strength_mobility_sessions'
+    | 'vigorous_activity_minutes';
+} & BaseTarget<'minutes' | 'km' | 'sessions'>;
+
+export type HabitTarget = {
+  trackingKey:
+    | 'sleep_duration'
+    | 'morning_light'
+    | 'meditation'
+    | 'tooth_brushing'
+    | 'nature_time'
+    | 'social_connection';
+} & BaseTarget<'minutes' | 'hours' | 'count'>;
 
 export type TipNutritionFood = {
   key: string;
@@ -146,6 +181,9 @@ type TipWithoutTargets = {
   vitaminTargets?: never;
   aminoAcidTargets?: never;
   trackingTargets?: never;
+  hydrationTargets?: never;
+  activityTargets?: never;
+  habitTargets?: never;
 };
 
 type TipWithTargets = {
@@ -156,6 +194,10 @@ type TipWithTargets = {
   vitaminTargets?: VitaminTarget[]; // Vitaminmål som används för plan-uppföljning
   aminoAcidTargets?: AminoAcidTarget[]; // Aminosyramål som används för plan-uppföljning
   trackingTargets?: TrackingTarget[]; // Flexibla tracking-mål (växter, färger, fisk, etc.)
+  hydrationTargets?: HydrationTarget[]; // Vätskemål
+  activityTargets?: ActivityTarget[]; // Träningsmål som kan verifieras från aktivitetsdata
+  habitTargets?: HabitTarget[]; // Beteendemål som användaren kan logga eller som kan hämtas från hälsodata
+  nutrientTargets?: NutrientTarget[]; // Näringsämnesmål som används för plan-uppföljning
 };
 
 export type Tip = TipBase & (TipWithoutTargets | TipWithTargets);
@@ -496,6 +538,11 @@ const rawTips: Tip[] = [
     preferredDayParts: ['evening'],
     timeRule: 'anytime',
     planCategory: ['nutrition', 'supplement'],
+    targetPeriod: 'daily',
+    targetIconName: 'mineral',
+    mineralTargets: [
+      { tag: 'zinc', amount: 10, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
+    ],
     nutritionFoods: [
       { key: 'oysters' },
       { key: 'beef' },
@@ -521,6 +568,11 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
     planCategory: ['nutrition', 'supplement'],
+    targetPeriod: 'daily',
+    targetIconName: 'mineral',
+    mineralTargets: [
+      { tag: 'selenium', amount: 0.055, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
+    ],
     nutritionFoods: [
       { key: 'brazilNuts' },
       { key: 'sardines' },
@@ -547,6 +599,11 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
     planCategory: ['nutrition', 'supplement'],
+    targetPeriod: 'daily',
+    targetIconName: 'mineral',
+    mineralTargets: [
+      { tag: 'iodine', amount: 0.15, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
+    ],
     nutritionFoods: [{ key: 'iodizedSeaSalt' }, { key: 'fortifiedDairy' }, { key: 'eggs' }, { key: 'cod' }],
     bodyParts: ['thyroid', 'hair'],
   },
@@ -593,6 +650,11 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday', 'afternoon', 'evening'],
     timeRule: 'anytime',
     planCategory: ['nutrition'],
+    targetPeriod: 'daily',
+    targetIconName: 'target',
+    hydrationTargets: [
+      { trackingKey: 'water_intake', amount: 2000, unit: 'ml' },
+    ],
     bodyParts: ['kidneys'],
   },
   {
@@ -638,6 +700,11 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'evening'],
     timeRule: 'anytime',
     planCategory: ['other'],
+    targetPeriod: 'daily',
+    targetIconName: 'target',
+    habitTargets: [
+      { trackingKey: 'tooth_brushing', amount: 2, unit: 'count' },
+    ],
     bodyParts: ['teeth'],
   },
   {
@@ -1058,6 +1125,11 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
+    targetPeriod: 'daily',
+    targetIconName: 'target',
+    habitTargets: [
+      { trackingKey: 'sleep_duration', amount: 7, unit: 'hours' },
+    ],
     bodyParts: ['nervousSystem'],
   },
   {
@@ -1126,6 +1198,11 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
+    targetPeriod: 'daily',
+    targetIconName: 'target',
+    habitTargets: [
+      { trackingKey: 'morning_light', amount: 10, unit: 'minutes' },
+    ],
     bodyParts: ['nervousSystem'],
   },
   {
@@ -1159,6 +1236,11 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday', 'evening'],
     timeRule: 'anytime',
+    targetPeriod: 'daily',
+    targetIconName: 'target',
+    habitTargets: [
+      { trackingKey: 'meditation', amount: 10, unit: 'minutes' },
+    ],
     bodyParts: ['nervousSystem'],
   },
   {
@@ -1291,6 +1373,11 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['midday', 'afternoon'],
     timeRule: 'anytime',
+    targetPeriod: 'weekly',
+    targetIconName: 'target',
+    habitTargets: [
+      { trackingKey: 'nature_time', amount: 120, unit: 'minutes' },
+    ],
     bodyParts: ['heart', 'nervousSystem'],
   },
   {
@@ -1326,6 +1413,11 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['afternoon', 'evening'],
     timeRule: 'anytime',
+    targetPeriod: 'weekly',
+    targetIconName: 'target',
+    habitTargets: [
+      { trackingKey: 'social_connection', amount: 2, unit: 'count' },
+    ],
     bodyParts: ['nervousSystem'],
   },
   {
@@ -1391,6 +1483,11 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
     planCategory: ['training'],
+    targetPeriod: 'weekly',
+    targetIconName: 'chart',
+    activityTargets: [
+      { trackingKey: 'neuromuscular_sessions', amount: 2, unit: 'sessions' },
+    ],
     bodyParts: ['muscles', 'nervousSystem'],
   },
   {
@@ -1411,23 +1508,6 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     planCategory: ['supplement'],
     bodyParts: ['muscles', 'brain'],
-  },
-  {
-    id: 'betaalanine_endurance',
-    level: 6,
-    xp: 700,
-    areas: [
-      { id: 'strength', descriptionKey: 'betaalanine_endurance.areas.strength' },
-      { id: 'cardioFitness', descriptionKey: 'betaalanine_endurance.areas.cardioFitness' },
-    ],
-    title: 'betaalanine_endurance.title',
-    descriptionKey: 'betaalanine_endurance.description',
-    supplements: [{ id: 'betaAlanine' }],
-    trainingRelation: 'anytime',
-    preferredDayParts: ['morning', 'midday'],
-    timeRule: 'anytime',
-    planCategory: ['supplement'],
-    bodyParts: ['muscles'],
   },
   {
     id: 'shilajit_performance',
@@ -1893,39 +1973,12 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
     planCategory: ['training'],
-    bodyParts: ['heart', 'lungs', 'muscles'],
-  },
-  {
-    id: 'vo2max_4x4_intervals',
-    level: 3,
-    xp: 600,
-    areas: [
-      { id: 'cardioFitness', descriptionKey: 'vo2max_4x4_intervals.areas.cardioFitness' },
-      { id: 'energy', descriptionKey: 'vo2max_4x4_intervals.areas.energy' },
-      { id: 'longevity', descriptionKey: 'vo2max_4x4_intervals.areas.longevity' },
+    targetPeriod: 'weekly',
+    targetIconName: 'chart',
+    activityTargets: [
+      { trackingKey: 'hiit_sessions', amount: 1, unit: 'sessions' },
     ],
-    title: 'vo2max_4x4_intervals.title',
-    descriptionKey: 'vo2max_4x4_intervals.description',
-    preferredDayParts: ['morning', 'midday'],
-    timeRule: 'anytime',
-    planCategory: ['training'],
     bodyParts: ['heart', 'lungs', 'muscles'],
-  },
-  {
-    id: 'vo2max_hill_intervals',
-    level: 4,
-    xp: 700,
-    areas: [
-      { id: 'cardioFitness', descriptionKey: 'vo2max_hill_intervals.areas.cardioFitness' },
-      { id: 'strength', descriptionKey: 'vo2max_hill_intervals.areas.strength' },
-      { id: 'longevity', descriptionKey: 'vo2max_hill_intervals.areas.longevity' },
-    ],
-    title: 'vo2max_hill_intervals.title',
-    descriptionKey: 'vo2max_hill_intervals.description',
-    preferredDayParts: ['morning', 'midday'],
-    timeRule: 'anytime',
-    planCategory: ['training'],
-    bodyParts: ['heart', 'lungs', 'muscles', 'joints'],
   },
   {
     id: 'running_volume_aerobic',
@@ -1941,6 +1994,11 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday', 'afternoon'],
     timeRule: 'anytime',
     planCategory: ['training'],
+    targetPeriod: 'weekly',
+    targetIconName: 'chart',
+    activityTargets: [
+      { trackingKey: 'running_minutes', amount: 150, unit: 'minutes' },
+    ],
     bodyParts: ['heart', 'lungs', 'muscles', 'joints'],
   },
   {
@@ -2087,6 +2145,11 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday', 'afternoon'],
     timeRule: 'anytime',
     planCategory: ['training'],
+    targetPeriod: 'weekly',
+    targetIconName: 'chart',
+    activityTargets: [
+      { trackingKey: 'zone2_sessions', amount: 2, unit: 'sessions' },
+    ],
     bodyParts: ['heart', 'lungs', 'muscles'],
   },
   {
@@ -2104,6 +2167,11 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday', 'afternoon'],
     timeRule: 'anytime',
     planCategory: ['training'],
+    targetPeriod: 'weekly',
+    targetIconName: 'chart',
+    activityTargets: [
+      { trackingKey: 'zone2_minutes', amount: 120, unit: 'minutes' },
+    ],
     bodyParts: ['heart', 'lungs', 'muscles'],
   },
   {
@@ -2120,6 +2188,11 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday', 'afternoon', 'evening'],
     timeRule: 'anytime',
     planCategory: ['training'],
+    targetPeriod: 'weekly',
+    targetIconName: 'chart',
+    activityTargets: [
+      { trackingKey: 'strength_mobility_sessions', amount: 2, unit: 'sessions' },
+    ],
     bodyParts: ['muscles', 'joints', 'bones', 'nervousSystem'],
   },
   {
@@ -2138,71 +2211,80 @@ const rawTips: Tip[] = [
     bodyParts: ['heart', 'lungs', 'muscles'],
   },
   {
-    id: 'lactate_threshold_training',
+    id: 'vigorous_exercise_lactate',
     level: 5,
     xp: 700,
     areas: [
-      { id: 'cardioFitness', descriptionKey: 'lactate_threshold_training.areas.cardioFitness' },
-      { id: 'energy', descriptionKey: 'lactate_threshold_training.areas.energy' },
-      { id: 'mind', descriptionKey: 'lactate_threshold_training.areas.mind' },
+      {
+        id: 'cardioFitness',
+        descriptionKey: 'vigorous_exercise_lactate.areas.cardioFitness',
+      },
+      {
+        id: 'energy',
+        descriptionKey: 'vigorous_exercise_lactate.areas.energy',
+      },
+      {
+        id: 'mind',
+        descriptionKey: 'vigorous_exercise_lactate.areas.mind',
+      },
     ],
-    title: 'lactate_threshold_training.title',
-    descriptionKey: 'lactate_threshold_training.description',
-    analyzePrompt: 'lactate_threshold_training.analyzePrompt',
+    title: 'vigorous_exercise_lactate.title',
+    descriptionKey: 'vigorous_exercise_lactate.description',
+    analyzePrompt: 'vigorous_exercise_lactate.analyzePrompt',
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
     planCategory: ['training'],
-    bodyParts: ['heart', 'muscles'],
+    targetPeriod: 'daily',
+    activityTargets: [
+      {
+        trackingKey: 'vigorous_activity_minutes',
+        amount: 2,
+        unit: 'minutes',
+      },
+    ],
+    bodyParts: ['heart', 'brain', 'muscles'],
   },
   {
-    id: 'running_economy_drills',
+    id: 'coffee_polyphenols_longevity',
     level: 4,
     xp: 500,
     areas: [
-      { id: 'strength', descriptionKey: 'running_economy_drills.areas.strength' },
-      { id: 'nervousSystem', descriptionKey: 'running_economy_drills.areas.nervousSystem' },
-      { id: 'cardioFitness', descriptionKey: 'running_economy_drills.areas.cardioFitness' },
+      {
+        id: 'cardioFitness',
+        descriptionKey: 'coffee_polyphenols_longevity.areas.cardioFitness',
+      },
+      {
+        id: 'energy',
+        descriptionKey: 'coffee_polyphenols_longevity.areas.energy',
+      },
+      {
+        id: 'mind',
+        descriptionKey: 'coffee_polyphenols_longevity.areas.mind',
+      },
     ],
-    title: 'running_economy_drills.title',
-    descriptionKey: 'running_economy_drills.description',
-    preferredDayParts: ['morning', 'midday'],
-    timeRule: 'anytime',
-    planCategory: ['training'],
-    bodyParts: ['heart', 'muscles'],
-  },
-  {
-    id: 'stride_frequency_optimization',
-    level: 6,
-    xp: 700,
-    areas: [
-      { id: 'strength', descriptionKey: 'stride_frequency_optimization.areas.strength' },
-      { id: 'nervousSystem', descriptionKey: 'stride_frequency_optimization.areas.nervousSystem' },
-      { id: 'energy', descriptionKey: 'stride_frequency_optimization.areas.energy' },
-    ],
-    title: 'stride_frequency_optimization.title',
-    descriptionKey: 'stride_frequency_optimization.description',
-    preferredDayParts: ['morning', 'midday'],
-    timeRule: 'anytime',
-    planCategory: ['training'],
-    bodyParts: ['heart', 'muscles'],
-  },
-  {
-    id: 'caffeine',
-    level: 4,
-    xp: 500,
-    areas: [
-      { id: 'energy', descriptionKey: 'caffeine.areas.energy' },
-      { id: 'mind', descriptionKey: 'caffeine.areas.mind' },
-      { id: 'cardioFitness', descriptionKey: 'caffeine.areas.cardioFitness' },
-    ],
-    title: 'caffeine.title',
-    descriptionKey: 'caffeine.description',
-    supplements: [{ id: 'caffeine' }],
-    trainingRelation: 'preWorkout',
+    title: 'coffee_polyphenols_longevity.title',
+    descriptionKey: 'coffee_polyphenols_longevity.description',
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'avoidLateEvening',
-    planCategory: ['supplement'],
-    bodyParts: ['nervousSystem', 'muscles'],
+    planCategory: ['nutrition'],
+    targetPeriod: 'daily',
+    polyphenolTargets: [
+      {
+        tag: 'chlorogenic_acids',
+        amount: 200,
+        unit: 'mg',
+        sourceBackedWeight: 1,
+        inferredWeight: 0.5,
+      },
+    ],
+    nutrientTargets: [
+      {
+        tag: 'caffeine',
+        amount: 50,
+        unit: 'mg',
+      },
+    ],
+    bodyParts: ['heart', 'brain'],
   },
   {
     id: 'nitrate_no_efficiency',

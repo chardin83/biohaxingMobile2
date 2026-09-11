@@ -6,6 +6,7 @@ import { KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, View } fr
 import { useStorage } from '@/app/context/StorageContext';
 
 import NutritionLogger from './NutritionLogger';
+import OtherTipsSection from './OtherTipsSection';
 import { SupplementsTabSection } from './SupplementsTabSection';
 import { ThemedText } from './ThemedText';
 import { TrainingDaySection } from './TrainingDaySection';
@@ -13,7 +14,7 @@ import { TrainingDaySection } from './TrainingDaySection';
 interface DayeEditProps {
   selectedDate: string;
   onTipCompleted?: (targetY?: number) => void;
-  initialTab?: 'supplements' | 'meal';
+  initialTab?: 'supplements' | 'meal' | 'other';
   preselectedSupplementId?: string;
 }
 
@@ -24,7 +25,7 @@ const DayEdit: React.FC<DayeEditProps> = ({
   preselectedSupplementId,
 }) => {
 
-  const [activeTab, setActiveTab] = useState<'supplements' | 'meal' | 'training'>(initialTab ?? 'meal');
+  const [activeTab, setActiveTab] = useState<'supplements' | 'meal' | 'training' | 'other'>(initialTab ?? 'meal');
   const {
     takenDates,
     dailyNutritionSummaries,
@@ -72,6 +73,24 @@ const DayEdit: React.FC<DayeEditProps> = ({
                 {t('dayEdit.tabMeal')}
               </ThemedText>
               {hasMealsToday && <View style={[styles.badge, { backgroundColor: colors.checkmarkMeal }]} />}
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.tabWrapper,
+              activeTab === 'other' && { borderBottomColor: colors.primary }
+            ]}
+            onPress={() => setActiveTab('other')}
+          >
+            <View style={styles.tabContent}>
+              <ThemedText
+                type="title3"
+                uppercase
+                style={{ color: activeTab === 'other' ? colors.text : colors.textTertiary }}
+              >
+                {t('dayEdit.tabOther')}
+              </ThemedText>
             </View>
           </TouchableOpacity>
 
@@ -140,6 +159,8 @@ const DayEdit: React.FC<DayeEditProps> = ({
         {activeTab === 'training' && (
           <TrainingDaySection selectedDate={selectedDate} />
         )}
+
+        {activeTab === 'other' && <OtherTipsSection selectedDate={selectedDate} />}
       </View>
     </KeyboardAvoidingView>
   );

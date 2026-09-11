@@ -88,13 +88,11 @@ const emptyVitaminTotals = (): Record<string, number> =>
 const emptyAminoAcidTotals = (): Record<string, number> =>
   ALL_AMINO_ACID_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
 
-export const normalizeItemName = (item: string): string => {
-  return item
+export const normalizeItemName = (item: string): string =>
+  item
     .trim()
     .toLowerCase()
-    .replaceAll(/[\s_-]+/g, ' ')
-    .replaceAll(/^\s+|\s+$/g, '');
-};
+    .replaceAll(/[\s_-]+/g, ' ');
 
 export const parseStringArray = (value: unknown): string[] => {
   if (Array.isArray(value)) {
@@ -292,13 +290,12 @@ const normalizeFlavonoidClassTag = (value: unknown): PolyphenolType | null => {
   if (typeof value !== 'string') return null;
 
   const normalized = value.toLowerCase().trim();
+
   if (normalized.includes('anthocyan')) return 'anthocyanins';
   if (normalized.includes('catechin')) return 'catechins';
   if (normalized.includes('flavanol')) return 'flavanols';
   if (normalized.includes('flavonol')) return 'flavonols';
   if (normalized.includes('quercetin')) return 'quercetin';
-  if (normalized.includes('ellagitannin')) return 'ellagitannins';
-  if (normalized.includes('flavonoid')) return 'flavonoids';
 
   return null;
 };
@@ -319,13 +316,25 @@ const applyMeasuredByTypeFromCandidate = (
 
   const fiberMap = candidate?.fiberByType;
   const fiberSubtypeMap = candidate?.fiberSubtypeTotals;
-  const polyMap = candidate?.polyphenolByType;
+
+  // New backend model:
+  // nutritionDetails.polyphenols.byType
+  //
+  // Legacy fallbacks:
+  // polyphenolsByType
+  // polyphenolByType
+  const polyMap =
+    candidate?.polyphenolsByType ??
+    candidate?.polyphenolByType;
+
   const mineralMap = candidate?.mineralsByType ?? candidate?.mineralByType;
   const vitaminMap = candidate?.vitaminsByType ?? candidate?.vitaminByType;
   const aminoMap = candidate?.aminoAcidsByType;
 
   if (fiberMap && typeof fiberMap === 'object') {
-    FIBER_TYPE_KEYS.forEach(tag => addToTotals(fiberByType, tag, fiberMap?.[tag]));
+    FIBER_TYPE_KEYS.forEach(tag =>
+      addToTotals(fiberByType, tag, fiberMap?.[tag])
+    );
   }
 
   if (fiberSubtypeMap && typeof fiberSubtypeMap === 'object') {
@@ -335,13 +344,17 @@ const applyMeasuredByTypeFromCandidate = (
   }
 
   if (polyMap && typeof polyMap === 'object') {
-    POLYPHENOL_TYPE_KEYS.forEach(tag => addToTotals(polyphenolByType, tag, polyMap?.[tag]));
+    POLYPHENOL_TYPE_KEYS.forEach(tag =>
+      addToTotals(polyphenolByType, tag, polyMap?.[tag])
+    );
   }
 
   if (mineralMap && typeof mineralMap === 'object') {
     MINERAL_TYPE_KEYS.forEach(tag => {
       const before = mineralsByType[tag] ?? 0;
+
       addToTotals(mineralsByType, tag, mineralMap?.[tag]);
+
       if ((mineralsByType[tag] ?? 0) > before) {
         setMineralConfidence(mineralsConfidenceByType, tag, 'medium');
       }
@@ -349,173 +362,355 @@ const applyMeasuredByTypeFromCandidate = (
   }
 
   if (vitaminMap && typeof vitaminMap === 'object') {
-    VITAMIN_TYPE_KEYS.forEach(tag => addToTotals(vitaminsByType, tag, vitaminMap?.[tag]));
+    VITAMIN_TYPE_KEYS.forEach(tag =>
+      addToTotals(vitaminsByType, tag, vitaminMap?.[tag])
+    );
   }
 
   if (aminoMap && typeof aminoMap === 'object') {
-    ALL_AMINO_ACID_KEYS.forEach(tag => addToTotals(aminoAcidsByType, tag, aminoMap?.[tag]));
+    ALL_AMINO_ACID_KEYS.forEach(tag =>
+      addToTotals(aminoAcidsByType, tag, aminoMap?.[tag])
+    );
   }
+};
+
+const applyFiberDetails = (
+  fiberDetails: any,
+  totals: TypedTotalsAccumulator
+) => {
+  if (!fiberDetails) return;
+
+  const { fiberByType, fiberSubtypeTotals } = totals;
+
+  addToTotals(
+    fiberByType,
+    'fiber_total',
+    fiberDetails?.total
+  );
+
+  addToTotals(
+    fiberByType,
+    'fiber_gel_forming',
+    fiberDetails?.gelForming ??
+      fiberDetails?.gel_forming ??
+      fiberDetails?.soluble
+  );
+
+  addToTotals(
+    fiberByType,
+    'fiber_non_gel_forming',
+    fiberDetails?.nonGelForming ??
+      fiberDetails?.non_gel_forming ??
+      fiberDetails?.insoluble
+  );
+
+  addToTotals(
+    fiberByType,
+    'fiber_fermentable',
+    fiberDetails?.fermentable ??
+      fiberDetails?.resistantStarch ??
+      fiberDetails?.resistant_starch
+  );
+
+  const subtypeRows = Array.isArray(fiberDetails?.subtypes)
+    ? fiberDetails.subtypes
+    : [];
+
+  subtypeRows.forEach((item: any) => {
+    const subtype = String(item?.subtype ?? '').trim();
+
+    if (!ALL_FIBER_SUBTYPES.includes(subtype as FiberSubtypeKey)) {
+      return;
+    }
+
+    addToTotals(
+      fiberSubtypeTotals,
+      subtype,
+      item?.amountG ??
+        item?.amount_g ??
+        item?.amount
+    );
+  });
+};
+
+const applyLegacyFlavonoids = (
+  flavonoids: any,
+  polyphenolByType: Record<string, number>
+) => {
+  if (!flavonoids) return;
+
+  addToTotals(
+    polyphenolByType,
+    'flavonoids_total',
+    flavonoids?.totalMg ??
+      flavonoids?.total_mg
+  );
+
+  const classes = Array.isArray(flavonoids?.classes)
+    ? flavonoids.classes
+    : [];
+
+  classes.forEach((item: any) => {
+    const classTag = normalizeFlavonoidClassTag(item?.name);
+
+    if (!classTag) return;
+
+    addToTotals(
+      polyphenolByType,
+      classTag,
+      item?.amountMg ??
+        item?.amount_mg
+    );
+  });
+};
+
+const applyPolyphenolDetails = (
+  polyphenols: any,
+  legacyFlavonoids: any,
+  totals: TypedTotalsAccumulator
+) => {
+  if (!polyphenols || typeof polyphenols !== 'object') {
+    return;
+  }
+
+  const { polyphenolByType } = totals;
+
+  const byType =
+    polyphenols?.byType &&
+    typeof polyphenols.byType === 'object'
+      ? polyphenols.byType
+      : null;
+
+  if (!byType) {
+    addToTotals(
+      polyphenolByType,
+      'polyphenols_total',
+      polyphenols?.totalMg ??
+        polyphenols?.total_mg
+    );
+
+    applyLegacyFlavonoids(
+      legacyFlavonoids,
+      polyphenolByType
+    );
+
+    return;
+  }
+
+  POLYPHENOL_TYPE_KEYS.forEach(tag => {
+    addToTotals(
+      polyphenolByType,
+      tag,
+      byType?.[tag]
+    );
+  });
+
+  const typedTotal = parseNumberValue(
+    byType?.polyphenols_total
+  );
+
+  if (typedTotal !== null) return;
+
+  addToTotals(
+    polyphenolByType,
+    'polyphenols_total',
+    polyphenols?.totalMg ??
+      polyphenols?.total_mg
+  );
+};
+
+const normalizeNutrientKey = (value: unknown): string => {
+  if (typeof value !== 'string') {
+    return '';
+  }
+
+  return value
+    .toLowerCase()
+    .trim()
+    .replaceAll(/\s+/g, '_');
+};
+
+const getLegacyRows = (value: any): any[] => {
+  if (Array.isArray(value?.items)) {
+    return value.items;
+  }
+
+  if (Array.isArray(value?.list)) {
+    return value.list;
+  }
+
+  return [];
+};
+
+const applyAminoAcidDetails = (
+  aminoAcids: any,
+  totals: TypedTotalsAccumulator
+) => {
+  if (!aminoAcids || typeof aminoAcids !== 'object') {
+    return;
+  }
+
+  const { aminoAcidsByType } = totals;
+
+  ALL_AMINO_ACID_KEYS.forEach(tag => {
+    addToTotals(
+      aminoAcidsByType,
+      tag,
+      aminoAcids?.[tag]
+    );
+  });
+
+  getLegacyRows(aminoAcids).forEach((item: any) => {
+    const key = normalizeNutrientKey(
+      item?.name ?? item?.tag
+    );
+
+    if (!ALL_AMINO_ACID_KEYS.includes(key as AminoAcidType)) {
+      return;
+    }
+
+    addToTotals(
+      aminoAcidsByType,
+      key,
+      item?.amountMg ??
+        item?.amount_mg ??
+        item?.amount
+    );
+  });
+};
+
+const addMineralWithConfidence = (
+  tag: string,
+  value: unknown,
+  totals: TypedTotalsAccumulator
+) => {
+  const {
+    mineralsByType,
+    mineralsConfidenceByType,
+  } = totals;
+
+  const before = mineralsByType[tag] ?? 0;
+
+  addToTotals(
+    mineralsByType,
+    tag,
+    value
+  );
+
+  if ((mineralsByType[tag] ?? 0) <= before) {
+    return;
+  }
+
+  setMineralConfidence(
+    mineralsConfidenceByType,
+    tag,
+    'high'
+  );
+};
+
+const applyMineralDetails = (
+  minerals: any,
+  totals: TypedTotalsAccumulator
+) => {
+  if (!minerals) return;
+
+  MINERAL_TYPE_KEYS.forEach(tag => {
+    addMineralWithConfidence(
+      tag,
+      minerals?.[tag],
+      totals
+    );
+  });
+
+  getLegacyRows(minerals).forEach((item: any) => {
+    const key = normalizeNutrientKey(
+      item?.name ?? item?.tag
+    );
+
+    if (!MINERAL_TYPE_KEYS.includes(key as MineralType)) {
+      return;
+    }
+
+    addMineralWithConfidence(
+      key,
+      item?.amountMg ??
+        item?.amount_mg ??
+        item?.amount,
+      totals
+    );
+  });
+};
+
+const applyVitaminDetails = (
+  vitamins: any,
+  totals: TypedTotalsAccumulator
+) => {
+  if (!vitamins) return;
+
+  const { vitaminsByType } = totals;
+
+  VITAMIN_TYPE_KEYS.forEach(tag => {
+    addToTotals(
+      vitaminsByType,
+      tag,
+      vitamins?.[tag]
+    );
+  });
+
+  getLegacyRows(vitamins).forEach((item: any) => {
+    const key = normalizeNutrientKey(
+      item?.name ?? item?.tag
+    );
+
+    if (!VITAMIN_TYPE_KEYS.includes(key as VitaminType)) {
+      return;
+    }
+
+    addToTotals(
+      vitaminsByType,
+      key,
+      item?.amountMg ??
+        item?.amount_mg ??
+        item?.amount
+    );
+  });
 };
 
 const applyDetailsFromCandidate = (
   candidate: any,
   totals: TypedTotalsAccumulator
 ) => {
-  const {
-    fiberByType,
-    fiberSubtypeTotals,
-    polyphenolByType,
-    mineralsByType,
-    mineralsConfidenceByType,
-    vitaminsByType,
-    aminoAcidsByType,
-  } = totals;
-
   const details = candidate?.nutritionDetails;
 
-  const fiberDetails = details?.fiber;
-  if (fiberDetails) {
-    addToTotals(fiberByType, 'fiber_total', fiberDetails?.total);
-    addToTotals(
-      fiberByType,
-      'fiber_gel_forming',
-      fiberDetails?.gelForming ?? fiberDetails?.gel_forming ?? fiberDetails?.soluble
-    );
-    addToTotals(
-      fiberByType,
-      'fiber_non_gel_forming',
-      fiberDetails?.nonGelForming ?? fiberDetails?.non_gel_forming ?? fiberDetails?.insoluble
-    );
-    addToTotals(
-      fiberByType,
-      'fiber_fermentable',
-      fiberDetails?.fermentable ??
-        fiberDetails?.resistantStarch ??
-        fiberDetails?.resistant_starch
-    );
-
-    const subtypeRows = Array.isArray(fiberDetails?.subtypes)
-      ? fiberDetails.subtypes
-      : [];
-
-    subtypeRows.forEach((item: any) => {
-      const subtype = String(item?.subtype ?? '').trim();
-      if (!ALL_FIBER_SUBTYPES.includes(subtype as FiberSubtypeKey)) return;
-      addToTotals(
-        fiberSubtypeTotals,
-        subtype,
-        item?.amountG ?? item?.amount_g ?? item?.amount
-      );
-    });
+  if (!details || typeof details !== 'object') {
+    return;
   }
 
-  const polyphenols = details?.polyphenols;
-  if (polyphenols) {
-    addToTotals(polyphenolByType, 'polyphenols_total', polyphenols?.totalMg ?? polyphenols?.total_mg);
-  }
+  applyFiberDetails(
+    details.fiber,
+    totals
+  );
 
-  const aminoAcids = details?.aminoAcids;
-  if (aminoAcids && typeof aminoAcids === 'object') {
-    ALL_AMINO_ACID_KEYS.forEach(tag => addToTotals(aminoAcidsByType, tag, aminoAcids[tag]));
+  applyPolyphenolDetails(
+    details.polyphenols,
+    details.flavonoids,
+    totals
+  );
 
-    let aminoRows: any[] = [];
-    if (Array.isArray(aminoAcids?.items)) {
-      aminoRows = aminoAcids.items;
-    } else if (Array.isArray(aminoAcids?.list)) {
-      aminoRows = aminoAcids.list;
-    }
+  applyAminoAcidDetails(
+    details.aminoAcids,
+    totals
+  );
 
-    aminoRows.forEach((item: any) => {
-      const normalizedKey = String(item?.name ?? item?.tag ?? '')
-        .toLowerCase()
-        .trim()
-        .replaceAll(/\s+/g, '_');
+  applyMineralDetails(
+    details.minerals,
+    totals
+  );
 
-      if (!ALL_AMINO_ACID_KEYS.includes(normalizedKey as AminoAcidType)) return;
-
-      addToTotals(
-        aminoAcidsByType,
-        normalizedKey,
-        item?.amountMg ?? item?.amount_mg ?? item?.amount
-      );
-    });
-  }
-
-  const flavonoids = details?.flavonoids;
-  if (flavonoids) {
-    addToTotals(polyphenolByType, 'flavonoids_total', flavonoids?.totalMg ?? flavonoids?.total_mg);
-
-    const classes = Array.isArray(flavonoids?.classes) ? flavonoids.classes : [];
-    classes.forEach((item: any) => {
-      const classTag = normalizeFlavonoidClassTag(item?.name);
-      if (classTag) {
-        addToTotals(polyphenolByType, classTag, item?.amountMg ?? item?.amount_mg);
-      }
-    });
-  }
-
-  const minerals = details?.minerals;
-  if (minerals) {
-    MINERAL_TYPE_KEYS.forEach(tag => {
-      const before = mineralsByType[tag] ?? 0;
-      addToTotals(mineralsByType, tag, minerals?.[tag]);
-      if ((mineralsByType[tag] ?? 0) > before) {
-        setMineralConfidence(mineralsConfidenceByType, tag, 'high');
-      }
-    });
-
-    let mineralsRows: any[] = [];
-    if (Array.isArray(minerals?.items)) {
-      mineralsRows = minerals.items;
-    } else if (Array.isArray(minerals?.list)) {
-      mineralsRows = minerals.list;
-    }
-
-    mineralsRows.forEach((item: any) => {
-      const rawKey = String(item?.name ?? item?.tag ?? '').toLowerCase().trim();
-      const normalizedKey = rawKey.replaceAll(/\s+/g, '_');
-
-      if (!MINERAL_TYPE_KEYS.includes(normalizedKey as MineralType)) return;
-
-      const before = mineralsByType[normalizedKey] ?? 0;
-      addToTotals(
-        mineralsByType,
-        normalizedKey,
-        item?.amountMg ?? item?.amount_mg ?? item?.amount
-      );
-
-      if ((mineralsByType[normalizedKey] ?? 0) > before) {
-        setMineralConfidence(mineralsConfidenceByType, normalizedKey, 'high');
-      }
-    });
-  }
-
-  const vitamins = details?.vitamins;
-  if (vitamins) {
-    VITAMIN_TYPE_KEYS.forEach(tag => {
-      addToTotals(vitaminsByType, tag, vitamins?.[tag]);
-    });
-
-    let vitaminRows: any[] = [];
-    if (Array.isArray(vitamins?.items)) {
-      vitaminRows = vitamins.items;
-    } else if (Array.isArray(vitamins?.list)) {
-      vitaminRows = vitamins.list;
-    }
-
-    vitaminRows.forEach((item: any) => {
-      const rawKey = String(item?.name ?? item?.tag ?? '').toLowerCase().trim();
-      const normalizedKey = rawKey.replaceAll(/\s+/g, '_');
-
-      if (!VITAMIN_TYPE_KEYS.includes(normalizedKey as VitaminType)) return;
-
-      addToTotals(
-        vitaminsByType,
-        normalizedKey,
-        item?.amountMg ?? item?.amount_mg ?? item?.amount
-      );
-    });
-  }
+  applyVitaminDetails(
+    details.vitamins,
+    totals
+  );
 };
 
 export const extractTypedTotals = (data: any, parsedContent: any) => {
@@ -539,10 +734,19 @@ export const extractTypedTotals = (data: any, parsedContent: any) => {
     parsedContent,
     parsedContent?.nutrition,
     parsedContent?.raw,
-  ];
+  ].filter(
+    (candidate, index, all) =>
+      candidate &&
+      typeof candidate === 'object' &&
+      all.indexOf(candidate) === index
+  );
 
   for (const candidate of candidates) {
     applyMeasuredByTypeFromCandidate(candidate, totals);
+
+    // Do not parse nutritionDetails.polyphenols twice:
+    // applyMeasuredByTypeFromCandidate handles byType only from legacy/root aliases,
+    // while applyDetailsFromCandidate owns the new nested model.
     applyDetailsFromCandidate(candidate, totals);
   }
 
@@ -773,15 +977,9 @@ export const extractWeeklyTrackingSignals = (
     parsedContent?.raw,
   ];
 
-  candidates.forEach((candidate, idx) => {
-    try {
-      console.log(`[extractWeeklyTrackingSignals] Kandidat #${idx}:`, candidate);
-    } catch (e) {}
+  candidates.forEach((candidate) => {
     const fromObject = candidate?.weeklyTrackingSignals;
     if (fromObject && typeof fromObject === 'object' && !Array.isArray(fromObject)) {
-      try {
-        console.log(`[extractWeeklyTrackingSignals] Kandidat #${idx} weeklyTrackingSignals:`, fromObject);
-      } catch (e) {}
       Object.entries(fromObject).forEach(([key, value]) =>
         mergeWeeklyTrackingSignal(collected, key, value)
       );
@@ -810,10 +1008,6 @@ export const extractWeeklyTrackingSignals = (
       }
     });
   });
-
-  try {
-    console.log('[extractWeeklyTrackingSignals] Extraherade signals:', collected);
-  } catch (e) {}
 
   return collected;
 };

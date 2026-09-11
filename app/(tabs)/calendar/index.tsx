@@ -16,7 +16,7 @@ const toLocalDateKey = (date: Date): string => {
 export default function Calendar() {
   const params = useLocalSearchParams<{
     selectedDate?: string;
-    openTab?: 'supplements' | 'meal';
+    openTab?: 'supplements' | 'meal' | 'other';
     supplementId?: string;
   }>();
   const today = toLocalDateKey(new Date());

@@ -45,6 +45,7 @@
     "dashboard": "Dashboard",
     "calendar": "Kalender",
     "plan": "Plan",
+    "other": "Övrigt",
     "settings": "Inställningar",
     "areas": "Områden"
   },
@@ -287,6 +288,7 @@
     "tabMeal": "Måltid",
     "tabSupplements": "Tillskott",
     "tabTraining": "Träning",
+    "tabOther": "Övrigt",
     "addSupplement": "Lägg till tillskott",
     "addFromPlan": "Från plan",
     "choosePlan": "Hur vill du lägga till tillskott?",
@@ -892,6 +894,17 @@
   "search": {
     "label": "Sök tips"
   },
+  "otherTips": {
+    "title": "Övriga tips",
+    "subtitle": "Följ dagens uppfyllelse av dina övriga tips.",
+    "description": "Övriga tips för din hälsa",
+    "count": "{{count}} tips",
+    "empty": "Inga övriga tips tillgängliga ännu.",
+    "noPlanned": "Inga övriga tips är planerade för den här dagen.",
+    "noTarget": "Inget mätbart mål",
+    "fulfilled": "Uppfyllt",
+    "notFulfilled": "Inte uppfyllt"
+  },
   "planCategory": {
     "nutrition": "Kost",
     "training": "Träning",
@@ -1111,13 +1124,15 @@
     "polyphenolLabels": {
       "polyphenols_total": "Polyfenoler totalt",
       "flavonoids_total": "Flavonoider totalt",
-      "flavonoids": "Flavonoider",
+      "phenolic_acids": "Fenoliska syror",
       "anthocyanins": "Antocyaniner",
       "catechins": "Katekiner",
       "flavanols": "Flavanoler",
       "flavonols": "Flavonoler",
       "quercetin": "Quercetin",
-      "ellagitannins": "Ellagitanniner"
+      "ellagitannins": "Ellagitanniner",
+      "lignans": "Lignaner",
+      "chlorogenic_acids": "Klorogensyror"
     },
     "mineralLabels": {
       "minerals_total": "Mineraler totalt",

@@ -28,7 +28,7 @@ export type MetricUnit =
   | 'min_from_midnight'
   | 'hours'
   | 'bss' // Bristol Stool Scale
-  | 'ml/kg/min'; 
+  | 'ml/kg/min';
 
 export type MetricSource = 'lab' | 'home' | 'wearable' | 'questionnaire';
 
@@ -109,6 +109,25 @@ export const metrics = {
       { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.0259 }, fromCanonical: { mul: 38.67 }, precision: 0 }
     ]
   },
+
+  blood_lactate: {
+  id: 'blood_lactate',
+  emoji: '🩸',
+  nameKey: 'blood_lactate.name',
+  descriptionKey: 'blood_lactate.description',
+  canonicalUnit: 'mmol/L',
+  source: 'home',
+  suggestedFrequency: 'perTest',
+  units: [
+    {
+      unit: 'mmol/L',
+      system: 'all',
+      toCanonical: { mul: 1 },
+      fromCanonical: { mul: 1 },
+      precision: 1,
+    },
+  ],
+},
 
   // ---------------- BLOOD PRESSURE ----------------
 
@@ -538,7 +557,7 @@ export const metrics = {
       { unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
     ]
   },
-    vo2_max: {
+  vo2_max: {
     id: 'vo2_max',
     emoji: '🫁',
     nameKey: 'vo2_max.name',
@@ -561,167 +580,172 @@ export type TipMetricLink = {
 };
 
 export const tipMetricLinks: Record<string, TipMetricLink[]> = {
-    // --- Intermittent fasting ---
-    intermittent_fasting_12h: [
-        { metricId: 'fasting_glucose', kind: 'primary' },
-        { metricId: 'hba1c', kind: 'primary' },
-        { metricId: 'fasting_insulin', kind: 'secondary' },
-        { metricId: 'weight', kind: 'secondary' },
-        { metricId: 'waist', kind: 'secondary' },
-        { metricId: 'energy', kind: 'subjective' },
-    ],
-    intermittent_fasting_16_8: [
-        { metricId: 'fasting_glucose', kind: 'primary' },
-        { metricId: 'hba1c', kind: 'primary' },
-        { metricId: 'fasting_insulin', kind: 'secondary' },
-        { metricId: 'weight', kind: 'secondary' },
-        { metricId: 'waist', kind: 'secondary' },
-        { metricId: 'energy', kind: 'subjective' },
-    ],
+  // --- Intermittent fasting ---
+  intermittent_fasting_12h: [
+    { metricId: 'fasting_glucose', kind: 'primary' },
+    { metricId: 'hba1c', kind: 'primary' },
+    { metricId: 'fasting_insulin', kind: 'secondary' },
+    { metricId: 'weight', kind: 'secondary' },
+    { metricId: 'waist', kind: 'secondary' },
+    { metricId: 'energy', kind: 'subjective' },
+  ],
+  intermittent_fasting_16_8: [
+    { metricId: 'fasting_glucose', kind: 'primary' },
+    { metricId: 'hba1c', kind: 'primary' },
+    { metricId: 'fasting_insulin', kind: 'secondary' },
+    { metricId: 'weight', kind: 'secondary' },
+    { metricId: 'waist', kind: 'secondary' },
+    { metricId: 'energy', kind: 'subjective' },
+  ],
 
-    // --- Multivitamin ---
-    multivitamin_general: [
-        { metricId: 'energy', kind: 'subjective' },
-        // lägg ev labb du vill spåra här (B12, folat, ferritin) när/om du skapar metric-defs för dem
-    ],
+  // --- Multivitamin ---
+  multivitamin_general: [
+    { metricId: 'energy', kind: 'subjective' },
+    // lägg ev labb du vill spåra här (B12, folat, ferritin) när/om du skapar metric-defs för dem
+  ],
 
-    // --- Vitamin D ---
-    vitamin_d: [
-        { metricId: 'vitd_25oh', kind: 'primary' },
-        { metricId: 'calcium', kind: 'safety' },
-        { metricId: 'pth', kind: 'secondary' },
-        { metricId: 'energy', kind: 'subjective' },
-    ],
+  // --- Vitamin D ---
+  vitamin_d: [
+    { metricId: 'vitd_25oh', kind: 'primary' },
+    { metricId: 'calcium', kind: 'safety' },
+    { metricId: 'pth', kind: 'secondary' },
+    { metricId: 'energy', kind: 'subjective' },
+  ],
 
-    // --- Magnesium ---
-    magnesium: [
-        { metricId: 'sleep_quality', kind: 'primary' },
-        { metricId: 'sleep_latency', kind: 'secondary' },
-        { metricId: 'hrv', kind: 'secondary' },
-        { metricId: 'resting_hr', kind: 'secondary' },
-        { metricId: 'stress', kind: 'subjective' },
-    ],
+  // --- Magnesium ---
+  magnesium: [
+    { metricId: 'sleep_quality', kind: 'primary' },
+    { metricId: 'sleep_latency', kind: 'secondary' },
+    { metricId: 'hrv', kind: 'secondary' },
+    { metricId: 'resting_hr', kind: 'secondary' },
+    { metricId: 'stress', kind: 'subjective' },
+  ],
 
-    // --- Zinc ---
-    zinc_comprehensive_support: [
-        { metricId: 'energy', kind: 'subjective' },
-    ],
+  // --- Zinc ---
+  zinc_comprehensive_support: [
+    { metricId: 'energy', kind: 'subjective' },
+  ],
 
-    // --- Selenium / Iodine (thyroid proxies) ---
-    selenium_thyroid_antioxidant: [
-        { metricId: 'tsh', kind: 'primary' },
-        { metricId: 'free_t4', kind: 'primary' },
-        { metricId: 'energy', kind: 'subjective' },
-    ],
-    iodine_thyroid_balance: [
-        { metricId: 'tsh', kind: 'primary' },
-        { metricId: 'free_t4', kind: 'primary' },
-        { metricId: 'energy', kind: 'subjective' },
-    ],
+  // --- Selenium / Iodine (thyroid proxies) ---
+  selenium_thyroid_antioxidant: [
+    { metricId: 'tsh', kind: 'primary' },
+    { metricId: 'free_t4', kind: 'primary' },
+    { metricId: 'energy', kind: 'subjective' },
+  ],
+  iodine_thyroid_balance: [
+    { metricId: 'tsh', kind: 'primary' },
+    { metricId: 'free_t4', kind: 'primary' },
+    { metricId: 'energy', kind: 'subjective' },
+  ],
 
-    // --- Breathwork / sleep / circadian ---
-    box_breathing: [
-        { metricId: 'hrv', kind: 'primary' },
-        { metricId: 'resting_hr', kind: 'secondary' },
-        { metricId: 'stress', kind: 'subjective' },
-    ],
-    '4_7_8_breathing': [
-        { metricId: 'sleep_quality', kind: 'primary' },
-        { metricId: 'sleep_latency', kind: 'secondary' },
-        { metricId: 'stress', kind: 'subjective' },
-    ],
-    sleep_duration_consistency: [
-        { metricId: 'sleep_duration', kind: 'primary' },
-        { metricId: 'sleep_quality', kind: 'primary' },
-        { metricId: 'hrv', kind: 'secondary' },
-    ],
-    sunlight_circadian: [
-        { metricId: 'sleep_latency', kind: 'primary' },
-        { metricId: 'sleep_quality', kind: 'secondary' },
-        { metricId: 'energy', kind: 'subjective' },
-    ],
-    sleep_optimization_recovery: [
-        { metricId: 'sleep_quality', kind: 'primary' },
-        { metricId: 'hrv', kind: 'secondary' },
-        { metricId: 'energy', kind: 'subjective' },
-    ],
+  // --- Breathwork / sleep / circadian ---
+  box_breathing: [
+    { metricId: 'hrv', kind: 'primary' },
+    { metricId: 'resting_hr', kind: 'secondary' },
+    { metricId: 'stress', kind: 'subjective' },
+  ],
+  '4_7_8_breathing': [
+    { metricId: 'sleep_quality', kind: 'primary' },
+    { metricId: 'sleep_latency', kind: 'secondary' },
+    { metricId: 'stress', kind: 'subjective' },
+  ],
+  sleep_duration_consistency: [
+    { metricId: 'sleep_duration', kind: 'primary' },
+    { metricId: 'sleep_quality', kind: 'primary' },
+    { metricId: 'hrv', kind: 'secondary' },
+  ],
+  sunlight_circadian: [
+    { metricId: 'sleep_latency', kind: 'primary' },
+    { metricId: 'sleep_quality', kind: 'secondary' },
+    { metricId: 'energy', kind: 'subjective' },
+  ],
+  sleep_optimization_recovery: [
+    { metricId: 'sleep_quality', kind: 'primary' },
+    { metricId: 'hrv', kind: 'secondary' },
+    { metricId: 'energy', kind: 'subjective' },
+  ],
 
-    // --- Hydration ---
-    maintain_hydration: [
-        { metricId: 'systolic_bp', kind: 'secondary' },
-        { metricId: 'diastolic_bp', kind: 'secondary' },
-        { metricId: 'resting_hr', kind: 'secondary' },
-        { metricId: 'energy', kind: 'subjective' },
-    ],
+  // --- Hydration ---
+  maintain_hydration: [
+    { metricId: 'systolic_bp', kind: 'secondary' },
+    { metricId: 'diastolic_bp', kind: 'secondary' },
+    { metricId: 'resting_hr', kind: 'secondary' },
+    { metricId: 'energy', kind: 'subjective' },
+  ],
 
-    // --- Gut tips ---
-    probiotics_microbiota: [
-        { metricId: 'bss', kind: 'primary' },
-        { metricId: 'bloating', kind: 'secondary' },
-    ],
-    fiber_microbiome: [
-        { metricId: 'bss', kind: 'primary' },
-        { metricId: 'bloating', kind: 'secondary' },
-    ],
-    eat_pomegranate: [
-      { metricId: 'bloating', kind: 'secondary' },
-      { metricId: 'energy', kind: 'subjective' },
-    ],
-    eat_colorful_veggies: [
-        { metricId: 'bloating', kind: 'secondary' },
-        { metricId: 'energy', kind: 'subjective' },
-    ],
+  // --- Gut tips ---
+  probiotics_microbiota: [
+    { metricId: 'bss', kind: 'primary' },
+    { metricId: 'bloating', kind: 'secondary' },
+  ],
+  fiber_microbiome: [
+    { metricId: 'bss', kind: 'primary' },
+    { metricId: 'bloating', kind: 'secondary' },
+  ],
+  eat_pomegranate: [
+    { metricId: 'bloating', kind: 'secondary' },
+    { metricId: 'energy', kind: 'subjective' },
+  ],
+  eat_colorful_veggies: [
+    { metricId: 'bloating', kind: 'secondary' },
+    { metricId: 'energy', kind: 'subjective' },
+  ],
 
-    // --- HRV monitoring ---
-    hrv_recovery_monitoring: [
-        { metricId: 'hrv', kind: 'primary' },
-        { metricId: 'resting_hr', kind: 'primary' },
-        { metricId: 'sleep_quality', kind: 'secondary' },
-    ],
+  // --- HRV monitoring ---
+  hrv_recovery_monitoring: [
+    { metricId: 'hrv', kind: 'primary' },
+    { metricId: 'resting_hr', kind: 'primary' },
+    { metricId: 'sleep_quality', kind: 'secondary' },
+  ],
 
-    // --- Caffeine / nitrate (BP + performance proxies) ---
-    caffeine: [
-        { metricId: 'sleep_quality', kind: 'safety' },
-        { metricId: 'systolic_bp', kind: 'secondary' },
-        { metricId: 'diastolic_bp', kind: 'secondary' },
-        { metricId: 'focus', kind: 'subjective' },
-    ],
-    nitrate_no_efficiency: [
-        { metricId: 'systolic_bp', kind: 'secondary' },
-        { metricId: 'diastolic_bp', kind: 'secondary' },
-        { metricId: 'energy', kind: 'subjective' },
-    ],
+  // --- Caffeine / nitrate (BP + performance proxies) ---
+  coffee_polyphenols_longevity: [
+  { metricId: 'fasting_glucose', kind: 'secondary' },
+  { metricId: 'hba1c', kind: 'secondary' },
+  { metricId: 'systolic_bp', kind: 'safety' },
+  { metricId: 'diastolic_bp', kind: 'safety' },
+  { metricId: 'sleep_quality', kind: 'safety' },
+  { metricId: 'sleep_latency', kind: 'safety' },
+],
+  nitrate_no_efficiency: [
+  { metricId: 'systolic_bp', kind: 'primary' },
+  { metricId: 'diastolic_bp', kind: 'primary' },
+  { metricId: 'resting_hr', kind: 'secondary' },
+  { metricId: 'energy', kind: 'subjective' },
+],
 
-    // --- Training Tips ---
-    neuromuscular_training: [
-        { metricId: 'hrv', kind: 'secondary' },
-        { metricId: 'resting_hr', kind: 'secondary' },
-        { metricId: 'energy', kind: 'subjective' },
-    ],
-    lactate_threshold_training: [
-        { metricId: 'vo2_max', kind: 'primary' },
-        { metricId: 'systolic_bp', kind: 'secondary' },
-        { metricId: 'diastolic_bp', kind: 'secondary' },
-        { metricId: 'focus', kind: 'subjective' },
-    ],
-    fasted_aerobic_training: [
-        { metricId: 'fasting_glucose', kind: 'secondary' },
-        { metricId: 'vo2_max', kind: 'primary' },
-        { metricId: 'resting_hr', kind: 'secondary' },
-        { metricId: 'hrv', kind: 'secondary' },
-        { metricId: 'weight', kind: 'secondary' },
-        { metricId: 'energy', kind: 'subjective' },
-    ],
-    fish_omega3_weekly: [
-      { metricId: 'triglycerides', kind: 'primary' },
-      { metricId: 'hdl', kind: 'secondary' },
-      { metricId: 'ldl', kind: 'safety' },
-      { metricId: 'systolic_bp', kind: 'secondary' },
-      { metricId: 'diastolic_bp', kind: 'secondary' },
-    ],
-    polyphenol_microbiome: [
-      { metricId: 'bss', kind: 'primary' },
-      { metricId: 'bloating', kind: 'primary' },
-      { metricId: 'energy', kind: 'subjective' },
-    ],
+  // --- Training Tips ---
+  neuromuscular_training: [
+    { metricId: 'hrv', kind: 'secondary' },
+    { metricId: 'resting_hr', kind: 'secondary' },
+    { metricId: 'energy', kind: 'subjective' },
+  ],
+  vigorous_exercise_lactate: [
+    { metricId: 'blood_lactate', kind: 'primary' },
+    { metricId: 'vo2_max', kind: 'primary' },
+    { metricId: 'resting_hr', kind: 'secondary' },
+    { metricId: 'systolic_bp', kind: 'secondary' },
+    { metricId: 'diastolic_bp', kind: 'secondary' },
+    { metricId: 'hrv', kind: 'safety' },
+  ],
+  fasted_aerobic_training: [
+    { metricId: 'fasting_glucose', kind: 'secondary' },
+    { metricId: 'vo2_max', kind: 'primary' },
+    { metricId: 'resting_hr', kind: 'secondary' },
+    { metricId: 'hrv', kind: 'secondary' },
+    { metricId: 'weight', kind: 'secondary' },
+    { metricId: 'energy', kind: 'subjective' },
+  ],
+  fish_omega3_weekly: [
+    { metricId: 'triglycerides', kind: 'primary' },
+    { metricId: 'hdl', kind: 'secondary' },
+    { metricId: 'ldl', kind: 'safety' },
+    { metricId: 'systolic_bp', kind: 'secondary' },
+    { metricId: 'diastolic_bp', kind: 'secondary' },
+  ],
+  polyphenol_microbiome: [
+    { metricId: 'bss', kind: 'primary' },
+    { metricId: 'bloating', kind: 'primary' },
+    { metricId: 'energy', kind: 'subjective' },
+  ],
 };

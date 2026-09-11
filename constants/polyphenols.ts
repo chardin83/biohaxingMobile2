@@ -2,7 +2,6 @@ export const POLYPHENOL_TYPE_KEYS = [
   'polyphenols_total',
   'phenolic_acids',
   'flavonoids_total',
-  'flavonoids',
   'anthocyanins',
   'catechins',
   'flavanols',
@@ -10,6 +9,7 @@ export const POLYPHENOL_TYPE_KEYS = [
   'quercetin',
   'ellagitannins',
   'lignans',
+  'chlorogenic_acids'
 ] as const;
 
 export type PolyphenolType = typeof POLYPHENOL_TYPE_KEYS[number];

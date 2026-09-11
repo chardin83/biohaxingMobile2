@@ -2,7 +2,8 @@
 import debug from 'debug';
 import { t } from 'i18next';
 
-import { PlansByCategory, ReasonSummary } from '@/app/context/StorageContext';
+import { PlansByCategory } from '@/app/context/storage/plans/planTypes';
+import {  ReasonSummary } from '@/app/context/StorageContext';
 import { GPTResponse } from '@/app/domain/GPTResponse';
 import { Message } from '@/app/domain/Message';
 import i18n from '@/app/i18n';
@@ -11,12 +12,7 @@ import { tips } from '@/locales/tips';
 
 const log = debug('app:gptServices');
 
-export interface AnalysisResponse {
-  type: string;
-  content?: string;
-  confidence?: number;
-  match?: boolean;
-}
+type SupportLevel = 'high' | 'medium' | 'low' | 'unknown';
 
 export interface NutritionAnalysisResponse {
   type: 'match_result' | 'text' | 'nutrition' | 'error';
@@ -25,23 +21,151 @@ export interface NutritionAnalysisResponse {
   confidence?: number;
   uploadedFileId?: string;
   raw?: any;
+
   nutrition?: {
+    mealName?: string;
     protein?: number;
     calories?: number;
     carbohydrates?: number;
     fat?: number;
     fiber?: number;
+
+    nutritionDetails?: {
+      fiber?: {
+        total?: number;
+        gelForming?: number;
+        nonGelForming?: number;
+        fermentable?: number;
+        subtypes?: Array<{
+          subtype: string;
+          amountG?: number;
+          likelySources?: string[];
+        }>;
+        unit?: 'g';
+      };
+
+      polyphenols?: {
+        totalMg?: number;
+        byType?: Record<string, number>;
+        likelySources?: string[];
+      };
+
+      minerals?: {
+        totalMg?: number;
+        sodium?: number;
+        potassium?: number;
+        magnesium?: number;
+        calcium?: number;
+        iron?: number;
+        zinc?: number;
+        selenium?: number;
+        iodine?: number;
+        phosphorus?: number;
+        copper?: number;
+        manganese?: number;
+      };
+
+      vitamins?: {
+        totalMg?: number;
+        vitamin_a?: number;
+        vitamin_c?: number;
+        vitamin_d?: number;
+        vitamin_e?: number;
+        vitamin_k?: number;
+        vitamin_b1?: number;
+        vitamin_b2?: number;
+        vitamin_b3?: number;
+        vitamin_b5?: number;
+        vitamin_b6?: number;
+        vitamin_b7?: number;
+        vitamin_b9?: number;
+        vitamin_b12?: number;
+      };
+
+      microbiomeSupport?: Array<{
+        microbe: string;
+        supportLevel: SupportLevel;
+        linkedNutrients: string[];
+        likelyFoods: string[];
+        rationale?: string;
+      }>;
+    };
+
+    aminoAcidsByType?: Record<string, number>;
+    vitaminsByType?: Record<string, number>;
+
+    weeklyTrackingSignals?:
+      | Record<string, string[] | number>
+      | Array<{
+          key?: string;
+          trackingKey?: string;
+          items?: string[];
+          count?: number;
+          increment?: number;
+          countIncrement?: number;
+        }>;
+
+    confidenceLabel?: SupportLevel;
+    analysisMode?: 'observed' | 'estimated' | 'fallback';
+    foodSources?: string[];
+    aiAssumptions?: string[];
+    referenceSources?: string[];
+
     [k: string]: any;
   };
+
+  nutritionDetails?: {
+    fiber?: {
+      total?: number;
+      gelForming?: number;
+      nonGelForming?: number;
+      fermentable?: number;
+      subtypes?: Array<{
+        subtype: string;
+        amountG?: number;
+        likelySources?: string[];
+      }>;
+      unit?: 'g';
+    };
+
+    polyphenols?: {
+      totalMg?: number;
+      byType?: Record<string, number>;
+      likelySources?: string[];
+    };
+
+    minerals?: Record<string, number | undefined>;
+    vitamins?: Record<string, number | undefined>;
+
+    microbiomeSupport?: Array<{
+      microbe: string;
+      supportLevel: SupportLevel;
+      linkedNutrients: string[];
+      likelyFoods: string[];
+      rationale?: string;
+    }>;
+  };
+
+  aminoAcidsByType?: Record<string, number>;
   vitaminsByType?: Record<string, number>;
-  weeklyTrackingSignals?: Record<string, string[] | number> | Array<{
-    key?: string;
-    trackingKey?: string;
-    items?: string[];
-    count?: number;
-    increment?: number;
-    countIncrement?: number;
-  }>;
+
+  weeklyTrackingSignals?:
+    | Record<string, string[] | number>
+    | Array<{
+        key?: string;
+        trackingKey?: string;
+        items?: string[];
+        count?: number;
+        increment?: number;
+        countIncrement?: number;
+      }>;
+
+  confidenceLabel?: SupportLevel;
+  analysisMode?: 'observed' | 'estimated' | 'fallback';
+  foodSources?: string[];
+  aiAssumptions?: string[];
+  referenceSources?: string[];
+
   message?: string;
 }
 
@@ -50,6 +174,15 @@ type TrackingTargetInput = {
   unit: 'items' | 'count';
   amount?: number;
   aiInstruction?: string;
+};
+
+export type NutritionAnalysisTier = 'free' | 'premium';
+
+export type NutritionAnalysisFeatures = {
+  fiberBreakdown?: boolean;
+  polyphenolBreakdown?: boolean;
+  aminoAcidBreakdown?: boolean;
+  microbiomeSupport?: boolean;
 };
 
 type AnalyseParams = {
@@ -68,7 +201,88 @@ type AnalyseParams = {
   supplement?: string;
   locale?: 'sv' | 'en';
   trackingTargets?: TrackingTargetInput[];
+  analysisTier?: NutritionAnalysisTier;
+  analysisFeatures?: NutritionAnalysisFeatures;
 };
+
+function appendNutritionFile(form: FormData, params: AnalyseParams): void {
+  if (params.file_base64) {
+    const raw = params.file_base64.includes(',') ? params.file_base64.split(',')[1] : params.file_base64;
+    form.append('file_base64', raw);
+    form.append('mime', params.mime ?? 'image/jpeg');
+    return;
+  }
+
+  if (params.uri) {
+    form.append('file', {
+      uri: params.uri,
+      name: params.name ?? `upload_${Date.now()}.jpg`,
+      type: params.type ?? 'image/jpeg',
+    } as any);
+    return;
+  }
+
+  throw new Error('No file data provided to NutritionAnalyze');
+}
+
+function appendIngredientFile(form: FormData, params: AnalyseParams): void {
+  if (params.ingredientListBase64) {
+    const raw = params.ingredientListBase64.includes(',')
+      ? params.ingredientListBase64.split(',')[1]
+      : params.ingredientListBase64;
+    form.append('ingredient_list_base64', raw);
+    form.append('ingredient_list_mime', params.ingredientListMime ?? 'image/jpeg');
+    return;
+  }
+
+  if (params.ingredientListUri) {
+    form.append('ingredient_list_file', {
+      uri: params.ingredientListUri,
+      name: params.ingredientListName ?? `ingredient_list_${Date.now()}.jpg`,
+      type: params.ingredientListType ?? 'image/jpeg',
+    } as any);
+  }
+}
+
+function appendNutritionOptions(form: FormData, params: AnalyseParams, locale: 'sv' | 'en'): NutritionAnalysisTier {
+  const analysisTier: NutritionAnalysisTier = params.analysisTier ?? 'premium';
+  const languageInstruction = locale === 'sv'
+    ? 'Write all free-text outputs in Swedish.'
+    : 'Write all free-text outputs in English.';
+
+  form.append('prompt', `${params.prompt ?? ''}\n${languageInstruction}`.trim());
+  form.append('mealDescription', params.mealDescription ?? '');
+  form.append('supplement', params.supplement ?? '');
+  form.append('locale', locale);
+  form.append('analysisTier', analysisTier);
+
+  if (params.analysisFeatures && Object.keys(params.analysisFeatures).length > 0) {
+    form.append('analysisFeatures', JSON.stringify(params.analysisFeatures));
+  }
+  if (params.trackingTargets && params.trackingTargets.length > 0) {
+    form.append('trackingTargets', JSON.stringify(params.trackingTargets));
+  }
+
+  return analysisTier;
+}
+
+async function parseNutritionResponse(response: Response): Promise<NutritionAnalysisResponse> {
+  const text = await response.text();
+  let json: NutritionAnalysisResponse | null = null;
+
+  try {
+    json = text ? JSON.parse(text) : null;
+  } catch {
+    throw new Error(`Invalid JSON from server: ${text}`);
+  }
+
+  if (!response.ok) {
+    const message = (json && (json.message || json.content)) ?? `HTTP ${response.status}`;
+    throw new Error(message);
+  }
+
+  return json!;
+}
 
 export const buildSystemPrompt = (plans: PlansByCategory, shareHealthPlan: boolean): string => {
   const supplementPlans = plans?.supplements ?? [];
@@ -106,253 +320,61 @@ export const askGPT = async (messagesToSend: Message[]): Promise<GPTResponse> =>
   return JSON.parse(text) as GPTResponse;
 };
 
-export type FileAnalysisParams = {
-  uri?: string;
-  name?: string;
-  type?: string;
-  prompt?: string;
-  supplement?: string;
-  file_base64?: string;
-  mime?: string;
-};
-
-export async function sendFileToAISupplementAnalysis({
-  uri,
-  name,
-  type,
-  prompt,
-  supplement,
-  file_base64,
-  mime,
-}: FileAnalysisParams): Promise<AnalysisResponse | any> {
-  const fd = new FormData();
-
-  // Om base64 skickas explicit, använd samma format som NutritionAnalyze
-  if (file_base64) {
-    const raw = file_base64.includes(',') ? file_base64.split(',')[1] : file_base64;
-    fd.append('file_base64', raw);
-    fd.append('mime', mime ?? type ?? 'image/jpeg');
-  } else if (typeof uri === 'string' && uri.startsWith('data:')) {
-    // data:<mime>;base64,... -> extrahera base64-delen
-    const raw = uri.includes(',') ? uri.split(',')[1] : uri;
-    fd.append('file_base64', raw);
-    // extrahera mime från data-uri om möjligt
-    const match = uri.match(/^data:(.*);base64,/);
-    fd.append('mime', mime ?? (match ? match[1] : (type ?? 'image/jpeg')));
-  } else if (uri) {
-    // React Native file object
-    fd.append('file', {
-      uri: String(uri),
-      name: name ?? `upload_${Date.now()}.jpg`,
-      type: type ?? 'image/jpeg',
-    } as any);
-  } else {
-    throw new Error('No file provided to sendFileToAIAnalysis');
-  }
-
-  fd.append('prompt', String(prompt ?? ''));
-  if (supplement) fd.append('supplement', String(supplement));
-
-  // Välj endpoint: supplement-specifik eller generell
-  //const endpoint = supplement ? ENDPOINTS.handleSupplementCheck : ENDPOINTS.askAIv2;
-  const endpoint = ENDPOINTS.handleSupplementCheck;
-
-  const res = await fetch(endpoint, {
-    method: 'POST',
-    body: fd as any,
-  });
-
-  const text = await res.text().catch(() => '');
-  let rawJson: any = null;
-  try {
-    rawJson = text ? JSON.parse(text) : null;
-  } catch (err) {
-    // om ej JSON så kasta med rå text om error, annars returnera text
-    if (!res.ok) {
-      throw new Error(`Analysis API error: ${res.status} ${text}`);
-    }
-    return { type: 'text', content: text } as AnalysisResponse;
-  }
-
-  // Om server returnerar { result: { ... } } så returnera result direkt
-  const payload = rawJson && typeof rawJson === 'object' && 'result' in rawJson ? rawJson.result : rawJson;
-
-  if (!res.ok) {
-    const msg = (payload && (payload.message || payload.content)) ?? `HTTP ${res.status}`;
-    throw new Error(msg);
-  }
-
-  return payload;
+function getNutritionLocale(params: AnalyseParams): 'sv' | 'en' {
+  const activeLanguage = (i18n.resolvedLanguage ?? i18n.language ?? 'en').toLowerCase();
+  const fallbackLocale: 'sv' | 'en' = activeLanguage.startsWith('sv') ? 'sv' : 'en';
+  return params.locale ?? fallbackLocale;
 }
 
-export async function sendFileToAIAnalysis({
-  uri,
-  name,
-  type,
-  prompt,
-  supplement,
-  file_base64,
-  mime,
-}: FileAnalysisParams): Promise<AnalysisResponse | any> {
-  const fd = new FormData();
-
-  // Om base64 skickas explicit, använd samma format som NutritionAnalyze
-  if (file_base64) {
-    const raw = file_base64.includes(',') ? file_base64.split(',')[1] : file_base64;
-    fd.append('file_base64', raw);
-    fd.append('mime', mime ?? type ?? 'image/jpeg');
-  } else if (typeof uri === 'string' && uri.startsWith('data:')) {
-    // data:<mime>;base64,... -> extrahera base64-delen
-    const raw = uri.includes(',') ? uri.split(',')[1] : uri;
-    fd.append('file_base64', raw);
-    // extrahera mime från data-uri om möjligt
-    const match = uri.match(/^data:(.*);base64,/);
-    fd.append('mime', mime ?? (match ? match[1] : (type ?? 'image/jpeg')));
-  } else if (uri) {
-    // React Native file object
-    fd.append('file', {
-      uri: String(uri),
-      name: name ?? `upload_${Date.now()}.jpg`,
-      type: type ?? 'image/jpeg',
-    } as any);
-  } else {
-    throw new Error('No file provided to sendFileToAIAnalysis');
-  }
-
-  fd.append('prompt', String(prompt ?? ''));
-  fd.append('validationSpec', 'verifiera att bilden visar ' + (supplement ?? 'HRV'));
-  fd.append('task', String(prompt ?? ''));
-  if (supplement) fd.append('supplement', String(supplement));
-
-  // Välj endpoint: supplement-specifik eller generell
-  //const endpoint = supplement ? ENDPOINTS.handleSupplementCheck : ENDPOINTS.askAIv2;
-  const endpoint = ENDPOINTS.handleSupplementCheck;
-
-  // innan fetch
-  log('[sendFileToAIAnalysis] sending to endpoint:', endpoint, {
-    fileProvided: !!(file_base64 || uri),
-    uri,
-    name,
-    type,
-    file_base64_present: !!file_base64,
-    prompt,
-    supplement,
-    validationSpec: fd.get('validationSpec'),
-    task: fd.get('task'),
+function logNutritionRequest(
+  params: AnalyseParams,
+  analysisTier: NutritionAnalysisTier,
+  locale: 'sv' | 'en',
+): void {
+  log('[NutritionAnalyze] request', {
+    endpoint: ENDPOINTS.handleNutritionCheck,
+    analysisTier,
+    analysisFeatures: params.analysisFeatures,
+    hasIngredientList: Boolean(params.ingredientListBase64 || params.ingredientListUri),
+    trackingTargetCount: params.trackingTargets?.length ?? 0,
+    locale,
   });
+}
 
-  const res = await fetch(endpoint, {
+async function runNutritionAnalysis(params: AnalyseParams): Promise<NutritionAnalysisResponse> {
+  const form = new FormData();
+  const locale = getNutritionLocale(params);
+
+  appendNutritionFile(form, params);
+  appendIngredientFile(form, params);
+  const analysisTier = appendNutritionOptions(form, params, locale);
+  logNutritionRequest(params, analysisTier, locale);
+
+  const response = await fetch(ENDPOINTS.handleNutritionCheck, {
     method: 'POST',
-    body: fd as any,
+    body: form as any,
   });
 
-  const text = await res.text().catch(() => '');
-  log('[sendFileToAIAnalysis] RAW RESPONSE text:', text);
-  let json: any = null;
-  try {
-    json = text ? JSON.parse(text) : null;
-  } catch (err) {
-    // om ej JSON så kasta med rå text
-    if (!res.ok) {
-      throw new Error(`Analysis API error: ${res.status} ${text}`);
-    }
-    return { type: 'text', content: text } as AnalysisResponse;
-  }
+  return parseNutritionResponse(response);
+}
 
-  if (!res.ok) {
-    const msg = (json && (json.message || json.content)) ?? `HTTP ${res.status}`;
-    throw new Error(msg);
-  }
-
-  return json;
+function isRetryableNutritionError(message: string): boolean {
+  const normalized = message.toLowerCase();
+  return normalized.includes('socket hang up') || normalized.includes('econnreset') || normalized.includes('timeout');
 }
 
 export async function NutritionAnalyze(params: AnalyseParams): Promise<NutritionAnalysisResponse> {
-  const shouldRetry = (message: string): boolean => {
-    const normalized = message.toLowerCase();
-    return normalized.includes('socket hang up') || normalized.includes('econnreset') || normalized.includes('timeout');
-  };
-
-  const runOnce = async (): Promise<NutritionAnalysisResponse> => {
-    const form = new FormData();
-
-    if (params.file_base64) {
-      const raw = params.file_base64.includes(',') ? params.file_base64.split(',')[1] : params.file_base64;
-      form.append('file_base64', raw);
-      form.append('mime', params.mime ?? 'image/jpeg');
-    } else if (params.uri) {
-      // @ts-ignore - React Native file object
-      form.append('file', {
-        uri: params.uri,
-        name: params.name ?? `upload_${Date.now()}.jpg`,
-        type: params.type ?? 'image/jpeg',
-      } as any);
-    } else {
-      throw new Error('No file data provided to NutritionAnalyze');
-    }
-
-    if (params.ingredientListBase64) {
-      const raw = params.ingredientListBase64.includes(',')
-        ? params.ingredientListBase64.split(',')[1]
-        : params.ingredientListBase64;
-      form.append('ingredient_list_base64', raw);
-      form.append('ingredient_list_mime', params.ingredientListMime ?? 'image/jpeg');
-    } else if (params.ingredientListUri) {
-      form.append('ingredient_list_file', {
-        uri: params.ingredientListUri,
-        name: params.ingredientListName ?? `ingredient_list_${Date.now()}.jpg`,
-        type: params.ingredientListType ?? 'image/jpeg',
-      } as any);
-    }
-
-    const activeLanguage = (i18n.resolvedLanguage ?? i18n.language ?? 'en').toLowerCase();
-    const fallbackLocale: 'sv' | 'en' = activeLanguage.startsWith('sv') ? 'sv' : 'en';
-    const effectiveLocale: 'sv' | 'en' = params.locale ?? fallbackLocale;
-    const languageInstruction =
-      effectiveLocale === 'sv'
-        ? 'Write all free-text outputs in Swedish.'
-        : 'Write all free-text outputs in English.';
-    const promptWithLanguage = `${params.prompt ?? ''}\n${languageInstruction}`.trim();
-
-    form.append('prompt', promptWithLanguage);
-    form.append('mealDescription', params.mealDescription ?? '');
-    form.append('supplement', params.supplement ?? '');
-    form.append('locale', effectiveLocale);
-    if (Array.isArray(params.trackingTargets) && params.trackingTargets.length > 0) {
-      form.append('trackingTargets', JSON.stringify(params.trackingTargets));
-    }
-
-    const resp = await fetch(ENDPOINTS.handleNutritionCheck, {
-      method: 'POST',
-      body: form as any, // don't set Content-Type
-    });
-
-    const text = await resp.text();
-    let json: NutritionAnalysisResponse | null = null;
-    try {
-      json = text ? JSON.parse(text) : null;
-    } catch {
-      throw new Error(`Invalid JSON from server: ${text}`);
-    }
-
-    if (!resp.ok) {
-      const msg = (json && (json.message || json.content)) ?? `HTTP ${resp.status}`;
-      throw new Error(msg);
-    }
-
-    return json!;
-  };
 
   try {
-    return await runOnce();
+    return await runNutritionAnalysis(params);
   } catch (error) {
     const firstMessage = error instanceof Error ? error.message : String(error);
-    if (!shouldRetry(firstMessage)) {
+    if (!isRetryableNutritionError(firstMessage)) {
       throw error;
     }
 
     await new Promise(resolve => setTimeout(resolve, 700));
-    return await runOnce();
+    return await runNutritionAnalysis(params);
   }
 }
 

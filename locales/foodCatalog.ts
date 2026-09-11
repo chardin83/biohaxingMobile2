@@ -184,12 +184,14 @@ export const FOOD_NUTRIENT_PROFILES = {
     },
     polyphenolByType: {
       polyphenols_total: 520,
+      phenolic_acids: 120,
+      chlorogenic_acids: 25,
       flavonoids_total: 330,
       flavonols: 130,
       quercetin: 25,
-      flavonoids: 330,
       catechins: 8,
       anthocyanins: 4,
+      lignans: 2.3,
     },
     microbiomeSupport: [
       {
@@ -382,7 +384,6 @@ export const FOOD_NUTRIENT_PROFILES = {
     polyphenolByType: {
       polyphenols_total: 1100,
       flavonoids_total: 220,
-      flavonoids: 220,
       flavonols: 42,
       flavanols: 31,
       phenolic_acids: 420,
@@ -423,6 +424,11 @@ export const FOOD_NUTRIENT_PROFILES = {
     fiber: 4,
     fiberByType: { fiber_total: 4, fiber_fermentable: 3.1 },
     mineralsByType: { potassium: 290, calcium: 41 },
+    polyphenolByType: {
+      polyphenols_total: 180,
+      phenolic_acids: 130,
+      chlorogenic_acids: 100,
+    },
     defaultServings: GRAM_50_100_200,
   },
   cookedCooledPotato: {
@@ -452,7 +458,14 @@ export const FOOD_NUTRIENT_PROFILES = {
     fat: 0.2,
     fiber: 2.4,
     fiberByType: { fiber_total: 2.4, fiber_fermentable: 1.1, fiber_gel_forming: 1 },
-    polyphenolByType: { polyphenols_total: 170, flavonoids_total: 65, quercetin: 4 },
+    polyphenolByType: {
+      polyphenols_total: 170,
+      phenolic_acids: 50,
+      chlorogenic_acids: 40,
+      flavonoids_total: 65,
+      flavonols: 20,
+      quercetin: 4,
+    },
     defaultServings: GRAM_50_100_200,
   },
   okra: {
@@ -498,7 +511,14 @@ export const FOOD_NUTRIENT_PROFILES = {
       vitamin_b9: 0.194,
     },
     mineralsByType: { magnesium: 79, iron: 2.7, potassium: 558, calcium: 99 },
-    polyphenolByType: { polyphenols_total: 120, flavonoids_total: 60, flavonols: 35, quercetin: 2 },
+    polyphenolByType: {
+      polyphenols_total: 120,
+      phenolic_acids: 30,
+      chlorogenic_acids: 8,
+      flavonoids_total: 60,
+      flavonols: 35,
+      quercetin: 2,
+    },
     aminoAcidsByType: { leucine: 0.2, valine: 0.17, lysine: 0.17, tmg: 600 },
     defaultServings: CUP_SPINACH_90_180_360,
   },
@@ -630,13 +650,15 @@ export const FOOD_NUTRIENT_PROFILES = {
     },
     polyphenolByType: {
       polyphenols_total: 180,
+      phenolic_acids: 45,
+      chlorogenic_acids: 6,
       flavonoids_total: 90,
-      flavonoids: 90,
       flavonols: 45,
       quercetin: 3,
       catechins: 6,
       flavanols: 8,
       anthocyanins: 1,
+      lignans: 0.8,
     },
     microbiomeSupport: [
       {
@@ -806,7 +828,6 @@ export const FOOD_NUTRIENT_PROFILES = {
     polyphenolByType: {
       polyphenols_total: 180,
       flavonoids_total: 85,
-      flavonoids: 85,
       flavonols: 24,
       quercetin: 2,
       flavanols: 12,
@@ -922,7 +943,6 @@ export const FOOD_NUTRIENT_PROFILES = {
     polyphenolByType: {
       polyphenols_total: 420,
       flavonoids_total: 105,
-      flavonoids: 105,
       flavonols: 22,
       quercetin: 1,
       flavanols: 18,
@@ -1193,7 +1213,6 @@ export const FOOD_NUTRIENT_PROFILES = {
     polyphenolByType: {
       polyphenols_total: 28,
       flavonoids_total: 10,
-      flavonoids: 10,
       flavonols: 3,
       quercetin: 0.2,
       flavanols: 2,
@@ -1560,7 +1579,6 @@ export const FOOD_NUTRIENT_PROFILES = {
     polyphenolByType: {
       polyphenols_total: 9,
       flavonoids_total: 2,
-      flavonoids: 2,
     },
     microbiomeSupport: [
       {
@@ -1645,7 +1663,6 @@ export const FOOD_NUTRIENT_PROFILES = {
     polyphenolByType: {
       polyphenols_total: 85,
       flavonoids_total: 35,
-      flavonoids: 35,
       flavonols: 12,
       quercetin: 2,
       flavanols: 6,
@@ -1740,7 +1757,6 @@ export const FOOD_NUTRIENT_PROFILES = {
     polyphenolByType: {
       polyphenols_total: 120,
       flavonoids_total: 38,
-      flavonoids: 38,
       flavonols: 12,
       quercetin: 1,
       flavanols: 8,
@@ -1930,9 +1946,9 @@ export const FOOD_NUTRIENT_PROFILES = {
     polyphenolByType: {
       polyphenols_total: 65,
       flavonoids_total: 18,
-      flavonoids: 18,
       flavonols: 5,
       phenolic_acids: 22,
+      chlorogenic_acids: 15,
       catechins: 2,
     },
     microbiomeSupport: [
@@ -2019,6 +2035,7 @@ export const FOOD_NUTRIENT_PROFILES = {
       flavonols: 32,
       catechins: 14,
       quercetin: 3,
+      lignans: 0.4,
     },
     microbiomeSupport: [
       {
@@ -2163,7 +2180,6 @@ export const FOOD_NUTRIENT_PROFILES = {
     polyphenolByType: {
       polyphenols_total: 95,
       flavonoids_total: 42,
-      flavonoids: 42,
       flavonols: 14,
       quercetin: 2,
       flavanols: 7,
@@ -2241,7 +2257,6 @@ export const FOOD_NUTRIENT_PROFILES = {
     polyphenolByType: {
       polyphenols_total: 950,
       flavonoids_total: 180,
-      flavonoids: 180,
       flavonols: 38,
       flavanols: 42,
       lignans: 320,
@@ -2304,7 +2319,9 @@ export const FOOD_NUTRIENT_PROFILES = {
       isoleucine: 80,
     },
     polyphenolByType: {
+      polyphenols_total: 35,
       phenolic_acids: 20,
+      chlorogenic_acids: 10,
       flavonoids_total: 8,
     },
     microbiomeSupport: [
@@ -2401,12 +2418,12 @@ export const FOOD_NUTRIENT_PROFILES = {
       polyphenols_total: 230,
       ellagitannins: 65,
       flavonoids_total: 115,
-      flavonoids: 115,
       anthocyanins: 75,
       flavonols: 25,
       flavanols: 18,
       catechins: 12,
       quercetin: 2,
+      lignans: 0.3,
     },
     microbiomeSupport: [
       {
@@ -2479,11 +2496,11 @@ export const FOOD_NUTRIENT_PROFILES = {
     polyphenolByType: {
       polyphenols_total: 600,
       flavonoids_total: 130,
-      flavonoids: 130,
       flavonols: 28,
       flavanols: 26,
       lignans: 85,
       phenolic_acids: 190,
+      chlorogenic_acids: 120,
     },
     microbiomeSupport: [
       {
@@ -2551,7 +2568,6 @@ export const FOOD_NUTRIENT_PROFILES = {
       polyphenols_total: 1300,
       ellagitannins: 400,
       flavonoids_total: 120,
-      flavonoids: 120,
       flavonols: 32,
       flavanols: 28,
       catechins: 10,
@@ -2638,7 +2654,6 @@ export const FOOD_NUTRIENT_PROFILES = {
     polyphenolByType: {
       polyphenols_total: 35,
       flavonoids_total: 10,
-      flavonoids: 10,
       flavonols: 3,
       flavanols: 2,
       phenolic_acids: 8,

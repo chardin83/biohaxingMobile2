@@ -1,5 +1,6 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
+import * as Crypto from 'expo-crypto';
 import * as Haptics from 'expo-haptics';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -773,7 +774,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({
     setDailyNutritionSummaries(prev => {
       const existing = prev[selectedDate]?.meals ?? [];
       const newMeal = {
-        id: `${selectedDate}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        id: `${selectedDate}-${Crypto.randomUUID()}`,
         date: selectedDate,
         ...analysis,
         weeklyTrackingSignals: mealWeeklyTrackingSignals,
@@ -818,7 +819,7 @@ const NutritionLogger: React.FC<NutritionLoggerProps> = ({
   const handleCopyMeal = (mealToCopy: any) => {
     const copiedMeal = {
       ...mealToCopy,
-      id: `${selectedDate}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      id: `${selectedDate}-${Crypto.randomUUID()}`,
       date: selectedDate,
       mealName: getNormalizedMealName(mealToCopy, t('nutritionLogger.unnamedMeal')),
     };

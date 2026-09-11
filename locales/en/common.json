@@ -45,6 +45,7 @@
     "dashboard": "Dashboard",
     "calendar": "Calendar",
     "plan": "Plan",
+    "other": "Other",
     "settings": "Settings",
     "areas": "Areas"
   },
@@ -286,6 +287,7 @@
     "tabMeal": "Meal",
     "tabSupplements": "Supplements",
     "tabTraining": "Training",
+    "tabOther": "Other",
     "addSupplement": "Add supplement",
     "addFromPlan": "From plan",
     "choosePlan": "How do you want to add supplements?",
@@ -881,6 +883,17 @@
   "search": {
     "label": "Search tips"
   },
+  "otherTips": {
+    "title": "Other tips",
+    "subtitle": "Track today's progress for your other tips.",
+    "description": "Additional tips for your health",
+    "count": "{{count}} tips",
+    "empty": "No other tips are available yet.",
+    "noPlanned": "No other tips are planned for this day.",
+    "noTarget": "No measurable target",
+    "fulfilled": "Fulfilled",
+    "notFulfilled": "Not fulfilled"
+  },
   "planCategory": {
     "nutrition": "Nutrition",
     "training": "Training",
@@ -1100,13 +1113,15 @@
     "polyphenolLabels": {
       "polyphenols_total": "Polyphenols total",
       "flavonoids_total": "Flavonoids total",
-      "flavonoids": "Flavonoids",
+      "phenolic_acids": "Phenolic acids",
       "anthocyanins": "Anthocyanins",
       "catechins": "Catechins",
       "flavanols": "Flavanols",
       "flavonols": "Flavonols",
       "quercetin": "Quercetin",
-      "ellagitannins": "Ellagitannins"
+      "ellagitannins": "Ellagitannins",
+      "lignans": "Lignans",
+      "chlorogenic_acids": "Chlorogenic acids"
     },
     "mineralLabels": {
       "minerals_total": "Minerals total",

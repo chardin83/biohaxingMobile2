@@ -635,14 +635,6 @@
     },
     "warning": "Kreatintillskott kan påverka njurfunktionen hos personer med redan befintliga tillstånd."
   },
-  "betaalanine_endurance": {
-    "title": "Beta-alanin för uthållighet",
-    "description": "Beta-alanin är en icke-essentiell aminosyra som ökar karnosinnivåerna i musklerna, buffrar mjölksyra och försenar trötthet under högintensiv träning. Det är särskilt effektivt för aktiviteter som varar 1-4 minuter.",
-    "areas": {
-      "strength": "Beta-alanin ökar musklernas karnosinnivåer, minskar trötthet och förbättrar prestationen under högintensiv träning.",
-      "cardioFitness": "Genom att buffra mjölksyra förlänger beta-alanin uthållighetskapaciteten och möjliggör längre och mer intensiva kardiovaskulära träningspass."
-    }
-  },
   "shilajit_performance": {
     "title": "Shilajit för prestation",
     "description": "Shilajit är ett mineralrikt ämne som finns i Himalaya och som stödjer mitokondriell funktion, förbättrar energiproduktion och förbättrar fysisk prestation. Det innehåller fulvinsyra och över 85 mineraler i jonisk form.",
@@ -826,7 +818,6 @@
         "sardines": {
           "details": "100 g sardiner ger cirka ~1,5 g EPA+DHA; mycket bra omega-3-källa och enkel att använda på burk."
         },
-
         "canTuna": {
           "details": "Bekväm alternativ med liknande omega-3-innehål som färsk fisk. Ofta konserverad i olja för extra omega-3."
         },
@@ -880,24 +871,6 @@
       "cardioFitness": "HIIT-träning ökar VO2 max avsevärt, vilket förbättrar kardiovaskulär kapacitet, uthållighet och övergripande aerob kondition.",
       "energy": "HIIT förbättrar mitokondriernas arbetskapacitet och förmåga att producera energi snabbt vid hög intensitet, vilket höjer den metabola effektiviteten när kraven är stora.",
       "longevity": "Högre VO2 max är en av de starkaste prediktorerna för långsiktig hälsa och överlevnad, vilket gör HIIT till en värdefull longevity-stimulus när återhämtningen hanteras smart."
-    }
-  },
-  "vo2max_4x4_intervals": {
-    "title": "VO2max 4x4-intervaller",
-    "description": "Ett klassiskt upplägg för att förbättra VO2 max är 4 x 4 minuter på hög men kontrollerad intensitet (cirka 85-95% av maxpuls), med 3 minuter lugn återhämtning mellan intervallerna. Utfört 1-2 gånger per vecka kan detta effektivt höja syreupptagningsförmåga, slagvolym och prestation.",
-    "areas": {
-      "cardioFitness": "4x4-intervaller ger en stark central kardiovaskulär stimulus och är en av de mest evidensbaserade metoderna för att höja VO2 max.",
-      "energy": "Förbättrad syreleverans och syreanvändning stödjer högre hållbar kapacitet och bättre energisystem i vardagen.",
-      "longevity": "Att bevara hög aerob kapacitet över tid är tydligt kopplat till friskare åldrande och lägre kardiometabol risk."
-    }
-  },
-  "vo2max_hill_intervals": {
-    "title": "Backintervaller för VO2 max",
-    "description": "Backintervaller (till exempel 6-10 repetitioner på 45-90 sekunder) är ett effektivt sätt att förbättra VO2 max samtidigt som du bygger underkroppsstyrka och löpekonomi. Backar minskar steghastighetens stötar men ökar kraftkravet, vilket gör dem till ett praktiskt högintensivt alternativ.",
-    "areas": {
-      "cardioFitness": "Backintervaller utmanar syretransport och hjärt-lungkapacitet, vilket stödjer förbättringar i VO2 max och uthållighetsprestation.",
-      "strength": "Uppförsarbete ökar kraftutvecklingen i säte, vader och bakre kedjan och förbättrar överföringen mellan styrka och uthållighet.",
-      "longevity": "Kombinationen av aerob intensitet och muskuloskeletal belastning stödjer både hjärt-kärlresiliens och funktionell kapacitet med åldern."
     }
   },
   "running_volume_aerobic": {
@@ -1194,49 +1167,31 @@
       "cardioFitness": "Utfört i låg intensitet kan detta förbättra aerob robusthet utan att kompromissa kvaliteten i högintensiva pass när det periodiseras rätt."
     }
   },
-  "lactate_threshold_training": {
-    "title": "Tröskelträning för 10 km–1 mil",
-    "description": "Tröskelträning (tempo strax under mjölksyratröskeln) gör dig snabbare utan att du ‘surnar’ lika tidigt. Det är en nyckel för 10 km och 1 mil eftersom du kan hålla hög fart med kontrollerad ansträngning.",
+  "vigorous_exercise_lactate": {
+    "title": "Högintensiv träning och laktat",
+    "description": "Korta perioder av högintensiv träning kan snabbt öka produktionen av laktat. Laktat är inte bara en restprodukt – det kan användas som bränsle och fungerar även som en signalmolekyl i kroppen. Korta inslag av högre intensitet kan därför vara ett värdefullt komplement till lugnare aerob aktivitet för hjärt-kärlhälsa, ämnesomsättning och hjärnhälsa.",
     "areas": {
-      "cardioFitness": "Tröskelpass höjer den fart du kan hålla innan laktat ackumuleras för snabbt, vilket förbättrar tävlingskapaciteten på 5–10 km.",
-      "energy": "Genom förbättrad laktat-clearance och effektivare energisystem kan du producera mer arbete med mindre upplevd trötthet vid högre fart.",
-      "mind": "Laktat har neurologiska effekter som kan förbättra fokus och mental uthållighet under hårda ansträngningar, vilket hjälper dig att pusha igenom. Det har också neuroprotektiva effekter som kan stödja hjärnhälsa och motståndskraft under stress."
+      "cardioFitness": "Högintensiv aktivitet ger en kraftig stimulans av hjärta och cirkulation på kort tid och kan bidra till att bibehålla eller förbättra kondition och hjärt-kärlhälsa.",
+      "energy": "När träningsintensiteten ökar stiger produktionen av laktat. Laktat kan transporteras mellan olika vävnader och användas som bränsle, vilket gör det till en viktig del av kroppens energiomsättning under fysisk aktivitet.",
+      "mind": "Laktat som bildas under träning kan användas som bränsle av hjärnan och fungerar även som en signalmolekyl. Laktatsignalering har kopplats till BDNF och processer involverade i neuroplasticitet, vilket kan vara en av mekanismerna bakom träningens positiva effekter på hjärnan."
     },
-    "analyzePrompt": "Analysera användarens träningsnivå och föreslå en tröskelstruktur (t.ex. 20–40 minuter sammanhängande eller intervallblock) som matchar deras kapacitet."
+    "analyzePrompt": "Analysera användarens nuvarande aktivitetsnivå och kondition och föreslå ett säkert sätt att inkludera korta perioder av högintensiv aktivitet som kan öka laktatproduktionen. Fokusera på hjärt-kärlhälsa, metabol hälsa och hjärnhälsa snarare än idrottsprestation."
   },
-  "running_economy_drills": {
-    "title": "Löpekonomi: teknik, drills och strides",
-    "description": "Löpekonomi handlar om hur lite energi du behöver för en viss fart. Korta teknikövningar, drills och strides (korta fartökningar) förbättrar neuromuskulär effektivitet och gör att du kan springa snabbare med samma ansträngning.",
+  "coffee_polyphenols_longevity": {
+    "title": "Kaffe och polyfenoler för långsiktig hälsa",
+    "description": "Kaffe är en betydande källa till polyfenoler, särskilt klorogensyror. Regelbunden kaffekonsumtion har i stora observationsstudier kopplats till lägre risk för flera kroniska sjukdomar och lägre dödlighet. Sambanden verkar inte enbart bero på koffein, eftersom även koffeinfritt kaffe har kopplats till hälsofördelar.",
     "areas": {
-      "strength": "Strides och teknikdrills förbättrar kraftutveckling och elastisk återfjädring, vilket gör steget mer effektivt och ‘lätt’.",
-      "nervousSystem": "Korta fartinslag tränar nervsystemets koordination och rekrytering av muskelfibrer, vilket förbättrar rörelseeffektivitet.",
-      "cardioFitness": "Bättre löpekonomi sänker syrekostnaden vid given fart, vilket förbättrar prestation i uthållighetslöpning."
-    }
-  },
-  "stride_frequency_optimization": {
-    "title": "Kadens och stegfrekvens",
-    "description": "Att optimera stegfrekvens (kadens) kan minska bromsande krafter och förbättra löpekonomi. För många ligger en effektiv kadens ofta runt 170–185 steg/min i moderata till högre farter, men optimal kadens är individuell.",
-    "areas": {
-      "strength": "En mer effektiv kadens kan minska överbelastning genom lägre stötar per steg och förbättrad steglängd-kontroll.",
-      "nervousSystem": "Kadensarbete förbättrar rytm, koordination och timing i löpsteget, vilket ökar rörelseeffektivitet.",
-      "energy": "Bättre stegmönster kan minska energiläckage och göra att du håller fart med lägre total energikostnad."
-    }
-  },
-  "caffeine": {
-    "title": "Koffein",
-    "description": "Koffein kan förbättra prestation genom ökad vakenhet, minskad upplevd ansträngning och bättre kraftutveckling under hårda pass. Det är särskilt användbart inför intervaller, tröskelpass och tävling.",
-    "areas": {
-      "energy": "Koffein kan öka prestationsförmåga genom att påverka adenosinreceptorer och förbättra arbetskapacitet vid ansträngning.",
-      "mind": "Koffein ökar vakenhet och mental skärpa, vilket kan förbättra koncentration, reaktionsförmåga och fokus under krävande mentala uppgifter.",
-      "cardioFitness": "Genom förbättrad ansträngningstolerans kan du hålla högre intensitet längre, vilket stärker träningsstimulus för VO2 och tröskel."
+      "cardioFitness": "Måttlig kaffekonsumtion har i observationsstudier kopplats till lägre risk för hjärt-kärlsjukdom. Kaffets polyfenoler kan påverka bland annat kärlfunktion, inflammation och oxidativ stress, även om koffein tillfälligt kan höja blodtrycket hos vissa personer.",
+      "energy": "Kaffe innehåller bioaktiva ämnen som klorogensyror som kan påverka glukos- och energiomsättning. Regelbunden kaffekonsumtion har också kopplats till lägre risk för typ 2-diabetes i observationsstudier.",
+      "mind": "Regelbunden kaffekonsumtion har i observationsstudier associerats med lägre risk för vissa neurodegenerativa sjukdomar. Kaffe innehåller flera bioaktiva ämnen utöver koffein, och både koffein och polyfenoler kan bidra till effekterna."
     }
   },
   "nitrate_no_efficiency": {
-    "title": "Nitrat (rödbeta) för syreeffektivitet",
-    "description": "Nitrat från rödbeta kan öka kväveoxid (NO), vilket förbättrar blodflöde och musklernas syreanvändning. Det används ofta som prestationsstöd inför intensiva pass eller tävling.",
+    "title": "Nitrat och kväveoxid för kärlhälsa",
+    "description": "Nitrat från exempelvis rödbetor och gröna bladgrönsaker kan omvandlas till nitrit och vidare till kväveoxid (NO). Kväveoxid hjälper blodkärlen att vidgas och spelar en viktig roll för blodflöde, blodtrycksreglering och kärlens funktion.",
     "areas": {
-      "cardioFitness": "Ökat NO kan förbättra blodflöde och sänka syrekostnaden vid given intensitet, vilket kan gynna 5–10 km-prestation.",
-      "energy": "Förbättrad mitokondriell och muskulär effektivitet kan öka ‘output’ per liter syre och minska energiläckage vid hårdare arbete."
+      "cardioFitness": "Ökad tillgänglighet av kväveoxid kan förbättra blodkärlens förmåga att vidga sig och kan bidra till lägre blodtryck och bättre kärlfunktion. Nitrat från kosten har i studier särskilt kopplats till en minskning av systoliskt blodtryck.",
+      "energy": "Förbättrat blodflöde kan hjälpa syre och näringsämnen att nå arbetande vävnader mer effektivt. Nitrat och kväveoxid kan dessutom påverka hur effektivt muskler använder syre under fysisk aktivitet."
     }
   },
   "l_carnitine_fat_transport": {
@@ -1413,4 +1368,3 @@
     }
   }
 }
-
