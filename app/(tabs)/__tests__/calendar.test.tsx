@@ -54,7 +54,7 @@ jest.mock('@/components/CalendarComponent', () => {
 });
 
 // Mock DayEdit component
-jest.mock('@/components/DayEdit', () => {
+jest.mock('@/components/calendar/DayEdit', () => {
   const mockReact = require('react');
   const { View, Text } = require('react-native');
 

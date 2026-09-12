@@ -4,14 +4,9 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { type DailyNutritionSummary, useStorage } from '@/app/context/StorageContext';
+import { DailyNutritionSummary, WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
+import { useStorage } from '@/app/context/StorageContext';
 import { Collapsible } from '@/components/Collapsible';
-import {
-  toGrams,
-  toMicrograms,
-  toMilligrams,
-  type WeeklyTrackingItem,
-} from '@/components/nutritionTargets.logic';
 import { ThemedText } from '@/components/ThemedText';
 import TipTarget, { type TipTargetItem } from '@/components/TipTarget';
 import Badge from '@/components/ui/Badge';
@@ -24,6 +19,11 @@ import { isMineralTargetTag } from '@/constants/minerals';
 import { isPolyphenolTargetTag } from '@/constants/polyphenols';
 import { isVitaminTargetTag } from '@/constants/vitamins';
 import { getTipTargetIconName, tips } from '@/locales/tips';
+import {
+  toGrams,
+  toMicrograms,
+  toMilligrams,
+  } from '@/services/targetProgress/nutritionTargets';
 import {
   type NutritionTargetPeriod,
   type NutritionTargetUnit,

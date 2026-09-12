@@ -2,8 +2,8 @@ import { useTheme } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 
+import DayEdit, { type DayEditTab } from '@/components/calendar/DayEdit';
 import CalendarComponent from '@/components/CalendarComponent';
-import DayEdit from '@/components/DayEdit';
 import Container, { ContainerScrollRef } from '@/components/ui/Container';
 
 const toLocalDateKey = (date: Date): string => {
@@ -22,6 +22,7 @@ export default function Calendar() {
   const today = toLocalDateKey(new Date());
   const initialDate = params.selectedDate ?? today;
   const [selectedDate, setSelectedDate] = useState<string | null>(initialDate);
+  const [activeDayEditTab, setActiveDayEditTab] = useState<DayEditTab>(params.openTab ?? 'meal');
   const calendarRef = useRef<any>(null);
   const containerRef = useRef<ContainerScrollRef>(null);
   const { colors } = useTheme();
@@ -44,6 +45,12 @@ export default function Calendar() {
     }
   }, [params.selectedDate]);
 
+  useEffect(() => {
+    if (params.openTab) {
+      setActiveDayEditTab(params.openTab);
+    }
+  }, [params.openTab]);
+
   return (
     <Container
       ref={containerRef}
@@ -57,6 +64,8 @@ export default function Calendar() {
           selectedDate={selectedDate}
           onTipCompleted={handleTipCompleted}
           initialTab={params.openTab}
+          activeTab={activeDayEditTab}
+          onActiveTabChange={setActiveDayEditTab}
           preselectedSupplementId={params.supplementId}
         />
 

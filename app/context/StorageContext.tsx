@@ -5,8 +5,6 @@ import { subscribeArchivedPlans, subscribePlans } from '@/app/context/storage/pl
 import { getArchivedPlans, getPlans } from '@/app/context/storage/plans/planStorage';
 import { archivePlan, archiveSupplement, archiveSupplementPlan, clearArchivedPlans, saveSupplementToPlan as saveSupplementToPlanStore, updatePlans } from '@/app/context/storage/plans/planStore';
 import { type ArchivedPlansByCategory, EMPTY_ARCHIVED_PLANS, EMPTY_PLANS, type PlansByCategory} from '@/app/context/storage/plans/planTypes';
-import { WeeklyTrackingItem } from '@/components/nutritionTargets.logic';
-import { type MineralType } from '@/constants/minerals';
 import {
   levels,
   XP_FOR_CHAT_QUESTION,
@@ -16,7 +14,6 @@ import {
   type XpSource,
 } from '@/constants/XP';
 import { MetricId } from '@/locales/metrics';
-import { type NutritionComposition } from '@/types/nutritionProfile';
 import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
 import { type TrainingActivityFilter, type TrainingActivityType, type TrainingIntensity, type TrainingIntensityFilter } from '@/types/training';
 import { VerdictValue } from '@/types/verdict';
@@ -44,6 +41,7 @@ import {
   saveDailyNutritionSummaries,
   saveWeeklyTracking,
 } from './storage/nutrition/nutritionStorage';
+import type { DailyNutritionSummary, WeeklyTrackingItem } from './storage/nutrition/nutritionTypes';
 import {
   getSupplementStorage,
   saveCustomSupplements,
@@ -65,32 +63,6 @@ import {
   saveXP,
   saveXpBreakdown,
 } from './storage/xp/xpStorage';
-
-export type MealNutrition = NutritionComposition & {
-  id?: string;
-  date: string; // YYYY-MM-DD
-  mealName?: string;
-  mineralsConfidenceByType?: Partial<Record<MineralType, 'high' | 'medium' | 'low' | 'unknown'>>;
-};
-
-export type DailyNutritionSummary = {
-  date: string;
-  meals: MealNutrition[];
-  totals: {
-    protein: number;
-    calories: number;
-    carbohydrates: number;
-    fat: number;
-    fiber: number;
-  };
-  goalsMet: {
-    protein: boolean;
-    calories: boolean;
-    carbohydrates: boolean;
-    fat: boolean;
-    fiber: boolean;
-  };
-};
 
 export type ReasonSummary = {
   text: string;
@@ -275,7 +247,6 @@ interface StorageContextType {
     updater: Record<string, Record<string, WeeklyTrackingItem[] | number>> | ((prev: Record<string, Record<string, WeeklyTrackingItem[] | number>>) => Record<string, Record<string, WeeklyTrackingItem[] | number>>)
   ) => void;
   addToWeeklyTracking: (weekStartISO: string, key: string, value: WeeklyTrackingItem | number) => void;
-  getWeeklyTrackingValue: (weekStartISO: string, key: string) => WeeklyTrackingItem[] | number | undefined;
   healthSyncEnabled: boolean;
   setHealthSyncEnabled: (val: boolean) => void;
   userProfile: UserProfile;
@@ -316,32 +287,6 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const [weeklyTrackingState, setWeeklyTrackingState] = useState<Record<string, Record<string, WeeklyTrackingItem[] | number>>>({});
   const [nutritionXpClaimsState, setNutritionXpClaimsState] = useState<Record<string, NutritionXpClaim>>({});
   const [userProfileState, setUserProfileState] = useState<UserProfile>({});
-
-
-  const setBooleanIfTrue = useCallback(
-    (raw: string | null, setter: React.Dispatch<React.SetStateAction<boolean>>) => {
-      if (raw === 'true') setter(true);
-    },
-    []
-  );
-
-  const setJsonIfPresent = useCallback(
-    <T,>(raw: string | null, setter: React.Dispatch<React.SetStateAction<T>>) => {
-      if (!raw) return;
-      setter(JSON.parse(raw) as T);
-    },
-    []
-  );
-
-  const setNumberIfPresent = useCallback(
-    (raw: string | null, setter: React.Dispatch<React.SetStateAction<number>>, fallback = 0) => {
-      if (!raw) return;
-      const value = Number.parseInt(raw, 10);
-      setter(Number.isFinite(value) ? value : fallback);
-    },
-    []
-  );
-
 
   useEffect(() => {
     let mounted = true;
@@ -990,13 +935,6 @@ useEffect(() => {
     });
   }, []);
 
-  const getWeeklyTrackingValue = useCallback(
-    (weekStartISO: string, key: string): WeeklyTrackingItem[] | number | undefined => {
-      return weeklyTrackingState[weekStartISO]?.[key];
-    },
-    [weeklyTrackingState]
-  );
-
   const saveUserProfile = useCallback(
   async (profile: UserProfile) => {
     return saveUserProfileStore(profile);
@@ -1085,7 +1023,6 @@ const clearUserProfile = useCallback(
       weeklyTracking: weeklyTrackingState,
       setWeeklyTracking,
       addToWeeklyTracking,
-      getWeeklyTrackingValue,
       healthSyncEnabled: healthSyncEnabledState,
       setHealthSyncEnabled,
       userProfile: userProfileState,
@@ -1093,7 +1030,7 @@ const clearUserProfile = useCallback(
       updateUserProfile,
       clearUserProfile,
     }),
-       [plansState, setPlans,saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, clearNutritionXP, clearEducationXP, nutritionXpClaimsState, trainingPlanSettingsState, trainingEntriesState, addTrainingEntry, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, weeklyTrackingState, addToWeeklyTracking, getWeeklyTrackingValue, healthSyncEnabledState, setHealthSyncEnabled, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
+       [plansState, setPlans,saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, clearNutritionXP, clearEducationXP, nutritionXpClaimsState, trainingPlanSettingsState, trainingEntriesState, addTrainingEntry, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, weeklyTrackingState, addToWeeklyTracking, healthSyncEnabledState, setHealthSyncEnabled, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

@@ -201,6 +201,13 @@
     "areas": {
       "immuneSupport": "Friskare tandkött och lägre inflammation i munnen minskar kronisk belastning på immunförsvaret och hjälper till att hålla inflammationen mer balanserad. Blödande tandkött kan också göra det lättare för orala bakterier och inflammatoriska ämnen att ta sig ut i blodbanan, och dålig tandköttshälsa har kopplats till högre långsiktig risk för kognitiv svikt och Alzheimers sjukdom.",
       "digestiveHealth": "God tandhälsa stödjer tuggning, salivproduktion och det första steget i matsmältningen samtidigt som problem kopplade till en obalanserad oral mikrobiota minskar."
+    },
+    "habitTargets": {
+      "description": "Borsta tänderna på morgonen och kvällen.",
+      "buttonLabels": {
+        "morning": "Morgon",
+        "night": "Kväll"
+      }
     }
   },
   "vitamin_c_immunity": {
@@ -475,6 +482,7 @@
   "sunlight_circadian": {
     "title": "Morgonsolljus exponering",
     "description": "Exponering för naturligt solljus, särskilt inom 30-60 minuter efter uppvaknande, är avgörande för att reglera cirkadisk rytm och optimera sömn-vaken-cykler. Morgonljus undertrycker melatonin och signalerar början av dagen.",
+    "habitTargets": { "description": "Få minst tio minuters naturligt morgonljus för att stödja dygnsrytmen." },
     "areas": {
       "sleepQuality": "Morgonsolljus exponering hjälper till att ställa din cirkadiska klocka, vilket förbättrar sömnkvaliteten och gör det lättare att somna på kvällen.",
       "nervousSystem": "Naturlig ljusexponering reglerar nervsystemet genom att synkronisera cirkadiska rytmer och stödja balanserad kortisolproduktion.",
@@ -494,6 +502,7 @@
   "meditation_mindfulness": {
     "title": "Meditation och mindfulness",
     "description": "Regelbunden meditation och mindfulness-övningar tränar sinnet att stanna närvarande och minska stress. Dessa övningar aktiverar det parasympatiska nervsystemet, förbättrar emotionell reglering och förbättrar kognitiv funktion.",
+    "habitTargets": { "description": "Meditera eller praktisera mindfulness i minst tio minuter." },
     "areas": {
       "nervousSystem": "Meditation aktiverar det parasympatiska nervsystemet, vilket minskar stresshormoner som kortisol och främjar djup avslappning och återhämtning av nervsystemet.",
       "immuneSupport": "Regelbunden meditation har visat sig minska inflammation, stärka immunresponsen och förbättra övergripande hälsomarkörer.",
@@ -564,6 +573,7 @@
   "nature_parasympathetic": {
     "title": "Tid i naturen",
     "description": "Att tillbringa tid i naturliga miljöer aktiverar det parasympatiska nervsystemet och minskar stress. Skogsbad (Shinrin-yoku) och exponering för naturliga miljöer har visat sig sänka kortisol, minska blodtryck och förbättra det övergripande välbefinnandet.",
+    "habitTargets": { "description": "Tillbringa minst två timmar i naturen under veckan." },
     "areas": {
       "nervousSystem": "Naturexponering aktiverar det parasympatiska nervsystemet, vilket minskar stresshormoner och främjar avslappning och återhämtning.",
       "immuneSupport": "Tid i naturen har visat sig öka aktiviteten hos naturliga mördarceller och stärka immunfunktionen.",
@@ -585,6 +595,7 @@
   "social_connection_vagal": {
     "title": "Social kontakt och vagal ton",
     "description": "Positiva sociala interaktioner och meningsfulla relationer aktiverar vagusnerven och stärker parasympatisk ton. Social kontakt är avgörande för nervsystemets reglering, emotionellt välbefinnande och övergripande hälsa.",
+    "habitTargets": { "description": "Ha två meningsfulla sociala kontakter under veckan." },
     "areas": {
       "nervousSystem": "Positiva sociala interaktioner aktiverar vagusnerven, vilket förbättrar hjärtfrekvensvariabilitet och främjar parasympatisk nervsystemaktivering.",
       "immuneSupport": "Starka sociala kontakter har visat sig minska inflammation, stärka immunfunktionen och öka livslängden.",
@@ -1111,6 +1122,7 @@
   "sleep_duration_consistency": {
     "title": "Sömnvaraktighet och konsistens",
     "description": "Att få 7-9 timmars konsekvent sömn varje natt är avgörande för återhämtning av nervsystemet, hormonell balans och cellulär reparation. Att upprätthålla ett konsekvent sömnschema hjälper till att reglera din cirkadiska rytm.",
+    "habitTargets": { "description": "Sikta på minst sju timmars sömn för bättre återhämtning." },
     "areas": {
       "sleepQuality": "Konsekvent 7-9 timmars sömn möjliggör fullständiga sömnkyclar, inklusive djup sömn och REM-sömn som är nödvändig för minnesfastställning och känslomässig bearbetning.",
       "energy": "Tillräcklig sömnvaraktighet påverkar direkt energinivåer, kognitiv funktion och fysisk prestanda under dagen."

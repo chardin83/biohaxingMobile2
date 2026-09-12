@@ -8,6 +8,8 @@ import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { useHabitTracking } from '@/hooks/useHabitTracking';
+import { tips } from '@/locales/tips';
 import { getFirstDayOfWeek, getLocalizedWeekdayLabels } from '@/utils/dateUtils';
 
 const addDays = (dateString: string, days: number) => {
@@ -17,6 +19,13 @@ const addDays = (dateString: string, days: number) => {
 };
 
 const isAfterDate = (dateString: string, maxDate: string) => dateString > maxDate;
+
+const toLocalDateKey = (value: Date): string => {
+  const year = value.getFullYear();
+  const month = String(value.getMonth() + 1).padStart(2, '0');
+  const day = String(value.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 const formatDayLabel = (dateString: string, language: string) => {
   const date = new Date(`${dateString}T12:00:00`);
@@ -80,7 +89,12 @@ interface CalendarComponentRef {
 const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProps>(({ onDayPress, selectedDate: selectedDateProp }, ref) => {
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
-  const { takenDates, setTakenDates, dailyNutritionSummaries, trainingEntries } = useStorage();
+  const { takenDates, setTakenDates, dailyNutritionSummaries, trainingEntries, plans, metricEntries } = useStorage();
+
+const {
+  getTrackedDates,
+} = useHabitTracking();
+
   const today = new Date().toISOString().split('T')[0];
 
   const [calendarKey, setCalendarKey] = useState(i18n.language + colors.background);
@@ -140,11 +154,37 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
 
   if (!isLocaleReady) return null;
 
+  const otherTrackingKeys = new Set<string>(
+  plans.other.flatMap(plan => {
+    const tip = tips.find(
+      candidate =>
+        candidate.id === plan.tipId
+    );
+
+    return (
+      tip?.habitTargets
+        ?.map(target => target.trackingKey)
+        .filter(Boolean) ??
+      []
+    );
+  })
+);
+
+const manuallyTrackedOtherDates =
+  getTrackedDates(
+    otherTrackingKeys
+  );
+  const metricTrackedOtherDates = metricEntries
+    .filter(entry => otherTrackingKeys.has(entry.metricId))
+    .map(entry => toLocalDateKey(new Date(entry.recordedAt)));
+  const otherActivityDates = Array.from(new Set([...manuallyTrackedOtherDates, ...metricTrackedOtherDates]));
+
   // Reducera logiken
   const dynamicMarkedDates = Object.keys({
     ...dailyNutritionSummaries,
     ...takenDates,
     ...trainingEntries,
+    ...Object.fromEntries(otherActivityDates.map(date => [date, true])),
   }).reduce(
     (acc, date) => {
       const dots = [];
@@ -159,6 +199,10 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
 
       if ((trainingEntries[date]?.length ?? 0) > 0) {
         dots.push({ key: 'training', color: colors.checkmarkTraining });
+      }
+
+      if (otherActivityDates.includes(date)) {
+        dots.push({ key: 'other', color: colors.checkmarkOther });
       }
 
       acc[date] = {

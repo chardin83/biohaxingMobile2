@@ -119,8 +119,8 @@ jest.mock('@/components/SupplementForm', () => {
   };
 });
 
-// Mock NutritionLogger
-jest.mock('@/components/NutritionLogger', () => {
+// Mock NutritionLoggerTab
+jest.mock('@/components/calendar/NutritionLoggerTab', () => {
   return ({ selectedDate }: any) => {
     const { View, Text } = require('react-native');
     return (

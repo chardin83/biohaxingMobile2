@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import { FullWindowOverlay } from 'react-native-screens';
 
+import { WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import {
@@ -25,10 +26,9 @@ import {
 } from '@/constants/XP';
 import { tips } from '@/locales/tips';
 import { NutritionAnalyze } from '@/services/gptServices';
+import { buildNutritionPlanTipProgress  } from '@/services/targetProgress/nutritionTargets';
 import { MicrobiomeSupportEntry } from '@/types/microbiome';
 import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
-
-import { MINERAL_TYPE_KEYS } from '../constants/minerals';
 import {
   type ConfidenceLevel,
   extractAndValidateNutritionAnalysis,
@@ -39,31 +39,32 @@ import {
   roundToOneDecimal,
   type WeeklyTrackingSignals,
   type WeeklyTrackingSignalValue,
-} from '../utils/analyzeNutrition';
-import { Collapsible } from './Collapsible';
-import CopyMealBottomSheet from './CopyMealBottomSheet';
-import ImagePickerButton from './ImagePickerButton';
-import ImageThumbnailWithDelete from './ImageThumbnailWithDelete';
-import { LoggedMealsSection } from './LoggedMealsSection';
+} from '@/utils/analyzeNutrition';
+
+import { MINERAL_TYPE_KEYS } from '../../constants/minerals';
+import { Collapsible } from '../Collapsible';
+import CopyMealBottomSheet from '../CopyMealBottomSheet';
+import ImagePickerButton from '../ImagePickerButton';
+import ImageThumbnailWithDelete from '../ImageThumbnailWithDelete';
+import { LoggedMealsSection } from '../LoggedMealsSection';
 import {
   handleGeneralError,
   handleNutritionError,
   handleSocketError,
-} from './nutritionAnalysisHelpers';
-import NutritionBreakdown from './NutritionBreakdown';
+} from '../nutritionAnalysisHelpers';
+import NutritionBreakdown from '../NutritionBreakdown';
 import NutritionPlanTargetsSection, {
   getTipProgressKey,
   TipProgressItem,
-} from './NutritionPlanTargetsSection';
-import { buildNutritionPlanTipProgress, WeeklyTrackingItem } from './nutritionTargets.logic';
-import { ThemedModal } from './ThemedModal';
-import { ThemedText } from './ThemedText';
-import { Card } from './ui/Card';
-import DiscreetButton from './ui/DiscreetButton';
-import { IconSymbol } from './ui/IconSymbol';
-import LabeledInput from './ui/LabeledInput';
+} from '../NutritionPlanTargetsSection';
+import { ThemedModal } from '../ThemedModal';
+import { ThemedText } from '../ThemedText';
+import { Card } from '../ui/Card';
+import DiscreetButton from '../ui/DiscreetButton';
+import { IconSymbol } from '../ui/IconSymbol';
+import LabeledInput from '../ui/LabeledInput';
 
-interface NutritionLoggerProps {
+interface NutritionLoggerTabProps {
   selectedDate: string;
   onTipCompleted?: (targetY?: number) => void;
 }
@@ -446,7 +447,7 @@ const handleTipCompletionTransitions = ({
   previousFulfilledByKeyRef.current = nextFulfilledByKey;
 };
 
-const NutritionLogger: React.FC<NutritionLoggerProps> = ({
+const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
   selectedDate,
   onTipCompleted,
 }) => {
@@ -1823,4 +1824,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NutritionLogger;
+export default NutritionLoggerTab;

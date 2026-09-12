@@ -3,6 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { getTipTargetIconName } from '@/locales/tips';
 import {
   type NutritionTargetPeriod,
@@ -12,7 +13,6 @@ import { formatWithUnit } from '@/utils/formatters';
 import { getNutritionTargetMedalEmoji, getNutritionTargetMedalType } from '@/utils/medals';
 
 import { Collapsible } from './Collapsible';
-import { type WeeklyTrackingItem } from './nutritionTargets.logic';
 import { ThemedText } from './ThemedText';
 import { IconSymbol } from './ui/IconSymbol';
 

@@ -6,6 +6,7 @@ import { Icon } from 'react-native-paper';
 
 import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 interface AppCardProps {
   icon?: string;
@@ -76,8 +77,8 @@ const AppCard: React.FC<AppCardProps> = ({
           )}
           {(isActive || showCheckbox) && (
             <View style={styles.checkIcon}>
-              <Icon
-                source={isActive ? 'check-circle' : 'checkbox-blank-outline'}
+              <IconSymbol
+                name={isActive ? 'checkCircle' : 'checkboxBlankOutline'}
                 size={34}
                 color={isActive ? colors.xp : colors.textMuted}
               />

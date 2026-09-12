@@ -1,45 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import type { WeeklyTrackingItem } from '@/components/nutritionTargets.logic';
-import type { MineralType } from '@/constants/minerals';
-import type { NutritionComposition } from '@/types/nutritionProfile';
-
-export type MealNutrition =
-  NutritionComposition & {
-    id?: string;
-    date: string;
-    mealName?: string;
-    mineralsConfidenceByType?: Partial<
-      Record<
-        MineralType,
-        'high' | 'medium' | 'low' | 'unknown'
-      >
-    >;
-  };
-
-export type DailyNutritionSummary = {
-  date: string;
-  meals: MealNutrition[];
-  totals: {
-    protein: number;
-    calories: number;
-    carbohydrates: number;
-    fat: number;
-    fiber: number;
-  };
-  goalsMet: {
-    protein: boolean;
-    calories: boolean;
-    carbohydrates: boolean;
-    fat: boolean;
-    fiber: boolean;
-  };
-};
-
-export type WeeklyTracking = Record<
-  string,
-  Record<string, WeeklyTrackingItem[] | number>
->;
+import { DailyNutritionSummary, WeeklyTracking } from './nutritionTypes';
 
 const KEYS = {
   DAILY_NUTRITION: 'dailyNutritionSummary',

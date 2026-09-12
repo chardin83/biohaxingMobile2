@@ -229,6 +229,13 @@
     "areas": {
       "immuneSupport": "Healthier gums and lower oral inflammation reduce chronic immune burden and help maintain a more balanced inflammatory state. Bleeding gums can also make it easier for oral bacteria and inflammatory compounds to enter the bloodstream, and poor gum health has been associated with a higher long-term risk of cognitive decline and Alzheimer’s disease.",
       "digestiveHealth": "Good dental health supports chewing, saliva production, and the first stage of digestion while reducing problems linked to an unhealthy oral microbiome."
+    },
+    "habitTargets": {
+      "description": "Brush your teeth in the morning and at night.",
+      "buttonLabels": {
+        "morning": "Morning",
+        "night": "Night"
+      }
     }
   },
   "vitamin_c_immunity": {
@@ -535,6 +542,7 @@
   "sleep_duration_consistency": {
     "title": "Sleep duration and consistency",
     "description": "Getting 7-9 hours of consistent sleep each night is crucial for nervous system recovery, hormonal balance, and cellular repair. Maintaining a consistent sleep schedule helps regulate your circadian rhythm.",
+    "habitTargets": { "description": "Aim for at least seven hours of sleep to support recovery." },
     "areas": {
       "sleepQuality": "Consistent 7-9 hours of sleep allows for complete sleep cycles, including deep sleep and REM sleep necessary for memory consolidation and emotional processing.",
       "energy": "Adequate sleep duration directly impacts energy levels, cognitive function, and physical performance throughout the day."
@@ -567,6 +575,7 @@
   "sunlight_circadian": {
     "title": "Morning sunlight exposure",
     "description": "Exposure to natural sunlight, especially within 30-60 minutes of waking, is crucial for regulating circadian rhythm and optimizing sleep-wake cycles. Morning light suppresses melatonin and signals the start of the day.",
+    "habitTargets": { "description": "Get at least ten minutes of natural morning light to support your circadian rhythm." },
     "areas": {
       "sleepQuality": "Morning sunlight exposure helps set your circadian clock, improving sleep quality and making it easier to fall asleep at night.",
       "nervousSystem": "Natural light exposure regulates the nervous system by synchronizing circadian rhythms and supporting balanced cortisol production.",
@@ -586,6 +595,7 @@
   "meditation_mindfulness": {
     "title": "Meditation and mindfulness",
     "description": "Regular meditation and mindfulness practices train the mind to stay present and reduce stress. These practices activate the parasympathetic nervous system, improve emotional regulation, and enhance cognitive function.",
+    "habitTargets": { "description": "Meditate or practice mindfulness for at least ten minutes." },
     "areas": {
       "nervousSystem": "Meditation activates the parasympathetic nervous system, reducing stress hormones like cortisol and promoting deep relaxation and nervous system recovery.",
       "immuneSupport": "Regular meditation has been shown to reduce inflammation, strengthen immune response, and improve overall health markers.",
@@ -656,6 +666,7 @@
   "nature_parasympathetic": {
     "title": "Time in nature",
     "description": "Spending time in natural environments activates the parasympathetic nervous system and reduces stress. Forest bathing (Shinrin-yoku) and exposure to natural settings have been shown to lower cortisol, reduce blood pressure, and improve overall well-being.",
+    "habitTargets": { "description": "Spend at least two hours in nature during the week." },
     "areas": {
       "nervousSystem": "Nature exposure activates the parasympathetic nervous system, reducing stress hormones and promoting relaxation and recovery.",
       "immuneSupport": "Time in nature has been shown to boost natural killer cell activity and strengthen immune function.",
@@ -677,6 +688,7 @@
   "social_connection_vagal": {
     "title": "Social connection and vagal tone",
     "description": "Positive social interactions and meaningful relationships activate the vagus nerve and strengthen parasympathetic tone. Social connection is essential for nervous system regulation, emotional well-being, and overall health.",
+    "habitTargets": { "description": "Have two meaningful social connections during the week." },
     "areas": {
       "nervousSystem": "Positive social interactions activate the vagus nerve, improving heart rate variability and promoting parasympathetic nervous system activation.",
       "immuneSupport": "Strong social connections have been shown to reduce inflammation, strengthen immune function, and increase longevity.",

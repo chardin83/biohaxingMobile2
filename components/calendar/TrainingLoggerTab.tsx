@@ -7,20 +7,20 @@ import { useStorage } from '@/app/context/StorageContext';
 import { type TrainingActivityType, type TrainingIntensity } from '@/types/training';
 import { DEFAULT_TRAINING_ACTIVITY, TRAINING_ACTIVITY_OPTIONS } from '@/types/trainingActivityOptions';
 
-import { LoggedTrainingSection } from './LoggedTrainingSection';
-import { TrainingWeeklyTargetsSection } from './sections/plan/TrainingWeeklyTargetsSection';
-import { ThemedText } from './ThemedText';
-import AppButton from './ui/AppButton';
-import { CancelButton } from './ui/CancelButton';
-import { IconSymbol } from './ui/IconSymbol';
-import LabeledInput from './ui/LabeledInput';
-import LabeledStepperInput from './ui/LabeledStepperInput';
+import { LoggedTrainingSection } from '../LoggedTrainingSection';
+import { TrainingWeeklyTargetsSection } from '../sections/plan/TrainingWeeklyTargetsSection';
+import { ThemedText } from '../ThemedText';
+import AppButton from '../ui/AppButton';
+import { CancelButton } from '../ui/CancelButton';
+import { IconSymbol } from '../ui/IconSymbol';
+import LabeledInput from '../ui/LabeledInput';
+import LabeledStepperInput from '../ui/LabeledStepperInput';
 
-type TrainingDaySectionProps = {
+type TrainingLoggerTabProps = {
   selectedDate: string;
 };
 
-export const TrainingDaySection: React.FC<TrainingDaySectionProps> = ({ selectedDate }) => {
+export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDate }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { trainingEntries, addTrainingEntry, setTrainingEntries } = useStorage();

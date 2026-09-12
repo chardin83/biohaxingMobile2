@@ -1,4 +1,4 @@
-import { WeeklyTrackingItem } from '@/components/nutritionTargets.logic';
+import { WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { ALL_AMINO_ACID_KEYS, AminoAcidType } from '@/constants/aminoAcids';
 import {
   FIBER_CATEGORY_SUBTYPES,

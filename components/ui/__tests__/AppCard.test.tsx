@@ -20,6 +20,13 @@ jest.mock('react-native-paper', () => ({
   },
 }));
 
+jest.mock('../IconSymbol', () => ({
+  IconSymbol: ({ name }: { name: string }) => {
+    const { Text } = require('react-native');
+    return <Text>{name}</Text>;
+  },
+}));
+
 // Mock Colors
 jest.mock('@/app/theme/Colors', () => ({
   Colors: {
@@ -111,7 +118,7 @@ describe('AppCard', () => {
     const { getByText } = renderWithProviders(<AppCard {...defaultProps} isActive={true} showCheckbox />);
 
     await waitFor(() => {
-      expect(getByText('check-circle')).toBeTruthy();
+      expect(getByText('checkCircle')).toBeTruthy();
     });
   });
 
@@ -119,8 +126,8 @@ describe('AppCard', () => {
     const { queryByText, getByText } = renderWithProviders(<AppCard {...defaultProps} isActive={false} showCheckbox />);
 
     await waitFor(() => {
-      expect(queryByText('check-circle')).toBeNull();
-      expect(getByText('checkbox-blank-outline')).toBeTruthy();
+      expect(queryByText('checkCircle')).toBeNull();
+      expect(getByText('checkboxBlankOutline')).toBeTruthy();
     });
   });
 
@@ -133,7 +140,7 @@ describe('AppCard', () => {
       expect(getByText('Test Card')).toBeTruthy();
       expect(getByText('Full card test')).toBeTruthy();
       expect(getByText('star')).toBeTruthy();
-      expect(getByText('check-circle')).toBeTruthy();
+      expect(getByText('checkCircle')).toBeTruthy();
     });
   });
 

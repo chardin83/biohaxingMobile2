@@ -7,11 +7,11 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { Colors } from '@/app/theme/Colors';
-import { buildNutritionPlanTipProgress } from '@/components/nutritionTargets.logic';
 import { ThemedText } from '@/components/ThemedText';
 import Container from '@/components/ui/Container';
 import { type MetricId, metrics } from '@/locales/metrics';
 import { tips } from '@/locales/tips';
+import { buildNutritionPlanTipProgress } from '@/services/targetProgress/nutritionTargets';
 import {
   extractWeeklyTrackingSignals,
   mergeWeeklyTrackingSignal,

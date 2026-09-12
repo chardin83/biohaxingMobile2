@@ -892,7 +892,15 @@
     "noPlanned": "No other tips are planned for this day.",
     "noTarget": "No measurable target",
     "fulfilled": "Fulfilled",
-    "notFulfilled": "Not fulfilled"
+    "notFulfilled": "Not fulfilled",
+    "markDone": "Mark as done",
+    "markDoneButton": "Do {{count}}",
+    "completedButton": "{{count}} done",
+    "showCompletionButtons": "Show buttons to change status",
+    "habitLabels": {
+      "morning": "Morning",
+      "night": "Night"
+    }
   },
   "planCategory": {
     "nutrition": "Nutrition",

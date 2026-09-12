@@ -7,7 +7,6 @@ import type { ImageSourcePropType } from 'react-native';
 import { Image, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
-import { buildNutritionPlanTipProgress } from '@/components/nutritionTargets.logic';
 import PlanCategoryIcon, { type PlanCategory } from '@/components/plan/PlanCategoryIcon';
 import { MetricsBottomSheet } from '@/components/sections/metrics/MetricsBottomSheet';
 import { NutritionPlanDetailsSection } from '@/components/sections/plan/NutritionPlanDetailsSection';
@@ -26,6 +25,7 @@ import { PressableCard } from '@/components/ui/PressableCard';
 import { FOOD_IMAGES } from '@/locales/foodCatalog';
 import { metrics, tipMetricLinks } from '@/locales/metrics';
 import { tips } from '@/locales/tips';
+import { buildNutritionPlanTipProgress } from '@/services/targetProgress/nutritionTargets';
 import { extractWeeklyTrackingSignals, mergeWeeklyTrackingSignal, parseNumberValue, type WeeklyTrackingSignals } from '@/utils/analyzeNutrition';
 import { formatDate, toDateKey } from '@/utils/dateUtils';
 

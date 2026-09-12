@@ -138,6 +138,7 @@ export type HabitTarget = {
     | 'tooth_brushing'
     | 'nature_time'
     | 'social_connection';
+  buttonLabels?: string[];
 } & BaseTarget<'minutes' | 'hours' | 'count'>;
 
 export type TipNutritionFood = {
@@ -703,7 +704,12 @@ const rawTips: Tip[] = [
     targetPeriod: 'daily',
     targetIconName: 'target',
     habitTargets: [
-      { trackingKey: 'tooth_brushing', amount: 2, unit: 'count' },
+      {
+        trackingKey: 'tooth_brushing',
+        amount: 2,
+        unit: 'count',
+        buttonLabels: ['morning', 'night'],
+      },
     ],
     bodyParts: ['teeth'],
   },

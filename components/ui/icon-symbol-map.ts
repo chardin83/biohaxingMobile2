@@ -173,6 +173,14 @@ export const ICON_SYMBOLS = {
     sf: 'checkmark',
     material: 'check',
   },
+  'checkCircle': {
+    sf: 'checkmark.circle.fill',
+    material: 'check-circle',
+  },
+  'checkboxBlankOutline': {
+    sf: 'square',
+    material: 'check-box-outline-blank',
+  },
   'settings': {
     sf: 'gearshape',
     material: 'settings',

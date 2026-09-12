@@ -1,24 +1,19 @@
 import { TFunction } from 'i18next';
 
-import { PlanTipEntry } from '@/app/context/StorageContext';
+import { WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
+import { PlanTipEntry } from '@/app/context/storage/plans/planTypes';
 import { type SupplementTime } from '@/app/domain/SupplementTime';
+import { type TipProgressItem } from '@/components/NutritionPlanTargetsSection';
+import { isAminoAcidTargetTag } from '@/constants/aminoAcids';
+import { isMineralTargetTag } from '@/constants/minerals';
+import { isVitaminTargetTag } from '@/constants/vitamins';
 import { tips } from '@/locales/tips';
 import {
   type NutritionTargetPeriod,
   type NutritionTargetUnit,
 } from '@/types/nutritionTargets';
+import { type WeeklyTrackingSignals,WeeklyTrackingSignalValue } from '@/utils/analyzeNutrition';
 
-import { isAminoAcidTargetTag } from '../constants/aminoAcids';
-import { isMineralTargetTag } from '../constants/minerals';
-import { isVitaminTargetTag } from '../constants/vitamins';
-import {
-  type WeeklyTrackingSignals,
-  type WeeklyTrackingSignalValue,
-} from '../utils/analyzeNutrition';
-import { type TipProgressItem } from './NutritionPlanTargetsSection';
-
-
-export type WeeklyTrackingItem = { en: string; local: string };
 
 type TipLabelGroup =
   | 'weeklyTrackingLabels'
@@ -339,7 +334,7 @@ const buildTipTargetProgress = (
       console.log('[buildTipTargetProgress] weekStartKey:', context.weekStartKey);
       console.log('[buildTipTargetProgress] all weeklyTracking keys:', Object.keys(context.weeklyTracking));
       console.log('[buildTipTargetProgress] weeklyTracking[weekStartKey]:', weekObj);
-    } catch (e) {}
+    } catch  {}
     trackingValue = tipPeriod === 'weekly'
       ? weekObj[trackingKey]
       : context.dailyTracking[trackingKey];

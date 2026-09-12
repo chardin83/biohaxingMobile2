@@ -11,7 +11,6 @@ import Svg, { Circle } from 'react-native-svg';
 import { useStorage } from '@/app/context/StorageContext';
 import { Collapsible } from '@/components/Collapsible';
 import FoodPortionBottomSheet, { FoodServing } from '@/components/FoodPortionBottomSheet';
-import { toGrams, toMicrograms, toMilligrams } from '@/components/nutritionTargets.logic';
 import { ThemedText } from '@/components/ThemedText';
 import { useBottomSheetDesign } from '@/components/ui/BottomSheetDesign';
 import Container from '@/components/ui/Container';
@@ -30,6 +29,7 @@ import {
 } from '@/locales/foodCatalog';
 import { useSupplementMap } from '@/locales/supplements';
 import { getTipTargetIconName, type NutrientTag, tips } from '@/locales/tips';
+import { toGrams, toMicrograms, toMilligrams } from '@/services/targetProgress/nutritionTargets';
 import { type NutritionTargetUnit } from '@/types/nutritionTargets';
 import { extractWeeklyTrackingSignals, type WeeklyTrackingSignalValue } from '@/utils/analyzeNutrition';
 import { formatMonthDayRange, fromDateKey, toDateKey } from '@/utils/dateUtils';

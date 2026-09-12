@@ -8,20 +8,20 @@ import { Supplement } from '@/app/domain/Supplement';
 import { SupplementTime } from '@/app/domain/SupplementTime';
 import { useSupplementMap } from '@/locales/supplements';
 
-import PlanSupplementsPicker from './PlanSupplementsPicker';
-import SelectedSupplementsList from './SelectedSupplementsList';
-import SupplementForm from './SupplementForm';
-import { ThemedText } from './ThemedText';
-import AppButton from './ui/AppButton';
-import { CancelButton } from './ui/CancelButton';
-import DiscreetButton from './ui/DiscreetButton';
+import PlanSupplementsPicker from '../PlanSupplementsPicker';
+import SelectedSupplementsList from '../SelectedSupplementsList';
+import SupplementForm from '../SupplementForm';
+import { ThemedText } from '../ThemedText';
+import AppButton from '../ui/AppButton';
+import { CancelButton } from '../ui/CancelButton';
+import DiscreetButton from '../ui/DiscreetButton';
 
 interface Props {
     selectedDate: string;
     preselectedSupplementId?: string;
 }
 
-export const SupplementsTabSection = ({ selectedDate, preselectedSupplementId }: Props) => {
+export const SupplementsLoggerTab = ({ selectedDate, preselectedSupplementId }: Props) => {
     const { plans, takenDates, setTakenDates } = useStorage();
     const { t } = useTranslation();
     const { colors } = useTheme();

@@ -903,7 +903,15 @@
     "noPlanned": "Inga övriga tips är planerade för den här dagen.",
     "noTarget": "Inget mätbart mål",
     "fulfilled": "Uppfyllt",
-    "notFulfilled": "Inte uppfyllt"
+    "notFulfilled": "Inte uppfyllt",
+    "markDone": "Markera som gjort",
+    "markDoneButton": "Gör {{count}}",
+    "completedButton": "{{count}} klart",
+    "showCompletionButtons": "Visa knappar för att ändra status",
+    "habitLabels": {
+      "morning": "Morgon",
+      "night": "Kväll"
+    }
   },
   "planCategory": {
     "nutrition": "Kost",

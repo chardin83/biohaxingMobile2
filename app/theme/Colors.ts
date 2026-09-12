@@ -24,6 +24,7 @@ export const Colors = {
     checkmarkMeal: '#2EC4B6',//'#00FFC8',
     checkmarkSupplement: '#8EDB6D',//'#CBEA3C',
     checkmarkTraining: '#5ECF91',
+    checkmarkOther: '#FFB300',
 
     progressPartialIcon: '#8A6200', // djup brons
     progressSuccessIcon: '#0B1B14',
@@ -189,6 +190,7 @@ export const Colors = {
     checkmarkMeal: '#00FFC8',
     checkmarkSupplement: '#C3FF00',
     checkmarkTraining: '#62FF64',
+    checkmarkOther: '#FFB300',
 
     progressPartialIcon: 'rgba(255,215,100,0.95)',
     progressSuccessIcon: '#0B1B14',

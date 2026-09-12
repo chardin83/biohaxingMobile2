@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 
+import { WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { globalStyles } from '@/app/theme/globalStyles';
 import TipTarget from '@/components/TipTarget';
 import {
@@ -13,7 +14,6 @@ import {
 } from '@/types/nutritionTargets';
 import { formatMonthDay, toDateKey } from '@/utils/dateUtils';
 
-import { type WeeklyTrackingItem } from './nutritionTargets.logic';
 import { ThemedText } from './ThemedText';
 import AppButton from './ui/AppButton';
 import { Card } from './ui/Card';
@@ -271,6 +271,7 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                   pathname: '/(tabs)/search',
                   params: {
                     targetPeriods: 'daily,weekly',
+                    planCategories: 'nutrition',
                   },
                 });
               }}
@@ -303,6 +304,7 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                       pathname: '/(tabs)/search',
                       params: {
                         targetPeriods: 'daily',
+                        planCategories: 'nutrition',
                       },
                     });
                   }}
@@ -333,6 +335,7 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                       pathname: '/(tabs)/search',
                       params: {
                         targetPeriods: 'weekly',
+                        planCategories: 'nutrition',
                       },
                     });
                   }}
