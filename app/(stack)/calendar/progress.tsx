@@ -4,39 +4,19 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { DailyNutritionSummary, WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
+import type { TipTargetItem, WeeklyNutritionTracking, WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { useStorage } from '@/app/context/StorageContext';
 import { Collapsible } from '@/components/Collapsible';
 import { ThemedText } from '@/components/ThemedText';
-import TipTarget, { type TipTargetItem } from '@/components/TipTarget';
+import TipTarget from '@/components/TipTarget';
 import Badge from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { isAminoAcidTargetTag } from '@/constants/aminoAcids';
-import { isFiberTargetTag } from '@/constants/fiber';
-import { isMineralTargetTag } from '@/constants/minerals';
-import { isPolyphenolTargetTag } from '@/constants/polyphenols';
-import { isVitaminTargetTag } from '@/constants/vitamins';
+import { useNutritionTipTargets } from '@/hooks/useNutritionTipTargets';
 import { getTipTargetIconName, tips } from '@/locales/tips';
-import {
-  toGrams,
-  toMicrograms,
-  toMilligrams,
-  } from '@/services/targetProgress/nutritionTargets';
-import {
-  type NutritionTargetPeriod,
-  type NutritionTargetUnit,
-} from '@/types/nutritionTargets';
-import { type WeeklyTrackingSignals,type WeeklyTrackingSignalValue } from '@/utils/analyzeNutrition';
-import {
-  formatMonthDay,
-  formatMonthDayRange,
-  fromDateKey,
-  getFirstDayOfWeek,
-  getLocalizedWeekdayLabels,
-  toDateKey,
-} from '@/utils/dateUtils';
+import { NutritionTargetPeriod } from '@/types/nutritionTargets';
+import { formatMonthDay, formatMonthDayRange, fromDateKey, getFirstDayOfWeek, getLocalizedWeekdayLabels, toDateKey } from '@/utils/dateUtils';
 
 // ── Date helpers ───────────────────────────────────────────────────────────────
 
@@ -81,76 +61,41 @@ const getLast4Weeks = (offsetWeeks = 0, language = 'en', firstDay = 1): PastWeek
   });
 };
 
-// ── Nutrient helpers ──────────────────────────────────────────────────────────
+const getWeeklyProgressText = (tipId: string, weekStartISO: string, weeklyNutritionTracking: WeeklyNutritionTracking): string | null => {
+  const tip = tips.find(candidate => candidate.id === tipId);
 
-const sumMealsForTag = (meals: DailyNutritionSummary['meals'], tag: string): number => {
-  let total = 0;
-  for (const meal of meals) {
-    if (isMineralTargetTag(tag)) total += meal.mineralsByType?.[tag] ?? 0;
-    else if (isVitaminTargetTag(tag)) total += meal.vitaminsByType?.[tag] ?? 0;
-    else if (isAminoAcidTargetTag(tag)) total += meal.aminoAcidsByType?.[tag] ?? 0;
-    else if (isFiberTargetTag(tag)) total += meal.fiberByType?.[tag] ?? 0;
-    else if (isPolyphenolTargetTag(tag)) total += meal.polyphenolByType?.[tag] ?? 0;
+  if (!tip) {
+    return null;
   }
-  return total;
-};
 
-const getDayRatioForTip = (
-  tipId: string,
-  dateKey: string,
-  summaries: Record<string, DailyNutritionSummary>
-): number => {
-  const tip = tips.find(t => t.id === tipId);
-  if (!tip) return 0;
-  const allTargets = [
-    ...(tip.mineralTargets ?? []),
-    ...(tip.vitaminTargets ?? []),
-    ...(tip.aminoAcidTargets ?? []),
-    ...(tip.polyphenolTargets ?? []),
-    ...(tip.fiberTargets ?? []),
-  ];
-  if (allTargets.length === 0) return 0;
-  const meals = summaries[dateKey]?.meals ?? [];
-  if (meals.length === 0) return 0;
-  let totalRatio = 0;
-  for (const target of allTargets) {
-    const tag = (target as { tag?: string }).tag ?? '';
-    if (!tag || !target.amount) continue;
-    const foodActual = sumMealsForTag(meals, tag);
-    const targetUnit = target.unit;
-    const targetUnitActual = targetUnit === 'μg' ? foodActual * 1000 : foodActual;
-    totalRatio += Math.min(targetUnitActual / target.amount, 1);
+  const trackingTargets = (tip.trackingTargets ?? []).filter(target => Number.isFinite(target.amount) && (target.amount ?? 0) > 0);
+
+  if (trackingTargets.length === 0) {
+    return null;
   }
-  return totalRatio / allTargets.length;
-};
 
-const getWeeklyProgressText = (
-  tipId: string,
-  weekStartISO: string,
-  weeklyTracking: Record<string, WeeklyTrackingSignals>
-): string | null => {
-  const tip = tips.find(t => t.id === tipId);
-  if (!tip) return null;
+  const weekData = weeklyNutritionTracking[weekStartISO] ?? {};
 
-  const trackingTargets = (tip.trackingTargets ?? []).filter(target =>
-    Number.isFinite(target.amount) && (target.amount ?? 0) > 0
-  );
-  if (!trackingTargets.length) return null;
-
-  const weekData = weeklyTracking[weekStartISO] ?? {};
   const getActual = (trackingKey: string): number => {
     const value = weekData[trackingKey];
-    if (Array.isArray(value)) return value.length;
-    if (typeof value === 'number' && Number.isFinite(value)) return value;
+
+    if (Array.isArray(value)) {
+      return value.length;
+    }
+
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      return value;
+    }
+
     return 0;
   };
 
-  const preferredTarget =
-    trackingTargets.find(target => getActual(target.trackingKey) < (target.amount ?? 0)) ??
-    trackingTargets[0];
+  const preferredTarget = trackingTargets.find(target => getActual(target.trackingKey) < (target.amount ?? 0)) ?? trackingTargets[0];
 
   const amount = preferredTarget.amount ?? 0;
+
   const actual = getActual(preferredTarget.trackingKey);
+
   return `${Math.round(actual)}/${Math.round(amount)}`;
 };
 
@@ -163,65 +108,57 @@ type TipHistoryItem = {
   startedAt: string;
 };
 
-type DailyTargetSummary = TipTargetItem & {
-  unit: Extract<NutritionTargetUnit, 'mg' | 'g' | 'μg'>;
-  period: 'daily';
-};
-
 // ── Component ──────────────────────────────────────────────────────────────────
 
 const isDateKeyBefore = (a: string, b: string): boolean => a < b;
 const PARTIAL_PROGRESS_ICON = '◐';
-const normalizeSupplementKey = (value: string | undefined): string =>
-  (value ?? '').trim().toLowerCase();
 
-const parseQuantity = (value: string | undefined): number | null => {
-  const parsed = Number.parseFloat((value ?? '').replace(',', '.'));
-  return Number.isFinite(parsed) ? parsed : null;
+const toWeeklyTrackingItems = (value: WeeklyTrackingItem[] | number | undefined): WeeklyTrackingItem[] | undefined => {
+  if (!Array.isArray(value)) {
+    return undefined;
+  }
+
+  return value;
 };
 
-const normalizeUnit = (value: string | undefined): string =>
-  (value ?? '').trim().toLowerCase();
+const getTargetRatio = (targets: TipTargetItem[] | undefined): number => {
+  if (!targets || targets.length === 0) {
+    return 0;
+  }
 
-const getNutritionLabelGroup = (tag: string, unit: Extract<NutritionTargetUnit, 'mg' | 'g' | 'μg'>):
-  | 'aminoAcidLabels'
-  | 'mineralLabels'
-  | 'vitaminLabels'
-  | 'fiberLabels'
-  | 'polyphenolLabels' => {
-  if (isAminoAcidTargetTag(tag)) return 'aminoAcidLabels';
-  if (isMineralTargetTag(tag)) return 'mineralLabels';
-  if (isVitaminTargetTag(tag)) return 'vitaminLabels';
-  if (unit === 'g') return 'fiberLabels';
-  return 'polyphenolLabels';
-};
+  const total = targets.reduce((sum, target) => {
+    if (target.amount <= 0) {
+      return sum;
+    }
 
-const toWeeklyTrackingItems = (value: WeeklyTrackingSignalValue | string[] | undefined): WeeklyTrackingItem[] | undefined => {
-  if (!Array.isArray(value)) return undefined;
+    return sum + Math.min(target.actual / target.amount, 1);
+  }, 0);
 
-  return value.map(item =>
-    typeof item === 'string'
-      ? { en: item, local: item }
-      : item
-  );
+  return total / targets.length;
 };
 
 export default function NutritionProgressScreen() {
   const router = useRouter();
   const { colors } = useTheme();
   const { t, i18n } = useTranslation();
-  const { plans, nutritionXpClaims, dailyNutritionSummaries, weeklyTracking, takenDates } = useStorage();
+  const { plans, nutritionXpClaims, weeklyNutritionTracking } = useStorage();
   const language = i18n.resolvedLanguage ?? i18n.language;
   const firstDayOfWeek = useMemo(() => getFirstDayOfWeek(language), [language]);
 
   const [weekOffset, setWeekOffset] = useState(0);
   const pastWeeks = useMemo(() => getLast4Weeks(weekOffset, language, firstDayOfWeek), [weekOffset, language, firstDayOfWeek]);
+
+  const progressDateKeys = useMemo(() => Array.from(new Set(pastWeeks.flatMap(week => week.days))), [pastWeeks]);
+
+  const nutritionTargetsByDate = useNutritionTipTargets(progressDateKeys);
+
   const dayLabels = useMemo(
-    () => getLocalizedWeekdayLabels(language, {
-      format: 'short',
-      weekStartsOn: firstDayOfWeek,
-      stripDots: true,
-    }),
+    () =>
+      getLocalizedWeekdayLabels(language, {
+        format: 'short',
+        weekStartsOn: firstDayOfWeek,
+        stripDots: true,
+      }),
     [firstDayOfWeek, language]
   );
   const todayKey = useMemo(() => toDateKey(new Date()), []);
@@ -246,20 +183,21 @@ export default function NutritionProgressScreen() {
     return (plans?.nutrition ?? []).flatMap(entry => {
       const tip = tips.find(candidate => candidate.id === entry.tipId);
       if (!tip?.targetPeriod) return [];
-      return [{
-        tipId: entry.tipId,
-        title: t(`tips:${entry.tipId}.title`),
-        period: tip.targetPeriod as NutritionTargetPeriod,
-        startedAt: entry.startedAt,
-      }];
+      return [
+        {
+          tipId: entry.tipId,
+          title: t(`tips:${entry.tipId}.title`),
+          period: tip.targetPeriod as NutritionTargetPeriod,
+          startedAt: entry.startedAt,
+        },
+      ];
     });
   }, [plans, t]);
 
   const dailyTips = useMemo(() => trackedTips.filter(tip => tip.period === 'daily'), [trackedTips]);
   const weeklyTips = useMemo(() => trackedTips.filter(tip => tip.period === 'weekly'), [trackedTips]);
 
-  const isClaimed = (tipId: string, period: NutritionTargetPeriod, key: string) =>
-    !!nutritionXpClaims?.[`${tipId}|${period}|${key}`];
+  const isClaimed = (tipId: string, period: NutritionTargetPeriod, key: string) => !!nutritionXpClaims?.[`${tipId}|${period}|${key}`];
 
   const getProgressColor = (actual: number, total: number): string => {
     if (!Number.isFinite(actual) || !Number.isFinite(total) || total <= 0 || actual <= 0) {
@@ -276,8 +214,7 @@ export default function NutritionProgressScreen() {
     setSelectedTipDay(todayKey);
   }, [todayKey]);
 
-  const getSelectedWeek = (): PastWeek =>
-    pastWeeks.find(w => w.start === selectedWeekStart) ?? pastWeeks[3];
+  const getSelectedWeek = (): PastWeek => pastWeeks.find(w => w.start === selectedWeekStart) ?? pastWeeks[3];
 
   const getStreakStatus = (tipId: string): { streak: number; isYesterdayStreak: boolean } => {
     const today = new Date();
@@ -309,86 +246,7 @@ export default function NutritionProgressScreen() {
 
   const toggleSelectedTipDay = (dateKey: string, isDisabled: boolean) => {
     if (isDisabled) return;
-    setSelectedTipDay(prev => prev === dateKey ? '' : dateKey);
-  };
-
-  const buildDailyTipTargets = (tipId: string, dateKey: string): DailyTargetSummary[] => {
-    const tip = tips.find(candidate => candidate.id === tipId);
-    if (!tip) return [];
-
-    const targetConfigs = [
-      ...(tip.mineralTargets ?? []),
-      ...(tip.vitaminTargets ?? []),
-      ...(tip.aminoAcidTargets ?? []),
-      ...(tip.polyphenolTargets ?? []),
-      ...(tip.fiberTargets ?? []),
-    ].filter(target => (
-      target.unit === 'mg' || target.unit === 'g' || target.unit === 'μg'
-    ) && Number.isFinite(target.amount));
-
-    const tipSupplementIds = (tip.supplements ?? [])
-      .map(entry => normalizeSupplementKey(entry.id))
-      .filter(Boolean);
-
-    const supplementsForDay = takenDates[dateKey] ?? [];
-
-    return targetConfigs.map(target => {
-      const tag = (target as { tag?: string }).tag ?? '';
-      const amount = target.amount ?? 0;
-      const mealValue = tag ? sumMealsForTag(dailyNutritionSummaries[dateKey]?.meals ?? [], tag) : 0;
-      const foodActual = target.unit === 'μg' ? mealValue * 1000 : mealValue;
-
-      const explicitTargetSupplementIds = ((target as { supplementIds?: string[] }).supplementIds ?? [])
-        .map(id => normalizeSupplementKey(id))
-        .filter(Boolean);
-      let matchedSupplementIds = tipSupplementIds;
-      if (explicitTargetSupplementIds.length > 0) {
-        matchedSupplementIds = explicitTargetSupplementIds;
-      }
-      const matchedSet = new Set(matchedSupplementIds);
-
-      let supplementActual = 0;
-      supplementsForDay.forEach(supplement => {
-        const componentSupplements = supplement.components?.length ? supplement.components : [supplement];
-        componentSupplements.forEach(component => {
-          const idKey = normalizeSupplementKey(component.id);
-          const nameKey = normalizeSupplementKey(component.name);
-          if (!matchedSet.has(idKey) && !matchedSet.has(nameKey)) return;
-
-          const quantity = parseQuantity(component.quantity);
-          if (quantity === null) return;
-
-          const sourceUnit = normalizeUnit(component.unit);
-          let converted: number | null;
-          if (target.unit === 'mg') {
-            converted = toMilligrams(quantity, sourceUnit);
-          } else if (target.unit === 'g') {
-            converted = toGrams(quantity, sourceUnit);
-          } else {
-            converted = toMicrograms(quantity, sourceUnit);
-          }
-          if (converted === null) return;
-
-          supplementActual += converted;
-        });
-      });
-
-      const labelGroup = getNutritionLabelGroup(tag, target.unit);
-
-      const actual = foodActual + supplementActual;
-      return {
-        tag,
-        unit: target.unit,
-        period: 'daily' as const,
-        amount,
-        actual,
-        foodActual,
-        supplementActual,
-        isMet: actual >= amount,
-        label: t(`nutritionLogger.${labelGroup}.${tag}`),
-        supplementIds: (target as { supplementIds?: string[] }).supplementIds,
-      };
-    });
+    setSelectedTipDay(prev => (prev === dateKey ? '' : dateKey));
   };
 
   const renderDailyTip = (tip: TipHistoryItem) => {
@@ -398,14 +256,12 @@ export default function NutritionProgressScreen() {
     const startLabel = formatMonthDay(fromDateKey(startDateKey), language);
     const isStartWeek = selectedWeek.start <= startDateKey && startDateKey <= selectedWeek.end;
     const { streak, isYesterdayStreak } = getStreakStatus(tip.tipId);
-    const visibleDays = selectedWeek.days.filter(
-      (d: string) => d <= todayKey && !isDateKeyBefore(d, startDateKey)
-    );
+    const visibleDays = selectedWeek.days.filter((d: string) => d <= todayKey && !isDateKeyBefore(d, startDateKey));
     const claimedDays = visibleDays.filter((d: string) => isClaimed(tip.tipId, 'daily', d));
     const claimedCount = claimedDays.length;
     const countColor = getProgressColor(claimedCount, visibleDays.length);
     const isSelectedDayBeforeStart = !!selectedTipDay && isDateKeyBefore(selectedTipDay, startDateKey);
-    const selectedDayTargets = selectedTipDay ? buildDailyTipTargets(tip.tipId, selectedTipDay) : [];
+    const selectedDayTargets = selectedTipDay ? (nutritionTargetsByDate[selectedTipDay]?.[tip.tipId] ?? []) : [];
     return (
       <View key={tip.tipId} style={styles.tipBlock}>
         <View style={styles.tipHeader}>
@@ -444,7 +300,7 @@ export default function NutritionProgressScreen() {
           <View style={styles.weekRow}>
             {selectedWeek.days.map((dateKey: string, i: number) => {
               const fulfilled = isClaimed(tip.tipId, 'daily', dateKey);
-              const ratio = getDayRatioForTip(tip.tipId, dateKey, dailyNutritionSummaries);
+              const ratio = getTargetRatio(nutritionTargetsByDate[dateKey]?.[tip.tipId]);
               const hasPartialProgress = ratio > 0;
               const isToday = dateKey === todayKey;
               const isSelectedDay = selectedTipDay === dateKey;
@@ -483,18 +339,8 @@ export default function NutritionProgressScreen() {
                 cellBackground = colors.overlayLight;
               }
               return (
-                <View
-                  key={dateKey}
-                  style={styles.dayColumn}
-                >
-                  <ThemedText
-                    type="caption"
-                    style={[
-                      styles.dayLabel,
-                      (isToday || isStartDay) && styles.dayLabelUnderlined,
-                      { color: dayLabelColor },
-                    ]}
-                  >
+                <View key={dateKey} style={styles.dayColumn}>
+                  <ThemedText type="caption" style={[styles.dayLabel, (isToday || isStartDay) && styles.dayLabelUnderlined, { color: dayLabelColor }]}>
                     {dayLabels[i] ?? ''}
                   </ThemedText>
                   <TouchableOpacity
@@ -508,9 +354,7 @@ export default function NutritionProgressScreen() {
                       isSelectedDay && { borderColor: colors.accentColor },
                     ]}
                   >
-                    <ThemedText style={[styles.dayCellIcon, { color: iconColor }]}>
-                      {iconChar}
-                    </ThemedText>
+                    <ThemedText style={[styles.dayCellIcon, { color: iconColor }]}>{iconChar}</ThemedText>
                   </TouchableOpacity>
                   {isSelectedDay && (
                     <ThemedText type="title2" style={[styles.dayCellArrow, { color: colors.accentColor }]}>
@@ -523,7 +367,7 @@ export default function NutritionProgressScreen() {
           </View>
         )}
         {isSelectedDayBeforeStart && !weekBeforeStart && (
-          <ThemedText type="default" style={[styles.notActiveText, styles.selectedDayInfoText, { color: colors.textMuted }] }>
+          <ThemedText type="default" style={[styles.notActiveText, styles.selectedDayInfoText, { color: colors.textMuted }]}>
             {t('common:progress.notActiveStarts', { date: startLabel })}
           </ThemedText>
         )}
@@ -543,7 +387,8 @@ export default function NutritionProgressScreen() {
           <Badge style={[styles.streakBadge, { backgroundColor: colors.accentWeak }]}>
             <View style={styles.streakMainRow}>
               <ThemedText type="explainer" style={styles.streakBadgeText}>
-                {'🔥 '}{t('common:progress.currentStreak')}
+                {'🔥 '}
+                {t('common:progress.currentStreak')}
               </ThemedText>
               <ThemedText type="default" style={[styles.streakBadgeText, { color: colors.primary }]}>
                 {t('common:progress.currentStreakDays', { count: streak })}
@@ -593,7 +438,7 @@ export default function NutritionProgressScreen() {
                     const isFutureDay = d > todayKey;
                     if (isFutureDay) return <View key={d} style={styles.miniBarTrack} />;
                     const done = isClaimed(tip.tipId, 'daily', d);
-                    const ratio = getDayRatioForTip(tip.tipId, d, dailyNutritionSummaries);
+                    const ratio = getTargetRatio(nutritionTargetsByDate[d]?.[tip.tipId]);
                     let fillHeight: number;
                     if (ratio > 0) {
                       fillHeight = Math.max(Math.round(ratio * 26), 2);
@@ -604,12 +449,7 @@ export default function NutritionProgressScreen() {
                     }
                     return (
                       <View key={d} style={styles.miniBarTrack}>
-                        <View
-                          style={[
-                            styles.miniBarFill,
-                            { height: fillHeight, backgroundColor: done ? colors.accentMedium : colors.border },
-                          ]}
-                        />
+                        <View style={[styles.miniBarFill, { height: fillHeight, backgroundColor: done ? colors.accentMedium : colors.border }]} />
                       </View>
                     );
                   })}
@@ -624,7 +464,7 @@ export default function NutritionProgressScreen() {
 
   const renderWeeklyTip = (tip: TipHistoryItem) => {
     const selectedWeek = getSelectedWeek();
-    const weekData = weeklyTracking[selectedWeek.start] ?? {};
+    const weekData = weeklyNutritionTracking[selectedWeek.start] ?? {};
     const tipObj = tips.find(candidate => candidate.id === tip.tipId);
     const summaryTargets: TipTargetItem[] = [];
 
@@ -664,7 +504,7 @@ export default function NutritionProgressScreen() {
         <View style={styles.weekStatusRow}>
           {pastWeeks.map(week => {
             const fulfilled = Boolean(isClaimed(tip.tipId, 'weekly', week.start));
-            const weekProgressText = getWeeklyProgressText(tip.tipId, week.start, weeklyTracking);
+            const weekProgressText = getWeeklyProgressText(tip.tipId, week.start, weeklyNutritionTracking);
             let weekProgressColor = colors.textMuted;
             let weekActual = 0;
             if (weekProgressText) {
@@ -710,14 +550,7 @@ export default function NutritionProgressScreen() {
                     },
                   ]}
                 >
-                  <ThemedText
-                    style={[
-                      styles.weekStatusIcon,
-                      { color: weekStatusIconColor },
-                    ]}
-                  >
-                    {weekStatusIcon}
-                  </ThemedText>
+                  <ThemedText style={[styles.weekStatusIcon, { color: weekStatusIconColor }]}>{weekStatusIcon}</ThemedText>
                 </View>
                 <ThemedText type="explainer" style={[styles.weekStatusProgress, { color: weekProgressColor }]}>
                   {weekProgressText}
@@ -729,12 +562,7 @@ export default function NutritionProgressScreen() {
 
         <View style={styles.weekSummaryBlock}>
           {summaryTargets.map(target => (
-            <TipTarget
-              key={`${tip.tipId}-${target.tag}-${target.period}`}
-              tip={tip}
-              target={target}
-              colors={colors}
-            />
+            <TipTarget key={`${tip.tipId}-${target.tag}-${target.period}`} tip={tip} target={target} colors={colors} />
           ))}
         </View>
       </View>
@@ -749,13 +577,17 @@ export default function NutritionProgressScreen() {
         </ThemedText>
         <View style={styles.dateRangeRow}>
           <TouchableOpacity onPress={goBackWeeks} style={styles.navArrow}>
-            <ThemedText type="title" style={{ color: colors.primary }}>{'\u2039'}</ThemedText>
+            <ThemedText type="title" style={{ color: colors.primary }}>
+              {'\u2039'}
+            </ThemedText>
           </TouchableOpacity>
           <ThemedText type="caption" style={[styles.dateRange, { color: colors.textMuted }]}>
             {dateRangeLabel}
           </ThemedText>
           <TouchableOpacity onPress={goForwardWeeks} style={styles.navArrow} disabled={weekOffset === 0}>
-            <ThemedText type="title" style={{ color: weekOffset === 0 ? colors.border : colors.primary }}>{'\u203a'}</ThemedText>
+            <ThemedText type="title" style={{ color: weekOffset === 0 ? colors.border : colors.primary }}>
+              {'\u203a'}
+            </ThemedText>
           </TouchableOpacity>
         </View>
 
@@ -907,8 +739,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-start',
   },
-  streakBadgeText: {
-  },
+  streakBadgeText: {},
   streakMainRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -938,8 +769,7 @@ const styles = StyleSheet.create({
     fontSize: 9,
     textAlign: 'center',
   },
-  pastWeekCount: {
-  },
+  pastWeekCount: {},
   pastWeekDaysLabel: {
     marginTop: -6,
   },

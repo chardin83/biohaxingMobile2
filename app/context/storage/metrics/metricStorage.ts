@@ -1,14 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import type { MetricId } from '@/locales/metrics';
-
-export type MetricEntry = {
-  metricId: MetricId;
-  value: number;
-  unit: string;
-  recordedAt: string;
-  notes?: string;
-};
+import { MetricEntry } from './metricTypes';
 
 const STORAGE_KEY = 'metricEntries';
 

@@ -21,24 +21,17 @@ import { isFiberTargetTag } from '@/constants/fiber';
 import { isMineralTargetTag } from '@/constants/minerals';
 import { isPolyphenolTargetTag } from '@/constants/polyphenols';
 import { isVitaminTargetTag } from '@/constants/vitamins';
-import {
-  FOOD_IMAGES,
-  FOOD_NUTRIENT_PROFILES,
-  FoodNutrientProfile,
-  type FoodServing as FoodCatalogServing,
-} from '@/locales/foodCatalog';
+import { FOOD_IMAGES, FOOD_NUTRIENT_PROFILES, FoodNutrientProfile, type FoodServing as FoodCatalogServing } from '@/locales/foodCatalog';
 import { useSupplementMap } from '@/locales/supplements';
 import { getTipTargetIconName, type NutrientTag, tips } from '@/locales/tips';
-import { toGrams, toMicrograms, toMilligrams } from '@/services/targetProgress/nutritionTargets';
+import { toGrams, toMicrograms, toMilligrams } from '@/services/targetProgress/nutritionTargetProgress';
 import { type NutritionTargetUnit } from '@/types/nutritionTargets';
 import { extractWeeklyTrackingSignals, type WeeklyTrackingSignalValue } from '@/utils/analyzeNutrition';
 import { formatMonthDayRange, fromDateKey, toDateKey } from '@/utils/dateUtils';
 import { formatWithUnit } from '@/utils/formatters';
 import { getNutritionTargetMedalEmoji, getNutritionTargetMedalType } from '@/utils/medals';
 
-const BottomSheetOverlayContainer = ({ children }: { children?: React.ReactNode }) => (
-  <FullWindowOverlay>{children}</FullWindowOverlay>
-);
+const BottomSheetOverlayContainer = ({ children }: { children?: React.ReactNode }) => <FullWindowOverlay>{children}</FullWindowOverlay>;
 
 type RouteParamValue = string | string[] | undefined;
 
@@ -66,8 +59,7 @@ const parseTargetUnit = (value: RouteParamValue): NutritionTargetUnit | null => 
   return null;
 };
 
-const isSupplementEligibleUnit = (unit: NutritionTargetUnit): unit is 'mg' | 'g' | 'μg' =>
-  unit === 'mg' || unit === 'g' || unit === 'μg';
+const isSupplementEligibleUnit = (unit: NutritionTargetUnit): unit is 'mg' | 'g' | 'μg' => unit === 'mg' || unit === 'g' || unit === 'μg';
 
 const addDays = (dateKey: string, days: number): string => {
   const nextDate = fromDateKey(dateKey);
@@ -193,37 +185,26 @@ const calculateIntakeForTarget = (
 
   const foodAmount = mealSummaries.reduce((sum: number, mealsSummary: any) => {
     const meals = Array.isArray(mealsSummary?.meals) ? mealsSummary.meals : [];
-    return sum + meals.reduce(
-      (mealSum: number, meal: any) => mealSum + getMealContributionForTarget(meal, targetTag, targetUnit),
-      0
-    );
+    return sum + meals.reduce((mealSum: number, meal: any) => mealSum + getMealContributionForTarget(meal, targetTag, targetUnit), 0);
   }, 0);
   const supplementAmount = supplementsForPeriod.reduce(
-    (sum: number, supp: any) =>
-      sum + getSupplementContributionForTargetUnit(Number(supp.quantity) || 0, (supp.unit || '').toLowerCase(), targetUnit),
+    (sum: number, supp: any) => sum + getSupplementContributionForTargetUnit(Number(supp.quantity) || 0, (supp.unit || '').toLowerCase(), targetUnit),
     0
   );
 
   return { foodAmount: Math.max(0, foodAmount), supplementAmount: Math.max(0, supplementAmount) };
 };
 
-const getSupplementContributionForTargetUnit = (
-  quantity: number,
-  unit: string,
-  targetUnit: 'mg' | 'g' | 'μg'
-): number => {
+const getSupplementContributionForTargetUnit = (quantity: number, unit: string, targetUnit: 'mg' | 'g' | 'μg'): number => {
   if (!quantity) return 0;
   if (targetUnit === 'mg') return toMilligrams(quantity, unit) ?? 0;
   if (targetUnit === 'g') return toGrams(quantity, unit) ?? 0;
   return toMicrograms(quantity, unit) ?? 0;
 };
 
-const getTargetValueFromMilligrams = (value: number, targetUnit: NutritionTargetUnit): number =>
-  targetUnit === 'μg' ? value * 1000 : value;
+const getTargetValueFromMilligrams = (value: number, targetUnit: NutritionTargetUnit): number => (targetUnit === 'μg' ? value * 1000 : value);
 
-const getDiscreteTrackingValueAmount = (
-  trackingValue: WeeklyTrackingSignalValue | undefined
-): number => {
+const getDiscreteTrackingValueAmount = (trackingValue: WeeklyTrackingSignalValue | undefined): number => {
   if (typeof trackingValue === 'number') {
     return trackingValue;
   }
@@ -235,11 +216,7 @@ const getDiscreteTrackingValueAmount = (
   return 0;
 };
 
-const getMealTrackedItemsForTarget = (
-  meal: any,
-  targetTag: string,
-  targetUnit: NutritionTargetUnit
-): string[] | undefined => {
+const getMealTrackedItemsForTarget = (meal: any, targetTag: string, targetUnit: NutritionTargetUnit): string[] | undefined => {
   if (targetUnit !== 'items' && targetUnit !== 'count' && targetUnit !== 'plants') {
     return undefined;
   }
@@ -256,11 +233,7 @@ const getMealTrackedItemsForTarget = (
     .sort((left, right) => left.localeCompare(right));
 };
 
-const getMealContributionForTarget = (
-  meal: any,
-  targetTag: string,
-  targetUnit: NutritionTargetUnit
-): number => {
+const getMealContributionForTarget = (meal: any, targetTag: string, targetUnit: NutritionTargetUnit): number => {
   if (targetUnit === 'items' || targetUnit === 'count' || targetUnit === 'plants') {
     const trackingValue = extractWeeklyTrackingSignals(meal, undefined)[targetTag];
     return getDiscreteTrackingValueAmount(trackingValue);
@@ -285,21 +258,12 @@ const getMealContributionForTarget = (
   return 0;
 };
 
-const getContributingMealsForTarget = (
-  meals: any[],
-  selectedDateKey: string,
-  targetTag: string,
-  targetUnit: NutritionTargetUnit,
-  t: (key: string) => string
-) =>
+const getContributingMealsForTarget = (meals: any[], selectedDateKey: string, targetTag: string, targetUnit: NutritionTargetUnit, t: (key: string) => string) =>
   meals
     .map((meal: any, index: number) => ({
       id: typeof meal?.id === 'string' ? meal.id : `${selectedDateKey}-meal-${index}`,
       dateKey: selectedDateKey,
-      name:
-        typeof meal?.mealName === 'string' && meal.mealName.trim().length > 0
-          ? meal.mealName
-          : t('nutritionLogger.unnamedMeal'),
+      name: typeof meal?.mealName === 'string' && meal.mealName.trim().length > 0 ? meal.mealName : t('nutritionLogger.unnamedMeal'),
       amount: getMealContributionForTarget(meal, targetTag, targetUnit),
       trackedItems: getMealTrackedItemsForTarget(meal, targetTag, targetUnit),
     }))
@@ -311,10 +275,7 @@ const scaleFrom100 = (value: number | undefined, grams: number): number => {
   return Number(((value * grams) / 100).toFixed(3));
 };
 
-const getProfileValueForTag = (
-  profile: FoodNutrientProfile | null,
-  targetTag: string
-): number | undefined => {
+const getProfileValueForTag = (profile: FoodNutrientProfile | null, targetTag: string): number | undefined => {
   if (!profile || !targetTag) return undefined;
   if (isMineralTargetTag(targetTag)) return profile.mineralsByType?.[targetTag];
   if (isVitaminTargetTag(targetTag)) return profile.vitaminsByType?.[targetTag];
@@ -324,18 +285,12 @@ const getProfileValueForTag = (
   return undefined;
 };
 
-const scaleMapFrom100 = <K extends string>(
-  map: Partial<Record<K, number>> | undefined,
-  grams: number
-): Record<string, number> => {
+const scaleMapFrom100 = <K extends string>(map: Partial<Record<K, number>> | undefined, grams: number): Record<string, number> => {
   if (!map) return {};
-  return Object.fromEntries(
-    Object.entries(map as Record<string, number | undefined>).map(([key, value]) => [key, scaleFrom100(value, grams)])
-  );
+  return Object.fromEntries(Object.entries(map as Record<string, number | undefined>).map(([key, value]) => [key, scaleFrom100(value, grams)]));
 };
 
-const isFoodProfileKey = (key: string): key is keyof typeof FOOD_NUTRIENT_PROFILES =>
-  key in FOOD_NUTRIENT_PROFILES;
+const isFoodProfileKey = (key: string): key is keyof typeof FOOD_NUTRIENT_PROFILES => key in FOOD_NUTRIENT_PROFILES;
 
 const ContributingMealsSection = ({
   colors,
@@ -364,7 +319,7 @@ const ContributingMealsSection = ({
 }) => {
   if (contributingMeals.length === 0) {
     return (
-      <View style={[styles.mealsSection, { borderColor: colors.borderLight ?? colors.border }]}> 
+      <View style={[styles.mealsSection, { borderColor: colors.borderLight ?? colors.border }]}>
         <ThemedText type="title3" style={styles.supplementHeading}>
           {t('common:tip-target-details.meals.title')}
         </ThemedText>
@@ -376,7 +331,7 @@ const ContributingMealsSection = ({
   }
 
   return (
-    <View style={[styles.mealsSection, { borderColor: colors.borderLight ?? colors.border }]}> 
+    <View style={[styles.mealsSection, { borderColor: colors.borderLight ?? colors.border }]}>
       <ThemedText type="title3" style={styles.supplementHeading}>
         {t('common:tip-target-details.meals.title')}
       </ThemedText>
@@ -407,9 +362,7 @@ const ContributingMealsSection = ({
                     ))}
                   </View>
                 ) : (
-                  <ThemedText type="caption">
-                    {`${formatWithUnit(meal.amount, amountUnit, targetTagParam)} ${targetLabel.toLowerCase()}`}
-                  </ThemedText>
+                  <ThemedText type="caption">{`${formatWithUnit(meal.amount, amountUnit, targetTagParam)} ${targetLabel.toLowerCase()}`}</ThemedText>
                 )}
               </View>
             </Collapsible>
@@ -439,28 +392,15 @@ const PeriodNavigationSection = ({
   onPrevious: () => void;
   onNext: () => void;
 }) => (
-  <View style={[styles.dateSection, { borderColor: colors.borderLight ?? colors.border }]}> 
+  <View style={[styles.dateSection, { borderColor: colors.borderLight ?? colors.border }]}>
     <ThemedText type="defaultSemiBold">{t('common:tip-target-details.date.title')}</ThemedText>
     <View style={styles.dateNavRow}>
-      <TouchableOpacity
-        onPress={onPrevious}
-        accessibilityRole="button"
-        accessibilityLabel={previousAccessibilityLabel}
-      >
+      <TouchableOpacity onPress={onPrevious} accessibilityRole="button" accessibilityLabel={previousAccessibilityLabel}>
         <IconSymbol name="chevron.left" size={20} color={colors.primary} />
       </TouchableOpacity>
       <ThemedText type="default">{periodLabel}</ThemedText>
-      <TouchableOpacity
-        onPress={onNext}
-        disabled={!canGoForward}
-        accessibilityRole="button"
-        accessibilityLabel={nextAccessibilityLabel}
-      >
-        <IconSymbol
-          name="chevron.right"
-          size={20}
-          color={canGoForward ? colors.primary : colors.textMuted}
-        />
+      <TouchableOpacity onPress={onNext} disabled={!canGoForward} accessibilityRole="button" accessibilityLabel={nextAccessibilityLabel}>
+        <IconSymbol name="chevron.right" size={20} color={canGoForward ? colors.primary : colors.textMuted} />
       </TouchableOpacity>
     </View>
   </View>
@@ -489,7 +429,7 @@ const IntakeDetailsSection = ({
   targetTagParam: string;
   noDataText: string;
 }) => (
-  <View style={[styles.detailsSection, { borderColor: colors.borderLight ?? colors.border }]}> 
+  <View style={[styles.detailsSection, { borderColor: colors.borderLight ?? colors.border }]}>
     <ThemedText type="title3" style={styles.detailsHeading}>
       {t('common:tip-target-details.details.title')}
     </ThemedText>
@@ -551,11 +491,7 @@ const getPeriodPresentation = ({
 }) => {
   if (isWeeklyTarget) {
     return {
-      periodLabel: formatMonthDayRange(
-        fromDateKey(selectedWeekStartKey),
-        fromDateKey(selectedWeekEndKey),
-        language
-      ),
+      periodLabel: formatMonthDayRange(fromDateKey(selectedWeekStartKey), fromDateKey(selectedWeekEndKey), language),
       previousPeriodLabel: t('common:tip-target-details.date.previousWeek'),
       nextPeriodLabel: t('common:tip-target-details.date.nextWeek'),
       noDataText: t('common:tip-target-details.details.noDataForWeek'),
@@ -585,7 +521,7 @@ export default function TipTargetDetailsScreen() {
   const [selectedFoodSourceKey, setSelectedFoodSourceKey] = useState<string>('');
   const [selectedFoodProfile, setSelectedFoodProfile] = useState<FoodNutrientProfile | null>(null);
   const [selectedFoodServings, setSelectedFoodServings] = useState<FoodServing[]>([]);
-  const { dailyNutritionSummaries, takenDates, weeklyTracking, setDailyNutritionSummaries } = useStorage();
+  const { dailyNutritionTracking, takenDates, weeklyNutritionTracking, setDailyNutritionTracking } = useStorage();
   const params = useLocalSearchParams<{
     tipId?: string;
     tipTitle?: string;
@@ -603,18 +539,12 @@ export default function TipTargetDetailsScreen() {
   const tipId = params.tipId ?? '';
   const tipMeta = tips.find(candidate => candidate.id === tipId);
   const targetTagParam = (Array.isArray(params.targetTag) ? params.targetTag[0] : params.targetTag) ?? '';
-  const selectedFoodImage: ImageSourcePropType | undefined =
-    isFoodProfileKey(selectedFoodSourceKey)
-      ? (FOOD_IMAGES[selectedFoodSourceKey] as ImageSourcePropType | undefined)
-      : undefined;
-  const targetSupplementIds = useMemo(
-    () => new Set(parseCommaSeparated(params.targetSupplementIds)),
-    [params.targetSupplementIds]
-  );
+  const selectedFoodImage: ImageSourcePropType | undefined = isFoodProfileKey(selectedFoodSourceKey)
+    ? (FOOD_IMAGES[selectedFoodSourceKey] as ImageSourcePropType | undefined)
+    : undefined;
+  const targetSupplementIds = useMemo(() => new Set(parseCommaSeparated(params.targetSupplementIds)), [params.targetSupplementIds]);
   const listedSupplements = (tipMeta?.supplements ?? [])
-    .filter(reference =>
-      targetSupplementIds.size > 0 ? targetSupplementIds.has(reference.id) : true
-    )
+    .filter(reference => (targetSupplementIds.size > 0 ? targetSupplementIds.has(reference.id) : true))
     .map(reference => supplementMap.get(reference.id))
     .filter((supplement): supplement is NonNullable<typeof supplement> => Boolean(supplement));
   const nutritionFoodItems = useMemo(() => {
@@ -622,11 +552,7 @@ export default function TipTargetDetailsScreen() {
       return [] as { key: string; foodKey: string; name: string; details: string }[];
     }
 
-    const matchingFoods = targetTagParam
-      ? tipMeta.nutritionFoods.filter(food =>
-          food.nutrientTags?.includes(targetTagParam as NutrientTag)
-        )
-      : [];
+    const matchingFoods = targetTagParam ? tipMeta.nutritionFoods.filter(food => food.nutrientTags?.includes(targetTagParam as NutrientTag)) : [];
     const foodsToRender = matchingFoods.length > 0 ? matchingFoods : tipMeta.nutritionFoods;
 
     return foodsToRender.map(food => {
@@ -651,57 +577,32 @@ export default function TipTargetDetailsScreen() {
   const targetPeriod = (Array.isArray(params.targetPeriod) ? params.targetPeriod[0] : params.targetPeriod) ?? 'daily';
   const isWeeklyTarget = targetPeriod === 'weekly';
   const today = toDateKey(new Date());
-  const initialDateKey =
-    params.dateKey && params.dateKey.length > 0 ? params.dateKey : today;
+  const initialDateKey = params.dateKey && params.dateKey.length > 0 ? params.dateKey : today;
   const [selectedDateKey, setSelectedDateKey] = useState(initialDateKey);
-  const selectedWeekBounds = useMemo(
-    () => getWeekBoundsFromDateKey(selectedDateKey),
-    [selectedDateKey]
-  );
-  const currentWeekStartKey = useMemo(
-    () => getWeekBoundsFromDateKey(today).weekStartKey,
-    [today]
-  );
-  const canGoForward = getCanGoForward(
-    isWeeklyTarget,
-    selectedDateKey,
-    today,
-    selectedWeekBounds.weekStartKey,
-    currentWeekStartKey
-  );
+  const selectedWeekBounds = useMemo(() => getWeekBoundsFromDateKey(selectedDateKey), [selectedDateKey]);
+  const currentWeekStartKey = useMemo(() => getWeekBoundsFromDateKey(today).weekStartKey, [today]);
+  const canGoForward = getCanGoForward(isWeeklyTarget, selectedDateKey, today, selectedWeekBounds.weekStartKey, currentWeekStartKey);
   const targetAmount = parseNumber(params.targetAmount);
   const targetUnit = parseTargetUnit(params.targetUnit) ?? 'mg';
   const selectedDateKeys = useMemo(
-    () =>
-      isWeeklyTarget
-        ? getDateKeysInRange(selectedWeekBounds.weekStartKey, selectedWeekBounds.weekEndKey)
-        : [selectedDateKey],
+    () => (isWeeklyTarget ? getDateKeysInRange(selectedWeekBounds.weekStartKey, selectedWeekBounds.weekEndKey) : [selectedDateKey]),
     [isWeeklyTarget, selectedDateKey, selectedWeekBounds.weekEndKey, selectedWeekBounds.weekStartKey]
   );
-  const selectedTrackingValue = isWeeklyTarget
-    ? weeklyTracking[selectedWeekBounds.weekStartKey]?.[targetTagParam]
-    : undefined;
+  const selectedTrackingValue = isWeeklyTarget ? weeklyNutritionTracking[selectedWeekBounds.weekStartKey]?.[targetTagParam] : undefined;
 
   const { foodAmount, supplementAmount } = useMemo(() => {
-    const mealSummaries = selectedDateKeys.map(dateKey => dailyNutritionSummaries[dateKey]);
+    const mealSummaries = selectedDateKeys.map(dateKey => dailyNutritionTracking[dateKey]);
+
     const supplementsForPeriod = selectedDateKeys.flatMap(dateKey => {
       const supplementsForDay = takenDates[dateKey] ?? [];
-      const componentSupplements = supplementsForDay.flatMap(supplement => (
-        supplement.components?.length ? supplement.components : [supplement]
-      ));
-      return targetSupplementIds.size > 0
-        ? componentSupplements.filter(supplement => targetSupplementIds.has(supplement.id))
-        : componentSupplements;
+
+      const componentSupplements = supplementsForDay.flatMap(supplement => (supplement.components?.length ? supplement.components : [supplement]));
+
+      return targetSupplementIds.size > 0 ? componentSupplements.filter(supplement => targetSupplementIds.has(supplement.id)) : componentSupplements;
     });
 
-    return calculateIntakeForTarget(
-      targetTagParam,
-      targetUnit,
-      mealSummaries,
-      supplementsForPeriod,
-      selectedTrackingValue
-    );
-  }, [selectedDateKeys, dailyNutritionSummaries, takenDates, targetTagParam, targetUnit, targetSupplementIds, selectedTrackingValue]);
+    return calculateIntakeForTarget(targetTagParam, targetUnit, mealSummaries, supplementsForPeriod, selectedTrackingValue);
+  }, [selectedDateKeys, dailyNutritionTracking, takenDates, targetTagParam, targetUnit, targetSupplementIds, selectedTrackingValue]);
 
   const foodActual = foodAmount;
   const supplementActual = supplementAmount;
@@ -709,14 +610,12 @@ export default function TipTargetDetailsScreen() {
   const contributingMeals = useMemo(() => {
     return selectedDateKeys
       .flatMap(dateKey => {
-        const meals = Array.isArray(dailyNutritionSummaries[dateKey]?.meals)
-          ? dailyNutritionSummaries[dateKey].meals
-          : [];
+        const meals = dailyNutritionTracking[dateKey]?.meals ?? [];
 
         return getContributingMealsForTarget(meals, dateKey, targetTagParam, targetUnit, t);
       })
       .sort((left, right) => right.amount - left.amount);
-  }, [dailyNutritionSummaries, selectedDateKeys, t, targetTagParam, targetUnit]);
+  }, [dailyNutritionTracking, selectedDateKeys, t, targetTagParam, targetUnit]);
 
   const hasData = foodActual + supplementActual > 0;
 
@@ -783,13 +682,7 @@ export default function TipTargetDetailsScreen() {
     : `${t('common:tip-target-details.medal.none')}. ${t('common:tip-target-details.medal.infoButton')}`;
 
   const amountUnit = targetUnit;
-  const {
-    periodLabel,
-    previousPeriodLabel,
-    nextPeriodLabel,
-    noDataText,
-    noContributingMealsText,
-  } = getPeriodPresentation({
+  const { periodLabel, previousPeriodLabel, nextPeriodLabel, noDataText, noContributingMealsText } = getPeriodPresentation({
     isWeeklyTarget,
     selectedDateKey,
     selectedWeekStartKey: selectedWeekBounds.weekStartKey,
@@ -830,13 +723,7 @@ export default function TipTargetDetailsScreen() {
   );
 
   const handleOpenFoodPortionSheet = React.useCallback(
-    (
-      foodSourceKey: string,
-      foodName: string,
-      foodDetails: string,
-      foodProfile: FoodNutrientProfile | null,
-      servingSizes: FoodServing[]
-    ) => {
+    (foodSourceKey: string, foodName: string, foodDetails: string, foodProfile: FoodNutrientProfile | null, servingSizes: FoodServing[]) => {
       setSelectedFoodSourceKey(foodSourceKey);
       setSelectedFoodName(foodName);
       setSelectedFoodDetails(foodDetails);
@@ -851,7 +738,7 @@ export default function TipTargetDetailsScreen() {
     (serving: FoodServing) => {
       const mealName = `${selectedFoodName} (${serving.label})`;
 
-      setDailyNutritionSummaries(prev => {
+      setDailyNutritionTracking(prev => {
         const existingMeals = prev[selectedDateKey]?.meals ?? [];
 
         const newMeal = {
@@ -888,15 +775,7 @@ export default function TipTargetDetailsScreen() {
         },
       });
     },
-    [
-      router,
-      selectedDateKey,
-      selectedFoodName,
-      selectedFoodProfile,
-      selectedFoodSourceKey,
-      setDailyNutritionSummaries,
-      tipId,
-    ]
+    [router, selectedDateKey, selectedFoodName, selectedFoodProfile, selectedFoodSourceKey, setDailyNutritionTracking, tipId]
   );
 
   const handleOpenMedalInfo = React.useCallback(() => {
@@ -907,7 +786,7 @@ export default function TipTargetDetailsScreen() {
     <Container background="default" showBackButton onBackPress={() => router.back()}>
       <View style={styles.content}>
         <View style={styles.topRow}>
-          <View style={[styles.iconCircle, { backgroundColor: colors.accentWeak }]}> 
+          <View style={[styles.iconCircle, { backgroundColor: colors.accentWeak }]}>
             <IconSymbol name={iconName} size={24} color={colors.primary} />
           </View>
           <View style={styles.topTextBlock}>
@@ -925,10 +804,7 @@ export default function TipTargetDetailsScreen() {
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               accessibilityRole="button"
               accessibilityLabel={medalAccessibilityLabel}
-              style={[
-                styles.medalButton,
-                { backgroundColor: colors.secondaryBackground, borderColor: colors.borderLight ?? colors.border },
-              ]}
+              style={[styles.medalButton, { backgroundColor: colors.secondaryBackground, borderColor: colors.borderLight ?? colors.border }]}
             >
               {medalType ? (
                 <ThemedText type="default" style={{ color: medalType === 'gold' ? colors.primary : colors.textMuted }}>
@@ -937,7 +813,7 @@ export default function TipTargetDetailsScreen() {
               ) : (
                 <ThemedText type="default" style={{ color: colors.textMuted }}>
                   {t('common:tip-target-details.medal.none')}
-                </ThemedText> 
+                </ThemedText>
               )}
               <IconSymbol name="chevron.right" size={14} color={colors.textMuted} />
             </TouchableOpacity>
@@ -947,14 +823,7 @@ export default function TipTargetDetailsScreen() {
         <View style={styles.chartRow}>
           <View style={styles.chartWrap}>
             <Svg width={size} height={size}>
-              <Circle
-                cx={center}
-                cy={center}
-                r={radius}
-                stroke={trackColor}
-                strokeWidth={strokeWidth}
-                fill="none"
-              />
+              <Circle cx={center} cy={center} r={radius} stroke={trackColor} strokeWidth={strokeWidth} fill="none" />
               {filledLength > 0 && (
                 <>
                   <Circle
@@ -1053,7 +922,7 @@ export default function TipTargetDetailsScreen() {
           language={i18n.language}
         />
 
-        <View style={[styles.supplementSection, { borderColor: colors.borderLight ?? colors.border }]}> 
+        <View style={[styles.supplementSection, { borderColor: colors.borderLight ?? colors.border }]}>
           <ThemedText type="title3" style={styles.supplementHeading}>
             {t('common:tip-target-details.supplements.title')}
           </ThemedText>
@@ -1063,7 +932,7 @@ export default function TipTargetDetailsScreen() {
                 <View key={supplement.id} style={styles.supplementRow}>
                   <View style={styles.supplementInfoRow}>
                     <IconSymbol name="pill" size={16} color={colors.textLight} />
-                    <ThemedText type="default" style={[styles.supplementText]}> 
+                    <ThemedText type="default" style={[styles.supplementText]}>
                       {`${supplement.name} (${supplement.quantity} ${supplement.unit})`}
                     </ThemedText>
                   </View>
@@ -1090,7 +959,7 @@ export default function TipTargetDetailsScreen() {
           )}
         </View>
 
-        <View style={[styles.foodSourceSection, { borderColor: colors.borderLight ?? colors.border }]}> 
+        <View style={[styles.foodSourceSection, { borderColor: colors.borderLight ?? colors.border }]}>
           <ThemedText type="title3" style={styles.supplementHeading}>
             {t('common:tip-target-details.foodSources.title')}
           </ThemedText>
@@ -1098,9 +967,7 @@ export default function TipTargetDetailsScreen() {
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.foodSourceScrollContent}>
               {nutritionFoodItems.map(({ key, foodKey, name, details }) => {
                 const foodSourceKey = foodKey;
-                const foodProfile = isFoodProfileKey(foodSourceKey)
-                  ? FOOD_NUTRIENT_PROFILES[foodSourceKey]
-                  : null;
+                const foodProfile = isFoodProfileKey(foodSourceKey) ? FOOD_NUTRIENT_PROFILES[foodSourceKey] : null;
                 const foodImage: ImageSourcePropType | undefined = isFoodProfileKey(foodSourceKey)
                   ? (FOOD_IMAGES[foodSourceKey] as ImageSourcePropType | undefined)
                   : undefined;
@@ -1113,23 +980,14 @@ export default function TipTargetDetailsScreen() {
                         defaultValue: String(serving.grams),
                       })
                     : `${serving.grams} ${t('food:units.gramsShort', { defaultValue: 'g' })}`,
-                  nutrientAmount:
-                    typeof nutrientPer100 === 'number'
-                      ? scaleFrom100(nutrientPer100, serving.grams)
-                      : undefined,
+                  nutrientAmount: typeof nutrientPer100 === 'number' ? scaleFrom100(nutrientPer100, serving.grams) : undefined,
                   nutrientUnit: targetUnit,
                   nutrientLabel: targetLabel || undefined,
                   nutrientTag: targetTagParam || undefined,
                 }));
                 return (
-                  <View key={key} style={[styles.foodSourceCard, { borderColor: colors.borderLight ?? colors.border }]}> 
-                    {!!foodImage && (
-                      <Image
-                        source={foodImage}
-                        style={styles.foodSourceImage}
-                        resizeMode="cover"
-                      />
-                    )}
+                  <View key={key} style={[styles.foodSourceCard, { borderColor: colors.borderLight ?? colors.border }]}>
+                    {!!foodImage && <Image source={foodImage} style={styles.foodSourceImage} resizeMode="cover" />}
                     <View style={styles.foodSourceTextBlock}>
                       <ThemedText type="defaultSemiBold" numberOfLines={2}>
                         {name}
@@ -1138,13 +996,7 @@ export default function TipTargetDetailsScreen() {
                     <Pressable
                       onPress={() => {
                         if (servingSizes.length > 0 && foodProfile) {
-                          handleOpenFoodPortionSheet(
-                            foodSourceKey,
-                            name,
-                            details || '',
-                            foodProfile,
-                            servingSizes
-                          );
+                          handleOpenFoodPortionSheet(foodSourceKey, name, details || '', foodProfile, servingSizes);
                         } else {
                           todaySelectedFoodSource(foodSourceKey);
                         }
@@ -1201,9 +1053,7 @@ export default function TipTargetDetailsScreen() {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
-            <ThemedText type="title3">
-              {t('common:tip-target-details.medal.infoTitle')}
-            </ThemedText>
+            <ThemedText type="title3">{t('common:tip-target-details.medal.infoTitle')}</ThemedText>
             <ThemedText type="caption" style={{ color: colors.textMuted }}>
               {t('common:tip-target-details.medal.infoIntro')}
             </ThemedText>
@@ -1229,15 +1079,8 @@ export default function TipTargetDetailsScreen() {
               </View>
             </View>
 
-            <View
-              style={[
-                styles.medalInfoNote,
-                { backgroundColor: colors.accentVeryWeak ?? colors.cardBackground },
-              ]}
-            >
-              <ThemedText type="defaultSemiBold">
-                {t('common:tip-target-details.medal.discreteRule.title')}
-              </ThemedText>
+            <View style={[styles.medalInfoNote, { backgroundColor: colors.accentVeryWeak ?? colors.cardBackground }]}>
+              <ThemedText type="defaultSemiBold">{t('common:tip-target-details.medal.discreteRule.title')}</ThemedText>
               <ThemedText type="caption" style={{ color: colors.textMuted }}>
                 {t('common:tip-target-details.medal.discreteRule.body')}
               </ThemedText>

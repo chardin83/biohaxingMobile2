@@ -7,6 +7,7 @@ import { PolyphenolType } from '@/constants/polyphenols';
 import { VitaminType } from '@/constants/vitamins';
 import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
 import { PlanCategory } from '@/types/planCategory';
+import { TrainingActivityType } from '@/types/training';
 
 import { supplementIds } from './supplementIds';
 
@@ -116,6 +117,7 @@ export type HydrationTarget = {
 } & BaseTarget<'ml'>;
 
 export type ActivityTarget = {
+  activityTypes: readonly TrainingActivityType[];
   trackingKey:
     | 'zone2_minutes'
     | 'zone2_sessions'
@@ -1492,7 +1494,7 @@ const rawTips: Tip[] = [
     targetPeriod: 'weekly',
     targetIconName: 'chart',
     activityTargets: [
-      { trackingKey: 'neuromuscular_sessions', amount: 2, unit: 'sessions' },
+      { trackingKey: 'neuromuscular_sessions', amount: 2, unit: 'sessions', activityTypes: ['gym']    },
     ],
     bodyParts: ['muscles', 'nervousSystem'],
   },
@@ -1982,7 +1984,7 @@ const rawTips: Tip[] = [
     targetPeriod: 'weekly',
     targetIconName: 'chart',
     activityTargets: [
-      { trackingKey: 'hiit_sessions', amount: 1, unit: 'sessions' },
+      { trackingKey: 'hiit_sessions', amount: 1, unit: 'sessions', activityTypes: ['running'] },
     ],
     bodyParts: ['heart', 'lungs', 'muscles'],
   },
@@ -2003,7 +2005,7 @@ const rawTips: Tip[] = [
     targetPeriod: 'weekly',
     targetIconName: 'chart',
     activityTargets: [
-      { trackingKey: 'running_minutes', amount: 150, unit: 'minutes' },
+      { trackingKey: 'running_minutes', amount: 150, unit: 'minutes', activityTypes: ['running'] },
     ],
     bodyParts: ['heart', 'lungs', 'muscles', 'joints'],
   },
@@ -2154,7 +2156,7 @@ const rawTips: Tip[] = [
     targetPeriod: 'weekly',
     targetIconName: 'chart',
     activityTargets: [
-      { trackingKey: 'zone2_sessions', amount: 2, unit: 'sessions' },
+      { trackingKey: 'zone2_sessions', amount: 2, unit: 'sessions', activityTypes: ['running'] },
     ],
     bodyParts: ['heart', 'lungs', 'muscles'],
   },
@@ -2176,7 +2178,7 @@ const rawTips: Tip[] = [
     targetPeriod: 'weekly',
     targetIconName: 'chart',
     activityTargets: [
-      { trackingKey: 'zone2_minutes', amount: 120, unit: 'minutes' },
+      { trackingKey: 'zone2_minutes', amount: 120, unit: 'minutes', activityTypes: ['running'] },
     ],
     bodyParts: ['heart', 'lungs', 'muscles'],
   },
@@ -2197,7 +2199,7 @@ const rawTips: Tip[] = [
     targetPeriod: 'weekly',
     targetIconName: 'chart',
     activityTargets: [
-      { trackingKey: 'strength_mobility_sessions', amount: 2, unit: 'sessions' },
+      { trackingKey: 'strength_mobility_sessions', amount: 2, unit: 'sessions', activityTypes: ['gym'] },
     ],
     bodyParts: ['muscles', 'joints', 'bones', 'nervousSystem'],
   },
@@ -2246,6 +2248,7 @@ const rawTips: Tip[] = [
         trackingKey: 'vigorous_activity_minutes',
         amount: 2,
         unit: 'minutes',
+        activityTypes: ['running'],
       },
     ],
     bodyParts: ['heart', 'brain', 'muscles'],

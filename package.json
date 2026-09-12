@@ -10,7 +10,9 @@
     "web": "expo start --web",
     "postinstall": "patch-package",
     "test": "jest --watchAll",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "jest": {
     "preset": "jest-expo",
@@ -23,7 +25,7 @@
   },
   "prettier": {
     "quoteProps": "consistent",
-    "printWidth": 120,
+    "printWidth": 160,
     "singleQuote": true,
     "trailingComma": "es5",
     "bracketSpacing": true,
@@ -110,6 +112,7 @@
     "jest-expo": "~54.0.17",
     "patch-package": "^8.0.1",
     "postinstall-postinstall": "^2.1.0",
+    "prettier": "^3.9.6",
     "react-native-svg-transformer": "^1.5.1",
     "react-test-renderer": "^19.1.0",
     "typescript": "^5.3.3"

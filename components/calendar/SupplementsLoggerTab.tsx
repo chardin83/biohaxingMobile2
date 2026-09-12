@@ -17,241 +17,231 @@ import { CancelButton } from '../ui/CancelButton';
 import DiscreetButton from '../ui/DiscreetButton';
 
 interface Props {
-    selectedDate: string;
-    preselectedSupplementId?: string;
+  selectedDate: string;
+  preselectedSupplementId?: string;
 }
 
 export const SupplementsLoggerTab = ({ selectedDate, preselectedSupplementId }: Props) => {
-    const { plans, takenDates, setTakenDates } = useStorage();
-    const { t } = useTranslation();
-    const { colors } = useTheme();
-    const supplementMap = useSupplementMap();
+  const { plans, takenDates, setTakenDates } = useStorage();
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const supplementMap = useSupplementMap();
 
-    const [selectedTime, setSelectedTime] = useState<Date>(new Date());
-    const [selectedSupplements, setSelectedSupplements] = useState<SupplementTime[]>([]);
-    const [isEditing, setIsEditing] = useState(false);
-    const [editingSupplement, setEditingSupplement] = useState<SupplementTime | null>(null);
-    const [isAddButtonVisible, setIsAddButtonVisible] = useState(true);
-    const [isSupplementFormVisible, setIsSupplementFormVisible] = useState(false);
-    const [isPlanPickerVisible, setIsPlanPickerVisible] = useState(false);
-    const [planSupplementsToPick, setPlanSupplementsToPick] = useState<Supplement[] | null>(null);
-    const [planName, setPlanName] = useState<string>('');
-    const [prefilledSupplement, setPrefilledSupplement] = useState<Supplement | null>(null);
+  const [selectedTime, setSelectedTime] = useState<Date>(new Date());
+  const [selectedSupplements, setSelectedSupplements] = useState<SupplementTime[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingSupplement, setEditingSupplement] = useState<SupplementTime | null>(null);
+  const [isAddButtonVisible, setIsAddButtonVisible] = useState(true);
+  const [isSupplementFormVisible, setIsSupplementFormVisible] = useState(false);
+  const [isPlanPickerVisible, setIsPlanPickerVisible] = useState(false);
+  const [planSupplementsToPick, setPlanSupplementsToPick] = useState<Supplement[] | null>(null);
+  const [planName, setPlanName] = useState<string>('');
+  const [prefilledSupplement, setPrefilledSupplement] = useState<Supplement | null>(null);
 
-    useEffect(() => {
-        setSelectedSupplements(takenDates[selectedDate] ?? []);
-    }, [selectedDate, takenDates]);
+  useEffect(() => {
+    setSelectedSupplements(takenDates[selectedDate] ?? []);
+  }, [selectedDate, takenDates]);
 
-    useEffect(() => {
-        if (!preselectedSupplementId) return;
-        const supplement = supplementMap.get(preselectedSupplementId);
-        if (!supplement) return;
-        setSelectedTime(new Date(`${selectedDate}T08:00`));
-        setEditingSupplement(null);
-        setIsEditing(false);
-        setPlanSupplementsToPick(null);
-        setIsPlanPickerVisible(false);
-        setIsAddButtonVisible(false);
-        setPrefilledSupplement(supplement);
-        setIsSupplementFormVisible(true);
-    }, [preselectedSupplementId, selectedDate, supplementMap]);
+  useEffect(() => {
+    if (!preselectedSupplementId) return;
+    const supplement = supplementMap.get(preselectedSupplementId);
+    if (!supplement) return;
+    setSelectedTime(new Date(`${selectedDate}T08:00`));
+    setEditingSupplement(null);
+    setIsEditing(false);
+    setPlanSupplementsToPick(null);
+    setIsPlanPickerVisible(false);
+    setIsAddButtonVisible(false);
+    setPrefilledSupplement(supplement);
+    setIsSupplementFormVisible(true);
+  }, [preselectedSupplementId, selectedDate, supplementMap]);
 
-    const saveToStorage = (supplements: SupplementTime[]) => {
-        setSelectedSupplements(supplements);
-        setTakenDates(prev => ({ ...prev, [selectedDate]: supplements }));
-    };
+  const saveToStorage = (supplements: SupplementTime[]) => {
+    setSelectedSupplements(supplements);
+    setTakenDates(prev => ({ ...prev, [selectedDate]: supplements }));
+  };
 
-    const deleteSupplement = (time: string, supplementName: string) => {
-        const updatedSupplements = selectedSupplements.filter(
-            item => !(item.name === supplementName && item.time === time)
-        );
-        saveToStorage(updatedSupplements);
-    };
+  const deleteSupplement = (time: string, supplementName: string) => {
+    const updatedSupplements = selectedSupplements.filter(item => !(item.name === supplementName && item.time === time));
+    saveToStorage(updatedSupplements);
+  };
 
-    const editSupplement = (time: string, supplementName: string) => {
-        setSelectedTime(new Date(`${selectedDate}T${time}`));
-        const isEditingSupplement = selectedSupplements.find(item => item.name === supplementName && item.time === time);
-        if (isEditingSupplement) {
-            setEditingSupplement(isEditingSupplement);
-            setIsEditing(true);
-            setIsSupplementFormVisible(true);
+  const editSupplement = (time: string, supplementName: string) => {
+    setSelectedTime(new Date(`${selectedDate}T${time}`));
+    const isEditingSupplement = selectedSupplements.find(item => item.name === supplementName && item.time === time);
+    if (isEditingSupplement) {
+      setEditingSupplement(isEditingSupplement);
+      setIsEditing(true);
+      setIsSupplementFormVisible(true);
+      setIsAddButtonVisible(false);
+    }
+  };
+
+  const saveSelectedSupplement = async (supplement: SupplementTime) => {
+    const time = selectedTime.toTimeString().slice(0, 5);
+    let updatedSupplements;
+    const supplementExists = selectedSupplements.some(existingSupplement => existingSupplement.name === supplement.name && existingSupplement.time === time);
+    if (supplementExists && !isEditing) return;
+    if (isEditing) {
+      updatedSupplements = selectedSupplements.map(existingSupplement =>
+        existingSupplement.name === supplement.name && existingSupplement.time === editingSupplement?.time
+          ? { ...existingSupplement, ...supplement, time }
+          : existingSupplement
+      );
+    } else {
+      updatedSupplements = [...selectedSupplements, { ...supplement, time }];
+    }
+    saveToStorage(updatedSupplements);
+    setEditingSupplement(null);
+    setIsEditing(false);
+    setPrefilledSupplement(null);
+    setIsSupplementFormVisible(false);
+  };
+
+  return (
+    <>
+      {isAddButtonVisible && (
+        <AppButton
+          title={' + ' + t('general.add')}
+          onPress={() => {
+            setIsPlanPickerVisible(true);
             setIsAddButtonVisible(false);
-        }
-    };
+          }}
+        />
+      )}
+      {isPlanPickerVisible && (
+        <View style={styles.planPickerContainer}>
+          <Text style={[styles.modalTitle, { color: colors.text }]}>{t('dayEdit.choosePlan')}</Text>
+          <View style={styles.addManuallyTextContainer}>
+            <DiscreetButton
+              title={' + ' + t('supplementTabSection.addManually')}
+              onPress={() => {
+                setIsSupplementFormVisible(true);
+                setEditingSupplement(null);
+                setPrefilledSupplement(null);
+              }}
+              larger
+            />
+          </View>
 
-    const saveSelectedSupplement = async (supplement: SupplementTime) => {
-        const time = selectedTime.toTimeString().slice(0, 5);
-        let updatedSupplements;
-        const supplementExists = selectedSupplements.some(
-            existingSupplement => existingSupplement.name === supplement.name && existingSupplement.time === time
-        );
-        if (supplementExists && !isEditing) return;
-        if (isEditing) {
-            updatedSupplements = selectedSupplements.map(existingSupplement =>
-                existingSupplement.name === supplement.name && existingSupplement.time === editingSupplement?.time
-                    ? { ...existingSupplement, ...supplement, time }
-                    : existingSupplement
+          <ThemedText type="label">{t('dayEdit.addFromPlan')}</ThemedText>
+          {plans.supplements.map(plan => {
+            const planSupplements = Array.isArray(plan.supplements) ? plan.supplements : [];
+            const isDisabled = planSupplements.length === 0;
+            return (
+              <AppButton
+                key={plan.name}
+                title={plan.name}
+                onPress={() => {
+                  setSelectedTime(new Date(`${selectedDate}T${plan.prefferedTime}`));
+                  setPlanSupplementsToPick(planSupplements.map(entry => entry.supplement));
+                  setPrefilledSupplement(null);
+                  setIsPlanPickerVisible(false);
+                  setPlanName(plan.name);
+                  setIsSupplementFormVisible(false);
+                }}
+                variant="primary"
+                style={styles.planButton}
+                disabled={isDisabled}
+                accessibilityLabel={plan.name}
+                disabledText={isDisabled ? t('plan.noSupplementsInPlan', { plan: plan.name.toLowerCase() }) : undefined}
+              />
             );
-        } else {
-            updatedSupplements = [...selectedSupplements, { ...supplement, time }];
-        }
-        saveToStorage(updatedSupplements);
-        setEditingSupplement(null);
-        setIsEditing(false);
-        setPrefilledSupplement(null);
-        setIsSupplementFormVisible(false);
-    };
+          })}
+          <CancelButton
+            onPress={() => {
+              setIsPlanPickerVisible(false);
+              setIsAddButtonVisible(true);
+            }}
+          />
+        </View>
+      )}
+      {planSupplementsToPick && (
+        <PlanSupplementsPicker
+          supplements={planSupplementsToPick}
+          planName={planName}
+          selectedTime={selectedTime}
+          setSelectedTime={setSelectedTime}
+          onCancel={() => {
+            setPlanSupplementsToPick(null);
+            setIsAddButtonVisible(true);
+          }}
+          onConfirm={(selectedSupps: Supplement[], time: Date) => {
+            const updatedSupplements = [...selectedSupplements];
+            selectedSupps.forEach(supplement => {
+              const exists = updatedSupplements.some(s => s.name === supplement.name && s.time === time.toTimeString().slice(0, 5));
+              if (!exists) {
+                updatedSupplements.push({
+                  ...supplement,
+                  time: time.toTimeString().slice(0, 5),
+                });
+              }
+            });
+            saveToStorage(updatedSupplements);
+            setPlanSupplementsToPick(null);
+            setIsPlanPickerVisible(false);
+            setIsAddButtonVisible(true);
+          }}
+        />
+      )}
+      {isSupplementFormVisible && (
+        <SupplementForm
+          key={editingSupplement?.name ?? prefilledSupplement?.name ?? 'new'}
+          selectedTime={selectedTime}
+          isEditing={isEditing}
+          preselectedSupplement={editingSupplement ?? prefilledSupplement}
+          onSelectedTimeChange={setSelectedTime}
+          onSave={supplement => {
+            // Convert Supplement to SupplementTime
+            const time = selectedTime.toTimeString().slice(0, 5);
+            saveSelectedSupplement({ ...supplement, time });
+            setPrefilledSupplement(null);
+            setIsSupplementFormVisible(false);
+            setIsAddButtonVisible(true);
+          }}
+          onCancel={() => {
+            setEditingSupplement(null);
+            setIsEditing(false);
+            setPrefilledSupplement(null);
+            setIsSupplementFormVisible(false);
+          }}
+        />
+      )}
 
-    return (
-        <>
-
-            {isAddButtonVisible && (
-                <AppButton
-                    title={" + " + t('general.add')}
-                    onPress={() => {
-                        setIsPlanPickerVisible(true);
-                        setIsAddButtonVisible(false);
-                    }}
-                />
-            )}
-            {isPlanPickerVisible && (
-                <View style={styles.planPickerContainer}>
-                    <Text style={[styles.modalTitle, { color: colors.text }]}>{t('dayEdit.choosePlan')}</Text>
-                    <View style={styles.addManuallyTextContainer}>
-                        <DiscreetButton
-                            title={" + " + t('supplementTabSection.addManually')}
-                            onPress={() => {
-                                setIsSupplementFormVisible(true);
-                                setEditingSupplement(null);
-                                setPrefilledSupplement(null);
-                            }}
-                            larger
-                        />
-                    </View>
-
-                    <ThemedText type="label">{t('dayEdit.addFromPlan')}</ThemedText>
-                    {plans.supplements.map((plan) => {
-                        const isDisabled = !plan.supplements || plan.supplements.length === 0;
-                        return (
-                            <AppButton
-                                key={plan.name}
-                                title={plan.name}
-                                onPress={() => {
-                                    setSelectedTime(new Date(`${selectedDate}T${plan.prefferedTime}`));
-                                    setPlanSupplementsToPick(
-                                        plan.supplements.map((entry) => entry.supplement)
-                                    );
-                                    setPrefilledSupplement(null);
-                                    setIsPlanPickerVisible(false);
-                                    setPlanName(plan.name);
-                                    setIsSupplementFormVisible(false);
-                                }}
-                                variant="primary"
-                                style={styles.planButton}
-                                disabled={isDisabled}
-                                accessibilityLabel={plan.name}
-                                disabledText={isDisabled ? t('plan.noSupplementsInPlan', { plan: plan.name.toLowerCase() }) : undefined}
-                            />
-                        );
-                    })}
-                    <CancelButton
-                        onPress={() => {
-                            setIsPlanPickerVisible(false);
-                            setIsAddButtonVisible(true);
-                        }}
-                    />
-                </View>
-            )}
-            {planSupplementsToPick && (
-                <PlanSupplementsPicker
-                    supplements={planSupplementsToPick}
-                    planName={planName}
-                    selectedTime={selectedTime}
-                    setSelectedTime={setSelectedTime}
-                    onCancel={() => { setPlanSupplementsToPick(null); setIsAddButtonVisible(true); }}
-                    onConfirm={(selectedSupps: Supplement[], time: Date) => {
-                        const updatedSupplements = [...selectedSupplements];
-                        selectedSupps.forEach(supplement => {
-                            const exists = updatedSupplements.some(
-                                s => s.name === supplement.name && s.time === time.toTimeString().slice(0, 5)
-                            );
-                            if (!exists) {
-                                updatedSupplements.push({
-                                    ...supplement,
-                                    time: time.toTimeString().slice(0, 5),
-                                });
-                            }
-                        });
-                        saveToStorage(updatedSupplements);
-                        setPlanSupplementsToPick(null);
-                        setIsPlanPickerVisible(false);
-                        setIsAddButtonVisible(true);
-                    }}
-                />
-            )}
-            {isSupplementFormVisible && (
-                    <SupplementForm
-                        key={editingSupplement?.name ?? prefilledSupplement?.name ?? 'new'}
-                        selectedTime={selectedTime}
-                        isEditing={isEditing}
-                        preselectedSupplement={editingSupplement ?? prefilledSupplement}
-                        onSelectedTimeChange={setSelectedTime}
-                        onSave={supplement => {
-                            // Convert Supplement to SupplementTime
-                            const time = selectedTime.toTimeString().slice(0, 5);
-                            saveSelectedSupplement({ ...supplement, time });
-                            setPrefilledSupplement(null);
-                            setIsSupplementFormVisible(false);
-                            setIsAddButtonVisible(true);
-                        }}
-                        onCancel={() => {
-                            setEditingSupplement(null);
-                            setIsEditing(false);
-                            setPrefilledSupplement(null);
-                            setIsSupplementFormVisible(false);
-                        }}
-                    />
-            )}
-
-            <View style={styles.SelectedSupplementsList}>
-                <SelectedSupplementsList
-                    supplements={selectedSupplements}
-                    deleteSupplement={deleteSupplement}
-                    editSupplement={editSupplement}
-                />
-            </View>
-        </>
-    );
+      <View style={styles.SelectedSupplementsList}>
+        <SelectedSupplementsList supplements={selectedSupplements} deleteSupplement={deleteSupplement} editSupplement={editSupplement} />
+      </View>
+    </>
+  );
 };
 
 const styles = StyleSheet.create({
-    planPickerContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 0,
-    },
-    addManuallyTextContainer: {
-        marginBottom: 20,
-    },
-    modalTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 20,
-    },
-    planButton: {
-        marginVertical: 6,
-        width: '100%',
-    },
-    cancelButton: {
-        marginTop: 20,
-    },
-    SelectedSupplementsList: {
-        marginTop: 20,
-    },
-    noSupplementsText: {
-        textAlign: 'center',
-        marginBottom: 18,
-    }
+  planPickerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 0,
+  },
+  addManuallyTextContainer: {
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  planButton: {
+    marginVertical: 6,
+    width: '100%',
+  },
+  cancelButton: {
+    marginTop: 20,
+  },
+  SelectedSupplementsList: {
+    marginTop: 20,
+  },
+  noSupplementsText: {
+    textAlign: 'center',
+    marginBottom: 18,
+  },
 });
-

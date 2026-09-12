@@ -1,80 +1,54 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import type {
-  TrainingActivityFilter,
-  TrainingActivityType,
-  TrainingIntensity,
-  TrainingIntensityFilter,
-} from '@/types/training';
-
-export type TrainingPlanSettings = {
-  sessionsPerWeek?: number;
-  sessionDurationMinutes?: number;
-  activityType?: TrainingActivityFilter;
-  minimumIntensity?: TrainingIntensityFilter;
-};
-
-export type TrainingLogEntry = {
-  id: string;
-  date: string;
-  activityType: TrainingActivityType;
-  durationMinutes: number;
-  distanceKm?: number;
-  intensity: TrainingIntensity;
-  notes?: string;
-  createdAt: string;
-};
-
-export type TrainingLogInput = {
-  date: string;
-  activityType: TrainingActivityType;
-  durationMinutes: number;
-  distanceKm?: number;
-  intensity: TrainingIntensity;
-  notes?: string;
-};
+  DailyTrainingTracking,
+  TrainingPlanSettings,
+  TrainingStorage,
+} from './trainingTypes';
 
 const KEYS = {
   SETTINGS: 'trainingPlanSettings',
   ENTRIES: 'trainingEntries',
 } as const;
 
-export const getTrainingStorage = async () => {
-  const [settings, entries] =
-    await Promise.all([
-      AsyncStorage.getItem(KEYS.SETTINGS),
-      AsyncStorage.getItem(KEYS.ENTRIES),
-    ]);
+export const getTrainingStorage =
+  async (): Promise<TrainingStorage> => {
+    const [settings, entries] =
+      await Promise.all([
+        AsyncStorage.getItem(
+          KEYS.SETTINGS
+        ),
+        AsyncStorage.getItem(
+          KEYS.ENTRIES
+        ),
+      ]);
 
-  return {
-    trainingPlanSettings: settings
-      ? JSON.parse(settings)
-      : {},
-    trainingEntries: entries
-      ? JSON.parse(entries)
-      : {},
-  } as {
-    trainingPlanSettings: Record<
-      string,
-      TrainingPlanSettings
-    >;
-    trainingEntries: Record<
-      string,
-      TrainingLogEntry[]
-    >;
+    return {
+      trainingPlanSettings:
+        settings
+          ? JSON.parse(settings)
+          : {},
+
+      dailyTrainingTracking:
+        entries
+          ? JSON.parse(entries)
+          : {},
+    };
   };
-};
 
 export const saveTrainingPlanSettings = (
-  value: Record<string, TrainingPlanSettings>
+  value: Record<
+    string,
+    TrainingPlanSettings
+  >
 ) =>
   AsyncStorage.setItem(
     KEYS.SETTINGS,
     JSON.stringify(value)
   );
 
-export const saveTrainingEntries = (
-  value: Record<string, TrainingLogEntry[]>
+export const saveDailyTrainingTracking = (
+  value: DailyTrainingTracking
 ) =>
   AsyncStorage.setItem(
     KEYS.ENTRIES,

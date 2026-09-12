@@ -1,28 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import type { NutritionTargetPeriod } from '@/types/nutritionTargets';
-import type { VerdictValue } from '@/types/verdict';
+import { NutritionXpClaim, ViewedTip, XpBreakdown } from './xpTyptes';
 
-export interface ViewedTip {
-  tipId: string;
-  viewedAt: string;
-  askedQuestions: string[];
-  xpEarned: number;
-  verdict?: VerdictValue;
-}
 
-export type XpBreakdown = {
-  education: number;
-  nutrition: number;
-};
-
-export type NutritionXpClaim = {
-  xp: number;
-  awardedAt: string;
-  period: NutritionTargetPeriod;
-  periodKey: string;
-  tipId: string;
-};
 
 const KEYS = {
   MY_XP: 'myXP',

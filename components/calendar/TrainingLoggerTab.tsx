@@ -22,136 +22,220 @@ type TrainingLoggerTabProps = {
 
 export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDate }) => {
   const { t } = useTranslation();
+
   const { colors } = useTheme();
-  const { trainingEntries, addTrainingEntry, setTrainingEntries } = useStorage();
+
+  const { dailyTrainingTracking, setDailyTrainingTracking } = useStorage();
 
   const [selectedTrainingType, setSelectedTrainingType] = useState<TrainingActivityType>(DEFAULT_TRAINING_ACTIVITY);
+
   const [durationMinutes, setDurationMinutes] = useState('');
+
   const [distanceKm, setDistanceKm] = useState('');
-  const [intensity, setIntensity] = useState('medium' as TrainingIntensity);
+
+  const [intensity, setIntensity] = useState<TrainingIntensity>('medium');
+
   const [trainingNotes, setTrainingNotes] = useState('');
+
   const [trainingFormError, setTrainingFormError] = useState<string | null>(null);
+
   const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
+
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const trainingOptions = useMemo(
-    () => TRAINING_ACTIVITY_OPTIONS.map(option => ({ ...option, label: t(option.labelKey) })),
+    () =>
+      TRAINING_ACTIVITY_OPTIONS.map(option => ({
+        ...option,
+        label: t(option.labelKey),
+      })),
     [t]
   );
 
-  const intensityOptions: Array<{ key: TrainingIntensity; label: string }> = [
-    { key: 'low', label: t('training:trainingIntensityLow') },
-    { key: 'medium', label: t('training:trainingIntensityMedium') },
-    { key: 'high', label: t('training:trainingIntensityHigh') },
-  ];
+  const intensityOptions = useMemo<
+    Array<{
+      key: TrainingIntensity;
+      label: string;
+    }>
+  >(
+    () => [
+      {
+        key: 'low',
+        label: t('training:trainingIntensityLow'),
+      },
+      {
+        key: 'medium',
+        label: t('training:trainingIntensityMedium'),
+      },
+      {
+        key: 'high',
+        label: t('training:trainingIntensityHigh'),
+      },
+    ],
+    [t]
+  );
 
-  const selectedChipStyle = {
-    borderColor: colors.primary,
-    backgroundColor: colors.primaryVeryWeak,
-  };
+  const selectedChipStyle = useMemo(
+    () => ({
+      borderColor: colors.primary,
+      backgroundColor: colors.primaryVeryWeak,
+    }),
+    [colors.primary, colors.primaryVeryWeak]
+  );
 
-  const defaultChipStyle = {
-    borderColor: colors.border,
-    backgroundColor: 'transparent',
-  };
+  const defaultChipStyle = useMemo(
+    () => ({
+      borderColor: colors.border,
+      backgroundColor: 'transparent',
+    }),
+    [colors.border]
+  );
 
-  const dayTrainingEntries = useMemo(() => trainingEntries[selectedDate] ?? [], [selectedDate, trainingEntries]);
+  const dayTrainingEntries = useMemo(() => dailyTrainingTracking[selectedDate] ?? [], [dailyTrainingTracking, selectedDate]);
 
   const resetForm = useCallback(() => {
     setSelectedTrainingType(DEFAULT_TRAINING_ACTIVITY);
+
     setDurationMinutes('');
     setDistanceKm('');
     setTrainingNotes('');
+
     setIntensity('medium');
+
     setTrainingFormError(null);
+
     setEditingEntryId(null);
+
     setIsFormOpen(false);
   }, []);
 
   const handleSaveTraining = useCallback(() => {
     const parsedDuration = Number.parseInt(durationMinutes, 10);
+
     if (!Number.isFinite(parsedDuration) || parsedDuration <= 0) {
       setTrainingFormError(t('training:trainingDurationError'));
+
       return;
     }
 
     let parsedDistance: number | undefined;
+
     const normalizedDistance = distanceKm.replace(',', '.').trim();
+
     if (normalizedDistance) {
       const distanceValue = Number.parseFloat(normalizedDistance);
-        if (!Number.isFinite(distanceValue) || distanceValue < 0) {
+
+      if (!Number.isFinite(distanceValue) || distanceValue < 0) {
         setTrainingFormError(t('training:trainingDistanceError'));
+
         return;
       }
+
       parsedDistance = distanceValue;
     }
 
-    if (editingEntryId) {
-      setTrainingEntries(prev => ({
-        ...prev,
-        [selectedDate]: (prev[selectedDate] ?? []).map(entry => {
-          if (entry.id !== editingEntryId) {
-            return entry;
-          }
+    setDailyTrainingTracking(prev => {
+      const existingEntries = prev[selectedDate] ?? [];
 
-          return {
-            ...entry,
-            activityType: selectedTrainingType,
-            durationMinutes: parsedDuration,
-            distanceKm: parsedDistance,
-            intensity,
-            notes: trainingNotes.trim() || undefined,
-          };
-        }),
-      }));
-    } else {
-      addTrainingEntry({
+      /*
+       * Redigera befintlig.
+       */
+      if (editingEntryId) {
+        return {
+          ...prev,
+
+          [selectedDate]: existingEntries.map(entry => {
+            if (entry.id !== editingEntryId) {
+              return entry;
+            }
+
+            return {
+              ...entry,
+              activityType: selectedTrainingType,
+              durationMinutes: parsedDuration,
+              distanceKm: parsedDistance,
+              intensity,
+              notes: trainingNotes.trim() || undefined,
+            };
+          }),
+        };
+      }
+
+      /*
+       * Ny registrering.
+       */
+      const newEntry = {
+        id: crypto.randomUUID(),
         date: selectedDate,
         activityType: selectedTrainingType,
         durationMinutes: parsedDuration,
         distanceKm: parsedDistance,
         intensity,
         notes: trainingNotes.trim() || undefined,
-      });
-    }
+        createdAt: new Date().toISOString(),
+      };
 
-    resetForm();
-  }, [addTrainingEntry, distanceKm, durationMinutes, editingEntryId, intensity, resetForm, selectedDate, selectedTrainingType, setTrainingEntries, t, trainingNotes]);
+      return {
+        ...prev,
 
-  const handleEditTraining = useCallback((entryId: string) => {
-    const entry = dayTrainingEntries.find(item => item.id === entryId);
-    if (!entry) {
-      return;
-    }
-
-    setSelectedTrainingType(entry.activityType);
-    setDurationMinutes(String(entry.durationMinutes));
-    setDistanceKm(typeof entry.distanceKm === 'number' ? String(entry.distanceKm) : '');
-    setIntensity(entry.intensity);
-    setTrainingNotes(entry.notes ?? '');
-    setTrainingFormError(null);
-    setEditingEntryId(entry.id);
-    setIsFormOpen(true);
-  }, [dayTrainingEntries]);
-
-  const handleDeleteTraining = useCallback((entryId: string) => {
-    setTrainingEntries(prev => {
-      const nextEntriesForDate = (prev[selectedDate] ?? []).filter(entry => entry.id !== entryId);
-      const next = { ...prev };
-
-      if (nextEntriesForDate.length === 0) {
-        delete next[selectedDate];
-      } else {
-        next[selectedDate] = nextEntriesForDate;
-      }
-
-      return next;
+        [selectedDate]: [...existingEntries, newEntry],
+      };
     });
 
-    if (editingEntryId === entryId) {
-      resetForm();
-    }
-  }, [editingEntryId, resetForm, selectedDate, setTrainingEntries]);
+    resetForm();
+  }, [distanceKm, durationMinutes, editingEntryId, intensity, resetForm, selectedDate, selectedTrainingType, setDailyTrainingTracking, t, trainingNotes]);
+
+  const handleEditTraining = useCallback(
+    (entryId: string) => {
+      const entry = dayTrainingEntries.find(item => item.id === entryId);
+
+      if (!entry) {
+        return;
+      }
+
+      setSelectedTrainingType(entry.activityType);
+
+      setDurationMinutes(String(entry.durationMinutes));
+
+      setDistanceKm(typeof entry.distanceKm === 'number' ? String(entry.distanceKm) : '');
+
+      setIntensity(entry.intensity);
+
+      setTrainingNotes(entry.notes ?? '');
+
+      setTrainingFormError(null);
+
+      setEditingEntryId(entry.id);
+
+      setIsFormOpen(true);
+    },
+    [dayTrainingEntries]
+  );
+
+  const handleDeleteTraining = useCallback(
+    (entryId: string) => {
+      setDailyTrainingTracking(prev => {
+        const remaining = (prev[selectedDate] ?? []).filter(entry => entry.id !== entryId);
+
+        const next = {
+          ...prev,
+        };
+
+        if (remaining.length === 0) {
+          delete next[selectedDate];
+        } else {
+          next[selectedDate] = remaining;
+        }
+
+        return next;
+      });
+
+      if (editingEntryId === entryId) {
+        resetForm();
+      }
+    },
+    [editingEntryId, resetForm, selectedDate, setDailyTrainingTracking]
+  );
 
   return (
     <View style={styles.trainingContainer}>
@@ -160,6 +244,7 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
           <ThemedText type="label" style={styles.sectionLabel}>
             {t('training:trainingTypeLabel')}
           </ThemedText>
+
           <View style={styles.activityRow}>
             {trainingOptions.map(option => (
               <TouchableOpacity
@@ -169,18 +254,10 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
                 accessibilityRole="button"
                 accessibilityLabel={option.label}
               >
-                <View
-                  style={[
-                    styles.activityCircle,
-                    selectedTrainingType === option.key ? selectedChipStyle : defaultChipStyle,
-                  ]}
-                >
-                  <IconSymbol
-                    name={option.icon}
-                    size={24}
-                    color={selectedTrainingType === option.key ? colors.primary : colors.text}
-                  />
+                <View style={[styles.activityCircle, selectedTrainingType === option.key ? selectedChipStyle : defaultChipStyle]}>
+                  <IconSymbol name={option.icon} size={24} color={selectedTrainingType === option.key ? colors.primary : colors.text} />
                 </View>
+
                 <ThemedText type="explainer" style={styles.activityLabel}>
                   {option.label}
                 </ThemedText>
@@ -219,14 +296,12 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
           <ThemedText type="label" style={styles.sectionLabel}>
             {t('training:trainingIntensityLabel')}
           </ThemedText>
+
           <View style={styles.chipRow}>
             {intensityOptions.map(option => (
               <TouchableOpacity
                 key={option.key}
-                style={[
-                  styles.chip,
-                  intensity === option.key ? selectedChipStyle : defaultChipStyle,
-                ]}
+                style={[styles.chip, intensity === option.key ? selectedChipStyle : defaultChipStyle]}
                 onPress={() => setIntensity(option.key)}
               >
                 <ThemedText type="defaultSemiBold">{option.label}</ThemedText>
@@ -244,39 +319,37 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
             isOptional
           />
 
-          {trainingFormError ? (
-            <ThemedText style={[styles.errorText, { color: colors.notification }]}> 
+          {trainingFormError && (
+            <ThemedText
+              style={[
+                styles.errorText,
+                {
+                  color: colors.notification,
+                },
+              ]}
+            >
               {trainingFormError}
             </ThemedText>
-          ) : null}
+          )}
 
-          <AppButton
-            title={t('training:trainingSaveButton')}
-            onPress={handleSaveTraining}
-            style={styles.saveButton}
-          />
+          <AppButton title={t('training:trainingSaveButton')} onPress={handleSaveTraining} style={styles.saveButton} />
 
           <CancelButton onPress={resetForm} />
         </View>
       ) : (
-        <AppButton
-          title={t('training:trainingOpenFormButton')}
-          onPress={() => setIsFormOpen(true)}
-          icon="trainingRunning"
-          style={styles.openFormButton}
-        />
+        <AppButton title={t('training:trainingOpenFormButton')} onPress={() => setIsFormOpen(true)} icon="trainingRunning" style={styles.openFormButton} />
       )}
 
       {dayTrainingEntries.length === 0 ? (
-        <ThemedText style={{ color: colors.textTertiary }}>
+        <ThemedText
+          style={{
+            color: colors.textTertiary,
+          }}
+        >
           {t('training:trainingEmpty')}
         </ThemedText>
       ) : (
-        <LoggedTrainingSection
-          entries={dayTrainingEntries}
-          onEdit={handleEditTraining}
-          onDelete={handleDeleteTraining}
-        />
+        <LoggedTrainingSection entries={dayTrainingEntries} onEdit={handleEditTraining} onDelete={handleDeleteTraining} />
       )}
 
       <TrainingWeeklyTargetsSection selectedDate={selectedDate} />
@@ -288,28 +361,34 @@ const styles = StyleSheet.create({
   trainingContainer: {
     gap: 10,
   },
+
   formContent: {
     gap: 10,
   },
+
   sectionLabel: {
     marginTop: 4,
   },
+
   chipRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
   },
+
   activityRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     columnGap: 14,
     rowGap: 12,
   },
+
   activityOption: {
     width: 76,
     alignItems: 'center',
     gap: 6,
   },
+
   activityCircle: {
     width: 56,
     height: 56,
@@ -318,30 +397,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   activityLabel: {
     textAlign: 'center',
   },
+
   chip: {
     borderWidth: 1,
     borderRadius: 18,
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
+
   input: {
     marginTop: 8,
   },
+
   notesInput: {
     minHeight: 70,
     textAlignVertical: 'top',
   },
+
   errorText: {
     marginTop: 2,
   },
+
   saveButton: {
     marginTop: 6,
     paddingVertical: 12,
     alignItems: 'center',
   },
+
   openFormButton: {
     marginTop: 6,
   },

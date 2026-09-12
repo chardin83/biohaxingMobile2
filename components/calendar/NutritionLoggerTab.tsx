@@ -4,29 +4,16 @@ import * as Crypto from 'expo-crypto';
 import * as Haptics from 'expo-haptics';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Animated,
-  KeyboardAvoidingView,
-  LayoutAnimation,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  UIManager,
-  View,
-} from 'react-native';
+import { Animated, KeyboardAvoidingView, LayoutAnimation, Platform, Pressable, ScrollView, StyleSheet, UIManager, View } from 'react-native';
 import { FullWindowOverlay } from 'react-native-screens';
 
-import { WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
+import type { DailyNutritionTracking, TipProgressItem, WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
-import {
-  XP_FOR_NUTRITION_TIP_DAILY_COMPLETION,
-  XP_FOR_NUTRITION_TIP_WEEKLY_COMPLETION,
-} from '@/constants/XP';
+import { XP_FOR_NUTRITION_TIP_DAILY_COMPLETION, XP_FOR_NUTRITION_TIP_WEEKLY_COMPLETION } from '@/constants/XP';
+import { useNutritionPlanProgress } from '@/hooks/useNutritionPlanProgress';
 import { tips } from '@/locales/tips';
 import { NutritionAnalyze } from '@/services/gptServices';
-import { buildNutritionPlanTipProgress  } from '@/services/targetProgress/nutritionTargets';
 import { MicrobiomeSupportEntry } from '@/types/microbiome';
 import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
 import {
@@ -38,7 +25,6 @@ import {
   parseNumberValue,
   roundToOneDecimal,
   type WeeklyTrackingSignals,
-  type WeeklyTrackingSignalValue,
 } from '@/utils/analyzeNutrition';
 
 import { MINERAL_TYPE_KEYS } from '../../constants/minerals';
@@ -47,16 +33,9 @@ import CopyMealBottomSheet from '../CopyMealBottomSheet';
 import ImagePickerButton from '../ImagePickerButton';
 import ImageThumbnailWithDelete from '../ImageThumbnailWithDelete';
 import { LoggedMealsSection } from '../LoggedMealsSection';
-import {
-  handleGeneralError,
-  handleNutritionError,
-  handleSocketError,
-} from '../nutritionAnalysisHelpers';
+import { handleGeneralError, handleNutritionError, handleSocketError } from '../nutritionAnalysisHelpers';
 import NutritionBreakdown from '../NutritionBreakdown';
-import NutritionPlanTargetsSection, {
-  getTipProgressKey,
-  TipProgressItem,
-} from '../NutritionPlanTargetsSection';
+import NutritionPlanTargetsSection, { getTipProgressKey } from '../NutritionPlanTargetsSection';
 import { ThemedModal } from '../ThemedModal';
 import { ThemedText } from '../ThemedText';
 import { Card } from '../ui/Card';
@@ -98,9 +77,7 @@ type PendingAnalysisReview = {
   statusMessage: string | null;
 };
 
-const BottomSheetOverlayContainer = ({ children }: { children?: React.ReactNode }) => (
-  <FullWindowOverlay>{children}</FullWindowOverlay>
-);
+const BottomSheetOverlayContainer = ({ children }: { children?: React.ReactNode }) => <FullWindowOverlay>{children}</FullWindowOverlay>;
 
 const toDateKeyLocal = (date: Date): string => {
   const year = date.getFullYear();
@@ -126,11 +103,10 @@ const getStartOfWeekMonday = (date: Date): Date => {
   return result;
 };
 
-const getWeekBoundsFromDateKey = (
-  dateKey: string
-): { weekStartISO: string; weekEndISO: string } => {
+const getWeekBoundsFromDateKey = (dateKey: string): { weekStartISO: string; weekEndISO: string } => {
   const date = parseDateKeyLocal(dateKey);
   const weekStartDate = getStartOfWeekMonday(date);
+
   const weekEndDate = new Date(weekStartDate);
   weekEndDate.setDate(weekStartDate.getDate() + 6);
 
@@ -167,29 +143,24 @@ const buildWeekTrackingFromSummaries = (
 
 const sumTypedTotals = (
   meals: Array<any>,
-  key:
-    | 'fiberByType'
-    | 'fiberSubtypeTotals'
-    | 'polyphenolByType'
-    | 'mineralsByType'
-    | 'vitaminsByType'
-    | 'aminoAcidsByType'
+  key: 'fiberByType' | 'fiberSubtypeTotals' | 'polyphenolByType' | 'mineralsByType' | 'vitaminsByType' | 'aminoAcidsByType'
 ) =>
-  meals.reduce((acc, meal) => {
-    const rawValue = meal?.[key];
-    const source = typeof rawValue === 'object' && rawValue !== null ? rawValue : {};
-    for (const [tag, value] of Object.entries(source)) {
-      const parsed = parseNumberValue(value);
-      if (parsed === null) continue;
-      acc[tag] = (acc[tag] ?? 0) + parsed;
-    }
-    return acc;
-  }, {} as Record<string, number>);
+  meals.reduce(
+    (acc, meal) => {
+      const rawValue = meal?.[key];
+      const source = typeof rawValue === 'object' && rawValue !== null ? rawValue : {};
+      for (const [tag, value] of Object.entries(source)) {
+        const parsed = parseNumberValue(value);
+        if (parsed === null) continue;
+        acc[tag] = (acc[tag] ?? 0) + parsed;
+      }
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
 const sumMicrobiomeSupport = (meals: Array<any>): MicrobiomeSupportEntry[] => {
-  const allEntries = meals.flatMap(meal =>
-    Array.isArray(meal?.microbiomeSupport) ? meal.microbiomeSupport : []
-  );
+  const allEntries = meals.flatMap(meal => (Array.isArray(meal?.microbiomeSupport) ? meal.microbiomeSupport : []));
 
   const byMicrobe = new Map<string, MicrobiomeSupportEntry>();
 
@@ -216,10 +187,7 @@ const sumMicrobiomeSupport = (meals: Array<any>): MicrobiomeSupportEntry[] => {
       return 0;
     };
 
-    const nextLevel =
-      supportLevelScore(entry.supportLevel) > supportLevelScore(existing.supportLevel)
-        ? entry.supportLevel
-        : existing.supportLevel;
+    const nextLevel = supportLevelScore(entry.supportLevel) > supportLevelScore(existing.supportLevel) ? entry.supportLevel : existing.supportLevel;
 
     byMicrobe.set(key, {
       microbe: existing.microbe,
@@ -233,13 +201,11 @@ const sumMicrobiomeSupport = (meals: Array<any>): MicrobiomeSupportEntry[] => {
   return Array.from(byMicrobe.values());
 };
 
-const mergeMineralConfidenceFromMeals = (
-  meals: Array<any>
-): Record<string, ConfidenceLevel> => {
+const mergeMineralConfidenceFromMeals = (meals: Array<any>): Record<string, ConfidenceLevel> => {
   const totals: Record<string, ConfidenceLevel> = MINERAL_TYPE_KEYS.reduce(
-  (acc, key) => ({ ...acc, [key]: 'unknown' as ConfidenceLevel }),
-  {} as Record<string, ConfidenceLevel>
-);
+    (acc, key) => ({ ...acc, [key]: 'unknown' as ConfidenceLevel }),
+    {} as Record<string, ConfidenceLevel>
+  );
 
   const confidenceRank: Record<ConfidenceLevel, number> = {
     unknown: 0,
@@ -248,10 +214,7 @@ const mergeMineralConfidenceFromMeals = (
     high: 3,
   };
 
-  const mergeConfidenceLevel = (
-    current: ConfidenceLevel,
-    next: ConfidenceLevel
-  ): ConfidenceLevel => {
+  const mergeConfidenceLevel = (current: ConfidenceLevel, next: ConfidenceLevel): ConfidenceLevel => {
     return confidenceRank[next] > confidenceRank[current] ? next : current;
   };
 
@@ -271,14 +234,11 @@ const mergeMineralConfidenceFromMeals = (
 };
 
 const getNormalizedMealName = (meal: any, fallbackName: string): string =>
-  typeof meal?.mealName === 'string' && meal.mealName.trim().length > 0
-    ? meal.mealName
-    : fallbackName;
+  typeof meal?.mealName === 'string' && meal.mealName.trim().length > 0 ? meal.mealName : fallbackName;
 
 const coerceNumber = (val: unknown): number => (typeof val === 'number' ? val : 0);
 
-const coerceObject = <T extends object>(val: unknown): T =>
-  typeof val === 'object' && val !== null ? (val as T) : ({} as T);
+const coerceObject = <T extends object>(val: unknown): T => (typeof val === 'object' && val !== null ? (val as T) : ({} as T));
 
 const coerceArray = <T,>(val: unknown): T[] => (Array.isArray(val) ? (val as T[]) : []);
 
@@ -289,7 +249,7 @@ const computeTargetY = (
   tipRowPeriodByKey: Record<string, NutritionTargetPeriod>,
   tipRowLocalYByKey: Record<string, number>,
   sectionY: number,
-  periodSectionY: Record<NutritionTargetPeriod, number>,
+  periodSectionY: Record<NutritionTargetPeriod, number>
 ): number | undefined => {
   const period = tipRowPeriodByKey[tipKey];
   const rowLocalY = tipRowLocalYByKey[tipKey];
@@ -334,10 +294,7 @@ const buildDailySummary = (meals: Array<any>, selectedDate: string) => {
   };
 };
 
-const parseInterpretationItems = (
-  review: PendingAnalysisReview,
-  fallback: string
-): string[] => {
+const parseInterpretationItems = (review: PendingAnalysisReview, fallback: string): string[] => {
   const aiText = review.aiDescription?.trim();
   if (aiText) {
     const lines = aiText
@@ -447,29 +404,19 @@ const handleTipCompletionTransitions = ({
   previousFulfilledByKeyRef.current = nextFulfilledByKey;
 };
 
-const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
-  selectedDate,
-  onTipCompleted,
-}) => {
+const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, onTipCompleted }) => {
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
 
-  const {
-    dailyNutritionSummaries,
-    setDailyNutritionSummaries,
-    plans,
-    takenDates,
-    weeklyTracking,
-    setWeeklyTracking,
-    addToWeeklyTracking,
-    claimNutritionTipCompletionXP,
-  } = useStorage();
+  const { plans, dailyNutritionTracking, setDailyNutritionTracking, setWeeklyNutritionTracking, claimNutritionTipCompletionXP } = useStorage();
+
+  const nutritionPlanTipProgress = useNutritionPlanProgress(selectedDate);
+  const { weekStartISO: weekStartKey } = getWeekBoundsFromDateKey(selectedDate);
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [isAnalysisReviewModalVisible, setIsAnalysisReviewModalVisible] = useState(false);
-  const [pendingAnalysisReview, setPendingAnalysisReview] =
-    useState<PendingAnalysisReview | null>(null);
+  const [pendingAnalysisReview, setPendingAnalysisReview] = useState<PendingAnalysisReview | null>(null);
   const [lastLoggedMeal, setLastLoggedMeal] = useState<ParsedMacroAnalysis | null>(null);
   const [pendingMealImage, setPendingMealImage] = useState<SelectedImageFile | null>(null);
   const [pendingMealDescription, setPendingMealDescription] = useState('');
@@ -501,10 +448,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
   const COMPLETION_ANIMATION_DELAY_AFTER_SCROLL_MS = 180;
 
   const interpretationItems = useMemo(
-    () =>
-      pendingAnalysisReview
-        ? parseInterpretationItems(pendingAnalysisReview, t('nutritionLogger.analysisNoStructuredData'))
-        : null,
+    () => (pendingAnalysisReview ? parseInterpretationItems(pendingAnalysisReview, t('nutritionLogger.analysisNoStructuredData')) : null),
     [pendingAnalysisReview, t]
   );
 
@@ -513,15 +457,9 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
     [isAnalyzing, colors.text]
   );
 
-  const reAnalyzePrefixStyle = useMemo(
-    () => [styles.reAnalyzePrefix, { color: colors.text }],
-    [colors.text]
-  );
+  const reAnalyzePrefixStyle = useMemo(() => [styles.reAnalyzePrefix, { color: colors.text }], [colors.text]);
 
-  const reAnalyzeHighlightStyle = useMemo(
-    () => [styles.reAnalyzeHighlight, { color: colors.showAllAccent }],
-    [colors.showAllAccent]
-  );
+  const reAnalyzeHighlightStyle = useMemo(() => [styles.reAnalyzeHighlight, { color: colors.showAllAccent }], [colors.showAllAccent]);
 
   const getCompletionAnimValue = useCallback((tipKey: string): Animated.Value => {
     if (!completionAnimByKeyRef.current[tipKey]) {
@@ -562,33 +500,23 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
   );
 
   const activeTrackingTargetsForAI = useMemo(() => {
-    const byKey = new Map<
-      string,
-      { key: string; unit: 'items' | 'count'; amount?: number; aiInstruction?: string }
-    >();
+    const byKey = new Map<string, { key: string; unit: 'items' | 'count'; amount?: number; aiInstruction?: string }>();
 
     (plans?.nutrition ?? []).forEach(planTip => {
       const tip = tips.find(candidate => candidate.id === planTip.tipId);
-      (tip?.trackingTargets ?? []).forEach(
-        (target: {
-          trackingKey: string;
-          unit: 'items' | 'count';
-          amount?: number;
-          aiInstruction?: string;
-        }) => {
-          const key = target.trackingKey?.trim();
-          if (!key) return;
+      (tip?.trackingTargets ?? []).forEach((target: { trackingKey: string; unit: 'items' | 'count'; amount?: number; aiInstruction?: string }) => {
+        const key = target.trackingKey?.trim();
+        if (!key) return;
 
-          if (!byKey.has(key)) {
-            byKey.set(key, {
-              key,
-              unit: target.unit,
-              amount: target.amount,
-              aiInstruction: target.aiInstruction,
-            });
-          }
+        if (!byKey.has(key)) {
+          byKey.set(key, {
+            key,
+            unit: target.unit,
+            amount: target.amount,
+            aiInstruction: target.aiInstruction,
+          });
         }
-      );
+      });
     });
 
     return Array.from(byKey.values());
@@ -662,23 +590,23 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
     }
   }, []);
 
-  const syncWeekTrackingForDate = (nextSummaries: Record<string, any>, dateKey: string) => {
+  const syncWeekTrackingForDate = (nextTracking: DailyNutritionTracking, dateKey: string) => {
     const { weekStartISO, weekEndISO } = getWeekBoundsFromDateKey(dateKey);
-    const recalculatedWeekTracking = buildWeekTrackingFromSummaries(
-      nextSummaries,
-      weekStartISO,
-      weekEndISO,
-      activeTrackingKeys
-    );
 
-    setWeeklyTracking(previousWeeklyTracking => {
-      const updatedWeeklyTracking = { ...previousWeeklyTracking };
+    const recalculatedWeekTracking = buildWeekTrackingFromSummaries(nextTracking, weekStartISO, weekEndISO, activeTrackingKeys);
+
+    setWeeklyNutritionTracking(previous => {
+      const next = {
+        ...previous,
+      };
+
       if (Object.keys(recalculatedWeekTracking).length > 0) {
-        updatedWeeklyTracking[weekStartISO] = recalculatedWeekTracking;
+        next[weekStartISO] = recalculatedWeekTracking;
       } else {
-        delete updatedWeeklyTracking[weekStartISO];
+        delete next[weekStartISO];
       }
-      return updatedWeeklyTracking;
+
+      return next;
     });
   };
 
@@ -688,20 +616,29 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
       setLastLoggedMeal(null);
     }
 
-    setDailyNutritionSummaries(prev => {
+    setDailyNutritionTracking(prev => {
       const existingSummary = prev[selectedDate];
-      if (!existingSummary) return prev;
+
+      if (!existingSummary) {
+        return prev;
+      }
 
       const updatedMeals = (existingSummary.meals ?? []).filter(meal => meal?.id !== mealId);
-      const next = { ...prev };
+
+      const next = {
+        ...prev,
+      };
 
       if (!updatedMeals.length) {
         delete next[selectedDate];
+
         syncWeekTrackingForDate(next, selectedDate);
+
         return next;
       }
 
       next[selectedDate] = buildDailySummary(updatedMeals, selectedDate);
+
       syncWeekTrackingForDate(next, selectedDate);
 
       return next;
@@ -739,18 +676,32 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
       return;
     }
 
-    setDailyNutritionSummaries(prev => {
+    setDailyNutritionTracking(prev => {
       const existingSummary = prev[selectedDate];
-      if (!existingSummary) return prev;
+
+      if (!existingSummary) {
+        return prev;
+      }
 
       const nextMealName = editingMealName.trim() || t('nutritionLogger.unnamedMeal');
+
       const updatedMeals = (existingSummary.meals ?? []).map(meal =>
-        meal?.id === editingMealId ? { ...meal, mealName: nextMealName } : meal
+        meal?.id === editingMealId
+          ? {
+              ...meal,
+              mealName: nextMealName,
+            }
+          : meal
       );
 
       if (editingMealId === selectedLoggedMealId) {
         setLastLoggedMeal(prevMeal =>
-          prevMeal ? { ...prevMeal, mealName: nextMealName } : prevMeal
+          prevMeal
+            ? {
+                ...prevMeal,
+                mealName: nextMealName,
+              }
+            : prevMeal
         );
       }
 
@@ -770,10 +721,12 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
     }
 
     const analysis = pendingAnalysisReview.analysis;
+
     const mealWeeklyTrackingSignals = pendingAnalysisReview.weeklyTrackingSignals;
 
-    setDailyNutritionSummaries(prev => {
-      const existing = prev[selectedDate]?.meals ?? [];
+    setDailyNutritionTracking(prev => {
+      const existingMeals = prev[selectedDate]?.meals ?? [];
+
       const newMeal = {
         id: `${selectedDate}-${Crypto.randomUUID()}`,
         date: selectedDate,
@@ -781,38 +734,22 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
         weeklyTrackingSignals: mealWeeklyTrackingSignals,
       };
 
+      const next = {
+        ...prev,
+        [selectedDate]: buildDailySummary([...existingMeals, newMeal], selectedDate),
+      };
+
       setSelectedLoggedMealId(newMeal.id);
 
-      const mealDateLocal = parseDateKeyLocal(selectedDate);
-      const weekStartDate = getStartOfWeekMonday(mealDateLocal);
-      const weekStartISO = toDateKeyLocal(weekStartDate);
+      syncWeekTrackingForDate(next, selectedDate);
 
-      const handleWeeklyTrackingSignal = (key: string, value: WeeklyTrackingSignalValue) => {
-        if (Array.isArray(value)) {
-          for (const item of value) {
-            addToWeeklyTracking(weekStartISO, key, item);
-          }
-        } else {
-          const existingCount = weeklyTracking[weekStartISO]?.[key];
-          const nextCount = (typeof existingCount === 'number' ? existingCount : 0) + value;
-          addToWeeklyTracking(weekStartISO, key, nextCount);
-        }
-      };
-
-      Object.entries(mealWeeklyTrackingSignals)
-        .filter(([key]) => activeTrackingKeys.has(key))
-        .forEach(([key, value]) => {
-          handleWeeklyTrackingSignal(key, value);
-        });
-
-      return {
-        ...prev,
-        [selectedDate]: buildDailySummary([...existing, newMeal], selectedDate),
-      };
+      return next;
     });
 
     setLastLoggedMeal(analysis);
+
     setAnalysisResult('✅ Måltid loggad och analyserad!');
+
     triggerLightHaptic();
     closeAnalysisReviewModal();
   };
@@ -825,7 +762,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
       mealName: getNormalizedMealName(mealToCopy, t('nutritionLogger.unnamedMeal')),
     };
 
-    setDailyNutritionSummaries(prev => {
+    setDailyNutritionTracking(prev => {
       const existingMeals = prev[selectedDate]?.meals ?? [];
 
       const next = {
@@ -839,9 +776,10 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
     });
 
     setSelectedLoggedMealId(copiedMeal.id);
-    setLastLoggedMeal(toParsedMacroAnalysis(copiedMeal));
-    triggerLightHaptic();
 
+    setLastLoggedMeal(toParsedMacroAnalysis(copiedMeal));
+
+    triggerLightHaptic();
     handleCloseCopyMealModal();
   };
 
@@ -874,11 +812,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
     setLastLoggedMeal(toParsedMacroAnalysis(meal));
   };
 
-  const runNutritionImageAnalysis = async (
-    mealFile: SelectedImageFile,
-    mealDescription?: string,
-    ingredientFile?: SelectedImageFile | null
-  ) => {
+  const runNutritionImageAnalysis = async (mealFile: SelectedImageFile, mealDescription?: string, ingredientFile?: SelectedImageFile | null) => {
     const todayKey = toDateKeyLocal(new Date());
     if (selectedDate > todayKey) {
       setAnalysisResult(t('nutritionLogger.futureDateLocked'));
@@ -998,20 +932,14 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
     const ingredientFile = ingredientListImage;
     lastAnalyzedFilesRef.current = { mealFile, mealDescription, ingredientFile };
     resetPackagingFlow();
-    runNutritionImageAnalysis(mealFile, mealDescription || undefined, ingredientFile).catch(
-      console.error
-    );
+    runNutritionImageAnalysis(mealFile, mealDescription || undefined, ingredientFile).catch(console.error);
   };
 
   const handleReAnalyze = useCallback(() => {
     const last = lastAnalyzedFilesRef.current;
     if (!last) return;
     closeAnalysisReviewModal();
-    runNutritionImageAnalysis(
-      last.mealFile,
-      last.mealDescription || undefined,
-      last.ingredientFile
-    ).catch(console.error);
+    runNutritionImageAnalysis(last.mealFile, last.mealDescription || undefined, last.ingredientFile).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [closeAnalysisReviewModal]);
 
@@ -1023,13 +951,13 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
     setPendingMealImage(null);
   };
 
-  const summary = dailyNutritionSummaries[selectedDate];
+  const summary = dailyNutritionTracking[selectedDate];
   const todayKey = toDateKeyLocal(new Date());
   const isFutureSelectedDate = selectedDate > todayKey;
 
   const recentMeals = useMemo<RecentMealOption[]>(
     () =>
-      Object.entries(dailyNutritionSummaries)
+      Object.entries(dailyNutritionTracking)
         .flatMap(([dateKey, daySummary]) => {
           const meals = Array.isArray(daySummary?.meals) ? daySummary.meals : [];
           return meals.map((meal, index) => ({
@@ -1047,153 +975,32 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
           return right.sortOrder - left.sortOrder;
         })
         .filter((meal, index, allMeals) => {
-          const mealCalories = roundToOneDecimal(
-            typeof meal.meal?.calories === 'number' ? meal.meal.calories : 0
-          );
-          const mealFiber = roundToOneDecimal(
-            typeof meal.meal?.fiber === 'number' ? meal.meal.fiber : 0
-          );
+          const mealCalories = roundToOneDecimal(typeof meal.meal?.calories === 'number' ? meal.meal.calories : 0);
+          const mealFiber = roundToOneDecimal(typeof meal.meal?.fiber === 'number' ? meal.meal.fiber : 0);
           const uniquenessKey = `${meal.mealName.toLowerCase()}|${mealCalories}|${mealFiber}`;
           return (
             index ===
             allMeals.findIndex(candidate => {
-              const candidateCalories = roundToOneDecimal(
-                typeof candidate.meal?.calories === 'number' ? candidate.meal.calories : 0
-              );
-              const candidateFiber = roundToOneDecimal(
-                typeof candidate.meal?.fiber === 'number' ? candidate.meal.fiber : 0
-              );
-              return (
-                `${candidate.mealName.toLowerCase()}|${candidateCalories}|${candidateFiber}` ===
-                uniquenessKey
-              );
+              const candidateCalories = roundToOneDecimal(typeof candidate.meal?.calories === 'number' ? candidate.meal.calories : 0);
+              const candidateFiber = roundToOneDecimal(typeof candidate.meal?.fiber === 'number' ? candidate.meal.fiber : 0);
+              return `${candidate.mealName.toLowerCase()}|${candidateCalories}|${candidateFiber}` === uniquenessKey;
             })
           );
         })
         .slice(0, 20),
-    [dailyNutritionSummaries, t]
+    [dailyNutritionTracking, t]
   );
 
   const copyMealSheetSnapPoints = useMemo(() => ['45%', '75%'], []);
 
-  const dailyFiberByType = useMemo(
-    () => (summary ? sumTypedTotals(summary.meals, 'fiberByType') : {}),
-    [summary]
-  );
-  const dailyFiberSubtypeTotals = useMemo(
-    () => (summary ? sumTypedTotals(summary.meals, 'fiberSubtypeTotals') : {}),
-    [summary]
-  );
-  const dailyPolyphenolByType = useMemo(
-    () => (summary ? sumTypedTotals(summary.meals, 'polyphenolByType') : {}),
-    [summary]
-  );
-  const dailyMineralsByType = useMemo(
-    () => (summary ? sumTypedTotals(summary.meals, 'mineralsByType') : {}),
-    [summary]
-  );
-  const dailyMineralConfidenceByType = useMemo(
-    () => (summary ? mergeMineralConfidenceFromMeals(summary.meals) : {}),
-    [summary]
-  );
-  const dailyVitaminsByType = useMemo(
-    () => (summary ? sumTypedTotals(summary.meals, 'vitaminsByType') : {}),
-    [summary]
-  );
-  const dailyAminoAcidsByType = useMemo(
-    () => (summary ? sumTypedTotals(summary.meals, 'aminoAcidsByType') : {}),
-    [summary]
-  );
-  const dailyMicrobiomeSupport = useMemo(
-    () => (summary ? sumMicrobiomeSupport(summary.meals) : []),
-    [summary]
-  );
-
-  const dailyTracking = React.useMemo(() => {
-    const aggregated: WeeklyTrackingSignals = {};
-    const meals = Array.isArray(summary?.meals) ? summary.meals : [];
-
-    meals.forEach(meal => {
-      const mealSignals = extractWeeklyTrackingSignals(meal, undefined);
-      Object.entries(mealSignals).forEach(([key, value]) => {
-        mergeWeeklyTrackingSignal(aggregated, key, value);
-      });
-    });
-
-    return aggregated;
-  }, [summary]);
-
-  const selectedDateLocal = parseDateKeyLocal(selectedDate);
-  const weekStartDate = getStartOfWeekMonday(selectedDateLocal);
-  const weekEndDate = new Date(weekStartDate);
-  weekEndDate.setDate(weekStartDate.getDate() + 6);
-
-  const weekStartKey = toDateKeyLocal(weekStartDate);
-  const weekEndKey = toDateKeyLocal(weekEndDate);
-
-  const weeklySummaries = Object.entries(dailyNutritionSummaries)
-    .filter(([dateKey]) => dateKey >= weekStartKey && dateKey <= weekEndKey)
-    .map(([, daySummary]) => daySummary);
-
-  const weeklyMeals = weeklySummaries.flatMap(daySummary =>
-    Array.isArray(daySummary?.meals) ? daySummary.meals : []
-  );
-
-  const weeklyFiberByType = sumTypedTotals(weeklyMeals, 'fiberByType');
-  const weeklyPolyphenolByType = sumTypedTotals(weeklyMeals, 'polyphenolByType');
-  const weeklyMineralsByType = sumTypedTotals(weeklyMeals, 'mineralsByType');
-  const weeklyVitaminsByType = sumTypedTotals(weeklyMeals, 'vitaminsByType');
-  const weeklyAminoAcidsByType = sumTypedTotals(weeklyMeals, 'aminoAcidsByType');
-  const weeklyFiberTotal = weeklySummaries.reduce((sum, daySummary) => {
-    const dayFiber = parseNumberValue(daySummary?.totals?.fiber) ?? 0;
-    return sum + dayFiber;
-  }, 0);
-
-  const nutritionPlanTipProgress = useMemo(
-    () =>
-      buildNutritionPlanTipProgress({
-        plans,
-        summary,
-        t,
-        selectedDateKey: selectedDate,
-        weekStartKey,
-        dailyTracking,
-        weeklyTracking,
-        takenDates,
-        dailyFiberByType,
-        dailyPolyphenolByType,
-        dailyMineralsByType,
-        dailyVitaminsByType,
-        dailyAminoAcidsByType,
-        weeklyFiberByType,
-        weeklyPolyphenolByType,
-        weeklyMineralsByType,
-        weeklyVitaminsByType,
-        weeklyAminoAcidsByType,
-        weeklyFiberTotal,
-      }),
-    [
-      plans,
-      summary,
-      t,
-      selectedDate,
-      weekStartKey,
-      dailyTracking,
-      weeklyTracking,
-      takenDates,
-      dailyFiberByType,
-      dailyPolyphenolByType,
-      dailyMineralsByType,
-      dailyVitaminsByType,
-      dailyAminoAcidsByType,
-      weeklyFiberByType,
-      weeklyPolyphenolByType,
-      weeklyMineralsByType,
-      weeklyVitaminsByType,
-      weeklyAminoAcidsByType,
-      weeklyFiberTotal,
-    ]
-  );
+  const dailyFiberByType = useMemo(() => (summary ? sumTypedTotals(summary.meals, 'fiberByType') : {}), [summary]);
+  const dailyFiberSubtypeTotals = useMemo(() => (summary ? sumTypedTotals(summary.meals, 'fiberSubtypeTotals') : {}), [summary]);
+  const dailyPolyphenolByType = useMemo(() => (summary ? sumTypedTotals(summary.meals, 'polyphenolByType') : {}), [summary]);
+  const dailyMineralsByType = useMemo(() => (summary ? sumTypedTotals(summary.meals, 'mineralsByType') : {}), [summary]);
+  const dailyMineralConfidenceByType = useMemo(() => (summary ? mergeMineralConfidenceFromMeals(summary.meals) : {}), [summary]);
+  const dailyVitaminsByType = useMemo(() => (summary ? sumTypedTotals(summary.meals, 'vitaminsByType') : {}), [summary]);
+  const dailyAminoAcidsByType = useMemo(() => (summary ? sumTypedTotals(summary.meals, 'aminoAcidsByType') : {}), [summary]);
+  const dailyMicrobiomeSupport = useMemo(() => (summary ? sumMicrobiomeSupport(summary.meals) : []), [summary]);
 
   const nutritionPlanTipProgressByPeriod = React.useMemo(() => {
     const byPeriod = (period: NutritionTargetPeriod) => {
@@ -1263,10 +1070,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
   }, [claimNutritionTipCompletionXP, nutritionPlanTipProgress, selectedDate, weekStartKey]);
 
   return (
-    <KeyboardAvoidingView
-      style={globalStyles.flex1}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
+    <KeyboardAvoidingView style={globalStyles.flex1} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.container}>
         <ImagePickerButton
           onImageSelected={handleImageSelected}
@@ -1293,9 +1097,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
 
         {lastLoggedMeal && (
           <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
-            <ThemedText type="title3">
-              {t('nutritionLogger.mealTitleWithName', { name: lastLoggedMeal.mealName })}
-            </ThemedText>
+            <ThemedText type="title3">{t('nutritionLogger.mealTitleWithName', { name: lastLoggedMeal.mealName })}</ThemedText>
             <NutritionBreakdown
               calories={lastLoggedMeal.calories}
               protein={lastLoggedMeal.protein}
@@ -1470,11 +1272,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
           okLabel={t('general.save')}
           cancelLabel={t('general.cancel')}
         >
-          <ScrollView
-            style={styles.analysisReviewScroll}
-            contentContainerStyle={styles.analysisReviewContent}
-            showsVerticalScrollIndicator
-          >
+          <ScrollView style={styles.analysisReviewScroll} contentContainerStyle={styles.analysisReviewContent} showsVerticalScrollIndicator>
             {pendingAnalysisReview?.statusMessage || analysisResult ? (
               <ThemedText type="defaultSemiBold" style={styles.analysisReviewStatus}>
                 {pendingAnalysisReview?.statusMessage ?? analysisResult}
@@ -1485,11 +1283,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
               <View style={styles.analysisReviewSection}>
                 <ThemedText type="label">AI Interpretation</ThemedText>
                 {interpretationItems.map((item, index) => (
-                  <ThemedText
-                    key={`interp-${item.slice(0, 32)}`}
-                    type="default"
-                    style={styles.analysisReviewBody}
-                  >
+                  <ThemedText key={`interp-${item.slice(0, 32)}`} type="default" style={styles.analysisReviewBody}>
                     {`${index + 1}. ${item}`}
                   </ThemedText>
                 ))}
@@ -1504,20 +1298,11 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
                     confidenceColor = colors.warmColor;
                   }
 
-                  const confidenceKey =
-                    'general.confidence.' + (pendingAnalysisReview?.evidence?.confidence ?? 'unknown');
-                  const confidenceText =
-                    t('general.confidence.label') + ': ' + t(confidenceKey);
+                  const confidenceKey = 'general.confidence.' + (pendingAnalysisReview?.evidence?.confidence ?? 'unknown');
+                  const confidenceText = t('general.confidence.label') + ': ' + t(confidenceKey);
 
                   return (
-                    <ThemedText
-                      type="caption"
-                      style={[
-                        styles.analysisReviewEvidence,
-                        styles.analysisInterpretationMeta,
-                        { color: confidenceColor },
-                      ]}
-                    >
+                    <ThemedText type="caption" style={[styles.analysisReviewEvidence, styles.analysisInterpretationMeta, { color: confidenceColor }]}>
                       {confidenceText}
                     </ThemedText>
                   );
@@ -1539,18 +1324,14 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
                   <ThemedText type="defaultSemiBold" style={reAnalyzeHighlightStyle}>
                     {t('general.reAnalyzePrompt.analyze')}
                   </ThemedText>
-                  {t('general.reAnalyzePrompt.suffix')
-                    ? ` ${t('general.reAnalyzePrompt.suffix')}`
-                    : ''}
+                  {t('general.reAnalyzePrompt.suffix') ? ` ${t('general.reAnalyzePrompt.suffix')}` : ''}
                 </ThemedText>
               </Pressable>
             ) : null}
 
             {pendingAnalysisReview?.analysis ? (
               <View style={styles.analysisReviewSection}>
-                <ThemedText type="label">
-                  {t('nutritionLogger.analysisReviewNutritionPreviewTitle')}
-                </ThemedText>
+                <ThemedText type="label">{t('nutritionLogger.analysisReviewNutritionPreviewTitle')}</ThemedText>
                 <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
                   <ThemedText type="title3">
                     {t('nutritionLogger.mealTitleWithName', {
@@ -1567,9 +1348,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({
                     fiberSubtypeTotals={pendingAnalysisReview.analysis.fiberSubtypeTotals}
                     polyphenolByType={pendingAnalysisReview.analysis.polyphenolByType}
                     mineralsByType={pendingAnalysisReview.analysis.mineralsByType}
-                    mineralsConfidenceByType={
-                      pendingAnalysisReview.analysis.mineralsConfidenceByType
-                    }
+                    mineralsConfidenceByType={pendingAnalysisReview.analysis.mineralsConfidenceByType}
                     vitaminsByType={pendingAnalysisReview.analysis.vitaminsByType}
                     aminoAcidsByType={pendingAnalysisReview.analysis.aminoAcidsByType}
                     microbiomeSupport={pendingAnalysisReview.analysis.microbiomeSupport}

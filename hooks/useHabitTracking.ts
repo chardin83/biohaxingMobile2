@@ -1,6 +1,10 @@
-import { useCallback } from 'react';
+import {
+  useCallback,
+} from 'react';
 
-import { useStorage } from '@/app/context/StorageContext';
+import {
+  useStorage,
+} from '@/app/context/StorageContext';
 import {
   getHabitTrackedDates,
   isHabitSlotCompleted,
@@ -9,66 +13,81 @@ import {
 
 export const useHabitTracking = () => {
   const {
-    weeklyTracking,
-    setWeeklyTracking,
+    dailyHabitTracking,
+    setDailyHabitTracking,
   } = useStorage();
 
-  const logHabit = useCallback(
-    ({
-      trackingKey,
-      selectedDate,
-      value,
-      slot,
-    }: {
-      trackingKey: string;
-      selectedDate: string;
-      value: number;
-      slot?: string;
-    }) => {
-      logHabitTarget({
+  const logHabit =
+    useCallback(
+      ({
         trackingKey,
         selectedDate,
         value,
         slot,
-        setWeeklyTracking,
-      });
-    },
-    [setWeeklyTracking]
-  );
+      }: {
+        trackingKey: string;
+        selectedDate: string;
+        value: number;
+        slot?: string;
+      }) => {
+        logHabitTarget({
+          trackingKey,
+          selectedDate,
+          value,
+          slot,
+          setDailyHabitTracking,
+        });
+      },
+      [
+        setDailyHabitTracking,
+      ]
+    );
 
-  const isSlotCompleted = useCallback(
-    ({
-      trackingKey,
-      selectedDate,
-      slot,
-    }: {
-      trackingKey: string;
-      selectedDate: string;
-      slot: string;
-    }) => {
-      return isHabitSlotCompleted({
+  const isSlotCompleted =
+    useCallback(
+      ({
         trackingKey,
         selectedDate,
         slot,
-        weeklyTracking,
-      });
-    },
-    [weeklyTracking]
-  );
+      }: {
+        trackingKey: string;
+        selectedDate: string;
+        slot: string;
+      }) => {
+        return isHabitSlotCompleted({
+          trackingKey,
+          selectedDate,
+          slot,
+          dailyHabitTracking,
+        });
+      },
+      [
+        dailyHabitTracking,
+      ]
+    );
 
-  const getTrackedDates = useCallback(
-    (trackingKeys: Set<string>) => {
-      return getHabitTrackedDates({
-        trackingKeys,
-        weeklyTracking,
-      });
-    },
-    [weeklyTracking]
-  );
+  const getTrackedDates =
+    useCallback(
+      (
+        trackingKeys:
+          Set<string>
+      ) => {
+        return getHabitTrackedDates({
+          trackingKeys,
+          dailyHabitTracking,
+        });
+      },
+      [
+        dailyHabitTracking,
+      ]
+    );
 
   return {
     logHabit,
-    isHabitSlotCompleted: isSlotCompleted,
+
+    isHabitSlotCompleted:
+      isSlotCompleted,
+
     getTrackedDates,
   };
 };

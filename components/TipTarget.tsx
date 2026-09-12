@@ -3,37 +3,15 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
+import { TipTargetItem, WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { getTipTargetIconName } from '@/locales/tips';
-import {
-  type NutritionTargetPeriod,
-  type NutritionTargetUnit,
-} from '@/types/nutritionTargets';
+import { type NutritionTargetUnit } from '@/types/nutritionTargets';
 import { formatWithUnit } from '@/utils/formatters';
 import { getNutritionTargetMedalEmoji, getNutritionTargetMedalType } from '@/utils/medals';
 
 import { Collapsible } from './Collapsible';
 import { ThemedText } from './ThemedText';
 import { IconSymbol } from './ui/IconSymbol';
-
-export type TipTargetItem = {
-  tag: string;
-  unit: NutritionTargetUnit;
-  period: NutritionTargetPeriod;
-  amount: number;
-  actual: number;
-  foodActual?: number;
-  supplementActual?: number;
-  isMet: boolean;
-  label: string;
-  trackedItems?: WeeklyTrackingItem[];
-  supplementIds?: string[];
-};
-
-export type TipTargetProgress = Pick<
-  TipTargetItem,
-  'tag' | 'unit' | 'period' | 'actual' | 'foodActual' | 'supplementActual' | 'isMet' | 'trackedItems' | 'supplementIds'
->;
 
 type TipTargetProps = {
   tip: { tipId: string; title?: string; dateKey?: string };
@@ -77,8 +55,7 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
   const targetIconName = getTipTargetIconName(tip.tipId) ?? 'target';
   const valueFormatter = usesDiscreteUnit ? formatTargetProgressValue : formatTargetValue;
   const translatedTipKey = tip.title?.includes('.') ? 'tips:' + tip.title : null;
-  const resolvedTipTitle =
-    translatedTipKey ? t(translatedTipKey) : (tip.title ?? tip.tipId);
+  const resolvedTipTitle = translatedTipKey ? t(translatedTipKey) : (tip.title ?? tip.tipId);
   const medalType = getNutritionTargetMedalType({
     actual: target.actual,
     targetAmount: target.amount,
@@ -129,17 +106,11 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
               style={styles.planTipTargetDetailsButton}
             >
               <View style={styles.planTipTargetDetailsContent}>
-                <ThemedText
-                  type="explainer"
-                  style={[styles.planTipTargetValue, styles.planTipTargetCollapsibleValue]}
-                >
+                <ThemedText type="explainer" style={[styles.planTipTargetValue, styles.planTipTargetCollapsibleValue]}>
                   {targetValueText}
                 </ThemedText>
                 {showsDetailsChevron ? (
-                  <ThemedText
-                    type="explainer"
-                    style={[styles.planTipTargetChevron, { color: colors.textMuted }]}
-                  >
+                  <ThemedText type="explainer" style={[styles.planTipTargetChevron, { color: colors.textMuted }]}>
                     {'›'}
                   </ThemedText>
                 ) : null}
@@ -147,9 +118,7 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
             </TouchableOpacity>
           }
         >
-          <View style={styles.planTipTargetItemsList}>
-            {renderTrackedItems(target.tag, trackedItems, language)}
-          </View>
+          <View style={styles.planTipTargetItemsList}>{renderTrackedItems(target.tag, trackedItems, language)}</View>
         </Collapsible>
       </View>
     );
@@ -164,17 +133,13 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
         accessibilityRole="button"
         accessibilityLabel={`Open details for ${target.label}`}
       >
-      
         <View style={styles.planTipTargetLabelRow}>
           <IconSymbol name={targetIconName} size={14} color={colors.textMuted} />
           <ThemedText type="explainer" style={styles.planTipTargetLabel}>
             {target.label}
           </ThemedText>
         </View>
-        <ThemedText
-          type="caption"
-          style={[styles.planTipTargetValue, { color: target.isMet ? colors.primary : colors.textMuted }]}
-        >
+        <ThemedText type="caption" style={[styles.planTipTargetValue, { color: target.isMet ? colors.primary : colors.textMuted }]}>
           {targetValueText}
         </ThemedText>
         <ThemedText type="explainer" style={[styles.planTipTargetChevron, { color: colors.textMuted }]}>

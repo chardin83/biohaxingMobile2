@@ -5,13 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 
-import { WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
+import { TipProgressItem, TipTargetPeriod } from '@/app/context/storage/nutrition/nutritionTypes';
 import { globalStyles } from '@/app/theme/globalStyles';
 import TipTarget from '@/components/TipTarget';
-import {
-  type NutritionTargetPeriod,
-  type NutritionTargetUnit,
-} from '@/types/nutritionTargets';
 import { formatMonthDay, toDateKey } from '@/utils/dateUtils';
 
 import { ThemedText } from './ThemedText';
@@ -21,40 +17,10 @@ import DiscreetButton from './ui/DiscreetButton';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
-export type TipTargetUnit = NutritionTargetUnit;
-export type TipTargetPeriod = NutritionTargetPeriod;
-
-export type TipProgressItem = {
-  tipId: string;
-  title: string;
-  areaId?: string;
-  dateKey?: string;
-  startedAt?: string;
-  period: TipTargetPeriod;
-  targets: Array<{
-    tag: string;
-    unit: TipTargetUnit;
-    period: TipTargetPeriod;
-    amount: number;
-    actual: number;
-    foodActual?: number;
-    supplementActual?: number;
-    isMet: boolean;
-    label: string;
-    trackedItems?: WeeklyTrackingItem[];
-    supplementIds?: string[];
-  }>;
-  metCount: number;
-  totalCount: number;
-  isFulfilled: boolean;
-  progress: number;
-};
-
 type CurrentRef<T> = { current: T };
 type ThemeColors = ReturnType<typeof useTheme>['colors'];
 
-export const getTipProgressKey = (tip: TipProgressItem): string =>
-  `${tip.tipId}|${tip.period}`;
+export const getTipProgressKey = (tip: TipProgressItem): string => `${tip.tipId}|${tip.period}`;
 
 // ── Props ──────────────────────────────────────────────────────────────────────
 
@@ -193,12 +159,7 @@ const TipProgressRow: React.FC<TipProgressRowProps> = ({
             </ThemedText>
           ) : (
             tip.targets.map(target => (
-              <TipTarget
-                key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`}
-                tip={tip}
-                target={target}
-                colors={colors}
-              />
+              <TipTarget key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`} tip={tip} target={target} colors={colors} />
             ))
           )}
         </View>
@@ -358,12 +319,7 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                 accessibilityLabel={t('nutritionLogger.seeProgress')}
               >
                 <View style={styles.seeProgressCtaContent}>
-                  <View
-                    style={[
-                      styles.seeProgressIconWrap,
-                      { backgroundColor: colors.accentVeryWeak },
-                    ]}
-                  >
+                  <View style={[styles.seeProgressIconWrap, { backgroundColor: colors.accentVeryWeak }]}>
                     <Icon source="chart-line" size={20} color={colors.primary} />
                   </View>
                   <ThemedText type="title3" style={styles.seeProgressCtaText}>

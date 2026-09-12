@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import type { ImageSourcePropType } from 'react-native';
 import { Image, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
+import { TipTargetProgress } from '@/app/context/storage/nutrition/nutritionTypes';
 import { useStorage } from '@/app/context/StorageContext';
 import PlanCategoryIcon, { type PlanCategory } from '@/components/plan/PlanCategoryIcon';
 import { MetricsBottomSheet } from '@/components/sections/metrics/MetricsBottomSheet';
@@ -13,7 +14,6 @@ import { NutritionPlanDetailsSection } from '@/components/sections/plan/Nutritio
 import { PlanActionsBottomSheet } from '@/components/sections/plan/PlanActionsBottomSheet';
 import { TrainingPlanDetailsSection } from '@/components/sections/plan/TrainingPlanDetailsSection';
 import { ThemedText } from '@/components/ThemedText';
-import { type TipTargetProgress } from '@/components/TipTarget';
 import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
 import Badge from '@/components/ui/Badge';
@@ -22,11 +22,10 @@ import Container from '@/components/ui/Container';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import PencilEditButton from '@/components/ui/PencilEditButton';
 import { PressableCard } from '@/components/ui/PressableCard';
+import { useNutritionPlanProgress } from '@/hooks/useNutritionPlanProgress';
 import { FOOD_IMAGES } from '@/locales/foodCatalog';
 import { metrics, tipMetricLinks } from '@/locales/metrics';
 import { tips } from '@/locales/tips';
-import { buildNutritionPlanTipProgress } from '@/services/targetProgress/nutritionTargets';
-import { extractWeeklyTrackingSignals, mergeWeeklyTrackingSignal, parseNumberValue, type WeeklyTrackingSignals } from '@/utils/analyzeNutrition';
 import { formatDate, toDateKey } from '@/utils/dateUtils';
 
 type PlanDetailsParams = {
@@ -62,32 +61,6 @@ type CardData = {
 
 type DeletablePlanCategory = 'training' | 'nutrition' | 'other';
 
-const sumTypedTotals = (
-  meals: Array<any>,
-  key: 'fiberByType' | 'polyphenolByType' | 'mineralsByType' | 'vitaminsByType' | 'aminoAcidsByType'
-) =>
-  meals.reduce((acc, meal) => {
-    const rawValue = meal?.[key];
-    const source = typeof rawValue === 'object' && rawValue !== null ? rawValue : {};
-
-    for (const [tag, value] of Object.entries(source)) {
-      const parsed = parseNumberValue(value);
-      if (parsed === null) continue;
-      acc[tag] = (acc[tag] ?? 0) + parsed;
-    }
-
-    return acc;
-  }, {} as Record<string, number>);
-
-const getWeekStartKeyForDate = (date: Date): string => {
-  const normalized = new Date(date);
-  normalized.setHours(0, 0, 0, 0);
-  const day = normalized.getDay();
-  const diffToMonday = (day + 6) % 7;
-  normalized.setDate(normalized.getDate() - diffToMonday);
-  return toDateKey(normalized);
-};
-
 const PLAN_CATEGORY_LABEL_KEYS: Record<PlanCategory, string> = {
   training: 'plan.trainingHeader',
   nutrition: 'plan.nutritionHeader',
@@ -100,7 +73,7 @@ export default function PlanDetailsScreen() {
   const { colors } = useTheme();
   const { t, i18n } = useTranslation(['common', 'areas', 'tips']);
   const params = useLocalSearchParams<PlanDetailsParams>();
-  const { archivePlan, plans, dailyNutritionSummaries, weeklyTracking, takenDates, setPlans, setTrainingPlanSettings } = useStorage();
+  const { archivePlan, setPlans, setTrainingPlanSettings } = useStorage();
   const metricsBottomSheetRef = React.useRef<BottomSheet>(null);
   const planActionsBottomSheetRef = React.useRef<BottomSheet>(null);
 
@@ -108,10 +81,7 @@ export default function PlanDetailsScreen() {
   const [commentDraft, setCommentDraft] = React.useState(params.comment ?? '');
   const [isPlanActionsSheetMounted, setIsPlanActionsSheetMounted] = React.useState(false);
 
-  const planTipId = React.useMemo(
-    () => (typeof params.tipId === 'string' ? params.tipId : undefined),
-    [params.tipId]
-  );
+  const planTipId = React.useMemo(() => (typeof params.tipId === 'string' ? params.tipId : undefined), [params.tipId]);
 
   const tip = React.useMemo(() => {
     if (!params.tipId) return undefined;
@@ -133,110 +103,42 @@ export default function PlanDetailsScreen() {
 
   const resolvedPlanCategory = React.useMemo<PlanCategory>(() => {
     const validCategories = ['training', 'nutrition', 'other', 'supplement'] as const;
-    return validCategories.includes(params.planCategory as (typeof validCategories)[number])
-      ? (params.planCategory as PlanCategory)
-      : 'other';
+    return validCategories.includes(params.planCategory as (typeof validCategories)[number]) ? (params.planCategory as PlanCategory) : 'other';
   }, [params.planCategory]);
 
-  const categoryLabel = React.useMemo(
-    () => t(PLAN_CATEGORY_LABEL_KEYS[resolvedPlanCategory] ?? 'plan.planDetails'),
-    [resolvedPlanCategory, t]
-  );
+  const categoryLabel = React.useMemo(() => t(PLAN_CATEGORY_LABEL_KEYS[resolvedPlanCategory] ?? 'plan.planDetails'), [resolvedPlanCategory, t]);
 
   const relatedMetricLinks = React.useMemo(() => {
     if (!params.tipId) return [];
     return tipMetricLinks[params.tipId] ?? [];
   }, [params.tipId]);
 
-  const selectedDateKey = React.useMemo(() => toDateKey(new Date()), []);
-  const weekStartKey = React.useMemo(() => getWeekStartKeyForDate(new Date()), []);
-
-  const targetProgressMap = React.useMemo(() => {
-    if (!tip?.id || resolvedPlanCategory === 'training') {
-      return new Map<string, TipTargetProgress>();
-    }
-
-    const summary = dailyNutritionSummaries[selectedDateKey];
-    const meals = Array.isArray(summary?.meals) ? summary.meals : [];
-
-    const dailyTracking: WeeklyTrackingSignals = {};
-    meals.forEach(meal => {
-      const mealSignals = extractWeeklyTrackingSignals(meal, undefined);
-      Object.entries(mealSignals).forEach(([key, value]) => {
-        mergeWeeklyTrackingSignal(dailyTracking, key, value);
-      });
-    });
-
-    const weekEndDate = new Date(weekStartKey);
-    weekEndDate.setDate(weekEndDate.getDate() + 6);
-    const weekEndKey = toDateKey(weekEndDate);
-
-    const weeklySummaries = Object.entries(dailyNutritionSummaries)
-      .filter(([dateKey]) => dateKey >= weekStartKey && dateKey <= weekEndKey)
-      .map(([, daySummary]) => daySummary);
-
-    const weeklyMeals = weeklySummaries.flatMap(daySummary =>
-      Array.isArray(daySummary?.meals) ? daySummary.meals : []
-    );
-
-    const weeklyFiberTotal = weeklySummaries.reduce((sum, daySummary) => {
-      const dayFiber = parseNumberValue(daySummary?.totals?.fiber) ?? 0;
-      return sum + dayFiber;
-    }, 0);
-
-    const planProgress = buildNutritionPlanTipProgress({
-      plans: {
-        ...plans,
-        nutrition: (plans.nutrition ?? []).filter(planEntry => planEntry.tipId === tip.id),
-      },
-      summary,
-      t,
-      selectedDateKey,
-      weekStartKey,
-      dailyTracking,
-      weeklyTracking,
-      takenDates,
-      dailyFiberByType: sumTypedTotals(meals, 'fiberByType'),
-      dailyPolyphenolByType: sumTypedTotals(meals, 'polyphenolByType'),
-      dailyMineralsByType: sumTypedTotals(meals, 'mineralsByType'),
-      dailyVitaminsByType: sumTypedTotals(meals, 'vitaminsByType'),
-      dailyAminoAcidsByType: sumTypedTotals(meals, 'aminoAcidsByType'),
-      weeklyFiberByType: sumTypedTotals(weeklyMeals, 'fiberByType'),
-      weeklyPolyphenolByType: sumTypedTotals(weeklyMeals, 'polyphenolByType'),
-      weeklyMineralsByType: sumTypedTotals(weeklyMeals, 'mineralsByType'),
-      weeklyVitaminsByType: sumTypedTotals(weeklyMeals, 'vitaminsByType'),
-      weeklyAminoAcidsByType: sumTypedTotals(weeklyMeals, 'aminoAcidsByType'),
-      weeklyFiberTotal,
-    });
-
-    const tipProgress = planProgress.find(item => item.tipId === tip.id);
-    const map = new Map<string, TipTargetProgress>();
-
-    (tipProgress?.targets ?? []).forEach(target => {
-      const targetKey = `${target.tag}|${target.unit}|${target.period}`;
-      map.set(targetKey, {
-        tag: target.tag,
-        unit: target.unit,
-        period: target.period,
-        actual: target.actual,
-        foodActual: target.foodActual,
-        supplementActual: target.supplementActual,
-        isMet: target.isMet,
-        trackedItems: target.trackedItems,
-        supplementIds: target.supplementIds,
-      });
-    });
-
-    return map;
-  }, [dailyNutritionSummaries, plans, resolvedPlanCategory, selectedDateKey, takenDates, t, tip?.id, weekStartKey, weeklyTracking]);
-
   const hasNutritionCardDetails = Boolean(
     cardData?.badges?.length || cardData?.recommendedDoseLabel || cardData?.foodItems?.length || cardData?.supplementNames?.length
   );
 
-  const canDeletePlan =
-    Boolean(planTipId) &&
-    (resolvedPlanCategory === 'training' || resolvedPlanCategory === 'nutrition' || resolvedPlanCategory === 'other');
+  const selectedDateKey = React.useMemo(() => toDateKey(new Date()), []);
+
+  const nutritionPlanProgress = useNutritionPlanProgress(selectedDateKey);
+
+  const targetProgressMap = React.useMemo(() => {
+    const map = new Map<string, TipTargetProgress>();
+
+    if (resolvedPlanCategory !== 'nutrition' || !tip?.id) {
+      return map;
+    }
+
+    const tipProgress = nutritionPlanProgress.find(item => item.tipId === tip.id);
+
+    tipProgress?.targets.forEach(target => {
+      const targetKey = `${target.tag}|${target.unit}|${target.period}`;
+
+      map.set(targetKey, target);
+    });
+
+    return map;
+  }, [nutritionPlanProgress, resolvedPlanCategory, tip?.id]);
+  const canDeletePlan = Boolean(planTipId) && (resolvedPlanCategory === 'training' || resolvedPlanCategory === 'nutrition' || resolvedPlanCategory === 'other');
 
   const planActionSnapPoints = React.useMemo(() => ['44%'], []);
 
@@ -281,9 +183,7 @@ export default function PlanDetailsScreen() {
     const category = resolvedPlanCategory as DeletablePlanCategory;
     setPlans(prev => ({
       ...prev,
-      [category]: prev[category].filter(entry =>
-        params.planId ? entry.id !== params.planId : entry.tipId !== tipId
-      ),
+      [category]: prev[category].filter(entry => (params.planId ? entry.id !== params.planId : entry.tipId !== tipId)),
     }));
 
     if (category === 'training') {
@@ -324,12 +224,7 @@ export default function PlanDetailsScreen() {
         </View>
         <AppBox
           title={t('plan.whyImportantTitle')}
-          headerRight={
-            <PencilEditButton
-              onPress={() => setIsEditingComment(true)}
-              accessibilityLabel={t('plan.editComment')}
-            />
-          }
+          headerRight={<PencilEditButton onPress={() => setIsEditingComment(true)} accessibilityLabel={t('plan.editComment')} />}
         >
           {isEditingComment ? (
             <TextInput
@@ -345,9 +240,7 @@ export default function PlanDetailsScreen() {
                 setPlans(prev => ({
                   ...prev,
                   [category]: prev[category].map((entry: { tipId: string }) =>
-                    entry.tipId === params.tipId
-                      ? { ...entry, comment: commentDraft, editedAt: new Date().toISOString(), editedBy: 'you' }
-                      : entry
+                    entry.tipId === params.tipId ? { ...entry, comment: commentDraft, editedAt: new Date().toISOString(), editedBy: 'you' } : entry
                   ),
                 }));
               }}
@@ -359,29 +252,14 @@ export default function PlanDetailsScreen() {
           )}
         </AppBox>
 
+        {resolvedPlanCategory === 'training' && <TrainingPlanDetailsSection cardData={cardData} tipId={tip?.id} />}
 
-
-        {resolvedPlanCategory === 'training' && (
-          <TrainingPlanDetailsSection
-            cardData={cardData}
-            tipId={tip?.id}
-          />
-        )}
-
-        {resolvedPlanCategory !== 'training' && tip && (
-          <NutritionPlanDetailsSection
-            tip={tip}
-            targetProgressMap={targetProgressMap}
-            selectedDateKey={selectedDateKey}
-            title={title}
-          />
+        {resolvedPlanCategory === 'nutrition' && tip && (
+          <NutritionPlanDetailsSection tip={tip} targetProgressMap={targetProgressMap} selectedDateKey={selectedDateKey} title={title} />
         )}
 
         {!!relatedMetricLinks.length && (
-          <AppBox
-            title={t('plan.relatedMetricsTitle')}
-            leading={<IconSymbol name="chart" size={18} color={colors.primary} />}
-          >
+          <AppBox title={t('plan.relatedMetricsTitle')} leading={<IconSymbol name="chart" size={18} color={colors.primary} />}>
             <View style={styles.relatedMetricsList}>
               {relatedMetricLinks.map(link => {
                 const metric = metrics[link.metricId];
@@ -442,86 +320,85 @@ export default function PlanDetailsScreen() {
               <IconSymbol name="chevron.right" size={16} color={colors.icon} />
             </View>
 
-        {resolvedPlanCategory === 'nutrition' && hasNutritionCardDetails && (
-          <View style={[styles.recommendedContent, { borderTopColor: colors.borderLight }]}> 
-            <ThemedText type="title3" style={styles.sectionTitle} uppercase>
-              {t('plan.cardDetails')}
-            </ThemedText>
-            {!!cardData?.badges?.length && (
-              <View style={styles.badgeRow}>
-                {cardData.badges.map(badge => (
-                  <Badge key={`${badge.label}-${badge.icon ?? 'default'}`} variant="overlay" style={styles.inlineBadge}>
-                    {badge.icon ? (
-                      <IconSymbol name={badge.icon as React.ComponentProps<typeof IconSymbol>['name']} size={14} color={colors.icon} style={styles.badgeIcon} />
-                    ) : null}
-                    <ThemedText type="caption">{badge.label}</ThemedText>
-                  </Badge>
-                ))}
-              </View>
-            )}
-            {!!cardData?.recommendedDoseLabel && (
-              <ThemedText type="default" style={styles.detailText}>
-                {cardData.recommendedDoseLabel}
-              </ThemedText>
-            )}
-            {!!cardData?.supplementNames?.length && (
-              <View style={styles.listContainer}>
-                {cardData.supplementNames.map(name => (
-                  <ThemedText key={name} type="default" style={styles.detailText}>
-                    • {name}
-                  </ThemedText>
-                ))}
-              </View>
-            )}
-            {!!cardData?.foodItems?.length && (
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.foodItemScrollContent}>
-                {cardData.foodItems.map(item => {
-                  const foodImage = item.imageKey
-                    ? (FOOD_IMAGES[item.imageKey as keyof typeof FOOD_IMAGES] as ImageSourcePropType | undefined)
-                    : undefined;
-                  const resolvedName = item.foodKey
-                    ? t(`tips:${tip?.id}.nutritionFoods.items.${item.foodKey}.name`, {
-                        defaultValue: t(`food:foods.${item.foodKey}.name`, {
-                          defaultValue: item.name || item.foodKey,
-                        }),
-                      })
-                    : item.name;
-                  const resolvedDetails = item.detailsKey
-                    ? t(`tips:${tip?.id}.nutritionFoods.items.${item.detailsKey}.details`, {
-                        defaultValue: item.details ?? '',
-                      })
-                    : item.details;
-
-                  return (
-                    <Card key={`${item.name}-${item.details ?? 'default'}`} style={styles.foodItemCard}>
-                      {foodImage ? <Image source={foodImage} style={styles.foodItemImage} /> : null}
-                      <View style={styles.foodItemTextBlock}>
-                        <ThemedText type="defaultSemiBold" numberOfLines={2}>
-                          {resolvedName}
-                        </ThemedText>
-                        {resolvedDetails ? (
-                          <ThemedText type="caption" style={styles.badgeDetail} numberOfLines={3}>
-                            {resolvedDetails}
-                          </ThemedText>
+            {resolvedPlanCategory === 'nutrition' && hasNutritionCardDetails && (
+              <View style={[styles.recommendedContent, { borderTopColor: colors.borderLight }]}>
+                <ThemedText type="title3" style={styles.sectionTitle} uppercase>
+                  {t('plan.cardDetails')}
+                </ThemedText>
+                {!!cardData?.badges?.length && (
+                  <View style={styles.badgeRow}>
+                    {cardData.badges.map(badge => (
+                      <Badge key={`${badge.label}-${badge.icon ?? 'default'}`} variant="overlay" style={styles.inlineBadge}>
+                        {badge.icon ? (
+                          <IconSymbol
+                            name={badge.icon as React.ComponentProps<typeof IconSymbol>['name']}
+                            size={14}
+                            color={colors.icon}
+                            style={styles.badgeIcon}
+                          />
                         ) : null}
-                      </View>
-                    </Card>
-                  );
-                })}
-              </ScrollView>
+                        <ThemedText type="caption">{badge.label}</ThemedText>
+                      </Badge>
+                    ))}
+                  </View>
+                )}
+                {!!cardData?.recommendedDoseLabel && (
+                  <ThemedText type="default" style={styles.detailText}>
+                    {cardData.recommendedDoseLabel}
+                  </ThemedText>
+                )}
+                {!!cardData?.supplementNames?.length && (
+                  <View style={styles.listContainer}>
+                    {cardData.supplementNames.map(name => (
+                      <ThemedText key={name} type="default" style={styles.detailText}>
+                        • {name}
+                      </ThemedText>
+                    ))}
+                  </View>
+                )}
+                {!!cardData?.foodItems?.length && (
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.foodItemScrollContent}>
+                    {cardData.foodItems.map(item => {
+                      const foodImage = item.imageKey ? (FOOD_IMAGES[item.imageKey as keyof typeof FOOD_IMAGES] as ImageSourcePropType | undefined) : undefined;
+                      const resolvedName = item.foodKey
+                        ? t(`tips:${tip?.id}.nutritionFoods.items.${item.foodKey}.name`, {
+                            defaultValue: t(`food:foods.${item.foodKey}.name`, {
+                              defaultValue: item.name || item.foodKey,
+                            }),
+                          })
+                        : item.name;
+                      const resolvedDetails = item.detailsKey
+                        ? t(`tips:${tip?.id}.nutritionFoods.items.${item.detailsKey}.details`, {
+                            defaultValue: item.details ?? '',
+                          })
+                        : item.details;
+
+                      return (
+                        <Card key={`${item.name}-${item.details ?? 'default'}`} style={styles.foodItemCard}>
+                          {foodImage ? <Image source={foodImage} style={styles.foodItemImage} /> : null}
+                          <View style={styles.foodItemTextBlock}>
+                            <ThemedText type="defaultSemiBold" numberOfLines={2}>
+                              {resolvedName}
+                            </ThemedText>
+                            {resolvedDetails ? (
+                              <ThemedText type="caption" style={styles.badgeDetail} numberOfLines={3}>
+                                {resolvedDetails}
+                              </ThemedText>
+                            ) : null}
+                          </View>
+                        </Card>
+                      );
+                    })}
+                  </ScrollView>
+                )}
+              </View>
             )}
-          </View>
-        )}
           </PressableCard>
         )}
 
         {canDeletePlan && (
           <View style={styles.deletePlanWrap}>
-            <AppButton
-              title="Avsluta / Ta bort planen"
-              variant="danger"
-              onPress={openPlanActionsSheet}
-            />
+            <AppButton title="Avsluta / Ta bort planen" variant="danger" onPress={openPlanActionsSheet} />
           </View>
         )}
       </View>
@@ -536,10 +413,7 @@ export default function PlanDetailsScreen() {
         />
       )}
 
-      <MetricsBottomSheet
-        bottomSheetRef={metricsBottomSheetRef}
-        tipId={params.tipId ?? null}
-      />
+      <MetricsBottomSheet bottomSheetRef={metricsBottomSheetRef} tipId={params.tipId ?? null} />
     </Container>
   );
 }

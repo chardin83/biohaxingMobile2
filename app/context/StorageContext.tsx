@@ -3,19 +3,18 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 
 import { subscribeArchivedPlans, subscribePlans } from '@/app/context/storage/plans/planEvents';
 import { getArchivedPlans, getPlans } from '@/app/context/storage/plans/planStorage';
-import { archivePlan, archiveSupplement, archiveSupplementPlan, clearArchivedPlans, saveSupplementToPlan as saveSupplementToPlanStore, updatePlans } from '@/app/context/storage/plans/planStore';
-import { type ArchivedPlansByCategory, EMPTY_ARCHIVED_PLANS, EMPTY_PLANS, type PlansByCategory} from '@/app/context/storage/plans/planTypes';
 import {
-  levels,
-  XP_FOR_CHAT_QUESTION,
-  XP_FOR_VERDICT,
-  XP_FOR_VIEW,
-  XP_PER_CHAT_MESSAGE,
-  type XpSource,
-} from '@/constants/XP';
+  archivePlan,
+  archiveSupplement,
+  archiveSupplementPlan,
+  clearArchivedPlans,
+  saveSupplementToPlan as saveSupplementToPlanStore,
+  updatePlans,
+} from '@/app/context/storage/plans/planStore';
+import { type ArchivedPlansByCategory, EMPTY_ARCHIVED_PLANS, EMPTY_PLANS, type PlansByCategory } from '@/app/context/storage/plans/planTypes';
+import { levels, XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW, XP_PER_CHAT_MESSAGE, type XpSource } from '@/constants/XP';
 import { MetricId } from '@/locales/metrics';
 import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
-import { type TrainingActivityFilter, type TrainingActivityType, type TrainingIntensity, type TrainingIntensityFilter } from '@/types/training';
 import { VerdictValue } from '@/types/verdict';
 
 import { Plan } from '../domain/Plan';
@@ -32,152 +31,48 @@ import {
   saveShareHealthPlan,
   saveShowMusic,
 } from './storage/app/appStorage';
-import {
-  getMetricEntries,
-  saveMetricEntries,
-} from './storage/metrics/metricStorage';
-import {
-  getNutritionStorage,
-  saveDailyNutritionSummaries,
-  saveWeeklyTracking,
-} from './storage/nutrition/nutritionStorage';
-import type { DailyNutritionSummary, WeeklyTrackingItem } from './storage/nutrition/nutritionTypes';
-import {
-  getSupplementStorage,
-  saveCustomSupplements,
-  saveTakenDates,
-} from './storage/supplements/supplementStorage';
-import {
-  getTrainingStorage,
-  saveTrainingEntries,
-  saveTrainingPlanSettings,
-} from './storage/training/trainingStorage';
+import { getHabitStorage, saveDailyHabitTracking } from './storage/habits/habitStorage';
+import type { DailyHabitTracking } from './storage/habits/habitTypes';
+import { getMetricEntries, saveMetricEntries } from './storage/metrics/metricStorage';
+import { MetricEntry } from './storage/metrics/metricTypes';
+import { getNutritionStorage, saveDailyNutritionTracking, saveWeeklyNutritionTracking } from './storage/nutrition/nutritionStorage';
+import type { DailyNutritionTracking, WeeklyNutritionTracking } from './storage/nutrition/nutritionTypes';
+import { getSupplementStorage, saveCustomSupplements, saveTakenDates } from './storage/supplements/supplementStorage';
+import { getTrainingStorage, saveDailyTrainingTracking, saveTrainingPlanSettings } from './storage/training/trainingStorage';
+import type { DailyTrainingTracking, TrainingLogEntry, TrainingLogInput, TrainingPlanSettings } from './storage/training/trainingTypes';
 import { subscribeUserProfile } from './storage/userProfile/userProfileEvents';
-import {  clearUserProfile as clearUserProfileStore, getUserProfile, saveUserProfile as saveUserProfileStore, updateUserProfile as updateUserProfileStore } from './storage/userProfile/userProfileStore';
-import { UserProfile } from './storage/userProfile/userProfileTypes';
 import {
-  getXpStorage,
-  saveLevel,
-  saveNutritionXpClaims,
-  saveViewedTips,
-  saveXP,
-  saveXpBreakdown,
-} from './storage/xp/xpStorage';
+  clearUserProfile as clearUserProfileStore,
+  getUserProfile,
+  saveUserProfile as saveUserProfileStore,
+  updateUserProfile as updateUserProfileStore,
+} from './storage/userProfile/userProfileStore';
+import { UserProfile } from './storage/userProfile/userProfileTypes';
+import { getXpStorage, saveLevel, saveNutritionXpClaims, saveViewedTips, saveXP, saveXpBreakdown } from './storage/xp/xpStorage';
+import type { NutritionXpClaim, ViewedTip, XpBreakdown } from './storage/xp/xpTyptes';
 
 export type ReasonSummary = {
   text: string;
   createdAt: string;
 };
 
-export type MetricEntry = {
-  metricId: MetricId;
-  value: number;
-  unit: string;
-  recordedAt: string;
-  notes?: string;
-};
-
-export type TrainingPlanSettings = {
-  sessionsPerWeek?: number;
-  sessionDurationMinutes?: number;
-  activityType?: TrainingActivityFilter;
-  minimumIntensity?: TrainingIntensityFilter;
-};
-
-export type TrainingLogEntry = {
-  id: string;
-  date: string;
-  activityType: TrainingActivityType;
-  durationMinutes: number;
-  distanceKm?: number;
-  intensity: TrainingIntensity;
-  notes?: string;
-  createdAt: string;
-};
-
-export type TrainingLogInput = {
-  date: string;
-  activityType: TrainingActivityType;
-  durationMinutes: number;
-  distanceKm?: number;
-  intensity: TrainingIntensity;
-  notes?: string;
-};
-
-export interface ViewedTip {
-  tipId: string;
-  viewedAt: string;
-  askedQuestions: string[]; // Array av frågor som ställts: ["studies", "experts", "risks"]
-  xpEarned: number;
-  verdict?: VerdictValue; // Uppdaterad för att använda VerdictValue
-}
-
-export type XpBreakdown = {
-  education: number;
-  nutrition: number;
-};
-
-export type NutritionXpClaim = {
-  xp: number;
-  awardedAt: string;
-  period: NutritionTargetPeriod;
-  periodKey: string;
-  tipId: string;
-};
-
 interface StorageContextType {
   plans: PlansByCategory;
-
-  setPlans: (
-    plans:
-      | PlansByCategory
-      | ((prev: PlansByCategory) => PlansByCategory)
-  ) => void;
-
-  saveSupplementToPlan: (
-  selectedPlan: Plan,
-  supplement: SupplementPlanEntry,
-  isEditingSupplement: boolean
-) => Promise<Plan | null>;
-
+  setPlans: (plans: PlansByCategory | ((prev: PlansByCategory) => PlansByCategory)) => void;
+  saveSupplementToPlan: (selectedPlan: Plan, supplement: SupplementPlanEntry, isEditingSupplement: boolean) => Promise<Plan | null>;
   archivedPlans: ArchivedPlansByCategory;
-
   clearArchivedPlans: () => Promise<void>;
-
-  archivePlan: (
-    category: Exclude<
-      keyof ArchivedPlansByCategory,
-      'supplements'
-    >,
-    planId: string | undefined,
-    tipId: string
-  ) => Promise<unknown>;
-
-  archiveSupplementPlan: (
-    planName: string,
-    preferredTime: string
-  ) => Promise<unknown>;
-
-  archiveSupplement: (
-    supplementName: string,
-    planName: string,
-    preferredTime: string
-  ) => Promise<unknown>;
-
+  archivePlan: (category: Exclude<keyof ArchivedPlansByCategory, 'supplements'>, planId: string | undefined, tipId: string) => Promise<unknown>;
+  archiveSupplementPlan: (planName: string, preferredTime: string) => Promise<unknown>;
+  archiveSupplement: (supplementName: string, planName: string, preferredTime: string) => Promise<unknown>;
   hasVisitedChat: boolean;
   setHasVisitedChat: (val: boolean) => void;
   shareHealthPlan: boolean;
   setShareHealthPlan: (val: boolean) => void;
   takenDates: Record<string, SupplementTime[]>;
+  setTakenDates: (update: Record<string, SupplementTime[]> | ((prev: Record<string, SupplementTime[]>) => Record<string, SupplementTime[]>)) => void;
   customSupplements: Supplement[];
-  setCustomSupplements: (
-    updater: Supplement[] | ((prev: Supplement[]) => Supplement[])
-  ) => void;
-  setTakenDates: (
-    update:
-      | Record<string, SupplementTime[]>
-      | ((prev: Record<string, SupplementTime[]>) => Record<string, SupplementTime[]>)
-  ) => void;
+  setCustomSupplements: (updater: Supplement[] | ((prev: Supplement[]) => Supplement[])) => void;
   myAreas: string[];
   setMyAreas: (areas: string[] | ((prev: string[]) => string[])) => void;
   errorMessage: string | null;
@@ -195,58 +90,39 @@ interface StorageContextType {
   myLevel: number;
   setMyLevel: (level: number) => void;
   levelUpModalVisible: boolean;
-  setLevelUpModalVisible: (v: boolean) => void;
+  setLevelUpModalVisible: (value: boolean) => void;
   newLevelReached: number | null;
   clearNewLevelReached: () => void;
-  dailyNutritionSummaries: Record<string, DailyNutritionSummary>;
-  setDailyNutritionSummaries: (
-    updater:
-      | Record<string, DailyNutritionSummary>
-      | ((prev: Record<string, DailyNutritionSummary>) => Record<string, DailyNutritionSummary>)
-  ) => void;
   viewedTips: ViewedTip[];
   setViewedTips: (tips: ViewedTip[] | ((prev: ViewedTip[]) => ViewedTip[])) => void;
   addTipView: (areaId: string, tipId: string) => number;
   incrementTipChat: (areaId: string, tipId: string, questionType: string) => number;
   addChatMessageXP: (areaId: string, tipId: string) => number;
   setTipVerdict: (areaId: string, tipId: string, verdict: VerdictValue) => number;
-  claimNutritionTipCompletionXP?: (input: {
-    claimKey: string;
-    tipId: string;
-    period: NutritionTargetPeriod;
-    periodKey: string;
-    amount: number;
-  }) => number;
+  claimNutritionTipCompletionXP?: (input: { claimKey: string; tipId: string; period: NutritionTargetPeriod; periodKey: string; amount: number }) => number;
   nutritionXpClaims?: Record<string, NutritionXpClaim>;
+  dailyNutritionTracking: DailyNutritionTracking;
+  setDailyNutritionTracking: (updater: DailyNutritionTracking | ((prev: DailyNutritionTracking) => DailyNutritionTracking)) => void;
+  weeklyNutritionTracking: WeeklyNutritionTracking;
+  setWeeklyNutritionTracking: (updater: WeeklyNutritionTracking | ((prev: WeeklyNutritionTracking) => WeeklyNutritionTracking)) => void;
   trainingPlanSettings: Record<string, TrainingPlanSettings>;
   setTrainingPlanSettings: (
-    updater:
-      | Record<string, TrainingPlanSettings>
-      | ((prev: Record<string, TrainingPlanSettings>) => Record<string, TrainingPlanSettings>)
+    updater: Record<string, TrainingPlanSettings> | ((prev: Record<string, TrainingPlanSettings>) => Record<string, TrainingPlanSettings>)
   ) => void;
-  trainingEntries: Record<string, TrainingLogEntry[]>;
-  setTrainingEntries: (
-    updater:
-      | Record<string, TrainingLogEntry[]>
-      | ((prev: Record<string, TrainingLogEntry[]>) => Record<string, TrainingLogEntry[]>)
-  ) => void;
+  dailyTrainingTracking: DailyTrainingTracking;
+  setDailyTrainingTracking: (updater: DailyTrainingTracking | ((prev: DailyTrainingTracking) => DailyTrainingTracking)) => void;
   addTrainingEntry: (entry: TrainingLogInput) => TrainingLogEntry;
+  dailyHabitTracking: DailyHabitTracking;
+  setDailyHabitTracking: (updater: DailyHabitTracking | ((prev: DailyHabitTracking) => DailyHabitTracking)) => void;
   showMusic: boolean;
   setShowMusic: (val: boolean) => void;
   tempPlans: PlansByCategory | null;
   setTempPlans: React.Dispatch<React.SetStateAction<PlansByCategory | null>>;
   metricEntries: MetricEntry[];
-  setMetricEntries: (
-    updater: MetricEntry[] | ((prev: MetricEntry[]) => MetricEntry[])
-  ) => void;
+  setMetricEntries: (updater: MetricEntry[] | ((prev: MetricEntry[]) => MetricEntry[])) => void;
   addMetricEntry: (entry: MetricEntry) => void;
   upsertMetricEntries: (entries: MetricEntry[]) => void;
   getMetricHistory: (metricId: MetricId) => MetricEntry[];
-  weeklyTracking: Record<string, Record<string, WeeklyTrackingItem[] | number>>;
-  setWeeklyTracking: (
-    updater: Record<string, Record<string, WeeklyTrackingItem[] | number>> | ((prev: Record<string, Record<string, WeeklyTrackingItem[] | number>>) => Record<string, Record<string, WeeklyTrackingItem[] | number>>)
-  ) => void;
-  addToWeeklyTracking: (weekStartISO: string, key: string, value: WeeklyTrackingItem | number) => void;
   healthSyncEnabled: boolean;
   setHealthSyncEnabled: (val: boolean) => void;
   userProfile: UserProfile;
@@ -269,34 +145,36 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const [hasCompletedOnboardingState, setHasCompletedOnboardingState] = useState(false);
   const [onboardingStepState, setOnboardingStepState] = useState(0);
   const [myXPState, setMyXPState] = useState(0);
-  const [xpBreakdownState, setXpBreakdownState] = useState<XpBreakdown>({ education: 0, nutrition: 0 });
+  const [xpBreakdownState, setXpBreakdownState] = useState<XpBreakdown>({
+    education: 0,
+    nutrition: 0,
+  });
   const [myLevelState, setMyLevelState] = useState(1);
   const [isInitialized, setIsInitialized] = useState(false);
   const [levelUpModalVisible, setLevelUpModalVisible] = useState(false);
   const [newLevelReached, setNewLevelReached] = useState<number | null>(null);
-  const [dailyNutritionSummariesState, setDailyNutritionSummariesState] = useState<
-    Record<string, DailyNutritionSummary>
-  >({});
-  const [viewedTipsState, setViewedTipsState] = useState<ViewedTip[]>([]);
+  const [dailyNutritionTrackingState, setDailyNutritionTrackingState] = useState<DailyNutritionTracking>({});
+  const [weeklyNutritionTrackingState, setWeeklyNutritionTrackingState] = useState<WeeklyNutritionTracking>({});
   const [trainingPlanSettingsState, setTrainingPlanSettingsState] = useState<Record<string, TrainingPlanSettings>>({});
-  const [trainingEntriesState, setTrainingEntriesState] = useState<Record<string, TrainingLogEntry[]>>({});
+  const [dailyTrainingTrackingState, setDailyTrainingTrackingState] = useState<DailyTrainingTracking>({});
+  const [dailyHabitTrackingState, setDailyHabitTrackingState] = useState<DailyHabitTracking>({});
+  const [viewedTipsState, setViewedTipsState] = useState<ViewedTip[]>([]);
   const [showMusicState, setShowMusicState] = useState(true);
   const [tempPlans, setTempPlans] = useState<PlansByCategory | null>(null);
   const [metricEntriesState, setMetricEntriesState] = useState<MetricEntry[]>([]);
   const [healthSyncEnabledState, setHealthSyncEnabledState] = useState(false);
-  const [weeklyTrackingState, setWeeklyTrackingState] = useState<Record<string, Record<string, WeeklyTrackingItem[] | number>>>({});
   const [nutritionXpClaimsState, setNutritionXpClaimsState] = useState<Record<string, NutritionXpClaim>>({});
   const [userProfileState, setUserProfileState] = useState<UserProfile>({});
+
+  /*
+   * Plans
+   */
 
   useEffect(() => {
     let mounted = true;
 
     const loadPlans = async () => {
-      const [plans, archivedPlans] =
-        await Promise.all([
-          getPlans(),
-          getArchivedPlans(),
-        ]);
+      const [plans, archivedPlans] = await Promise.all([getPlans(), getArchivedPlans()]);
 
       if (!mounted) {
         return;
@@ -308,18 +186,13 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
 
     loadPlans();
 
-    const unsubscribePlans = subscribePlans(
-      plans => {
-        setPlansState(plans);
-      }
-    );
+    const unsubscribePlans = subscribePlans(plans => {
+      setPlansState(plans);
+    });
 
-    const unsubscribeArchivedPlans =
-      subscribeArchivedPlans(
-        archivedPlans => {
-          setArchivedPlansState(archivedPlans);
-        }
-      );
+    const unsubscribeArchivedPlans = subscribeArchivedPlans(archivedPlans => {
+      setArchivedPlansState(archivedPlans);
+    });
 
     return () => {
       mounted = false;
@@ -329,150 +202,146 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     };
   }, []);
 
+  /*
+   * User profile
+   */
+
   useEffect(() => {
-  let mounted = true;
+    let mounted = true;
 
-  const loadUserProfile = async () => {
-    const profile = await getUserProfile();
+    const loadUserProfile = async () => {
+      const profile = await getUserProfile();
 
-    if (mounted) {
-      setUserProfileState(profile);
-    }
-  };
+      if (mounted) {
+        setUserProfileState(profile);
+      }
+    };
 
-  loadUserProfile();
+    loadUserProfile();
 
-  const unsubscribe =
-    subscribeUserProfile(profile => {
+    const unsubscribe = subscribeUserProfile(profile => {
       setUserProfileState(profile);
     });
 
-  return () => {
-    mounted = false;
-    unsubscribe();
-  };
-}, []);
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
+  }, []);
 
-useEffect(() => {
-  const loadData = async () => {
-    try {
-      const [
-        app,
-        supplements,
-        nutrition,
-        xp,
-        training,
-        metrics,
-      ] = await Promise.all([
-        getAppStorage(),
-        getSupplementStorage(),
-        getNutritionStorage(),
-        getXpStorage(),
-        getTrainingStorage(),
-        getMetricEntries(),
-      ]);
+  /*
+   * Remaining storage
+   */
 
-      setHasVisitedChatState(
-        app.hasVisitedChat
-      );
-      setShareHealthPlanState(
-        app.shareHealthPlan
-      );
-      setMyAreasState(app.myAreas);
-      setHasCompletedOnboardingState(
-        app.hasCompletedOnboarding
-      );
-      setOnboardingStepState(
-        app.onboardingStep
-      );
-      setShowMusicState(app.showMusic);
-      setHealthSyncEnabledState(
-        app.healthSyncEnabled
-      );
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [app, supplements, nutrition, training, habits, xp, metrics] = await Promise.all([
+          getAppStorage(),
+          getSupplementStorage(),
+          getNutritionStorage(),
+          getTrainingStorage(),
+          getHabitStorage(),
+          getXpStorage(),
+          getMetricEntries(),
+        ]);
 
-      setTakenDatesState(
-        supplements.takenDates
-      );
-      setCustomSupplementsState(
-        supplements.customSupplements
-      );
+        /*
+         * App
+         */
 
-      setDailyNutritionSummariesState(
-        nutrition.dailyNutritionSummaries
-      );
-      setWeeklyTrackingState(
-        nutrition.weeklyTracking
-      );
+        setHasVisitedChatState(app.hasVisitedChat);
 
-      setMyXPState(xp.myXP);
-      setXpBreakdownState(
-        xp.xpBreakdown
-      );
-      setMyLevelState(xp.myLevel);
-      setViewedTipsState(
-        xp.viewedTips
-      );
-      setNutritionXpClaimsState(
-        xp.nutritionXpClaims
-      );
+        setShareHealthPlanState(app.shareHealthPlan);
 
-      setTrainingPlanSettingsState(
-        training.trainingPlanSettings
-      );
-      setTrainingEntriesState(
-        training.trainingEntries
-      );
+        setMyAreasState(app.myAreas);
 
-      setMetricEntriesState(metrics);
-    } catch (err) {
-      console.error(
-        'Kunde inte ladda storage:',
-        err
-      );
-    } finally {
-      setIsInitialized(true);
-    }
-  };
+        setHasCompletedOnboardingState(app.hasCompletedOnboarding);
 
-  loadData();
-}, []);
+        setOnboardingStepState(app.onboardingStep);
 
-  const setPlans = useCallback(
-    (
-      update:
-        | PlansByCategory
-        | ((prev: PlansByCategory) => PlansByCategory)
-    ) => {
-      if (typeof update === 'function') {
-        updatePlans(current =>
-          update(current)
-        ).catch(() => {});
+        setShowMusicState(app.showMusic);
 
-        return;
+        setHealthSyncEnabledState(app.healthSyncEnabled);
+
+        /*
+         * Supplements
+         */
+
+        setTakenDatesState(supplements.takenDates);
+
+        setCustomSupplementsState(supplements.customSupplements);
+
+        /*
+         * Nutrition
+         */
+
+        setDailyNutritionTrackingState(nutrition.dailyNutritionTracking);
+
+        setWeeklyNutritionTrackingState(nutrition.weeklyNutritionTracking);
+
+        /*
+         * Training
+         */
+
+        setTrainingPlanSettingsState(training.trainingPlanSettings);
+
+        setDailyTrainingTrackingState(training.dailyTrainingTracking);
+
+        /*
+         * Habits
+         */
+
+        setDailyHabitTrackingState(habits.dailyHabitTracking);
+
+        /*
+         * XP
+         */
+
+        setMyXPState(xp.myXP);
+
+        setXpBreakdownState(xp.xpBreakdown);
+
+        setMyLevelState(xp.myLevel);
+
+        setViewedTipsState(xp.viewedTips);
+
+        setNutritionXpClaimsState(xp.nutritionXpClaims);
+
+        /*
+         * Metrics
+         */
+
+        setMetricEntriesState(metrics);
+      } catch (err) {
+        console.error('Kunde inte ladda storage:', err);
+      } finally {
+        setIsInitialized(true);
       }
+    };
 
-      updatePlans(update).catch(() => {});
-    },
-    []
-  );
+    loadData();
+  }, []);
 
-  const saveSupplementToPlan = useCallback(
-  async (
-    selectedPlan: Plan,
-    supplement: SupplementPlanEntry,
-    isEditingSupplement: boolean
-  ): Promise<Plan | null> => {
+  /*
+   * Plans
+   */
+
+  const setPlans = useCallback((update: PlansByCategory | ((prev: PlansByCategory) => PlansByCategory)) => {
+    if (typeof update === 'function') {
+      updatePlans(current => update(current)).catch(() => {});
+
+      return;
+    }
+
+    updatePlans(update).catch(() => {});
+  }, []);
+
+  const saveSupplementToPlan = useCallback(async (selectedPlan: Plan, supplement: SupplementPlanEntry, isEditingSupplement: boolean): Promise<Plan | null> => {
     try {
-      return await saveSupplementToPlanStore(
-        selectedPlan,
-        supplement,
-        isEditingSupplement
-      );
+      return await saveSupplementToPlanStore(selectedPlan, supplement, isEditingSupplement);
     } catch (err) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : 'Kunde inte spara tillskottet.';
+      const message = err instanceof Error ? err.message : 'Kunde inte spara tillskottet.';
 
       setErrorMessage(message);
 
@@ -482,157 +351,132 @@ useEffect(() => {
 
       return null;
     }
-  },
-  []
-);
+  }, []);
 
-  const setTakenDates = (
-    update:
-      | Record<string, SupplementTime[]>
-      | ((prev: Record<string, SupplementTime[]>) => Record<string, SupplementTime[]>)
-  ) => {
+  /*
+   * Supplements
+   */
+
+  const setTakenDates = (update: Record<string, SupplementTime[]> | ((prev: Record<string, SupplementTime[]>) => Record<string, SupplementTime[]>)) => {
     setTakenDatesState(prev => {
       const newDates = typeof update === 'function' ? update(prev) : update;
+
       saveTakenDates(newDates);
+
       return newDates;
     });
   };
 
-  const setCustomSupplements = (
-    updater: Supplement[] | ((prev: Supplement[]) => Supplement[])
-  ) => {
+  const setCustomSupplements = (updater: Supplement[] | ((prev: Supplement[]) => Supplement[])) => {
     setCustomSupplementsState(prev => {
       const nextSupplements = typeof updater === 'function' ? updater(prev) : updater;
+
       saveCustomSupplements(nextSupplements);
+
       return nextSupplements;
     });
   };
 
+  /*
+   * App settings
+   */
+
   const setHasVisitedChat = async (val: boolean) => {
     setHasVisitedChatState(val);
+
     await saveHasVisitedChat(val);
   };
 
   const setShareHealthPlan = async (val: boolean) => {
     setShareHealthPlanState(val);
+
     await saveShareHealthPlan(val);
   };
 
   const setMyAreas = (update: string[] | ((prev: string[]) => string[])) => {
     setMyAreasState(prev => {
       const newAreas = typeof update === 'function' ? update(prev) : update;
+
       saveMyAreas(newAreas);
+
       return newAreas;
     });
   };
 
   const setHasCompletedOnboarding = (val: boolean) => {
     setHasCompletedOnboardingState(val);
+
     saveHasCompletedOnboarding(val);
   };
 
   const setOnboardingStep = (val: number) => {
     setOnboardingStepState(val);
+
     saveOnboardingStep(val);
   };
 
-  const setMyXP = useCallback((update: number | ((prev: number) => number)) => {
-    setMyXPState(prevXP => {
-      const newXP = typeof update === 'function' ? update(prevXP) : update;
+  const setShowMusic = (val: boolean) => {
+    setShowMusicState(val);
 
-      const oldLevelObj = levels.findLast(l => l.requiredXP <= prevXP);
-      const newLevelObj = levels.findLast(l => l.requiredXP <= newXP);
-
-      const oldLevel = oldLevelObj?.level ?? 1;
-      const newLevel = newLevelObj?.level ?? 1;
-
-      // Om man gått upp minst en level
-      if (newLevel > oldLevel) {
-        setMyLevel(newLevel);
-        setNewLevelReached(newLevel);
-        setLevelUpModalVisible(true);
-        saveLevel(newLevel);
-      } else if (newLevel !== myLevelState) {
-        // Om man inte gått upp, men XP ändå ökat, säkerställ att nivå stämmer
-        setMyLevel(newLevel);
-        saveLevel(newLevel);
-      }
-
-      saveXP(newXP);
-      return newXP;
-    });
-  }, [myLevelState]);
-
-  const awardXP = useCallback(
-    (amount: number, source: XpSource) => {
-      if (!Number.isFinite(amount) || amount <= 0) return;
-
-      setXpBreakdownState(prev => {
-        const next = {
-          ...prev,
-          [source]: (prev[source] ?? 0) + amount,
-        };
-        saveXpBreakdown(next);
-        return next;
-      });
-
-      setMyXP(prev => prev + amount);
-    },
-    [setMyXP]
-  );
-
-  const setMyLevel = (level: number) => {
-    setMyLevelState(level);
-    saveLevel(level);
+    saveShowMusic(val);
   };
 
-  const clearNewLevelReached = () => {
-    setNewLevelReached(null);
-  };
+  const setHealthSyncEnabled = useCallback((val: boolean) => {
+    setHealthSyncEnabledState(val);
 
-  const setDailyNutritionSummaries = (
-    updater:
-      | Record<string, DailyNutritionSummary>
-      | ((prev: Record<string, DailyNutritionSummary>) => Record<string, DailyNutritionSummary>)
-  ) => {
-    setDailyNutritionSummariesState(prev => {
+    saveHealthSyncEnabled(val);
+  }, []);
+
+  /*
+   * Nutrition
+   */
+
+  const setDailyNutritionTracking = useCallback((updater: DailyNutritionTracking | ((prev: DailyNutritionTracking) => DailyNutritionTracking)) => {
+    setDailyNutritionTrackingState(prev => {
       const updated = typeof updater === 'function' ? updater(prev) : updater;
-      saveDailyNutritionSummaries(updated);
-      return updated;
-    });
-  };
 
-  const setViewedTips = useCallback((update: ViewedTip[] | ((prev: ViewedTip[]) => ViewedTip[])) => {
-    setViewedTipsState(prev => {
-      const newTips = typeof update === 'function' ? update(prev) : update;
-      saveViewedTips(newTips);
-      return newTips;
+      saveDailyNutritionTracking(updated);
+
+      return updated;
     });
   }, []);
 
-  const setTrainingPlanSettings = (
-    updater:
-      | Record<string, TrainingPlanSettings>
-      | ((prev: Record<string, TrainingPlanSettings>) => Record<string, TrainingPlanSettings>)
-  ) => {
-    setTrainingPlanSettingsState(prev => {
+  const setWeeklyNutritionTracking = useCallback((updater: WeeklyNutritionTracking | ((prev: WeeklyNutritionTracking) => WeeklyNutritionTracking)) => {
+    setWeeklyNutritionTrackingState(prev => {
       const updated = typeof updater === 'function' ? updater(prev) : updater;
-      saveTrainingPlanSettings(updated);
-      return updated;
-    });
-  };
 
-  const setTrainingEntries = (
-    updater:
-      | Record<string, TrainingLogEntry[]>
-      | ((prev: Record<string, TrainingLogEntry[]>) => Record<string, TrainingLogEntry[]>)
-  ) => {
-    setTrainingEntriesState(prev => {
-      const updated = typeof updater === 'function' ? updater(prev) : updater;
-      saveTrainingEntries(updated);
+      saveWeeklyNutritionTracking(updated);
+
       return updated;
     });
-  };
+  }, []);
+
+  /*
+   * Training
+   */
+
+  const setTrainingPlanSettings = useCallback(
+    (updater: Record<string, TrainingPlanSettings> | ((prev: Record<string, TrainingPlanSettings>) => Record<string, TrainingPlanSettings>)) => {
+      setTrainingPlanSettingsState(prev => {
+        const updated = typeof updater === 'function' ? updater(prev) : updater;
+
+        saveTrainingPlanSettings(updated);
+
+        return updated;
+      });
+    },
+    []
+  );
+
+  const setDailyTrainingTracking = useCallback((updater: DailyTrainingTracking | ((prev: DailyTrainingTracking) => DailyTrainingTracking)) => {
+    setDailyTrainingTrackingState(prev => {
+      const updated = typeof updater === 'function' ? updater(prev) : updater;
+
+      saveDailyTrainingTracking(updated);
+
+      return updated;
+    });
+  }, []);
 
   const addTrainingEntry = useCallback(
     (entry: TrainingLogInput): TrainingLogEntry => {
@@ -642,35 +486,43 @@ useEffect(() => {
         ...entry,
       };
 
-      setTrainingEntries(prev => ({
+      setDailyTrainingTracking(prev => ({
         ...prev,
         [entry.date]: [...(prev[entry.date] ?? []), nextEntry],
       }));
 
       return nextEntry;
     },
-    []
+    [setDailyTrainingTracking]
   );
 
-  const setShowMusic = (val: boolean) => {
-    setShowMusicState(val);
-    saveShowMusic(val);
-  };
+  /*
+   * Habits
+   */
 
-  const setMetricEntries = (
-    updater: MetricEntry[] | ((prev: MetricEntry[]) => MetricEntry[])
-  ) => {
+  const setDailyHabitTracking = useCallback((updater: DailyHabitTracking | ((prev: DailyHabitTracking) => DailyHabitTracking)) => {
+    setDailyHabitTrackingState(prev => {
+      const updated = typeof updater === 'function' ? updater(prev) : updater;
+
+      saveDailyHabitTracking(updated);
+
+      return updated;
+    });
+  }, []);
+
+  /*
+   * Metrics
+   */
+
+  const setMetricEntries = (updater: MetricEntry[] | ((prev: MetricEntry[]) => MetricEntry[])) => {
     setMetricEntriesState(prev => {
       const updated = typeof updater === 'function' ? updater(prev) : updater;
+
       saveMetricEntries(updated);
+
       return updated;
     });
   };
-
-  const setHealthSyncEnabled = useCallback((val: boolean) => {
-    setHealthSyncEnabledState(val);
-    saveHealthSyncEnabled(val);
-  }, []);
 
   const addMetricEntry = useCallback((entry: MetricEntry) => {
     setMetricEntries(prev => [...prev, entry]);
@@ -683,6 +535,7 @@ useEffect(() => {
 
     setMetricEntries(prev => {
       const next = [...prev];
+
       const existingIndexByKey = new Map<string, number>();
 
       next.forEach((entry, index) => {
@@ -691,11 +544,14 @@ useEffect(() => {
 
       entries.forEach(entry => {
         const key = `${entry.metricId}|${entry.recordedAt}`;
+
         const existingIndex = existingIndexByKey.get(key);
 
         if (existingIndex === undefined) {
           existingIndexByKey.set(key, next.length);
+
           next.push(entry);
+
           return;
         }
 
@@ -709,19 +565,104 @@ useEffect(() => {
     });
   }, []);
 
-  const getMetricHistory = useCallback((metricId: MetricId): MetricEntry[] => {
-    return metricEntriesState.filter(entry => {
-      const matchesMetric = entry.metricId === metricId;
-      return matchesMetric;
+  const getMetricHistory = useCallback(
+    (metricId: MetricId): MetricEntry[] => {
+      return metricEntriesState.filter(entry => entry.metricId === metricId);
+    },
+    [metricEntriesState]
+  );
+
+  /*
+   * XP
+   */
+
+  const setMyLevel = (level: number) => {
+    setMyLevelState(level);
+
+    saveLevel(level);
+  };
+
+  const clearNewLevelReached = () => {
+    setNewLevelReached(null);
+  };
+
+  const setMyXP = useCallback(
+    (update: number | ((prev: number) => number)) => {
+      setMyXPState(prevXP => {
+        const newXP = typeof update === 'function' ? update(prevXP) : update;
+
+        const oldLevelObj = levels.findLast(level => level.requiredXP <= prevXP);
+
+        const newLevelObj = levels.findLast(level => level.requiredXP <= newXP);
+
+        const oldLevel = oldLevelObj?.level ?? 1;
+
+        const newLevel = newLevelObj?.level ?? 1;
+
+        if (newLevel > oldLevel) {
+          setMyLevelState(newLevel);
+
+          saveLevel(newLevel);
+
+          setNewLevelReached(newLevel);
+
+          setLevelUpModalVisible(true);
+        } else if (newLevel !== myLevelState) {
+          setMyLevelState(newLevel);
+
+          saveLevel(newLevel);
+        }
+
+        saveXP(newXP);
+
+        return newXP;
+      });
+    },
+    [myLevelState]
+  );
+
+  const awardXP = useCallback(
+    (amount: number, source: XpSource) => {
+      if (!Number.isFinite(amount) || amount <= 0) {
+        return;
+      }
+
+      setXpBreakdownState(prev => {
+        const next = {
+          ...prev,
+          [source]: (prev[source] ?? 0) + amount,
+        };
+
+        saveXpBreakdown(next);
+
+        return next;
+      });
+
+      setMyXP(prev => prev + amount);
+    },
+    [setMyXP]
+  );
+
+  const setViewedTips = useCallback((update: ViewedTip[] | ((prev: ViewedTip[]) => ViewedTip[])) => {
+    setViewedTipsState(prev => {
+      const newTips = typeof update === 'function' ? update(prev) : update;
+
+      saveViewedTips(newTips);
+
+      return newTips;
     });
-  }, [metricEntriesState]);
+  }, []);
 
+  const addTipView = useCallback(
+    (_areaId: string, tipId: string): number => {
+      const hasExistingTip = viewedTipsState.some(view => view.tipId === tipId);
 
-  const addTipView = useCallback((_areaId: string, tipId: string): number => {
-    const hasExistingTip = viewedTipsState.some(v => v.tipId === tipId);
-    const xpForView = XP_FOR_VIEW;
+      if (hasExistingTip) {
+        return 0;
+      }
 
-    if (!hasExistingTip) {
+      const xpForView = XP_FOR_VIEW;
+
       const newView: ViewedTip = {
         tipId,
         viewedAt: new Date().toISOString(),
@@ -729,115 +670,121 @@ useEffect(() => {
         xpEarned: xpForView,
       };
 
-      setViewedTips([...viewedTipsState, newView]);
-      awardXP(xpForView, 'education');
-      return xpForView;
-    }
+      setViewedTips(prev => [...prev, newView]);
 
-    return 0;
-  }, [viewedTipsState, setViewedTips, awardXP]);
+      awardXP(xpForView, 'education');
+
+      return xpForView;
+    },
+    [viewedTipsState, setViewedTips, awardXP]
+  );
 
   const incrementTipChat = useCallback(
     (_areaId: string, tipId: string, questionType: string): number => {
-      const existing = viewedTipsState.find(v => v.tipId === tipId);
+      const existing = viewedTipsState.find(view => view.tipId === tipId);
 
-      // Om frågan redan ställts, ingen XP
       if (existing?.askedQuestions.includes(questionType)) {
         return 0;
       }
 
       const xpForChat = XP_FOR_CHAT_QUESTION;
 
-      const updated = viewedTipsState.map(v => {
-        if (v.tipId === tipId) {
-          return {
-            ...v,
-            askedQuestions: [...v.askedQuestions, questionType],
-            xpEarned: v.xpEarned + xpForChat,
-          };
-        }
-        return v;
-      });
+      setViewedTips(prev =>
+        prev.map(view => {
+          if (view.tipId !== tipId) {
+            return view;
+          }
 
-      setViewedTips(updated);
+          return {
+            ...view,
+            askedQuestions: [...view.askedQuestions, questionType],
+            xpEarned: view.xpEarned + xpForChat,
+          };
+        })
+      );
+
       awardXP(xpForChat, 'education');
+
       return xpForChat;
     },
     [viewedTipsState, setViewedTips, awardXP]
   );
 
-  // Lägg till ny funktion för att ge XP för varje chat-meddelande
-  const addChatMessageXP = useCallback((_areaId: string, tipId: string): number => {
-    const xpPerMessage = XP_PER_CHAT_MESSAGE; // 2 XP per meddelande
+  const addChatMessageXP = useCallback(
+    (_areaId: string, tipId: string): number => {
+      const xpPerMessage = XP_PER_CHAT_MESSAGE;
 
-    const updated = viewedTipsState.map(v => {
-      if (v.tipId === tipId) {
-        return {
-          ...v,
-          xpEarned: v.xpEarned + xpPerMessage,
-        };
-      }
-      return v;
-    });
+      setViewedTips(prev =>
+        prev.map(view => {
+          if (view.tipId !== tipId) {
+            return view;
+          }
 
-    setViewedTips(updated);
-    awardXP(xpPerMessage, 'education');
-    return xpPerMessage;
-  }, [viewedTipsState, setViewedTips, awardXP]);
+          return {
+            ...view,
+            xpEarned: view.xpEarned + xpPerMessage,
+          };
+        })
+      );
+
+      awardXP(xpPerMessage, 'education');
+
+      return xpPerMessage;
+    },
+    [setViewedTips, awardXP]
+  );
 
   const setTipVerdict = useCallback(
     (_areaId: string, tipId: string, verdict: VerdictValue): number => {
-      const existing = viewedTipsState.find(v => v.tipId === tipId);
+      const existing = viewedTipsState.find(view => view.tipId === tipId);
 
-      // Om verdict redan satt, ingen XP
       if (existing?.verdict) {
-        // Uppdatera bara verdict, ingen XP
-        const updated = viewedTipsState.map(v => {
-          if (v.tipId === tipId) {
-            return { ...v, verdict };
-          }
-          return v;
-        });
-        setViewedTips(updated);
+        setViewedTips(prev =>
+          prev.map(view =>
+            view.tipId === tipId
+              ? {
+                  ...view,
+                  verdict,
+                }
+              : view
+          )
+        );
+
         return 0;
       }
 
       const xpForVerdict = XP_FOR_VERDICT;
 
-      const updated = viewedTipsState.map(v => {
-        if (v.tipId === tipId) {
-          return {
-            ...v,
-            verdict,
-            xpEarned: v.xpEarned + xpForVerdict,
-          };
-        }
-        return v;
-      });
+      setViewedTips(prev =>
+        prev.map(view =>
+          view.tipId === tipId
+            ? {
+                ...view,
+                verdict,
+                xpEarned: view.xpEarned + xpForVerdict,
+              }
+            : view
+        )
+      );
 
-      setViewedTips(updated);
       awardXP(xpForVerdict, 'education');
+
       return xpForVerdict;
     },
     [viewedTipsState, setViewedTips, awardXP]
   );
 
   const claimNutritionTipCompletionXP = useCallback(
-    (input: {
-      claimKey: string;
-      tipId: string;
-      period: NutritionTargetPeriod;
-      periodKey: string;
-      amount: number;
-    }): number => {
+    (input: { claimKey: string; tipId: string; period: NutritionTargetPeriod; periodKey: string; amount: number }): number => {
       const { claimKey, tipId, period, periodKey, amount } = input;
+
       if (!claimKey || !Number.isFinite(amount) || amount <= 0) {
         return 0;
       }
+
       if (nutritionXpClaimsState[claimKey]) {
         return 0;
       }
-
 
       setNutritionXpClaimsState(prev => {
         if (prev[claimKey]) {
@@ -846,6 +793,7 @@ useEffect(() => {
 
         const next: Record<string, NutritionXpClaim> = {
           ...prev,
+
           [claimKey]: {
             xp: amount,
             awardedAt: new Date().toISOString(),
@@ -856,11 +804,12 @@ useEffect(() => {
         };
 
         saveNutritionXpClaims(next);
+
         return next;
       });
 
-
       awardXP(amount, 'nutrition');
+
       return amount;
     },
     [awardXP, nutritionXpClaimsState]
@@ -870,11 +819,17 @@ useEffect(() => {
     const nutritionXP = xpBreakdownState.nutrition;
 
     setNutritionXpClaimsState({});
+
     saveNutritionXpClaims({});
 
     setXpBreakdownState(prev => {
-      const next = { ...prev, nutrition: 0 };
+      const next = {
+        ...prev,
+        nutrition: 0,
+      };
+
       saveXpBreakdown(next);
+
       return next;
     });
 
@@ -887,8 +842,13 @@ useEffect(() => {
     const educationXP = xpBreakdownState.education;
 
     setXpBreakdownState(prev => {
-      const next = { ...prev, education: 0 };
+      const next = {
+        ...prev,
+        education: 0,
+      };
+
       saveXpBreakdown(next);
+
       return next;
     });
 
@@ -897,68 +857,23 @@ useEffect(() => {
     }
   }, [setMyXP, xpBreakdownState.education]);
 
-  const setWeeklyTracking = (
-    updater: Record<string, Record<string, WeeklyTrackingItem[] | number>> | ((prev: Record<string, Record<string, WeeklyTrackingItem[] | number>>) => Record<string, Record<string, WeeklyTrackingItem[] | number>>)
-  ) => {
-    setWeeklyTrackingState(prev => {
-      const updated = typeof updater === 'function' ? updater(prev) : updater;
-      saveWeeklyTracking(updated);
-      return updated;
-    });
-  };
+  /*
+   * User profile
+   */
 
-  const addToWeeklyTracking = useCallback((weekStartISO: string, key: string, value: WeeklyTrackingItem | number) => {
-    setWeeklyTracking(prev => {
-      const updated = { ...prev };
-      if (!updated[weekStartISO]) {
-        updated[weekStartISO] = {};
-      }
-      const weekData = updated[weekStartISO];
-
-      if (typeof value === 'number') {
-        // If value is a number, just set/overwrite (for counts)
-        weekData[key] = value;
-      } else {
-        // If value is a WeeklyTrackingItem, treat as array
-        const existing = weekData[key];
-        if (Array.isArray(existing)) {
-          // Only add if not already present (unique constraint by id or value)
-          if (!existing.some((item: WeeklyTrackingItem) => JSON.stringify(item) === JSON.stringify(value))) {
-            weekData[key] = [...existing, value];
-          }
-        } else {
-          weekData[key] = [value];
-        }
-      }
-
-      return updated;
-    });
+  const saveUserProfile = useCallback(async (profile: UserProfile) => {
+    return saveUserProfileStore(profile);
   }, []);
 
-  const saveUserProfile = useCallback(
-  async (profile: UserProfile) => {
-    return saveUserProfileStore(profile);
-  },
-  []
-);
-
-const updateUserProfile = useCallback(
-  async (updates: Partial<UserProfile>) => {
+  const updateUserProfile = useCallback(async (updates: Partial<UserProfile>) => {
     return updateUserProfileStore(updates);
-  },
-  []
-);
+  }, []);
 
-const clearUserProfile = useCallback(
-  async () => {
+  const clearUserProfile = useCallback(async () => {
     await clearUserProfileStore();
-  },
-  []
-);
+  }, []);
 
-
-
-  const value = useMemo(
+  const value = useMemo<StorageContextType>(
     () => ({
       plans: plansState,
       setPlans,
@@ -973,20 +888,22 @@ const clearUserProfile = useCallback(
       shareHealthPlan: shareHealthPlanState,
       setShareHealthPlan,
       takenDates: takenDatesState,
+      setTakenDates,
       customSupplements: customSupplementsState,
       setCustomSupplements,
-      setTakenDates,
       myAreas: myAreasState,
       setMyAreas,
       errorMessage,
       setErrorMessage,
       hasCompletedOnboarding: hasCompletedOnboardingState,
       setHasCompletedOnboarding,
+      isInitialized,
       onboardingStep: onboardingStepState,
       setOnboardingStep,
-      isInitialized,
       myXP: myXPState,
       setMyXP,
+      clearNutritionXP,
+      clearEducationXP,
       xpBreakdown: xpBreakdownState,
       myLevel: myLevelState,
       setMyLevel,
@@ -994,8 +911,6 @@ const clearUserProfile = useCallback(
       setLevelUpModalVisible,
       newLevelReached,
       clearNewLevelReached,
-      dailyNutritionSummaries: dailyNutritionSummariesState,
-      setDailyNutritionSummaries,
       viewedTips: viewedTipsState,
       setViewedTips,
       addTipView,
@@ -1003,14 +918,18 @@ const clearUserProfile = useCallback(
       addChatMessageXP,
       setTipVerdict,
       claimNutritionTipCompletionXP,
-      clearNutritionXP,
-      clearEducationXP,
       nutritionXpClaims: nutritionXpClaimsState,
+      dailyNutritionTracking: dailyNutritionTrackingState,
+      setDailyNutritionTracking,
+      weeklyNutritionTracking: weeklyNutritionTrackingState,
+      setWeeklyNutritionTracking,
       trainingPlanSettings: trainingPlanSettingsState,
       setTrainingPlanSettings,
-      trainingEntries: trainingEntriesState,
-      setTrainingEntries,
+      dailyTrainingTracking: dailyTrainingTrackingState,
+      setDailyTrainingTracking,
       addTrainingEntry,
+      dailyHabitTracking: dailyHabitTrackingState,
+      setDailyHabitTracking,
       showMusic: showMusicState,
       setShowMusic,
       tempPlans,
@@ -1020,9 +939,6 @@ const clearUserProfile = useCallback(
       addMetricEntry,
       upsertMetricEntries,
       getMetricHistory,
-      weeklyTracking: weeklyTrackingState,
-      setWeeklyTracking,
-      addToWeeklyTracking,
       healthSyncEnabled: healthSyncEnabledState,
       setHealthSyncEnabled,
       userProfile: userProfileState,
@@ -1030,7 +946,8 @@ const clearUserProfile = useCallback(
       updateUserProfile,
       clearUserProfile,
     }),
-       [plansState, setPlans,saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, dailyNutritionSummariesState, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, clearNutritionXP, clearEducationXP, nutritionXpClaimsState, trainingPlanSettingsState, trainingEntriesState, addTrainingEntry, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, weeklyTrackingState, addToWeeklyTracking, healthSyncEnabledState, setHealthSyncEnabled, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
+    // prettier-ignore
+    [plansState, setPlans, saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, clearNutritionXP, clearEducationXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState, dailyNutritionTrackingState, setDailyNutritionTracking, weeklyNutritionTrackingState, setWeeklyNutritionTracking, trainingPlanSettingsState, setTrainingPlanSettings, dailyTrainingTrackingState, setDailyTrainingTracking, addTrainingEntry, dailyHabitTrackingState, setDailyHabitTracking, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, healthSyncEnabledState, setHealthSyncEnabled, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;
@@ -1038,10 +955,10 @@ const clearUserProfile = useCallback(
 
 export const useStorage = (): StorageContextType => {
   const context = useContext(StorageContext);
+
   if (!context) {
     throw new Error('useStorage måste användas inom en <StorageProvider>');
   }
+
   return context;
 };
-
-

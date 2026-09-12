@@ -37,3 +37,6 @@ yarn-error.*
 
 app-example
 components/ui/DateTimeInput.tsx
+components/OtherTipsSection.tsx
+components/ui/AppCard.tsx
+components/ui/icon-symbol-map.ts

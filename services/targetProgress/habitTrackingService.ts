@@ -1,218 +1,134 @@
-import { WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
+import type {
+  DailyHabitTracking,
+  HabitEntry,
+} from '@/app/context/storage/habits/habitTypes';
 
-import { getWeekStartKey } from './dateRange';
-
-export type WeeklyTracking = Record<
-  string,
-  Record<string, WeeklyTrackingItem[] | number>
->;
-
-type LogHabitTargetParams = {
-  trackingKey: string;
-  selectedDate: string;
-  value: number;
-  slot?: string;
-  setWeeklyTracking: (
-    updater: (
-      prev: WeeklyTracking
-    ) => WeeklyTracking
-  ) => void;
-};
-
-type GetHabitValueParams = {
-  trackingKey: string;
-  selectedDate: string;
-  weeklyTracking: WeeklyTracking;
-};
-
-type GetHabitSlotValueParams = {
-  trackingKey: string;
-  selectedDate: string;
-  slot: string;
-  weeklyTracking: WeeklyTracking;
-};
-
-const getHabitKey = (
-  trackingKey: string,
-  date: string
-): string =>
-  `habit:${trackingKey}:${date}`;
-
-const getHabitSlotKey = (
-  trackingKey: string,
-  date: string,
-  slot: string
-): string =>
-  `habit:${trackingKey}:${date}:slot:${slot}`;
-
-export const getHabitValue = ({
-  trackingKey,
-  selectedDate,
-  weeklyTracking,
-}: GetHabitValueParams): number => {
-  const weekStartKey =
-    getWeekStartKey(selectedDate);
-
-  const habitKey =
-    getHabitKey(
-      trackingKey,
-      selectedDate
-    );
-
-  const value =
-    weeklyTracking[
-      weekStartKey
-    ]?.[habitKey];
-
-  return typeof value === 'number'
-    ? value
-    : 0;
-};
-
-export const getHabitSlotValue = ({
-  trackingKey,
-  selectedDate,
-  slot,
-  weeklyTracking,
-}: GetHabitSlotValueParams): number => {
-  const weekStartKey =
-    getWeekStartKey(selectedDate);
-
-  const slotKey =
-    getHabitSlotKey(
-      trackingKey,
-      selectedDate,
-      slot
-    );
-
-  const value =
-    weeklyTracking[
-      weekStartKey
-    ]?.[slotKey];
-
-  return typeof value === 'number'
-    ? value
-    : 0;
-};
-
-export const isHabitSlotCompleted = ({
-  trackingKey,
-  selectedDate,
-  slot,
-  weeklyTracking,
-}: GetHabitSlotValueParams): boolean => {
-  return (
-    getHabitSlotValue({
-      trackingKey,
-      selectedDate,
-      slot,
-      weeklyTracking,
-    }) > 0
-  );
-};
+type SetDailyHabitTracking = (
+  updater:
+    | DailyHabitTracking
+    | ((
+        prev: DailyHabitTracking
+      ) => DailyHabitTracking)
+) => void;
 
 export const logHabitTarget = ({
   trackingKey,
   selectedDate,
   value,
   slot,
-  setWeeklyTracking,
-}: LogHabitTargetParams): void => {
-  const weekStartKey =
-    getWeekStartKey(selectedDate);
+  setDailyHabitTracking,
+}: {
+  trackingKey: string;
+  selectedDate: string;
+  value: number;
+  slot?: string;
+  setDailyHabitTracking:
+    SetDailyHabitTracking;
+}) => {
+  setDailyHabitTracking(prev => {
+    const day =
+      prev[selectedDate] ?? {};
 
-  const key = slot
-    ? getHabitSlotKey(
-        trackingKey,
-        selectedDate,
-        slot
-      )
-    : getHabitKey(
-        trackingKey,
-        selectedDate
-      );
-
-  setWeeklyTracking(prev => {
-    const currentWeek =
-      prev[weekStartKey] ?? {};
-
-    const nextWeek = {
-      ...currentWeek,
-      [key]: value,
-    };
+    const existing:
+      HabitEntry =
+      day[trackingKey] ?? {
+        value: 0,
+      };
 
     if (slot) {
-      const slotPrefix =
-        `habit:${trackingKey}:${selectedDate}:slot:`;
+      const slots = {
+        ...(existing.slots ?? {}),
+        [slot]: value > 0,
+      };
 
-      const total =
-        Object.entries(nextWeek)
-          .filter(
-            ([entryKey]) =>
-              entryKey.startsWith(
-                slotPrefix
-              )
-          )
-          .reduce(
-            (
-              sum,
-              [, entryValue]
-            ) =>
-              sum +
-              (
-                typeof entryValue ===
-                'number'
-                  ? entryValue
-                  : 0
-              ),
-            0
-          );
+      const newValue =
+        Object.values(slots).filter(
+          Boolean
+        ).length;
 
-      nextWeek[
-        getHabitKey(
-          trackingKey,
-          selectedDate
-        )
-      ] = total;
+      return {
+        ...prev,
+        [selectedDate]: {
+          ...day,
+          [trackingKey]: {
+            ...existing,
+            value: newValue,
+            slots,
+          },
+        },
+      };
     }
 
     return {
       ...prev,
-      [weekStartKey]:
-        nextWeek,
+      [selectedDate]: {
+        ...day,
+        [trackingKey]: {
+          ...existing,
+          value,
+        },
+      },
     };
   });
 };
 
+export const getHabitValue = ({
+  trackingKey,
+  selectedDate,
+  dailyHabitTracking,
+}: {
+  trackingKey: string;
+  selectedDate: string;
+  dailyHabitTracking:
+    DailyHabitTracking;
+}): number => {
+  return (
+    dailyHabitTracking[
+      selectedDate
+    ]?.[trackingKey]?.value ?? 0
+  );
+};
+
+export const isHabitSlotCompleted = ({
+  trackingKey,
+  selectedDate,
+  slot,
+  dailyHabitTracking,
+}: {
+  trackingKey: string;
+  selectedDate: string;
+  slot: string;
+  dailyHabitTracking:
+    DailyHabitTracking;
+}): boolean => {
+  return (
+    dailyHabitTracking[
+      selectedDate
+    ]?.[trackingKey]?.slots?.[
+      slot
+    ] ?? false
+  );
+};
+
 export const getHabitTrackedDates = ({
   trackingKeys,
-  weeklyTracking,
+  dailyHabitTracking,
 }: {
   trackingKeys: Set<string>;
-  weeklyTracking: WeeklyTracking;
+  dailyHabitTracking:
+    DailyHabitTracking;
 }): string[] => {
-  const dates = Object.values(weeklyTracking).flatMap(
-    weekData =>
-      Object.entries(weekData).flatMap(([key, value]) => {
-        const match =
-          /^habit:([^:]+):(\d{4}-\d{2}-\d{2})$/.exec(key);
-
-        if (
-          !match ||
-          typeof value !== 'number' ||
-          value <= 0
-        ) {
-          return [];
-        }
-
-        const trackingKey = match[1];
-        const date = match[2];
-
-        return trackingKeys.has(trackingKey)
-          ? [date]
-          : [];
-      })
-  );
-
-  return Array.from(new Set(dates));
+  return Object.entries(
+    dailyHabitTracking
+  )
+    .filter(([, day]) =>
+      Object.entries(day).some(
+        ([trackingKey, entry]) =>
+          trackingKeys.has(
+            trackingKey
+          ) &&
+          entry.value > 0
+      )
+    )
+    .map(([date]) => date);
 };
