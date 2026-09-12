@@ -5,6 +5,7 @@ import { TipProgressItem } from '@/app/context/storage/nutrition/nutritionTypes'
 import { useStorage } from '@/app/context/StorageContext';
 import { useTargetProgressList } from '@/hooks/useTargetProgressList';
 import { tips } from '@/locales/tips';
+import { normalizeNutritionTargets } from '@/services/targetProgress/normalizeNutritionTargets';
 import type { NutritionTargetDefinition } from '@/services/targetProgress/targetProgressTypes';
 
 type NutritionPlanTarget = NutritionTargetDefinition & {
@@ -14,6 +15,7 @@ type NutritionPlanTarget = NutritionTargetDefinition & {
 
 export const useNutritionPlanProgress = (selectedDate: string): TipProgressItem[] => {
   const { plans } = useStorage();
+
   const { t } = useTranslation();
 
   const targets = useMemo<NutritionPlanTarget[]>(() => {
@@ -24,23 +26,17 @@ export const useNutritionPlanProgress = (selectedDate: string): TipProgressItem[
         return [];
       }
 
-      const period = tip.targetPeriod;
-
-      if (!period) {
-        return [];
-      }
-
       const title = t(`tips:${tip.id}.title`);
 
-      return (tip.trackingTargets ?? []).map(target => ({
+      return normalizeNutritionTargets(tip).map(target => ({
         ...target,
+
         tipId: tip.id,
+
         title,
-        source: 'nutrition' as const,
-        period,
       }));
     });
-  }, [plans, t]);
+  }, [plans?.nutrition, t]);
 
   const targetProgress = useTargetProgressList(targets, selectedDate);
 
@@ -50,17 +46,35 @@ export const useNutritionPlanProgress = (selectedDate: string): TipProgressItem[
     targetProgress.forEach(item => {
       const targetProgressValue = item.progress.target > 0 ? Math.min(item.progress.current / item.progress.target, 1) : 0;
 
+      const targetTag = item.tag ?? item.trackingKey;
+
+      const targetLabel = item.labelGroup
+        ? t(`common:nutritionLogger.${item.labelGroup}.${targetTag}`, {
+            defaultValue: targetTag,
+          })
+        : targetTag;
+
       const targetItem = {
-        tag: item.trackingKey,
+        tag: targetTag,
+
         unit: item.unit,
+
         period: item.period,
+
         amount: item.progress.target,
+
         actual: item.progress.current,
+
         foodActual: item.progress.current,
+
         supplementActual: 0,
+
         isMet: item.progress.isFulfilled,
-        label: item.title,
+
+        label: targetLabel,
+
         trackedItems: undefined,
+
         supplementIds: item.supplementIds,
       };
 
@@ -69,7 +83,9 @@ export const useNutritionPlanProgress = (selectedDate: string): TipProgressItem[
       if (!existing) {
         byTip.set(item.tipId, {
           tipId: item.tipId,
+
           title: item.title,
+
           period: item.period,
 
           progress: targetProgressValue,
@@ -94,9 +110,20 @@ export const useNutritionPlanProgress = (selectedDate: string): TipProgressItem[
 
       existing.isFulfilled = existing.metCount === existing.totalCount;
 
-      existing.progress = existing.totalCount > 0 ? existing.metCount / existing.totalCount : 0;
+      /*
+       * Här använder vi faktisk
+       * target-progress istället för
+       * bara antal uppfyllda targets.
+       *
+       * Ex:
+       * magnesium 160 / 320
+       * blir 50 %, inte 0 %.
+       */
+      const previousTargetCount = existing.totalCount - 1;
+
+      existing.progress = (existing.progress * previousTargetCount + targetProgressValue) / existing.totalCount;
     });
 
     return Array.from(byTip.values());
-  }, [targetProgress]);
+  }, [targetProgress, t]);
 };

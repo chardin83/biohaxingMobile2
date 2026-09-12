@@ -2,8 +2,8 @@ import React from 'react';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { tips } from '@/locales/tips';
+import { normalizeNutritionTargets } from '@/services/targetProgress/normalizeNutritionTargets';
 import { getTargetProgress } from '@/services/targetProgress/targetProgressService';
-import type { NutritionTargetDefinition } from '@/services/targetProgress/targetProgressTypes';
 
 export type NutritionTargetHistoryItem = {
   tag: string;
@@ -31,31 +31,21 @@ export const useNutritionPlanProgressHistory = (dateKeys: string[]): NutritionPr
       (plans?.nutrition ?? []).forEach(planTip => {
         const tip = tips.find(candidate => candidate.id === planTip.tipId);
 
-        if (!tip || !tip.targetPeriod) {
+        if (!tip) {
           return;
         }
 
-        const targets = [...(tip.trackingTargets ?? [])];
+        const nutritionTargets = normalizeNutritionTargets(tip);
 
-        if (targets.length === 0) {
+        if (nutritionTargets.length === 0) {
           return;
         }
 
-        const tipSupplementIds = (tip.supplements ?? []).map(supplement => supplement.id).filter(Boolean);
-
-        const targetProgress = targets.map(rawTarget => {
-          const supplementIds = rawTarget.supplementIds?.length ? rawTarget.supplementIds : tipSupplementIds;
-
-          const target: NutritionTargetDefinition = {
-            ...rawTarget,
-            source: 'nutrition',
-            period: tip.targetPeriod,
-            supplementIds,
-          };
-
+        const targetProgress = nutritionTargets.map(target => {
           const progress = getTargetProgress({
             target,
             selectedDate: dateKey,
+
             storage: {
               dailyNutritionTracking,
               weeklyNutritionTracking,
@@ -66,20 +56,24 @@ export const useNutritionPlanProgressHistory = (dateKeys: string[]): NutritionPr
           });
 
           return {
-            tag: target.trackingKey,
+            tag: target.tag ?? target.trackingKey,
+
             unit: target.unit,
+
             period: target.period,
+
             isMet: progress.isFulfilled,
           };
         });
 
         result[dateKey].push({
           tipId: tip.id,
+
           targets: targetProgress,
         });
       });
     });
 
     return result;
-  }, [dateKeys, plans, dailyNutritionTracking, weeklyNutritionTracking, dailyHabitTracking, dailyTrainingTracking, takenDates]);
+  }, [dateKeys, plans?.nutrition, dailyNutritionTracking, weeklyNutritionTracking, dailyHabitTracking, dailyTrainingTracking, takenDates]);
 };

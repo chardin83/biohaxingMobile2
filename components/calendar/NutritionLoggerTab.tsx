@@ -411,6 +411,25 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   const { plans, dailyNutritionTracking, setDailyNutritionTracking, setWeeklyNutritionTracking, claimNutritionTipCompletionXP } = useStorage();
 
   const nutritionPlanTipProgress = useNutritionPlanProgress(selectedDate);
+
+  useEffect(() => {
+    console.log('🥗 plans.nutrition', JSON.stringify(plans.nutrition, null, 2));
+
+    console.log('🥗 nutritionPlanTipProgress', JSON.stringify(nutritionPlanTipProgress, null, 2));
+
+    console.log(
+      '🥗 periods',
+      nutritionPlanTipProgress.map(item => ({
+        tipId: item.tipId,
+        period: item.period,
+        targets: item.targets.map(target => ({
+          tag: target.tag,
+          period: target.period,
+          amount: target.amount,
+        })),
+      }))
+    );
+  }, [plans.nutrition, nutritionPlanTipProgress]);
   const { weekStartISO: weekStartKey } = getWeekBoundsFromDateKey(selectedDate);
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);

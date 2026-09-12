@@ -119,7 +119,7 @@ const TipProgressRow: React.FC<TipProgressRowProps> = ({
               style={styles.tipTitleButton}
             >
               <ThemedText type="defaultSemiBold" style={styles.fulfilledTipTextBlock}>
-                {t(`tips:${tip.title}`)}
+                {tip.title}
               </ThemedText>
             </TouchableOpacity>
             {tip.isFulfilled && <Icon source="check-circle" size={34} color={colors.xp} />}
