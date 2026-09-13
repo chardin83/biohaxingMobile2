@@ -20,13 +20,7 @@ export type TipArea = {
   descriptionKey: string;
 };
 
-export type TrainingRelation =
-  | 'anytime'
-  | 'preWorkout'
-  | 'postWorkout'
-  | 'avoidPreWorkout'
-  | 'avoidPostWorkout'
-  | 'avoidNearWorkout'; // generellt “inte nära pass” (t.ex. ±3–6h)
+export type TrainingRelation = 'anytime' | 'preWorkout' | 'postWorkout' | 'avoidPreWorkout' | 'avoidPostWorkout' | 'avoidNearWorkout'; // generellt “inte nära pass” (t.ex. ±3–6h)
 
 export type DayPart = 'morning' | 'midday' | 'afternoon' | 'evening' | 'night';
 
@@ -38,16 +32,7 @@ export type TimeOfDayRule =
 export type EvidenceConfidence = 'high' | 'medium' | 'low';
 export type TipTargetIconName = Extract<
   IconSymbolName,
-  | 'fiber'
-  | 'polyphenol'
-  | 'mineral'
-  | 'vitamin'
-  | 'protein'
-  | 'carbs'
-  | 'fat'
-  | 'microbiome'
-  | 'target'
-  | 'chart'
+  'fiber' | 'polyphenol' | 'mineral' | 'vitamin' | 'protein' | 'carbs' | 'fat' | 'microbiome' | 'target' | 'chart'
 >;
 
 export type TargetPeriod = NutritionTargetPeriod;
@@ -83,28 +68,33 @@ type WeightedTarget = {
 
 export type FiberTarget = {
   tag: FiberType;
-} & BaseTarget<'g'> & WeightedTarget;
+} & BaseTarget<'g'> &
+  WeightedTarget;
 
 export type PolyphenolTarget = {
   tag: PolyphenolType;
-} & BaseTarget<'mg'> & WeightedTarget;
+} & BaseTarget<'mg'> &
+  WeightedTarget;
 
 export type MineralTarget = {
   tag: MineralType;
-} & BaseTarget<'mg'> & WeightedTarget;
+} & BaseTarget<'mg'> &
+  WeightedTarget;
 
 export type VitaminTarget = {
   tag: VitaminType;
-} & BaseTarget<'mg' | 'μg'> & WeightedTarget;
+} & BaseTarget<'mg' | 'μg'> &
+  WeightedTarget;
 
 export type AminoAcidTarget = {
   tag: AminoAcidType;
-} & BaseTarget<'mg'> & WeightedTarget;
+} & BaseTarget<'mg'> &
+  WeightedTarget;
 
 export type NutrientTarget = {
   tag: NutrientType;
-} & BaseTarget<'mg'> & WeightedTarget;
-
+} & BaseTarget<'mg'> &
+  WeightedTarget;
 
 export type TrackingTarget = {
   trackingKey: string; // e.g., 'unique_plants', 'vegetable_colors', 'fish_meals', 'fatty_fish_meals'
@@ -132,15 +122,12 @@ export type ActivityTarget = {
     | 'vigorous_activity_minutes';
 } & BaseTarget<'minutes' | 'km' | 'sessions'>;
 
+export type HabitInputMode = 'number' | 'daily-check' | 'slots';
+
 export type HabitTarget = {
-  trackingKey:
-    | 'sleep_duration'
-    | 'morning_light'
-    | 'meditation'
-    | 'tooth_brushing'
-    | 'nature_time'
-    | 'social_connection';
+  trackingKey: 'sleep_duration' | 'morning_light' | 'meditation' | 'tooth_brushing' | 'nature_time' | 'social_connection';
   buttonLabels?: string[];
+  inputMode?: HabitInputMode;
 } & BaseTarget<'minutes' | 'hours' | 'count'>;
 
 export type TipNutritionFood = {
@@ -213,17 +200,14 @@ const rawTips: Tip[] = [
     xp: 800,
     areas: [
       { id: 'energy', descriptionKey: 'low_carb_diet.areas.energy' },
-      { id: 'digestiveHealth', descriptionKey: 'low_carb_diet.areas.digestiveHealth' }
+      { id: 'digestiveHealth', descriptionKey: 'low_carb_diet.areas.digestiveHealth' },
     ],
     title: 'low_carb_diet.title',
     descriptionKey: 'low_carb_diet.description',
     trainingRelation: 'anytime',
     timeRule: 'anytime',
     planCategory: ['nutrition'],
-    nutritionFoods: [
-      { key: 'kale' },
-      { key: 'eggs' },
-    ],
+    nutritionFoods: [{ key: 'kale' }, { key: 'eggs' }],
     bodyParts: ['digestiveSystem', 'cells'],
   },
   // Ketogen kost
@@ -234,19 +218,14 @@ const rawTips: Tip[] = [
     areas: [
       { id: 'energy', descriptionKey: 'ketogenic_diet.areas.energy' },
       { id: 'mind', descriptionKey: 'ketogenic_diet.areas.mind' },
-      { id: 'digestiveHealth', descriptionKey: 'ketogenic_diet.areas.digestiveHealth' }
+      { id: 'digestiveHealth', descriptionKey: 'ketogenic_diet.areas.digestiveHealth' },
     ],
     title: 'ketogenic_diet.title',
     descriptionKey: 'ketogenic_diet.description',
     trainingRelation: 'anytime',
     timeRule: 'anytime',
     planCategory: ['nutrition'],
-    nutritionFoods: [
-      { key: 'avocado' },
-      { key: 'coconutOil' },
-      { key: 'sardines' },
-      { key: 'eggs' },
-    ],
+    nutritionFoods: [{ key: 'avocado' }, { key: 'coconutOil' }, { key: 'sardines' }, { key: 'eggs' }],
     bodyParts: ['brain', 'cells'],
   },
   {
@@ -256,7 +235,7 @@ const rawTips: Tip[] = [
     areas: [
       { id: 'digestiveHealth', descriptionKey: 'berberine.areas.digestiveHealth' },
       { id: 'cardioFitness', descriptionKey: 'berberine.areas.cardioFitness' },
-      { id: 'energy', descriptionKey: 'berberine.areas.energy' }
+      { id: 'energy', descriptionKey: 'berberine.areas.energy' },
     ],
     title: 'berberine.title',
     descriptionKey: 'berberine.description',
@@ -272,9 +251,7 @@ const rawTips: Tip[] = [
     id: 'urolithin_a',
     level: 9,
     xp: 500,
-    areas: [
-      { id: 'energy', descriptionKey: 'urolithin_a.areas.energy' },
-    ],
+    areas: [{ id: 'energy', descriptionKey: 'urolithin_a.areas.energy' }],
     title: 'urolithin_a.title',
     descriptionKey: 'urolithin_a.description',
     supplements: [{ id: 'urolithinA' }, { id: 'pomegranateExtract' }],
@@ -284,9 +261,7 @@ const rawTips: Tip[] = [
     planCategory: ['supplement', 'nutrition'],
     targetPeriod: 'daily',
     targetIconName: 'polyphenol',
-    polyphenolTargets: [
-      { tag: 'ellagitannins', amount: 200, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
-    ],
+    polyphenolTargets: [{ tag: 'ellagitannins', amount: 200, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 }],
     bodyParts: ['muscles', 'cells'],
     nutritionFoods: [
       {
@@ -383,12 +358,7 @@ const rawTips: Tip[] = [
     ],
     title: 'vitamin_d.title',
     descriptionKey: 'vitamin_d.description',
-    supplements: [
-      { id: 'vitaminD' },
-      { id: 'codLiverOil' },
-      { id: 'vitaminK2' },
-      { id: 'magnesiumGlycinate' },
-    ],
+    supplements: [{ id: 'vitaminD' }, { id: 'codLiverOil' }, { id: 'vitaminK2' }, { id: 'magnesiumGlycinate' }],
     startPrompt: 'vitamin_d.startPrompt',
     trainingRelation: 'anytime',
     preferredDayParts: ['morning'],
@@ -414,13 +384,7 @@ const rawTips: Tip[] = [
     ],
     title: 'vitamin_e_antioxidant_support.title',
     descriptionKey: 'vitamin_e_antioxidant_support.description',
-    supplements: [
-      { id: 'vitaminE' },
-      { id: 'vitaminEMixedTocopherols' },
-      { id: 'vitaminETocotrienols' },
-      { id: 'codLiverOil' },
-      { id: 'astaxanthin' },
-    ],
+    supplements: [{ id: 'vitaminE' }, { id: 'vitaminEMixedTocopherols' }, { id: 'vitaminETocotrienols' }, { id: 'codLiverOil' }, { id: 'astaxanthin' }],
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'evening'],
     timeRule: 'anytime',
@@ -443,13 +407,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
     planCategory: ['nutrition', 'supplement'],
-    nutritionFoods: [
-      { key: 'liver' },
-      { key: 'sardines' },
-      { key: 'beef' },
-      { key: 'spinach' },
-      { key: 'broccoli' },
-    ],
+    nutritionFoods: [{ key: 'liver' }, { key: 'sardines' }, { key: 'beef' }, { key: 'spinach' }, { key: 'broccoli' }],
     bodyParts: ['heart', 'muscles'],
   },
   {
@@ -499,30 +457,15 @@ const rawTips: Tip[] = [
     ],
     title: 'magnesium.title',
     descriptionKey: 'magnesium.description',
-    supplements: [
-      { id: 'magnesium' },
-      { id: 'magnesiumGlycinate' },
-      { id: 'magnesiumCitrate' },
-      { id: 'magnesiumMalate' },
-      { id: 'magnesiumThreonate' },
-    ],
+    supplements: [{ id: 'magnesium' }, { id: 'magnesiumGlycinate' }, { id: 'magnesiumCitrate' }, { id: 'magnesiumMalate' }, { id: 'magnesiumThreonate' }],
     trainingRelation: 'anytime',
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
     planCategory: ['nutrition', 'supplement'],
     targetPeriod: 'daily',
     targetIconName: 'mineral',
-    mineralTargets: [
-      { tag: 'magnesium', amount: 320, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
-    ],
-    nutritionFoods: [
-      { key: 'spinach' },
-      { key: 'pumpkinSeeds' },
-      { key: 'almonds' },
-      { key: 'darkChocolate' },
-      { key: 'blackBeans' },
-      { key: 'avocado' },
-    ],
+    mineralTargets: [{ tag: 'magnesium', amount: 320, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 }],
+    nutritionFoods: [{ key: 'spinach' }, { key: 'pumpkinSeeds' }, { key: 'almonds' }, { key: 'darkChocolate' }, { key: 'blackBeans' }, { key: 'avocado' }],
     bodyParts: ['muscles', 'nervousSystem', 'bones'],
   },
   {
@@ -543,16 +486,8 @@ const rawTips: Tip[] = [
     planCategory: ['nutrition', 'supplement'],
     targetPeriod: 'daily',
     targetIconName: 'mineral',
-    mineralTargets: [
-      { tag: 'zinc', amount: 10, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
-    ],
-    nutritionFoods: [
-      { key: 'oysters' },
-      { key: 'beef' },
-      { key: 'pumpkinSeeds' },
-      { key: 'chickpeas' },
-      { key: 'cashews' },
-    ],
+    mineralTargets: [{ tag: 'zinc', amount: 10, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 }],
+    nutritionFoods: [{ key: 'oysters' }, { key: 'beef' }, { key: 'pumpkinSeeds' }, { key: 'chickpeas' }, { key: 'cashews' }],
     bodyParts: ['immuneSystem', 'skin'],
   },
   {
@@ -573,17 +508,8 @@ const rawTips: Tip[] = [
     planCategory: ['nutrition', 'supplement'],
     targetPeriod: 'daily',
     targetIconName: 'mineral',
-    mineralTargets: [
-      { tag: 'selenium', amount: 0.055, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
-    ],
-    nutritionFoods: [
-      { key: 'brazilNuts' },
-      { key: 'sardines' },
-      { key: 'eggs' },
-      { key: 'shiitakeMushrooms' },
-      { key: 'cod' },
-      { key: 'sunflowerSeeds' },
-    ],
+    mineralTargets: [{ tag: 'selenium', amount: 0.055, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 }],
+    nutritionFoods: [{ key: 'brazilNuts' }, { key: 'sardines' }, { key: 'eggs' }, { key: 'shiitakeMushrooms' }, { key: 'cod' }, { key: 'sunflowerSeeds' }],
     bodyParts: ['thyroid', 'immuneSystem', 'hair'],
   },
   {
@@ -604,9 +530,7 @@ const rawTips: Tip[] = [
     planCategory: ['nutrition', 'supplement'],
     targetPeriod: 'daily',
     targetIconName: 'mineral',
-    mineralTargets: [
-      { tag: 'iodine', amount: 0.15, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
-    ],
+    mineralTargets: [{ tag: 'iodine', amount: 0.15, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 }],
     nutritionFoods: [{ key: 'iodizedSeaSalt' }, { key: 'fortifiedDairy' }, { key: 'eggs' }, { key: 'cod' }],
     bodyParts: ['thyroid', 'hair'],
   },
@@ -655,9 +579,7 @@ const rawTips: Tip[] = [
     planCategory: ['nutrition'],
     targetPeriod: 'daily',
     targetIconName: 'target',
-    hydrationTargets: [
-      { trackingKey: 'water_intake', amount: 2000, unit: 'ml' },
-    ],
+    hydrationTargets: [{ trackingKey: 'water_intake', amount: 2000, unit: 'ml' }],
     bodyParts: ['kidneys'],
   },
   {
@@ -683,10 +605,7 @@ const rawTips: Tip[] = [
       { tag: 'magnesium', amount: 320, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
       { tag: 'calcium', amount: 800, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
     ],
-    nutritionFoods: [
-      { key: 'coconutWater' },
-      { key: 'potatoes' },
-    ],
+    nutritionFoods: [{ key: 'coconutWater' }, { key: 'potatoes' }],
     bodyParts: ['muscles', 'nervousSystem', 'kidneys'],
   },
   {
@@ -711,6 +630,7 @@ const rawTips: Tip[] = [
         amount: 2,
         unit: 'count',
         buttonLabels: ['morning', 'night'],
+        inputMode: 'slots',
       },
     ],
     bodyParts: ['teeth'],
@@ -727,16 +647,9 @@ const rawTips: Tip[] = [
     preferredDayParts: ['midday', 'afternoon'],
     targetPeriod: 'daily',
     targetIconName: 'vitamin',
-    vitaminTargets: [
-      { tag: 'vitamin_c', amount: 110, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 },
-    ],
+    vitaminTargets: [{ tag: 'vitamin_c', amount: 110, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7 }],
     timeRule: 'anytime',
-    nutritionFoods: [
-      { key: 'orange' },
-      { key: 'bellPeppers' },
-      { key: 'kiwi' },
-      { key: 'blackCurrants' },
-    ],
+    nutritionFoods: [{ key: 'orange' }, { key: 'bellPeppers' }, { key: 'kiwi' }, { key: 'blackCurrants' }],
     planCategory: ['nutrition', 'supplement'],
     bodyParts: ['immuneSystem', 'skin'],
   },
@@ -772,9 +685,7 @@ const rawTips: Tip[] = [
     planCategory: ['nutrition', 'supplement'],
     targetPeriod: 'daily',
     targetIconName: 'protein',
-    aminoAcidTargets: [
-      { tag: 'glycine', amount: 2000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 },
-    ],
+    aminoAcidTargets: [{ tag: 'glycine', amount: 2000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 }],
     nutritionFoods: [
       { key: 'beefShank', nutrientTags: ['glycine'] },
       { key: 'chickenWings', nutrientTags: ['glycine'] },
@@ -786,9 +697,7 @@ const rawTips: Tip[] = [
     id: 'muscle_leucine',
     level: 7,
     xp: 600,
-    areas: [
-      { id: 'strength', descriptionKey: 'muscle_leucine.areas.strength' },
-    ],
+    areas: [{ id: 'strength', descriptionKey: 'muscle_leucine.areas.strength' }],
     title: 'muscle_leucine.title',
     descriptionKey: 'muscle_leucine.description',
     supplements: [{ id: 'leucine' }],
@@ -798,9 +707,7 @@ const rawTips: Tip[] = [
     planCategory: ['nutrition', 'supplement'],
     targetPeriod: 'daily',
     targetIconName: 'protein',
-    aminoAcidTargets: [
-      { tag: 'leucine', amount: 7000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.5 },
-    ],
+    aminoAcidTargets: [{ tag: 'leucine', amount: 7000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.5 }],
     nutritionFoods: [
       { key: 'beef', nutrientTags: ['leucine'] },
       { key: 'chickenBreast', nutrientTags: ['leucine'] },
@@ -852,9 +759,7 @@ const rawTips: Tip[] = [
     planCategory: ['nutrition', 'supplement'],
     targetPeriod: 'daily',
     targetIconName: 'protein',
-    aminoAcidTargets: [
-      { tag: 'arginine', amount: 5000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.5 },
-    ],
+    aminoAcidTargets: [{ tag: 'arginine', amount: 5000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.5 }],
     nutritionFoods: [
       { key: 'pumpkinSeeds', nutrientTags: ['arginine'] },
       { key: 'sesameSeeds', nutrientTags: ['arginine'] },
@@ -879,9 +784,7 @@ const rawTips: Tip[] = [
     planCategory: ['nutrition'],
     targetPeriod: 'daily',
     targetIconName: 'protein',
-    aminoAcidTargets: [
-      { tag: 'leucine', amount: 2500, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 },
-    ],
+    aminoAcidTargets: [{ tag: 'leucine', amount: 2500, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 }],
     nutritionFoods: [
       { key: 'chickenBreast', nutrientTags: ['leucine'] },
       { key: 'canTuna', nutrientTags: ['leucine'] },
@@ -933,9 +836,7 @@ const rawTips: Tip[] = [
       { tag: 'glycine', amount: 3000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6, supplementIds: ['glycine'] },
       { tag: 'cysteine', amount: 600, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6, supplementIds: ['nac'] },
     ],
-    mineralTargets: [
-      { tag: 'selenium', amount: 0.055, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7, supplementIds: ['selenium'] },
-    ],
+    mineralTargets: [{ tag: 'selenium', amount: 0.055, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.7, supplementIds: ['selenium'] }],
     nutritionFoods: [
       { key: 'beets', nutrientTags: ['tmg', 'vitamin_b9'] },
       { key: 'spinach', nutrientTags: ['tmg', 'vitamin_b6', 'vitamin_b9'] },
@@ -950,9 +851,7 @@ const rawTips: Tip[] = [
     id: 'collagen',
     level: 5,
     xp: 500,
-    areas: [
-      { id: 'strength', descriptionKey: 'collagen.areas.strength' },
-    ],
+    areas: [{ id: 'strength', descriptionKey: 'collagen.areas.strength' }],
     title: 'collagen.title',
     descriptionKey: 'collagen.description',
     supplements: [{ id: 'collagen' }],
@@ -960,10 +859,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
     planCategory: ['nutrition', 'supplement'],
-    nutritionFoods: [
-      { key: 'beefShank' },
-      { key: 'chickenWings' },
-    ],
+    nutritionFoods: [{ key: 'beefShank' }, { key: 'chickenWings' }],
     bodyParts: ['joints', 'skin', 'bones'],
   },
   {
@@ -983,9 +879,7 @@ const rawTips: Tip[] = [
     planCategory: ['nutrition', 'supplement'],
     targetPeriod: 'daily',
     targetIconName: 'protein',
-    aminoAcidTargets: [
-      { tag: 'citrulline', amount: 3000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.5 },
-    ],
+    aminoAcidTargets: [{ tag: 'citrulline', amount: 3000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.5 }],
     nutritionFoods: [
       { key: 'watermelon', nutrientTags: ['citrulline'] },
       { key: 'cucumber', nutrientTags: ['citrulline'] },
@@ -1007,11 +901,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
     planCategory: ['nutrition', 'supplement'],
-    nutritionFoods: [
-      { key: 'broccoli' },
-      { key: 'avocado' },
-      { key: 'spinach' },
-    ],
+    nutritionFoods: [{ key: 'broccoli' }, { key: 'avocado' }, { key: 'spinach' }],
     bodyParts: ['liver', 'immuneSystem', 'cells'],
   },
   {
@@ -1135,9 +1025,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     targetPeriod: 'daily',
     targetIconName: 'target',
-    habitTargets: [
-      { trackingKey: 'sleep_duration', amount: 7, unit: 'hours' },
-    ],
+    habitTargets: [{ trackingKey: 'sleep_duration', amount: 7, unit: 'hours' }],
     bodyParts: ['nervousSystem'],
   },
   {
@@ -1208,9 +1096,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     targetPeriod: 'daily',
     targetIconName: 'target',
-    habitTargets: [
-      { trackingKey: 'morning_light', amount: 10, unit: 'minutes' },
-    ],
+    habitTargets: [{ trackingKey: 'morning_light', amount: 10, unit: 'minutes' }],
     bodyParts: ['nervousSystem'],
   },
   {
@@ -1246,9 +1132,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     targetPeriod: 'daily',
     targetIconName: 'target',
-    habitTargets: [
-      { trackingKey: 'meditation', amount: 10, unit: 'minutes' },
-    ],
+    habitTargets: [{ trackingKey: 'meditation', amount: 10, unit: 'minutes' }],
     bodyParts: ['nervousSystem'],
   },
   {
@@ -1383,9 +1267,8 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     targetPeriod: 'weekly',
     targetIconName: 'target',
-    habitTargets: [
-      { trackingKey: 'nature_time', amount: 120, unit: 'minutes' },
-    ],
+    habitTargets: [{ trackingKey: 'nature_time', amount: 120, unit: 'minutes', inputMode: 'number' }],
+
     bodyParts: ['heart', 'nervousSystem'],
   },
   {
@@ -1423,9 +1306,7 @@ const rawTips: Tip[] = [
     timeRule: 'anytime',
     targetPeriod: 'weekly',
     targetIconName: 'target',
-    habitTargets: [
-      { trackingKey: 'social_connection', amount: 2, unit: 'count' },
-    ],
+    habitTargets: [{ trackingKey: 'social_connection', amount: 2, unit: 'count', inputMode: 'daily-check' }],
     bodyParts: ['nervousSystem'],
   },
   {
@@ -1493,9 +1374,7 @@ const rawTips: Tip[] = [
     planCategory: ['training'],
     targetPeriod: 'weekly',
     targetIconName: 'chart',
-    activityTargets: [
-      { trackingKey: 'neuromuscular_sessions', amount: 2, unit: 'sessions', activityTypes: ['gym']    },
-    ],
+    activityTargets: [{ trackingKey: 'neuromuscular_sessions', amount: 2, unit: 'sessions', activityTypes: ['gym'] }],
     bodyParts: ['muscles', 'nervousSystem'],
   },
   {
@@ -1592,9 +1471,7 @@ const rawTips: Tip[] = [
     isParent: true,
     targetPeriod: 'daily',
     targetIconName: 'fiber',
-    fiberTargets: [
-      { tag: 'fiber_total', amount: 25, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
-    ],
+    fiberTargets: [{ tag: 'fiber_total', amount: 25, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 }],
     nutritionFoods: [
       {
         key: 'oats',
@@ -1620,7 +1497,6 @@ const rawTips: Tip[] = [
         sourceRefs: ['USDA FoodData Central'],
         defaultConfidence: 'high',
       },
-
     ],
     bodyParts: ['digestiveSystem'],
     microbiomeIds: ['Akkermansia', 'Roseburia', 'Faecalibacterium', 'Ruminococcus'],
@@ -1845,7 +1721,8 @@ const rawTips: Tip[] = [
         trackingKey: 'unique_plants',
         amount: 30,
         unit: 'items',
-        aiInstruction: 'List distinct plant foods visible in the meal. For each, return an object with the English name as en and the translation in the user\'s language as local, e.g. { en: "kale", local: "grönkål" }. Do not include animal foods or sauces. If you see something containing wheat, only say "wheat" not for example "wheat (pasta)".',
+        aiInstruction:
+          'List distinct plant foods visible in the meal. For each, return an object with the English name as en and the translation in the user\'s language as local, e.g. { en: "kale", local: "grönkål" }. Do not include animal foods or sauces. If you see something containing wheat, only say "wheat" not for example "wheat (pasta)".',
       },
     ],
   },
@@ -1888,7 +1765,6 @@ const rawTips: Tip[] = [
         sourceRefs: ['USDA FoodData Central'],
         defaultConfidence: 'high',
       },
-
     ],
     bodyParts: ['cardiovascularSystem', 'brain'],
     microbiomeIds: ['Akkermansia', 'Roseburia', 'Faecalibacterium'],
@@ -1916,7 +1792,6 @@ const rawTips: Tip[] = [
       { tag: 'anthocyanins', amount: 50, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 },
     ],
     nutritionFoods: [
-
       {
         key: 'darkChocolate',
         nutrientTags: ['polyphenols_total', 'flavonoids_total', 'catechins', 'flavanols'],
@@ -1983,9 +1858,7 @@ const rawTips: Tip[] = [
     planCategory: ['training'],
     targetPeriod: 'weekly',
     targetIconName: 'chart',
-    activityTargets: [
-      { trackingKey: 'hiit_sessions', amount: 1, unit: 'sessions', activityTypes: ['running'] },
-    ],
+    activityTargets: [{ trackingKey: 'hiit_sessions', amount: 1, unit: 'sessions', activityTypes: ['running'] }],
     bodyParts: ['heart', 'lungs', 'muscles'],
   },
   {
@@ -2004,9 +1877,7 @@ const rawTips: Tip[] = [
     planCategory: ['training'],
     targetPeriod: 'weekly',
     targetIconName: 'chart',
-    activityTargets: [
-      { trackingKey: 'running_minutes', amount: 150, unit: 'minutes', activityTypes: ['running'] },
-    ],
+    activityTargets: [{ trackingKey: 'running_minutes', amount: 150, unit: 'minutes', activityTypes: ['running'] }],
     bodyParts: ['heart', 'lungs', 'muscles', 'joints'],
   },
   {
@@ -2155,9 +2026,7 @@ const rawTips: Tip[] = [
     planCategory: ['training'],
     targetPeriod: 'weekly',
     targetIconName: 'chart',
-    activityTargets: [
-      { trackingKey: 'zone2_sessions', amount: 2, unit: 'sessions', activityTypes: ['running'] },
-    ],
+    activityTargets: [{ trackingKey: 'zone2_sessions', amount: 2, unit: 'sessions', activityTypes: ['running'] }],
     bodyParts: ['heart', 'lungs', 'muscles'],
   },
   {
@@ -2177,9 +2046,7 @@ const rawTips: Tip[] = [
     planCategory: ['training'],
     targetPeriod: 'weekly',
     targetIconName: 'chart',
-    activityTargets: [
-      { trackingKey: 'zone2_minutes', amount: 120, unit: 'minutes', activityTypes: ['running'] },
-    ],
+    activityTargets: [{ trackingKey: 'zone2_minutes', amount: 120, unit: 'minutes', activityTypes: ['running'] }],
     bodyParts: ['heart', 'lungs', 'muscles'],
   },
   {
@@ -2198,9 +2065,7 @@ const rawTips: Tip[] = [
     planCategory: ['training'],
     targetPeriod: 'weekly',
     targetIconName: 'chart',
-    activityTargets: [
-      { trackingKey: 'strength_mobility_sessions', amount: 2, unit: 'sessions', activityTypes: ['gym'] },
-    ],
+    activityTargets: [{ trackingKey: 'strength_mobility_sessions', amount: 2, unit: 'sessions', activityTypes: ['gym'] }],
     bodyParts: ['muscles', 'joints', 'bones', 'nervousSystem'],
   },
   {
@@ -2340,12 +2205,7 @@ const rawTips: Tip[] = [
     ],
     title: 'astaxanthin_recovery_antioxidant.title',
     descriptionKey: 'astaxanthin_recovery_antioxidant.description',
-    supplements: [
-      { id: 'astaxanthin' },
-      { id: 'vitaminETocotrienols' },
-      { id: 'vitaminEMixedTocopherols' },
-      { id: 'vitaminE' },
-    ],
+    supplements: [{ id: 'astaxanthin' }, { id: 'vitaminETocotrienols' }, { id: 'vitaminEMixedTocopherols' }, { id: 'vitaminE' }],
     trainingRelation: 'avoidNearWorkout',
     preferredDayParts: ['evening'],
     timeRule: 'anytime',
@@ -2393,13 +2253,7 @@ const rawTips: Tip[] = [
     preferredDayParts: ['midday', 'evening'],
     timeRule: 'anytime',
     planCategory: ['nutrition'],
-    nutritionFoods: [
-      { key: 'orange' },
-      { key: 'strawberries' },
-      { key: 'blackCurrants' },
-      { key: 'kale' },
-      { key: 'broccoli' },
-    ],
+    nutritionFoods: [{ key: 'orange' }, { key: 'strawberries' }, { key: 'blackCurrants' }, { key: 'kale' }, { key: 'broccoli' }],
     bodyParts: ['digestiveSystem'],
     targetPeriod: 'weekly',
     targetIconName: 'target',
@@ -2408,7 +2262,8 @@ const rawTips: Tip[] = [
         trackingKey: 'vegetable_colors',
         amount: 6,
         unit: 'items',
-        aiInstruction: 'Track only colors represented by visible vegetables. For each, return an object with the English color as en and the translation in the user\'s language as local, e.g. { en: "red", local: "röd" }. Never infer color from egg, pasta, dairy, meat, or dressing.',
+        aiInstruction:
+          'Track only colors represented by visible vegetables. For each, return an object with the English color as en and the translation in the user\'s language as local, e.g. { en: "red", local: "röd" }. Never infer color from egg, pasta, dairy, meat, or dressing.',
       },
     ],
   },
@@ -2418,7 +2273,7 @@ const rawTips: Tip[] = [
     xp: 500,
     areas: [
       { id: 'energy', descriptionKey: 'near_infrared_red_light.areas.energy' },
-      { id: 'strength', descriptionKey: 'near_infrared_red_light.areas.strength' }
+      { id: 'strength', descriptionKey: 'near_infrared_red_light.areas.strength' },
     ],
     title: 'near_infrared_red_light.title',
     descriptionKey: 'near_infrared_red_light.description',
@@ -2433,7 +2288,7 @@ const rawTips: Tip[] = [
     xp: 500,
     areas: [
       { id: 'energy', descriptionKey: 'far_infrared_light.areas.energy' },
-      { id: 'strength', descriptionKey: 'far_infrared_light.areas.strength' }
+      { id: 'strength', descriptionKey: 'far_infrared_light.areas.strength' },
     ],
     title: 'far_infrared_light.title',
     descriptionKey: 'far_infrared_light.description',
@@ -2448,7 +2303,7 @@ const rawTips: Tip[] = [
     xp: 300,
     areas: [
       { id: 'energy', descriptionKey: 'nasal_breathing_nitric_oxide.areas.energy' },
-      { id: 'cardioFitness', descriptionKey: 'nasal_breathing_nitric_oxide.areas.cardioFitness' }
+      { id: 'cardioFitness', descriptionKey: 'nasal_breathing_nitric_oxide.areas.cardioFitness' },
     ],
     title: 'nasal_breathing_nitric_oxide.title',
     descriptionKey: 'nasal_breathing_nitric_oxide.description',
@@ -2461,9 +2316,7 @@ const rawTips: Tip[] = [
     id: 'lutein_zeaxanthin_eye_health',
     level: 8,
     xp: 500,
-    areas: [
-      { id: 'energy', descriptionKey: 'lutein_zeaxanthin_eye_health.areas.energy' }
-    ],
+    areas: [{ id: 'energy', descriptionKey: 'lutein_zeaxanthin_eye_health.areas.energy' }],
     title: 'lutein_zeaxanthin_eye_health.title',
     descriptionKey: 'lutein_zeaxanthin_eye_health.description',
     supplements: [{ id: 'lutein' }, { id: 'zeaxanthin' }],
@@ -2478,16 +2331,12 @@ const rawTips: Tip[] = [
     xp: 400,
     areas: [
       { id: 'digestiveHealth', descriptionKey: 'sulfate.areas.digestiveHealth' },
-      { id: 'energy', descriptionKey: 'sulfate.areas.energy' }
+      { id: 'energy', descriptionKey: 'sulfate.areas.energy' },
     ],
     title: 'sulfate.title',
     descriptionKey: 'sulfate.description',
     isParent: true,
-    nutritionFoods: [
-      { key: 'garlic' },
-      { key: 'onions' },
-      { key: 'eggs' },
-    ],
+    nutritionFoods: [{ key: 'garlic' }, { key: 'onions' }, { key: 'eggs' }],
     bodyParts: ['hair'],
   },
   {
@@ -2497,7 +2346,6 @@ const rawTips: Tip[] = [
     areas: [
       { id: 'strength', descriptionKey: 'msm_joint_health.areas.strength' },
       { id: 'immuneSupport', descriptionKey: 'msm_joint_health.areas.recovery' },
-
     ],
     title: 'msm_joint_health.title',
     parentId: 'sulfate',
@@ -2512,9 +2360,7 @@ const rawTips: Tip[] = [
     id: 'blue_light_evening',
     level: 1,
     xp: 200,
-    areas: [
-      { id: 'sleepQuality', descriptionKey: 'blue_light_evening.areas.sleepQuality' }
-    ],
+    areas: [{ id: 'sleepQuality', descriptionKey: 'blue_light_evening.areas.sleepQuality' }],
     title: 'blue_light_evening.title',
     descriptionKey: 'blue_light_evening.description',
     trainingRelation: 'anytime',
@@ -2542,5 +2388,4 @@ export const tips: Tip[] = rawTips.map(tip => {
 
 const tipById = new Map(tips.map(tip => [tip.id, tip]));
 
-export const getTipTargetIconName = (tipId?: string): TipTargetIconName | undefined =>
-  tipId ? tipById.get(tipId)?.targetIconName : undefined;
+export const getTipTargetIconName = (tipId?: string): TipTargetIconName | undefined => (tipId ? tipById.get(tipId)?.targetIconName : undefined);

@@ -28,9 +28,11 @@
         "in": "tum",
         "score_0_10": "Poäng (0-10)",
         "count": "antal",
+        "minutes": "minuter",
         "min": "min",
         "min_from_midnight": "min från midnatt",
         "hours": "timmar",
+        "hours_short": "h",
         "bss": "Bristol-skala",
         "ml_kg_min": "ml/kg/min"
     },

@@ -4,7 +4,8 @@ import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 
-import { type MetricEntry, useStorage } from '@/app/context/StorageContext';
+import { MetricEntry } from '@/app/context/storage/metrics/metricTypes';
+import { useStorage } from '@/app/context/StorageContext';
 import { RegisterMetricBottomSheet } from '@/components/RegisterMetricBottomSheet';
 import { MetricId, metrics, tipMetricLinks } from '@/locales/metrics';
 
@@ -33,7 +34,7 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
   const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
 
   const getRegisteredEntries = (targetMetricId: MetricId) => {
-      return getMetricHistory(targetMetricId);
+    return getMetricHistory(targetMetricId);
   };
 
   const handleOpenAddMetricSheet = (targetMetricId: MetricId) => {
@@ -57,7 +58,6 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
     const value = Number.parseFloat(metricValue);
     if (Number.isNaN(value)) return;
 
-
     const nextEntry: MetricEntry = {
       metricId: metricDraftId,
       value,
@@ -71,12 +71,12 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
         let replaced = false;
         const next = prev.map(entry => {
           if (
-            !replaced
-            && entry.metricId === editingEntry.metricId
-            && entry.recordedAt === editingEntry.recordedAt
-            && entry.value === editingEntry.value
-            && entry.unit === editingEntry.unit
-            && (entry.notes ?? '') === (editingEntry.notes ?? '')
+            !replaced &&
+            entry.metricId === editingEntry.metricId &&
+            entry.recordedAt === editingEntry.recordedAt &&
+            entry.value === editingEntry.value &&
+            entry.unit === editingEntry.unit &&
+            (entry.notes ?? '') === (editingEntry.notes ?? '')
           ) {
             replaced = true;
             return nextEntry;
@@ -125,12 +125,12 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
       let removed = false;
       return prev.filter(current => {
         if (
-          !removed
-          && current.metricId === entry.metricId
-          && current.recordedAt === entry.recordedAt
-          && current.value === entry.value
-          && current.unit === entry.unit
-          && (current.notes ?? '') === (entry.notes ?? '')
+          !removed &&
+          current.metricId === entry.metricId &&
+          current.recordedAt === entry.recordedAt &&
+          current.value === entry.value &&
+          current.unit === entry.unit &&
+          (current.notes ?? '') === (entry.notes ?? '')
         ) {
           removed = true;
           return false;
@@ -142,21 +142,17 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
   };
 
   const handleDeleteMetricEntry = (entry: MetricEntry) => {
-    Alert.alert(
-      t('common:metricValuesBottomSheet.confirmDeleteTitle'),
-      t('common:metricValuesBottomSheet.confirmDeleteMessage'),
-      [
-        {
-          text: t('common:general.cancel'),
-          style: 'cancel',
-        },
-        {
-          text: t('common:metricValuesBottomSheet.confirmDeleteAction'),
-          style: 'destructive',
-          onPress: () => performDeleteMetricEntry(entry),
-        },
-      ]
-    );
+    Alert.alert(t('common:metricValuesBottomSheet.confirmDeleteTitle'), t('common:metricValuesBottomSheet.confirmDeleteMessage'), [
+      {
+        text: t('common:general.cancel'),
+        style: 'cancel',
+      },
+      {
+        text: t('common:metricValuesBottomSheet.confirmDeleteAction'),
+        style: 'destructive',
+        onPress: () => performDeleteMetricEntry(entry),
+      },
+    ]);
   };
 
   const handleSheetChange = (index: number) => {
@@ -178,7 +174,6 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
   if (!selectedMetric) {
     return null;
   }
-
 
   return (
     <>

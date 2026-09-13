@@ -1210,6 +1210,10 @@
     },
     "seeProgress": "See progress"
   },
+  "otherLoggerTab": {
+    "registerToday": "Register today",
+    "registeredToday": "Registered today"
+  },
   "labeledInput": {
     "optional": "optional",
     "required": "required"

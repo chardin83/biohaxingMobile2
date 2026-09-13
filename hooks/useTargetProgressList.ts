@@ -1,21 +1,10 @@
-import {
-  useMemo,
-} from 'react';
+import { useMemo } from 'react';
 
-import {
-  useStorage,
-} from '@/app/context/StorageContext';
-import {
-  getTargetProgress,
-} from '@/services/targetProgress/targetProgressService';
-import type {
-  TargetDefinition,
-  TargetProgress,
-} from '@/services/targetProgress/targetProgressTypes';
+import { useStorage } from '@/app/context/StorageContext';
+import { getTargetProgress } from '@/services/targetProgress/targetProgressService';
+import type { TargetDefinition, TargetProgress } from '@/services/targetProgress/targetProgressTypes';
 
-export const useTargetProgressList = <
-  T extends TargetDefinition
->(
+export const useTargetProgressList = <T extends TargetDefinition>(
   targets: T[],
   selectedDate: string
 ): Array<
@@ -23,12 +12,7 @@ export const useTargetProgressList = <
     progress: TargetProgress;
   }
 > => {
-  const {
-    dailyNutritionTracking,
-    weeklyNutritionTracking,
-    dailyTrainingTracking,
-    dailyHabitTracking,
-  } = useStorage();
+  const { dailyNutritionTracking, weeklyNutritionTracking, dailyTrainingTracking, dailyHabitTracking, takenDates } = useStorage();
 
   return useMemo(() => {
     const storage = {
@@ -36,6 +20,7 @@ export const useTargetProgressList = <
       weeklyNutritionTracking,
       dailyTrainingTracking,
       dailyHabitTracking,
+      takenDates,
     };
 
     return targets.map(target => ({
@@ -47,12 +32,5 @@ export const useTargetProgressList = <
         storage,
       }),
     }));
-  }, [
-    targets,
-    selectedDate,
-    dailyNutritionTracking,
-    weeklyNutritionTracking,
-    dailyTrainingTracking,
-    dailyHabitTracking,
-  ]);
+  }, [targets, selectedDate, dailyNutritionTracking, weeklyNutritionTracking, dailyTrainingTracking, dailyHabitTracking, takenDates]);
 };

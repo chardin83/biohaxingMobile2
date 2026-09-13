@@ -1,20 +1,24 @@
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { useHabitTracking } from '@/hooks/useHabitTracking';
 import { useTargetProgressList } from '@/hooks/useTargetProgressList';
-import { tips } from '@/locales/tips';
+import { HabitInputMode, tips } from '@/locales/tips';
+import { getTargetDates } from '@/services/targetProgress/dateRange';
 import { type HabitTargetDefinition } from '@/services/targetProgress/targetProgressTypes';
+import { formatDate } from '@/utils/dateUtils';
 
 import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
 import { Card } from '../ui/Card';
 import DiscreetButton from '../ui/DiscreetButton';
 import { IconSymbol } from '../ui/IconSymbol';
+import { RegisterHabitValueBottomSheet } from './RegisterHabitValueBottomSheet';
 
 type OtherTipProgress = {
   tipId: string;
@@ -28,6 +32,11 @@ type OtherTipProgress = {
   isFulfilled: boolean;
   canMarkManually: boolean;
   buttonLabels: string[];
+  inputMode?: HabitInputMode;
+  history: {
+    date: string;
+    value: number;
+  }[];
 };
 
 type OtherTargetDefinition = HabitTargetDefinition & {
@@ -35,6 +44,7 @@ type OtherTargetDefinition = HabitTargetDefinition & {
   title: string;
   description: string;
   buttonLabels: string[];
+  inputMode?: HabitInputMode;
 };
 
 export default function OtherLoggerTab({
@@ -43,15 +53,67 @@ export default function OtherLoggerTab({
   selectedDate: string;
 }>) {
   const { colors } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
-
-  const { plans } = useStorage();
-
+  const { plans, dailyHabitTracking } = useStorage();
   const { logHabit, isHabitSlotCompleted } = useHabitTracking();
-
   const [expandedTipIds, setExpandedTipIds] = useState<Set<string>>(() => new Set());
+  const registerHabitValueBottomSheetRef = useRef<BottomSheetModal>(null);
+  const [valueTarget, setValueTarget] = useState<OtherTipProgress | null>(null);
+  const [isValueSheetVisible, setIsValueSheetVisible] = useState(false);
 
+  const getDailyHabitValue = (trackingKey: string): number | undefined => {
+    return dailyHabitTracking[selectedDate]?.[trackingKey]?.value;
+  };
+
+  const handleOpenValueSheet = (item: OtherTipProgress) => {
+    setValueTarget(item);
+    setIsValueSheetVisible(true);
+  };
+
+  const getUnitLabel = useCallback(
+    (unit: string) => {
+      return t(`metrics:units.${unit}`, {
+        defaultValue: unit,
+      });
+    },
+    [t]
+  );
+
+  const getUnitLabelShort = useCallback(
+    (unit: string) => {
+      if (unit === 'hours') {
+        return t(`metrics:units.hours_short`);
+      } else if (unit === 'minutes') {
+        return t(`metrics:units.min`);
+      }
+      return t(`metrics:units.${unit}`);
+    },
+    [t]
+  );
+
+  const handleSaveValue = (value: number) => {
+    if (!valueTarget) {
+      return;
+    }
+
+    logHabit({
+      trackingKey: valueTarget.trackingKey,
+      selectedDate,
+      value,
+    });
+
+    setIsValueSheetVisible(false);
+    setValueTarget(null);
+
+    registerHabitValueBottomSheetRef.current?.close();
+  };
+
+  const handleCloseValueSheet = () => {
+    setIsValueSheetVisible(false);
+
+    setValueTarget(null);
+  };
   const targetDefinitions = useMemo<OtherTargetDefinition[]>(() => {
     return plans.other.flatMap(plan => {
       const tip = tips.find(candidate => candidate.id === plan.tipId);
@@ -64,17 +126,12 @@ export default function OtherLoggerTab({
 
       return (tip.habitTargets ?? []).map(target => ({
         source: 'habit',
-
         tipId: tip.id,
-
         trackingKey: target.trackingKey,
-
         amount: target.amount,
-
         unit: target.unit,
-
         period,
-
+        inputMode: target.inputMode,
         title: t(`tips:${tip.title}`, {
           defaultValue: tip.id,
         }),
@@ -90,36 +147,56 @@ export default function OtherLoggerTab({
 
   const targetProgressList = useTargetProgressList(targetDefinitions, selectedDate);
 
-  const progressItems = useMemo<OtherTipProgress[]>(() => {
-    return targetProgressList.map(item => ({
-      tipId: item.tipId,
-
+  const isCompletedToday = (item: OtherTipProgress) =>
+    isHabitSlotCompleted({
       trackingKey: item.trackingKey,
+      selectedDate,
+      slot: 'daily',
+    });
 
-      period: item.period,
+  const handleDailyToggle = (item: OtherTipProgress) => {
+    const completed = isCompletedToday(item);
 
-      title: item.title,
+    logHabit({
+      trackingKey: item.trackingKey,
+      selectedDate,
+      slot: 'daily',
+      value: completed ? 0 : 1,
+    });
+  };
 
-      description: item.description,
-
-      unit: item.unit,
-
-      actual: item.progress.current,
-
-      target: item.progress.target,
-
-      isFulfilled: item.progress.isFulfilled,
-
-      canMarkManually: item.trackingKey !== 'sleep_duration',
-
-      buttonLabels: item.buttonLabels,
-    }));
-  }, [targetProgressList]);
+  const progressItems = useMemo<OtherTipProgress[]>(() => {
+    return targetProgressList.map(item => {
+      const history =
+        item.period === 'weekly'
+          ? getTargetDates(selectedDate, 'weekly')
+              .map(date => ({
+                date,
+                value: dailyHabitTracking[date]?.[item.trackingKey]?.value ?? 0,
+              }))
+              .filter(entry => entry.value > 0)
+          : [];
+      return {
+        tipId: item.tipId,
+        trackingKey: item.trackingKey,
+        period: item.period,
+        title: item.title,
+        description: item.description,
+        unit: item.unit,
+        actual: item.progress.current,
+        target: item.progress.target,
+        isFulfilled: item.progress.isFulfilled,
+        canMarkManually: item.trackingKey !== 'sleep_duration',
+        buttonLabels: item.buttonLabels,
+        inputMode: item.inputMode,
+        history,
+      };
+    });
+  }, [targetProgressList, selectedDate, dailyHabitTracking]);
 
   const progressItemsByPeriod = useMemo(
     () => ({
       daily: progressItems.filter(item => item.period === 'daily'),
-
       weekly: progressItems.filter(item => item.period === 'weekly'),
     }),
     [progressItems]
@@ -160,14 +237,6 @@ export default function OtherLoggerTab({
     });
   };
 
-  const handleWholeTargetToggle = (item: OtherTipProgress) => {
-    logHabit({
-      trackingKey: item.trackingKey,
-      selectedDate,
-      value: item.isFulfilled ? 0 : item.target,
-    });
-  };
-
   const renderManualButtons = (item: OtherTipProgress) => {
     if (!item.canMarkManually) {
       return null;
@@ -179,32 +248,28 @@ export default function OtherLoggerTab({
       return null;
     }
 
-    if (item.target > 2) {
+    if (item.inputMode === 'daily-check') {
+      const completedToday = isCompletedToday(item);
+
       return (
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => handleWholeTargetToggle(item)}
+        <AppButton
+          icon={completedToday ? 'checkCircle' : undefined}
+          onPress={() => handleDailyToggle(item)}
           style={[
             styles.completeButton,
             {
-              borderColor: colors.planSectionOtherIcon,
-
-              backgroundColor: item.isFulfilled ? colors.accentWeak : colors.background,
+              backgroundColor: completedToday ? colors.accentWeak : colors.overlayLight,
             },
           ]}
-        >
-          <ThemedText type="caption">{item.isFulfilled ? t('otherTips.fulfilled') : t('otherTips.markDone')}</ThemedText>
-        </Pressable>
+          title={completedToday ? t('otherLoggerTab.registeredToday') : t('otherLoggerTab.registerToday')}
+        />
       );
     }
 
-    return (
-      <View style={styles.actionsRow}>
-        {Array.from(
-          {
-            length: item.target,
-          },
-          (_, index) => {
+    if (item.inputMode === 'slots') {
+      return (
+        <View style={styles.actionsRow}>
+          {item.buttonLabels.map((buttonLabel, index) => {
             const slot = getSlotId(item, index);
 
             const isCompleted = isHabitSlotCompleted({
@@ -213,21 +278,9 @@ export default function OtherLoggerTab({
               slot,
             });
 
-            const buttonLabel = item.buttonLabels[index] ?? (item.tipId === 'dental_health_basics' ? ['morning', 'night'][index] : undefined);
-
-            let displayLabel = t('otherTips.markDoneButton', {
-              count: index + 1,
+            const displayLabel = t(`tips:${item.tipId}.habitTargets.buttonLabels.${buttonLabel}`, {
+              defaultValue: buttonLabel,
             });
-
-            if (buttonLabel) {
-              displayLabel = t(`tips:${item.tipId}.habitTargets.buttonLabels.${buttonLabel}`, {
-                defaultValue: buttonLabel,
-              });
-            } else if (isCompleted) {
-              displayLabel = t('otherTips.completedButton', {
-                count: index + 1,
-              });
-            }
 
             return (
               <AppButton
@@ -243,48 +296,83 @@ export default function OtherLoggerTab({
                 title={displayLabel}
               />
             );
-          }
+          })}
+        </View>
+      );
+    }
+
+    if (item.inputMode === 'number') {
+      const todayValue = getDailyHabitValue(item.trackingKey);
+      const hasValueToday = todayValue !== undefined && todayValue > 0;
+      return (
+        <AppButton
+          onPress={() => {
+            handleOpenValueSheet(item);
+          }}
+          style={[
+            styles.completeButton,
+            {
+              backgroundColor: colors.overlayLight,
+            },
+          ]}
+          title={hasValueToday ? `✓ ${todayValue} ${getUnitLabel(item.unit)} ${t('today')}` : t('otherLoggerTab.registerToday')}
+        />
+      );
+    }
+
+    return null;
+  };
+
+  const renderProgressItem = (item: OtherTipProgress) => {
+    return (
+      <View key={`${item.tipId}-${item.trackingKey}`} style={styles.tip}>
+        <View style={styles.header}>
+          <ThemedText type="title3" style={styles.title}>
+            {item.title}
+          </ThemedText>
+
+          {item.isFulfilled && (
+            <Pressable accessibilityRole="button" accessibilityLabel={t('otherTips.showCompletionButtons')} onPress={() => toggleExpanded(item.tipId)}>
+              <IconSymbol name="checkCircle" size={34} color={colors.xp} />
+            </Pressable>
+          )}
+        </View>
+
+        {item.description ? (
+          <ThemedText type="default" style={styles.description}>
+            {item.description}
+          </ThemedText>
+        ) : null}
+
+        <View style={styles.statusRow}>
+          <ThemedText type="caption">{item.isFulfilled ? t('otherTips.fulfilled') : t('otherTips.notFulfilled')}</ThemedText>
+          <ThemedText type="explainer">{`${item.actual} / ${item.target} ${getUnitLabel(item.unit)}`}</ThemedText>
+        </View>
+        {item.period === 'weekly' && item.history.length > 0 && (
+          <View style={styles.history}>
+            {item.history.map(entry => (
+              <View
+                key={entry.date}
+                style={[
+                  styles.historyValue,
+                  {
+                    backgroundColor: colors.overlayLight,
+                  },
+                ]}
+              >
+                {item.inputMode === 'number' ? (
+                  <ThemedText type="explainer">{`${formatDate(entry.date, i18n.language)} · ${entry.value} ${getUnitLabelShort(item.unit)}`}</ThemedText>
+                ) : (
+                  <ThemedText type="explainer">{formatDate(entry.date, i18n.language)}</ThemedText>
+                )}
+              </View>
+            ))}
+          </View>
         )}
+        {renderManualButtons(item)}
       </View>
     );
   };
-
-  const renderProgressItem = (item: OtherTipProgress) => (
-    <View key={`${item.tipId}-${item.trackingKey}`} style={styles.tip}>
-      <View style={styles.header}>
-        <ThemedText type="title3" style={styles.title}>
-          {item.title}
-        </ThemedText>
-
-        {item.isFulfilled && (
-          <Pressable accessibilityRole="button" accessibilityLabel={t('otherTips.showCompletionButtons')} onPress={() => toggleExpanded(item.tipId)}>
-            <IconSymbol name="checkCircle" size={34} color={colors.xp} />
-          </Pressable>
-        )}
-      </View>
-
-      {item.description ? (
-        <ThemedText type="default" style={styles.description}>
-          {item.description}
-        </ThemedText>
-      ) : null}
-
-      <View style={styles.statusRow}>
-        <ThemedText type="caption">{item.isFulfilled ? t('otherTips.fulfilled') : t('otherTips.notFulfilled')}</ThemedText>
-
-        <ThemedText
-          type="caption"
-          style={{
-            color: colors.textMuted,
-          }}
-        >
-          {`${item.actual} / ${item.target} ${item.unit}`}
-        </ThemedText>
-      </View>
-
-      {renderManualButtons(item)}
-    </View>
-  );
 
   const renderPeriod = (period: 'daily' | 'weekly', title: string) => {
     const items = progressItemsByPeriod[period];
@@ -347,33 +435,44 @@ export default function OtherLoggerTab({
   };
 
   return (
-    <View style={styles.container}>
-      <Card style={styles.card}>
-        <ThemedText type="title2">{t('otherTips.title')}</ThemedText>
+    <>
+      <View style={styles.container}>
+        <Card style={styles.card}>
+          <ThemedText type="title2">{t('otherTips.title')}</ThemedText>
 
-        <ThemedText
-          type="caption"
-          style={{
-            color: colors.textMuted,
-          }}
-        >
-          {t('otherTips.subtitle')}
-        </ThemedText>
+          <ThemedText
+            type="caption"
+            style={{
+              color: colors.textMuted,
+            }}
+          >
+            {t('otherTips.subtitle')}
+          </ThemedText>
 
-        {renderPeriod('daily', t('nutritionLogger.periodDaily'))}
+          {renderPeriod('daily', t('nutritionLogger.periodDaily'))}
 
-        <View
-          style={[
-            styles.divider,
-            {
-              backgroundColor: colors.textMuted,
-            },
-          ]}
-        />
+          <View
+            style={[
+              styles.divider,
+              {
+                backgroundColor: colors.textMuted,
+              },
+            ]}
+          />
 
-        {renderPeriod('weekly', t('nutritionLogger.periodWeekly'))}
-      </Card>
-    </View>
+          {renderPeriod('weekly', t('nutritionLogger.periodWeekly'))}
+        </Card>
+      </View>
+      <RegisterHabitValueBottomSheet
+        bottomSheetRef={registerHabitValueBottomSheetRef}
+        isVisible={isValueSheetVisible}
+        title={valueTarget?.title ?? ''}
+        unit={valueTarget?.unit ?? ''}
+        onSave={handleSaveValue}
+        onClose={handleCloseValueSheet}
+        initialValue={valueTarget ? getDailyHabitValue(valueTarget.trackingKey) : undefined}
+      />
+    </>
   );
 }
 
@@ -381,70 +480,66 @@ const styles = StyleSheet.create({
   container: {
     gap: 10,
   },
-
   card: {
     gap: 10,
   },
-
   periodSection: {
     marginTop: 6,
   },
-
   periodSectionHeading: {
     alignSelf: 'flex-start',
     marginBottom: 4,
     opacity: 0.9,
     textTransform: 'capitalize',
   },
-
   tip: {
     gap: 10,
     paddingHorizontal: 10,
   },
-
   divider: {
     height: 1,
     marginHorizontal: 10,
     marginVertical: 6,
     opacity: 0.45,
   },
-
   emptyPeriodText: {
     marginHorizontal: 10,
   },
-
   addTargetButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 6,
+    marginTop: 12,
   },
-
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
   },
-
   title: {
     flex: 1,
   },
-
   description: {
     opacity: 0.85,
   },
-
   statusRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 10,
   },
-
+  history: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 2,
+  },
+  historyValue: {
+    borderRadius: 6,
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+  },
   actionsRow: {
     flexDirection: 'row',
     gap: 8,
   },
-
   completeButton: {
     flex: 1,
     borderWidth: 1,
@@ -452,5 +547,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 9,
     alignItems: 'center',
+    marginBottom: 10,
   },
 });

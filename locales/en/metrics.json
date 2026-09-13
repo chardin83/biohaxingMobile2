@@ -28,9 +28,11 @@
         "in": "in",
         "score_0_10": "Score (0-10)",
         "count": "count",
+        "minutes": "minutes",
         "min": "min",
         "min_from_midnight": "min from midnight",
         "hours": "hours",
+        "hours_short": "h",
         "bss": "Bristol scale",
         "ml_kg_min": "ml/kg/min"
     },

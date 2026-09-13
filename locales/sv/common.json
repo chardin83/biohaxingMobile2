@@ -1221,6 +1221,10 @@
     },
     "seeProgress": "Se utveckling"
   },
+  "otherLoggerTab": {
+    "registerToday": "Registrera idag",
+    "registeredToday": "Registrerat idag"
+  },
   "labeledInput": {
     "optional": "valfritt",
     "required": "obligatoriskt"

@@ -1,10 +1,10 @@
 import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import React from 'react';
-import { Pressable,View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { ThemedText } from './ThemedText';
-import { IconSymbol } from './ui/IconSymbol';
 import { useBottomSheetDesign } from './ui/BottomSheetDesign';
+import { IconSymbol } from './ui/IconSymbol';
 
 // Types for props
 export type CopyMealBottomSheetProps = {
@@ -73,13 +73,13 @@ const CopyMealBottomSheet: React.FC<CopyMealBottomSheetProps> = ({
                 <View style={styles.copyMealStatsGroup}>
                   <View style={styles.copyMealStatItem}>
                     <IconSymbol name="flame" size={14} color={colors.textLight} />
-                    <ThemedText type="caption" style={[styles.copyMealStatText, { color: colors.textLight }]}> 
+                    <ThemedText type="caption" style={[styles.copyMealStatText, { color: colors.textLight }]}>
                       {roundToOneDecimal(typeof option.meal?.calories === 'number' ? option.meal.calories : 0)}
                     </ThemedText>
                   </View>
                   <View style={styles.copyMealStatItem}>
                     <IconSymbol name="fiber" size={14} color={colors.textLight} />
-                    <ThemedText type="caption" style={[styles.copyMealStatText, { color: colors.textLight }]}> 
+                    <ThemedText type="caption" style={[styles.copyMealStatText, { color: colors.textLight }]}>
                       {roundToOneDecimal(typeof option.meal?.fiber === 'number' ? option.meal.fiber : 0)}
                     </ThemedText>
                   </View>
@@ -88,7 +88,7 @@ const CopyMealBottomSheet: React.FC<CopyMealBottomSheetProps> = ({
             </Pressable>
           ))
         ) : (
-          <ThemedText type="caption" style={[styles.copyMealEmptyText, { color: colors.textMuted }]}> 
+          <ThemedText type="caption" style={[styles.copyMealEmptyText, { color: colors.textMuted }]}>
             {t('nutritionLogger.copyMealEmpty')}
           </ThemedText>
         )}
