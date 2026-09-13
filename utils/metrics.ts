@@ -22,3 +22,18 @@ export function buildTrendData(
 
   return Array.from(byDate.values()).sort((left, right) => left.date.localeCompare(right.date));
 }
+
+export const getUnitLabel = (unit: string, t: (key: string, options?: Record<string, unknown>) => string) => {
+  return t(`metrics:units.${unit}`, {
+    defaultValue: unit,
+  });
+};
+
+export const getUnitLabelShort = (unit: string, t: (key: string, options?: Record<string, unknown>) => string) => {
+  if (unit === 'hours') {
+    return t(`metrics:units.hours_short`);
+  } else if (unit === 'minutes') {
+    return t(`metrics:units.min`);
+  }
+  return t(`metrics:units.${unit}`);
+};

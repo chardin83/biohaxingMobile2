@@ -6,60 +6,21 @@ import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import type { TipTargetItem, WeeklyNutritionTracking, WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { useStorage } from '@/app/context/StorageContext';
+import DailyProgressWeek from '@/components/calendar/progress/DailyProgressWeek';
+import PastWeeksProgress, { PastWeekProgress } from '@/components/calendar/progress/PastWeekPRogress';
+import ProgressDateNavigator from '@/components/calendar/progress/ProgressDateNavigator';
+import ProgressTipHeader from '@/components/calendar/progress/ProgressTipHeader';
 import { Collapsible } from '@/components/Collapsible';
 import { ThemedText } from '@/components/ThemedText';
 import TipTarget from '@/components/TipTarget';
 import Badge from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useNutritionTipTargets } from '@/hooks/useNutritionTipTargets';
-import { getTipTargetIconName, tips } from '@/locales/tips';
+import { useProgressWeeks } from '@/hooks/useWeekProgress';
+import { tips } from '@/locales/tips';
 import { NutritionTargetPeriod } from '@/types/nutritionTargets';
-import { formatMonthDay, formatMonthDayRange, fromDateKey, getFirstDayOfWeek, getLocalizedWeekdayLabels, toDateKey } from '@/utils/dateUtils';
-
-// ── Date helpers ───────────────────────────────────────────────────────────────
-
-const getWeekStart = (d: Date, firstDay: number): Date => {
-  const result = new Date(d);
-  const normalizedFirstDay = ((firstDay % 7) + 7) % 7;
-  const diff = (result.getDay() - normalizedFirstDay + 7) % 7;
-  result.setDate(result.getDate() - diff);
-  result.setHours(0, 0, 0, 0);
-  return result;
-};
-
-const addDays = (d: Date, n: number): Date => {
-  const result = new Date(d);
-  result.setDate(result.getDate() + n);
-  return result;
-};
-
-const getCurrentWeek = (firstDay: number): string[] => {
-  const weekStart = getWeekStart(new Date(), firstDay);
-  return Array.from({ length: 7 }, (_v, j) => toDateKey(addDays(weekStart, j)));
-};
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const _getCurrentWeek = getCurrentWeek;
-
-type PastWeek = { start: string; end: string; label: string; days: string[]; isCurrent: boolean };
-
-const getLast4Weeks = (offsetWeeks = 0, language = 'en', firstDay = 1): PastWeek[] => {
-  const currentWeekStart = getWeekStart(new Date(), firstDay);
-  return Array.from({ length: 4 }, (_, i) => {
-    const weekStart = addDays(currentWeekStart, (-(3 - i) + offsetWeeks) * 7);
-    const weekEnd = addDays(weekStart, 6);
-    const label = formatMonthDayRange(weekStart, weekEnd, language);
-    return {
-      start: toDateKey(weekStart),
-      end: toDateKey(weekEnd),
-      label,
-      days: Array.from({ length: 7 }, (_v, j) => toDateKey(addDays(weekStart, j))),
-      isCurrent: i === 3 && offsetWeeks === 0,
-    };
-  });
-};
+import { formatMonthDay, fromDateKey, toDateKey } from '@/utils/dateUtils';
 
 const getWeeklyProgressText = (tipId: string, weekStartISO: string, weeklyNutritionTracking: WeeklyNutritionTracking): string | null => {
   const tip = tips.find(candidate => candidate.id === tipId);
@@ -91,11 +52,8 @@ const getWeeklyProgressText = (tipId: string, weekStartISO: string, weeklyNutrit
   };
 
   const preferredTarget = trackingTargets.find(target => getActual(target.trackingKey) < (target.amount ?? 0)) ?? trackingTargets[0];
-
   const amount = preferredTarget.amount ?? 0;
-
   const actual = getActual(preferredTarget.trackingKey);
-
   return `${Math.round(actual)}/${Math.round(amount)}`;
 };
 
@@ -143,41 +101,24 @@ export default function NutritionProgressScreen() {
   const { t, i18n } = useTranslation();
   const { plans, nutritionXpClaims, weeklyNutritionTracking } = useStorage();
   const language = i18n.resolvedLanguage ?? i18n.language;
-  const firstDayOfWeek = useMemo(() => getFirstDayOfWeek(language), [language]);
 
-  const [weekOffset, setWeekOffset] = useState(0);
-  const pastWeeks = useMemo(() => getLast4Weeks(weekOffset, language, firstDayOfWeek), [weekOffset, language, firstDayOfWeek]);
+  const {
+    weeks: pastWeeks,
+    selectedWeek,
+    selectedWeekStart,
+    setSelectedWeekStart,
+    dayLabels,
+    dateRangeLabel,
+    goBackWeeks,
+    goForwardWeeks,
+    canGoForward,
+  } = useProgressWeeks(language);
 
   const progressDateKeys = useMemo(() => Array.from(new Set(pastWeeks.flatMap(week => week.days))), [pastWeeks]);
 
   const nutritionTargetsByDate = useNutritionTipTargets(progressDateKeys);
 
-  const dayLabels = useMemo(
-    () =>
-      getLocalizedWeekdayLabels(language, {
-        format: 'short',
-        weekStartsOn: firstDayOfWeek,
-        stripDots: true,
-      }),
-    [firstDayOfWeek, language]
-  );
   const todayKey = useMemo(() => toDateKey(new Date()), []);
-  const dateRangeLabel = useMemo(() => {
-    const start = fromDateKey(pastWeeks[0].start);
-    const end = fromDateKey(pastWeeks[3].end);
-    return formatMonthDayRange(start, end, language);
-  }, [pastWeeks, language]);
-
-  const goBackWeeks = () => {
-    setSelectedTipDay('');
-    setWeekOffset(prev => prev - 4);
-    setSelectedWeekStart(null);
-  };
-  const goForwardWeeks = () => {
-    setSelectedTipDay('');
-    setWeekOffset(prev => Math.min(prev + 4, 0));
-    setSelectedWeekStart(null);
-  };
 
   const trackedTips = useMemo<TipHistoryItem[]>(() => {
     return (plans?.nutrition ?? []).flatMap(entry => {
@@ -207,14 +148,11 @@ export default function NutritionProgressScreen() {
     return colors.accentColor;
   };
 
-  const [selectedWeekStart, setSelectedWeekStart] = useState<string | null>(null);
   const [selectedTipDay, setSelectedTipDay] = useState<string>('');
 
   React.useEffect(() => {
     setSelectedTipDay(todayKey);
   }, [todayKey]);
-
-  const getSelectedWeek = (): PastWeek => pastWeeks.find(w => w.start === selectedWeekStart) ?? pastWeeks[3];
 
   const getStreakStatus = (tipId: string): { streak: number; isYesterdayStreak: boolean } => {
     const today = new Date();
@@ -250,7 +188,6 @@ export default function NutritionProgressScreen() {
   };
 
   const renderDailyTip = (tip: TipHistoryItem) => {
-    const selectedWeek = getSelectedWeek();
     const startDateKey = toDateKey(new Date(tip.startedAt));
     const weekBeforeStart = isDateKeyBefore(selectedWeek.end, startDateKey);
     const startLabel = formatMonthDay(fromDateKey(startDateKey), language);
@@ -259,31 +196,40 @@ export default function NutritionProgressScreen() {
     const visibleDays = selectedWeek.days.filter((d: string) => d <= todayKey && !isDateKeyBefore(d, startDateKey));
     const claimedDays = visibleDays.filter((d: string) => isClaimed(tip.tipId, 'daily', d));
     const claimedCount = claimedDays.length;
-    const countColor = getProgressColor(claimedCount, visibleDays.length);
     const isSelectedDayBeforeStart = !!selectedTipDay && isDateKeyBefore(selectedTipDay, startDateKey);
     const selectedDayTargets = selectedTipDay ? (nutritionTargetsByDate[selectedTipDay]?.[tip.tipId] ?? []) : [];
+
+    const pastWeekProgress: PastWeekProgress[] = pastWeeks.map(week => {
+      const pastDays = week.days.filter(dateKey => dateKey <= todayKey && !isDateKeyBefore(dateKey, startDateKey));
+
+      return {
+        start: week.start,
+        label: week.label,
+        completed: pastDays.filter(dateKey => isClaimed(tip.tipId, 'daily', dateKey)).length,
+        total: pastDays.length,
+        days: week.days.map(dateKey => {
+          const disabled = dateKey > todayKey || isDateKeyBefore(dateKey, startDateKey);
+          const fulfilled = isClaimed(tip.tipId, 'daily', dateKey);
+          const ratio = getTargetRatio(nutritionTargetsByDate[dateKey]?.[tip.tipId]);
+
+          return {
+            date: dateKey,
+            ratio: fulfilled ? 1 : ratio,
+            fulfilled,
+            disabled,
+          };
+        }),
+      };
+    });
+
     return (
       <View key={tip.tipId} style={styles.tipBlock}>
-        <View style={styles.tipHeader}>
-          {getTipTargetIconName(tip.tipId) && (
-            <View style={[styles.iconCircle, { backgroundColor: colors.accentWeak }]}>
-              <IconSymbol name={getTipTargetIconName(tip.tipId)!} size={20} color={colors.textMuted} />
-            </View>
-          )}
-          <ThemedText type="defaultSemiBold" style={styles.tipTitle}>
-            {tip.title}
-          </ThemedText>
-          {!weekBeforeStart && (
-            <>
-              <ThemedText type="title3" style={[styles.tipCount, { color: countColor }]}>
-                {`${claimedCount}`}
-              </ThemedText>
-              <ThemedText type="caption" style={[{ color: colors.textMuted }]}>
-                {`/ ${visibleDays.length} ${t('common:progress.days')}`}
-              </ThemedText>
-            </>
-          )}
-        </View>
+        <ProgressTipHeader
+          tipId={tip.tipId}
+          title={tip.title}
+          progress={`${claimedCount}/${visibleDays.length}`}
+          progressColor={getProgressColor(claimedCount, visibleDays.length)}
+        />
         <ThemedText type="caption" style={[styles.selectedWeekRange, { color: colors.textMuted }]}>
           {selectedWeek.label}
           {isStartWeek && (
@@ -297,74 +243,36 @@ export default function NutritionProgressScreen() {
             {t('common:progress.notActiveStarts', { date: startLabel })}
           </ThemedText>
         ) : (
-          <View style={styles.weekRow}>
-            {selectedWeek.days.map((dateKey: string, i: number) => {
+          <DailyProgressWeek
+            days={selectedWeek.days}
+            dayLabels={dayLabels}
+            todayKey={todayKey}
+            selectedDate={selectedTipDay}
+            startDate={startDateKey}
+            getStatus={dateKey => {
               const fulfilled = isClaimed(tip.tipId, 'daily', dateKey);
               const ratio = getTargetRatio(nutritionTargetsByDate[dateKey]?.[tip.tipId]);
-              const hasPartialProgress = ratio > 0;
-              const isToday = dateKey === todayKey;
-              const isSelectedDay = selectedTipDay === dateKey;
-              const isFuture = dateKey > todayKey;
-              const isBeforeStart = isDateKeyBefore(dateKey, startDateKey);
-              const isStartDay = dateKey === startDateKey;
-              let dayLabelColor = colors.textMuted;
-              if (isToday) {
-                dayLabelColor = colors.accentColor;
-              }
-              if (isStartDay) {
-                dayLabelColor = colors.goldSoft;
-              }
-              let iconColor = colors.textMuted;
-              let cellBackground = colors.overlayLight;
-
-              let iconChar = '\u2717';
 
               if (fulfilled) {
-                iconChar = '\u2713';
-
-                // BEST STATE
-                iconColor = colors.progressSuccessIcon;
-                cellBackground = colors.progressSuccessCell;
-              } else if (hasPartialProgress) {
-                iconChar = PARTIAL_PROGRESS_ICON;
-
-                // PARTIAL
-                iconColor = colors.progressPartialIcon;
-                cellBackground = colors.overlayLight;
+                return {
+                  state: 'fulfilled',
+                  ratio: 1,
+                };
+              }
+              if (ratio > 0) {
+                return {
+                  state: 'partial',
+                  ratio,
+                };
               }
 
-              if (isFuture || isBeforeStart) {
-                iconChar = '';
-                iconColor = colors.secondaryBackground;
-                cellBackground = colors.overlayLight;
-              }
-              return (
-                <View key={dateKey} style={styles.dayColumn}>
-                  <ThemedText type="caption" style={[styles.dayLabel, (isToday || isStartDay) && styles.dayLabelUnderlined, { color: dayLabelColor }]}>
-                    {dayLabels[i] ?? ''}
-                  </ThemedText>
-                  <TouchableOpacity
-                    activeOpacity={0.75}
-                    onPress={() => toggleSelectedTipDay(dateKey, isFuture)}
-                    style={[
-                      styles.dayCell,
-                      { backgroundColor: cellBackground },
-                      isBeforeStart && styles.dayCellBeforeStart,
-                      isSelectedDay && styles.dayCellSelected,
-                      isSelectedDay && { borderColor: colors.accentColor },
-                    ]}
-                  >
-                    <ThemedText style={[styles.dayCellIcon, { color: iconColor }]}>{iconChar}</ThemedText>
-                  </TouchableOpacity>
-                  {isSelectedDay && (
-                    <ThemedText type="title2" style={[styles.dayCellArrow, { color: colors.accentColor }]}>
-                      {'⌵'}
-                    </ThemedText>
-                  )}
-                </View>
-              );
-            })}
-          </View>
+              return {
+                state: 'none',
+                ratio: 0,
+              };
+            }}
+            onSelectDate={dateKey => toggleSelectedTipDay(dateKey, dateKey > todayKey)}
+          />
         )}
         {isSelectedDayBeforeStart && !weekBeforeStart && (
           <ThemedText type="default" style={[styles.notActiveText, styles.selectedDayInfoText, { color: colors.textMuted }]}>
@@ -395,75 +303,29 @@ export default function NutritionProgressScreen() {
               </ThemedText>
             </View>
             {isYesterdayStreak && (
-              <ThemedText type="explainer" style={[styles.streakReminderText, { color: colors.textMuted }]}>
+              <ThemedText type="explainer" style={[styles.streakReminderText]}>
                 {t('common:progress.streakReminder')}
               </ThemedText>
             )}
           </Badge>
         )}
-        <ThemedText type="caption" style={[styles.pastWeeksHeading, { color: colors.textMuted }]}>
+        <ThemedText type="explainer" style={[styles.pastWeeksHeading]}>
           {t('progress.last4Weeks')}
         </ThemedText>
-        <View style={styles.pastWeeksRow}>
-          {pastWeeks.map(week => {
-            const pastDays = week.days.filter((d: string) => d <= todayKey);
-            const count = pastDays.filter((d: string) => isClaimed(tip.tipId, 'daily', d)).length;
-            const total = pastDays.length;
-            const isSelected = (selectedWeekStart ?? pastWeeks[3].start) === week.start;
-            const pastCountColor = getProgressColor(count, total);
-            return (
-              <TouchableOpacity
-                key={week.start}
-                onPress={() => setSelectedWeekStart(week.start)}
-                style={[
-                  styles.pastWeekCell,
-                  {
-                    backgroundColor: isSelected ? colors.background : colors.secondaryBackground,
-                    borderColor: isSelected ? colors.primary : colors.textWeak,
-                  },
-                  isSelected && styles.pastWeekCellCurrent,
-                ]}
-              >
-                <ThemedText type="caption" style={[styles.pastWeekLabel, { color: colors.textMuted }]}>
-                  {week.label}
-                </ThemedText>
-                <ThemedText type="title3" style={[styles.pastWeekCount, { color: pastCountColor }]}>
-                  {`${count}/${total}`}
-                </ThemedText>
-                <ThemedText type="explainer" style={styles.pastWeekDaysLabel}>
-                  {t('progress.days')}
-                </ThemedText>
-                <View style={styles.miniBarRow}>
-                  {week.days.map((d: string) => {
-                    const isFutureDay = d > todayKey;
-                    if (isFutureDay) return <View key={d} style={styles.miniBarTrack} />;
-                    const done = isClaimed(tip.tipId, 'daily', d);
-                    const ratio = getTargetRatio(nutritionTargetsByDate[d]?.[tip.tipId]);
-                    let fillHeight: number;
-                    if (ratio > 0) {
-                      fillHeight = Math.max(Math.round(ratio * 26), 2);
-                    } else if (done) {
-                      fillHeight = 26;
-                    } else {
-                      fillHeight = 1;
-                    }
-                    return (
-                      <View key={d} style={styles.miniBarTrack}>
-                        <View style={[styles.miniBarFill, { height: fillHeight, backgroundColor: done ? colors.accentMedium : colors.border }]} />
-                      </View>
-                    );
-                  })}
-                </View>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+        <PastWeeksProgress
+          weeks={pastWeekProgress}
+          selectedWeekStart={selectedWeekStart ?? pastWeeks[3].start}
+          daysLabel={t('progress.days')}
+          onSelectWeek={weekStart => {
+            setSelectedWeekStart(weekStart);
+            setSelectedTipDay('');
+          }}
+        />
       </View>
     );
   };
 
   const renderWeeklyTip = (tip: TipHistoryItem) => {
-    const selectedWeek = getSelectedWeek();
     const weekData = weeklyNutritionTracking[selectedWeek.start] ?? {};
     const tipObj = tips.find(candidate => candidate.id === tip.tipId);
     const summaryTargets: TipTargetItem[] = [];
@@ -498,9 +360,7 @@ export default function NutritionProgressScreen() {
 
     return (
       <View key={tip.tipId} style={[styles.tipBlock, { borderBottomColor: colors.borderLight }]}>
-        <ThemedText type="defaultSemiBold" style={styles.tipTitle}>
-          {tip.title}
-        </ThemedText>
+        <ProgressTipHeader tipId={tip.tipId} title={tip.title} />
         <View style={styles.weekStatusRow}>
           {pastWeeks.map(week => {
             const fulfilled = Boolean(isClaimed(tip.tipId, 'weekly', week.start));
@@ -575,21 +435,18 @@ export default function NutritionProgressScreen() {
         <ThemedText type="title2" style={styles.heading}>
           {t('progress.title')}
         </ThemedText>
-        <View style={styles.dateRangeRow}>
-          <TouchableOpacity onPress={goBackWeeks} style={styles.navArrow}>
-            <ThemedText type="title" style={{ color: colors.primary }}>
-              {'\u2039'}
-            </ThemedText>
-          </TouchableOpacity>
-          <ThemedText type="caption" style={[styles.dateRange, { color: colors.textMuted }]}>
-            {dateRangeLabel}
-          </ThemedText>
-          <TouchableOpacity onPress={goForwardWeeks} style={styles.navArrow} disabled={weekOffset === 0}>
-            <ThemedText type="title" style={{ color: weekOffset === 0 ? colors.border : colors.primary }}>
-              {'\u203a'}
-            </ThemedText>
-          </TouchableOpacity>
-        </View>
+        <ProgressDateNavigator
+          label={dateRangeLabel}
+          canGoForward={canGoForward}
+          onBack={() => {
+            goBackWeeks();
+            setSelectedTipDay('');
+          }}
+          onForward={() => {
+            goForwardWeeks();
+            setSelectedTipDay('');
+          }}
+        />
 
         {dailyTips.length > 0 && (
           <Collapsible title={t('nutritionLogger.periodDaily')} titleType="title3" contentStyle={styles.collapsibleContent}>

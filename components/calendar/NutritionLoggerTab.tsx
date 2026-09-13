@@ -35,13 +35,13 @@ import ImageThumbnailWithDelete from '../ImageThumbnailWithDelete';
 import { LoggedMealsSection } from '../LoggedMealsSection';
 import { handleGeneralError, handleNutritionError, handleSocketError } from '../nutritionAnalysisHelpers';
 import NutritionBreakdown from '../NutritionBreakdown';
-import NutritionPlanTargetsSection, { getTipProgressKey } from '../NutritionPlanTargetsSection';
 import { ThemedModal } from '../ThemedModal';
 import { ThemedText } from '../ThemedText';
 import { Card } from '../ui/Card';
 import DiscreetButton from '../ui/DiscreetButton';
 import { IconSymbol } from '../ui/IconSymbol';
 import LabeledInput from '../ui/LabeledInput';
+import NutritionPlanTargetsSection, { getTipProgressKey } from './NutritionPlanTargetsSection';
 
 interface NutritionLoggerTabProps {
   selectedDate: string;

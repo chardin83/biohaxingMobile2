@@ -10,10 +10,11 @@ import { globalStyles } from '@/app/theme/globalStyles';
 import TipTarget from '@/components/TipTarget';
 import { formatMonthDay, toDateKey } from '@/utils/dateUtils';
 
-import { ThemedText } from './ThemedText';
-import AppButton from './ui/AppButton';
-import { Card } from './ui/Card';
-import DiscreetButton from './ui/DiscreetButton';
+import { ThemedText } from '../ThemedText';
+import AppButton from '../ui/AppButton';
+import { Card } from '../ui/Card';
+import DiscreetButton from '../ui/DiscreetButton';
+import ProgressButton from './ProgressButton';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -304,31 +305,7 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                 />
               </View>
             </View>
-            <View style={styles.seeProgressButton}>
-              <TouchableOpacity
-                onPress={() => router.push('/(stack)/calendar/progress' as any)}
-                activeOpacity={0.85}
-                style={[
-                  styles.seeProgressCta,
-                  {
-                    backgroundColor: colors.secondaryBackground,
-                    borderColor: colors.border,
-                  },
-                ]}
-                accessibilityRole="button"
-                accessibilityLabel={t('nutritionLogger.seeProgress')}
-              >
-                <View style={styles.seeProgressCtaContent}>
-                  <View style={[styles.seeProgressIconWrap, { backgroundColor: colors.accentVeryWeak }]}>
-                    <Icon source="chart-line" size={20} color={colors.primary} />
-                  </View>
-                  <ThemedText type="title3" style={styles.seeProgressCtaText}>
-                    {t('nutritionLogger.seeProgress')}
-                  </ThemedText>
-                </View>
-                <Icon source="chevron-right" size={22} color={colors.accentColor} />
-              </TouchableOpacity>
-            </View>
+            <ProgressButton href="/(stack)/calendar/nutrition/progress" label={t('nutritionLogger.seeProgress')} />
           </>
         )}
       </Card>
@@ -431,36 +408,6 @@ const styles = StyleSheet.create({
   addTargetButton: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  seeProgressButton: {
-    marginTop: 4,
-    marginBottom: 8,
-  },
-  seeProgressCta: {
-    width: '100%',
-    minHeight: 56,
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  seeProgressCtaContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    flex: 1,
-  },
-  seeProgressIconWrap: {
-    width: 34,
-    height: 34,
-    borderRadius: 999,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  seeProgressCtaText: {
-    flexShrink: 1,
   },
 });
 

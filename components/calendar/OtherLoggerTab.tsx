@@ -12,12 +12,14 @@ import { HabitInputMode, tips } from '@/locales/tips';
 import { getTargetDates } from '@/services/targetProgress/dateRange';
 import { type HabitTargetDefinition } from '@/services/targetProgress/targetProgressTypes';
 import { formatDate } from '@/utils/dateUtils';
+import { getUnitLabel, getUnitLabelShort } from '@/utils/metrics';
 
 import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
 import { Card } from '../ui/Card';
 import DiscreetButton from '../ui/DiscreetButton';
 import { IconSymbol } from '../ui/IconSymbol';
+import ProgressButton from './ProgressButton';
 import { RegisterHabitValueBottomSheet } from './RegisterHabitValueBottomSheet';
 
 type OtherTipProgress = {
@@ -71,23 +73,16 @@ export default function OtherLoggerTab({
     setIsValueSheetVisible(true);
   };
 
-  const getUnitLabel = useCallback(
+  const translateUnit = useCallback(
     (unit: string) => {
-      return t(`metrics:units.${unit}`, {
-        defaultValue: unit,
-      });
+      return getUnitLabel(unit, t);
     },
     [t]
   );
 
-  const getUnitLabelShort = useCallback(
+  const translateUnitShort = useCallback(
     (unit: string) => {
-      if (unit === 'hours') {
-        return t(`metrics:units.hours_short`);
-      } else if (unit === 'minutes') {
-        return t(`metrics:units.min`);
-      }
-      return t(`metrics:units.${unit}`);
+      return getUnitLabelShort(unit, t);
     },
     [t]
   );
@@ -315,7 +310,7 @@ export default function OtherLoggerTab({
               backgroundColor: colors.overlayLight,
             },
           ]}
-          title={hasValueToday ? `✓ ${todayValue} ${getUnitLabel(item.unit)} ${t('today')}` : t('otherLoggerTab.registerToday')}
+          title={hasValueToday ? `✓ ${todayValue} ${translateUnit(item.unit)} ${t('today')}` : t('otherLoggerTab.registerToday')}
         />
       );
     }
@@ -346,7 +341,7 @@ export default function OtherLoggerTab({
 
         <View style={styles.statusRow}>
           <ThemedText type="caption">{item.isFulfilled ? t('otherTips.fulfilled') : t('otherTips.notFulfilled')}</ThemedText>
-          <ThemedText type="explainer">{`${item.actual} / ${item.target} ${getUnitLabel(item.unit)}`}</ThemedText>
+          <ThemedText type="explainer">{`${item.actual} / ${item.target} ${translateUnit(item.unit)}`}</ThemedText>
         </View>
         {item.period === 'weekly' && item.history.length > 0 && (
           <View style={styles.history}>
@@ -361,7 +356,7 @@ export default function OtherLoggerTab({
                 ]}
               >
                 {item.inputMode === 'number' ? (
-                  <ThemedText type="explainer">{`${formatDate(entry.date, i18n.language)} · ${entry.value} ${getUnitLabelShort(item.unit)}`}</ThemedText>
+                  <ThemedText type="explainer">{`${formatDate(entry.date, i18n.language)} · ${entry.value} ${translateUnitShort(item.unit)}`}</ThemedText>
                 ) : (
                   <ThemedText type="explainer">{formatDate(entry.date, i18n.language)}</ThemedText>
                 )}
@@ -461,6 +456,7 @@ export default function OtherLoggerTab({
           />
 
           {renderPeriod('weekly', t('nutritionLogger.periodWeekly'))}
+          <ProgressButton href="/(stack)/calendar/habits/progress" label={t('nutritionLogger.seeProgress')} />
         </Card>
       </View>
       <RegisterHabitValueBottomSheet
