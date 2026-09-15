@@ -18,7 +18,7 @@ export type HabitTargetDefinition = BaseTargetDefinition & {
 
 export type TrainingTargetDefinition = BaseTargetDefinition & {
   source: 'training';
-  activityTypes: TrainingActivityType[];
+  activityTypes: readonly TrainingActivityType[];
 };
 
 export type NutritionLabelGroup = 'fiberLabels' | 'polyphenolLabels' | 'mineralLabels' | 'vitaminLabels' | 'aminoAcidLabels' | 'trackingLabels';

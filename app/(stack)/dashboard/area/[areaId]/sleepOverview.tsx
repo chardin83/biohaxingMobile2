@@ -15,8 +15,6 @@ import { WearableStatus } from '@/components/WearableStatus';
 import { shouldSyncWearableData, syncWearableMetricsToStorage } from '@/wearables/syncMetricsToStorage';
 import { useWearable } from '@/wearables/wearableProvider';
 
-
-
 export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { adapter, status } = useWearable();
   const { upsertMetricEntries } = useStorage();
@@ -27,6 +25,7 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
   lastSyncAtRef.current = status.lastSyncAt;
 
   React.useEffect(() => {
+    console.log('Checking if wearable data should be synced', adapter.source);
     if (adapter.source === 'none') return;
     (async () => {
       if (shouldSyncWearableData(lastSyncAtRef.current)) {
@@ -37,7 +36,9 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
 
   return (
     <>
-      <ThemedText type="title" style={{ color: colors.area.sleep }}>{t('sleepOverview.title')}</ThemedText>
+      <ThemedText type="title" style={{ color: colors.area.sleep }}>
+        {t('sleepOverview.title')}
+      </ThemedText>
       <ThemedText type="subtitle">{t('sleepOverview.description')}</ThemedText>
       <WearableStatus status={status} />
 
@@ -47,30 +48,22 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
       <Card title={t('sleepOverview.understandingSleep.title')}>
         <View style={globalStyles.infoSection}>
           <ThemedText type="title3">🌙 {t('sleepOverview.understandingSleep.stages.title')}</ThemedText>
-          <ThemedText type="default">
-            {t('sleepOverview.understandingSleep.stages.description')}
-          </ThemedText>
+          <ThemedText type="default">{t('sleepOverview.understandingSleep.stages.description')}</ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
           <ThemedText type="title3">🧠 {t('sleepOverview.understandingSleep.deepSleep.title')}</ThemedText>
-          <ThemedText type="default">
-            {t('sleepOverview.understandingSleep.deepSleep.description')}
-          </ThemedText>
+          <ThemedText type="default">{t('sleepOverview.understandingSleep.deepSleep.description')}</ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
           <ThemedText type="title3">💭 {t('sleepOverview.understandingSleep.remSleep.title')}</ThemedText>
-          <ThemedText type="default">
-            {t('sleepOverview.understandingSleep.remSleep.description')} 
-          </ThemedText>
+          <ThemedText type="default">{t('sleepOverview.understandingSleep.remSleep.description')}</ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
           <ThemedText type="title3">⏰ {t('sleepOverview.understandingSleep.circadianRhythm.title')}</ThemedText>
-          <ThemedText type="default">
-            {t('sleepOverview.understandingSleep.circadianRhythm.description')}
-          </ThemedText>
+          <ThemedText type="default">{t('sleepOverview.understandingSleep.circadianRhythm.description')}</ThemedText>
         </View>
       </Card>
 
@@ -87,5 +80,3 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
     </>
   );
 }
-
-

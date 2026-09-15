@@ -6,7 +6,7 @@ import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import DailyProgressWeek from '@/components/calendar/progress/DailyProgressWeek';
-import PastWeeksProgress, { PastWeekProgress } from '@/components/calendar/progress/PastWeekPRogress';
+import PastWeeksProgress, { PastWeekProgress } from '@/components/calendar/progress/PastWeekProgress';
 import ProgressDateNavigator from '@/components/calendar/progress/ProgressDateNavigator';
 import ProgressTipHeader from '@/components/calendar/progress/ProgressTipHeader';
 import { Collapsible } from '@/components/Collapsible';

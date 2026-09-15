@@ -21,5 +21,22 @@
   "trainingDistanceError": "Ange en giltig distans i km.",
   "trainingListTitle": "Registrerade pass",
   "trainingEmpty": "Inga träningspass registrerade för dagen ännu.",
-  "trainingMinutesUnit": "min"
+  "trainingMinutesUnit": "min",
+  "targets": {
+     "zone2_minutes": "Zone 2 minuter",
+     "zone2_sessions": "Zone 2 pass",
+     "running_minutes": "Löptid",
+     "running_distance": "Löpdistanser",
+     "hiit_sessions": "HIIT-pass",
+     "interval_sessions": "Intervallpass",
+     "hill_interval_sessions": "Backintervallpass",
+     "running_drill_sessions": "Löpteknikpass",
+     "neuromuscular_sessions": "Neuromuskulära pass",
+     "strength_mobility_sessions": "Styrka & rörlighet",
+     "vigorous_activity_minutes": "Intensiv aktivitet (minuter)",
+     "runningDistance": "Löpdistanser",
+     "cyclingDistance": "Cykeldistanser",
+     "gymSessions": "Gympass",
+     "walkingDistance": "Promenaddistanser"
+   }
 }

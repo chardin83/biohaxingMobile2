@@ -8,13 +8,13 @@ import { type TrainingActivityType, type TrainingIntensity } from '@/types/train
 import { DEFAULT_TRAINING_ACTIVITY, TRAINING_ACTIVITY_OPTIONS } from '@/types/trainingActivityOptions';
 
 import { LoggedTrainingSection } from '../LoggedTrainingSection';
-import { TrainingWeeklyTargetsSection } from '../sections/plan/TrainingWeeklyTargetsSection';
 import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
 import { CancelButton } from '../ui/CancelButton';
 import { IconSymbol } from '../ui/IconSymbol';
 import LabeledInput from '../ui/LabeledInput';
 import LabeledStepperInput from '../ui/LabeledStepperInput';
+import { TrainingPlanTargetsSection } from './TrainingPlanTargetsSection';
 
 type TrainingLoggerTabProps = {
   selectedDate: string;
@@ -22,25 +22,16 @@ type TrainingLoggerTabProps = {
 
 export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDate }) => {
   const { t } = useTranslation();
-
   const { colors } = useTheme();
-
   const { dailyTrainingTracking, setDailyTrainingTracking } = useStorage();
 
   const [selectedTrainingType, setSelectedTrainingType] = useState<TrainingActivityType>(DEFAULT_TRAINING_ACTIVITY);
-
   const [durationMinutes, setDurationMinutes] = useState('');
-
   const [distanceKm, setDistanceKm] = useState('');
-
   const [intensity, setIntensity] = useState<TrainingIntensity>('medium');
-
   const [trainingNotes, setTrainingNotes] = useState('');
-
   const [trainingFormError, setTrainingFormError] = useState<string | null>(null);
-
   const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
-
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const trainingOptions = useMemo(
@@ -95,17 +86,12 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
 
   const resetForm = useCallback(() => {
     setSelectedTrainingType(DEFAULT_TRAINING_ACTIVITY);
-
     setDurationMinutes('');
     setDistanceKm('');
     setTrainingNotes('');
-
     setIntensity('medium');
-
     setTrainingFormError(null);
-
     setEditingEntryId(null);
-
     setIsFormOpen(false);
   }, []);
 
@@ -114,12 +100,10 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
 
     if (!Number.isFinite(parsedDuration) || parsedDuration <= 0) {
       setTrainingFormError(t('training:trainingDurationError'));
-
       return;
     }
 
     let parsedDistance: number | undefined;
-
     const normalizedDistance = distanceKm.replace(',', '.').trim();
 
     if (normalizedDistance) {
@@ -127,23 +111,18 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
 
       if (!Number.isFinite(distanceValue) || distanceValue < 0) {
         setTrainingFormError(t('training:trainingDistanceError'));
-
         return;
       }
 
       parsedDistance = distanceValue;
     }
 
-    setDailyTrainingTracking(prev => {
-      const existingEntries = prev[selectedDate] ?? [];
+    setDailyTrainingTracking(previous => {
+      const existingEntries = previous[selectedDate] ?? [];
 
-      /*
-       * Redigera befintlig.
-       */
       if (editingEntryId) {
         return {
-          ...prev,
-
+          ...previous,
           [selectedDate]: existingEntries.map(entry => {
             if (entry.id !== editingEntryId) {
               return entry;
@@ -161,9 +140,6 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
         };
       }
 
-      /*
-       * Ny registrering.
-       */
       const newEntry = {
         id: crypto.randomUUID(),
         date: selectedDate,
@@ -176,8 +152,7 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
       };
 
       return {
-        ...prev,
-
+        ...previous,
         [selectedDate]: [...existingEntries, newEntry],
       };
     });
@@ -194,19 +169,12 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
       }
 
       setSelectedTrainingType(entry.activityType);
-
       setDurationMinutes(String(entry.durationMinutes));
-
       setDistanceKm(typeof entry.distanceKm === 'number' ? String(entry.distanceKm) : '');
-
       setIntensity(entry.intensity);
-
       setTrainingNotes(entry.notes ?? '');
-
       setTrainingFormError(null);
-
       setEditingEntryId(entry.id);
-
       setIsFormOpen(true);
     },
     [dayTrainingEntries]
@@ -214,11 +182,10 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
 
   const handleDeleteTraining = useCallback(
     (entryId: string) => {
-      setDailyTrainingTracking(prev => {
-        const remaining = (prev[selectedDate] ?? []).filter(entry => entry.id !== entryId);
-
+      setDailyTrainingTracking(previous => {
+        const remaining = (previous[selectedDate] ?? []).filter(entry => entry.id !== entryId);
         const next = {
-          ...prev,
+          ...previous,
         };
 
         if (remaining.length === 0) {
@@ -352,7 +319,7 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
         <LoggedTrainingSection entries={dayTrainingEntries} onEdit={handleEditTraining} onDelete={handleDeleteTraining} />
       )}
 
-      <TrainingWeeklyTargetsSection selectedDate={selectedDate} />
+      <TrainingPlanTargetsSection selectedDate={selectedDate} />
     </View>
   );
 };
@@ -361,34 +328,28 @@ const styles = StyleSheet.create({
   trainingContainer: {
     gap: 10,
   },
-
   formContent: {
     gap: 10,
   },
-
   sectionLabel: {
     marginTop: 4,
   },
-
   chipRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
   },
-
   activityRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     columnGap: 14,
     rowGap: 12,
   },
-
   activityOption: {
     width: 76,
     alignItems: 'center',
     gap: 6,
   },
-
   activityCircle: {
     width: 56,
     height: 56,
@@ -397,37 +358,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-
   activityLabel: {
     textAlign: 'center',
   },
-
   chip: {
     borderWidth: 1,
     borderRadius: 18,
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
-
   input: {
     marginTop: 8,
   },
-
   notesInput: {
     minHeight: 70,
     textAlignVertical: 'top',
   },
-
   errorText: {
     marginTop: 2,
   },
-
   saveButton: {
     marginTop: 6,
     paddingVertical: 12,
     alignItems: 'center',
   },
-
   openFormButton: {
     marginTop: 6,
   },

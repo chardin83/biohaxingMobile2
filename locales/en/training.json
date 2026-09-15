@@ -21,5 +21,22 @@
   "trainingDistanceError": "Enter a valid distance in km.",
   "trainingListTitle": "Logged sessions",
   "trainingEmpty": "No training sessions logged for this day yet.",
-  "trainingMinutesUnit": "min"
+  "trainingMinutesUnit": "min",
+    "targets": {
+     "zone2_minutes": "Zone 2 minutes",
+     "zone2_sessions": "Zone 2 sessions",
+     "running_minutes": "Running time",
+     "running_distance": "Running distance",
+     "hiit_sessions": "HIIT sessions",
+     "interval_sessions": "Interval sessions",
+     "hill_interval_sessions": "Hill interval sessions",
+     "running_drill_sessions": "Running drill sessions",
+     "neuromuscular_sessions": "Neuromuscular sessions",
+     "strength_mobility_sessions": "Strength & mobility",
+     "vigorous_activity_minutes": "Vigorous activity (minutes)",
+     "runningDistance": "Running distance",
+     "cyclingDistance": "Cycling distance",
+     "gymSessions": "Gym sessions",
+     "walkingDistance": "Walking distance"
+   }
 }

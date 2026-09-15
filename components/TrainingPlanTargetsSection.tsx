@@ -1,2 +1,2 @@
-export { TrainingWeeklyTargetsSection as TrainingPlanTargetsSection } from './sections/plan/TrainingWeeklyTargetsSection';
-export { TrainingWeeklyTargetsSection } from './sections/plan/TrainingWeeklyTargetsSection';
+export { TrainingWeeklyTargetsSection as TrainingPlanTargetsSection } from './calendar/TrainingPlanTargetsSection';
+export { TrainingWeeklyTargetsSection } from './calendar/TrainingPlanTargetsSection';
