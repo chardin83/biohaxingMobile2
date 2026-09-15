@@ -1,6 +1,5 @@
-import { useNavigationState , useTheme } from '@react-navigation/native';
-import { router, useLocalSearchParams, usePathname, useSegments } from 'expo-router';
-import { useEffect } from 'react';
+import { useTheme } from '@react-navigation/native';
+import { router, useLocalSearchParams } from 'expo-router';
 
 import { Colors } from '@/app/theme/Colors';
 import Container from '@/components/ui/Container';
@@ -22,7 +21,13 @@ export default function AreaRootScreen() {
   const themeGradients = dark ? Colors.dark.gradients : Colors.light.gradients;
 
   return (
-    <Container background="gradient" gradientLocations={themeGradients.sunrise.locations2 as any} onBackPress={() => router.back()} showBackButton>
+    <Container
+      background="gradient"
+      gradientLocations={themeGradients.sunrise.locations2 as any}
+      onBackPress={() => router.back()}
+      showBackButton
+      syncWearableOnRefresh
+    >
       {areaId === 'nervousSystem' && <NervousSystemOverview mainGoalId={areaId} />}
       {areaId === 'sleepQuality' && <SleepOverview mainGoalId={areaId} />}
       {areaId === 'energy' && <EnergyOverview mainGoalId={areaId} />}

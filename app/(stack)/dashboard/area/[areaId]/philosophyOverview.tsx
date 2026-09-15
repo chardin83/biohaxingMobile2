@@ -9,21 +9,21 @@ import { Card } from '@/components/ui/Card';
 import RelatedAreasList from '@/components/ui/RelatedAreasList';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
-import { useWearable } from '@/wearables/wearableProvider';
 
 export default function PhilosophyOverview({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { status } = useWearable();
 
   return (
     <>
-      <ThemedText type="title" style={{ color: colors.area.philosophy }}>{t('philosophyOverview.title')}</ThemedText>
+      <ThemedText type="title" style={{ color: colors.area.philosophy }}>
+        {t('philosophyOverview.title')}
+      </ThemedText>
       <ThemedText type="subtitle" style={{ color: colors.textTertiary }}>
         {t('philosophyOverview.description')}
       </ThemedText>
 
-      <WearableStatus status={status} />
+      <WearableStatus />
 
       <Card title={t('philosophyOverview.principles.title')}>
         <View style={globalStyles.infoSection}>

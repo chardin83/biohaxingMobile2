@@ -511,17 +511,6 @@
       "sinceWaking": "since waking",
       "explainer": "Body Battery tracks your body's energy reserves by monitoring stress, activity, and recovery. It reflects your mitochondrial ATP production capacity."
     },
-    "energyBalance": {
-      "title": "Energy Balance",
-      "energyDrain": "Energy Drain",
-      "energyRecharge": "Energy Recharge",
-      "stressScore": "Stress score",
-      "intensityMinutes": "Intensity minutes",
-      "sleepDuration": "Sleep duration",
-      "sleepQuality": "sleep quality",
-      "deepSleep": "Deep sleep",
-      "explainer": "Deep sleep is when mitochondrial repair and autophagy (cellular cleanup) occur. Chronic stress increases cortisol, which impairs mitochondrial function."
-    },
     "mitochondrialHealth": {
       "title": "Mitochondrial Health",
       "powerhouses": {

@@ -2,12 +2,16 @@ import React, { createContext, useCallback, useContext, useMemo, useState } from
 
 import { NoopAdapter } from './noopAdapter';
 import { AdapterStatus, WearableAdapter } from './types';
+import { createWearableAdapter } from './wearableAdapter';
 
 type WearableContextValue = {
   adapter: WearableAdapter;
   status: AdapterStatus;
+  isSyncing: boolean;
+  setIsSyncing: (isSyncing: boolean) => void;
   setAdapter: (adapter: WearableAdapter) => Promise<void>;
   refreshStatus: () => Promise<void>;
+  markSynced: () => void;
 };
 
 const WearableContext = createContext<WearableContextValue | null>(null);
@@ -18,68 +22,74 @@ type WearableProviderProps = {
 };
 
 export function WearableProvider({ children, initialAdapter }: WearableProviderProps) {
-  const markSuccessfulSync = useCallback(() => {
-    const syncTime = new Date().toISOString();
-    setStatus(prev => ({ ...prev, lastSyncAt: syncTime }));
-  }, []);
-
-  const createTrackedAdapter = useCallback((base: WearableAdapter): WearableAdapter => {
-    return {
-      source: base.source,
-      getStatus: () => base.getStatus(),
-      connect: base.connect ? async () => { await base.connect?.(); } : undefined,
-      disconnect: base.disconnect ? async () => { await base.disconnect?.(); } : undefined,
-      getSleep: async range => {
-        const result = await base.getSleep(range);
-        markSuccessfulSync();
-        return result;
-      },
-      getHRV: async range => {
-        const result = await base.getHRV(range);
-        markSuccessfulSync();
-        return result;
-      },
-      getDailyActivity: async range => {
-        const result = await base.getDailyActivity(range);
-        markSuccessfulSync();
-        return result;
-      },
-      getEnergySignal: async range => {
-        const result = await base.getEnergySignal(range);
-        markSuccessfulSync();
-        return result;
-      },
-    };
-  }, [markSuccessfulSync]);
-
-  const [adapterState, setAdapterState] = useState<WearableAdapter>(() => createTrackedAdapter(initialAdapter ?? new NoopAdapter()));
-  const [status, setStatus] = useState<AdapterStatus>(() => ({ state: 'disconnected', source: (initialAdapter ?? new NoopAdapter()).source }));
+  const [adapterState, setAdapterState] = useState<WearableAdapter>(() => initialAdapter ?? createWearableAdapter() ?? new NoopAdapter());
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [status, setStatus] = useState<AdapterStatus>(() => ({
+    state: 'disconnected',
+    source: adapterState.source,
+  }));
 
   const refreshStatus = useCallback(async () => {
-    const s = await adapterState.getStatus();
-    setStatus(prev => ({ ...s, lastSyncAt: prev.lastSyncAt }));
+    const nextStatus = await adapterState.getStatus();
+
+    setStatus(prev => ({
+      ...nextStatus,
+      lastSyncAt: prev.lastSyncAt,
+    }));
   }, [adapterState]);
 
-  const setAdapter = async (next: WearableAdapter) => {
-    const trackedAdapter = createTrackedAdapter(next);
-    setAdapterState(trackedAdapter);
-    const s = await next.getStatus();
-    setStatus(prev => ({ ...s, lastSyncAt: prev.lastSyncAt }));
-  };
+  const setAdapter = useCallback(async (next: WearableAdapter) => {
+    setAdapterState(next);
 
-  // load initial status once adapter exists
+    const nextStatus = await next.getStatus();
+
+    setStatus(prev => ({
+      ...nextStatus,
+      lastSyncAt: prev.lastSyncAt,
+    }));
+  }, []);
+
+  const markSynced = useCallback(() => {
+    setStatus(prev => ({
+      ...prev,
+      lastSyncAt: new Date().toISOString(),
+    }));
+  }, []);
+
   React.useEffect(() => {
-    refreshStatus().catch(() => setStatus({ state: 'error', message: 'Failed to load adapter status' }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [adapterState]);
+    refreshStatus().catch(error => {
+      console.warn('[WearableProvider] refreshStatus failed', error);
 
-  const value = useMemo(() => ({ adapter: adapterState, status, setAdapter, refreshStatus }), [adapterState, refreshStatus, status]);
+      setStatus(prev => ({
+        ...prev,
+        state: 'error',
+        message: 'Failed to load adapter status',
+      }));
+    });
+  }, [refreshStatus]);
+
+  const value = useMemo(
+    () => ({
+      adapter: adapterState,
+      status,
+      isSyncing,
+      setIsSyncing,
+      setAdapter,
+      refreshStatus,
+      markSynced,
+    }),
+    [adapterState, status, isSyncing, setAdapter, refreshStatus, markSynced]
+  );
 
   return <WearableContext.Provider value={value}>{children}</WearableContext.Provider>;
 }
 
 export function useWearable() {
-  const ctx = useContext(WearableContext);
-  if (!ctx) throw new Error('useWearable must be used inside WearableProvider');
-  return ctx;
+  const context = useContext(WearableContext);
+
+  if (!context) {
+    throw new Error('useWearable must be used inside WearableProvider');
+  }
+
+  return context;
 }

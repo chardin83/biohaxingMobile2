@@ -246,26 +246,6 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
           getMetricEntries(),
         ]);
 
-        if (__DEV__) {
-          console.log('========== STORAGE DEBUG ==========');
-
-          //console.log('APP:', JSON.stringify(app, null, 2));
-
-          console.log('SUPPLEMENTS:', JSON.stringify(supplements, null, 2));
-
-          console.log('NUTRITION:', JSON.stringify(nutrition, null, 2));
-
-          console.log('TRAINING:', JSON.stringify(training, null, 2));
-
-          console.log('HABITS:', JSON.stringify(habits, null, 2));
-
-          //console.log('XP:', JSON.stringify(xp, null, 2));
-
-          //console.log('METRICS:', JSON.stringify(metrics, null, 2));
-
-          console.log('===================================');
-        }
-
         /*
          * App
          */

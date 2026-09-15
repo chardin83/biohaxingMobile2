@@ -9,21 +9,20 @@ import { Card } from '@/components/ui/Card';
 import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
-import { useWearable } from '@/wearables/wearableProvider';
 
 export default function LongevityOverview({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { status } = useWearable();
-
   return (
     <>
-      <ThemedText type="title" style={{ color: colors.area.longevity }}>{t('longevityOverview.title')}</ThemedText>
+      <ThemedText type="title" style={{ color: colors.area.longevity }}>
+        {t('longevityOverview.title')}
+      </ThemedText>
       <ThemedText type="subtitle" style={{ color: colors.textTertiary }}>
         {t('longevityOverview.description')}
       </ThemedText>
 
-      <WearableStatus status={status} />
+      <WearableStatus />
 
       <Card title={t('longevityOverview.pillars.title')}>
         <View style={globalStyles.infoSection}>

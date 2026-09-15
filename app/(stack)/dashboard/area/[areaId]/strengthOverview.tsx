@@ -1,5 +1,5 @@
 import { useTheme } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
@@ -7,76 +7,38 @@ import { globalStyles } from '@/app/theme/globalStyles';
 import { StrengthRecoveryTrendsChart } from '@/components/metrics/StrengthRecoveryTrendsChart';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
-import { Error } from '@/components/ui/Error';
 import GenesListCard from '@/components/ui/GenesListCard';
-import { Loading } from '@/components/ui/Loading';
 import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
-import { SleepSummary, TimeRange } from '@/wearables/types';
-import { useWearable } from '@/wearables/wearableProvider';
 
 export default function StrengthScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
-  const { adapter, status } = useWearable();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [sleepData, setSleepData] = useState<SleepSummary[]>([]);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        const range: TimeRange = {
-          start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-          end: new Date().toISOString(),
-        };
-
-        const sleep = await adapter.getSleep(range);
-
-        setSleepData(sleep);
-      } catch (err) {
-        console.error('Failed to load data:', err);
-        setError('Failed to load data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, [adapter]);
-
-  if (loading) {
-    return <Loading />;
-  }
-
-  if (error) {
-    return <Error error={error} />;
-  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <ThemedText type="title" style={{ color: colors.area.strength }}>{t('strengthOverview.title')}</ThemedText>
+      <ThemedText type="title" style={{ color: colors.area.strength }}>
+        {t('strengthOverview.title')}
+      </ThemedText>
       <ThemedText type="subtitle" style={{ color: colors.textTertiary }}>
         {t('strengthOverview.description')}
       </ThemedText>
 
-      <WearableStatus status={status} />
+      <WearableStatus />
 
-      <StrengthRecoveryTrendsChart sleepData={sleepData} />
+      <StrengthRecoveryTrendsChart />
 
       {/* Protein Timing Card */}
       <Card title="Anabolic Window">
         <View style={globalStyles.infoSection}>
           <ThemedText type="title3">⏰ Post-workout protein timing</ThemedText>
-          <ThemedText type='default'>
-            Post-workout protein intake is most effective within 2-3 hours after training. Muscle protein synthesis
-            remains elevated for 24-48 hours after resistance training.
+          <ThemedText type="default">
+            Post-workout protein intake is most effective within 2-3 hours after training. Muscle protein synthesis remains elevated for 24-48 hours after
+            resistance training.
           </ThemedText>
         </View>
-        <View style={[globalStyles.topBorder, { borderTopColor: colors.borderLight}]}>  
+        <View style={[globalStyles.topBorder, { borderTopColor: colors.borderLight }]}>
           <View style={globalStyles.infoSection}>
             <ThemedText type="title3">Recommended:</ThemedText>
             <ThemedText type="default">• 20-40g protein within 2h post-workout</ThemedText>
@@ -91,27 +53,19 @@ export default function StrengthScreen({ mainGoalId }: Readonly<{ mainGoalId: st
       <Card title={t('strengthOverview.information.title')}>
         <View style={globalStyles.infoSection}>
           <ThemedText type="title3">💪 {t('strengthOverview.information.trainingReadiness.title')}</ThemedText>
-          <ThemedText type="default">
-            {t('strengthOverview.information.trainingReadiness.description')}
-          </ThemedText>
+          <ThemedText type="default">{t('strengthOverview.information.trainingReadiness.description')}</ThemedText>
         </View>
         <View style={globalStyles.infoSection}>
           <ThemedText type="title3">📊 {t('strengthOverview.information.trainingLoad.title')}</ThemedText>
-          <ThemedText type="default">
-            {t('strengthOverview.information.trainingLoad.description')}
-          </ThemedText>
+          <ThemedText type="default">{t('strengthOverview.information.trainingLoad.description')}</ThemedText>
         </View>
         <View style={globalStyles.infoSection}>
           <ThemedText type="title3">⏱️ {t('strengthOverview.information.recoveryTime.title')}</ThemedText>
-          <ThemedText type="default">
-            {t('strengthOverview.information.recoveryTime.description')}
-          </ThemedText>
+          <ThemedText type="default">{t('strengthOverview.information.recoveryTime.description')}</ThemedText>
         </View>
         <View style={globalStyles.infoSection}>
           <ThemedText type="title3">🛌 {t('strengthOverview.information.sleepMuscleGrowth.title')}</ThemedText>
-          <ThemedText type="default">
-            {t('strengthOverview.information.sleepMuscleGrowth.description')}
-          </ThemedText>
+          <ThemedText type="default">{t('strengthOverview.information.sleepMuscleGrowth.description')}</ThemedText>
         </View>
       </Card>
 
@@ -122,7 +76,7 @@ export default function StrengthScreen({ mainGoalId }: Readonly<{ mainGoalId: st
       <MicrobiomeListCard areaId="strength" />
 
       {/* Optimization Tips Card */}
-      <TipsList areaId={mainGoalId}/>
+      <TipsList areaId={mainGoalId} />
     </ScrollView>
   );
 }

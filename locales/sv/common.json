@@ -516,18 +516,6 @@
       "sinceWaking": "sedan uppvaknande",
       "explainer": "Body Battery spårar kroppens energireserver genom att övervaka stress, aktivitet och återhämtning. Det speglar din mitokondriella ATP-produktionskapacitet."
     },
-    "energyBalance": {
-      "title": "Energibalans",
-      "energyDrain": "Energiutarmning",
-      "energyRecharge": "Energiladdning",
-      "stressScore": "Stresspoäng",
-      "stressLevel": "Stressnivå",
-      "intensityMinutes": "Intensiva minuter",
-      "sleepDuration": "Sömnvaraktighet",
-      "sleepQuality": "Sömnkvalitet",
-      "deepSleep": "Djupsömn",
-      "explainer": "Mitokondrier skadas av kronisk stress och återhämtas under djupsömn. Att minska stress och förbättra sömn är avgörande för att optimera energiproduktionen."
-    },
     "mitochondrialHealth": {
       "title": "Mitokondriell hälsa",
       "powerhouses": {

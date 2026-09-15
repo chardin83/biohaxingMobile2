@@ -10,7 +10,6 @@ import { MetricValuesBottomSheet } from '@/components/sections/metrics/MetricVal
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { buildTrendData } from '@/utils/metrics';
-import { SleepSummary } from '@/wearables/types';
 
 import { HRVMetric } from './HRVMetric';
 import { MetricTrendChart } from './MetricTrendChart';
@@ -18,10 +17,6 @@ import { SleepConsistencyMetric } from './SleepConsistencyMetric';
 import { SleepMetric } from './SleepMetric';
 
 type StrengthRecoveryMetricKey = 'sleep_duration' | 'sleep_bedtime' | 'hrv';
-
-type StrengthRecoveryTrendsChartProps = {
-  sleepData?: SleepSummary[];
-};
 
 function formatSleepDuration(valueInMinutes: number) {
   const roundedMinutes = Math.max(0, Math.round(valueInMinutes));
@@ -37,7 +32,7 @@ function formatTimeFromMinutes(value: number) {
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }
 
-export function StrengthRecoveryTrendsChart({ sleepData }: Readonly<StrengthRecoveryTrendsChartProps>) {
+export function StrengthRecoveryTrendsChart() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { getMetricHistory } = useStorage();
@@ -97,36 +92,14 @@ export function StrengthRecoveryTrendsChart({ sleepData }: Readonly<StrengthReco
           explainer: t('strengthOverview.recoveryFactors.explainers.sleep_duration'),
         };
     }
-  }, [
-    selectedMetric,
-    t,
-    sleepBedtimeTrendData,
-    hrvTrendData,
-    sleepDurationTrendData,
-    colors.chart.deepSleep,
-    colors.chart.hrv,
-    colors.chart.sleepDuration,
-  ]);
+  }, [selectedMetric, t, sleepBedtimeTrendData, hrvTrendData, sleepDurationTrendData, colors.chart.deepSleep, colors.chart.hrv, colors.chart.sleepDuration]);
 
   return (
     <Card title={t('strengthOverview.recoveryFactors.title')}>
       <View style={globalStyles.row}>
-        <SleepMetric
-          showDivider
-          onPress={() => toggleMetric('sleep_duration')}
-          isSelected={selectedMetric === 'sleep_duration'}
-        />
-        <SleepConsistencyMetric
-          sleepData={sleepData?.[0] ? { ...sleepData[0], targetBedtime: '' } : undefined}
-          showDivider
-          onPress={() => toggleMetric('sleep_bedtime')}
-          isSelected={selectedMetric === 'sleep_bedtime'}
-        />
-        <HRVMetric
-          showDivider={false}
-          onPress={() => toggleMetric('hrv')}
-          isSelected={selectedMetric === 'hrv'}
-        />
+        <SleepMetric showDivider onPress={() => toggleMetric('sleep_duration')} isSelected={selectedMetric === 'sleep_duration'} />
+        <SleepConsistencyMetric showDivider onPress={() => toggleMetric('sleep_bedtime')} isSelected={selectedMetric === 'sleep_bedtime'} />
+        <HRVMetric showDivider={false} onPress={() => toggleMetric('hrv')} isSelected={selectedMetric === 'hrv'} />
       </View>
 
       {selectedConfig && (
@@ -141,16 +114,12 @@ export function StrengthRecoveryTrendsChart({ sleepData }: Readonly<StrengthReco
       )}
 
       <View style={globalStyles.infoSection}>
-        <ThemedText type="explainer" style={[globalStyles.topBorder, { borderColor: colors.borderLight }]}> 
+        <ThemedText type="explainer" style={[globalStyles.topBorder, { borderColor: colors.borderLight }]}>
           {selectedConfig?.explainer ?? t('strengthOverview.recoveryFactors.explainer')}
         </ThemedText>
       </View>
 
-      <MetricValuesBottomSheet
-        bottomSheetRef={metricValuesBottomSheetRef}
-        metricId={selectedMetric}
-        metricName={selectedConfig?.metricName}
-      />
+      <MetricValuesBottomSheet bottomSheetRef={metricValuesBottomSheetRef} metricId={selectedMetric} metricName={selectedConfig?.metricName} />
     </Card>
   );
 }

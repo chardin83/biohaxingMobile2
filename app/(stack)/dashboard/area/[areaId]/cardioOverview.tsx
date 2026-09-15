@@ -12,70 +12,54 @@ import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
 import RelatedAreasList from '@/components/ui/RelatedAreasList';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
-import { useWearable } from '@/wearables/wearableProvider';
 
 export default function CardioScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
-  const { status } = useWearable();
   const { colors } = useTheme();
   const { t } = useTranslation();
 
   return (
     <>
-      <ThemedText type="title" style={{ color: colors.area.cardio }}>{t("cardioOverview.title")}</ThemedText>
-      <ThemedText type="subtitle">{t("cardioOverview.description")}</ThemedText>
-      <WearableStatus status={status} />
+      <ThemedText type="title" style={{ color: colors.area.cardio }}>
+        {t('cardioOverview.title')}
+      </ThemedText>
+      <ThemedText type="subtitle">{t('cardioOverview.description')}</ThemedText>
+      <WearableStatus />
 
       <CardioTrendsChart />
 
       {/* VO2 Max explanation */}
-      <Card title={t("cardioOverview.understandingYourMetrics.title")}>
+      <Card title={t('cardioOverview.understandingYourMetrics.title')}>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🫁 {t("cardioOverview.understandingYourMetrics.vo2Max.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("cardioOverview.understandingYourMetrics.vo2Max.description")}
-          </ThemedText>
+          <ThemedText type="title3">🫁 {t('cardioOverview.understandingYourMetrics.vo2Max.title')}</ThemedText>
+          <ThemedText type="default">{t('cardioOverview.understandingYourMetrics.vo2Max.description')}</ThemedText>
         </View>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">❤️ {t("cardioOverview.understandingYourMetrics.vo2Health.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("cardioOverview.understandingYourMetrics.vo2Health.description")}
-          </ThemedText>
+          <ThemedText type="title3">❤️ {t('cardioOverview.understandingYourMetrics.vo2Health.title')}</ThemedText>
+          <ThemedText type="default">{t('cardioOverview.understandingYourMetrics.vo2Health.description')}</ThemedText>
         </View>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🏃 {t("cardioOverview.understandingYourMetrics.easyRun.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("cardioOverview.understandingYourMetrics.easyRun.description")}
-          </ThemedText>
+          <ThemedText type="title3">🏃 {t('cardioOverview.understandingYourMetrics.easyRun.title')}</ThemedText>
+          <ThemedText type="default">{t('cardioOverview.understandingYourMetrics.easyRun.description')}</ThemedText>
         </View>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">⚡ {t("cardioOverview.understandingYourMetrics.lactate.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("cardioOverview.understandingYourMetrics.lactate.description")}
-          </ThemedText>
+          <ThemedText type="title3">⚡ {t('cardioOverview.understandingYourMetrics.lactate.title')}</ThemedText>
+          <ThemedText type="default">{t('cardioOverview.understandingYourMetrics.lactate.description')}</ThemedText>
         </View>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🫀 {t("cardioOverview.understandingYourMetrics.restingHeartRate.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("cardioOverview.understandingYourMetrics.restingHeartRate.description")}
-          </ThemedText>
+          <ThemedText type="title3">🫀 {t('cardioOverview.understandingYourMetrics.restingHeartRate.title')}</ThemedText>
+          <ThemedText type="default">{t('cardioOverview.understandingYourMetrics.restingHeartRate.description')}</ThemedText>
         </View>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">💪 {t("cardioOverview.understandingYourMetrics.trainingLoad.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("cardioOverview.understandingYourMetrics.trainingLoad.description")}
-          </ThemedText>
+          <ThemedText type="title3">💪 {t('cardioOverview.understandingYourMetrics.trainingLoad.title')}</ThemedText>
+          <ThemedText type="default">{t('cardioOverview.understandingYourMetrics.trainingLoad.description')}</ThemedText>
         </View>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">⏱️ {t("cardioOverview.understandingYourMetrics.recoveryTime.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("cardioOverview.understandingYourMetrics.recoveryTime.description")}
-          </ThemedText>
+          <ThemedText type="title3">⏱️ {t('cardioOverview.understandingYourMetrics.recoveryTime.title')}</ThemedText>
+          <ThemedText type="default">{t('cardioOverview.understandingYourMetrics.recoveryTime.description')}</ThemedText>
         </View>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🎂 {t("cardioOverview.understandingYourMetrics.fitnessAge.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("cardioOverview.understandingYourMetrics.fitnessAge.description")}
-          </ThemedText>
+          <ThemedText type="title3">🎂 {t('cardioOverview.understandingYourMetrics.fitnessAge.title')}</ThemedText>
+          <ThemedText type="default">{t('cardioOverview.understandingYourMetrics.fitnessAge.description')}</ThemedText>
         </View>
       </Card>
 
@@ -86,9 +70,7 @@ export default function CardioScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
       <MicrobiomeListCard areaId="cardioFitness" />
 
       {/* Tips Card */}
-      <TipsList areaId={mainGoalId}/>
+      <TipsList areaId={mainGoalId} />
     </>
   );
 }
-
-

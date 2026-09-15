@@ -18,11 +18,12 @@ import { MusicProvider } from '@/components/MusicContext';
 import Sparks from '@/components/Sparks';
 import { SparksProvider, useSparks } from '@/components/SparksContext';
 import { WearableProvider } from '@/wearables/wearableProvider';
+import { WearableStorageSync } from '@/wearables/WearableStorageSync';
 
 // ThemeProvider value computed below (reads stored preferred theme)
 import { SessionProvider } from './context/SessionStorage';
 import { StorageProvider } from './context/StorageContext';
-import { getStoredPreferredTheme,subscribe } from './context/themeEvents';
+import { getStoredPreferredTheme, subscribe } from './context/themeEvents';
 import { MyDarkTheme, MyLightTheme } from './theme/AppTheme';
 // Themes are provided by AppThemeProvider
 import { globalStyles } from './theme/globalStyles';
@@ -64,7 +65,6 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-
   if (!loaded) return null;
 
   return (
@@ -76,6 +76,7 @@ export default function RootLayout() {
             <WearableProvider>
               <SessionProvider>
                 <StorageProvider>
+                  <WearableStorageSync />
                   <PaperProvider>
                     <MenuProvider>
                       <BottomSheetModalProvider>

@@ -1,57 +1,18 @@
 import { useTheme } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 
-import { useStorage } from '@/app/context/StorageContext';
-import { syncWearableMetricsToStorage } from '@/wearables/syncMetricsToStorage';
-import { AdapterStatus, SleepSummary } from '@/wearables/types';
-import { createWearableAdapter } from '@/wearables/wearableAdapter';
+import { useWearable } from '@/wearables/wearableProvider';
 
 interface WearableStatusProps {
-  readonly status: AdapterStatus;
-  readonly style?: any;
-  readonly onSync?: (data: SleepSummary[]) => void;
+  readonly style?: ViewStyle;
 }
 
-export function WearableStatus({ status, style, onSync }: WearableStatusProps) {
+export function WearableStatus({ style }: WearableStatusProps) {
   const { colors } = useTheme();
-  const [localLastSync, setLocalLastSync] = useState<string | null>(null);
-  const { upsertMetricEntries, healthSyncEnabled, setErrorMessage } = useStorage();
-  let formattedLastSync: string | null = null;
-  if (status.lastSyncAt) {
-    formattedLastSync = new Date(status.lastSyncAt).toLocaleString();
-  } else if (localLastSync) {
-    formattedLastSync = new Date(localLastSync).toLocaleString();
-  }
+  const { status, isSyncing } = useWearable();
 
-  useEffect(() => {
-    let mounted = true;
-    const adapter = createWearableAdapter();
-
-    if (!adapter) {
-      return;
-    }
-
-    (async () => {
-      try {
-        if (!healthSyncEnabled) {
-          return;
-        }
-
-        await syncWearableMetricsToStorage(adapter, upsertMetricEntries, 7);
-        if (!mounted) return;
-        setLocalLastSync(new Date().toISOString());
-        if (onSync) onSync([]); // optional: consumer callback — no payload by default
-      } catch (e) {
-        console.debug('[WearableStatus] HealthKit sync failed', e);
-        if (setErrorMessage) setErrorMessage(e instanceof Error ? e.message : String(e));
-      }
-    })();
-
-    return () => {
-      mounted = false;
-    };
-  }, [healthSyncEnabled, upsertMetricEntries, setErrorMessage, onSync]);
+  const formattedLastSync = status.lastSyncAt ? new Date(status.lastSyncAt).toLocaleString() : null;
 
   const getStatusColor = () => {
     switch (status.state) {
@@ -82,16 +43,26 @@ export function WearableStatus({ status, style, onSync }: WearableStatusProps) {
   return (
     <View style={[styles.container, style]}>
       <View style={styles.statusRow}>
-        <Text style={[styles.statusText, { color: getStatusColor() }]}> 
-          {getStatusIcon()} {status.state}
-        </Text>
-        {status.state === 'connected' && status.source && (
-          <Text style={[styles.sourceText, { color: colors.textMuted }]}> • {status.source}</Text>
+        {isSyncing ? (
+          <Text style={[styles.statusText, { color: colors.primary }]}>↻ Synkar...</Text>
+        ) : (
+          <>
+            <Text style={[styles.statusText, { color: getStatusColor() }]}>
+              {getStatusIcon()} {status.state}
+            </Text>
+            {status.state === 'connected' && status.source && (
+              <Text style={[styles.sourceText, { color: colors.textMuted }]}>
+                {' • '}
+                {status.source}
+              </Text>
+            )}
+          </>
         )}
       </View>
-      {formattedLastSync && (
-        <Text style={[styles.syncText, { color: colors.textMuted }]}>Last sync: {formattedLastSync}</Text>
-      )}
+
+      {formattedLastSync && <Text style={[styles.syncText, { color: colors.textMuted }]}>Last sync: {formattedLastSync}</Text>}
+
+      {status.state === 'error' && status.message && <Text style={[styles.errorText, { color: colors.error }]}>{status.message}</Text>}
     </View>
   );
 }
@@ -116,5 +87,9 @@ const styles = StyleSheet.create({
   },
   syncText: {
     fontSize: 11,
+  },
+  errorText: {
+    fontSize: 11,
+    textAlign: 'center',
   },
 });

@@ -20,28 +20,19 @@ type HealthKitModule = {
 let AppleHealthKit: HealthKitModule | null = null;
 
 function getInitOptions() {
-  const permissions =
-    AppleHealthKit?.Constants?.Permissions;
+  const permissions = AppleHealthKit?.Constants?.Permissions;
 
   return {
     permissions: {
       read: [
-        permissions?.SleepAnalysis ??
-          'SleepAnalysis',
-        permissions?.RestingHeartRate ??
-          'RestingHeartRate',
-        permissions?.HeartRate ??
-          'HeartRate',
-        permissions?.HeartRateVariability ??
-          'HeartRateVariability',
-        permissions?.BloodPressureSystolic ??
-          'BloodPressureSystolic',
-        permissions?.BloodPressureDiastolic ??
-          'BloodPressureDiastolic',
-        permissions?.StepCount ??
-          'StepCount',
-        permissions?.Workout ??
-          'Workout',
+        permissions?.SleepAnalysis ?? 'SleepAnalysis',
+        permissions?.RestingHeartRate ?? 'RestingHeartRate',
+        permissions?.HeartRate ?? 'HeartRate',
+        permissions?.HeartRateVariability ?? 'HeartRateVariability',
+        permissions?.BloodPressureSystolic ?? 'BloodPressureSystolic',
+        permissions?.BloodPressureDiastolic ?? 'BloodPressureDiastolic',
+        permissions?.StepCount ?? 'StepCount',
+        permissions?.Workout ?? 'Workout',
       ],
       write: [],
     },
@@ -57,9 +48,7 @@ function toLocalDateISO(dt: string) {
 }
 
 function minutesBetween(start: string, end: string): number {
-  return Math.round(
-    (new Date(end).getTime() - new Date(start).getTime()) / 60000
-  );
+  return Math.round((new Date(end).getTime() - new Date(start).getTime()) / 60000);
 }
 
 type SleepDayAggregate = {
@@ -126,8 +115,7 @@ type RawHeartRateSample = {
 };
 
 function overlaps(startA: string, endA: string, startB: string, endB: string) {
-  return new Date(startA).getTime() <= new Date(endB).getTime()
-    && new Date(endA).getTime() >= new Date(startB).getTime();
+  return new Date(startA).getTime() <= new Date(endB).getTime() && new Date(endA).getTime() >= new Date(startB).getTime();
 }
 
 function detectVendorFromSamples(samples: any[]): string | null {
@@ -143,18 +131,9 @@ function detectVendorFromSamples(samples: any[]): string | null {
   ];
 
   for (const sample of samples) {
-    const source = [
-      sample?.sourceId,
-      sample?.source,
-      sample?.sourceName,
-    ]
-      .filter(Boolean)
-      .join(' ')
-      .toLowerCase();
+    const source = [sample?.sourceId, sample?.source, sample?.sourceName].filter(Boolean).join(' ').toLowerCase();
 
-    const vendor = vendors.find(({ keywords }) =>
-      keywords.some(keyword => source.includes(keyword)),
-    );
+    const vendor = vendors.find(({ keywords }) => keywords.some(keyword => source.includes(keyword)));
 
     if (vendor) {
       return vendor.name;
@@ -218,7 +197,7 @@ function findHealthKitModule(mod: unknown, NativeModules: Record<string, unknown
 async function callInitHealthKit(mod: HealthKitModule) {
   const initOptions = getInitOptions();
   await new Promise<void>((resolve, reject) => {
-    const fn = (mod.initHealthKit as any);
+    const fn = mod.initHealthKit as any;
     fn(initOptions, (err: any) => {
       if (err) return reject(err);
       resolve();
@@ -292,16 +271,13 @@ function finalizeAggregates(byDate: Record<string, SleepDayAggregate>) {
 }
 
 // Preferred HealthKit sample method order for resting HR / HRV
-const HRV_SAMPLE_METHODS = [
-  'getRestingHeartRateSamples',
-  'getHeartRateSamples',
-  'getHeartRateVariabilitySamples',
-] as const;
+const HRV_SAMPLE_METHODS = ['getRestingHeartRateSamples', 'getHeartRateSamples', 'getHeartRateVariabilitySamples'] as const;
 
 export class HealthKitAdapter implements WearableAdapter {
   source = 'healthkit' as const;
   private initialized = false;
   private initErrorMessage: string | null = null;
+  private vendor: string | null = null;
 
   private async ensureInit() {
     if (this.initialized) return;
@@ -337,128 +313,131 @@ export class HealthKitAdapter implements WearableAdapter {
     }
   }
 
+  private toError(error: unknown): Error {
+    return error instanceof Error ? error : new Error(String(error));
+  }
+
+  private groupSleepSamplesIntoSessions(samples: RawSleepSample[]): RawSleepSample[][] {
+    const sorted = [...samples].sort((a, b) => new Date(a.startDate ?? a.endDate ?? 0).getTime() - new Date(b.startDate ?? b.endDate ?? 0).getTime());
+    const sessions: RawSleepSample[][] = [];
+    const graceMs = 1000;
+    let currentSession: RawSleepSample[] = [];
+    let currentEnd = 0;
+
+    for (const sample of sorted) {
+      const start = new Date(sample.startDate ?? sample.endDate ?? 0).getTime();
+      const end = new Date(sample.endDate ?? sample.startDate ?? 0).getTime();
+
+      if (currentSession.length > 0 && start > currentEnd + graceMs) {
+        sessions.push(currentSession);
+        currentSession = [];
+      }
+
+      currentSession.push(sample);
+      currentEnd = Math.max(currentEnd, end);
+    }
+
+    if (currentSession.length > 0) {
+      sessions.push(currentSession);
+    }
+
+    return sessions;
+  }
+
+  private aggregateSleepSessions(sessions: RawSleepSample[][]): Record<string, SleepDayAggregate> {
+    const byDate: Record<string, SleepDayAggregate> = {};
+
+    for (const session of sessions) {
+      const sessionEnd = Math.max(...session.map(sample => new Date(sample.endDate ?? sample.startDate ?? 0).getTime()));
+
+      const dateKey = toLocalDateISO(new Date(sessionEnd).toISOString());
+
+      for (const sample of session) {
+        mergeSleepSampleWithKey(byDate, sample, dateKey);
+      }
+    }
+
+    finalizeAggregates(byDate);
+
+    return byDate;
+  }
+
+  private mapSleepAggregates(byDate: Record<string, SleepDayAggregate>, source: SleepSummary['source']): SleepSummary[] {
+    return Object.entries(byDate).map(([date, aggregate]) => ({
+      source,
+      date,
+      durationMinutes: aggregate.durationMinutes,
+      startTime: aggregate.startTime,
+      endTime: aggregate.endTime,
+      stages: {
+        deepMinutes: aggregate.stages.deepMinutes ?? 0,
+        remMinutes: aggregate.stages.remMinutes ?? 0,
+        lightMinutes: aggregate.stages.lightMinutes ?? 0,
+        awakeMinutes: aggregate.stages.awakeMinutes ?? 0,
+      },
+    }));
+  }
+
   async getSleep(range: TimeRange): Promise<SleepSummary[]> {
     try {
       await this.ensureInit();
+
       const health = AppleHealthKit;
+
       if (!health || typeof (health.getSleepSamples as any) !== 'function') {
         throw new Error('AppleHealthKit.getSleepSamples is not available');
       }
 
       const samples: RawSleepSample[] = await new Promise((resolve, reject) => {
         (health.getSleepSamples as any)(
-          { startDate: range.start, endDate: range.end },
-          (err: any, results: any) => {
-            if (err) return reject(err);
-            resolve(results || []);
+          {
+            startDate: range.start,
+            endDate: range.end,
+          },
+          (err: unknown, results: RawSleepSample[] | undefined) => {
+            if (err) {
+              reject(this.toError(err));
+              return;
+            }
+
+            resolve(results ?? []);
           }
         );
       });
 
-      // Detect vendor from raw samples (e.g. Garmin/Fitbit) and store on adapter instance
-      try {
-        const vendor = detectVendorFromSamples(samples as any[]);
-        if (vendor) {
-          (this as any).vendor = vendor;
-        }
-      } catch {
-        /* ignore */
+      const vendor = detectVendorFromSamples(samples);
+
+      if (vendor) {
+        this.vendor = vendor;
       }
 
-      // Log full raw samples (for debugging external analysis)
-      //console.debug('[HealthKitAdapter] raw sleep samples', samples);
+      console.debug('[HealthKitAdapter] raw sleep samples', samples);
 
-      // No targeted logging — only full raw samples are logged above
+      const sessions = this.groupSleepSamplesIntoSessions(samples);
 
-      const byDate: Record<string, SleepDayAggregate> = {};
+      const byDate = this.aggregateSleepSessions(sessions);
 
-      // Group samples into contiguous sleep sessions (so chained samples belong to same night)
-      const sorted = samples.slice().sort((a, b) => new Date(a.startDate ?? a.endDate ?? 0).getTime() - new Date(b.startDate ?? b.endDate ?? 0).getTime());
-      const sessions: any[][] = [];
-      const GRACE_MS = 1000; // consider contiguous if next.start <= prev.end + GRACE_MS
-      let curSession: any[] = [];
-      let curEnd = 0;
-      for (const s of sorted) {
-        const sStart = new Date(s.startDate ?? s.endDate ?? 0).getTime();
-        const sEnd = new Date(s.endDate ?? s.startDate ?? 0).getTime();
-        if (!curSession.length) {
-          curSession.push(s);
-          curEnd = sEnd;
-          continue;
-        }
-        if (sStart <= curEnd + GRACE_MS) {
-          curSession.push(s);
-          curEnd = Math.max(curEnd, sEnd);
-        } else {
-          sessions.push(curSession);
-          curSession = [s];
-          curEnd = sEnd;
-        }
-      }
-      if (curSession.length) sessions.push(curSession);
-
-      // Merge samples into byDate using session's last endDate as the date key
-      for (const session of sessions) {
-        const sessionEnd = session.reduce((acc: number, it: any) => Math.max(acc, new Date(it.endDate ?? it.startDate ?? 0).getTime()), 0);
-        const dateKey = toLocalDateISO(new Date(sessionEnd).toISOString());
-        for (const sample of session) {
-          mergeSleepSampleWithKey(byDate, sample, dateKey);
-        }
-      }
-
-      // Merge overlapping intervals and compute final per-day totals
-      finalizeAggregates(byDate);
-
-      // No per-day debug logging
-
-      const out: SleepSummary[] = Object.keys(byDate).map(date => ({
-        source: this.source,
-        date,
-        durationMinutes: byDate[date].durationMinutes,
-        startTime: byDate[date].startTime,
-        endTime: byDate[date].endTime,
-        stages: {
-          deepMinutes: byDate[date].stages.deepMinutes ?? 0,
-          remMinutes: byDate[date].stages.remMinutes ?? 0,
-          lightMinutes: byDate[date].stages.lightMinutes ?? 0,
-          awakeMinutes: byDate[date].stages.awakeMinutes ?? 0,
-        },
-      }));
-
-      // No aggregated previews logged
-
-      return out;
+      return this.mapSleepAggregates(byDate, this.source);
     } catch (error) {
       if (error instanceof Error) {
         this.initErrorMessage = error.message;
       }
+
       return [];
     }
   }
 
+  async getBloodPressure(range: TimeRange): Promise<BloodPressureReading[]> {
+    try {
+      await this.ensureInit();
 
-async getBloodPressure(
-  range: TimeRange,
-): Promise<BloodPressureReading[]> {
-  try {
-    await this.ensureInit();
+      const health = AppleHealthKit;
 
-    const health = AppleHealthKit;
+      if (!health || typeof health.getBloodPressureSamples !== 'function') {
+        throw new Error('AppleHealthKit.getBloodPressureSamples is not available');
+      }
 
-    if (
-      !health ||
-      typeof health.getBloodPressureSamples !==
-        'function'
-    ) {
-      throw new Error(
-        'AppleHealthKit.getBloodPressureSamples is not available',
-      );
-    }
-
-    const samples =
-      await new Promise<
-        RawBloodPressureSample[]
-      >((resolve, reject) => {
+      const samples = await new Promise<RawBloodPressureSample[]>((resolve, reject) => {
         health.getBloodPressureSamples!(
           {
             unit: 'mmhg',
@@ -466,79 +445,49 @@ async getBloodPressure(
             endDate: range.end,
             ascending: true,
           },
-          (
-            err: unknown,
-            results:
-              | RawBloodPressureSample[]
-              | undefined,
-          ) => {
+          (err: unknown, results: RawBloodPressureSample[] | undefined) => {
             if (err) {
-              reject(err);
+              reject(this.toError(err));
               return;
             }
 
             resolve(results ?? []);
-          },
+          }
         );
       });
 
-    const vendor =
-      detectVendorFromSamples(samples);
+      const vendor = detectVendorFromSamples(samples);
 
-    if (vendor) {
-      (
-        this as HealthKitAdapter & {
-          vendor?: string;
-        }
-      ).vendor = vendor;
-    }
-
-    return samples.flatMap(sample => {
-      const systolic = Number(
-        sample.bloodPressureSystolicValue,
-      );
-
-      const diastolic = Number(
-        sample.bloodPressureDiastolicValue,
-      );
-
-      const recordedAt =
-        sample.startDate ??
-        sample.endDate;
-
-      if (
-        !Number.isFinite(systolic) ||
-        !Number.isFinite(diastolic) ||
-        !recordedAt ||
-        Number.isNaN(
-          new Date(recordedAt).getTime(),
-        )
-      ) {
-        return [];
+      if (vendor) {
+        this.vendor = vendor;
       }
 
-      return [
-        {
-          systolic,
-          diastolic,
-          recordedAt,
-          sourceName:
-            sample.sourceName ??
-            sample.sourceId,
-        } satisfies BloodPressureReading,
-      ];
-    });
-  } catch (error) {
-    console.warn(
-      '[HealthKitAdapter] getBloodPressure failed',
-      error,
-    );
+      return samples.flatMap(sample => {
+        const systolic = Number(sample.bloodPressureSystolicValue);
 
-    return [];
+        const diastolic = Number(sample.bloodPressureDiastolicValue);
+
+        const recordedAt = sample.startDate ?? sample.endDate;
+
+        if (!Number.isFinite(systolic) || !Number.isFinite(diastolic) || !recordedAt || Number.isNaN(new Date(recordedAt).getTime())) {
+          return [];
+        }
+
+        return [
+          {
+            systolic,
+            diastolic,
+            recordedAt,
+            sourceName: sample.sourceName ?? sample.sourceId,
+          } satisfies BloodPressureReading,
+        ];
+      });
+    } catch (error) {
+      console.warn('[HealthKitAdapter] getBloodPressure failed', error);
+
+      return [];
+    }
   }
-}
-
-
 
   async getHRV(range: TimeRange): Promise<HRVSummary[]> {
     try {
@@ -561,10 +510,7 @@ async getBloodPressure(
     }
   }
 
-  private async fetchFirstAvailableHRVSamples(
-    health: typeof AppleHealthKit,
-    range: TimeRange,
-  ): Promise<any[]> {
+  private async fetchFirstAvailableHRVSamples(health: typeof AppleHealthKit, range: TimeRange): Promise<any[]> {
     for (const methodName of HRV_SAMPLE_METHODS) {
       const samples = await this.tryFetchHRVSamples(health, methodName, range);
 
@@ -573,21 +519,10 @@ async getBloodPressure(
       }
     }
 
-    // No method returned samples — log available keys to help debugging
-    try {
-      console.debug('[HealthKitAdapter] getHRV availableKeys', Object.keys(health || {}).sort());
-    } catch {
-      /* ignore */
-    }
-
     return [];
   }
 
-  private async tryFetchHRVSamples(
-    health: typeof AppleHealthKit,
-    methodName: typeof HRV_SAMPLE_METHODS[number],
-    range: TimeRange,
-  ): Promise<any[]> {
+  private async tryFetchHRVSamples(health: typeof AppleHealthKit, methodName: (typeof HRV_SAMPLE_METHODS)[number], range: TimeRange): Promise<any[]> {
     const fn = (health as any)[methodName];
 
     if (typeof fn !== 'function') {
@@ -598,29 +533,22 @@ async getBloodPressure(
     console.debug('[HealthKitAdapter] getHRV trying', methodName);
 
     const samples = await new Promise<any[]>((resolve, reject) => {
-      fn.call(
-        health,
-        { startDate: range.start, endDate: range.end },
-        (err: any, results: any) => {
-          if (err) {
-            reject(err);
-            return;
-          }
+      fn.call(health, { startDate: range.start, endDate: range.end }, (err: any, results: any) => {
+        if (err) {
+          reject(err);
+          return;
+        }
 
-          resolve(results ?? []);
-        },
-      );
+        resolve(results ?? []);
+      });
     });
 
-    console.debug(
-      '[HealthKitAdapter] getHRV fetched',
-      methodName,
-      'count',
-      samples.length,
-    );
+    console.debug('[HealthKitAdapter] getHRV fetched', methodName, 'count', samples.length);
 
     if (samples.length) {
-      try { console.debug('[HealthKitAdapter] getHRV sample0', samples[0]); } catch { }
+      try {
+        console.debug('[HealthKitAdapter] getHRV sample0', samples[0]);
+      } catch {}
     }
 
     return samples;
@@ -658,17 +586,12 @@ async getBloodPressure(
     }, {});
   }
 
-  private async getHeartRateSamples(
-    range: TimeRange
-  ): Promise<RawHeartRateSample[]> {
+  private async getHeartRateSamples(range: TimeRange): Promise<RawHeartRateSample[]> {
     await this.ensureInit();
 
     const health = AppleHealthKit;
 
-    if (
-      !health ||
-      typeof (health.getHeartRateSamples as any) !== 'function'
-    ) {
+    if (!health || typeof (health.getHeartRateSamples as any) !== 'function') {
       throw new Error('AppleHealthKit.getHeartRateSamples is not available');
     }
 
@@ -686,10 +609,10 @@ async getBloodPressure(
     });
   }
 
-
   async getDailyActivity(range: TimeRange): Promise<DailyActivity[]> {
     try {
       await this.ensureInit();
+      console.log('[HealthKitAdapter] getDailyActivity range', range);
 
       const health = AppleHealthKit;
 
@@ -699,16 +622,13 @@ async getBloodPressure(
           return;
         }
 
-        (health.getDailyStepCountSamples as any)(
-          { startDate: range.start, endDate: range.end },
-          (err: any, results: RawStepSample[]) => {
-            if (err) return reject(err);
-            resolve(results ?? []);
-          }
-        );
+        (health.getDailyStepCountSamples as any)({ startDate: range.start, endDate: range.end }, (err: any, results: RawStepSample[]) => {
+          if (err) return reject(err);
+          resolve(results ?? []);
+        });
       });
 
-      const workoutSamples: RawWorkoutSample[] = await new Promise((resolve) => {
+      const workoutSamples: RawWorkoutSample[] = await new Promise(resolve => {
         if (!health || typeof (health.getSamples as any) !== 'function') {
           resolve([]);
           return;
@@ -726,8 +646,7 @@ async getBloodPressure(
         );
       });
 
-      console.log('[HealthKitAdapter] workoutSamples', JSON.stringify(workoutSamples, null, 2));
-
+      //console.log('[HealthKitAdapter] workoutSamples', JSON.stringify(workoutSamples, null, 2));
 
       /*const exerciseSamples = await new Promise<any[]>((resolve) => {
         if (!health || typeof (health.getSamples as any) !== 'function') {
@@ -807,10 +726,7 @@ async getBloodPressure(
 
             if (!sampleStart || !sampleEnd) return false;
 
-            return (
-              overlaps(sampleStart, sampleEnd, start, end) &&
-              Number(sample.value ?? 0) >= intensityHrThreshold
-            );
+            return overlaps(sampleStart, sampleEnd, start, end) && Number(sample.value ?? 0) >= intensityHrThreshold;
           });
 
           const intenseMinutes = intenseHeartRateSamples.length;
@@ -821,14 +737,8 @@ async getBloodPressure(
       return [...activityByDay.values()].map(entry => ({
         ...entry,
         steps: typeof entry.steps === 'number' ? Math.round(entry.steps) : undefined,
-        activeMinutes:
-          typeof entry.activeMinutes === 'number'
-            ? Math.round(entry.activeMinutes)
-            : undefined,
-        intensityMinutes:
-          typeof entry.intensityMinutes === 'number'
-            ? Math.round(entry.intensityMinutes)
-            : undefined,
+        activeMinutes: typeof entry.activeMinutes === 'number' ? Math.round(entry.activeMinutes) : undefined,
+        intensityMinutes: typeof entry.intensityMinutes === 'number' ? Math.round(entry.intensityMinutes) : undefined,
       }));
     } catch (err) {
       console.warn('[HealthKitAdapter] getDailyActivity failed', err);
@@ -836,10 +746,9 @@ async getBloodPressure(
     }
   }
 
-  async getEnergySignal(): Promise<any[]> { return []; }
-
+  async getEnergySignal(): Promise<any[]> {
+    return [];
+  }
 }
-
-
 
 export default HealthKitAdapter;

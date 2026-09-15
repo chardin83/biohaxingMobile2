@@ -12,20 +12,18 @@ import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
 import { useStoredHRVData } from '@/hooks/useStoredHRVData';
 import { calculateHRVMetrics } from '@/utils/hrvCalculations';
-import { useWearable } from '@/wearables/wearableProvider';
 
 function getBalanceMessage(stressScore: number, t: (key: string) => string): string {
   if (stressScore < 40) {
-    return t("nervousSystemOverview.ansBalance.parasympathetic");
+    return t('nervousSystemOverview.ansBalance.parasympathetic');
   } else if (stressScore < 70) {
-    return t("nervousSystemOverview.ansBalance.balanced");
+    return t('nervousSystemOverview.ansBalance.balanced');
   } else {
-    return t("nervousSystemOverview.ansBalance.sympathetic");
+    return t('nervousSystemOverview.ansBalance.sympathetic');
   }
 }
 
 export default function NervousSystemScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
-  const { status } = useWearable();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const hrvData = useStoredHRVData();
@@ -36,17 +34,19 @@ export default function NervousSystemScreen({ mainGoalId }: Readonly<{ mainGoalI
 
   return (
     <>
-      <ThemedText type="title" style={{ color: colors.area.nervousSystem }}>{t("nervousSystemOverview.title")}</ThemedText>
+      <ThemedText type="title" style={{ color: colors.area.nervousSystem }}>
+        {t('nervousSystemOverview.title')}
+      </ThemedText>
       <ThemedText type="subtitle" style={{ color: colors.textTertiary }}>
-        {t("nervousSystemOverview.description")}
+        {t('nervousSystemOverview.description')}
       </ThemedText>
 
-      <WearableStatus status={status} />
+      <WearableStatus />
 
       <NervousSystemStatusChart />
 
       {/* ANS Balance visualization */}
-      <Card title={t("nervousSystemOverview.ansBalance.title")}>
+      <Card title={t('nervousSystemOverview.ansBalance.title')}>
         <>
           <View style={styles.balanceContainer}>
             <View style={styles.balanceBar}>
@@ -54,8 +54,8 @@ export default function NervousSystemScreen({ mainGoalId }: Readonly<{ mainGoalI
               <View style={[{ flex: 100 - stressScore, backgroundColor: colors.accentDefault }]} />
             </View>
             <View style={styles.balanceLabels}>
-              <ThemedText type="caption">⚡ {t("nervousSystemOverview.ansBalance.fightFlight")}</ThemedText>
-              <ThemedText type="caption">😌 {t("nervousSystemOverview.ansBalance.restDigest")}</ThemedText>
+              <ThemedText type="caption">⚡ {t('nervousSystemOverview.ansBalance.fightFlight')}</ThemedText>
+              <ThemedText type="caption">😌 {t('nervousSystemOverview.ansBalance.restDigest')}</ThemedText>
             </View>
           </View>
           <ThemedText type="default">{getBalanceMessage(stressScore, t)}</ThemedText>
@@ -63,86 +63,64 @@ export default function NervousSystemScreen({ mainGoalId }: Readonly<{ mainGoalI
       </Card>
 
       {/* Information card */}
-      <Card title={t("nervousSystemOverview.informationCard.title")}>
+      <Card title={t('nervousSystemOverview.informationCard.title')}>
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">❤️ {t("nervousSystemOverview.informationCard.hrv.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("nervousSystemOverview.informationCard.hrv.description")}
-          </ThemedText>
+          <ThemedText type="title3">❤️ {t('nervousSystemOverview.informationCard.hrv.title')}</ThemedText>
+          <ThemedText type="default">{t('nervousSystemOverview.informationCard.hrv.description')}</ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">😰 {t("nervousSystemOverview.informationCard.stressScore.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("nervousSystemOverview.informationCard.stressScore.description")}
-          </ThemedText>
+          <ThemedText type="title3">😰 {t('nervousSystemOverview.informationCard.stressScore.title')}</ThemedText>
+          <ThemedText type="default">{t('nervousSystemOverview.informationCard.stressScore.description')}</ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🔋 {t("nervousSystemOverview.informationCard.bodyBattery.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("nervousSystemOverview.informationCard.bodyBattery.description")}
-          </ThemedText>
+          <ThemedText type="title3">🔋 {t('nervousSystemOverview.informationCard.bodyBattery.title')}</ThemedText>
+          <ThemedText type="default">{t('nervousSystemOverview.informationCard.bodyBattery.description')}</ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">⚖️ {t("nervousSystemOverview.informationCard.ansBalance.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("nervousSystemOverview.informationCard.ansBalance.description")}
-          </ThemedText>
+          <ThemedText type="title3">⚖️ {t('nervousSystemOverview.informationCard.ansBalance.title')}</ThemedText>
+          <ThemedText type="default">{t('nervousSystemOverview.informationCard.ansBalance.description')}</ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🥦 {t("nervousSystemOverview.informationCard.nutrients.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("nervousSystemOverview.informationCard.nutrients.description")}
-          </ThemedText>
+          <ThemedText type="title3">🥦 {t('nervousSystemOverview.informationCard.nutrients.title')}</ThemedText>
+          <ThemedText type="default">{t('nervousSystemOverview.informationCard.nutrients.description')}</ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">📱 {t("nervousSystemOverview.informationCard.overstimulationScreenTime.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("nervousSystemOverview.informationCard.overstimulationScreenTime.description")}
-          </ThemedText>
+          <ThemedText type="title3">📱 {t('nervousSystemOverview.informationCard.overstimulationScreenTime.title')}</ThemedText>
+          <ThemedText type="default">{t('nervousSystemOverview.informationCard.overstimulationScreenTime.description')}</ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🫁 {t("nervousSystemOverview.informationCard.breathing.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("nervousSystemOverview.informationCard.breathing.description")}
-          </ThemedText>
+          <ThemedText type="title3">🫁 {t('nervousSystemOverview.informationCard.breathing.title')}</ThemedText>
+          <ThemedText type="default">{t('nervousSystemOverview.informationCard.breathing.description')}</ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🛡️ {t("nervousSystemOverview.informationCard.immuneInflammation.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("nervousSystemOverview.informationCard.immuneInflammation.description")}
-          </ThemedText>
+          <ThemedText type="title3">🛡️ {t('nervousSystemOverview.informationCard.immuneInflammation.title')}</ThemedText>
+          <ThemedText type="default">{t('nervousSystemOverview.informationCard.immuneInflammation.description')}</ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🦠 {t("nervousSystemOverview.informationCard.gutVagusMicrobiome.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("nervousSystemOverview.informationCard.gutVagusMicrobiome.description")}
-          </ThemedText>
+          <ThemedText type="title3">🦠 {t('nervousSystemOverview.informationCard.gutVagusMicrobiome.title')}</ThemedText>
+          <ThemedText type="default">{t('nervousSystemOverview.informationCard.gutVagusMicrobiome.description')}</ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">💪 {t("nervousSystemOverview.informationCard.trainingStrengthens.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("nervousSystemOverview.informationCard.trainingStrengthens.description")}
-          </ThemedText>
+          <ThemedText type="title3">💪 {t('nervousSystemOverview.informationCard.trainingStrengthens.title')}</ThemedText>
+          <ThemedText type="default">{t('nervousSystemOverview.informationCard.trainingStrengthens.description')}</ThemedText>
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🏃 {t("nervousSystemOverview.informationCard.trainingNutritionStress.title")}</ThemedText>
-          <ThemedText type="default">
-            {t("nervousSystemOverview.informationCard.trainingNutritionStress.description")}
-          </ThemedText>
+          <ThemedText type="title3">🏃 {t('nervousSystemOverview.informationCard.trainingNutritionStress.title')}</ThemedText>
+          <ThemedText type="default">{t('nervousSystemOverview.informationCard.trainingNutritionStress.description')}</ThemedText>
         </View>
       </Card>
 
-      <GenesListCard areaId="nervousSystem"/>
+      <GenesListCard areaId="nervousSystem" />
 
       {/* Tips card */}
       <TipsList areaId={mainGoalId} />

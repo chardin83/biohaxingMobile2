@@ -3,7 +3,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
-import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { SleepTrendsChart } from '@/components/metrics/SleepTrendsChart';
 import { ThemedText } from '@/components/ThemedText';
@@ -12,27 +11,10 @@ import GenesListCard from '@/components/ui/GenesListCard';
 import RelatedAreasList from '@/components/ui/RelatedAreasList';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
-import { shouldSyncWearableData, syncWearableMetricsToStorage } from '@/wearables/syncMetricsToStorage';
-import { useWearable } from '@/wearables/wearableProvider';
 
 export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
-  const { adapter, status } = useWearable();
-  const { upsertMetricEntries } = useStorage();
   const { colors } = useTheme();
   const { t } = useTranslation();
-
-  const lastSyncAtRef = React.useRef(status.lastSyncAt);
-  lastSyncAtRef.current = status.lastSyncAt;
-
-  React.useEffect(() => {
-    console.log('Checking if wearable data should be synced', adapter.source);
-    if (adapter.source === 'none') return;
-    (async () => {
-      if (shouldSyncWearableData(lastSyncAtRef.current)) {
-        await syncWearableMetricsToStorage(adapter, upsertMetricEntries);
-      }
-    })().catch(() => {});
-  }, [adapter, upsertMetricEntries]);
 
   return (
     <>
@@ -40,7 +22,7 @@ export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: strin
         {t('sleepOverview.title')}
       </ThemedText>
       <ThemedText type="subtitle">{t('sleepOverview.description')}</ThemedText>
-      <WearableStatus status={status} />
+      <WearableStatus />
 
       <SleepTrendsChart />
 
