@@ -125,7 +125,6 @@ export default function TipsList({ areaId }: Readonly<TipsListProps>) {
           tipId: tip.id,
         },
       };
-      console.log('router.push called with:', routeObj);
       router.push(routeObj);
     }
   };
@@ -136,30 +135,19 @@ export default function TipsList({ areaId }: Readonly<TipsListProps>) {
         const tipProgress = getTipProgress(tip.id);
         const locked = myLevel < (tip?.level ?? 0);
 
-        return (
-          <TipCard
-            key={tip.id}
-            tip={tip}
-            tipProgress={tipProgress}
-            onPress={() => handleTipPress(index)}
-            areaId={areaId}
-            locked={locked}
-          />
-        );
+        return <TipCard key={tip.id} tip={tip} tipProgress={tipProgress} onPress={() => handleTipPress(index)} areaId={areaId} locked={locked} />;
       })}
 
       {sortedTips.some(tip => {
         const viewedTip = viewedTips?.find(v => v.tipId === tip.id);
         return viewedTip?.verdict && negativeVerdicts.has(viewedTip.verdict);
       }) && (
-          <Pressable style={[styles.showAllButton, { borderTopColor: colors.textWeak }]} onPress={() => setShowAllTips(!showAllTips)}>
-            <ThemedText type='defaultSemiBold' style={[{ color: colors.accentDefault }] }>
-              {showAllTips
-                ? t('tipsList.hideNotInterested')
-                : t('tipsList.showAll', { count: hiddenTipsCount })}
-            </ThemedText>
-          </Pressable>
-        )}
+        <Pressable style={[styles.showAllButton, { borderTopColor: colors.textWeak }]} onPress={() => setShowAllTips(!showAllTips)}>
+          <ThemedText type="defaultSemiBold" style={[{ color: colors.accentDefault }]}>
+            {showAllTips ? t('tipsList.hideNotInterested') : t('tipsList.showAll', { count: hiddenTipsCount })}
+          </ThemedText>
+        </Pressable>
+      )}
     </Card>
   );
 }

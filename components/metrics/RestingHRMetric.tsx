@@ -3,9 +3,13 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { useStorage } from '@/app/context/StorageContext';
 import { ThemedText } from '@/components/ThemedText';
-import { useStoredHRVData } from '@/hooks/useStoredHRVData';
-import { calculateRestingHRMetrics } from '@/utils/restingHRCalculations';
+import { toDateKey } from '@/utils/dateUtils';
+import { WearablePermission } from '@/wearables/types';
+import { useWearable } from '@/wearables/wearableProvider';
+
+import { MetricDataStatus } from './MetricDataStatus';
 
 interface RestingHRMetricProps {
   showDivider?: boolean;
@@ -16,27 +20,55 @@ interface RestingHRMetricProps {
 export function RestingHRMetric({ showDivider = false, onPress, isSelected = false }: Readonly<RestingHRMetricProps>) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const hrvData = useStoredHRVData();
-  const { restingHR, restingHRDelta } = calculateRestingHRMetrics(hrvData);
+  const { getMetricHistory } = useStorage();
+  const { adapter } = useWearable();
+  const [hasPermission, setHasPermission] = React.useState(true);
+  const restingHRData = getMetricHistory('resting_hr');
+
+  React.useEffect(() => {
+    adapter
+      .hasPermission(WearablePermission.restingHeartRate)
+      .then(setHasPermission)
+      .catch(() => setHasPermission(false));
+  }, [adapter]);
+
+  const latest = restingHRData.at(-1);
+  const isLatestToday = latest?.recordedAt && toDateKey(new Date(latest.recordedAt)) === toDateKey(new Date());
+  const previous = restingHRData.at(-2);
+  const restingHR = latest?.value;
+  const restingHRDelta = restingHR !== undefined && previous?.value !== undefined ? restingHR - previous.value : undefined;
+
   const content = (
     <View style={styles.contentContainer}>
-      <ThemedText type="label">{t('metrics:resting_hr.shortName', { defaultValue: t('metrics:resting_hr.name') })}</ThemedText>
-      <View style={styles.metricValueContainer}>
-        <ThemedText type="title2">{restingHR ?? '—'}</ThemedText>
-        {restingHR && (
-          <ThemedText type="caption"> bpm</ThemedText>
-        )}
-      </View>
-      <ThemedText type="explainer" style={{ color: colors.accentStrong }}>
-        {restingHRDelta > 0 ? '+' : ''}
-        {restingHRDelta} bpm
+      <ThemedText type="label">
+        {t('metrics:resting_hr.shortName', {
+          defaultValue: t('metrics:resting_hr.name'),
+        })}
       </ThemedText>
+      {restingHR !== undefined && (
+        <View style={styles.metricValueContainer}>
+          <ThemedText type="title2">{restingHR}</ThemedText>
+          <ThemedText type="caption"> bpm</ThemedText>
+        </View>
+      )}
+
+      <MetricDataStatus recordedAt={latest?.recordedAt} hasPermission={hasPermission} />
+
+      {restingHR !== undefined && isLatestToday && restingHRDelta !== undefined && (
+        <ThemedText type="explainer" style={{ color: colors.accentStrong }}>
+          {restingHRDelta > 0 ? '+' : ''}
+          {restingHRDelta} bpm
+        </ThemedText>
+      )}
     </View>
   );
 
   const containerStyle = [
     styles.metricContainer,
-    isSelected && { backgroundColor: colors.overlayLight, borderColor: colors.accentStrong },
+    isSelected && {
+      backgroundColor: colors.overlayLight,
+      borderColor: colors.accentStrong,
+    },
   ];
 
   if (onPress) {
@@ -46,7 +78,10 @@ export function RestingHRMetric({ showDivider = false, onPress, isSelected = fal
         accessibilityRole="button"
         style={({ pressed }) => [
           containerStyle,
-          pressed && !isSelected && { backgroundColor: colors.overlayLight },
+          pressed &&
+            !isSelected && {
+              backgroundColor: colors.overlayLight,
+            },
         ]}
       >
         {content}
@@ -72,6 +107,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   contentContainer: {
+    flex: 1,
     paddingHorizontal: 8,
     paddingVertical: 6,
   },
@@ -85,5 +121,16 @@ const styles = StyleSheet.create({
   metricValueContainer: {
     flexDirection: 'row',
     alignItems: 'baseline',
+  },
+  metricMissingValueContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 2,
+  },
+  warningContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

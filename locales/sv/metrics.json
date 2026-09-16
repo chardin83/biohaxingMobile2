@@ -240,5 +240,9 @@
         "needRecovery": "Behöver återhämtning",
         "sleep": "Sömn",
         "noSleepData": "Ingen sömndata"
+    },
+     "warnings": {
+        "missing_permission": "Behörighet saknas",
+        "register_manually": "Registrera manuellt"
     }
 }

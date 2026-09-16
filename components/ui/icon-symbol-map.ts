@@ -1,7 +1,6 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
-type MaterialIconName =
-  React.ComponentProps<typeof MaterialIcons>['name'];
+type MaterialIconName = React.ComponentProps<typeof MaterialIcons>['name'];
 
 type IconDefinition = {
   sf: string;
@@ -204,6 +203,10 @@ export const ICON_SYMBOLS = {
   'lightbulb': {
     sf: 'lightbulb',
     material: 'lightbulb',
+  },
+  'warning': {
+    sf: 'exclamationmark.triangle.fill',
+    material: 'warning',
   },
 } as const satisfies Record<string, IconDefinition>;
 

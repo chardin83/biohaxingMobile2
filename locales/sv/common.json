@@ -1293,5 +1293,12 @@
     "currentStreak": "Nuvarande streak: ",
     "currentStreakDays": "{{count}} dagar",
     "streakReminder": "Glöm inte logga din måltid idag för att hålla streaken vid liv!"
+  },
+  "wearableStatus": {
+    "lastSync": "Senaste synkronisering",
+    "connected": "Ansluten",
+    "connecting": "Ansluter",
+    "disconnected": "Frånkopplad",
+    "error": "Fel"
   }
 }

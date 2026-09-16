@@ -55,6 +55,8 @@
     </dict>
     <key>NSCameraUsageDescription</key>
     <string>Appen behöver kameratillgång för att du ska kunna ta bilder av tillskott.</string>
+    <key>NSFaceIDUsageDescription</key>
+    <string>Allow $(PRODUCT_NAME) to use Face ID</string>
     <key>NSHealthShareUsageDescription</key>
     <string>Appen behöver åtkomst till din sömnhistorik för att synkronisera sömndata.</string>
     <key>NSHealthUpdateUsageDescription</key>

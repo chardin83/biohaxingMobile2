@@ -1,4 +1,14 @@
-import { AdapterStatus, BloodPressureReading, DailyActivity, EnergySignal, HRVSummary, SleepSummary, TimeRange, WearableAdapter } from './types';
+import {
+  AdapterStatus,
+  BloodPressureReading,
+  DailyActivity,
+  EnergySignal,
+  HRVSummary,
+  RestingHeartRateSummary,
+  SleepSummary,
+  TimeRange,
+  WearableAdapter,
+} from './types';
 
 export class NoopAdapter implements WearableAdapter {
   readonly source = 'none' as const;
@@ -23,6 +33,10 @@ export class NoopAdapter implements WearableAdapter {
   }
 
   async getHRV(_range: TimeRange): Promise<HRVSummary[]> {
+    return [];
+  }
+
+  async getRestingHeartRate(_range: TimeRange): Promise<RestingHeartRateSummary[]> {
     return [];
   }
 

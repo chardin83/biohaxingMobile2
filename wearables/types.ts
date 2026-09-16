@@ -24,10 +24,15 @@ export type SleepSummaryWithTarget = SleepSummary & { targetBedtime: string };
 
 export type HRVSummary = {
   source: SourceId;
-  date: string; // YYYY-MM-DD
-  rmssdMs?: number; // common HRV metric
-  sdnnMs?: number; // optional
-  avgRestingHrBpm?: number;
+  date: string;
+  rmssdMs?: number;
+  sdnnMs?: number;
+};
+
+export type RestingHeartRateSummary = {
+  source: SourceId;
+  date: string;
+  bpm: number;
 };
 
 export type DailyActivity = {
@@ -50,12 +55,12 @@ type AdapterStatusMeta = {
 };
 
 export type AdapterStatus = (
-  | { state: 'disconnected', source: SourceId }
-  | { state: 'connecting', source: SourceId }
+  | { state: 'disconnected'; source: SourceId }
+  | { state: 'connecting'; source: SourceId }
   | { state: 'connected'; source: SourceId }
   | { state: 'error'; message: string }
-) & AdapterStatusMeta;
-
+) &
+  AdapterStatusMeta;
 
 export interface BloodPressureReading {
   recordedAt: string;
@@ -64,9 +69,20 @@ export interface BloodPressureReading {
   sourceName?: string;
 }
 
+export enum WearablePermission {
+  sleep = 'sleep',
+  steps = 'steps',
+  heartRate = 'heartRate',
+  restingHeartRate = 'restingHeartRate',
+  hrv = 'hrv',
+  bloodPressure = 'bloodPressure',
+  workout = 'workout',
+}
+
 export interface WearableAdapter {
   source: SourceId;
 
+  hasPermission(recordType: WearablePermission): Promise<boolean>;
   getStatus(): Promise<AdapterStatus>;
 
   // Optional auth methods (some adapters won't need these)
@@ -76,9 +92,8 @@ export interface WearableAdapter {
   // Data fetches
   getSleep(range: TimeRange): Promise<SleepSummary[]>;
   getHRV(range: TimeRange): Promise<HRVSummary[]>;
+  getRestingHeartRate(range: TimeRange): Promise<RestingHeartRateSummary[]>;
   getDailyActivity(range: TimeRange): Promise<DailyActivity[]>;
   getEnergySignal(range: TimeRange): Promise<EnergySignal[]>;
-  getBloodPressure(
-    range: TimeRange,
-  ): Promise<BloodPressureReading[]>;
+  getBloodPressure(range: TimeRange): Promise<BloodPressureReading[]>;
 }

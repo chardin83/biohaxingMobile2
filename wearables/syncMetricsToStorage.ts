@@ -78,13 +78,19 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
     end: new Date().toISOString(),
   };
 
-  const [sleep, activity, energy, hrvs, bloodPressure] = await Promise.all([
+  const [sleep, activity, energy, hrvs, restingHeartRates, bloodPressure] = await Promise.all([
     adapter.getSleep(range),
     adapter.getDailyActivity(range),
     adapter.getEnergySignal(range),
 
     adapter.getHRV(range).catch(error => {
       console.warn('[WearableSync] Failed to fetch HRV', error);
+
+      return [];
+    }),
+
+    adapter.getRestingHeartRate(range).catch(error => {
+      console.warn('[WearableSync] Failed to fetch resting heart rate', error);
 
       return [];
     }),
@@ -108,7 +114,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
 
   console.log('[WearableSync] Activity from adapter:', activity);
 
-  console.log('[WearableSync] Blood pressure from adapter:', bloodPressure);
+  //console.log('[WearableSync] Blood pressure from adapter:', bloodPressure);
 
   const bloodPressureEntries = bloodPressure.filter(isValidBloodPressureReading).flatMap(reading => {
     const readingNotes = reading.sourceName ? `${notesLabel} (${reading.sourceName})` : notesLabel;
@@ -238,12 +244,25 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
       ),
 
     ...hrvs
-      .filter(entry => typeof entry.avgRestingHrBpm === 'number')
+      .filter(entry => typeof entry.sdnnMs === 'number')
+      .map(
+        entry =>
+          ({
+            metricId: 'hrv',
+            value: entry.sdnnMs as number,
+            unit: 'ms',
+            recordedAt: toRecordedAt(entry.date),
+            notes: notesLabel,
+          }) satisfies MetricEntry
+      ),
+
+    ...restingHeartRates
+      .filter(entry => typeof entry.bpm === 'number')
       .map(
         entry =>
           ({
             metricId: 'resting_hr',
-            value: entry.avgRestingHrBpm as number,
+            value: entry.bpm,
             unit: 'bpm',
             recordedAt: toRecordedAt(entry.date),
             notes: notesLabel,

@@ -1,5 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 import { useWearable } from '@/wearables/wearableProvider';
@@ -11,6 +12,7 @@ interface WearableStatusProps {
 export function WearableStatus({ style }: WearableStatusProps) {
   const { colors } = useTheme();
   const { status, isSyncing } = useWearable();
+  const { t } = useTranslation();
 
   const formattedLastSync = status.lastSyncAt ? new Date(status.lastSyncAt).toLocaleString() : null;
 
@@ -48,7 +50,7 @@ export function WearableStatus({ style }: WearableStatusProps) {
         ) : (
           <>
             <Text style={[styles.statusText, { color: getStatusColor() }]}>
-              {getStatusIcon()} {status.state}
+              {getStatusIcon()} {t(`common:wearableStatus.${status.state}`)}
             </Text>
             {status.state === 'connected' && status.source && (
               <Text style={[styles.sourceText, { color: colors.textMuted }]}>
@@ -60,7 +62,11 @@ export function WearableStatus({ style }: WearableStatusProps) {
         )}
       </View>
 
-      {formattedLastSync && <Text style={[styles.syncText, { color: colors.textMuted }]}>Last sync: {formattedLastSync}</Text>}
+      {formattedLastSync && (
+        <Text style={[styles.syncText, { color: colors.textMuted }]}>
+          {t('common:wearableStatus.lastSync')}: {formattedLastSync}
+        </Text>
+      )}
 
       {status.state === 'error' && status.message && <Text style={[styles.errorText, { color: colors.error }]}>{status.message}</Text>}
     </View>

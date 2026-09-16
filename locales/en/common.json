@@ -1283,5 +1283,12 @@
     "currentStreak": "Current streak: ",
     "currentStreakDays": "{{count}} days",
      "streakReminder": "Don't forget to log your meal today to keep your streak alive!"
+  },
+  "wearableStatus": {
+    "lastSync": "Last sync",
+    "connected": "Connected",
+    "connecting": "Connecting",
+    "disconnected": "Disconnected",
+    "error": "Error"
   }
 }

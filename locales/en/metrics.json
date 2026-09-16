@@ -240,5 +240,9 @@
         "needRecovery": "Need recovery",
         "sleep": "Sleep",
         "noSleepData": "No sleep data"
+    },
+    "warnings": {
+        "missing_permission": "Permission missing",
+        "register_manually": "Register manually"
     }
 }

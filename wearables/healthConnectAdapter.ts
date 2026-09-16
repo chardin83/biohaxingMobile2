@@ -8,7 +8,16 @@ import {
   SdkAvailabilityStatus,
 } from 'react-native-health-connect';
 
-import { BloodPressureReading, DailyActivity, HRVSummary, SleepSummary, TimeRange, WearableAdapter } from './types';
+import {
+  BloodPressureReading,
+  DailyActivity,
+  HRVSummary,
+  RestingHeartRateSummary,
+  SleepSummary,
+  TimeRange,
+  WearableAdapter,
+  WearablePermission,
+} from './types';
 
 const PERMISSIONS: Permission[] = [
   {
@@ -29,9 +38,23 @@ const PERMISSIONS: Permission[] = [
   },
   {
     accessType: 'read',
+    recordType: 'HeartRateVariabilityRmssd',
+  },
+  {
+    accessType: 'read',
     recordType: 'BloodPressure',
   },
 ];
+
+const PERMISSION_RECORD_TYPES = {
+  [WearablePermission.sleep]: 'SleepSession',
+  [WearablePermission.steps]: 'Steps',
+  [WearablePermission.heartRate]: 'HeartRate',
+  [WearablePermission.restingHeartRate]: 'RestingHeartRate',
+  [WearablePermission.hrv]: 'HeartRateVariabilityRmssd',
+  [WearablePermission.bloodPressure]: 'BloodPressure',
+  [WearablePermission.workout]: 'Workout',
+} as const;
 
 const SLEEP_STAGE = {
   awake: 1,
@@ -126,15 +149,34 @@ export class HealthConnectAdapter implements WearableAdapter {
     );
   }
 
+  async hasPermission(permission: WearablePermission): Promise<boolean> {
+    await this.ensureInit();
+    const recordType = PERMISSION_RECORD_TYPES[permission];
+    if (!recordType) return false;
+    const granted = await getGrantedPermissions();
+    return granted.some(grantedPermission => grantedPermission.accessType === 'read' && grantedPermission.recordType === recordType);
+  }
+
+  private async getPermissionStatus() {
+    await this.ensureInit();
+    const granted = await getGrantedPermissions();
+    const grantedCount = PERMISSIONS.filter(required =>
+      granted.some(permission => permission.accessType === required.accessType && permission.recordType === required.recordType)
+    ).length;
+    return {
+      hasAnyPermissions: grantedCount > 0,
+      hasAllPermissions: grantedCount === PERMISSIONS.length,
+    };
+  }
+
   async getStatus() {
     try {
       await this.ensureInit();
-
-      const hasPermissions = await this.hasPermissions();
-
+      const { hasAnyPermissions, hasAllPermissions } = await this.getPermissionStatus();
       return {
-        state: hasPermissions ? 'connected' : 'permissionRequired',
+        state: hasAnyPermissions ? 'connected' : 'permissionRequired',
         source: this.source,
+        hasMissingPermissions: !hasAllPermissions,
       } as any;
     } catch (err: any) {
       return {
@@ -226,8 +268,50 @@ export class HealthConnectAdapter implements WearableAdapter {
     }
   }
 
-  async getHRV(_range: TimeRange): Promise<HRVSummary[]> {
-    return [];
+  async getHRV(range: TimeRange): Promise<HRVSummary[]> {
+    try {
+      await this.ensureInit();
+      const result = await readRecords('HeartRateVariabilityRmssd', {
+        timeRangeFilter: {
+          operator: 'between',
+          startTime: range.start,
+          endTime: range.end,
+        },
+        ascendingOrder: true,
+      });
+      return result.records.map(record => ({
+        source: this.source,
+        date: toLocalDateISO(record.time),
+        rmssdMs: record.heartRateVariabilityMillis,
+      }));
+    } catch (err) {
+      console.warn('[HealthConnectAdapter] getHRV failed', err);
+      return [];
+    }
+  }
+
+  async getRestingHeartRate(range: TimeRange): Promise<RestingHeartRateSummary[]> {
+    try {
+      await this.ensureInit();
+      const result = await readRecords('RestingHeartRate', {
+        timeRangeFilter: {
+          operator: 'between',
+          startTime: range.start,
+          endTime: range.end,
+        },
+        ascendingOrder: true,
+      });
+      return result.records
+        .filter(record => typeof record.beatsPerMinute === 'number')
+        .map(record => ({
+          source: this.source,
+          date: toLocalDateISO(record.time),
+          bpm: record.beatsPerMinute,
+        }));
+    } catch (err) {
+      console.warn('[HealthConnectAdapter] getRestingHeartRate failed', err);
+      return [];
+    }
   }
 
   async getDailyActivity(range: TimeRange): Promise<DailyActivity[]> {
