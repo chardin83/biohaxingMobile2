@@ -11,8 +11,8 @@ import { MetricValuesBottomSheet } from '@/components/sections/metrics/MetricVal
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 
-import { IntensityMinutesMetric } from './IntensityMinutesMetric';
 import { StepsMetric } from './StepsMetric';
+import { TodaysIntensityMinutesMetric } from './TodaysIntensityMinutesMetric';
 import { TotalActivityMetric } from './TotalActivityMetric';
 
 // Vilka metrik-nycklar som ska visas
@@ -29,29 +29,35 @@ export function TodaysActivityCharts() {
     metricValuesBottomSheetRef.current?.snapToIndex(1);
   }, []);
 
-   const toggleMetric = React.useCallback((metric: ActivityMetricKey) => {
+  const toggleMetric = React.useCallback((metric: ActivityMetricKey) => {
     setSelectedMetric(current => (current === metric ? null : metric));
   }, []);
   // Trenddata för varje metrik
   const activeMinutesTrendData = React.useMemo<MetricTrendPoint[]>(() => {
-    return getMetricHistory('active_minutes').map(entry => ({
-      date: entry.recordedAt.slice(0, 10),
-      value: entry.value,
-    })).sort((a, b) => a.date.localeCompare(b.date));
+    return getMetricHistory('active_minutes')
+      .map(entry => ({
+        date: entry.recordedAt.slice(0, 10),
+        value: entry.value,
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date));
   }, [getMetricHistory]);
 
   const stepsTrendData = React.useMemo<MetricTrendPoint[]>(() => {
-    return getMetricHistory('steps').map(entry => ({
-      date: entry.recordedAt.slice(0, 10),
-      value: entry.value,
-    })).sort((a, b) => a.date.localeCompare(b.date));
+    return getMetricHistory('steps')
+      .map(entry => ({
+        date: entry.recordedAt.slice(0, 10),
+        value: entry.value,
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date));
   }, [getMetricHistory]);
 
   const intensityMinutesTrendData = React.useMemo<MetricTrendPoint[]>(() => {
-    return getMetricHistory('intensity_minutes').map(entry => ({
-      date: entry.recordedAt.slice(0, 10),
-      value: entry.value,
-    })).sort((a, b) => a.date.localeCompare(b.date));
+    return getMetricHistory('intensity_minutes')
+      .map(entry => ({
+        date: entry.recordedAt.slice(0, 10),
+        value: entry.value,
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date));
   }, [getMetricHistory]);
 
   const selectedMetricConfig = React.useMemo(() => {
@@ -91,7 +97,7 @@ export function TodaysActivityCharts() {
       <View style={globalStyles.row}>
         <TotalActivityMetric showDivider onPress={() => toggleMetric('active_minutes')} isSelected={selectedMetric === 'active_minutes'} />
         <StepsMetric showDivider onPress={() => toggleMetric('steps')} isSelected={selectedMetric === 'steps'} />
-        <IntensityMinutesMetric onPress={() => toggleMetric('intensity_minutes')} isSelected={selectedMetric === 'intensity_minutes'} />
+        <TodaysIntensityMinutesMetric onPress={() => toggleMetric('intensity_minutes')} isSelected={selectedMetric === 'intensity_minutes'} />
       </View>
       {selectedMetricConfig && (
         <MetricTrendChart
@@ -102,18 +108,14 @@ export function TodaysActivityCharts() {
           onViewRegisteredValues={openMetricValuesTable}
         />
       )}
-      <ThemedText type="explainer" style={[globalStyles.explainer, { borderColor: colors.borderLight }]}> 
+      <ThemedText type="explainer" style={[globalStyles.explainer, { borderColor: colors.borderLight }]}>
         {selectedMetric
           ? t(`todaysActivityCharts.explainers.${selectedMetric}`, {
               defaultValue: t('todaysActivityCharts.explainer'),
             })
           : t('todaysActivityCharts.explainer')}
       </ThemedText>
-      <MetricValuesBottomSheet
-        bottomSheetRef={metricValuesBottomSheetRef}
-        metricId={selectedMetric}
-        metricName={selectedMetricConfig?.metricName}
-      />
+      <MetricValuesBottomSheet bottomSheetRef={metricValuesBottomSheetRef} metricId={selectedMetric} metricName={selectedMetricConfig?.metricName} />
     </Card>
   );
 }

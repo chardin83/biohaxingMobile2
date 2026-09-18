@@ -18,18 +18,18 @@ export const Colors = {
     progressBar: '#FFB300',
     icon: '#FFB300',
     iconBackground: '#FFF3DD',
-    iconBorder:'rgba(233, 7, 14, 0.08)',
+    iconBorder: 'rgba(233, 7, 14, 0.08)',
 
     textWhite: '#fff',
-    checkmarkMeal: '#2EC4B6',//'#00FFC8',
-    checkmarkSupplement: '#8EDB6D',//'#CBEA3C',
+    checkmarkMeal: '#2EC4B6', //'#00FFC8',
+    checkmarkSupplement: '#8EDB6D', //'#CBEA3C',
     checkmarkTraining: '#5ECF91',
     checkmarkOther: '#FFB300',
 
     progressPartialIcon: '#8A6200', // djup brons
     progressSuccessIcon: '#0B1B14',
     progressSuccessCell: '#67E8C0',
-    xp:'#CBEA3C',
+    xp: '#CBEA3C',
 
     buttonGlowBackground: 'rgba(31, 174, 158, 0.18)',
     buttonGlow: 'rgba(31, 174, 158, 0.85)',
@@ -45,6 +45,9 @@ export const Colors = {
     warmColor: 'rgba(255,100,100,1)', // Red - sympathetic/stress
     successColor: 'rgba(255,215,0,1)', // Gold - relevant/success
     infoColor: 'rgba(0,150,255,1)', // Blue - information
+
+    warningColor: 'rgba(230, 145, 45, 1)',
+    positiveColor: 'rgba(43, 138, 62, 1)',
 
     // Text variants
     textPrimary: 'rgba(17,24,28,0.95)', // Strong text
@@ -95,7 +98,7 @@ export const Colors = {
     // Gradients
     gradients: {
       sunrise: {
-        colors: ['#FFF9F0', '#FFE9C7', '#FFD08A', '#FFE3B5','#FFF6E5',],
+        colors: ['#FFF9F0', '#FFE9C7', '#FFD08A', '#FFE3B5', '#FFF6E5'],
         locations1: [0, 0.7, 1],
         locations2: [0, 0.5, 1],
         locations3: [0, 0.3, 1],
@@ -142,17 +145,17 @@ export const Colors = {
       activeMinutes: 'rgba(0,191,174,0.95)',
     },
 
-     area: {
+    area: {
       energy: 'rgba(255,191,0, 0.95)', // gold
-      mind: 'rgba(0,191,174,0.95)',     // accentStrong
-      sleep: '#32D1A6',                 // primary
+      mind: 'rgba(0,191,174,0.95)', // accentStrong
+      sleep: '#32D1A6', // primary
       longevity: 'rgba(245,190,90,0.95)',
       philosophy: 'rgba(170,160,255,0.95)',
-      nervousSystem: 'rgba(120,170,255,0.95)',    // lugn blå (tidigare röd)
-      strength: 'rgba(255,120,100,0.95)',   // tomato
-      digestiveHealth: 'rgba(170,220,120,0.95)',  // grön (unik)
-      cardio: 'rgba(255,140,180,0.95)',           // rosa (unik)
-      immuneSystem: 'rgba(120,220,220,0.95)',     // turkos (unik)
+      nervousSystem: 'rgba(120,170,255,0.95)', // lugn blå (tidigare röd)
+      strength: 'rgba(255,120,100,0.95)', // tomato
+      digestiveHealth: 'rgba(170,220,120,0.95)', // grön (unik)
+      cardio: 'rgba(255,140,180,0.95)', // rosa (unik)
+      immuneSystem: 'rgba(120,220,220,0.95)', // turkos (unik)
       // Lägg till fler områden vid behov
     },
     goldGradient: [
@@ -161,7 +164,6 @@ export const Colors = {
       '#FFB300', // djupare guld
     ],
     showAllAccent: 'rgba(199, 121, 36, 0.95)',
-
 
     checkboxCheckedBg: '#1FAF9A',
     checkboxCheckedBorder: '#1FAF9A',
@@ -175,7 +177,7 @@ export const Colors = {
     tint: tintColorDark,
     icon: '#2fe0c5',
     iconBackground: '#0f2f33',
-    iconBorder:'rgba(47, 224, 197, 0.35)',
+    iconBorder: 'rgba(47, 224, 197, 0.35)',
     //tabIconDefault: '#9BA1A6',
     //tabIconSelected: tintColorDark,
     primary: '#32D1A6',
@@ -195,7 +197,7 @@ export const Colors = {
     progressPartialIcon: 'rgba(255,215,100,0.95)',
     progressSuccessIcon: '#0B1B14',
     progressSuccessCell: '#67E8C0',
-    xp:'#B6F000',
+    xp: '#B6F000',
     buttonGlowBackground: 'rgba(4,26,34,0.2)',
     buttonGlow: '#00ffffcc',
     buttonTextGlow: '#00ffff88',
@@ -210,6 +212,9 @@ export const Colors = {
     successColor: 'rgba(255,215,0,1)', // Gold - relevant/success
     infoColor: 'rgba(120,200,255,1)', // Blue - information
 
+    warningColor: 'rgba(230, 145, 45, 1)',
+    positiveColor: 'rgba(43, 138, 62, 1)',
+
     // Text variants
     textPrimary: 'rgba(255,255,255,0.95)', // Strong text
     textSecondary: 'rgba(255,255,255,0.85)', // Secondary text
@@ -217,7 +222,6 @@ export const Colors = {
     textLight: '#ccc',
     textMuted: 'rgba(255,255,255,0.5)', // Muted/disabled text
     textWeak: 'rgba(255,255,255,0.1)', // Very weak/borders
-
 
     // Accent opacity variants
     accentStrong: 'rgba(120,255,220,0.95)',
@@ -280,7 +284,7 @@ export const Colors = {
     goldenGlowButtonText: '#fff7e6',
     goldenGlowButtonBackground: 'rgba(11, 16, 33, 0.9)',
     goldenGlowButtonGlow: 'rgba(255, 180, 80, 0.8)',
-    
+
     gold: 'rgba(255,215,100,0.95)',
     goldSoft: 'rgba(255,215,100,0.75)',
     goldSuperSoft: 'rgba(255,215,100,0.55)',
@@ -304,18 +308,18 @@ export const Colors = {
       intensityMinutes: 'rgba(255,120,100,0.95)',
       activeMinutes: 'rgba(0,191,174,0.95)',
     },
-    
+
     area: {
       energy: 'rgba(255,215,100,0.95)', // gold
-      mind: 'rgba(0,191,174,0.95)',     // accentStrong
-      sleep: '#1FAE9E',                 // primary
+      mind: 'rgba(0,191,174,0.95)', // accentStrong
+      sleep: '#1FAE9E', // primary
       longevity: 'rgba(245,190,90,0.95)',
       philosophy: 'rgba(170,160,255,0.95)',
       nervousSystem: 'rgba(120,170,255,0.95)', // lugn blå
-      strength: 'rgba(255,120,100,0.95)',   // tomato
-      digestiveHealth: 'rgba(170,220,120,0.95)',  // grön (unik)
-      cardio: 'rgba(255,140,180,0.95)',           // rosa (unik)
-      immuneSystem: 'rgba(120,220,220,0.95)',     // turkos (unik)
+      strength: 'rgba(255,120,100,0.95)', // tomato
+      digestiveHealth: 'rgba(170,220,120,0.95)', // grön (unik)
+      cardio: 'rgba(255,140,180,0.95)', // rosa (unik)
+      immuneSystem: 'rgba(120,220,220,0.95)', // turkos (unik)
     },
 
     goldGradient: [

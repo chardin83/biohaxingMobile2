@@ -10,6 +10,8 @@ import { toDateKey } from '@/utils/dateUtils';
 import { WearablePermission } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
+import { getLatestMetricEntry } from './metricDateUtils';
+
 interface HRVMetricProps {
   readonly showDivider?: boolean;
   readonly onPress?: () => void;
@@ -31,7 +33,7 @@ export function HRVMetric({ showDivider = false, onPress, isSelected = false }: 
       .catch(() => setHasPermission(false));
   }, [adapter]);
 
-  const latest = hrvData.at(-1);
+  const latest = React.useMemo(() => getLatestMetricEntry(hrvData), [hrvData]);
   const previous = hrvData.at(-2);
   const hrv = latest?.value;
   const hrvDelta = hrv !== undefined && previous?.value !== undefined ? ((hrv - previous.value) / previous.value) * 100 : undefined;

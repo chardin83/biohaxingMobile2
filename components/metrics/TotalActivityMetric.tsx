@@ -1,41 +1,47 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet,View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
+import { MetricDataStatus } from '@/components/metrics/MetricDataStatus';
 import { ThemedText } from '@/components/ThemedText';
+import { WearablePermission } from '@/wearables/types';
+import { useWearable } from '@/wearables/wearableProvider';
 
 import { MetricContainer } from './MetricContainer';
+import { getLatestEntryForToday } from './metricDateUtils';
 
 interface TotalActivityMetricProps {
-  showDivider?: boolean;
-  onPress?: () => void;
-  isSelected?: boolean;
+  readonly showDivider?: boolean;
+  readonly onPress?: () => void;
+  readonly isSelected?: boolean;
 }
 
-export function TotalActivityMetric({ showDivider = false, onPress, isSelected }: Readonly<TotalActivityMetricProps>) {
+export function TotalActivityMetric({ showDivider = false, onPress, isSelected = false }: TotalActivityMetricProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { getMetricHistory } = useStorage();
+  const { adapter } = useWearable();
+  const [hasPermission, setHasPermission] = React.useState(true);
 
-  const activeMinutesFromStorage = React.useMemo(() => {
-      const latestEntry = getMetricHistory('active_minutes')
-        .sort((left, right) => left.recordedAt.localeCompare(right.recordedAt))
-        .at(-1);
-      return latestEntry?.value ?? null;
-    }, [getMetricHistory]);
+  React.useEffect(() => {
+    adapter
+      .hasPermission(WearablePermission.workout)
+      .then(setHasPermission)
+      .catch(() => setHasPermission(false));
+  }, [adapter]);
+
+  const latest = React.useMemo(() => getLatestEntryForToday(getMetricHistory('active_minutes')), [getMetricHistory]);
+
+  const activeMinutes = latest?.value;
 
   return (
-    <MetricContainer
-      showDivider={showDivider}
-      isSelected={isSelected}
-      onPress={onPress}
-      borderColor={isSelected ? colors.primary : 'transparent'}
-    >
+    <MetricContainer showDivider={showDivider} isSelected={isSelected} onPress={onPress} borderColor={isSelected ? colors.primary : 'transparent'}>
       <View style={styles.contentContainer}>
-        <ThemedText type="label">{t("metrics:activeMinutes.shortName")}</ThemedText>
-        <ThemedText type="title2">{activeMinutesFromStorage ?? '—'}</ThemedText>
+        <ThemedText type="label">{t('metrics:activeMinutes.shortName')}</ThemedText>
+        {activeMinutes !== undefined && <ThemedText type="title2">{Math.round(activeMinutes)}</ThemedText>}
+        <MetricDataStatus recordedAt={latest?.recordedAt} hasPermission={hasPermission} />
       </View>
     </MetricContainer>
   );
@@ -43,7 +49,6 @@ export function TotalActivityMetric({ showDivider = false, onPress, isSelected }
 
 const styles = StyleSheet.create({
   contentContainer: {
-    paddingHorizontal: 8,
-    paddingVertical: 6,
+    //flex: 1,
   },
 });

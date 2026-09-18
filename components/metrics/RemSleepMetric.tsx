@@ -4,51 +4,58 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
+import { MetricDataStatus } from '@/components/metrics/MetricDataStatus';
 import { ThemedText } from '@/components/ThemedText';
+import { WearablePermission } from '@/wearables/types';
+import { useWearable } from '@/wearables/wearableProvider';
 
-import { getLatestEntryForToday } from './metricDateUtils';
+import { getLatestMetricEntry } from './metricDateUtils';
 
 interface RemSleepMetricProps {
-  labelType?: 'label' | 'default';
-  valueType?: 'title2' | 'title3';
-  showDivider?: boolean;
-  onPress?: () => void;
-  isSelected?: boolean;
+  readonly labelType?: 'label' | 'default';
+  readonly valueType?: 'title2' | 'title3';
+  readonly showDivider?: boolean;
+  readonly onPress?: () => void;
+  readonly isSelected?: boolean;
 }
 
-export function RemSleepMetric({
-  labelType = 'label',
-  valueType = 'title2',
-  showDivider = false,
-  onPress,
-  isSelected = false,
-}: Readonly<RemSleepMetricProps>) {
+export function RemSleepMetric({ labelType = 'label', valueType = 'title2', showDivider = false, onPress, isSelected = false }: RemSleepMetricProps) {
   const { t } = useTranslation();
-  const { getMetricHistory } = useStorage();
   const { colors } = useTheme();
+  const { getMetricHistory } = useStorage();
+  const { adapter } = useWearable();
+  const [hasPermission, setHasPermission] = React.useState(true);
+  const remSleepData = getMetricHistory('rem_sleep');
 
-  const latestRemSleep = React.useMemo(() => {
-    const latestEntry = getLatestEntryForToday(getMetricHistory('rem_sleep'));
+  React.useEffect(() => {
+    adapter
+      .hasPermission(WearablePermission.sleep)
+      .then(setHasPermission)
+      .catch(() => setHasPermission(false));
+  }, [adapter]);
 
-    if (!latestEntry) {
-      return null;
-    }
-
-    return Math.round(latestEntry.value);
-  }, [getMetricHistory]);
+  const latest = React.useMemo(() => getLatestMetricEntry(remSleepData), [remSleepData]);
+  const remSleep = latest?.value;
 
   const content = (
     <View style={styles.contentContainer}>
       <ThemedText type={labelType}>{t('metrics:sleepStages.remSleep.title')}</ThemedText>
-      <ThemedText type={valueType}>{latestRemSleep ?? '\u2014'}</ThemedText>
-      <ThemedText type="caption">{t('metrics:sleepStages.remSleep.minutes')}</ThemedText>
+      {remSleep !== undefined && (
+        <>
+          <ThemedText type={valueType}>{Math.round(remSleep)}</ThemedText>
+          <ThemedText type="caption">{t('metrics:sleepStages.remSleep.minutes')}</ThemedText>
+        </>
+      )}
+      <MetricDataStatus recordedAt={latest?.recordedAt} hasPermission={hasPermission} />
     </View>
   );
 
   const containerStyle = [
     styles.metricContainer,
-    isSelected && { backgroundColor: colors.overlayLight, borderColor: colors.accentStrong },
-    // showDivider && styles.divider,
+    isSelected && {
+      backgroundColor: colors.overlayLight,
+      borderColor: colors.accentStrong,
+    },
   ];
 
   if (onPress) {
@@ -58,7 +65,10 @@ export function RemSleepMetric({
         accessibilityRole="button"
         style={({ pressed }) => [
           containerStyle,
-          pressed && !isSelected && { backgroundColor: colors.overlayLight },
+          pressed &&
+            !isSelected && {
+              backgroundColor: colors.overlayLight,
+            },
         ]}
       >
         {content}
@@ -84,6 +94,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   contentContainer: {
+    flex: 1,
     paddingHorizontal: 8,
     paddingVertical: 6,
   },

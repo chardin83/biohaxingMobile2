@@ -532,36 +532,26 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     if (entries.length === 0) {
       return;
     }
-
     setMetricEntries(prev => {
       const next = [...prev];
-
       const existingIndexByKey = new Map<string, number>();
-
       next.forEach((entry, index) => {
         existingIndexByKey.set(`${entry.metricId}|${entry.recordedAt}`, index);
       });
-
       entries.forEach(entry => {
         const key = `${entry.metricId}|${entry.recordedAt}`;
-
         const existingIndex = existingIndexByKey.get(key);
-
         if (existingIndex === undefined) {
           existingIndexByKey.set(key, next.length);
-
           next.push(entry);
-
           return;
         }
-
         next[existingIndex] = {
           ...next[existingIndex],
           ...entry,
         };
       });
-
-      return next;
+      return next.sort((a, b) => new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime());
     });
   }, []);
 

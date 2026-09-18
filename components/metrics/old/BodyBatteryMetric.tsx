@@ -8,7 +8,7 @@ import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
 import { EnergySignal } from '@/wearables/types';
 
-import { MetricContainer } from './MetricContainer';
+import { MetricContainer } from '../MetricContainer';
 
 interface BodyBatteryMetricProps {
   readonly energyData?: EnergySignal[];
@@ -47,11 +47,11 @@ export function BodyBatteryMetric({ energyData, showDivider = false, onPress, is
       onPress={onPress}
       borderColor={isSelected ? colors.chart?.mindBodyBattery || colors.primary : 'transparent'}
     >
-        <ThemedText type="label">{t('metrics:bodyBattery.name')}</ThemedText>
-        <View style={globalStyles.metricValueContainer}>
-          <ThemedText type="title2">{latestBodyBattery ?? '—'}</ThemedText>
-          <ThemedText type="caption">%</ThemedText>
-        </View>
+      <ThemedText type="label">{t('metrics:bodyBattery.name')}</ThemedText>
+      <View style={globalStyles.metricValueContainer}>
+        <ThemedText type="title2">{latestBodyBattery ?? '—'}</ThemedText>
+        <ThemedText type="caption">%</ThemedText>
+      </View>
     </MetricContainer>
   );
 }

@@ -7,6 +7,7 @@ import {
   RestingHeartRateSummary,
   SleepSummary,
   TimeRange,
+  VO2MaxSummary,
   WearableAdapter,
   WearablePermission,
 } from './types';
@@ -14,12 +15,14 @@ import {
 type HealthKitModule = {
   initHealthKit?: (...args: any[]) => any;
   getSleepSamples?: (...args: any[]) => any;
-  getDailyStepCountSamples?: (...args: any[]) => any;
+  //getDailyStepCountSamples?: (...args: any[]) => any;
+  getStepCount?: (...args: any[]) => any;
   getSamples?: (...args: any[]) => any;
   getHeartRateSamples?: (...args: any[]) => any;
   getHeartRateVariabilitySamples?: (...args: any[]) => any;
   getRestingHeartRateSamples?: (...args: any[]) => any;
   getBloodPressureSamples?: (...args: any[]) => any;
+  getVo2MaxSamples?: (...args: any[]) => any;
   Constants?: {
     Permissions?: Record<string, string>;
   };
@@ -44,6 +47,7 @@ function getInitOptions() {
         permissions?.BloodPressureDiastolic ?? 'BloodPressureDiastolic',
         permissions?.StepCount ?? 'StepCount',
         permissions?.Workout ?? 'Workout',
+        permissions?.Vo2Max ?? 'Vo2Max',
       ],
       write: [],
     },
@@ -94,11 +98,11 @@ type RawSleepSample = {
   sourceName?: string;
 };
 
-type RawStepSample = {
+/*type RawStepSample = {
   startDate?: string;
   endDate?: string;
   value?: number;
-};
+};*/
 
 type RawWorkoutSample = {
   start?: string;
@@ -133,9 +137,13 @@ type RawHRVSample = {
   sourceName?: string;
 };
 
-function overlaps(startA: string, endA: string, startB: string, endB: string) {
-  return new Date(startA).getTime() <= new Date(endB).getTime() && new Date(endA).getTime() >= new Date(startB).getTime();
-}
+type RawVO2MaxSample = {
+  startDate?: string;
+  endDate?: string;
+  value?: number;
+  sourceId?: string;
+  sourceName?: string;
+};
 
 function detectVendorFromSamples(samples: any[]): string | null {
   if (!samples?.length) {
@@ -325,23 +333,24 @@ export class HealthKitAdapter implements WearableAdapter {
       await this.ensureInit();
       const health = AppleHealthKit;
       if (!health) return false;
-      const range: TimeRange = {
-        start: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-        end: new Date().toISOString(),
-      };
+
       switch (permission) {
+        case WearablePermission.sleep:
+          return typeof health.getSleepSamples === 'function';
+        case WearablePermission.steps:
+          return typeof health.getStepCount === 'function';
+        case WearablePermission.heartRate:
+          return typeof health.getHeartRateSamples === 'function';
         case WearablePermission.restingHeartRate:
-          if (typeof health.getRestingHeartRateSamples !== 'function') {
-            return false;
-          }
-          await this.getRestingHeartRateSamples(health, range);
-          return true;
+          return typeof health.getRestingHeartRateSamples === 'function';
         case WearablePermission.hrv:
-          if (typeof health.getHeartRateVariabilitySamples !== 'function') {
-            return false;
-          }
-          await this.getHeartRateVariabilitySamples(health, range);
-          return true;
+          return typeof health.getHeartRateVariabilitySamples === 'function';
+        case WearablePermission.vo2Max:
+          return typeof health.getVo2MaxSamples === 'function';
+        case WearablePermission.bloodPressure:
+          return typeof health.getBloodPressureSamples === 'function';
+        case WearablePermission.workout:
+          return typeof health.getSamples === 'function';
         default:
           return false;
       }
@@ -544,9 +553,9 @@ export class HealthKitAdapter implements WearableAdapter {
       }
       const samples = await this.getHeartRateVariabilitySamples(health, range);
       //console.debug('[HealthKitAdapter] HRV samples count', samples.length);
-      if (samples.length > 0) {
+      /*if (samples.length > 0) {
         console.debug('[HealthKitAdapter] HRV sample0', samples[0]);
-      }
+      }*/
       return this.toHRVSummaries(samples);
     } catch (error) {
       console.warn('[HealthKitAdapter] getHRV failed', error);
@@ -675,130 +684,106 @@ export class HealthKitAdapter implements WearableAdapter {
     });
   }
 
+  async getVO2Max(range: TimeRange): Promise<VO2MaxSummary[]> {
+    try {
+      await this.ensureInit();
+      const health = AppleHealthKit;
+      if (!health || typeof health.getVo2MaxSamples !== 'function') {
+        console.debug('[HealthKitAdapter] getVo2MaxSamples is not available');
+        return [];
+      }
+      const samples = await this.getVo2MaxSamples(health, range);
+      //console.log('[HealthKitAdapter] VO2 max sample', JSON.stringify(samples, null, 2));
+
+      return samples.flatMap(sample => {
+        const value = Number(sample.value);
+        const sampleDate = sample.endDate ?? sample.startDate;
+
+        if (!Number.isFinite(value) || !sampleDate) {
+          return [];
+        }
+        return [
+          {
+            source: this.source,
+            date: toLocalDateISO(sampleDate),
+            value: Math.round(value * 10) / 10,
+          } satisfies VO2MaxSummary,
+        ];
+      });
+    } catch (error) {
+      console.warn('[HealthKitAdapter] getVO2Max failed', error);
+      return [];
+    }
+  }
+
+  private getVo2MaxSamples(health: HealthKitModule, range: TimeRange): Promise<RawVO2MaxSample[]> {
+    return new Promise((resolve, reject) => {
+      health.getVo2MaxSamples!(
+        {
+          startDate: range.start,
+          endDate: range.end,
+        },
+        (error: unknown, results: RawVO2MaxSample[] | undefined) => {
+          if (error) {
+            reject(this.toError(error));
+            return;
+          }
+          resolve(results ?? []);
+        }
+      );
+    });
+  }
+
   async getDailyActivity(range: TimeRange): Promise<DailyActivity[]> {
     try {
       await this.ensureInit();
-      console.log('[HealthKitAdapter] getDailyActivity range', range);
-
       const health = AppleHealthKit;
-
-      const stepSamples: RawStepSample[] = await new Promise((resolve, reject) => {
-        if (!health || typeof (health.getDailyStepCountSamples as any) !== 'function') {
-          reject(new Error('AppleHealthKit.getDailyStepCountSamples is not available'));
-          return;
-        }
-
-        (health.getDailyStepCountSamples as any)({ startDate: range.start, endDate: range.end }, (err: any, results: RawStepSample[]) => {
-          if (err) return reject(err);
-          resolve(results ?? []);
-        });
-      });
-
-      const workoutSamples: RawWorkoutSample[] = await new Promise(resolve => {
-        if (!health || typeof (health.getSamples as any) !== 'function') {
-          resolve([]);
-          return;
-        }
-
-        (health.getSamples as any)(
-          {
-            startDate: range.start,
-            endDate: range.end,
-            type: 'Workout',
-          },
-          (_err: any, results: RawWorkoutSample[]) => {
-            resolve(results ?? []);
-          }
-        );
-      });
-
-      console.log('[HealthKitAdapter] workoutSamples', JSON.stringify(workoutSamples, null, 2));
-
-      /*const exerciseSamples = await new Promise<any[]>((resolve) => {
-        if (!health || typeof (health.getSamples as any) !== 'function') {
-          resolve([]);
-          return;
-        }
-  
-    (health.getSamples as any)(
-      {
-        startDate: range.start,
-        endDate: range.end,
-        type: 'AppleExerciseTime',
-      },
-      (_err: any, results: any[]) => {
-        resolve(results ?? []);
+      if (!health) {
+        return [];
       }
-    );
-  });
-  
-  console.log(
-    '[HealthKitAdapter] exerciseSamples',
-    JSON.stringify(exerciseSamples, null, 2)
-  );*/
-
+      const [dailyStepCounts, workoutSamples, heartRateSamples, userProfile] = await Promise.all([
+        this.getDailyStepCounts(health, range),
+        this.getWorkoutSamples(health, range),
+        this.getHeartRateSamples(range),
+        getUserProfile(),
+      ]);
+      const maxHeartRate = userProfile.maxHeartRate;
       const activityByDay = new Map<string, DailyActivity>();
-
       const getDay = (date: string) => {
-        const day = toLocalDateISO(date);
-        const existing = activityByDay.get(day);
-
-        if (existing) return existing;
-
+        const dateKey = toLocalDateISO(date);
+        const existing = activityByDay.get(dateKey);
+        if (existing) {
+          return existing;
+        }
         const created: DailyActivity = {
           source: this.source,
-          date: day,
+          date: dateKey,
         };
-
-        activityByDay.set(day, created);
+        activityByDay.set(dateKey, created);
         return created;
       };
-
-      for (const sample of stepSamples) {
-        const date = sample.startDate ?? sample.endDate ?? range.end;
-        const steps = Number(sample.value ?? 0);
-
-        if (Number.isFinite(steps)) {
-          const day = getDay(date);
-          day.steps = (day.steps ?? 0) + steps;
-        }
+      for (const entry of dailyStepCounts) {
+        const day = getDay(entry.date);
+        day.steps = entry.steps;
       }
-
       for (const workout of workoutSamples) {
         const start = workout.startDate ?? workout.start;
         const end = workout.endDate ?? workout.end;
-
-        if (!start || !end) continue;
-
-        const activeMinutes = minutesBetween(start, end);
-
-        if (!Number.isFinite(activeMinutes) || activeMinutes <= 0) continue;
-
-        const day = getDay(end);
-
-        day.activeMinutes = (day.activeMinutes ?? 0) + activeMinutes;
-
-        const heartRateSamples = await this.getHeartRateSamples(range);
-
-        const userProfile = await getUserProfile();
-        const maxHeartRate = userProfile.maxHeartRate;
-
-        if (maxHeartRate) {
-          const intensityHrThreshold = maxHeartRate * 0.7;
-
-          const intenseHeartRateSamples = heartRateSamples.filter(sample => {
-            const sampleStart = sample.startDate ?? sample.endDate;
-            const sampleEnd = sample.endDate ?? sample.startDate;
-
-            if (!sampleStart || !sampleEnd) return false;
-
-            return overlaps(sampleStart, sampleEnd, start, end) && Number(sample.value ?? 0) >= intensityHrThreshold;
-          });
-
-          const intenseMinutes = intenseHeartRateSamples.length;
-
-          day.intensityMinutes = (day.intensityMinutes ?? 0) + intenseMinutes;
+        if (!start || !end) {
+          continue;
         }
+        const activeMinutes = minutesBetween(start, end);
+        if (!Number.isFinite(activeMinutes) || activeMinutes <= 0) {
+          continue;
+        }
+        const day = getDay(end);
+        day.activeMinutes = (day.activeMinutes ?? 0) + activeMinutes;
+        if (!maxHeartRate) {
+          continue;
+        }
+        const intensityHrThreshold = maxHeartRate * 0.7;
+        const intenseMinutes = this.calculateIntenseMinutes(heartRateSamples, start, end, intensityHrThreshold);
+        day.intensityMinutes = (day.intensityMinutes ?? 0) + intenseMinutes;
       }
       return [...activityByDay.values()].map(entry => ({
         ...entry,
@@ -806,10 +791,115 @@ export class HealthKitAdapter implements WearableAdapter {
         activeMinutes: typeof entry.activeMinutes === 'number' ? Math.round(entry.activeMinutes) : undefined,
         intensityMinutes: typeof entry.intensityMinutes === 'number' ? Math.round(entry.intensityMinutes) : undefined,
       }));
-    } catch (err) {
-      console.warn('[HealthKitAdapter] getDailyActivity failed', err);
+    } catch (error) {
+      console.warn('[HealthKitAdapter] getDailyActivity failed', error);
       return [];
     }
+  }
+
+  private async getStepCountForDate(health: NonNullable<typeof AppleHealthKit>, date: Date): Promise<number> {
+    return new Promise((resolve, reject) => {
+      if (typeof health.getStepCount !== 'function') {
+        throw new TypeError('AppleHealthKit.getStepCount is not available');
+      }
+      health.getStepCount(
+        {
+          date: date.toISOString(),
+          includeManuallyAdded: true,
+        },
+        (error: unknown, result: { value?: number } | undefined) => {
+          if (error) {
+            reject(this.toError(error));
+            return;
+          }
+          const value = Number(result?.value ?? 0);
+          resolve(Number.isFinite(value) ? value : 0);
+        }
+      );
+    });
+  }
+
+  private async getDailyStepCounts(health: NonNullable<typeof AppleHealthKit>, range: TimeRange): Promise<Array<{ date: string; steps: number }>> {
+    const start = new Date(range.start);
+    const end = new Date(range.end);
+    const current = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    const lastDate = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+    const result: Array<{ date: string; steps: number }> = [];
+    while (current <= lastDate) {
+      const date = new Date(current);
+      const steps = await this.getStepCountForDate(health, date);
+      result.push({
+        date: toLocalDateISO(date.toISOString()),
+        steps,
+      });
+      current.setDate(current.getDate() + 1);
+    }
+    return result;
+  }
+
+  private getWorkoutSamples(health: HealthKitModule, range: TimeRange): Promise<RawWorkoutSample[]> {
+    return new Promise((resolve, reject) => {
+      health.getSamples!(
+        {
+          startDate: range.start,
+          endDate: range.end,
+          type: 'Workout',
+        },
+        (error: unknown, results: RawWorkoutSample[] | undefined) => {
+          if (error) {
+            reject(this.toError(error));
+            return;
+          }
+          resolve(results ?? []);
+        }
+      );
+    });
+  }
+
+  private calculateIntenseMinutes(samples: RawHeartRateSample[], workoutStart: string, workoutEnd: string, threshold: number): number {
+    const workoutStartMs = new Date(workoutStart).getTime();
+    const workoutEndMs = new Date(workoutEnd).getTime();
+    if (Number.isNaN(workoutStartMs) || Number.isNaN(workoutEndMs) || workoutEndMs <= workoutStartMs) {
+      return 0;
+    }
+    const maxGapMs = 10 * 60 * 1000;
+    const workoutSamples = samples
+      .map(sample => {
+        const recordedAt = sample.startDate ?? sample.endDate;
+        return {
+          time: recordedAt ? new Date(recordedAt).getTime() : Number.NaN,
+          value: Number(sample.value),
+        };
+      })
+      .filter(sample => Number.isFinite(sample.time) && Number.isFinite(sample.value) && sample.time >= workoutStartMs && sample.time <= workoutEndMs)
+      .sort((left, right) => left.time - right.time);
+    if (workoutSamples.length < 2) {
+      return 0;
+    }
+    let intenseMs = 0;
+    for (let i = 0; i < workoutSamples.length - 1; i++) {
+      const current = workoutSamples[i];
+      const next = workoutSamples[i + 1];
+      const durationMs = next.time - current.time;
+      if (durationMs <= 0 || durationMs > maxGapMs) {
+        continue;
+      }
+      if (current.value >= threshold && next.value >= threshold) {
+        intenseMs += durationMs;
+        continue;
+      }
+      if (current.value < threshold && next.value < threshold) {
+        continue;
+      }
+      const fraction = (threshold - current.value) / (next.value - current.value);
+      const crossingTime = current.time + durationMs * fraction;
+      if (current.value < threshold) {
+        intenseMs += next.time - crossingTime;
+      } else {
+        intenseMs += crossingTime - current.time;
+      }
+    }
+    return intenseMs / 60000;
   }
 
   async getEnergySignal(): Promise<any[]> {

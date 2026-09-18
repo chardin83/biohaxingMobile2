@@ -10,6 +10,7 @@ import { WearablePermission } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
 import { MetricDataStatus } from './MetricDataStatus';
+import { getLatestMetricEntry } from './metricDateUtils';
 
 interface RestingHRMetricProps {
   showDivider?: boolean;
@@ -32,7 +33,7 @@ export function RestingHRMetric({ showDivider = false, onPress, isSelected = fal
       .catch(() => setHasPermission(false));
   }, [adapter]);
 
-  const latest = restingHRData.at(-1);
+  const latest = React.useMemo(() => getLatestMetricEntry(restingHRData), [restingHRData]);
   const isLatestToday = latest?.recordedAt && toDateKey(new Date(latest.recordedAt)) === toDateKey(new Date());
   const previous = restingHRData.at(-2);
   const restingHR = latest?.value;

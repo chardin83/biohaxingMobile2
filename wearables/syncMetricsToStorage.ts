@@ -78,8 +78,9 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
     end: new Date().toISOString(),
   };
 
-  const [sleep, activity, energy, hrvs, restingHeartRates, bloodPressure] = await Promise.all([
+  const [sleep, vo2Max, activity, energy, hrvs, restingHeartRates, bloodPressure] = await Promise.all([
     adapter.getSleep(range),
+    adapter.getVO2Max(range),
     adapter.getDailyActivity(range),
     adapter.getEnergySignal(range),
 
@@ -112,7 +113,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
 
   const notesLabel = adapter.source === 'healthkit' ? `AppleHealth${vendorSuffix}` : `HealthConnect${vendorSuffix}`;
 
-  console.log('[WearableSync] Activity from adapter:', activity);
+  //console.log('[WearableSync] Activity from adapter:', activity);
 
   //console.log('[WearableSync] Blood pressure from adapter:', bloodPressure);
 
@@ -190,6 +191,17 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
             notes: notesLabel,
           }) satisfies MetricEntry
       ),
+
+    ...vo2Max.map(
+      entry =>
+        ({
+          metricId: 'vo2_max',
+          value: entry.value,
+          unit: 'ml/kg/min',
+          recordedAt: toRecordedAt(entry.date),
+          notes: notesLabel,
+        }) satisfies MetricEntry
+    ),
 
     ...activity
       .filter(entry => typeof entry.steps === 'number')

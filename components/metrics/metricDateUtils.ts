@@ -1,4 +1,4 @@
-import { type MetricEntry } from '@/app/context/StorageContext';
+import { MetricEntry } from '@/app/context/storage/metrics/metricTypes';
 
 export function toLocalDateKey(value: Date) {
   const year = value.getFullYear();
@@ -7,11 +7,13 @@ export function toLocalDateKey(value: Date) {
   return `${year}-${month}-${day}`;
 }
 
-export function getLatestEntryForToday(entries: MetricEntry[], now = new Date()) {
+export function getLatestEntryForToday(entries: MetricEntry[], now = new Date()): MetricEntry | undefined {
+  const latest = entries.at(-1);
+  if (!latest) return undefined;
   const todayKey = toLocalDateKey(now);
+  return toLocalDateKey(new Date(latest.recordedAt)) === todayKey ? latest : undefined;
+}
 
-  return entries
-    .filter(entry => toLocalDateKey(new Date(entry.recordedAt)) === todayKey)
-    .sort((left, right) => left.recordedAt.localeCompare(right.recordedAt))
-    .at(-1);
+export function getLatestMetricEntry<T>(entries: T[]): T | undefined {
+  return entries.at(-1);
 }

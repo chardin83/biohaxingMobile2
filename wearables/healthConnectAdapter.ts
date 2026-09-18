@@ -8,6 +8,8 @@ import {
   SdkAvailabilityStatus,
 } from 'react-native-health-connect';
 
+import { getUserProfile } from '@/app/context/storage/userProfile/userProfileStore';
+
 import {
   BloodPressureReading,
   DailyActivity,
@@ -15,6 +17,7 @@ import {
   RestingHeartRateSummary,
   SleepSummary,
   TimeRange,
+  VO2MaxSummary,
   WearableAdapter,
   WearablePermission,
 } from './types';
@@ -30,6 +33,10 @@ const PERMISSIONS: Permission[] = [
   },
   {
     accessType: 'read',
+    recordType: 'ExerciseSession',
+  },
+  {
+    accessType: 'read',
     recordType: 'HeartRate',
   },
   {
@@ -39,6 +46,10 @@ const PERMISSIONS: Permission[] = [
   {
     accessType: 'read',
     recordType: 'HeartRateVariabilityRmssd',
+  },
+  {
+    accessType: 'read',
+    recordType: 'Vo2Max',
   },
   {
     accessType: 'read',
@@ -53,7 +64,8 @@ const PERMISSION_RECORD_TYPES = {
   [WearablePermission.restingHeartRate]: 'RestingHeartRate',
   [WearablePermission.hrv]: 'HeartRateVariabilityRmssd',
   [WearablePermission.bloodPressure]: 'BloodPressure',
-  [WearablePermission.workout]: 'Workout',
+  [WearablePermission.workout]: 'ExerciseSession',
+  [WearablePermission.vo2Max]: 'Vo2Max',
 } as const;
 
 const SLEEP_STAGE = {
@@ -239,7 +251,7 @@ export class HealthConnectAdapter implements WearableAdapter {
         ascendingOrder: true,
       });
 
-      console.log('[HealthConnectAdapter] Blood pressure records', JSON.stringify(result.records, null, 2));
+      //console.log('[HealthConnectAdapter] Blood pressure records', JSON.stringify(result.records, null, 2));
 
       return result.records.flatMap(record => {
         const systolic = getPressureInMmHg(record.systolic);
@@ -314,39 +326,168 @@ export class HealthConnectAdapter implements WearableAdapter {
     }
   }
 
-  async getDailyActivity(range: TimeRange): Promise<DailyActivity[]> {
+  async getVO2Max(range: TimeRange): Promise<VO2MaxSummary[]> {
     try {
       await this.ensureInit();
-      console.log('[HealthConnectAdapter] getDailyActivity range', range);
-      const result = await readRecords('Steps', {
+      const result = await readRecords('Vo2Max', {
         timeRangeFilter: {
           operator: 'between',
           startTime: range.start,
           endTime: range.end,
         },
+        ascendingOrder: true,
       });
-
-      const stepsByDay = new Map<string, number>();
-
-      for (const record of result.records) {
-        const date = toLocalDateISO(record.endTime);
-
-        stepsByDay.set(date, (stepsByDay.get(date) ?? 0) + record.count);
-      }
-
-      return [...stepsByDay.entries()].map(
-        ([date, steps]) =>
-          ({
-            source: this.source,
-            date,
-            steps,
-          }) satisfies DailyActivity
-      );
+      //console.log('[HealthConnectAdapter] VO2 max records', JSON.stringify(result.records, null, 2));
+      return result.records
+        .filter(record => typeof record.vo2MillilitersPerMinuteKilogram === 'number')
+        .map(record => ({
+          source: this.source,
+          date: toLocalDateISO(record.time),
+          value: Math.round(record.vo2MillilitersPerMinuteKilogram * 10) / 10,
+        }));
     } catch (err) {
-      console.warn('[HealthConnectAdapter] getDailyActivity failed', err);
-
+      console.warn('[HealthConnectAdapter] getVO2Max failed', err);
       return [];
     }
+  }
+
+  async getDailyActivity(range: TimeRange): Promise<DailyActivity[]> {
+    try {
+      await this.ensureInit();
+      const [stepsResult, exerciseSessions, userProfile] = await Promise.all([
+        readRecords('Steps', {
+          timeRangeFilter: {
+            operator: 'between',
+            startTime: range.start,
+            endTime: range.end,
+          },
+        }),
+        this.getExerciseSessions(range),
+        getUserProfile(),
+      ]);
+      const maxHeartRate = userProfile.maxHeartRate;
+      const activityByDay = new Map<string, DailyActivity>();
+      const getDay = (date: string) => {
+        const dateKey = toLocalDateISO(date);
+        const existing = activityByDay.get(dateKey);
+        if (existing) {
+          return existing;
+        }
+        const created: DailyActivity = {
+          source: this.source,
+          date: dateKey,
+        };
+        activityByDay.set(dateKey, created);
+        return created;
+      };
+      for (const record of stepsResult.records) {
+        const day = getDay(record.endTime);
+        day.steps = (day.steps ?? 0) + record.count;
+      }
+      for (const session of exerciseSessions) {
+        const activeMinutes = minutesBetween(session.startTime, session.endTime);
+        if (!Number.isFinite(activeMinutes) || activeMinutes <= 0) {
+          continue;
+        }
+        const day = getDay(session.endTime);
+        day.activeMinutes = (day.activeMinutes ?? 0) + activeMinutes;
+        if (!maxHeartRate) {
+          continue;
+        }
+        const heartRateSamples = await this.getHeartRateSamples({
+          start: session.startTime,
+          end: session.endTime,
+        });
+        const threshold = maxHeartRate * 0.7;
+        const intenseMinutes = this.calculateIntenseMinutes(heartRateSamples, session.startTime, session.endTime, threshold);
+        console.log('[HealthConnectAdapter] intensity', {
+          date: toLocalDateISO(session.endTime),
+          samples: heartRateSamples.length,
+          maxHr: heartRateSamples.length ? Math.max(...heartRateSamples.map(sample => sample.value)) : undefined,
+          threshold,
+          intenseMinutes,
+        });
+        day.intensityMinutes = (day.intensityMinutes ?? 0) + intenseMinutes;
+      }
+      return [...activityByDay.values()].map(activity => ({
+        ...activity,
+        steps: typeof activity.steps === 'number' ? Math.round(activity.steps) : undefined,
+        activeMinutes: typeof activity.activeMinutes === 'number' ? Math.round(activity.activeMinutes) : undefined,
+        intensityMinutes: typeof activity.intensityMinutes === 'number' ? Math.round(activity.intensityMinutes) : undefined,
+      }));
+    } catch (err) {
+      console.warn('[HealthConnectAdapter] getDailyActivity failed', err);
+      return [];
+    }
+  }
+
+  private async getExerciseSessions(range: TimeRange) {
+    const result = await readRecords('ExerciseSession', {
+      timeRangeFilter: {
+        operator: 'between',
+        startTime: range.start,
+        endTime: range.end,
+      },
+      ascendingOrder: true,
+    });
+
+    return result.records;
+  }
+
+  private async getHeartRateSamples(range: TimeRange) {
+    const result = await readRecords('HeartRate', {
+      timeRangeFilter: {
+        operator: 'between',
+        startTime: range.start,
+        endTime: range.end,
+      },
+      ascendingOrder: true,
+    });
+    return result.records.flatMap(record =>
+      record.samples.map(sample => ({
+        time: new Date(sample.time).getTime(),
+        value: sample.beatsPerMinute,
+      }))
+    );
+  }
+
+  private calculateIntenseMinutes(samples: Array<{ time: number; value: number }>, workoutStart: string, workoutEnd: string, threshold: number): number {
+    const workoutStartMs = new Date(workoutStart).getTime();
+    const workoutEndMs = new Date(workoutEnd).getTime();
+    if (Number.isNaN(workoutStartMs) || Number.isNaN(workoutEndMs) || workoutEndMs <= workoutStartMs) {
+      return 0;
+    }
+    const maxGapMs = 10 * 60 * 1000;
+    const workoutSamples = samples
+      .filter(sample => Number.isFinite(sample.time) && Number.isFinite(sample.value) && sample.time >= workoutStartMs && sample.time <= workoutEndMs)
+      .sort((left, right) => left.time - right.time);
+    if (workoutSamples.length < 2) {
+      return 0;
+    }
+    let intenseMs = 0;
+    for (let i = 0; i < workoutSamples.length - 1; i++) {
+      const current = workoutSamples[i];
+      const next = workoutSamples[i + 1];
+      const durationMs = next.time - current.time;
+      if (durationMs <= 0 || durationMs > maxGapMs) {
+        continue;
+      }
+      if (current.value >= threshold && next.value >= threshold) {
+        intenseMs += durationMs;
+        continue;
+      }
+      if (current.value < threshold && next.value < threshold) {
+        continue;
+      }
+      const fraction = (threshold - current.value) / (next.value - current.value);
+      const crossingTime = current.time + durationMs * fraction;
+      if (current.value < threshold) {
+        intenseMs += next.time - crossingTime;
+      } else {
+        intenseMs += crossingTime - current.time;
+      }
+    }
+    return intenseMs / 60000;
   }
 
   async getEnergySignal(): Promise<any[]> {

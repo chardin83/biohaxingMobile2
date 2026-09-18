@@ -2,8 +2,7 @@ import { useTheme } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RefreshControl, StyleSheet, Text, View, ViewProps } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { RefreshControl, ScrollView, StyleSheet, Text, View, ViewProps } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Colors } from '@/app/theme/Colors';
@@ -77,7 +76,7 @@ const Container = forwardRef<ContainerScrollRef, ContainerProps>(
     }
     // Merge user contentContainerStyle with centerContent and default paddings
     const mergedContentContainerStyle = [
-      { paddingHorizontal: 18, paddingBottom: 200, paddingTop: defaultPaddingTop },
+      { flexGrow: 1, paddingHorizontal: 18, paddingBottom: 200, paddingTop: defaultPaddingTop },
       contentContainerStyle,
       centerContent ? styles.centerContent : null,
     ];
@@ -136,15 +135,16 @@ const Container = forwardRef<ContainerScrollRef, ContainerProps>(
         {scrollable ? (
           <ScrollView
             ref={internalScrollRef}
-            style={style}
+            style={[styles.scrollView, style]}
             contentContainerStyle={mergedContentContainerStyle}
             refreshControl={
               syncWearableOnRefresh ? (
                 <RefreshControl
                   refreshing={isSyncing}
                   onRefresh={() => {
-                    sync().catch(() => {});
+                    void sync();
                   }}
+                  progressViewOffset={defaultPaddingTop}
                 />
               ) : undefined
             }
@@ -299,6 +299,9 @@ const styles = StyleSheet.create({
   footerDarkOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(11,16,33,0.95)',
+  },
+  scrollView: {
+    flex: 1,
   },
   centerContent: {
     alignItems: 'center',

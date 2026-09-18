@@ -1,46 +1,73 @@
-
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
+import { MetricDataStatus } from '@/components/metrics/MetricDataStatus';
+import { ThemedText } from '@/components/ThemedText';
+import { toDateKey } from '@/utils/dateUtils';
+import { WearablePermission } from '@/wearables/types';
+import { useWearable } from '@/wearables/wearableProvider';
 
-import { ThemedText } from '../ThemedText';
+import { getLatestMetricEntry } from './metricDateUtils';
 
 interface VO2MaxMetricProps {
-  trend?: number; // Percentage change
-  showDivider?: boolean;
-  onPress?: () => void;
-  isSelected?: boolean;
+  readonly trend?: number;
+  readonly showDivider?: boolean;
+  readonly onPress?: () => void;
+  readonly isSelected?: boolean;
 }
 
-export function VO2MaxMetric({ trend, showDivider = false, onPress, isSelected = false }: Readonly<VO2MaxMetricProps>) {
+export function VO2MaxMetric({ trend, showDivider = false, onPress, isSelected = false }: VO2MaxMetricProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { getMetricHistory } = useStorage();
-  const vo2maxEntry = getMetricHistory('vo2_max').at(-1);
-  const vo2max = vo2maxEntry?.value ?? null;
-  // Här kan du lägga till logik för status om det behövs, t.ex. baserat på vo2max-värdet
-  const status = undefined;
+  const { adapter } = useWearable();
+  const [hasPermission, setHasPermission] = React.useState(true);
+  const vo2maxData = getMetricHistory('vo2_max');
 
+  React.useEffect(() => {
+    adapter
+      .hasPermission(WearablePermission.vo2Max)
+      .then(setHasPermission)
+      .catch(() => setHasPermission(false));
+  }, [adapter]);
+
+  const latest = React.useMemo(() => getLatestMetricEntry(vo2maxData), [vo2maxData]);
+
+  const vo2max = latest?.value;
+
+  const isLatestToday = latest?.recordedAt !== undefined && toDateKey(new Date(latest.recordedAt)) === toDateKey(new Date());
   const content = (
     <View style={styles.contentContainer}>
-      <ThemedText type="label">{t('metrics:vo2_max.shortName', { defaultValue: t('metrics:vo2_max.name') })}</ThemedText>
-      <ThemedText type="title2">{vo2max ?? '—'}</ThemedText>
-      {trend !== undefined && (
-        <ThemedText type="explainer">
+      <ThemedText type="label">
+        {t('metrics:vo2_max.shortName', {
+          defaultValue: t('metrics:vo2_max.name'),
+        })}
+      </ThemedText>
+      {vo2max !== undefined && (
+        <View style={styles.metricValueContainer}>
+          <ThemedText type="title2">{vo2max}</ThemedText>
+          <ThemedText type="caption"> ml/kg/min</ThemedText>
+        </View>
+      )}
+      <MetricDataStatus recordedAt={latest?.recordedAt} hasPermission={hasPermission} />
+      {vo2max !== undefined && isLatestToday && trend !== undefined && (
+        <ThemedText type="explainer" style={{ color: colors.accentStrong }}>
           {trend > 0 ? '+' : ''}
           {trend}% trend
         </ThemedText>
       )}
-      {status && <ThemedText type="explainer">{status}</ThemedText>}
     </View>
   );
 
   const containerStyle = [
     styles.metricContainer,
-    isSelected && { backgroundColor: colors.overlayLight, borderColor: colors.accentStrong },
+    isSelected && {
+      backgroundColor: colors.overlayLight,
+      borderColor: colors.accentStrong,
+    },
   ];
 
   if (onPress) {
@@ -50,7 +77,10 @@ export function VO2MaxMetric({ trend, showDivider = false, onPress, isSelected =
         accessibilityRole="button"
         style={({ pressed }) => [
           containerStyle,
-          pressed && !isSelected && { backgroundColor: colors.overlayLight },
+          pressed &&
+            !isSelected && {
+              backgroundColor: colors.overlayLight,
+            },
         ]}
       >
         {content}
@@ -76,6 +106,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   contentContainer: {
+    flex: 1,
     paddingHorizontal: 8,
     paddingVertical: 6,
   },
@@ -85,5 +116,9 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 16,
     width: 1,
+  },
+  metricValueContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
   },
 });

@@ -33,7 +33,9 @@ export function StressScoreMetric({ hrvData, showDivider = false, onPress, isSel
     <>
       <ThemedText type="label">{t('stressScore.title')}</ThemedText>
       <ThemedText type="title2">{Math.round(stressScore)}</ThemedText>
-      <ThemedText type="caption" style={{ color: colors.accentDefault }}>{stressLevel}</ThemedText>
+      <ThemedText type="caption" style={{ color: colors.accentDefault }}>
+        {stressLevel}
+      </ThemedText>
     </>
   );
 
@@ -53,21 +55,12 @@ export function StressScoreMetric({ hrvData, showDivider = false, onPress, isSel
       <Pressable
         onPress={onPress}
         accessibilityRole="button"
-        style={({ pressed }) => [
-          containerStyle,
-          pressed && !isSelected && { backgroundColor: colors.overlayLight },
-        ]}
+        style={({ pressed }) => [containerStyle, pressed && !isSelected && { backgroundColor: colors.overlayLight }]}
       >
         {content}
       </Pressable>
     );
   }
 
-  return (
-    <View
-      style={containerStyle}
-    >
-      {content}
-    </View>
-  );
+  return <View style={containerStyle}>{content}</View>;
 }

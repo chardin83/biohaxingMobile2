@@ -11,11 +11,11 @@ import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { buildTrendData } from '@/utils/metrics';
 
-import { BodyBatteryMetric } from './BodyBatteryMetric';
 import { DeepSleepMetric } from './DeepSleepMetric';
 import { HRVMetric } from './HRVMetric';
 import { MetricTrendChart, type MetricTrendPoint } from './MetricTrendChart';
-import { RecoveryStatusMetric } from './RecoveryStatusMetric';
+import { BodyBatteryMetric } from './old/BodyBatteryMetric';
+import { RecoveryStatusMetric } from './old/RecoveryStatusMetric';
 import { RestingHRMetric } from './RestingHRMetric';
 import { SleepMetric } from './SleepMetric';
 
@@ -44,15 +44,12 @@ export function ImmuneStatusChart() {
   }, []);
 
   const sleepDurationTrendData = React.useMemo<MetricTrendPoint[]>(() => {
-    return buildTrendData(
-      getMetricHistory('sleep_duration'),
-      (value, unit) => {
-        if (unit === 'hours') {
-          return Math.round(value * 60);
-        }
-        return Math.round(value);
+    return buildTrendData(getMetricHistory('sleep_duration'), (value, unit) => {
+      if (unit === 'hours') {
+        return Math.round(value * 60);
       }
-    );
+      return Math.round(value);
+    });
   }, [getMetricHistory]);
 
   const deepSleepTrendData = React.useMemo<MetricTrendPoint[]>(() => {
@@ -134,33 +131,14 @@ export function ImmuneStatusChart() {
     <>
       <Card title={t('immuneOverview.immuneStatus.title')}>
         <View style={globalStyles.row}>
-          <SleepMetric
-            showDivider={true}
-            onPress={() => toggleMetric('sleep_duration')}
-            isSelected={selectedMetric === 'sleep_duration'}
-          />
-          <DeepSleepMetric
-            showDivider={true}
-            onPress={() => toggleMetric('deep_sleep')}
-            isSelected={selectedMetric === 'deep_sleep'}
-          />
-          <BodyBatteryMetric
-            onPress={() => toggleMetric('body_battery')}
-            isSelected={selectedMetric === 'body_battery'}
-          />
+          <SleepMetric showDivider={true} onPress={() => toggleMetric('sleep_duration')} isSelected={selectedMetric === 'sleep_duration'} />
+          <DeepSleepMetric showDivider={true} onPress={() => toggleMetric('deep_sleep')} isSelected={selectedMetric === 'deep_sleep'} />
+          <BodyBatteryMetric onPress={() => toggleMetric('body_battery')} isSelected={selectedMetric === 'body_battery'} />
         </View>
 
         <View style={[globalStyles.row, globalStyles.marginTop8]}>
-          <RestingHRMetric
-            showDivider={true}
-            onPress={() => toggleMetric('resting_hr')}
-            isSelected={selectedMetric === 'resting_hr'}
-          />
-          <HRVMetric
-            showDivider={true}
-            onPress={() => toggleMetric('hrv')}
-            isSelected={selectedMetric === 'hrv'}
-          />
+          <RestingHRMetric showDivider={true} onPress={() => toggleMetric('resting_hr')} isSelected={selectedMetric === 'resting_hr'} />
+          <HRVMetric showDivider={true} onPress={() => toggleMetric('hrv')} isSelected={selectedMetric === 'hrv'} />
           <RecoveryStatusMetric />
         </View>
 
@@ -175,19 +153,15 @@ export function ImmuneStatusChart() {
           />
         )}
 
-        <ThemedText type="explainer" style={[globalStyles.explainer, { borderColor: colors.borderLight }] }>
+        <ThemedText type="explainer" style={[globalStyles.explainer, { borderColor: colors.borderLight }]}>
           {selectedMetric
             ? t(`immuneTrendsChart.explainers.${selectedMetric}`, {
-              defaultValue: t('immuneTrendsChart.explainer'),
-            })
+                defaultValue: t('immuneTrendsChart.explainer'),
+              })
             : t('immuneTrendsChart.explainer')}
         </ThemedText>
       </Card>
-      <MetricValuesBottomSheet
-        bottomSheetRef={metricValuesBottomSheetRef}
-        metricId={selectedMetric}
-        metricName={selectedConfig?.metricName}
-      />
+      <MetricValuesBottomSheet bottomSheetRef={metricValuesBottomSheetRef} metricId={selectedMetric} metricName={selectedConfig?.metricName} />
     </>
   );
 }

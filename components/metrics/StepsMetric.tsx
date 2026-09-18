@@ -5,29 +5,38 @@ import { View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
+import { MetricDataStatus } from '@/components/metrics/MetricDataStatus';
 import { ThemedText } from '@/components/ThemedText';
+import { WearablePermission } from '@/wearables/types';
+import { useWearable } from '@/wearables/wearableProvider';
 
 import { MetricContainer } from './MetricContainer';
+import { getLatestMetricEntry } from './metricDateUtils';
 
 interface StepsMetricProps {
-  showDivider?: boolean;
-  onPress?: () => void;
-  isSelected?: boolean;
+  readonly showDivider?: boolean;
+  readonly onPress?: () => void;
+  readonly isSelected?: boolean;
 }
 
-export function StepsMetric({ showDivider = false, onPress, isSelected }: Readonly<StepsMetricProps>) {
+export function StepsMetric({ showDivider = false, onPress, isSelected = false }: StepsMetricProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { getMetricHistory } = useStorage();
+  const { adapter } = useWearable();
+  const [hasPermission, setHasPermission] = React.useState(true);
+  const stepsData = getMetricHistory('steps');
 
-  const stepsFromStorage = React.useMemo(() => {
-    const latestEntry = getMetricHistory('steps')
-      .sort((left, right) => left.recordedAt.localeCompare(right.recordedAt))
-      .at(-1);
-    return latestEntry?.value ?? null;
-  }, [getMetricHistory]);
+  React.useEffect(() => {
+    adapter
+      .hasPermission(WearablePermission.steps)
+      .then(setHasPermission)
+      .catch(() => setHasPermission(false));
+  }, [adapter]);
 
-  const steps = stepsFromStorage;
+  const latest = React.useMemo(() => getLatestMetricEntry(stepsData), [stepsData]);
+
+  const steps = latest?.value;
 
   return (
     <MetricContainer
@@ -36,12 +45,13 @@ export function StepsMetric({ showDivider = false, onPress, isSelected }: Readon
       onPress={onPress}
       borderColor={isSelected ? colors.chart?.mindSteps || colors.primary : 'transparent'}
     >
-      <ThemedText type="label">{t("metrics:todaysSteps.name")}</ThemedText>
-       <View style={globalStyles.metricValueContainer}>
-          <ThemedText type="title2">{typeof steps === 'number' ? Math.round(steps).toLocaleString() : '—'}</ThemedText>
-       </View>
+      <ThemedText type="label">{t('metrics:todaysSteps.name')}</ThemedText>
+      {steps !== undefined && (
+        <View style={globalStyles.metricValueContainer}>
+          <ThemedText type="title2">{Math.round(steps).toLocaleString()}</ThemedText>
+        </View>
+      )}
+      <MetricDataStatus recordedAt={latest?.recordedAt} hasPermission={hasPermission} />
     </MetricContainer>
   );
 }
-
-// No styles needed

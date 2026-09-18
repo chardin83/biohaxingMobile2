@@ -35,6 +35,12 @@ export type RestingHeartRateSummary = {
   bpm: number;
 };
 
+export type VO2MaxSummary = {
+  source: SourceId;
+  date: string;
+  value: number;
+};
+
 export type DailyActivity = {
   source: SourceId;
   date: string; // YYYY-MM-DD
@@ -77,6 +83,7 @@ export enum WearablePermission {
   hrv = 'hrv',
   bloodPressure = 'bloodPressure',
   workout = 'workout',
+  vo2Max = 'vo2Max',
 }
 
 export interface WearableAdapter {
@@ -94,6 +101,7 @@ export interface WearableAdapter {
   getHRV(range: TimeRange): Promise<HRVSummary[]>;
   getRestingHeartRate(range: TimeRange): Promise<RestingHeartRateSummary[]>;
   getDailyActivity(range: TimeRange): Promise<DailyActivity[]>;
+  getVO2Max(range: TimeRange): Promise<VO2MaxSummary[]>;
   getEnergySignal(range: TimeRange): Promise<EnergySignal[]>;
   getBloodPressure(range: TimeRange): Promise<BloodPressureReading[]>;
 }
