@@ -16,9 +16,9 @@ interface StressScoreMetricProps {
 }
 
 function getStressLevel(score: number, t: (key: string) => string): string {
-  if (score < 30) return t('common.low');
-  if (score < 70) return t('common.moderate');
-  return t('common.high');
+  if (score < 30) return t('metricStatus.low');
+  if (score < 70) return t('metricStatus.moderate');
+  return t('metricStatus.high');
 }
 
 export function StressScoreMetric({ hrvData, showDivider = false, onPress, isSelected = false }: StressScoreMetricProps) {

@@ -14,18 +14,27 @@ import { SleepConsistencyMetric } from '@/components/metrics/SleepConsistencyMet
 import { SleepMetric } from '@/components/metrics/SleepMetric';
 import { MetricValuesBottomSheet } from '@/components/sections/metrics/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
+import { MetricId } from '@/locales/metrics';
 import { buildTrendData } from '@/utils/metrics';
 
 import { Card } from '../ui/Card';
+import { IntenseExerciseBeforeSleepMetric } from './IntenseExerciseBeforeSleep';
 
-export type SleepTrendMetricKey = 'sleep_duration' | 'deep_sleep' | 'rem_sleep' | 'sleep_bedtime';
+export const SLEEP_TREND_METRIC_KEYS = [
+  'sleep_duration',
+  'deep_sleep',
+  'rem_sleep',
+  'sleep_bedtime',
+  'intense_exercise_before_sleep',
+] as const satisfies readonly MetricId[];
+
+export type SleepTrendMetricKey = (typeof SLEEP_TREND_METRIC_KEYS)[number];
 
 const MINUTES_PER_DAY = 1440;
 const MIDDAY_MINUTES = 12 * 60;
 
 function normalizeBedtimeForChart(value: number) {
   const normalized = ((Math.round(value) % MINUTES_PER_DAY) + MINUTES_PER_DAY) % MINUTES_PER_DAY;
-  // Shift post-midnight bedtimes to the next day so the chart is visually continuous around bedtime.
   return normalized < MIDDAY_MINUTES ? normalized + MINUTES_PER_DAY : normalized;
 }
 
@@ -43,12 +52,41 @@ function formatSleepDuration(valueInMinutes: number) {
   return `${hours}h ${String(minutes).padStart(2, '0')}m`;
 }
 
+function getTrendData(metricId: SleepTrendMetricKey, history: ReturnType<ReturnType<typeof useStorage>['getMetricHistory']>): MetricTrendPoint[] {
+  switch (metricId) {
+    case 'sleep_duration':
+      return buildTrendData(history, (value, unit) => (unit === 'hours' ? Math.round(value * 60) : Math.round(value)));
+    case 'sleep_bedtime':
+      return buildTrendData(history, normalizeBedtimeForChart);
+    default:
+      return buildTrendData(history);
+  }
+}
+
 export function SleepTrendsChart() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { getMetricHistory } = useStorage();
   const [selectedTrendMetric, setSelectedTrendMetric] = React.useState<SleepTrendMetricKey | null>(null);
   const metricValuesBottomSheetRef = React.useRef<BottomSheet>(null);
+
+  const metricHistory = React.useMemo(
+    () =>
+      Object.fromEntries(SLEEP_TREND_METRIC_KEYS.map(metricId => [metricId, getMetricHistory(metricId)])) as Record<
+        SleepTrendMetricKey,
+        ReturnType<typeof getMetricHistory>
+      >,
+    [getMetricHistory]
+  );
+
+  const trendData = React.useMemo(
+    () =>
+      Object.fromEntries(SLEEP_TREND_METRIC_KEYS.map(metricId => [metricId, getTrendData(metricId, metricHistory[metricId])])) as Record<
+        SleepTrendMetricKey,
+        MetricTrendPoint[]
+      >,
+    [metricHistory]
+  );
 
   const toggleMetric = React.useCallback((metric: SleepTrendMetricKey) => {
     setSelectedTrendMetric(current => (current === metric ? null : metric));
@@ -57,35 +95,6 @@ export function SleepTrendsChart() {
   const openMetricValuesTable = React.useCallback(() => {
     metricValuesBottomSheetRef.current?.snapToIndex(1);
   }, []);
-
-  const sleepDurationTrendData = React.useMemo<MetricTrendPoint[]>(() => {
-    return buildTrendData(
-      getMetricHistory('sleep_duration'),
-      (value, unit) => {
-        if (unit === 'hours') {
-          return Math.round(value * 60);
-        }
-        return Math.round(value);
-      }
-    );
-  }, [getMetricHistory]);
-
-  const deepSleepTrendData = React.useMemo<MetricTrendPoint[]>(() => {
-    return buildTrendData(getMetricHistory('deep_sleep'));
-  }, [getMetricHistory]);
-
-  const remSleepTrendData = React.useMemo<MetricTrendPoint[]>(() => {
-    return buildTrendData(getMetricHistory('rem_sleep'));
-  }, [getMetricHistory]);
-
-  const bedtimeTrendData = React.useMemo<MetricTrendPoint[]>(() => {
-    return buildTrendData(
-      getMetricHistory('sleep_bedtime'),
-      (value) => {
-        return normalizeBedtimeForChart(value);
-      }
-    );
-  }, [getMetricHistory]);
 
   const selectedTrendConfig = React.useMemo(() => {
     if (!selectedTrendMetric) {
@@ -97,14 +106,14 @@ export function SleepTrendsChart() {
         return {
           metricName: t('metrics:deep_sleep.name'),
           unit: 'min',
-          data: deepSleepTrendData,
+          data: trendData.deep_sleep,
           accentColor: colors.chart.deepSleep,
         };
       case 'rem_sleep':
         return {
           metricName: t('metrics:rem_sleep.name'),
           unit: 'min',
-          data: remSleepTrendData,
+          data: trendData.rem_sleep,
           accentColor: colors.chart.remSleep,
         };
       case 'sleep_bedtime':
@@ -112,8 +121,15 @@ export function SleepTrendsChart() {
           metricName: t('metrics:sleep_bedtime.name'),
           unit: undefined,
           valueFormatter: formatBedtimeChartValue,
-          data: bedtimeTrendData,
+          data: trendData.sleep_bedtime,
           accentColor: colors.chart.sleepBedtime,
+        };
+      case 'intense_exercise_before_sleep':
+        return {
+          metricName: t('metrics:intense_exercise_before_sleep.name'),
+          unit: 'min',
+          data: trendData.intense_exercise_before_sleep,
+          accentColor: colors.chart.intenseExerciseBeforeSleep,
         };
       case 'sleep_duration':
       default:
@@ -121,38 +137,28 @@ export function SleepTrendsChart() {
           metricName: t('metrics:sleep_duration.name'),
           unit: undefined,
           valueFormatter: formatSleepDuration,
-          data: sleepDurationTrendData,
+          data: trendData.sleep_duration,
           accentColor: colors.chart.sleepDuration,
         };
     }
-  }, [bedtimeTrendData, colors.chart.deepSleep, colors.chart.remSleep, colors.chart.sleepBedtime, colors.chart.sleepDuration, deepSleepTrendData, remSleepTrendData, selectedTrendMetric, sleepDurationTrendData, t]);
+  }, [colors.chart, selectedTrendMetric, t, trendData]);
 
   return (
-     <Card title={t('sleepTrendChart.title')}>
+    <Card title={t('sleepTrendChart.title')}>
       <View style={styles.trendMetricRow}>
-        <SleepMetric
-          showDivider={true}
-          onPress={() => toggleMetric('sleep_duration')}
-          isSelected={selectedTrendMetric === 'sleep_duration'}
-        />
-        <DeepSleepMetric
-          showDivider={true}
-          onPress={() => toggleMetric('deep_sleep')}
-          isSelected={selectedTrendMetric === 'deep_sleep'}
-        />
-        <RemSleepMetric
-          onPress={() => toggleMetric('rem_sleep')}
-          isSelected={selectedTrendMetric === 'rem_sleep'}
-        />
+        <SleepMetric showDivider onPress={() => toggleMetric('sleep_duration')} isSelected={selectedTrendMetric === 'sleep_duration'} />
+        <DeepSleepMetric showDivider onPress={() => toggleMetric('deep_sleep')} isSelected={selectedTrendMetric === 'deep_sleep'} />
+        <RemSleepMetric onPress={() => toggleMetric('rem_sleep')} isSelected={selectedTrendMetric === 'rem_sleep'} />
       </View>
       <View style={globalStyles.row}>
-        <SleepConsistencyLabel showDivider={true} />
+        <SleepConsistencyLabel showDivider />
         <View style={globalStyles.col}>
-          <SleepConsistencyMetric
-            onPress={() => toggleMetric('sleep_bedtime')}
-            isSelected={selectedTrendMetric === 'sleep_bedtime'}
-          />
+          <SleepConsistencyMetric onPress={() => toggleMetric('sleep_bedtime')} isSelected={selectedTrendMetric === 'sleep_bedtime'} showDivider />
         </View>
+        <IntenseExerciseBeforeSleepMetric
+          onPress={() => toggleMetric('intense_exercise_before_sleep')}
+          isSelected={selectedTrendMetric === 'intense_exercise_before_sleep'}
+        />
       </View>
       {selectedTrendConfig && (
         <MetricTrendChart
@@ -164,18 +170,14 @@ export function SleepTrendsChart() {
           onViewRegisteredValues={openMetricValuesTable}
         />
       )}
-      <ThemedText type="explainer" style={[globalStyles.explainer, { borderColor: colors.borderLight }] }>
+      <ThemedText type="explainer" style={[globalStyles.explainer, { borderColor: colors.borderLight }]}>
         {selectedTrendMetric
           ? t(`sleepTrendChart.explainers.${selectedTrendMetric}`, {
-            defaultValue: t('sleepTrendChart.explainer'),
-          })
+              defaultValue: t('sleepTrendChart.explainer'),
+            })
           : t('sleepTrendChart.explainer')}
       </ThemedText>
-      <MetricValuesBottomSheet
-        bottomSheetRef={metricValuesBottomSheetRef}
-        metricId={selectedTrendMetric}
-        metricName={selectedTrendConfig?.metricName}
-      />
+      <MetricValuesBottomSheet bottomSheetRef={metricValuesBottomSheetRef} metricId={selectedTrendMetric} metricName={selectedTrendConfig?.metricName} />
     </Card>
   );
 }

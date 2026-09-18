@@ -7,10 +7,9 @@ import { useStorage } from '@/app/context/StorageContext';
 import { MetricDataStatus } from '@/components/metrics/MetricDataStatus';
 import { ThemedText } from '@/components/ThemedText';
 import { toDateKey } from '@/utils/dateUtils';
+import { getLatestMetricEntry } from '@/utils/metricDateUtils';
 import { WearablePermission } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
-
-import { getLatestMetricEntry } from './metricDateUtils';
 
 interface HRVMetricProps {
   readonly showDivider?: boolean;
@@ -41,11 +40,7 @@ export function HRVMetric({ showDivider = false, onPress, isSelected = false }: 
 
   const content = (
     <View style={styles.contentContainer}>
-      <ThemedText type="label">
-        {t('metrics:hrv.shortName', {
-          defaultValue: t('metrics:hrv.name'),
-        })}
-      </ThemedText>
+      <ThemedText type="label">{t('metrics:hrv.shortName')}</ThemedText>
       {hrv !== undefined && (
         <View style={styles.metricValueContainer}>
           <ThemedText type="title2">{Math.round(hrv)}</ThemedText>

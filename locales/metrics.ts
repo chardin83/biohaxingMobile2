@@ -64,8 +64,8 @@ export const metrics = {
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'mmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
-      { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.0259 }, fromCanonical: { mul: 38.67 }, precision: 0 }
-    ]
+      { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.0259 }, fromCanonical: { mul: 38.67 }, precision: 0 },
+    ],
   },
 
   apob: {
@@ -78,8 +78,8 @@ export const metrics = {
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'g/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
-      { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.01 }, fromCanonical: { mul: 100 }, precision: 0 }
-    ]
+      { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.01 }, fromCanonical: { mul: 100 }, precision: 0 },
+    ],
   },
 
   triglycerides: {
@@ -92,8 +92,8 @@ export const metrics = {
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'mmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
-      { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.0113 }, fromCanonical: { mul: 88.57 }, precision: 0 }
-    ]
+      { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.0113 }, fromCanonical: { mul: 88.57 }, precision: 0 },
+    ],
   },
 
   hdl: {
@@ -106,28 +106,28 @@ export const metrics = {
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'mmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
-      { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.0259 }, fromCanonical: { mul: 38.67 }, precision: 0 }
-    ]
+      { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.0259 }, fromCanonical: { mul: 38.67 }, precision: 0 },
+    ],
   },
 
   blood_lactate: {
-  id: 'blood_lactate',
-  emoji: '🩸',
-  nameKey: 'blood_lactate.name',
-  descriptionKey: 'blood_lactate.description',
-  canonicalUnit: 'mmol/L',
-  source: 'home',
-  suggestedFrequency: 'perTest',
-  units: [
-    {
-      unit: 'mmol/L',
-      system: 'all',
-      toCanonical: { mul: 1 },
-      fromCanonical: { mul: 1 },
-      precision: 1,
-    },
-  ],
-},
+    id: 'blood_lactate',
+    emoji: '🩸',
+    nameKey: 'blood_lactate.name',
+    descriptionKey: 'blood_lactate.description',
+    canonicalUnit: 'mmol/L',
+    source: 'home',
+    suggestedFrequency: 'perTest',
+    units: [
+      {
+        unit: 'mmol/L',
+        system: 'all',
+        toCanonical: { mul: 1 },
+        fromCanonical: { mul: 1 },
+        precision: 1,
+      },
+    ],
+  },
 
   // ---------------- BLOOD PRESSURE ----------------
 
@@ -139,9 +139,7 @@ export const metrics = {
     canonicalUnit: 'mmHg',
     source: 'home',
     suggestedFrequency: 'weekly',
-    units: [
-      { unit: 'mmHg', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'mmHg', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
   diastolic_bp: {
@@ -152,9 +150,7 @@ export const metrics = {
     canonicalUnit: 'mmHg',
     source: 'home',
     suggestedFrequency: 'weekly',
-    units: [
-      { unit: 'mmHg', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'mmHg', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
   // ---------------- GLUCOSE ----------------
@@ -169,8 +165,8 @@ export const metrics = {
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'mmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 },
-      { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.0555 }, fromCanonical: { mul: 18.02 }, precision: 0 }
-    ]
+      { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.0555 }, fromCanonical: { mul: 18.02 }, precision: 0 },
+    ],
   },
 
   hba1c: {
@@ -183,8 +179,8 @@ export const metrics = {
     suggestedFrequency: 'perTest',
     units: [
       { unit: 'mmol/mol', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 0 },
-      { unit: '%', system: 'US', toCanonical: { mul: 10.93, add: -23.5 }, fromCanonical: { mul: 0.0915, add: 2.15 }, precision: 1 }
-    ]
+      { unit: '%', system: 'US', toCanonical: { mul: 10.93, add: -23.5 }, fromCanonical: { mul: 0.0915, add: 2.15 }, precision: 1 },
+    ],
   },
 
   fasting_insulin: {
@@ -197,8 +193,8 @@ export const metrics = {
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'mIU/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 },
-      { unit: 'µIU/mL', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 }
-    ]
+      { unit: 'µIU/mL', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 },
+    ],
   },
 
   // ---------------- VITAMINS ----------------
@@ -213,8 +209,8 @@ export const metrics = {
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'nmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 0 },
-      { unit: 'ng/mL', system: 'US', toCanonical: { mul: 2.5 }, fromCanonical: { mul: 0.4 }, precision: 1 }
-    ]
+      { unit: 'ng/mL', system: 'US', toCanonical: { mul: 2.5 }, fromCanonical: { mul: 0.4 }, precision: 1 },
+    ],
   },
 
   calcium: {
@@ -227,8 +223,8 @@ export const metrics = {
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'mmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
-      { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.2495 }, fromCanonical: { mul: 4.01 }, precision: 1 }
-    ]
+      { unit: 'mg/dL', system: 'US', toCanonical: { mul: 0.2495 }, fromCanonical: { mul: 4.01 }, precision: 1 },
+    ],
   },
 
   pth: {
@@ -241,8 +237,8 @@ export const metrics = {
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'pmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 },
-      { unit: 'pg/mL', system: 'US', toCanonical: { mul: 0.106 }, fromCanonical: { mul: 9.43 }, precision: 0 }
-    ]
+      { unit: 'pg/mL', system: 'US', toCanonical: { mul: 0.106 }, fromCanonical: { mul: 9.43 }, precision: 0 },
+    ],
   },
 
   // ---------------- THYROID ----------------
@@ -257,8 +253,8 @@ export const metrics = {
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'mIU/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
-      { unit: 'µIU/mL', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 }
-    ]
+      { unit: 'µIU/mL', system: 'US', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
+    ],
   },
 
   free_t4: {
@@ -271,8 +267,8 @@ export const metrics = {
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'pmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 },
-      { unit: 'ng/dL', system: 'US', toCanonical: { mul: 12.87 }, fromCanonical: { mul: 0.078 }, precision: 1 }
-    ]
+      { unit: 'ng/dL', system: 'US', toCanonical: { mul: 12.87 }, fromCanonical: { mul: 0.078 }, precision: 1 },
+    ],
   },
 
   // ---------------- RECOVERY ----------------
@@ -285,9 +281,7 @@ export const metrics = {
     canonicalUnit: 'bpm',
     source: 'wearable',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: 'bpm', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'bpm', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
   hrv: {
@@ -298,9 +292,18 @@ export const metrics = {
     canonicalUnit: 'ms',
     source: 'wearable',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: 'ms', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'ms', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
+  },
+
+  intense_exercise_before_sleep: {
+    id: 'intense_exercise_before_sleep',
+    emoji: '🏋️‍♂️',
+    nameKey: 'intense_exercise_before_sleep.name',
+    descriptionKey: 'intense_exercise_before_sleep.description',
+    canonicalUnit: 'min',
+    source: 'questionnaire',
+    suggestedFrequency: 'daily',
+    units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
   // ---------------- SLEEP ----------------
@@ -313,9 +316,7 @@ export const metrics = {
     canonicalUnit: 'min',
     source: 'wearable',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
   sleep_bedtime: {
@@ -326,9 +327,7 @@ export const metrics = {
     canonicalUnit: 'min_from_midnight',
     source: 'wearable',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: 'min_from_midnight', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'min_from_midnight', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
   deep_sleep: {
@@ -339,9 +338,7 @@ export const metrics = {
     canonicalUnit: 'min',
     source: 'wearable',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
   rem_sleep: {
@@ -352,9 +349,7 @@ export const metrics = {
     canonicalUnit: 'min',
     source: 'wearable',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
   sleep_wake: {
@@ -365,11 +360,8 @@ export const metrics = {
     canonicalUnit: 'min_from_midnight',
     source: 'wearable',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: 'min_from_midnight', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'min_from_midnight', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
-
 
   sleep_quality: {
     id: 'sleep_quality',
@@ -379,9 +371,7 @@ export const metrics = {
     canonicalUnit: 'score_0_10',
     source: 'questionnaire',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
   sleep_latency: {
@@ -392,9 +382,7 @@ export const metrics = {
     canonicalUnit: 'min',
     source: 'questionnaire',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
   stress_score: {
@@ -405,9 +393,7 @@ export const metrics = {
     canonicalUnit: 'score_0_10',
     source: 'questionnaire',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
   // ---------------- BODY ----------------
@@ -422,8 +408,8 @@ export const metrics = {
     suggestedFrequency: 'weekly',
     units: [
       { unit: 'kg', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 },
-      { unit: 'lb', system: 'US', toCanonical: { mul: 0.4536 }, fromCanonical: { mul: 2.2046 }, precision: 1 }
-    ]
+      { unit: 'lb', system: 'US', toCanonical: { mul: 0.4536 }, fromCanonical: { mul: 2.2046 }, precision: 1 },
+    ],
   },
 
   waist: {
@@ -436,8 +422,8 @@ export const metrics = {
     suggestedFrequency: 'weekly',
     units: [
       { unit: 'cm', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 0 },
-      { unit: 'in', system: 'US', toCanonical: { mul: 2.54 }, fromCanonical: { mul: 0.3937 }, precision: 0 }
-    ]
+      { unit: 'in', system: 'US', toCanonical: { mul: 2.54 }, fromCanonical: { mul: 0.3937 }, precision: 0 },
+    ],
   },
 
   // ---------------- GUT ----------------
@@ -450,9 +436,7 @@ export const metrics = {
     canonicalUnit: 'bss',
     source: 'questionnaire',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: 'bss', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'bss', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
   bloating: {
@@ -463,9 +447,7 @@ export const metrics = {
     canonicalUnit: 'score_0_10',
     source: 'questionnaire',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
   active_minutes: {
     id: 'active_minutes',
@@ -475,9 +457,7 @@ export const metrics = {
     canonicalUnit: 'min',
     source: 'wearable',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
   steps: {
     id: 'steps',
@@ -487,9 +467,7 @@ export const metrics = {
     canonicalUnit: 'count',
     source: 'wearable',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: 'count', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'count', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
   intensity_minutes: {
     id: 'intensity_minutes',
@@ -499,9 +477,7 @@ export const metrics = {
     canonicalUnit: 'min',
     source: 'wearable',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
   // ---------------- SUBJECTIVE ----------------
@@ -514,9 +490,7 @@ export const metrics = {
     canonicalUnit: 'score_0_10',
     source: 'questionnaire',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
   body_battery: {
@@ -527,9 +501,7 @@ export const metrics = {
     canonicalUnit: '%',
     source: 'wearable',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: '%', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: '%', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
   stress: {
@@ -540,9 +512,7 @@ export const metrics = {
     canonicalUnit: 'score_0_10',
     source: 'questionnaire',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
   focus: {
@@ -553,9 +523,7 @@ export const metrics = {
     canonicalUnit: 'score_0_10',
     source: 'questionnaire',
     suggestedFrequency: 'daily',
-    units: [
-      { unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }
-    ]
+    units: [{ unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
   vo2_max: {
     id: 'vo2_max',
@@ -565,14 +533,11 @@ export const metrics = {
     canonicalUnit: 'ml/kg/min',
     source: 'wearable',
     suggestedFrequency: 'weekly',
-    units: [
-      { unit: 'ml/kg/min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 }
-    ]
+    units: [{ unit: 'ml/kg/min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 }],
   },
 } satisfies Record<string, MetricDefinition>;
 
 export type MetricId = keyof typeof metrics;
-
 
 export type TipMetricLink = {
   metricId: MetricId;
@@ -581,7 +546,7 @@ export type TipMetricLink = {
 
 export const tipMetricLinks: Record<string, TipMetricLink[]> = {
   // --- Intermittent fasting ---
-  intermittent_fasting_12h: [
+  'intermittent_fasting_12h': [
     { metricId: 'fasting_glucose', kind: 'primary' },
     { metricId: 'hba1c', kind: 'primary' },
     { metricId: 'fasting_insulin', kind: 'secondary' },
@@ -589,7 +554,7 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
     { metricId: 'waist', kind: 'secondary' },
     { metricId: 'energy', kind: 'subjective' },
   ],
-  intermittent_fasting_16_8: [
+  'intermittent_fasting_16_8': [
     { metricId: 'fasting_glucose', kind: 'primary' },
     { metricId: 'hba1c', kind: 'primary' },
     { metricId: 'fasting_insulin', kind: 'secondary' },
@@ -599,13 +564,13 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
   ],
 
   // --- Multivitamin ---
-  multivitamin_general: [
+  'multivitamin_general': [
     { metricId: 'energy', kind: 'subjective' },
     // lägg ev labb du vill spåra här (B12, folat, ferritin) när/om du skapar metric-defs för dem
   ],
 
   // --- Vitamin D ---
-  vitamin_d: [
+  'vitamin_d': [
     { metricId: 'vitd_25oh', kind: 'primary' },
     { metricId: 'calcium', kind: 'safety' },
     { metricId: 'pth', kind: 'secondary' },
@@ -613,7 +578,7 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
   ],
 
   // --- Magnesium ---
-  magnesium: [
+  'magnesium': [
     { metricId: 'sleep_quality', kind: 'primary' },
     { metricId: 'sleep_latency', kind: 'secondary' },
     { metricId: 'hrv', kind: 'secondary' },
@@ -622,24 +587,22 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
   ],
 
   // --- Zinc ---
-  zinc_comprehensive_support: [
-    { metricId: 'energy', kind: 'subjective' },
-  ],
+  'zinc_comprehensive_support': [{ metricId: 'energy', kind: 'subjective' }],
 
   // --- Selenium / Iodine (thyroid proxies) ---
-  selenium_thyroid_antioxidant: [
+  'selenium_thyroid_antioxidant': [
     { metricId: 'tsh', kind: 'primary' },
     { metricId: 'free_t4', kind: 'primary' },
     { metricId: 'energy', kind: 'subjective' },
   ],
-  iodine_thyroid_balance: [
+  'iodine_thyroid_balance': [
     { metricId: 'tsh', kind: 'primary' },
     { metricId: 'free_t4', kind: 'primary' },
     { metricId: 'energy', kind: 'subjective' },
   ],
 
   // --- Breathwork / sleep / circadian ---
-  box_breathing: [
+  'box_breathing': [
     { metricId: 'hrv', kind: 'primary' },
     { metricId: 'resting_hr', kind: 'secondary' },
     { metricId: 'stress', kind: 'subjective' },
@@ -649,24 +612,24 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
     { metricId: 'sleep_latency', kind: 'secondary' },
     { metricId: 'stress', kind: 'subjective' },
   ],
-  sleep_duration_consistency: [
+  'sleep_duration_consistency': [
     { metricId: 'sleep_duration', kind: 'primary' },
     { metricId: 'sleep_quality', kind: 'primary' },
     { metricId: 'hrv', kind: 'secondary' },
   ],
-  sunlight_circadian: [
+  'sunlight_circadian': [
     { metricId: 'sleep_latency', kind: 'primary' },
     { metricId: 'sleep_quality', kind: 'secondary' },
     { metricId: 'energy', kind: 'subjective' },
   ],
-  sleep_optimization_recovery: [
+  'sleep_optimization_recovery': [
     { metricId: 'sleep_quality', kind: 'primary' },
     { metricId: 'hrv', kind: 'secondary' },
     { metricId: 'energy', kind: 'subjective' },
   ],
 
   // --- Hydration ---
-  maintain_hydration: [
+  'maintain_hydration': [
     { metricId: 'systolic_bp', kind: 'secondary' },
     { metricId: 'diastolic_bp', kind: 'secondary' },
     { metricId: 'resting_hr', kind: 'secondary' },
@@ -674,53 +637,53 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
   ],
 
   // --- Gut tips ---
-  probiotics_microbiota: [
+  'probiotics_microbiota': [
     { metricId: 'bss', kind: 'primary' },
     { metricId: 'bloating', kind: 'secondary' },
   ],
-  fiber_microbiome: [
+  'fiber_microbiome': [
     { metricId: 'bss', kind: 'primary' },
     { metricId: 'bloating', kind: 'secondary' },
   ],
-  eat_pomegranate: [
+  'eat_pomegranate': [
     { metricId: 'bloating', kind: 'secondary' },
     { metricId: 'energy', kind: 'subjective' },
   ],
-  eat_colorful_veggies: [
+  'eat_colorful_veggies': [
     { metricId: 'bloating', kind: 'secondary' },
     { metricId: 'energy', kind: 'subjective' },
   ],
 
   // --- HRV monitoring ---
-  hrv_recovery_monitoring: [
+  'hrv_recovery_monitoring': [
     { metricId: 'hrv', kind: 'primary' },
     { metricId: 'resting_hr', kind: 'primary' },
     { metricId: 'sleep_quality', kind: 'secondary' },
   ],
 
   // --- Caffeine / nitrate (BP + performance proxies) ---
-  coffee_polyphenols_longevity: [
-  { metricId: 'fasting_glucose', kind: 'secondary' },
-  { metricId: 'hba1c', kind: 'secondary' },
-  { metricId: 'systolic_bp', kind: 'safety' },
-  { metricId: 'diastolic_bp', kind: 'safety' },
-  { metricId: 'sleep_quality', kind: 'safety' },
-  { metricId: 'sleep_latency', kind: 'safety' },
-],
-  nitrate_no_efficiency: [
-  { metricId: 'systolic_bp', kind: 'primary' },
-  { metricId: 'diastolic_bp', kind: 'primary' },
-  { metricId: 'resting_hr', kind: 'secondary' },
-  { metricId: 'energy', kind: 'subjective' },
-],
+  'coffee_polyphenols_longevity': [
+    { metricId: 'fasting_glucose', kind: 'secondary' },
+    { metricId: 'hba1c', kind: 'secondary' },
+    { metricId: 'systolic_bp', kind: 'safety' },
+    { metricId: 'diastolic_bp', kind: 'safety' },
+    { metricId: 'sleep_quality', kind: 'safety' },
+    { metricId: 'sleep_latency', kind: 'safety' },
+  ],
+  'nitrate_no_efficiency': [
+    { metricId: 'systolic_bp', kind: 'primary' },
+    { metricId: 'diastolic_bp', kind: 'primary' },
+    { metricId: 'resting_hr', kind: 'secondary' },
+    { metricId: 'energy', kind: 'subjective' },
+  ],
 
   // --- Training Tips ---
-  neuromuscular_training: [
+  'neuromuscular_training': [
     { metricId: 'hrv', kind: 'secondary' },
     { metricId: 'resting_hr', kind: 'secondary' },
     { metricId: 'energy', kind: 'subjective' },
   ],
-  vigorous_exercise_lactate: [
+  'vigorous_exercise_lactate': [
     { metricId: 'blood_lactate', kind: 'primary' },
     { metricId: 'vo2_max', kind: 'primary' },
     { metricId: 'resting_hr', kind: 'secondary' },
@@ -728,7 +691,7 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
     { metricId: 'diastolic_bp', kind: 'secondary' },
     { metricId: 'hrv', kind: 'safety' },
   ],
-  fasted_aerobic_training: [
+  'fasted_aerobic_training': [
     { metricId: 'fasting_glucose', kind: 'secondary' },
     { metricId: 'vo2_max', kind: 'primary' },
     { metricId: 'resting_hr', kind: 'secondary' },
@@ -736,14 +699,14 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
     { metricId: 'weight', kind: 'secondary' },
     { metricId: 'energy', kind: 'subjective' },
   ],
-  fish_omega3_weekly: [
+  'fish_omega3_weekly': [
     { metricId: 'triglycerides', kind: 'primary' },
     { metricId: 'hdl', kind: 'secondary' },
     { metricId: 'ldl', kind: 'safety' },
     { metricId: 'systolic_bp', kind: 'secondary' },
     { metricId: 'diastolic_bp', kind: 'secondary' },
   ],
-  polyphenol_microbiome: [
+  'polyphenol_microbiome': [
     { metricId: 'bss', kind: 'primary' },
     { metricId: 'bloating', kind: 'primary' },
     { metricId: 'energy', kind: 'subjective' },

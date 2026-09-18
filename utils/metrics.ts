@@ -11,16 +11,15 @@ export function buildTrendData(
 ): MetricTrendPoint[] {
   const byDate = new Map<string, MetricTrendPoint>();
 
-  entries
-    .sort((left, right) => left.recordedAt.localeCompare(right.recordedAt))
-    .forEach(entry => {
-      byDate.set(entry.recordedAt.slice(0, 10), {
-        date: entry.recordedAt.slice(0, 10),
-        value: transformValue ? transformValue(entry.value, entry.unit) : entry.value,
-      });
+  entries.forEach(entry => {
+    const date = entry.recordedAt.slice(0, 10);
+    byDate.set(date, {
+      date,
+      value: transformValue ? transformValue(entry.value, entry.unit) : entry.value,
     });
+  });
 
-  return Array.from(byDate.values()).sort((left, right) => left.date.localeCompare(right.date));
+  return Array.from(byDate.values());
 }
 
 export const getUnitLabel = (unit: string, t: (key: string, options?: Record<string, unknown>) => string) => {

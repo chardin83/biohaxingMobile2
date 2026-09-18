@@ -6,11 +6,11 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { useStorage } from '@/app/context/StorageContext';
 import { ThemedText } from '@/components/ThemedText';
 import { toDateKey } from '@/utils/dateUtils';
+import { getLatestMetricEntry } from '@/utils/metricDateUtils';
 import { WearablePermission } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
 import { MetricDataStatus } from './MetricDataStatus';
-import { getLatestMetricEntry } from './metricDateUtils';
 
 interface RestingHRMetricProps {
   showDivider?: boolean;

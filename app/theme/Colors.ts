@@ -46,8 +46,15 @@ export const Colors = {
     successColor: 'rgba(255,215,0,1)', // Gold - relevant/success
     infoColor: 'rgba(0,150,255,1)', // Blue - information
 
-    warningColor: 'rgba(230, 145, 45, 1)',
-    positiveColor: 'rgba(43, 138, 62, 1)',
+    metricStatus: {
+      low: 'rgba(0,150,255,1)',
+      moderate: 'rgba(255,200,0,1)',
+      good: 'rgba(0,200,100,1)',
+      optimal: 'rgba(43,138,62,1)',
+      elevated: 'rgba(230,145,45,1)',
+      high: 'rgba(255,100,100,1)',
+      neutral: 'rgba(17,24,28,0.85)',
+    },
 
     // Text variants
     textPrimary: 'rgba(17,24,28,0.95)', // Strong text
@@ -143,6 +150,7 @@ export const Colors = {
       steps: 'rgba(120,170,255,0.95)',
       intensityMinutes: 'rgba(255,120,100,0.95)',
       activeMinutes: 'rgba(0,191,174,0.95)',
+      intenseExerciseBeforeSleep: 'rgba(255,170,60,0.95)',
     },
 
     area: {
@@ -212,8 +220,15 @@ export const Colors = {
     successColor: 'rgba(255,215,0,1)', // Gold - relevant/success
     infoColor: 'rgba(120,200,255,1)', // Blue - information
 
-    warningColor: 'rgba(230, 145, 45, 1)',
-    positiveColor: 'rgba(43, 138, 62, 1)',
+    metricStatus: {
+      low: 'rgba(120,200,255,1)',
+      moderate: 'rgba(255,200,0,1)',
+      good: 'rgba(0,200,100,1)',
+      optimal: 'rgba(94,207,145,1)',
+      elevated: 'rgba(255,180,80,1)',
+      high: 'rgba(255,120,120,1)',
+      neutral: 'rgba(255,255,255,0.85)',
+    },
 
     // Text variants
     textPrimary: 'rgba(255,255,255,0.95)', // Strong text
@@ -307,6 +322,7 @@ export const Colors = {
       steps: 'rgba(120,170,255,0.95)',
       intensityMinutes: 'rgba(255,120,100,0.95)',
       activeMinutes: 'rgba(0,191,174,0.95)',
+      intenseExerciseBeforeSleep: 'rgba(255,170,60,0.95)',
     },
 
     area: {

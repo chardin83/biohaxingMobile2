@@ -180,6 +180,13 @@
         "name": "Sleep onset time",
         "description": "How long it takes you to fall asleep."
     },
+    "intense_exercise_before_sleep": {
+        "name": "Intense exercise before sleep",
+        "shortName": "Intense exercise",
+        "description": "Record if you performed intense exercise before going to bed.",
+        "beforeSleep": "Before sleep",
+        "afterSleep": "After sleep"
+    },
     "weight": {
         "name": "Body weight",
         "description": "Your body weight."
@@ -244,5 +251,15 @@
     "warnings": {
         "missing_permission": "Permission missing",
         "register_manually": "Register manually"
+    },
+  "metricStatus": {
+        "low": "Låg",
+        "moderate": "Måttlig",
+        "good": "Bra",
+        "optimal": "Optimal",
+        "elevated": "Förhöjd",
+        "high": "Hög",
+        "closeToBedtime": "Ganska nära",
+        "tooCloseToBedtime": "För nära sovdags"
     }
 }

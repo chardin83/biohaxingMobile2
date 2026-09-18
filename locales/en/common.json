@@ -119,7 +119,10 @@
       "subtitle": "Manage your personal data",      
       "birthday": "Birthday",
       "training": "Training",
-      "maxHeartRate": "Max heart rate"
+      "maxHeartRate": "Max heart rate",
+      "bedtime": "Bedtime",
+      "bedtimeDescription": "Your usual bedtime",
+      "recommendedBedtime": "Recommended bedtime"
     }
   },
   
@@ -962,7 +965,8 @@
       "sleep_duration": "Sleep duration shows your total nightly recovery. A stable level around 7 to 9 hours supports hormone balance, immune function, and mental sharpness.",
       "deep_sleep": "Deep sleep is the phase where the body prioritizes physical recovery, tissue repair, and immune support. The trend helps show whether recovery is actually improving over time.",
       "rem_sleep": "REM sleep supports memory consolidation, emotional processing, and learning. Tracking REM over time gives a better signal of stress, sleep quality, and mental recovery.",
-      "sleep_bedtime": "Bedtime consistency is one of the most powerful levers for sleep quality. The trend shows whether your sleep timing is becoming more stable — a key factor for circadian rhythm and overall recovery."
+      "sleep_bedtime": "Bedtime consistency is one of the most powerful levers for sleep quality. The trend shows whether your sleep timing is becoming more stable — a key factor for circadian rhythm and overall recovery.",
+      "intense_exercise_before_sleep": "Intense exercise before sleep can negatively impact sleep quality. The trend shows whether evening workouts affect your recovery over time."
     }
   },
   "todaysActivityCharts": {

@@ -6,11 +6,11 @@ import { StyleSheet, View } from 'react-native';
 import { useStorage } from '@/app/context/StorageContext';
 import { MetricDataStatus } from '@/components/metrics/MetricDataStatus';
 import { ThemedText } from '@/components/ThemedText';
+import { getLatestEntryForToday } from '@/utils/metricDateUtils';
 import { WearablePermission } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
 import { MetricContainer } from './MetricContainer';
-import { getLatestEntryForToday } from './metricDateUtils';
 
 interface TotalActivityMetricProps {
   readonly showDivider?: boolean;

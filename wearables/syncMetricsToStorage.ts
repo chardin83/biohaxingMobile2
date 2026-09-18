@@ -1,4 +1,6 @@
 import { MetricEntry } from '@/app/context/storage/metrics/metricTypes';
+import { getUserProfile } from '@/app/context/storage/userProfile/userProfileStore';
+import { ClockTime } from '@/types/ClockTime';
 
 import { BloodPressureReading, WearableAdapter } from './types';
 
@@ -72,13 +74,23 @@ export function shouldSyncWearableData(lastSyncAt?: string, intervalMs = WEARABL
   return Date.now() - lastSync >= intervalMs;
 }
 
+function getMinutesBeforeBedtime(lastIntenseExerciseAt: string, bedtime: ClockTime): number | null {
+  const intenseAt = new Date(lastIntenseExerciseAt);
+  if (Number.isNaN(intenseAt.getTime())) {
+    return null;
+  }
+  const [hours, minutes] = bedtime.split(':').map(Number);
+  const bedtimeAt = new Date(intenseAt.getFullYear(), intenseAt.getMonth(), intenseAt.getDate(), hours, minutes, 0, 0);
+  return Math.round((bedtimeAt.getTime() - intenseAt.getTime()) / 60000);
+}
+
 export async function syncWearableMetricsToStorage(adapter: WearableAdapter, upsertMetricEntries: UpsertMetricEntries, lookbackDays = 7) {
   const range = {
     start: new Date(Date.now() - lookbackDays * 24 * 60 * 60 * 1000).toISOString(),
     end: new Date().toISOString(),
   };
 
-  const [sleep, vo2Max, activity, energy, hrvs, restingHeartRates, bloodPressure] = await Promise.all([
+  const [sleep, vo2Max, activity, energy, hrvs, restingHeartRates, bloodPressure, userProfile] = await Promise.all([
     adapter.getSleep(range),
     adapter.getVO2Max(range),
     adapter.getDailyActivity(range),
@@ -101,7 +113,21 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
 
       return [];
     }),
+    getUserProfile(),
   ]);
+
+  console.log(
+    '[HealthConnectAdapter] intense exercise',
+    JSON.stringify(
+      activity.map(entry => ({
+        date: entry.date,
+        intensityMinutes: entry.intensityMinutes,
+        lastIntenseExerciseAt: entry.lastIntenseExerciseAt,
+      })),
+      null,
+      2
+    )
+  );
 
   const detectedVendor = (
     adapter as WearableAdapter & {
@@ -204,17 +230,33 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
     ),
 
     ...activity
-      .filter(entry => typeof entry.steps === 'number')
-      .map(
-        entry =>
-          ({
-            metricId: 'steps',
-            value: entry.steps as number,
-            unit: 'count',
-            recordedAt: toRecordedAt(entry.date),
-            notes: notesLabel,
-          }) satisfies MetricEntry
-      ),
+      .filter(entry => typeof entry.lastIntenseExerciseAt === 'string' && Boolean(userProfile.bedtime))
+      .map(entry => ({
+        entry,
+        minutes: getMinutesBeforeBedtime(entry.lastIntenseExerciseAt!, userProfile.bedtime!),
+      }))
+      .filter(
+        (
+          item
+        ): item is typeof item & {
+          minutes: number;
+        } => item.minutes !== null
+      )
+      .map(({ entry, minutes }) => {
+        console.log('[WearableSync] intense before bedtime', {
+          date: entry.date,
+          lastIntenseExerciseAt: entry.lastIntenseExerciseAt,
+          bedtime: userProfile.bedtime,
+          minutes,
+        });
+        return {
+          metricId: 'intense_exercise_before_sleep',
+          value: minutes,
+          unit: 'min',
+          recordedAt: toRecordedAt(entry.date),
+          notes: notesLabel,
+        } satisfies MetricEntry;
+      }),
 
     ...activity
       .filter(entry => typeof entry.activeMinutes === 'number')

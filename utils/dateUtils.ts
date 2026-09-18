@@ -33,20 +33,40 @@ export const formatDate = (isoDate?: string, language?: string): string => {
   }
 };
 
-export const formatDateRange = (
-  startIsoDate?: string,
-  endIsoDate?: string,
-  language?: string
-): string => {
+export const clockTimeToDate = (time: string): Date => {
+  const [hours, minutes] = time.split(':').map(Number);
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  return date;
+};
+
+export const dateToClockTime = (date: Date): string => {
+  return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+};
+
+export function formatClockTime(value: Date | string, locale?: string): string {
+  const date = typeof value === 'string' ? clockTimeToDate(value) : value;
+  const resolvedLocale = locale?.trim() || undefined;
+  try {
+    return new Intl.DateTimeFormat(resolvedLocale, {
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(date);
+  } catch {
+    return new Intl.DateTimeFormat(undefined, {
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(date);
+  }
+}
+
+export const formatDateRange = (startIsoDate?: string, endIsoDate?: string, language?: string): string => {
   if (!startIsoDate || !endIsoDate) return '';
 
   const startDate = new Date(startIsoDate);
   const endDate = new Date(endIsoDate);
 
-  if (
-    Number.isNaN(startDate.getTime()) ||
-    Number.isNaN(endDate.getTime())
-  ) {
+  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
     return '';
   }
 

@@ -9,7 +9,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { WearablePermission } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
-import { getLatestMetricEntry } from './metricDateUtils';
+import { getLatestMetricEntry } from '@/utils/metricDateUtils';
 
 interface RemSleepMetricProps {
   readonly labelType?: 'label' | 'default';

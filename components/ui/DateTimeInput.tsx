@@ -6,7 +6,7 @@ import { Platform, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
-import { formatClockTime } from '@/utils/sleepTimeUtils';
+import { formatClockTime } from '@/utils/dateUtils';
 
 import { IconSymbolName } from './icon-symbol-map';
 
@@ -131,16 +131,9 @@ export function DateTimeInput({
     });
   };
 
-
   return (
     <View style={styles.container}>
-      <AppButton
-        title={buttonTitle}
-        icon={buttonIcon}
-        onPress={handleTogglePicker}
-        variant="secondary"
-        disabled={disabled}
-      />
+      <AppButton title={buttonTitle} icon={buttonIcon} onPress={handleTogglePicker} variant="secondary" disabled={disabled} />
       {showPicker && (
         <>
           {showDatePicker && (
@@ -163,15 +156,7 @@ export function DateTimeInput({
                 </View>
               ) : (
                 <View style={[styles.pickerContainer, { borderColor: colors.border }]}>
-                  <DateTimePicker
-                    value={value}
-                    mode="date"
-                    display="default"
-                    is24Hour
-                    onChange={handleDateChange}
-                    {...minimumDateProp}
-                    {...maximumDateProp}
-                  />
+                  <DateTimePicker value={value} mode="date" display="default" is24Hour onChange={handleDateChange} {...minimumDateProp} {...maximumDateProp} />
                 </View>
               )}
             </View>

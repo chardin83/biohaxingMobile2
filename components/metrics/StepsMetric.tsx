@@ -11,7 +11,7 @@ import { WearablePermission } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
 import { MetricContainer } from './MetricContainer';
-import { getLatestMetricEntry } from './metricDateUtils';
+import { getLatestMetricEntry } from '@/utils/metricDateUtils';
 
 interface StepsMetricProps {
   readonly showDivider?: boolean;

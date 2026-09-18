@@ -1,11 +1,4 @@
 {
-    "common": {
-        "low": "Låg",
-        "moderate": "Måttlig",
-        "good": "Bra",
-        "optimal": "Optimal",
-        "high": "Hög"
-    },
     "units": {
         "miu_l": "mIU/L",
         "uiu_ml": "µIU/mL",
@@ -180,6 +173,13 @@
         "name": "Insomningstid",
         "description": "Hur lång tid det tar att somna."
     },
+    "intense_exercise_before_sleep": {
+        "name": "Intensiv träning innan sömn",
+        "shortName": "Intensiv träning",
+        "description": "Registrera om du har utfört intensiv träning innan du gick och lade dig.",
+        "beforeSleep": "Innan sömn",
+        "afterSleep": "Efter sömn"
+    },
     "weight": {
         "name": "Kroppsvikt",
         "description": "Din vikt."
@@ -244,5 +244,15 @@
      "warnings": {
         "missing_permission": "Behörighet saknas",
         "register_manually": "Registrera manuellt"
+    },
+    "metricStatus": {
+         "low": "Låg",
+        "moderate": "Måttlig",
+        "good": "Bra",
+        "optimal": "Optimal",
+        "elevated": "Förhöjd",
+        "high": "Hög",
+        "closeToBedtime": "Ganska nära",
+        "tooCloseToBedtime": "För nära"
     }
 }

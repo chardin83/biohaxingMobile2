@@ -6,11 +6,12 @@ import { StyleSheet, View } from 'react-native';
 import { useStorage } from '@/app/context/StorageContext';
 import { MetricDataStatus } from '@/components/metrics/MetricDataStatus';
 import { ThemedText } from '@/components/ThemedText';
+import { getLatestMetricEntry } from '@/utils/metricDateUtils';
 import { WearablePermission } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
 import { MetricContainer } from './MetricContainer';
-import { getLatestMetricEntry } from './metricDateUtils';
+import { MetricStatusLabel } from './MetricStatusLabel';
 
 interface BloodPressureMetricProps {
   readonly showDivider?: boolean;
@@ -58,38 +59,6 @@ export function BloodPressureMetric({ showDivider = false, onPress, isSelected =
 
   const styles = React.useMemo(() => createStyles(colors), [colors]);
 
-  const statusLabel = React.useMemo(() => {
-    switch (status) {
-      case 'high':
-        return t('metrics:common.high');
-      case 'elevated':
-        return t('metrics:common.elevated', {
-          defaultValue: 'Förhöjt',
-        });
-      case 'low':
-        return t('metrics:common.low');
-      case 'optimal':
-        return t('metrics:common.optimal');
-      default:
-        return '—';
-    }
-  }, [status, t]);
-
-  const statusStyle = React.useMemo(() => {
-    switch (status) {
-      case 'high':
-        return styles.statusHigh;
-      case 'elevated':
-        return styles.statusElevated;
-      case 'low':
-        return styles.statusLow;
-      case 'optimal':
-        return styles.statusOptimal;
-      default:
-        return styles.statusNeutral;
-    }
-  }, [status, styles]);
-
   const hasReading = systolic?.value != null && diastolic?.value != null;
 
   const recordedAt = systolic?.recordedAt ?? diastolic?.recordedAt;
@@ -105,9 +74,7 @@ export function BloodPressureMetric({ showDivider = false, onPress, isSelected =
 
         {hasReading && (
           <>
-            <ThemedText type="title2" style={statusStyle}>
-              {statusLabel}
-            </ThemedText>
+            <MetricStatusLabel status={status} />
 
             <View style={styles.valueRow}>
               <ThemedText type="caption">
@@ -144,30 +111,5 @@ const createStyles = (colors: ReturnType<typeof useTheme>['colors']) =>
     unit: {
       marginLeft: 4,
       color: colors.textSecondary,
-    },
-    statusNeutral: {
-      marginTop: 2,
-      fontWeight: '600',
-      color: colors.textSecondary,
-    },
-    statusHigh: {
-      marginTop: 2,
-      fontWeight: '600',
-      color: colors.warmColor,
-    },
-    statusElevated: {
-      marginTop: 2,
-      fontWeight: '600',
-      color: colors.warningColor,
-    },
-    statusOptimal: {
-      marginTop: 2,
-      fontWeight: '600',
-      color: colors.positiveColor,
-    },
-    statusLow: {
-      marginTop: 2,
-      fontWeight: '600',
-      color: colors.infoColor,
     },
   });

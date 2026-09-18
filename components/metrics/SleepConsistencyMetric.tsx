@@ -11,7 +11,7 @@ import { WearablePermission } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
 import { MetricContainer } from './MetricContainer';
-import { getLatestMetricEntry } from './metricDateUtils';
+import { getLatestMetricEntry } from '@/utils/metricDateUtils';
 import { DEFAULT_TARGET_BEDTIME_MINUTES, getBedtimeDeviation, minutesToTimeString } from './sleepConsistency';
 
 interface SleepConsistencyMetricProps {

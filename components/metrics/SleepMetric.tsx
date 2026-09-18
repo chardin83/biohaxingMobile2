@@ -6,9 +6,9 @@ import { View } from 'react-native';
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
+import { getLatestEntryForToday } from '@/utils/metricDateUtils';
 
 import { MetricContainer } from './MetricContainer';
-import { getLatestEntryForToday } from './metricDateUtils';
 
 interface SleepMetricProps {
   showDivider?: boolean;
@@ -37,12 +37,7 @@ export function SleepMetric({ showDivider = false, onPress, isSelected = false }
   const sleepMins = sleepMinutes ? sleepMinutes % 60 : null;
 
   return (
-    <MetricContainer
-      showDivider={showDivider}
-      isSelected={isSelected}
-      onPress={onPress}
-      borderColor={isSelected ? colors.accentStrong : 'transparent'}
-    >
+    <MetricContainer showDivider={showDivider} isSelected={isSelected} onPress={onPress} borderColor={isSelected ? colors.accentStrong : 'transparent'}>
       <ThemedText type="label">{t('metrics:sleep_duration.name')}</ThemedText>
       <View style={globalStyles.metricValueContainer}>
         {sleepMinutes === null ? (

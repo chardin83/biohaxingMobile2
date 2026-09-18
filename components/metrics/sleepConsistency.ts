@@ -1,4 +1,4 @@
-import { type MetricEntry } from '@/app/context/StorageContext';
+import { MetricEntry } from '@/app/context/storage/metrics/metricTypes';
 
 const MINUTES_PER_DAY = 1440;
 const MINUTES_PER_HALF_DAY = MINUTES_PER_DAY / 2;
@@ -160,14 +160,12 @@ export function getSleepConsistencySummary(
   const daysWithData = values.length;
   const weeklyAverageBedtimeMinutes = getCircularMeanMinutes(values);
 
-  const weeklyDifferenceMinutes = typeof weeklyAverageBedtimeMinutes === 'number'
-    ? getSignedClockDifference(targetBedtimeMinutes, weeklyAverageBedtimeMinutes)
-    : undefined;
+  const weeklyDifferenceMinutes =
+    typeof weeklyAverageBedtimeMinutes === 'number' ? getSignedClockDifference(targetBedtimeMinutes, weeklyAverageBedtimeMinutes) : undefined;
 
   const absoluteDifferences = values.map(value => Math.abs(getSignedClockDifference(targetBedtimeMinutes, value)));
-  const weeklyAverageAbsoluteDifferenceMinutes = absoluteDifferences.length > 0
-    ? absoluteDifferences.reduce((sum, value) => sum + value, 0) / absoluteDifferences.length
-    : undefined;
+  const weeklyAverageAbsoluteDifferenceMinutes =
+    absoluteDifferences.length > 0 ? absoluteDifferences.reduce((sum, value) => sum + value, 0) / absoluteDifferences.length : undefined;
 
   const weeklyHitCount = values.filter(value => Math.abs(targetBedtimeMinutes - value) <= PERFECT_THRESHOLD_MINUTES).length;
 

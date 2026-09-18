@@ -119,7 +119,10 @@
       "subtitle": "Hantera din personliga information",
       "birthday": "Födelsedag",
       "training": "Träning",
-      "maxHeartRate": "Maxpuls"
+      "maxHeartRate": "Maxpuls",
+      "bedtime": "Läggtid",
+      "bedtimeDescription": "Din vanliga läggtid",
+      "recommendedBedtime": "Rekommenderad läggtid"
     }
   },
   
@@ -972,7 +975,8 @@
       "sleep_duration": "Sömnlängd visar din totala nattliga återhämtning. En stabil nivå på ungefär 7 till 9 timmar stödjer hormonbalans, immunförsvar och mental skärpa.",
       "deep_sleep": "Djupsömn är fasen där kroppen prioriterar fysisk återhämtning, vävnadsreparation och immunstöd. Trenden hjälper dig se om återhämtningen faktiskt förbättras över tid.",
       "rem_sleep": "REM-sömn stödjer minneskonsolidering, emotionell bearbetning och inlärning. Att följa REM över tid ger en bättre bild av stress, sömnkvalitet och mental återhämtning.",
-      "sleep_bedtime": "Läggtidskonsistens är en av de kraftfullaste faktorerna för sömnkvalitet. Trenden visar om din sömnrytm blir mer stabil — en nyckel för dygnsrytm och återhämtning."
+      "sleep_bedtime": "Läggtidskonsistens är en av de kraftfullaste faktorerna för sömnkvalitet. Trenden visar om din sömnrytm blir mer stabil — en nyckel för dygnsrytm och återhämtning.",
+      "intense_exercise_before_sleep": "Intensiv träning innan sömn kan påverka sömnkvaliteten negativt. Trenden visar om kvällsträning påverkar din återhämtning över tid."
     }
   },
   "todaysActivityCharts": {

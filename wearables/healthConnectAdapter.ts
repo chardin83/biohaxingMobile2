@@ -400,15 +400,16 @@ export class HealthConnectAdapter implements WearableAdapter {
         });
         const threshold = maxHeartRate * 0.7;
         const intenseMinutes = this.calculateIntenseMinutes(heartRateSamples, session.startTime, session.endTime, threshold);
-        console.log('[HealthConnectAdapter] intensity', {
-          date: toLocalDateISO(session.endTime),
-          samples: heartRateSamples.length,
-          maxHr: heartRateSamples.length ? Math.max(...heartRateSamples.map(sample => sample.value)) : undefined,
-          threshold,
-          intenseMinutes,
-        });
+        const lastIntenseExerciseAt = this.getLastIntenseExerciseAt(heartRateSamples, session.startTime, session.endTime, threshold);
         day.intensityMinutes = (day.intensityMinutes ?? 0) + intenseMinutes;
+        if (lastIntenseExerciseAt) {
+          const currentLastIntenseAt = day.lastIntenseExerciseAt;
+          if (!currentLastIntenseAt || new Date(lastIntenseExerciseAt).getTime() > new Date(currentLastIntenseAt).getTime()) {
+            day.lastIntenseExerciseAt = lastIntenseExerciseAt;
+          }
+        }
       }
+
       return [...activityByDay.values()].map(activity => ({
         ...activity,
         steps: typeof activity.steps === 'number' ? Math.round(activity.steps) : undefined,
@@ -488,6 +489,30 @@ export class HealthConnectAdapter implements WearableAdapter {
       }
     }
     return intenseMs / 60000;
+  }
+
+  private getLastIntenseExerciseAt(
+    samples: Array<{ time: number; value: number }>,
+    workoutStart: string,
+    workoutEnd: string,
+    threshold: number
+  ): string | undefined {
+    const workoutStartMs = new Date(workoutStart).getTime();
+    const workoutEndMs = new Date(workoutEnd).getTime();
+    if (Number.isNaN(workoutStartMs) || Number.isNaN(workoutEndMs) || workoutEndMs <= workoutStartMs) {
+      return undefined;
+    }
+    const intenseSamples = samples.filter(
+      sample =>
+        Number.isFinite(sample.time) &&
+        Number.isFinite(sample.value) &&
+        sample.time >= workoutStartMs &&
+        sample.time <= workoutEndMs &&
+        sample.value >= threshold
+    );
+    intenseSamples.sort((left, right) => right.time - left.time);
+    const lastIntenseSample = intenseSamples[0];
+    return lastIntenseSample ? new Date(lastIntenseSample.time).toISOString() : undefined;
   }
 
   async getEnergySignal(): Promise<any[]> {

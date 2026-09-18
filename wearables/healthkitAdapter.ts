@@ -784,6 +784,14 @@ export class HealthKitAdapter implements WearableAdapter {
         const intensityHrThreshold = maxHeartRate * 0.7;
         const intenseMinutes = this.calculateIntenseMinutes(heartRateSamples, start, end, intensityHrThreshold);
         day.intensityMinutes = (day.intensityMinutes ?? 0) + intenseMinutes;
+        const lastIntenseExerciseAt = this.getLastIntenseExerciseAt(heartRateSamples, start, end, intensityHrThreshold);
+
+        if (
+          lastIntenseExerciseAt &&
+          (!day.lastIntenseExerciseAt || new Date(lastIntenseExerciseAt).getTime() > new Date(day.lastIntenseExerciseAt).getTime())
+        ) {
+          day.lastIntenseExerciseAt = lastIntenseExerciseAt;
+        }
       }
       return [...activityByDay.values()].map(entry => ({
         ...entry,
@@ -900,6 +908,31 @@ export class HealthKitAdapter implements WearableAdapter {
       }
     }
     return intenseMs / 60000;
+  }
+
+  private getLastIntenseExerciseAt(samples: RawHeartRateSample[], workoutStart: string, workoutEnd: string, threshold: number): string | undefined {
+    const workoutStartMs = new Date(workoutStart).getTime();
+    const workoutEndMs = new Date(workoutEnd).getTime();
+    const lastSample = samples
+      .map(sample => {
+        const recordedAt = sample.startDate ?? sample.endDate;
+        return {
+          recordedAt,
+          time: recordedAt ? new Date(recordedAt).getTime() : Number.NaN,
+          value: Number(sample.value),
+        };
+      })
+      .filter(
+        sample =>
+          sample.recordedAt &&
+          Number.isFinite(sample.time) &&
+          Number.isFinite(sample.value) &&
+          sample.time >= workoutStartMs &&
+          sample.time <= workoutEndMs &&
+          sample.value >= threshold
+      )
+      .sort((a, b) => b.time - a.time)[0];
+    return lastSample?.recordedAt;
   }
 
   async getEnergySignal(): Promise<any[]> {

@@ -7,10 +7,9 @@ import { useStorage } from '@/app/context/StorageContext';
 import { MetricDataStatus } from '@/components/metrics/MetricDataStatus';
 import { ThemedText } from '@/components/ThemedText';
 import { toDateKey } from '@/utils/dateUtils';
+import { getLatestMetricEntry } from '@/utils/metricDateUtils';
 import { WearablePermission } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
-
-import { getLatestMetricEntry } from './metricDateUtils';
 
 interface VO2MaxMetricProps {
   readonly trend?: number;
@@ -41,11 +40,7 @@ export function VO2MaxMetric({ trend, showDivider = false, onPress, isSelected =
   const isLatestToday = latest?.recordedAt !== undefined && toDateKey(new Date(latest.recordedAt)) === toDateKey(new Date());
   const content = (
     <View style={styles.contentContainer}>
-      <ThemedText type="label">
-        {t('metrics:vo2_max.shortName', {
-          defaultValue: t('metrics:vo2_max.name'),
-        })}
-      </ThemedText>
+      <ThemedText type="label">{t('metrics:vo2_max.shortName')}</ThemedText>
       {vo2max !== undefined && (
         <View style={styles.metricValueContainer}>
           <ThemedText type="title2">{vo2max}</ThemedText>
