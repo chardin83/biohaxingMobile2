@@ -6,6 +6,8 @@
     "areYouSure": "Are you sure?",
     "add": "Add",
     "cancel": "Cancel",
+    "confirm": "Confirm",
+    "confirmed": "Confirmed",
     "you": "you",
     "close": "Close",
     "save": "Save",
@@ -125,7 +127,6 @@
       "recommendedBedtime": "Recommended bedtime"
     }
   },
-  
   "selectedSupplementList": {
     "choosenFor": "Supplements taken"
   },
@@ -267,7 +268,7 @@
     "creatingAIPlan": "Creating AI plan",
     "duplicateWarning": "The AI plan includes {{count}} duplicates already in your plan.",
     "goals": {
-    "title": "What is your goal/goals?",
+      "title": "What is your goal/goals?",
       "suggestions": [
         "Build muscle",
         "Lose weight",
@@ -343,9 +344,9 @@
     "finish": "Finish",
     "analyzeHint": "You can analyze once the time period is over.",
     "analysisTitle": "Analyze",
+    "takePhoto": "Take photo",
     "selectFileBody": "Select file to analyze",
     "loading": "Analyseras av AI",
-    "takePhoto": "Take photo",
     "selectFileConfirm": "Select file",
     "defaultTitle": "AI analysis",
     "analysisMatch": "✅ The supplement matches the goal with {{confidence}}% certainty.",
@@ -1054,6 +1055,7 @@
     "mealTitle": "Logged meal",
     "mealTitleWithName": "Logged meal: {{name}}",
     "loggedMealsTitle": "Logged meals",
+    "loggedDrinksTitle": "Logged drinks",
     "futureDateLocked": "You cannot log or analyze meals on future dates.",
     "packageFlowTitle": "Nutrition label (optional)",
     "packageFlowAnalyze": "Analyze meal",
@@ -1063,6 +1065,7 @@
     "packageFlowDescriptionPlaceholder": "Example: chicken salad with avocado, feta, and pumpkin seeds",
     "packageFlowAddIngredientImage": "Add nutrition label",
     "packageFlowHint": "A photo of the nutrition label helps analyze the meal more accurately.",
+    "mealTime": "Meal time",
     "analysisReviewTitle": "Review AI analysis before saving",
     "analysisReviewAiDescriptionTitle": "AI description of the image",
     "analysisReviewNutritionPreviewTitle": "Nutrition that will be saved",
@@ -1086,6 +1089,9 @@
     "polyphenols": "Polyphenols: {{value}} mg",
     "minerals": "Minerals: {{value}} mg",
     "vitamins": "Vitamins: {{value}} mg",
+    "alcohol": "Alcohol",
+    "caffeine": "Caffeine",
+    "sugarFree": "Sugar-free",
     "microbiomeYes": "Microbiome support: Yes ({{count}})",
     "fulfilledTargetsCount": "{{met}}/{{total}} completed",
     "continueToday": "Continue today",
@@ -1105,6 +1111,7 @@
     "confidenceMedium": "Medium confidence",
     "confidenceLow": "Low confidence",
     "confidenceUnknown": "Unknown confidence",
+    "detectedDrinksTitle": "Confirm drinks",
     "fiberLabels": {
       "fiber_total": "Fiber total",
       "fiber_gel_forming": "Gel-forming fiber",
@@ -1201,7 +1208,9 @@
       "galactooligosaccharides": "Galactooligosaccharides (GOS)",
       "pectic_oligosaccharides": "Pectic oligosaccharides"
     },
-    "seeProgress": "See progress"
+    "seeProgress": "See progress",
+    "analysisInProgress": "Analysis in progress",
+    "analysisDoNotCloseApp": "Do not close the app while the analysis is in progress. It is okay to navigate to other parts of the app."
   },
   "otherLoggerTab": {
     "registerToday": "Register today",

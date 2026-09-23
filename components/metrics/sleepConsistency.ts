@@ -1,4 +1,5 @@
 import { MetricEntry } from '@/app/context/storage/metrics/metricTypes';
+import { SleepConsistencyStatus } from '@/types/metricStatuses';
 
 const MINUTES_PER_DAY = 1440;
 const MINUTES_PER_HALF_DAY = MINUTES_PER_DAY / 2;
@@ -7,8 +8,6 @@ const GOOD_THRESHOLD_MINUTES = 30;
 
 export const DEFAULT_TARGET_BEDTIME_MINUTES = 22 * 60 + 30;
 
-export type ConsistencyLevel = 'low' | 'moderate' | 'good' | 'optimal';
-
 export type SleepConsistencySummary = {
   latestTodayBedtimeMinutes?: number;
   weeklyAverageBedtimeMinutes?: number;
@@ -16,7 +15,7 @@ export type SleepConsistencySummary = {
   weeklyAverageAbsoluteDifferenceMinutes?: number;
   weeklyHitCount: number;
   daysWithData: number;
-  level: ConsistencyLevel;
+  level: SleepConsistencyStatus;
 };
 
 export type BedtimeDeviation = {
@@ -80,7 +79,7 @@ function getWeeklyBounds(today: Date) {
   return { start, end };
 }
 
-function getLevelFromAverageAbsoluteDifference(averageAbsoluteDifferenceMinutes?: number): ConsistencyLevel {
+function getLevelFromAverageAbsoluteDifference(averageAbsoluteDifferenceMinutes?: number): SleepConsistencyStatus {
   if (typeof averageAbsoluteDifferenceMinutes !== 'number') {
     return 'low';
   }

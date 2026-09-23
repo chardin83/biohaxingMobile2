@@ -31,6 +31,8 @@ import {
   saveShareHealthPlan,
   saveShowMusic,
 } from './storage/app/appStorage';
+import { getDrinkStorage, saveDailyDrinkTracking } from './storage/drinks/drinkStorage';
+import { DailyDrinkTracking } from './storage/drinks/drinkTypes';
 import { getHabitStorage, saveDailyHabitTracking } from './storage/habits/habitStorage';
 import type { DailyHabitTracking } from './storage/habits/habitTypes';
 import { getMetricEntries, saveMetricEntries } from './storage/metrics/metricStorage';
@@ -104,6 +106,8 @@ interface StorageContextType {
   dailyNutritionTracking: DailyNutritionTracking;
   setDailyNutritionTracking: (updater: DailyNutritionTracking | ((prev: DailyNutritionTracking) => DailyNutritionTracking)) => void;
   weeklyNutritionTracking: WeeklyNutritionTracking;
+  dailyDrinkTracking: DailyDrinkTracking;
+  setDailyDrinkTracking: (updater: DailyDrinkTracking | ((prev: DailyDrinkTracking) => DailyDrinkTracking)) => void;
   setWeeklyNutritionTracking: (updater: WeeklyNutritionTracking | ((prev: WeeklyNutritionTracking) => WeeklyNutritionTracking)) => void;
   trainingPlanSettings: Record<string, TrainingPlanSettings>;
   setTrainingPlanSettings: (
@@ -155,6 +159,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const [newLevelReached, setNewLevelReached] = useState<number | null>(null);
   const [dailyNutritionTrackingState, setDailyNutritionTrackingState] = useState<DailyNutritionTracking>({});
   const [weeklyNutritionTrackingState, setWeeklyNutritionTrackingState] = useState<WeeklyNutritionTracking>({});
+  const [dailyDrinkTrackingState, setDailyDrinkTrackingState] = useState<DailyDrinkTracking>({});
   const [trainingPlanSettingsState, setTrainingPlanSettingsState] = useState<Record<string, TrainingPlanSettings>>({});
   const [dailyTrainingTrackingState, setDailyTrainingTrackingState] = useState<DailyTrainingTracking>({});
   const [dailyHabitTrackingState, setDailyHabitTrackingState] = useState<DailyHabitTracking>({});
@@ -236,10 +241,11 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [app, supplements, nutrition, training, habits, xp, metrics] = await Promise.all([
+        const [app, supplements, nutrition, drinks, training, habits, xp, metrics] = await Promise.all([
           getAppStorage(),
           getSupplementStorage(),
           getNutritionStorage(),
+          getDrinkStorage(),
           getTrainingStorage(),
           getHabitStorage(),
           getXpStorage(),
@@ -279,6 +285,12 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
         setDailyNutritionTrackingState(nutrition.dailyNutritionTracking);
 
         setWeeklyNutritionTrackingState(nutrition.weeklyNutritionTracking);
+
+        /*
+         * Drinks
+         */
+
+        setDailyDrinkTrackingState(drinks.dailyDrinkTracking);
 
         /*
          * Training
@@ -446,6 +458,20 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       const updated = typeof updater === 'function' ? updater(prev) : updater;
 
       saveWeeklyNutritionTracking(updated);
+
+      return updated;
+    });
+  }, []);
+
+  /*
+   * Drinks
+   */
+
+  const setDailyDrinkTracking = useCallback((updater: DailyDrinkTracking | ((prev: DailyDrinkTracking) => DailyDrinkTracking)) => {
+    setDailyDrinkTrackingState(prev => {
+      const updated = typeof updater === 'function' ? updater(prev) : updater;
+
+      saveDailyDrinkTracking(updated);
 
       return updated;
     });
@@ -913,6 +939,8 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       setDailyNutritionTracking,
       weeklyNutritionTracking: weeklyNutritionTrackingState,
       setWeeklyNutritionTracking,
+      dailyDrinkTracking: dailyDrinkTrackingState,
+      setDailyDrinkTracking,
       trainingPlanSettings: trainingPlanSettingsState,
       setTrainingPlanSettings,
       dailyTrainingTracking: dailyTrainingTrackingState,
@@ -937,7 +965,8 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       clearUserProfile,
     }),
     // prettier-ignore
-    [plansState, setPlans, saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, clearNutritionXP, clearEducationXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState, dailyNutritionTrackingState, setDailyNutritionTracking, weeklyNutritionTrackingState, setWeeklyNutritionTracking, trainingPlanSettingsState, setTrainingPlanSettings, dailyTrainingTrackingState, setDailyTrainingTracking, addTrainingEntry, dailyHabitTrackingState, setDailyHabitTracking, showMusicState, tempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, healthSyncEnabledState, setHealthSyncEnabled, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
+    [plansState, setPlans, saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, clearNutritionXP, clearEducationXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState, 
+      dailyNutritionTrackingState, setDailyNutritionTracking, weeklyNutritionTrackingState, setWeeklyNutritionTracking, dailyDrinkTrackingState, setDailyDrinkTracking, trainingPlanSettingsState, setTrainingPlanSettings, dailyTrainingTrackingState, setDailyTrainingTracking, addTrainingEntry, dailyHabitTrackingState, setDailyHabitTracking, showMusicState, setShowMusic, tempPlans, setTempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, healthSyncEnabledState, setHealthSyncEnabled, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

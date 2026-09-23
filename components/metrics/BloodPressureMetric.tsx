@@ -6,6 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import { useStorage } from '@/app/context/StorageContext';
 import { MetricDataStatus } from '@/components/metrics/MetricDataStatus';
 import { ThemedText } from '@/components/ThemedText';
+import { BloodPressureStatus } from '@/types/metricStatuses';
 import { getLatestMetricEntry } from '@/utils/metricDateUtils';
 import { WearablePermission } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
@@ -18,8 +19,6 @@ interface BloodPressureMetricProps {
   readonly onPress?: () => void;
   readonly isSelected?: boolean;
 }
-
-type BloodPressureStatus = 'low' | 'optimal' | 'elevated' | 'high' | 'unknown';
 
 function getBloodPressureStatus(systolic?: number, diastolic?: number): BloodPressureStatus {
   if (systolic == null && diastolic == null) {

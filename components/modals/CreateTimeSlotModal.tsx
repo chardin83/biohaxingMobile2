@@ -24,14 +24,7 @@ interface CreateTimeSlotModalProps {
   onDelete?: () => void;
 }
 
-const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({
-  visible,
-  onClose,
-  onCreate,
-  initialName = '',
-  initialTime = new Date(),
-  onDelete,
-}) => {
+const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({ visible, onClose, onCreate, initialName = '', initialTime = new Date(), onDelete }) => {
   const { t } = useTranslation();
   const [planName, setPlanName] = React.useState(initialName);
   const [time, setTime] = React.useState(initialTime);
@@ -70,15 +63,9 @@ const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({
       }}
       onSave={handleSave}
       okLabel={t('general.save')}
-      cancelLabel={t('general.cancel')}
     >
       <View style={styles.fullWidth}>
-        <LabeledInput
-          label={t('plan.timeSlotNameLabel')}
-          value={planName}
-          isOptional={false}
-          onChangeText={setPlanName}
-        />
+        <LabeledInput label={t('plan.timeSlotNameLabel')} value={planName} isOptional={false} onChangeText={setPlanName} />
 
         {Platform.OS === 'android' && (
           <AppButton
@@ -91,9 +78,7 @@ const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({
 
         {Platform.OS === 'ios' && (
           <View>
-            <ThemedText type="label">
-              {`${t('plan.prefferedTime')}:`}
-            </ThemedText>
+            <ThemedText type="label">{`${t('plan.prefferedTime')}:`}</ThemedText>
             <DateTimePicker
               value={time}
               mode="time"
@@ -122,14 +107,7 @@ const CreateTimeSlotModal: React.FC<CreateTimeSlotModalProps> = ({
           />
         )}
 
-        {isEditing && onDelete && (
-          <AppButton
-            title={t('general.delete')}
-            onPress={onDelete}
-            variant="danger"
-            style={globalStyles.marginTop16}
-          />
-        )}
+        {isEditing && onDelete && <AppButton title={t('general.delete')} onPress={onDelete} variant="danger" style={globalStyles.marginTop16} />}
       </View>
     </ThemedModal>
   );

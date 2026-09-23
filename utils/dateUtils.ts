@@ -177,3 +177,10 @@ export const getFirstDayOfWeek = (language?: string): number => {
 
   return locale.toLowerCase().startsWith('en') ? 0 : 1;
 };
+
+export const combineDateKeyAndTime = (dateKey: string, time: Date): Date => {
+  const [year, month, day] = dateKey.split('-').map(Number);
+  return new Date(year, (month ?? 1) - 1, day ?? 1, time.getHours(), time.getMinutes(), time.getSeconds(), time.getMilliseconds());
+};
+
+export const toRecordedAt = (dateKey: string, time: Date): string => combineDateKeyAndTime(dateKey, time).toISOString();

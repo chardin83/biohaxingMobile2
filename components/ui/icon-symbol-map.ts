@@ -208,6 +208,18 @@ export const ICON_SYMBOLS = {
     sf: 'exclamationmark.triangle.fill',
     material: 'warning',
   },
+  'plus': {
+    sf: 'plus',
+    material: 'add',
+  },
+  'caffeine': {
+    sf: 'cup.and.saucer.fill',
+    material: 'coffee',
+  },
+  'alcohol': {
+    sf: 'wineglass.fill',
+    material: 'wine-bar',
+  },
 } as const satisfies Record<string, IconDefinition>;
 
 export type IconSymbolName = keyof typeof ICON_SYMBOLS;

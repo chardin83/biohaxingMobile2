@@ -7,6 +7,7 @@ import { Icon } from 'react-native-paper';
 import CreateTimeSlotModal, { CreatePlanData } from '@/components/modals/CreateTimeSlotModal';
 import { ThemedModal } from '@/components/ThemedModal';
 import { ThemedText } from '@/components/ThemedText';
+import AddButton from '@/components/ui/AddButton';
 import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
 
@@ -20,11 +21,7 @@ interface SupplementListProps {
   supplementPlans: any[];
 }
 
-const SupplementList: React.FC<SupplementListProps> = ({
-  supplements,
-  plannedSupplements,
-  supplementPlans,
-}) => {
+const SupplementList: React.FC<SupplementListProps> = ({ supplements, plannedSupplements, supplementPlans }) => {
   const { t } = useTranslation();
   const { saveSupplementToPlan } = useStorage();
   const { colors } = useTheme();
@@ -34,9 +31,7 @@ const SupplementList: React.FC<SupplementListProps> = ({
   const [createPlanVisible, setCreatePlanVisible] = React.useState(false);
 
   const toggleSupplementInfo = (supplementId: string) => {
-    setExpandedSupplements(prev =>
-      prev.includes(supplementId) ? prev.filter(id => id !== supplementId) : [...prev, supplementId]
-    );
+    setExpandedSupplements(prev => (prev.includes(supplementId) ? prev.filter(id => id !== supplementId) : [...prev, supplementId]));
   };
 
   const handleOpenAddToPlan = (supp: Supplement) => {
@@ -56,11 +51,7 @@ const SupplementList: React.FC<SupplementListProps> = ({
       notify: plan.notify,
     };
 
-    saveSupplementToPlan(
-      { name: plan.name, prefferedTime: plan.prefferedTime, supplements: plan.supplements ?? [], notify: plan.notify },
-      entry,
-      false
-    );
+    saveSupplementToPlan({ name: plan.name, prefferedTime: plan.prefferedTime, supplements: plan.supplements ?? [], notify: plan.notify }, entry, false);
 
     // Stäng modal och nollställ valet
     setAddToPlanVisible(false);
@@ -72,63 +63,36 @@ const SupplementList: React.FC<SupplementListProps> = ({
     <AppBox title={t('supplementList.title')}>
       {supplements.map((supplement: Supplement) => {
         const supplementId = supplement.id || supplement.name;
-        const alreadyPlanned =
-          plannedSupplements.ids.has(supplement.id) || plannedSupplements.names.has(supplement.name);
+        const alreadyPlanned = plannedSupplements.ids.has(supplement.id) || plannedSupplements.names.has(supplement.name);
         const isExpanded = !!supplement.description && expandedSupplements.includes(supplementId);
 
         return (
-
-
           <View key={supplementId} style={[styles.supplementContainer, { borderBottomColor: colors.borderLight }]}>
             <View style={styles.supplementRow}>
               <View style={styles.supplementNameColumn}>
-                <ThemedText
-                  type="default"
-                  style={[{ color: colors.textLight }]}
-                  numberOfLines={isExpanded ? undefined : 1}
-                  ellipsizeMode="tail"
-                >
+                <ThemedText type="default" style={[{ color: colors.textLight }]} numberOfLines={isExpanded ? undefined : 1} ellipsizeMode="tail">
                   {supplement.name}
                 </ThemedText>
                 {supplement.description ? (
-                  <Pressable
-                    accessibilityRole="button"
-                    onPress={() => toggleSupplementInfo(supplementId)}
-                    style={styles.supplementInfoRow}
-                  >
-                    <Icon
-                      source={isExpanded ? 'information' : 'information-outline'}
-                      size={14}
-                      color={colors.primary}
-                    />
+                  <Pressable accessibilityRole="button" onPress={() => toggleSupplementInfo(supplementId)} style={styles.supplementInfoRow}>
+                    <Icon source={isExpanded ? 'information' : 'information-outline'} size={14} color={colors.primary} />
                     <ThemedText type="caption" style={[styles.supplementInfoText, { color: colors.primary }]}>
                       {isExpanded ? t('common:supplementList.lessInfo') : t('common:supplementList.moreInfo')}
                     </ThemedText>
                   </Pressable>
                 ) : null}
               </View>
-              {alreadyPlanned ? (
-                <View style={styles.supplementCheck}>
-                  <Icon source="check" size={22} color={colors.primary} />
-                </View>
-              ) : (
-                <AppButton
-                  title="+"
-                  accessibilityLabel={t('common:supplementList.addToPlan')}
-                  onPress={() => handleOpenAddToPlan(supplement)}
-                  variant="primary"
-                />
-              )}
+              <AddButton
+                added={alreadyPlanned}
+                onClick={() => handleOpenAddToPlan(supplement)}
+                accessibilityLabel={t('common:supplementList.addToPlan')}
+                allowToggle={false}
+              />
             </View>
-            {supplement.description && isExpanded && (
-              <ThemedText type="default">
-                {supplement.description}
-              </ThemedText>
-            )}
+            {supplement.description && isExpanded && <ThemedText type="default">{supplement.description}</ThemedText>}
           </View>
         );
-      }
-      )}
+      })}
 
       {/* Modal: välj tidpunkt + lista planer */}
       <ThemedModal
@@ -141,16 +105,10 @@ const SupplementList: React.FC<SupplementListProps> = ({
         showCancelButton
       >
         <View>
-          <ThemedText type="default">
-            {t('supplementList.chooseTime')}
-          </ThemedText>
+          <ThemedText type="default">{t('supplementList.chooseTime')}</ThemedText>
           {supplementPlans.map(p => (
             <View key={p.name} style={styles.supplementPlanItem}>
-              <AppButton
-                title={`${p.name} (${p.prefferedTime})`}
-                onPress={() => handleAddSupplementToPlan(p)}
-                variant="primary"
-              />
+              <AppButton title={`${p.name} (${p.prefferedTime})`} onPress={() => handleAddSupplementToPlan(p)} variant="primary" />
             </View>
           ))}
           <View style={styles.supplementPlanItem}>
@@ -188,11 +146,7 @@ const SupplementList: React.FC<SupplementListProps> = ({
             notify: newPlan.notify,
           };
 
-          saveSupplementToPlan(
-            { name: newPlan.name, prefferedTime: newPlan.prefferedTime, supplements: [], notify: newPlan.notify },
-            entry,
-            false
-          );
+          saveSupplementToPlan({ name: newPlan.name, prefferedTime: newPlan.prefferedTime, supplements: [], notify: newPlan.notify }, entry, false);
 
           // Stäng båda modalerna och nollställ pending
           setPendingSupplement(null);
@@ -200,9 +154,8 @@ const SupplementList: React.FC<SupplementListProps> = ({
           setAddToPlanVisible(false);
         }}
       />
-
-
-    </AppBox>);
+    </AppBox>
+  );
 };
 
 const styles = StyleSheet.create({

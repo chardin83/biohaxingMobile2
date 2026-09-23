@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
-import { MetricStatus } from '@/wearables/types';
+import { MetricStatus } from '@/types/metricStatuses';
 
 interface MetricStatusLabelProps {
   readonly status: MetricStatus;

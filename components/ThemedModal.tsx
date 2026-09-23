@@ -23,7 +23,6 @@ interface ThemedModalProps {
   onSecondarySave?: () => void;
   ok2Label?: string;
 
-  cancelLabel?: string;
   showCancelButton?: boolean;
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
@@ -39,7 +38,6 @@ export const ThemedModal = ({
   onSecondarySave,
   okLabel,
   ok2Label,
-  cancelLabel,
   showCancelButton = true,
   children,
   style,
@@ -49,11 +47,7 @@ export const ThemedModal = ({
 
   return (
     <Modal animationType="slide" transparent visible={visible}>
-      <BlurView
-        intensity={25}
-        tint={dark ? 'dark' : 'light'}
-        style={styles.overlay}
-      >
+      <BlurView intensity={25} tint={dark ? 'dark' : 'light'} style={styles.overlay}>
         <View
           style={[
             styles.modal,
@@ -79,21 +73,9 @@ export const ThemedModal = ({
                 style={styles.buttonRowFade}
                 pointerEvents="none"
               />
-              {showCancelButton && (
-                <CancelButton onPress={onClose} />
-              )}
-              {onSecondarySave && (
-                <AppButton onPress={onSecondarySave} title={ok2Label ?? t('general.secondary')} variant="primary" />
-              )}
-              {onSave && (
-                <AppButton
-                  onPress={onSave}
-                  title={okLabel ?? t('general.save')}
-                  variant="primary"
-                  disabled={onSaveDisabled}
-                  glow={onSaveGlow}
-                />
-              )}
+              {showCancelButton && <CancelButton onPress={onClose} />}
+              {onSecondarySave && <AppButton onPress={onSecondarySave} title={ok2Label ?? t('general.secondary')} variant="primary" />}
+              {onSave && <AppButton onPress={onSave} title={okLabel ?? t('general.save')} variant="primary" disabled={onSaveDisabled} glow={onSaveGlow} />}
             </View>
           )}
         </View>

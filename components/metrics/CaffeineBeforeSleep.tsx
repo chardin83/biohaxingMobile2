@@ -6,26 +6,27 @@ import { StyleSheet, View } from 'react-native';
 import { useStorage } from '@/app/context/StorageContext';
 import { MetricDataStatus } from '@/components/metrics/MetricDataStatus';
 import { ThemedText } from '@/components/ThemedText';
-import { ExerciseBeforeSleepStatus } from '@/types/metricStatuses';
+import { CaffeineBeforeSleepStatus } from '@/types/metricStatuses';
 import { getLatestMetricEntry } from '@/utils/metricDateUtils';
+import {} from '@/wearables/types';
 
 import { MetricContainer } from './MetricContainer';
 import { MetricStatusLabel } from './MetricStatusLabel';
 
-interface IntenseExerciseBeforeSleepMetricProps {
+interface CaffeineBeforeSleepMetricProps {
   readonly showDivider?: boolean;
   readonly onPress?: () => void;
   readonly isSelected?: boolean;
 }
 
-function getExerciseBeforeSleepStatus(minutes?: number): ExerciseBeforeSleepStatus {
+function getCaffeineBeforeSleepStatus(minutes?: number): CaffeineBeforeSleepStatus {
   if (minutes == null) {
     return 'unknown';
   }
-  if (minutes < 120) {
+  if (minutes < 360) {
     return 'tooCloseToBedtime';
   }
-  if (minutes < 240) {
+  if (minutes < 480) {
     return 'closeToBedtime';
   }
   return 'optimal';
@@ -43,33 +44,28 @@ function formatDuration(minutes: number): string {
   return `${hours} h ${remainingMinutes} min`;
 }
 
-export function IntenseExerciseBeforeSleepMetric({ showDivider = false, onPress, isSelected = false }: Readonly<IntenseExerciseBeforeSleepMetricProps>) {
+export function CaffeineBeforeSleepMetric({ showDivider = false, onPress, isSelected = false }: Readonly<CaffeineBeforeSleepMetricProps>) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { getMetricHistory } = useStorage();
-  const entry = React.useMemo(() => getLatestMetricEntry(getMetricHistory('intense_exercise_before_sleep')), [getMetricHistory]);
-  const status = getExerciseBeforeSleepStatus(entry?.value);
+  const entry = React.useMemo(() => getLatestMetricEntry(getMetricHistory('caffeine_before_sleep')), [getMetricHistory]);
+  const status = getCaffeineBeforeSleepStatus(entry?.value);
   const styles = React.useMemo(() => createStyles(colors), [colors]);
-
   return (
     <MetricContainer showDivider={showDivider} isSelected={isSelected} onPress={onPress} borderColor={isSelected ? colors.accentStrong : 'transparent'}>
       <View style={styles.contentContainer}>
         <ThemedText type="label" numberOfLines={1} ellipsizeMode="tail" style={styles.label}>
-          {t('metrics:intense_exercise_before_sleep.shortName')}
+          {t('metrics:caffeine_before_sleep.shortName')}
         </ThemedText>
         {entry?.value != null && (
           <>
-            {entry?.value != null && (
-              <>
-                <MetricStatusLabel status={status} />
-                <View style={styles.valueRow}>
-                  <ThemedText type="caption">{formatDuration(Math.abs(entry.value))}</ThemedText>
-                  <ThemedText type="caption" style={styles.description}>
-                    {t(entry.value < 0 ? 'metrics:intense_exercise_before_sleep.afterSleep' : 'metrics:intense_exercise_before_sleep.beforeSleep')}
-                  </ThemedText>
-                </View>
-              </>
-            )}
+            <MetricStatusLabel status={status} />
+            <View style={styles.valueRow}>
+              <ThemedText type="caption">{formatDuration(Math.abs(entry.value))}</ThemedText>
+              <ThemedText type="caption" style={styles.description}>
+                {t(entry.value < 0 ? 'metrics:caffeine_before_sleep.afterSleep' : 'metrics:caffeine_before_sleep.beforeSleep')}
+              </ThemedText>
+            </View>
           </>
         )}
         <MetricDataStatus recordedAt={entry?.recordedAt} hasPermission />

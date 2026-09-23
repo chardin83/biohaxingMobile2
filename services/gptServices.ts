@@ -3,7 +3,7 @@ import debug from 'debug';
 import { t } from 'i18next';
 
 import { PlansByCategory } from '@/app/context/storage/plans/planTypes';
-import {  ReasonSummary } from '@/app/context/StorageContext';
+import { ReasonSummary } from '@/app/context/StorageContext';
 import { GPTResponse } from '@/app/domain/GPTResponse';
 import { Message } from '@/app/domain/Message';
 import i18n from '@/app/i18n';
@@ -13,6 +13,25 @@ import { tips } from '@/locales/tips';
 const log = debug('app:gptServices');
 
 type SupportLevel = 'high' | 'medium' | 'low' | 'unknown';
+type DrinkConfidence = 'high' | 'medium' | 'low' | 'unknown';
+
+export type DrinkType =
+  'water' | 'coffee' | 'tea' | 'soft_drink' | 'energy_drink' | 'juice' | 'milk' | 'red_wine' | 'white_wine' | 'beer' | 'spirits' | 'drink';
+
+export const ALCOHOL_TYPES = ['red_wine', 'white_wine', 'beer', 'spirits'] as const satisfies readonly DrinkType[];
+
+export type AlcoholType = (typeof ALCOHOL_TYPES)[number];
+
+export const isAlcohol = (type: DrinkType): type is AlcoholType => ALCOHOL_TYPES.includes(type as AlcoholType);
+
+export type DetectedDrink = {
+  type: DrinkType;
+  name: string;
+  amountMl?: number;
+  sugarFree?: boolean;
+  caffeinated?: boolean;
+  confidence: DrinkConfidence;
+};
 
 export interface NutritionAnalysisResponse {
   type: 'match_result' | 'text' | 'nutrition' | 'error';
@@ -21,6 +40,8 @@ export interface NutritionAnalysisResponse {
   confidence?: number;
   uploadedFileId?: string;
   raw?: any;
+
+  detectedDrinks?: DetectedDrink[];
 
   nutrition?: {
     mealName?: string;
@@ -227,9 +248,7 @@ function appendNutritionFile(form: FormData, params: AnalyseParams): void {
 
 function appendIngredientFile(form: FormData, params: AnalyseParams): void {
   if (params.ingredientListBase64) {
-    const raw = params.ingredientListBase64.includes(',')
-      ? params.ingredientListBase64.split(',')[1]
-      : params.ingredientListBase64;
+    const raw = params.ingredientListBase64.includes(',') ? params.ingredientListBase64.split(',')[1] : params.ingredientListBase64;
     form.append('ingredient_list_base64', raw);
     form.append('ingredient_list_mime', params.ingredientListMime ?? 'image/jpeg');
     return;
@@ -246,9 +265,7 @@ function appendIngredientFile(form: FormData, params: AnalyseParams): void {
 
 function appendNutritionOptions(form: FormData, params: AnalyseParams, locale: 'sv' | 'en'): NutritionAnalysisTier {
   const analysisTier: NutritionAnalysisTier = params.analysisTier ?? 'premium';
-  const languageInstruction = locale === 'sv'
-    ? 'Write all free-text outputs in Swedish.'
-    : 'Write all free-text outputs in English.';
+  const languageInstruction = locale === 'sv' ? 'Write all free-text outputs in Swedish.' : 'Write all free-text outputs in English.';
 
   form.append('prompt', `${params.prompt ?? ''}\n${languageInstruction}`.trim());
   form.append('mealDescription', params.mealDescription ?? '');
@@ -291,9 +308,7 @@ export const buildSystemPrompt = (plans: PlansByCategory, shareHealthPlan: boole
     const planSummary = supplementPlans
       .map(plan =>
         plan.supplements?.length
-          ? `🕒 ${plan.prefferedTime}: ${plan.supplements
-              .map((s: any) => `${s.supplement.name} (${s.supplement.quantity}${s.supplement.unit})`)
-              .join(', ')}`
+          ? `🕒 ${plan.prefferedTime}: ${plan.supplements.map((s: any) => `${s.supplement.name} (${s.supplement.quantity}${s.supplement.unit})`).join(', ')}`
           : null
       )
       .filter(Boolean)
@@ -326,11 +341,7 @@ function getNutritionLocale(params: AnalyseParams): 'sv' | 'en' {
   return params.locale ?? fallbackLocale;
 }
 
-function logNutritionRequest(
-  params: AnalyseParams,
-  analysisTier: NutritionAnalysisTier,
-  locale: 'sv' | 'en',
-): void {
+function logNutritionRequest(params: AnalyseParams, analysisTier: NutritionAnalysisTier, locale: 'sv' | 'en'): void {
   log('[NutritionAnalyze] request', {
     endpoint: ENDPOINTS.handleNutritionCheck,
     analysisTier,
@@ -364,7 +375,6 @@ function isRetryableNutritionError(message: string): boolean {
 }
 
 export async function NutritionAnalyze(params: AnalyseParams): Promise<NutritionAnalysisResponse> {
-
   try {
     return await runNutritionAnalysis(params);
   } catch (error) {

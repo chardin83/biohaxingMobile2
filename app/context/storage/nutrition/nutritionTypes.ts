@@ -61,8 +61,8 @@ export type WeeklyNutritionTracking = WeeklyTracking<Record<string, WeeklyNutrit
 export type WeeklyTrackingItem = { en: string; local: string };
 
 export type MealNutrition = NutritionComposition & {
-  id?: string;
-  date: string;
+  id: string;
+  recordedAt: string;
   mealName?: string;
   mineralsConfidenceByType?: Partial<Record<MineralType, 'high' | 'medium' | 'low' | 'unknown'>>;
 };

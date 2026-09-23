@@ -4,7 +4,7 @@ import * as Crypto from 'expo-crypto';
 import * as Haptics from 'expo-haptics';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Animated, KeyboardAvoidingView, LayoutAnimation, Platform, Pressable, ScrollView, StyleSheet, UIManager, View } from 'react-native';
+import { Animated, Image, KeyboardAvoidingView, LayoutAnimation, Platform, Pressable, ScrollView, StyleSheet, UIManager, View } from 'react-native';
 import { FullWindowOverlay } from 'react-native-screens';
 
 import type { DailyNutritionTracking, TipProgressItem, WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
@@ -12,8 +12,9 @@ import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { XP_FOR_NUTRITION_TIP_DAILY_COMPLETION, XP_FOR_NUTRITION_TIP_WEEKLY_COMPLETION } from '@/constants/XP';
 import { useNutritionPlanProgress } from '@/hooks/useNutritionPlanProgress';
+import { getDrinkImage } from '@/locales/drinkCatalog';
 import { tips } from '@/locales/tips';
-import { NutritionAnalyze } from '@/services/gptServices';
+import { type DetectedDrink, isAlcohol, NutritionAnalyze } from '@/services/gptServices';
 import { MicrobiomeSupportEntry } from '@/types/microbiome';
 import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
 import {
@@ -26,29 +27,31 @@ import {
   roundToOneDecimal,
   type WeeklyTrackingSignals,
 } from '@/utils/analyzeNutrition';
+import { toRecordedAt } from '@/utils/dateUtils';
 
 import { MINERAL_TYPE_KEYS } from '../../constants/minerals';
 import { Collapsible } from '../Collapsible';
 import CopyMealBottomSheet from '../CopyMealBottomSheet';
 import ImagePickerButton from '../ImagePickerButton';
-import ImageThumbnailWithDelete from '../ImageThumbnailWithDelete';
-import { LoggedMealsSection } from '../LoggedMealsSection';
 import { handleGeneralError, handleNutritionError, handleSocketError } from '../nutritionAnalysisHelpers';
 import NutritionBreakdown from '../NutritionBreakdown';
 import { ThemedModal } from '../ThemedModal';
 import { ThemedText } from '../ThemedText';
+import AddButton from '../ui/AddButton';
 import { Card } from '../ui/Card';
+import { DateTimeInput } from '../ui/DateTimeInput';
 import DiscreetButton from '../ui/DiscreetButton';
 import { IconSymbol } from '../ui/IconSymbol';
 import LabeledInput from '../ui/LabeledInput';
+import { LoggedDrinksSection } from './LoggedDrinksSection';
+import { LoggedMealsSection } from './LoggedMealsSection';
 import NutritionPlanTargetsSection, { getTipProgressKey } from './NutritionPlanTargetsSection';
+import PackagingAnalysisModal, { SelectedImageFile } from './PackagingAnalysisModal';
 
 interface NutritionLoggerTabProps {
   selectedDate: string;
   onTipCompleted?: (targetY?: number) => void;
 }
-
-// TipProgressItem and getTipProgressKey are imported from NutritionPlanTargetsSection
 
 type RecentMealOption = {
   id: string;
@@ -58,15 +61,14 @@ type RecentMealOption = {
   sortOrder: number;
 };
 
-type SelectedImageFile = {
-  uri: string;
-  name: string;
-  type: string;
+type ReviewDrink = DetectedDrink & {
+  confirmed: boolean;
 };
 
 type PendingAnalysisReview = {
   analysis: ParsedMacroAnalysis | null;
   weeklyTrackingSignals: WeeklyTrackingSignals;
+  detectedDrinks: ReviewDrink[];
   evidence: {
     sources: string[];
     inferred: string[];
@@ -103,13 +105,16 @@ const getStartOfWeekMonday = (date: Date): Date => {
   return result;
 };
 
-const getWeekBoundsFromDateKey = (dateKey: string): { weekStartISO: string; weekEndISO: string } => {
+const getWeekBoundsFromDateKey = (
+  dateKey: string
+): {
+  weekStartISO: string;
+  weekEndISO: string;
+} => {
   const date = parseDateKeyLocal(dateKey);
   const weekStartDate = getStartOfWeekMonday(date);
-
   const weekEndDate = new Date(weekStartDate);
   weekEndDate.setDate(weekStartDate.getDate() + 6);
-
   return {
     weekStartISO: toDateKeyLocal(weekStartDate),
     weekEndISO: toDateKeyLocal(weekEndDate),
@@ -123,7 +128,6 @@ const buildWeekTrackingFromSummaries = (
   allowedKeys: Set<string>
 ): Record<string, WeeklyTrackingItem[] | number> => {
   const aggregated: WeeklyTrackingSignals = {};
-
   Object.entries(summaries)
     .filter(([dateKey]) => dateKey >= weekStartISO && dateKey <= weekEndISO)
     .forEach(([, daySummary]) => {
@@ -137,7 +141,6 @@ const buildWeekTrackingFromSummaries = (
           });
       });
     });
-
   return aggregated;
 };
 
@@ -161,13 +164,10 @@ const sumTypedTotals = (
 
 const sumMicrobiomeSupport = (meals: Array<any>): MicrobiomeSupportEntry[] => {
   const allEntries = meals.flatMap(meal => (Array.isArray(meal?.microbiomeSupport) ? meal.microbiomeSupport : []));
-
   const byMicrobe = new Map<string, MicrobiomeSupportEntry>();
-
   allEntries.forEach((entry: MicrobiomeSupportEntry) => {
     const key = entry.microbe.toLowerCase().trim();
     if (!key) return;
-
     const existing = byMicrobe.get(key);
     if (!existing) {
       byMicrobe.set(key, {
@@ -179,16 +179,13 @@ const sumMicrobiomeSupport = (meals: Array<any>): MicrobiomeSupportEntry[] => {
       });
       return;
     }
-
     const supportLevelScore = (value: MicrobiomeSupportEntry['supportLevel']): number => {
       if (value === 'high') return 3;
       if (value === 'medium') return 2;
       if (value === 'low') return 1;
       return 0;
     };
-
     const nextLevel = supportLevelScore(entry.supportLevel) > supportLevelScore(existing.supportLevel) ? entry.supportLevel : existing.supportLevel;
-
     byMicrobe.set(key, {
       microbe: existing.microbe,
       supportLevel: nextLevel,
@@ -197,31 +194,28 @@ const sumMicrobiomeSupport = (meals: Array<any>): MicrobiomeSupportEntry[] => {
       rationale: existing.rationale ?? entry.rationale,
     });
   });
-
   return Array.from(byMicrobe.values());
 };
 
 const mergeMineralConfidenceFromMeals = (meals: Array<any>): Record<string, ConfidenceLevel> => {
   const totals: Record<string, ConfidenceLevel> = MINERAL_TYPE_KEYS.reduce(
-    (acc, key) => ({ ...acc, [key]: 'unknown' as ConfidenceLevel }),
+    (acc, key) => ({
+      ...acc,
+      [key]: 'unknown' as ConfidenceLevel,
+    }),
     {} as Record<string, ConfidenceLevel>
   );
-
   const confidenceRank: Record<ConfidenceLevel, number> = {
     unknown: 0,
     low: 1,
     medium: 2,
     high: 3,
   };
-
-  const mergeConfidenceLevel = (current: ConfidenceLevel, next: ConfidenceLevel): ConfidenceLevel => {
-    return confidenceRank[next] > confidenceRank[current] ? next : current;
-  };
-
+  const mergeConfidenceLevel = (current: ConfidenceLevel, next: ConfidenceLevel): ConfidenceLevel =>
+    confidenceRank[next] > confidenceRank[current] ? next : current;
   meals.forEach(meal => {
     const raw = meal?.mineralsConfidenceByType;
     if (!raw || typeof raw !== 'object') return;
-
     MINERAL_TYPE_KEYS.forEach(key => {
       const value = raw[key];
       if (value === 'high' || value === 'medium' || value === 'low' || value === 'unknown') {
@@ -229,7 +223,6 @@ const mergeMineralConfidenceFromMeals = (meals: Array<any>): Record<string, Conf
       }
     });
   });
-
   return totals;
 };
 
@@ -269,9 +262,14 @@ const buildDailySummary = (meals: Array<any>, selectedDate: string) => {
       fat: acc.fat + (m.fat ?? 0),
       fiber: acc.fiber + (m.fiber ?? 0),
     }),
-    { protein: 0, calories: 0, carbohydrates: 0, fat: 0, fiber: 0 }
+    {
+      protein: 0,
+      calories: 0,
+      carbohydrates: 0,
+      fat: 0,
+      fiber: 0,
+    }
   );
-
   const totals = {
     protein: roundToOneDecimal(rawTotals.protein),
     calories: roundToOneDecimal(rawTotals.calories),
@@ -279,7 +277,6 @@ const buildDailySummary = (meals: Array<any>, selectedDate: string) => {
     fat: roundToOneDecimal(rawTotals.fat),
     fiber: roundToOneDecimal(rawTotals.fiber),
   };
-
   return {
     date: selectedDate,
     meals,
@@ -303,20 +300,22 @@ const parseInterpretationItems = (review: PendingAnalysisReview, fallback: strin
       .filter(line => line.length > 0);
     if (lines.length > 0) return lines;
   }
-
   const inferred = review.evidence?.inferred ?? [];
   if (inferred.length > 0) {
     const items = inferred
       .flatMap(item => item.split(/\r?\n+/g))
       .map(item => item.replace(BULLET_REGEX, '').trim())
       .filter(item => item.length > 0);
-    if (items.length > 0) return Array.from(new Set(items));
+    if (items.length > 0) {
+      return Array.from(new Set(items));
+    }
   }
-
   return [fallback];
 };
 
-type RefBox<T> = { current: T };
+type RefBox<T> = {
+  current: T;
+};
 
 type HandleTipCompletionTransitionsParams = {
   nutritionPlanTipProgress: TipProgressItem[];
@@ -351,35 +350,29 @@ const handleTipCompletionTransitions = ({
 }: HandleTipCompletionTransitionsParams) => {
   const nextFulfilledByKey: Record<string, boolean> = {};
   const newlyFulfilledTipKeys: string[] = [];
-
   nutritionPlanTipProgress.forEach(tipProgress => {
     const tipKey = getTipProgressKey(tipProgress);
     const wasFulfilled = previousFulfilledByKeyRef.current[tipKey] ?? false;
     nextFulfilledByKey[tipKey] = tipProgress.isFulfilled;
-
     if (tipProgress.isFulfilled && !wasFulfilled) {
       newlyFulfilledTipKeys.push(tipKey);
     }
   });
-
   if (!hasInitializedFulfilledTrackingRef.current) {
     previousFulfilledByKeyRef.current = nextFulfilledByKey;
     hasInitializedFulfilledTrackingRef.current = true;
     return;
   }
-
   if (newlyFulfilledTipKeys.length > 0) {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
     const firstNewlyFulfilledTip = newlyFulfilledTipKeys[0];
-
     if (pendingCompletionScrollTimeoutRef.current) {
       clearTimeout(pendingCompletionScrollTimeoutRef.current);
     }
     if (pendingCompletionAnimTimeoutRef.current) {
       clearTimeout(pendingCompletionAnimTimeoutRef.current);
     }
-
     requestAnimationFrame(() => {
       pendingCompletionScrollTimeoutRef.current = setTimeout(() => {
         onTipCompleted?.(
@@ -394,24 +387,27 @@ const handleTipCompletionTransitions = ({
         pendingCompletionScrollTimeoutRef.current = null;
       }, completionScrollDelayMs);
     });
-
     pendingCompletionAnimTimeoutRef.current = setTimeout(() => {
       newlyFulfilledTipKeys.forEach(key => animateTipCompletion(key));
       pendingCompletionAnimTimeoutRef.current = null;
     }, completionScrollDelayMs + completionAnimationDelayAfterScrollMs);
   }
-
   previousFulfilledByKeyRef.current = nextFulfilledByKey;
 };
 
 const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, onTipCompleted }) => {
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
-
-  const { plans, dailyNutritionTracking, setDailyNutritionTracking, setWeeklyNutritionTracking, claimNutritionTipCompletionXP } = useStorage();
-
+  const {
+    plans,
+    dailyNutritionTracking,
+    setDailyNutritionTracking,
+    setWeeklyNutritionTracking,
+    dailyDrinkTracking,
+    setDailyDrinkTracking,
+    claimNutritionTipCompletionXP,
+  } = useStorage();
   const nutritionPlanTipProgress = useNutritionPlanProgress(selectedDate);
-
   const { weekStartISO: weekStartKey } = getWeekBoundsFromDateKey(selectedDate);
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -419,19 +415,23 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   const [isAnalysisReviewModalVisible, setIsAnalysisReviewModalVisible] = useState(false);
   const [pendingAnalysisReview, setPendingAnalysisReview] = useState<PendingAnalysisReview | null>(null);
   const [lastLoggedMeal, setLastLoggedMeal] = useState<ParsedMacroAnalysis | null>(null);
-  const [pendingMealImage, setPendingMealImage] = useState<SelectedImageFile | null>(null);
-  const [pendingMealDescription, setPendingMealDescription] = useState('');
-  const [ingredientListImage, setIngredientListImage] = useState<SelectedImageFile | null>(null);
+  const [isPackagingModalVisible, setIsPackagingModalVisible] = useState(false);
+  const [packagingMealImage, setPackagingMealImage] = useState<SelectedImageFile | null>(null);
   const lastAnalyzedFilesRef = useRef<{
     mealFile: SelectedImageFile;
     mealDescription: string;
     ingredientFile: SelectedImageFile | null;
   } | null>(null);
-  const [isPackagingModalVisible, setIsPackagingModalVisible] = useState(false);
   const [selectedLoggedMealId, setSelectedLoggedMealId] = useState<string | null>(null);
   const [isEditMealModalVisible, setIsEditMealModalVisible] = useState(false);
   const [editingMealId, setEditingMealId] = useState<string | null>(null);
   const [editingMealName, setEditingMealName] = useState('');
+  const [editingMealTime, setEditingMealTime] = useState<Date>(() => new Date());
+  const [isEditDrinkModalVisible, setIsEditDrinkModalVisible] = useState(false);
+  const [editingDrinkId, setEditingDrinkId] = useState<string | null>(null);
+  const [editingDrinkName, setEditingDrinkName] = useState('');
+  const [editingDrinkTime, setEditingDrinkTime] = useState<Date>(() => new Date());
+  const [mealTime, setMealTime] = useState<Date>(() => new Date());
   const previousFulfilledByKeyRef = useRef<Record<string, boolean>>({});
   const hasInitializedFulfilledTrackingRef = useRef(false);
   const completionAnimByKeyRef = useRef<Record<string, Animated.Value>>({});
@@ -445,6 +445,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   const tipRowPeriodByKeyRef = useRef<Record<string, NutritionTargetPeriod>>({});
   const pendingCompletionScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingCompletionAnimTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const COMPLETION_SCROLL_DELAY_MS = 80;
   const COMPLETION_ANIMATION_DELAY_AFTER_SCROLL_MS = 180;
 
@@ -460,7 +461,15 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
 
   const reAnalyzePrefixStyle = useMemo(() => [styles.reAnalyzePrefix, { color: colors.text }], [colors.text]);
 
-  const reAnalyzeHighlightStyle = useMemo(() => [styles.reAnalyzeHighlight, { color: colors.showAllAccent }], [colors.showAllAccent]);
+  const reAnalyzeHighlightStyle = useMemo(
+    () => [
+      styles.reAnalyzeHighlight,
+      {
+        color: colors.showAllAccent,
+      },
+    ],
+    [colors.showAllAccent]
+  );
 
   const getCompletionAnimValue = useCallback((tipKey: string): Animated.Value => {
     if (!completionAnimByKeyRef.current[tipKey]) {
@@ -483,7 +492,6 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
       const anim = getCompletionAnimValue(tipKey);
       anim.stopAnimation();
       anim.setValue(0);
-
       Animated.sequence([
         Animated.timing(anim, {
           toValue: 1,
@@ -501,14 +509,20 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   );
 
   const activeTrackingTargetsForAI = useMemo(() => {
-    const byKey = new Map<string, { key: string; unit: 'items' | 'count'; amount?: number; aiInstruction?: string }>();
-
+    const byKey = new Map<
+      string,
+      {
+        key: string;
+        unit: 'items' | 'count';
+        amount?: number;
+        aiInstruction?: string;
+      }
+    >();
     (plans?.nutrition ?? []).forEach(planTip => {
       const tip = tips.find(candidate => candidate.id === planTip.tipId);
       (tip?.trackingTargets ?? []).forEach((target: { trackingKey: string; unit: 'items' | 'count'; amount?: number; aiInstruction?: string }) => {
         const key = target.trackingKey?.trim();
         if (!key) return;
-
         if (!byKey.has(key)) {
           byKey.set(key, {
             key,
@@ -519,13 +533,11 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
         }
       });
     });
-
     return Array.from(byKey.values());
   }, [plans]);
 
   const activeTrackingKeys = useMemo(() => {
     const keys = new Set<string>();
-
     (plans?.nutrition ?? []).forEach(planTip => {
       const tip = tips.find(candidate => candidate.id === planTip.tipId);
       (tip?.trackingTargets ?? []).forEach((target: { trackingKey: string }) => {
@@ -534,13 +546,13 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
         }
       });
     });
-
     return keys;
   }, [plans]);
 
   const trackingPromptForAI = useMemo(() => {
-    if (!activeTrackingTargetsForAI.length) return 'nutrition_analysis';
-
+    if (!activeTrackingTargetsForAI.length) {
+      return 'nutrition_analysis';
+    }
     const targetsJson = JSON.stringify(activeTrackingTargetsForAI);
     return [
       'nutrition_analysis',
@@ -557,9 +569,14 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     setIsEditMealModalVisible(false);
     setEditingMealId(null);
     setEditingMealName('');
+    setIsPackagingModalVisible(false);
+    setPackagingMealImage(null);
     previousFulfilledByKeyRef.current = {};
     hasInitializedFulfilledTrackingRef.current = false;
-    periodSectionYRef.current = { daily: 0, weekly: 0 };
+    periodSectionYRef.current = {
+      daily: 0,
+      weekly: 0,
+    };
     tipRowLocalYByKeyRef.current = {};
     tipRowPeriodByKeyRef.current = {};
     if (pendingCompletionScrollTimeoutRef.current) {
@@ -576,11 +593,9 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     return () => {
       if (pendingCompletionScrollTimeoutRef.current) {
         clearTimeout(pendingCompletionScrollTimeoutRef.current);
-        pendingCompletionScrollTimeoutRef.current = null;
       }
       if (pendingCompletionAnimTimeoutRef.current) {
         clearTimeout(pendingCompletionAnimTimeoutRef.current);
-        pendingCompletionAnimTimeoutRef.current = null;
       }
     };
   }, []);
@@ -593,20 +608,14 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
 
   const syncWeekTrackingForDate = (nextTracking: DailyNutritionTracking, dateKey: string) => {
     const { weekStartISO, weekEndISO } = getWeekBoundsFromDateKey(dateKey);
-
     const recalculatedWeekTracking = buildWeekTrackingFromSummaries(nextTracking, weekStartISO, weekEndISO, activeTrackingKeys);
-
     setWeeklyNutritionTracking(previous => {
-      const next = {
-        ...previous,
-      };
-
+      const next = { ...previous };
       if (Object.keys(recalculatedWeekTracking).length > 0) {
         next[weekStartISO] = recalculatedWeekTracking;
       } else {
         delete next[weekStartISO];
       }
-
       return next;
     });
   };
@@ -616,39 +625,44 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
       setSelectedLoggedMealId(null);
       setLastLoggedMeal(null);
     }
-
     setDailyNutritionTracking(prev => {
       const existingSummary = prev[selectedDate];
-
-      if (!existingSummary) {
-        return prev;
-      }
-
+      if (!existingSummary) return prev;
       const updatedMeals = (existingSummary.meals ?? []).filter(meal => meal?.id !== mealId);
-
-      const next = {
-        ...prev,
-      };
-
+      const next = { ...prev };
       if (!updatedMeals.length) {
         delete next[selectedDate];
-
         syncWeekTrackingForDate(next, selectedDate);
-
         return next;
       }
-
       next[selectedDate] = buildDailySummary(updatedMeals, selectedDate);
-
       syncWeekTrackingForDate(next, selectedDate);
+      return next;
+    });
+  };
+
+  const handleRemoveDrink = (drinkId: string) => {
+    setDailyDrinkTracking(prev => {
+      const updatedDrinks = (prev[selectedDate] ?? []).filter(drink => drink.id !== drinkId);
+
+      const next = { ...prev };
+
+      if (updatedDrinks.length === 0) {
+        delete next[selectedDate];
+      } else {
+        next[selectedDate] = updatedDrinks;
+      }
 
       return next;
     });
   };
 
-  const handleStartEditMealName = (mealId: string, currentName: string) => {
+  const handleStartEditMeal = (mealId: string, mealName: string) => {
+    const meal = dailyNutritionTracking[selectedDate]?.meals.find(item => item.id === mealId);
+    if (!meal) return;
     setEditingMealId(mealId);
-    setEditingMealName(currentName);
+    setEditingMealName(mealName);
+    setEditingMealTime(new Date(meal.recordedAt));
     setIsEditMealModalVisible(true);
   };
 
@@ -656,6 +670,46 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     setIsEditMealModalVisible(false);
     setEditingMealId(null);
     setEditingMealName('');
+    setEditingMealTime(new Date());
+  };
+
+  const handleStartEditDrink = (drinkId: string) => {
+    const drink = dailyDrinkTracking[selectedDate]?.find(item => item.id === drinkId);
+    if (!drink) return;
+    setEditingDrinkId(drinkId);
+    setEditingDrinkName(drink.name);
+    setEditingDrinkTime(new Date(drink.recordedAt));
+    setIsEditDrinkModalVisible(true);
+  };
+
+  const handleCloseEditDrinkModal = () => {
+    setIsEditDrinkModalVisible(false);
+    setEditingDrinkId(null);
+    setEditingDrinkName('');
+    setEditingDrinkTime(new Date());
+  };
+
+  const handleSaveDrink = () => {
+    if (!editingDrinkId) {
+      handleCloseEditDrinkModal();
+      return;
+    }
+    const name = editingDrinkName.trim();
+    if (!name) return;
+    const recordedAt = toRecordedAt(selectedDate, editingDrinkTime);
+    setDailyDrinkTracking(prev => ({
+      ...prev,
+      [selectedDate]: (prev[selectedDate] ?? []).map(drink =>
+        drink.id === editingDrinkId
+          ? {
+              ...drink,
+              name,
+              recordedAt,
+            }
+          : drink
+      ),
+    }));
+    handleCloseEditDrinkModal();
   };
 
   const handleOpenCopyMealModal = () => {
@@ -671,47 +725,57 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     setPendingAnalysisReview(null);
   }, []);
 
-  const handleSaveMealName = () => {
+  const handleToggleDrinkConfirmation = useCallback((index: number) => {
+    setPendingAnalysisReview(current => {
+      if (!current) return current;
+      return {
+        ...current,
+        detectedDrinks: current.detectedDrinks.map((drink, drinkIndex) =>
+          drinkIndex === index
+            ? {
+                ...drink,
+                confirmed: !drink.confirmed,
+              }
+            : drink
+        ),
+      };
+    });
+  }, []);
+
+  const handleSaveMeal = () => {
     if (!editingMealId) {
       handleCloseEditMealModal();
       return;
     }
-
+    const nextMealName = editingMealName.trim() || t('nutritionLogger.unnamedMeal');
+    const recordedAt = toRecordedAt(selectedDate, editingMealTime);
     setDailyNutritionTracking(prev => {
       const existingSummary = prev[selectedDate];
-
-      if (!existingSummary) {
-        return prev;
-      }
-
-      const nextMealName = editingMealName.trim() || t('nutritionLogger.unnamedMeal');
-
-      const updatedMeals = (existingSummary.meals ?? []).map(meal =>
-        meal?.id === editingMealId
+      if (!existingSummary) return prev;
+      const updatedMeals = existingSummary.meals.map(meal =>
+        meal.id === editingMealId
           ? {
               ...meal,
               mealName: nextMealName,
+              recordedAt,
             }
           : meal
       );
-
-      if (editingMealId === selectedLoggedMealId) {
-        setLastLoggedMeal(prevMeal =>
-          prevMeal
-            ? {
-                ...prevMeal,
-                mealName: nextMealName,
-              }
-            : prevMeal
-        );
-      }
-
       return {
         ...prev,
         [selectedDate]: buildDailySummary(updatedMeals, selectedDate),
       };
     });
-
+    if (editingMealId === selectedLoggedMealId) {
+      setLastLoggedMeal(prev =>
+        prev
+          ? {
+              ...prev,
+              mealName: nextMealName,
+            }
+          : prev
+      );
+    }
     handleCloseEditMealModal();
   };
 
@@ -720,76 +784,49 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
       closeAnalysisReviewModal();
       return;
     }
-
     const analysis = pendingAnalysisReview.analysis;
-
     const mealWeeklyTrackingSignals = pendingAnalysisReview.weeklyTrackingSignals;
+    const recordedAt = toRecordedAt(selectedDate, mealTime);
+    const confirmedDrinks = pendingAnalysisReview.detectedDrinks.filter(drink => drink.confirmed).map(({ confirmed: _confirmed, ...drink }) => drink);
+    const mealId = `${selectedDate}-${Crypto.randomUUID()}`;
 
     setDailyNutritionTracking(prev => {
       const existingMeals = prev[selectedDate]?.meals ?? [];
-
       const newMeal = {
-        id: `${selectedDate}-${Crypto.randomUUID()}`,
-        date: selectedDate,
+        id: mealId,
+        recordedAt,
         ...analysis,
         weeklyTrackingSignals: mealWeeklyTrackingSignals,
       };
-
       const next = {
         ...prev,
         [selectedDate]: buildDailySummary([...existingMeals, newMeal], selectedDate),
       };
-
       setSelectedLoggedMealId(newMeal.id);
-
       syncWeekTrackingForDate(next, selectedDate);
-
       return next;
     });
 
+    if (confirmedDrinks.length > 0) {
+      const drinkEntries = confirmedDrinks.map(drink => ({
+        id: Crypto.randomUUID(),
+        mealId,
+        ...drink,
+        recordedAt,
+        source: 'meal_analysis' as const,
+      }));
+
+      setDailyDrinkTracking(prev => ({
+        ...prev,
+        [selectedDate]: [...(prev[selectedDate] ?? []), ...drinkEntries],
+      }));
+    }
+
     setLastLoggedMeal(analysis);
-
     setAnalysisResult('✅ Måltid loggad och analyserad!');
-
     triggerLightHaptic();
     closeAnalysisReviewModal();
   };
-
-  const handleCopyMeal = (mealToCopy: any) => {
-    const copiedMeal = {
-      ...mealToCopy,
-      id: `${selectedDate}-${Crypto.randomUUID()}`,
-      date: selectedDate,
-      mealName: getNormalizedMealName(mealToCopy, t('nutritionLogger.unnamedMeal')),
-    };
-
-    setDailyNutritionTracking(prev => {
-      const existingMeals = prev[selectedDate]?.meals ?? [];
-
-      const next = {
-        ...prev,
-        [selectedDate]: buildDailySummary([...existingMeals, copiedMeal], selectedDate),
-      };
-
-      syncWeekTrackingForDate(next, selectedDate);
-
-      return next;
-    });
-
-    setSelectedLoggedMealId(copiedMeal.id);
-
-    setLastLoggedMeal(toParsedMacroAnalysis(copiedMeal));
-
-    triggerLightHaptic();
-    handleCloseCopyMealModal();
-  };
-
-  const resetPackagingFlow = useCallback(() => {
-    setPendingMealImage(null);
-    setPendingMealDescription('');
-    setIngredientListImage(null);
-    setIsPackagingModalVisible(false);
-  }, []);
 
   const toParsedMacroAnalysis = (meal: any): ParsedMacroAnalysis => ({
     mealName: getNormalizedMealName(meal, t('nutritionLogger.unnamedMeal')),
@@ -808,6 +845,30 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     microbiomeSupport: coerceArray(meal?.microbiomeSupport),
   });
 
+  const handleCopyMeal = (mealToCopy: any) => {
+    const copiedMeal = {
+      ...mealToCopy,
+      id: `${selectedDate}-${Crypto.randomUUID()}`,
+      recordedAt: toRecordedAt(selectedDate, new Date()),
+      mealName: getNormalizedMealName(mealToCopy, t('nutritionLogger.unnamedMeal')),
+    };
+
+    setDailyNutritionTracking(prev => {
+      const existingMeals = prev[selectedDate]?.meals ?? [];
+      const next = {
+        ...prev,
+        [selectedDate]: buildDailySummary([...existingMeals, copiedMeal], selectedDate),
+      };
+      syncWeekTrackingForDate(next, selectedDate);
+      return next;
+    });
+
+    setSelectedLoggedMealId(copiedMeal.id);
+    setLastLoggedMeal(toParsedMacroAnalysis(copiedMeal));
+    triggerLightHaptic();
+    handleCloseCopyMealModal();
+  };
+
   const handleSelectLoggedMeal = (meal: any, mealId: string) => {
     setSelectedLoggedMealId(mealId);
     setLastLoggedMeal(toParsedMacroAnalysis(meal));
@@ -820,16 +881,13 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
       setLastLoggedMeal(null);
       return;
     }
-
     const activeLanguage = (i18n.resolvedLanguage ?? i18n.language ?? 'en').toLowerCase();
     const locale: 'sv' | 'en' = activeLanguage.startsWith('sv') ? 'sv' : 'en';
-
     setIsAnalyzing(true);
     setAnalysisResult(null);
     setPendingAnalysisReview(null);
     setIsAnalysisReviewModalVisible(false);
     setLastLoggedMeal(null);
-
     try {
       const data = await NutritionAnalyze({
         uri: mealFile.uri,
@@ -843,7 +901,6 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
         prompt: trackingPromptForAI,
         trackingTargets: activeTrackingTargetsForAI,
       });
-
       if (data?.type === 'error') {
         handleNutritionError({
           data,
@@ -854,7 +911,6 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
         });
         return;
       }
-
       const result = extractAndValidateNutritionAnalysis({
         data,
         t,
@@ -864,23 +920,29 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
         setIsAnalysisReviewModalVisible,
         setLastLoggedMeal,
       });
-
       if (!result) return;
-
       setPendingAnalysisReview({
         analysis: result.analysis,
         weeklyTrackingSignals: result.mealWeeklyTrackingSignals,
+        detectedDrinks: (data.detectedDrinks ?? []).map(drink => ({
+          ...drink,
+          confirmed: false,
+        })),
         evidence: result.evidence,
         aiDescription: result.aiResponseDescription,
         evidenceMessage: result.evidenceMessage,
         statusMessage: t('nutritionLogger.analysisReadyToSave'),
       });
-      setIsAnalysisReviewModalVisible(true);
       setAnalysisResult(t('nutritionLogger.analysisReadyToSave'));
+      setIsPackagingModalVisible(false);
+      setPackagingMealImage(null);
+      requestAnimationFrame(() => {
+        setIsAnalysisReviewModalVisible(true);
+      });
     } catch (err) {
       console.error('Error analyzing image:', err);
       const errMsg = err instanceof Error ? err.message : '';
-      if (typeof errMsg === 'string' && errMsg.toLowerCase().includes('socket hang up')) {
+      if (errMsg.toLowerCase().includes('socket hang up')) {
         handleSocketError({
           t,
           setAnalysisResult,
@@ -908,31 +970,26 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
       setAnalysisResult(t('nutritionLogger.futureDateLocked'));
       return;
     }
-
-    setPendingMealImage(file);
-    setPendingMealDescription('');
-    setIngredientListImage(null);
+    setMealTime(new Date());
+    setPackagingMealImage(file);
     setIsPackagingModalVisible(true);
   };
 
-  const handleIngredientListImageSelected = (file: SelectedImageFile) => {
-    setIngredientListImage(file);
-  };
-
-  const handlePendingMealImageSelected = (file: SelectedImageFile) => {
-    setPendingMealImage(file);
-  };
-
-  const handleAnalyzePendingImages = () => {
-    if (!pendingMealImage) return;
-
-    const mealFile = pendingMealImage;
-    const mealDescription = pendingMealDescription.trim();
-    const ingredientFile = ingredientListImage;
-    lastAnalyzedFilesRef.current = { mealFile, mealDescription, ingredientFile };
-    resetPackagingFlow();
+  const handleAnalyzePackaging = (mealFile: SelectedImageFile, mealDescription: string, ingredientFile: SelectedImageFile | null) => {
+    lastAnalyzedFilesRef.current = {
+      mealFile,
+      mealDescription,
+      ingredientFile,
+    };
+    //setIsPackagingModalVisible(false);
+    //setPackagingMealImage(null);
     runNutritionImageAnalysis(mealFile, mealDescription || undefined, ingredientFile).catch(console.error);
   };
+
+  const handleClosePackagingModal = useCallback(() => {
+    setIsPackagingModalVisible(false);
+    setPackagingMealImage(null);
+  }, []);
 
   const handleReAnalyze = useCallback(() => {
     const last = lastAnalyzedFilesRef.current;
@@ -942,15 +999,8 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [closeAnalysisReviewModal]);
 
-  const handleRemoveIngredientListImage = () => {
-    setIngredientListImage(null);
-  };
-
-  const handleRemovePendingMealImage = () => {
-    setPendingMealImage(null);
-  };
-
   const summary = dailyNutritionTracking[selectedDate];
+  const drinks = dailyDrinkTracking[selectedDate] ?? [];
   const todayKey = toDateKeyLocal(new Date());
   const isFutureSelectedDate = selectedDate > todayKey;
 
@@ -1001,23 +1051,19 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   const dailyAminoAcidsByType = useMemo(() => (summary ? sumTypedTotals(summary.meals, 'aminoAcidsByType') : {}), [summary]);
   const dailyMicrobiomeSupport = useMemo(() => (summary ? sumMicrobiomeSupport(summary.meals) : []), [summary]);
 
-  const nutritionPlanTipProgressByPeriod = React.useMemo(() => {
-    const byPeriod = (period: NutritionTargetPeriod) => {
-      return nutritionPlanTipProgress
+  const nutritionPlanTipProgressByPeriod = useMemo(() => {
+    const byPeriod = (period: NutritionTargetPeriod) =>
+      nutritionPlanTipProgress
         .filter(tipProgress => tipProgress.period === period)
         .sort((left, right) => {
           if (left.isFulfilled !== right.isFulfilled) {
             return left.isFulfilled ? -1 : 1;
           }
-
           if (left.progress !== right.progress) {
             return right.progress - left.progress;
           }
-
           return left.title.localeCompare(right.title);
         });
-    };
-
     return {
       daily: byPeriod('daily'),
       weekly: byPeriod('weekly'),
@@ -1045,7 +1091,6 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   useEffect(() => {
     nutritionPlanTipProgress.forEach(tipProgress => {
       if (!tipProgress.isFulfilled) return;
-
       if (tipProgress.period === 'daily') {
         claimNutritionTipCompletionXP?.({
           claimKey: `${tipProgress.tipId}|daily|${selectedDate}`,
@@ -1055,7 +1100,6 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           amount: XP_FOR_NUTRITION_TIP_DAILY_COMPLETION,
         });
       }
-
       if (tipProgress.period === 'weekly') {
         claimNutritionTipCompletionXP?.({
           claimKey: `${tipProgress.tipId}|weekly|${weekStartKey}`,
@@ -1079,7 +1123,6 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           label={t('nutritionLogger.packageFlowAnalyze')}
           glow
         />
-
         <View style={styles.copyMealLinkContainer}>
           <DiscreetButton
             onPress={handleOpenCopyMealModal}
@@ -1087,16 +1130,30 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
             disabled={isFutureSelectedDate || recentMeals.length === 0}
           />
         </View>
-
         {isFutureSelectedDate && (
-          <ThemedText type="caption" style={[styles.futureDateHint, { color: colors.textMuted }]}>
+          <ThemedText
+            type="caption"
+            style={[
+              styles.futureDateHint,
+              {
+                color: colors.textMuted,
+              },
+            ]}
+          >
             {t('nutritionLogger.futureDateLocked')}
           </ThemedText>
         )}
-
         {lastLoggedMeal && (
-          <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
-            <ThemedText type="title3">{t('nutritionLogger.mealTitleWithName', { name: lastLoggedMeal.mealName })}</ThemedText>
+          <Card
+            style={{
+              borderRadius: globalStyles.borders.borderRadius,
+            }}
+          >
+            <ThemedText type="title3">
+              {t('nutritionLogger.mealTitleWithName', {
+                name: lastLoggedMeal.mealName,
+              })}
+            </ThemedText>
             <NutritionBreakdown
               calories={lastLoggedMeal.calories}
               protein={lastLoggedMeal.protein}
@@ -1115,9 +1172,12 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
             />
           </Card>
         )}
-
         {summary && (
-          <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
+          <Card
+            style={{
+              borderRadius: globalStyles.borders.borderRadius,
+            }}
+          >
             <Collapsible
               title={t('nutritionLogger.summaryTitle')}
               titleType="title3"
@@ -1154,17 +1214,10 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
             </Collapsible>
           </Card>
         )}
-
         {summary && summary.meals.length > 0 && (
-          <LoggedMealsSection
-            meals={summary.meals}
-            selectedDate={selectedDate}
-            onEdit={handleStartEditMealName}
-            onDelete={handleRemoveMeal}
-            onSelect={handleSelectLoggedMeal}
-          />
+          <LoggedMealsSection meals={summary.meals} onEdit={handleStartEditMeal} onDelete={handleRemoveMeal} onSelect={handleSelectLoggedMeal} />
         )}
-
+        {drinks.length > 0 && <LoggedDrinksSection drinks={drinks} onEdit={handleStartEditDrink} onDelete={handleRemoveDrink} />}
         <NutritionPlanTargetsSection
           fulfilledTipsSectionYRef={fulfilledTipsSectionYRef}
           periodSectionYRef={periodSectionYRef}
@@ -1173,95 +1226,13 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           tipRowLocalYByKeyRef={tipRowLocalYByKeyRef}
           tipRowPeriodByKeyRef={tipRowPeriodByKeyRef}
         />
-
-        <ThemedModal
+        <PackagingAnalysisModal
           visible={isPackagingModalVisible}
-          title={t('nutritionLogger.packageFlowAnalyze')}
-          onClose={resetPackagingFlow}
-          onSave={handleAnalyzePendingImages}
-          onSaveDisabled={!pendingMealImage || isAnalyzing}
-          onSaveGlow
-          okLabel={t('nutritionLogger.packageFlowAnalyze')}
-        >
-          <View style={styles.packagingModalContent}>
-            {pendingMealImage ? (
-              <ImageThumbnailWithDelete
-                uri={pendingMealImage.uri}
-                onPress={handleRemovePendingMealImage}
-                accessibilityLabel={t('nutritionLogger.packageFlowRemoveMealImage')}
-                width={180}
-                height={120}
-                borderRadius={12}
-                badgeSize={30}
-                badgeIconSize={16}
-              />
-            ) : (
-              <ImagePickerButton
-                onImageSelected={handlePendingMealImageSelected}
-                isLoading={isAnalyzing}
-                label={t('nutritionLogger.packageFlowAddMealImage')}
-                style={styles.packagingModalPickerButton}
-              />
-            )}
-
-            <LabeledInput
-              label={t('nutritionLogger.packageFlowDescriptionLabel')}
-              placeholder={t('nutritionLogger.packageFlowDescriptionPlaceholder')}
-              value={pendingMealDescription}
-              isOptional
-              onChangeText={setPendingMealDescription}
-              multilineInput
-              autoCapitalize="sentences"
-              autoCorrect={false}
-              containerStyle={styles.packagingDescriptionInput}
-            />
-
-            <View
-              style={[
-                styles.packagingLabelBox,
-                {
-                  borderColor: colors.secondary,
-                  backgroundColor: colors.secondaryBackground,
-                },
-              ]}
-            >
-              <ThemedText
-                type="caption"
-                style={[
-                  styles.packagingLabelBoxTitle,
-                  {
-                    color: colors.textMuted,
-                    backgroundColor: colors.secondaryBackground,
-                  },
-                ]}
-              >
-                {t('nutritionLogger.packageFlowTitle')}
-              </ThemedText>
-
-              {ingredientListImage ? (
-                <ImageThumbnailWithDelete
-                  uri={ingredientListImage.uri}
-                  onPress={handleRemoveIngredientListImage}
-                  accessibilityLabel={t('nutritionLogger.packageFlowRemoveIngredientImage')}
-                />
-              ) : (
-                <>
-                  <ImagePickerButton
-                    onImageSelected={handleIngredientListImageSelected}
-                    isLoading={isAnalyzing}
-                    label={t('nutritionLogger.packageFlowAddIngredientImage')}
-                    buttonVariant="secondary"
-                    style={styles.packagingModalPickerButton}
-                  />
-                  <ThemedText type="explainer" style={styles.packagingModalHint}>
-                    {t('nutritionLogger.packageFlowHint')}
-                  </ThemedText>
-                </>
-              )}
-            </View>
-          </View>
-        </ThemedModal>
-
+          initialMealImage={packagingMealImage}
+          isAnalyzing={isAnalyzing}
+          onClose={handleClosePackagingModal}
+          onAnalyze={handleAnalyzePackaging}
+        />
         <ThemedModal
           visible={isAnalysisReviewModalVisible}
           title={t('nutritionLogger.analysisReviewTitle')}
@@ -1269,15 +1240,26 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           onSave={handleSaveAnalyzedMeal}
           onSaveDisabled={!pendingAnalysisReview?.analysis}
           okLabel={t('general.save')}
-          cancelLabel={t('general.cancel')}
         >
           <ScrollView style={styles.analysisReviewScroll} contentContainerStyle={styles.analysisReviewContent} showsVerticalScrollIndicator>
+            <View style={styles.mealTimeRow}>
+              <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                {t('nutritionLogger.mealTime')}
+              </ThemedText>
+              <DateTimeInput
+                value={mealTime}
+                showTime={true}
+                showDate={false}
+                onChange={value => {
+                  setMealTime(value);
+                }}
+              />
+            </View>
             {pendingAnalysisReview?.statusMessage || analysisResult ? (
               <ThemedText type="defaultSemiBold" style={styles.analysisReviewStatus}>
                 {pendingAnalysisReview?.statusMessage ?? analysisResult}
               </ThemedText>
             ) : null}
-
             {interpretationItems?.length ? (
               <View style={styles.analysisReviewSection}>
                 <ThemedText type="label">AI Interpretation</ThemedText>
@@ -1286,7 +1268,6 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
                     {`${index + 1}. ${item}`}
                   </ThemedText>
                 ))}
-
                 {(() => {
                   let confidenceColor = colors.textMuted;
                   if (pendingAnalysisReview?.evidence?.confidence === 'high') {
@@ -1296,19 +1277,25 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
                   } else if (pendingAnalysisReview?.evidence?.confidence === 'low') {
                     confidenceColor = colors.warmColor;
                   }
-
                   const confidenceKey = 'general.confidence.' + (pendingAnalysisReview?.evidence?.confidence ?? 'unknown');
                   const confidenceText = t('general.confidence.label') + ': ' + t(confidenceKey);
-
                   return (
-                    <ThemedText type="caption" style={[styles.analysisReviewEvidence, styles.analysisInterpretationMeta, { color: confidenceColor }]}>
+                    <ThemedText
+                      type="caption"
+                      style={[
+                        styles.analysisReviewEvidence,
+                        styles.analysisInterpretationMeta,
+                        {
+                          color: confidenceColor,
+                        },
+                      ]}
+                    >
                       {confidenceText}
                     </ThemedText>
                   );
                 })()}
               </View>
             ) : null}
-
             {lastAnalyzedFilesRef.current ? (
               <Pressable onPress={handleReAnalyze} disabled={isAnalyzing}>
                 <ThemedText type="default" style={reAnalyzeTextStyle}>
@@ -1327,11 +1314,55 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
                 </ThemedText>
               </Pressable>
             ) : null}
+            {pendingAnalysisReview?.detectedDrinks.length ? (
+              <View style={styles.analysisReviewSection}>
+                <ThemedText type="title3">{t('nutritionLogger.detectedDrinksTitle')}</ThemedText>
+                {pendingAnalysisReview.detectedDrinks.map((drink, index) => {
+                  const drinkImage = getDrinkImage(drink.type);
 
+                  console.log('[Drink image]', {
+                    type: drink.type,
+                    name: drink.name,
+                    image: drinkImage,
+                  });
+
+                  return (
+                    <Card key={`${drink.type}-${drink.name}-${index}`} style={styles.detectedDrinkCard}>
+                      <View style={styles.detectedDrinkHeader}>
+                        <Image source={drinkImage} style={styles.detectedDrinkImage} resizeMode="contain" />
+                        <View style={styles.detectedDrinkInfo}>
+                          <ThemedText type="defaultSemiBold">{drink.name}</ThemedText>
+                          <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                            {[
+                              drink.amountMl ? `${Math.round(drink.amountMl)} ml` : null,
+                              drink.sugarFree === true ? t('nutritionLogger.sugarFree') : null,
+                              drink.caffeinated === true ? t('nutritionLogger.caffeine') : null,
+                              isAlcohol(drink.type) ? t('nutritionLogger.alcohol') : null,
+                            ]
+                              .filter(Boolean)
+                              .join(' · ')}
+                          </ThemedText>
+                        </View>
+                        <AddButton
+                          allowToggle
+                          added={drink.confirmed}
+                          onClick={() => handleToggleDrinkConfirmation(index)}
+                          accessibilityLabel={drink.confirmed ? 'common.confirmed' : 'common.confirm'}
+                        />
+                      </View>
+                    </Card>
+                  );
+                })}
+              </View>
+            ) : null}
             {pendingAnalysisReview?.analysis ? (
               <View style={styles.analysisReviewSection}>
                 <ThemedText type="label">{t('nutritionLogger.analysisReviewNutritionPreviewTitle')}</ThemedText>
-                <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
+                <Card
+                  style={{
+                    borderRadius: globalStyles.borders.borderRadius,
+                  }}
+                >
                   <ThemedText type="title3">
                     {t('nutritionLogger.mealTitleWithName', {
                       name: pendingAnalysisReview.analysis.mealName,
@@ -1358,14 +1389,8 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
             ) : null}
           </ScrollView>
         </ThemedModal>
-
-        <ThemedModal
-          visible={isEditMealModalVisible}
-          title={t('nutritionLogger.editMealNameTitle')}
-          onClose={handleCloseEditMealModal}
-          onSave={handleSaveMealName}
-        >
-          <View style={styles.editMealModalContent}>
+        <ThemedModal visible={isEditMealModalVisible} title={t('nutritionLogger.editMealTitle')} onClose={handleCloseEditMealModal} onSave={handleSaveMeal}>
+          <View style={styles.editEntryModalContent}>
             <LabeledInput
               label={t('nutritionLogger.mealNameLabel')}
               value={editingMealName}
@@ -1374,9 +1399,32 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
               autoCorrect={false}
               autoFocus
             />
+            <View style={styles.editTime}>
+              <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                {t('nutritionLogger.mealTime')}
+              </ThemedText>
+              <DateTimeInput value={editingMealTime} showTime showDate={false} onChange={setEditingMealTime} />
+            </View>
           </View>
         </ThemedModal>
-
+        <ThemedModal visible={isEditDrinkModalVisible} title={t('nutritionLogger.editDrinkTitle')} onClose={handleCloseEditDrinkModal} onSave={handleSaveDrink}>
+          <View style={styles.editEntryModalContent}>
+            <LabeledInput
+              label={t('nutritionLogger.drinkNameLabel')}
+              value={editingDrinkName}
+              onChangeText={setEditingDrinkName}
+              autoCapitalize="sentences"
+              autoCorrect={false}
+              autoFocus
+            />
+            <View style={styles.editTime}>
+              <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                {t('nutritionLogger.drinkTime')}
+              </ThemedText>
+              <DateTimeInput value={editingDrinkTime} showTime showDate={false} onChange={setEditingDrinkTime} />
+            </View>
+          </View>
+        </ThemedModal>
         <CopyMealBottomSheet
           copyMealBottomSheetRef={copyMealBottomSheetRef}
           copyMealSheetSnapPoints={copyMealSheetSnapPoints}
@@ -1397,20 +1445,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  label: {
-    fontSize: 16,
-    marginTop: 20,
-    fontWeight: 'bold',
-  },
-  result: {
-    marginTop: 20,
-    fontSize: 16,
-  },
-  evidenceText: {
-    marginTop: 8,
-    fontSize: 13,
-    lineHeight: 18,
-  },
   imagePickerButton: {
     alignSelf: 'center',
     marginBottom: 16,
@@ -1424,48 +1458,6 @@ const styles = StyleSheet.create({
     marginTop: -6,
     marginBottom: 12,
   },
-  clearAllMealsButton: {
-    marginBottom: 12,
-  },
-  packagingModalContent: {
-    width: '100%',
-    alignItems: 'stretch',
-    gap: 12,
-  },
-  packagingModalBody: {
-    textAlign: 'center',
-  },
-  packagingLabelBox: {
-    width: '100%',
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderRadius: 14,
-    marginTop: 12,
-    paddingHorizontal: 12,
-    paddingTop: 20,
-    paddingBottom: 12,
-    gap: 10,
-    alignItems: 'stretch',
-    position: 'relative',
-  },
-  packagingLabelBoxTitle: {
-    position: 'absolute',
-    top: -9,
-    left: 12,
-    paddingHorizontal: 6,
-    textAlign: 'left',
-  },
-  packagingModalStatus: {
-    textAlign: 'center',
-    opacity: 0.8,
-  },
-  packagingModalHint: {
-    textAlign: 'center',
-    opacity: 0.75,
-  },
-  packagingDescriptionInput: {
-    marginTop: 2,
-  },
   analysisReviewScroll: {
     maxHeight: 420,
     width: '100%',
@@ -1473,6 +1465,18 @@ const styles = StyleSheet.create({
   analysisReviewContent: {
     gap: 12,
     paddingBottom: 8,
+  },
+  mealTimeRow: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 0,
+    marginBottom: 4,
+  },
+  mealTimeInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
   analysisReviewStatus: {
     marginBottom: 4,
@@ -1498,45 +1502,6 @@ const styles = StyleSheet.create({
   },
   reAnalyzePrefix: {},
   reAnalyzeHighlight: {},
-  packagingModalPickerButton: {
-    marginTop: 4,
-  },
-  nutrientRow: {
-    paddingBottom: 6,
-    marginBottom: 6,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  nutrientRowWithIcon: {
-    paddingBottom: 6,
-    marginBottom: 6,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    paddingLeft: 22,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  breakdownSection: {
-    marginTop: 12,
-    gap: 4,
-  },
-  fiberCategoryRow: {
-    marginBottom: 4,
-  },
-  fiberSubtypeText: {
-    marginLeft: 14,
-    opacity: 0.85,
-  },
-  microbeRow: {
-    marginBottom: 6,
-  },
-  aminoGroupHeader: {
-    marginTop: 4,
-    marginBottom: 2,
-    fontWeight: '600',
-  },
-  aminoGroupHeaderSecond: {
-    marginTop: 10,
-  },
   copyMealModalContent: {
     width: '100%',
     gap: 10,
@@ -1597,8 +1562,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
   },
-  collapsibleTitleIcon: {
-    marginLeft: 'auto',
+  detectedDrinkCard: {
+    padding: 12,
+  },
+  detectedDrinkHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  detectedDrinkImage: {
+    width: 64,
+    height: 64,
+  },
+  detectedDrinkInfo: {
+    flex: 1,
+    gap: 2,
+  },
+  editEntryModalContent: {
+    width: '100%',
+    gap: 16,
+  },
+  editTime: {
+    alignItems: 'center',
+    gap: 2,
   },
 });
 

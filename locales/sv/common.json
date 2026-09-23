@@ -6,6 +6,8 @@
     "areYouSure": "Är du säker?",
     "add": "Lägg till",
     "cancel": "Avbryt",
+    "confirm": "Bekräfta",
+    "confirmed": "Bekräftad",
     "you": "dig",
     "close": "Stäng",
     "save": "Spara",
@@ -125,8 +127,7 @@
       "recommendedBedtime": "Rekommenderad läggtid"
     }
   },
-  
-  "selectedSupplementList": {
+   "selectedSupplementList": {
     "choosenFor": "Tagna kosttillskott"
   },
   "plan": {
@@ -193,7 +194,6 @@
     "toggleNotifications": "Växla notiser",
     "toggleSupplements": "Visa eller dölj innehåll",
     "noSupplementSlots": "Inga tider skapade ännu.",
-    "createdBy": "Skapad av {{name}}",
     "aiCreateTitle": "Skapa plan med AI",
     "aiCreateDescription": "Låt AI skapa ett personligt förslag",
     "latestAiCommentTitle": "AI-kommentar",
@@ -373,10 +373,6 @@
     "skipConfirmBody": "Om du hoppar över nu måste du börja om från början.",
     "skipConfirmYes": "Ja, hoppa över",
     "verdict": "Vad tycker du?",
-    "verdictRelevant": "Relevant för mig",
-    "verdictRelevantDesc": "Jag tycker detta verkar intressant.",
-    "verdictFollowResearch": "Intressant",
-    "verdictFollowResearchDesc": "Men jag vill ha mer forskning först.",
     "verdictInterested": "Gör redan detta",
     "verdictAlreadyDoing": "Gör redan detta",
     "verdictNotInterested": "Inte för mig",
@@ -573,10 +569,7 @@
     "immuneStatus": {
       "title": "Immuntillstånd",
       "stressLevel": "Stressnivå",
-      "bodyBattery": "Body Battery",
-      "recoveryStatus": "Återhämtningsstatus",
-      "readyForActivity": "Redo för aktivitet",
-      "needRecovery": "Behöver återhämtning"
+      "bodyBattery": "Body Battery"
     },
     "whyTheseMetricsMatter": {
       "title": "Varför dessa metrik är viktiga",
@@ -854,8 +847,6 @@
     "welcomeMessage": "Hej! Jag är din personliga hälsocoach – specialiserad på biohacking och kosttillskott. Ställ gärna en fråga om tillskott, dagliga rutiner eller hur du optimerar din hälsa. 💪🌿",
     "introPrompt": "Jag har precis lagt till ett nytt hälsomål: {{goal}}. Det innehåller dessa tillskott: {{supplements}}. Kan du gå igenom varje tillskott, ge råd om fördelar, tidpunkt att ta det, och varningar om det behövs?",
     "askToAddSupplements": "Vill du att jag lägger till dessa tillskott i din plan?",
-    "systemPromptWithPlan": "📝 Användaren har följande plan:\n{{plan}}\n\nDu är en professionell hälsocoach med expertis inom biohacking och kosttillskott. När du svarar:\n\n1. Ange fördelar med varje tillskott.\n2. Ange lämplig tidpunkt på dagen att ta varje tillskott.\n3. Ange eventuella varningar.\n4. Om användaren har en plan: föreslå endast tillskott som passar tider som ännu inte är upptagna.\n5. Avsluta med en fråga om du ska lägga till tillskotten i användarens plan.\n\nSvara tydligt på svenska, gärna i punktform.",
-    "systemPromptNoPlan": "⚠️ Användaren har inte delat sin plan.\n\nDu är en professionell hälsocoach inom biohacking. När du svarar:\n\n1. Ange fördelar med varje tillskott.\n2. Ange lämplig tidpunkt att ta varje tillskott.\n3. Ange eventuella varningar.\n\nSvara på svenska, gärna i punktform.",
     "supplementNotFound": "⚠️ Jag kunde inte hitta {{supplement}} i listan över kosttillskott."
   },
   "onboarding": {
@@ -875,11 +866,11 @@
     "appTitle": "BIOHAXING",
     "level": "LEVEL",
     "noFavorites": "Inga favoriter än",
+    "noPlanned": "Inget planerat",
     "editAreas": "Redigera Områden",
     "checkCoverage": "Min plan-täckning",
     "myProgress": "Min XP",
     "xpBreakdown": "Kunskaps-XP: {{education}} • Nutrition-XP: {{nutrition}}",
-    "noPlanned": "Inget planerat",
     "xpInfo": "XP mäter din utveckling i appen. Kunskaps-XP får du när du utforskar tips och frågor. Nutrition-XP får du när du uppfyller nutritionstips (dagliga/veckovisa mål).\n\nNuvarande uppdelning:\n Kunskaps-XP: {{education}} • Nutrition-XP: {{nutrition}}."
   },
   "search": {
@@ -1064,15 +1055,17 @@
     "mealTitle": "Loggad måltid",
     "mealTitleWithName": "Loggad måltid: {{name}}",
     "loggedMealsTitle": "Loggade måltider",
+    "loggedDrinksTitle": "Loggade drycker",
     "futureDateLocked": "Du kan inte logga eller analysera måltider på framtida datum.",
     "packageFlowTitle": "Ingredienser",
-    "packageFlowDescriptionLabel": "Måltidsbeskrivning",
-    "packageFlowDescriptionPlaceholder": "Exempel: kycklingsallad med avokado, fetaost och pumpafrön",
     "packageFlowAnalyze": "Analysera måltid",
     "packageFlowAddMealImage": "Lägg till måltidsbild",
     "packageFlowRemoveMealImage": "Ta bort måltidsbild",
+    "packageFlowDescriptionLabel": "Måltidsbeskrivning",
+    "packageFlowDescriptionPlaceholder": "Exempel: kycklingsallad med avokado, fetaost och pumpafrön",
     "packageFlowAddIngredientImage": "Lägg till näringsetikett",
     "packageFlowHint": "Foto på näringsetiketten hjälper till att analysera måltiden mer exakt.",
+    "mealTime": "Måltidstid",
     "analysisReviewTitle": "Granska AI-analysen innan du sparar",
     "analysisReviewAiDescriptionTitle": "AI-beskrivning av bilden",
     "analysisReviewNutritionPreviewTitle": "Näring som kommer att sparas",
@@ -1096,6 +1089,9 @@
     "polyphenols": "Polyfenoler: {{value}} mg",
     "minerals": "Mineraler: {{value}} mg",
     "vitamins": "Vitaminer: {{value}} mg",
+    "alcohol": "Alkohol",
+    "caffeine": "Koffein",
+    "sugarFree": "Sockerfri",
     "microbiomeYes": "Mikrobiom-support: Ja ({{count}})",
     "fulfilledTargetsCount": "{{met}}/{{total}} uppfyllda",
     "continueToday": "Fortsätt idag",
@@ -1115,6 +1111,7 @@
     "confidenceMedium": "Medelhög säkerhet",
     "confidenceLow": "Låg säkerhet",
     "confidenceUnknown": "Okänd säkerhet",
+    "detectedDrinksTitle": "Bekräfta drycker",
     "fiberLabels": {
       "fiber_total": "Fibrer totalt",
       "fiber_gel_forming": "Gelbildande fibrer",
@@ -1211,7 +1208,9 @@
       "galactooligosaccharides": "Galaktooligosackarider (GOS)",
       "pectic_oligosaccharides": "Pektiska oligosackarider"
     },
-    "seeProgress": "Se utveckling"
+    "seeProgress": "Se utveckling",
+    "analysisInProgress": "Analys pågår",
+    "analysisDoNotCloseApp": "Stäng inte appen medan analysen pågår. Det går bra att navigera till andra delar av appen."
   },
   "otherLoggerTab": {
     "registerToday": "Registrera idag",

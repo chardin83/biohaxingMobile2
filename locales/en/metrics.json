@@ -253,13 +253,13 @@
         "register_manually": "Register manually"
     },
   "metricStatus": {
-        "low": "Låg",
-        "moderate": "Måttlig",
-        "good": "Bra",
+        "low": "Low",
+        "moderate": "Moderate",
+        "good": "Good",
         "optimal": "Optimal",
-        "elevated": "Förhöjd",
-        "high": "Hög",
-        "closeToBedtime": "Ganska nära",
-        "tooCloseToBedtime": "För nära sovdags"
+        "elevated": "Elevated",
+        "high": "High",
+        "closeToBedtime": "Close",
+        "tooCloseToBedtime": "Too close"
     }
 }

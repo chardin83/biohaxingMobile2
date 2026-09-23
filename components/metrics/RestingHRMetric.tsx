@@ -123,15 +123,4 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'baseline',
   },
-  metricMissingValueContainer: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 2,
-  },
-  warningContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
 });
