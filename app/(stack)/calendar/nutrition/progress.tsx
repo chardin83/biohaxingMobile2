@@ -19,7 +19,7 @@ import Container from '@/components/ui/Container';
 import { useNutritionTipTargets } from '@/hooks/useNutritionTipTargets';
 import { useProgressWeeks } from '@/hooks/useWeekProgress';
 import { tips } from '@/locales/tips';
-import { NutritionTargetPeriod } from '@/types/nutritionTargets';
+import { NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import { formatMonthDay, fromDateKey, toDateKey } from '@/utils/dateUtils';
 
 const getWeeklyProgressText = (tipId: string, weekStartISO: string, weeklyNutritionTracking: WeeklyNutritionTracking): string | null => {

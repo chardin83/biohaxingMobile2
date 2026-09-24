@@ -1,6 +1,6 @@
 import { MineralType } from '@/constants/minerals';
-import { NutritionComposition } from '@/types/nutritionProfile';
-import { NutritionTargetPeriod, NutritionTargetUnit } from '@/types/nutritionTargets';
+import { NutritionComposition } from '@/types/nutrition/nutritionProfile';
+import { NutritionTargetPeriod, NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
 
 import { DailyTracking, WeeklyTracking } from '../types/trackingTypes';
 
@@ -54,22 +54,44 @@ export type TipProgressItem = {
 
 export type DailyNutritionTracking = DailyTracking<DailyNutritionSummary>;
 
-export type WeeklyNutritionValue = WeeklyTrackingItem[] | number;
-
-export type WeeklyNutritionTracking = WeeklyTracking<Record<string, WeeklyNutritionValue>>;
-
 export type WeeklyTrackingItem = { en: string; local: string };
 
-export type MealNutrition = NutritionComposition & {
+export type WeeklyNutritionValue = WeeklyTrackingItem[] | number;
+
+export type NutritionTrackingContribution = {
+  nutritionEntryId: string;
+  date: string;
+  signals: Record<string, WeeklyNutritionValue>;
+};
+
+export type WeeklyNutritionTracking = WeeklyTracking<NutritionTrackingContribution[]>;
+
+export type NutritionEntryType = 'meal' | 'food' | 'drink';
+
+export type NutritionEntryBase = NutritionComposition & {
   id: string;
   recordedAt: string;
-  mealName?: string;
+  name: string;
   mineralsConfidenceByType?: Partial<Record<MineralType, 'high' | 'medium' | 'low' | 'unknown'>>;
 };
 
+export type MealEntry = NutritionEntryBase & {
+  type: Extract<NutritionEntryType, 'meal'>;
+};
+
+export type FoodEntry = NutritionEntryBase & {
+  type: Extract<NutritionEntryType, 'food'>;
+};
+
+export type DrinkNutritionEntry = NutritionEntryBase & {
+  type: Extract<NutritionEntryType, 'drink'>;
+};
+
+export type NutritionEntry = MealEntry | FoodEntry | DrinkNutritionEntry;
+
 export type DailyNutritionSummary = {
   date: string;
-  meals: MealNutrition[];
+  entries: NutritionEntry[];
   totals: {
     protein: number;
     calories: number;

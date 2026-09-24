@@ -1,6 +1,12 @@
-import type { DailyNutritionSummary, DailyNutritionTracking, WeeklyNutritionTracking } from '@/app/context/storage/nutrition/nutritionTypes';
+import type {
+  DailyNutritionSummary,
+  DailyNutritionTracking,
+  NutritionEntry,
+  WeeklyNutritionTracking,
+  WeeklyNutritionValue,
+} from '@/app/context/storage/nutrition/nutritionTypes';
 import type { SupplementTime } from '@/app/domain/SupplementTime';
-import type { NutritionTargetUnit } from '@/types/nutritionTargets';
+import type { NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
 
 import { getTargetDates } from './dateRange';
 import type { NutritionTargetDefinition } from './targetProgressTypes';
@@ -12,10 +18,6 @@ export type NutritionTargetDetails = {
   foodActual: number;
   supplementActual: number;
 };
-
-// ─────────────────────────────────────────────────────────────
-// Unit conversion
-// ─────────────────────────────────────────────────────────────
 
 const normalizeUnit = (unit: string | undefined): string => (unit ?? '').trim().toLowerCase();
 
@@ -77,21 +79,14 @@ const convertQuantity = (quantity: number, sourceUnit: string, targetUnit: Nutri
   switch (targetUnit) {
     case 'mg':
       return toMilligrams(quantity, sourceUnit);
-
     case 'μg':
       return toMicrograms(quantity, sourceUnit);
-
     case 'g':
       return toGrams(quantity, sourceUnit);
-
     default:
       return null;
   }
 };
-
-// ─────────────────────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────────────────────
 
 const normalizeSupplementKey = (value: string | undefined): string => (value ?? '').trim().toLowerCase();
 
@@ -115,9 +110,9 @@ const getNumericRecordValue = (source: object | undefined, key: string): number 
   return typeof value === 'number' && Number.isFinite(value) ? value : 0;
 };
 
-const resolveNutritionValueFromMeals = (meals: DailyNutritionSummary['meals'], trackingKey: string): number => {
-  return meals.reduce((total, meal) => {
-    const sources = [meal.fiberByType, meal.fiberSubtypeTotals, meal.polyphenolByType, meal.mineralsByType, meal.vitaminsByType, meal.aminoAcidsByType];
+const resolveNutritionValueFromEntries = (entries: NutritionEntry[], trackingKey: string): number =>
+  entries.reduce((total, entry) => {
+    const sources = [entry.fiberByType, entry.fiberSubtypeTotals, entry.polyphenolByType, entry.mineralsByType, entry.vitaminsByType, entry.aminoAcidsByType];
 
     for (const source of sources) {
       const value = getNumericRecordValue(source, trackingKey);
@@ -129,15 +124,7 @@ const resolveNutritionValueFromMeals = (meals: DailyNutritionSummary['meals'], t
 
     return total;
   }, 0);
-};
 
-/**
- * Nutrient maps are stored using the same convention as before:
- * nutrient values are essentially represented in mg, while μg targets
- * therefore need converting from mg -> μg.
- *
- * Macro/fiber totals are already stored in their normal unit.
- */
 const convertFoodValueToTargetUnit = (value: number, targetUnit: NutritionTargetUnit): number => {
   if (targetUnit === 'μg') {
     return value * 1000;
@@ -155,22 +142,17 @@ const resolveFoodActual = ({ target, summary }: { target: NutritionTargetDefinit
 
   switch (trackingKey) {
     case 'fiber_total':
-      return summary.totals?.fiber ?? 0;
-
+      return summary.totals.fiber;
     case 'protein':
-      return summary.totals?.protein ?? 0;
-
+      return summary.totals.protein;
     case 'calories':
-      return summary.totals?.calories ?? 0;
-
+      return summary.totals.calories;
     case 'carbohydrates':
-      return summary.totals?.carbohydrates ?? 0;
-
+      return summary.totals.carbohydrates;
     case 'fat':
-      return summary.totals?.fat ?? 0;
-
+      return summary.totals.fat;
     default: {
-      const rawValue = resolveNutritionValueFromMeals(summary.meals ?? [], trackingKey);
+      const rawValue = resolveNutritionValueFromEntries(summary.entries, trackingKey);
 
       return convertFoodValueToTargetUnit(rawValue, target.unit);
     }
@@ -237,10 +219,6 @@ const resolveSupplementActual = ({
   return total;
 };
 
-// ─────────────────────────────────────────────────────────────
-// Daily target details
-// ─────────────────────────────────────────────────────────────
-
 export const resolveDailyNutritionTargetDetails = ({
   target,
   dateKey,
@@ -252,12 +230,6 @@ export const resolveDailyNutritionTargetDetails = ({
   dateKey: string;
   dailyNutritionTracking: DailyNutritionTracking;
   takenDates?: TakenDates;
-
-  /**
-   * IDs associated with this target/tip.
-   *
-   * If supplied, these take precedence over target.supplementIds.
-   */
   supplementIds?: readonly string[];
 }): NutritionTargetDetails => {
   const summary = dailyNutritionTracking[dateKey];
@@ -276,18 +248,44 @@ export const resolveDailyNutritionTargetDetails = ({
     supplementIds: resolvedSupplementIds,
   });
 
-  const actual = foodActual + supplementActual;
-
   return {
-    actual,
+    actual: foodActual + supplementActual,
     foodActual,
     supplementActual,
   };
 };
 
-// ─────────────────────────────────────────────────────────────
-// Weekly targets
-// ─────────────────────────────────────────────────────────────
+const aggregateWeeklyNutritionTracking = (weeklyNutritionTracking: WeeklyNutritionTracking, weekStartKey: string): Record<string, WeeklyNutritionValue> => {
+  const result: Record<string, WeeklyNutritionValue> = {};
+
+  const contributions = weeklyNutritionTracking[weekStartKey] ?? [];
+
+  contributions.forEach(contribution => {
+    Object.entries(contribution.signals).forEach(([trackingKey, value]) => {
+      const existing = result[trackingKey];
+
+      if (typeof value === 'number' && Number.isFinite(value)) {
+        const existingNumber = typeof existing === 'number' ? existing : 0;
+
+        result[trackingKey] = existingNumber + value;
+
+        return;
+      }
+
+      if (!Array.isArray(value)) {
+        return;
+      }
+
+      const existingItems = Array.isArray(existing) ? existing : [];
+
+      const allItems = [...existingItems, ...value];
+
+      result[trackingKey] = Array.from(new Map(allItems.map(item => [`${item.en}|${item.local}`, item])).values());
+    });
+  });
+
+  return result;
+};
 
 const resolveWeeklyNutritionTarget = ({
   target,
@@ -300,24 +298,22 @@ const resolveWeeklyNutritionTarget = ({
 }): number => {
   const weekStartKey = getTargetDates(selectedDate, 'weekly')[0];
 
-  const value = weeklyNutritionTracking[weekStartKey]?.[target.trackingKey];
+  const aggregated = aggregateWeeklyNutritionTracking(weeklyNutritionTracking, weekStartKey);
+
+  const value = aggregated[target.trackingKey];
 
   if (typeof value === 'number' && Number.isFinite(value)) {
     return value;
   }
 
   if (Array.isArray(value)) {
-    const uniqueItems = new Set(value.map(item => (item.en ?? item.local ?? '').trim().toLowerCase()).filter(Boolean));
+    const uniqueItems = new Set(value.map(item => (item.en || item.local).trim().toLowerCase()).filter(Boolean));
 
     return uniqueItems.size;
   }
 
   return 0;
 };
-
-// ─────────────────────────────────────────────────────────────
-// Public resolver used by targetProgressService
-// ─────────────────────────────────────────────────────────────
 
 export const resolveNutritionTarget = ({
   target,

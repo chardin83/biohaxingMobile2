@@ -1,5 +1,5 @@
-import type { NutritionTargetPeriod } from "@/types/nutritionTargets";
-import { VerdictValue } from "@/types/verdict";
+import type { NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
+import { VerdictValue } from '@/types/verdict';
 
 export interface ViewedTip {
   tipId: string;

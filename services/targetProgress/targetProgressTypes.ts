@@ -1,4 +1,4 @@
-import { NutritionTargetPeriod, NutritionTargetUnit } from '@/types/nutritionTargets';
+import { NutritionTargetPeriod, NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
 import type { TrainingActivityType } from '@/types/training';
 
 export type TargetPeriod = 'daily' | 'weekly';

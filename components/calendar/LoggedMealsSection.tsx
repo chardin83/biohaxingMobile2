@@ -3,7 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { MealNutrition } from '@/app/context/storage/nutrition/nutritionTypes';
+import { NutritionEntry } from '@/app/context/storage/nutrition/nutritionTypes';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { formatClockTime } from '@/utils/dateUtils';
 
@@ -14,10 +14,10 @@ import { IconSymbol } from '../ui/IconSymbol';
 import { SwipeableRow } from '../ui/SwipeableRow';
 
 type LoggedMealsSectionProps = {
-  meals: MealNutrition[];
+  meals: NutritionEntry[];
   onEdit: (mealId: string, mealName: string) => void;
   onDelete: (mealId: string) => void;
-  onSelect: (meal: MealNutrition, mealId: string) => void;
+  onSelect: (meal: NutritionEntry, mealId: string) => void;
 };
 
 export const LoggedMealsSection: React.FC<LoggedMealsSectionProps> = ({ meals, onEdit, onDelete, onSelect }) => {

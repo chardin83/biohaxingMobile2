@@ -23,7 +23,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import PencilEditButton from '@/components/ui/PencilEditButton';
 import { PressableCard } from '@/components/ui/PressableCard';
 import { useNutritionPlanProgress } from '@/hooks/useNutritionPlanProgress';
-import { FOOD_IMAGES } from '@/locales/foodCatalog';
+import { FOOD_IMAGES } from '@/types/nutrition/foodCatalog';
 import { metrics, tipMetricLinks } from '@/locales/metrics';
 import { tips } from '@/locales/tips';
 import { formatDate, toDateKey } from '@/utils/dateUtils';

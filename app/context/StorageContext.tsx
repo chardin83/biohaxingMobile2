@@ -14,7 +14,7 @@ import {
 import { type ArchivedPlansByCategory, EMPTY_ARCHIVED_PLANS, EMPTY_PLANS, type PlansByCategory } from '@/app/context/storage/plans/planTypes';
 import { levels, XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW, XP_PER_CHAT_MESSAGE, type XpSource } from '@/constants/XP';
 import { MetricId } from '@/locales/metrics';
-import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
+import { type NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import { VerdictValue } from '@/types/verdict';
 
 import { Plan } from '../domain/Plan';
@@ -171,6 +171,13 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const [nutritionXpClaimsState, setNutritionXpClaimsState] = useState<Record<string, NutritionXpClaim>>({});
   const [userProfileState, setUserProfileState] = useState<UserProfile>({});
 
+  // useEffect(() => {
+  //   AsyncStorage.clear()
+  //     .then(() => {
+  //       console.log('AsyncStorage cleared');
+  //     })
+  //     .catch(console.error);
+  // }, []);
   /*
    * Plans
    */

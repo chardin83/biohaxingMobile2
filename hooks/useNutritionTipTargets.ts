@@ -11,7 +11,7 @@ import { isVitaminTargetTag } from '@/constants/vitamins';
 import { tips } from '@/locales/tips';
 import { resolveDailyNutritionTargetDetails } from '@/services/targetProgress/nutritionTargetProgress';
 import type { NutritionTargetDefinition } from '@/services/targetProgress/targetProgressTypes';
-import type { NutritionTargetUnit } from '@/types/nutritionTargets';
+import type { NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
 
 type NutritionLabelGroup = 'aminoAcidLabels' | 'mineralLabels' | 'vitaminLabels' | 'fiberLabels' | 'polyphenolLabels';
 

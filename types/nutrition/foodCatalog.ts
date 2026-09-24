@@ -1,4 +1,4 @@
-import { type NutritionComposition } from '@/types/nutritionProfile';
+import { type NutritionComposition } from '@/types/nutrition/nutritionProfile';
 
 export type FoodServing = {
   grams: number;
@@ -9,17 +9,9 @@ export type FoodNutrientProfile = NutritionComposition & {
   defaultServings: FoodServing[];
 };
 
-const GRAM_30_60_90: FoodServing[] = [
-  { grams: 30 },
-  { grams: 60 },
-  { grams: 90 },
-];
+const GRAM_30_60_90: FoodServing[] = [{ grams: 30 }, { grams: 60 }, { grams: 90 }];
 
-const GRAM_50_100_200: FoodServing[] = [
-  { grams: 50 },
-  { grams: 100 },
-  { grams: 200 },
-];
+const GRAM_50_100_200: FoodServing[] = [{ grams: 50 }, { grams: 100 }, { grams: 200 }];
 
 const CUP_LEAFY_90_180_360: FoodServing[] = [
   { grams: 90, labelKey: 'halfCup' },
@@ -105,11 +97,7 @@ const CUP_DRINK_120_240_480: FoodServing[] = [
   { grams: 480, labelKey: 'twoCups' },
 ];
 
-const GRAM_150_300_450: FoodServing[] = [
-  { grams: 150 },
-  { grams: 300 },
-  { grams: 450 },
-];
+const GRAM_150_300_450: FoodServing[] = [{ grams: 150 }, { grams: 300 }, { grams: 450 }];
 
 // Unit reminder for all values below (per 100g):
 // macros/fiber in grams, vitamins/minerals/amino acids/polyphenols in mg.
@@ -1034,7 +1022,7 @@ export const FOOD_NUTRIENT_PROFILES = {
       phenylalanine: 1200,
       threonine: 1300,
       tryptophan: 300,
-      arginine: 1900  ,
+      arginine: 1900,
       cysteine: 350,
       glutamine: 4700,
       glycine: 1500,
@@ -1390,11 +1378,7 @@ export const FOOD_NUTRIENT_PROFILES = {
     aminoAcidsByType: {
       citrulline: 25,
     },
-    defaultServings: [
-      { grams: 50 },
-      { grams: 100 },
-      { grams: 200 },
-    ],
+    defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }],
   },
   extraVirginOliveOil: {
     calories: 884,
@@ -1412,11 +1396,7 @@ export const FOOD_NUTRIENT_PROFILES = {
       vitamin_e: 14,
       vitamin_k: 0.0601,
     },
-    defaultServings: [
-      { grams: 7 },
-      { grams: 14 },
-      { grams: 28 },
-    ],
+    defaultServings: [{ grams: 7 }, { grams: 14 }, { grams: 28 }],
   },
   fortifiedDairy: {
     calories: 47,
@@ -1527,11 +1507,7 @@ export const FOOD_NUTRIENT_PROFILES = {
       calcium: 24,
       potassium: 8,
     },
-    defaultServings: [
-      { grams: 3 },
-      { grams: 6 },
-      { grams: 12 },
-    ],
+    defaultServings: [{ grams: 3 }, { grams: 6 }, { grams: 12 }],
   },
   kefir: {
     calories: 61,
@@ -2749,10 +2725,9 @@ export const FOOD_IMAGES: FoodImageSourceMap = {
   cucumber: require('@/assets/images/food/cucumber.png'),
   beets: require('@/assets/images/food/beets.png'),
   eggs: require('@/assets/images/food/eggs.png'),
-  broccoli: require('@/assets/images/food/broccoli.png'), 
+  broccoli: require('@/assets/images/food/broccoli.png'),
   beefShank: require('@/assets/images/food/beefShank.png'),
   chickenWings: require('@/assets/images/food/chickenWings.png'),
   salmon: require('@/assets/images/food/salmon.png'),
   //sardines: require('@/assets/images/food/sardines.png'),
 };
-

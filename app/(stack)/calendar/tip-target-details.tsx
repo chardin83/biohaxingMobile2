@@ -1,16 +1,24 @@
 import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
+import * as Crypto from 'expo-crypto';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ImageSourcePropType } from 'react-native';
 import { Image, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { FullWindowOverlay } from 'react-native-screens';
 import Svg, { Circle } from 'react-native-svg';
 
+import {
+  DailyNutritionSummary,
+  NutritionEntry,
+  NutritionTrackingContribution,
+  WeeklyNutritionValue,
+  WeeklyTrackingItem,
+} from '@/app/context/storage/nutrition/nutritionTypes';
 import { useStorage } from '@/app/context/StorageContext';
+import { Supplement } from '@/app/domain/Supplement';
 import { Collapsible } from '@/components/Collapsible';
-import FoodPortionBottomSheet, { FoodServing } from '@/components/FoodPortionBottomSheet';
+import FoodPortionBottomSheet from '@/components/FoodPortionBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import { useBottomSheetDesign } from '@/components/ui/BottomSheetDesign';
 import Container from '@/components/ui/Container';
@@ -21,17 +29,22 @@ import { isFiberTargetTag } from '@/constants/fiber';
 import { isMineralTargetTag } from '@/constants/minerals';
 import { isPolyphenolTargetTag } from '@/constants/polyphenols';
 import { isVitaminTargetTag } from '@/constants/vitamins';
-import { FOOD_IMAGES, FOOD_NUTRIENT_PROFILES, FoodNutrientProfile, type FoodServing as FoodCatalogServing } from '@/locales/foodCatalog';
 import { useSupplementMap } from '@/locales/supplements';
 import { getTipTargetIconName, type NutrientTag, tips } from '@/locales/tips';
 import { toGrams, toMicrograms, toMilligrams } from '@/services/targetProgress/nutritionTargetProgress';
-import { type NutritionTargetUnit } from '@/types/nutritionTargets';
-import { extractWeeklyTrackingSignals, type WeeklyTrackingSignalValue } from '@/utils/analyzeNutrition';
-import { formatMonthDayRange, fromDateKey, toDateKey } from '@/utils/dateUtils';
+import { FOOD_IMAGES, FOOD_NUTRIENT_PROFILES, FoodNutrientProfile, type FoodServing } from '@/types/nutrition/foodCatalog';
+import { type NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
+import { formatMonthDayRange, fromDateKey, toDateKey, toRecordedAt } from '@/utils/dateUtils';
 import { formatWithUnit } from '@/utils/formatters';
 import { getNutritionTargetMedalEmoji, getNutritionTargetMedalType } from '@/utils/medals';
 
-const BottomSheetOverlayContainer = ({ children }: { children?: React.ReactNode }) => <FullWindowOverlay>{children}</FullWindowOverlay>;
+type ContributingNutritionEntry = {
+  id: string;
+  dateKey: string;
+  name: string;
+  amount: number;
+  trackedItems?: string[];
+};
 
 type RouteParamValue = string | string[] | undefined;
 
@@ -116,16 +129,22 @@ const getDateKeysInRange = (startKey: string, endKey: string): string[] => {
   return keys;
 };
 
-const buildDailySummary = (meals: Array<any>, selectedDate: string) => {
-  const rawTotals = meals.reduce(
-    (acc, m) => ({
-      protein: acc.protein + (m.protein ?? 0),
-      calories: acc.calories + (m.calories ?? 0),
-      carbohydrates: acc.carbohydrates + (m.carbohydrates ?? 0),
-      fat: acc.fat + (m.fat ?? 0),
-      fiber: acc.fiber + (m.fiber ?? 0),
+const buildDailySummary = (entries: NutritionEntry[], selectedDate: string): DailyNutritionSummary => {
+  const rawTotals = entries.reduce(
+    (acc, entry) => ({
+      protein: acc.protein + (entry.protein ?? 0),
+      calories: acc.calories + (entry.calories ?? 0),
+      carbohydrates: acc.carbohydrates + (entry.carbohydrates ?? 0),
+      fat: acc.fat + (entry.fat ?? 0),
+      fiber: acc.fiber + (entry.fiber ?? 0),
     }),
-    { protein: 0, calories: 0, carbohydrates: 0, fat: 0, fiber: 0 }
+    {
+      protein: 0,
+      calories: 0,
+      carbohydrates: 0,
+      fat: 0,
+      fiber: 0,
+    }
   );
 
   const totals = {
@@ -138,7 +157,7 @@ const buildDailySummary = (meals: Array<any>, selectedDate: string) => {
 
   return {
     date: selectedDate,
-    meals,
+    entries,
     totals,
     goalsMet: {
       protein: totals.protein >= 100,
@@ -149,13 +168,14 @@ const buildDailySummary = (meals: Array<any>, selectedDate: string) => {
     },
   };
 };
-
 const getDiscreteTrackingAmounts = (
-  _targetUnit: string,
-  _supplementsForPeriod: any[],
-  trackingValue?: WeeklyTrackingSignalValue
-): { foodAmount: number; supplementAmount: number } => {
+  trackingValue?: WeeklyNutritionValue
+): {
+  foodAmount: number;
+  supplementAmount: number;
+} => {
   let foodAmount = 0;
+
   if (typeof trackingValue === 'number') {
     foodAmount = trackingValue;
   } else if (Array.isArray(trackingValue)) {
@@ -171,30 +191,65 @@ const getDiscreteTrackingAmounts = (
 const calculateIntakeForTarget = (
   targetTag: string,
   targetUnit: NutritionTargetUnit,
-  mealSummaries: any[],
-  supplementsForPeriod: any[],
-  trackingValue?: WeeklyTrackingSignalValue
-): { foodAmount: number; supplementAmount: number } => {
+  nutritionSummaries: Array<DailyNutritionSummary | undefined>,
+  supplementsForPeriod: Supplement[],
+  trackingValue?: WeeklyNutritionValue
+): {
+  foodAmount: number;
+  supplementAmount: number;
+} => {
   if (targetUnit === 'items' || targetUnit === 'count' || targetUnit === 'plants') {
-    return getDiscreteTrackingAmounts(targetUnit, supplementsForPeriod, trackingValue);
+    return getDiscreteTrackingAmounts(trackingValue);
   }
 
   if (!isSupplementEligibleUnit(targetUnit)) {
-    return { foodAmount: 0, supplementAmount: 0 };
+    return {
+      foodAmount: 0,
+      supplementAmount: 0,
+    };
   }
 
-  const foodAmount = mealSummaries.reduce((sum: number, mealsSummary: any) => {
-    const meals = Array.isArray(mealsSummary?.meals) ? mealsSummary.meals : [];
-    return sum + meals.reduce((mealSum: number, meal: any) => mealSum + getMealContributionForTarget(meal, targetTag, targetUnit), 0);
-  }, 0);
-  const supplementAmount = supplementsForPeriod.reduce(
-    (sum: number, supp: any) => sum + getSupplementContributionForTargetUnit(Number(supp.quantity) || 0, (supp.unit || '').toLowerCase(), targetUnit),
+  const foodAmount = nutritionSummaries.reduce(
+    (sum, summary) =>
+      sum + (summary?.entries ?? []).reduce((entrySum, entry) => entrySum + getNutritionEntryContributionForTarget(entry, targetTag, targetUnit), 0),
     0
   );
 
-  return { foodAmount: Math.max(0, foodAmount), supplementAmount: Math.max(0, supplementAmount) };
-};
+  const supplementAmount = supplementsForPeriod.reduce(
+    (sum, supplement) => sum + getSupplementContributionForTargetUnit(Number(supplement.quantity) || 0, (supplement.unit || '').toLowerCase(), targetUnit),
+    0
+  );
 
+  return {
+    foodAmount: Math.max(0, foodAmount),
+    supplementAmount: Math.max(0, supplementAmount),
+  };
+};
+const aggregateTrackingValue = (contributions: NutritionTrackingContribution[], trackingKey: string): WeeklyNutritionValue | undefined => {
+  const values = contributions.map(contribution => contribution.signals[trackingKey]).filter((value): value is WeeklyNutritionValue => value !== undefined);
+
+  if (values.length === 0) {
+    return undefined;
+  }
+
+  if (values.every((value): value is number => typeof value === 'number')) {
+    return values.reduce((sum, value) => sum + value, 0);
+  }
+
+  const items = values.flatMap(value => (Array.isArray(value) ? value : []));
+
+  const uniqueItems = new Map<string, WeeklyTrackingItem>();
+
+  items.forEach(item => {
+    const key = item.en.trim().toLowerCase();
+
+    if (key) {
+      uniqueItems.set(key, item);
+    }
+  });
+
+  return Array.from(uniqueItems.values());
+};
 const getSupplementContributionForTargetUnit = (quantity: number, unit: string, targetUnit: 'mg' | 'g' | 'μg'): number => {
   if (!quantity) return 0;
   if (targetUnit === 'mg') return toMilligrams(quantity, unit) ?? 0;
@@ -204,70 +259,49 @@ const getSupplementContributionForTargetUnit = (quantity: number, unit: string, 
 
 const getTargetValueFromMilligrams = (value: number, targetUnit: NutritionTargetUnit): number => (targetUnit === 'μg' ? value * 1000 : value);
 
-const getDiscreteTrackingValueAmount = (trackingValue: WeeklyTrackingSignalValue | undefined): number => {
-  if (typeof trackingValue === 'number') {
-    return trackingValue;
-  }
-
-  if (Array.isArray(trackingValue)) {
-    return trackingValue.length;
-  }
-
-  return 0;
-};
-
-const getMealTrackedItemsForTarget = (meal: any, targetTag: string, targetUnit: NutritionTargetUnit): string[] | undefined => {
-  if (targetUnit !== 'items' && targetUnit !== 'count' && targetUnit !== 'plants') {
-    return undefined;
-  }
-
-  const trackingValue = extractWeeklyTrackingSignals(meal, undefined)[targetTag];
-  if (!Array.isArray(trackingValue)) {
-    return undefined;
-  }
-
-  return trackingValue
-    .map(item => (typeof item === 'string' ? item : item.en))
-    .filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
-    .map(item => item.trim())
-    .sort((left, right) => left.localeCompare(right));
-};
-
-const getMealContributionForTarget = (meal: any, targetTag: string, targetUnit: NutritionTargetUnit): number => {
+const getNutritionEntryContributionForTarget = (entry: NutritionEntry, targetTag: string, targetUnit: NutritionTargetUnit): number => {
   if (targetUnit === 'items' || targetUnit === 'count' || targetUnit === 'plants') {
-    const trackingValue = extractWeeklyTrackingSignals(meal, undefined)[targetTag];
-    return getDiscreteTrackingValueAmount(trackingValue);
+    return 0;
   }
 
-  if (isMineralTargetTag(targetTag) && meal?.mineralsByType?.[targetTag]) {
-    return getTargetValueFromMilligrams(Number(meal.mineralsByType[targetTag]) || 0, targetUnit);
+  if (isMineralTargetTag(targetTag) && entry.mineralsByType?.[targetTag]) {
+    return getTargetValueFromMilligrams(Number(entry.mineralsByType[targetTag]) || 0, targetUnit);
   }
-  if (isVitaminTargetTag(targetTag) && meal?.vitaminsByType?.[targetTag]) {
-    return getTargetValueFromMilligrams(Number(meal.vitaminsByType[targetTag]) || 0, targetUnit);
+
+  if (isVitaminTargetTag(targetTag) && entry.vitaminsByType?.[targetTag]) {
+    return getTargetValueFromMilligrams(Number(entry.vitaminsByType[targetTag]) || 0, targetUnit);
   }
-  if (isAminoAcidTargetTag(targetTag) && meal?.aminoAcidsByType?.[targetTag]) {
-    return getTargetValueFromMilligrams(Number(meal.aminoAcidsByType[targetTag]) || 0, targetUnit);
+
+  if (isAminoAcidTargetTag(targetTag) && entry.aminoAcidsByType?.[targetTag]) {
+    return getTargetValueFromMilligrams(Number(entry.aminoAcidsByType[targetTag]) || 0, targetUnit);
   }
-  if (isFiberTargetTag(targetTag) && meal?.fiberByType?.[targetTag]) {
-    return Number(meal.fiberByType[targetTag]) || 0;
+
+  if (isFiberTargetTag(targetTag) && entry.fiberByType?.[targetTag]) {
+    return Number(entry.fiberByType[targetTag]) || 0;
   }
-  if (isPolyphenolTargetTag(targetTag) && meal?.polyphenolByType?.[targetTag]) {
-    return getTargetValueFromMilligrams(Number(meal.polyphenolByType[targetTag]) || 0, targetUnit);
+
+  if (isPolyphenolTargetTag(targetTag) && entry.polyphenolByType?.[targetTag]) {
+    return getTargetValueFromMilligrams(Number(entry.polyphenolByType[targetTag]) || 0, targetUnit);
   }
 
   return 0;
 };
 
-const getContributingMealsForTarget = (meals: any[], selectedDateKey: string, targetTag: string, targetUnit: NutritionTargetUnit, t: (key: string) => string) =>
-  meals
-    .map((meal: any, index: number) => ({
-      id: typeof meal?.id === 'string' ? meal.id : `${selectedDateKey}-meal-${index}`,
+const getContributingNutritionEntriesForTarget = (
+  entries: NutritionEntry[],
+  selectedDateKey: string,
+  targetTag: string,
+  targetUnit: NutritionTargetUnit,
+  t: (key: string) => string
+): ContributingNutritionEntry[] =>
+  entries
+    .map(entry => ({
+      id: entry.id,
       dateKey: selectedDateKey,
-      name: typeof meal?.mealName === 'string' && meal.mealName.trim().length > 0 ? meal.mealName : t('nutritionLogger.unnamedMeal'),
-      amount: getMealContributionForTarget(meal, targetTag, targetUnit),
-      trackedItems: getMealTrackedItemsForTarget(meal, targetTag, targetUnit),
+      name: entry.name?.trim() || t('nutritionLogger.unnamedEntry'),
+      amount: getNutritionEntryContributionForTarget(entry, targetTag, targetUnit),
     }))
-    .filter(meal => meal.amount > 0)
+    .filter(entry => entry.amount > 0)
     .sort((left, right) => right.amount - left.amount);
 
 const scaleFrom100 = (value: number | undefined, grams: number): number => {
@@ -588,7 +622,15 @@ export default function TipTargetDetailsScreen() {
     () => (isWeeklyTarget ? getDateKeysInRange(selectedWeekBounds.weekStartKey, selectedWeekBounds.weekEndKey) : [selectedDateKey]),
     [isWeeklyTarget, selectedDateKey, selectedWeekBounds.weekEndKey, selectedWeekBounds.weekStartKey]
   );
-  const selectedTrackingValue = isWeeklyTarget ? weeklyNutritionTracking[selectedWeekBounds.weekStartKey]?.[targetTagParam] : undefined;
+  const selectedTrackingValue = useMemo(() => {
+    if (!isWeeklyTarget) {
+      return undefined;
+    }
+
+    const contributions = weeklyNutritionTracking[selectedWeekBounds.weekStartKey] ?? [];
+
+    return aggregateTrackingValue(contributions, targetTagParam);
+  }, [isWeeklyTarget, weeklyNutritionTracking, selectedWeekBounds.weekStartKey, targetTagParam]);
 
   const { foodAmount, supplementAmount } = useMemo(() => {
     const mealSummaries = selectedDateKeys.map(dateKey => dailyNutritionTracking[dateKey]);
@@ -608,14 +650,51 @@ export default function TipTargetDetailsScreen() {
   const supplementActual = supplementAmount;
   const totalActual = foodActual + supplementActual;
   const contributingMeals = useMemo(() => {
+    if (isWeeklyTarget && (targetUnit === 'items' || targetUnit === 'count' || targetUnit === 'plants')) {
+      const contributions = weeklyNutritionTracking[selectedWeekBounds.weekStartKey] ?? [];
+
+      return contributions
+        .map((contribution): ContributingNutritionEntry | null => {
+          const trackingValue = contribution.signals[targetTagParam];
+
+          if (trackingValue === undefined) {
+            return null;
+          }
+
+          const amount = typeof trackingValue === 'number' ? trackingValue : trackingValue.length;
+
+          if (amount <= 0) {
+            return null;
+          }
+
+          const nutritionEntry = dailyNutritionTracking[contribution.date]?.entries.find(entry => entry.id === contribution.nutritionEntryId);
+
+          if (!nutritionEntry) {
+            return null;
+          }
+
+          const trackedItems = Array.isArray(trackingValue) ? trackingValue.map(item => item.local || item.en) : undefined;
+
+          return {
+            id: contribution.nutritionEntryId,
+            dateKey: contribution.date,
+            name: nutritionEntry.name?.trim() || t('nutritionLogger.unnamedEntry'),
+            amount,
+            trackedItems,
+          };
+        })
+        .filter((entry): entry is ContributingNutritionEntry => entry !== null)
+        .sort((left, right) => right.amount - left.amount);
+    }
+
     return selectedDateKeys
       .flatMap(dateKey => {
-        const meals = dailyNutritionTracking[dateKey]?.meals ?? [];
+        const entries = dailyNutritionTracking[dateKey]?.entries ?? [];
 
-        return getContributingMealsForTarget(meals, dateKey, targetTagParam, targetUnit, t);
+        return getContributingNutritionEntriesForTarget(entries, dateKey, targetTagParam, targetUnit, t);
       })
       .sort((left, right) => right.amount - left.amount);
-  }, [dailyNutritionTracking, selectedDateKeys, t, targetTagParam, targetUnit]);
+  }, [dailyNutritionTracking, isWeeklyTarget, selectedDateKeys, selectedWeekBounds.weekStartKey, t, targetTagParam, targetUnit, weeklyNutritionTracking]);
 
   const hasData = foodActual + supplementActual > 0;
 
@@ -736,15 +815,13 @@ export default function TipTargetDetailsScreen() {
 
   const handleSelectServing = React.useCallback(
     (serving: FoodServing) => {
-      const mealName = `${selectedFoodName} (${serving.label})`;
-
       setDailyNutritionTracking(prev => {
-        const existingMeals = prev[selectedDateKey]?.meals ?? [];
-
-        const newMeal = {
-          id: crypto.randomUUID(),
-          date: selectedDateKey,
-          mealName,
+        const existingEntries = prev[selectedDateKey]?.entries ?? [];
+        const newEntry: NutritionEntry = {
+          id: Crypto.randomUUID(),
+          type: 'food',
+          recordedAt: toRecordedAt(selectedDateKey, new Date()),
+          name: `${selectedFoodName} (${serving.grams} g)`,
           protein: scaleFrom100(selectedFoodProfile?.protein, serving.grams),
           calories: scaleFrom100(selectedFoodProfile?.calories, serving.grams),
           carbohydrates: scaleFrom100(selectedFoodProfile?.carbohydrates, serving.grams),
@@ -755,17 +832,12 @@ export default function TipTargetDetailsScreen() {
           mineralsByType: scaleMapFrom100(selectedFoodProfile?.mineralsByType, serving.grams),
           vitaminsByType: scaleMapFrom100(selectedFoodProfile?.vitaminsByType, serving.grams),
           polyphenolByType: scaleMapFrom100(selectedFoodProfile?.polyphenolByType, serving.grams),
-          foodSource: selectedFoodSourceKey,
-          servingGrams: serving.grams,
-          servingLabel: serving.label,
         };
-
         return {
           ...prev,
-          [selectedDateKey]: buildDailySummary([...existingMeals, newMeal], selectedDateKey),
+          [selectedDateKey]: buildDailySummary([...existingEntries, newEntry], selectedDateKey),
         };
       });
-
       router.push({
         pathname: '/(tabs)/calendar',
         params: {
@@ -775,7 +847,7 @@ export default function TipTargetDetailsScreen() {
         },
       });
     },
-    [router, selectedDateKey, selectedFoodName, selectedFoodProfile, selectedFoodSourceKey, setDailyNutritionTracking, tipId]
+    [router, selectedDateKey, selectedFoodName, selectedFoodProfile, setDailyNutritionTracking, tipId]
   );
 
   const handleOpenMedalInfo = React.useCallback(() => {
@@ -971,51 +1043,46 @@ export default function TipTargetDetailsScreen() {
                 const foodImage: ImageSourcePropType | undefined = isFoodProfileKey(foodSourceKey)
                   ? (FOOD_IMAGES[foodSourceKey] as ImageSourcePropType | undefined)
                   : undefined;
-                const servingOptions: FoodCatalogServing[] = foodProfile?.defaultServings ?? [];
-                const nutrientPer100 = getProfileValueForTag(foodProfile, targetTagParam);
-                const servingSizes = servingOptions.map(serving => ({
-                  grams: serving.grams,
-                  label: serving.labelKey
-                    ? t(`food:servingSizes.${serving.labelKey}`, {
-                        defaultValue: String(serving.grams),
-                      })
-                    : `${serving.grams} ${t('food:units.gramsShort', { defaultValue: 'g' })}`,
-                  nutrientAmount: typeof nutrientPer100 === 'number' ? scaleFrom100(nutrientPer100, serving.grams) : undefined,
-                  nutrientUnit: targetUnit,
-                  nutrientLabel: targetLabel || undefined,
-                  nutrientTag: targetTagParam || undefined,
-                }));
+                const servingSizes: FoodServing[] = foodProfile?.defaultServings ?? [];
                 return (
-                  <View key={key} style={[styles.foodSourceCard, { borderColor: colors.borderLight ?? colors.border }]}>
+                  <Pressable
+                    key={key}
+                    onPress={() => {
+                      if (servingSizes.length > 0 && foodProfile) {
+                        handleOpenFoodPortionSheet(foodSourceKey, name, details || '', foodProfile, servingSizes);
+                      } else {
+                        todaySelectedFoodSource(foodSourceKey);
+                      }
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('common:tip-target-details.foodSources.addSource', { name })}
+                    style={({ pressed }) => [
+                      styles.foodSourceCard,
+                      {
+                        borderColor: colors.borderLight ?? colors.border,
+                        opacity: pressed ? 0.7 : 1,
+                      },
+                    ]}
+                  >
                     {!!foodImage && <Image source={foodImage} style={styles.foodSourceImage} resizeMode="cover" />}
                     <View style={styles.foodSourceTextBlock}>
                       <ThemedText type="defaultSemiBold" numberOfLines={2}>
                         {name}
                       </ThemedText>
                     </View>
-                    <Pressable
-                      onPress={() => {
-                        if (servingSizes.length > 0 && foodProfile) {
-                          handleOpenFoodPortionSheet(foodSourceKey, name, details || '', foodProfile, servingSizes);
-                        } else {
-                          todaySelectedFoodSource(foodSourceKey);
-                        }
-                      }}
-                      accessibilityRole="button"
-                      accessibilityLabel={t('common:tip-target-details.foodSources.addSource', { name })}
-                      style={({ pressed }) => [
+                    <View
+                      style={[
                         styles.foodSourceAddButton,
                         {
                           backgroundColor: colors.accentVeryWeak,
-                          opacity: pressed ? 0.7 : 1,
                         },
                       ]}
                     >
                       <ThemedText type="defaultSemiBold" style={{ color: colors.primary }}>
                         +
                       </ThemedText>
-                    </Pressable>
-                  </View>
+                    </View>
+                  </Pressable>
                 );
               })}
             </ScrollView>
@@ -1029,12 +1096,16 @@ export default function TipTargetDetailsScreen() {
         <FoodPortionBottomSheet
           foodPortionBottomSheetRef={foodPortionBottomSheetRef}
           snapPoints={['45%', '75%']}
-          BottomSheetOverlayContainer={BottomSheetOverlayContainer}
+
           colors={colors}
           foodName={selectedFoodName}
           foodDetails={selectedFoodDetails}
           foodImage={selectedFoodImage}
           servingSizes={selectedFoodServings}
+          nutrientPer100={getProfileValueForTag(selectedFoodProfile, targetTagParam)}
+          nutrientUnit={targetUnit}
+          nutrientLabel={targetLabel || undefined}
+          nutrientTag={targetTagParam || undefined}
           onSelectServing={handleSelectServing}
         />
 
@@ -1043,7 +1114,6 @@ export default function TipTargetDetailsScreen() {
           snapPoints={medalInfoSnapPoints}
           enablePanDownToClose
           animateOnMount
-          containerComponent={BottomSheetOverlayContainer}
           backgroundStyle={sheetDesign.backgroundStyle}
           handleComponent={sheetDesign.handleComponent}
         >

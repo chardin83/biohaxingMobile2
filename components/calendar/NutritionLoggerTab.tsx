@@ -5,9 +5,8 @@ import * as Haptics from 'expo-haptics';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Animated, Image, KeyboardAvoidingView, LayoutAnimation, Platform, Pressable, ScrollView, StyleSheet, UIManager, View } from 'react-native';
-import { FullWindowOverlay } from 'react-native-screens';
 
-import type { DailyNutritionTracking, TipProgressItem, WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
+import type { NutritionEntry, NutritionTrackingContribution, TipProgressItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { XP_FOR_NUTRITION_TIP_DAILY_COMPLETION, XP_FOR_NUTRITION_TIP_WEEKLY_COMPLETION } from '@/constants/XP';
@@ -16,12 +15,10 @@ import { getDrinkImage } from '@/locales/drinkCatalog';
 import { tips } from '@/locales/tips';
 import { type DetectedDrink, isAlcohol, NutritionAnalyze } from '@/services/gptServices';
 import { MicrobiomeSupportEntry } from '@/types/microbiome';
-import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
+import { type NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import {
   type ConfidenceLevel,
   extractAndValidateNutritionAnalysis,
-  extractWeeklyTrackingSignals,
-  mergeWeeklyTrackingSignal,
   type ParsedMacroAnalysis,
   parseNumberValue,
   roundToOneDecimal,
@@ -56,8 +53,8 @@ interface NutritionLoggerTabProps {
 type RecentMealOption = {
   id: string;
   date: string;
-  meal: any;
-  mealName: string;
+  entry: NutritionEntry;
+  name: string;
   sortOrder: number;
 };
 
@@ -78,8 +75,6 @@ type PendingAnalysisReview = {
   evidenceMessage: string | null;
   statusMessage: string | null;
 };
-
-const BottomSheetOverlayContainer = ({ children }: { children?: React.ReactNode }) => <FullWindowOverlay>{children}</FullWindowOverlay>;
 
 const toDateKeyLocal = (date: Date): string => {
   const year = date.getFullYear();
@@ -121,36 +116,13 @@ const getWeekBoundsFromDateKey = (
   };
 };
 
-const buildWeekTrackingFromSummaries = (
-  summaries: Record<string, any>,
-  weekStartISO: string,
-  weekEndISO: string,
-  allowedKeys: Set<string>
-): Record<string, WeeklyTrackingItem[] | number> => {
-  const aggregated: WeeklyTrackingSignals = {};
-  Object.entries(summaries)
-    .filter(([dateKey]) => dateKey >= weekStartISO && dateKey <= weekEndISO)
-    .forEach(([, daySummary]) => {
-      const meals = Array.isArray(daySummary?.meals) ? daySummary.meals : [];
-      meals.forEach((meal: any) => {
-        const mealSignals = extractWeeklyTrackingSignals(meal, undefined);
-        Object.entries(mealSignals)
-          .filter(([key]) => allowedKeys.has(key))
-          .forEach(([key, value]) => {
-            mergeWeeklyTrackingSignal(aggregated, key, value);
-          });
-      });
-    });
-  return aggregated;
-};
-
 const sumTypedTotals = (
-  meals: Array<any>,
+  entries: NutritionEntry[],
   key: 'fiberByType' | 'fiberSubtypeTotals' | 'polyphenolByType' | 'mineralsByType' | 'vitaminsByType' | 'aminoAcidsByType'
 ) =>
-  meals.reduce(
-    (acc, meal) => {
-      const rawValue = meal?.[key];
+  entries.reduce(
+    (acc, entry) => {
+      const rawValue = entry[key];
       const source = typeof rawValue === 'object' && rawValue !== null ? rawValue : {};
       for (const [tag, value] of Object.entries(source)) {
         const parsed = parseNumberValue(value);
@@ -162,10 +134,10 @@ const sumTypedTotals = (
     {} as Record<string, number>
   );
 
-const sumMicrobiomeSupport = (meals: Array<any>): MicrobiomeSupportEntry[] => {
-  const allEntries = meals.flatMap(meal => (Array.isArray(meal?.microbiomeSupport) ? meal.microbiomeSupport : []));
+const sumMicrobiomeSupport = (entries: NutritionEntry[]): MicrobiomeSupportEntry[] => {
+  const allEntries = entries.flatMap(entry => (Array.isArray(entry.microbiomeSupport) ? entry.microbiomeSupport : []));
   const byMicrobe = new Map<string, MicrobiomeSupportEntry>();
-  allEntries.forEach((entry: MicrobiomeSupportEntry) => {
+  allEntries.forEach(entry => {
     const key = entry.microbe.toLowerCase().trim();
     if (!key) return;
     const existing = byMicrobe.get(key);
@@ -197,7 +169,7 @@ const sumMicrobiomeSupport = (meals: Array<any>): MicrobiomeSupportEntry[] => {
   return Array.from(byMicrobe.values());
 };
 
-const mergeMineralConfidenceFromMeals = (meals: Array<any>): Record<string, ConfidenceLevel> => {
+const mergeMineralConfidenceFromEntries = (entries: NutritionEntry[]): Record<string, ConfidenceLevel> => {
   const totals: Record<string, ConfidenceLevel> = MINERAL_TYPE_KEYS.reduce(
     (acc, key) => ({
       ...acc,
@@ -211,23 +183,23 @@ const mergeMineralConfidenceFromMeals = (meals: Array<any>): Record<string, Conf
     medium: 2,
     high: 3,
   };
-  const mergeConfidenceLevel = (current: ConfidenceLevel, next: ConfidenceLevel): ConfidenceLevel =>
-    confidenceRank[next] > confidenceRank[current] ? next : current;
-  meals.forEach(meal => {
-    const raw = meal?.mineralsConfidenceByType;
-    if (!raw || typeof raw !== 'object') return;
+  entries.forEach(entry => {
+    const raw = entry.mineralsConfidenceByType;
+    if (!raw) return;
     MINERAL_TYPE_KEYS.forEach(key => {
       const value = raw[key];
       if (value === 'high' || value === 'medium' || value === 'low' || value === 'unknown') {
-        totals[key] = mergeConfidenceLevel(totals[key], value);
+        if (confidenceRank[value] > confidenceRank[totals[key]]) {
+          totals[key] = value;
+        }
       }
     });
   });
   return totals;
 };
 
-const getNormalizedMealName = (meal: any, fallbackName: string): string =>
-  typeof meal?.mealName === 'string' && meal.mealName.trim().length > 0 ? meal.mealName : fallbackName;
+const getNutritionEntryName = (entry: NutritionEntry, fallbackName: string): string =>
+  typeof entry.name === 'string' && entry.name.trim().length > 0 ? entry.name : fallbackName;
 
 const coerceNumber = (val: unknown): number => (typeof val === 'number' ? val : 0);
 
@@ -253,8 +225,8 @@ const computeTargetY = (
   return sectionY > 0 ? sectionY : undefined;
 };
 
-const buildDailySummary = (meals: Array<any>, selectedDate: string) => {
-  const rawTotals = meals.reduce(
+const buildDailySummary = (entries: NutritionEntry[], selectedDate: string) => {
+  const rawTotals = entries.reduce(
     (acc, m) => ({
       protein: acc.protein + (m.protein ?? 0),
       calories: acc.calories + (m.calories ?? 0),
@@ -279,7 +251,7 @@ const buildDailySummary = (meals: Array<any>, selectedDate: string) => {
   };
   return {
     date: selectedDate,
-    meals,
+    entries,
     totals,
     goalsMet: {
       protein: totals.protein >= 100,
@@ -402,6 +374,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     plans,
     dailyNutritionTracking,
     setDailyNutritionTracking,
+    weeklyNutritionTracking,
     setWeeklyNutritionTracking,
     dailyDrinkTracking,
     setDailyDrinkTracking,
@@ -606,16 +579,53 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     }
   }, []);
 
-  const syncWeekTrackingForDate = (nextTracking: DailyNutritionTracking, dateKey: string) => {
-    const { weekStartISO, weekEndISO } = getWeekBoundsFromDateKey(dateKey);
-    const recalculatedWeekTracking = buildWeekTrackingFromSummaries(nextTracking, weekStartISO, weekEndISO, activeTrackingKeys);
+  const findWeeklyTrackingContribution = (nutritionEntryId: string, dateKey: string): NutritionTrackingContribution | undefined => {
+    const { weekStartISO } = getWeekBoundsFromDateKey(dateKey);
+
+    return weeklyNutritionTracking[weekStartISO]?.find(contribution => contribution.nutritionEntryId === nutritionEntryId);
+  };
+
+  const addWeeklyTrackingContribution = (nutritionEntryId: string, dateKey: string, signals: WeeklyTrackingSignals) => {
+    const filteredSignals = Object.fromEntries(Object.entries(signals).filter(([key]) => activeTrackingKeys.has(key)));
+
+    if (Object.keys(filteredSignals).length === 0) {
+      return;
+    }
+
+    const { weekStartISO } = getWeekBoundsFromDateKey(dateKey);
+
+    const contribution: NutritionTrackingContribution = {
+      nutritionEntryId,
+      date: dateKey,
+      signals: filteredSignals,
+    };
+
+    setWeeklyNutritionTracking(previous => ({
+      ...previous,
+      [weekStartISO]: [...(previous[weekStartISO] ?? []), contribution],
+    }));
+  };
+
+  const removeWeeklyTrackingContribution = (nutritionEntryId: string, dateKey: string) => {
+    const { weekStartISO } = getWeekBoundsFromDateKey(dateKey);
+
     setWeeklyNutritionTracking(previous => {
-      const next = { ...previous };
-      if (Object.keys(recalculatedWeekTracking).length > 0) {
-        next[weekStartISO] = recalculatedWeekTracking;
-      } else {
-        delete next[weekStartISO];
+      const contributions = previous[weekStartISO] ?? [];
+
+      const updatedContributions = contributions.filter(contribution => contribution.nutritionEntryId !== nutritionEntryId);
+
+      if (updatedContributions.length === contributions.length) {
+        return previous;
       }
+
+      const next = { ...previous };
+
+      if (updatedContributions.length === 0) {
+        delete next[weekStartISO];
+      } else {
+        next[weekStartISO] = updatedContributions;
+      }
+
       return next;
     });
   };
@@ -625,20 +635,28 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
       setSelectedLoggedMealId(null);
       setLastLoggedMeal(null);
     }
+
     setDailyNutritionTracking(prev => {
       const existingSummary = prev[selectedDate];
-      if (!existingSummary) return prev;
-      const updatedMeals = (existingSummary.meals ?? []).filter(meal => meal?.id !== mealId);
-      const next = { ...prev };
-      if (!updatedMeals.length) {
-        delete next[selectedDate];
-        syncWeekTrackingForDate(next, selectedDate);
-        return next;
+
+      if (!existingSummary) {
+        return prev;
       }
-      next[selectedDate] = buildDailySummary(updatedMeals, selectedDate);
-      syncWeekTrackingForDate(next, selectedDate);
+
+      const updatedEntries = existingSummary.entries.filter(entry => entry.id !== mealId);
+
+      const next = { ...prev };
+
+      if (updatedEntries.length === 0) {
+        delete next[selectedDate];
+      } else {
+        next[selectedDate] = buildDailySummary(updatedEntries, selectedDate);
+      }
+
       return next;
     });
+
+    removeWeeklyTrackingContribution(mealId, selectedDate);
   };
 
   const handleRemoveDrink = (drinkId: string) => {
@@ -657,12 +675,12 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     });
   };
 
-  const handleStartEditMeal = (mealId: string, mealName: string) => {
-    const meal = dailyNutritionTracking[selectedDate]?.meals.find(item => item.id === mealId);
-    if (!meal) return;
-    setEditingMealId(mealId);
-    setEditingMealName(mealName);
-    setEditingMealTime(new Date(meal.recordedAt));
+  const handleStartEditMeal = (entryId: string, entryName: string) => {
+    const entry = dailyNutritionTracking[selectedDate]?.entries.find(item => item.id === entryId);
+    if (!entry) return;
+    setEditingMealId(entryId);
+    setEditingMealName(entryName);
+    setEditingMealTime(new Date(entry.recordedAt));
     setIsEditMealModalVisible(true);
   };
 
@@ -672,7 +690,52 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     setEditingMealName('');
     setEditingMealTime(new Date());
   };
+  const handleSaveMeal = () => {
+    if (!editingMealId) {
+      handleCloseEditMealModal();
+      return;
+    }
 
+    const name = editingMealName.trim() || t('nutritionLogger.unnamedMeal');
+
+    const recordedAt = toRecordedAt(selectedDate, editingMealTime);
+
+    setDailyNutritionTracking(prev => {
+      const existingSummary = prev[selectedDate];
+
+      if (!existingSummary) {
+        return prev;
+      }
+
+      const updatedEntries = existingSummary.entries.map((entry): NutritionEntry =>
+        entry.id === editingMealId
+          ? {
+              ...entry,
+              name,
+              recordedAt,
+            }
+          : entry
+      );
+
+      return {
+        ...prev,
+        [selectedDate]: buildDailySummary(updatedEntries, selectedDate),
+      };
+    });
+
+    if (editingMealId === selectedLoggedMealId) {
+      setLastLoggedMeal(prev =>
+        prev
+          ? {
+              ...prev,
+              mealName: name,
+            }
+          : prev
+      );
+    }
+
+    handleCloseEditMealModal();
+  };
   const handleStartEditDrink = (drinkId: string) => {
     const drink = dailyDrinkTracking[selectedDate]?.find(item => item.id === drinkId);
     if (!drink) return;
@@ -742,83 +805,52 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     });
   }, []);
 
-  const handleSaveMeal = () => {
-    if (!editingMealId) {
-      handleCloseEditMealModal();
-      return;
-    }
-    const nextMealName = editingMealName.trim() || t('nutritionLogger.unnamedMeal');
-    const recordedAt = toRecordedAt(selectedDate, editingMealTime);
-    setDailyNutritionTracking(prev => {
-      const existingSummary = prev[selectedDate];
-      if (!existingSummary) return prev;
-      const updatedMeals = existingSummary.meals.map(meal =>
-        meal.id === editingMealId
-          ? {
-              ...meal,
-              mealName: nextMealName,
-              recordedAt,
-            }
-          : meal
-      );
-      return {
-        ...prev,
-        [selectedDate]: buildDailySummary(updatedMeals, selectedDate),
-      };
-    });
-    if (editingMealId === selectedLoggedMealId) {
-      setLastLoggedMeal(prev =>
-        prev
-          ? {
-              ...prev,
-              mealName: nextMealName,
-            }
-          : prev
-      );
-    }
-    handleCloseEditMealModal();
-  };
-
   const handleSaveAnalyzedMeal = () => {
     if (!pendingAnalysisReview?.analysis) {
       closeAnalysisReviewModal();
       return;
     }
-    const analysis = pendingAnalysisReview.analysis;
-    const mealWeeklyTrackingSignals = pendingAnalysisReview.weeklyTrackingSignals;
-    const recordedAt = toRecordedAt(selectedDate, mealTime);
-    const confirmedDrinks = pendingAnalysisReview.detectedDrinks.filter(drink => drink.confirmed).map(({ confirmed: _confirmed, ...drink }) => drink);
-    const mealId = `${selectedDate}-${Crypto.randomUUID()}`;
 
-    setDailyNutritionTracking(prev => {
-      const existingMeals = prev[selectedDate]?.meals ?? [];
-      const newMeal = {
-        id: mealId,
-        recordedAt,
-        ...analysis,
-        weeklyTrackingSignals: mealWeeklyTrackingSignals,
+    const analysis = pendingAnalysisReview.analysis;
+    const { mealName, ...nutrition } = analysis;
+    const recordedAt = toRecordedAt(selectedDate, mealTime);
+    const nutritionEntryId = Crypto.randomUUID();
+
+    const confirmedDrinks = pendingAnalysisReview.detectedDrinks.filter(drink => drink.confirmed).map(({ confirmed: _confirmed, ...drink }) => drink);
+
+    const newEntry: NutritionEntry = {
+      id: nutritionEntryId,
+      type: 'meal',
+      recordedAt,
+      name: mealName?.trim() || t('nutritionLogger.unnamedMeal'),
+      ...nutrition,
+    };
+
+    setDailyNutritionTracking(previous => {
+      const existingEntries = previous[selectedDate]?.entries ?? [];
+
+      return {
+        ...previous,
+        [selectedDate]: buildDailySummary([...existingEntries, newEntry], selectedDate),
       };
-      const next = {
-        ...prev,
-        [selectedDate]: buildDailySummary([...existingMeals, newMeal], selectedDate),
-      };
-      setSelectedLoggedMealId(newMeal.id);
-      syncWeekTrackingForDate(next, selectedDate);
-      return next;
     });
+
+    addWeeklyTrackingContribution(nutritionEntryId, selectedDate, pendingAnalysisReview.weeklyTrackingSignals);
+
+    setSelectedLoggedMealId(nutritionEntryId);
 
     if (confirmedDrinks.length > 0) {
       const drinkEntries = confirmedDrinks.map(drink => ({
         id: Crypto.randomUUID(),
-        mealId,
+        nutritionEntryId,
         ...drink,
         recordedAt,
         source: 'meal_analysis' as const,
       }));
 
-      setDailyDrinkTracking(prev => ({
-        ...prev,
-        [selectedDate]: [...(prev[selectedDate] ?? []), ...drinkEntries],
+      setDailyDrinkTracking(previous => ({
+        ...previous,
+        [selectedDate]: [...(previous[selectedDate] ?? []), ...drinkEntries],
       }));
     }
 
@@ -828,50 +860,55 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     closeAnalysisReviewModal();
   };
 
-  const toParsedMacroAnalysis = (meal: any): ParsedMacroAnalysis => ({
-    mealName: getNormalizedMealName(meal, t('nutritionLogger.unnamedMeal')),
-    protein: coerceNumber(meal?.protein),
-    calories: coerceNumber(meal?.calories),
-    carbohydrates: coerceNumber(meal?.carbohydrates),
-    fat: coerceNumber(meal?.fat),
-    fiber: coerceNumber(meal?.fiber),
-    fiberByType: coerceObject(meal?.fiberByType),
-    fiberSubtypeTotals: coerceObject(meal?.fiberSubtypeTotals),
-    polyphenolByType: coerceObject(meal?.polyphenolByType),
-    mineralsByType: coerceObject(meal?.mineralsByType),
-    mineralsConfidenceByType: coerceObject(meal?.mineralsConfidenceByType),
-    vitaminsByType: coerceObject(meal?.vitaminsByType),
-    aminoAcidsByType: coerceObject(meal?.aminoAcidsByType),
-    microbiomeSupport: coerceArray(meal?.microbiomeSupport),
+  const toParsedMacroAnalysis = (entry: NutritionEntry): ParsedMacroAnalysis => ({
+    mealName: getNutritionEntryName(entry, t('nutritionLogger.unnamedMeal')),
+    protein: coerceNumber(entry.protein),
+    calories: coerceNumber(entry.calories),
+    carbohydrates: coerceNumber(entry.carbohydrates),
+    fat: coerceNumber(entry.fat),
+    fiber: coerceNumber(entry.fiber),
+    fiberByType: coerceObject(entry.fiberByType),
+    fiberSubtypeTotals: coerceObject(entry.fiberSubtypeTotals),
+    polyphenolByType: coerceObject(entry.polyphenolByType),
+    mineralsByType: coerceObject(entry.mineralsByType),
+    mineralsConfidenceByType: coerceObject(entry.mineralsConfidenceByType),
+    vitaminsByType: coerceObject(entry.vitaminsByType),
+    aminoAcidsByType: coerceObject(entry.aminoAcidsByType),
+    microbiomeSupport: coerceArray(entry.microbiomeSupport),
   });
 
-  const handleCopyMeal = (mealToCopy: any) => {
-    const copiedMeal = {
-      ...mealToCopy,
-      id: `${selectedDate}-${Crypto.randomUUID()}`,
+  const handleCopyMeal = (option: RecentMealOption) => {
+    const copiedEntry: NutritionEntry = {
+      ...option.entry,
+      id: Crypto.randomUUID(),
       recordedAt: toRecordedAt(selectedDate, new Date()),
-      mealName: getNormalizedMealName(mealToCopy, t('nutritionLogger.unnamedMeal')),
+      name: getNutritionEntryName(option.entry, t('nutritionLogger.unnamedMeal')),
     };
 
     setDailyNutritionTracking(prev => {
-      const existingMeals = prev[selectedDate]?.meals ?? [];
-      const next = {
+      const existingEntries = prev[selectedDate]?.entries ?? [];
+
+      return {
         ...prev,
-        [selectedDate]: buildDailySummary([...existingMeals, copiedMeal], selectedDate),
+        [selectedDate]: buildDailySummary([...existingEntries, copiedEntry], selectedDate),
       };
-      syncWeekTrackingForDate(next, selectedDate);
-      return next;
     });
 
-    setSelectedLoggedMealId(copiedMeal.id);
-    setLastLoggedMeal(toParsedMacroAnalysis(copiedMeal));
+    const sourceContribution = findWeeklyTrackingContribution(option.entry.id, option.date);
+
+    if (sourceContribution) {
+      addWeeklyTrackingContribution(copiedEntry.id, selectedDate, sourceContribution.signals);
+    }
+
+    setSelectedLoggedMealId(copiedEntry.id);
+    setLastLoggedMeal(toParsedMacroAnalysis(copiedEntry));
     triggerLightHaptic();
     handleCloseCopyMealModal();
   };
 
-  const handleSelectLoggedMeal = (meal: any, mealId: string) => {
-    setSelectedLoggedMealId(mealId);
-    setLastLoggedMeal(toParsedMacroAnalysis(meal));
+  const handleSelectLoggedMeal = (entry: NutritionEntry, entryId: string) => {
+    setSelectedLoggedMealId(entryId);
+    setLastLoggedMeal(toParsedMacroAnalysis(entry));
   };
 
   const runNutritionImageAnalysis = async (mealFile: SelectedImageFile, mealDescription?: string, ingredientFile?: SelectedImageFile | null) => {
@@ -1007,32 +1044,31 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   const recentMeals = useMemo<RecentMealOption[]>(
     () =>
       Object.entries(dailyNutritionTracking)
-        .flatMap(([dateKey, daySummary]) => {
-          const meals = Array.isArray(daySummary?.meals) ? daySummary.meals : [];
-          return meals.map((meal, index) => ({
-            id: typeof meal?.id === 'string' ? meal.id : `${dateKey}-${index}`,
+        .flatMap(([dateKey, daySummary]) =>
+          daySummary.entries.map((entry, index): RecentMealOption => ({
+            id: entry.id,
             date: dateKey,
-            meal,
-            mealName: getNormalizedMealName(meal, t('nutritionLogger.unnamedMeal')),
-            sortOrder: meals.length - index,
-          }));
-        })
+            entry,
+            name: getNutritionEntryName(entry, t('nutritionLogger.unnamedMeal')),
+            sortOrder: daySummary.entries.length - index,
+          }))
+        )
         .sort((left, right) => {
           if (left.date !== right.date) {
             return right.date.localeCompare(left.date);
           }
           return right.sortOrder - left.sortOrder;
         })
-        .filter((meal, index, allMeals) => {
-          const mealCalories = roundToOneDecimal(typeof meal.meal?.calories === 'number' ? meal.meal.calories : 0);
-          const mealFiber = roundToOneDecimal(typeof meal.meal?.fiber === 'number' ? meal.meal.fiber : 0);
-          const uniquenessKey = `${meal.mealName.toLowerCase()}|${mealCalories}|${mealFiber}`;
+        .filter((entry, index, allEntries) => {
+          const calories = roundToOneDecimal(entry.entry.calories ?? 0);
+          const fiber = roundToOneDecimal(entry.entry.fiber ?? 0);
+          const uniquenessKey = `${entry.name.toLowerCase()}|${calories}|${fiber}`;
           return (
             index ===
-            allMeals.findIndex(candidate => {
-              const candidateCalories = roundToOneDecimal(typeof candidate.meal?.calories === 'number' ? candidate.meal.calories : 0);
-              const candidateFiber = roundToOneDecimal(typeof candidate.meal?.fiber === 'number' ? candidate.meal.fiber : 0);
-              return `${candidate.mealName.toLowerCase()}|${candidateCalories}|${candidateFiber}` === uniquenessKey;
+            allEntries.findIndex(candidate => {
+              const candidateCalories = roundToOneDecimal(candidate.entry.calories ?? 0);
+              const candidateFiber = roundToOneDecimal(candidate.entry.fiber ?? 0);
+              return `${candidate.name.toLowerCase()}|` + `${candidateCalories}|${candidateFiber}` === uniquenessKey;
             })
           );
         })
@@ -1042,14 +1078,14 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
 
   const copyMealSheetSnapPoints = useMemo(() => ['45%', '75%'], []);
 
-  const dailyFiberByType = useMemo(() => (summary ? sumTypedTotals(summary.meals, 'fiberByType') : {}), [summary]);
-  const dailyFiberSubtypeTotals = useMemo(() => (summary ? sumTypedTotals(summary.meals, 'fiberSubtypeTotals') : {}), [summary]);
-  const dailyPolyphenolByType = useMemo(() => (summary ? sumTypedTotals(summary.meals, 'polyphenolByType') : {}), [summary]);
-  const dailyMineralsByType = useMemo(() => (summary ? sumTypedTotals(summary.meals, 'mineralsByType') : {}), [summary]);
-  const dailyMineralConfidenceByType = useMemo(() => (summary ? mergeMineralConfidenceFromMeals(summary.meals) : {}), [summary]);
-  const dailyVitaminsByType = useMemo(() => (summary ? sumTypedTotals(summary.meals, 'vitaminsByType') : {}), [summary]);
-  const dailyAminoAcidsByType = useMemo(() => (summary ? sumTypedTotals(summary.meals, 'aminoAcidsByType') : {}), [summary]);
-  const dailyMicrobiomeSupport = useMemo(() => (summary ? sumMicrobiomeSupport(summary.meals) : []), [summary]);
+  const dailyFiberByType = useMemo(() => (summary ? sumTypedTotals(summary.entries, 'fiberByType') : {}), [summary]);
+  const dailyFiberSubtypeTotals = useMemo(() => (summary ? sumTypedTotals(summary.entries, 'fiberSubtypeTotals') : {}), [summary]);
+  const dailyPolyphenolByType = useMemo(() => (summary ? sumTypedTotals(summary.entries, 'polyphenolByType') : {}), [summary]);
+  const dailyMineralsByType = useMemo(() => (summary ? sumTypedTotals(summary.entries, 'mineralsByType') : {}), [summary]);
+  const dailyMineralConfidenceByType = useMemo(() => (summary ? mergeMineralConfidenceFromEntries(summary.entries) : {}), [summary]);
+  const dailyVitaminsByType = useMemo(() => (summary ? sumTypedTotals(summary.entries, 'vitaminsByType') : {}), [summary]);
+  const dailyAminoAcidsByType = useMemo(() => (summary ? sumTypedTotals(summary.entries, 'aminoAcidsByType') : {}), [summary]);
+  const dailyMicrobiomeSupport = useMemo(() => (summary ? sumMicrobiomeSupport(summary.entries) : []), [summary]);
 
   const nutritionPlanTipProgressByPeriod = useMemo(() => {
     const byPeriod = (period: NutritionTargetPeriod) =>
@@ -1214,8 +1250,8 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
             </Collapsible>
           </Card>
         )}
-        {summary && summary.meals.length > 0 && (
-          <LoggedMealsSection meals={summary.meals} onEdit={handleStartEditMeal} onDelete={handleRemoveMeal} onSelect={handleSelectLoggedMeal} />
+        {summary && summary.entries.length > 0 && (
+          <LoggedMealsSection meals={summary.entries} onEdit={handleStartEditMeal} onDelete={handleRemoveMeal} onSelect={handleSelectLoggedMeal} />
         )}
         {drinks.length > 0 && <LoggedDrinksSection drinks={drinks} onEdit={handleStartEditDrink} onDelete={handleRemoveDrink} />}
         <NutritionPlanTargetsSection
@@ -1428,7 +1464,6 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
         <CopyMealBottomSheet
           copyMealBottomSheetRef={copyMealBottomSheetRef}
           copyMealSheetSnapPoints={copyMealSheetSnapPoints}
-          BottomSheetOverlayContainer={BottomSheetOverlayContainer}
           colors={colors}
           styles={styles}
           t={t}

@@ -1,4 +1,4 @@
-import { type NutritionTargetUnit } from '@/types/nutritionTargets';
+import { type NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
 
 export type NutritionMedalType = 'gold' | 'silver' | 'bronze';
 
@@ -9,12 +9,7 @@ type NutritionMedalInput = {
   unit?: NutritionTargetUnit;
 };
 
-export const getNutritionTargetMedalType = ({
-  actual,
-  targetAmount,
-  foodActual = 0,
-  unit,
-}: NutritionMedalInput): NutritionMedalType | null => {
+export const getNutritionTargetMedalType = ({ actual, targetAmount, foodActual = 0, unit }: NutritionMedalInput): NutritionMedalType | null => {
   if (targetAmount <= 0 || actual < targetAmount) return null;
 
   if (unit && unit !== 'g' && unit !== 'mg') return 'gold';
@@ -26,9 +21,7 @@ export const getNutritionTargetMedalType = ({
   return 'bronze';
 };
 
-export const getNutritionTargetMedalEmoji = (
-  medalType: NutritionMedalType | null
-): string => {
+export const getNutritionTargetMedalEmoji = (medalType: NutritionMedalType | null): string => {
   if (medalType === 'gold') return '🥇';
   if (medalType === 'silver') return '🥈';
   if (medalType === 'bronze') return '🥉';

@@ -5,7 +5,7 @@ import { MineralType } from '@/constants/minerals';
 import { NutrientType } from '@/constants/nutrients';
 import { PolyphenolType } from '@/constants/polyphenols';
 import { VitaminType } from '@/constants/vitamins';
-import { type NutritionTargetPeriod } from '@/types/nutritionTargets';
+import { type NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import { PlanCategory } from '@/types/planCategory';
 import { TrainingActivityType } from '@/types/training';
 

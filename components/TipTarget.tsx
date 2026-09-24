@@ -5,7 +5,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { TipTargetItem, WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { getTipTargetIconName } from '@/locales/tips';
-import { type NutritionTargetUnit } from '@/types/nutritionTargets';
+import { type NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
 import { formatWithUnit } from '@/utils/formatters';
 import { getNutritionTargetMedalEmoji, getNutritionTargetMedalType } from '@/utils/medals';
 

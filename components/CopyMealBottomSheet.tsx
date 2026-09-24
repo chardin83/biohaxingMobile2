@@ -10,7 +10,7 @@ import { IconSymbol } from './ui/IconSymbol';
 export type CopyMealBottomSheetProps = {
   copyMealBottomSheetRef: React.RefObject<BottomSheetModal | null>;
   copyMealSheetSnapPoints: string[];
-  BottomSheetOverlayContainer: any;
+  bottomSheetOverlayContainer?: any;
   colors: any;
   styles: any;
   t: any;
@@ -22,7 +22,7 @@ export type CopyMealBottomSheetProps = {
 const CopyMealBottomSheet: React.FC<CopyMealBottomSheetProps> = ({
   copyMealBottomSheetRef,
   copyMealSheetSnapPoints,
-  BottomSheetOverlayContainer,
+  bottomSheetOverlayContainer,
   colors,
   styles,
   t,
@@ -38,7 +38,7 @@ const CopyMealBottomSheet: React.FC<CopyMealBottomSheetProps> = ({
       snapPoints={copyMealSheetSnapPoints}
       enablePanDownToClose
       animateOnMount
-      containerComponent={BottomSheetOverlayContainer}
+      containerComponent={bottomSheetOverlayContainer}
       backgroundStyle={sheetDesign.backgroundStyle}
       handleComponent={sheetDesign.handleComponent}
     >
@@ -64,7 +64,7 @@ const CopyMealBottomSheet: React.FC<CopyMealBottomSheetProps> = ({
                   paddingLeft: pressed ? 9 : 12,
                 },
               ]}
-              onPress={() => handleCopyMeal(option.meal)}
+              onPress={() => handleCopyMeal(option)}
             >
               <View style={styles.copyMealStatsRow}>
                 <ThemedText type="defaultSemiBold" style={styles.copyMealOptionName} numberOfLines={1}>

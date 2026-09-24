@@ -11,7 +11,7 @@ import { ALL_AMINO_ACID_KEYS } from '@/constants/aminoAcids';
 import { MINERAL_TYPE_KEYS } from '@/constants/minerals';
 import { VITAMIN_TYPE_KEYS } from '@/constants/vitamins';
 import type { Tip } from '@/locales/tips';
-import { NutritionTargetPeriod, NutritionTargetUnit } from '@/types/nutritionTargets';
+import { NutritionTargetPeriod, NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
 
 export type NutritionPlanDetailsTarget = {
   key: string;
@@ -37,12 +37,7 @@ type Props = {
   title: string;
 };
 
-export const NutritionPlanDetailsSection: React.FC<Props> = ({
-  tip,
-  targetProgressMap,
-  selectedDateKey,
-  title,
-}) => {
+export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgressMap, selectedDateKey, title }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
   const { colors } = useTheme();
 
@@ -135,10 +130,7 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({
   }, [t, targets]);
 
   return (
-    <AppBox
-      title={t('plan.targetsTitle')}
-      leading={<IconSymbol name="target" size={18} color={colors.primary} />}
-    >
+    <AppBox title={t('plan.targetsTitle')} leading={<IconSymbol name="target" size={18} color={colors.primary} />}>
       <ThemedText type="explainer" style={styles.targetInfoText}>
         {targetProgressInfoText}
       </ThemedText>
