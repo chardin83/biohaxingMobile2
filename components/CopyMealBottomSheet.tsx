@@ -2,6 +2,8 @@ import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import React from 'react';
 import { Pressable, View } from 'react-native';
 
+import type { MealEntry } from '@/app/context/storage/nutrition/nutritionTypes';
+
 import { ThemedText } from './ThemedText';
 import { useBottomSheetDesign } from './ui/BottomSheetDesign';
 import { IconSymbol } from './ui/IconSymbol';
@@ -14,8 +16,8 @@ export type CopyMealBottomSheetProps = {
   colors: any;
   styles: any;
   t: any;
-  recentMeals: any[];
-  handleCopyMeal: (meal: any) => void;
+  recentMeals: MealEntry[];
+  handleCopyMeal: (meal: MealEntry) => void;
   roundToOneDecimal: (value: number) => number;
 };
 
@@ -52,9 +54,9 @@ const CopyMealBottomSheet: React.FC<CopyMealBottomSheetProps> = ({
           {t('nutritionLogger.copyMealModalTitle')}
         </ThemedText>
         {recentMeals.length > 0 ? (
-          recentMeals.map(option => (
+          recentMeals.map(meal => (
             <Pressable
-              key={option.id}
+              key={meal.id}
               style={({ pressed }) => [
                 styles.copyMealOption,
                 {
@@ -64,23 +66,23 @@ const CopyMealBottomSheet: React.FC<CopyMealBottomSheetProps> = ({
                   paddingLeft: pressed ? 9 : 12,
                 },
               ]}
-              onPress={() => handleCopyMeal(option)}
+              onPress={() => handleCopyMeal(meal)}
             >
               <View style={styles.copyMealStatsRow}>
                 <ThemedText type="defaultSemiBold" style={styles.copyMealOptionName} numberOfLines={1}>
-                  {option.mealName}
+                  {meal.name}
                 </ThemedText>
                 <View style={styles.copyMealStatsGroup}>
                   <View style={styles.copyMealStatItem}>
                     <IconSymbol name="flame" size={14} color={colors.textLight} />
                     <ThemedText type="caption" style={[styles.copyMealStatText, { color: colors.textLight }]}>
-                      {roundToOneDecimal(typeof option.meal?.calories === 'number' ? option.meal.calories : 0)}
+                      {roundToOneDecimal(meal.calories ?? 0)}
                     </ThemedText>
                   </View>
                   <View style={styles.copyMealStatItem}>
                     <IconSymbol name="fiber" size={14} color={colors.textLight} />
                     <ThemedText type="caption" style={[styles.copyMealStatText, { color: colors.textLight }]}>
-                      {roundToOneDecimal(typeof option.meal?.fiber === 'number' ? option.meal.fiber : 0)}
+                      {roundToOneDecimal(meal.fiber ?? 0)}
                     </ThemedText>
                   </View>
                 </View>

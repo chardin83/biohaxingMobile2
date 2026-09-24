@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import { Animated, Image, KeyboardAvoidingView, LayoutAnimation, Platform, Pressable, ScrollView, StyleSheet, UIManager, View } from 'react-native';
 
-import type { NutritionEntry, NutritionTrackingContribution, TipProgressItem } from '@/app/context/storage/nutrition/nutritionTypes';
+import type { MealEntry, NutritionEntry, NutritionTrackingContribution, TipProgressItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { XP_FOR_NUTRITION_TIP_DAILY_COMPLETION, XP_FOR_NUTRITION_TIP_WEEKLY_COMPLETION } from '@/constants/XP';
@@ -49,14 +49,6 @@ interface NutritionLoggerTabProps {
   selectedDate: string;
   onTipCompleted?: (targetY?: number) => void;
 }
-
-type RecentMealOption = {
-  id: string;
-  date: string;
-  entry: NutritionEntry;
-  name: string;
-  sortOrder: number;
-};
 
 type ReviewDrink = DetectedDrink & {
   confirmed: boolean;
@@ -877,12 +869,14 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     microbiomeSupport: coerceArray(entry.microbiomeSupport),
   });
 
-  const handleCopyMeal = (option: RecentMealOption) => {
-    const copiedEntry: NutritionEntry = {
-      ...option.entry,
-      id: Crypto.randomUUID(),
-      recordedAt: toRecordedAt(selectedDate, new Date()),
-      name: getNutritionEntryName(option.entry, t('nutritionLogger.unnamedMeal')),
+  const handleCopyMeal = (sourceEntry: MealEntry) => {
+    const nutritionEntryId = Crypto.randomUUID();
+    const recordedAt = toRecordedAt(selectedDate, new Date(sourceEntry.recordedAt));
+
+    const copiedEntry: MealEntry = {
+      ...sourceEntry,
+      id: nutritionEntryId,
+      recordedAt,
     };
 
     setDailyNutritionTracking(prev => {
@@ -894,14 +888,15 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
       };
     });
 
-    const sourceContribution = findWeeklyTrackingContribution(option.entry.id, option.date);
+    const sourceContribution = findWeeklyTrackingContribution(sourceEntry.id, toDateKeyLocal(new Date(sourceEntry.recordedAt)));
 
     if (sourceContribution) {
-      addWeeklyTrackingContribution(copiedEntry.id, selectedDate, sourceContribution.signals);
+      addWeeklyTrackingContribution(nutritionEntryId, selectedDate, sourceContribution.signals);
     }
 
-    setSelectedLoggedMealId(copiedEntry.id);
+    setSelectedLoggedMealId(nutritionEntryId);
     setLastLoggedMeal(toParsedMacroAnalysis(copiedEntry));
+
     triggerLightHaptic();
     handleCloseCopyMealModal();
   };
@@ -1041,40 +1036,29 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   const todayKey = toDateKeyLocal(new Date());
   const isFutureSelectedDate = selectedDate > todayKey;
 
-  const recentMeals = useMemo<RecentMealOption[]>(
-    () =>
-      Object.entries(dailyNutritionTracking)
-        .flatMap(([dateKey, daySummary]) =>
-          daySummary.entries.map((entry, index): RecentMealOption => ({
-            id: entry.id,
-            date: dateKey,
-            entry,
-            name: getNutritionEntryName(entry, t('nutritionLogger.unnamedMeal')),
-            sortOrder: daySummary.entries.length - index,
-          }))
-        )
-        .sort((left, right) => {
-          if (left.date !== right.date) {
-            return right.date.localeCompare(left.date);
-          }
-          return right.sortOrder - left.sortOrder;
-        })
-        .filter((entry, index, allEntries) => {
-          const calories = roundToOneDecimal(entry.entry.calories ?? 0);
-          const fiber = roundToOneDecimal(entry.entry.fiber ?? 0);
-          const uniquenessKey = `${entry.name.toLowerCase()}|${calories}|${fiber}`;
-          return (
-            index ===
-            allEntries.findIndex(candidate => {
-              const candidateCalories = roundToOneDecimal(candidate.entry.calories ?? 0);
-              const candidateFiber = roundToOneDecimal(candidate.entry.fiber ?? 0);
-              return `${candidate.name.toLowerCase()}|` + `${candidateCalories}|${candidateFiber}` === uniquenessKey;
-            })
-          );
-        })
-        .slice(0, 20),
-    [dailyNutritionTracking, t]
-  );
+  const RECENT_MEAL_LIMIT = 20;
+
+  const recentMeals = useMemo<MealEntry[]>(() => {
+    const meals: MealEntry[] = [];
+
+    const dateKeys = Object.keys(dailyNutritionTracking).sort().reverse();
+
+    for (const dateKey of dateKeys) {
+      const entries = dailyNutritionTracking[dateKey]?.entries ?? [];
+
+      const dayMeals = entries
+        .filter((entry): entry is MealEntry => entry.type === 'meal')
+        .sort((a, b) => new Date(b.recordedAt).getTime() - new Date(a.recordedAt).getTime());
+
+      meals.push(...dayMeals);
+
+      if (meals.length >= RECENT_MEAL_LIMIT) {
+        return meals.slice(0, RECENT_MEAL_LIMIT);
+      }
+    }
+
+    return meals;
+  }, [dailyNutritionTracking]);
 
   const copyMealSheetSnapPoints = useMemo(() => ['45%', '75%'], []);
 
