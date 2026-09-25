@@ -1,13 +1,6 @@
-import type {
-  TrainingActivityFilter,
-  TrainingActivityType,
-  TrainingIntensity,
-  TrainingIntensityFilter,
-} from '@/types/training';
+import type { TrainingActivityFilter, TrainingActivityType, TrainingIntensity, TrainingIntensityFilter } from '@/types/training';
 
-import type {
-  DailyTracking,
-} from '../types/trackingTypes';
+import type { DailyTracking } from '../types/trackingTypes';
 
 export type TrainingPlanSettings = {
   sessionsPerWeek?: number;
@@ -27,23 +20,12 @@ export type TrainingLogEntry = {
   createdAt: string;
 };
 
-export type TrainingLogInput = {
-  date: string;
-  activityType: TrainingActivityType;
-  durationMinutes: number;
-  distanceKm?: number;
-  intensity: TrainingIntensity;
-  notes?: string;
-};
+export type TrainingLogInput = Omit<TrainingLogEntry, 'id' | 'createdAt'>;
 
-export type DailyTrainingTracking =
-  DailyTracking<TrainingLogEntry[]>;
+export type DailyTrainingTracking = DailyTracking<TrainingLogEntry[]>;
 
 export type TrainingStorage = {
-  trainingPlanSettings: Record<
-    string,
-    TrainingPlanSettings
-  >;
+  trainingPlanSettings: Record<string, TrainingPlanSettings>;
 
   dailyTrainingTracking: DailyTrainingTracking;
 };

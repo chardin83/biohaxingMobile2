@@ -203,7 +203,7 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
     allDates.forEach(date => {
       const dots: CalendarDot[] = [];
 
-      if ((dailyNutritionTracking[date]?.meals?.length ?? 0) > 0) {
+      if ((dailyNutritionTracking[date]?.entries?.length ?? 0) > 0) {
         dots.push({
           key: 'meal',
           color: colors.checkmarkMeal,

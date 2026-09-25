@@ -4,6 +4,7 @@ import type { DailyTracking } from '../types/trackingTypes';
 
 export type DrinkEntry = {
   id: string;
+  nutritionEntryId?: string;
   type: DrinkType;
   name: string;
   amountMl?: number;
@@ -12,5 +13,7 @@ export type DrinkEntry = {
   recordedAt: string;
   source: 'meal_analysis' | 'manual';
 };
+
+export type DrinkEntryInput = Omit<DrinkEntry, 'id'>;
 
 export type DailyDrinkTracking = DailyTracking<DrinkEntry[]>;

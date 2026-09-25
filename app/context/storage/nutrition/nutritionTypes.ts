@@ -89,6 +89,8 @@ export type DrinkNutritionEntry = NutritionEntryBase & {
 
 export type NutritionEntry = MealEntry | FoodEntry | DrinkNutritionEntry;
 
+export type NutritionEntryInput = Omit<MealEntry, 'id'> | Omit<FoodEntry, 'id'> | Omit<DrinkNutritionEntry, 'id'>;
+
 export type DailyNutritionSummary = {
   date: string;
   entries: NutritionEntry[];

@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Crypto from 'expo-crypto';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
@@ -31,16 +32,43 @@ import {
   saveShareHealthPlan,
   saveShowMusic,
 } from './storage/app/appStorage';
-import { getDrinkStorage, saveDailyDrinkTracking } from './storage/drinks/drinkStorage';
-import { DailyDrinkTracking } from './storage/drinks/drinkTypes';
-import { getHabitStorage, saveDailyHabitTracking } from './storage/habits/habitStorage';
-import type { DailyHabitTracking } from './storage/habits/habitTypes';
+import {
+  addDrinkEntryToTracking,
+  getDrinkStorage,
+  removeDrinkEntryFromTracking,
+  syncDailyDrinkTracking,
+  updateDrinkEntryInTracking,
+} from './storage/drinks/drinkStorage';
+import { DailyDrinkTracking, DrinkEntry, DrinkEntryInput } from './storage/drinks/drinkTypes';
+import {
+  addHabitEntryToTracking,
+  getHabitStorage,
+  removeHabitEntryFromTracking,
+  syncDailyHabitTracking,
+  updateHabitEntryInTracking,
+} from './storage/habits/habitStorage';
+import type { DailyHabitTracking, HabitEntry } from './storage/habits/habitTypes';
 import { getMetricEntries, saveMetricEntries } from './storage/metrics/metricStorage';
 import { MetricEntry } from './storage/metrics/metricTypes';
-import { getNutritionStorage, saveDailyNutritionTracking, saveWeeklyNutritionTracking } from './storage/nutrition/nutritionStorage';
-import type { DailyNutritionTracking, WeeklyNutritionTracking } from './storage/nutrition/nutritionTypes';
+import {
+  addNutritionEntryToTracking,
+  getNutritionStorage,
+  removeNutritionEntryFromTracking,
+  removeWeeklyNutritionTracking,
+  saveWeeklyNutritionTracking,
+  syncDailyNutritionTracking,
+  updateNutritionEntryInTracking,
+} from './storage/nutrition/nutritionStorage';
+import type { DailyNutritionTracking, NutritionEntry, NutritionEntryInput, WeeklyNutritionTracking } from './storage/nutrition/nutritionTypes';
 import { getSupplementStorage, saveCustomSupplements, saveTakenDates } from './storage/supplements/supplementStorage';
-import { getTrainingStorage, saveDailyTrainingTracking, saveTrainingPlanSettings } from './storage/training/trainingStorage';
+import {
+  addTrainingEntryToTracking,
+  getTrainingStorage,
+  removeTrainingEntryFromTracking,
+  saveTrainingPlanSettings,
+  syncDailyTrainingTracking,
+  updateTrainingEntryInTracking,
+} from './storage/training/trainingStorage';
 import type { DailyTrainingTracking, TrainingLogEntry, TrainingLogInput, TrainingPlanSettings } from './storage/training/trainingTypes';
 import { subscribeUserProfile } from './storage/userProfile/userProfileEvents';
 import {
@@ -104,20 +132,27 @@ interface StorageContextType {
   claimNutritionTipCompletionXP?: (input: { claimKey: string; tipId: string; period: NutritionTargetPeriod; periodKey: string; amount: number }) => number;
   nutritionXpClaims?: Record<string, NutritionXpClaim>;
   dailyNutritionTracking: DailyNutritionTracking;
-  setDailyNutritionTracking: (updater: DailyNutritionTracking | ((prev: DailyNutritionTracking) => DailyNutritionTracking)) => void;
+  addNutritionEntry: (dateKey: string, entry: NutritionEntryInput) => NutritionEntry;
+  updateNutritionEntry: (dateKey: string, entryId: string, updates: Partial<NutritionEntryInput>) => void;
+  removeNutritionEntry: (dateKey: string, entryId: string) => void;
   weeklyNutritionTracking: WeeklyNutritionTracking;
   dailyDrinkTracking: DailyDrinkTracking;
-  setDailyDrinkTracking: (updater: DailyDrinkTracking | ((prev: DailyDrinkTracking) => DailyDrinkTracking)) => void;
+  addDrinkEntry: (dateKey: string, entry: DrinkEntryInput) => DrinkEntry;
+  updateDrinkEntry: (dateKey: string, entryId: string, updates: Partial<DrinkEntry>) => void;
+  removeDrinkEntry: (dateKey: string, entryId: string) => void;
   setWeeklyNutritionTracking: (updater: WeeklyNutritionTracking | ((prev: WeeklyNutritionTracking) => WeeklyNutritionTracking)) => void;
   trainingPlanSettings: Record<string, TrainingPlanSettings>;
   setTrainingPlanSettings: (
     updater: Record<string, TrainingPlanSettings> | ((prev: Record<string, TrainingPlanSettings>) => Record<string, TrainingPlanSettings>)
   ) => void;
   dailyTrainingTracking: DailyTrainingTracking;
-  setDailyTrainingTracking: (updater: DailyTrainingTracking | ((prev: DailyTrainingTracking) => DailyTrainingTracking)) => void;
   addTrainingEntry: (entry: TrainingLogInput) => TrainingLogEntry;
+  updateTrainingEntry: (dateKey: string, entryId: string, updates: Partial<TrainingLogInput>) => void;
+  removeTrainingEntry: (dateKey: string, entryId: string) => void;
   dailyHabitTracking: DailyHabitTracking;
-  setDailyHabitTracking: (updater: DailyHabitTracking | ((prev: DailyHabitTracking) => DailyHabitTracking)) => void;
+  addHabitEntry: (dateKey: string, trackingKey: string, entry: HabitEntry) => void;
+  updateHabitEntry: (dateKey: string, trackingKey: string, updates: Partial<HabitEntry>) => void;
+  removeHabitEntry: (dateKey: string, trackingKey: string) => void;
   showMusic: boolean;
   setShowMusic: (val: boolean) => void;
   tempPlans: PlansByCategory | null;
@@ -171,13 +206,13 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const [nutritionXpClaimsState, setNutritionXpClaimsState] = useState<Record<string, NutritionXpClaim>>({});
   const [userProfileState, setUserProfileState] = useState<UserProfile>({});
 
-  // useEffect(() => {
-  //   AsyncStorage.clear()
-  //     .then(() => {
-  //       console.log('AsyncStorage cleared');
-  //     })
-  //     .catch(console.error);
-  // }, []);
+  useEffect(() => {
+    AsyncStorage.clear()
+      .then(() => {
+        console.log('AsyncStorage cleared');
+      })
+      .catch(console.error);
+  }, []);
   /*
    * Plans
    */
@@ -450,21 +485,67 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
    * Nutrition
    */
 
+  //private
   const setDailyNutritionTracking = useCallback((updater: DailyNutritionTracking | ((prev: DailyNutritionTracking) => DailyNutritionTracking)) => {
     setDailyNutritionTrackingState(prev => {
       const updated = typeof updater === 'function' ? updater(prev) : updater;
 
-      saveDailyNutritionTracking(updated);
+      syncDailyNutritionTracking(prev, updated);
 
       return updated;
     });
   }, []);
 
+  const addNutritionEntry = useCallback(
+    (dateKey: string, entry: NutritionEntryInput): NutritionEntry => {
+      const nextEntry: NutritionEntry = {
+        ...entry,
+        id: Crypto.randomUUID(),
+      };
+
+      setDailyNutritionTracking(prev => addNutritionEntryToTracking(prev, dateKey, nextEntry));
+
+      return nextEntry;
+    },
+    [setDailyNutritionTracking]
+  );
+
+  const updateNutritionEntry = useCallback(
+    (dateKey: string, entryId: string, updates: Partial<NutritionEntryInput>) => {
+      setDailyNutritionTracking(prev => updateNutritionEntryInTracking(prev, dateKey, entryId, updates));
+    },
+    [setDailyNutritionTracking]
+  );
+
+  const removeNutritionEntry = useCallback(
+    (dateKey: string, entryId: string) => {
+      setDailyNutritionTracking(prev => removeNutritionEntryFromTracking(prev, dateKey, entryId));
+    },
+    [setDailyNutritionTracking]
+  );
+
   const setWeeklyNutritionTracking = useCallback((updater: WeeklyNutritionTracking | ((prev: WeeklyNutritionTracking) => WeeklyNutritionTracking)) => {
     setWeeklyNutritionTrackingState(prev => {
       const updated = typeof updater === 'function' ? updater(prev) : updater;
 
-      saveWeeklyNutritionTracking(updated);
+      const weekKeys = new Set([...Object.keys(prev), ...Object.keys(updated)]);
+
+      weekKeys.forEach(weekKey => {
+        const previousContributions = prev[weekKey];
+        const updatedContributions = updated[weekKey];
+
+        if (previousContributions === updatedContributions) {
+          return;
+        }
+
+        if (!updatedContributions) {
+          removeWeeklyNutritionTracking(weekKey).catch(console.error);
+
+          return;
+        }
+
+        saveWeeklyNutritionTracking(weekKey, updatedContributions).catch(console.error);
+      });
 
       return updated;
     });
@@ -474,15 +555,44 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
    * Drinks
    */
 
+  //private
   const setDailyDrinkTracking = useCallback((updater: DailyDrinkTracking | ((prev: DailyDrinkTracking) => DailyDrinkTracking)) => {
     setDailyDrinkTrackingState(prev => {
       const updated = typeof updater === 'function' ? updater(prev) : updater;
 
-      saveDailyDrinkTracking(updated);
+      syncDailyDrinkTracking(prev, updated);
 
       return updated;
     });
   }, []);
+
+  const addDrinkEntry = useCallback(
+    (dateKey: string, entry: DrinkEntryInput): DrinkEntry => {
+      const nextEntry: DrinkEntry = {
+        ...entry,
+        id: Crypto.randomUUID(),
+      };
+
+      setDailyDrinkTracking(prev => addDrinkEntryToTracking(prev, dateKey, nextEntry));
+
+      return nextEntry;
+    },
+    [setDailyDrinkTracking]
+  );
+
+  const updateDrinkEntry = useCallback(
+    (dateKey: string, entryId: string, updates: Partial<DrinkEntry>) => {
+      setDailyDrinkTracking(prev => updateDrinkEntryInTracking(prev, dateKey, entryId, updates));
+    },
+    [setDailyDrinkTracking]
+  );
+
+  const removeDrinkEntry = useCallback(
+    (dateKey: string, entryId: string) => {
+      setDailyDrinkTracking(prev => removeDrinkEntryFromTracking(prev, dateKey, entryId));
+    },
+    [setDailyDrinkTracking]
+  );
 
   /*
    * Training
@@ -501,11 +611,12 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     []
   );
 
+  //private
   const setDailyTrainingTracking = useCallback((updater: DailyTrainingTracking | ((prev: DailyTrainingTracking) => DailyTrainingTracking)) => {
     setDailyTrainingTrackingState(prev => {
       const updated = typeof updater === 'function' ? updater(prev) : updater;
 
-      saveDailyTrainingTracking(updated);
+      syncDailyTrainingTracking(prev, updated);
 
       return updated;
     });
@@ -519,12 +630,23 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
         ...entry,
       };
 
-      setDailyTrainingTracking(prev => ({
-        ...prev,
-        [entry.date]: [...(prev[entry.date] ?? []), nextEntry],
-      }));
+      setDailyTrainingTracking(prev => addTrainingEntryToTracking(prev, nextEntry));
 
       return nextEntry;
+    },
+    [setDailyTrainingTracking]
+  );
+
+  const updateTrainingEntry = useCallback(
+    (dateKey: string, entryId: string, updates: Partial<TrainingLogEntry>) => {
+      setDailyTrainingTracking(prev => updateTrainingEntryInTracking(prev, dateKey, entryId, updates));
+    },
+    [setDailyTrainingTracking]
+  );
+
+  const removeTrainingEntry = useCallback(
+    (dateKey: string, entryId: string) => {
+      setDailyTrainingTracking(prev => removeTrainingEntryFromTracking(prev, dateKey, entryId));
     },
     [setDailyTrainingTracking]
   );
@@ -532,16 +654,37 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   /*
    * Habits
    */
-
+  //private
   const setDailyHabitTracking = useCallback((updater: DailyHabitTracking | ((prev: DailyHabitTracking) => DailyHabitTracking)) => {
     setDailyHabitTrackingState(prev => {
       const updated = typeof updater === 'function' ? updater(prev) : updater;
 
-      saveDailyHabitTracking(updated);
+      syncDailyHabitTracking(prev, updated);
 
       return updated;
     });
   }, []);
+
+  const addHabitEntry = useCallback(
+    (dateKey: string, trackingKey: string, entry: HabitEntry) => {
+      setDailyHabitTracking(prev => addHabitEntryToTracking(prev, dateKey, trackingKey, entry));
+    },
+    [setDailyHabitTracking]
+  );
+
+  const updateHabitEntry = useCallback(
+    (dateKey: string, trackingKey: string, updates: Partial<HabitEntry>) => {
+      setDailyHabitTracking(prev => updateHabitEntryInTracking(prev, dateKey, trackingKey, updates));
+    },
+    [setDailyHabitTracking]
+  );
+
+  const removeHabitEntry = useCallback(
+    (dateKey: string, trackingKey: string) => {
+      setDailyHabitTracking(prev => removeHabitEntryFromTracking(prev, dateKey, trackingKey));
+    },
+    [setDailyHabitTracking]
+  );
 
   /*
    * Metrics
@@ -943,18 +1086,25 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       claimNutritionTipCompletionXP,
       nutritionXpClaims: nutritionXpClaimsState,
       dailyNutritionTracking: dailyNutritionTrackingState,
-      setDailyNutritionTracking,
+      addNutritionEntry,
+      updateNutritionEntry,
+      removeNutritionEntry,
       weeklyNutritionTracking: weeklyNutritionTrackingState,
       setWeeklyNutritionTracking,
       dailyDrinkTracking: dailyDrinkTrackingState,
-      setDailyDrinkTracking,
+      addDrinkEntry,
+      updateDrinkEntry,
+      removeDrinkEntry,
       trainingPlanSettings: trainingPlanSettingsState,
       setTrainingPlanSettings,
       dailyTrainingTracking: dailyTrainingTrackingState,
-      setDailyTrainingTracking,
       addTrainingEntry,
+      updateTrainingEntry,
+      removeTrainingEntry,
       dailyHabitTracking: dailyHabitTrackingState,
-      setDailyHabitTracking,
+      addHabitEntry,
+      updateHabitEntry,
+      removeHabitEntry,
       showMusic: showMusicState,
       setShowMusic,
       tempPlans,
@@ -973,7 +1123,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     }),
     // prettier-ignore
     [plansState, setPlans, saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, clearNutritionXP, clearEducationXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState, 
-      dailyNutritionTrackingState, setDailyNutritionTracking, weeklyNutritionTrackingState, setWeeklyNutritionTracking, dailyDrinkTrackingState, setDailyDrinkTracking, trainingPlanSettingsState, setTrainingPlanSettings, dailyTrainingTrackingState, setDailyTrainingTracking, addTrainingEntry, dailyHabitTrackingState, setDailyHabitTracking, showMusicState, setShowMusic, tempPlans, setTempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, healthSyncEnabledState, setHealthSyncEnabled, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
+      dailyNutritionTrackingState, addNutritionEntry, updateNutritionEntry, removeNutritionEntry, weeklyNutritionTrackingState, setWeeklyNutritionTracking, dailyDrinkTrackingState, addDrinkEntry, updateDrinkEntry, removeDrinkEntry, trainingPlanSettingsState, setTrainingPlanSettings, dailyTrainingTrackingState, addTrainingEntry, updateTrainingEntry, removeTrainingEntry, dailyHabitTrackingState, addHabitEntry, updateHabitEntry, removeHabitEntry, showMusicState, setShowMusic, tempPlans, setTempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, getMetricHistory, healthSyncEnabledState, setHealthSyncEnabled, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

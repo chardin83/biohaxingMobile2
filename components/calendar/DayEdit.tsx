@@ -69,7 +69,7 @@ const DayEdit: React.FC<DayEditProps> = ({
   /*
    * Måltider
    */
-  const hasMealsToday = (dailyNutritionTracking[selectedDate]?.meals?.length ?? 0) > 0;
+  const hasMealsToday = (dailyNutritionTracking[selectedDate]?.entries?.length ?? 0) > 0;
 
   /*
    * Träning

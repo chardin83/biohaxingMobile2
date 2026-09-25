@@ -23,7 +23,7 @@ type TrainingLoggerTabProps = {
 export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDate }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { dailyTrainingTracking, setDailyTrainingTracking } = useStorage();
+  const { dailyTrainingTracking, addTrainingEntry, updateTrainingEntry, removeTrainingEntry } = useStorage();
 
   const [selectedTrainingType, setSelectedTrainingType] = useState<TrainingActivityType>(DEFAULT_TRAINING_ACTIVITY);
   const [durationMinutes, setDurationMinutes] = useState('');
@@ -117,48 +117,37 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
       parsedDistance = distanceValue;
     }
 
-    setDailyTrainingTracking(previous => {
-      const existingEntries = previous[selectedDate] ?? [];
+    const values = {
+      activityType: selectedTrainingType,
+      durationMinutes: parsedDuration,
+      distanceKm: parsedDistance,
+      intensity,
+      notes: trainingNotes.trim() || undefined,
+    };
 
-      if (editingEntryId) {
-        return {
-          ...previous,
-          [selectedDate]: existingEntries.map(entry => {
-            if (entry.id !== editingEntryId) {
-              return entry;
-            }
-
-            return {
-              ...entry,
-              activityType: selectedTrainingType,
-              durationMinutes: parsedDuration,
-              distanceKm: parsedDistance,
-              intensity,
-              notes: trainingNotes.trim() || undefined,
-            };
-          }),
-        };
-      }
-
-      const newEntry = {
-        id: crypto.randomUUID(),
+    if (editingEntryId) {
+      updateTrainingEntry(selectedDate, editingEntryId, values);
+    } else {
+      addTrainingEntry({
         date: selectedDate,
-        activityType: selectedTrainingType,
-        durationMinutes: parsedDuration,
-        distanceKm: parsedDistance,
-        intensity,
-        notes: trainingNotes.trim() || undefined,
-        createdAt: new Date().toISOString(),
-      };
-
-      return {
-        ...previous,
-        [selectedDate]: [...existingEntries, newEntry],
-      };
-    });
+        ...values,
+      });
+    }
 
     resetForm();
-  }, [distanceKm, durationMinutes, editingEntryId, intensity, resetForm, selectedDate, selectedTrainingType, setDailyTrainingTracking, t, trainingNotes]);
+  }, [
+    addTrainingEntry,
+    distanceKm,
+    durationMinutes,
+    editingEntryId,
+    intensity,
+    resetForm,
+    selectedDate,
+    selectedTrainingType,
+    t,
+    trainingNotes,
+    updateTrainingEntry,
+  ]);
 
   const handleEditTraining = useCallback(
     (entryId: string) => {
@@ -182,26 +171,13 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
 
   const handleDeleteTraining = useCallback(
     (entryId: string) => {
-      setDailyTrainingTracking(previous => {
-        const remaining = (previous[selectedDate] ?? []).filter(entry => entry.id !== entryId);
-        const next = {
-          ...previous,
-        };
-
-        if (remaining.length === 0) {
-          delete next[selectedDate];
-        } else {
-          next[selectedDate] = remaining;
-        }
-
-        return next;
-      });
+      removeTrainingEntry(selectedDate, entryId);
 
       if (editingEntryId === entryId) {
         resetForm();
       }
     },
-    [editingEntryId, resetForm, selectedDate, setDailyTrainingTracking]
+    [editingEntryId, removeTrainingEntry, resetForm, selectedDate]
   );
 
   return (

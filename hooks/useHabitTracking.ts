@@ -4,48 +4,50 @@ import { useStorage } from '@/app/context/StorageContext';
 import { getHabitTrackedDates, isHabitSlotCompleted, logHabitTarget } from '@/services/targetProgress/habitTrackingService';
 
 export const useHabitTracking = () => {
-  const { dailyHabitTracking, setDailyHabitTracking } = useStorage();
+  const { dailyHabitTracking, addHabitEntry, updateHabitEntry } = useStorage();
 
   const logHabit = useCallback(
     ({ trackingKey, selectedDate, value, slot }: { trackingKey: string; selectedDate: string; value: number; slot?: string }) => {
-      logHabitTarget({
-        trackingKey,
-        selectedDate,
+      const existing = dailyHabitTracking[selectedDate]?.[trackingKey];
+
+      const entry = logHabitTarget({
+        existing,
         value,
         slot,
-        setDailyHabitTracking,
       });
+
+      if (existing) {
+        updateHabitEntry(selectedDate, trackingKey, entry);
+      } else {
+        addHabitEntry(selectedDate, trackingKey, entry);
+      }
     },
-    [setDailyHabitTracking]
+    [dailyHabitTracking, addHabitEntry, updateHabitEntry]
   );
 
   const isSlotCompleted = useCallback(
-    ({ trackingKey, selectedDate, slot }: { trackingKey: string; selectedDate: string; slot: string }) => {
-      return isHabitSlotCompleted({
+    ({ trackingKey, selectedDate, slot }: { trackingKey: string; selectedDate: string; slot: string }) =>
+      isHabitSlotCompleted({
         trackingKey,
         selectedDate,
         slot,
         dailyHabitTracking,
-      });
-    },
+      }),
     [dailyHabitTracking]
   );
 
   const getTrackedDates = useCallback(
-    (trackingKeys: Set<string>) => {
-      return getHabitTrackedDates({
+    (trackingKeys: Set<string>) =>
+      getHabitTrackedDates({
         trackingKeys,
         dailyHabitTracking,
-      });
-    },
+      }),
     [dailyHabitTracking]
   );
 
   return {
     logHabit,
-
     isHabitSlotCompleted: isSlotCompleted,
-
     getTrackedDates,
   };
 };
