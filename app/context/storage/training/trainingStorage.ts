@@ -1,9 +1,7 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { getStorageSize } from '../shared/storageSize';
 import { getDailyRange, getTrackingKeys, removeDailyValue, saveDailyValue } from '../shared/trackingStorage';
-import type { DailyTrainingTracking, TrainingLogEntry, TrainingPlanSettings, TrainingStorage } from './trainingTypes';
+import type { DailyTrainingTracking, TrainingLogEntry, TrainingStorage } from './trainingTypes';
 
-const TRAINING_PLAN_SETTINGS_KEY = 'trainingPlanSettings';
 const DAILY_TRAINING_NAMESPACE = 'dailyTrainingTracking';
 
 type DailyTrainingValue = DailyTrainingTracking[string];
@@ -67,7 +65,6 @@ export const removeTrainingEntryFromTracking = (tracking: DailyTrainingTracking,
   }
 
   const updatedEntries = entries.filter(entry => entry.id !== entryId);
-
   const updated = { ...tracking };
 
   if (updatedEntries.length === 0) {
@@ -79,16 +76,13 @@ export const removeTrainingEntryFromTracking = (tracking: DailyTrainingTracking,
   return updated;
 };
 
-export const saveTrainingPlanSettings = (value: Record<string, TrainingPlanSettings>): Promise<void> =>
-  AsyncStorage.setItem(TRAINING_PLAN_SETTINGS_KEY, JSON.stringify(value));
-
 export const getTrainingStorage = async (): Promise<TrainingStorage> => {
-  const [settings, dateKeys] = await Promise.all([AsyncStorage.getItem(TRAINING_PLAN_SETTINGS_KEY), getTrackingKeys(DAILY_TRAINING_NAMESPACE)]);
-
+  const dateKeys = await getTrackingKeys(DAILY_TRAINING_NAMESPACE);
   const dailyTrainingTracking = await getDailyRange<DailyTrainingValue>(DAILY_TRAINING_NAMESPACE, dateKeys);
 
   return {
-    trainingPlanSettings: settings ? JSON.parse(settings) : {},
     dailyTrainingTracking,
   };
 };
+
+export const getTrainingStorageSize = (): Promise<number> => getStorageSize([DAILY_TRAINING_NAMESPACE]);

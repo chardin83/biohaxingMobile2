@@ -1,40 +1,26 @@
 import { Plan } from '@/app/domain/Plan';
 import { SupplementPlanEntry } from '@/app/domain/SupplementPlanEntry';
 
-import {
-  emitArchivedPlans,
-  emitPlans,
-} from './planEvents';
-import {
-  getArchivedPlans,
-  getPlans,
-  saveArchivedPlans,
-  savePlans,
-} from './planStorage';
+import { emitArchivedPlans, emitPlans } from './planEvents';
+import { getArchivedPlans, getPlans, saveArchivedPlans, savePlans } from './planStorage';
 import {
   type ArchivedPlansByCategory,
   type ArchivedPlanTipEntry,
   type ArchivedSupplementPlanEntry,
   type PlansByCategory,
+  TrainingPlanSettings,
 } from './planTypes';
-
 
 /**
  * Ersätter hela plans-objektet.
  */
-export const setPlans = async (
-  plans: PlansByCategory
-): Promise<PlansByCategory> => {
+export const setPlans = async (plans: PlansByCategory): Promise<PlansByCategory> => {
   await savePlans(plans);
   emitPlans(plans);
 
   return plans;
 };
-export const updatePlans = async (
-  updater:
-    | Partial<PlansByCategory>
-    | ((current: PlansByCategory) => PlansByCategory)
-): Promise<PlansByCategory> => {
+export const updatePlans = async (updater: Partial<PlansByCategory> | ((current: PlansByCategory) => PlansByCategory)): Promise<PlansByCategory> => {
   const current = await getPlans();
 
   const updated =
@@ -51,28 +37,16 @@ export const updatePlans = async (
   return updated;
 };
 
-export const saveSupplementToPlan = async (
-  selectedPlan: Plan,
-  supplement: SupplementPlanEntry,
-  isEditingSupplement: boolean
-): Promise<Plan> => {
+export const saveSupplementToPlan = async (selectedPlan: Plan, supplement: SupplementPlanEntry, isEditingSupplement: boolean): Promise<Plan> => {
   const plans = await getPlans();
   const supplementPlans = plans.supplements ?? [];
 
-  const existingPlan = supplementPlans.find(
-    plan =>
-      plan.name === selectedPlan.name &&
-      plan.prefferedTime === selectedPlan.prefferedTime
-  );
+  const existingPlan = supplementPlans.find(plan => plan.name === selectedPlan.name && plan.prefferedTime === selectedPlan.prefferedTime);
 
-  const targetKey =
-    supplement.supplement?.id ??
-    supplement.supplement?.name;
+  const targetKey = supplement.supplement?.id ?? supplement.supplement?.name;
 
   if (!targetKey) {
-    throw new Error(
-      'Ogiltigt tillskott (saknar id/namn).'
-    );
+    throw new Error('Ogiltigt tillskott (saknar id/namn).');
   }
 
   let updatedSupplementPlans: Plan[];
@@ -86,64 +60,38 @@ export const saveSupplementToPlan = async (
       notify: selectedPlan.notify,
     };
 
-    updatedSupplementPlans = [
-      ...supplementPlans,
-      updatedPlan,
-    ];
+    updatedSupplementPlans = [...supplementPlans, updatedPlan];
   } else if (isEditingSupplement) {
     updatedPlan = {
       ...existingPlan,
-      supplements: (
-        existingPlan.supplements ?? []
-      ).map(existingSupplement => {
-        const existingKey =
-          existingSupplement.supplement?.id ??
-          existingSupplement.supplement?.name;
+      supplements: (existingPlan.supplements ?? []).map(existingSupplement => {
+        const existingKey = existingSupplement.supplement?.id ?? existingSupplement.supplement?.name;
 
-        return existingKey === targetKey
-          ? supplement
-          : existingSupplement;
+        return existingKey === targetKey ? supplement : existingSupplement;
       }),
     };
 
     updatedSupplementPlans = supplementPlans.map(plan =>
-      plan.name === existingPlan.name &&
-      plan.prefferedTime === existingPlan.prefferedTime
-        ? updatedPlan
-        : plan
+      plan.name === existingPlan.name && plan.prefferedTime === existingPlan.prefferedTime ? updatedPlan : plan
     );
   } else {
-    const supplementExists = (
-      existingPlan.supplements ?? []
-    ).some(existingSupplement => {
-      const existingKey =
-        existingSupplement.supplement?.id ??
-        existingSupplement.supplement?.name;
+    const supplementExists = (existingPlan.supplements ?? []).some(existingSupplement => {
+      const existingKey = existingSupplement.supplement?.id ?? existingSupplement.supplement?.name;
 
       return existingKey === targetKey;
     });
 
     if (supplementExists) {
-      throw new Error(
-        `Tillskottet "${
-          supplement.supplement?.name ?? targetKey
-        }" finns redan i planen.`
-      );
+      throw new Error(`Tillskottet "${supplement.supplement?.name ?? targetKey}" finns redan i planen.`);
     }
 
     updatedPlan = {
       ...existingPlan,
-      supplements: [
-        ...(existingPlan.supplements ?? []),
-        supplement,
-      ],
+      supplements: [...(existingPlan.supplements ?? []), supplement],
     };
 
     updatedSupplementPlans = supplementPlans.map(plan =>
-      plan.name === existingPlan.name &&
-      plan.prefferedTime === existingPlan.prefferedTime
-        ? updatedPlan
-        : plan
+      plan.name === existingPlan.name && plan.prefferedTime === existingPlan.prefferedTime ? updatedPlan : plan
     );
   }
 
@@ -158,26 +106,12 @@ export const saveSupplementToPlan = async (
   return updatedPlan;
 };
 
-export const archivePlan = async (
-  category: Exclude<
-    keyof ArchivedPlansByCategory,
-    'supplements'
-  >,
-  planId: string | undefined,
-  tipId: string
-) => {
-  const [plans, archivedPlans] = await Promise.all([
-    getPlans(),
-    getArchivedPlans(),
-  ]);
+export const archivePlan = async (category: Exclude<keyof ArchivedPlansByCategory, 'supplements'>, planId: string | undefined, tipId: string) => {
+  const [plans, archivedPlans] = await Promise.all([getPlans(), getArchivedPlans()]);
 
   const activePlans = plans[category];
 
-  const index = activePlans.findIndex(plan =>
-    planId
-      ? plan.id === planId
-      : plan.tipId === tipId
-  );
+  const index = activePlans.findIndex(plan => (planId ? plan.id === planId : plan.tipId === tipId));
 
   if (index < 0) {
     return;
@@ -190,43 +124,24 @@ export const archivePlan = async (
 
   const nextPlans: PlansByCategory = {
     ...plans,
-    [category]: activePlans.filter(
-      (_, itemIndex) => itemIndex !== index
-    ),
+    [category]: activePlans.filter((_, itemIndex) => itemIndex !== index),
   };
 
   const nextArchivedPlans: ArchivedPlansByCategory = {
     ...archivedPlans,
-    [category]: [
-      ...archivedPlans[category],
-      archivedPlan,
-    ],
+    [category]: [...archivedPlans[category], archivedPlan],
   };
 
-  await Promise.all([
-    savePlans(nextPlans),
-    saveArchivedPlans(nextArchivedPlans),
-  ]);
+  await Promise.all([savePlans(nextPlans), saveArchivedPlans(nextArchivedPlans)]);
 
   emitPlans(nextPlans);
   emitArchivedPlans(nextArchivedPlans);
 };
 
-export const archiveSupplement = async (
-  supplementName: string,
-  planName: string,
-  preferredTime: string
-) => {
-  const [plans, archivedPlans] = await Promise.all([
-    getPlans(),
-    getArchivedPlans(),
-  ]);
+export const archiveSupplement = async (supplementName: string, planName: string, preferredTime: string) => {
+  const [plans, archivedPlans] = await Promise.all([getPlans(), getArchivedPlans()]);
 
-  const planIndex = plans.supplements.findIndex(
-    plan =>
-      plan.name === planName &&
-      plan.prefferedTime === preferredTime
-  );
+  const planIndex = plans.supplements.findIndex(plan => plan.name === planName && plan.prefferedTime === preferredTime);
 
   if (planIndex < 0) {
     return;
@@ -234,9 +149,7 @@ export const archiveSupplement = async (
 
   const plan = plans.supplements[planIndex];
 
-  const supplementIndex = plan.supplements.findIndex(
-    item => item.supplement.name === supplementName
-  );
+  const supplementIndex = plan.supplements.findIndex(item => item.supplement.name === supplementName);
 
   if (supplementIndex < 0) {
     return;
@@ -247,16 +160,11 @@ export const archiveSupplement = async (
     endedAt: new Date().toISOString(),
   };
 
-  const remainingSupplements =
-    plan.supplements.filter(
-      (_, index) => index !== supplementIndex
-    );
+  const remainingSupplements = plan.supplements.filter((_, index) => index !== supplementIndex);
 
   const nextSupplementPlans =
     remainingSupplements.length === 0
-      ? plans.supplements.filter(
-          (_, index) => index !== planIndex
-        )
+      ? plans.supplements.filter((_, index) => index !== planIndex)
       : plans.supplements.map((item, index) =>
           index === planIndex
             ? {
@@ -273,35 +181,19 @@ export const archiveSupplement = async (
 
   const nextArchivedPlans: ArchivedPlansByCategory = {
     ...archivedPlans,
-    supplements: [
-      ...archivedPlans.supplements,
-      archivedSupplement,
-    ],
+    supplements: [...archivedPlans.supplements, archivedSupplement],
   };
 
-  await Promise.all([
-    savePlans(nextPlans),
-    saveArchivedPlans(nextArchivedPlans),
-  ]);
+  await Promise.all([savePlans(nextPlans), saveArchivedPlans(nextArchivedPlans)]);
 
   emitPlans(nextPlans);
   emitArchivedPlans(nextArchivedPlans);
 };
 
-export const archiveSupplementPlan = async (
-  planName: string,
-  preferredTime: string
-) => {
-  const [plans, archivedPlans] = await Promise.all([
-    getPlans(),
-    getArchivedPlans(),
-  ]);
+export const archiveSupplementPlan = async (planName: string, preferredTime: string) => {
+  const [plans, archivedPlans] = await Promise.all([getPlans(), getArchivedPlans()]);
 
-  const planIndex = plans.supplements.findIndex(
-    plan =>
-      plan.name === planName &&
-      plan.prefferedTime === preferredTime
-  );
+  const planIndex = plans.supplements.findIndex(plan => plan.name === planName && plan.prefferedTime === preferredTime);
 
   if (planIndex < 0) {
     return;
@@ -311,31 +203,22 @@ export const archiveSupplementPlan = async (
 
   const endedAt = new Date().toISOString();
 
-  const archivedSupplements: ArchivedSupplementPlanEntry[] =
-    plan.supplements.map(supplement => ({
-      ...supplement,
-      endedAt,
-    }));
+  const archivedSupplements: ArchivedSupplementPlanEntry[] = plan.supplements.map(supplement => ({
+    ...supplement,
+    endedAt,
+  }));
 
   const nextPlans: PlansByCategory = {
     ...plans,
-    supplements: plans.supplements.filter(
-      (_, index) => index !== planIndex
-    ),
+    supplements: plans.supplements.filter((_, index) => index !== planIndex),
   };
 
   const nextArchivedPlans: ArchivedPlansByCategory = {
     ...archivedPlans,
-    supplements: [
-      ...archivedPlans.supplements,
-      ...archivedSupplements,
-    ],
+    supplements: [...archivedPlans.supplements, ...archivedSupplements],
   };
 
-  await Promise.all([
-    savePlans(nextPlans),
-    saveArchivedPlans(nextArchivedPlans),
-  ]);
+  await Promise.all([savePlans(nextPlans), saveArchivedPlans(nextArchivedPlans)]);
 
   emitPlans(nextPlans);
   emitArchivedPlans(nextArchivedPlans);
@@ -370,4 +253,10 @@ export const clearArchivedPlans = async () => {
 
   await saveArchivedPlans(empty);
   emitArchivedPlans(empty);
+};
+
+export type PlanStorage = {
+  plans: PlansByCategory;
+  archivedPlans: ArchivedPlansByCategory;
+  trainingPlanSettings: Record<string, TrainingPlanSettings>;
 };

@@ -1,5 +1,6 @@
 import { roundToOneDecimal } from '@/utils/analyzeNutrition';
 
+import { getStorageSize } from '../shared/storageSize';
 import { getDailyRange, getTrackingKeys, removeDailyValue, saveDailyValue } from '../shared/trackingStorage';
 import type { DailyNutritionSummary, DailyNutritionTracking, NutritionEntry, NutritionTrackingContribution, WeeklyNutritionTracking } from './nutritionTypes';
 
@@ -162,3 +163,5 @@ export const getNutritionStorage = async (): Promise<NutritionStorage> => {
     weeklyNutritionTracking,
   };
 };
+
+export const getNutritionStorageSize = (): Promise<number> => getStorageSize([DAILY_NUTRITION_NAMESPACE, WEEKLY_NUTRITION_NAMESPACE]);

@@ -6,8 +6,18 @@ import { useTranslation } from 'react-i18next';
 import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { clearChat } from '@/app/context/chatEvents';
+import { getHealthSettingsStorageSize, getKnowledgeSettingsStorageSize, getSharingStorageSize } from '@/app/context/storage/app/appStorage';
+import { getDrinkStorageSize } from '@/app/context/storage/drinks/drinkStorage';
+import { getHabitStorageSize } from '@/app/context/storage/habits/habitStorage';
+import { getMetricStorageSize } from '@/app/context/storage/metrics/metricStorage';
+import { getNutritionStorageSize } from '@/app/context/storage/nutrition/nutritionStorage';
+import { getPlanStorageSize } from '@/app/context/storage/plans/planStorage';
 import { PlansByCategory } from '@/app/context/storage/plans/planTypes';
+import { getSupplementCustomStorageSize, getSupplementTakenDatesStorageSize } from '@/app/context/storage/supplements/supplementStorage';
+import { getTrainingStorageSize } from '@/app/context/storage/training/trainingStorage';
+import { getUserProfileStorageSize } from '@/app/context/storage/userProfile/userProfileStorage';
 import { clearUserProfile } from '@/app/context/storage/userProfile/userProfileStore';
+import { getKnowledgeXpStorageSize, getNutritionXpStorageSize } from '@/app/context/storage/xp/xpStorage';
 import { useStorage } from '@/app/context/StorageContext';
 import { type Supplement } from '@/app/domain/Supplement';
 import { type SupplementPlanEntry } from '@/app/domain/SupplementPlanEntry';
@@ -45,6 +55,20 @@ export const pruneCustomSupplementReferences = (plans: PlansByCategory, customSu
   };
 };
 
+export const formatStorageSize = (bytes: number): string => {
+  if (bytes < 1024) {
+    return `${bytes} B`;
+  }
+
+  const kb = bytes / 1024;
+
+  if (kb < 1024) {
+    return `${kb.toFixed(1)} KB`;
+  }
+
+  return `${(kb / 1024).toFixed(1)} MB`;
+};
+
 export default function DeleteDataPage() {
   const { t } = useTranslation('common');
   const { colors } = useTheme();
@@ -54,17 +78,18 @@ export default function DeleteDataPage() {
     setPlans,
     clearArchivedPlans,
     setHasVisitedChat,
-    setCustomSupplements,
     setMyAreas,
-    setMetricEntries,
-    setDailyNutritionTracking,
+    clearMetricEntries,
+    clearDailyNutritionTracking,
     setWeeklyNutritionTracking,
     setTrainingPlanSettings,
-    setDailyTrainingTracking,
-    setDailyHabitTracking,
+    clearDailyTrainingTracking,
+    clearDailyHabitTracking,
+    clearDailyDrinkTracking,
     setViewedTips,
     setShareHealthPlan,
-    setTakenDates,
+    clearSupplementTakenDates,
+    clearSupplementCustom,
     clearNutritionXP,
     clearEducationXP,
     setHealthSyncEnabled,
@@ -82,6 +107,68 @@ export default function DeleteDataPage() {
     [DELETE_OPTION_KEYS.sharing]: false,
   });
   const [showDeletionConfirmation, setShowDeletionConfirmation] = React.useState(false);
+
+  type DeleteOptionKey = (typeof DELETE_OPTION_KEYS)[keyof typeof DELETE_OPTION_KEYS];
+
+  const [storageSizes, setStorageSizes] = React.useState<Record<DeleteOptionKey, number>>({
+    plans: 0,
+    supplements: 0,
+    healthData: 0,
+    logs: 0,
+    knowledge: 0,
+    personal: 0,
+    sharing: 0,
+  });
+
+  React.useEffect(() => {
+    const loadStorageSizes = async () => {
+      const [
+        plans,
+        supplementsCustom,
+        supplementsTakenDates,
+        metrics,
+        healthSettings,
+        training,
+        habits,
+        nutrition,
+        drinks,
+        nutritionXp,
+        knowledgeSettings,
+        knowledgeXp,
+        personal,
+        sharing,
+      ] = await Promise.all([
+        getPlanStorageSize(),
+        getSupplementCustomStorageSize(),
+        getSupplementTakenDatesStorageSize(),
+        getMetricStorageSize(),
+        getHealthSettingsStorageSize(),
+        getTrainingStorageSize(),
+        getHabitStorageSize(),
+        getNutritionStorageSize(),
+        getDrinkStorageSize(),
+        getNutritionXpStorageSize(),
+        getKnowledgeSettingsStorageSize(),
+        getKnowledgeXpStorageSize(),
+        getUserProfileStorageSize(),
+        getSharingStorageSize(),
+      ]);
+
+      setStorageSizes({
+        plans,
+        supplements: supplementsCustom,
+        healthData: metrics + healthSettings,
+        logs: training + habits + nutrition + drinks + nutritionXp + supplementsTakenDates,
+        knowledge: knowledgeSettings + knowledgeXp,
+        personal,
+        sharing,
+      });
+    };
+
+    loadStorageSizes().catch(error => {
+      console.error('Failed to load storage sizes', error);
+    });
+  }, []);
 
   const toggleOption = (key: string) => {
     setSelected(prev => ({ ...prev, [key]: !prev[key] }));
@@ -134,20 +221,21 @@ export default function DeleteDataPage() {
     }
 
     if (selected.supplements) {
-      setCustomSupplements([]);
+      clearSupplementCustom();
     }
 
     if (selected.healthData) {
-      setMetricEntries([]);
+      clearMetricEntries();
       setHealthSyncEnabled(false);
     }
 
     if (selected.logs) {
-      setDailyTrainingTracking({});
-      setDailyHabitTracking({});
+      clearDailyTrainingTracking();
+      clearDailyHabitTracking();
       setWeeklyNutritionTracking({});
-      setDailyNutritionTracking({});
-      setTakenDates({});
+      clearDailyNutritionTracking();
+      clearDailyDrinkTracking();
+      clearSupplementTakenDates();
 
       clearNutritionXP();
     }
@@ -174,17 +262,18 @@ export default function DeleteDataPage() {
     clearNutritionXP,
     customSupplements,
     selected,
-    setCustomSupplements,
-    setDailyHabitTracking,
+    clearSupplementCustom,
+    clearDailyHabitTracking,
     setHasVisitedChat,
     setHealthSyncEnabled,
-    setMetricEntries,
+    clearMetricEntries,
     setMyAreas,
     setPlans,
     setShareHealthPlan,
-    setTakenDates,
-    setDailyNutritionTracking,
-    setDailyTrainingTracking,
+    clearSupplementTakenDates,
+    clearDailyNutritionTracking,
+    clearDailyTrainingTracking,
+    clearDailyDrinkTracking,
     setTrainingPlanSettings,
     setViewedTips,
     setWeeklyNutritionTracking,
@@ -329,6 +418,8 @@ export default function DeleteDataPage() {
                   </ThemedText>
                   <ThemedText type="caption" style={styles.optionDescription}>
                     {option.description}
+                    {' · '}
+                    {formatStorageSize(storageSizes[option.key] ?? 0)}
                   </ThemedText>
                 </View>
               </View>

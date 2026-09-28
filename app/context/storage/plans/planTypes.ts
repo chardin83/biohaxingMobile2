@@ -1,6 +1,7 @@
-import { Plan } from "@/app/domain/Plan";
-import { SupplementPlanEntry } from "@/app/domain/SupplementPlanEntry";
-import { PlanCategory } from "@/types/planCategory";
+import { Plan } from '@/app/domain/Plan';
+import { SupplementPlanEntry } from '@/app/domain/SupplementPlanEntry';
+import { PlanCategory } from '@/types/planCategory';
+import type { TrainingActivityFilter, TrainingIntensityFilter } from '@/types/training';
 
 export type PlanTipEntry = {
   startedAt: string;
@@ -39,6 +40,13 @@ export type ArchivedPlansByCategory = {
   nutrition: ArchivedPlanTipEntry[];
   other: ArchivedPlanTipEntry[];
   supplements: ArchivedSupplementPlanEntry[];
+};
+
+export type TrainingPlanSettings = {
+  sessionsPerWeek?: number;
+  sessionDurationMinutes?: number;
+  activityType?: TrainingActivityFilter;
+  minimumIntensity?: TrainingIntensityFilter;
 };
 
 export const EMPTY_PLANS: PlansByCategory = {

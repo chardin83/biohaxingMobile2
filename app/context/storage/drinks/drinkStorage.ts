@@ -1,3 +1,4 @@
+import { getStorageSize } from '../shared/storageSize';
 import { getDailyRange, getTrackingKeys, removeDailyValue, saveDailyValue } from '../shared/trackingStorage';
 import type { DailyDrinkTracking, DrinkEntry } from './drinkTypes';
 
@@ -93,3 +94,5 @@ export const getDrinkStorage = async (): Promise<DrinkStorage> => {
     dailyDrinkTracking,
   };
 };
+
+export const getDrinkStorageSize = (): Promise<number> => getStorageSize([DAILY_DRINK_NAMESPACE]);

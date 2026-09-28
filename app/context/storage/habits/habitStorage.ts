@@ -1,3 +1,4 @@
+import { getStorageSize } from '../shared/storageSize';
 import { getDailyRange, getTrackingKeys, removeDailyValue, saveDailyValue } from '../shared/trackingStorage';
 import type { DailyHabitTracking, HabitEntry, HabitStorage } from './habitTypes';
 
@@ -99,3 +100,5 @@ export const getHabitStorage = async (): Promise<HabitStorage> => {
     dailyHabitTracking,
   };
 };
+
+export const getHabitStorageSize = (): Promise<number> => getStorageSize([DAILY_HABIT_NAMESPACE]);
