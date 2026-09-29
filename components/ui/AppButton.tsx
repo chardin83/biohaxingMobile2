@@ -19,8 +19,9 @@ interface AppButtonProps {
   accessibilityLabel?: string;
   accessibilityHint?: string;
   icon?: IconSymbolName;
-  iconPosition?: 'left' | 'right';
+  rightIcon?: IconSymbolName;
   disabledText?: string;
+  content?: React.ReactNode;
 }
 
 const AppButton: React.FC<AppButtonProps> = ({
@@ -33,31 +34,48 @@ const AppButton: React.FC<AppButtonProps> = ({
   accessibilityLabel,
   accessibilityHint,
   icon,
-  iconPosition = 'left',
+  rightIcon,
   disabledText,
+  content,
 }) => {
   const { colors } = useTheme();
+  const leftIcon = icon;
 
   const isPrimary = variant === 'primary';
   const isDanger = variant === 'danger';
 
   let buttonVariantStyle;
+
   if (isPrimary) {
-    buttonVariantStyle = { borderColor: colors.primary };
+    buttonVariantStyle = {
+      borderColor: colors.primary,
+    };
   } else if (isDanger) {
-    buttonVariantStyle = { backgroundColor: 'transparent', borderColor: colors.error };
+    buttonVariantStyle = {
+      backgroundColor: 'transparent',
+      borderColor: colors.error,
+    };
   } else {
-    buttonVariantStyle = { backgroundColor: 'transparent', borderColor: colors.secondary };
+    buttonVariantStyle = {
+      backgroundColor: 'transparent',
+      borderColor: colors.secondary,
+    };
   }
 
-  // Determine the text color style based on variant
   let textColorStyle;
+
   if (isPrimary) {
-    textColorStyle = { color: colors.primary };
+    textColorStyle = {
+      color: colors.primary,
+    };
   } else if (isDanger) {
-    textColorStyle = { color: colors.error };
+    textColorStyle = {
+      color: colors.error,
+    };
   } else {
-    textColorStyle = { color: colors.textLight };
+    textColorStyle = {
+      color: colors.textLight,
+    };
   }
 
   const iconColor = disabled ? colors.textMuted : textColorStyle.color;
@@ -69,20 +87,21 @@ const AppButton: React.FC<AppButtonProps> = ({
         style={[
           styles.button,
           buttonVariantStyle,
-          isPrimary && glow && {
-            ...(Platform.OS === 'ios'
-              ? {
-                backgroundColor: colors.buttonGlowBackground,
-                shadowColor: colors.buttonGlow,
-                shadowOffset: { width: 0, height: 0 },
-                shadowOpacity: 0.7,
-                shadowRadius: 8,
-              }
-              : {
-                elevation: 20,
-                shadowColor: colors.buttonGlow,
-              }),
-          },
+          isPrimary &&
+            glow && {
+              ...(Platform.OS === 'ios'
+                ? {
+                    backgroundColor: colors.buttonGlowBackground,
+                    shadowColor: colors.buttonGlow,
+                    shadowOffset: { width: 0, height: 0 },
+                    shadowOpacity: 0.7,
+                    shadowRadius: 8,
+                  }
+                : {
+                    elevation: 20,
+                    shadowColor: colors.buttonGlow,
+                  }),
+            },
           disabled && styles.disabled,
           style,
         ]}
@@ -91,27 +110,23 @@ const AppButton: React.FC<AppButtonProps> = ({
         accessibilityRole="button"
         accessibilityState={{ disabled }}
         accessibilityHint={accessibilityHint}
-        accessible={true}
+        accessible
       >
-        <View style={styles.content}>
-          {icon && iconPosition === 'left' && (
-            <IconSymbol name={icon} size={26} color={iconColor} />
-          )}
-          <ThemedText
-            type="defaultSemiBold"
-            style={[
-              styles.text,
-              textColorStyle,
-              icon && styles.textWithIcon,
-            ]}
-          >
-            {title}
-          </ThemedText>
-          {icon && iconPosition === 'right' && (
-            <IconSymbol name={icon} size={16} color={iconColor} />
-          )}
+        <View style={styles.buttonContent}>
+          <View style={styles.content}>
+            {leftIcon && <IconSymbol name={leftIcon} size={26} color={iconColor} />}
+
+            <ThemedText type="defaultSemiBold" style={[styles.text, textColorStyle]}>
+              {title}
+            </ThemedText>
+
+            {rightIcon && <IconSymbol name={rightIcon} size={18} color={iconColor} />}
+          </View>
+
+          {content}
         </View>
       </TouchableOpacity>
+
       {disabled && disabledText && (
         <ThemedText type="explainer" style={styles.disabledText}>
           {disabledText}
@@ -137,10 +152,15 @@ const styles = StyleSheet.create({
   disabled: {
     opacity: 0.5,
   },
+  buttonContent: {
+    width: '100%',
+    alignItems: 'center',
+  },
   content: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'center',
+    gap: 10,
   },
   text: {
     fontWeight: 'bold',
@@ -149,13 +169,7 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
     textAlignVertical: 'center',
   },
-  textWithIcon: {
-    marginLeft: 4,
-  },
-  textShadow: {
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 1,
-  },
+
   disabledText: {
     textAlign: 'center',
     marginBottom: 18,

@@ -41,6 +41,7 @@ import { IconSymbol } from '../ui/IconSymbol';
 import LabeledInput from '../ui/LabeledInput';
 import { LoggedDrinksSection } from './LoggedDrinksSection';
 import { LoggedMealsSection } from './LoggedMealsSection';
+import NutritionAnalysisBottomSheet from './NutritionAnalysisBottomSheet';
 import NutritionPlanTargetsSection, { getTipProgressKey } from './NutritionPlanTargetsSection';
 import PackagingAnalysisModal, { SelectedImageFile } from './PackagingAnalysisModal';
 
@@ -359,6 +360,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   const hasInitializedFulfilledTrackingRef = useRef(false);
   const completionAnimByKeyRef = useRef<Record<string, Animated.Value>>({});
   const copyMealBottomSheetRef = useRef<BottomSheetModal>(null);
+  const nutritionAnalysisBottomSheetRef = useRef<BottomSheetModal>(null);
   const fulfilledTipsSectionYRef = useRef(0);
   const periodSectionYRef = useRef<Record<NutritionTargetPeriod, number>>({
     daily: 0,
@@ -848,11 +850,13 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
         statusMessage: t('nutritionLogger.analysisReadyToSave'),
       });
       setAnalysisResult(t('nutritionLogger.analysisReadyToSave'));
-      setIsPackagingModalVisible(false);
-      setPackagingMealImage(null);
-      requestAnimationFrame(() => {
+
+      nutritionAnalysisBottomSheetRef.current?.dismiss();
+
+      setTimeout(() => {
+        setPackagingMealImage(null);
         setIsAnalysisReviewModalVisible(true);
-      });
+      }, 250);
     } catch (err) {
       console.error('Error analyzing image:', err);
       const errMsg = err instanceof Error ? err.message : '';
@@ -895,8 +899,18 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
       mealDescription,
       ingredientFile,
     };
-    //setIsPackagingModalVisible(false);
-    //setPackagingMealImage(null);
+
+    // Stäng formuläret
+    setIsPackagingModalVisible(false);
+
+    // Behåll bilden så analys-bottomsheeten kan visa den
+    setPackagingMealImage(mealFile);
+
+    // Visa analysen
+    requestAnimationFrame(() => {
+      nutritionAnalysisBottomSheetRef.current?.present();
+    });
+
     runNutritionImageAnalysis(mealFile, mealDescription || undefined, ingredientFile).catch(console.error);
   };
 
@@ -1131,7 +1145,6 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
         <PackagingAnalysisModal
           visible={isPackagingModalVisible}
           initialMealImage={packagingMealImage}
-          isAnalyzing={isAnalyzing}
           onClose={handleClosePackagingModal}
           onAnalyze={handleAnalyzePackaging}
         />
@@ -1337,6 +1350,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           handleCopyMeal={handleCopyMeal}
           roundToOneDecimal={roundToOneDecimal}
         />
+        <NutritionAnalysisBottomSheet ref={nutritionAnalysisBottomSheetRef} image={packagingMealImage} />
       </View>
     </KeyboardAvoidingView>
   );
@@ -1348,6 +1362,7 @@ const styles = StyleSheet.create({
   },
   imagePickerButton: {
     alignSelf: 'center',
+    width: '85%',
     marginBottom: 16,
   },
   copyMealLinkContainer: {

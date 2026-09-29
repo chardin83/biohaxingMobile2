@@ -1063,7 +1063,7 @@
     "packageFlowRemoveMealImage": "Remove meal image",
     "packageFlowDescriptionLabel": "Meal description",
     "packageFlowDescriptionPlaceholder": "Example: chicken salad with avocado, feta, and pumpkin seeds",
-    "packageFlowAddIngredientImage": "Add nutrition label",
+    "packageFlowAddIngredientImage": "Scan label",
     "packageFlowHint": "A photo of the nutrition label helps analyze the meal more accurately.",
     "mealTime": "Meal time",
     "analysisReviewTitle": "Review AI analysis before saving",
@@ -1210,7 +1210,10 @@
     },
     "seeProgress": "See progress",
     "analysisInProgress": "Analysis in progress",
-    "analysisDoNotCloseApp": "Do not close the app while the analysis is in progress. It is okay to navigate to other parts of the app."
+    "analysisDoNotCloseApp": "Do not close the app while the analysis is in progress. It is okay to navigate to other parts of the app.",
+    "analysisImage": "Analyzing image",
+    "analysisNutrition": "Calculating nutrition",
+    "analysisPreparingResult": "Preparing result"
   },
   "otherLoggerTab": {
     "registerToday": "Register today",

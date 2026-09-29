@@ -1,14 +1,13 @@
 import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import ImagePickerButton from '../ImagePickerButton';
 import ImageThumbnailWithDelete from '../ImageThumbnailWithDelete';
 import { ThemedModal } from '../ThemedModal';
 import { ThemedText } from '../ThemedText';
 import LabeledInput from '../ui/LabeledInput';
-import Notice from '../ui/Notice';
 
 export type SelectedImageFile = {
   uri: string;
@@ -19,12 +18,11 @@ export type SelectedImageFile = {
 interface PackagingAnalysisModalProps {
   visible: boolean;
   initialMealImage: SelectedImageFile | null;
-  isAnalyzing: boolean;
   onClose: () => void;
   onAnalyze: (mealFile: SelectedImageFile, mealDescription: string, ingredientFile: SelectedImageFile | null) => void;
 }
 
-const PackagingAnalysisModal: React.FC<PackagingAnalysisModalProps> = ({ visible, initialMealImage, isAnalyzing, onClose, onAnalyze }) => {
+const PackagingAnalysisModal: React.FC<PackagingAnalysisModalProps> = ({ visible, initialMealImage, onClose, onAnalyze }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const [mealImage, setMealImage] = useState<SelectedImageFile | null>(null);
@@ -43,7 +41,7 @@ const PackagingAnalysisModal: React.FC<PackagingAnalysisModalProps> = ({ visible
   };
 
   const handleAnalyze = () => {
-    if (!mealImage || isAnalyzing) return;
+    if (!mealImage) return;
     onAnalyze(mealImage, mealDescription.trim(), ingredientListImage);
   };
 
@@ -53,94 +51,84 @@ const PackagingAnalysisModal: React.FC<PackagingAnalysisModalProps> = ({ visible
       title={t('nutritionLogger.packageFlowAnalyze')}
       onClose={handleClose}
       onSave={handleAnalyze}
-      onSaveDisabled={!mealImage || isAnalyzing}
+      onSaveDisabled={!mealImage}
       onSaveGlow
       okLabel={t('nutritionLogger.packageFlowAnalyze')}
     >
-      {isAnalyzing ? (
-        <View style={styles.analyzingContainer}>
-          <ActivityIndicator size="large" color={colors.accentDefault} />
-          <ThemedText type="defaultSemiBold" style={styles.analyzingTitle}>
-            {t('nutritionLogger.analysisInProgress')}
-          </ThemedText>
-          <Notice variant="info" title={t('nutritionLogger.analysisInProgress')} message={t('nutritionLogger.analysisDoNotCloseApp')} />
-        </View>
-      ) : (
-        <View style={styles.content}>
-          {mealImage ? (
-            <ImageThumbnailWithDelete
-              uri={mealImage.uri}
-              onPress={() => setMealImage(null)}
-              accessibilityLabel={t('nutritionLogger.packageFlowRemoveMealImage')}
-              width={180}
-              height={120}
-              borderRadius={12}
-              badgeSize={30}
-              badgeIconSize={16}
-            />
-          ) : (
-            <ImagePickerButton
-              onImageSelected={setMealImage}
-              isLoading={false}
-              label={t('nutritionLogger.packageFlowAddMealImage')}
-              style={styles.pickerButton}
-            />
-          )}
-          <LabeledInput
-            label={t('nutritionLogger.packageFlowDescriptionLabel')}
-            placeholder={t('nutritionLogger.packageFlowDescriptionPlaceholder')}
-            value={mealDescription}
-            isOptional
-            onChangeText={setMealDescription}
-            multilineInput
-            autoCapitalize="sentences"
-            autoCorrect={false}
-            containerStyle={styles.descriptionInput}
+      <View style={styles.content}>
+        {mealImage ? (
+          <ImageThumbnailWithDelete
+            uri={mealImage.uri}
+            onPress={() => setMealImage(null)}
+            accessibilityLabel={t('nutritionLogger.packageFlowRemoveMealImage')}
+            width={180}
+            height={120}
+            borderRadius={12}
+            badgeSize={30}
+            badgeIconSize={16}
           />
-          <View
+        ) : (
+          <ImagePickerButton
+            onImageSelected={setMealImage}
+            isLoading={false}
+            label={t('nutritionLogger.packageFlowAddMealImage')}
+            style={styles.pickerButton}
+          />
+        )}
+        <LabeledInput
+          label={t('nutritionLogger.packageFlowDescriptionLabel')}
+          placeholder={t('nutritionLogger.packageFlowDescriptionPlaceholder')}
+          value={mealDescription}
+          isOptional
+          onChangeText={setMealDescription}
+          multilineInput
+          autoCapitalize="sentences"
+          autoCorrect={false}
+          containerStyle={styles.descriptionInput}
+        />
+        <View
+          style={[
+            styles.ingredientBox,
+            {
+              borderColor: colors.secondary,
+              backgroundColor: colors.secondaryBackground,
+            },
+          ]}
+        >
+          <ThemedText
+            type="caption"
             style={[
-              styles.ingredientBox,
+              styles.ingredientBoxTitle,
               {
-                borderColor: colors.secondary,
+                color: colors.textMuted,
                 backgroundColor: colors.secondaryBackground,
               },
             ]}
           >
-            <ThemedText
-              type="caption"
-              style={[
-                styles.ingredientBoxTitle,
-                {
-                  color: colors.textMuted,
-                  backgroundColor: colors.secondaryBackground,
-                },
-              ]}
-            >
-              {t('nutritionLogger.packageFlowTitle')}
-            </ThemedText>
-            {ingredientListImage ? (
-              <ImageThumbnailWithDelete
-                uri={ingredientListImage.uri}
-                onPress={() => setIngredientListImage(null)}
-                accessibilityLabel={t('nutritionLogger.packageFlowRemoveIngredientImage')}
+            {t('nutritionLogger.packageFlowTitle')}
+          </ThemedText>
+          {ingredientListImage ? (
+            <ImageThumbnailWithDelete
+              uri={ingredientListImage.uri}
+              onPress={() => setIngredientListImage(null)}
+              accessibilityLabel={t('nutritionLogger.packageFlowRemoveIngredientImage')}
+            />
+          ) : (
+            <>
+              <ImagePickerButton
+                onImageSelected={setIngredientListImage}
+                isLoading={false}
+                label={t('nutritionLogger.packageFlowAddIngredientImage')}
+                buttonVariant="secondary"
+                style={styles.pickerButton}
               />
-            ) : (
-              <>
-                <ImagePickerButton
-                  onImageSelected={setIngredientListImage}
-                  isLoading={false}
-                  label={t('nutritionLogger.packageFlowAddIngredientImage')}
-                  buttonVariant="secondary"
-                  style={styles.pickerButton}
-                />
-                <ThemedText type="explainer" style={styles.hint}>
-                  {t('nutritionLogger.packageFlowHint')}
-                </ThemedText>
-              </>
-            )}
-          </View>
+              <ThemedText type="explainer" style={styles.hint}>
+                {t('nutritionLogger.packageFlowHint')}
+              </ThemedText>
+            </>
+          )}
         </View>
-      )}
+      </View>
     </ThemedModal>
   );
 };

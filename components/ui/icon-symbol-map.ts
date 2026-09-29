@@ -92,6 +92,10 @@ export const ICON_SYMBOLS = {
     sf: 'camera',
     material: 'photo-camera',
   },
+  'sparkles': {
+    sf: 'sparkles',
+    material: 'auto-awesome',
+  },
   'flame': {
     sf: 'flame',
     material: 'whatshot',

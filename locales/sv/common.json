@@ -1063,7 +1063,7 @@
     "packageFlowRemoveMealImage": "Ta bort måltidsbild",
     "packageFlowDescriptionLabel": "Måltidsbeskrivning",
     "packageFlowDescriptionPlaceholder": "Exempel: kycklingsallad med avokado, fetaost och pumpafrön",
-    "packageFlowAddIngredientImage": "Lägg till näringsetikett",
+    "packageFlowAddIngredientImage": "Fota näringsetikett",
     "packageFlowHint": "Foto på näringsetiketten hjälper till att analysera måltiden mer exakt.",
     "mealTime": "Måltidstid",
     "analysisReviewTitle": "Granska AI-analysen innan du sparar",
@@ -1210,7 +1210,10 @@
     },
     "seeProgress": "Se utveckling",
     "analysisInProgress": "Analys pågår",
-    "analysisDoNotCloseApp": "Stäng inte appen medan analysen pågår. Det går bra att navigera till andra delar av appen."
+    "analysisDoNotCloseApp": "Stäng inte appen medan analysen pågår. Det går bra att navigera till andra delar av appen.",
+    "analysisImage": "Analyserar bilden",
+    "analysisNutrition": "Beräknar näringsinnehåll",
+    "analysisPreparingResult": "Förbereder resultatet"
   },
   "otherLoggerTab": {
     "registerToday": "Registrera idag",

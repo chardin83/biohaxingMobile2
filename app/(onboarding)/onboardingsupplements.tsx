@@ -64,15 +64,7 @@ export default function OnboardingSupplements() {
       onBackPress={() => router.replace('/(onboarding)/onboardingwelcome')}
       scrollable={false}
       contentContainerStyle={styles.container}
-      footer={
-        <AppButton
-          title={t('common:onboarding.continue')}
-          onPress={handleNext}
-          variant="primary"
-          icon="chevron.right"
-          iconPosition="right"
-        />
-      }
+      footer={<AppButton title={t('common:onboarding.continue')} onPress={handleNext} variant="primary" rightIcon="chevron.right" />}
     >
       <Text style={[styles.title, { color: colors.primary }]}> {t('common:onboarding.whatSupplementDoYouTakeAlready')}</Text>
 
