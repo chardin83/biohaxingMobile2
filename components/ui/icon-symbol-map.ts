@@ -96,6 +96,14 @@ export const ICON_SYMBOLS = {
     sf: 'sparkles',
     material: 'auto-awesome',
   },
+  'barcode': {
+    sf: 'barcode.viewfinder',
+    material: 'qr-code-scanner',
+  },
+  'history': {
+    sf: 'clock.arrow.circlepath',
+    material: 'history',
+  },
   'flame': {
     sf: 'flame',
     material: 'whatshot',

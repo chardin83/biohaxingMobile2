@@ -4,11 +4,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Animated, Easing, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
-import { ThemedText } from './ThemedText';
-import AppButton from './ui/AppButton';
-import { IconSymbol } from './ui/IconSymbol';
+import { ThemedText } from '../ThemedText';
+import AppButton from '../ui/AppButton';
+import { IconSymbol } from '../ui/IconSymbol';
 
-interface ImagePickerButtonProps {
+interface NutritionImageAnalysisButtonProps {
   onImageSelected: (file: { uri: string; name: string; type: string }) => void;
   isLoading?: boolean;
   disabled?: boolean;
@@ -18,7 +18,7 @@ interface ImagePickerButtonProps {
   style?: StyleProp<ViewStyle>;
 }
 
-const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({
+const NutritionImageAnalysisButton: React.FC<NutritionImageAnalysisButtonProps> = ({
   onImageSelected,
   isLoading = false,
   disabled = false,
@@ -218,4 +218,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ImagePickerButton;
+export default NutritionImageAnalysisButton;

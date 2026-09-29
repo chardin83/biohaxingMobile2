@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import ImagePickerButton from '../ImagePickerButton';
 import ImageThumbnailWithDelete from '../ImageThumbnailWithDelete';
 import { ThemedModal } from '../ThemedModal';
 import { ThemedText } from '../ThemedText';
 import LabeledInput from '../ui/LabeledInput';
+import ImagePickerButton from './ImagePickerButton';
 
 export type SelectedImageFile = {
   uri: string;

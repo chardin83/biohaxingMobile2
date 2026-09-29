@@ -1072,7 +1072,6 @@
     "analysisReadyToSave": "Granska analysen och tryck på Spara om den verkar stämma.",
     "unnamedMeal": "Namnlös måltid",
     "editMealNameTitle": "Redigera måltidsnamn",
-    "copyMealLink": "Kopiera en tidigare måltid",
     "copyMealModalTitle": "Välj en av dina senaste måltider",
     "copyMealEmpty": "Du har inga loggade måltider att kopiera än.",
     "copyMealMeta": "{{calories}} kcal • {{protein}} g protein • {{fiber}} g fibrer",
@@ -1213,7 +1212,17 @@
     "analysisDoNotCloseApp": "Stäng inte appen medan analysen pågår. Det går bra att navigera till andra delar av appen.",
     "analysisImage": "Analyserar bilden",
     "analysisNutrition": "Beräknar näringsinnehåll",
-    "analysisPreparingResult": "Förbereder resultatet"
+    "analysisPreparingResult": "Förbereder resultatet",
+    "mealLogger": {
+      "addMeal": "Lägg till måltid",
+      "chooseHowToAddMeal": "Välj hur du vill lägga till måltiden",
+      "analyzePhoto": "Analysera foto",
+      "takePhotoOfMeal": "Ta ett foto av måltiden",
+      "scanBarcode": "Skanna streckkod",
+      "lookupPackagedProduct": "Sök förpackad produkt",
+      "previousMeal": "Föregående måltid",
+      "copyPreviousMeal": "Kopiera en tidigare måltid"
+    }
   },
   "otherLoggerTab": {
     "registerToday": "Registrera idag",

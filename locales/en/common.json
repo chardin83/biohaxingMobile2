@@ -1072,7 +1072,6 @@
     "analysisReadyToSave": "Review the analysis and tap Save if it looks correct.",
     "unnamedMeal": "Unnamed meal",
     "editMealNameTitle": "Edit meal name",
-    "copyMealLink": "Copy a previous meal",
     "copyMealModalTitle": "Choose one of your recent meals",
     "copyMealEmpty": "You have no logged meals to copy yet.",
     "copyMealMeta": "{{calories}} kcal • {{protein}} g protein • {{fiber}} g fiber",
@@ -1213,7 +1212,17 @@
     "analysisDoNotCloseApp": "Do not close the app while the analysis is in progress. It is okay to navigate to other parts of the app.",
     "analysisImage": "Analyzing image",
     "analysisNutrition": "Calculating nutrition",
-    "analysisPreparingResult": "Preparing result"
+    "analysisPreparingResult": "Preparing result",
+    "mealLogger": {
+      "addMeal": "Add meal",
+      "chooseHowToAddMeal": "Choose how to add the meal",
+      "analyzePhoto": "Analyze photo",
+      "takePhotoOfMeal": "Take a photo of the meal",
+      "scanBarcode": "Scan barcode",
+      "lookupPackagedProduct": "Lookup packaged product",
+      "previousMeal": "Previous meal",
+      "copyPreviousMeal": "Copy a previous meal"
+    }
   },
   "otherLoggerTab": {
     "registerToday": "Register today",

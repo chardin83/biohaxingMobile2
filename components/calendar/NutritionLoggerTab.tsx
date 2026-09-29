@@ -1,9 +1,10 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
+import * as ImagePicker from 'expo-image-picker';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Animated, Image, KeyboardAvoidingView, LayoutAnimation, Platform, Pressable, ScrollView, StyleSheet, UIManager, View } from 'react-native';
+import { Alert, Animated, Image, KeyboardAvoidingView, LayoutAnimation, Platform, Pressable, ScrollView, StyleSheet, UIManager, View } from 'react-native';
 
 import type { MealEntry, NutritionEntry, NutritionTrackingContribution, TipProgressItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { useStorage } from '@/app/context/StorageContext';
@@ -28,19 +29,21 @@ import { toDateKey, toRecordedAt } from '@/utils/dateUtils';
 import { MINERAL_TYPE_KEYS } from '../../constants/minerals';
 import { Collapsible } from '../Collapsible';
 import CopyMealBottomSheet from '../CopyMealBottomSheet';
-import ImagePickerButton from '../ImagePickerButton';
 import { handleGeneralError, handleNutritionError, handleSocketError } from '../nutritionAnalysisHelpers';
 import NutritionBreakdown from '../NutritionBreakdown';
 import { ThemedModal } from '../ThemedModal';
 import { ThemedText } from '../ThemedText';
 import AddButton from '../ui/AddButton';
+import AppButton from '../ui/AppButton';
 import { Card } from '../ui/Card';
 import { DateTimeInput } from '../ui/DateTimeInput';
 import DiscreetButton from '../ui/DiscreetButton';
 import { IconSymbol } from '../ui/IconSymbol';
 import LabeledInput from '../ui/LabeledInput';
+import AnalysisStatus from './AnalysisStatus';
 import { LoggedDrinksSection } from './LoggedDrinksSection';
 import { LoggedMealsSection } from './LoggedMealsSection';
+import MealLoggerBottomSheet from './MealLoggerBottomSheet';
 import NutritionAnalysisBottomSheet from './NutritionAnalysisBottomSheet';
 import NutritionPlanTargetsSection, { getTipProgressKey } from './NutritionPlanTargetsSection';
 import PackagingAnalysisModal, { SelectedImageFile } from './PackagingAnalysisModal';
@@ -361,6 +364,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   const completionAnimByKeyRef = useRef<Record<string, Animated.Value>>({});
   const copyMealBottomSheetRef = useRef<BottomSheetModal>(null);
   const nutritionAnalysisBottomSheetRef = useRef<BottomSheetModal>(null);
+  const mealLoggerBottomSheetRef = useRef<BottomSheetModal>(null);
   const fulfilledTipsSectionYRef = useRef(0);
   const periodSectionYRef = useRef<Record<NutritionTargetPeriod, number>>({
     daily: 0,
@@ -919,6 +923,67 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     setPackagingMealImage(null);
   }, []);
 
+  const handlePickNutritionImage = async (fromCamera: boolean) => {
+    const permission = fromCamera ? await ImagePicker.requestCameraPermissionsAsync() : await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    const granted = permission.granted ?? permission.status === 'granted';
+
+    if (!granted) {
+      Alert.alert(t('permissions.title'), t('permissions.message'));
+      return;
+    }
+
+    const result = fromCamera
+      ? await ImagePicker.launchCameraAsync({
+          base64: false,
+          quality: 0.45,
+        })
+      : await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ['images'],
+          allowsEditing: true,
+          base64: false,
+          quality: 0.45,
+        });
+
+    if (result.canceled || !result.assets?.length) {
+      return;
+    }
+
+    const image = result.assets[0];
+    const uri = image.uri;
+
+    const name = image.fileName ?? uri.split('/').pop() ?? `photo_${Date.now()}.jpg`;
+
+    const type = image.mimeType?.trim() || 'image/jpeg';
+
+    handleImageSelected({
+      uri,
+      name,
+      type,
+    });
+  };
+
+  const handleAnalyzePhoto = () => {
+    Alert.alert(t('imagePicker.title'), undefined, [
+      {
+        text: t('imagePicker.takePhoto'),
+        onPress: () => {
+          handlePickNutritionImage(true).catch(console.error);
+        },
+      },
+      {
+        text: t('imagePicker.chooseFromLibrary'),
+        onPress: () => {
+          handlePickNutritionImage(false).catch(console.error);
+        },
+      },
+      {
+        text: t('general.cancel'),
+        style: 'cancel',
+      },
+    ]);
+  };
+
   const handleReAnalyze = useCallback(() => {
     const last = lastAnalyzedFilesRef.current;
     if (!last) return;
@@ -1031,21 +1096,17 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   return (
     <KeyboardAvoidingView style={globalStyles.flex1} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.container}>
-        <ImagePickerButton
-          onImageSelected={handleImageSelected}
-          isLoading={isAnalyzing}
-          disabled={isFutureSelectedDate}
+        <AppButton
+          title={isAnalyzing ? t('dayEdit.analyzing') : t('dayEdit.pickImage')}
+          onPress={() => mealLoggerBottomSheetRef.current?.present()}
+          disabled={isAnalyzing}
+          variant="primary"
+          glow={true}
+          icon="camera"
+          rightIcon="sparkles"
+          content={isAnalyzing ? <AnalysisStatus /> : null}
           style={styles.imagePickerButton}
-          label={t('nutritionLogger.packageFlowAnalyze')}
-          glow
         />
-        <View style={styles.copyMealLinkContainer}>
-          <DiscreetButton
-            onPress={handleOpenCopyMealModal}
-            title={t('nutritionLogger.copyMealLink')}
-            disabled={isFutureSelectedDate || recentMeals.length === 0}
-          />
-        </View>
         {isFutureSelectedDate && (
           <ThemedText
             type="caption"
@@ -1351,6 +1412,18 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           roundToOneDecimal={roundToOneDecimal}
         />
         <NutritionAnalysisBottomSheet ref={nutritionAnalysisBottomSheetRef} image={packagingMealImage} />
+        <MealLoggerBottomSheet
+          ref={mealLoggerBottomSheetRef}
+          onAnalyzePhoto={handleAnalyzePhoto}
+          onScanBarcode={() => {
+            // Nästa steg: öppna barcode scanner
+          }}
+          onPreviousMeal={() => {
+            requestAnimationFrame(() => {
+              copyMealBottomSheetRef.current?.present();
+            });
+          }}
+        />
       </View>
     </KeyboardAvoidingView>
   );
@@ -1364,10 +1437,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '85%',
     marginBottom: 16,
-  },
-  copyMealLinkContainer: {
-    alignSelf: 'center',
-    marginBottom: 20,
   },
   futureDateHint: {
     textAlign: 'center',
