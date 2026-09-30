@@ -1222,6 +1222,34 @@
       "lookupPackagedProduct": "Lookup packaged product",
       "previousMeal": "Previous meal",
       "copyPreviousMeal": "Copy a previous meal"
+    },
+    "barcodeScanner": {
+      "title": "Scan barcode",
+      "description": "Point the camera at the product's barcode",
+      "cameraPermission": "Camera permission is required to scan barcodes.",
+      "allowCamera": "Allow camera",
+      "productNotFoundTitle": "Product not found",
+      "productNotFoundMessage": "The product is not available in Open Food Facts.",
+      "lookupFailedTitle": "Lookup failed",
+      "lookupFailedMessage": "Failed to fetch the product. Please try again."
+    },
+    "barcodeProduct": {
+      "type": "Type",
+      "meal": "Meal",
+      "drink": "Drink",
+      "amount": "Amount",
+      "calories": "Calories",
+      "protein": "Protein",
+      "carbohydrates": "Carbohydrates",
+      "fat": "Fat",
+      "fiber": "Fiber",
+      "nutritionForAmount": "Nutrition for selected amount",
+      "add": "Add",
+      "nutritionCalculatedPer100g": "Nutrition calculated from values per 100 g",
+      "manualDescription": "Can't scan the barcode? Enter the number manually.",
+      "barcode": "Barcode",
+      "barcodePlaceholder": "E.g. 7310865004703",
+      "search": "Find product"
     }
   },
   "otherLoggerTab": {

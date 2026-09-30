@@ -1222,6 +1222,34 @@
       "lookupPackagedProduct": "Sök förpackad produkt",
       "previousMeal": "Föregående måltid",
       "copyPreviousMeal": "Kopiera en tidigare måltid"
+    },
+    "barcodeScanner": {
+      "title": "Skanna streckkod",
+      "description": "Rikta kameran mot produktens streckkod",
+      "cameraPermission": "Kamerabehörighet behövs för att skanna streckkoder.",
+      "allowCamera": "Tillåt kamera",
+      "manualDescription": "Kan du inte skanna streckkoden? Ange numret manuellt.",
+      "barcode": "Streckkod",
+      "barcodePlaceholder": "T.ex. 7310865004703",
+      "search": "Sök produkt",
+      "productNotFoundTitle": "Produkten hittades inte",
+      "productNotFoundMessage": "Produkten finns inte i Open Food Facts.",
+      "lookupFailedTitle": "Kunde inte hämta produkten",
+      "lookupFailedMessage": "Försök igen."
+    },
+    "barcodeProduct": {
+      "type": "Typ",
+      "meal": "Måltid",
+      "drink": "Dryck",
+      "amount": "Mängd",
+      "calories": "Kalorier",
+      "protein": "Protein",
+      "carbohydrates": "Kolhydrater",
+      "fat": "Fett",
+      "fiber": "Fibrer",
+      "nutritionForAmount": "Näringsvärden för vald mängd",
+      "add": "Lägg till",
+      "nutritionCalculatedPer100g": "Näringsvärden beräknade från värden per 100 g"    
     }
   },
   "otherLoggerTab": {

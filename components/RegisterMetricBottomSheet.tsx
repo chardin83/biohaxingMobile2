@@ -102,24 +102,30 @@ export function RegisterMetricBottomSheet({
     return nextValue;
   }, [parsedSleepDurationMinutes, recordedAt]);
 
-  const updateSleepDurationValue = React.useCallback((nextHoursRaw: string, nextMinutesRaw: string) => {
-    const normalizedHours = nextHoursRaw.replaceAll(/\D/g, '');
-    const normalizedMinutes = nextMinutesRaw.replaceAll(/\D/g, '');
+  const updateSleepDurationValue = React.useCallback(
+    (nextHoursRaw: string, nextMinutesRaw: string) => {
+      const normalizedHours = nextHoursRaw.replaceAll(/\D/g, '');
+      const normalizedMinutes = nextMinutesRaw.replaceAll(/\D/g, '');
 
-    if (!normalizedHours && !normalizedMinutes) {
-      setMetricValue('');
-      return;
-    }
+      if (!normalizedHours && !normalizedMinutes) {
+        setMetricValue('');
+        return;
+      }
 
-    const hours = normalizedHours ? Number.parseInt(normalizedHours, 10) : 0;
-    const minutes = normalizedMinutes ? Math.min(Number.parseInt(normalizedMinutes, 10), 59) : 0;
-    setMetricValue(String(hours * 60 + minutes));
-  }, [setMetricValue]);
+      const hours = normalizedHours ? Number.parseInt(normalizedHours, 10) : 0;
+      const minutes = normalizedMinutes ? Math.min(Number.parseInt(normalizedMinutes, 10), 59) : 0;
+      setMetricValue(String(hours * 60 + minutes));
+    },
+    [setMetricValue]
+  );
 
-  const handleBedtimeChange = React.useCallback((selectedDate: Date) => {
-    const minutesFromMidnight = selectedDate.getHours() * 60 + selectedDate.getMinutes();
-    setMetricValue(String(minutesFromMidnight));
-  }, [setMetricValue]);
+  const handleBedtimeChange = React.useCallback(
+    (selectedDate: Date) => {
+      const minutesFromMidnight = selectedDate.getHours() * 60 + selectedDate.getMinutes();
+      setMetricValue(String(minutesFromMidnight));
+    },
+    [setMetricValue]
+  );
 
   let unitField = (
     <BottomSheetTextInput
@@ -133,13 +139,8 @@ export function RegisterMetricBottomSheet({
 
   if (hasMultipleUnits) {
     unitField = (
-      <View style={[styles.input, styles.pickerContainer, { borderColor: colors.border }]}> 
-        <Picker
-          selectedValue={metricUnit}
-          onValueChange={setMetricUnit}
-          style={{ color: colors.text }}
-          dropdownIconColor={colors.text}
-        >
+      <View style={[styles.input, styles.pickerContainer, { borderColor: colors.border }]}>
+        <Picker selectedValue={metricUnit} onValueChange={setMetricUnit} style={{ color: colors.text }} dropdownIconColor={colors.text}>
           {uniqueUnits.map(unit => (
             <Picker.Item
               key={`${unit.system}-${unit.unit}`}
@@ -152,7 +153,7 @@ export function RegisterMetricBottomSheet({
     );
   } else if (hasSingleUnit) {
     unitField = (
-      <View style={[styles.input, styles.singleUnitContainer, { borderColor: colors.border }]}> 
+      <View style={[styles.input, styles.singleUnitContainer, { borderColor: colors.border }]}>
         <ThemedText type="defaultSemiBold">{translateMetricUnit(uniqueUnits[0].unit, t)}</ThemedText>
       </View>
     );
@@ -215,14 +216,8 @@ export function RegisterMetricBottomSheet({
   if (isSleepBedtimeMetric) {
     valueField = (
       <View style={styles.inputGroup}>
-        <DateTimeInput
-          value={bedtimePickerValue}
-          onChange={handleBedtimeChange}
-          showDate={false}
-          showTime
-          timeLabel="Laggtid"
-        />
-        <View style={[styles.input, styles.singleUnitContainer, { borderColor: colors.border }]}> 
+        <DateTimeInput value={bedtimePickerValue} onChange={handleBedtimeChange} showDate={false} showTime timeLabel="Laggtid" />
+        <View style={[styles.input, styles.singleUnitContainer, { borderColor: colors.border }]}>
           <ThemedText type="default">Använder klockslag (HH:mm)</ThemedText>
         </View>
       </View>
@@ -240,10 +235,7 @@ export function RegisterMetricBottomSheet({
       index={initialSnapIndex}
       onChange={handleSheetChange}
     >
-      <BottomSheetScrollView
-        contentContainerStyle={[styles.contentContainer, { backgroundColor: colors.background }]}
-        keyboardShouldPersistTaps="handled"
-      >
+      <BottomSheetScrollView contentContainerStyle={[styles.contentContainer, { backgroundColor: colors.background }]} keyboardShouldPersistTaps="handled">
         <ThemedText type="title3" style={styles.title}>
           Registrera mätvärde
         </ThemedText>

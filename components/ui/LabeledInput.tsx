@@ -10,8 +10,9 @@ type Props = TextInputProps & {
   containerStyle?: StyleProp<ViewStyle>;
   inputStyle?: StyleProp<TextStyle>;
   multilineInput?: boolean;
-  isOptional?: boolean; // <-- ny prop för optional/mandatory
+  isOptional?: boolean;
   disabled?: boolean;
+  suffix?: string;
 };
 
 const LabeledInput: React.FC<Props> = ({
@@ -21,40 +22,35 @@ const LabeledInput: React.FC<Props> = ({
   multilineInput = false,
   isOptional,
   disabled = false,
+  suffix,
   ...textInputProps
 }) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { placeholder, ...restProps } = textInputProps;
   const flattenedInputStyle = StyleSheet.flatten(inputStyle) as TextStyle | undefined;
-  const baseMinHeight =
-    multilineInput && typeof flattenedInputStyle?.minHeight === 'number'
-      ? flattenedInputStyle.minHeight
-      : 40;
+  const baseMinHeight = multilineInput && typeof flattenedInputStyle?.minHeight === 'number' ? flattenedInputStyle.minHeight : 40;
 
   const [inputHeight, setInputHeight] = React.useState(baseMinHeight);
   const textValue = typeof restProps.value === 'string' ? restProps.value : '';
 
   const height = multilineInput ? Math.max(baseMinHeight, inputHeight) : 40;
 
-  let suffix = '';
-  if (isOptional === true) {
-    suffix = ` (${t('labeledInput.optional')})`;
-  } else if (isOptional === false) {
-    suffix = ` (${t('labeledInput.required')})`;
-  }
-  const displayLabel = `${label}${suffix}`;
+  let labelSuffix = '';
 
-  // Visa inte placeholder om det är samma som label
-  const effectivePlaceholder =
-    typeof placeholder === 'string' && placeholder.trim() === label.trim()
-      ? undefined
-      : placeholder;
+  if (isOptional === true) {
+    labelSuffix = ` (${t('labeledInput.optional')})`;
+  } else if (isOptional === false) {
+    labelSuffix = ` (${t('labeledInput.required')})`;
+  }
+
+  const displayLabel = `${label}${labelSuffix}`;
+
+  const effectivePlaceholder = typeof placeholder === 'string' && placeholder.trim() === label.trim() ? undefined : placeholder;
 
   const handleContentSizeChange: TextInputProps['onContentSizeChange'] = e => {
     if (!multilineInput) return;
 
-    // Keep a compact single-line field until user has entered text.
     if (textValue.trim().length === 0) {
       setInputHeight(baseMinHeight);
       return;
@@ -63,31 +59,52 @@ const LabeledInput: React.FC<Props> = ({
     setInputHeight(Math.max(baseMinHeight, e.nativeEvent.contentSize.height));
   };
 
-    return (
+  return (
     <View style={[styles.container, containerStyle]}>
-      <ThemedText type="label">
-        {displayLabel}
-      </ThemedText>
-      <TextInput
+      <ThemedText type="label">{displayLabel}</ThemedText>
+
+      <View
         style={[
-          styles.input,
+          styles.inputContainer,
           disabled && styles.disabledInput,
-           multilineInput ? styles.inputMultiline : styles.inputSingleLine,
           {
             borderColor: colors.border,
-            color: colors.text,
             height,
           },
-          inputStyle,
         ]}
-        placeholderTextColor={colors.textMuted}
-        placeholder={effectivePlaceholder}
-        multiline={multilineInput}
-        onContentSizeChange={handleContentSizeChange}
-        editable={!disabled}
-        {...restProps}
-        value={textValue}
-      />
+      >
+        <TextInput
+          style={[
+            styles.input,
+            multilineInput ? styles.inputMultiline : styles.inputSingleLine,
+            {
+              color: colors.text,
+            },
+            inputStyle,
+          ]}
+          placeholderTextColor={colors.textMuted}
+          placeholder={effectivePlaceholder}
+          multiline={multilineInput}
+          onContentSizeChange={handleContentSizeChange}
+          editable={!disabled}
+          {...restProps}
+          value={textValue}
+        />
+
+        {suffix ? (
+          <ThemedText
+            type="default"
+            style={[
+              styles.suffix,
+              {
+                color: colors.textMuted,
+              },
+            ]}
+          >
+            {suffix}
+          </ThemedText>
+        ) : null}
+      </View>
     </View>
   );
 };
@@ -98,10 +115,17 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
   },
-  input: {
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 2,
     borderRadius: 8,
-    padding: 10,
+    minHeight: 40,
+  },
+  input: {
+    flex: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     minHeight: 40,
   },
   disabledInput: {
@@ -112,5 +136,14 @@ const styles = StyleSheet.create({
   },
   inputMultiline: {
     textAlignVertical: 'top',
+  },
+  suffix: {
+    paddingRight: 10,
+    paddingLeft: 4,
+  },
+  keyboardAccessory: {
+    alignItems: 'flex-end',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
   },
 });

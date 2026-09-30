@@ -13,7 +13,8 @@ import { XP_FOR_NUTRITION_TIP_DAILY_COMPLETION, XP_FOR_NUTRITION_TIP_WEEKLY_COMP
 import { useNutritionPlanProgress } from '@/hooks/useNutritionPlanProgress';
 import { getDrinkImage } from '@/locales/drinkCatalog';
 import { tips } from '@/locales/tips';
-import { type DetectedDrink, isAlcohol, NutritionAnalyze } from '@/services/gptServices';
+import { type DetectedDrink, DrinkType, isAlcohol, NutritionAnalyze } from '@/services/gptServices';
+import { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFacts';
 import { MicrobiomeSupportEntry } from '@/types/microbiome';
 import { type NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import {
@@ -37,10 +38,11 @@ import AddButton from '../ui/AddButton';
 import AppButton from '../ui/AppButton';
 import { Card } from '../ui/Card';
 import { DateTimeInput } from '../ui/DateTimeInput';
-import DiscreetButton from '../ui/DiscreetButton';
 import { IconSymbol } from '../ui/IconSymbol';
 import LabeledInput from '../ui/LabeledInput';
 import AnalysisStatus from './AnalysisStatus';
+import BarcodeProductBottomSheet from './BarcodeProductBottomSheet';
+import BarcodeScannerBottomSheet from './BarcodeScannerBottomSheet';
 import { LoggedDrinksSection } from './LoggedDrinksSection';
 import { LoggedMealsSection } from './LoggedMealsSection';
 import MealLoggerBottomSheet from './MealLoggerBottomSheet';
@@ -365,6 +367,8 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   const copyMealBottomSheetRef = useRef<BottomSheetModal>(null);
   const nutritionAnalysisBottomSheetRef = useRef<BottomSheetModal>(null);
   const mealLoggerBottomSheetRef = useRef<BottomSheetModal>(null);
+  const barcodeProductBottomSheetRef = useRef<BottomSheetModal>(null);
+  const barcodeScannerBottomSheetRef = useRef<BottomSheetModal>(null);
   const fulfilledTipsSectionYRef = useRef(0);
   const periodSectionYRef = useRef<Record<NutritionTargetPeriod, number>>({
     daily: 0,
@@ -679,10 +683,6 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     });
 
     handleCloseEditDrinkModal();
-  };
-
-  const handleOpenCopyMealModal = () => {
-    copyMealBottomSheetRef.current?.present();
   };
 
   const handleCloseCopyMealModal = () => {
@@ -1093,6 +1093,39 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     });
   }, [claimNutritionTipCompletionXP, nutritionPlanTipProgress, selectedDate, weekStartKey]);
 
+  const handleSaveBarcodeProduct = (product: BarcodeProduct, amount: number, productType: BarcodeProductType) => {
+    const recordedAt = toRecordedAt(selectedDate, new Date());
+    const factor = amount / 100;
+
+    if (productType === 'drink') {
+      addDrinkEntry(selectedDate, {
+        type: product.drinkType ?? 'drink',
+        name: product.name,
+        amountMl: amount,
+        recordedAt,
+        source: 'manual',
+      });
+
+      triggerLightHaptic();
+      return;
+    }
+
+    const entry = addNutritionEntry(selectedDate, {
+      type: 'meal',
+      recordedAt,
+      name: product.name,
+      calories: (product.nutrition.caloriesPer100g ?? 0) * factor,
+      protein: (product.nutrition.proteinPer100g ?? 0) * factor,
+      carbohydrates: (product.nutrition.carbohydratesPer100g ?? 0) * factor,
+      fat: (product.nutrition.fatPer100g ?? 0) * factor,
+      fiber: (product.nutrition.fiberPer100g ?? 0) * factor,
+    });
+
+    setSelectedLoggedMealId(entry.id);
+    setLastLoggedMeal(toParsedMacroAnalysis(entry));
+
+    triggerLightHaptic();
+  };
   return (
     <KeyboardAvoidingView style={globalStyles.flex1} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.container}>
@@ -1416,11 +1449,30 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           ref={mealLoggerBottomSheetRef}
           onAnalyzePhoto={handleAnalyzePhoto}
           onScanBarcode={() => {
-            // Nästa steg: öppna barcode scanner
+            setTimeout(() => {
+              barcodeScannerBottomSheetRef.current?.present();
+            }, 250);
           }}
           onPreviousMeal={() => {
             requestAnimationFrame(() => {
               copyMealBottomSheetRef.current?.present();
+            });
+          }}
+        />
+        <BarcodeProductBottomSheet
+          ref={barcodeProductBottomSheetRef}
+          onSave={(barcodeProduct, amount, productType) => {
+            barcodeProductBottomSheetRef.current?.dismiss();
+            handleSaveBarcodeProduct(barcodeProduct, amount, productType);
+          }}
+        />
+        <BarcodeScannerBottomSheet
+          ref={barcodeScannerBottomSheetRef}
+          onProductFound={product => {
+            barcodeScannerBottomSheetRef.current?.dismiss();
+
+            requestAnimationFrame(() => {
+              barcodeProductBottomSheetRef.current?.present(product);
             });
           }}
         />

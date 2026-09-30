@@ -232,6 +232,14 @@ export const ICON_SYMBOLS = {
     sf: 'wineglass.fill',
     material: 'wine-bar',
   },
+  'meal': {
+    sf: 'fork.knife',
+    material: 'restaurant',
+  },
+  'drink': {
+    sf: 'cup.and.saucer.fill',
+    material: 'local-drink',
+  },
 } as const satisfies Record<string, IconDefinition>;
 
 export type IconSymbolName = keyof typeof ICON_SYMBOLS;
