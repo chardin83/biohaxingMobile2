@@ -1,18 +1,24 @@
 // Helper functions for NutritionLogger.tsx
 // Extracted from runNutritionImageAnalysis and related logic
 
-export function handleNutritionError({ data, t, setAnalysisResult, setPendingAnalysisReview, setIsAnalysisReviewModalVisible }: {
-  data: any,
-  t: any,
-  setAnalysisResult: any,
-  setPendingAnalysisReview: any,
-  setIsAnalysisReviewModalVisible: any,
+export function handleNutritionError({
+  data,
+  t,
+  setAnalysisResult,
+  setPendingAnalysisReview,
+  setIsAnalysisReviewModalVisible,
+}: {
+  data: any;
+  t: any;
+  setAnalysisResult: any;
+  setPendingAnalysisReview: any;
+  setIsAnalysisReviewModalVisible: any;
 }) {
   const backendMessage =
-    (typeof data?.message === 'string' && data.message)
-    || (typeof data?.content === 'string' && data.content)
-    || t('dayEdit.analysisFailed')
-    || '❌ Misslyckades med att analysera bilden.';
+    (typeof data?.message === 'string' && data.message) ||
+    (typeof data?.content === 'string' && data.content) ||
+    t('dayEdit.analysisFailed') ||
+    '❌ Misslyckades med att analysera bilden.';
 
   let rawDetails: string | null = null;
   if (typeof data?.raw === 'string') {
@@ -43,14 +49,14 @@ export function handleNoStructuredData({
   aiResponseDescription,
   evidenceMessage,
 }: {
-  data: any,
-  t: any,
-  setAnalysisResult: any,
-  setPendingAnalysisReview: any,
-  setIsAnalysisReviewModalVisible: any,
-  evidence: any,
-  aiResponseDescription: any,
-  evidenceMessage: any,
+  data: any;
+  t: any;
+  setAnalysisResult: any;
+  setPendingAnalysisReview: any;
+  setIsAnalysisReviewModalVisible: any;
+  evidence: any;
+  aiResponseDescription: any;
+  evidenceMessage: any;
 }) {
   const text = data?.content ?? t('dayEdit.analysisNoStructuredData') ?? 'Ingen strukturerad näringsdata hittades.';
   const statusMessage = typeof text === 'string' ? text : JSON.stringify(text);
@@ -76,18 +82,18 @@ export function handleNoMacroData({
   evidence,
   aiResponseDescription,
   evidenceMessage,
-  setLastLoggedMeal,
+  setSelectedNutrition,
 }: {
-  data: any,
-  t: any,
-  setAnalysisResult: any,
-  setPendingAnalysisReview: any,
-  setIsAnalysisReviewModalVisible: any,
-  analysis: any,
-  evidence: any,
-  aiResponseDescription: any,
-  evidenceMessage: any,
-  setLastLoggedMeal: any,
+  data: any;
+  t: any;
+  setAnalysisResult: any;
+  setPendingAnalysisReview: any;
+  setIsAnalysisReviewModalVisible: any;
+  analysis: any;
+  evidence: any;
+  aiResponseDescription: any;
+  evidenceMessage: any;
+  setSelectedNutrition: any;
 }) {
   const text = data?.content ?? 'AI hittade ingen tillforlitlig macro-data i svaret. Prova en tydligare bild eller en narbild pa tallriken.';
   const statusMessage = typeof text === 'string' ? text : JSON.stringify(text);
@@ -101,15 +107,21 @@ export function handleNoMacroData({
     statusMessage,
   });
   setIsAnalysisReviewModalVisible(true);
-  setLastLoggedMeal(null);
+  setSelectedNutrition(null);
 }
 
-export function handleSocketError({ t, setAnalysisResult, setPendingAnalysisReview, setIsAnalysisReviewModalVisible, setLastLoggedMeal }: {
-  t: any,
-  setAnalysisResult: any,
-  setPendingAnalysisReview: any,
-  setIsAnalysisReviewModalVisible: any,
-  setLastLoggedMeal: any,
+export function handleSocketError({
+  t,
+  setAnalysisResult,
+  setPendingAnalysisReview,
+  setIsAnalysisReviewModalVisible,
+  setSelectedNutrition,
+}: {
+  t: any;
+  setAnalysisResult: any;
+  setPendingAnalysisReview: any;
+  setIsAnalysisReviewModalVisible: any;
+  setSelectedNutrition: any;
 }) {
   setAnalysisResult('❌ Backend tappade anslutning till AI (socket hang up). Prova igen med en mindre bild.');
   setPendingAnalysisReview({
@@ -121,15 +133,21 @@ export function handleSocketError({ t, setAnalysisResult, setPendingAnalysisRevi
     statusMessage: '❌ Backend tappade anslutning till AI (socket hang up). Prova igen med en mindre bild.',
   });
   setIsAnalysisReviewModalVisible(true);
-  setLastLoggedMeal(null);
+  setSelectedNutrition(null);
 }
 
-export function handleGeneralError({ t, setAnalysisResult, setPendingAnalysisReview, setIsAnalysisReviewModalVisible, setLastLoggedMeal }: {
-  t: any,
-  setAnalysisResult: any,
-  setPendingAnalysisReview: any,
-  setIsAnalysisReviewModalVisible: any,
-  setLastLoggedMeal: any,
+export function handleGeneralError({
+  t,
+  setAnalysisResult,
+  setPendingAnalysisReview,
+  setIsAnalysisReviewModalVisible,
+  setSelectedNutrition,
+}: {
+  t: any;
+  setAnalysisResult: any;
+  setPendingAnalysisReview: any;
+  setIsAnalysisReviewModalVisible: any;
+  setSelectedNutrition: any;
 }) {
   setAnalysisResult(t('dayEdit.analysisFailed') ?? '❌ Misslyckades med att analysera bilden.');
   setPendingAnalysisReview({
@@ -141,5 +159,5 @@ export function handleGeneralError({ t, setAnalysisResult, setPendingAnalysisRev
     statusMessage: t('dayEdit.analysisFailed') ?? '❌ Misslyckades med att analysera bilden.',
   });
   setIsAnalysisReviewModalVisible(true);
-  setLastLoggedMeal(null);
+  setSelectedNutrition(null);
 }

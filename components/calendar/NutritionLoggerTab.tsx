@@ -13,7 +13,7 @@ import { XP_FOR_NUTRITION_TIP_DAILY_COMPLETION, XP_FOR_NUTRITION_TIP_WEEKLY_COMP
 import { useNutritionPlanProgress } from '@/hooks/useNutritionPlanProgress';
 import { getDrinkImage } from '@/locales/drinkCatalog';
 import { tips } from '@/locales/tips';
-import { type DetectedDrink, DrinkType, isAlcohol, NutritionAnalyze } from '@/services/gptServices';
+import { type DetectedDrink, isAlcohol, NutritionAnalyze } from '@/services/gptServices';
 import { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFacts';
 import { MicrobiomeSupportEntry } from '@/types/microbiome';
 import { type NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
@@ -343,7 +343,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [isAnalysisReviewModalVisible, setIsAnalysisReviewModalVisible] = useState(false);
   const [pendingAnalysisReview, setPendingAnalysisReview] = useState<PendingAnalysisReview | null>(null);
-  const [lastLoggedMeal, setLastLoggedMeal] = useState<ParsedMacroAnalysis | null>(null);
+  const [selectedNutrition, setSelectedNutrition] = useState<ParsedMacroAnalysis | null>(null);
   const [isPackagingModalVisible, setIsPackagingModalVisible] = useState(false);
   const [packagingMealImage, setPackagingMealImage] = useState<SelectedImageFile | null>(null);
   const lastAnalyzedFilesRef = useRef<{
@@ -351,7 +351,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     mealDescription: string;
     ingredientFile: SelectedImageFile | null;
   } | null>(null);
-  const [selectedLoggedMealId, setSelectedLoggedMealId] = useState<string | null>(null);
+  const [selectedNutritionEntryId, setSelectedNutritionEntryId] = useState<string | null>(null);
   const [isEditMealModalVisible, setIsEditMealModalVisible] = useState(false);
   const [editingMealId, setEditingMealId] = useState<string | null>(null);
   const [editingMealName, setEditingMealName] = useState('');
@@ -361,6 +361,8 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   const [editingDrinkName, setEditingDrinkName] = useState('');
   const [editingDrinkTime, setEditingDrinkTime] = useState<Date>(() => new Date());
   const [mealTime, setMealTime] = useState<Date>(() => new Date());
+  const [selectedNutritionUnavailable, setSelectedNutritionUnavailable] = useState(false);
+
   const previousFulfilledByKeyRef = useRef<Record<string, boolean>>({});
   const hasInitializedFulfilledTrackingRef = useRef(false);
   const completionAnimByKeyRef = useRef<Record<string, Animated.Value>>({});
@@ -497,8 +499,9 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   }, [activeTrackingTargetsForAI]);
 
   useEffect(() => {
-    setLastLoggedMeal(null);
-    setSelectedLoggedMealId(null);
+    setSelectedNutrition(null);
+    setSelectedNutritionEntryId(null);
+    setSelectedNutritionUnavailable(false);
     setIsEditMealModalVisible(false);
     setEditingMealId(null);
     setEditingMealName('');
@@ -591,9 +594,10 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   };
 
   const handleRemoveMeal = (mealId: string) => {
-    if (mealId === selectedLoggedMealId) {
-      setSelectedLoggedMealId(null);
-      setLastLoggedMeal(null);
+    if (mealId === selectedNutritionEntryId) {
+      setSelectedNutritionEntryId(null);
+      setSelectedNutrition(null);
+      setSelectedNutritionUnavailable(false);
     }
 
     removeNutritionEntry(selectedDate, mealId);
@@ -634,8 +638,8 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
       recordedAt,
     });
 
-    if (editingMealId === selectedLoggedMealId) {
-      setLastLoggedMeal(prev =>
+    if (editingMealId === selectedNutritionEntryId) {
+      setSelectedNutrition(prev =>
         prev
           ? {
               ...prev,
@@ -734,7 +738,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
 
     addWeeklyTrackingContribution(nutritionEntryId, selectedDate, pendingAnalysisReview.weeklyTrackingSignals);
 
-    setSelectedLoggedMealId(nutritionEntryId);
+    setSelectedNutritionEntryId(nutritionEntryId);
 
     confirmedDrinks.forEach(drink => {
       addDrinkEntry(selectedDate, {
@@ -745,7 +749,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
       });
     });
 
-    setLastLoggedMeal(analysis);
+    setSelectedNutrition(analysis);
     setAnalysisResult('✅ Måltid loggad och analyserad!');
     triggerLightHaptic();
     closeAnalysisReviewModal();
@@ -782,23 +786,63 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
       addWeeklyTrackingContribution(copiedEntry.id, selectedDate, sourceContribution.signals);
     }
 
-    setSelectedLoggedMealId(copiedEntry.id);
-    setLastLoggedMeal(toParsedMacroAnalysis(copiedEntry));
+    setSelectedNutritionEntryId(copiedEntry.id);
+    setSelectedNutrition(toParsedMacroAnalysis(copiedEntry));
+    setSelectedNutritionUnavailable(false);
 
     triggerLightHaptic();
     handleCloseCopyMealModal();
   };
 
-  const handleSelectLoggedMeal = (entry: NutritionEntry, entryId: string) => {
-    setSelectedLoggedMealId(entryId);
-    setLastLoggedMeal(toParsedMacroAnalysis(entry));
+  const handleSelectNutritionEntry = (entry: NutritionEntry, entryId: string) => {
+    setSelectedNutritionEntryId(entryId);
+    setSelectedNutritionUnavailable(false);
+    setSelectedNutrition(toParsedMacroAnalysis(entry));
+  };
+
+  const handleSelectLoggedDrink = (drinkId: string) => {
+    const drink = dailyDrinkTracking[selectedDate]?.find(item => item.id === drinkId);
+
+    if (!drink) return;
+
+    const nutritionEntry = drink.nutritionEntryId
+      ? dailyNutritionTracking[selectedDate]?.entries.find(entry => entry.id === drink.nutritionEntryId)
+      : undefined;
+
+    if (!nutritionEntry) {
+      setSelectedNutritionEntryId(null);
+      setSelectedNutritionUnavailable(true);
+
+      setSelectedNutrition({
+        mealName: drink.name,
+        calories: 0,
+        protein: 0,
+        carbohydrates: 0,
+        fat: 0,
+        fiber: 0,
+        fiberByType: {},
+        fiberSubtypeTotals: {},
+        polyphenolByType: {},
+        mineralsByType: {},
+        mineralsConfidenceByType: {},
+        vitaminsByType: {},
+        aminoAcidsByType: {},
+        microbiomeSupport: [],
+      });
+
+      return;
+    }
+
+    handleSelectNutritionEntry(nutritionEntry, nutritionEntry.id);
   };
 
   const runNutritionImageAnalysis = async (mealFile: SelectedImageFile, mealDescription?: string, ingredientFile?: SelectedImageFile | null) => {
     const todayKey = toDateKey(new Date());
     if (selectedDate > todayKey) {
       setAnalysisResult(t('nutritionLogger.futureDateLocked'));
-      setLastLoggedMeal(null);
+      setSelectedNutrition(null);
+      setSelectedNutritionEntryId(null);
+      setSelectedNutritionUnavailable(false);
       return;
     }
     const activeLanguage = (i18n.resolvedLanguage ?? i18n.language ?? 'en').toLowerCase();
@@ -807,7 +851,9 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     setAnalysisResult(null);
     setPendingAnalysisReview(null);
     setIsAnalysisReviewModalVisible(false);
-    setLastLoggedMeal(null);
+    setSelectedNutrition(null);
+    setSelectedNutritionEntryId(null);
+    setSelectedNutritionUnavailable(false);
     try {
       const data = await NutritionAnalyze({
         uri: mealFile.uri,
@@ -838,7 +884,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
         setAnalysisResult,
         setPendingAnalysisReview,
         setIsAnalysisReviewModalVisible,
-        setLastLoggedMeal,
+        setSelectedNutrition,
       });
       if (!result) return;
       setPendingAnalysisReview({
@@ -870,7 +916,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           setAnalysisResult,
           setPendingAnalysisReview,
           setIsAnalysisReviewModalVisible,
-          setLastLoggedMeal,
+          setSelectedNutrition,
         });
       } else {
         handleGeneralError({
@@ -878,7 +924,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           setAnalysisResult,
           setPendingAnalysisReview,
           setIsAnalysisReviewModalVisible,
-          setLastLoggedMeal,
+          setSelectedNutrition,
         });
       }
     } finally {
@@ -1098,7 +1144,19 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     const factor = amount / 100;
 
     if (productType === 'drink') {
+      const nutritionEntry = addNutritionEntry(selectedDate, {
+        type: 'drink',
+        recordedAt,
+        name: product.name,
+        calories: (product.nutrition.caloriesPer100g ?? 0) * factor,
+        protein: (product.nutrition.proteinPer100g ?? 0) * factor,
+        carbohydrates: (product.nutrition.carbohydratesPer100g ?? 0) * factor,
+        fat: (product.nutrition.fatPer100g ?? 0) * factor,
+        fiber: (product.nutrition.fiberPer100g ?? 0) * factor,
+      });
+
       addDrinkEntry(selectedDate, {
+        nutritionEntryId: nutritionEntry.id,
         type: product.drinkType ?? 'drink',
         name: product.name,
         amountMl: amount,
@@ -1121,8 +1179,9 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
       fiber: (product.nutrition.fiberPer100g ?? 0) * factor,
     });
 
-    setSelectedLoggedMealId(entry.id);
-    setLastLoggedMeal(toParsedMacroAnalysis(entry));
+    setSelectedNutritionEntryId(entry.id);
+    setSelectedNutrition(toParsedMacroAnalysis(entry));
+    setSelectedNutritionUnavailable(false);
 
     triggerLightHaptic();
   };
@@ -1153,7 +1212,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
             {t('nutritionLogger.futureDateLocked')}
           </ThemedText>
         )}
-        {lastLoggedMeal && (
+        {selectedNutrition && (
           <Card
             style={{
               borderRadius: globalStyles.borders.borderRadius,
@@ -1161,25 +1220,32 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           >
             <ThemedText type="title3">
               {t('nutritionLogger.mealTitleWithName', {
-                name: lastLoggedMeal.mealName,
+                name: selectedNutrition.mealName,
               })}
             </ThemedText>
-            <NutritionBreakdown
-              calories={lastLoggedMeal.calories}
-              protein={lastLoggedMeal.protein}
-              carbohydrates={lastLoggedMeal.carbohydrates}
-              fat={lastLoggedMeal.fat}
-              fiber={lastLoggedMeal.fiber}
-              fiberByType={lastLoggedMeal.fiberByType}
-              fiberSubtypeTotals={lastLoggedMeal.fiberSubtypeTotals}
-              polyphenolByType={lastLoggedMeal.polyphenolByType}
-              mineralsByType={lastLoggedMeal.mineralsByType}
-              mineralsConfidenceByType={lastLoggedMeal.mineralsConfidenceByType}
-              vitaminsByType={lastLoggedMeal.vitaminsByType}
-              aminoAcidsByType={lastLoggedMeal.aminoAcidsByType}
-              microbiomeSupport={lastLoggedMeal.microbiomeSupport}
-              keyPrefix="meal"
-            />
+
+            {selectedNutritionUnavailable ? (
+              <ThemedText type="default" style={{ color: colors.textMuted }}>
+                {t('nutritionLogger.nutritionUnavailable')}
+              </ThemedText>
+            ) : (
+              <NutritionBreakdown
+                calories={selectedNutrition.calories}
+                protein={selectedNutrition.protein}
+                carbohydrates={selectedNutrition.carbohydrates}
+                fat={selectedNutrition.fat}
+                fiber={selectedNutrition.fiber}
+                fiberByType={selectedNutrition.fiberByType}
+                fiberSubtypeTotals={selectedNutrition.fiberSubtypeTotals}
+                polyphenolByType={selectedNutrition.polyphenolByType}
+                mineralsByType={selectedNutrition.mineralsByType}
+                mineralsConfidenceByType={selectedNutrition.mineralsConfidenceByType}
+                vitaminsByType={selectedNutrition.vitaminsByType}
+                aminoAcidsByType={selectedNutrition.aminoAcidsByType}
+                microbiomeSupport={selectedNutrition.microbiomeSupport}
+                keyPrefix="meal"
+              />
+            )}
           </Card>
         )}
         {summary && (
@@ -1225,9 +1291,11 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           </Card>
         )}
         {summary && summary.entries.length > 0 && (
-          <LoggedMealsSection meals={summary.entries} onEdit={handleStartEditMeal} onDelete={handleRemoveMeal} onSelect={handleSelectLoggedMeal} />
+          <LoggedMealsSection meals={summary.entries} onEdit={handleStartEditMeal} onDelete={handleRemoveMeal} onSelect={handleSelectNutritionEntry} />
         )}
-        {drinks.length > 0 && <LoggedDrinksSection drinks={drinks} onEdit={handleStartEditDrink} onDelete={handleRemoveDrink} />}
+        {drinks.length > 0 && (
+          <LoggedDrinksSection drinks={drinks} onEdit={handleStartEditDrink} onDelete={handleRemoveDrink} onSelect={handleSelectLoggedDrink} />
+        )}
         <NutritionPlanTargetsSection
           fulfilledTipsSectionYRef={fulfilledTipsSectionYRef}
           periodSectionYRef={periodSectionYRef}

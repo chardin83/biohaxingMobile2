@@ -1,19 +1,12 @@
 import { WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { ALL_AMINO_ACID_KEYS, AminoAcidType } from '@/constants/aminoAcids';
-import {
-  FIBER_CATEGORY_SUBTYPES,
-  FIBER_TYPE_KEYS,
-  type FiberSubtype,
-} from '@/constants/fiber';
+import { FIBER_CATEGORY_SUBTYPES, FIBER_TYPE_KEYS, type FiberSubtype } from '@/constants/fiber';
 import { MINERAL_TYPE_KEYS, MineralType } from '@/constants/minerals';
 import { POLYPHENOL_TYPE_KEYS, PolyphenolType } from '@/constants/polyphenols';
 import { VITAMIN_TYPE_KEYS, VitaminType } from '@/constants/vitamins';
 import { MicrobiomeSupportEntry } from '@/types/microbiome';
 
-import {
-  handleNoMacroData,
-  handleNoStructuredData,
-} from '../components/nutritionAnalysisHelpers';
+import { handleNoMacroData, handleNoStructuredData } from '../components/nutritionAnalysisHelpers';
 
 export type NutritionEvidence = {
   sources: string[];
@@ -22,7 +15,6 @@ export type NutritionEvidence = {
 };
 
 export type ConfidenceLevel = NutritionEvidence['confidence'];
-
 
 export type WeeklyTrackingSignalValue = WeeklyTrackingItem[] | number;
 export type WeeklyTrackingSignals = Record<string, WeeklyTrackingSignalValue>;
@@ -56,9 +48,7 @@ type TypedTotalsAccumulator = {
 
 type FiberSubtypeKey = FiberSubtype;
 
-const ALL_FIBER_SUBTYPES: FiberSubtypeKey[] = [
-  ...new Set(Object.values(FIBER_CATEGORY_SUBTYPES).flat()),
-] as FiberSubtypeKey[];
+const ALL_FIBER_SUBTYPES: FiberSubtypeKey[] = [...new Set(Object.values(FIBER_CATEGORY_SUBTYPES).flat())] as FiberSubtypeKey[];
 
 const confidenceRank: Record<ConfidenceLevel, number> = {
   unknown: 0,
@@ -67,26 +57,20 @@ const confidenceRank: Record<ConfidenceLevel, number> = {
   high: 3,
 };
 
-const emptyFiberTotals = (): Record<string, number> =>
-  FIBER_TYPE_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
+const emptyFiberTotals = (): Record<string, number> => FIBER_TYPE_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
 
-const emptyFiberSubtypeTotals = (): Record<string, number> =>
-  ALL_FIBER_SUBTYPES.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
+const emptyFiberSubtypeTotals = (): Record<string, number> => ALL_FIBER_SUBTYPES.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
 
-const emptyPolyphenolTotals = (): Record<string, number> =>
-  POLYPHENOL_TYPE_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
+const emptyPolyphenolTotals = (): Record<string, number> => POLYPHENOL_TYPE_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
 
-const emptyMineralTotals = (): Record<string, number> =>
-  MINERAL_TYPE_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
+const emptyMineralTotals = (): Record<string, number> => MINERAL_TYPE_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
 
 const emptyMineralConfidenceTotals = (): Record<string, ConfidenceLevel> =>
   MINERAL_TYPE_KEYS.reduce((acc, key) => ({ ...acc, [key]: 'unknown' }), {} as Record<string, ConfidenceLevel>);
 
-const emptyVitaminTotals = (): Record<string, number> =>
-  VITAMIN_TYPE_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
+const emptyVitaminTotals = (): Record<string, number> => VITAMIN_TYPE_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
 
-const emptyAminoAcidTotals = (): Record<string, number> =>
-  ALL_AMINO_ACID_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
+const emptyAminoAcidTotals = (): Record<string, number> => ALL_AMINO_ACID_KEYS.reduce((acc, key) => ({ ...acc, [key]: 0 }), {} as Record<string, number>);
 
 export const normalizeItemName = (item: string): string =>
   item
@@ -127,10 +111,7 @@ const normalizeConfidence = (value: unknown): NutritionEvidence['confidence'] =>
   return 'unknown';
 };
 
-const pickConfidence = (
-  labelValue: unknown,
-  scoreValue: unknown
-): NutritionEvidence['confidence'] => {
+const pickConfidence = (labelValue: unknown, scoreValue: unknown): NutritionEvidence['confidence'] => {
   const label = normalizeConfidence(labelValue);
   if (label === 'unknown') {
     return normalizeConfidence(scoreValue);
@@ -162,18 +143,11 @@ const pickFirstNumber = (candidate: any, keys: string[]): number | null => {
   return null;
 };
 
-const mergeConfidenceLevel = (
-  current: ConfidenceLevel,
-  next: ConfidenceLevel
-): ConfidenceLevel => {
+const mergeConfidenceLevel = (current: ConfidenceLevel, next: ConfidenceLevel): ConfidenceLevel => {
   return confidenceRank[next] > confidenceRank[current] ? next : current;
 };
 
-const setMineralConfidence = (
-  target: Record<string, ConfidenceLevel>,
-  key: string,
-  level: ConfidenceLevel
-) => {
+const setMineralConfidence = (target: Record<string, ConfidenceLevel>, key: string, level: ConfidenceLevel) => {
   const current = target[key] ?? 'unknown';
   target[key] = mergeConfidenceLevel(current, level);
 };
@@ -193,9 +167,7 @@ const supportLevelScore = (value: MicrobiomeSupportEntry['supportLevel']): numbe
   return 0;
 };
 
-const normalizeSupportLevel = (
-  value: unknown
-): MicrobiomeSupportEntry['supportLevel'] => {
+const normalizeSupportLevel = (value: unknown): MicrobiomeSupportEntry['supportLevel'] => {
   if (typeof value !== 'string') return 'unknown';
 
   const raw = value.toLowerCase().trim();
@@ -204,9 +176,7 @@ const normalizeSupportLevel = (
   return 'unknown';
 };
 
-const mergeMicrobiomeSupportLists = (
-  entries: MicrobiomeSupportEntry[]
-): MicrobiomeSupportEntry[] => {
+const mergeMicrobiomeSupportLists = (entries: MicrobiomeSupportEntry[]): MicrobiomeSupportEntry[] => {
   const byMicrobe = new Map<string, MicrobiomeSupportEntry>();
 
   entries.forEach(entry => {
@@ -225,10 +195,7 @@ const mergeMicrobiomeSupportLists = (
       return;
     }
 
-    const nextLevel =
-      supportLevelScore(entry.supportLevel) > supportLevelScore(existing.supportLevel)
-        ? entry.supportLevel
-        : existing.supportLevel;
+    const nextLevel = supportLevelScore(entry.supportLevel) > supportLevelScore(existing.supportLevel) ? entry.supportLevel : existing.supportLevel;
 
     byMicrobe.set(key, {
       microbe: existing.microbe,
@@ -242,10 +209,7 @@ const mergeMicrobiomeSupportLists = (
   return Array.from(byMicrobe.values());
 };
 
-export const extractMicrobiomeSupport = (
-  data: any,
-  parsedContent: any
-): MicrobiomeSupportEntry[] => {
+export const extractMicrobiomeSupport = (data: any, parsedContent: any): MicrobiomeSupportEntry[] => {
   const candidates = [
     data,
     data?.nutrition,
@@ -261,12 +225,8 @@ export const extractMicrobiomeSupport = (
   const entries: MicrobiomeSupportEntry[] = [];
 
   candidates.forEach(candidate => {
-    const fromDetails = Array.isArray(candidate?.nutritionDetails?.microbiomeSupport)
-      ? candidate.nutritionDetails.microbiomeSupport
-      : [];
-    const fromRoot = Array.isArray(candidate?.microbiomeSupport)
-      ? candidate.microbiomeSupport
-      : [];
+    const fromDetails = Array.isArray(candidate?.nutritionDetails?.microbiomeSupport) ? candidate.nutritionDetails.microbiomeSupport : [];
+    const fromRoot = Array.isArray(candidate?.microbiomeSupport) ? candidate.microbiomeSupport : [];
     const merged = [...fromDetails, ...fromRoot];
 
     merged.forEach((item: any) => {
@@ -300,19 +260,8 @@ const normalizeFlavonoidClassTag = (value: unknown): PolyphenolType | null => {
   return null;
 };
 
-const applyMeasuredByTypeFromCandidate = (
-  candidate: any,
-  totals: TypedTotalsAccumulator
-) => {
-  const {
-    fiberByType,
-    fiberSubtypeTotals,
-    polyphenolByType,
-    mineralsByType,
-    mineralsConfidenceByType,
-    vitaminsByType,
-    aminoAcidsByType,
-  } = totals;
+const applyMeasuredByTypeFromCandidate = (candidate: any, totals: TypedTotalsAccumulator) => {
+  const { fiberByType, fiberSubtypeTotals, polyphenolByType, mineralsByType, mineralsConfidenceByType, vitaminsByType, aminoAcidsByType } = totals;
 
   const fiberMap = candidate?.fiberByType;
   const fiberSubtypeMap = candidate?.fiberSubtypeTotals;
@@ -323,30 +272,22 @@ const applyMeasuredByTypeFromCandidate = (
   // Legacy fallbacks:
   // polyphenolsByType
   // polyphenolByType
-  const polyMap =
-    candidate?.polyphenolsByType ??
-    candidate?.polyphenolByType;
+  const polyMap = candidate?.polyphenolsByType ?? candidate?.polyphenolByType;
 
   const mineralMap = candidate?.mineralsByType ?? candidate?.mineralByType;
   const vitaminMap = candidate?.vitaminsByType ?? candidate?.vitaminByType;
   const aminoMap = candidate?.aminoAcidsByType;
 
   if (fiberMap && typeof fiberMap === 'object') {
-    FIBER_TYPE_KEYS.forEach(tag =>
-      addToTotals(fiberByType, tag, fiberMap?.[tag])
-    );
+    FIBER_TYPE_KEYS.forEach(tag => addToTotals(fiberByType, tag, fiberMap?.[tag]));
   }
 
   if (fiberSubtypeMap && typeof fiberSubtypeMap === 'object') {
-    ALL_FIBER_SUBTYPES.forEach(tag =>
-      addToTotals(fiberSubtypeTotals, tag, fiberSubtypeMap?.[tag])
-    );
+    ALL_FIBER_SUBTYPES.forEach(tag => addToTotals(fiberSubtypeTotals, tag, fiberSubtypeMap?.[tag]));
   }
 
   if (polyMap && typeof polyMap === 'object') {
-    POLYPHENOL_TYPE_KEYS.forEach(tag =>
-      addToTotals(polyphenolByType, tag, polyMap?.[tag])
-    );
+    POLYPHENOL_TYPE_KEYS.forEach(tag => addToTotals(polyphenolByType, tag, polyMap?.[tag]));
   }
 
   if (mineralMap && typeof mineralMap === 'object') {
@@ -362,59 +303,28 @@ const applyMeasuredByTypeFromCandidate = (
   }
 
   if (vitaminMap && typeof vitaminMap === 'object') {
-    VITAMIN_TYPE_KEYS.forEach(tag =>
-      addToTotals(vitaminsByType, tag, vitaminMap?.[tag])
-    );
+    VITAMIN_TYPE_KEYS.forEach(tag => addToTotals(vitaminsByType, tag, vitaminMap?.[tag]));
   }
 
   if (aminoMap && typeof aminoMap === 'object') {
-    ALL_AMINO_ACID_KEYS.forEach(tag =>
-      addToTotals(aminoAcidsByType, tag, aminoMap?.[tag])
-    );
+    ALL_AMINO_ACID_KEYS.forEach(tag => addToTotals(aminoAcidsByType, tag, aminoMap?.[tag]));
   }
 };
 
-const applyFiberDetails = (
-  fiberDetails: any,
-  totals: TypedTotalsAccumulator
-) => {
+const applyFiberDetails = (fiberDetails: any, totals: TypedTotalsAccumulator) => {
   if (!fiberDetails) return;
 
   const { fiberByType, fiberSubtypeTotals } = totals;
 
-  addToTotals(
-    fiberByType,
-    'fiber_total',
-    fiberDetails?.total
-  );
+  addToTotals(fiberByType, 'fiber_total', fiberDetails?.total);
 
-  addToTotals(
-    fiberByType,
-    'fiber_gel_forming',
-    fiberDetails?.gelForming ??
-      fiberDetails?.gel_forming ??
-      fiberDetails?.soluble
-  );
+  addToTotals(fiberByType, 'fiber_gel_forming', fiberDetails?.gelForming ?? fiberDetails?.gel_forming ?? fiberDetails?.soluble);
 
-  addToTotals(
-    fiberByType,
-    'fiber_non_gel_forming',
-    fiberDetails?.nonGelForming ??
-      fiberDetails?.non_gel_forming ??
-      fiberDetails?.insoluble
-  );
+  addToTotals(fiberByType, 'fiber_non_gel_forming', fiberDetails?.nonGelForming ?? fiberDetails?.non_gel_forming ?? fiberDetails?.insoluble);
 
-  addToTotals(
-    fiberByType,
-    'fiber_fermentable',
-    fiberDetails?.fermentable ??
-      fiberDetails?.resistantStarch ??
-      fiberDetails?.resistant_starch
-  );
+  addToTotals(fiberByType, 'fiber_fermentable', fiberDetails?.fermentable ?? fiberDetails?.resistantStarch ?? fiberDetails?.resistant_starch);
 
-  const subtypeRows = Array.isArray(fiberDetails?.subtypes)
-    ? fiberDetails.subtypes
-    : [];
+  const subtypeRows = Array.isArray(fiberDetails?.subtypes) ? fiberDetails.subtypes : [];
 
   subtypeRows.forEach((item: any) => {
     const subtype = String(item?.subtype ?? '').trim();
@@ -423,100 +333,52 @@ const applyFiberDetails = (
       return;
     }
 
-    addToTotals(
-      fiberSubtypeTotals,
-      subtype,
-      item?.amountG ??
-        item?.amount_g ??
-        item?.amount
-    );
+    addToTotals(fiberSubtypeTotals, subtype, item?.amountG ?? item?.amount_g ?? item?.amount);
   });
 };
 
-const applyLegacyFlavonoids = (
-  flavonoids: any,
-  polyphenolByType: Record<string, number>
-) => {
+const applyLegacyFlavonoids = (flavonoids: any, polyphenolByType: Record<string, number>) => {
   if (!flavonoids) return;
 
-  addToTotals(
-    polyphenolByType,
-    'flavonoids_total',
-    flavonoids?.totalMg ??
-      flavonoids?.total_mg
-  );
+  addToTotals(polyphenolByType, 'flavonoids_total', flavonoids?.totalMg ?? flavonoids?.total_mg);
 
-  const classes = Array.isArray(flavonoids?.classes)
-    ? flavonoids.classes
-    : [];
+  const classes = Array.isArray(flavonoids?.classes) ? flavonoids.classes : [];
 
   classes.forEach((item: any) => {
     const classTag = normalizeFlavonoidClassTag(item?.name);
 
     if (!classTag) return;
 
-    addToTotals(
-      polyphenolByType,
-      classTag,
-      item?.amountMg ??
-        item?.amount_mg
-    );
+    addToTotals(polyphenolByType, classTag, item?.amountMg ?? item?.amount_mg);
   });
 };
 
-const applyPolyphenolDetails = (
-  polyphenols: any,
-  legacyFlavonoids: any,
-  totals: TypedTotalsAccumulator
-) => {
+const applyPolyphenolDetails = (polyphenols: any, legacyFlavonoids: any, totals: TypedTotalsAccumulator) => {
   if (!polyphenols || typeof polyphenols !== 'object') {
     return;
   }
 
   const { polyphenolByType } = totals;
 
-  const byType =
-    polyphenols?.byType &&
-    typeof polyphenols.byType === 'object'
-      ? polyphenols.byType
-      : null;
+  const byType = polyphenols?.byType && typeof polyphenols.byType === 'object' ? polyphenols.byType : null;
 
   if (!byType) {
-    addToTotals(
-      polyphenolByType,
-      'polyphenols_total',
-      polyphenols?.totalMg ??
-        polyphenols?.total_mg
-    );
+    addToTotals(polyphenolByType, 'polyphenols_total', polyphenols?.totalMg ?? polyphenols?.total_mg);
 
-    applyLegacyFlavonoids(
-      legacyFlavonoids,
-      polyphenolByType
-    );
+    applyLegacyFlavonoids(legacyFlavonoids, polyphenolByType);
 
     return;
   }
 
   POLYPHENOL_TYPE_KEYS.forEach(tag => {
-    addToTotals(
-      polyphenolByType,
-      tag,
-      byType?.[tag]
-    );
+    addToTotals(polyphenolByType, tag, byType?.[tag]);
   });
 
-  const typedTotal = parseNumberValue(
-    byType?.polyphenols_total
-  );
+  const typedTotal = parseNumberValue(byType?.polyphenols_total);
 
   if (typedTotal !== null) return;
 
-  addToTotals(
-    polyphenolByType,
-    'polyphenols_total',
-    polyphenols?.totalMg ??
-      polyphenols?.total_mg
-  );
+  addToTotals(polyphenolByType, 'polyphenols_total', polyphenols?.totalMg ?? polyphenols?.total_mg);
 };
 
 const normalizeNutrientKey = (value: unknown): string => {
@@ -524,10 +386,7 @@ const normalizeNutrientKey = (value: unknown): string => {
     return '';
   }
 
-  return value
-    .toLowerCase()
-    .trim()
-    .replaceAll(/\s+/g, '_');
+  return value.toLowerCase().trim().replaceAll(/\s+/g, '_');
 };
 
 const getLegacyRows = (value: any): any[] => {
@@ -542,10 +401,7 @@ const getLegacyRows = (value: any): any[] => {
   return [];
 };
 
-const applyAminoAcidDetails = (
-  aminoAcids: any,
-  totals: TypedTotalsAccumulator
-) => {
+const applyAminoAcidDetails = (aminoAcids: any, totals: TypedTotalsAccumulator) => {
   if (!aminoAcids || typeof aminoAcids !== 'object') {
     return;
   }
@@ -553,164 +409,88 @@ const applyAminoAcidDetails = (
   const { aminoAcidsByType } = totals;
 
   ALL_AMINO_ACID_KEYS.forEach(tag => {
-    addToTotals(
-      aminoAcidsByType,
-      tag,
-      aminoAcids?.[tag]
-    );
+    addToTotals(aminoAcidsByType, tag, aminoAcids?.[tag]);
   });
 
   getLegacyRows(aminoAcids).forEach((item: any) => {
-    const key = normalizeNutrientKey(
-      item?.name ?? item?.tag
-    );
+    const key = normalizeNutrientKey(item?.name ?? item?.tag);
 
     if (!ALL_AMINO_ACID_KEYS.includes(key as AminoAcidType)) {
       return;
     }
 
-    addToTotals(
-      aminoAcidsByType,
-      key,
-      item?.amountMg ??
-        item?.amount_mg ??
-        item?.amount
-    );
+    addToTotals(aminoAcidsByType, key, item?.amountMg ?? item?.amount_mg ?? item?.amount);
   });
 };
 
-const addMineralWithConfidence = (
-  tag: string,
-  value: unknown,
-  totals: TypedTotalsAccumulator
-) => {
-  const {
-    mineralsByType,
-    mineralsConfidenceByType,
-  } = totals;
+const addMineralWithConfidence = (tag: string, value: unknown, totals: TypedTotalsAccumulator) => {
+  const { mineralsByType, mineralsConfidenceByType } = totals;
 
   const before = mineralsByType[tag] ?? 0;
 
-  addToTotals(
-    mineralsByType,
-    tag,
-    value
-  );
+  addToTotals(mineralsByType, tag, value);
 
   if ((mineralsByType[tag] ?? 0) <= before) {
     return;
   }
 
-  setMineralConfidence(
-    mineralsConfidenceByType,
-    tag,
-    'high'
-  );
+  setMineralConfidence(mineralsConfidenceByType, tag, 'high');
 };
 
-const applyMineralDetails = (
-  minerals: any,
-  totals: TypedTotalsAccumulator
-) => {
+const applyMineralDetails = (minerals: any, totals: TypedTotalsAccumulator) => {
   if (!minerals) return;
 
   MINERAL_TYPE_KEYS.forEach(tag => {
-    addMineralWithConfidence(
-      tag,
-      minerals?.[tag],
-      totals
-    );
+    addMineralWithConfidence(tag, minerals?.[tag], totals);
   });
 
   getLegacyRows(minerals).forEach((item: any) => {
-    const key = normalizeNutrientKey(
-      item?.name ?? item?.tag
-    );
+    const key = normalizeNutrientKey(item?.name ?? item?.tag);
 
     if (!MINERAL_TYPE_KEYS.includes(key as MineralType)) {
       return;
     }
 
-    addMineralWithConfidence(
-      key,
-      item?.amountMg ??
-        item?.amount_mg ??
-        item?.amount,
-      totals
-    );
+    addMineralWithConfidence(key, item?.amountMg ?? item?.amount_mg ?? item?.amount, totals);
   });
 };
 
-const applyVitaminDetails = (
-  vitamins: any,
-  totals: TypedTotalsAccumulator
-) => {
+const applyVitaminDetails = (vitamins: any, totals: TypedTotalsAccumulator) => {
   if (!vitamins) return;
 
   const { vitaminsByType } = totals;
 
   VITAMIN_TYPE_KEYS.forEach(tag => {
-    addToTotals(
-      vitaminsByType,
-      tag,
-      vitamins?.[tag]
-    );
+    addToTotals(vitaminsByType, tag, vitamins?.[tag]);
   });
 
   getLegacyRows(vitamins).forEach((item: any) => {
-    const key = normalizeNutrientKey(
-      item?.name ?? item?.tag
-    );
+    const key = normalizeNutrientKey(item?.name ?? item?.tag);
 
     if (!VITAMIN_TYPE_KEYS.includes(key as VitaminType)) {
       return;
     }
 
-    addToTotals(
-      vitaminsByType,
-      key,
-      item?.amountMg ??
-        item?.amount_mg ??
-        item?.amount
-    );
+    addToTotals(vitaminsByType, key, item?.amountMg ?? item?.amount_mg ?? item?.amount);
   });
 };
 
-const applyDetailsFromCandidate = (
-  candidate: any,
-  totals: TypedTotalsAccumulator
-) => {
+const applyDetailsFromCandidate = (candidate: any, totals: TypedTotalsAccumulator) => {
   const details = candidate?.nutritionDetails;
 
   if (!details || typeof details !== 'object') {
     return;
   }
 
-  applyFiberDetails(
-    details.fiber,
-    totals
-  );
+  applyFiberDetails(details.fiber, totals);
 
-  applyPolyphenolDetails(
-    details.polyphenols,
-    details.flavonoids,
-    totals
-  );
+  applyPolyphenolDetails(details.polyphenols, details.flavonoids, totals);
 
-  applyAminoAcidDetails(
-    details.aminoAcids,
-    totals
-  );
+  applyAminoAcidDetails(details.aminoAcids, totals);
 
-  applyMineralDetails(
-    details.minerals,
-    totals
-  );
+  applyMineralDetails(details.minerals, totals);
 
-  applyVitaminDetails(
-    details.vitamins,
-    totals
-  );
+  applyVitaminDetails(details.vitamins, totals);
 };
 
 export const extractTypedTotals = (data: any, parsedContent: any) => {
@@ -734,12 +514,7 @@ export const extractTypedTotals = (data: any, parsedContent: any) => {
     parsedContent,
     parsedContent?.nutrition,
     parsedContent?.raw,
-  ].filter(
-    (candidate, index, all) =>
-      candidate &&
-      typeof candidate === 'object' &&
-      all.indexOf(candidate) === index
-  );
+  ].filter((candidate, index, all) => candidate && typeof candidate === 'object' && all.indexOf(candidate) === index);
 
   for (const candidate of candidates) {
     applyMeasuredByTypeFromCandidate(candidate, totals);
@@ -753,8 +528,7 @@ export const extractTypedTotals = (data: any, parsedContent: any) => {
   return totals;
 };
 
-export const hasAnyTypedTotals = (values: Record<string, number>) =>
-  Object.values(values).some(value => (value ?? 0) > 0);
+export const hasAnyTypedTotals = (values: Record<string, number>) => Object.values(values).some(value => (value ?? 0) > 0);
 
 const extractFromCandidate = (candidate: any): ParsedMacroAnalysis | null => {
   if (!candidate || typeof candidate !== 'object') return null;
@@ -765,13 +539,7 @@ const extractFromCandidate = (candidate: any): ParsedMacroAnalysis | null => {
   const fat = pickFirstNumber(candidate, ['fat', 'fats', 'fat_g', 'total_fat']);
   const fiber = pickFirstNumber(candidate, ['fiber', 'fibre', 'fiber_g', 'dietary_fiber']);
 
-  if (
-    protein === null &&
-    calories === null &&
-    carbohydrates === null &&
-    fat === null &&
-    fiber === null
-  ) {
+  if (protein === null && calories === null && carbohydrates === null && fat === null && fiber === null) {
     return null;
   }
 
@@ -817,13 +585,7 @@ const extractFromText = (text: string): ParsedMacroAnalysis | null => {
   const fat = read(/(?:fett|fat)[^\d-]*(-?\d+(?:[.,]\d+)?)/i);
   const fiber = read(/(?:fibrer|fiber|fibre)[^\d-]*(-?\d+(?:[.,]\d+)?)/i);
 
-  if (
-    protein === null &&
-    calories === null &&
-    carbohydrates === null &&
-    fat === null &&
-    fiber === null
-  ) {
+  if (protein === null && calories === null && carbohydrates === null && fat === null && fiber === null) {
     return null;
   }
 
@@ -845,10 +607,7 @@ const extractFromText = (text: string): ParsedMacroAnalysis | null => {
   };
 };
 
-export const extractStructuredAnalysis = (
-  data: any,
-  parsedContent: any
-): ParsedMacroAnalysis | null => {
+export const extractStructuredAnalysis = (data: any, parsedContent: any): ParsedMacroAnalysis | null => {
   const candidates = [
     data?.nutrition,
     data?.raw,
@@ -875,10 +634,7 @@ export const extractStructuredAnalysis = (
   return null;
 };
 
-export const extractAIResponseDescription = (
-  data: any,
-  parsedContent: any
-): string | null => {
+export const extractAIResponseDescription = (data: any, parsedContent: any): string | null => {
   const candidates: unknown[] = [
     parsedContent?.description,
     parsedContent?.summary,
@@ -920,11 +676,7 @@ export const extractAIResponseDescription = (
   return null;
 };
 
-export const mergeWeeklyTrackingSignal = (
-  target: WeeklyTrackingSignals,
-  key: string,
-  value: unknown
-) => {
+export const mergeWeeklyTrackingSignal = (target: WeeklyTrackingSignals, key: string, value: unknown) => {
   if (!key || typeof key !== 'string') return;
 
   if (Array.isArray(value)) {
@@ -959,10 +711,7 @@ export const mergeWeeklyTrackingSignal = (
   }
 };
 
-export const extractWeeklyTrackingSignals = (
-  data: any,
-  parsedContent: any
-): WeeklyTrackingSignals => {
+export const extractWeeklyTrackingSignals = (data: any, parsedContent: any): WeeklyTrackingSignals => {
   const collected: WeeklyTrackingSignals = {};
 
   const candidates = [
@@ -977,12 +726,10 @@ export const extractWeeklyTrackingSignals = (
     parsedContent?.raw,
   ];
 
-  candidates.forEach((candidate) => {
+  candidates.forEach(candidate => {
     const fromObject = candidate?.weeklyTrackingSignals;
     if (fromObject && typeof fromObject === 'object' && !Array.isArray(fromObject)) {
-      Object.entries(fromObject).forEach(([key, value]) =>
-        mergeWeeklyTrackingSignal(collected, key, value)
-      );
+      Object.entries(fromObject).forEach(([key, value]) => mergeWeeklyTrackingSignal(collected, key, value));
     }
 
     let fromRows: any[] = [];
@@ -1000,9 +747,7 @@ export const extractWeeklyTrackingSignals = (
         mergeWeeklyTrackingSignal(collected, key, row.items);
       }
 
-      const increment = parseNumberValue(
-        row?.countIncrement ?? row?.increment ?? row?.count
-      );
+      const increment = parseNumberValue(row?.countIncrement ?? row?.increment ?? row?.count);
       if (increment !== null) {
         mergeWeeklyTrackingSignal(collected, key, increment);
       }
@@ -1012,10 +757,7 @@ export const extractWeeklyTrackingSignals = (
   return collected;
 };
 
-export const extractEvidence = (
-  data: any,
-  parsedContent: any
-): NutritionEvidence => {
+export const extractEvidence = (data: any, parsedContent: any): NutritionEvidence => {
   const fromNutrition = data?.nutrition ?? {};
   const fromRaw = data?.raw ?? {};
   const fromParsed = parsedContent ?? {};
@@ -1058,15 +800,9 @@ export const extractEvidence = (
     ...parseStringArray(data?.ai_assumptions),
   ];
 
-  const nutritionConfidence = pickConfidence(
-    fromNutrition.confidenceLabel,
-    fromNutrition.confidence
-  );
+  const nutritionConfidence = pickConfidence(fromNutrition.confidenceLabel, fromNutrition.confidence);
   const rawConfidence = pickConfidence(fromRaw.confidenceLabel, fromRaw.confidence);
-  const parsedConfidence = pickConfidence(
-    fromParsed.confidenceLabel,
-    fromParsed.confidence
-  );
+  const parsedConfidence = pickConfidence(fromParsed.confidenceLabel, fromParsed.confidence);
   const rootConfidence = pickConfidence(data?.confidenceLabel, data?.confidence);
 
   let confidence: NutritionEvidence['confidence'] = 'unknown';
@@ -1099,13 +835,9 @@ export const buildEvidenceMessage = (evidence: NutritionEvidence): string => {
     confidenceLabel = 'Lag confidence';
   }
 
-  const sourceLine = evidence.sources.length
-    ? `Source-backed: ${evidence.sources.join(', ')}`
-    : 'Source-backed: inga explicita kallor angavs';
+  const sourceLine = evidence.sources.length ? `Source-backed: ${evidence.sources.join(', ')}` : 'Source-backed: inga explicita kallor angavs';
 
-  const inferredLine = evidence.inferred.length
-    ? `AI-inferred: ${evidence.inferred.join(', ')}`
-    : 'AI-inferred: inga extra inferenser angavs';
+  const inferredLine = evidence.inferred.length ? `AI-inferred: ${evidence.inferred.join(', ')}` : 'AI-inferred: inga extra inferenser angavs';
 
   return `${confidenceLabel}\n${sourceLine}\n${inferredLine}`;
 };
@@ -1117,7 +849,7 @@ export const extractAndValidateNutritionAnalysis = ({
   setAnalysisResult,
   setPendingAnalysisReview,
   setIsAnalysisReviewModalVisible,
-  setLastLoggedMeal,
+  setSelectedNutrition,
 }: {
   data: any;
   t: any;
@@ -1125,7 +857,7 @@ export const extractAndValidateNutritionAnalysis = ({
   setAnalysisResult: (val: any) => void;
   setPendingAnalysisReview: (val: any) => void;
   setIsAnalysisReviewModalVisible: (val: boolean) => void;
-  setLastLoggedMeal: (val: any) => void;
+  setSelectedNutrition: (val: any) => void;
 }) => {
   let analysis: ParsedMacroAnalysis | null = null;
   let parsedContent: any = null;
@@ -1173,13 +905,7 @@ export const extractAndValidateNutritionAnalysis = ({
     microbiomeSupport,
   };
 
-  const hasMacroData = !(
-    analysis.protein === 0 &&
-    analysis.calories === 0 &&
-    analysis.carbohydrates === 0 &&
-    analysis.fat === 0 &&
-    analysis.fiber === 0
-  );
+  const hasMacroData = !(analysis.protein === 0 && analysis.calories === 0 && analysis.carbohydrates === 0 && analysis.fat === 0 && analysis.fiber === 0);
 
   const hasTypedNutritionData =
     hasAnyTypedTotals(typedTotals.fiberByType) ||
@@ -1203,7 +929,7 @@ export const extractAndValidateNutritionAnalysis = ({
       evidence,
       aiResponseDescription,
       evidenceMessage,
-      setLastLoggedMeal,
+      setSelectedNutrition,
     });
     return null;
   }
@@ -1229,5 +955,4 @@ export const extractAndValidateNutritionAnalysis = ({
   };
 };
 
-export const roundToOneDecimal = (value: number): number =>
-  Math.round((value + Number.EPSILON) * 10) / 10;
+export const roundToOneDecimal = (value: number): number => Math.round((value + Number.EPSILON) * 10) / 10;

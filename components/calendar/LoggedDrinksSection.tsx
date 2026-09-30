@@ -2,7 +2,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import type { DrinkEntry } from '@/app/context/storage/drinks/drinkTypes';
 import { globalStyles } from '@/app/theme/globalStyles';
@@ -16,11 +16,12 @@ import { SwipeableRow } from '../ui/SwipeableRow';
 
 type LoggedDrinksSectionProps = {
   drinks: DrinkEntry[];
+  onSelect: (drinkId: string) => void;
   onEdit: (drinkId: string) => void;
   onDelete: (drinkId: string) => void;
 };
 
-export const LoggedDrinksSection: React.FC<LoggedDrinksSectionProps> = ({ drinks, onEdit, onDelete }) => {
+export const LoggedDrinksSection: React.FC<LoggedDrinksSectionProps> = ({ drinks, onEdit, onDelete, onSelect }) => {
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
 
@@ -37,54 +38,54 @@ export const LoggedDrinksSection: React.FC<LoggedDrinksSectionProps> = ({ drinks
     <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
       <View style={styles.loggedDrinksSection}>
         <Collapsible title={`${t('nutritionLogger.loggedDrinksTitle')} (${drinks.length})`} titleType="default" initialCollapsed>
-          {drinks.map(drink => {
-            return (
-              <SwipeableRow key={drink.id} onDelete={() => onDelete(drink.id)} onEdit={() => onEdit(drink.id)} containerStyle={styles.loggedDrinkSwipeContent}>
-                <View style={styles.loggedDrinkRow}>
-                  <View style={styles.loggedDrinkInfo}>
-                    <View style={styles.drinkNameRow}>
-                      <ThemedText type="default">{drink.name}</ThemedText>
-                    </View>
-                    <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                      {formatTime(drink.recordedAt)}
-                    </ThemedText>
+          {drinks.map(drink => (
+            <SwipeableRow key={drink.id} onDelete={() => onDelete(drink.id)} onEdit={() => onEdit(drink.id)} containerStyle={styles.loggedDrinkSwipeContent}>
+              <Pressable onPress={() => onSelect(drink.id)} style={[styles.loggedDrinkRow]}>
+                <View style={styles.loggedDrinkInfo}>
+                  <View style={styles.drinkNameRow}>
+                    <ThemedText type="default">{drink.name}</ThemedText>
                   </View>
 
-                  <View style={styles.drinkTags}>
-                    {drink.amountMl != null && (
-                      <View style={styles.drinkTag}>
-                        <MaterialIcons name="local-drink" size={14} color={colors.textMuted} />
-                        <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                          {Math.round(drink.amountMl)} ml
-                        </ThemedText>
-                      </View>
-                    )}
-                    {drink.caffeinated === true && (
-                      <View style={styles.drinkTag}>
-                        <IconSymbol name="caffeine" size={14} color={colors.textMuted} />
-                        <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                          {t('nutritionLogger.caffeine')}
-                        </ThemedText>
-                      </View>
-                    )}
-
-                    {isAlcohol(drink.type) && (
-                      <View style={styles.drinkTag}>
-                        <IconSymbol name="alcohol" size={14} color={colors.textMuted} />
-                        <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                          {t('nutritionLogger.alcohol')}
-                        </ThemedText>
-                      </View>
-                    )}
-
-                    <ThemedText type="default" style={[styles.loggedDrinkIcon, { color: colors.textMuted }]}>
-                      ⋮
-                    </ThemedText>
-                  </View>
+                  <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                    {formatTime(drink.recordedAt)}
+                  </ThemedText>
                 </View>
-              </SwipeableRow>
-            );
-          })}
+
+                <View style={styles.drinkTags}>
+                  {drink.amountMl != null && (
+                    <View style={styles.drinkTag}>
+                      <MaterialIcons name="local-drink" size={14} color={colors.textMuted} />
+                      <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                        {Math.round(drink.amountMl)} ml
+                      </ThemedText>
+                    </View>
+                  )}
+
+                  {drink.caffeinated === true && (
+                    <View style={styles.drinkTag}>
+                      <IconSymbol name="caffeine" size={14} color={colors.textMuted} />
+                      <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                        {t('nutritionLogger.caffeine')}
+                      </ThemedText>
+                    </View>
+                  )}
+
+                  {isAlcohol(drink.type) && (
+                    <View style={styles.drinkTag}>
+                      <IconSymbol name="alcohol" size={14} color={colors.textMuted} />
+                      <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                        {t('nutritionLogger.alcohol')}
+                      </ThemedText>
+                    </View>
+                  )}
+
+                  <ThemedText type="default" style={[styles.loggedDrinkIcon, { color: colors.textMuted }]}>
+                    ⋮
+                  </ThemedText>
+                </View>
+              </Pressable>
+            </SwipeableRow>
+          ))}
         </Collapsible>
       </View>
     </Card>
