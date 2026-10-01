@@ -1,76 +1,44 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
-import * as ImagePicker from 'expo-image-picker';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Animated, Image, KeyboardAvoidingView, LayoutAnimation, Platform, Pressable, ScrollView, StyleSheet, UIManager, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 
-import type { MealEntry, NutritionData, NutritionEntry, NutritionTrackingContribution, TipProgressItem } from '@/app/context/storage/nutrition/nutritionTypes';
+import type { MealEntry, NutritionEntry, NutritionTrackingContribution } from '@/app/context/storage/nutrition/nutritionTypes';
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
-import { XP_FOR_NUTRITION_TIP_DAILY_COMPLETION, XP_FOR_NUTRITION_TIP_WEEKLY_COMPLETION } from '@/constants/XP';
-import { useNutritionPlanProgress } from '@/hooks/useNutritionPlanProgress';
-import { getDrinkImage } from '@/locales/drinkCatalog';
+import { useNutritionAnalysis } from '@/hooks/useNutritionAnalysis';
+import { useNutritionLoggerData } from '@/hooks/useNutritionLoggerData';
+import { useNutritionTipCompletion } from '@/hooks/useNutritionTipCompletion';
 import { tips } from '@/locales/tips';
-import { type DetectedDrink, isAlcohol, NutritionAnalyze } from '@/services/gptServices';
 import { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFacts';
-import { MicrobiomeSupportEntry } from '@/types/microbiome';
-import { type NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
-import {
-  type ConfidenceLevel,
-  extractAndValidateNutritionAnalysis,
-  parseNumberValue,
-  roundToOneDecimal,
-  type WeeklyTrackingSignals,
-} from '@/utils/analyzeNutrition';
+import { roundToOneDecimal, type WeeklyTrackingSignals } from '@/utils/analyzeNutrition';
 import { toDateKey, toRecordedAt } from '@/utils/dateUtils';
 
-import { MINERAL_TYPE_KEYS } from '../../constants/minerals';
 import { Collapsible } from '../Collapsible';
 import CopyMealBottomSheet from '../CopyMealBottomSheet';
-import { handleGeneralError, handleNutritionError, handleSocketError } from '../nutritionAnalysisHelpers';
 import NutritionBreakdown from '../NutritionBreakdown';
-import { ThemedModal } from '../ThemedModal';
 import { ThemedText } from '../ThemedText';
-import AddButton from '../ui/AddButton';
 import AppButton from '../ui/AppButton';
 import { Card } from '../ui/Card';
-import { DateTimeInput } from '../ui/DateTimeInput';
 import { IconSymbol } from '../ui/IconSymbol';
-import LabeledInput from '../ui/LabeledInput';
 import AnalysisStatus from './AnalysisStatus';
 import BarcodeProductBottomSheet from './BarcodeProductBottomSheet';
 import BarcodeScannerBottomSheet from './BarcodeScannerBottomSheet';
+import EntryEditModal from './EntryEditModal';
 import { LoggedDrinksSection } from './LoggedDrinksSection';
 import { LoggedMealsSection } from './LoggedMealsSection';
 import MealLoggerBottomSheet from './MealLoggerBottomSheet';
 import NutritionAnalysisBottomSheet from './NutritionAnalysisBottomSheet';
-import NutritionPlanTargetsSection, { getTipProgressKey } from './NutritionPlanTargetsSection';
-import PackagingAnalysisModal, { SelectedImageFile } from './PackagingAnalysisModal';
+import NutritionAnalysisReviewModal from './NutritionAnalysisReviewModal';
+import NutritionPlanTargetsSection from './NutritionPlanTargetsSection';
+import PackagingAnalysisModal from './PackagingAnalysisModal';
 
 interface NutritionLoggerTabProps {
   selectedDate: string;
   onTipCompleted?: (targetY?: number) => void;
 }
-
-type ReviewDrink = DetectedDrink & {
-  confirmed: boolean;
-};
-
-type PendingAnalysisReview = {
-  analysis: NutritionData | null;
-  weeklyTrackingSignals: WeeklyTrackingSignals;
-  detectedDrinks: ReviewDrink[];
-  evidence: {
-    sources: string[];
-    inferred: string[];
-    confidence: 'high' | 'medium' | 'low' | 'unknown';
-  } | null;
-  aiDescription: string | null;
-  evidenceMessage: string | null;
-  statusMessage: string | null;
-};
 
 const parseDateKeyLocal = (dateKey: string): Date => {
   const [yearRaw, monthRaw, dayRaw] = dateKey.split('-');
@@ -105,212 +73,8 @@ const getWeekBoundsFromDateKey = (
   };
 };
 
-const sumTypedTotals = (
-  entries: NutritionEntry[],
-  key: 'fiberByType' | 'fiberSubtypeTotals' | 'polyphenolByType' | 'mineralsByType' | 'vitaminsByType' | 'aminoAcidsByType'
-) =>
-  entries.reduce(
-    (acc, entry) => {
-      const rawValue = entry[key];
-      const source = typeof rawValue === 'object' && rawValue !== null ? rawValue : {};
-      for (const [tag, value] of Object.entries(source)) {
-        const parsed = parseNumberValue(value);
-        if (parsed === null) continue;
-        acc[tag] = (acc[tag] ?? 0) + parsed;
-      }
-      return acc;
-    },
-    {} as Record<string, number>
-  );
-
-const sumMicrobiomeSupport = (entries: NutritionEntry[]): MicrobiomeSupportEntry[] => {
-  const allEntries = entries.flatMap(entry => (Array.isArray(entry.microbiomeSupport) ? entry.microbiomeSupport : []));
-  const byMicrobe = new Map<string, MicrobiomeSupportEntry>();
-  allEntries.forEach(entry => {
-    const key = entry.microbe.toLowerCase().trim();
-    if (!key) return;
-    const existing = byMicrobe.get(key);
-    if (!existing) {
-      byMicrobe.set(key, {
-        microbe: entry.microbe,
-        supportLevel: entry.supportLevel,
-        linkedNutrients: Array.from(new Set(entry.linkedNutrients)),
-        likelyFoods: Array.from(new Set(entry.likelyFoods)),
-        rationale: entry.rationale,
-      });
-      return;
-    }
-    const supportLevelScore = (value: MicrobiomeSupportEntry['supportLevel']): number => {
-      if (value === 'high') return 3;
-      if (value === 'medium') return 2;
-      if (value === 'low') return 1;
-      return 0;
-    };
-    const nextLevel = supportLevelScore(entry.supportLevel) > supportLevelScore(existing.supportLevel) ? entry.supportLevel : existing.supportLevel;
-    byMicrobe.set(key, {
-      microbe: existing.microbe,
-      supportLevel: nextLevel,
-      linkedNutrients: Array.from(new Set([...existing.linkedNutrients, ...entry.linkedNutrients])),
-      likelyFoods: Array.from(new Set([...existing.likelyFoods, ...entry.likelyFoods])),
-      rationale: existing.rationale ?? entry.rationale,
-    });
-  });
-  return Array.from(byMicrobe.values());
-};
-
-const mergeMineralConfidenceFromEntries = (entries: NutritionEntry[]): Record<string, ConfidenceLevel> => {
-  const totals: Record<string, ConfidenceLevel> = MINERAL_TYPE_KEYS.reduce(
-    (acc, key) => ({
-      ...acc,
-      [key]: 'unknown' as ConfidenceLevel,
-    }),
-    {} as Record<string, ConfidenceLevel>
-  );
-  const confidenceRank: Record<ConfidenceLevel, number> = {
-    unknown: 0,
-    low: 1,
-    medium: 2,
-    high: 3,
-  };
-  entries.forEach(entry => {
-    const raw = entry.mineralsConfidenceByType;
-    if (!raw) return;
-    MINERAL_TYPE_KEYS.forEach(key => {
-      const value = raw[key];
-      if (value === 'high' || value === 'medium' || value === 'low' || value === 'unknown') {
-        if (confidenceRank[value] > confidenceRank[totals[key]]) {
-          totals[key] = value;
-        }
-      }
-    });
-  });
-  return totals;
-};
-
-const BULLET_REGEX = /^([•*-]\s+|\d+[.)]\s+)/;
-
-const computeTargetY = (
-  tipKey: string,
-  tipRowPeriodByKey: Record<string, NutritionTargetPeriod>,
-  tipRowLocalYByKey: Record<string, number>,
-  sectionY: number,
-  periodSectionY: Record<NutritionTargetPeriod, number>
-): number | undefined => {
-  const period = tipRowPeriodByKey[tipKey];
-  const rowLocalY = tipRowLocalYByKey[tipKey];
-  const periodY = period ? periodSectionY[period] : 0;
-  if (period && typeof rowLocalY === 'number') {
-    return sectionY + periodY + rowLocalY;
-  }
-  return sectionY > 0 ? sectionY : undefined;
-};
-
-const parseInterpretationItems = (review: PendingAnalysisReview, fallback: string): string[] => {
-  const aiText = review.aiDescription?.trim();
-  if (aiText) {
-    const lines = aiText
-      .split(/\r?\n+/g)
-      .map(line => line.replace(BULLET_REGEX, '').trim())
-      .filter(line => line.length > 0);
-    if (lines.length > 0) return lines;
-  }
-  const inferred = review.evidence?.inferred ?? [];
-  if (inferred.length > 0) {
-    const items = inferred
-      .flatMap(item => item.split(/\r?\n+/g))
-      .map(item => item.replace(BULLET_REGEX, '').trim())
-      .filter(item => item.length > 0);
-    if (items.length > 0) {
-      return Array.from(new Set(items));
-    }
-  }
-  return [fallback];
-};
-
-type RefBox<T> = {
-  current: T;
-};
-
-type HandleTipCompletionTransitionsParams = {
-  nutritionPlanTipProgress: TipProgressItem[];
-  previousFulfilledByKeyRef: RefBox<Record<string, boolean>>;
-  hasInitializedFulfilledTrackingRef: RefBox<boolean>;
-  pendingCompletionScrollTimeoutRef: RefBox<ReturnType<typeof setTimeout> | null>;
-  pendingCompletionAnimTimeoutRef: RefBox<ReturnType<typeof setTimeout> | null>;
-  onTipCompleted?: (targetY?: number) => void;
-  tipRowPeriodByKeyRef: RefBox<Record<string, NutritionTargetPeriod>>;
-  tipRowLocalYByKeyRef: RefBox<Record<string, number>>;
-  fulfilledTipsSectionYRef: RefBox<number>;
-  periodSectionYRef: RefBox<Record<NutritionTargetPeriod, number>>;
-  animateTipCompletion: (tipKey: string) => void;
-  completionScrollDelayMs: number;
-  completionAnimationDelayAfterScrollMs: number;
-};
-
-const handleTipCompletionTransitions = ({
-  nutritionPlanTipProgress,
-  previousFulfilledByKeyRef,
-  hasInitializedFulfilledTrackingRef,
-  pendingCompletionScrollTimeoutRef,
-  pendingCompletionAnimTimeoutRef,
-  onTipCompleted,
-  tipRowPeriodByKeyRef,
-  tipRowLocalYByKeyRef,
-  fulfilledTipsSectionYRef,
-  periodSectionYRef,
-  animateTipCompletion,
-  completionScrollDelayMs,
-  completionAnimationDelayAfterScrollMs,
-}: HandleTipCompletionTransitionsParams) => {
-  const nextFulfilledByKey: Record<string, boolean> = {};
-  const newlyFulfilledTipKeys: string[] = [];
-  nutritionPlanTipProgress.forEach(tipProgress => {
-    const tipKey = getTipProgressKey(tipProgress);
-    const wasFulfilled = previousFulfilledByKeyRef.current[tipKey] ?? false;
-    nextFulfilledByKey[tipKey] = tipProgress.isFulfilled;
-    if (tipProgress.isFulfilled && !wasFulfilled) {
-      newlyFulfilledTipKeys.push(tipKey);
-    }
-  });
-  if (!hasInitializedFulfilledTrackingRef.current) {
-    previousFulfilledByKeyRef.current = nextFulfilledByKey;
-    hasInitializedFulfilledTrackingRef.current = true;
-    return;
-  }
-  if (newlyFulfilledTipKeys.length > 0) {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
-    const firstNewlyFulfilledTip = newlyFulfilledTipKeys[0];
-    if (pendingCompletionScrollTimeoutRef.current) {
-      clearTimeout(pendingCompletionScrollTimeoutRef.current);
-    }
-    if (pendingCompletionAnimTimeoutRef.current) {
-      clearTimeout(pendingCompletionAnimTimeoutRef.current);
-    }
-    requestAnimationFrame(() => {
-      pendingCompletionScrollTimeoutRef.current = setTimeout(() => {
-        onTipCompleted?.(
-          computeTargetY(
-            firstNewlyFulfilledTip,
-            tipRowPeriodByKeyRef.current,
-            tipRowLocalYByKeyRef.current,
-            fulfilledTipsSectionYRef.current,
-            periodSectionYRef.current
-          )
-        );
-        pendingCompletionScrollTimeoutRef.current = null;
-      }, completionScrollDelayMs);
-    });
-    pendingCompletionAnimTimeoutRef.current = setTimeout(() => {
-      newlyFulfilledTipKeys.forEach(key => animateTipCompletion(key));
-      pendingCompletionAnimTimeoutRef.current = null;
-    }, completionScrollDelayMs + completionAnimationDelayAfterScrollMs);
-  }
-  previousFulfilledByKeyRef.current = nextFulfilledByKey;
-};
-
 const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, onTipCompleted }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { colors } = useTheme();
   const {
     plans,
@@ -324,114 +88,40 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     addDrinkEntry,
     updateDrinkEntry,
     removeDrinkEntry,
-    claimNutritionTipCompletionXP,
   } = useStorage();
-  const nutritionPlanTipProgress = useNutritionPlanProgress(selectedDate);
   const { weekStartISO: weekStartKey } = getWeekBoundsFromDateKey(selectedDate);
+  const { summary, drinks, recentMeals, dailyNutrition } = useNutritionLoggerData(selectedDate);
+  const { fulfilledTipsSectionYRef, periodSectionYRef, nutritionPlanTipProgressByPeriod, getCompletionAnimValue, tipRowLocalYByKeyRef, tipRowPeriodByKeyRef } =
+    useNutritionTipCompletion({ selectedDate, weekStartKey, onTipCompleted });
 
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
-  const [isAnalysisReviewModalVisible, setIsAnalysisReviewModalVisible] = useState(false);
-  const [pendingAnalysisReview, setPendingAnalysisReview] = useState<PendingAnalysisReview | null>(null);
   const [selectedNutrition, setSelectedNutrition] = useState<NutritionEntry | null>(null);
   const [selectedNutritionName, setSelectedNutritionName] = useState<string | null>(null);
   const [selectedNutritionEntryId, setSelectedNutritionEntryId] = useState<string | null>(null);
-  const [isPackagingModalVisible, setIsPackagingModalVisible] = useState(false);
-  const [packagingMealImage, setPackagingMealImage] = useState<SelectedImageFile | null>(null);
-  const lastAnalyzedFilesRef = useRef<{
-    mealFile: SelectedImageFile;
-    mealDescription: string;
-    ingredientFile: SelectedImageFile | null;
+  const [editingEntry, setEditingEntry] = useState<{
+    kind: 'meal' | 'drink';
+    id: string;
+    name: string;
+    recordedAt: Date;
   } | null>(null);
-  const [isEditMealModalVisible, setIsEditMealModalVisible] = useState(false);
-  const [editingMealId, setEditingMealId] = useState<string | null>(null);
-  const [editingMealName, setEditingMealName] = useState('');
-  const [editingMealTime, setEditingMealTime] = useState<Date>(() => new Date());
-  const [isEditDrinkModalVisible, setIsEditDrinkModalVisible] = useState(false);
-  const [editingDrinkId, setEditingDrinkId] = useState<string | null>(null);
-  const [editingDrinkName, setEditingDrinkName] = useState('');
-  const [editingDrinkTime, setEditingDrinkTime] = useState<Date>(() => new Date());
-  const [mealTime, setMealTime] = useState<Date>(() => new Date());
-
-  const previousFulfilledByKeyRef = useRef<Record<string, boolean>>({});
-  const hasInitializedFulfilledTrackingRef = useRef(false);
-  const completionAnimByKeyRef = useRef<Record<string, Animated.Value>>({});
   const copyMealBottomSheetRef = useRef<BottomSheetModal>(null);
   const nutritionAnalysisBottomSheetRef = useRef<BottomSheetModal>(null);
   const mealLoggerBottomSheetRef = useRef<BottomSheetModal>(null);
   const barcodeProductBottomSheetRef = useRef<BottomSheetModal>(null);
   const barcodeScannerBottomSheetRef = useRef<BottomSheetModal>(null);
-  const fulfilledTipsSectionYRef = useRef(0);
-  const periodSectionYRef = useRef<Record<NutritionTargetPeriod, number>>({
-    daily: 0,
-    weekly: 0,
-  });
-  const tipRowLocalYByKeyRef = useRef<Record<string, number>>({});
-  const tipRowPeriodByKeyRef = useRef<Record<string, NutritionTargetPeriod>>({});
-  const pendingCompletionScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const pendingCompletionAnimTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const COMPLETION_SCROLL_DELAY_MS = 80;
-  const COMPLETION_ANIMATION_DELAY_AFTER_SCROLL_MS = 180;
-
-  const interpretationItems = useMemo(
-    () => (pendingAnalysisReview ? parseInterpretationItems(pendingAnalysisReview, t('nutritionLogger.analysisNoStructuredData')) : null),
-    [pendingAnalysisReview, t]
-  );
-
-  const reAnalyzeTextStyle = useMemo(
-    () => [styles.reAnalyzeText, isAnalyzing && styles.reAnalyzeTextDisabled, { color: colors.text }],
-    [isAnalyzing, colors.text]
-  );
-
-  const reAnalyzePrefixStyle = useMemo(() => [styles.reAnalyzePrefix, { color: colors.text }], [colors.text]);
-
-  const reAnalyzeHighlightStyle = useMemo(
-    () => [
-      styles.reAnalyzeHighlight,
-      {
-        color: colors.showAllAccent,
-      },
-    ],
-    [colors.showAllAccent]
-  );
-
-  const getCompletionAnimValue = useCallback((tipKey: string): Animated.Value => {
-    if (!completionAnimByKeyRef.current[tipKey]) {
-      completionAnimByKeyRef.current[tipKey] = new Animated.Value(0);
-    }
-    return completionAnimByKeyRef.current[tipKey];
+  const clearSelectedNutrition = useCallback(() => {
+    setSelectedNutrition(null);
+    setSelectedNutritionEntryId(null);
+    setSelectedNutritionName(null);
   }, []);
-
+  const presentNutritionAnalysisSheet = useCallback(() => {
+    nutritionAnalysisBottomSheetRef.current?.present();
+  }, []);
+  const dismissNutritionAnalysisSheet = useCallback(() => {
+    nutritionAnalysisBottomSheetRef.current?.dismiss();
+  }, []);
   const triggerLightHaptic = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
   }, []);
-
-  useEffect(() => {
-    if (!isAnalysisReviewModalVisible) return;
-    Haptics.selectionAsync().catch(() => undefined);
-  }, [isAnalysisReviewModalVisible]);
-
-  const animateTipCompletion = useCallback(
-    (tipKey: string) => {
-      const anim = getCompletionAnimValue(tipKey);
-      anim.stopAnimation();
-      anim.setValue(0);
-      Animated.sequence([
-        Animated.timing(anim, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(anim, {
-          toValue: 0,
-          duration: 450,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    },
-    [getCompletionAnimValue]
-  );
 
   const activeTrackingTargetsForAI = useMemo(() => {
     const byKey = new Map<
@@ -488,49 +178,44 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     ].join('\n');
   }, [activeTrackingTargetsForAI]);
 
+  const {
+    isAnalyzing,
+    analysisResult,
+    setAnalysisResult,
+    isAnalysisReviewModalVisible,
+    pendingAnalysisReview,
+    mealTime,
+    setMealTime,
+    isPackagingModalVisible,
+    packagingMealImage,
+    canReAnalyze,
+    closeAnalysisReviewModal,
+    handleToggleDrinkConfirmation,
+    handleReAnalyze,
+    handleAnalyzePackaging,
+    handleClosePackagingModal,
+    handleAnalyzePhoto,
+  } = useNutritionAnalysis({
+    selectedDate,
+    trackingPrompt: trackingPromptForAI,
+    trackingTargets: activeTrackingTargetsForAI,
+    activeTrackingKeys,
+    clearSelectedNutrition,
+    presentAnalysisSheet: presentNutritionAnalysisSheet,
+    dismissAnalysisSheet: dismissNutritionAnalysisSheet,
+  });
+
+  useEffect(() => {
+    if (!isAnalysisReviewModalVisible) return;
+    Haptics.selectionAsync().catch(() => undefined);
+  }, [isAnalysisReviewModalVisible]);
+
   useEffect(() => {
     setSelectedNutrition(null);
     setSelectedNutritionEntryId(null);
     setSelectedNutritionName(null);
-    setIsEditMealModalVisible(false);
-    setEditingMealId(null);
-    setEditingMealName('');
-    setIsPackagingModalVisible(false);
-    setPackagingMealImage(null);
-    previousFulfilledByKeyRef.current = {};
-    hasInitializedFulfilledTrackingRef.current = false;
-    periodSectionYRef.current = {
-      daily: 0,
-      weekly: 0,
-    };
-    tipRowLocalYByKeyRef.current = {};
-    tipRowPeriodByKeyRef.current = {};
-    if (pendingCompletionScrollTimeoutRef.current) {
-      clearTimeout(pendingCompletionScrollTimeoutRef.current);
-      pendingCompletionScrollTimeoutRef.current = null;
-    }
-    if (pendingCompletionAnimTimeoutRef.current) {
-      clearTimeout(pendingCompletionAnimTimeoutRef.current);
-      pendingCompletionAnimTimeoutRef.current = null;
-    }
+    setEditingEntry(null);
   }, [selectedDate]);
-
-  useEffect(() => {
-    return () => {
-      if (pendingCompletionScrollTimeoutRef.current) {
-        clearTimeout(pendingCompletionScrollTimeoutRef.current);
-      }
-      if (pendingCompletionAnimTimeoutRef.current) {
-        clearTimeout(pendingCompletionAnimTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-      UIManager.setLayoutAnimationEnabledExperimental(true);
-    }
-  }, []);
 
   const findWeeklyTrackingContribution = (nutritionEntryId: string, dateKey: string): NutritionTrackingContribution | undefined => {
     const { weekStartISO } = getWeekBoundsFromDateKey(dateKey);
@@ -601,109 +286,45 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   const handleStartEditMeal = (entryId: string, entryName: string) => {
     const entry = dailyNutritionTracking[selectedDate]?.entries.find(item => item.id === entryId);
     if (!entry) return;
-    setEditingMealId(entryId);
-    setEditingMealName(entryName);
-    setEditingMealTime(new Date(entry.recordedAt));
-    setIsEditMealModalVisible(true);
+    setEditingEntry({ kind: 'meal', id: entryId, name: entryName, recordedAt: new Date(entry.recordedAt) });
   };
 
-  const handleCloseEditMealModal = () => {
-    setIsEditMealModalVisible(false);
-    setEditingMealId(null);
-    setEditingMealName('');
-    setEditingMealTime(new Date());
-  };
-  const handleSaveMeal = () => {
-    if (!editingMealId) {
-      handleCloseEditMealModal();
+  const handleSaveEntryEdit = () => {
+    if (!editingEntry) {
+      setEditingEntry(null);
       return;
     }
 
-    const name = editingMealName.trim() || t('nutritionLogger.unnamedMeal');
-
-    const recordedAt = toRecordedAt(selectedDate, editingMealTime);
-
-    updateNutritionEntry(selectedDate, editingMealId, {
-      name,
-      recordedAt,
-    });
-
-    if (editingMealId === selectedNutritionEntryId) {
-      setSelectedNutrition(prev =>
-        prev
-          ? {
-              ...prev,
-              mealName: name,
-            }
-          : prev
-      );
+    const name = editingEntry.name.trim();
+    if (editingEntry.kind === 'meal') {
+      const mealName = name || t('nutritionLogger.unnamedMeal');
+      updateNutritionEntry(selectedDate, editingEntry.id, {
+        name: mealName,
+        recordedAt: toRecordedAt(selectedDate, editingEntry.recordedAt),
+      });
+      if (editingEntry.id === selectedNutritionEntryId) {
+        setSelectedNutrition(prev => (prev ? { ...prev, mealName } : prev));
+      }
+    } else {
+      if (!name) return;
+      updateDrinkEntry(selectedDate, editingEntry.id, {
+        name,
+        recordedAt: toRecordedAt(selectedDate, editingEntry.recordedAt),
+      });
     }
 
-    handleCloseEditMealModal();
+    setEditingEntry(null);
   };
+
   const handleStartEditDrink = (drinkId: string) => {
     const drink = dailyDrinkTracking[selectedDate]?.find(item => item.id === drinkId);
     if (!drink) return;
-    setEditingDrinkId(drinkId);
-    setEditingDrinkName(drink.name);
-    setEditingDrinkTime(new Date(drink.recordedAt));
-    setIsEditDrinkModalVisible(true);
-  };
-
-  const handleCloseEditDrinkModal = () => {
-    setIsEditDrinkModalVisible(false);
-    setEditingDrinkId(null);
-    setEditingDrinkName('');
-    setEditingDrinkTime(new Date());
-  };
-
-  const handleSaveDrink = () => {
-    if (!editingDrinkId) {
-      handleCloseEditDrinkModal();
-      return;
-    }
-
-    const name = editingDrinkName.trim();
-
-    if (!name) {
-      return;
-    }
-
-    const recordedAt = toRecordedAt(selectedDate, editingDrinkTime);
-
-    updateDrinkEntry(selectedDate, editingDrinkId, {
-      name,
-      recordedAt,
-    });
-
-    handleCloseEditDrinkModal();
+    setEditingEntry({ kind: 'drink', id: drinkId, name: drink.name, recordedAt: new Date(drink.recordedAt) });
   };
 
   const handleCloseCopyMealModal = () => {
     copyMealBottomSheetRef.current?.dismiss();
   };
-
-  const closeAnalysisReviewModal = useCallback(() => {
-    setIsAnalysisReviewModalVisible(false);
-    setPendingAnalysisReview(null);
-  }, []);
-
-  const handleToggleDrinkConfirmation = useCallback((index: number) => {
-    setPendingAnalysisReview(current => {
-      if (!current) return current;
-      return {
-        ...current,
-        detectedDrinks: (current.detectedDrinks ?? []).map((drink, drinkIndex) =>
-          drinkIndex === index
-            ? {
-                ...drink,
-                confirmed: !drink.confirmed,
-              }
-            : drink
-        ),
-      };
-    });
-  }, []);
 
   const handleSaveAnalyzedMeal = () => {
     if (!pendingAnalysisReview?.analysis) {
@@ -715,7 +336,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     const { name, ...nutrition } = analysis;
     const recordedAt = toRecordedAt(selectedDate, mealTime);
 
-    const confirmedDrinks = pendingAnalysisReview.detectedDrinks.filter(drink => drink.confirmed).map(({ confirmed: _confirmed, ...drink }) => drink);
+    const confirmedDrinks = (pendingAnalysisReview.detectedDrinks ?? []).filter(drink => drink.confirmed).map(({ confirmed: _confirmed, ...drink }) => drink);
 
     const newEntry = addNutritionEntry(selectedDate, {
       type: 'meal',
@@ -795,328 +416,10 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     setSelectedNutrition(nutritionEntry);
   };
 
-  const runNutritionImageAnalysis = async (mealFile: SelectedImageFile, mealDescription?: string, ingredientFile?: SelectedImageFile | null) => {
-    const todayKey = toDateKey(new Date());
-    if (selectedDate > todayKey) {
-      setAnalysisResult(t('nutritionLogger.futureDateLocked'));
-      setSelectedNutrition(null);
-      setSelectedNutritionEntryId(null);
-      setSelectedNutritionName(null);
-      return;
-    }
-    const activeLanguage = (i18n.resolvedLanguage ?? i18n.language ?? 'en').toLowerCase();
-    const locale: 'sv' | 'en' = activeLanguage.startsWith('sv') ? 'sv' : 'en';
-    setIsAnalyzing(true);
-    setAnalysisResult(null);
-    setPendingAnalysisReview(null);
-    setIsAnalysisReviewModalVisible(false);
-    setSelectedNutrition(null);
-    setSelectedNutritionEntryId(null);
-    setSelectedNutritionName(null);
-    try {
-      const data = await NutritionAnalyze({
-        uri: mealFile.uri,
-        name: mealFile.name,
-        type: mealFile.type,
-        mealDescription,
-        ingredientListUri: ingredientFile?.uri,
-        ingredientListName: ingredientFile?.name,
-        ingredientListType: ingredientFile?.type,
-        locale,
-        prompt: trackingPromptForAI,
-        trackingTargets: activeTrackingTargetsForAI,
-      });
-      if (data?.type === 'error') {
-        handleNutritionError({
-          data,
-          t,
-          setAnalysisResult,
-          setPendingAnalysisReview,
-          setIsAnalysisReviewModalVisible,
-        });
-        return;
-      }
-      const result = extractAndValidateNutritionAnalysis({
-        data,
-        t,
-        activeTrackingKeys,
-        setAnalysisResult,
-        setPendingAnalysisReview,
-        setIsAnalysisReviewModalVisible,
-        setSelectedNutrition,
-      });
-      if (!result) return;
-      setPendingAnalysisReview({
-        analysis: result.analysis,
-        weeklyTrackingSignals: result.mealWeeklyTrackingSignals,
-        detectedDrinks: (data.detectedDrinks ?? []).map(drink => ({
-          ...drink,
-          confirmed: false,
-        })),
-        evidence: result.evidence,
-        aiDescription: result.aiResponseDescription,
-        evidenceMessage: result.evidenceMessage,
-        statusMessage: t('nutritionLogger.analysisReadyToSave'),
-      });
-      setAnalysisResult(t('nutritionLogger.analysisReadyToSave'));
-
-      nutritionAnalysisBottomSheetRef.current?.dismiss();
-
-      setTimeout(() => {
-        setPackagingMealImage(null);
-        setIsAnalysisReviewModalVisible(true);
-      }, 250);
-    } catch (err) {
-      console.error('Error analyzing image:', err);
-      const errMsg = err instanceof Error ? err.message : '';
-      if (errMsg.toLowerCase().includes('socket hang up')) {
-        handleSocketError({
-          t,
-          setAnalysisResult,
-          setPendingAnalysisReview,
-          setIsAnalysisReviewModalVisible,
-          setSelectedNutrition,
-        });
-      } else {
-        handleGeneralError({
-          t,
-          setAnalysisResult,
-          setPendingAnalysisReview,
-          setIsAnalysisReviewModalVisible,
-          setSelectedNutrition,
-        });
-      }
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
-  const handleImageSelected = (file: SelectedImageFile) => {
-    const todayKey = toDateKey(new Date());
-    if (selectedDate > todayKey) {
-      setAnalysisResult(t('nutritionLogger.futureDateLocked'));
-      return;
-    }
-    setMealTime(new Date());
-    setPackagingMealImage(file);
-    setIsPackagingModalVisible(true);
-  };
-
-  const handleAnalyzePackaging = (mealFile: SelectedImageFile, mealDescription: string, ingredientFile: SelectedImageFile | null) => {
-    lastAnalyzedFilesRef.current = {
-      mealFile,
-      mealDescription,
-      ingredientFile,
-    };
-
-    // Stäng formuläret
-    setIsPackagingModalVisible(false);
-
-    // Behåll bilden så analys-bottomsheeten kan visa den
-    setPackagingMealImage(mealFile);
-
-    // Visa analysen
-    requestAnimationFrame(() => {
-      nutritionAnalysisBottomSheetRef.current?.present();
-    });
-
-    runNutritionImageAnalysis(mealFile, mealDescription || undefined, ingredientFile).catch(console.error);
-  };
-
-  const handleClosePackagingModal = useCallback(() => {
-    setIsPackagingModalVisible(false);
-    setPackagingMealImage(null);
-  }, []);
-
-  const handlePickNutritionImage = async (fromCamera: boolean) => {
-    const permission = fromCamera ? await ImagePicker.requestCameraPermissionsAsync() : await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    const granted = permission.granted ?? permission.status === 'granted';
-
-    if (!granted) {
-      Alert.alert(t('permissions.title'), t('permissions.message'));
-      return;
-    }
-
-    const result = fromCamera
-      ? await ImagePicker.launchCameraAsync({
-          base64: false,
-          quality: 0.45,
-        })
-      : await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ['images'],
-          allowsEditing: true,
-          base64: false,
-          quality: 0.45,
-        });
-
-    if (result.canceled || !result.assets?.length) {
-      return;
-    }
-
-    const image = result.assets[0];
-    const uri = image.uri;
-
-    const name = image.fileName ?? uri.split('/').pop() ?? `photo_${Date.now()}.jpg`;
-
-    const type = image.mimeType?.trim() || 'image/jpeg';
-
-    handleImageSelected({
-      uri,
-      name,
-      type,
-    });
-  };
-
-  const handleAnalyzePhoto = () => {
-    Alert.alert(t('imagePicker.title'), undefined, [
-      {
-        text: t('imagePicker.takePhoto'),
-        onPress: () => {
-          handlePickNutritionImage(true).catch(console.error);
-        },
-      },
-      {
-        text: t('imagePicker.chooseFromLibrary'),
-        onPress: () => {
-          handlePickNutritionImage(false).catch(console.error);
-        },
-      },
-      {
-        text: t('general.cancel'),
-        style: 'cancel',
-      },
-    ]);
-  };
-
-  const handleReAnalyze = useCallback(() => {
-    const last = lastAnalyzedFilesRef.current;
-    if (!last) return;
-    closeAnalysisReviewModal();
-    runNutritionImageAnalysis(last.mealFile, last.mealDescription || undefined, last.ingredientFile).catch(console.error);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [closeAnalysisReviewModal]);
-
-  const summary = dailyNutritionTracking[selectedDate];
-
-  const drinks = dailyDrinkTracking[selectedDate] ?? [];
   const todayKey = toDateKey(new Date());
   const isFutureSelectedDate = selectedDate > todayKey;
 
-  const RECENT_MEAL_LIMIT = 20;
-
-  const recentMeals = useMemo<MealEntry[]>(() => {
-    const meals: MealEntry[] = [];
-
-    const dateKeys = Object.keys(dailyNutritionTracking).sort((a, b) => b.localeCompare(a));
-
-    for (const dateKey of dateKeys) {
-      const entries = dailyNutritionTracking[dateKey]?.entries ?? [];
-
-      const dayMeals = entries
-        .filter((entry): entry is MealEntry => entry.type === 'meal')
-        .sort((a, b) => new Date(b.recordedAt).getTime() - new Date(a.recordedAt).getTime());
-
-      meals.push(...dayMeals);
-
-      if (meals.length >= RECENT_MEAL_LIMIT) {
-        return meals.slice(0, RECENT_MEAL_LIMIT);
-      }
-    }
-
-    return meals;
-  }, [dailyNutritionTracking]);
-
   const copyMealSheetSnapPoints = useMemo(() => ['45%', '75%'], []);
-
-  const dailyFiberByType = useMemo(() => (summary ? sumTypedTotals(summary.entries, 'fiberByType') : {}), [summary]);
-  const dailyFiberSubtypeTotals = useMemo(() => (summary ? sumTypedTotals(summary.entries, 'fiberSubtypeTotals') : {}), [summary]);
-  const dailyPolyphenolByType = useMemo(() => (summary ? sumTypedTotals(summary.entries, 'polyphenolByType') : {}), [summary]);
-  const dailyMineralsByType = useMemo(() => (summary ? sumTypedTotals(summary.entries, 'mineralsByType') : {}), [summary]);
-  const dailyMineralConfidenceByType = useMemo(() => (summary ? mergeMineralConfidenceFromEntries(summary.entries) : {}), [summary]);
-  const dailyVitaminsByType = useMemo(() => (summary ? sumTypedTotals(summary.entries, 'vitaminsByType') : {}), [summary]);
-  const dailyAminoAcidsByType = useMemo(() => (summary ? sumTypedTotals(summary.entries, 'aminoAcidsByType') : {}), [summary]);
-  const dailyMicrobiomeSupport = useMemo(() => (summary ? sumMicrobiomeSupport(summary.entries) : []), [summary]);
-
-  const dailyNutrition: NutritionData = {
-    name: t('nutritionLogger.dailySummary'),
-
-    calories: summary?.totals.calories,
-    protein: summary?.totals.protein,
-    carbohydrates: summary?.totals.carbohydrates,
-    fat: summary?.totals.fat,
-    fiber: summary?.totals.fiber,
-
-    fiberByType: dailyFiberByType,
-    fiberSubtypeTotals: dailyFiberSubtypeTotals,
-    polyphenolByType: dailyPolyphenolByType,
-    mineralsByType: dailyMineralsByType,
-    mineralsConfidenceByType: dailyMineralConfidenceByType,
-    vitaminsByType: dailyVitaminsByType,
-    aminoAcidsByType: dailyAminoAcidsByType,
-    microbiomeSupport: dailyMicrobiomeSupport,
-  };
-
-  const nutritionPlanTipProgressByPeriod = useMemo(() => {
-    const byPeriod = (period: NutritionTargetPeriod) =>
-      nutritionPlanTipProgress
-        .filter(tipProgress => tipProgress.period === period)
-        .sort((left, right) => {
-          if (left.isFulfilled !== right.isFulfilled) {
-            return left.isFulfilled ? -1 : 1;
-          }
-          if (left.progress !== right.progress) {
-            return right.progress - left.progress;
-          }
-          return left.title.localeCompare(right.title);
-        });
-    return {
-      daily: byPeriod('daily'),
-      weekly: byPeriod('weekly'),
-    };
-  }, [nutritionPlanTipProgress]);
-
-  useEffect(() => {
-    handleTipCompletionTransitions({
-      nutritionPlanTipProgress,
-      previousFulfilledByKeyRef,
-      hasInitializedFulfilledTrackingRef,
-      pendingCompletionScrollTimeoutRef,
-      pendingCompletionAnimTimeoutRef,
-      onTipCompleted,
-      tipRowPeriodByKeyRef,
-      tipRowLocalYByKeyRef,
-      fulfilledTipsSectionYRef,
-      periodSectionYRef,
-      animateTipCompletion,
-      completionScrollDelayMs: COMPLETION_SCROLL_DELAY_MS,
-      completionAnimationDelayAfterScrollMs: COMPLETION_ANIMATION_DELAY_AFTER_SCROLL_MS,
-    });
-  }, [animateTipCompletion, nutritionPlanTipProgress, onTipCompleted]);
-
-  useEffect(() => {
-    nutritionPlanTipProgress.forEach(tipProgress => {
-      if (!tipProgress.isFulfilled) return;
-      if (tipProgress.period === 'daily') {
-        claimNutritionTipCompletionXP?.({
-          claimKey: `${tipProgress.tipId}|daily|${selectedDate}`,
-          tipId: tipProgress.tipId,
-          period: 'daily',
-          periodKey: selectedDate,
-          amount: XP_FOR_NUTRITION_TIP_DAILY_COMPLETION,
-        });
-      }
-      if (tipProgress.period === 'weekly') {
-        claimNutritionTipCompletionXP?.({
-          claimKey: `${tipProgress.tipId}|weekly|${weekStartKey}`,
-          tipId: tipProgress.tipId,
-          period: 'weekly',
-          periodKey: weekStartKey,
-          amount: XP_FOR_NUTRITION_TIP_WEEKLY_COMPLETION,
-        });
-      }
-    });
-  }, [claimNutritionTipCompletionXP, nutritionPlanTipProgress, selectedDate, weekStartKey]);
 
   const handleSaveBarcodeProduct = (product: BarcodeProduct, amount: number, productType: BarcodeProductType) => {
     const recordedAt = toRecordedAt(selectedDate, new Date());
@@ -1259,183 +562,31 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           onClose={handleClosePackagingModal}
           onAnalyze={handleAnalyzePackaging}
         />
-        <ThemedModal
+        <NutritionAnalysisReviewModal
           visible={isAnalysisReviewModalVisible}
-          title={t('nutritionLogger.analysisReviewTitle')}
+          pendingReview={pendingAnalysisReview}
+          analysisResult={analysisResult}
+          mealTime={mealTime}
+          onMealTimeChange={setMealTime}
+          isAnalyzing={isAnalyzing}
+          canReAnalyze={canReAnalyze}
+          onReAnalyze={handleReAnalyze}
+          onToggleDrink={handleToggleDrinkConfirmation}
           onClose={closeAnalysisReviewModal}
           onSave={handleSaveAnalyzedMeal}
-          onSaveDisabled={!pendingAnalysisReview?.analysis}
-          okLabel={t('general.save')}
-        >
-          <ScrollView style={styles.analysisReviewScroll} contentContainerStyle={styles.analysisReviewContent} showsVerticalScrollIndicator>
-            <View style={styles.mealTimeRow}>
-              <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                {t('nutritionLogger.mealTime')}
-              </ThemedText>
-              <DateTimeInput
-                value={mealTime}
-                showTime={true}
-                showDate={false}
-                onChange={value => {
-                  setMealTime(value);
-                }}
-              />
-            </View>
-            {pendingAnalysisReview?.statusMessage || analysisResult ? (
-              <ThemedText type="defaultSemiBold" style={styles.analysisReviewStatus}>
-                {pendingAnalysisReview?.statusMessage ?? analysisResult}
-              </ThemedText>
-            ) : null}
-            {interpretationItems?.length ? (
-              <View style={styles.analysisReviewSection}>
-                <ThemedText type="label">AI Interpretation</ThemedText>
-                {interpretationItems.map((item, index) => (
-                  <ThemedText key={`interp-${item.slice(0, 32)}`} type="default" style={styles.analysisReviewBody}>
-                    {`${index + 1}. ${item}`}
-                  </ThemedText>
-                ))}
-                {(() => {
-                  let confidenceColor = colors.textMuted;
-                  if (pendingAnalysisReview?.evidence?.confidence === 'high') {
-                    confidenceColor = colors.surfaceGreenBorder;
-                  } else if (pendingAnalysisReview?.evidence?.confidence === 'medium') {
-                    confidenceColor = colors.successColor;
-                  } else if (pendingAnalysisReview?.evidence?.confidence === 'low') {
-                    confidenceColor = colors.warmColor;
-                  }
-                  const confidenceKey = 'general.confidence.' + (pendingAnalysisReview?.evidence?.confidence ?? 'unknown');
-                  const confidenceText = t('general.confidence.label') + ': ' + t(confidenceKey);
-                  return (
-                    <ThemedText
-                      type="caption"
-                      style={[
-                        styles.analysisReviewEvidence,
-                        styles.analysisInterpretationMeta,
-                        {
-                          color: confidenceColor,
-                        },
-                      ]}
-                    >
-                      {confidenceText}
-                    </ThemedText>
-                  );
-                })()}
-              </View>
-            ) : null}
-            {lastAnalyzedFilesRef.current ? (
-              <Pressable onPress={handleReAnalyze} disabled={isAnalyzing}>
-                <ThemedText type="default" style={reAnalyzeTextStyle}>
-                  {`${t('general.reAnalyzePrompt.prefix')} `}
-                  <ThemedText type="defaultSemiBold" style={reAnalyzeHighlightStyle}>
-                    {t('general.reAnalyzePrompt.correct')}
-                  </ThemedText>
-                  {`${t('general.reAnalyzePrompt.question')} `}
-                  <ThemedText type="defaultSemiBold" style={reAnalyzePrefixStyle}>
-                    {t('general.reAnalyzePrompt.rePrefix')}
-                  </ThemedText>
-                  <ThemedText type="defaultSemiBold" style={reAnalyzeHighlightStyle}>
-                    {t('general.reAnalyzePrompt.analyze')}
-                  </ThemedText>
-                  {t('general.reAnalyzePrompt.suffix') ? ` ${t('general.reAnalyzePrompt.suffix')}` : ''}
-                </ThemedText>
-              </Pressable>
-            ) : null}
-            {pendingAnalysisReview?.detectedDrinks?.length ? (
-              <View style={styles.analysisReviewSection}>
-                <ThemedText type="title3">{t('nutritionLogger.detectedDrinksTitle')}</ThemedText>
-                {pendingAnalysisReview.detectedDrinks.map((drink, index) => {
-                  const drinkImage = getDrinkImage(drink.type);
-
-                  console.log('[Drink image]', {
-                    type: drink.type,
-                    name: drink.name,
-                    image: drinkImage,
-                  });
-
-                  return (
-                    <Card key={`${drink.type}-${drink.name}-${index}`} style={styles.detectedDrinkCard}>
-                      <View style={styles.detectedDrinkHeader}>
-                        <Image source={drinkImage} style={styles.detectedDrinkImage} resizeMode="contain" />
-                        <View style={styles.detectedDrinkInfo}>
-                          <ThemedText type="defaultSemiBold">{drink.name}</ThemedText>
-                          <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                            {[
-                              drink.amountMl ? `${Math.round(drink.amountMl)} ml` : null,
-                              drink.sugarFree === true ? t('nutritionLogger.sugarFree') : null,
-                              drink.caffeinated === true ? t('nutritionLogger.caffeine') : null,
-                              isAlcohol(drink.type) ? t('nutritionLogger.alcohol') : null,
-                            ]
-                              .filter(Boolean)
-                              .join(' · ')}
-                          </ThemedText>
-                        </View>
-                        <AddButton
-                          allowToggle
-                          added={drink.confirmed}
-                          onClick={() => handleToggleDrinkConfirmation(index)}
-                          accessibilityLabel={drink.confirmed ? 'common.confirmed' : 'common.confirm'}
-                        />
-                      </View>
-                    </Card>
-                  );
-                })}
-              </View>
-            ) : null}
-            {pendingAnalysisReview?.analysis ? (
-              <View style={styles.analysisReviewSection}>
-                <ThemedText type="label">{t('nutritionLogger.analysisReviewNutritionPreviewTitle')}</ThemedText>
-                <Card
-                  style={{
-                    borderRadius: globalStyles.borders.borderRadius,
-                  }}
-                >
-                  <ThemedText type="title3">
-                    {t('nutritionLogger.mealTitleWithName', {
-                      name: pendingAnalysisReview.analysis.name,
-                    })}
-                  </ThemedText>
-                  <NutritionBreakdown nutrition={pendingAnalysisReview.analysis} keyPrefix="review" />
-                </Card>
-              </View>
-            ) : null}
-          </ScrollView>
-        </ThemedModal>
-        <ThemedModal visible={isEditMealModalVisible} title={t('nutritionLogger.editMealTitle')} onClose={handleCloseEditMealModal} onSave={handleSaveMeal}>
-          <View style={styles.editEntryModalContent}>
-            <LabeledInput
-              label={t('nutritionLogger.mealNameLabel')}
-              value={editingMealName}
-              onChangeText={setEditingMealName}
-              autoCapitalize="sentences"
-              autoCorrect={false}
-              autoFocus
-            />
-            <View style={styles.editTime}>
-              <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                {t('nutritionLogger.mealTime')}
-              </ThemedText>
-              <DateTimeInput value={editingMealTime} showTime showDate={false} onChange={setEditingMealTime} />
-            </View>
-          </View>
-        </ThemedModal>
-        <ThemedModal visible={isEditDrinkModalVisible} title={t('nutritionLogger.editDrinkTitle')} onClose={handleCloseEditDrinkModal} onSave={handleSaveDrink}>
-          <View style={styles.editEntryModalContent}>
-            <LabeledInput
-              label={t('nutritionLogger.drinkNameLabel')}
-              value={editingDrinkName}
-              onChangeText={setEditingDrinkName}
-              autoCapitalize="sentences"
-              autoCorrect={false}
-              autoFocus
-            />
-            <View style={styles.editTime}>
-              <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                {t('nutritionLogger.drinkTime')}
-              </ThemedText>
-              <DateTimeInput value={editingDrinkTime} showTime showDate={false} onChange={setEditingDrinkTime} />
-            </View>
-          </View>
-        </ThemedModal>
+        />
+        <EntryEditModal
+          visible={editingEntry !== null}
+          title={t(editingEntry?.kind === 'drink' ? 'nutritionLogger.editDrinkTitle' : 'nutritionLogger.editMealTitle')}
+          nameLabel={t(editingEntry?.kind === 'drink' ? 'nutritionLogger.drinkNameLabel' : 'nutritionLogger.mealNameLabel')}
+          timeLabel={t(editingEntry?.kind === 'drink' ? 'nutritionLogger.drinkTime' : 'nutritionLogger.mealTime')}
+          name={editingEntry?.name ?? ''}
+          recordedAt={editingEntry?.recordedAt ?? new Date()}
+          onNameChange={name => setEditingEntry(current => (current ? { ...current, name } : current))}
+          onRecordedAtChange={recordedAt => setEditingEntry(current => (current ? { ...current, recordedAt } : current))}
+          onClose={() => setEditingEntry(null)}
+          onSave={handleSaveEntryEdit}
+        />
         <CopyMealBottomSheet
           copyMealBottomSheetRef={copyMealBottomSheetRef}
           copyMealSheetSnapPoints={copyMealSheetSnapPoints}
@@ -1497,50 +648,6 @@ const styles = StyleSheet.create({
     marginTop: -6,
     marginBottom: 12,
   },
-  analysisReviewScroll: {
-    maxHeight: 420,
-    width: '100%',
-  },
-  analysisReviewContent: {
-    gap: 12,
-    paddingBottom: 8,
-  },
-  mealTimeRow: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 0,
-    marginBottom: 4,
-  },
-  mealTimeInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  analysisReviewStatus: {
-    marginBottom: 4,
-  },
-  analysisReviewSection: {
-    gap: 6,
-  },
-  analysisReviewBody: {
-    lineHeight: 20,
-  },
-  analysisReviewEvidence: {
-    lineHeight: 18,
-  },
-  analysisInterpretationMeta: {
-    marginTop: 2,
-    opacity: 0.9,
-  },
-  reAnalyzeText: {
-    marginTop: 8,
-  },
-  reAnalyzeTextDisabled: {
-    opacity: 0.5,
-  },
-  reAnalyzePrefix: {},
-  reAnalyzeHighlight: {},
   copyMealModalContent: {
     width: '100%',
     gap: 10,
@@ -1600,30 +707,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-  },
-  detectedDrinkCard: {
-    padding: 12,
-  },
-  detectedDrinkHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  detectedDrinkImage: {
-    width: 64,
-    height: 64,
-  },
-  detectedDrinkInfo: {
-    flex: 1,
-    gap: 2,
-  },
-  editEntryModalContent: {
-    width: '100%',
-    gap: 16,
-  },
-  editTime: {
-    alignItems: 'center',
-    gap: 2,
   },
 });
 

@@ -9,6 +9,7 @@ import { TipProgressItem, TipTargetPeriod } from '@/app/context/storage/nutritio
 import { globalStyles } from '@/app/theme/globalStyles';
 import TipTarget from '@/components/TipTarget';
 import { formatMonthDay, toDateKey } from '@/utils/dateUtils';
+import { getTipProgressKey } from '@/utils/nutritionTipProgress';
 
 import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
@@ -20,8 +21,6 @@ import ProgressButton from './ProgressButton';
 
 type CurrentRef<T> = { current: T };
 type ThemeColors = ReturnType<typeof useTheme>['colors'];
-
-export const getTipProgressKey = (tip: TipProgressItem): string => `${tip.tipId}|${tip.period}`;
 
 // ── Props ──────────────────────────────────────────────────────────────────────
 

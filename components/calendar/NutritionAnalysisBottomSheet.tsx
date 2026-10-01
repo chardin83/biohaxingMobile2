@@ -4,10 +4,11 @@ import React, { forwardRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet } from 'react-native';
 
+import type { SelectedImageFile } from '@/types/nutrition/nutritionAnalysis';
+
 import { useBottomSheetDesign } from '../ui/BottomSheetDesign';
 import Notice from '../ui/Notice';
 import { ImageAnalysisScanner } from './ImageAnalysisScanner';
-import type { SelectedImageFile } from './PackagingAnalysisModal';
 
 interface NutritionAnalysisBottomSheetProps {
   image: SelectedImageFile | null;
