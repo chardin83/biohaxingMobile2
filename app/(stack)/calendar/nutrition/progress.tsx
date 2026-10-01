@@ -16,9 +16,10 @@ import TipTarget from '@/components/TipTarget';
 import Badge from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
-import { useNutritionTipTargets } from '@/hooks/useNutritionTipTargets';
+import { useNutritionTipTargets } from '@/hooks/nutrition/useNutritionTipTargets';
 import { useProgressWeeks } from '@/hooks/useWeekProgress';
 import { tips } from '@/locales/tips';
+import { aggregateWeeklyNutritionTracking } from '@/services/targetProgress/nutritionTargetProgress';
 import { NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import { formatMonthDay, fromDateKey, toDateKey } from '@/utils/dateUtils';
 
@@ -35,7 +36,7 @@ const getWeeklyProgressText = (tipId: string, weekStartISO: string, weeklyNutrit
     return null;
   }
 
-  const weekData = weeklyNutritionTracking[weekStartISO] ?? {};
+  const weekData = aggregateWeeklyNutritionTracking(weeklyNutritionTracking, weekStartISO);
 
   const getActual = (trackingKey: string): number => {
     const value = weekData[trackingKey];
@@ -326,7 +327,7 @@ export default function NutritionProgressScreen() {
   };
 
   const renderWeeklyTip = (tip: TipHistoryItem) => {
-    const weekData = weeklyNutritionTracking[selectedWeek.start] ?? {};
+    const weekData = aggregateWeeklyNutritionTracking(weeklyNutritionTracking, selectedWeek.start);
     const tipObj = tips.find(candidate => candidate.id === tip.tipId);
     const summaryTargets: TipTargetItem[] = [];
 

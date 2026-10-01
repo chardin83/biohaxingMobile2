@@ -5,7 +5,7 @@ import { Animated, LayoutAnimation, Platform, UIManager } from 'react-native';
 import type { TipProgressItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { useStorage } from '@/app/context/StorageContext';
 import { XP_FOR_NUTRITION_TIP_DAILY_COMPLETION, XP_FOR_NUTRITION_TIP_WEEKLY_COMPLETION } from '@/constants/XP';
-import { useNutritionPlanProgress } from '@/hooks/useNutritionPlanProgress';
+import { useNutritionPlanProgress } from '@/hooks/nutrition/useNutritionPlanProgress';
 import type { NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import { getTipProgressKey } from '@/utils/nutritionTipProgress';
 

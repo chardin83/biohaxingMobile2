@@ -8,11 +8,11 @@ import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import type { MealEntry, NutritionEntry, NutritionTrackingContribution } from '@/app/context/storage/nutrition/nutritionTypes';
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
-import { useNutritionAnalysis } from '@/hooks/useNutritionAnalysis';
-import { useNutritionLoggerData } from '@/hooks/useNutritionLoggerData';
-import { useNutritionTipCompletion } from '@/hooks/useNutritionTipCompletion';
+import { useNutritionAnalysis } from '@/hooks/nutrition/useNutritionAnalysis';
+import { useNutritionBarcodeActions } from '@/hooks/nutrition/useNutritionBarcodeActions';
+import { useNutritionLoggerData } from '@/hooks/nutrition/useNutritionLoggerData';
+import { useNutritionTipCompletion } from '@/hooks/nutrition/useNutritionTipCompletion';
 import { tips } from '@/locales/tips';
-import { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFacts';
 import { roundToOneDecimal, type WeeklyTrackingSignals } from '@/utils/analyzeNutrition';
 import { toDateKey, toRecordedAt } from '@/utils/dateUtils';
 
@@ -108,6 +108,12 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   const mealLoggerBottomSheetRef = useRef<BottomSheetModal>(null);
   const barcodeProductBottomSheetRef = useRef<BottomSheetModal>(null);
   const barcodeScannerBottomSheetRef = useRef<BottomSheetModal>(null);
+  const handleSelectNutritionEntry = useCallback((entry: NutritionEntry) => {
+    setSelectedNutritionEntryId(entry.id);
+    setSelectedNutritionName(entry.name);
+    setSelectedNutrition(entry);
+  }, []);
+  const handleSaveBarcodeProduct = useNutritionBarcodeActions({ selectedDate, onNutritionEntrySelected: handleSelectNutritionEntry });
   const clearSelectedNutrition = useCallback(() => {
     setSelectedNutrition(null);
     setSelectedNutritionEntryId(null);
@@ -389,12 +395,6 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     handleCloseCopyMealModal();
   };
 
-  const handleSelectNutritionEntry = (entry: NutritionEntry) => {
-    setSelectedNutritionEntryId(entry.id);
-    setSelectedNutritionName(entry.name);
-    setSelectedNutrition(entry);
-  };
-
   const handleSelectLoggedDrink = (drinkId: string) => {
     const drink = dailyDrinkTracking[selectedDate]?.find(item => item.id === drinkId);
 
@@ -421,52 +421,6 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
 
   const copyMealSheetSnapPoints = useMemo(() => ['45%', '75%'], []);
 
-  const handleSaveBarcodeProduct = (product: BarcodeProduct, amount: number, productType: BarcodeProductType) => {
-    const recordedAt = toRecordedAt(selectedDate, new Date());
-    const factor = amount / 100;
-
-    if (productType === 'drink') {
-      const nutritionEntry = addNutritionEntry(selectedDate, {
-        type: 'drink',
-        recordedAt,
-        name: product.name,
-        calories: (product.nutrition.caloriesPer100g ?? 0) * factor,
-        protein: (product.nutrition.proteinPer100g ?? 0) * factor,
-        carbohydrates: (product.nutrition.carbohydratesPer100g ?? 0) * factor,
-        fat: (product.nutrition.fatPer100g ?? 0) * factor,
-        fiber: (product.nutrition.fiberPer100g ?? 0) * factor,
-      });
-
-      addDrinkEntry(selectedDate, {
-        nutritionEntryId: nutritionEntry.id,
-        type: product.drinkType ?? 'drink',
-        name: product.name,
-        amountMl: amount,
-        recordedAt,
-        source: 'manual',
-      });
-
-      triggerLightHaptic();
-      return;
-    }
-
-    const entry = addNutritionEntry(selectedDate, {
-      type: 'meal',
-      recordedAt,
-      name: product.name,
-      calories: (product.nutrition.caloriesPer100g ?? 0) * factor,
-      protein: (product.nutrition.proteinPer100g ?? 0) * factor,
-      carbohydrates: (product.nutrition.carbohydratesPer100g ?? 0) * factor,
-      fat: (product.nutrition.fatPer100g ?? 0) * factor,
-      fiber: (product.nutrition.fiberPer100g ?? 0) * factor,
-    });
-
-    setSelectedNutritionEntryId(entry.id);
-    setSelectedNutritionName(entry.name);
-    setSelectedNutrition(entry);
-
-    triggerLightHaptic();
-  };
   return (
     <KeyboardAvoidingView style={globalStyles.flex1} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.container}>

@@ -8,7 +8,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Colors } from '@/app/theme/Colors';
 import { ThemedText } from '@/components/ThemedText';
 import Container from '@/components/ui/Container';
-import { useNutritionPlanProgressHistory } from '@/hooks/useNutritionPlanProgressHistory';
+import { useNutritionPlanProgressHistory } from '@/hooks/nutrition/useNutritionPlanProgressHistory';
 import { type MetricId, metrics } from '@/locales/metrics';
 import { tips } from '@/locales/tips';
 import { toDateKey } from '@/utils/dateUtils';

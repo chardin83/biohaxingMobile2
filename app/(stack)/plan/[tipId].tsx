@@ -22,10 +22,10 @@ import Container from '@/components/ui/Container';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import PencilEditButton from '@/components/ui/PencilEditButton';
 import { PressableCard } from '@/components/ui/PressableCard';
-import { useNutritionPlanProgress } from '@/hooks/useNutritionPlanProgress';
-import { FOOD_IMAGES } from '@/types/nutrition/foodCatalog';
+import { useNutritionPlanProgress } from '@/hooks/nutrition/useNutritionPlanProgress';
 import { metrics, tipMetricLinks } from '@/locales/metrics';
 import { tips } from '@/locales/tips';
+import { FOOD_IMAGES } from '@/types/nutrition/foodCatalog';
 import { formatDate, toDateKey } from '@/utils/dateUtils';
 
 type PlanDetailsParams = {
@@ -160,7 +160,7 @@ export default function PlanDetailsScreen() {
     return () => cancelAnimationFrame(frame);
   }, [isPlanActionsSheetMounted]);
 
-  const handleArchivePlan = React.useCallback(() => {
+  const handleArchivePlan = React.useCallback(async () => {
     const tipId = planTipId;
     if (!tipId || !canDeletePlan) {
       closePlanActionsSheet();
@@ -168,9 +168,13 @@ export default function PlanDetailsScreen() {
     }
 
     const category = resolvedPlanCategory as DeletablePlanCategory;
-    archivePlan(category, typeof params.planId === 'string' ? params.planId : undefined, tipId);
-    closePlanActionsSheet();
-    router.back();
+    try {
+      await archivePlan(category, typeof params.planId === 'string' ? params.planId : undefined, tipId);
+      closePlanActionsSheet();
+      router.back();
+    } catch (error) {
+      console.error('Failed to archive plan:', error);
+    }
   }, [archivePlan, canDeletePlan, closePlanActionsSheet, params.planId, planTipId, resolvedPlanCategory, router]);
 
   const handleDeletePlanPermanently = React.useCallback(() => {

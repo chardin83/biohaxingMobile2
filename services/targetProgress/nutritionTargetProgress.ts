@@ -255,7 +255,10 @@ export const resolveDailyNutritionTargetDetails = ({
   };
 };
 
-const aggregateWeeklyNutritionTracking = (weeklyNutritionTracking: WeeklyNutritionTracking, weekStartKey: string): Record<string, WeeklyNutritionValue> => {
+export const aggregateWeeklyNutritionTracking = (
+  weeklyNutritionTracking: WeeklyNutritionTracking,
+  weekStartKey: string
+): Record<string, WeeklyNutritionValue> => {
   const result: Record<string, WeeklyNutritionValue> = {};
 
   const contributions = weeklyNutritionTracking[weekStartKey] ?? [];

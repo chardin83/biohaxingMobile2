@@ -56,7 +56,7 @@ export const useNutritionTipTargets = (dateKeys: string[]): Record<string, Recor
     (plans?.nutrition ?? []).forEach(planTip => {
       const tip = tips.find(candidate => candidate.id === planTip.tipId);
 
-      if (!tip || tip.targetPeriod !== 'daily') {
+      if (tip?.targetPeriod !== 'daily') {
         return;
       }
 
