@@ -68,11 +68,14 @@ export type WeeklyNutritionTracking = WeeklyTracking<NutritionTrackingContributi
 
 export type NutritionEntryType = 'meal' | 'food' | 'drink';
 
-export type NutritionEntryBase = NutritionComposition & {
-  id: string;
-  recordedAt: string;
+export type NutritionData = NutritionComposition & {
   name: string;
   mineralsConfidenceByType?: Partial<Record<MineralType, 'high' | 'medium' | 'low' | 'unknown'>>;
+};
+
+export type NutritionEntryBase = NutritionData & {
+  id: string;
+  recordedAt: string;
 };
 
 export type MealEntry = NutritionEntryBase & {

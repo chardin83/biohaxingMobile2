@@ -19,5 +19,6 @@
         "typescriptreact"
     ],
     "eslint.workingDirectories": [{ "mode": "auto" }],
-    "eslint.experimental.useFlatConfig": true
+    "eslint.experimental.useFlatConfig": true,
+    "jest.runMode": "on-demand"
 }

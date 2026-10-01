@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import { Alert, Animated, Image, KeyboardAvoidingView, LayoutAnimation, Platform, Pressable, ScrollView, StyleSheet, UIManager, View } from 'react-native';
 
-import type { MealEntry, NutritionEntry, NutritionTrackingContribution, TipProgressItem } from '@/app/context/storage/nutrition/nutritionTypes';
+import type { MealEntry, NutritionData, NutritionEntry, NutritionTrackingContribution, TipProgressItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { XP_FOR_NUTRITION_TIP_DAILY_COMPLETION, XP_FOR_NUTRITION_TIP_WEEKLY_COMPLETION } from '@/constants/XP';
@@ -20,7 +20,6 @@ import { type NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import {
   type ConfidenceLevel,
   extractAndValidateNutritionAnalysis,
-  type ParsedMacroAnalysis,
   parseNumberValue,
   roundToOneDecimal,
   type WeeklyTrackingSignals,
@@ -60,7 +59,7 @@ type ReviewDrink = DetectedDrink & {
 };
 
 type PendingAnalysisReview = {
-  analysis: ParsedMacroAnalysis | null;
+  analysis: NutritionData | null;
   weeklyTrackingSignals: WeeklyTrackingSignals;
   detectedDrinks: ReviewDrink[];
   evidence: {
@@ -187,15 +186,6 @@ const mergeMineralConfidenceFromEntries = (entries: NutritionEntry[]): Record<st
   });
   return totals;
 };
-
-const getNutritionEntryName = (entry: NutritionEntry, fallbackName: string): string =>
-  typeof entry.name === 'string' && entry.name.trim().length > 0 ? entry.name : fallbackName;
-
-const coerceNumber = (val: unknown): number => (typeof val === 'number' ? val : 0);
-
-const coerceObject = <T extends object>(val: unknown): T => (typeof val === 'object' && val !== null ? (val as T) : ({} as T));
-
-const coerceArray = <T,>(val: unknown): T[] => (Array.isArray(val) ? (val as T[]) : []);
 
 const BULLET_REGEX = /^([•*-]\s+|\d+[.)]\s+)/;
 
@@ -343,7 +333,9 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [isAnalysisReviewModalVisible, setIsAnalysisReviewModalVisible] = useState(false);
   const [pendingAnalysisReview, setPendingAnalysisReview] = useState<PendingAnalysisReview | null>(null);
-  const [selectedNutrition, setSelectedNutrition] = useState<ParsedMacroAnalysis | null>(null);
+  const [selectedNutrition, setSelectedNutrition] = useState<NutritionEntry | null>(null);
+  const [selectedNutritionName, setSelectedNutritionName] = useState<string | null>(null);
+  const [selectedNutritionEntryId, setSelectedNutritionEntryId] = useState<string | null>(null);
   const [isPackagingModalVisible, setIsPackagingModalVisible] = useState(false);
   const [packagingMealImage, setPackagingMealImage] = useState<SelectedImageFile | null>(null);
   const lastAnalyzedFilesRef = useRef<{
@@ -351,7 +343,6 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     mealDescription: string;
     ingredientFile: SelectedImageFile | null;
   } | null>(null);
-  const [selectedNutritionEntryId, setSelectedNutritionEntryId] = useState<string | null>(null);
   const [isEditMealModalVisible, setIsEditMealModalVisible] = useState(false);
   const [editingMealId, setEditingMealId] = useState<string | null>(null);
   const [editingMealName, setEditingMealName] = useState('');
@@ -361,7 +352,6 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   const [editingDrinkName, setEditingDrinkName] = useState('');
   const [editingDrinkTime, setEditingDrinkTime] = useState<Date>(() => new Date());
   const [mealTime, setMealTime] = useState<Date>(() => new Date());
-  const [selectedNutritionUnavailable, setSelectedNutritionUnavailable] = useState(false);
 
   const previousFulfilledByKeyRef = useRef<Record<string, boolean>>({});
   const hasInitializedFulfilledTrackingRef = useRef(false);
@@ -501,7 +491,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   useEffect(() => {
     setSelectedNutrition(null);
     setSelectedNutritionEntryId(null);
-    setSelectedNutritionUnavailable(false);
+    setSelectedNutritionName(null);
     setIsEditMealModalVisible(false);
     setEditingMealId(null);
     setEditingMealName('');
@@ -597,7 +587,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     if (mealId === selectedNutritionEntryId) {
       setSelectedNutritionEntryId(null);
       setSelectedNutrition(null);
-      setSelectedNutritionUnavailable(false);
+      setSelectedNutritionName(null);
     }
 
     removeNutritionEntry(selectedDate, mealId);
@@ -703,7 +693,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
       if (!current) return current;
       return {
         ...current,
-        detectedDrinks: current.detectedDrinks.map((drink, drinkIndex) =>
+        detectedDrinks: (current.detectedDrinks ?? []).map((drink, drinkIndex) =>
           drinkIndex === index
             ? {
                 ...drink,
@@ -722,7 +712,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     }
 
     const analysis = pendingAnalysisReview.analysis;
-    const { mealName, ...nutrition } = analysis;
+    const { name, ...nutrition } = analysis;
     const recordedAt = toRecordedAt(selectedDate, mealTime);
 
     const confirmedDrinks = pendingAnalysisReview.detectedDrinks.filter(drink => drink.confirmed).map(({ confirmed: _confirmed, ...drink }) => drink);
@@ -730,15 +720,13 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     const newEntry = addNutritionEntry(selectedDate, {
       type: 'meal',
       recordedAt,
-      name: mealName?.trim() || t('nutritionLogger.unnamedMeal'),
+      name: name?.trim() || t('nutritionLogger.unnamedMeal'),
       ...nutrition,
     });
 
     const nutritionEntryId = newEntry.id;
 
     addWeeklyTrackingContribution(nutritionEntryId, selectedDate, pendingAnalysisReview.weeklyTrackingSignals);
-
-    setSelectedNutritionEntryId(nutritionEntryId);
 
     confirmedDrinks.forEach(drink => {
       addDrinkEntry(selectedDate, {
@@ -749,28 +737,14 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
       });
     });
 
-    setSelectedNutrition(analysis);
+    setSelectedNutritionEntryId(nutritionEntryId);
+    setSelectedNutritionName(newEntry.name);
+    setSelectedNutrition(newEntry);
+
     setAnalysisResult('✅ Måltid loggad och analyserad!');
     triggerLightHaptic();
     closeAnalysisReviewModal();
   };
-
-  const toParsedMacroAnalysis = (entry: NutritionEntry): ParsedMacroAnalysis => ({
-    mealName: getNutritionEntryName(entry, t('nutritionLogger.unnamedMeal')),
-    protein: coerceNumber(entry.protein),
-    calories: coerceNumber(entry.calories),
-    carbohydrates: coerceNumber(entry.carbohydrates),
-    fat: coerceNumber(entry.fat),
-    fiber: coerceNumber(entry.fiber),
-    fiberByType: coerceObject(entry.fiberByType),
-    fiberSubtypeTotals: coerceObject(entry.fiberSubtypeTotals),
-    polyphenolByType: coerceObject(entry.polyphenolByType),
-    mineralsByType: coerceObject(entry.mineralsByType),
-    mineralsConfidenceByType: coerceObject(entry.mineralsConfidenceByType),
-    vitaminsByType: coerceObject(entry.vitaminsByType),
-    aminoAcidsByType: coerceObject(entry.aminoAcidsByType),
-    microbiomeSupport: coerceArray(entry.microbiomeSupport),
-  });
 
   const handleCopyMeal = (sourceEntry: MealEntry) => {
     const recordedAt = toRecordedAt(selectedDate, new Date(sourceEntry.recordedAt));
@@ -787,17 +761,17 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     }
 
     setSelectedNutritionEntryId(copiedEntry.id);
-    setSelectedNutrition(toParsedMacroAnalysis(copiedEntry));
-    setSelectedNutritionUnavailable(false);
+    setSelectedNutritionName(copiedEntry.name);
+    setSelectedNutrition(copiedEntry);
 
     triggerLightHaptic();
     handleCloseCopyMealModal();
   };
 
-  const handleSelectNutritionEntry = (entry: NutritionEntry, entryId: string) => {
-    setSelectedNutritionEntryId(entryId);
-    setSelectedNutritionUnavailable(false);
-    setSelectedNutrition(toParsedMacroAnalysis(entry));
+  const handleSelectNutritionEntry = (entry: NutritionEntry) => {
+    setSelectedNutritionEntryId(entry.id);
+    setSelectedNutritionName(entry.name);
+    setSelectedNutrition(entry);
   };
 
   const handleSelectLoggedDrink = (drinkId: string) => {
@@ -806,34 +780,19 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     if (!drink) return;
 
     const nutritionEntry = drink.nutritionEntryId
-      ? dailyNutritionTracking[selectedDate]?.entries.find(entry => entry.id === drink.nutritionEntryId)
+      ? dailyNutritionTracking[selectedDate]?.entries.find(entry => entry.id === drink.nutritionEntryId && entry.type === 'drink')
       : undefined;
+
+    setSelectedNutritionName(drink.name);
 
     if (!nutritionEntry) {
       setSelectedNutritionEntryId(null);
-      setSelectedNutritionUnavailable(true);
-
-      setSelectedNutrition({
-        mealName: drink.name,
-        calories: 0,
-        protein: 0,
-        carbohydrates: 0,
-        fat: 0,
-        fiber: 0,
-        fiberByType: {},
-        fiberSubtypeTotals: {},
-        polyphenolByType: {},
-        mineralsByType: {},
-        mineralsConfidenceByType: {},
-        vitaminsByType: {},
-        aminoAcidsByType: {},
-        microbiomeSupport: [],
-      });
-
+      setSelectedNutrition(null);
       return;
     }
 
-    handleSelectNutritionEntry(nutritionEntry, nutritionEntry.id);
+    setSelectedNutritionEntryId(nutritionEntry.id);
+    setSelectedNutrition(nutritionEntry);
   };
 
   const runNutritionImageAnalysis = async (mealFile: SelectedImageFile, mealDescription?: string, ingredientFile?: SelectedImageFile | null) => {
@@ -842,7 +801,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
       setAnalysisResult(t('nutritionLogger.futureDateLocked'));
       setSelectedNutrition(null);
       setSelectedNutritionEntryId(null);
-      setSelectedNutritionUnavailable(false);
+      setSelectedNutritionName(null);
       return;
     }
     const activeLanguage = (i18n.resolvedLanguage ?? i18n.language ?? 'en').toLowerCase();
@@ -853,7 +812,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     setIsAnalysisReviewModalVisible(false);
     setSelectedNutrition(null);
     setSelectedNutritionEntryId(null);
-    setSelectedNutritionUnavailable(false);
+    setSelectedNutritionName(null);
     try {
       const data = await NutritionAnalyze({
         uri: mealFile.uri,
@@ -1039,6 +998,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   }, [closeAnalysisReviewModal]);
 
   const summary = dailyNutritionTracking[selectedDate];
+
   const drinks = dailyDrinkTracking[selectedDate] ?? [];
   const todayKey = toDateKey(new Date());
   const isFutureSelectedDate = selectedDate > todayKey;
@@ -1077,6 +1037,25 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   const dailyVitaminsByType = useMemo(() => (summary ? sumTypedTotals(summary.entries, 'vitaminsByType') : {}), [summary]);
   const dailyAminoAcidsByType = useMemo(() => (summary ? sumTypedTotals(summary.entries, 'aminoAcidsByType') : {}), [summary]);
   const dailyMicrobiomeSupport = useMemo(() => (summary ? sumMicrobiomeSupport(summary.entries) : []), [summary]);
+
+  const dailyNutrition: NutritionData = {
+    name: t('nutritionLogger.dailySummary'),
+
+    calories: summary?.totals.calories,
+    protein: summary?.totals.protein,
+    carbohydrates: summary?.totals.carbohydrates,
+    fat: summary?.totals.fat,
+    fiber: summary?.totals.fiber,
+
+    fiberByType: dailyFiberByType,
+    fiberSubtypeTotals: dailyFiberSubtypeTotals,
+    polyphenolByType: dailyPolyphenolByType,
+    mineralsByType: dailyMineralsByType,
+    mineralsConfidenceByType: dailyMineralConfidenceByType,
+    vitaminsByType: dailyVitaminsByType,
+    aminoAcidsByType: dailyAminoAcidsByType,
+    microbiomeSupport: dailyMicrobiomeSupport,
+  };
 
   const nutritionPlanTipProgressByPeriod = useMemo(() => {
     const byPeriod = (period: NutritionTargetPeriod) =>
@@ -1180,8 +1159,8 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     });
 
     setSelectedNutritionEntryId(entry.id);
-    setSelectedNutrition(toParsedMacroAnalysis(entry));
-    setSelectedNutritionUnavailable(false);
+    setSelectedNutritionName(entry.name);
+    setSelectedNutrition(entry);
 
     triggerLightHaptic();
   };
@@ -1212,7 +1191,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
             {t('nutritionLogger.futureDateLocked')}
           </ThemedText>
         )}
-        {selectedNutrition && (
+        {selectedNutritionName && (
           <Card
             style={{
               borderRadius: globalStyles.borders.borderRadius,
@@ -1220,31 +1199,16 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           >
             <ThemedText type="title3">
               {t('nutritionLogger.mealTitleWithName', {
-                name: selectedNutrition.mealName,
+                name: selectedNutritionName,
               })}
             </ThemedText>
 
-            {selectedNutritionUnavailable ? (
+            {selectedNutrition ? (
+              <NutritionBreakdown nutrition={selectedNutrition} keyPrefix="meal" />
+            ) : (
               <ThemedText type="default" style={{ color: colors.textMuted }}>
                 {t('nutritionLogger.nutritionUnavailable')}
               </ThemedText>
-            ) : (
-              <NutritionBreakdown
-                calories={selectedNutrition.calories}
-                protein={selectedNutrition.protein}
-                carbohydrates={selectedNutrition.carbohydrates}
-                fat={selectedNutrition.fat}
-                fiber={selectedNutrition.fiber}
-                fiberByType={selectedNutrition.fiberByType}
-                fiberSubtypeTotals={selectedNutrition.fiberSubtypeTotals}
-                polyphenolByType={selectedNutrition.polyphenolByType}
-                mineralsByType={selectedNutrition.mineralsByType}
-                mineralsConfidenceByType={selectedNutrition.mineralsConfidenceByType}
-                vitaminsByType={selectedNutrition.vitaminsByType}
-                aminoAcidsByType={selectedNutrition.aminoAcidsByType}
-                microbiomeSupport={selectedNutrition.microbiomeSupport}
-                keyPrefix="meal"
-              />
             )}
           </Card>
         )}
@@ -1271,22 +1235,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
                 </View>
               }
             >
-              <NutritionBreakdown
-                calories={summary.totals.calories}
-                protein={roundToOneDecimal(summary.totals.protein)}
-                carbohydrates={roundToOneDecimal(summary.totals.carbohydrates)}
-                fat={roundToOneDecimal(summary.totals.fat)}
-                fiber={summary.totals.fiber}
-                fiberByType={dailyFiberByType}
-                fiberSubtypeTotals={dailyFiberSubtypeTotals}
-                polyphenolByType={dailyPolyphenolByType}
-                mineralsByType={dailyMineralsByType}
-                mineralsConfidenceByType={dailyMineralConfidenceByType}
-                vitaminsByType={dailyVitaminsByType}
-                aminoAcidsByType={dailyAminoAcidsByType}
-                microbiomeSupport={dailyMicrobiomeSupport}
-                keyPrefix="daily"
-              />
+              <NutritionBreakdown nutrition={dailyNutrition} keyPrefix="daily" />
             </Collapsible>
           </Card>
         )}
@@ -1391,7 +1340,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
                 </ThemedText>
               </Pressable>
             ) : null}
-            {pendingAnalysisReview?.detectedDrinks.length ? (
+            {pendingAnalysisReview?.detectedDrinks?.length ? (
               <View style={styles.analysisReviewSection}>
                 <ThemedText type="title3">{t('nutritionLogger.detectedDrinksTitle')}</ThemedText>
                 {pendingAnalysisReview.detectedDrinks.map((drink, index) => {
@@ -1442,25 +1391,10 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
                 >
                   <ThemedText type="title3">
                     {t('nutritionLogger.mealTitleWithName', {
-                      name: pendingAnalysisReview.analysis.mealName,
+                      name: pendingAnalysisReview.analysis.name,
                     })}
                   </ThemedText>
-                  <NutritionBreakdown
-                    calories={pendingAnalysisReview.analysis.calories}
-                    protein={pendingAnalysisReview.analysis.protein}
-                    carbohydrates={pendingAnalysisReview.analysis.carbohydrates}
-                    fat={pendingAnalysisReview.analysis.fat}
-                    fiber={pendingAnalysisReview.analysis.fiber}
-                    fiberByType={pendingAnalysisReview.analysis.fiberByType}
-                    fiberSubtypeTotals={pendingAnalysisReview.analysis.fiberSubtypeTotals}
-                    polyphenolByType={pendingAnalysisReview.analysis.polyphenolByType}
-                    mineralsByType={pendingAnalysisReview.analysis.mineralsByType}
-                    mineralsConfidenceByType={pendingAnalysisReview.analysis.mineralsConfidenceByType}
-                    vitaminsByType={pendingAnalysisReview.analysis.vitaminsByType}
-                    aminoAcidsByType={pendingAnalysisReview.analysis.aminoAcidsByType}
-                    microbiomeSupport={pendingAnalysisReview.analysis.microbiomeSupport}
-                    keyPrefix="review"
-                  />
+                  <NutritionBreakdown nutrition={pendingAnalysisReview.analysis} keyPrefix="review" />
                 </Card>
               </View>
             ) : null}

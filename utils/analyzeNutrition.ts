@@ -1,4 +1,4 @@
-import { WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
+import { NutritionData, WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { ALL_AMINO_ACID_KEYS, AminoAcidType } from '@/constants/aminoAcids';
 import { FIBER_CATEGORY_SUBTYPES, FIBER_TYPE_KEYS, type FiberSubtype } from '@/constants/fiber';
 import { MINERAL_TYPE_KEYS, MineralType } from '@/constants/minerals';
@@ -18,23 +18,6 @@ export type ConfidenceLevel = NutritionEvidence['confidence'];
 
 export type WeeklyTrackingSignalValue = WeeklyTrackingItem[] | number;
 export type WeeklyTrackingSignals = Record<string, WeeklyTrackingSignalValue>;
-
-export type ParsedMacroAnalysis = {
-  mealName: string;
-  protein: number;
-  calories: number;
-  carbohydrates: number;
-  fat: number;
-  fiber: number;
-  fiberByType: Record<string, number>;
-  fiberSubtypeTotals: Record<string, number>;
-  polyphenolByType: Record<string, number>;
-  mineralsByType: Record<string, number>;
-  mineralsConfidenceByType: Record<string, ConfidenceLevel>;
-  vitaminsByType: Record<string, number>;
-  aminoAcidsByType: Record<string, number>;
-  microbiomeSupport: MicrobiomeSupportEntry[];
-};
 
 type TypedTotalsAccumulator = {
   fiberByType: Record<string, number>;
@@ -530,7 +513,7 @@ export const extractTypedTotals = (data: any, parsedContent: any) => {
 
 export const hasAnyTypedTotals = (values: Record<string, number>) => Object.values(values).some(value => (value ?? 0) > 0);
 
-const extractFromCandidate = (candidate: any): ParsedMacroAnalysis | null => {
+const extractFromCandidate = (candidate: any): NutritionData | null => {
   if (!candidate || typeof candidate !== 'object') return null;
 
   const protein = pickFirstNumber(candidate, ['protein', 'protein_g', 'proteinGrams', 'proteins']);
@@ -555,7 +538,7 @@ const extractFromCandidate = (candidate: any): ParsedMacroAnalysis | null => {
   const mealName = mealNameRaw.trim();
 
   return {
-    mealName,
+    name: mealName,
     protein: protein ?? 0,
     calories: calories ?? 0,
     carbohydrates: carbohydrates ?? 0,
@@ -572,7 +555,7 @@ const extractFromCandidate = (candidate: any): ParsedMacroAnalysis | null => {
   };
 };
 
-const extractFromText = (text: string): ParsedMacroAnalysis | null => {
+const extractFromText = (text: string): NutritionData | null => {
   const read = (regex: RegExp): number | null => {
     const match = regex.exec(text);
     if (!match?.[1]) return null;
@@ -590,7 +573,7 @@ const extractFromText = (text: string): ParsedMacroAnalysis | null => {
   }
 
   return {
-    mealName: '',
+    name: '',
     protein: protein ?? 0,
     calories: calories ?? 0,
     carbohydrates: carbohydrates ?? 0,
@@ -607,7 +590,7 @@ const extractFromText = (text: string): ParsedMacroAnalysis | null => {
   };
 };
 
-export const extractStructuredAnalysis = (data: any, parsedContent: any): ParsedMacroAnalysis | null => {
+export const extractStructuredAnalysis = (data: any, parsedContent: any): NutritionData | null => {
   const candidates = [
     data?.nutrition,
     data?.raw,
@@ -859,7 +842,7 @@ export const extractAndValidateNutritionAnalysis = ({
   setIsAnalysisReviewModalVisible: (val: boolean) => void;
   setSelectedNutrition: (val: any) => void;
 }) => {
-  let analysis: ParsedMacroAnalysis | null = null;
+  let analysis: NutritionData | null = null;
   let parsedContent: any = null;
 
   if (data?.content) {
@@ -894,7 +877,7 @@ export const extractAndValidateNutritionAnalysis = ({
 
   analysis = {
     ...analysis,
-    mealName: analysis.mealName || t('nutritionLogger.unnamedMeal'),
+    name: analysis.name || t('nutritionLogger.unnamedMeal'),
     fiberByType: typedTotals.fiberByType,
     fiberSubtypeTotals: typedTotals.fiberSubtypeTotals,
     polyphenolByType: typedTotals.polyphenolByType,
