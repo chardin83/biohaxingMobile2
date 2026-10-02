@@ -8,12 +8,14 @@ import { getDrinkImage } from '@/locales/drinkCatalog';
 import { isAlcohol } from '@/services/gptServices';
 import type { PendingAnalysisReview } from '@/types/nutrition/nutritionAnalysis';
 
+import { Collapsible } from '../Collapsible';
 import NutritionBreakdown from '../NutritionBreakdown';
 import { ThemedModal } from '../ThemedModal';
 import { ThemedText } from '../ThemedText';
 import AddButton from '../ui/AddButton';
 import { Card } from '../ui/Card';
 import { DateTimeInput } from '../ui/DateTimeInput';
+import { IconSymbol } from '../ui/IconSymbol';
 
 interface NutritionAnalysisReviewModalProps {
   visible: boolean;
@@ -138,9 +140,28 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
             </ThemedText>
           </Pressable>
         ) : null}
+        {pendingReview?.analysis ? (
+          <View style={styles.section}>
+            <ThemedText type="title3">{t('journal:nutritionLogger.detectedfFoodTitle', { st: '1' })}</ThemedText>
+            <Card style={[styles.detectedDrinkCard]}>
+              <Collapsible
+                title={pendingReview.analysis.name?.trim() || t('journal:nutritionLogger.unnamedMeal')}
+                titleType="defaultSemiBold"
+                chevronPosition="right"
+                initialCollapsed
+                leftContent={<IconSymbol name="meal" size={28} color={colors.textMuted} />}
+                rightContent={
+                  <ThemedText type="caption" style={{ color: colors.textMuted }}>{`${Math.round(pendingReview.analysis.calories)} kcal`}</ThemedText>
+                }
+              >
+                <NutritionBreakdown nutrition={pendingReview.analysis} keyPrefix="review" />
+              </Collapsible>
+            </Card>
+          </View>
+        ) : null}
         {pendingReview?.detectedDrinks?.length ? (
           <View style={styles.section}>
-            <ThemedText type="title3">{t('journal:nutritionLogger.detectedDrinksTitle')}</ThemedText>
+            <ThemedText type="title3">{t('journal:nutritionLogger.detectedDrinksTitle', { st: `${pendingReview?.detectedDrinks?.length}` })}</ThemedText>
             {pendingReview.detectedDrinks.map((drink, index) => {
               const drinkImage = getDrinkImage(drink.type);
 
@@ -177,19 +198,6 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
                 </Card>
               );
             })}
-          </View>
-        ) : null}
-        {pendingReview?.analysis ? (
-          <View style={styles.section}>
-            <ThemedText type="label">{t('journal:nutritionLogger.analysisReviewNutritionPreviewTitle')}</ThemedText>
-            <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
-              <ThemedText type="title3">
-                {t('journal:nutritionLogger.nutritionTitleWithName', {
-                  name: pendingReview.analysis.name,
-                })}
-              </ThemedText>
-              <NutritionBreakdown nutrition={pendingReview.analysis} keyPrefix="review" />
-            </Card>
           </View>
         ) : null}
       </ScrollView>

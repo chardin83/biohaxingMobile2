@@ -19,7 +19,8 @@
     "mealTime": "Måltidstid",
     "analysisReviewTitle": "Granska AI-analysen innan du sparar",
     "analysisReviewAiDescriptionTitle": "AI-beskrivning av bilden",
-    "analysisReviewNutritionPreviewTitle": "Näring som kommer att sparas",
+    "detectedfFoodTitle": "Mat ({{st}})",
+    "detectedDrinksTitle": "Drycker ({{st}})",
     "analysisReadyToSave": "Granska analysen och tryck på Spara om den verkar stämma.",
     "unnamedMeal": "Namnlös måltid",
     "editMealNameTitle": "Redigera måltidsnamn",
@@ -61,7 +62,6 @@
     "confidenceMedium": "Medelhög säkerhet",
     "confidenceLow": "Låg säkerhet",
     "confidenceUnknown": "Okänd säkerhet",
-    "detectedDrinksTitle": "Bekräfta drycker",
     "fiberLabels": {
       "fiber_total": "Fibrer totalt",
       "fiber_gel_forming": "Gelbildande fibrer",

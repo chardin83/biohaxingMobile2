@@ -19,7 +19,8 @@
     "mealTime": "Meal time",
     "analysisReviewTitle": "Review AI analysis before saving",
     "analysisReviewAiDescriptionTitle": "AI description of the image",
-    "analysisReviewNutritionPreviewTitle": "Nutrition that will be saved",
+    "detectedfFoodTitle": "Food ({{st}})",
+    "detectedDrinksTitle": "Drinks ({{st}})",
     "analysisReadyToSave": "Review the analysis and tap Save if it looks correct.",
     "unnamedMeal": "Unnamed meal",
     "editMealNameTitle": "Edit meal name",
@@ -61,8 +62,7 @@
     "confidenceMedium": "Medium confidence",
     "confidenceLow": "Low confidence",
     "confidenceUnknown": "Unknown confidence",
-    "detectedDrinksTitle": "Confirm drinks",
-    "fiberLabels": {
+        "fiberLabels": {
       "fiber_total": "Fiber total",
       "fiber_gel_forming": "Gel-forming fiber",
       "fiber_non_gel_forming": "Non-gel-forming fiber",
