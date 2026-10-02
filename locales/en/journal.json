@@ -3,7 +3,8 @@
     "addNutrition": "Log food and drink",
     "analyzing": "Analyzing with AI",
     "mealTitle": "Logged meal",
-    "mealTitleWithName": "Logged meal: {{name}}",
+    "nutritionTitleWithName": "Nutrition information: {{name}}",
+    "nutritionUnavailable": "Nutrition information unavailable",
     "loggedMealsTitle": "Logged meals",
     "loggedDrinksTitle": "Logged drinks",
     "futureDateLocked": "You cannot log or analyze meals on future dates.",
@@ -164,14 +165,18 @@
     "analysisNutrition": "Calculating nutrition",
     "analysisPreparingResult": "Preparing result",
     "mealLogger": {
-      "addMeal": "Add meal",
+      "addMeal": "Add food or drink",
       "chooseHowToAddMeal": "Choose how to add the meal",
       "analyzePhoto": "Analyze photo",
       "takePhotoOfMeal": "Take a photo of the meal",
       "scanBarcode": "Scan barcode",
       "lookupPackagedProduct": "Lookup packaged product",
       "previousMeal": "Previous meal",
-      "copyPreviousMeal": "Copy a previous meal"
+      "copyPreviousMeal": "Copy a previous meal",
+      "addDrink": "Add drink",
+      "chooseDrink": "Choose a drink",
+      "chooseFood": "Choose food",
+      "searchNutritiousFoods": "Search among nutritious foods"
     },
     "barcodeScanner": {
       "title": "Scan barcode",
@@ -199,7 +204,33 @@
       "manualDescription": "Can't scan the barcode? Enter the number manually.",
       "barcode": "Barcode",
       "barcodePlaceholder": "E.g. 7310865004703",
-      "search": "Find product"
+      "search": "Find product",
+      "nutritionCalculatedPer100ml": "Nutrition values calculated from values per 100 ml"
+    },
+    "drinkPicker": {
+      "title": "Choose drink",
+      "subtitle": "Tap a drink to log it now"
+    },
+    "drinkTypes": {
+      "water": "Water",
+      "coffee": "Coffee",
+      "tea": "Tea",
+      "soft_drink": "Soft drink",
+      "energy_drink": "Energy drink",
+      "juice": "Juice",
+      "milk": "Milk",
+      "red_wine": "Red wine",
+      "white_wine": "White wine",
+      "beer": "Beer",
+      "spirits": "Spirits",
+      "oak_aged_spirits": "Oak-aged spirits (whisky, cognac)",
+      "drink": "Other drink"
+    },
+    "foodPicker": {
+      "title": "Choose food",
+      "subtitle": "Search and pick a food, then choose the amount",
+      "searchPlaceholder": "Search foods...",
+      "empty": "No foods found"
     }
   },
   "dayEdit": {

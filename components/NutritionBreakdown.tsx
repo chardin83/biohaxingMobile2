@@ -58,6 +58,31 @@ const formatMilligramValue = (value: number): string => {
   return value.toFixed(0);
 };
 
+const splitLabelValue = (text: string): { label: string; value?: string } => {
+  const index = text.indexOf(': ');
+
+  return index < 0 ? { label: text } : { label: text.slice(0, index), value: text.slice(index + 2) };
+};
+
+const NutrientText: React.FC<{ text: string }> = ({ text }) => {
+  const { label, value } = splitLabelValue(text);
+
+  return (
+    <>
+      <ThemedText type="default" style={styles.nutrientLabel}>
+        {label}
+      </ThemedText>
+      {value ? <ThemedText type="default">{value}</ThemedText> : null}
+    </>
+  );
+};
+
+const collapsibleHeader = (text: string) => {
+  const { label, value } = splitLabelValue(text);
+
+  return { title: label, rightContent: value ? <ThemedText type="default">{value}</ThemedText> : undefined };
+};
+
 const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyPrefix }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -96,13 +121,13 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
     <>
       <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
         <IconSymbol name="flame" size={16} color={colors.textMuted} />
-        <ThemedText type="default">{t('journal:nutritionLogger.calories', { value: calories })}</ThemedText>
+        <NutrientText text={t('journal:nutritionLogger.calories', { value: calories })} />
       </View>
 
       {hasAnyTypedTotals(aminoAcidsByType) ? (
         <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
           <Collapsible
-            title={t('journal:nutritionLogger.protein', { value: protein })}
+            {...collapsibleHeader(t('journal:nutritionLogger.protein', { value: protein }))}
             titleType="default"
             initialCollapsed
             leftContent={<IconSymbol name="protein" size={14} color={colors.textMuted} />}
@@ -151,24 +176,24 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
       ) : (
         <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
           <IconSymbol name="protein" size={16} color={colors.textMuted} />
-          <ThemedText type="default">{t('journal:nutritionLogger.protein', { value: protein })}</ThemedText>
+          <NutrientText text={t('journal:nutritionLogger.protein', { value: protein })} />
         </View>
       )}
 
       <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
         <IconSymbol name="carbs" size={16} color={colors.textMuted} />
-        <ThemedText type="default">{t('journal:nutritionLogger.carbohydrates', { value: carbohydrates })}</ThemedText>
+        <NutrientText text={t('journal:nutritionLogger.carbohydrates', { value: carbohydrates })} />
       </View>
 
       <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
         <IconSymbol name="fat" size={16} color={colors.textMuted} />
-        <ThemedText type="default">{t('journal:nutritionLogger.fat', { value: fat })}</ThemedText>
+        <NutrientText text={t('journal:nutritionLogger.fat', { value: fat })} />
       </View>
 
       {hasAnyTypedTotals(fiberByType) ? (
         <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
           <Collapsible
-            title={t('journal:nutritionLogger.fiber', { value: fiber })}
+            {...collapsibleHeader(t('journal:nutritionLogger.fiber', { value: fiber }))}
             titleType="default"
             initialCollapsed
             leftContent={<IconSymbol name="fiber" size={14} color={colors.textMuted} />}
@@ -199,16 +224,18 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
       ) : (
         <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
           <IconSymbol name="fiber" size={16} color={colors.textMuted} />
-          <ThemedText type="default">{t('journal:nutritionLogger.fiber', { value: fiber })}</ThemedText>
+          <NutrientText text={t('journal:nutritionLogger.fiber', { value: fiber })} />
         </View>
       )}
 
       {hasAnyTypedTotals(polyphenolByType) && (
         <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
           <Collapsible
-            title={t('journal:nutritionLogger.polyphenols', {
-              value: (polyphenolByType?.polyphenols_total ?? 0).toFixed(1),
-            })}
+            {...collapsibleHeader(
+              t('journal:nutritionLogger.polyphenols', {
+                value: (polyphenolByType?.polyphenols_total ?? 0).toFixed(1),
+              })
+            )}
             titleType="default"
             initialCollapsed
             leftContent={<IconSymbol name="polyphenol" size={14} color={colors.textMuted} />}
@@ -231,9 +258,11 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
       {hasAnyTypedTotals(mineralsByType) && (
         <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
           <Collapsible
-            title={t('journal:nutritionLogger.minerals', {
-              value: getMineralsTotal(mineralsByType!).toFixed(1),
-            })}
+            {...collapsibleHeader(
+              t('journal:nutritionLogger.minerals', {
+                value: getMineralsTotal(mineralsByType!).toFixed(1),
+              })
+            )}
             titleType="default"
             initialCollapsed
           >
@@ -257,9 +286,11 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
       {hasAnyTypedTotals(vitaminsByType) && (
         <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
           <Collapsible
-            title={t('journal:nutritionLogger.vitamins', {
-              value: getVitaminsTotal(vitaminsByType!).toFixed(1),
-            })}
+            {...collapsibleHeader(
+              t('journal:nutritionLogger.vitamins', {
+                value: getVitaminsTotal(vitaminsByType!).toFixed(1),
+              })
+            )}
             titleType="default"
             initialCollapsed
           >
@@ -328,6 +359,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+  },
+  nutrientLabel: {
+    flex: 1,
   },
   fiberCategoryRow: {
     marginBottom: 4,

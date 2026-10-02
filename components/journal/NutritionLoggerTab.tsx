@@ -12,9 +12,12 @@ import { useNutritionAnalysis } from '@/hooks/nutrition/useNutritionAnalysis';
 import { useNutritionBarcodeActions } from '@/hooks/nutrition/useNutritionBarcodeActions';
 import { useNutritionLoggerData } from '@/hooks/nutrition/useNutritionLoggerData';
 import { useNutritionTipCompletion } from '@/hooks/nutrition/useNutritionTipCompletion';
+import { getDrinkProduct } from '@/locales/drinkCatalog';
 import { tips } from '@/locales/tips';
+import type { DrinkType } from '@/services/gptServices';
 import { roundToOneDecimal, type WeeklyTrackingSignals } from '@/utils/analyzeNutrition';
 import { toDateKey, toRecordedAt } from '@/utils/dateUtils';
+import { type FoodKey, getFoodProduct } from '@/utils/foodProduct';
 
 import { Collapsible } from '../Collapsible';
 import CopyMealBottomSheet from '../CopyMealBottomSheet';
@@ -24,9 +27,10 @@ import AppButton from '../ui/AppButton';
 import { Card } from '../ui/Card';
 import { IconSymbol } from '../ui/IconSymbol';
 import AnalysisStatus from './AnalysisStatus';
-import BarcodeProductBottomSheet from './BarcodeProductBottomSheet';
 import BarcodeScannerBottomSheet from './BarcodeScannerBottomSheet';
+import DrinkPickerBottomSheet from './DrinkPickerBottomSheet';
 import EntryEditModal from './EntryEditModal';
+import FoodPickerBottomSheet from './FoodPickerBottomSheet';
 import { LoggedDrinksSection } from './LoggedDrinksSection';
 import { LoggedMealsSection } from './LoggedMealsSection';
 import MealLoggerBottomSheet from './MealLoggerBottomSheet';
@@ -34,6 +38,7 @@ import NutritionAnalysisBottomSheet from './NutritionAnalysisBottomSheet';
 import NutritionAnalysisReviewModal from './NutritionAnalysisReviewModal';
 import NutritionPlanTargetsSection from './NutritionPlanTargetsSection';
 import PackagingAnalysisModal from './PackagingAnalysisModal';
+import ProductAmountBottomSheet from './ProductAmountBottomSheet';
 
 interface NutritionLoggerTabProps {
   selectedDate: string;
@@ -106,7 +111,9 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   const copyMealBottomSheetRef = useRef<BottomSheetModal>(null);
   const nutritionAnalysisBottomSheetRef = useRef<BottomSheetModal>(null);
   const mealLoggerBottomSheetRef = useRef<BottomSheetModal>(null);
-  const barcodeProductBottomSheetRef = useRef<BottomSheetModal>(null);
+  const drinkPickerBottomSheetRef = useRef<BottomSheetModal>(null);
+  const foodPickerBottomSheetRef = useRef<BottomSheetModal>(null);
+  const productAmountBottomSheetRef = useRef<BottomSheetModal>(null);
   const barcodeScannerBottomSheetRef = useRef<BottomSheetModal>(null);
   const handleSelectNutritionEntry = useCallback((entry: NutritionEntry) => {
     setSelectedNutritionEntryId(entry.id);
@@ -395,6 +402,18 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     handleCloseCopyMealModal();
   };
 
+  const handleAddManualDrink = (type: DrinkType) => {
+    drinkPickerBottomSheetRef.current?.dismiss();
+    const product = getDrinkProduct(type, t(`journal:nutritionLogger.drinkTypes.${type}`));
+    requestAnimationFrame(() => productAmountBottomSheetRef.current?.present(product));
+  };
+
+  const handleChooseFood = (key: FoodKey) => {
+    foodPickerBottomSheetRef.current?.dismiss();
+    const product = getFoodProduct(key, t(`food:foods.${key}.name`, { defaultValue: key }));
+    requestAnimationFrame(() => productAmountBottomSheetRef.current?.present(product));
+  };
+
   const handleSelectLoggedDrink = (drinkId: string) => {
     const drink = dailyDrinkTracking[selectedDate]?.find(item => item.id === drinkId);
 
@@ -448,14 +467,14 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
             {t('journal:nutritionLogger.futureDateLocked')}
           </ThemedText>
         )}
-        {selectedNutritionName && (
+        {!!selectedNutritionName && (
           <Card
             style={{
               borderRadius: globalStyles.borders.borderRadius,
             }}
           >
             <ThemedText type="title3">
-              {t('journal:nutritionLogger.mealTitleWithName', {
+              {t('journal:nutritionLogger.nutritionTitleWithName', {
                 name: selectedNutritionName,
               })}
             </ThemedText>
@@ -565,11 +584,23 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
               copyMealBottomSheetRef.current?.present();
             });
           }}
+          onChooseFood={() => {
+            requestAnimationFrame(() => {
+              foodPickerBottomSheetRef.current?.present();
+            });
+          }}
+          onAddDrink={() => {
+            requestAnimationFrame(() => {
+              drinkPickerBottomSheetRef.current?.present();
+            });
+          }}
         />
-        <BarcodeProductBottomSheet
-          ref={barcodeProductBottomSheetRef}
+        <FoodPickerBottomSheet ref={foodPickerBottomSheetRef} onSelect={handleChooseFood} />
+        <DrinkPickerBottomSheet ref={drinkPickerBottomSheetRef} onSelect={handleAddManualDrink} />
+        <ProductAmountBottomSheet
+          ref={productAmountBottomSheetRef}
           onSave={(barcodeProduct, amount, productType) => {
-            barcodeProductBottomSheetRef.current?.dismiss();
+            productAmountBottomSheetRef.current?.dismiss();
             handleSaveBarcodeProduct(barcodeProduct, amount, productType);
           }}
         />
@@ -579,7 +610,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
             barcodeScannerBottomSheetRef.current?.dismiss();
 
             requestAnimationFrame(() => {
-              barcodeProductBottomSheetRef.current?.present(product);
+              productAmountBottomSheetRef.current?.present(product);
             });
           }}
         />

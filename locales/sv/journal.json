@@ -3,7 +3,8 @@
     "addNutrition": "Logga mat och dryck",
     "analyzing": "Analyserar med AI",
     "mealTitle": "Loggad måltid",
-    "mealTitleWithName": "Loggad måltid: {{name}}",
+    "nutritionTitleWithName": "Näringsinformation: {{name}}",
+    "nutritionUnavailable": "Näringsinformation saknas",
     "loggedMealsTitle": "Loggade måltider",
     "loggedDrinksTitle": "Loggade drycker",
     "futureDateLocked": "Du kan inte logga eller analysera måltider på framtida datum.",
@@ -164,14 +165,18 @@
     "analysisNutrition": "Beräknar näringsinnehåll",
     "analysisPreparingResult": "Förbereder resultatet",
     "mealLogger": {
-      "addMeal": "Lägg till måltid",
+      "addMeal": "Lägg till måltid eller dryck ",
       "chooseHowToAddMeal": "Välj hur du vill lägga till måltiden",
       "analyzePhoto": "Analysera foto",
       "takePhotoOfMeal": "Ta ett foto av måltiden",
       "scanBarcode": "Skanna streckkod",
       "lookupPackagedProduct": "Sök förpackad produkt",
       "previousMeal": "Föregående måltid",
-      "copyPreviousMeal": "Kopiera en tidigare måltid"
+      "copyPreviousMeal": "Kopiera en tidigare måltid",
+      "addDrink": "Lägg till dryck",
+      "chooseDrink": "Välj en dryck",
+      "chooseFood": "Välj livsmedel",
+      "searchNutritiousFoods": "Sök bland näringsrika livsmedel"
     },
     "barcodeScanner": {
       "title": "Skanna streckkod",
@@ -199,7 +204,33 @@
       "fiber": "Fibrer",
       "nutritionForAmount": "Näringsvärden för vald mängd",
       "add": "Lägg till",
-      "nutritionCalculatedPer100g": "Näringsvärden beräknade från värden per 100 g"
+      "nutritionCalculatedPer100g": "Näringsvärden beräknade från värden per 100 g",
+      "nutritionCalculatedPer100ml": "Näringsvärden beräknade från värden per 100 ml"
+    },
+    "drinkPicker": {
+      "title": "Välj dryck",
+      "subtitle": "Tryck på en dryck för att logga den nu"
+    },
+    "drinkTypes": {
+      "water": "Vatten",
+      "coffee": "Kaffe",
+      "tea": "Te",
+      "soft_drink": "Läsk",
+      "energy_drink": "Energidryck",
+      "juice": "Juice",
+      "milk": "Mjölk",
+      "red_wine": "Rött vin",
+      "white_wine": "Vitt vin",
+      "beer": "Öl",
+      "spirits": "Sprit",
+      "oak_aged_spirits": "Eklagrad sprit (whisky, konjak)",
+      "drink": "Annan dryck"
+    },
+    "foodPicker": {
+      "title": "Välj livsmedel",
+      "subtitle": "Sök och välj ett livsmedel, välj sedan mängd",
+      "searchPlaceholder": "Sök livsmedel...",
+      "empty": "Inga livsmedel hittades"
     }
   },
   "dayEdit": {

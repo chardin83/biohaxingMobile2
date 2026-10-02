@@ -1,6 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import * as React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Image, type ImageSourcePropType, Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import SettingIcon from '@/components/ui/SettingIcon';
@@ -22,6 +22,7 @@ type Props = {
   subtitle?: string;
   iconName?: IconSymbolName;
   iconColor?: string;
+  image?: ImageSourcePropType;
   onPress?: () => void;
   style?: any;
   value?: string;
@@ -29,7 +30,7 @@ type Props = {
   rows?: Row[];
 };
 
-export const SettingsCardLink: React.FC<Props> = ({ title, subtitle, iconName = 'public', iconColor, onPress, style, value, accessory, rows }: Props) => {
+export const SettingsCardLink: React.FC<Props> = ({ title, subtitle, iconName = 'public', iconColor, image, onPress, style, value, accessory, rows }: Props) => {
   const { colors } = useTheme();
 
   let rightAccessory: React.ReactNode = null;
@@ -78,7 +79,11 @@ export const SettingsCardLink: React.FC<Props> = ({ title, subtitle, iconName = 
     <CardContainer style={style}>
       <Pressable onPress={onPress} style={styles.container}>
         <View style={styles.leftRow}>
-          <SettingIcon size={40} iconName={iconName} iconColor={iconColor} />
+          {image ? (
+            <Image source={image} style={styles.image} resizeMode="contain" />
+          ) : (
+            <SettingIcon size={40} iconName={iconName} iconColor={iconColor} />
+          )}
           <View style={styles.textColumn}>
             <ThemedText type="title3" style={styles.title}>
               {title}
@@ -112,6 +117,10 @@ const styles = StyleSheet.create({
   leftRow: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  image: {
+    width: 40,
+    height: 40,
   },
   textColumn: {
     marginLeft: 12,

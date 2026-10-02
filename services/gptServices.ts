@@ -16,9 +16,9 @@ type SupportLevel = 'high' | 'medium' | 'low' | 'unknown';
 type DrinkConfidence = 'high' | 'medium' | 'low' | 'unknown';
 
 export type DrinkType =
-  'water' | 'coffee' | 'tea' | 'soft_drink' | 'energy_drink' | 'juice' | 'milk' | 'red_wine' | 'white_wine' | 'beer' | 'spirits' | 'drink';
+  'water' | 'coffee' | 'tea' | 'soft_drink' | 'energy_drink' | 'juice' | 'milk' | 'red_wine' | 'white_wine' | 'beer' | 'spirits' | 'oak_aged_spirits' | 'drink';
 
-export const ALCOHOL_TYPES = ['red_wine', 'white_wine', 'beer', 'spirits'] as const satisfies readonly DrinkType[];
+export const ALCOHOL_TYPES = ['red_wine', 'white_wine', 'beer', 'spirits', 'oak_aged_spirits'] as const satisfies readonly DrinkType[];
 
 export type AlcoholType = (typeof ALCOHOL_TYPES)[number];
 

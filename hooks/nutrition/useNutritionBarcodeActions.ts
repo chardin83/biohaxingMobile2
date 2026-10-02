@@ -5,6 +5,7 @@ import type { NutritionEntry } from '@/app/context/storage/nutrition/nutritionTy
 import { useStorage } from '@/app/context/StorageContext';
 import type { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFacts';
 import { toRecordedAt } from '@/utils/dateUtils';
+import { scaleNutritionComposition } from '@/utils/nutritionComposition';
 
 interface UseNutritionBarcodeActionsParams {
   selectedDate: string;
@@ -25,6 +26,12 @@ export const useNutritionBarcodeActions = ({ selectedDate, onNutritionEntrySelec
         carbohydrates: (product.nutrition.carbohydratesPer100g ?? 0) * factor,
         fat: (product.nutrition.fatPer100g ?? 0) * factor,
         fiber: (product.nutrition.fiberPer100g ?? 0) * factor,
+        ...(product.composition && scaleNutritionComposition(product.composition, factor)),
+        ...(product.nutrition.polyphenolsMgPer100g && {
+          polyphenolByType: Object.fromEntries(
+            Object.entries(product.nutrition.polyphenolsMgPer100g).map(([key, value]) => [key, Math.round(value * factor * 10) / 10])
+          ),
+        }),
       };
 
       if (productType === 'drink') {

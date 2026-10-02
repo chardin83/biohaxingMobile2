@@ -184,7 +184,7 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
             <ThemedText type="label">{t('journal:nutritionLogger.analysisReviewNutritionPreviewTitle')}</ThemedText>
             <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
               <ThemedText type="title3">
-                {t('journal:nutritionLogger.mealTitleWithName', {
+                {t('journal:nutritionLogger.nutritionTitleWithName', {
                   name: pendingReview.analysis.name,
                 })}
               </ThemedText>

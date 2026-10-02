@@ -1,5 +1,10 @@
 // services/openFoodFactsService.ts
 
+import type { ImageSourcePropType } from 'react-native';
+
+import type { PolyphenolType } from '@/constants/polyphenols';
+import type { NutritionComposition } from '@/types/nutrition/nutritionProfile';
+
 import { OPEN_FOOD_FACTS_BASE_URL } from '../config';
 import { DrinkType } from './gptServices';
 
@@ -13,6 +18,7 @@ export interface BarcodeNutrition {
   sugarsPer100g?: number;
   saltPer100g?: number;
   sodiumPer100g?: number;
+  polyphenolsMgPer100g?: Partial<Record<PolyphenolType, number>>;
 }
 
 export type BarcodeProductType = 'food' | 'drink';
@@ -30,6 +36,10 @@ export interface BarcodeProduct {
   nutritionGrade?: string;
   productType?: BarcodeProductType;
   drinkType?: DrinkType;
+  fromCatalog?: boolean;
+  image?: ImageSourcePropType;
+  // Full per-100g profile for catalog foods; replaces `nutrition` when set.
+  composition?: NutritionComposition;
   nutrition: BarcodeNutrition;
 }
 

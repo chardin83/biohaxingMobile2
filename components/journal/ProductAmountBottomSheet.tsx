@@ -4,23 +4,26 @@ import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, use
 import { useTranslation } from 'react-i18next';
 import { Image, Keyboard, StyleSheet, View } from 'react-native';
 
+import type { NutritionData } from '@/app/context/storage/nutrition/nutritionTypes';
 import type { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFacts';
+import { scaleNutritionComposition } from '@/utils/nutritionComposition';
 
+import NutritionBreakdown from '../NutritionBreakdown';
 import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
 import { useBottomSheetDesign } from '../ui/BottomSheetDesign';
 import OptionSelector from '../ui/OptionSelector';
 
-export interface BarcodeProductBottomSheetRef {
+export interface ProductAmountBottomSheetRef {
   present: (product: BarcodeProduct) => void;
   dismiss: () => void;
 }
 
-interface BarcodeProductBottomSheetProps {
+interface ProductAmountBottomSheetProps {
   onSave: (product: BarcodeProduct, grams: number, productType: BarcodeProductType) => void;
 }
 
-const BarcodeProductBottomSheet = forwardRef<BarcodeProductBottomSheetRef, BarcodeProductBottomSheetProps>(({ onSave }, ref) => {
+const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, ProductAmountBottomSheetProps>(({ onSave }, ref) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const sheetDesign = useBottomSheetDesign(colors);
@@ -38,7 +41,7 @@ const BarcodeProductBottomSheet = forwardRef<BarcodeProductBottomSheetRef, Barco
     () => ({
       present: nextProduct => {
         setProduct(nextProduct);
-        setGramsText('100');
+        setGramsText(String(nextProduct.fromCatalog ? (nextProduct.quantityValue ?? 100) : 100));
         setProductType(nextProduct.productType);
 
         requestAnimationFrame(() => {
@@ -76,12 +79,28 @@ const BarcodeProductBottomSheet = forwardRef<BarcodeProductBottomSheetRef, Barco
 
   const factor = grams / 100;
 
-  const nutrition = product?.nutrition;
-  const calories = nutrition?.caloriesPer100g !== undefined ? nutrition.caloriesPer100g * factor : undefined;
-  const protein = nutrition?.proteinPer100g !== undefined ? nutrition.proteinPer100g * factor : undefined;
-  const carbohydrates = nutrition?.carbohydratesPer100g !== undefined ? nutrition.carbohydratesPer100g * factor : undefined;
-  const fat = nutrition?.fatPer100g !== undefined ? nutrition.fatPer100g * factor : undefined;
-  const fiber = nutrition?.fiberPer100g !== undefined ? nutrition.fiberPer100g * factor : undefined;
+  const scaledNutrition = useMemo<NutritionData | null>(() => {
+    if (!product) return null;
+
+    if (product.composition) {
+      return { name: product.name, ...scaleNutritionComposition(product.composition, factor) };
+    }
+
+    const per100 = product.nutrition;
+    const round1 = (value: number) => Math.round(value * 10) / 10;
+
+    return {
+      name: product.name,
+      calories: Math.round((per100.caloriesPer100g ?? 0) * factor),
+      protein: round1((per100.proteinPer100g ?? 0) * factor),
+      carbohydrates: round1((per100.carbohydratesPer100g ?? 0) * factor),
+      fat: round1((per100.fatPer100g ?? 0) * factor),
+      fiber: round1((per100.fiberPer100g ?? 0) * factor),
+      ...(per100.polyphenolsMgPer100g && {
+        polyphenolByType: Object.fromEntries(Object.entries(per100.polyphenolsMgPer100g).map(([key, value]) => [key, value * factor])),
+      }),
+    };
+  }, [product, factor]);
 
   const handleSave = () => {
     if (!product || grams <= 0 || !productType) return;
@@ -107,7 +126,9 @@ const BarcodeProductBottomSheet = forwardRef<BarcodeProductBottomSheetRef, Barco
         {product ? (
           <>
             <View style={styles.productHeader}>
-              {product.imageUrl ? <Image source={{ uri: product.imageUrl }} style={styles.productImage} resizeMode="contain" /> : null}
+              {product.image || product.imageUrl ? (
+                <Image source={product.image ?? { uri: product.imageUrl }} style={styles.productImage} resizeMode="contain" />
+              ) : null}
 
               <View style={styles.productInfo}>
                 <ThemedText type="title2">{product.name}</ThemedText>
@@ -136,20 +157,22 @@ const BarcodeProductBottomSheet = forwardRef<BarcodeProductBottomSheetRef, Barco
               </View>
             </View>
 
-            <View style={styles.typeSection}>
-              <ThemedText type="defaultSemiBold">{t('journal:nutritionLogger.barcodeProduct.type')}</ThemedText>
+            {!product.fromCatalog && (
+              <View style={styles.typeSection}>
+                <ThemedText type="defaultSemiBold">{t('journal:nutritionLogger.barcodeProduct.type')}</ThemedText>
 
-              <View style={styles.typeOptions}>
-                <OptionSelector
-                  value={productType}
-                  onChange={setProductType}
-                  options={[
-                    { value: 'food', label: t('journal:nutritionLogger.barcodeProduct.meal'), icon: 'meal' },
-                    { value: 'drink', label: t('journal:nutritionLogger.barcodeProduct.drink'), icon: 'drink' },
-                  ]}
-                />
+                <View style={styles.typeOptions}>
+                  <OptionSelector
+                    value={productType}
+                    onChange={setProductType}
+                    options={[
+                      { value: 'food', label: t('journal:nutritionLogger.barcodeProduct.meal'), icon: 'meal' },
+                      { value: 'drink', label: t('journal:nutritionLogger.barcodeProduct.drink'), icon: 'drink' },
+                    ]}
+                  />
+                </View>
               </View>
-            </View>
+            )}
 
             <View style={styles.amountSection}>
               <ThemedText type="defaultSemiBold">{t('journal:nutritionLogger.barcodeProduct.amount')}</ThemedText>
@@ -181,24 +204,11 @@ const BarcodeProductBottomSheet = forwardRef<BarcodeProductBottomSheetRef, Barco
               </View>
             </View>
 
-            <View
-              style={[
-                styles.nutrition,
-                {
-                  borderColor: colors.border,
-                },
-              ]}
-            >
-              <NutritionValue label={t('journal:nutritionLogger.barcodeProduct.calories')} value={calories} unit="kcal" />
-
-              <NutritionValue label={t('journal:nutritionLogger.barcodeProduct.protein')} value={protein} unit="g" />
-
-              <NutritionValue label={t('journal:nutritionLogger.barcodeProduct.carbohydrates')} value={carbohydrates} unit="g" />
-
-              <NutritionValue label={t('journal:nutritionLogger.barcodeProduct.fat')} value={fat} unit="g" />
-
-              <NutritionValue label={t('journal:nutritionLogger.barcodeProduct.fiber')} value={fiber} unit="g" />
-            </View>
+            {scaledNutrition && (
+              <View style={[styles.nutrition, { borderColor: colors.border }]}>
+                <NutritionBreakdown nutrition={scaledNutrition} keyPrefix="product" />
+              </View>
+            )}
 
             <ThemedText
               type="caption"
@@ -212,7 +222,13 @@ const BarcodeProductBottomSheet = forwardRef<BarcodeProductBottomSheetRef, Barco
               {t('journal:nutritionLogger.barcodeProduct.nutritionForAmount')}
             </ThemedText>
 
-            <AppButton title={t('journal:nutritionLogger.barcodeProduct.add')} onPress={handleSave} disabled={grams <= 0} variant="primary" style={styles.saveButton} />
+            <AppButton
+              title={t('journal:nutritionLogger.barcodeProduct.add')}
+              onPress={handleSave}
+              disabled={grams <= 0}
+              variant="primary"
+              style={styles.saveButton}
+            />
 
             <ThemedText
               type="caption"
@@ -223,7 +239,11 @@ const BarcodeProductBottomSheet = forwardRef<BarcodeProductBottomSheetRef, Barco
                 },
               ]}
             >
-              {t('journal:nutritionLogger.barcodeProduct.nutritionCalculatedPer100g')}
+              {t(
+                productType === 'drink'
+                  ? 'journal:nutritionLogger.barcodeProduct.nutritionCalculatedPer100ml'
+                  : 'journal:nutritionLogger.barcodeProduct.nutritionCalculatedPer100g'
+              )}
             </ThemedText>
 
             {/* <AppButton title="Lägg till" onPress={handleSave} disabled={grams <= 0} variant="primary" style={styles.saveButton} /> */}
@@ -234,21 +254,7 @@ const BarcodeProductBottomSheet = forwardRef<BarcodeProductBottomSheetRef, Barco
   );
 });
 
-BarcodeProductBottomSheet.displayName = 'BarcodeProductBottomSheet';
-
-interface NutritionValueProps {
-  label: string;
-  value?: number;
-  unit: string;
-}
-
-const NutritionValue: React.FC<NutritionValueProps> = ({ label, value, unit }) => (
-  <View style={styles.nutritionRow}>
-    <ThemedText type="default">{label}</ThemedText>
-
-    <ThemedText type="defaultSemiBold">{value !== undefined ? `${Math.round(value * 10) / 10} ${unit}` : '–'}</ThemedText>
-  </View>
-);
+ProductAmountBottomSheet.displayName = 'ProductAmountBottomSheet';
 
 const styles = StyleSheet.create({
   content: {
@@ -310,13 +316,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
 
-  nutritionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 7,
-  },
-
   per100g: {
     marginTop: 8,
     textAlign: 'center',
@@ -327,4 +326,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BarcodeProductBottomSheet;
+export default ProductAmountBottomSheet;
