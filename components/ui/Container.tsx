@@ -142,7 +142,9 @@ const Container = forwardRef<ContainerScrollRef, ContainerProps>(
                 <RefreshControl
                   refreshing={isSyncing}
                   onRefresh={() => {
-                    void sync();
+                    sync().catch(error => {
+                      console.warn('Wearable refresh sync failed:', error);
+                    });
                   }}
                   progressViewOffset={defaultPaddingTop}
                 />

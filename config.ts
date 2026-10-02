@@ -1,7 +1,9 @@
-export const BASE_IP = '192.168.68.58';
+export const BASE_IP = '192.168.68.66';
 export const API_PORT = '7071';
 
 export const BASE_URL = `http://${BASE_IP}:${API_PORT}`;
+
+export const OPEN_FOOD_FACTS_BASE_URL = 'https://world.openfoodfacts.org/api/v3/product';
 
 export const ENDPOINTS = {
   askAIv2: `${BASE_URL}/api/askAIv2`,

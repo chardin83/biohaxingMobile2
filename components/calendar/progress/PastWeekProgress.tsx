@@ -23,6 +23,10 @@ type PastWeeksProgressProps = {
   onSelectWeek: (weekStart: string) => void;
 };
 
+const barHeightStyles = Array.from({ length: 26 }, (_, index) => StyleSheet.create({ height: { height: index + 1 } }).height);
+
+const getBarHeight = (ratio: number): number => Math.min(ratio > 0 ? Math.max(Math.round(ratio * 26), 2) : 1, 26);
+
 const PastWeeksProgress = ({ weeks, selectedWeekStart, daysLabel, onSelectWeek }: PastWeeksProgressProps) => {
   const { colors } = useTheme();
 
@@ -67,8 +71,8 @@ const PastWeeksProgress = ({ weeks, selectedWeekStart, daysLabel, onSelectWeek }
                     <View
                       style={[
                         styles.barFill,
+                        barHeightStyles[getBarHeight(day.ratio) - 1],
                         {
-                          height: day.ratio > 0 ? Math.max(Math.round(day.ratio * 26), 2) : 1,
                           backgroundColor: day.fulfilled ? colors.accentMedium : colors.border,
                         },
                       ]}

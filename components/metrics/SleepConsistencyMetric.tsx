@@ -7,11 +7,11 @@ import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { MetricDataStatus } from '@/components/metrics/MetricDataStatus';
 import { ThemedText } from '@/components/ThemedText';
+import { getLatestMetricEntry } from '@/utils/metricDateUtils';
 import { WearablePermission } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
 import { MetricContainer } from './MetricContainer';
-import { getLatestMetricEntry } from '@/utils/metricDateUtils';
 import { DEFAULT_TARGET_BEDTIME_MINUTES, getBedtimeDeviation, minutesToTimeString } from './sleepConsistency';
 
 interface SleepConsistencyMetricProps {

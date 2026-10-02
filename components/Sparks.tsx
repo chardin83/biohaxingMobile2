@@ -46,7 +46,7 @@ const Spark: React.FC<SparkProps> = ({ id, onComplete }) => {
         }),
       ])
     ).start();
-  }, []);
+  }, [amplitude, offsetX, positionY, opacity, onComplete, id, upwardDuration]);
 
   return (
     <Animated.View
@@ -54,11 +54,7 @@ const Spark: React.FC<SparkProps> = ({ id, onComplete }) => {
         styles.spark,
         {
           opacity,
-          transform: [
-            { translateY: positionY },
-            { translateX: Animated.add(offsetX, new Animated.Value(baseX)) },
-            { scale },
-          ],
+          transform: [{ translateY: positionY }, { translateX: Animated.add(offsetX, new Animated.Value(baseX)) }, { scale }],
         },
       ]}
     />

@@ -104,6 +104,12 @@ export default function MetricDetailScreen() {
       const translatedTarget = t(`common:nutrition.${targetDefinition.tag}`, {
         defaultValue: targetDefinition.tag,
       });
+      let color = colors.accentStrong;
+      if (targetIndex === 0) {
+        color = colors.warmColor;
+      } else if (targetIndex === 1) {
+        color = colors.primary;
+      }
 
       return {
         label: t('common:general.targetReachedWithName', {
@@ -113,7 +119,7 @@ export default function MetricDetailScreen() {
 
         dates: fulfilledDates,
 
-        color: targetIndex === 0 ? colors.warmColor : targetIndex === 1 ? colors.primary : colors.accentStrong,
+        color,
       };
     });
   }, [nutritionProgressHistory, datesInRange, tip?.id, t, colors.warmColor, colors.primary, colors.accentStrong]);

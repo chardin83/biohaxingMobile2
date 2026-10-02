@@ -64,7 +64,7 @@ export default function HabitProgressScreen() {
     return (plans.other ?? []).flatMap(plan => {
       const tip = tips.find(candidate => candidate.id === plan.tipId);
 
-      if (!tip || !tip.targetPeriod) {
+      if (!tip?.targetPeriod) {
         return [];
       }
 
@@ -323,9 +323,19 @@ export default function HabitProgressScreen() {
 
             const isSelected = (selectedWeekStart ?? pastWeeks[3].start) === week.start;
 
-            const icon = fulfilled ? '✓' : hasProgress ? '◐' : '✗';
+            let icon = '✗';
+            if (fulfilled) {
+              icon = '✓';
+            } else if (hasProgress) {
+              icon = '◐';
+            }
 
-            const iconColor = fulfilled ? colors.progressSuccessIcon : hasProgress ? colors.progressPartialIcon : colors.textMuted;
+            let iconColor = colors.textMuted;
+            if (fulfilled) {
+              iconColor = colors.progressSuccessIcon;
+            } else if (hasProgress) {
+              iconColor = colors.progressPartialIcon;
+            }
 
             return (
               <TouchableOpacity

@@ -28,7 +28,7 @@ import { MyDarkTheme, MyLightTheme } from './theme/AppTheme';
 // Themes are provided by AppThemeProvider
 import { globalStyles } from './theme/globalStyles';
 
-SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync().catch(() => undefined);
 
 function SparksOverlay() {
   const { showSparks } = useSparks();
@@ -48,7 +48,7 @@ export default function RootLayout() {
     (async () => {
       const stored = await getStoredPreferredTheme();
       if (mounted) setPreferredTheme(stored);
-    })();
+    })().catch(() => undefined);
 
     const unsub = subscribe(s => setPreferredTheme(s));
     return () => {
@@ -57,11 +57,16 @@ export default function RootLayout() {
     };
   }, []);
 
-  const theme = preferredTheme === 'light' ? MyLightTheme : preferredTheme === 'dark' ? MyDarkTheme : colorScheme === 'dark' ? MyDarkTheme : MyLightTheme;
+  let theme = colorScheme === 'dark' ? MyDarkTheme : MyLightTheme;
+  if (preferredTheme === 'light') {
+    theme = MyLightTheme;
+  } else if (preferredTheme === 'dark') {
+    theme = MyDarkTheme;
+  }
 
   useEffect(() => {
     if (loaded) {
-      SplashScreen.hideAsync();
+      SplashScreen.hideAsync().catch(() => undefined);
     }
   }, [loaded]);
 

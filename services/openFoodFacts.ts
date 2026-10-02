@@ -1,8 +1,7 @@
 // services/openFoodFactsService.ts
 
+import { OPEN_FOOD_FACTS_BASE_URL } from '../config';
 import { DrinkType } from './gptServices';
-
-const OPEN_FOOD_FACTS_BASE_URL = 'https://world.openfoodfacts.org/api/v3/product';
 
 export interface BarcodeNutrition {
   caloriesPer100g?: number;
@@ -123,31 +122,6 @@ const getProductClassification = (product: OpenFoodFactsProduct): ProductClassif
 const productCache = new Map<string, BarcodeProduct>();
 
 const pendingRequests = new Map<string, Promise<BarcodeProduct | null>>();
-
-const getProductType = (product: OpenFoodFactsProduct): BarcodeProductType | undefined => {
-  const categories = product.categories_tags ?? [];
-
-  if (categories.length === 0) {
-    return undefined;
-  }
-
-  const isDrink = categories.some(category => {
-    const normalized = category.toLowerCase();
-
-    return (
-      normalized === 'en:beverages' ||
-      normalized.startsWith('en:beverages-') ||
-      normalized === 'en:non-alcoholic-beverages' ||
-      normalized === 'en:alcoholic-beverages'
-    );
-  });
-
-  if (isDrink) {
-    return 'drink';
-  }
-
-  return 'food';
-};
 
 const fetchProductByBarcode = async (normalizedBarcode: string): Promise<BarcodeProduct | null> => {
   const fields = [

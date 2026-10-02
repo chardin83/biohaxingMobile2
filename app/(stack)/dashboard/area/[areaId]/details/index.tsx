@@ -54,7 +54,7 @@ export default function AreaDetailScreen() {
     }
   }, [addTipView, areaId, tipId]);
 
-  const mainArea = areas.find(g => g.id === areaId);
+  const hasMainArea = areas.some(g => g.id === areaId);
   const findTip = (localTipId: string | undefined, searchAreaId: string) => {
     return localTipId
       ? tips.find(tipItem => tipItem.id === localTipId)
@@ -78,7 +78,7 @@ export default function AreaDetailScreen() {
     infoText = t('tipDetails.unlockedTipInfo'); // Lägg till denna översättning!
   }
 
-  const notFound = !mainArea || !tip;
+  const notFound = !hasMainArea || !tip;
 
   const descriptionKey = tip?.descriptionKey;
   const titleKey = tip?.title;

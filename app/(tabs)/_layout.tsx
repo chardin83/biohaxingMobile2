@@ -11,6 +11,17 @@ import TabBarBackground from '@/components/ui/TabBarBackground';
 
 import i18n from '../i18n';
 
+type TabIconProps = {
+  color: string;
+};
+
+const DashboardTabIcon = ({ color }: TabIconProps) => <IconSymbol size={28} name={'dashboard' as IconSymbolName} color={color} />;
+const CalendarTabIcon = ({ color }: TabIconProps) => <IconSymbol size={28} name="calendar" color={color} />;
+const PlanTabIcon = ({ color }: TabIconProps) => <IconSymbol size={28} name="checklist" color={color} />;
+const ChatTabIcon = ({ color }: TabIconProps) => <IconSymbol size={28} name="chat" color={color} />;
+const SearchTabIcon = ({ color }: TabIconProps) => <IconSymbol size={28} name="search" color={color} />;
+const SettingsTabIcon = ({ color }: TabIconProps) => <IconSymbol size={28} name="settings" color={color} />;
+
 export default function TabLayout() {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -48,21 +59,21 @@ export default function TabLayout() {
         name="dashboard/index"
         options={{
           title: t('layout.dashboard'),
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name={'dashboard' as IconSymbolName} color={color} />,
+          tabBarIcon: DashboardTabIcon,
         }}
       />
       <Tabs.Screen
         name="calendar/index"
         options={{
           title: t('layout.calendar'),
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
+          tabBarIcon: CalendarTabIcon,
         }}
       />
       <Tabs.Screen
         name="plan/index"
         options={{
           title: 'Plan',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="checklist" color={color} />,
+          tabBarIcon: PlanTabIcon,
         }}
       />
       <Tabs.Screen name="plan/create" options={{ href: null }} />
@@ -70,21 +81,21 @@ export default function TabLayout() {
         name="chat/index"
         options={{
           title: 'AI',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="chat" color={color} />,
+          tabBarIcon: ChatTabIcon,
         }}
       />
       <Tabs.Screen
         name="search/index"
         options={{
           title: t('layout.search', { defaultValue: 'Sök' }),
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="search" color={color} />,
+          tabBarIcon: SearchTabIcon,
         }}
       />
       <Tabs.Screen
         name="settings/index"
         options={{
           title: t('layout.settings', { defaultValue: 'Settings' }),
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="settings" color={color} />,
+          tabBarIcon: SettingsTabIcon,
         }}
       />
     </Tabs>

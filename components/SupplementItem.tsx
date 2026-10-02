@@ -1,6 +1,5 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { Supplement } from '@/app/domain/Supplement';
@@ -16,15 +15,8 @@ interface SupplementItemProps {
   badgeLabel?: string;
 }
 
-const SupplementItem: React.FC<SupplementItemProps> = ({
-  planName,
-  supplement,
-  onRemoveSupplement,
-  onEditSupplement,
-  badgeLabel,
-}) => {
+const SupplementItem: React.FC<SupplementItemProps> = ({ planName, supplement, onRemoveSupplement, onEditSupplement, badgeLabel }) => {
   const { colors } = useTheme();
-  const { t } = useTranslation();
   const includedSupplements = supplement.components ?? [];
 
   return (
@@ -49,16 +41,12 @@ const SupplementItem: React.FC<SupplementItemProps> = ({
               ) : null}
             </View>
             {includedSupplements.length > 0 ? (
-              <ThemedText
-                type="caption"
-                style={[styles.includedText, { color: colors.textLight }]}
-                numberOfLines={1}
-              >
+              <ThemedText type="caption" style={[styles.includedText, { color: colors.textLight }]} numberOfLines={1}>
                 {`${includedSupplements.map(item => item.name).join(', ')}`}
               </ThemedText>
             ) : null}
           </View>
-          <ThemedText type="default" style={[styles.icon, { color: colors.textLight}]}> 
+          <ThemedText type="default" style={[styles.icon, { color: colors.textLight }]}>
             ⋮
           </ThemedText>
         </View>

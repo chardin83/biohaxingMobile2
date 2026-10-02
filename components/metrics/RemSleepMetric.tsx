@@ -6,10 +6,9 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { useStorage } from '@/app/context/StorageContext';
 import { MetricDataStatus } from '@/components/metrics/MetricDataStatus';
 import { ThemedText } from '@/components/ThemedText';
+import { getLatestMetricEntry } from '@/utils/metricDateUtils';
 import { WearablePermission } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
-
-import { getLatestMetricEntry } from '@/utils/metricDateUtils';
 
 interface RemSleepMetricProps {
   readonly labelType?: 'label' | 'default';

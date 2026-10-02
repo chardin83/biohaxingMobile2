@@ -265,7 +265,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       }
     };
 
-    loadUserProfile();
+    loadUserProfile().catch(console.error);
 
     const unsubscribe = subscribeUserProfile(profile => {
       setUserProfileState(profile);
@@ -381,7 +381,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       }
     };
 
-    loadData();
+    loadData().catch(() => undefined);
   }, []);
 
   /*
@@ -422,7 +422,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     setTakenDatesState(prev => {
       const newDates = typeof update === 'function' ? update(prev) : update;
 
-      saveTakenDates(newDates);
+      saveTakenDates(newDates).catch(console.error);
 
       return newDates;
     });
@@ -432,7 +432,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     setCustomSupplementsState(prev => {
       const nextSupplements = typeof updater === 'function' ? updater(prev) : updater;
 
-      saveCustomSupplements(nextSupplements);
+      saveCustomSupplements(nextSupplements).catch(console.error);
 
       return nextSupplements;
     });
@@ -458,7 +458,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     setMyAreasState(prev => {
       const newAreas = typeof update === 'function' ? update(prev) : update;
 
-      saveMyAreas(newAreas);
+      saveMyAreas(newAreas).catch(console.error);
 
       return newAreas;
     });
@@ -467,25 +467,25 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const setHasCompletedOnboarding = (val: boolean) => {
     setHasCompletedOnboardingState(val);
 
-    saveHasCompletedOnboarding(val);
+    saveHasCompletedOnboarding(val).catch(console.error);
   };
 
   const setOnboardingStep = (val: number) => {
     setOnboardingStepState(val);
 
-    saveOnboardingStep(val);
+    saveOnboardingStep(val).catch(console.error);
   };
 
-  const setShowMusic = (val: boolean) => {
+  const setShowMusic = useCallback((val: boolean) => {
     setShowMusicState(val);
 
-    saveShowMusic(val);
-  };
+    saveShowMusic(val).catch(console.error);
+  }, []);
 
   const setHealthSyncEnabled = useCallback((val: boolean) => {
     setHealthSyncEnabledState(val);
 
-    saveHealthSyncEnabled(val);
+    saveHealthSyncEnabled(val).catch(console.error);
   }, []);
 
   /*
@@ -618,7 +618,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       setTrainingPlanSettingsState(prev => {
         const updated = typeof updater === 'function' ? updater(prev) : updater;
 
-        saveTrainingPlanSettings(updated);
+        saveTrainingPlanSettings(updated).catch(console.error);
 
         return updated;
       });
@@ -783,7 +783,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const setMyLevel = (level: number) => {
     setMyLevelState(level);
 
-    saveLevel(level);
+    saveLevel(level).catch(console.error);
   };
 
   const clearNewLevelReached = () => {
@@ -806,7 +806,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
         if (newLevel > oldLevel) {
           setMyLevelState(newLevel);
 
-          saveLevel(newLevel);
+          saveLevel(newLevel).catch(console.error);
 
           setNewLevelReached(newLevel);
 
@@ -814,10 +814,10 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
         } else if (newLevel !== myLevelState) {
           setMyLevelState(newLevel);
 
-          saveLevel(newLevel);
+          saveLevel(newLevel).catch(console.error);
         }
 
-        saveXP(newXP);
+        saveXP(newXP).catch(console.error);
 
         return newXP;
       });
@@ -837,7 +837,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
           [source]: (prev[source] ?? 0) + amount,
         };
 
-        saveXpBreakdown(next);
+        saveXpBreakdown(next).catch(console.error);
 
         return next;
       });
@@ -851,7 +851,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     setViewedTipsState(prev => {
       const newTips = typeof update === 'function' ? update(prev) : update;
 
-      saveViewedTips(newTips);
+      saveViewedTips(newTips).catch(console.error);
 
       return newTips;
     });
@@ -1007,7 +1007,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
           },
         };
 
-        saveNutritionXpClaims(next);
+        saveNutritionXpClaims(next).catch(console.error);
 
         return next;
       });
@@ -1024,7 +1024,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
 
     setNutritionXpClaimsState({});
 
-    saveNutritionXpClaims({});
+    saveNutritionXpClaims({}).catch(console.error);
 
     setXpBreakdownState(prev => {
       const next = {
@@ -1032,7 +1032,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
         nutrition: 0,
       };
 
-      saveXpBreakdown(next);
+      saveXpBreakdown(next).catch(console.error);
 
       return next;
     });
@@ -1051,7 +1051,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
         education: 0,
       };
 
-      saveXpBreakdown(next);
+      saveXpBreakdown(next).catch(console.error);
 
       return next;
     });

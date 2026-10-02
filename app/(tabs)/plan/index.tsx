@@ -104,7 +104,9 @@ const getSupplementTimeIcon = (preferredTime: string): React.ComponentProps<type
 export default function Plans() {
   // Request notification permissions on mount
   useEffect(() => {
-    requestNotificationPermission();
+    requestNotificationPermission().catch(error => {
+      console.error('Failed to request notification permission:', error);
+    });
   }, []);
   const params = useLocalSearchParams<{ openCreate?: string }>();
   const { colors } = useTheme();
@@ -423,10 +425,14 @@ export default function Plans() {
     return () => cancelAnimationFrame(frame);
   }, [isPlanActionsSheetMounted]);*/
 
-  const archiveSelectedPlan = () => {
+  const archiveSelectedPlan = async () => {
     if (!planActionsTarget) return;
-    archiveSupplementPlan(planActionsTarget.name, planActionsTarget.prefferedTime);
-    closePlanActions();
+    try {
+      await archiveSupplementPlan(planActionsTarget.name, planActionsTarget.prefferedTime);
+      closePlanActions();
+    } catch (error) {
+      console.error('Failed to archive supplement plan:', error);
+    }
   };
 
   const deleteSelectedPlan = () => {
@@ -440,10 +446,14 @@ export default function Plans() {
     closePlanActions();
   };
 
-  const archiveSelectedSupplement = () => {
+  const archiveSelectedSupplement = async () => {
     if (!supplementActionsTarget) return;
-    archiveSupplement(supplementActionsTarget.supplement.name, supplementActionsTarget.planName, supplementActionsTarget.prefferedTime);
-    closeSupplementActions();
+    try {
+      await archiveSupplement(supplementActionsTarget.supplement.name, supplementActionsTarget.planName, supplementActionsTarget.prefferedTime);
+      closeSupplementActions();
+    } catch (error) {
+      console.error('Failed to archive supplement:', error);
+    }
   };
 
   const renderPlanRow = (plan: Plan) => {
@@ -792,7 +802,7 @@ export default function Plans() {
               />
             ) : null
           }
-          onSave={savedSupplement => {
+          onSave={async savedSupplement => {
             // Skapa SupplementPlanEntry här
             const entry: SupplementPlanEntry = {
               supplement: savedSupplement,
@@ -807,9 +817,13 @@ export default function Plans() {
               notify: planForSupplementEdit.notify,
               reason: planForSupplementEdit.reason,
             };
-            saveSupplementToPlan(planForSupplementEdit, entry, isEditingSupplement);
-            setSupplement(null);
-            setPlanForSupplementEdit(null);
+            try {
+              await saveSupplementToPlan(planForSupplementEdit, entry, isEditingSupplement);
+              setSupplement(null);
+              setPlanForSupplementEdit(null);
+            } catch (error) {
+              console.error('Failed to save supplement to plan:', error);
+            }
           }}
           onCancel={() => {
             setPlanForSupplementEdit(null);

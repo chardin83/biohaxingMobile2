@@ -2,10 +2,9 @@ import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
-import { Colors } from '@/app/theme/Colors';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { Card } from '@/components/ui/Card';
 import { XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW } from '@/constants/XP';
@@ -61,7 +60,7 @@ export default function TipsList({ areaId }: Readonly<TipsListProps>) {
 
       return bScore - aScore;
     });
-  }, [tipsRaw, viewedTips, getVerdictScore, areaId]);
+  }, [tipsRaw, viewedTips, getVerdictScore]);
 
   // Filtrera tips: dölj "not interested"-liknande om inte "show all"
   const visibleTips = React.useMemo(() => {
@@ -72,7 +71,7 @@ export default function TipsList({ areaId }: Readonly<TipsListProps>) {
       const viewedTip = viewedTips?.find(v => v.tipId === tip.id);
       return viewedTip?.verdict ? !negativeVerdicts.has(viewedTip.verdict) : true;
     });
-  }, [showAllTips, sortedTips, viewedTips, negativeVerdicts, areaId]);
+  }, [showAllTips, sortedTips, viewedTips, negativeVerdicts ]);
 
   const hiddenTipsCount = sortedTips.length - visibleTips.length;
 

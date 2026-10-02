@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
-import ThemedSwitch from '@/components/ui/ThemedSwitch';
+import { StyleSheet, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
+import { ThemedText } from '@/components/ThemedText';
+import ThemedSwitch from '@/components/ui/ThemedSwitch';
 
 import { useMusic } from './MusicContext';
 import { useSparks } from './SparksContext';
@@ -22,7 +23,11 @@ export default function GlobalLevelUpModal() {
   useEffect(() => {
     if (levelUpModalVisible && newLevelReached) {
       triggerSparks();
-      if (showMusic) play(); // Kontrollera showMusic här!
+      if (showMusic) {
+        play().catch(error => {
+          console.warn('Failed to play level-up music:', error);
+        });
+      }
     }
   }, [levelUpModalVisible, newLevelReached, play, showMusic, triggerSparks]);
 
@@ -46,14 +51,30 @@ export default function GlobalLevelUpModal() {
       okLabel={t('common:ok')}
       onSave={handleClose}
       showCancelButton={false}
-      onClose={() => {}}>
-      <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>
+      onClose={() => {}}
+    >
+      <ThemedText type="title3" style={styles.levelText}>
         {t(`${newLevelReached}`)} ({t('levelUp.level')} {newLevelReached})
-      </Text>
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 16, justifyContent: 'center' }}>
-        <Text style={{ color: 'white', marginRight: 8 }}>Musik</Text>
+      </ThemedText>
+      <View style={styles.musicRow}>
+        <ThemedText style={styles.musicLabel}>Musik</ThemedText>
         <ThemedSwitch value={showMusic} onValueChange={handleToggleMusic} />
       </View>
     </ThemedModal>
   );
 }
+
+const styles = StyleSheet.create({
+  levelText: {
+    textAlign: 'center',
+  },
+  musicRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 16,
+    justifyContent: 'center',
+  },
+  musicLabel: {
+    marginRight: 8,
+  },
+});

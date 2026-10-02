@@ -21,7 +21,7 @@ const getLast4Weeks = (weekOffset: number, language: string, firstDayOfWeek: num
     const startDate = new Date(currentWeekStart);
     startDate.setDate(currentWeekStart.getDate() - (3 - index) * 7);
 
-    const days = Array.from({ length: 7 }, (_, dayIndex) => {
+    const days = Array.from({ length: 7 }, (_day, dayIndex) => {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + dayIndex);
       return toDateKey(date);
