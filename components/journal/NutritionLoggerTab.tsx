@@ -303,7 +303,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
 
     const name = editingEntry.name.trim();
     if (editingEntry.kind === 'meal') {
-      const mealName = name || t('nutritionLogger.unnamedMeal');
+      const mealName = name || t('journal:nutritionLogger.unnamedMeal');
       updateNutritionEntry(selectedDate, editingEntry.id, {
         name: mealName,
         recordedAt: toRecordedAt(selectedDate, editingEntry.recordedAt),
@@ -347,7 +347,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     const newEntry = addNutritionEntry(selectedDate, {
       type: 'meal',
       recordedAt,
-      name: name?.trim() || t('nutritionLogger.unnamedMeal'),
+      name: name?.trim() || t('journal:nutritionLogger.unnamedMeal'),
       ...nutrition,
     });
 
@@ -425,7 +425,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     <KeyboardAvoidingView style={globalStyles.flex1} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.container}>
         <AppButton
-          title={isAnalyzing ? t('nutritionLogger.analyzing') : t('nutritionLogger.addNutrition')}
+          title={isAnalyzing ? t('journal:nutritionLogger.analyzing') : t('journal:nutritionLogger.addNutrition')}
           onPress={() => mealLoggerBottomSheetRef.current?.present()}
           disabled={isAnalyzing}
           variant="primary"
@@ -445,7 +445,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
               },
             ]}
           >
-            {t('nutritionLogger.futureDateLocked')}
+            {t('journal:nutritionLogger.futureDateLocked')}
           </ThemedText>
         )}
         {selectedNutritionName && (
@@ -455,7 +455,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
             }}
           >
             <ThemedText type="title3">
-              {t('nutritionLogger.mealTitleWithName', {
+              {t('journal:nutritionLogger.mealTitleWithName', {
                 name: selectedNutritionName,
               })}
             </ThemedText>
@@ -464,7 +464,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
               <NutritionBreakdown nutrition={selectedNutrition} keyPrefix="meal" />
             ) : (
               <ThemedText type="default" style={{ color: colors.textMuted }}>
-                {t('nutritionLogger.nutritionUnavailable')}
+                {t('journal:nutritionLogger.nutritionUnavailable')}
               </ThemedText>
             )}
           </Card>
@@ -476,7 +476,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
             }}
           >
             <Collapsible
-              title={t('nutritionLogger.summaryTitle')}
+              title={t('journal:nutritionLogger.summaryTitle')}
               titleType="title3"
               initialCollapsed
               rightContent={
@@ -531,9 +531,9 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
         />
         <EntryEditModal
           visible={editingEntry !== null}
-          title={t(editingEntry?.kind === 'drink' ? 'nutritionLogger.editDrinkTitle' : 'nutritionLogger.editMealTitle')}
-          nameLabel={t(editingEntry?.kind === 'drink' ? 'nutritionLogger.drinkNameLabel' : 'nutritionLogger.mealNameLabel')}
-          timeLabel={t(editingEntry?.kind === 'drink' ? 'nutritionLogger.drinkTime' : 'nutritionLogger.mealTime')}
+          title={t(editingEntry?.kind === 'drink' ? 'journal:nutritionLogger.editDrinkTitle' : 'journal:nutritionLogger.editMealTitle')}
+          nameLabel={t(editingEntry?.kind === 'drink' ? 'journal:nutritionLogger.drinkNameLabel' : 'journal:nutritionLogger.mealNameLabel')}
+          timeLabel={t(editingEntry?.kind === 'drink' ? 'journal:nutritionLogger.drinkTime' : 'journal:nutritionLogger.mealTime')}
           name={editingEntry?.name ?? ''}
           recordedAt={editingEntry?.recordedAt ?? new Date()}
           onNameChange={name => setEditingEntry(current => (current ? { ...current, name } : current))}

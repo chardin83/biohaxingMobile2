@@ -108,7 +108,7 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgre
         unit: target.unit,
         period: target.period ?? 'daily',
         amount: target.amount,
-        label: t(`nutritionLogger.${labelGroup}.${trackingKey}`, { defaultValue: trackingKey }),
+        label: t(`journal:nutritionLogger.${labelGroup}.${trackingKey}`, { defaultValue: trackingKey }),
         value: formatValue(target.amount, target.unit),
       };
     });

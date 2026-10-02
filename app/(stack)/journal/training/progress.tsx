@@ -318,7 +318,7 @@ export default function TrainingProgressScreen() {
                 color: colors.goldSuperSoft,
               }}
             >
-              {` • ${t('common:progress.startsOn', {
+              {` • ${t('journal:progress.startsOn', {
                 date: startLabel,
               })}`}
             </ThemedText>
@@ -335,7 +335,7 @@ export default function TrainingProgressScreen() {
               },
             ]}
           >
-            {t('common:progress.notActiveStarts', {
+            {t('journal:progress.notActiveStarts', {
               date: startLabel,
             })}
           </ThemedText>
@@ -393,7 +393,7 @@ export default function TrainingProgressScreen() {
               },
             ]}
           >
-            {t('common:progress.notActiveStarts', {
+            {t('journal:progress.notActiveStarts', {
               date: startLabel,
             })}
           </ThemedText>
@@ -415,7 +415,7 @@ export default function TrainingProgressScreen() {
             <View style={styles.streakMainRow}>
               <ThemedText type="explainer">
                 {'🔥 '}
-                {t('common:progress.currentStreak')}
+                {t('journal:progress.currentStreak')}
               </ThemedText>
 
               <ThemedText
@@ -424,7 +424,7 @@ export default function TrainingProgressScreen() {
                   color: colors.primary,
                 }}
               >
-                {t('common:progress.currentStreakDays', {
+                {t('journal:progress.currentStreakDays', {
                   count: streak,
                 })}
               </ThemedText>
@@ -432,20 +432,20 @@ export default function TrainingProgressScreen() {
 
             {isYesterdayStreak && (
               <ThemedText type="explainer" style={styles.streakReminderText}>
-                {t('common:progress.streakReminder')}
+                {t('journal:progress.streakReminder')}
               </ThemedText>
             )}
           </View>
         )}
 
         <ThemedText type="explainer" style={styles.pastWeeksHeading}>
-          {t('progress.last4Weeks')}
+          {t('journal:progress.last4Weeks')}
         </ThemedText>
 
         <PastWeeksProgress
           weeks={pastWeekProgress}
           selectedWeekStart={selectedWeekStart ?? pastWeeks[3].start}
-          daysLabel={t('progress.days')}
+          daysLabel={t('journal:progress.days')}
           onSelectWeek={weekStart => {
             setSelectedWeekStart(weekStart);
             setSelectedTipDay('');
@@ -547,7 +547,7 @@ export default function TrainingProgressScreen() {
                     },
                   ]}
                 >
-                  {fulfilled ? t('progress.fulfilled') : hasPartialProgress ? t('progress.inProgress') : t('progress.notFulfilled')}
+                  {fulfilled ? t('journal:progress.fulfilled') : hasPartialProgress ? t('journal:progress.inProgress') : t('journal:progress.notFulfilled')}
                 </ThemedText>
               </TouchableOpacity>
             );
@@ -563,7 +563,7 @@ export default function TrainingProgressScreen() {
     <Container background="default" showBackButton onBackPress={() => router.back()}>
       <ScrollView contentContainerStyle={styles.content}>
         <ThemedText type="title2" style={styles.heading}>
-          {t('progress.title')}
+          {t('journal:progress.title')}
         </ThemedText>
 
         <ProgressDateNavigator
@@ -580,7 +580,7 @@ export default function TrainingProgressScreen() {
         />
 
         {dailyTips.length > 0 && (
-          <Collapsible title={t('nutritionLogger.periodDaily')} titleType="title3" contentStyle={styles.collapsibleContent}>
+          <Collapsible title={t('journal:nutritionLogger.periodDaily')} titleType="title3" contentStyle={styles.collapsibleContent}>
             <Card style={styles.card} transparent={false}>
               {dailyTips.map(renderDailyTip)}
             </Card>
@@ -588,7 +588,7 @@ export default function TrainingProgressScreen() {
         )}
 
         {weeklyTips.length > 0 && (
-          <Collapsible title={t('nutritionLogger.periodWeekly')} titleType="title3" contentStyle={styles.collapsibleContent}>
+          <Collapsible title={t('journal:nutritionLogger.periodWeekly')} titleType="title3" contentStyle={styles.collapsibleContent}>
             <Card style={styles.card} transparent={false}>
               {weeklyTips.map(renderWeeklyTip)}
             </Card>
@@ -602,7 +602,7 @@ export default function TrainingProgressScreen() {
               color: colors.textMuted,
             }}
           >
-            {t('progress.noTargets')}
+            {t('journal:progress.noTargets')}
           </ThemedText>
         )}
       </ScrollView>

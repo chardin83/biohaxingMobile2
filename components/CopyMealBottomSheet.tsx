@@ -51,7 +51,7 @@ const CopyMealBottomSheet: React.FC<CopyMealBottomSheetProps> = ({
         keyboardShouldPersistTaps="handled"
       >
         <ThemedText type="title3" style={styles.copyMealSheetTitle}>
-          {t('nutritionLogger.copyMealModalTitle')}
+          {t('journal:nutritionLogger.copyMealModalTitle')}
         </ThemedText>
         {recentMeals.length > 0 ? (
           recentMeals.map(meal => (
@@ -91,7 +91,7 @@ const CopyMealBottomSheet: React.FC<CopyMealBottomSheetProps> = ({
           ))
         ) : (
           <ThemedText type="caption" style={[styles.copyMealEmptyText, { color: colors.textMuted }]}>
-            {t('nutritionLogger.copyMealEmpty')}
+            {t('journal:nutritionLogger.copyMealEmpty')}
           </ThemedText>
         )}
       </BottomSheetScrollView>

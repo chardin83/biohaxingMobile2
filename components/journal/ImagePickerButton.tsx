@@ -66,15 +66,15 @@ const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({
   };
 
   const showOptions = () => {
-    Alert.alert(t('imagePicker.title'), undefined, [
+    Alert.alert(t('journal:imagePicker.title'), undefined, [
       {
-        text: t('imagePicker.takePhoto'),
+        text: t('journal:imagePicker.takePhoto'),
         onPress: () => {
           handlePick(true).catch(console.error);
         },
       },
       {
-        text: t('imagePicker.chooseFromLibrary'),
+        text: t('journal:imagePicker.chooseFromLibrary'),
         onPress: () => {
           handlePick(false).catch(console.error);
         },
@@ -88,7 +88,7 @@ const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({
 
   return (
     <AppButton
-      title={isLoading ? t('dayEdit.analyzing') : (label ?? t('dayEdit.pickImage'))}
+      title={isLoading ? t('journal:dayEdit.analyzing') : (label ?? t('journal:dayEdit.pickImage'))}
       onPress={showOptions}
       disabled={isLoading || disabled}
       variant={buttonVariant}

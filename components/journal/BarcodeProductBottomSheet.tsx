@@ -137,22 +137,22 @@ const BarcodeProductBottomSheet = forwardRef<BarcodeProductBottomSheetRef, Barco
             </View>
 
             <View style={styles.typeSection}>
-              <ThemedText type="defaultSemiBold">{t('nutritionLogger.barcodeProduct.type')}</ThemedText>
+              <ThemedText type="defaultSemiBold">{t('journal:nutritionLogger.barcodeProduct.type')}</ThemedText>
 
               <View style={styles.typeOptions}>
                 <OptionSelector
                   value={productType}
                   onChange={setProductType}
                   options={[
-                    { value: 'food', label: t('nutritionLogger.barcodeProduct.meal'), icon: 'meal' },
-                    { value: 'drink', label: t('nutritionLogger.barcodeProduct.drink'), icon: 'drink' },
+                    { value: 'food', label: t('journal:nutritionLogger.barcodeProduct.meal'), icon: 'meal' },
+                    { value: 'drink', label: t('journal:nutritionLogger.barcodeProduct.drink'), icon: 'drink' },
                   ]}
                 />
               </View>
             </View>
 
             <View style={styles.amountSection}>
-              <ThemedText type="defaultSemiBold">{t('nutritionLogger.barcodeProduct.amount')}</ThemedText>
+              <ThemedText type="defaultSemiBold">{t('journal:nutritionLogger.barcodeProduct.amount')}</ThemedText>
 
               <View
                 style={[
@@ -189,15 +189,15 @@ const BarcodeProductBottomSheet = forwardRef<BarcodeProductBottomSheetRef, Barco
                 },
               ]}
             >
-              <NutritionValue label={t('nutritionLogger.barcodeProduct.calories')} value={calories} unit="kcal" />
+              <NutritionValue label={t('journal:nutritionLogger.barcodeProduct.calories')} value={calories} unit="kcal" />
 
-              <NutritionValue label={t('nutritionLogger.barcodeProduct.protein')} value={protein} unit="g" />
+              <NutritionValue label={t('journal:nutritionLogger.barcodeProduct.protein')} value={protein} unit="g" />
 
-              <NutritionValue label={t('nutritionLogger.barcodeProduct.carbohydrates')} value={carbohydrates} unit="g" />
+              <NutritionValue label={t('journal:nutritionLogger.barcodeProduct.carbohydrates')} value={carbohydrates} unit="g" />
 
-              <NutritionValue label={t('nutritionLogger.barcodeProduct.fat')} value={fat} unit="g" />
+              <NutritionValue label={t('journal:nutritionLogger.barcodeProduct.fat')} value={fat} unit="g" />
 
-              <NutritionValue label={t('nutritionLogger.barcodeProduct.fiber')} value={fiber} unit="g" />
+              <NutritionValue label={t('journal:nutritionLogger.barcodeProduct.fiber')} value={fiber} unit="g" />
             </View>
 
             <ThemedText
@@ -209,10 +209,10 @@ const BarcodeProductBottomSheet = forwardRef<BarcodeProductBottomSheetRef, Barco
                 },
               ]}
             >
-              {t('nutritionLogger.barcodeProduct.nutritionForAmount')}
+              {t('journal:nutritionLogger.barcodeProduct.nutritionForAmount')}
             </ThemedText>
 
-            <AppButton title={t('nutritionLogger.barcodeProduct.add')} onPress={handleSave} disabled={grams <= 0} variant="primary" style={styles.saveButton} />
+            <AppButton title={t('journal:nutritionLogger.barcodeProduct.add')} onPress={handleSave} disabled={grams <= 0} variant="primary" style={styles.saveButton} />
 
             <ThemedText
               type="caption"
@@ -223,7 +223,7 @@ const BarcodeProductBottomSheet = forwardRef<BarcodeProductBottomSheetRef, Barco
                 },
               ]}
             >
-              {t('nutritionLogger.barcodeProduct.nutritionCalculatedPer100g')}
+              {t('journal:nutritionLogger.barcodeProduct.nutritionCalculatedPer100g')}
             </ThemedText>
 
             {/* <AppButton title="Lägg till" onPress={handleSave} disabled={grams <= 0} variant="primary" style={styles.saveButton} /> */}

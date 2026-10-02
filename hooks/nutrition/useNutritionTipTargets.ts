@@ -128,7 +128,7 @@ export const useNutritionTipTargets = (dateKeys: string[]): Record<string, Recor
               foodActual: details.foodActual,
               supplementActual: details.supplementActual,
               isMet: details.actual >= rawTarget.amount,
-              label: t(`nutritionLogger.${labelGroup}.${tag}`),
+              label: t(`journal:nutritionLogger.${labelGroup}.${tag}`),
               supplementIds,
             },
           ];

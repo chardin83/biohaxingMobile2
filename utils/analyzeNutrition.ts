@@ -877,7 +877,7 @@ export const extractAndValidateNutritionAnalysis = ({
 
   analysis = {
     ...analysis,
-    name: analysis.name || t('nutritionLogger.unnamedMeal'),
+    name: analysis.name || t('journal:nutritionLogger.unnamedMeal'),
     fiberByType: typedTotals.fiberByType,
     fiberSubtypeTotals: typedTotals.fiberSubtypeTotals,
     polyphenolByType: typedTotals.polyphenolByType,

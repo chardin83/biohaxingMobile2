@@ -44,19 +44,19 @@ const PackagingAnalysisModal: React.FC<PackagingAnalysisModalProps> = ({ visible
   return (
     <ThemedModal
       visible={visible}
-      title={t('nutritionLogger.packageFlowAnalyze')}
+      title={t('journal:nutritionLogger.packageFlowAnalyze')}
       onClose={handleClose}
       onSave={handleAnalyze}
       onSaveDisabled={!mealImage}
       onSaveGlow
-      okLabel={t('nutritionLogger.packageFlowAnalyze')}
+      okLabel={t('journal:nutritionLogger.packageFlowAnalyze')}
     >
       <View style={styles.content}>
         {mealImage ? (
           <ImageThumbnailWithDelete
             uri={mealImage.uri}
             onPress={() => setMealImage(null)}
-            accessibilityLabel={t('nutritionLogger.packageFlowRemoveMealImage')}
+            accessibilityLabel={t('journal:nutritionLogger.packageFlowRemoveMealImage')}
             width={180}
             height={120}
             borderRadius={12}
@@ -67,13 +67,13 @@ const PackagingAnalysisModal: React.FC<PackagingAnalysisModalProps> = ({ visible
           <ImagePickerButton
             onImageSelected={setMealImage}
             isLoading={false}
-            label={t('nutritionLogger.packageFlowAddMealImage')}
+            label={t('journal:nutritionLogger.packageFlowAddMealImage')}
             style={styles.pickerButton}
           />
         )}
         <LabeledInput
-          label={t('nutritionLogger.packageFlowDescriptionLabel')}
-          placeholder={t('nutritionLogger.packageFlowDescriptionPlaceholder')}
+          label={t('journal:nutritionLogger.packageFlowDescriptionLabel')}
+          placeholder={t('journal:nutritionLogger.packageFlowDescriptionPlaceholder')}
           value={mealDescription}
           isOptional
           onChangeText={setMealDescription}
@@ -101,25 +101,25 @@ const PackagingAnalysisModal: React.FC<PackagingAnalysisModalProps> = ({ visible
               },
             ]}
           >
-            {t('nutritionLogger.packageFlowTitle')}
+            {t('journal:nutritionLogger.packageFlowTitle')}
           </ThemedText>
           {ingredientListImage ? (
             <ImageThumbnailWithDelete
               uri={ingredientListImage.uri}
               onPress={() => setIngredientListImage(null)}
-              accessibilityLabel={t('nutritionLogger.packageFlowRemoveIngredientImage')}
+              accessibilityLabel={t('journal:nutritionLogger.packageFlowRemoveIngredientImage')}
             />
           ) : (
             <>
               <ImagePickerButton
                 onImageSelected={setIngredientListImage}
                 isLoading={false}
-                label={t('nutritionLogger.packageFlowAddIngredientImage')}
+                label={t('journal:nutritionLogger.packageFlowAddIngredientImage')}
                 buttonVariant="secondary"
                 style={styles.pickerButton}
               />
               <ThemedText type="explainer" style={styles.hint}>
-                {t('nutritionLogger.packageFlowHint')}
+                {t('journal:nutritionLogger.packageFlowHint')}
               </ThemedText>
             </>
           )}

@@ -111,10 +111,10 @@ export const SupplementsLoggerTab = ({ selectedDate, preselectedSupplementId }: 
       )}
       {isPlanPickerVisible && (
         <View style={styles.planPickerContainer}>
-          <Text style={[styles.modalTitle, { color: colors.text }]}>{t('dayEdit.choosePlan')}</Text>
+          <Text style={[styles.modalTitle, { color: colors.text }]}>{t('journal:dayEdit.choosePlan')}</Text>
           <View style={styles.addManuallyTextContainer}>
             <DiscreetButton
-              title={' + ' + t('supplementTabSection.addManually')}
+              title={' + ' + t('journal:supplementTabSection.addManually')}
               onPress={() => {
                 setIsSupplementFormVisible(true);
                 setEditingSupplement(null);
@@ -124,7 +124,7 @@ export const SupplementsLoggerTab = ({ selectedDate, preselectedSupplementId }: 
             />
           </View>
 
-          <ThemedText type="label">{t('dayEdit.addFromPlan')}</ThemedText>
+          <ThemedText type="label">{t('journal:dayEdit.addFromPlan')}</ThemedText>
           {plans.supplements.map(plan => {
             const planSupplements = Array.isArray(plan.supplements) ? plan.supplements : [];
             const isDisabled = planSupplements.length === 0;

@@ -20,13 +20,13 @@ jest.mock('react-i18next', () => ({
       const translations: { [key: string]: any } = {
         'today': 'Today',
         'general.add': 'Add',
-        'dayEdit.tabMeal': 'Måltid',
-        'dayEdit.tabSupplements': 'Tillskott',
-        'dayEdit.addSupplement': 'Add Supplement',
-        'dayEdit.addFromPlan': 'Add from Plan',
-        'dayEdit.editSupplement': 'Edit Supplement',
-        'dayEdit.chooseTime': 'Choose Time',
-        'dayEdit.choosePlan': 'Choose Plan',
+        'journal:dayEdit.tabMeal': 'Måltid',
+        'journal:dayEdit.tabSupplements': 'Tillskott',
+        'journal:dayEdit.addSupplement': 'Add Supplement',
+        'journal:dayEdit.addFromPlan': 'Add from Plan',
+        'journal:dayEdit.editSupplement': 'Edit Supplement',
+        'journal:dayEdit.chooseTime': 'Choose Time',
+        'journal:dayEdit.choosePlan': 'Choose Plan',
         'general.cancel': 'Cancel',
       };
       return translations[key] || key;

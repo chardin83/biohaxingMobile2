@@ -83,7 +83,7 @@ export const useNutritionAnalysis = ({
 
   const handleNutritionError = useCallback(
     (data: NutritionAnalysisResponse) => {
-      const backendMessage = data.message || data.content || t('dayEdit.analysisFailed') || '❌ Misslyckades med att analysera bilden.';
+      const backendMessage = data.message || data.content || t('journal:dayEdit.analysisFailed') || '❌ Misslyckades med att analysera bilden.';
       let rawDetails: string | null = null;
       if (typeof data.raw === 'string') {
         rawDetails = data.raw;
@@ -108,7 +108,7 @@ export const useNutritionAnalysis = ({
     async (mealFile: SelectedImageFile, mealDescription?: string, ingredientFile?: SelectedImageFile | null) => {
       const todayKey = toDateKey(new Date());
       if (selectedDate > todayKey) {
-        setAnalysisResult(t('nutritionLogger.futureDateLocked'));
+        setAnalysisResult(t('journal:nutritionLogger.futureDateLocked'));
         clearSelectedNutrition();
         return;
       }
@@ -158,9 +158,9 @@ export const useNutritionAnalysis = ({
           evidence: result.evidence,
           aiDescription: result.aiResponseDescription,
           evidenceMessage: result.evidenceMessage,
-          statusMessage: t('nutritionLogger.analysisReadyToSave'),
+          statusMessage: t('journal:nutritionLogger.analysisReadyToSave'),
         });
-        setAnalysisResult(t('nutritionLogger.analysisReadyToSave'));
+        setAnalysisResult(t('journal:nutritionLogger.analysisReadyToSave'));
         dismissAnalysisSheet();
         setTimeout(() => {
           setPackagingMealImage(null);
@@ -171,7 +171,7 @@ export const useNutritionAnalysis = ({
         const errMsg = err instanceof Error ? err.message : '';
         const statusMessage = errMsg.toLowerCase().includes('socket hang up')
           ? '❌ Backend tappade anslutning till AI (socket hang up). Prova igen med en mindre bild.'
-          : (t('dayEdit.analysisFailed') ?? '❌ Misslyckades med att analysera bilden.');
+          : (t('journal:dayEdit.analysisFailed') ?? '❌ Misslyckades med att analysera bilden.');
         setAnalysisResult(statusMessage);
         setPendingAnalysisReview(emptyReview({ statusMessage }));
         setIsAnalysisReviewModalVisible(true);
@@ -197,7 +197,7 @@ export const useNutritionAnalysis = ({
   const handleImageSelected = useCallback(
     (file: SelectedImageFile) => {
       if (selectedDate > toDateKey(new Date())) {
-        setAnalysisResult(t('nutritionLogger.futureDateLocked'));
+        setAnalysisResult(t('journal:nutritionLogger.futureDateLocked'));
         return;
       }
       setMealTime(new Date());
@@ -253,9 +253,9 @@ export const useNutritionAnalysis = ({
   );
 
   const handleAnalyzePhoto = useCallback(() => {
-    Alert.alert(t('imagePicker.title'), undefined, [
-      { text: t('imagePicker.takePhoto'), onPress: () => handlePickNutritionImage(true).catch(console.error) },
-      { text: t('imagePicker.chooseFromLibrary'), onPress: () => handlePickNutritionImage(false).catch(console.error) },
+    Alert.alert(t('journal:imagePicker.title'), undefined, [
+      { text: t('journal:imagePicker.takePhoto'), onPress: () => handlePickNutritionImage(true).catch(console.error) },
+      { text: t('journal:imagePicker.chooseFromLibrary'), onPress: () => handlePickNutritionImage(false).catch(console.error) },
       { text: t('general.cancel'), style: 'cancel' },
     ]);
   }, [handlePickNutritionImage, t]);

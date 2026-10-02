@@ -37,7 +37,7 @@ export const LoggedDrinksSection: React.FC<LoggedDrinksSectionProps> = ({ drinks
   return (
     <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
       <View style={styles.loggedDrinksSection}>
-        <Collapsible title={`${t('nutritionLogger.loggedDrinksTitle')} (${drinks.length})`} titleType="default" initialCollapsed>
+        <Collapsible title={`${t('journal:nutritionLogger.loggedDrinksTitle')} (${drinks.length})`} titleType="default" initialCollapsed>
           {drinks.map(drink => (
             <SwipeableRow key={drink.id} onDelete={() => onDelete(drink.id)} onEdit={() => onEdit(drink.id)} containerStyle={styles.loggedDrinkSwipeContent}>
               <Pressable onPress={() => onSelect(drink.id)} style={[styles.loggedDrinkRow]}>
@@ -65,7 +65,7 @@ export const LoggedDrinksSection: React.FC<LoggedDrinksSectionProps> = ({ drinks
                     <View style={styles.drinkTag}>
                       <IconSymbol name="caffeine" size={14} color={colors.textMuted} />
                       <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                        {t('nutritionLogger.caffeine')}
+                        {t('journal:nutritionLogger.caffeine')}
                       </ThemedText>
                     </View>
                   )}
@@ -74,7 +74,7 @@ export const LoggedDrinksSection: React.FC<LoggedDrinksSectionProps> = ({ drinks
                     <View style={styles.drinkTag}>
                       <IconSymbol name="alcohol" size={14} color={colors.textMuted} />
                       <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                        {t('nutritionLogger.alcohol')}
+                        {t('journal:nutritionLogger.alcohol')}
                       </ThemedText>
                     </View>
                   )}

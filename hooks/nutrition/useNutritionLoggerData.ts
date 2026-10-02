@@ -122,7 +122,7 @@ export const useNutritionLoggerData = (selectedDate: string) => {
   const dailyNutrition = useMemo<NutritionData>(() => {
     const entries = summary?.entries ?? [];
     return {
-      name: t('nutritionLogger.dailySummary'),
+      name: t('journal:nutritionLogger.dailySummary'),
       calories: summary?.totals.calories,
       protein: summary?.totals.protein,
       carbohydrates: summary?.totals.carbohydrates,

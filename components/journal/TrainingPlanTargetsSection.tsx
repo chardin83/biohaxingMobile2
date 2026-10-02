@@ -201,7 +201,7 @@ export const TrainingPlanTargetsSection: React.FC<TrainingPlanTargetsSectionProp
         </View>
 
         <ThemedText type="caption" style={styles.tipStatus}>
-          {t('nutritionLogger.fulfilledTargetsCount', {
+          {t('journal:nutritionLogger.fulfilledTargetsCount', {
             met: tip.metCount,
             total: tip.totalCount,
           })}
@@ -256,7 +256,7 @@ export const TrainingPlanTargetsSection: React.FC<TrainingPlanTargetsSectionProp
               color: colors.textMuted,
             }}
           >
-            {t('nutritionLogger.noPlanTipsWithTargets')}
+            {t('journal:nutritionLogger.noPlanTipsWithTargets')}
           </ThemedText>
         )}
 
@@ -271,7 +271,7 @@ export const TrainingPlanTargetsSection: React.FC<TrainingPlanTargetsSectionProp
                 },
               });
             }}
-            title={t(period === 'daily' ? 'nutritionLogger.addDailyTarget' : 'nutritionLogger.addWeeklyTarget')}
+            title={t(period === 'daily' ? 'journal:nutritionLogger.addDailyTarget' : 'journal:nutritionLogger.addWeeklyTarget')}
           />
         </View>
       </View>
@@ -305,7 +305,7 @@ export const TrainingPlanTargetsSection: React.FC<TrainingPlanTargetsSectionProp
           </ThemedText>
 
           <AppButton
-            title={t('nutritionLogger.addFirstTarget')}
+            title={t('journal:nutritionLogger.addFirstTarget')}
             onPress={() => {
               router.push({
                 pathname: '/(tabs)/search',
@@ -325,11 +325,11 @@ export const TrainingPlanTargetsSection: React.FC<TrainingPlanTargetsSectionProp
             {t('plan.trainingTargetsSectionTitle')}
           </ThemedText>
 
-          {renderPeriod('daily', t('nutritionLogger.periodDaily'))}
+          {renderPeriod('daily', t('journal:nutritionLogger.periodDaily'))}
 
-          {renderPeriod('weekly', t('nutritionLogger.periodWeekly'))}
+          {renderPeriod('weekly', t('journal:nutritionLogger.periodWeekly'))}
 
-          <ProgressButton href="/(stack)/journal/training/progress" label={t('nutritionLogger.seeProgress')} />
+          <ProgressButton href="/(stack)/journal/training/progress" label={t('journal:nutritionLogger.seeProgress')} />
         </>
       )}
     </Card>

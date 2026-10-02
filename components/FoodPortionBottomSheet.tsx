@@ -92,7 +92,7 @@ const FoodPortionBottomSheet: React.FC<FoodPortionBottomSheetProps> = ({
           </View>
         </View>
         <ThemedText type="defaultSemiBold" style={styles.sectionTitle}>
-          {t('common:foodPortionBottomSheet.selectPortion')}
+          {t('journal:foodPortionBottomSheet.selectPortion')}
         </ThemedText>
         {servingSizes.map(serving => {
           const label = getServingLabel(serving);

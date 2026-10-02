@@ -49,7 +49,7 @@ export const useNutritionPlanProgress = (selectedDate: string): TipProgressItem[
       const targetTag = item.tag ?? item.trackingKey;
 
       const targetLabel = item.labelGroup
-        ? t(`common:nutritionLogger.${item.labelGroup}.${targetTag}`, {
+        ? t(`journal:nutritionLogger.${item.labelGroup}.${targetTag}`, {
             defaultValue: targetTag,
           })
         : targetTag;

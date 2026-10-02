@@ -127,7 +127,7 @@
       "recommendedBedtime": "Rekommenderad läggtid"
     }
   },
-   "selectedSupplementList": {
+  "selectedSupplementList": {
     "choosenFor": "Tagna kosttillskott"
   },
   "plan": {
@@ -222,19 +222,13 @@
     "supplementActionsPromptTitle": "Avsluta kosttillskott?",
     "supplementActionsPromptDescription": "Vad vill du göra med kosttillskottet?",
     "supplementActionsPromptDescriptionWithName": "Vad vill du göra med {{name}}?",
-
     "supplementActionsArchiveTitle": "Arkivera",
     "supplementActionsArchiveDescription": "Markera kosttillskottet som avslutat och behåll historiken.",
-
     "supplementActionsDeleteTitle": "Ta bort permanent",
     "supplementActionsDeleteDescription": "Ta bort kosttillskottet och dess historik helt.",
-
     "supplementActionsDeleteConfirmTitle": "Ta bort kosttillskott?",
     "supplementActionsDeleteConfirmMessage": "Vill du verkligen ta bort {{name}} permanent? Detta går inte att ångra.",
     "supplementActionsDeleteConfirmAction": "Ta bort"
-  },
-  "supplementTabSection": {
-    "addManually": "Lägg till manuellt"
   },
   "planMeta": {
     "activeSince": "Aktiv sedan {{date}}",
@@ -286,18 +280,6 @@
   "supplementForm": {
     "dosage": "Dos",
     "unit": "Enhet"
-  },
-  "dayEdit": {
-    "tabMeal": "Måltid",
-    "tabSupplements": "Tillskott",
-    "tabTraining": "Träning",
-    "tabOther": "Övrigt",
-    "addSupplement": "Lägg till tillskott",
-    "addFromPlan": "Från plan",
-    "choosePlan": "Hur vill du lägga till tillskott?",
-    "editSupplement": "Redigera tillskott för",
-    "analysisFailed": "Analysen misslyckades. Försök igen.",
-    "nutritionSummary": "Näringsöversikt"
   },
   "planSupplementsPicker": {
     "chooseSupplementsFromPlan": "Välj tillskott från"
@@ -855,11 +837,6 @@
     "continue": "Fortsätt",
     "stepOf": "Steg {{current}} av {{total}}"
   },
-  "imagePicker": {
-    "title": "Välj en bild",
-    "takePhoto": "Ta foto",
-    "chooseFromLibrary": "Välj från biblioteket"
-  },
   "dashboard": {
     "appTitle": "BIOHAXING",
     "level": "LEVEL",
@@ -873,25 +850,6 @@
   },
   "search": {
     "label": "Sök tips"
-  },
-  "otherTips": {
-    "title": "Övriga tips",
-    "subtitle": "Följ dagens uppfyllelse av dina övriga tips.",
-    "description": "Övriga tips för din hälsa",
-    "count": "{{count}} tips",
-    "empty": "Inga övriga tips tillgängliga ännu.",
-    "noPlanned": "Inga övriga tips är planerade för den här dagen.",
-    "noTarget": "Inget mätbart mål",
-    "fulfilled": "Uppfyllt",
-    "notFulfilled": "Inte uppfyllt",
-    "markDone": "Markera som gjort",
-    "markDoneButton": "Gör {{count}}",
-    "completedButton": "{{count}} klart",
-    "showCompletionButtons": "Visa knappar för att ändra status",
-    "habitLabels": {
-      "morning": "Morgon",
-      "night": "Kväll"
-    }
   },
   "planCategory": {
     "nutrition": "Kost",
@@ -1049,293 +1007,9 @@
     "notesLabel": "Noteringar",
     "notesPlaceholder": "Hunden sov i sängen, vaknade ofta, etc."
   },
-  "nutritionLogger": {
-    "addNutrition": "Logga mat och dryck",
-    "analyzing": "Analyserar med AI",
-    "mealTitle": "Loggad måltid",
-    "mealTitleWithName": "Loggad måltid: {{name}}",
-    "loggedMealsTitle": "Loggade måltider",
-    "loggedDrinksTitle": "Loggade drycker",
-    "futureDateLocked": "Du kan inte logga eller analysera måltider på framtida datum.",
-    "packageFlowTitle": "Ingredienser",
-    "packageFlowAnalyze": "Analysera måltid",
-    "packageFlowAddMealImage": "Lägg till måltidsbild",
-    "packageFlowRemoveMealImage": "Ta bort måltidsbild",
-    "packageFlowDescriptionLabel": "Måltidsbeskrivning",
-    "packageFlowDescriptionPlaceholder": "Exempel: kycklingsallad med avokado, fetaost och pumpafrön",
-    "packageFlowAddIngredientImage": "Fota näringsetikett",
-    "packageFlowHint": "Foto på näringsetiketten hjälper till att analysera måltiden mer exakt.",
-    "mealTime": "Måltidstid",
-    "analysisReviewTitle": "Granska AI-analysen innan du sparar",
-    "analysisReviewAiDescriptionTitle": "AI-beskrivning av bilden",
-    "analysisReviewNutritionPreviewTitle": "Näring som kommer att sparas",
-    "analysisReadyToSave": "Granska analysen och tryck på Spara om den verkar stämma.",
-    "unnamedMeal": "Namnlös måltid",
-    "editMealNameTitle": "Redigera måltidsnamn",
-    "copyMealModalTitle": "Välj en av dina senaste måltider",
-    "copyMealEmpty": "Du har inga loggade måltider att kopiera än.",
-    "copyMealMeta": "{{calories}} kcal • {{protein}} g protein • {{fiber}} g fibrer",
-    "mealNameLabel": "Måltidsnamn",
-    "removeMeal": "Ta bort",
-    "showSummary": "Visa dagssummering",
-    "hideSummary": "Dölj dagssummering",
-    "summaryTitle": "Dagssummering",
-    "protein": "Protein: {{value}} g",
-    "carbohydrates": "Kolhydrater: {{value}} g",
-    "fat": "Fett: {{value}} g",
-    "calories": "Kalorier: {{value}} kcal",
-    "fiber": "Fibrer: {{value}} g",
-    "polyphenols": "Polyfenoler: {{value}} mg",
-    "minerals": "Mineraler: {{value}} mg",
-    "vitamins": "Vitaminer: {{value}} mg",
-    "alcohol": "Alkohol",
-    "caffeine": "Koffein",
-    "sugarFree": "Sockerfri",
-    "microbiomeYes": "Mikrobiom-support: Ja ({{count}})",
-    "fulfilledTargetsCount": "{{met}}/{{total}} uppfyllda",
-    "continueToday": "Fortsätt idag",
-    "continueThisWeek": "Fortsätt denna vecka",
-    "targetsTitle": "Mål",
-    "targetsEmptyDescription": "Sätt dagliga eller veckovisa mål för att börja följa din progress.",
-    "addFirstTarget": "+ Lägg till ditt första mål",
-    "addDailyTarget": "+ Lägg till dagligt mål",
-    "addWeeklyTarget": "+ Lägg till veckomål",
-    "periodDaily": "Idag",
-    "periodWeekly": "Denna vecka",
-    "noPlanTipsWithTargets": "Du har inga plantips med näringsmål.",
-    "noFulfilledTipsToday": "Inga plantips med näringsmål är uppfyllda idag.",
-    "linkedNutrients": "Nutrienter",
-    "sources": "Källor",
-    "confidenceHigh": "Hög säkerhet",
-    "confidenceMedium": "Medelhög säkerhet",
-    "confidenceLow": "Låg säkerhet",
-    "confidenceUnknown": "Okänd säkerhet",
-    "detectedDrinksTitle": "Bekräfta drycker",
-    "fiberLabels": {
-      "fiber_total": "Fibrer totalt",
-      "fiber_gel_forming": "Gelbildande fibrer",
-      "fiber_non_gel_forming": "Ej gelbildande fibrer",
-      "fiber_fermentable": "Fermenterbara fibrer"
-    },
-    "polyphenolLabels": {
-      "polyphenols_total": "Polyfenoler totalt",
-      "flavonoids_total": "Flavonoider totalt",
-      "phenolic_acids": "Fenoliska syror",
-      "anthocyanins": "Antocyaniner",
-      "catechins": "Katekiner",
-      "flavanols": "Flavanoler",
-      "flavonols": "Flavonoler",
-      "quercetin": "Quercetin",
-      "ellagitannins": "Ellagitanniner",
-      "lignans": "Lignaner",
-      "chlorogenic_acids": "Klorogensyror"
-    },
-    "mineralLabels": {
-      "minerals_total": "Mineraler totalt",
-      "sodium": "Natrium",
-      "potassium": "Kalium",
-      "magnesium": "Magnesium",
-      "calcium": "Kalcium",
-      "iron": "Järn",
-      "zinc": "Zink",
-      "selenium": "Selen",
-      "iodine": "Jod",
-      "phosphorus": "Fosfor",
-      "copper": "Koppar",
-      "manganese": "Mangan"
-    },
-    "vitaminLabels": {
-      "vitamins_total": "Vitaminer totalt",
-      "vitamin_a": "Vitamin A",
-      "vitamin_c": "Vitamin C",
-      "vitamin_d": "Vitamin D",
-      "vitamin_e": "Vitamin E",
-      "vitamin_k": "Vitamin K",
-      "vitamin_b1": "Vitamin B1 (Tiamin)",
-      "vitamin_b2": "Vitamin B2 (Riboflavin)",
-      "vitamin_b3": "Vitamin B3 (Niacin)",
-      "vitamin_b5": "Vitamin B5 (Pantotensyra)",
-      "vitamin_b6": "Vitamin B6",
-      "vitamin_b7": "Vitamin B7 (Biotin)",
-      "vitamin_b9": "Vitamin B9 (Folat)",
-      "vitamin_b12": "Vitamin B12"
-    },
-    "aminoAcids": "Aminosyror ({{count}} spårade)",
-    "essentialAminoAcidsTitle": "Essentiella aminosyror",
-    "essentialAminoAcidsTotal": "Essentiella aminosyror totalt",
-    "otherAminoAcidsTitle": "Andra viktiga aminosyror",
-    "aminoAcidLabels": {
-      "histidine": "Histidin",
-      "isoleucine": "Isoleucin",
-      "leucine": "Leucin",
-      "lysine": "Lysin",
-      "methionine": "Metionin",
-      "phenylalanine": "Fenylalanin",
-      "threonine": "Treonin",
-      "tryptophan": "Tryptofan",
-      "valine": "Valin",
-      "arginine": "Arginin",
-      "cysteine": "Cystein",
-      "glutamine": "Glutamin",
-      "glycine": "Glycin",
-      "proline": "Prolin",
-      "tyrosine": "Tyrosin",
-      "citrulline": "Citrullin",
-      "tmg": "Trimethylglycin (TMG)"
-    },
-    "plantDiversityLabels": {
-      "plant_diversity": "Växtdiversitet"
-    },
-    "weeklyTrackingLabels": {
-      "unique_plants": "Unika växter",
-      "vegetable_colors": "Grönsaksfarger",
-      "fish_meals": "Fiskåtagningar",
-      "fatty_fish_meals": "Fet fiskåtagningar"
-    },
-    "fiberSubtypeLabels": {
-      "beta_glucans": "Beta-glukaner",
-      "pectin": "Pektin",
-      "psyllium": "Psyllium",
-      "mucilage": "Slemfibrer",
-      "cellulose": "Cellulosa",
-      "hemicellulose": "Hemicellulosa",
-      "lignin": "Lignin",
-      "arabinoxylan": "Arabinoxylan",
-      "resistant_starch": "Resistent stärkelse",
-      "inulin": "Inulin",
-      "fructooligosaccharides": "Fruktooligosackarider (FOS)",
-      "galactooligosaccharides": "Galaktooligosackarider (GOS)",
-      "pectic_oligosaccharides": "Pektiska oligosackarider"
-    },
-    "seeProgress": "Se utveckling",
-    "analysisInProgress": "Analys pågår",
-    "analysisDoNotCloseApp": "Stäng inte appen medan analysen pågår. Det går bra att navigera till andra delar av appen.",
-    "analysisImage": "Analyserar bilden",
-    "analysisNutrition": "Beräknar näringsinnehåll",
-    "analysisPreparingResult": "Förbereder resultatet",
-    "mealLogger": {
-      "addMeal": "Lägg till måltid",
-      "chooseHowToAddMeal": "Välj hur du vill lägga till måltiden",
-      "analyzePhoto": "Analysera foto",
-      "takePhotoOfMeal": "Ta ett foto av måltiden",
-      "scanBarcode": "Skanna streckkod",
-      "lookupPackagedProduct": "Sök förpackad produkt",
-      "previousMeal": "Föregående måltid",
-      "copyPreviousMeal": "Kopiera en tidigare måltid"
-    },
-    "barcodeScanner": {
-      "title": "Skanna streckkod",
-      "description": "Rikta kameran mot produktens streckkod",
-      "cameraPermission": "Kamerabehörighet behövs för att skanna streckkoder.",
-      "allowCamera": "Tillåt kamera",
-      "manualDescription": "Kan du inte skanna streckkoden? Ange numret manuellt.",
-      "barcode": "Streckkod",
-      "barcodePlaceholder": "T.ex. 7310865004703",
-      "search": "Sök produkt",
-      "productNotFoundTitle": "Produkten hittades inte",
-      "productNotFoundMessage": "Produkten finns inte i Open Food Facts.",
-      "lookupFailedTitle": "Kunde inte hämta produkten",
-      "lookupFailedMessage": "Försök igen."
-    },
-    "barcodeProduct": {
-      "type": "Typ",
-      "meal": "Måltid",
-      "drink": "Dryck",
-      "amount": "Mängd",
-      "calories": "Kalorier",
-      "protein": "Protein",
-      "carbohydrates": "Kolhydrater",
-      "fat": "Fett",
-      "fiber": "Fibrer",
-      "nutritionForAmount": "Näringsvärden för vald mängd",
-      "add": "Lägg till",
-      "nutritionCalculatedPer100g": "Näringsvärden beräknade från värden per 100 g"    
-    }
-  },
-  "otherLoggerTab": {
-    "registerToday": "Registrera idag",
-    "registeredToday": "Registrerat idag"
-  },
   "labeledInput": {
     "optional": "valfritt",
     "required": "obligatoriskt"
-  },
-  "foodPortionBottomSheet": {
-    "selectPortion": "Välj portion"
-  },
-  "tip-target-details": {
-    "noData": "Ingen data",
-    "medal": {
-      "goldLabel": "Guldmedalj",
-      "silverLabel": "Silvermedalj",
-      "bronzeLabel": "Bronsmedalj",
-      "none": "Ingen medalj än",
-      "infoButton": "Visa hur medaljer fungerar",
-      "infoTitle": "Hur medaljer fungerar",
-      "infoIntro": "För gram- och milligrammål måste målet först vara uppnått. Därefter avgör hur stor andel som kommer från mat vilken medalj du får.",
-      "goldRule": {
-        "title": "🥇 Guld",
-        "body": "Målet är nått och minst 80% av intaget kommer från mat."
-      },
-      "silverRule": {
-        "title": "🥈 Silver",
-        "body": "Målet är nått och minst 50% av intaget kommer från mat."
-      },
-      "bronzeRule": {
-        "title": "🥉 Brons",
-        "body": "Målet är nått, men mindre än 50% av intaget kommer från mat."
-      },
-      "discreteRule": {
-        "title": "Items, count och plants",
-        "body": "För mål som inte använder g eller mg blir medaljen alltid guld när målet är uppnått."
-      }
-    },
-    "breakdown": {
-      "viaFood": "{{percent}}% via mat",
-      "viaSupplement": "{{percent}}% via supplement"
-    },
-    "date": {
-      "title": "Datum",
-      "previousDay": "Föregående dag",
-      "nextDay": "Nästa dag",
-      "previousWeek": "Föregående vecka",
-      "nextWeek": "Nästa vecka"
-    },
-    "details": {
-      "title": "Detaljer",
-      "totalIntake": "Totalt intag:",
-      "fromFood": "Från mat:",
-      "fromSupplements": "Från kosttillskott:",
-      "noDataForDay": "Ingen data för denna dag",
-      "noDataForWeek": "Ingen data för denna vecka",
-      "goal": "Mål"
-    },
-    "meals": {
-      "title": "Bidragande måltider",
-      "noneContributed": "Inga måltider bidrog till detta mål denna dag.",
-      "noneContributedWeek": "Inga måltider bidrog till detta mål denna vecka."
-    },
-    "supplements": {
-      "title": "Kosttillskott",
-      "noneListed": "Inga kosttillskott listade för detta tips."
-    },
-    "foodSources": {
-      "title": "Lägg till mat",
-      "addSource": "Lägg till {{name}}",
-      "noneListed": "Inga matkällor listade för detta tips."
-    }
-  },
-  "progress": {
-    "title": "Utveckling",
-    "last4Weeks": "Senaste 4 veckorna",
-    "thisWeek": "Denna vecka",
-    "noTargets": "Inga mål inställda ännu.",
-    "notActiveStarts": "Inte aktiv - startar {{date}}",
-    "startsOn": "Startar {{date}}",
-    "days": "dagar",
-    "currentStreak": "Nuvarande streak: ",
-    "currentStreakDays": "{{count}} dagar",
-    "streakReminder": "Glöm inte logga din måltid idag för att hålla streaken vid liv!"
   },
   "wearableStatus": {
     "lastSync": "Senaste synkronisering",

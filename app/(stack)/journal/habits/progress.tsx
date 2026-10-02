@@ -232,7 +232,7 @@ export default function HabitProgressScreen() {
                 color: colors.goldSuperSoft,
               }}
             >
-              {` • ${t('common:progress.startsOn', {
+              {` • ${t('journal:progress.startsOn', {
                 date: startLabel,
               })}`}
             </ThemedText>
@@ -245,7 +245,7 @@ export default function HabitProgressScreen() {
               color: colors.textMuted,
             }}
           >
-            {t('common:progress.notActiveStarts', {
+            {t('journal:progress.notActiveStarts', {
               date: startLabel,
             })}
           </ThemedText>
@@ -283,13 +283,13 @@ export default function HabitProgressScreen() {
         )}
         {!weekBeforeStart && renderSelectedDay(target)}
         <ThemedText type="explainer" style={[styles.pastWeeksHeading]}>
-          {t('progress.last4Weeks')}
+          {t('journal:progress.last4Weeks')}
         </ThemedText>
 
         <PastWeeksProgress
           weeks={pastWeekProgress}
           selectedWeekStart={selectedWeekStart ?? pastWeeks[3].start}
-          daysLabel={t('progress.days')}
+          daysLabel={t('journal:progress.days')}
           onSelectWeek={weekStart => {
             setSelectedWeekStart(weekStart);
             setSelectedDay('');
@@ -453,7 +453,7 @@ export default function HabitProgressScreen() {
     <Container background="default" showBackButton onBackPress={() => router.back()}>
       <ScrollView contentContainerStyle={styles.content}>
         <ThemedText type="title2" style={styles.heading}>
-          {t('progress.title')}
+          {t('journal:progress.title')}
         </ThemedText>
         <ProgressDateNavigator
           label={dateRangeLabel}
@@ -468,14 +468,14 @@ export default function HabitProgressScreen() {
           }}
         />
         {dailyTargets.length > 0 && (
-          <Collapsible title={t('nutritionLogger.periodDaily')} titleType="title3" contentStyle={styles.collapsibleContent}>
+          <Collapsible title={t('journal:nutritionLogger.periodDaily')} titleType="title3" contentStyle={styles.collapsibleContent}>
             <Card style={styles.card} transparent={false}>
               {dailyTargets.map(renderDailyTarget)}
             </Card>
           </Collapsible>
         )}
         {weeklyTargets.length > 0 && (
-          <Collapsible title={t('nutritionLogger.periodWeekly')} titleType="title3" contentStyle={styles.collapsibleContent}>
+          <Collapsible title={t('journal:nutritionLogger.periodWeekly')} titleType="title3" contentStyle={styles.collapsibleContent}>
             <Card style={styles.card} transparent={false}>
               {weeklyTargets.map(renderWeeklyTarget)}
             </Card>
@@ -488,7 +488,7 @@ export default function HabitProgressScreen() {
               color: colors.textMuted,
             }}
           >
-            {t('progress.noTargets')}
+            {t('journal:progress.noTargets')}
           </ThemedText>
         )}
       </ScrollView>

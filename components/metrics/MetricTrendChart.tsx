@@ -165,14 +165,14 @@ export function MetricTrendChart({
   const getTargetLabel = React.useCallback(
   (tag: string) => {
     const keys = [
-      `common:nutritionLogger.mineralLabels.${tag}`,
-      `common:nutritionLogger.polyphenolLabels.${tag}`,
-      `common:nutritionLogger.vitaminLabels.${tag}`,
-      `common:nutritionLogger.fiberLabels.${tag}`,
-      `common:nutritionLogger.aminoAcidLabels.${tag}`,
-      `common:nutritionLogger.plantDiversityLabels.${tag}`,
-      `common:nutritionLogger.weeklyTrackingLabels.${tag}`,
-      `common:nutritionLogger.fiberSubtypeLabels.${tag}`,
+      `journal:nutritionLogger.mineralLabels.${tag}`,
+      `journal:nutritionLogger.polyphenolLabels.${tag}`,
+      `journal:nutritionLogger.vitaminLabels.${tag}`,
+      `journal:nutritionLogger.fiberLabels.${tag}`,
+      `journal:nutritionLogger.aminoAcidLabels.${tag}`,
+      `journal:nutritionLogger.plantDiversityLabels.${tag}`,
+      `journal:nutritionLogger.weeklyTrackingLabels.${tag}`,
+      `journal:nutritionLogger.fiberSubtypeLabels.${tag}`,
     ];
 
     for (const key of keys) {

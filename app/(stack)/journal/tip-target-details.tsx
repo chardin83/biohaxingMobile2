@@ -298,7 +298,7 @@ const getContributingNutritionEntriesForTarget = (
     .map(entry => ({
       id: entry.id,
       dateKey: selectedDateKey,
-      name: entry.name?.trim() || t('nutritionLogger.unnamedEntry'),
+      name: entry.name?.trim() || t('journal:nutritionLogger.unnamedEntry'),
       amount: getNutritionEntryContributionForTarget(entry, targetTag, targetUnit),
     }))
     .filter(entry => entry.amount > 0)
@@ -355,7 +355,7 @@ const ContributingMealsSection = ({
     return (
       <View style={[styles.mealsSection, { borderColor: colors.borderLight ?? colors.border }]}>
         <ThemedText type="title3" style={styles.supplementHeading}>
-          {t('common:tip-target-details.meals.title')}
+          {t('journal:tip-target-details.meals.title')}
         </ThemedText>
         <ThemedText type="caption" style={{ color: colors.textMuted }}>
           {emptyText}
@@ -367,7 +367,7 @@ const ContributingMealsSection = ({
   return (
     <View style={[styles.mealsSection, { borderColor: colors.borderLight ?? colors.border }]}>
       <ThemedText type="title3" style={styles.supplementHeading}>
-        {t('common:tip-target-details.meals.title')}
+        {t('journal:tip-target-details.meals.title')}
       </ThemedText>
       <View style={styles.mealsList}>
         {contributingMeals.map(meal => (
@@ -427,7 +427,7 @@ const PeriodNavigationSection = ({
   onNext: () => void;
 }) => (
   <View style={[styles.dateSection, { borderColor: colors.borderLight ?? colors.border }]}>
-    <ThemedText type="defaultSemiBold">{t('common:tip-target-details.date.title')}</ThemedText>
+    <ThemedText type="defaultSemiBold">{t('journal:tip-target-details.date.title')}</ThemedText>
     <View style={styles.dateNavRow}>
       <TouchableOpacity onPress={onPrevious} accessibilityRole="button" accessibilityLabel={previousAccessibilityLabel}>
         <IconSymbol name="chevron.left" size={20} color={colors.primary} />
@@ -465,20 +465,20 @@ const IntakeDetailsSection = ({
 }) => (
   <View style={[styles.detailsSection, { borderColor: colors.borderLight ?? colors.border }]}>
     <ThemedText type="title3" style={styles.detailsHeading}>
-      {t('common:tip-target-details.details.title')}
+      {t('journal:tip-target-details.details.title')}
     </ThemedText>
     {hasData ? (
       <>
         <View style={styles.detailRow}>
-          <ThemedText type="default">{t('common:tip-target-details.details.totalIntake')}</ThemedText>
+          <ThemedText type="default">{t('journal:tip-target-details.details.totalIntake')}</ThemedText>
           <ThemedText type="defaultSemiBold">{formatWithUnit(totalActual, amountUnit, targetTagParam)}</ThemedText>
         </View>
         <View style={styles.detailRow}>
-          <ThemedText type="default">{t('common:tip-target-details.details.fromFood')}</ThemedText>
+          <ThemedText type="default">{t('journal:tip-target-details.details.fromFood')}</ThemedText>
           <ThemedText type="defaultSemiBold">{formatWithUnit(foodActual, amountUnit, targetTagParam)}</ThemedText>
         </View>
         <View style={styles.detailRow}>
-          <ThemedText type="default">{t('common:tip-target-details.details.fromSupplements')}</ThemedText>
+          <ThemedText type="default">{t('journal:tip-target-details.details.fromSupplements')}</ThemedText>
           <ThemedText type="defaultSemiBold">{formatWithUnit(supplementActual, amountUnit, targetTagParam)}</ThemedText>
         </View>
       </>
@@ -488,7 +488,7 @@ const IntakeDetailsSection = ({
       </ThemedText>
     )}
     <View style={styles.detailRow}>
-      <ThemedText type="default">{t('common:tip-target-details.details.goal')}</ThemedText>
+      <ThemedText type="default">{t('journal:tip-target-details.details.goal')}</ThemedText>
       <ThemedText type="defaultSemiBold">{formatWithUnit(targetAmount, amountUnit, targetTagParam)}</ThemedText>
     </View>
   </View>
@@ -526,19 +526,19 @@ const getPeriodPresentation = ({
   if (isWeeklyTarget) {
     return {
       periodLabel: formatMonthDayRange(fromDateKey(selectedWeekStartKey), fromDateKey(selectedWeekEndKey), language),
-      previousPeriodLabel: t('common:tip-target-details.date.previousWeek'),
-      nextPeriodLabel: t('common:tip-target-details.date.nextWeek'),
-      noDataText: t('common:tip-target-details.details.noDataForWeek'),
-      noContributingMealsText: t('common:tip-target-details.meals.noneContributedWeek'),
+      previousPeriodLabel: t('journal:tip-target-details.date.previousWeek'),
+      nextPeriodLabel: t('journal:tip-target-details.date.nextWeek'),
+      noDataText: t('journal:tip-target-details.details.noDataForWeek'),
+      noContributingMealsText: t('journal:tip-target-details.meals.noneContributedWeek'),
     };
   }
 
   return {
     periodLabel: formatDateLabel(selectedDateKey, language),
-    previousPeriodLabel: t('common:tip-target-details.date.previousDay'),
-    nextPeriodLabel: t('common:tip-target-details.date.nextDay'),
-    noDataText: t('common:tip-target-details.details.noDataForDay'),
-    noContributingMealsText: t('common:tip-target-details.meals.noneContributed'),
+    previousPeriodLabel: t('journal:tip-target-details.date.previousDay'),
+    nextPeriodLabel: t('journal:tip-target-details.date.nextDay'),
+    noDataText: t('journal:tip-target-details.details.noDataForDay'),
+    noContributingMealsText: t('journal:tip-target-details.meals.noneContributed'),
   };
 };
 
@@ -678,7 +678,7 @@ export default function TipTargetDetailsScreen() {
           return {
             id: contribution.nutritionEntryId,
             dateKey: contribution.date,
-            name: nutritionEntry.name?.trim() || t('nutritionLogger.unnamedEntry'),
+            name: nutritionEntry.name?.trim() || t('journal:nutritionLogger.unnamedEntry'),
             amount,
             trackedItems,
           };
@@ -751,14 +751,14 @@ export default function TipTargetDetailsScreen() {
   const medalInfoSnapPoints = useMemo(() => ['42%', '62%'], []);
   const medalLabelKey = medalType
     ? {
-        gold: 'common:tip-target-details.medal.goldLabel',
-        silver: 'common:tip-target-details.medal.silverLabel',
-        bronze: 'common:tip-target-details.medal.bronzeLabel',
+        gold: 'journal:tip-target-details.medal.goldLabel',
+        silver: 'journal:tip-target-details.medal.silverLabel',
+        bronze: 'journal:tip-target-details.medal.bronzeLabel',
       }[medalType]
     : null;
   const medalAccessibilityLabel = medalLabelKey
-    ? `${t(medalLabelKey)}. ${t('common:tip-target-details.medal.infoButton')}`
-    : `${t('common:tip-target-details.medal.none')}. ${t('common:tip-target-details.medal.infoButton')}`;
+    ? `${t(medalLabelKey)}. ${t('journal:tip-target-details.medal.infoButton')}`
+    : `${t('journal:tip-target-details.medal.none')}. ${t('journal:tip-target-details.medal.infoButton')}`;
 
   const amountUnit = targetUnit;
   const { periodLabel, previousPeriodLabel, nextPeriodLabel, noDataText, noContributingMealsText } = getPeriodPresentation({
@@ -884,7 +884,7 @@ export default function TipTargetDetailsScreen() {
                 </ThemedText>
               ) : (
                 <ThemedText type="default" style={{ color: colors.textMuted }}>
-                  {t('common:tip-target-details.medal.none')}
+                  {t('journal:tip-target-details.medal.none')}
                 </ThemedText>
               )}
               <IconSymbol name="chevron.right" size={14} color={colors.textMuted} />
@@ -939,17 +939,17 @@ export default function TipTargetDetailsScreen() {
             {hasData ? (
               <>
                 <ThemedText type="defaultSemiBold" style={{ color: foodColor }}>
-                  {t('common:tip-target-details.breakdown.viaFood', { percent: split.fromFood })}
+                  {t('journal:tip-target-details.breakdown.viaFood', { percent: split.fromFood })}
                 </ThemedText>
                 {isSupplementEligibleUnit(targetUnit) && (
                   <ThemedText type="defaultSemiBold" style={{ color: supplementColor }}>
-                    {t('common:tip-target-details.breakdown.viaSupplement', { percent: split.fromSupplement })}
+                    {t('journal:tip-target-details.breakdown.viaSupplement', { percent: split.fromSupplement })}
                   </ThemedText>
                 )}
               </>
             ) : (
               <ThemedText type="defaultSemiBold" style={{ color: colors.textMuted }}>
-                {t('common:tip-target-details.noData')}
+                {t('journal:tip-target-details.noData')}
               </ThemedText>
             )}
           </View>
@@ -996,7 +996,7 @@ export default function TipTargetDetailsScreen() {
 
         <View style={[styles.supplementSection, { borderColor: colors.borderLight ?? colors.border }]}>
           <ThemedText type="title3" style={styles.supplementHeading}>
-            {t('common:tip-target-details.supplements.title')}
+            {t('journal:tip-target-details.supplements.title')}
           </ThemedText>
           {listedSupplements.length > 0 ? (
             <View style={styles.supplementList}>
@@ -1026,14 +1026,14 @@ export default function TipTargetDetailsScreen() {
             </View>
           ) : (
             <ThemedText type="caption" style={{ color: colors.textMuted }}>
-              {t('common:tip-target-details.supplements.noneListed')}
+              {t('journal:tip-target-details.supplements.noneListed')}
             </ThemedText>
           )}
         </View>
 
         <View style={[styles.foodSourceSection, { borderColor: colors.borderLight ?? colors.border }]}>
           <ThemedText type="title3" style={styles.supplementHeading}>
-            {t('common:tip-target-details.foodSources.title')}
+            {t('journal:tip-target-details.foodSources.title')}
           </ThemedText>
           {nutritionFoodItems.length > 0 ? (
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.foodSourceScrollContent}>
@@ -1055,7 +1055,7 @@ export default function TipTargetDetailsScreen() {
                       }
                     }}
                     accessibilityRole="button"
-                    accessibilityLabel={t('common:tip-target-details.foodSources.addSource', { name })}
+                    accessibilityLabel={t('journal:tip-target-details.foodSources.addSource', { name })}
                     style={({ pressed }) => [
                       styles.foodSourceCard,
                       {
@@ -1088,7 +1088,7 @@ export default function TipTargetDetailsScreen() {
             </ScrollView>
           ) : (
             <ThemedText type="caption" style={{ color: colors.textMuted }}>
-              {t('common:tip-target-details.foodSources.noneListed')}
+              {t('journal:tip-target-details.foodSources.noneListed')}
             </ThemedText>
           )}
         </View>
@@ -1123,36 +1123,36 @@ export default function TipTargetDetailsScreen() {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
-            <ThemedText type="title3">{t('common:tip-target-details.medal.infoTitle')}</ThemedText>
+            <ThemedText type="title3">{t('journal:tip-target-details.medal.infoTitle')}</ThemedText>
             <ThemedText type="caption" style={{ color: colors.textMuted }}>
-              {t('common:tip-target-details.medal.infoIntro')}
+              {t('journal:tip-target-details.medal.infoIntro')}
             </ThemedText>
 
             <View style={styles.medalInfoList}>
               <View style={styles.medalInfoRow}>
-                <ThemedText type="defaultSemiBold">{t('common:tip-target-details.medal.goldRule.title')}</ThemedText>
+                <ThemedText type="defaultSemiBold">{t('journal:tip-target-details.medal.goldRule.title')}</ThemedText>
                 <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                  {t('common:tip-target-details.medal.goldRule.body')}
+                  {t('journal:tip-target-details.medal.goldRule.body')}
                 </ThemedText>
               </View>
               <View style={styles.medalInfoRow}>
-                <ThemedText type="defaultSemiBold">{t('common:tip-target-details.medal.silverRule.title')}</ThemedText>
+                <ThemedText type="defaultSemiBold">{t('journal:tip-target-details.medal.silverRule.title')}</ThemedText>
                 <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                  {t('common:tip-target-details.medal.silverRule.body')}
+                  {t('journal:tip-target-details.medal.silverRule.body')}
                 </ThemedText>
               </View>
               <View style={styles.medalInfoRow}>
-                <ThemedText type="defaultSemiBold">{t('common:tip-target-details.medal.bronzeRule.title')}</ThemedText>
+                <ThemedText type="defaultSemiBold">{t('journal:tip-target-details.medal.bronzeRule.title')}</ThemedText>
                 <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                  {t('common:tip-target-details.medal.bronzeRule.body')}
+                  {t('journal:tip-target-details.medal.bronzeRule.body')}
                 </ThemedText>
               </View>
             </View>
 
             <View style={[styles.medalInfoNote, { backgroundColor: colors.accentVeryWeak ?? colors.cardBackground }]}>
-              <ThemedText type="defaultSemiBold">{t('common:tip-target-details.medal.discreteRule.title')}</ThemedText>
+              <ThemedText type="defaultSemiBold">{t('journal:tip-target-details.medal.discreteRule.title')}</ThemedText>
               <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                {t('common:tip-target-details.medal.discreteRule.body')}
+                {t('journal:tip-target-details.medal.discreteRule.body')}
               </ThemedText>
             </View>
           </BottomSheetScrollView>

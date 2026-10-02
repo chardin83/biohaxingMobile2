@@ -43,7 +43,7 @@ const BarcodeScannerBottomSheet = forwardRef<BottomSheetModal, BarcodeScannerBot
         const product = await getProductByBarcode(normalizedBarcode);
 
         if (!product) {
-          Alert.alert(t('nutritionLogger.barcodeScanner.productNotFoundTitle'), t('nutritionLogger.barcodeScanner.productNotFoundMessage'));
+          Alert.alert(t('journal:nutritionLogger.barcodeScanner.productNotFoundTitle'), t('journal:nutritionLogger.barcodeScanner.productNotFoundMessage'));
 
           scanningRef.current = false;
           setHasScanned(false);
@@ -54,7 +54,7 @@ const BarcodeScannerBottomSheet = forwardRef<BottomSheetModal, BarcodeScannerBot
       } catch (error) {
         console.error('Barcode lookup failed:', error);
 
-        Alert.alert(t('nutritionLogger.barcodeScanner.lookupFailedTitle'), t('nutritionLogger.barcodeScanner.lookupFailedMessage'));
+        Alert.alert(t('journal:nutritionLogger.barcodeScanner.lookupFailedTitle'), t('journal:nutritionLogger.barcodeScanner.lookupFailedMessage'));
 
         scanningRef.current = false;
         setHasScanned(false);
@@ -95,21 +95,21 @@ const BarcodeScannerBottomSheet = forwardRef<BottomSheetModal, BarcodeScannerBot
     >
       <BottomSheetView style={styles.content}>
         <View style={styles.header}>
-          <ThemedText type="title2">{t('nutritionLogger.barcodeScanner.title')}</ThemedText>
+          <ThemedText type="title2">{t('journal:nutritionLogger.barcodeScanner.title')}</ThemedText>
 
           <ThemedText type="caption" style={{ color: colors.textMuted }}>
-            {t('nutritionLogger.barcodeScanner.description')}
+            {t('journal:nutritionLogger.barcodeScanner.description')}
           </ThemedText>
         </View>
 
         {!permission.granted ? (
           <View style={styles.permission}>
             <ThemedText type="default" style={styles.permissionText}>
-              {t('nutritionLogger.barcodeScanner.cameraPermission')}
+              {t('journal:nutritionLogger.barcodeScanner.cameraPermission')}
             </ThemedText>
 
             <AppButton
-              title={t('nutritionLogger.barcodeScanner.allowCamera')}
+              title={t('journal:nutritionLogger.barcodeScanner.allowCamera')}
               onPress={() => {
                 requestPermission().catch(console.error);
               }}
@@ -141,21 +141,21 @@ const BarcodeScannerBottomSheet = forwardRef<BottomSheetModal, BarcodeScannerBot
             </View>
             <View style={styles.manualSection}>
               <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                {t('nutritionLogger.barcodeScanner.manualDescription')}
+                {t('journal:nutritionLogger.barcodeScanner.manualDescription')}
               </ThemedText>
 
               <LabeledInput
-                label={t('nutritionLogger.barcodeScanner.barcode')}
+                label={t('journal:nutritionLogger.barcodeScanner.barcode')}
                 value={manualBarcode}
                 onChangeText={setManualBarcode}
                 keyboardType="number-pad"
                 returnKeyType="search"
                 onSubmitEditing={handleManualBarcode}
-                placeholder={t('nutritionLogger.barcodeScanner.barcodePlaceholder')}
+                placeholder={t('journal:nutritionLogger.barcodeScanner.barcodePlaceholder')}
               />
 
               <AppButton
-                title={t('nutritionLogger.barcodeScanner.search')}
+                title={t('journal:nutritionLogger.barcodeScanner.search')}
                 onPress={handleManualBarcode}
                 disabled={!manualBarcode.trim() || hasScanned}
                 variant="secondary"

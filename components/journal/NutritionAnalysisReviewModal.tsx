@@ -65,7 +65,7 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
         .filter(item => item.length > 0);
       if (items.length > 0) return Array.from(new Set(items));
     }
-    return [t('nutritionLogger.analysisNoStructuredData')];
+    return [t('journal:nutritionLogger.analysisNoStructuredData')];
   }, [pendingReview, t]);
 
   const reAnalyzeTextStyle = [styles.reAnalyzeText, isAnalyzing && styles.reAnalyzeTextDisabled, { color: colors.text }];
@@ -75,7 +75,7 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
   return (
     <ThemedModal
       visible={visible}
-      title={t('nutritionLogger.analysisReviewTitle')}
+      title={t('journal:nutritionLogger.analysisReviewTitle')}
       onClose={onClose}
       onSave={onSave}
       onSaveDisabled={!pendingReview?.analysis}
@@ -84,7 +84,7 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator>
         <View style={styles.mealTimeRow}>
           <ThemedText type="caption" style={{ color: colors.textMuted }}>
-            {t('nutritionLogger.mealTime')}
+            {t('journal:nutritionLogger.mealTime')}
           </ThemedText>
           <DateTimeInput value={mealTime} showTime showDate={false} onChange={onMealTimeChange} />
         </View>
@@ -140,7 +140,7 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
         ) : null}
         {pendingReview?.detectedDrinks?.length ? (
           <View style={styles.section}>
-            <ThemedText type="title3">{t('nutritionLogger.detectedDrinksTitle')}</ThemedText>
+            <ThemedText type="title3">{t('journal:nutritionLogger.detectedDrinksTitle')}</ThemedText>
             {pendingReview.detectedDrinks.map((drink, index) => {
               const drinkImage = getDrinkImage(drink.type);
 
@@ -159,9 +159,9 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
                       <ThemedText type="caption" style={{ color: colors.textMuted }}>
                         {[
                           drink.amountMl ? `${Math.round(drink.amountMl)} ml` : null,
-                          drink.sugarFree === true ? t('nutritionLogger.sugarFree') : null,
-                          drink.caffeinated === true ? t('nutritionLogger.caffeine') : null,
-                          isAlcohol(drink.type) ? t('nutritionLogger.alcohol') : null,
+                          drink.sugarFree === true ? t('journal:nutritionLogger.sugarFree') : null,
+                          drink.caffeinated === true ? t('journal:nutritionLogger.caffeine') : null,
+                          isAlcohol(drink.type) ? t('journal:nutritionLogger.alcohol') : null,
                         ]
                           .filter(Boolean)
                           .join(' · ')}
@@ -181,10 +181,10 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
         ) : null}
         {pendingReview?.analysis ? (
           <View style={styles.section}>
-            <ThemedText type="label">{t('nutritionLogger.analysisReviewNutritionPreviewTitle')}</ThemedText>
+            <ThemedText type="label">{t('journal:nutritionLogger.analysisReviewNutritionPreviewTitle')}</ThemedText>
             <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
               <ThemedText type="title3">
-                {t('nutritionLogger.mealTitleWithName', {
+                {t('journal:nutritionLogger.mealTitleWithName', {
                   name: pendingReview.analysis.name,
                 })}
               </ThemedText>

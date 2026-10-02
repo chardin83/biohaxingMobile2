@@ -84,7 +84,7 @@ export const RegisterHabitValueBottomSheet: React.FC<RegisterHabitValueBottomShe
         <ThemedText type="title2">{title}</ThemedText>
         <View style={styles.valueRow}>
           <LabeledBottomSheetInput
-            label={t('otherLoggerTab.registerToday')}
+            label={t('journal:otherLoggerTab.registerToday')}
             value={value}
             onChangeText={setValue}
             keyboardType="decimal-pad"

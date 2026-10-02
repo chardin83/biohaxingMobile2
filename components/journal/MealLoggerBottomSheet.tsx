@@ -48,31 +48,31 @@ const MealLoggerBottomSheet = forwardRef<BottomSheetModal, MealLoggerBottomSheet
     >
       <BottomSheetView style={styles.content}>
         <View style={styles.header}>
-          <ThemedText type="title2">{t('nutritionLogger.mealLogger.addMeal')}</ThemedText>
+          <ThemedText type="title2">{t('journal:nutritionLogger.mealLogger.addMeal')}</ThemedText>
 
           <ThemedText type="caption" style={{ color: colors.textMuted }}>
-            {t('nutritionLogger.mealLogger.chooseHowToAddMeal')}
+            {t('journal:nutritionLogger.mealLogger.chooseHowToAddMeal')}
           </ThemedText>
         </View>
 
         <View style={styles.options}>
           <SettingsCardLink
-            title={t('nutritionLogger.mealLogger.analyzePhoto')}
-            subtitle={t('nutritionLogger.mealLogger.takePhotoOfMeal')}
+            title={t('journal:nutritionLogger.mealLogger.analyzePhoto')}
+            subtitle={t('journal:nutritionLogger.mealLogger.takePhotoOfMeal')}
             iconName="camera"
             onPress={() => handleAction(onAnalyzePhoto)}
           />
 
           <SettingsCardLink
-            title={t('nutritionLogger.mealLogger.scanBarcode')}
-            subtitle={t('nutritionLogger.mealLogger.lookupPackagedProduct')}
+            title={t('journal:nutritionLogger.mealLogger.scanBarcode')}
+            subtitle={t('journal:nutritionLogger.mealLogger.lookupPackagedProduct')}
             iconName="barcode"
             onPress={() => handleAction(onScanBarcode)}
           />
 
           <SettingsCardLink
-            title={t('nutritionLogger.mealLogger.previousMeal')}
-            subtitle={t('nutritionLogger.mealLogger.copyPreviousMeal')}
+            title={t('journal:nutritionLogger.mealLogger.previousMeal')}
+            subtitle={t('journal:nutritionLogger.mealLogger.copyPreviousMeal')}
             iconName="history"
             onPress={() => handleAction(onPreviousMeal)}
           />

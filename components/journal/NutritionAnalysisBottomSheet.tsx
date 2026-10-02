@@ -36,7 +36,7 @@ const NutritionAnalysisBottomSheet = forwardRef<BottomSheetModal, NutritionAnaly
       <BottomSheetView style={styles.content}>
         {image && <ImageAnalysisScanner source={{ uri: image.uri }} height={260} />}
 
-        <Notice variant="info" title={t('nutritionLogger.analysisInProgress')} message={t('nutritionLogger.analysisDoNotCloseApp')} />
+        <Notice variant="info" title={t('journal:nutritionLogger.analysisInProgress')} message={t('journal:nutritionLogger.analysisDoNotCloseApp')} />
       </BottomSheetView>
     </BottomSheetModal>
   );

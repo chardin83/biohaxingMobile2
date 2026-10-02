@@ -63,7 +63,7 @@ const TipProgressRow: React.FC<TipProgressRowProps> = ({
   const startDateKey = tip.startedAt ? toDateKey(new Date(tip.startedAt)) : '';
   const isNotActiveYet = Boolean(startDateKey) && dateKey < startDateKey;
   const inactiveText = isNotActiveYet
-    ? t('common:progress.notActiveStarts', {
+    ? t('journal:progress.notActiveStarts', {
         date: formatMonthDay(new Date(tip.startedAt!), language),
       })
     : null;
@@ -126,7 +126,7 @@ const TipProgressRow: React.FC<TipProgressRowProps> = ({
           </View>
 
           <ThemedText type="caption" style={styles.planTipStatusText}>
-            {t('nutritionLogger.fulfilledTargetsCount', {
+            {t('journal:nutritionLogger.fulfilledTargetsCount', {
               met: tip.metCount,
               total: tip.totalCount,
             })}
@@ -220,13 +220,13 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
         {nutritionPlanTipProgressByPeriod.daily.length === 0 && nutritionPlanTipProgressByPeriod.weekly.length === 0 ? (
           <View style={styles.emptyTargetsContainer}>
             <ThemedText type="title3" style={styles.emptyTargetsHeading}>
-              {t('nutritionLogger.targetsTitle')}
+              {t('journal:nutritionLogger.targetsTitle')}
             </ThemedText>
             <ThemedText type="caption" style={[styles.emptyTargetsText, { color: colors.textLight }]}>
-              {t('nutritionLogger.targetsEmptyDescription')}
+              {t('journal:nutritionLogger.targetsEmptyDescription')}
             </ThemedText>
             <AppButton
-              title={t('nutritionLogger.addFirstTarget')}
+              title={t('journal:nutritionLogger.addFirstTarget')}
               onPress={() => {
                 router.push({
                   pathname: '/(tabs)/search',
@@ -249,13 +249,13 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
               }}
             >
               <ThemedText type="title3" style={styles.periodSectionHeading}>
-                {t('nutritionLogger.periodDaily')}
+                {t('journal:nutritionLogger.periodDaily')}
               </ThemedText>
               {nutritionPlanTipProgressByPeriod.daily.length > 0 ? (
                 renderTipProgressList(nutritionPlanTipProgressByPeriod.daily)
               ) : (
                 <ThemedText type="explainer" style={styles.noFulfilledTipsText}>
-                  {t('nutritionLogger.noPlanTipsWithTargets')}
+                  {t('journal:nutritionLogger.noPlanTipsWithTargets')}
                 </ThemedText>
               )}
               <View style={styles.addTargetButton}>
@@ -269,7 +269,7 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                       },
                     });
                   }}
-                  title={t('nutritionLogger.addDailyTarget')}
+                  title={t('journal:nutritionLogger.addDailyTarget')}
                 />
               </View>
             </View>
@@ -280,13 +280,13 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
               }}
             >
               <ThemedText type="title3" style={styles.periodSectionHeading}>
-                {t('nutritionLogger.periodWeekly')}
+                {t('journal:nutritionLogger.periodWeekly')}
               </ThemedText>
               {nutritionPlanTipProgressByPeriod.weekly.length > 0 ? (
                 renderTipProgressList(nutritionPlanTipProgressByPeriod.weekly)
               ) : (
                 <ThemedText type="explainer" style={styles.noFulfilledTipsText}>
-                  {t('nutritionLogger.noPlanTipsWithTargets')}
+                  {t('journal:nutritionLogger.noPlanTipsWithTargets')}
                 </ThemedText>
               )}
               <View style={styles.addTargetButton}>
@@ -300,11 +300,11 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                       },
                     });
                   }}
-                  title={t('nutritionLogger.addWeeklyTarget')}
+                  title={t('journal:nutritionLogger.addWeeklyTarget')}
                 />
               </View>
             </View>
-            <ProgressButton href="/(stack)/journal/nutrition/progress" label={t('nutritionLogger.seeProgress')} />
+            <ProgressButton href="/(stack)/journal/nutrition/progress" label={t('journal:nutritionLogger.seeProgress')} />
           </>
         )}
       </Card>

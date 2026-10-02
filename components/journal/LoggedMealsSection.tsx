@@ -27,9 +27,9 @@ export const LoggedMealsSection: React.FC<LoggedMealsSectionProps> = ({ meals, o
   return (
     <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
       <View style={styles.loggedMealsSection}>
-        <Collapsible title={`${t('nutritionLogger.loggedMealsTitle')} (${meals.length})`} titleType="default" initialCollapsed>
+        <Collapsible title={`${t('journal:nutritionLogger.loggedMealsTitle')} (${meals.length})`} titleType="default" initialCollapsed>
           {meals.map(meal => {
-            const mealName = meal.name.trim() || t('nutritionLogger.unnamedMeal');
+            const mealName = meal.name.trim() || t('journal:nutritionLogger.unnamedMeal');
 
             return (
               <SwipeableRow

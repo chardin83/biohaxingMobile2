@@ -60,7 +60,7 @@ export default function NutritionTargetsSection({ tip, colors, t }: Readonly<{ t
                 } else if (vitaminTags.has(trackingKey)) {
                     labelGroup = 'vitaminLabels';
                 }
-                const label = t(`nutritionLogger.${labelGroup}.${trackingKey}`);
+                const label = t(`journal:nutritionLogger.${labelGroup}.${trackingKey}`);
                 return (
                     <View key={`target-${trackingKey}`}>
                         <View key={`target-${trackingKey}`} style={styles.nutritionTagContainer}>

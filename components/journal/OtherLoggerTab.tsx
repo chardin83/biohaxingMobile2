@@ -256,7 +256,7 @@ export default function OtherLoggerTab({
               backgroundColor: completedToday ? colors.accentWeak : colors.overlayLight,
             },
           ]}
-          title={completedToday ? t('otherLoggerTab.registeredToday') : t('otherLoggerTab.registerToday')}
+          title={completedToday ? t('journal:otherLoggerTab.registeredToday') : t('journal:otherLoggerTab.registerToday')}
         />
       );
     }
@@ -310,7 +310,7 @@ export default function OtherLoggerTab({
               backgroundColor: colors.overlayLight,
             },
           ]}
-          title={hasValueToday ? `✓ ${todayValue} ${translateUnit(item.unit)} ${t('today')}` : t('otherLoggerTab.registerToday')}
+          title={hasValueToday ? `✓ ${todayValue} ${translateUnit(item.unit)} ${t('today')}` : t('journal:otherLoggerTab.registerToday')}
         />
       );
     }
@@ -327,7 +327,7 @@ export default function OtherLoggerTab({
           </ThemedText>
 
           {item.isFulfilled && (
-            <Pressable accessibilityRole="button" accessibilityLabel={t('otherTips.showCompletionButtons')} onPress={() => toggleExpanded(item.tipId)}>
+            <Pressable accessibilityRole="button" accessibilityLabel={t('journal:otherTips.showCompletionButtons')} onPress={() => toggleExpanded(item.tipId)}>
               <IconSymbol name="checkCircle" size={34} color={colors.xp} />
             </Pressable>
           )}
@@ -340,7 +340,7 @@ export default function OtherLoggerTab({
         ) : null}
 
         <View style={styles.statusRow}>
-          <ThemedText type="caption">{item.isFulfilled ? t('otherTips.fulfilled') : t('otherTips.notFulfilled')}</ThemedText>
+          <ThemedText type="caption">{item.isFulfilled ? t('journal:otherTips.fulfilled') : t('journal:otherTips.notFulfilled')}</ThemedText>
           <ThemedText type="explainer">{`${item.actual} / ${item.target} ${translateUnit(item.unit)}`}</ThemedText>
         </View>
         {item.period === 'weekly' && item.history.length > 0 && (
@@ -405,7 +405,7 @@ export default function OtherLoggerTab({
               },
             ]}
           >
-            {t('otherTips.noPlanned')}
+            {t('journal:otherTips.noPlanned')}
           </ThemedText>
         )}
 
@@ -422,7 +422,7 @@ export default function OtherLoggerTab({
                 },
               });
             }}
-            title={t(period === 'daily' ? 'nutritionLogger.addDailyTarget' : 'nutritionLogger.addWeeklyTarget')}
+            title={t(period === 'daily' ? 'journal:nutritionLogger.addDailyTarget' : 'journal:nutritionLogger.addWeeklyTarget')}
           />
         </View>
       </View>
@@ -433,7 +433,7 @@ export default function OtherLoggerTab({
     <>
       <View style={styles.container}>
         <Card style={styles.card}>
-          <ThemedText type="title2">{t('otherTips.title')}</ThemedText>
+          <ThemedText type="title2">{t('journal:otherTips.title')}</ThemedText>
 
           <ThemedText
             type="caption"
@@ -441,10 +441,10 @@ export default function OtherLoggerTab({
               color: colors.textMuted,
             }}
           >
-            {t('otherTips.subtitle')}
+            {t('journal:otherTips.subtitle')}
           </ThemedText>
 
-          {renderPeriod('daily', t('nutritionLogger.periodDaily'))}
+          {renderPeriod('daily', t('journal:nutritionLogger.periodDaily'))}
 
           <View
             style={[
@@ -455,8 +455,8 @@ export default function OtherLoggerTab({
             ]}
           />
 
-          {renderPeriod('weekly', t('nutritionLogger.periodWeekly'))}
-          <ProgressButton href="/(stack)/journal/habits/progress" label={t('nutritionLogger.seeProgress')} />
+          {renderPeriod('weekly', t('journal:nutritionLogger.periodWeekly'))}
+          <ProgressButton href="/(stack)/journal/habits/progress" label={t('journal:nutritionLogger.seeProgress')} />
         </Card>
       </View>
       <RegisterHabitValueBottomSheet

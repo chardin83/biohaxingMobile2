@@ -166,7 +166,7 @@ const DayEdit: React.FC<DayEditProps> = ({
                   color: activeTab === 'meal' ? colors.text : colors.textTertiary,
                 }}
               >
-                {t('dayEdit.tabMeal')}
+                {t('journal:dayEdit.tabMeal')}
               </ThemedText>
 
               {hasMealsToday && (
@@ -199,7 +199,7 @@ const DayEdit: React.FC<DayEditProps> = ({
                   color: activeTab === 'other' ? colors.text : colors.textTertiary,
                 }}
               >
-                {t('dayEdit.tabOther')}
+                {t('journal:dayEdit.tabOther')}
               </ThemedText>
 
               {hasOtherToday && (
@@ -232,7 +232,7 @@ const DayEdit: React.FC<DayEditProps> = ({
                   color: activeTab === 'supplements' ? colors.text : colors.textTertiary,
                 }}
               >
-                {t('dayEdit.tabSupplements')}
+                {t('journal:dayEdit.tabSupplements')}
               </ThemedText>
 
               {hasSupplementsToday && (
@@ -265,7 +265,7 @@ const DayEdit: React.FC<DayEditProps> = ({
                   color: activeTab === 'training' ? colors.text : colors.textTertiary,
                 }}
               >
-                {t('dayEdit.tabTraining')}
+                {t('journal:dayEdit.tabTraining')}
               </ThemedText>
 
               {hasTrainingToday && (

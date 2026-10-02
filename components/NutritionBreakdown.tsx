@@ -43,11 +43,11 @@ const getVitaminsTotal = (vitaminsByType: NonNullable<NutritionData['vitaminsByT
 };
 
 const getConfidenceLabelKey = (confidence: ConfidenceLevel): string => {
-  if (confidence === 'high') return 'nutritionLogger.confidenceHigh';
-  if (confidence === 'medium') return 'nutritionLogger.confidenceMedium';
-  if (confidence === 'low') return 'nutritionLogger.confidenceLow';
+  if (confidence === 'high') return 'journal:nutritionLogger.confidenceHigh';
+  if (confidence === 'medium') return 'journal:nutritionLogger.confidenceMedium';
+  if (confidence === 'low') return 'journal:nutritionLogger.confidenceLow';
 
-  return 'nutritionLogger.confidenceUnknown';
+  return 'journal:nutritionLogger.confidenceUnknown';
 };
 
 const formatMilligramValue = (value: number): string => {
@@ -86,7 +86,7 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
     return subtypes
       .map(subtype => ({
         subtype,
-        label: t(`nutritionLogger.fiberSubtypeLabels.${subtype}`),
+        label: t(`journal:nutritionLogger.fiberSubtypeLabels.${subtype}`),
         amount: fiberSubtypeTotals?.[subtype] ?? 0,
       }))
       .filter(item => item.amount > 0);
@@ -96,23 +96,23 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
     <>
       <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
         <IconSymbol name="flame" size={16} color={colors.textMuted} />
-        <ThemedText type="default">{t('nutritionLogger.calories', { value: calories })}</ThemedText>
+        <ThemedText type="default">{t('journal:nutritionLogger.calories', { value: calories })}</ThemedText>
       </View>
 
       {hasAnyTypedTotals(aminoAcidsByType) ? (
         <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
           <Collapsible
-            title={t('nutritionLogger.protein', { value: protein })}
+            title={t('journal:nutritionLogger.protein', { value: protein })}
             titleType="default"
             initialCollapsed
             leftContent={<IconSymbol name="protein" size={14} color={colors.textMuted} />}
           >
             <ThemedText type="caption" style={[styles.aminoGroupHeader, { color: colors.textMuted }]}>
-              {t('nutritionLogger.essentialAminoAcidsTitle')}
+              {t('journal:nutritionLogger.essentialAminoAcidsTitle')}
             </ThemedText>
 
             <ThemedText type="default" style={{ color: colors.textMuted }}>
-              • {t('nutritionLogger.essentialAminoAcidsTotal')}: {(getEssentialAminoTotalMg(aminoAcidsByType!) / 1000).toFixed(1)} g
+              • {t('journal:nutritionLogger.essentialAminoAcidsTotal')}: {(getEssentialAminoTotalMg(aminoAcidsByType!) / 1000).toFixed(1)} g
             </ThemedText>
 
             {ESSENTIAL_AMINO_ACID_KEYS.map(key => {
@@ -122,7 +122,7 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
 
               return (
                 <ThemedText key={`${keyPrefix}_${key}`} type="default">
-                  • {t(`nutritionLogger.aminoAcidLabels.${key}`)}: {(value / 1000).toFixed(1)} g
+                  • {t(`journal:nutritionLogger.aminoAcidLabels.${key}`)}: {(value / 1000).toFixed(1)} g
                 </ThemedText>
               );
             })}
@@ -130,7 +130,7 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
             {OTHER_AMINO_ACID_KEYS.some(key => (aminoAcidsByType?.[key] ?? 0) > 0) && (
               <>
                 <ThemedText type="caption" style={[styles.aminoGroupHeader, styles.aminoGroupHeaderSecond, { color: colors.textMuted }]}>
-                  {t('nutritionLogger.otherAminoAcidsTitle')}
+                  {t('journal:nutritionLogger.otherAminoAcidsTitle')}
                 </ThemedText>
 
                 {OTHER_AMINO_ACID_KEYS.map(key => {
@@ -140,7 +140,7 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
 
                   return (
                     <ThemedText key={`${keyPrefix}_${key}`} type="default">
-                      • {t(`nutritionLogger.aminoAcidLabels.${key}`)}: {(value / 1000).toFixed(1)} g
+                      • {t(`journal:nutritionLogger.aminoAcidLabels.${key}`)}: {(value / 1000).toFixed(1)} g
                     </ThemedText>
                   );
                 })}
@@ -151,24 +151,24 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
       ) : (
         <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
           <IconSymbol name="protein" size={16} color={colors.textMuted} />
-          <ThemedText type="default">{t('nutritionLogger.protein', { value: protein })}</ThemedText>
+          <ThemedText type="default">{t('journal:nutritionLogger.protein', { value: protein })}</ThemedText>
         </View>
       )}
 
       <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
         <IconSymbol name="carbs" size={16} color={colors.textMuted} />
-        <ThemedText type="default">{t('nutritionLogger.carbohydrates', { value: carbohydrates })}</ThemedText>
+        <ThemedText type="default">{t('journal:nutritionLogger.carbohydrates', { value: carbohydrates })}</ThemedText>
       </View>
 
       <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
         <IconSymbol name="fat" size={16} color={colors.textMuted} />
-        <ThemedText type="default">{t('nutritionLogger.fat', { value: fat })}</ThemedText>
+        <ThemedText type="default">{t('journal:nutritionLogger.fat', { value: fat })}</ThemedText>
       </View>
 
       {hasAnyTypedTotals(fiberByType) ? (
         <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
           <Collapsible
-            title={t('nutritionLogger.fiber', { value: fiber })}
+            title={t('journal:nutritionLogger.fiber', { value: fiber })}
             titleType="default"
             initialCollapsed
             leftContent={<IconSymbol name="fiber" size={14} color={colors.textMuted} />}
@@ -183,7 +183,7 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
               return (
                 <View key={`${keyPrefix}_${key}`} style={styles.fiberCategoryRow}>
                   <ThemedText type="default">
-                    • {t(`nutritionLogger.fiberLabels.${key}`)}: {value.toFixed(1)} g
+                    • {t(`journal:nutritionLogger.fiberLabels.${key}`)}: {value.toFixed(1)} g
                   </ThemedText>
 
                   {subtypeRows.map(row => (
@@ -199,14 +199,14 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
       ) : (
         <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
           <IconSymbol name="fiber" size={16} color={colors.textMuted} />
-          <ThemedText type="default">{t('nutritionLogger.fiber', { value: fiber })}</ThemedText>
+          <ThemedText type="default">{t('journal:nutritionLogger.fiber', { value: fiber })}</ThemedText>
         </View>
       )}
 
       {hasAnyTypedTotals(polyphenolByType) && (
         <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
           <Collapsible
-            title={t('nutritionLogger.polyphenols', {
+            title={t('journal:nutritionLogger.polyphenols', {
               value: (polyphenolByType?.polyphenols_total ?? 0).toFixed(1),
             })}
             titleType="default"
@@ -220,7 +220,7 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
 
               return (
                 <ThemedText key={`${keyPrefix}_${key}`} type="default">
-                  • {t(`nutritionLogger.polyphenolLabels.${key}`)}: {value.toFixed(1)} mg
+                  • {t(`journal:nutritionLogger.polyphenolLabels.${key}`)}: {value.toFixed(1)} mg
                 </ThemedText>
               );
             })}
@@ -231,7 +231,7 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
       {hasAnyTypedTotals(mineralsByType) && (
         <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
           <Collapsible
-            title={t('nutritionLogger.minerals', {
+            title={t('journal:nutritionLogger.minerals', {
               value: getMineralsTotal(mineralsByType!).toFixed(1),
             })}
             titleType="default"
@@ -244,7 +244,7 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
 
               return (
                 <ThemedText key={`${keyPrefix}_${key}`} type="default">
-                  • {t(`nutritionLogger.mineralLabels.${key}`)}: {value.toFixed(1)} mg
+                  • {t(`journal:nutritionLogger.mineralLabels.${key}`)}: {value.toFixed(1)} mg
                   {' • '}
                   {t(getConfidenceLabelKey(mineralsConfidenceByType?.[key] ?? 'unknown'))}
                 </ThemedText>
@@ -257,7 +257,7 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
       {hasAnyTypedTotals(vitaminsByType) && (
         <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
           <Collapsible
-            title={t('nutritionLogger.vitamins', {
+            title={t('journal:nutritionLogger.vitamins', {
               value: getVitaminsTotal(vitaminsByType!).toFixed(1),
             })}
             titleType="default"
@@ -270,7 +270,7 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
 
               return (
                 <ThemedText key={`${keyPrefix}_${key}`} type="default">
-                  • {t(`nutritionLogger.vitaminLabels.${key}`)}: {formatMilligramValue(value)} mg
+                  • {t(`journal:nutritionLogger.vitaminLabels.${key}`)}: {formatMilligramValue(value)} mg
                 </ThemedText>
               );
             })}
@@ -280,7 +280,7 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
 
       {(microbiomeSupport?.length ?? 0) > 0 && (
         <Collapsible
-          title={t('nutritionLogger.microbiomeYes', {
+          title={t('journal:nutritionLogger.microbiomeYes', {
             count: microbiomeSupport?.length ?? 0,
           })}
           titleType="default"
@@ -295,13 +295,13 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
 
               {item.linkedNutrients.length > 0 && (
                 <ThemedText type="caption" style={styles.fiberSubtypeText}>
-                  {t('nutritionLogger.linkedNutrients')}: {item.linkedNutrients.join(', ')}
+                  {t('journal:nutritionLogger.linkedNutrients')}: {item.linkedNutrients.join(', ')}
                 </ThemedText>
               )}
 
               {item.likelyFoods.length > 0 && (
                 <ThemedText type="caption" style={styles.fiberSubtypeText}>
-                  {t('nutritionLogger.sources')}: {item.likelyFoods.join(', ')}
+                  {t('journal:nutritionLogger.sources')}: {item.likelyFoods.join(', ')}
                 </ThemedText>
               )}
             </View>

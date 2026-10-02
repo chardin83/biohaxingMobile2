@@ -17,7 +17,7 @@ export function handleNoStructuredData({
   aiResponseDescription: any;
   evidenceMessage: any;
 }) {
-  const text = data?.content ?? t('dayEdit.analysisNoStructuredData') ?? 'Ingen strukturerad näringsdata hittades.';
+  const text = data?.content ?? t('journal:dayEdit.analysisNoStructuredData') ?? 'Ingen strukturerad näringsdata hittades.';
   const statusMessage = typeof text === 'string' ? text : JSON.stringify(text);
   setAnalysisResult(statusMessage);
   setPendingAnalysisReview({
