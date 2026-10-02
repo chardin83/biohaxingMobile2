@@ -10,6 +10,7 @@ export type AppStorageData = {
   onboardingStep: number;
   showMusic: boolean;
   healthSyncEnabled: boolean;
+  hideBarcodeInfo: boolean;
 };
 
 const STORAGE_KEYS = {
@@ -20,10 +21,11 @@ const STORAGE_KEYS = {
   ONBOARDING_STEP: 'onBoardingStep',
   SHOW_MUSIC: 'showMusic',
   HEALTH_SYNC_ENABLED: 'healthSyncEnabled',
+  HIDE_BARCODE_INFO: 'hideBarcodeInfo',
 } as const;
 
 export const getAppStorage = async (): Promise<AppStorageData> => {
-  const [visited, share, areas, onboarding, onboardingStep, showMusic, healthSyncEnabled] = await Promise.all([
+  const [visited, share, areas, onboarding, onboardingStep, showMusic, healthSyncEnabled, hideBarcodeInfo] = await Promise.all([
     AsyncStorage.getItem(STORAGE_KEYS.HAS_VISITED_CHAT),
     AsyncStorage.getItem(STORAGE_KEYS.SHARE_HEALTH_PLAN),
     AsyncStorage.getItem(STORAGE_KEYS.MY_AREAS),
@@ -31,6 +33,7 @@ export const getAppStorage = async (): Promise<AppStorageData> => {
     AsyncStorage.getItem(STORAGE_KEYS.ONBOARDING_STEP),
     AsyncStorage.getItem(STORAGE_KEYS.SHOW_MUSIC),
     AsyncStorage.getItem(STORAGE_KEYS.HEALTH_SYNC_ENABLED),
+    AsyncStorage.getItem(STORAGE_KEYS.HIDE_BARCODE_INFO),
   ]);
 
   return {
@@ -41,6 +44,7 @@ export const getAppStorage = async (): Promise<AppStorageData> => {
     onboardingStep: onboardingStep ? Number.parseInt(onboardingStep, 10) : 0,
     showMusic: showMusic === null ? true : showMusic === 'true',
     healthSyncEnabled: healthSyncEnabled === 'true',
+    hideBarcodeInfo: hideBarcodeInfo === 'true',
   };
 };
 
@@ -57,6 +61,8 @@ export const saveOnboardingStep = (value: number) => AsyncStorage.setItem(STORAG
 export const saveShowMusic = (value: boolean) => AsyncStorage.setItem(STORAGE_KEYS.SHOW_MUSIC, String(value));
 
 export const saveHealthSyncEnabled = (value: boolean) => AsyncStorage.setItem(STORAGE_KEYS.HEALTH_SYNC_ENABLED, String(value));
+
+export const saveHideBarcodeInfo = (value: boolean) => AsyncStorage.setItem(STORAGE_KEYS.HIDE_BARCODE_INFO, String(value));
 
 export const getHealthSettingsStorageSize = (): Promise<number> => getStorageSize([STORAGE_KEYS.HEALTH_SYNC_ENABLED]);
 

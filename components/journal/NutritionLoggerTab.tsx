@@ -17,7 +17,7 @@ import { tips } from '@/locales/tips';
 import type { DrinkType } from '@/services/gptServices';
 import { roundToOneDecimal, type WeeklyTrackingSignals } from '@/utils/analyzeNutrition';
 import { toDateKey, toRecordedAt } from '@/utils/dateUtils';
-import { type FoodKey, getFoodProduct } from '@/utils/foodProduct';
+import { type FoodKey, getFoodProduct, getMealProduct } from '@/utils/foodProduct';
 
 import { Collapsible } from '../Collapsible';
 import CopyMealBottomSheet from '../CopyMealBottomSheet';
@@ -27,6 +27,7 @@ import AppButton from '../ui/AppButton';
 import { Card } from '../ui/Card';
 import { IconSymbol } from '../ui/IconSymbol';
 import AnalysisStatus from './AnalysisStatus';
+import BarcodeInfoBottomSheet from './BarcodeInfoBottomSheet';
 import BarcodeScannerBottomSheet from './BarcodeScannerBottomSheet';
 import DrinkPickerBottomSheet from './DrinkPickerBottomSheet';
 import EntryEditModal from './EntryEditModal';
@@ -93,6 +94,8 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     addDrinkEntry,
     updateDrinkEntry,
     removeDrinkEntry,
+    hideBarcodeInfo,
+    setHideBarcodeInfo,
   } = useStorage();
   const { weekStartISO: weekStartKey } = getWeekBoundsFromDateKey(selectedDate);
   const { summary, drinks, recentMeals, dailyNutrition } = useNutritionLoggerData(selectedDate);
@@ -115,12 +118,29 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   const foodPickerBottomSheetRef = useRef<BottomSheetModal>(null);
   const productAmountBottomSheetRef = useRef<BottomSheetModal>(null);
   const barcodeScannerBottomSheetRef = useRef<BottomSheetModal>(null);
+  const barcodeInfoBottomSheetRef = useRef<BottomSheetModal>(null);
   const handleSelectNutritionEntry = useCallback((entry: NutritionEntry) => {
     setSelectedNutritionEntryId(entry.id);
     setSelectedNutritionName(entry.name);
     setSelectedNutrition(entry);
   }, []);
-  const handleSaveBarcodeProduct = useNutritionBarcodeActions({ selectedDate, onNutritionEntrySelected: handleSelectNutritionEntry });
+  const copySourceMealIdRef = useRef<string | null>(null);
+  const handleNutritionEntrySaved = (entry: NutritionEntry) => {
+    handleSelectNutritionEntry(entry);
+
+    const sourceId = copySourceMealIdRef.current;
+    copySourceMealIdRef.current = null;
+    if (!sourceId) return;
+
+    const sourceMeal = recentMeals.find(meal => meal.id === sourceId);
+    if (!sourceMeal) return;
+
+    const sourceContribution = findWeeklyTrackingContribution(sourceId, toDateKey(new Date(sourceMeal.recordedAt)));
+    if (sourceContribution) {
+      addWeeklyTrackingContribution(entry.id, selectedDate, sourceContribution.signals);
+    }
+  };
+  const handleSaveBarcodeProduct = useNutritionBarcodeActions({ selectedDate, onNutritionEntrySelected: handleNutritionEntrySaved });
   const clearSelectedNutrition = useCallback(() => {
     setSelectedNutrition(null);
     setSelectedNutritionEntryId(null);
@@ -381,25 +401,9 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   };
 
   const handleCopyMeal = (sourceEntry: MealEntry) => {
-    const recordedAt = toRecordedAt(selectedDate, new Date(sourceEntry.recordedAt));
-
-    const copiedEntry = addNutritionEntry(selectedDate, {
-      ...sourceEntry,
-      recordedAt,
-    });
-
-    const sourceContribution = findWeeklyTrackingContribution(sourceEntry.id, toDateKey(new Date(sourceEntry.recordedAt)));
-
-    if (sourceContribution) {
-      addWeeklyTrackingContribution(copiedEntry.id, selectedDate, sourceContribution.signals);
-    }
-
-    setSelectedNutritionEntryId(copiedEntry.id);
-    setSelectedNutritionName(copiedEntry.name);
-    setSelectedNutrition(copiedEntry);
-
-    triggerLightHaptic();
     handleCloseCopyMealModal();
+    const product = getMealProduct(sourceEntry);
+    requestAnimationFrame(() => productAmountBottomSheetRef.current?.present(product));
   };
 
   const handleAddManualDrink = (type: DrinkType) => {
@@ -575,14 +579,21 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           ref={mealLoggerBottomSheetRef}
           onAnalyzePhoto={handleAnalyzePhoto}
           onScanBarcode={() => {
-            setTimeout(() => {
-              barcodeScannerBottomSheetRef.current?.present();
-            }, 250);
+            requestAnimationFrame(() => {
+              if (hideBarcodeInfo) {
+                barcodeScannerBottomSheetRef.current?.present();
+              } else {
+                barcodeInfoBottomSheetRef.current?.present();
+              }
+            });
           }}
           onPreviousMeal={() => {
             requestAnimationFrame(() => {
               copyMealBottomSheetRef.current?.present();
             });
+          }}
+          onShowBarcodeInfo={() => {
+            barcodeInfoBottomSheetRef.current?.present();
           }}
           onChooseFood={() => {
             requestAnimationFrame(() => {
@@ -601,8 +612,19 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           ref={productAmountBottomSheetRef}
           onSave={(barcodeProduct, amount, productType) => {
             productAmountBottomSheetRef.current?.dismiss();
+            copySourceMealIdRef.current = barcodeProduct.sourceMealId ?? null;
             handleSaveBarcodeProduct(barcodeProduct, amount, productType);
           }}
+        />
+        <BarcodeInfoBottomSheet
+          ref={barcodeInfoBottomSheetRef}
+          onContinue={() => {
+            setTimeout(() => {
+              barcodeScannerBottomSheetRef.current?.present();
+            }, 250);
+          }}
+          onUsePhotoAnalysis={handleAnalyzePhoto}
+          onDontShowAgainChange={setHideBarcodeInfo}
         />
         <BarcodeScannerBottomSheet
           ref={barcodeScannerBottomSheetRef}

@@ -38,6 +38,7 @@ export interface BarcodeProduct {
   productType?: BarcodeProductType;
   drinkType?: DrinkType;
   fromCatalog?: boolean;
+  sourceMealId?: string;
   image?: ImageSourcePropType;
   servings?: FoodServing[];
   // Full per-100g profile for catalog foods; replaces `nutrition` when set.

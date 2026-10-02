@@ -216,6 +216,10 @@ export const ICON_SYMBOLS = {
     sf: 'lightbulb',
     material: 'lightbulb',
   },
+  'info': {
+    sf: 'info.circle',
+    material: 'info-outline',
+  },
   'warning': {
     sf: 'exclamationmark.triangle.fill',
     material: 'warning',

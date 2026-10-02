@@ -108,6 +108,13 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
     };
   }, [product, factor]);
 
+  let calculationNoteKey = 'nutritionCalculatedPer100g';
+  if (product?.sourceMealId) {
+    calculationNoteKey = 'nutritionCalculatedPerMeal';
+  } else if (productType === 'drink') {
+    calculationNoteKey = 'nutritionCalculatedPer100ml';
+  }
+
   const handleSave = () => {
     if (!product || grams <= 0 || !productType) return;
 
@@ -284,11 +291,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
                 },
               ]}
             >
-              {t(
-                productType === 'drink'
-                  ? 'journal:nutritionLogger.barcodeProduct.nutritionCalculatedPer100ml'
-                  : 'journal:nutritionLogger.barcodeProduct.nutritionCalculatedPer100g'
-              )}
+              {t(`journal:nutritionLogger.barcodeProduct.${calculationNoteKey}`)}
             </ThemedText>
 
             {/* <AppButton title="Lägg till" onPress={handleSave} disabled={grams <= 0} variant="primary" style={styles.saveButton} /> */}

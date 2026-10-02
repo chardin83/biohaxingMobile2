@@ -4,10 +4,12 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 
-type NoticeVariant = 'info' | 'success';
+import { IconSymbol } from './IconSymbol';
+
+type NoticeVariant = 'info' | 'success' | 'warning';
 
 type NoticeProps = Readonly<{
-  title: string;
+  title?: string;
   message: string;
   variant?: NoticeVariant;
   onDismiss?: () => void;
@@ -17,11 +19,15 @@ type NoticeProps = Readonly<{
 export default function Notice({ title, message, variant = 'info', onDismiss, dismissAccessibilityLabel = 'Dismiss' }: NoticeProps) {
   const { colors } = useTheme();
 
-  const isInfo = variant === 'info';
+  const isWarning = variant === 'warning';
 
-  const backgroundColor = isInfo ? colors.infoWeak : colors.surfaceGreen;
+  const variantStyles = {
+    info: { backgroundColor: colors.infoWeak, accentColor: colors.infoColor, iconName: 'info' },
+    success: { backgroundColor: colors.surfaceGreen, accentColor: colors.surfaceGreenBorder, iconName: 'check' },
+    warning: { backgroundColor: colors.surfaceWarning, accentColor: colors.warning, iconName: 'warning' },
+  } as const;
 
-  const accentColor = isInfo ? colors.infoColor : colors.surfaceGreenBorder;
+  const { backgroundColor, accentColor, iconName } = variantStyles[variant];
 
   return (
     <View
@@ -42,13 +48,17 @@ export default function Notice({ title, message, variant = 'info', onDismiss, di
           },
         ]}
       >
-        <ThemedText type="defaultSemiBold" style={[styles.iconText, { color: accentColor }]}>
-          {isInfo ? 'i' : '\u2713'}
-        </ThemedText>
+        <IconSymbol name={iconName} size={16} color={accentColor} />
       </View>
       <View style={styles.textContainer}>
-        <ThemedText type="defaultSemiBold">{title}</ThemedText>
-        <ThemedText type="caption">{message}</ThemedText>
+        {title ? (
+          <ThemedText type="defaultSemiBold" style={isWarning ? { color: colors.warning } : undefined}>
+            {title}
+          </ThemedText>
+        ) : null}
+        <ThemedText type="caption" style={isWarning ? { color: colors.warning } : undefined}>
+          {message}
+        </ThemedText>
       </View>
       {onDismiss && (
         <TouchableOpacity onPress={onDismiss} style={styles.dismissButton} accessibilityLabel={dismissAccessibilityLabel}>
@@ -78,10 +88,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: StyleSheet.hairlineWidth,
     marginRight: 10,
-  },
-  iconText: {
-    fontSize: 17,
-    lineHeight: 20,
   },
   textContainer: {
     flex: 1,

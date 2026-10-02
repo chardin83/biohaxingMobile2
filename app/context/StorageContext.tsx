@@ -33,6 +33,7 @@ import {
   saveHasCompletedOnboarding,
   saveHasVisitedChat,
   saveHealthSyncEnabled,
+  saveHideBarcodeInfo,
   saveMyAreas,
   saveOnboardingStep,
   saveShareHealthPlan,
@@ -182,6 +183,8 @@ interface StorageContextType {
   clearMetricEntries: () => void;
   healthSyncEnabled: boolean;
   setHealthSyncEnabled: (val: boolean) => void;
+  hideBarcodeInfo: boolean;
+  setHideBarcodeInfo: (val: boolean) => void;
   userProfile: UserProfile;
   updateUserProfile: (updates: Partial<UserProfile>) => Promise<UserProfile>;
   saveUserProfile: (profile: UserProfile) => Promise<UserProfile>;
@@ -221,6 +224,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const [tempPlans, setTempPlans] = useState<PlansByCategory | null>(null);
   const [metricEntriesState, setMetricEntriesState] = useState<MetricEntry[]>([]);
   const [healthSyncEnabledState, setHealthSyncEnabledState] = useState(false);
+  const [hideBarcodeInfoState, setHideBarcodeInfoState] = useState(false);
   const [nutritionXpClaimsState, setNutritionXpClaimsState] = useState<Record<string, NutritionXpClaim>>({});
   const [userProfileState, setUserProfileState] = useState<UserProfile>({});
 
@@ -313,6 +317,8 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
         setShowMusicState(app.showMusic);
 
         setHealthSyncEnabledState(app.healthSyncEnabled);
+
+        setHideBarcodeInfoState(app.hideBarcodeInfo);
 
         /*
          * Plans
@@ -486,6 +492,12 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     setHealthSyncEnabledState(val);
 
     saveHealthSyncEnabled(val).catch(console.error);
+  }, []);
+
+  const setHideBarcodeInfo = useCallback((val: boolean) => {
+    setHideBarcodeInfoState(val);
+
+    saveHideBarcodeInfo(val).catch(console.error);
   }, []);
 
   /*
@@ -1169,6 +1181,8 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       getMetricHistory,
       healthSyncEnabled: healthSyncEnabledState,
       setHealthSyncEnabled,
+      hideBarcodeInfo: hideBarcodeInfoState,
+      setHideBarcodeInfo,
       userProfile: userProfileState,
       saveUserProfile,
       updateUserProfile,
@@ -1176,7 +1190,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     }),
     // prettier-ignore
     [plansState, setPlans, saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, clearSupplementTakenDates, clearSupplementCustom, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, clearNutritionXP, clearEducationXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState, 
-      dailyNutritionTrackingState, addNutritionEntry, updateNutritionEntry, removeNutritionEntry, clearDailyNutritionTracking, weeklyNutritionTrackingState, setWeeklyNutritionTracking, dailyDrinkTrackingState, addDrinkEntry, updateDrinkEntry, removeDrinkEntry, clearDailyDrinkTracking, trainingPlanSettingsState, setTrainingPlanSettings, dailyTrainingTrackingState, addTrainingEntry, updateTrainingEntry, removeTrainingEntry, clearDailyTrainingTracking, dailyHabitTrackingState, addHabitEntry, updateHabitEntry, removeHabitEntry, clearDailyHabitTracking, showMusicState, setShowMusic, tempPlans, setTempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, setMetricEntries, getMetricHistory, clearMetricEntries, healthSyncEnabledState, setHealthSyncEnabled, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
+      dailyNutritionTrackingState, addNutritionEntry, updateNutritionEntry, removeNutritionEntry, clearDailyNutritionTracking, weeklyNutritionTrackingState, setWeeklyNutritionTracking, dailyDrinkTrackingState, addDrinkEntry, updateDrinkEntry, removeDrinkEntry, clearDailyDrinkTracking, trainingPlanSettingsState, setTrainingPlanSettings, dailyTrainingTrackingState, addTrainingEntry, updateTrainingEntry, removeTrainingEntry, clearDailyTrainingTracking, dailyHabitTrackingState, addHabitEntry, updateHabitEntry, removeHabitEntry, clearDailyHabitTracking, showMusicState, setShowMusic, tempPlans, setTempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, setMetricEntries, getMetricHistory, clearMetricEntries, healthSyncEnabledState, setHealthSyncEnabled, hideBarcodeInfoState, setHideBarcodeInfo, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

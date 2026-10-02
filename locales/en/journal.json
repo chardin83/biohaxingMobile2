@@ -205,7 +205,8 @@
       "barcode": "Barcode",
       "barcodePlaceholder": "E.g. 7310865004703",
       "search": "Find product",
-      "nutritionCalculatedPer100ml": "Nutrition values calculated from values per 100 ml"
+      "nutritionCalculatedPer100ml": "Nutrition values calculated from values per 100 ml",
+      "nutritionCalculatedPerMeal": "Nutrition values for the whole meal (100 % = the logged amount)"
     },
     "drinkPicker": {
       "title": "Choose drink",
@@ -231,6 +232,17 @@
       "subtitle": "Search and pick a food, then choose the amount",
       "searchPlaceholder": "Search foods...",
       "empty": "No foods found"
+    },
+    "barcodeInfo": {
+      "title": "Limited information",
+      "description": "Barcode search gives basic nutrition values such as energy, protein, carbohydrates and more.",
+      "warning": "Details such as polyphenols, vitamins, minerals and plant compounds are missing.",
+      "bestForPackaged": "Best for packaged products",
+      "quickSearch": "Gives a quick search",
+      "usePhotoForDetails": "Use photo analysis for detailed nutrition analysis",
+      "continue": "Continue",
+      "usePhotoAnalysis": "Use photo analysis instead",
+      "dontShowAgain": "Don't show again"
     }
   },
   "dayEdit": {

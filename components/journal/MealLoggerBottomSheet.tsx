@@ -2,12 +2,13 @@ import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import React, { forwardRef, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import SettingsCardLink from '@/components/ui/SettingsCardLink';
 
 import { useBottomSheetDesign } from '../ui/BottomSheetDesign';
+import { IconSymbol } from '../ui/IconSymbol';
 
 interface MealLoggerBottomSheetProps {
   onAnalyzePhoto: () => void;
@@ -15,10 +16,11 @@ interface MealLoggerBottomSheetProps {
   onPreviousMeal: () => void;
   onAddDrink: () => void;
   onChooseFood: () => void;
+  onShowBarcodeInfo: () => void;
 }
 
 const MealLoggerBottomSheet = forwardRef<BottomSheetModal, MealLoggerBottomSheetProps>(
-  ({ onAnalyzePhoto, onScanBarcode, onPreviousMeal, onAddDrink, onChooseFood }, ref) => {
+  ({ onAnalyzePhoto, onScanBarcode, onPreviousMeal, onAddDrink, onChooseFood, onShowBarcodeInfo }, ref) => {
     const { colors } = useTheme();
     const { t } = useTranslation();
     const sheetDesign = useBottomSheetDesign(colors);
@@ -63,7 +65,9 @@ const MealLoggerBottomSheet = forwardRef<BottomSheetModal, MealLoggerBottomSheet
               title={t('journal:nutritionLogger.mealLogger.analyzePhoto')}
               subtitle={t('journal:nutritionLogger.mealLogger.takePhotoOfMeal')}
               iconName="camera"
+              style={[styles.highlighted, { borderColor: colors.primary, backgroundColor: colors.primaryVeryWeak }]}
               onPress={() => handleAction(onAnalyzePhoto)}
+              accessory={<IconSymbol name="sparkles" size={18} color={colors.textMuted} />}
             />
 
             <SettingsCardLink
@@ -71,6 +75,11 @@ const MealLoggerBottomSheet = forwardRef<BottomSheetModal, MealLoggerBottomSheet
               subtitle={t('journal:nutritionLogger.mealLogger.lookupPackagedProduct')}
               iconName="barcode"
               onPress={() => handleAction(onScanBarcode)}
+              accessory={
+                <Pressable accessibilityRole="button" hitSlop={10} onPress={() => handleAction(onShowBarcodeInfo)}>
+                  <IconSymbol name="info" size={18} color={colors.textMuted} />
+                </Pressable>
+              }
             />
 
             <SettingsCardLink
@@ -118,6 +127,10 @@ const styles = StyleSheet.create({
 
   options: {
     gap: 12,
+  },
+
+  highlighted: {
+    borderWidth: 1,
   },
 });
 

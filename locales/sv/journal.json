@@ -205,7 +205,8 @@
       "nutritionForAmount": "Näringsvärden för vald mängd",
       "add": "Lägg till",
       "nutritionCalculatedPer100g": "Näringsvärden beräknade från värden per 100 g",
-      "nutritionCalculatedPer100ml": "Näringsvärden beräknade från värden per 100 ml"
+      "nutritionCalculatedPer100ml": "Näringsvärden beräknade från värden per 100 ml",
+      "nutritionCalculatedPerMeal": "Näringsvärden för hela måltiden (100 % = den loggade mängden)"
     },
     "drinkPicker": {
       "title": "Välj dryck",
@@ -231,6 +232,17 @@
       "subtitle": "Sök och välj ett livsmedel, välj sedan mängd",
       "searchPlaceholder": "Sök livsmedel...",
       "empty": "Inga livsmedel hittades"
+    },
+    "barcodeInfo": {
+      "title": "Begränsad information",
+      "description": "Streckkodssökning ger grundläggande näringsvärden som energi, protein, kolhydrater med mera.",
+      "warning": "Detaljer som polyfenoler, vitaminer, mineraler och växtämnen saknas.",
+      "bestForPackaged": "Bäst för förpackade produkter",
+      "quickSearch": "Ger snabb sökning",
+      "usePhotoForDetails": "Använd fotoanalys för detaljerad näringsanalys",
+      "continue": "Fortsätt",
+      "usePhotoAnalysis": "Använd fotoanalys istället",
+      "dontShowAgain": "Visa inte igen"
     }
   },
   "dayEdit": {

@@ -135,6 +135,8 @@ export const Colors = {
     surfaceRedBorder: 'rgba(217, 83, 79, 0.9)',
     surfaceGreen: 'rgba(60, 179, 113, 0.12)',
     surfaceGreenBorder: 'rgba(60, 179, 113, 0.95)',
+    warning: '#E67700',
+    surfaceWarning: 'rgba(230, 119, 0, 0.12)',
 
     chart: {
       vo2Max: 'rgba(255,191,0, 0.95)',
@@ -307,6 +309,8 @@ export const Colors = {
     surfaceRedBorder: 'rgba(255,100,100,0.3)',
     surfaceGreen: 'rgba(100,255,150,0.12)',
     surfaceGreenBorder: 'rgba(100,255,150,0.3)',
+    warning: '#FFA94D',
+    surfaceWarning: 'rgba(255, 169, 77, 0.14)',
 
     chart: {
       vo2Max: 'rgba(255,215,100,0.95)',
