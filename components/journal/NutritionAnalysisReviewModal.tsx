@@ -1,10 +1,9 @@
 import { useTheme } from '@react-navigation/native';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
-import { globalStyles } from '@/app/theme/globalStyles';
-import { getDrinkImage } from '@/locales/drinkCatalog';
+import { getDrinkImage, getDrinkNutritionData } from '@/locales/drinkCatalog';
 import { isAlcohol } from '@/services/gptServices';
 import type { PendingAnalysisReview } from '@/types/nutrition/nutritionAnalysis';
 
@@ -48,6 +47,8 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
+
+  const [expandedDrinks, setExpandedDrinks] = useState<Record<number, boolean>>({});
 
   const interpretationItems = useMemo(() => {
     if (!pendingReview) return null;
@@ -194,7 +195,20 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
                       onClick={() => onToggleDrink(index)}
                       accessibilityLabel={drink.confirmed ? 'common.confirmed' : 'common.confirm'}
                     />
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityState={{ expanded: !!expandedDrinks[index] }}
+                      hitSlop={8}
+                      onPress={() => setExpandedDrinks(current => ({ ...current, [index]: !current[index] }))}
+                    >
+                      <IconSymbol name="chevron.right" size={18} color={colors.icon} style={expandedDrinks[index] ? styles.chevronOpen : undefined} />
+                    </Pressable>
                   </View>
+                  {expandedDrinks[index] ? (
+                    <View style={styles.drinkNutrition}>
+                      <NutritionBreakdown nutrition={getDrinkNutritionData(drink.type, drink.name, drink.amountMl)} keyPrefix={`drink-${index}`} />
+                    </View>
+                  ) : null}
                 </Card>
               );
             })}
@@ -252,6 +266,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+  },
+  chevronOpen: {
+    transform: [{ rotate: '90deg' }],
+  },
+  drinkNutrition: {
+    marginTop: 12,
   },
   detectedDrinkImage: {
     width: 64,

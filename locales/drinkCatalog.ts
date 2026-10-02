@@ -1,5 +1,6 @@
 import type { ImageSourcePropType } from 'react-native';
 
+import type { NutritionData } from '@/app/context/storage/nutrition/nutritionTypes';
 import type { PolyphenolType } from '@/constants/polyphenols';
 import type { DrinkType } from '@/services/gptServices';
 import type { BarcodeProduct } from '@/services/openFoodFacts';
@@ -86,5 +87,23 @@ export const getDrinkProduct = (type: DrinkType, name: string): BarcodeProduct =
       fiberPer100g: per100ml.fiber,
       polyphenolsMgPer100g: polyphenolsMgPer100ml,
     },
+  };
+};
+
+export const getDrinkNutritionData = (type: DrinkType, name: string, amountMl?: number): NutritionData => {
+  const { amountMl: defaultAmountMl, per100ml, polyphenolsMgPer100ml } = DRINK_DEFAULTS[type];
+  const factor = (amountMl ?? defaultAmountMl) / 100;
+  const round1 = (value: number) => Math.round(value * 10) / 10;
+
+  return {
+    name,
+    calories: Math.round(per100ml.calories * factor),
+    protein: round1(per100ml.protein * factor),
+    carbohydrates: round1(per100ml.carbohydrates * factor),
+    fat: round1(per100ml.fat * factor),
+    fiber: round1(per100ml.fiber * factor),
+    ...(polyphenolsMgPer100ml && {
+      polyphenolByType: Object.fromEntries(Object.entries(polyphenolsMgPer100ml).map(([key, value]) => [key, value * factor])),
+    }),
   };
 };
