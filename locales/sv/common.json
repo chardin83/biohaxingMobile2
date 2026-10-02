@@ -45,7 +45,7 @@
   },
   "layout": {
     "dashboard": "Dashboard",
-    "calendar": "Kalender",
+    "journal": "Dagbok",
     "plan": "Plan",
     "other": "Övrigt",
     "settings": "Inställningar",
@@ -80,7 +80,7 @@
   "aiSharing": {
     "description": "Välj vilken information AI:n får använda för att ge dig personliga hälsoråd:",
     "healthPlan": "Hälsoplan och tillskott",
-    "calendar": "Kalender (delas inte)"
+    "journal": "Dagbok (delas inte)"
   },
   "privacy": {
     "disclaimer": "Vi delar aldrig din identitet (som namn eller e-post) med AI:n.",
@@ -296,8 +296,6 @@
     "addFromPlan": "Från plan",
     "choosePlan": "Hur vill du lägga till tillskott?",
     "editSupplement": "Redigera tillskott för",
-    "pickImage": "Analysera måltid",
-    "analyzing": "Analyserar med AI",
     "analysisFailed": "Analysen misslyckades. Försök igen.",
     "nutritionSummary": "Näringsöversikt"
   },
@@ -1052,6 +1050,8 @@
     "notesPlaceholder": "Hunden sov i sängen, vaknade ofta, etc."
   },
   "nutritionLogger": {
+    "addNutrition": "Logga mat och dryck",
+    "analyzing": "Analyserar med AI",
     "mealTitle": "Loggad måltid",
     "mealTitleWithName": "Loggad måltid: {{name}}",
     "loggedMealsTitle": "Loggade måltider",

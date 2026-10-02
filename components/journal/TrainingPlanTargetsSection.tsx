@@ -329,7 +329,7 @@ export const TrainingPlanTargetsSection: React.FC<TrainingPlanTargetsSectionProp
 
           {renderPeriod('weekly', t('nutritionLogger.periodWeekly'))}
 
-          <ProgressButton href="/(stack)/calendar/training/progress" label={t('nutritionLogger.seeProgress')} />
+          <ProgressButton href="/(stack)/journal/training/progress" label={t('nutritionLogger.seeProgress')} />
         </>
       )}
     </Card>

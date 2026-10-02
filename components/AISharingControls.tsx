@@ -26,31 +26,20 @@ export default function AISharingControls({ sharePlanText }: Readonly<AISharingC
 
       <View style={styles.row}>
         <SettingIcon size={40} iconName="checklist" />
-        <ThemedText type="defaultSemiBold">
-          {t('aiSharing.healthPlan')}
-        </ThemedText>
+        <ThemedText type="defaultSemiBold">{t('aiSharing.healthPlan')}</ThemedText>
 
         <ThemedSwitch
           value={healthPlanEnabled}
-          onValueChange={(value) => {
+          onValueChange={value => {
             setShareHealthPlan(value);
           }}
         />
-       
       </View>
-       <View style={[styles.row, styles.explainer]}>
-        {sharePlanText && (
-          <ThemedText type="explainer">
-            {sharePlanText}
-          </ThemedText>
-        )}
-       </View>
+      <View style={[styles.row, styles.explainer]}>{sharePlanText && <ThemedText type="explainer">{sharePlanText}</ThemedText>}</View>
 
       <View style={styles.row}>
         <SettingIcon size={40} iconName="calendar" />
-        <ThemedText type="defaultSemiBold">
-          {t('aiSharing.calendar')}
-        </ThemedText>
+        <ThemedText type="defaultSemiBold">{t('aiSharing.journal')}</ThemedText>
         <ThemedSwitch value={false} onValueChange={() => {}} disabled />
       </View>
 

@@ -45,7 +45,7 @@
   },
   "layout": {
     "dashboard": "Dashboard",
-    "calendar": "Calendar",
+    "journal": "Journal",
     "plan": "Plan",
     "other": "Other",
     "settings": "Settings",
@@ -80,7 +80,7 @@
   "aiSharing": {
     "description": "Choose what information the AI may use to provide you personalized health advice:",
     "healthPlan": "Health plan and supplements",
-    "calendar": "Calendar (not shared)"
+    "journal": "Journal (not shared)"
   },
   "privacy": {
     "disclaimer": "We never share your identity (name or email) with the AI.",
@@ -296,8 +296,6 @@
     "addFromPlan": "From plan",
     "choosePlan": "How do you want to add supplements?",
     "editSupplement": "Edit supplements for",
-    "pickImage": "Analyze meal",
-    "analyzing": "Analyzing with AI",
     "analysisFailed": "Analysis failed. Please try again.",
     "nutritionSummary": "Nutrition summary"
   },
@@ -1052,6 +1050,8 @@
     "notesPlaceholder": "Dog slept in bed, woke up often, etc."
   },
   "nutritionLogger": {
+    "addNutrition": "Log food and drink",
+    "analyzing": "Analyzing with AI",
     "mealTitle": "Logged meal",
     "mealTitleWithName": "Logged meal: {{name}}",
     "loggedMealsTitle": "Logged meals",

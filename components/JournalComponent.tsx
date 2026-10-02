@@ -33,7 +33,7 @@ const formatDayLabel = (dateString: string, language: string): string => {
   });
 };
 
-const buildIntlCalendarLocale = (language: string, todayLabel: string) => {
+const buildIntlJournalLocale = (language: string, todayLabel: string) => {
   const baseYear = 2024;
 
   const normalizeShort = (value: string) => value.replaceAll('.', '');
@@ -74,36 +74,36 @@ const buildIntlCalendarLocale = (language: string, todayLabel: string) => {
   };
 };
 
-const configureCalendarLocale = (language: string, todayLabel: string) => {
-  LocaleConfig.locales[language] = buildIntlCalendarLocale(language, todayLabel);
+const configureJournalLocale = (language: string, todayLabel: string) => {
+  LocaleConfig.locales[language] = buildIntlJournalLocale(language, todayLabel);
 
   LocaleConfig.defaultLocale = language;
 };
 
-interface CalendarComponentProps {
+interface JournalComponentProps {
   onDayPress?: (date: string) => void;
 
   selectedDate?: string;
 }
 
-interface CalendarComponentRef {
+interface JournalComponentRef {
   addMarkForDate: (date: string) => void;
 
   removeMarkForDate: (date: string) => void;
 }
 
-type CalendarDot = {
+type JournalDot = {
   key: string;
   color: string;
 };
 
-type CalendarMark = {
-  dots?: CalendarDot[];
+type JournalMark = {
+  dots?: JournalDot[];
   marked?: boolean;
   selected?: boolean;
 };
 
-const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProps>(({ onDayPress, selectedDate: selectedDateProp }, ref) => {
+const JournalComponent = forwardRef<JournalComponentRef, JournalComponentProps>(({ onDayPress, selectedDate: selectedDateProp }, ref) => {
   const { t, i18n } = useTranslation();
 
   const { colors } = useTheme();
@@ -114,7 +114,7 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
 
   const today = useMemo(() => toDateKey(new Date()), []);
 
-  const [calendarKey, setCalendarKey] = useState(i18n.language + colors.background);
+  const [journalKey, setJournalKey] = useState(i18n.language + colors.background);
 
   const [isLocaleReady, setIsLocaleReady] = useState(false);
 
@@ -150,9 +150,9 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
   );
 
   useEffect(() => {
-    configureCalendarLocale(i18n.language, t('today'));
+    configureJournalLocale(i18n.language, t('today'));
 
-    setCalendarKey(i18n.language + colors.background);
+    setJournalKey(i18n.language + colors.background);
 
     setIsLocaleReady(true);
   }, [i18n.language, t, colors.background]);
@@ -198,10 +198,10 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
       selectedDate,
     ]);
 
-    const markedDates: Record<string, CalendarMark> = {};
+    const markedDates: Record<string, JournalMark> = {};
 
     allDates.forEach(date => {
-      const dots: CalendarDot[] = [];
+      const dots: JournalDot[] = [];
 
       if ((dailyNutritionTracking[date]?.entries?.length ?? 0) > 0) {
         dots.push({
@@ -294,10 +294,10 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
     return null;
   }
 
-  const calendarTheme = {
+  const journalTheme = {
     backgroundColor: colors.cardBackground,
 
-    calendarBackground: colors.cardBackground,
+    journalBackground: colors.cardBackground,
 
     dayTextColor: colors.text,
 
@@ -350,7 +350,7 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
             accessibilityState={{
               expanded: true,
             }}
-            accessibilityLabel="Collapse calendar"
+            accessibilityLabel="Collapse journal"
           >
             <IconSymbol name="calendar" size={20} color={colors.primary} />
           </TouchableOpacity>
@@ -371,7 +371,7 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
               accessibilityState={{
                 expanded: false,
               }}
-              accessibilityLabel="Expand calendar"
+              accessibilityLabel="Expand journal"
             >
               <IconSymbol name="calendar" size={20} color={colors.primary} />
             </TouchableOpacity>
@@ -394,13 +394,13 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
 
       {isExpanded && (
         <Calendar
-          key={`${calendarKey}-month`}
+          key={`${journalKey}-month`}
           current={selectedDate}
           firstDay={firstDay}
           onDayPress={handleDayPress}
           markingType="multi-dot"
           markedDates={dynamicMarkedDates}
-          theme={calendarTheme}
+          theme={journalTheme}
           style={styles.calendar}
           maxDate={today}
           disableAllTouchEventsForDisabledDays
@@ -411,7 +411,7 @@ const CalendarComponent = forwardRef<CalendarComponentRef, CalendarComponentProp
   );
 });
 
-CalendarComponent.displayName = 'CalendarComponent';
+JournalComponent.displayName = 'JournalComponent';
 
 const styles = StyleSheet.create({
   container: {
@@ -460,4 +460,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CalendarComponent;
+export default JournalComponent;

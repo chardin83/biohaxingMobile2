@@ -3,7 +3,7 @@ import React from 'react';
 
 import { AllProviders } from '@/test-utils/Providers';
 
-import Calendar from '../calendar';
+import Journal from '../journal';
 
 export const addMarkForDateMock = jest.fn();
 
@@ -21,14 +21,14 @@ jest.mock('react-i18next', () => ({
   },
 }));
 
-// Mock CalendarComponent
-jest.mock('@/components/CalendarComponent', () => {
+// Mock JournalComponent
+jest.mock('@/components/JournalComponent', () => {
   const mockReact = require('react');
   const { View, Text, TouchableOpacity } = require('react-native');
 
   return {
     __esModule: true,
-    default: mockReact.forwardRef(function MockCalendarComponent({ onDayPress }: any, ref: any) {
+    default: mockReact.forwardRef(function MockJournalComponent({ onDayPress }: any, ref: any) {
       mockReact.useImperativeHandle(ref, () => ({
         addMarkForDate: jest.fn(),
         removeMarkForDate: jest.fn(),
@@ -36,8 +36,8 @@ jest.mock('@/components/CalendarComponent', () => {
 
       return mockReact.createElement(
         View,
-        { testID: 'calendar-component' },
-        mockReact.createElement(Text, null, 'Mock Calendar'),
+        { testID: 'journal-component' },
+        mockReact.createElement(Text, null, 'Mock Journal'),
         mockReact.createElement(
           TouchableOpacity,
           { testID: 'day-2024-01-15', onPress: () => onDayPress?.({ dateString: '2024-01-15' }) },
@@ -54,7 +54,7 @@ jest.mock('@/components/CalendarComponent', () => {
 });
 
 // Mock DayEdit component
-jest.mock('@/components/calendar/DayEdit', () => {
+jest.mock('@/components/journal/DayEdit', () => {
   const mockReact = require('react');
   const { View, Text } = require('react-native');
 
@@ -70,31 +70,30 @@ jest.mock('@/components/calendar/DayEdit', () => {
   };
 });
 
-const renderWithProviders = (ui: React.ReactElement) =>
-  render(ui, { wrapper: AllProviders });
+const renderWithProviders = (ui: React.ReactElement) => render(ui, { wrapper: AllProviders });
 
-describe('Calendar', () => {
+describe('Journal', () => {
   beforeEach(() => {
     addMarkForDateMock.mockClear();
   });
 
-  it('renders calendar component', async () => {
-    const { getByTestId } = renderWithProviders(<Calendar />);
+  it('renders journal component', async () => {
+    const { getByTestId } = renderWithProviders(<Journal />);
 
     await waitFor(() => {
-      expect(getByTestId('calendar-component')).toBeTruthy();
+      expect(getByTestId('journal-component')).toBeTruthy();
     });
   });
 
   it('shows DayEdit initially for today', async () => {
-    const { getByTestId } = renderWithProviders(<Calendar />);
+    const { getByTestId } = renderWithProviders(<Journal />);
     await waitFor(() => {
       expect(getByTestId('day-edit')).toBeTruthy();
     });
   });
 
   it('shows DayEdit when a date is selected', async () => {
-    const { getByTestId } = renderWithProviders(<Calendar />);
+    const { getByTestId } = renderWithProviders(<Journal />);
 
     const dayButton = getByTestId('day-2024-01-15');
     fireEvent.press(dayButton);
@@ -105,7 +104,7 @@ describe('Calendar', () => {
   });
 
   it('displays selected date in DayEdit', async () => {
-    const { getByTestId } = renderWithProviders(<Calendar />);
+    const { getByTestId } = renderWithProviders(<Journal />);
     const dayButton = getByTestId('day-2024-01-15');
     fireEvent.press(dayButton);
 
@@ -116,7 +115,7 @@ describe('Calendar', () => {
   });
 
   it('initially shows no supplement selected', async () => {
-    const { getByTestId } = renderWithProviders(<Calendar />);
+    const { getByTestId } = renderWithProviders(<Journal />);
 
     const dayButton = getByTestId('day-2024-01-15');
     fireEvent.press(dayButton);
@@ -128,11 +127,11 @@ describe('Calendar', () => {
   });
 
   it('renders with proper safe area and scroll view structure', async () => {
-    const { getByTestId } = renderWithProviders(<Calendar />);
+    const { getByTestId } = renderWithProviders(<Journal />);
 
     // Verify main components are rendered
     await waitFor(() => {
-      expect(getByTestId('calendar-component')).toBeTruthy();
+      expect(getByTestId('journal-component')).toBeTruthy();
     });
   });
 });

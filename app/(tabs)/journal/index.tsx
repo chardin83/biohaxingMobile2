@@ -2,8 +2,8 @@ import { useTheme } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 
-import DayEdit, { type DayEditTab } from '@/components/calendar/DayEdit';
-import CalendarComponent from '@/components/CalendarComponent';
+import DayEdit, { type DayEditTab } from '@/components/journal/DayEdit';
+import JournalComponent from '@/components/JournalComponent';
 import Container, { ContainerScrollRef } from '@/components/ui/Container';
 
 const toLocalDateKey = (date: Date): string => {
@@ -13,7 +13,7 @@ const toLocalDateKey = (date: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
-export default function Calendar() {
+export default function Journal() {
   const params = useLocalSearchParams<{
     selectedDate?: string;
     openTab?: 'supplements' | 'meal' | 'other';
@@ -23,7 +23,7 @@ export default function Calendar() {
   const initialDate = params.selectedDate ?? today;
   const [selectedDate, setSelectedDate] = useState<string | null>(initialDate);
   const [activeDayEditTab, setActiveDayEditTab] = useState<DayEditTab>(params.openTab ?? 'meal');
-  const calendarRef = useRef<any>(null);
+  const journalRef = useRef<any>(null);
   const containerRef = useRef<ContainerScrollRef>(null);
   const { colors } = useTheme();
 
@@ -52,12 +52,8 @@ export default function Calendar() {
   }, [params.openTab]);
 
   return (
-    <Container
-      ref={containerRef}
-      background="gradient"
-      gradientLocations={colors.gradients?.sunrise?.locations1 as any}
-    >
-      <CalendarComponent onDayPress={handleDayPress} selectedDate={selectedDate ?? undefined} ref={calendarRef} />
+    <Container ref={containerRef} background="gradient" gradientLocations={colors.gradients?.sunrise?.locations1 as any}>
+      <JournalComponent onDayPress={handleDayPress} selectedDate={selectedDate ?? undefined} ref={journalRef} />
       {selectedDate && (
         <DayEdit
           key={selectedDate}
@@ -68,7 +64,6 @@ export default function Calendar() {
           onActiveTabChange={setActiveDayEditTab}
           preselectedSupplementId={params.supplementId}
         />
-
       )}
     </Container>
   );

@@ -71,7 +71,7 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
 
   const openTargetDetails = () => {
     router.push({
-      pathname: '/(stack)/calendar/tip-target-details',
+      pathname: '/(stack)/journal/tip-target-details',
       params: {
         tipId: tip.tipId,
         tipTitle: resolvedTipTitle,

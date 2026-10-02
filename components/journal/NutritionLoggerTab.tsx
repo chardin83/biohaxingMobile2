@@ -425,7 +425,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     <KeyboardAvoidingView style={globalStyles.flex1} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.container}>
         <AppButton
-          title={isAnalyzing ? t('dayEdit.analyzing') : t('dayEdit.pickImage')}
+          title={isAnalyzing ? t('nutritionLogger.analyzing') : t('nutritionLogger.addNutrition')}
           onPress={() => mealLoggerBottomSheetRef.current?.present()}
           disabled={isAnalyzing}
           variant="primary"
@@ -594,7 +594,7 @@ const styles = StyleSheet.create({
   },
   imagePickerButton: {
     alignSelf: 'center',
-    width: '85%',
+    width: '87%',
     marginBottom: 16,
   },
   futureDateHint: {

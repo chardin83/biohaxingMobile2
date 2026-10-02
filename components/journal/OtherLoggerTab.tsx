@@ -456,7 +456,7 @@ export default function OtherLoggerTab({
           />
 
           {renderPeriod('weekly', t('nutritionLogger.periodWeekly'))}
-          <ProgressButton href="/(stack)/calendar/habits/progress" label={t('nutritionLogger.seeProgress')} />
+          <ProgressButton href="/(stack)/journal/habits/progress" label={t('nutritionLogger.seeProgress')} />
         </Card>
       </View>
       <RegisterHabitValueBottomSheet

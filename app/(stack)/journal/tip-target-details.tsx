@@ -789,7 +789,7 @@ export default function TipTargetDetailsScreen() {
   const todaySelectedFoodSource = React.useCallback(
     (foodSourceKey: string) => {
       router.push({
-        pathname: '/(tabs)/calendar',
+        pathname: '/(tabs)/journal',
         params: {
           selectedDate: selectedDateKey,
           openTab: 'meal',
@@ -839,7 +839,7 @@ export default function TipTargetDetailsScreen() {
         };
       });
       router.push({
-        pathname: '/(tabs)/calendar',
+        pathname: '/(tabs)/journal',
         params: {
           selectedDate: selectedDateKey,
           openTab: 'meal',
@@ -1012,7 +1012,7 @@ export default function TipTargetDetailsScreen() {
                     title={t('general.add')}
                     onPress={() => {
                       router.push({
-                        pathname: '/(tabs)/calendar',
+                        pathname: '/(tabs)/journal',
                         params: {
                           selectedDate: selectedDateKey,
                           openTab: 'supplements',

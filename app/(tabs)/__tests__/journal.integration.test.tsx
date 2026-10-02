@@ -4,7 +4,7 @@ import React from 'react';
 
 import { AllProviders } from '@/test-utils/Providers';
 
-import Calendar from '../calendar';
+import Journal from '../journal';
 
 // Mock only external dependencies, not internal components
 jest.mock('expo-router', () => ({
@@ -48,17 +48,17 @@ jest.mock('@/locales/supplements', () => ({
   ],
 }));
 
-// Mock react-native-calendars to use a simpler implementation
-jest.mock('react-native-calendars', () => ({
-  Calendar: ({ onDayPress, markedDates }: any) => {
+// Mock react-native-journals to use a simpler implementation
+jest.mock('react-native-journals', () => ({
+  Journal: ({ onDayPress, markedDates }: any) => {
     const { View, Text, TouchableOpacity } = require('react-native');
     return (
-      <View testID="real-calendar">
-        <Text>Calendar Component</Text>
-        <TouchableOpacity testID="calendar-day-2024-01-15" onPress={() => onDayPress({ dateString: '2024-01-15' })}>
+      <View testID="real-journal">
+        <Text>Journal Component</Text>
+        <TouchableOpacity testID="journal-day-2024-01-15" onPress={() => onDayPress({ dateString: '2024-01-15' })}>
           <Text>Jan 15</Text>
         </TouchableOpacity>
-        <TouchableOpacity testID="calendar-day-2024-01-16" onPress={() => onDayPress({ dateString: '2024-01-16' })}>
+        <TouchableOpacity testID="journal-day-2024-01-16" onPress={() => onDayPress({ dateString: '2024-01-16' })}>
           <Text>Jan 16</Text>
         </TouchableOpacity>
         {markedDates &&
@@ -99,16 +99,10 @@ jest.mock('@/components/SupplementForm', () => {
       <View testID="supplement-form">
         <Text>Supplement Form</Text>
         <Text>Editing: {preselectedSupplement?.name || 'New'}</Text>
-        <TouchableOpacity
-          testID="save-vitamin-d3"
-          onPress={() => onSave({ id: 'vit-d3', name: 'Vitamin D3', category: 'vitamins' })}
-        >
+        <TouchableOpacity testID="save-vitamin-d3" onPress={() => onSave({ id: 'vit-d3', name: 'Vitamin D3', category: 'vitamins' })}>
           <Text>Save Vitamin D3</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          testID="save-omega-3"
-          onPress={() => onSave({ id: 'omega-3', name: 'Omega-3', category: 'fatty-acids' })}
-        >
+        <TouchableOpacity testID="save-omega-3" onPress={() => onSave({ id: 'omega-3', name: 'Omega-3', category: 'fatty-acids' })}>
           <Text>Save Omega-3</Text>
         </TouchableOpacity>
         <TouchableOpacity testID="cancel-form" onPress={onCancel}>
@@ -120,7 +114,7 @@ jest.mock('@/components/SupplementForm', () => {
 });
 
 // Mock NutritionLoggerTab
-jest.mock('@/components/calendar/NutritionLoggerTab', () => {
+jest.mock('@/components/journal/NutritionLoggerTab', () => {
   return ({ selectedDate }: any) => {
     const { View, Text } = require('react-native');
     return (
@@ -138,35 +132,35 @@ const renderWithProviders = async (children: React.ReactNode) => {
   return result;
 };
 
-const expandCalendar = async (getByLabelText: (label: string) => any) => {
+const expandJournal = async (getByLabelText: (label: string) => any) => {
   await act(async () => {
-    fireEvent.press(getByLabelText('Expand calendar'));
+    fireEvent.press(getByLabelText('Expand journal'));
   });
 };
 
-describe('Calendar Integration Tests', () => {
+describe('Journal Integration Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('renders calendar with real CalendarComponent integration', async () => {
-    const { getByLabelText, getByTestId } = await renderWithProviders(<Calendar />);
+  it('renders journal with real JournalComponent integration', async () => {
+    const { getByLabelText, getByTestId } = await renderWithProviders(<Journal />);
 
-    await expandCalendar(getByLabelText);
+    await expandJournal(getByLabelText);
 
     await waitFor(() => {
-      expect(getByTestId('real-calendar')).toBeTruthy();
+      expect(getByTestId('real-journal')).toBeTruthy();
     });
   });
 
-  it('integrates calendar day selection with DayEdit component', async () => {
-    const { getByLabelText, getByTestId, queryByText } = await renderWithProviders(<Calendar />);
+  it('integrates journal day selection with DayEdit component', async () => {
+    const { getByLabelText, getByTestId, queryByText } = await renderWithProviders(<Journal />);
 
-    await expandCalendar(getByLabelText);
+    await expandJournal(getByLabelText);
 
-    // Select a day on the calendar
+    // Select a day on the journal
     await act(async () => {
-      fireEvent.press(getByTestId('calendar-day-2024-01-15'));
+      fireEvent.press(getByTestId('journal-day-2024-01-15'));
     });
 
     // DayEdit should now be visible with tabs
@@ -177,13 +171,13 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('allows adding supplements through the full workflow', async () => {
-    const { getByLabelText, getByTestId, getByText, queryByText } = await renderWithProviders(<Calendar />);
+    const { getByLabelText, getByTestId, getByText, queryByText } = await renderWithProviders(<Journal />);
 
-    await expandCalendar(getByLabelText);
+    await expandJournal(getByLabelText);
 
     // Select a day
     await act(async () => {
-      fireEvent.press(getByTestId('calendar-day-2024-01-15'));
+      fireEvent.press(getByTestId('journal-day-2024-01-15'));
     });
 
     // Wait for DayEdit to appear
@@ -191,20 +185,20 @@ describe('Calendar Integration Tests', () => {
       expect(queryByText('Tillskott')).toBeTruthy();
     });
 
-    // Verify selected date propagated to header after calendar selection
+    // Verify selected date propagated to header after journal selection
     await waitFor(() => {
       expect(getByText('Mon, Jan 15, 2024')).toBeTruthy();
     });
   });
 
   it('manages supplement state through storage context', async () => {
-    const { getByLabelText, getByTestId, queryByText } = await renderWithProviders(<Calendar />);
+    const { getByLabelText, getByTestId, queryByText } = await renderWithProviders(<Journal />);
 
-    await expandCalendar(getByLabelText);
+    await expandJournal(getByLabelText);
 
     // Select a day and verify DayEdit appears
     await act(async () => {
-      fireEvent.press(getByTestId('calendar-day-2024-01-15'));
+      fireEvent.press(getByTestId('journal-day-2024-01-15'));
     });
 
     await waitFor(() => {
@@ -212,15 +206,15 @@ describe('Calendar Integration Tests', () => {
     });
 
     // Switch to another day
-    await expandCalendar(getByLabelText);
+    await expandJournal(getByLabelText);
     await act(async () => {
-      fireEvent.press(getByTestId('calendar-day-2024-01-16'));
+      fireEvent.press(getByTestId('journal-day-2024-01-16'));
     });
 
     // Go back to the first day
-    await expandCalendar(getByLabelText);
+    await expandJournal(getByLabelText);
     await act(async () => {
-      fireEvent.press(getByTestId('calendar-day-2024-01-15'));
+      fireEvent.press(getByTestId('journal-day-2024-01-15'));
     });
 
     // The DayEdit should still appear (showing state persistence)
@@ -229,30 +223,30 @@ describe('Calendar Integration Tests', () => {
     });
   });
 
-  it('integrates calendar marking with supplement data', async () => {
-    const { getByLabelText, getByTestId, getByText } = await renderWithProviders(<Calendar />);
+  it('integrates journal marking with supplement data', async () => {
+    const { getByLabelText, getByTestId, getByText } = await renderWithProviders(<Journal />);
 
-    await expandCalendar(getByLabelText);
+    await expandJournal(getByLabelText);
 
     // Select a day
     await act(async () => {
-      fireEvent.press(getByTestId('calendar-day-2024-01-15'));
+      fireEvent.press(getByTestId('journal-day-2024-01-15'));
     });
 
-    // Verify selected date propagated to header after calendar selection
+    // Verify selected date propagated to header after journal selection
     await waitFor(() => {
       expect(getByText('Mon, Jan 15, 2024')).toBeTruthy();
     });
   });
 
   it('switches between supplement and meal tabs', async () => {
-    const { getByLabelText, getByTestId, getByText, queryByTestId } = await renderWithProviders(<Calendar />);
+    const { getByLabelText, getByTestId, getByText, queryByTestId } = await renderWithProviders(<Journal />);
 
-    await expandCalendar(getByLabelText);
+    await expandJournal(getByLabelText);
 
     // Select a day
     await act(async () => {
-      fireEvent.press(getByTestId('calendar-day-2024-01-15'));
+      fireEvent.press(getByTestId('journal-day-2024-01-15'));
     });
 
     await waitFor(() => {
@@ -280,13 +274,13 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('handles time changes in supplement workflow', async () => {
-    const { getByLabelText, getByTestId, getByText } = await renderWithProviders(<Calendar />);
+    const { getByLabelText, getByTestId, getByText } = await renderWithProviders(<Journal />);
 
-    await expandCalendar(getByLabelText);
+    await expandJournal(getByLabelText);
 
     // Select a day
     await act(async () => {
-      fireEvent.press(getByTestId('calendar-day-2024-01-15'));
+      fireEvent.press(getByTestId('journal-day-2024-01-15'));
     });
 
     await waitFor(() => {
@@ -300,13 +294,13 @@ describe('Calendar Integration Tests', () => {
   });
 
   it('handles supplement editing workflow', async () => {
-    const { getByLabelText, getByTestId, getByText } = await renderWithProviders(<Calendar />);
+    const { getByLabelText, getByTestId, getByText } = await renderWithProviders(<Journal />);
 
-    await expandCalendar(getByLabelText);
+    await expandJournal(getByLabelText);
 
     // Select a day
     await act(async () => {
-      fireEvent.press(getByTestId('calendar-day-2024-01-15'));
+      fireEvent.press(getByTestId('journal-day-2024-01-15'));
     });
 
     await waitFor(() => {
@@ -333,9 +327,9 @@ describe('Calendar Integration Tests', () => {
       return Promise.resolve(null);
     });
 
-    const { getByLabelText, getByTestId } = await renderWithProviders(<Calendar />);
+    const { getByLabelText, getByTestId } = await renderWithProviders(<Journal />);
 
-    await expandCalendar(getByLabelText);
+    await expandJournal(getByLabelText);
 
     // Kalendern ska visa markering för 2024-01-15
     await waitFor(() => {

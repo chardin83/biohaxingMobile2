@@ -6,11 +6,11 @@ import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import type { TipTargetItem, WeeklyNutritionTracking, WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { useStorage } from '@/app/context/StorageContext';
-import DailyProgressWeek from '@/components/calendar/progress/DailyProgressWeek';
-import PastWeeksProgress, { PastWeekProgress } from '@/components/calendar/progress/PastWeekProgress';
-import ProgressDateNavigator from '@/components/calendar/progress/ProgressDateNavigator';
-import ProgressTipHeader from '@/components/calendar/progress/ProgressTipHeader';
 import { Collapsible } from '@/components/Collapsible';
+import DailyProgressWeek from '@/components/journal/progress/DailyProgressWeek';
+import PastWeeksProgress, { PastWeekProgress } from '@/components/journal/progress/PastWeekProgress';
+import ProgressDateNavigator from '@/components/journal/progress/ProgressDateNavigator';
+import ProgressTipHeader from '@/components/journal/progress/ProgressTipHeader';
 import { ThemedText } from '@/components/ThemedText';
 import TipTarget from '@/components/TipTarget';
 import Badge from '@/components/ui/Badge';

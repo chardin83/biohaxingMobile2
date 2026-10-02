@@ -304,7 +304,7 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                 />
               </View>
             </View>
-            <ProgressButton href="/(stack)/calendar/nutrition/progress" label={t('nutritionLogger.seeProgress')} />
+            <ProgressButton href="/(stack)/journal/nutrition/progress" label={t('nutritionLogger.seeProgress')} />
           </>
         )}
       </Card>

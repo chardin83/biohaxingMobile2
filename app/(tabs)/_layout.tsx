@@ -16,7 +16,7 @@ type TabIconProps = {
 };
 
 const DashboardTabIcon = ({ color }: TabIconProps) => <IconSymbol size={28} name={'dashboard' as IconSymbolName} color={color} />;
-const CalendarTabIcon = ({ color }: TabIconProps) => <IconSymbol size={28} name="calendar" color={color} />;
+const JournalTabIcon = ({ color }: TabIconProps) => <IconSymbol size={28} name="calendar" color={color} />;
 const PlanTabIcon = ({ color }: TabIconProps) => <IconSymbol size={28} name="checklist" color={color} />;
 const ChatTabIcon = ({ color }: TabIconProps) => <IconSymbol size={28} name="chat" color={color} />;
 const SearchTabIcon = ({ color }: TabIconProps) => <IconSymbol size={28} name="search" color={color} />;
@@ -63,10 +63,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="calendar/index"
+        name="journal/index"
         options={{
-          title: t('layout.calendar'),
-          tabBarIcon: CalendarTabIcon,
+          title: t('layout.journal'),
+          tabBarIcon: JournalTabIcon,
         }}
       />
       <Tabs.Screen
