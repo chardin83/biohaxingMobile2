@@ -1,8 +1,8 @@
 {
   "servingSizes": {
-    "oneTablespoon": "1 tablespoon",
-    "twoTablespoons": "2 tablespoons",
-    "fourTablespoons": "4 tablespoons",
+    "oneTablespoon": "1 tbsp",
+    "twoTablespoons": "2 tbsp",
+    "fourTablespoons": "4 tbsp",
     "quarterCup": "1/4 cup",
     "halfCup": "1/2 cup",
     "oneCup": "1 cup",
@@ -23,7 +23,7 @@
     "twoEggs": "2 eggs",
     "threeEggs": "3 eggs",
     "oneBrazilNut": "1 brazil nut",
-    "twoBrazilNuts": "2 brazil nuts",
+    "twoBrazilNuts": "2 brazil nuts"
   },
   "units": {
     "gramsShort": "g"

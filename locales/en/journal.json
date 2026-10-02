@@ -349,8 +349,5 @@
       "addSource": "Add {{name}}",
       "noneListed": "No food sources listed for this tip."
     }
-  },
-  "foodPortionBottomSheet": {
-    "selectPortion": "Choose portion"
   }
 }

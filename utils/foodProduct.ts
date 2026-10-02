@@ -19,6 +19,7 @@ export const getFoodProduct = (key: FoodKey, name: string): BarcodeProduct => {
     fromCatalog: true,
     image: FOOD_IMAGES[key] as ImageSourcePropType | undefined,
     composition,
+    servings: defaultServings,
     nutrition: {},
   };
 };

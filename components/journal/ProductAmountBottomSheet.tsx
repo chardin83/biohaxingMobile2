@@ -2,7 +2,7 @@ import { BottomSheetModal, BottomSheetScrollView, BottomSheetTextInput } from '@
 import { useTheme } from '@react-navigation/native';
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, Keyboard, StyleSheet, View } from 'react-native';
+import { Image, Keyboard, Pressable, StyleSheet, View } from 'react-native';
 
 import type { NutritionData } from '@/app/context/storage/nutrition/nutritionTypes';
 import type { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFacts';
@@ -22,6 +22,8 @@ export interface ProductAmountBottomSheetRef {
 interface ProductAmountBottomSheetProps {
   onSave: (product: BarcodeProduct, grams: number, productType: BarcodeProductType) => void;
 }
+
+const AMOUNT_STEP = 10;
 
 const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, ProductAmountBottomSheetProps>(({ onSave }, ref) => {
   const { colors } = useTheme();
@@ -78,6 +80,10 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
   }, [gramsText]);
 
   const factor = grams / 100;
+
+  const adjustAmount = (delta: number) => {
+    setGramsText(String(Math.max(0, Math.round((grams + delta) * 10) / 10)));
+  };
 
   const scaledNutrition = useMemo<NutritionData | null>(() => {
     if (!product) return null;
@@ -185,6 +191,15 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
                   },
                 ]}
               >
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="-10"
+                  onPress={() => adjustAmount(-AMOUNT_STEP)}
+                  style={[styles.stepButton, { borderColor: colors.border }]}
+                >
+                  <ThemedText type="title3">−</ThemedText>
+                </Pressable>
+
                 <BottomSheetTextInput
                   style={[
                     styles.amountInput,
@@ -201,7 +216,37 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
                 <ThemedText type="default" style={{ color: colors.textMuted }}>
                   {amountUnit}
                 </ThemedText>
+
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="+10"
+                  onPress={() => adjustAmount(AMOUNT_STEP)}
+                  style={[styles.stepButton, { borderColor: colors.border }]}
+                >
+                  <ThemedText type="title3">+</ThemedText>
+                </Pressable>
               </View>
+
+              {product.servings && product.servings.length > 0 && (
+                <View style={styles.servings}>
+                  {product.servings.map(serving => {
+                    const selected = serving.grams === grams;
+                    const gramsLabel = `${serving.grams} g`;
+
+                    return (
+                      <Pressable
+                        key={`${serving.labelKey ?? 'grams'}-${serving.grams}`}
+                        onPress={() => setGramsText(String(serving.grams))}
+                        style={[styles.servingChip, { borderColor: selected ? colors.primary : colors.border }]}
+                      >
+                        <ThemedText type="caption" style={selected ? { color: colors.primary } : undefined}>
+                          {serving.labelKey ? `${t(`food:servingSizes.${serving.labelKey}`, { defaultValue: gramsLabel })} · ${gramsLabel}` : gramsLabel}
+                        </ThemedText>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              )}
             </View>
 
             {scaledNutrition && (
@@ -303,11 +348,34 @@ const styles = StyleSheet.create({
   amountInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    gap: 8,
   },
 
   amountInput: {
     flex: 1,
+    textAlign: 'center',
+  },
+
+  stepButton: {
+    width: 40,
+    height: 40,
+    borderWidth: 1,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  servings: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+
+  servingChip: {
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
   },
 
   nutrition: {

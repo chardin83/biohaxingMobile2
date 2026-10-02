@@ -3,6 +3,7 @@
 import type { ImageSourcePropType } from 'react-native';
 
 import type { PolyphenolType } from '@/constants/polyphenols';
+import type { FoodServing } from '@/types/nutrition/foodCatalog';
 import type { NutritionComposition } from '@/types/nutrition/nutritionProfile';
 
 import { OPEN_FOOD_FACTS_BASE_URL } from '../config';
@@ -38,6 +39,7 @@ export interface BarcodeProduct {
   drinkType?: DrinkType;
   fromCatalog?: boolean;
   image?: ImageSourcePropType;
+  servings?: FoodServing[];
   // Full per-100g profile for catalog foods; replaces `nutrition` when set.
   composition?: NutritionComposition;
   nutrition: BarcodeNutrition;

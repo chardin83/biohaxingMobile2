@@ -349,8 +349,5 @@
       "addSource": "Lägg till {{name}}",
       "noneListed": "Inga matkällor listade för detta tips."
     }
-  },
-  "foodPortionBottomSheet": {
-    "selectPortion": "Välj portion"
   }
 }

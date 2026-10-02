@@ -18,7 +18,7 @@ import {
 import { useStorage } from '@/app/context/StorageContext';
 import { Supplement } from '@/app/domain/Supplement';
 import { Collapsible } from '@/components/Collapsible';
-import FoodPortionBottomSheet from '@/components/FoodPortionBottomSheet';
+import ProductAmountBottomSheet, { type ProductAmountBottomSheetRef } from '@/components/journal/ProductAmountBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import { useBottomSheetDesign } from '@/components/ui/BottomSheetDesign';
 import Container from '@/components/ui/Container';
@@ -31,12 +31,15 @@ import { isPolyphenolTargetTag } from '@/constants/polyphenols';
 import { isVitaminTargetTag } from '@/constants/vitamins';
 import { useSupplementMap } from '@/locales/supplements';
 import { getTipTargetIconName, type NutrientTag, tips } from '@/locales/tips';
+import type { BarcodeProduct } from '@/services/openFoodFacts';
 import { toGrams, toMicrograms, toMilligrams } from '@/services/targetProgress/nutritionTargetProgress';
-import { FOOD_IMAGES, FOOD_NUTRIENT_PROFILES, FoodNutrientProfile, type FoodServing } from '@/types/nutrition/foodCatalog';
+import { FOOD_IMAGES, FOOD_NUTRIENT_PROFILES, type FoodServing } from '@/types/nutrition/foodCatalog';
 import { type NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
 import { formatMonthDayRange, fromDateKey, toDateKey, toRecordedAt } from '@/utils/dateUtils';
+import { type FoodKey, getFoodProduct } from '@/utils/foodProduct';
 import { formatWithUnit } from '@/utils/formatters';
 import { getNutritionTargetMedalEmoji, getNutritionTargetMedalType } from '@/utils/medals';
+import { scaleNutritionComposition } from '@/utils/nutritionComposition';
 
 type ContributingNutritionEntry = {
   id: string;
@@ -304,26 +307,6 @@ const getContributingNutritionEntriesForTarget = (
     .filter(entry => entry.amount > 0)
     .sort((left, right) => right.amount - left.amount);
 
-const scaleFrom100 = (value: number | undefined, grams: number): number => {
-  if (typeof value !== 'number') return 0;
-  return Number(((value * grams) / 100).toFixed(3));
-};
-
-const getProfileValueForTag = (profile: FoodNutrientProfile | null, targetTag: string): number | undefined => {
-  if (!profile || !targetTag) return undefined;
-  if (isMineralTargetTag(targetTag)) return profile.mineralsByType?.[targetTag];
-  if (isVitaminTargetTag(targetTag)) return profile.vitaminsByType?.[targetTag];
-  if (isAminoAcidTargetTag(targetTag)) return profile.aminoAcidsByType?.[targetTag];
-  if (isFiberTargetTag(targetTag)) return profile.fiberByType?.[targetTag];
-  if (isPolyphenolTargetTag(targetTag)) return profile.polyphenolByType?.[targetTag];
-  return undefined;
-};
-
-const scaleMapFrom100 = <K extends string>(map: Partial<Record<K, number>> | undefined, grams: number): Record<string, number> => {
-  if (!map) return {};
-  return Object.fromEntries(Object.entries(map as Record<string, number | undefined>).map(([key, value]) => [key, scaleFrom100(value, grams)]));
-};
-
 const isFoodProfileKey = (key: string): key is keyof typeof FOOD_NUTRIENT_PROFILES => key in FOOD_NUTRIENT_PROFILES;
 
 const ContributingMealsSection = ({
@@ -548,13 +531,8 @@ export default function TipTargetDetailsScreen() {
   const sheetDesign = useBottomSheetDesign(colors);
   const { t, i18n } = useTranslation();
   const supplementMap = useSupplementMap();
-  const foodPortionBottomSheetRef = useRef<BottomSheetModal>(null);
+  const foodAmountBottomSheetRef = useRef<ProductAmountBottomSheetRef>(null);
   const medalInfoBottomSheetRef = useRef<BottomSheetModal | null>(null);
-  const [selectedFoodName, setSelectedFoodName] = useState<string>('');
-  const [selectedFoodDetails, setSelectedFoodDetails] = useState<string>('');
-  const [selectedFoodSourceKey, setSelectedFoodSourceKey] = useState<string>('');
-  const [selectedFoodProfile, setSelectedFoodProfile] = useState<FoodNutrientProfile | null>(null);
-  const [selectedFoodServings, setSelectedFoodServings] = useState<FoodServing[]>([]);
   const { dailyNutritionTracking, takenDates, weeklyNutritionTracking, setDailyNutritionTracking } = useStorage();
   const params = useLocalSearchParams<{
     tipId?: string;
@@ -573,9 +551,6 @@ export default function TipTargetDetailsScreen() {
   const tipId = params.tipId ?? '';
   const tipMeta = tips.find(candidate => candidate.id === tipId);
   const targetTagParam = (Array.isArray(params.targetTag) ? params.targetTag[0] : params.targetTag) ?? '';
-  const selectedFoodImage: ImageSourcePropType | undefined = isFoodProfileKey(selectedFoodSourceKey)
-    ? (FOOD_IMAGES[selectedFoodSourceKey] as ImageSourcePropType | undefined)
-    : undefined;
   const targetSupplementIds = useMemo(() => new Set(parseCommaSeparated(params.targetSupplementIds)), [params.targetSupplementIds]);
   const listedSupplements = (tipMeta?.supplements ?? [])
     .filter(reference => (targetSupplementIds.size > 0 ? targetSupplementIds.has(reference.id) : true))
@@ -801,37 +776,22 @@ export default function TipTargetDetailsScreen() {
     [router, selectedDateKey, tipId]
   );
 
-  const handleOpenFoodPortionSheet = React.useCallback(
-    (foodSourceKey: string, foodName: string, foodDetails: string, foodProfile: FoodNutrientProfile | null, servingSizes: FoodServing[]) => {
-      setSelectedFoodSourceKey(foodSourceKey);
-      setSelectedFoodName(foodName);
-      setSelectedFoodDetails(foodDetails);
-      setSelectedFoodProfile(foodProfile);
-      setSelectedFoodServings(servingSizes);
-      foodPortionBottomSheetRef.current?.present();
-    },
-    []
-  );
+  const handleOpenFoodSheet = React.useCallback((foodKey: FoodKey, foodName: string) => {
+    foodAmountBottomSheetRef.current?.present(getFoodProduct(foodKey, foodName));
+  }, []);
 
-  const handleSelectServing = React.useCallback(
-    (serving: FoodServing) => {
+  const handleSaveFood = React.useCallback(
+    (product: BarcodeProduct, grams: number) => {
+      if (!product.composition) return;
+
       setDailyNutritionTracking(prev => {
         const existingEntries = prev[selectedDateKey]?.entries ?? [];
         const newEntry: NutritionEntry = {
           id: Crypto.randomUUID(),
           type: 'food',
           recordedAt: toRecordedAt(selectedDateKey, new Date()),
-          name: `${selectedFoodName} (${serving.grams} g)`,
-          protein: scaleFrom100(selectedFoodProfile?.protein, serving.grams),
-          calories: scaleFrom100(selectedFoodProfile?.calories, serving.grams),
-          carbohydrates: scaleFrom100(selectedFoodProfile?.carbohydrates, serving.grams),
-          fat: scaleFrom100(selectedFoodProfile?.fat, serving.grams),
-          fiber: scaleFrom100(selectedFoodProfile?.fiber, serving.grams),
-          fiberByType: scaleMapFrom100(selectedFoodProfile?.fiberByType, serving.grams),
-          aminoAcidsByType: scaleMapFrom100(selectedFoodProfile?.aminoAcidsByType, serving.grams),
-          mineralsByType: scaleMapFrom100(selectedFoodProfile?.mineralsByType, serving.grams),
-          vitaminsByType: scaleMapFrom100(selectedFoodProfile?.vitaminsByType, serving.grams),
-          polyphenolByType: scaleMapFrom100(selectedFoodProfile?.polyphenolByType, serving.grams),
+          name: `${product.name} (${grams} g)`,
+          ...scaleNutritionComposition(product.composition!, grams / 100),
         };
         return {
           ...prev,
@@ -847,7 +807,7 @@ export default function TipTargetDetailsScreen() {
         },
       });
     },
-    [router, selectedDateKey, selectedFoodName, selectedFoodProfile, setDailyNutritionTracking, tipId]
+    [router, selectedDateKey, setDailyNutritionTracking, tipId]
   );
 
   const handleOpenMedalInfo = React.useCallback(() => {
@@ -1037,7 +997,7 @@ export default function TipTargetDetailsScreen() {
           </ThemedText>
           {nutritionFoodItems.length > 0 ? (
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.foodSourceScrollContent}>
-              {nutritionFoodItems.map(({ key, foodKey, name, details }) => {
+              {nutritionFoodItems.map(({ key, foodKey, name }) => {
                 const foodSourceKey = foodKey;
                 const foodProfile = isFoodProfileKey(foodSourceKey) ? FOOD_NUTRIENT_PROFILES[foodSourceKey] : null;
                 const foodImage: ImageSourcePropType | undefined = isFoodProfileKey(foodSourceKey)
@@ -1048,8 +1008,8 @@ export default function TipTargetDetailsScreen() {
                   <Pressable
                     key={key}
                     onPress={() => {
-                      if (servingSizes.length > 0 && foodProfile) {
-                        handleOpenFoodPortionSheet(foodSourceKey, name, details || '', foodProfile, servingSizes);
+                      if (servingSizes.length > 0 && isFoodProfileKey(foodSourceKey)) {
+                        handleOpenFoodSheet(foodSourceKey, name);
                       } else {
                         todaySelectedFoodSource(foodSourceKey);
                       }
@@ -1093,21 +1053,7 @@ export default function TipTargetDetailsScreen() {
           )}
         </View>
 
-        <FoodPortionBottomSheet
-          foodPortionBottomSheetRef={foodPortionBottomSheetRef}
-          snapPoints={['45%', '75%']}
-
-          colors={colors}
-          foodName={selectedFoodName}
-          foodDetails={selectedFoodDetails}
-          foodImage={selectedFoodImage}
-          servingSizes={selectedFoodServings}
-          nutrientPer100={getProfileValueForTag(selectedFoodProfile, targetTagParam)}
-          nutrientUnit={targetUnit}
-          nutrientLabel={targetLabel || undefined}
-          nutrientTag={targetTagParam || undefined}
-          onSelectServing={handleSelectServing}
-        />
+        <ProductAmountBottomSheet ref={foodAmountBottomSheetRef} onSave={handleSaveFood} />
 
         <BottomSheetModal
           ref={medalInfoBottomSheetRef}

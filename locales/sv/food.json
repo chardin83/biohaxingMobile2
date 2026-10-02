@@ -1,8 +1,8 @@
 {
   "servingSizes": {
-    "oneTablespoon": "1 matsked",
-    "twoTablespoons": "2 matskedar",
-    "fourTablespoons": "4 matskedar",
+    "oneTablespoon": "1 msk",
+    "twoTablespoons": "2 msk",
+    "fourTablespoons": "4 msk",
     "quarterCup": "1/4 kopp",
     "halfCup": "1/2 kopp",
     "oneCup": "1 kopp",
@@ -23,7 +23,7 @@
     "twoEggs": "2 ägg",
     "threeEggs": "3 ägg",
     "oneBrazilNut": "1 paranöt",
-    "twoBrazilNuts": "2 paranötter",
+    "twoBrazilNuts": "2 paranötter"
   },
   "units": {
     "gramsShort": "g"
