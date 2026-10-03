@@ -12,6 +12,7 @@ import { ClockTime } from '@/types/ClockTime';
 import { formatClockTime } from '@/utils/dateUtils';
 
 import NumberStepper from './NumberStepper';
+import PersonalDetailsSettings from './PersonalDetailsSettings';
 import { DateTimeInput } from './ui/DateTimeInput';
 import SettingIcon from './ui/SettingIcon';
 import SettingsCardLink from './ui/SettingsCardLink';
@@ -76,7 +77,7 @@ export default function PersonSettings() {
       <ThemedText type="label" style={styles.title} uppercase>
         {t('privacy.person.title')}
       </ThemedText>
-      <SettingsCardLink iconName="calendar" title={t('privacy.person.birthday')} style={styles.cardSpacing} />
+      <PersonalDetailsSettings style={styles.cardSpacing} />
       <ThemedText type="label" style={styles.title} uppercase>
         {t('privacy.person.sleep')}
       </ThemedText>
@@ -148,6 +149,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 10,
+    gap: 8,
   },
   bedtimeRow: {
     flexDirection: 'row',

@@ -5,6 +5,11 @@ export type NutritionDistribution = 'balanced' | 'lowCarb' | 'ketogenic' | 'lowF
 export interface UserProfile {
   maxHeartRate?: number;
   birthDate?: string;
+  weightKg?: number;
+  heightCm?: number;
+  activityPal?: number;
+  nutritionGuideCompleted?: boolean;
+  biologicalSex?: 'female' | 'male' | 'intersex';
   bedtime?: ClockTime;
   nutritionDistribution?: NutritionDistribution;
   nutritionGoals?: {

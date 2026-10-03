@@ -120,6 +120,22 @@
       "title": "Personuppgifter",
       "subtitle": "Hantera din personliga information",
       "birthday": "Födelsedag",
+      "biologicalSex": "Biologiskt kön",
+      "sexSaveError": "Kunde inte spara biologiskt kön. Försök igen.",
+      "sexOptions": {
+        "female": "Kvinna",
+        "male": "Man",
+        "intersex": "Intersex"
+      },
+      "height": "Längd",
+      "heightSaveError": "Kunde inte spara längden. Försök igen.",
+      "weight": "Vikt",
+      "notSet": "Inte inställt",
+      "weightSaveError": "Kunde inte spara vikten. Försök igen.",
+      "ageTitle": "Ålder",
+      "chooseBirthday": "Välj födelsedag",
+      "age": "{{count}} år",
+      "birthdaySaveError": "Kunde inte spara födelsedagen. Försök igen.",
       "training": "Träning",
       "maxHeartRate": "Maxpuls",
       "bedtime": "Läggtid",
@@ -401,6 +417,59 @@
     }
   },
   "nutritionGoals": {
+    "summary": {
+      "saveError": "Kunde inte slutföra guiden. Försök igen.",
+      "title": "Sammanfattning",
+      "description": "Ditt uppskattade energibehov utifrån dina uppgifter och din aktivitetsnivå.",
+      "basal": "Basalmetabolism",
+      "basalDescription": "Uppskattad energiförbrukning i vila",
+      "activity": "Extra för aktivitet",
+      "total": "Totalt energibehov",
+      "perDay": "per dag",
+      "missingDetails": "Fyll i ålder, vikt, längd, biologiskt kön och aktivitetsnivå i föregående steg. Beräkningen gäller vuxna.",
+      "unsupportedSex": "Den här beräkningsmodellen saknar en formel för Intersex, så vi kan inte visa ett tillförlitligt värde här."
+    },
+    "activity": {
+      "title": "Hur aktiv är du?",
+      "description": "Välj den nivå som bäst beskriver din vardagsaktivitet.",
+      "saveError": "Kunde inte spara aktivitetsnivån. Försök igen.",
+      "bedbound": {
+        "title": "Sängliggande / nästan ingen rörelse",
+        "description": "Du ligger större delen av dygnet och har nästan ingen fysisk aktivitet."
+      },
+      "eliteAthlete": {
+        "title": "Elitidrottare / extremt aktiv",
+        "description": "Mycket omfattande och intensiv träning, ofta flera pass per dag."
+      },
+      "highlyActive": {
+        "title": "Extremt aktiv",
+        "description": "Intensiv träning varje dag i kombination med mycket vardagsrörelse eller fysiskt krävande arbete."
+      },
+      "sedentary": {
+        "title": "Mycket stillasittande",
+        "description": "Kontorsarbete och lite vardagsrörelse."
+      },
+      "light": {
+        "title": "Lätt aktiv",
+        "description": "Mest sittande arbete, men promenader och en del vardagsrörelse."
+      },
+      "moderate": {
+        "title": "Måttligt aktiv",
+        "description": "Du går och står en stor del av dagen och rör dig regelbundet."
+      },
+      "active": {
+        "title": "Aktiv",
+        "description": "Du rör dig mycket under dagen eller har ett fysiskt aktivt arbete."
+      },
+      "veryActive": {
+        "title": "Mycket aktiv",
+        "description": "Fysiskt krävande arbete och mycket rörelse under större delen av dagen."
+      }
+    },
+    "personalDetailsTitle": "1. Dina uppgifter",
+    "personalDetailsNotice": "Dessa uppgifter används för att beräkna energibehov.",
+    "calculatorTitle": "Vill du ha hjälp att hitta rätt nivå?",
+    "calculatorDescription": "Beräkna utifrån ålder, vikt, längd och aktivitetsnivå.",
     "customDescription": "Ställ in egna mål för protein, kolhydrater och fett",
     "distribution": "Fördelning",
     "distributionRatio": "Protein {{protein}} % · Kolhydrater {{carbohydrates}} % · Fett {{fat}} %",

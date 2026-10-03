@@ -7,7 +7,7 @@ import SettingIcon from '@/components/ui/SettingIcon';
 import { SettingsCard as CardContainer } from '@/components/ui/SettingsCard';
 
 import { IconSymbolName } from './icon-symbol-map';
-import { IconSymbol } from './IconSymbol.ios';
+import { IconSymbol } from './IconSymbol';
 
 type Row = {
   key: string;
@@ -15,6 +15,9 @@ type Row = {
   value?: string;
   iconName?: IconSymbolName;
   onPress?: () => void;
+  expanded?: boolean;
+  disabled?: boolean;
+  content?: React.ReactNode;
 };
 
 type Props = {
@@ -30,7 +33,18 @@ type Props = {
   rows?: Row[];
 };
 
-export const SettingsCardLink: React.FC<Props> = ({ title, subtitle, iconName = 'public', iconColor, image, onPress, style, value, accessory, rows }: Props) => {
+export const SettingsCardLink: React.FC<Props> = ({
+  title,
+  subtitle,
+  iconName = 'public',
+  iconColor,
+  image,
+  onPress,
+  style,
+  value,
+  accessory,
+  rows,
+}: Props) => {
   const { colors } = useTheme();
 
   let rightAccessory: React.ReactNode = null;
@@ -48,28 +62,33 @@ export const SettingsCardLink: React.FC<Props> = ({ title, subtitle, iconName = 
     return (
       <CardContainer style={style}>
         {rows.map((r, idx) => (
-          <Pressable
-            key={r.key}
-            onPress={r.onPress}
-            style={[styles.row, idx === rows.length - 1 ? styles.rowNoBorder : styles.rowBorder]}
-          >
-            <View style={styles.leftRow}>
-              <SettingIcon size={40} iconName={r.iconName ?? 'public'} />
-              <View style={styles.textColumn}>
-                <ThemedText type="title3" style={styles.title}>
-                  {r.title}
-                </ThemedText>
+          <View key={r.key} style={idx === rows.length - 1 ? styles.rowNoBorder : [styles.rowBorder, { borderBottomColor: colors.borderLight }]}>
+            <Pressable
+              onPress={r.onPress}
+              disabled={r.disabled}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: r.expanded, disabled: r.disabled }}
+              style={styles.row}
+            >
+              <View style={styles.leftRow}>
+                <SettingIcon size={40} iconName={r.iconName ?? 'public'} />
+                <View style={styles.textColumn}>
+                  <ThemedText type="title3" style={styles.title}>
+                    {r.title}
+                  </ThemedText>
+                </View>
               </View>
-            </View>
-            <View style={styles.rightColumn}>
-              {r.value ? (
-                <ThemedText type="default" style={[styles.value, { color: colors.textMuted }]} numberOfLines={1}>
-                  {r.value}
-                </ThemedText>
-              ) : null}
-            </View>
-            <IconSymbol name="chevron.right" size={16} color={colors.text} />
-          </Pressable>
+              <View style={styles.rightColumn}>
+                {r.value ? (
+                  <ThemedText type="default" style={[styles.value, { color: colors.textMuted }]} numberOfLines={1}>
+                    {r.value}
+                  </ThemedText>
+                ) : null}
+              </View>
+              <IconSymbol name={r.expanded ? 'expandMore' : 'chevron.right'} size={16} color={colors.text} />
+            </Pressable>
+            {r.expanded && r.content}
+          </View>
         ))}
       </CardContainer>
     );
@@ -79,11 +98,7 @@ export const SettingsCardLink: React.FC<Props> = ({ title, subtitle, iconName = 
     <CardContainer style={style}>
       <Pressable onPress={onPress} style={styles.container}>
         <View style={styles.leftRow}>
-          {image ? (
-            <Image source={image} style={styles.image} resizeMode="contain" />
-          ) : (
-            <SettingIcon size={40} iconName={iconName} iconColor={iconColor} />
-          )}
+          {image ? <Image source={image} style={styles.image} resizeMode="contain" /> : <SettingIcon size={40} iconName={iconName} iconColor={iconColor} />}
           <View style={styles.textColumn}>
             <ThemedText type="title3" style={styles.title}>
               {title}
@@ -96,9 +111,7 @@ export const SettingsCardLink: React.FC<Props> = ({ title, subtitle, iconName = 
           </View>
         </View>
 
-        <View style={styles.rightColumn}>
-          {rightAccessory}
-        </View>
+        <View style={styles.rightColumn}>{rightAccessory}</View>
         <IconSymbol name="chevron.right" size={16} color={colors.text} />
       </Pressable>
     </CardContainer>
@@ -125,8 +138,7 @@ const styles = StyleSheet.create({
   textColumn: {
     marginLeft: 12,
   },
-  title: {
-  },
+  title: {},
   subtitle: {
     marginTop: 2,
   },
@@ -134,11 +146,9 @@ const styles = StyleSheet.create({
     marginRight: 8,
     alignItems: 'flex-end',
     justifyContent: 'center',
-    maxWidth: '60%'
+    maxWidth: '60%',
   },
-  value: {
-  }
-  ,
+  value: {},
   cardContainer: {
     borderRadius: 8,
     borderWidth: StyleSheet.hairlineWidth,

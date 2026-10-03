@@ -184,3 +184,10 @@ export const combineDateKeyAndTime = (dateKey: string, time: Date): Date => {
 };
 
 export const toRecordedAt = (dateKey: string, time: Date): string => combineDateKeyAndTime(dateKey, time).toISOString();
+
+export const getAge = (birthDate: Date, today = new Date()): number => {
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const birthdayPending = today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate());
+  if (birthdayPending) age -= 1;
+  return age;
+};

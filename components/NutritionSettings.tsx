@@ -1,4 +1,5 @@
 import { useTheme } from '@react-navigation/native';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
@@ -90,7 +91,7 @@ export default function NutritionSettings() {
   };
 
   return (
-    <Container background="default" showBackButton>
+    <Container background="gradient" gradientKey="sunrise" gradientLocations={colors.gradients?.sunrise?.locations3} showBackButton>
       <View style={styles.header}>
         <ThemedText type="title2">{t('nutritionTargetSection.title')}</ThemedText>
         <PencilEditButton
@@ -157,6 +158,23 @@ export default function NutritionSettings() {
         <ThemedText type="title2" accessibilityLiveRegion="polite">
           {Math.round(totalEnergy)} kcal
         </ThemedText>
+      </SettingsCard>
+      <SettingsCard style={styles.calculatorSpacing}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('nutritionGoals.calculatorTitle')}
+          style={styles.calculatorCard}
+          onPress={() => router.push('/settings/nutrition-details')}
+        >
+          <IconSymbol name="calculator" size={24} color={colors.icon} />
+          <View style={styles.optionLabel}>
+            <ThemedText type="title3">{t('nutritionGoals.calculatorTitle')}</ThemedText>
+            <ThemedText type="caption" style={{ color: colors.textMuted }}>
+              {t('nutritionGoals.calculatorDescription')}
+            </ThemedText>
+          </View>
+          <IconSymbol name="chevron.right" size={16} color={colors.text} />
+        </Pressable>
       </SettingsCard>
       {editing && (
         <SettingsCard style={styles.editor}>
@@ -267,6 +285,8 @@ const styles = StyleSheet.create({
   iconLabelRow: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
   share: { textAlign: 'center', marginTop: 12 },
   energyCard: { marginTop: 16, padding: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
+  calculatorSpacing: { marginTop: 16 },
+  calculatorCard: { padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 },
   distributionCard: { marginTop: 24, marginBottom: 8 },
   distributionOption: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, gap: 12 },
   distributionMacros: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },

@@ -8,6 +8,18 @@ type IconDefinition = {
 };
 
 export const ICON_SYMBOLS = {
+  'height': {
+    sf: 'ruler',
+    material: 'straighten',
+  },
+  'weight': {
+    sf: 'scalemass',
+    material: 'monitor-weight',
+  },
+  'calculator': {
+    sf: 'calculator',
+    material: 'calculate',
+  },
   'pencil': {
     sf: 'pencil',
     material: 'edit',

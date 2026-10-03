@@ -14,6 +14,7 @@ interface DateTimeInputProps {
   value: Date;
   onChange: (value: Date) => void;
   dateLabel?: string;
+  buttonLabel?: string;
   timeLabel?: string;
   showDate?: boolean;
   showTime?: boolean;
@@ -27,6 +28,7 @@ export function DateTimeInput({
   value,
   onChange,
   dateLabel,
+  buttonLabel,
   timeLabel,
   showDate = false,
   showTime = true,
@@ -133,7 +135,7 @@ export function DateTimeInput({
 
   return (
     <View style={styles.container}>
-      <AppButton title={buttonTitle} icon={buttonIcon} onPress={handleTogglePicker} variant="secondary" disabled={disabled} />
+      <AppButton title={buttonLabel ?? buttonTitle} icon={buttonIcon} onPress={handleTogglePicker} variant="secondary" disabled={disabled} />
       {showPicker && (
         <>
           {showDatePicker && (

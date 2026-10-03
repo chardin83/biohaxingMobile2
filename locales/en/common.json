@@ -120,6 +120,22 @@
       "title": "Personal information",
       "subtitle": "Manage your personal data",
       "birthday": "Birthday",
+      "biologicalSex": "Biological sex",
+      "sexSaveError": "Could not save biological sex. Please try again.",
+      "sexOptions": {
+        "female": "Female",
+        "male": "Male",
+        "intersex": "Intersex"
+      },
+      "height": "Height",
+      "heightSaveError": "Could not save your height. Please try again.",
+      "weight": "Weight",
+      "notSet": "Not set",
+      "weightSaveError": "Could not save your weight. Please try again.",
+      "ageTitle": "Age",
+      "chooseBirthday": "Choose birthday",
+      "age": "{{count}} years old",
+      "birthdaySaveError": "Could not save your birthday. Please try again.",
       "training": "Training",
       "maxHeartRate": "Max heart rate",
       "bedtime": "Bedtime",
@@ -401,6 +417,59 @@
     }
   },
   "nutritionGoals": {
+    "summary": {
+      "saveError": "Could not complete the guide. Please try again.",
+      "title": "Summary",
+      "description": "Your estimated energy needs based on your details and activity level.",
+      "basal": "Basal metabolism",
+      "basalDescription": "Estimated energy expenditure at rest",
+      "activity": "Extra for activity",
+      "total": "Total energy needs",
+      "perDay": "per day",
+      "missingDetails": "Enter age, weight, height, biological sex and activity level in the previous steps. This calculation applies to adults.",
+      "unsupportedSex": "This model has no formula for Intersex, so we cannot show a reliable estimate here."
+    },
+    "activity": {
+      "title": "How active are you?",
+      "description": "Choose the level that best describes your everyday activity.",
+      "saveError": "Could not save your activity level. Please try again.",
+      "bedbound": {
+        "title": "Bedbound / almost no movement",
+        "description": "You spend most of the day lying down with almost no physical activity."
+      },
+      "eliteAthlete": {
+        "title": "Elite athlete / extremely active",
+        "description": "Extensive and intense training, often multiple sessions per day."
+      },
+      "highlyActive": {
+        "title": "Extremely active",
+        "description": "Intense daily training combined with plenty of everyday movement or physically demanding work."
+      },
+      "sedentary": {
+        "title": "Very sedentary",
+        "description": "Desk work and little everyday movement."
+      },
+      "light": {
+        "title": "Lightly active",
+        "description": "Mostly seated work, with walking and some everyday movement."
+      },
+      "moderate": {
+        "title": "Moderately active",
+        "description": "You walk and stand for much of the day and move regularly."
+      },
+      "active": {
+        "title": "Active",
+        "description": "You move a lot during the day or have a physically active job."
+      },
+      "veryActive": {
+        "title": "Very active",
+        "description": "Physically demanding work and plenty of movement throughout most of the day."
+      }
+    },
+    "personalDetailsTitle": "1. Your details",
+    "personalDetailsNotice": "These details are used to calculate energy needs.",
+    "calculatorTitle": "Need help finding the right level?",
+    "calculatorDescription": "Calculate based on age, weight, height and activity level.",
     "customDescription": "Set your own goals for protein, carbohydrates and fat",
     "distribution": "Distribution",
     "distributionRatio": "Protein {{protein}}% · Carbohydrates {{carbohydrates}}% · Fat {{fat}}%",
