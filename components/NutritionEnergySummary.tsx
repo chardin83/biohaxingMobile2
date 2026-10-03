@@ -1,6 +1,5 @@
 import { useTheme } from '@react-navigation/native';
 import { router } from 'expo-router';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
@@ -16,25 +15,9 @@ import { calculateEnergyNeeds } from '@/utils/energyNeeds';
 export default function NutritionEnergySummary() {
   const { colors } = useTheme();
   const { t, i18n } = useTranslation('common');
-  const { userProfile, updateUserProfile } = useStorage();
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState(false);
+  const { userProfile } = useStorage();
   const energy = calculateEnergyNeeds(userProfile);
   const pal = energy ? new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 1 }).format(energy.pal) : '';
-
-  const finishGuide = async () => {
-    if (saving) return;
-    setSaving(true);
-    setSaveError(false);
-    try {
-      await updateUserProfile({ nutritionGuideCompleted: true });
-      router.dismissTo('/settings/nutrition');
-    } catch {
-      setSaveError(true);
-    } finally {
-      setSaving(false);
-    }
-  };
 
   return (
     <Container
@@ -43,9 +26,16 @@ export default function NutritionEnergySummary() {
       gradientLocations={colors.gradients?.sunrise?.locations3}
       showBackButton
       currentStep={3}
-      totalSteps={3}
+      totalSteps={4}
       contentContainerStyle={styles.container}
-      footer={<AppButton title={t('onboarding.continue')} variant="primary" rightIcon="chevron.right" disabled={saving} onPress={finishGuide} />}
+      footer={
+        <AppButton
+          title={t('onboarding.continue')}
+          variant="primary"
+          rightIcon="chevron.right"
+          onPress={() => router.push('/settings/nutrition-distribution')}
+        />
+      }
     >
       <ThemedText type="title2" style={styles.title}>
         {t('nutritionGoals.summary.title')}
@@ -85,7 +75,6 @@ export default function NutritionEnergySummary() {
           message={t(userProfile.biologicalSex === 'intersex' ? 'nutritionGoals.summary.unsupportedSex' : 'nutritionGoals.summary.missingDetails')}
         />
       )}
-      {saveError && <ThemedText type="error">{t('nutritionGoals.summary.saveError')}</ThemedText>}
     </Container>
   );
 }

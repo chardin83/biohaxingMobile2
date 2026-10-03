@@ -21,7 +21,7 @@ export default function NutritionPersonalDetails() {
       gradientLocations={colors.gradients?.sunrise?.locations3}
       showBackButton
       currentStep={1}
-      totalSteps={3}
+      totalSteps={4}
       contentContainerStyle={styles.container}
       footer={
         <AppButton title={t('onboarding.continue')} variant="primary" rightIcon="chevron.right" onPress={() => router.push('/settings/nutrition-activity')} />

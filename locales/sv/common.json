@@ -422,12 +422,12 @@
       "title": "Sammanfattning",
       "description": "Ditt uppskattade energibehov utifrån dina uppgifter och din aktivitetsnivå.",
       "basal": "Basalmetabolism",
-      "basalDescription": "Uppskattad energiförbrukning i vila",
+      "basalDescription": "Uppskattad viloförbrukning enligt Mifflin–St Jeor",
       "activity": "Extra för aktivitet",
       "total": "Totalt energibehov",
       "perDay": "per dag",
       "missingDetails": "Fyll i ålder, vikt, längd, biologiskt kön och aktivitetsnivå i föregående steg. Beräkningen gäller vuxna.",
-      "unsupportedSex": "Den här beräkningsmodellen saknar en formel för Intersex, så vi kan inte visa ett tillförlitligt värde här."
+      "unsupportedSex": "Vi använder Mifflin–St Jeor, en vedertagen beräkningsmodell för att uppskatta energiförbrukning i vila hos vuxna. Modellen har separata formler för kvinnor och män, men ingen validerad formel för intersexpersoner. Därför visas ingen automatisk uppskattning här. Du kan fortfarande ställa in dina näringsmål manuellt."
     },
     "activity": {
       "title": "Hur aktiv är du?",
@@ -919,6 +919,7 @@
     "supplementNotFound": "⚠️ Jag kunde inte hitta {{supplement}} i listan över kosttillskott."
   },
   "onboarding": {
+    "finish": "Slutför",
     "welcomeTo": "Välkommen till",
     "discoverHealth": "Upptäck vad som kan förbättra din hälsa.",
     "getStarted": "Kom igång",

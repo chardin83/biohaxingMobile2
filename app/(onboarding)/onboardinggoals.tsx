@@ -31,7 +31,7 @@ export default function OnboardingGoals() {
       totalSteps={2}
       onBackPress={() => router.replace('/(onboarding)/onboardingsupplements')}
       contentContainerStyle={styles.container}
-      footer={<AppButton title={t('common:onboarding.continue')} onPress={handleNext} variant="primary" rightIcon="chevron.right" />}
+      footer={<AppButton title={t('common:onboarding.finish')} onPress={handleNext} variant="primary" rightIcon="chevron.right" />}
     >
       <Areas />
     </Container>

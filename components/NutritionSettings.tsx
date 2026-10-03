@@ -8,27 +8,15 @@ import Svg, { Circle } from 'react-native-svg';
 import type { NutritionDistribution } from '@/app/context/storage/userProfile/userProfileTypes';
 import { useStorage } from '@/app/context/StorageContext';
 import NumberStepper from '@/components/NumberStepper';
+import NutritionDistributionSelector from '@/components/NutritionDistributionSelector';
 import { ThemedText } from '@/components/ThemedText';
 import Container from '@/components/ui/Container';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import PencilEditButton from '@/components/ui/PencilEditButton';
-import RadioButton from '@/components/ui/RadioButton';
 import SettingsCard from '@/components/ui/SettingsCard';
 import SettingsCardLink from '@/components/ui/SettingsCardLink';
+import { DEFAULT_GOALS, goalsForDistribution,MACROS } from '@/utils/nutritionGoals';
 
-const DEFAULT_GOALS = { protein: 100, carbohydrates: 250, fat: 67 };
-const MACROS = [
-  { key: 'protein', icon: 'protein', caloriesPerGram: 4, color: '#6C9EFF' },
-  { key: 'carbohydrates', icon: 'carbs', caloriesPerGram: 4, color: '#E6AE54' },
-  { key: 'fat', icon: 'fat', caloriesPerGram: 9, color: '#A58AE6' },
-] as const;
-const DISTRIBUTIONS = {
-  balanced: { protein: 20, carbohydrates: 50, fat: 30 },
-  lowCarb: { protein: 30, carbohydrates: 20, fat: 50 },
-  ketogenic: { protein: 20, carbohydrates: 5, fat: 75 },
-  lowFat: { protein: 25, carbohydrates: 55, fat: 20 },
-};
-const DISTRIBUTION_CHOICES: NutritionDistribution[] = ['balanced', 'lowCarb', 'ketogenic', 'lowFat', 'custom'];
 const RADIUS = 46;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
@@ -66,9 +54,7 @@ export default function NutritionSettings() {
     const nextGoals = { ...displayedGoals };
     if (choice !== 'custom') {
       const energy = totalEnergy || 2000;
-      for (const macro of MACROS) {
-        nextGoals[macro.key] = Math.round((energy * DISTRIBUTIONS[choice][macro.key]) / 100 / macro.caloriesPerGram);
-      }
+      Object.assign(nextGoals, goalsForDistribution(choice, energy));
     }
     if (editing || choice === 'custom') {
       setDraft(nextGoals);
@@ -222,51 +208,7 @@ export default function NutritionSettings() {
           if (!saving) setChoosingDistribution(current => !current);
         }}
       />
-      {choosingDistribution && (
-        <SettingsCard>
-          {DISTRIBUTION_CHOICES.map((choice, index) => (
-            <RadioButton
-              key={choice}
-              selected={displayedDistribution === choice}
-              accessibilityLabel={
-                choice === 'custom'
-                  ? `${t(`nutritionGoals.distributions.${choice}`)}, ${t('nutritionGoals.customDescription')}`
-                  : `${t(`nutritionGoals.distributions.${choice}`)}, ${t('nutritionGoals.distributionRatio', DISTRIBUTIONS[choice])}`
-              }
-              disabled={saving}
-              style={[
-                styles.distributionOption,
-                index < DISTRIBUTION_CHOICES.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderLight },
-              ]}
-              onPress={() => selectDistribution(choice)}
-            >
-              <View style={styles.optionLabel}>
-                <ThemedText type="title3">{t(`nutritionGoals.distributions.${choice}`)}</ThemedText>
-                {choice === 'custom' && (
-                  <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                    {t('nutritionGoals.customDescription')}
-                  </ThemedText>
-                )}
-                {choice !== 'custom' && (
-                  <View style={styles.distributionMacros}>
-                    {MACROS.map(macro => (
-                      <View key={macro.key} style={styles.distributionMacro}>
-                        <IconSymbol name={macro.icon} size={16} color={macro.color} />
-                        <View style={styles.distributionValue}>
-                          <ThemedText type="default">{DISTRIBUTIONS[choice][macro.key]} %</ThemedText>
-                          <ThemedText type="caption" style={[styles.distributionLabel, { color: colors.textMuted }]}>
-                            {t(`nutritionGoals.${macro.key}`).toLowerCase()}
-                          </ThemedText>
-                        </View>
-                      </View>
-                    ))}
-                  </View>
-                )}
-              </View>
-            </RadioButton>
-          ))}
-        </SettingsCard>
-      )}
+      {choosingDistribution && <NutritionDistributionSelector value={displayedDistribution} onChange={selectDistribution} disabled={saving} />}
     </Container>
   );
 }
@@ -288,11 +230,6 @@ const styles = StyleSheet.create({
   calculatorSpacing: { marginTop: 16 },
   calculatorCard: { padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 },
   distributionCard: { marginTop: 24, marginBottom: 8 },
-  distributionOption: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, gap: 12 },
-  distributionMacros: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  distributionMacro: { flexDirection: 'row', alignItems: 'flex-start', gap: 4 },
-  distributionValue: { gap: 2 },
-  distributionLabel: { fontSize: 10, lineHeight: 14 },
   optionLabel: { flex: 1, gap: 4 },
   editor: { marginTop: 16, padding: 16 },
   editRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, gap: 8 },

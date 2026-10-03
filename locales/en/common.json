@@ -422,12 +422,12 @@
       "title": "Summary",
       "description": "Your estimated energy needs based on your details and activity level.",
       "basal": "Basal metabolism",
-      "basalDescription": "Estimated energy expenditure at rest",
+      "basalDescription": "Estimated resting energy expenditure using Mifflin–St Jeor",
       "activity": "Extra for activity",
       "total": "Total energy needs",
       "perDay": "per day",
       "missingDetails": "Enter age, weight, height, biological sex and activity level in the previous steps. This calculation applies to adults.",
-      "unsupportedSex": "This model has no formula for Intersex, so we cannot show a reliable estimate here."
+      "unsupportedSex": "We use Mifflin–St Jeor, an established model for estimating resting energy expenditure in adults. It has separate equations for women and men, but no validated equation for intersex people. Therefore, no automatic estimate is shown here. You can still set your nutrition goals manually."
     },
     "activity": {
       "title": "How active are you?",
@@ -919,6 +919,7 @@
     "supplementNotFound": "⚠️ I couldn't find {{supplement}} in the list of supplements."
   },
   "onboarding": {
+    "finish": "Finish",
     "welcomeTo": "Welcome to",
     "discoverHealth": "Discover what can improve your health.",
     "getStarted": "Get started",
