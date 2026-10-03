@@ -46,7 +46,8 @@ describe('MacroGoalsCard', () => {
     expect(getByText('35 / 100 g')).toBeTruthy();
     expect(getByText('80 / 250 g')).toBeTruthy();
     expect(getByText('22.5 / 70 g')).toBeTruthy();
-    fireEvent.press(getByLabelText('nutritionGoals.edit'));
+    fireEvent.press(getByLabelText('nutritionGoals.logger.options'));
+    fireEvent.press(getByLabelText('nutritionGoals.logger.edit'));
     expect(mockPush).toHaveBeenCalledWith('/settings/nutrition-goals');
   });
 
@@ -54,6 +55,7 @@ describe('MacroGoalsCard', () => {
     mockProfile = { nutritionGoals: goals };
     mockUpdate.mockResolvedValueOnce({ ...mockProfile, trackMacros: false });
     const { getByLabelText, getByText, queryByText, rerender } = render(<MacroGoalsCard />);
+    fireEvent.press(getByLabelText('nutritionGoals.logger.options'));
     fireEvent(getByLabelText('nutritionGoals.logger.track'), 'valueChange', false);
     await waitFor(() => expect(mockUpdate).toHaveBeenCalledWith({ trackMacros: false }));
     mockProfile = { nutritionGoals: goals, trackMacros: false };
@@ -67,6 +69,7 @@ describe('MacroGoalsCard', () => {
     mockProfile = { nutritionGoals: goals, trackMacros: false };
     mockUpdate.mockResolvedValueOnce({ ...mockProfile, trackMacros: true });
     const { getByLabelText } = render(<MacroGoalsCard />);
+    fireEvent.press(getByLabelText('nutritionGoals.logger.options'));
     fireEvent(getByLabelText('nutritionGoals.logger.track'), 'valueChange', true);
     await waitFor(() => expect(mockUpdate).toHaveBeenCalledWith({ trackMacros: true }));
   });
@@ -80,5 +83,15 @@ describe('MacroGoalsCard', () => {
     expect(getByText('900')).toBeTruthy();
     rerender(<MacroGoalsCard />);
     expect(getByText('0 / 100 g')).toBeTruthy();
+  });
+  it('keeps the tracking toggle in the expanded panel and closes it with the close button', () => {
+    mockProfile = { nutritionGoals: goals };
+    const { getByLabelText, queryByLabelText, getByText } = render(<MacroGoalsCard />);
+    expect(getByText('nutritionGoals.logger.on')).toBeTruthy();
+    expect(queryByLabelText('nutritionGoals.logger.track')).toBeNull();
+    fireEvent.press(getByLabelText('nutritionGoals.logger.options'));
+    expect(getByLabelText('nutritionGoals.logger.track')).toBeTruthy();
+    fireEvent.press(getByText('general.close'));
+    expect(queryByLabelText('nutritionGoals.logger.track')).toBeNull();
   });
 });

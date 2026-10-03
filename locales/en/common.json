@@ -418,6 +418,10 @@
   },
   "nutritionGoals": {
     "logger": {
+      "options": "Show macro goal settings",
+      "edit": "Edit macro goals",
+      "on": "On",
+      "off": "Off",
       "energyProgress": "{{consumed}} of {{goal}} kcal",
       "title": "Your macro goals",
       "track": "Track macro goals",

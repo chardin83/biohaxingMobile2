@@ -97,6 +97,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     removeDrinkEntry,
     hideBarcodeInfo,
     setHideBarcodeInfo,
+    userProfile,
   } = useStorage();
   const { weekStartISO: weekStartKey } = getWeekBoundsFromDateKey(selectedDate);
   const { summary, drinks, recentMeals, dailyNutrition } = useNutritionLoggerData(selectedDate);
@@ -459,7 +460,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           content={isAnalyzing ? <AnalysisStatus /> : null}
           style={styles.imagePickerButton}
         />
-        <MacroGoalsCard totals={summary?.totals} />
+        {userProfile.trackMacros !== false && <MacroGoalsCard totals={summary?.totals} />}
         {isFutureSelectedDate && (
           <ThemedText
             type="caption"
@@ -535,6 +536,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           tipRowLocalYByKeyRef={tipRowLocalYByKeyRef}
           tipRowPeriodByKeyRef={tipRowPeriodByKeyRef}
         />
+        {userProfile.trackMacros === false && <MacroGoalsCard totals={summary?.totals} />}
         <PackagingAnalysisModal
           visible={isPackagingModalVisible}
           initialMealImage={packagingMealImage}

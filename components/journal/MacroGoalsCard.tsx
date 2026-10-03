@@ -2,7 +2,7 @@ import { useTheme } from '@react-navigation/native';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Switch, View } from 'react-native';
+import { Pressable, StyleSheet, Switch, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
 import { useStorage } from '@/app/context/StorageContext';
@@ -11,7 +11,7 @@ import { MACROS } from '@/utils/nutritionGoals';
 import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
 import { IconSymbol } from '../ui/IconSymbol';
-import PencilEditButton from '../ui/PencilEditButton';
+import Pill from '../ui/Pill';
 import SettingsCard from '../ui/SettingsCard';
 
 const CHART_SIZE = 104;
@@ -24,6 +24,7 @@ export default function MacroGoalsCard({ totals = {} }: Readonly<{ totals?: Dail
   const { t } = useTranslation('common');
   const { colors } = useTheme();
   const { userProfile, updateUserProfile } = useStorage();
+  const [expanded, setExpanded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
   const tracking = userProfile.trackMacros !== false;
@@ -47,24 +48,43 @@ export default function MacroGoalsCard({ totals = {} }: Readonly<{ totals?: Dail
 
   return (
     <SettingsCard style={styles.card}>
-      <View style={styles.header}>
+      <Pressable
+        style={styles.header}
+        accessibilityRole="button"
+        accessibilityLabel={t('nutritionGoals.logger.options')}
+        accessibilityState={{ expanded }}
+        onPress={() => setExpanded(current => !current)}
+      >
         <ThemedText type="title3" style={styles.label}>
           {t('nutritionGoals.logger.title')}
         </ThemedText>
-        {tracking && goals && (
-          <PencilEditButton accessibilityLabel={t('nutritionGoals.edit')} style={styles.editButton} onPress={() => router.push('/settings/nutrition-goals')} />
-        )}
-      </View>
-      <View style={styles.toggleRow}>
-        <ThemedText style={styles.label}>{t('nutritionGoals.logger.track')}</ThemedText>
-        <Switch
-          accessibilityLabel={t('nutritionGoals.logger.track')}
-          value={tracking}
-          disabled={saving}
-          onValueChange={toggleTracking}
-          trackColor={{ true: colors.primary, false: colors.border }}
-        />
-      </View>
+        <Pill label={t(tracking ? 'nutritionGoals.logger.on' : 'nutritionGoals.logger.off')} active={tracking} />
+        <IconSymbol name={expanded ? 'expandMore' : 'chevron.right'} size={18} color={colors.text} />
+      </Pressable>
+      {expanded && (
+        <View style={[styles.options, { borderColor: colors.borderLight }]}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('nutritionGoals.logger.edit')}
+            onPress={() => router.push(goals ? '/settings/nutrition-goals' : '/settings/nutrition')}
+            style={styles.editRow}
+          >
+            <IconSymbol name="pencil" size={20} color={colors.icon} />
+            <IconSymbol name="chevron.right" size={16} color={colors.text} />
+            <ThemedText style={styles.label}>{t('nutritionGoals.logger.edit')}</ThemedText>
+          </Pressable>
+          <View style={styles.toggleRow}>
+            <ThemedText style={styles.label}>{t('nutritionGoals.logger.track')}</ThemedText>
+            <Switch
+              accessibilityLabel={t('nutritionGoals.logger.track')}
+              value={tracking}
+              disabled={saving}
+              onValueChange={toggleTracking}
+              trackColor={{ true: colors.primary, false: colors.border }}
+            />
+          </View>
+        </View>
+      )}
       {!tracking ? (
         <ThemedText type="caption" style={{ color: colors.textMuted }}>
           {t('nutritionGoals.logger.disabled')}
@@ -137,15 +157,17 @@ export default function MacroGoalsCard({ totals = {} }: Readonly<{ totals?: Dail
         </View>
       )}
       {error && <ThemedText type="error">{t('nutritionGoals.logger.saveError')}</ThemedText>}
+      {expanded && <AppButton title={t('general.close')} variant="secondary" style={styles.closeButton} onPress={() => setExpanded(false)} />}
     </SettingsCard>
   );
 }
 
 const styles = StyleSheet.create({
   card: { padding: 16, marginBottom: 16 },
-  header: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  header: { flexDirection: 'row', alignItems: 'center', gap: 8, minHeight: 44, marginBottom: 12 },
   label: { flex: 1 },
-  editButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
+  options: { borderTopWidth: StyleSheet.hairlineWidth, borderBottomWidth: StyleSheet.hairlineWidth, paddingVertical: 12, marginBottom: 16, gap: 8 },
+  editRow: { flexDirection: 'row', alignItems: 'center', gap: 8, minHeight: 44 },
   toggleRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 },
   goalsRow: { flexDirection: 'row', alignItems: 'center', gap: 16 },
   chartColumn: { alignItems: 'center', gap: 4 },
@@ -155,4 +177,5 @@ const styles = StyleSheet.create({
   macros: { flex: 1, gap: 12 },
   macro: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   setup: { gap: 12 },
+  closeButton: { marginTop: 16 },
 });

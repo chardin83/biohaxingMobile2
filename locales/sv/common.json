@@ -418,6 +418,10 @@
   },
   "nutritionGoals": {
     "logger": {
+      "options": "Visa inställningar för makromål",
+      "edit": "Redigera makromål",
+      "on": "På",
+      "off": "Av",
       "energyProgress": "{{consumed}} av {{goal}} kcal",
       "title": "Dina makromål",
       "track": "Följ makromål",
