@@ -1,4 +1,5 @@
 import { useTheme } from '@react-navigation/native';
+import { router } from 'expo-router';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -119,6 +120,12 @@ export default function PersonSettings() {
           <NumberStepper value={maxHeartRate} onChange={handleMaxHeartRateChange} min={120} max={230} />
         </View>
       </SettingsCard>
+      <SettingsCardLink
+        style={styles.cardSpacing}
+        iconName="target"
+        title={t('nutritionTargetSection.title')}
+        onPress={() => router.push('/settings/nutrition')}
+      />
     </Container>
   );
 }

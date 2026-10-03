@@ -1,4 +1,4 @@
-import { BottomSheetModal, BottomSheetScrollView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ import type { NutritionData } from '@/app/context/storage/nutrition/nutritionTyp
 import type { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFacts';
 import { scaleNutritionComposition } from '@/utils/nutritionComposition';
 
+import NumberStepper from '../NumberStepper';
 import NutritionBreakdown from '../NutritionBreakdown';
 import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
@@ -22,8 +23,6 @@ export interface ProductAmountBottomSheetRef {
 interface ProductAmountBottomSheetProps {
   onSave: (product: BarcodeProduct, grams: number, productType: BarcodeProductType) => void;
 }
-
-const AMOUNT_STEP = 10;
 
 const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, ProductAmountBottomSheetProps>(({ onSave }, ref) => {
   const { colors } = useTheme();
@@ -80,10 +79,6 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
   }, [gramsText]);
 
   const factor = grams / 100;
-
-  const adjustAmount = (delta: number) => {
-    setGramsText(String(Math.max(0, Math.round((grams + delta) * 10) / 10)));
-  };
 
   const scaledNutrition = useMemo<NutritionData | null>(() => {
     if (!product) return null;
@@ -190,48 +185,18 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
             <View style={styles.amountSection}>
               <ThemedText type="defaultSemiBold">{t('journal:nutritionLogger.barcodeProduct.amount')}</ThemedText>
 
-              <View
-                style={[
-                  styles.amountInputContainer,
-                  {
-                    borderColor: colors.border,
-                  },
-                ]}
-              >
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel="-10"
-                  onPress={() => adjustAmount(-AMOUNT_STEP)}
-                  style={[styles.stepButton, { borderColor: colors.border }]}
-                >
-                  <ThemedText type="title3">−</ThemedText>
-                </Pressable>
-
-                <BottomSheetTextInput
-                  style={[
-                    styles.amountInput,
-                    {
-                      color: colors.text,
-                    },
-                  ]}
-                  value={gramsText}
-                  onChangeText={setGramsText}
-                  keyboardType="decimal-pad"
-                  selectTextOnFocus
+              <View style={styles.amountRow}>
+                <NumberStepper
+                  value={grams}
+                  onChange={value => setGramsText(String(value))}
+                  min={0}
+                  step={10}
+                  inBottomSheet
+                  accessibilityLabel={t('journal:nutritionLogger.barcodeProduct.amount')}
                 />
-
                 <ThemedText type="default" style={{ color: colors.textMuted }}>
                   {amountUnit}
                 </ThemedText>
-
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel="+10"
-                  onPress={() => adjustAmount(AMOUNT_STEP)}
-                  style={[styles.stepButton, { borderColor: colors.border }]}
-                >
-                  <ThemedText type="title3">+</ThemedText>
-                </Pressable>
               </View>
 
               {product.servings && product.servings.length > 0 && (
@@ -348,25 +313,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 
-  amountInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-
-  amountInput: {
-    flex: 1,
-    textAlign: 'center',
-  },
-
-  stepButton: {
-    width: 40,
-    height: 40,
-    borderWidth: 1,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  amountRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
 
   servings: {
     flexDirection: 'row',

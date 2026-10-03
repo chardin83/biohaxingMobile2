@@ -400,6 +400,26 @@
       "avoidNight": "Undvik nattetid"
     }
   },
+  "nutritionGoals": {
+    "customDescription": "Ställ in egna mål för protein, kolhydrater och fett",
+    "distribution": "Fördelning",
+    "distributionRatio": "Protein {{protein}} % · Kolhydrater {{carbohydrates}} % · Fett {{fat}} %",
+    "distributions": {
+      "balanced": "Balanserad",
+      "lowCarb": "Lågkolhydrat",
+      "ketogenic": "Ketogen",
+      "lowFat": "Låg fett",
+      "custom": "Egen fördelning"
+    },
+    "totalEnergy": "Total energi",
+    "macros": "Makros",
+    "protein": "Protein",
+    "carbohydrates": "Kolhydrater",
+    "fat": "Fett",
+    "edit": "Ändra näringsmål",
+    "energyShare": "{{percent}} % av energin",
+    "saveError": "Kunde inte spara målen. Försök igen."
+  },
   "nutritionTargetSection": {
     "title": "Näringsmål",
     "description": "Dessa är de viktigaste näringsmålen relaterade till detta tips. Att följa dessa kan hjälpa dig att se hur väl du implementerar tipset och dess påverkan på din hälsa."

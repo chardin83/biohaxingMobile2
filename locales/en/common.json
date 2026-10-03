@@ -400,6 +400,26 @@
       "avoidNight": "Avoid night"
     }
   },
+  "nutritionGoals": {
+    "customDescription": "Set your own goals for protein, carbohydrates and fat",
+    "distribution": "Distribution",
+    "distributionRatio": "Protein {{protein}}% · Carbohydrates {{carbohydrates}}% · Fat {{fat}}%",
+    "distributions": {
+      "balanced": "Balanced",
+      "lowCarb": "Low carb",
+      "ketogenic": "Ketogenic",
+      "lowFat": "Low fat",
+      "custom": "Custom distribution"
+    },
+    "totalEnergy": "Total energy",
+    "macros": "Macros",
+    "protein": "Protein",
+    "carbohydrates": "Carbohydrates",
+    "fat": "Fat",
+    "edit": "Edit nutrition goals",
+    "energyShare": "{{percent}}% of energy",
+    "saveError": "Could not save goals. Please try again."
+  },
   "nutritionTargetSection": {
     "title": "Nutrition targets",
     "description": "These are the key nutrition targets related to this tip. Tracking these can help you see how well you're implementing the tip and its impact on your health."
