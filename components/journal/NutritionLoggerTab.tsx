@@ -34,6 +34,7 @@ import EntryEditModal from './EntryEditModal';
 import FoodPickerBottomSheet from './FoodPickerBottomSheet';
 import { LoggedDrinksSection } from './LoggedDrinksSection';
 import { LoggedMealsSection } from './LoggedMealsSection';
+import MacroGoalsCard from './MacroGoalsCard';
 import MealLoggerBottomSheet from './MealLoggerBottomSheet';
 import NutritionAnalysisBottomSheet from './NutritionAnalysisBottomSheet';
 import NutritionAnalysisReviewModal from './NutritionAnalysisReviewModal';
@@ -458,6 +459,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           content={isAnalyzing ? <AnalysisStatus /> : null}
           style={styles.imagePickerButton}
         />
+        <MacroGoalsCard totals={summary?.totals} />
         {isFutureSelectedDate && (
           <ThemedText
             type="caption"

@@ -417,6 +417,15 @@
     }
   },
   "nutritionGoals": {
+    "logger": {
+      "energyProgress": "{{consumed}} of {{goal}} kcal",
+      "title": "Your macro goals",
+      "track": "Track macro goals",
+      "disabled": "You can log food and drinks without tracking macro goals.",
+      "notSet": "Set your daily goals for protein, carbohydrates and fat.",
+      "setGoals": "Set macro goals",
+      "saveError": "Could not save your preference. Please try again."
+    },
     "summary": {
       "saveError": "Could not complete the guide. Please try again.",
       "title": "Summary",

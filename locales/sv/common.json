@@ -417,6 +417,15 @@
     }
   },
   "nutritionGoals": {
+    "logger": {
+      "energyProgress": "{{consumed}} av {{goal}} kcal",
+      "title": "Dina makromål",
+      "track": "Följ makromål",
+      "disabled": "Du kan logga mat och dryck utan att följa makromål.",
+      "notSet": "Ställ in dina dagliga mål för protein, kolhydrater och fett.",
+      "setGoals": "Ställ in makromål",
+      "saveError": "Kunde inte spara ditt val. Försök igen."
+    },
     "summary": {
       "saveError": "Kunde inte slutföra guiden. Försök igen.",
       "title": "Sammanfattning",

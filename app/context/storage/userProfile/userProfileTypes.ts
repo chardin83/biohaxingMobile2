@@ -9,6 +9,7 @@ export interface UserProfile {
   heightCm?: number;
   activityPal?: number;
   nutritionGuideCompleted?: boolean;
+  trackMacros?: boolean;
   biologicalSex?: 'female' | 'male' | 'intersex';
   bedtime?: ClockTime;
   nutritionDistribution?: NutritionDistribution;
