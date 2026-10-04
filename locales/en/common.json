@@ -89,6 +89,8 @@
       "subtitle": "Control what is shared with AI services"
     },
     "deleteData": {
+      "errorTitle": "Deletion failed",
+      "errorMessage": "Some selected data could not be deleted. Please try again.",
       "title": "Delete app data",
       "subtitle": "Choose what to remove",
       "selectAll": "Select all",

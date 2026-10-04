@@ -52,7 +52,7 @@ export function WearableStatus({ style }: WearableStatusProps) {
             <Text style={[styles.statusText, { color: getStatusColor() }]}>
               {getStatusIcon()} {t(`common:wearableStatus.${status.state}`)}
             </Text>
-            {status.state === 'connected' && status.source && (
+            {status.state === 'connected' && Boolean(status.source) && (
               <Text style={[styles.sourceText, { color: colors.textMuted }]}>
                 {' • '}
                 {status.source}
@@ -62,13 +62,13 @@ export function WearableStatus({ style }: WearableStatusProps) {
         )}
       </View>
 
-      {formattedLastSync && (
+      {Boolean(formattedLastSync) && (
         <Text style={[styles.syncText, { color: colors.textMuted }]}>
           {t('common:wearableStatus.lastSync')}: {formattedLastSync}
         </Text>
       )}
 
-      {status.state === 'error' && status.message && <Text style={[styles.errorText, { color: colors.error }]}>{status.message}</Text>}
+      {status.state === 'error' && Boolean(status.message) && <Text style={[styles.errorText, { color: colors.error }]}>{status.message}</Text>}
     </View>
   );
 }

@@ -384,20 +384,22 @@ export class HealthConnectAdapter implements WearableAdapter {
         const day = getDay(record.endTime);
         day.steps = (day.steps ?? 0) + record.count;
       }
-      for (const session of exerciseSessions) {
-        const activeMinutes = minutesBetween(session.startTime, session.endTime);
-        if (!Number.isFinite(activeMinutes) || activeMinutes <= 0) {
-          continue;
-        }
+      const validSessions = exerciseSessions
+        .map(session => ({ session, activeMinutes: minutesBetween(session.startTime, session.endTime) }))
+        .filter(({ activeMinutes }) => Number.isFinite(activeMinutes) && activeMinutes > 0);
+      const sessionActivities = await Promise.all(
+        validSessions.map(async ({ session, activeMinutes }) => ({
+          session,
+          activeMinutes,
+          heartRateSamples: maxHeartRate ? await this.getHeartRateSamples({ start: session.startTime, end: session.endTime }) : [],
+        }))
+      );
+      for (const { session, activeMinutes, heartRateSamples } of sessionActivities) {
         const day = getDay(session.endTime);
         day.activeMinutes = (day.activeMinutes ?? 0) + activeMinutes;
         if (!maxHeartRate) {
           continue;
         }
-        const heartRateSamples = await this.getHeartRateSamples({
-          start: session.startTime,
-          end: session.endTime,
-        });
         const threshold = maxHeartRate * 0.7;
         const intenseMinutes = this.calculateIntenseMinutes(heartRateSamples, session.startTime, session.endTime, threshold);
         const lastIntenseExerciseAt = this.getLastIntenseExerciseAt(heartRateSamples, session.startTime, session.endTime, threshold);
@@ -515,8 +517,8 @@ export class HealthConnectAdapter implements WearableAdapter {
     return lastIntenseSample ? new Date(lastIntenseSample.time).toISOString() : undefined;
   }
 
-  async getEnergySignal(): Promise<any[]> {
-    return [];
+  getEnergySignal(): Promise<any[]> {
+    return Promise.resolve([]);
   }
 }
 

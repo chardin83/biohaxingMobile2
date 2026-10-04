@@ -66,31 +66,34 @@ export default function NutritionActivitySettings() {
       </ThemedText>
       <ThemedText style={styles.description}>{t('nutritionGoals.activity.description')}</ThemedText>
       <SettingsCard>
-        {ACTIVITY_LEVELS.map((level, index) => (
-          <RadioButton
-            key={level.key}
-            selected={selected === level.pal}
-            disabled={saving}
-            onPress={() => selectLevel(level.pal)}
-            accessibilityLabel={`${t(`nutritionGoals.activity.${level.key}.title`)}, PAL ${level.pal}`}
-            style={[
-              styles.option,
-              index < ACTIVITY_LEVELS.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderLight },
-            ]}
-          >
-            <View style={styles.optionText}>
-              <ThemedText type="title3">
-                {index + 1}. {t(`nutritionGoals.activity.${level.key}.title`)}
-              </ThemedText>
-              <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                {t(`nutritionGoals.activity.${level.key}.description`)}
-              </ThemedText>
-              <ThemedText type="caption" style={{ color: colors.primary }}>
-                PAL {new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(level.pal)}
-              </ThemedText>
-            </View>
-          </RadioButton>
-        ))}
+        {ACTIVITY_LEVELS.map((level, index) => {
+          const title = t(`nutritionGoals.activity.${level.key}.title`);
+          return (
+            <RadioButton
+              key={level.key}
+              selected={selected === level.pal}
+              disabled={saving}
+              onPress={() => selectLevel(level.pal)}
+              accessibilityLabel={`${title}, PAL ${level.pal}`}
+              style={[
+                styles.option,
+                index < ACTIVITY_LEVELS.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderLight },
+              ]}
+            >
+              <View style={styles.optionText}>
+                <ThemedText type="title3">
+                  {index + 1}. {title}
+                </ThemedText>
+                <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                  {t(`nutritionGoals.activity.${level.key}.description`)}
+                </ThemedText>
+                <ThemedText type="caption" style={{ color: colors.primary }}>
+                  PAL {new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(level.pal)}
+                </ThemedText>
+              </View>
+            </RadioButton>
+          );
+        })}
       </SettingsCard>
       {error && (
         <ThemedText type="error" style={styles.error}>

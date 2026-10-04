@@ -20,16 +20,14 @@ const GenesListCard: React.FC<GenesListCardProps> = ({ areaId, style }) => {
   const router = useRouter();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  
-  const filteredGenes = genes.filter(gene =>
-    gene.areas.some(area => area.id === areaId)
-  );
+
+  const filteredGenes = genes.filter(gene => gene.areas.some(area => area.id === areaId));
 
   if (filteredGenes.length === 0) return null;
 
   const handleGenePress = (geneId: string) => {
     router.push({
-      pathname: "/dashboard/area/[areaId]/gene",
+      pathname: '/dashboard/area/[areaId]/gene',
       params: { areaId, geneId },
     });
   };
@@ -37,27 +35,22 @@ const GenesListCard: React.FC<GenesListCardProps> = ({ areaId, style }) => {
   return (
     <Card title={`${t('genesList.title')}`} style={style}>
       <View style={styles.infoSection}>
-        <ThemedText style={[styles.infoLabel, { color: colors.textSecondary }]}>🧬 {t('genesList.genesLinkedToArea', { area: t(`areas:${areaId}.title`) })}</ThemedText>
+        <ThemedText style={[styles.infoLabel, { color: colors.textSecondary }]}>
+          🧬 {t('genesList.genesLinkedToArea', { area: t(`areas:${areaId}.title`) })}
+        </ThemedText>
         {filteredGenes.length === 0 ? (
-          <ThemedText style={[styles.infoText, { color: colors.textTertiary }]}>
-            {t('genesList.noGenes')}
-          </ThemedText>
+          <ThemedText style={[styles.infoText, { color: colors.textTertiary }]}>{t('genesList.noGenes')}</ThemedText>
         ) : (
-          <ThemedText style={[styles.infoText, { color: colors.textTertiary }]}>
-            {t('genesList.genesAffectHealth')}
-          </ThemedText>
+          <ThemedText style={[styles.infoText, { color: colors.textTertiary }]}>{t('genesList.genesAffectHealth')}</ThemedText>
         )}
       </View>
       {filteredGenes.map(gene => {
         const area = gene.areas.find(a => a.id === areaId);
         if (!area) return null;
-        return (
-          <GeneCard key={gene.id} gene={gene} area={area} onPress={() => handleGenePress(gene.id)} />
-        );
+        return <GeneCard key={gene.id} gene={gene} area={area} onPress={() => handleGenePress(gene.id)} />;
       })}
-      <ThemedText  type="explainer" style={[globalStyles.explainer, { color: colors.textMuted, borderColor: colors.borderLight }]}>
+      <ThemedText type="explainer" style={[globalStyles.explainer, { color: colors.textMuted, borderColor: colors.borderLight }]}>
         {t('genesList.explainer')}
-        Genetiska tester kan ge insikt om din profil, men livsstil har alltid störst påverkan!
       </ThemedText>
     </Card>
   );

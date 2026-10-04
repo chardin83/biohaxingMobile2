@@ -827,22 +827,22 @@ export class HealthKitAdapter implements WearableAdapter {
     });
   }
 
-  private async getDailyStepCounts(health: NonNullable<typeof AppleHealthKit>, range: TimeRange): Promise<Array<{ date: string; steps: number }>> {
+  private getDailyStepCounts(health: NonNullable<typeof AppleHealthKit>, range: TimeRange): Promise<Array<{ date: string; steps: number }>> {
     const start = new Date(range.start);
     const end = new Date(range.end);
     const current = new Date(start.getFullYear(), start.getMonth(), start.getDate());
     const lastDate = new Date(end.getFullYear(), end.getMonth(), end.getDate());
-    const result: Array<{ date: string; steps: number }> = [];
+    const dates: Date[] = [];
     while (current <= lastDate) {
-      const date = new Date(current);
-      const steps = await this.getStepCountForDate(health, date);
-      result.push({
-        date: toLocalDateISO(date.toISOString()),
-        steps,
-      });
+      dates.push(new Date(current));
       current.setDate(current.getDate() + 1);
     }
-    return result;
+    return Promise.all(
+      dates.map(async date => ({
+        date: toLocalDateISO(date.toISOString()),
+        steps: await this.getStepCountForDate(health, date),
+      }))
+    );
   }
 
   private getWorkoutSamples(health: HealthKitModule, range: TimeRange): Promise<RawWorkoutSample[]> {
@@ -935,8 +935,8 @@ export class HealthKitAdapter implements WearableAdapter {
     return lastSample?.recordedAt;
   }
 
-  async getEnergySignal(): Promise<any[]> {
-    return [];
+  getEnergySignal(): Promise<any[]> {
+    return Promise.resolve([]);
   }
 }
 

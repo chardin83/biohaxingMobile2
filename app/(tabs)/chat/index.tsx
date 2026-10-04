@@ -156,7 +156,10 @@ export default function ChatWithGPT4o(): JSX.Element {
         }
       };
 
-      sendInitialPrompt();
+      sendInitialPrompt().catch(error => {
+        setMessages(prev => [...prev, createMessage({ role: 'assistant', content: 'Något gick fel. 😕 ' + error })]);
+        setLoading(false);
+      });
     }
   }, [fullSystemPrompt, initialPrompt]);
 
@@ -198,7 +201,10 @@ export default function ChatWithGPT4o(): JSX.Element {
         }
       };
 
-      ask();
+      ask().catch(error => {
+        setMessages(prev => [...prev, createMessage({ role: 'assistant', content: 'Fel: ' + error })]);
+        setLoading(false);
+      });
     }
   }, [fullSystemPrompt, goal, parsedSupplements, parsedSupplements.length]);
 
@@ -240,7 +246,7 @@ export default function ChatWithGPT4o(): JSX.Element {
         const content = data.content ?? '🤖 Inget svar tillgängligt.';
         setMessages(prev => [...prev, createMessage({ role: 'assistant', content })]);
       } else if (data.type === 'function_call' && data.arguments) {
-        handleGPTFunctionCall(data.arguments, setMessages);
+        await handleGPTFunctionCall(data.arguments, setMessages);
       } else {
         setMessages(prev => [...prev, createMessage({ role: 'assistant', content: 'Inget användbart svar.' })]);
       }

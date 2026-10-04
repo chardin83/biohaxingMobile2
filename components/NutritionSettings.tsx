@@ -15,7 +15,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import PencilEditButton from '@/components/ui/PencilEditButton';
 import SettingsCard from '@/components/ui/SettingsCard';
 import SettingsCardLink from '@/components/ui/SettingsCardLink';
-import { DEFAULT_GOALS, goalsForDistribution,MACROS } from '@/utils/nutritionGoals';
+import { DEFAULT_GOALS, goalsForDistribution, MACROS } from '@/utils/nutritionGoals';
 
 const RADIUS = 46;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
@@ -99,10 +99,11 @@ export default function NutritionSettings() {
         <View style={styles.charts}>
           {MACROS.map(macro => {
             const grams = displayedGoals[macro.key];
+            const macroLabel = t(`nutritionGoals.${macro.key}`);
             const share = totalEnergy > 0 ? (grams * macro.caloriesPerGram) / totalEnergy : 0;
             return (
               <View key={macro.key} style={styles.macro}>
-                <View style={styles.chart} accessible accessibilityLabel={`${grams} g ${t(`nutritionGoals.${macro.key}`)}`}>
+                <View style={styles.chart} accessible accessibilityLabel={`${grams} g ${macroLabel}`}>
                   <Svg width="100%" height="100%" viewBox="0 0 108 108">
                     <Circle cx={54} cy={54} r={RADIUS} stroke={colors.border} strokeWidth={8} fill="none" />
                     <Circle
@@ -121,7 +122,7 @@ export default function NutritionSettings() {
                     <View style={styles.chartLabelRow}>
                       <IconSymbol name={macro.icon} size={12} color={macro.color} />
                       <ThemedText type="caption" numberOfLines={1} adjustsFontSizeToFit style={styles.macroLabel}>
-                        {t(`nutritionGoals.${macro.key}`)}
+                        {macroLabel}
                       </ThemedText>
                     </View>
                   </View>

@@ -99,7 +99,8 @@ export function useGPTFunctionHandler() {
         notify: matchingPlan.notify,
       };
 
-      saveSupplementToPlan(matchingPlan, newEntry, false);
+      const savedPlan = await saveSupplementToPlan(matchingPlan, newEntry, false);
+      if (!savedPlan) return;
 
       setMessages?.(prev => [
         ...prev,

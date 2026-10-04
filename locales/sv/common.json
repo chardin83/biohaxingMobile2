@@ -89,6 +89,8 @@
       "subtitle": "Styr vad som delas med AI-tjänster"
     },
     "deleteData": {
+      "errorTitle": "Raderingen misslyckades",
+      "errorMessage": "Vissa valda uppgifter kunde inte raderas. Försök igen.",
       "title": "Radera appdata",
       "subtitle": "Välj vad som ska tas bort",
       "selectAll": "Markera allt",

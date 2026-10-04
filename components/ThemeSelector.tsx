@@ -22,10 +22,13 @@ export default function ThemeSelector({ onChange }: Props) {
 
   React.useEffect(() => {
     let mounted = true;
-    (async () => {
-      const stored = await getStoredPreferredTheme();
-      if (mounted && stored) setSelected(stored);
-    })();
+    getStoredPreferredTheme()
+      .then(stored => {
+        if (mounted && stored) setSelected(stored);
+      })
+      .catch(err => {
+        console.warn('ThemeSelector: failed to load', err);
+      });
     return () => {
       mounted = false;
     };

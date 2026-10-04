@@ -484,13 +484,16 @@ export default function TrainingProgressScreen() {
 
             let statusIcon = '✗';
             let statusColor = colors.textMuted;
+            let statusLabel = t('journal:progress.notFulfilled');
 
             if (fulfilled) {
               statusIcon = '✓';
               statusColor = colors.primary;
+              statusLabel = t('journal:progress.fulfilled');
             } else if (hasPartialProgress) {
               statusIcon = PARTIAL_PROGRESS_ICON;
               statusColor = colors.goldSoft;
+              statusLabel = t('journal:progress.inProgress');
             }
 
             return (
@@ -547,7 +550,7 @@ export default function TrainingProgressScreen() {
                     },
                   ]}
                 >
-                  {fulfilled ? t('journal:progress.fulfilled') : hasPartialProgress ? t('journal:progress.inProgress') : t('journal:progress.notFulfilled')}
+                  {statusLabel}
                 </ThemedText>
               </TouchableOpacity>
             );

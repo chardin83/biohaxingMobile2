@@ -1,6 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Switch, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
@@ -46,6 +46,85 @@ export default function MacroGoalsCard({ totals = {} }: Readonly<{ totals?: Dail
     }
   };
 
+  let goalsContent: ReactNode;
+  if (!tracking) {
+    goalsContent = (
+      <ThemedText type="caption" style={{ color: colors.textMuted }}>
+        {t('nutritionGoals.logger.disabled')}
+      </ThemedText>
+    );
+  } else if (goals) {
+    goalsContent = (
+      <View style={styles.goalsRow}>
+        <View style={styles.chartColumn}>
+          <View
+            style={styles.chart}
+            accessible
+            accessibilityLabel={t('nutritionGoals.logger.energyProgress', { consumed: consumedCalories, goal: Math.round(totalCalories) })}
+          >
+            <Svg width={CHART_SIZE} height={CHART_SIZE} viewBox="0 0 104 104">
+              <Circle cx={52} cy={52} r={CHART_RADIUS} stroke={colors.border} strokeWidth={8} fill="none" />
+              {MACROS.map(macro => {
+                const targetLength = totalCalories > 0 ? ((goals[macro.key] * macro.caloriesPerGram) / totalCalories) * CHART_CIRCUMFERENCE : 0;
+                const progress = goals[macro.key] > 0 ? Math.min(Math.max((totals[macro.key] ?? 0) / goals[macro.key], 0), 1) : 0;
+                const length = targetLength * progress;
+                const offset = chartOffset;
+                chartOffset += targetLength;
+                return (
+                  <Circle
+                    key={macro.key}
+                    cx={52}
+                    cy={52}
+                    r={CHART_RADIUS}
+                    fill="none"
+                    stroke={macro.color}
+                    strokeWidth={8}
+                    strokeDasharray={`${length} ${CHART_CIRCUMFERENCE}`}
+                    strokeDashoffset={-offset}
+                    transform="rotate(-90 52 52)"
+                  />
+                );
+              })}
+            </Svg>
+            <View style={styles.chartCenter} pointerEvents="none">
+              <IconSymbol name="flame" size={18} color={colors.primary} />
+              <ThemedText type="title3">{consumedCalories}</ThemedText>
+              <ThemedText type="caption">kcal</ThemedText>
+            </View>
+          </View>
+          <ThemedText type="caption" style={styles.energyGoal}>
+            / {Math.round(totalCalories)} kcal
+          </ThemedText>
+        </View>
+        <View style={styles.macros}>
+          {MACROS.map(macro => (
+            <View key={macro.key} style={styles.macro}>
+              <IconSymbol name={macro.icon} size={20} color={macro.color} />
+              <ThemedText type="caption" style={styles.label}>
+                {t(`nutritionGoals.${macro.key}`)}
+              </ThemedText>
+              <ThemedText type="defaultSemiBold">
+                {formatGrams(totals[macro.key] ?? 0)} / {goals[macro.key]} g
+              </ThemedText>
+            </View>
+          ))}
+        </View>
+      </View>
+    );
+  } else {
+    goalsContent = (
+      <View style={styles.setup}>
+        <ThemedText type="caption">{t('nutritionGoals.logger.notSet')}</ThemedText>
+        <AppButton
+          title={t('nutritionGoals.logger.setGoals')}
+          variant="secondary"
+          rightIcon="chevron.right"
+          onPress={() => router.push('/settings/nutrition')}
+        />
+      </View>
+    );
+  }
+
   return (
     <SettingsCard style={styles.card}>
       <Pressable
@@ -85,77 +164,7 @@ export default function MacroGoalsCard({ totals = {} }: Readonly<{ totals?: Dail
           </View>
         </View>
       )}
-      {!tracking ? (
-        <ThemedText type="caption" style={{ color: colors.textMuted }}>
-          {t('nutritionGoals.logger.disabled')}
-        </ThemedText>
-      ) : goals ? (
-        <View style={styles.goalsRow}>
-          <View style={styles.chartColumn}>
-            <View
-              style={styles.chart}
-              accessible
-              accessibilityLabel={t('nutritionGoals.logger.energyProgress', { consumed: consumedCalories, goal: Math.round(totalCalories) })}
-            >
-              <Svg width={CHART_SIZE} height={CHART_SIZE} viewBox="0 0 104 104">
-                <Circle cx={52} cy={52} r={CHART_RADIUS} stroke={colors.border} strokeWidth={8} fill="none" />
-                {MACROS.map(macro => {
-                  const targetLength = totalCalories > 0 ? ((goals[macro.key] * macro.caloriesPerGram) / totalCalories) * CHART_CIRCUMFERENCE : 0;
-                  const progress = goals[macro.key] > 0 ? Math.min(Math.max((totals[macro.key] ?? 0) / goals[macro.key], 0), 1) : 0;
-                  const length = targetLength * progress;
-                  const offset = chartOffset;
-                  chartOffset += targetLength;
-                  return (
-                    <Circle
-                      key={macro.key}
-                      cx={52}
-                      cy={52}
-                      r={CHART_RADIUS}
-                      fill="none"
-                      stroke={macro.color}
-                      strokeWidth={8}
-                      strokeDasharray={`${length} ${CHART_CIRCUMFERENCE}`}
-                      strokeDashoffset={-offset}
-                      transform="rotate(-90 52 52)"
-                    />
-                  );
-                })}
-              </Svg>
-              <View style={styles.chartCenter} pointerEvents="none">
-                <IconSymbol name="flame" size={18} color={colors.primary} />
-                <ThemedText type="title3">{consumedCalories}</ThemedText>
-                <ThemedText type="caption">kcal</ThemedText>
-              </View>
-            </View>
-            <ThemedText type="caption" style={styles.energyGoal}>
-              / {Math.round(totalCalories)} kcal
-            </ThemedText>
-          </View>
-          <View style={styles.macros}>
-            {MACROS.map(macro => (
-              <View key={macro.key} style={styles.macro}>
-                <IconSymbol name={macro.icon} size={20} color={macro.color} />
-                <ThemedText type="caption" style={styles.label}>
-                  {t(`nutritionGoals.${macro.key}`)}
-                </ThemedText>
-                <ThemedText type="defaultSemiBold">
-                  {formatGrams(totals[macro.key] ?? 0)} / {goals[macro.key]} g
-                </ThemedText>
-              </View>
-            ))}
-          </View>
-        </View>
-      ) : (
-        <View style={styles.setup}>
-          <ThemedText type="caption">{t('nutritionGoals.logger.notSet')}</ThemedText>
-          <AppButton
-            title={t('nutritionGoals.logger.setGoals')}
-            variant="secondary"
-            rightIcon="chevron.right"
-            onPress={() => router.push('/settings/nutrition')}
-          />
-        </View>
-      )}
+      {goalsContent}
       {error && <ThemedText type="error">{t('nutritionGoals.logger.saveError')}</ThemedText>}
       {expanded && <AppButton title={t('general.close')} variant="secondary" style={styles.closeButton} onPress={() => setExpanded(false)} />}
     </SettingsCard>

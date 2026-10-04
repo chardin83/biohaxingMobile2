@@ -203,7 +203,7 @@ export default function DeleteDataPage() {
 
   const hasSelected = Object.values(selected).some(Boolean);
 
-  const deleteSelectedData = React.useCallback(() => {
+  const deleteSelectedData = React.useCallback(async () => {
     if (selected.plans) {
       setPlans({
         supplements: [],
@@ -214,7 +214,7 @@ export default function DeleteDataPage() {
       });
 
       setShareHealthPlan(false);
-      clearArchivedPlans();
+      await clearArchivedPlans();
       setTrainingPlanSettings({});
     } else if (selected.supplements) {
       setPlans(current => pruneCustomSupplementReferences(current, customSupplements));
@@ -248,13 +248,13 @@ export default function DeleteDataPage() {
     }
 
     if (selected.personal) {
-      clearUserProfile();
+      await clearUserProfile();
     }
 
     if (selected.sharing) {
       setHasVisitedChat(false);
       setShareHealthPlan(false);
-      clearChat();
+      await clearChat();
     }
   }, [
     clearArchivedPlans,
@@ -308,7 +308,13 @@ export default function DeleteDataPage() {
             return;
           }
 
-          deleteSelectedData();
+          try {
+            await deleteSelectedData();
+          } catch (error) {
+            console.error('Failed to delete selected data', error);
+            Alert.alert(t('privacy.deleteData.errorTitle'), t('privacy.deleteData.errorMessage'));
+            return;
+          }
 
           if (allSelected) {
             setHasCompletedOnboarding(false);

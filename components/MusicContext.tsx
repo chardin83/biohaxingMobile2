@@ -1,21 +1,21 @@
 import { Audio } from 'expo-av';
-import React, { createContext, useContext, useRef } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useRef } from 'react';
 
 const MusicContext = createContext<{ play: () => Promise<void>; stop: () => Promise<void> } | undefined>(undefined);
 
-export function MusicProvider({ children }: { children: React.ReactNode }) {
+export function MusicProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const sound = useRef<Audio.Sound | null>(null);
 
-  const play = async () => {
+  const play = useCallback(async () => {
     //await stop();
     if (sound.current) {
       await sound.current.setPositionAsync(0);
       await sound.current.playAsync();
     } else {
-      const { sound: playback } = await Audio.Sound.createAsync(
-        require('../assets/audio/cinematic-sci-fi-trailer-music-414667.mp3'),
-        { isLooping: false, volume: 0.5 }
-      );
+      const { sound: playback } = await Audio.Sound.createAsync(require('../assets/audio/cinematic-sci-fi-trailer-music-414667.mp3'), {
+        isLooping: false,
+        volume: 0.5,
+      });
       sound.current = playback;
       await playback.playAsync();
       playback.setOnPlaybackStatusUpdate(status => {
@@ -24,23 +24,25 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
         }
       });
     }
-  };
+  }, []);
 
-  const stop = async () => {
+  const stop = useCallback(async () => {
     await Audio.setIsEnabledAsync(false);
     await Audio.setIsEnabledAsync(true);
     if (sound.current) {
-      try { await sound.current.stopAsync(); } catch {}
-      try { await sound.current.unloadAsync(); } catch {}
+      try {
+        await sound.current.stopAsync();
+      } catch {}
+      try {
+        await sound.current.unloadAsync();
+      } catch {}
       sound.current = null;
     }
-  };
+  }, []);
 
-  return (
-    <MusicContext.Provider value={{ play, stop }}>
-      {children}
-    </MusicContext.Provider>
-  );
+  const value = useMemo(() => ({ play, stop }), [play, stop]);
+
+  return <MusicContext.Provider value={value}>{children}</MusicContext.Provider>;
 }
 
 export function useMusic() {

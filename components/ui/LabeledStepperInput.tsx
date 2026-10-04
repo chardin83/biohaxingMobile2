@@ -34,7 +34,16 @@ const formatNumber = (value: number, decimals: number): string => {
     return String(Math.round(value));
   }
 
-  return value.toFixed(decimals).replace(/\.0+$/, '').replace(/(\.\d*?)0+$/, '$1');
+  const formatted = value.toFixed(decimals);
+  if (!formatted.includes('.') || formatted.includes('e')) return formatted;
+
+  let end = formatted.length;
+  while (formatted[end - 1] === '0') {
+    end--;
+  }
+  if (formatted[end - 1] === '.') end--;
+
+  return formatted.slice(0, end);
 };
 
 const LabeledStepperInput: React.FC<LabeledStepperInputProps> = ({

@@ -14,37 +14,31 @@ export default function MultivitaminsPage() {
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const editingMultivitamin = customSupplements.find(item => item.id === editingId);
 
-  const confirmDelete = (multivitaminId: string, multivitaminName: string) => {
-    const planCount = plans.supplements.filter(plan => plan.supplements.some(
-      entry => entry.supplement.id === multivitaminId
-    )).length;
-    const message = planCount > 0
-      ? t('settings.deleteMultivitaminUsedMessage', { count: planCount })
-      : t('settings.deleteMultivitaminMessage');
+  const deleteMultivitamin = (multivitaminId: string, planCount: number) => {
+    setCustomSupplements(current => current.filter(item => item.id !== multivitaminId));
+    if (planCount > 0) {
+      setPlans(current => ({
+        ...current,
+        supplements: current.supplements.map(plan => ({
+          ...plan,
+          supplements: plan.supplements.filter(entry => entry.supplement.id !== multivitaminId),
+        })),
+      }));
+    }
+  };
 
-    Alert.alert(
-      t('settings.deleteMultivitaminTitle', { name: multivitaminName }),
-      message,
-      [
-        { text: t('general.cancel'), style: 'cancel' },
-        {
-          text: t('settings.deleteMultivitaminAction'),
-          style: 'destructive',
-          onPress: () => {
-            setCustomSupplements(current => current.filter(item => item.id !== multivitaminId));
-            if (planCount > 0) {
-              setPlans(current => ({
-                ...current,
-                supplements: current.supplements.map(plan => ({
-                  ...plan,
-                  supplements: plan.supplements.filter(entry => entry.supplement.id !== multivitaminId),
-                })),
-              }));
-            }
-          },
-        },
-      ]
-    );
+  const confirmDelete = (multivitaminId: string, multivitaminName: string) => {
+    const planCount = plans.supplements.filter(plan => plan.supplements.some(entry => entry.supplement.id === multivitaminId)).length;
+    const message = planCount > 0 ? t('settings.deleteMultivitaminUsedMessage', { count: planCount }) : t('settings.deleteMultivitaminMessage');
+
+    Alert.alert(t('settings.deleteMultivitaminTitle', { name: multivitaminName }), message, [
+      { text: t('general.cancel'), style: 'cancel' },
+      {
+        text: t('settings.deleteMultivitaminAction'),
+        style: 'destructive',
+        onPress: () => deleteMultivitamin(multivitaminId, planCount),
+      },
+    ]);
   };
 
   return (
@@ -75,11 +69,8 @@ export default function MultivitaminsPage() {
           supplements={editingMultivitamin.components ?? []}
           multivitamin={editingMultivitamin}
           onSave={(name, components) => {
-            setCustomSupplements(current => current.map(item => (
-              item.id === editingMultivitamin.id
-                ? { ...item, name, components, description: components.map(component => component.name).join(', ') }
-                : item
-            )));
+            const description = components.map(component => component.name).join(', ');
+            setCustomSupplements(current => current.map(item => (item.id === editingMultivitamin.id ? { ...item, name, components, description } : item)));
             setEditingId(null);
           }}
           onCancel={() => setEditingId(null)}

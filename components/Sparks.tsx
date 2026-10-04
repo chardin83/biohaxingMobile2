@@ -3,6 +3,9 @@ import { Animated, Dimensions, StyleSheet, View, ViewStyle } from 'react-native'
 
 const { width, height } = Dimensions.get('window');
 
+// Only varies decorative sparks; never used for security-sensitive values.
+const randomForAnimation = () => Math.random(); // NOSONAR: Non-security animation randomness is safe here.
+
 type SparkProps = {
   id: number;
   onComplete: (id: number) => void;
@@ -12,11 +15,11 @@ const Spark: React.FC<SparkProps> = ({ id, onComplete }) => {
   const opacity = useRef(new Animated.Value(1)).current;
   const positionY = useRef(new Animated.Value(0)).current;
 
-  const baseX = Math.random() * width;
+  const baseX = randomForAnimation() * width;
   const offsetX = useRef(new Animated.Value(0)).current;
-  const amplitude = Math.random() * 20 + 5;
-  const upwardDuration = 6000 + Math.random() * 2000;
-  const scale = Math.random() * 0.5 + 0.5;
+  const amplitude = randomForAnimation() * 20 + 5;
+  const upwardDuration = 6000 + randomForAnimation() * 2000;
+  const scale = randomForAnimation() * 0.5 + 0.5;
 
   useEffect(() => {
     Animated.parallel([
@@ -63,11 +66,13 @@ const Spark: React.FC<SparkProps> = ({ id, onComplete }) => {
 
 const Sparks: React.FC = () => {
   const [sparkList, setSparkList] = useState<number[]>([]);
+  const nextSparkId = useRef(0);
 
   useEffect(() => {
     // Skapa en ny gnista var 600ms
     const interval = setInterval(() => {
-      setSparkList(prev => [...prev, Date.now() + Math.random()]);
+      const id = nextSparkId.current++;
+      setSparkList(prev => [...prev, id]);
     }, 600);
 
     return () => clearInterval(interval);
@@ -78,7 +83,7 @@ const Sparks: React.FC = () => {
   };
 
   return (
-    <View style={[StyleSheet.absoluteFill, { zIndex: 9999, pointerEvents: 'none' }]}>
+    <View style={styles.overlay} pointerEvents="none">
       {sparkList.map(id => (
         <Spark key={id} id={id} onComplete={removeSpark} />
       ))}
@@ -87,6 +92,10 @@ const Sparks: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 9999,
+  },
   spark: {
     position: 'absolute',
     top: height - 80, // Starta nära botten

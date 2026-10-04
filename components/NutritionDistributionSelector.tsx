@@ -23,47 +23,47 @@ export default function NutritionDistributionSelector({
   const { colors } = useTheme();
   return (
     <SettingsCard>
-      {DISTRIBUTION_CHOICES.map((choice, index) => (
-        <RadioButton
-          key={choice}
-          selected={value === choice}
-          accessibilityLabel={
-            choice === 'custom'
-              ? `${t(`nutritionGoals.distributions.${choice}`)}, ${t('nutritionGoals.customDescription')}`
-              : `${t(`nutritionGoals.distributions.${choice}`)}, ${t('nutritionGoals.distributionRatio', DISTRIBUTIONS[choice])}`
-          }
-          disabled={disabled}
-          style={[
-            styles.distributionOption,
-            index < DISTRIBUTION_CHOICES.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderLight },
-          ]}
-          onPress={() => onChange(choice)}
-        >
-          <View style={styles.optionLabel}>
-            <ThemedText type="title3">{t(`nutritionGoals.distributions.${choice}`)}</ThemedText>
-            {choice === 'custom' && (
-              <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                {t('nutritionGoals.customDescription')}
-              </ThemedText>
-            )}
-            {choice !== 'custom' && (
-              <View style={styles.distributionMacros}>
-                {MACROS.map(macro => (
-                  <View key={macro.key} style={styles.distributionMacro}>
-                    <IconSymbol name={macro.icon} size={16} color={macro.color} />
-                    <View style={styles.distributionValue}>
-                      <ThemedText type="default">{DISTRIBUTIONS[choice][macro.key]} %</ThemedText>
-                      <ThemedText type="caption" style={[styles.distributionLabel, { color: colors.textMuted }]}>
-                        {t(`nutritionGoals.${macro.key}`).toLowerCase()}
-                      </ThemedText>
+      {DISTRIBUTION_CHOICES.map((choice, index) => {
+        const title = t(`nutritionGoals.distributions.${choice}`);
+        const description = choice === 'custom' ? t('nutritionGoals.customDescription') : t('nutritionGoals.distributionRatio', DISTRIBUTIONS[choice]);
+        return (
+          <RadioButton
+            key={choice}
+            selected={value === choice}
+            accessibilityLabel={`${title}, ${description}`}
+            disabled={disabled}
+            style={[
+              styles.distributionOption,
+              index < DISTRIBUTION_CHOICES.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderLight },
+            ]}
+            onPress={() => onChange(choice)}
+          >
+            <View style={styles.optionLabel}>
+              <ThemedText type="title3">{title}</ThemedText>
+              {choice === 'custom' && (
+                <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                  {description}
+                </ThemedText>
+              )}
+              {choice !== 'custom' && (
+                <View style={styles.distributionMacros}>
+                  {MACROS.map(macro => (
+                    <View key={macro.key} style={styles.distributionMacro}>
+                      <IconSymbol name={macro.icon} size={16} color={macro.color} />
+                      <View style={styles.distributionValue}>
+                        <ThemedText type="default">{DISTRIBUTIONS[choice][macro.key]} %</ThemedText>
+                        <ThemedText type="caption" style={[styles.distributionLabel, { color: colors.textMuted }]}>
+                          {t(`nutritionGoals.${macro.key}`).toLowerCase()}
+                        </ThemedText>
+                      </View>
                     </View>
-                  </View>
-                ))}
-              </View>
-            )}
-          </View>
-        </RadioButton>
-      ))}
+                  ))}
+                </View>
+              )}
+            </View>
+          </RadioButton>
+        );
+      })}
     </SettingsCard>
   );
 }

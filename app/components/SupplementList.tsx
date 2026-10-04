@@ -39,7 +39,7 @@ const SupplementList: React.FC<SupplementListProps> = ({ supplements, plannedSup
     setAddToPlanVisible(true);
   };
 
-  const handleAddSupplementToPlan = (plan: any) => {
+  const handleAddSupplementToPlan = async (plan: any) => {
     if (!pendingSupplement) return;
 
     const entry: SupplementPlanEntry = {
@@ -51,7 +51,12 @@ const SupplementList: React.FC<SupplementListProps> = ({ supplements, plannedSup
       notify: plan.notify,
     };
 
-    saveSupplementToPlan({ name: plan.name, prefferedTime: plan.prefferedTime, supplements: plan.supplements ?? [], notify: plan.notify }, entry, false);
+    const savedPlan = await saveSupplementToPlan(
+      { name: plan.name, prefferedTime: plan.prefferedTime, supplements: plan.supplements ?? [], notify: plan.notify },
+      entry,
+      false
+    );
+    if (!savedPlan) return;
 
     // Stäng modal och nollställ valet
     setAddToPlanVisible(false);
@@ -131,7 +136,7 @@ const SupplementList: React.FC<SupplementListProps> = ({ supplements, plannedSup
           // Stäng endast create-modal
           setCreatePlanVisible(false);
         }}
-        onCreate={(newPlan: CreatePlanData) => {
+        onCreate={async (newPlan: CreatePlanData) => {
           if (!pendingSupplement) {
             setCreatePlanVisible(false);
             return;
@@ -146,7 +151,12 @@ const SupplementList: React.FC<SupplementListProps> = ({ supplements, plannedSup
             notify: newPlan.notify,
           };
 
-          saveSupplementToPlan({ name: newPlan.name, prefferedTime: newPlan.prefferedTime, supplements: [], notify: newPlan.notify }, entry, false);
+          const savedPlan = await saveSupplementToPlan(
+            { name: newPlan.name, prefferedTime: newPlan.prefferedTime, supplements: [], notify: newPlan.notify },
+            entry,
+            false
+          );
+          if (!savedPlan) return;
 
           // Stäng båda modalerna och nollställ pending
           setPendingSupplement(null);

@@ -33,6 +33,8 @@ export default function PersonalDetailsSettings({ style }: Readonly<{ style?: St
   const today = new Date();
   const storedBirthday = userProfile.birthDate ? fromDateKey(userProfile.birthDate.slice(0, 10)) : null;
   const birthday = storedBirthday && Number.isFinite(storedBirthday.getTime()) && storedBirthday <= today ? storedBirthday : null;
+  const displayedWeight = editingWeight ? weight : userProfile.weightKg;
+  const displayedHeight = editingHeight ? height : userProfile.heightCm;
 
   const handleBirthdayChange = async (value: Date) => {
     if (!Number.isFinite(value.getTime()) || toDateKey(value) > toDateKey(today)) return;
@@ -118,7 +120,7 @@ export default function PersonalDetailsSettings({ style }: Readonly<{ style?: St
           key: 'weight',
           title: t('privacy.person.weight'),
           iconName: 'weight',
-          value: (editingWeight ? weight : userProfile.weightKg) ? `${editingWeight ? weight : userProfile.weightKg} kg` : t('privacy.person.notSet'),
+          value: displayedWeight ? `${displayedWeight} kg` : t('privacy.person.notSet'),
           expanded: editingWeight,
           onPress: () => {
             if (!editingWeight) setWeight(userProfile.weightKg ?? 0);
@@ -139,7 +141,7 @@ export default function PersonalDetailsSettings({ style }: Readonly<{ style?: St
           key: 'height',
           title: t('privacy.person.height'),
           iconName: 'height',
-          value: (editingHeight ? height : userProfile.heightCm) ? `${editingHeight ? height : userProfile.heightCm} cm` : t('privacy.person.notSet'),
+          value: displayedHeight ? `${displayedHeight} cm` : t('privacy.person.notSet'),
           expanded: editingHeight,
           onPress: () => {
             if (!editingHeight) setHeight(userProfile.heightCm ?? 170);
