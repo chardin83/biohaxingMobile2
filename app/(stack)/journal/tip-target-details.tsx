@@ -1,6 +1,5 @@
 import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
-import * as Crypto from 'expo-crypto';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -132,45 +131,6 @@ const getDateKeysInRange = (startKey: string, endKey: string): string[] => {
   return keys;
 };
 
-const buildDailySummary = (entries: NutritionEntry[], selectedDate: string): DailyNutritionSummary => {
-  const rawTotals = entries.reduce(
-    (acc, entry) => ({
-      protein: acc.protein + (entry.protein ?? 0),
-      calories: acc.calories + (entry.calories ?? 0),
-      carbohydrates: acc.carbohydrates + (entry.carbohydrates ?? 0),
-      fat: acc.fat + (entry.fat ?? 0),
-      fiber: acc.fiber + (entry.fiber ?? 0),
-    }),
-    {
-      protein: 0,
-      calories: 0,
-      carbohydrates: 0,
-      fat: 0,
-      fiber: 0,
-    }
-  );
-
-  const totals = {
-    protein: Number(rawTotals.protein.toFixed(1)),
-    calories: Number(rawTotals.calories.toFixed(1)),
-    carbohydrates: Number(rawTotals.carbohydrates.toFixed(1)),
-    fat: Number(rawTotals.fat.toFixed(1)),
-    fiber: Number(rawTotals.fiber.toFixed(1)),
-  };
-
-  return {
-    date: selectedDate,
-    entries,
-    totals,
-    goalsMet: {
-      protein: totals.protein >= 100,
-      calories: totals.calories >= 2000,
-      carbohydrates: totals.carbohydrates >= 250,
-      fat: totals.fat >= 70,
-      fiber: totals.fiber >= 25,
-    },
-  };
-};
 const getDiscreteTrackingAmounts = (
   trackingValue?: WeeklyNutritionValue
 ): {
@@ -533,7 +493,7 @@ export default function TipTargetDetailsScreen() {
   const supplementMap = useSupplementMap();
   const foodAmountBottomSheetRef = useRef<ProductAmountBottomSheetRef>(null);
   const medalInfoBottomSheetRef = useRef<BottomSheetModal | null>(null);
-  const { dailyNutritionTracking, takenDates, weeklyNutritionTracking, setDailyNutritionTracking } = useStorage();
+  const { dailyNutritionTracking, takenDates, weeklyNutritionTracking, addNutritionEntry } = useStorage();
   const params = useLocalSearchParams<{
     tipId?: string;
     tipTitle?: string;
@@ -784,19 +744,11 @@ export default function TipTargetDetailsScreen() {
     (product: BarcodeProduct, grams: number) => {
       if (!product.composition) return;
 
-      setDailyNutritionTracking(prev => {
-        const existingEntries = prev[selectedDateKey]?.entries ?? [];
-        const newEntry: NutritionEntry = {
-          id: Crypto.randomUUID(),
-          type: 'food',
-          recordedAt: toRecordedAt(selectedDateKey, new Date()),
-          name: `${product.name} (${grams} g)`,
-          ...scaleNutritionComposition(product.composition!, grams / 100),
-        };
-        return {
-          ...prev,
-          [selectedDateKey]: buildDailySummary([...existingEntries, newEntry], selectedDateKey),
-        };
+      addNutritionEntry(selectedDateKey, {
+        type: 'food',
+        recordedAt: toRecordedAt(selectedDateKey, new Date()),
+        name: `${product.name} (${grams} g)`,
+        ...scaleNutritionComposition(product.composition, grams / 100),
       });
       router.push({
         pathname: '/(tabs)/journal',
@@ -807,7 +759,7 @@ export default function TipTargetDetailsScreen() {
         },
       });
     },
-    [router, selectedDateKey, setDailyNutritionTracking, tipId]
+    [addNutritionEntry, router, selectedDateKey, tipId]
   );
 
   const handleOpenMedalInfo = React.useCallback(() => {
