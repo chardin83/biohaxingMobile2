@@ -4,33 +4,22 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
-import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { MetricValuesBottomSheet } from '@/components/sections/metrics/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { useHRVTrendSelector } from '@/hooks/useHRVTrendSelector';
-import { useStoredHRVData } from '@/hooks/useStoredHRVData';
-import { getHRVHistory } from '@/utils/hrvHistory';
-import { buildTrendData } from '@/utils/metrics';
 
 import { HRVMetric } from './HRVMetric';
 import { type NervousMetricKey, useMetricConfig } from './metricChartConfig';
 import { MetricTrendChart } from './MetricTrendChart';
 import { RecoveryStatusMetric } from './old/RecoveryStatusMetric';
-import { StressScoreMetric } from './old/StressScoreMetric';
 import { RestingHRMetric } from './RestingHRMetric';
-
-function clampScore(value: number) {
-  return Math.max(0, Math.min(100, value));
-}
 
 export function NervousSystemStatusChart() {
   const hrvTrend = useHRVTrendSelector();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { getMetricHistory } = useStorage();
-  const hrvData = useStoredHRVData();
 
   const [selectedMetric, setSelectedMetric] = React.useState<NervousMetricKey | null>(null);
 
@@ -44,34 +33,13 @@ export function NervousSystemStatusChart() {
     metricValuesBottomSheetRef.current?.snapToIndex(1);
   }, []);
 
-  /*
-   * Stress score finns inte som separat lagrad metric.
-   * Den beräknas därför från HRV och skickas som data-override.
-   */
-  const stressScoreTrendData = React.useMemo(
-    () => buildTrendData(getHRVHistory(getMetricHistory).entries, value => clampScore(100 - Math.round(value))),
-    [getMetricHistory]
-  );
-
-  const selectedConfig = useMetricConfig({
-    metricId: selectedMetric,
-    data: selectedMetric === 'stress_score' ? stressScoreTrendData : undefined,
-  });
-
-  /*
-   * Bottom sheet ska visa de registrerade HRV-värdena
-   * när den beräknade stresspoängen är vald.
-   */
-  const selectedMetricId = selectedMetric === 'stress_score' ? 'hrv' : selectedMetric;
+  const selectedConfig = useMetricConfig({ metricId: selectedMetric });
 
   return (
     <>
       <Card title={t('nervousSystemOverview.autonomicNervousSystem.title')}>
         <View style={globalStyles.row}>
-          <HRVMetric showDivider onPress={() => toggleMetric('hrv')} isSelected={selectedMetric === 'hrv'} />
-
-          <StressScoreMetric hrvData={hrvData} onPress={() => toggleMetric('stress_score')} isSelected={selectedMetric === 'stress_score'} />
-
+          <HRVMetric onPress={() => toggleMetric('hrv')} isSelected={selectedMetric === 'hrv'} />
         </View>
 
         <View style={[globalStyles.row, globalStyles.marginTop16]}>
@@ -110,7 +78,7 @@ export function NervousSystemStatusChart() {
 
       <MetricValuesBottomSheet
         bottomSheetRef={metricValuesBottomSheetRef}
-        metricId={selectedMetric === 'hrv' ? hrvTrend.metricId : selectedMetricId}
+        metricId={selectedMetric === 'hrv' ? hrvTrend.metricId : selectedMetric}
         metricName={selectedMetric === 'hrv' ? hrvTrend.metricName : selectedConfig?.metricName}
       />
     </>

@@ -239,9 +239,6 @@
         "name": "Träningsbelastning",
         "sevenDayTotal": "7-dagars total"  
     },
-    "stressScore": {
-        "title": "Stressnivå"
-    },
     "recoveryStatus": {
         "title": "Återhämtningsstatus",
         "readyForActivity": "Redo för aktivitet",

@@ -683,27 +683,11 @@
     "autonomicNervousSystem": {
       "title": "Autonomic Nervous System"
     },
-    "ansBalance": {
-      "title": "Sympathetic vs Parasympathetic",
-      "fightFlight": "Fight/Flight",
-      "restDigest": "Rest/Digest",
-      "parasympathetic": "Your nervous system is currently in a parasympathetic-dominant state, indicating good recovery and relaxation.",
-      "balanced": "Your nervous system shows balanced activity between sympathetic and parasympathetic, suggesting you are managing stress well and have good recovery capacity.",
-      "sympathetic": "Your nervous system is currently in a sympathetic-dominant state, which may indicate stress or inadequate recovery. Consider prioritizing rest, deep breathing, or relaxing activities."
-    },
     "informationCard": {
       "title": "Understanding your nervous system",
       "hrv": {
         "title": "HRV (Heart Rate Variability)",
         "description": "HRV measures the variation in time between heartbeats. Higher HRV indicates better autonomic nervous system function, resilience, and recovery capacity. It's influenced by stress, sleep, fitness, and overall health."
-      },
-      "stressScore": {
-        "title": "Stress Score",
-        "description": "Based on HRV, activity, and sleep data. Lower scores (0-25) indicate low stress, while higher scores (75-100) show significant sympathetic nervous system activation. Chronic high stress can lead to burnout and health issues."
-      },
-      "ansBalance": {
-        "title": "ANS Balance",
-        "description": "The balance between sympathetic (stress response) and parasympathetic (recovery response) activity. Predominant parasympathetic activity indicates good recovery, while predominant sympathetic activity may signal stress or inadequate recovery."
       },
       "nutrients": {
         "title": "Nutrients That Support the Nervous System",
@@ -1064,10 +1048,9 @@
   },
   "nervousTrendsChart": {
     "title": "Nervous system trends",
-    "explainer": "Tap HRV, stress score, or resting heart rate to see how your autonomic system is loading and recovering over time.",
+    "explainer": "Tap HRV or resting heart rate to see their trends over time.",
     "explainers": {
       "hrv": "The HRV trend shows how effectively your autonomic system shifts into recovery. Higher and steadier levels often indicate better stress resilience.",
-      "stress_score": "Stress score is derived from HRV and reflects estimated physiological load over time. An upward trend can indicate increasing sympathetic activation.",
       "resting_hr": "Resting heart rate is a sensitive stress and recovery marker. A gradual upward trend can be an early sign of under-recovery."
     }
   },

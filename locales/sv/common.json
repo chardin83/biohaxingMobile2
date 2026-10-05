@@ -683,27 +683,11 @@
     "autonomicNervousSystem": {
       "title": "Autonoma nervsystemet"
     },
-    "ansBalance": {
-      "title": "Sympatisk vs Parasympatisk balans",
-      "fightFlight": "Kamp/Flight",
-      "restDigest": "Vila/Smälta",
-      "parasympathetic": "Ditt nervsystem är för närvarande i ett parasympatiskt dominerande tillstånd, vilket indikerar god återhämtning och avslappning.",
-      "balanced": "Ditt nervsystem visar en balanserad aktivitet mellan sympatisk och parasympatisk, vilket tyder på att du hanterar stress väl och har en god återhämtningsförmåga.",
-      "sympathetic": "Ditt nervsystem är för närvarande i ett sympatisk dominerande tillstånd, vilket kan indikera stress eller otillräcklig återhämtning. Överväg att prioritera vila, djupandning eller avkopplande aktiviteter."
-    },
     "informationCard": {
       "title": "Förstå ditt nervsystem",
       "hrv": {
         "title": "HRV (Heart Rate Variability)",
         "description": "HRV mäter variationen i tid mellan hjärtslag. Hög HRV indikerar en stark parasympatisk aktivitet och god återhämtning. Låg HRV kan signalera stress, trötthet eller sjukdom."
-      },
-      "stressScore": {
-        "title": "Stresspoäng",
-        "description": "Baserat på HRV, vilopuls och andra faktorer. Högre poäng indikerar högre stressnivåer och behov av återhämtning."
-      },
-      "ansBalance": {
-        "title": "ANS-balans",
-        "description": "Balansen mellan sympatisk (stressrespons) och parasympatisk (återhämtningsrespons) aktivitet. En övervägande parasympatisk aktivitet indikerar god återhämtning, medan en övervägande sympatisk aktivitet kan signalera stress eller otillräcklig återhämtning."
       },
       "nutrients": {
         "title": "Näringsämnen som stöder nervsystemet",
@@ -1064,10 +1048,9 @@
   },
   "nervousTrendsChart": {
     "title": "Nervsystemets trender",
-    "explainer": "Klicka på HRV, stressnivå eller vilopuls för att se hur ditt autonoma nervsystem belastas och återhämtar sig över tid.",
+    "explainer": "Klicka på HRV eller vilopuls för att se deras trender över tid.",
     "explainers": {
       "hrv": "HRV-trenden visar hur väl ditt autonoma nervsystem växlar till återhämtning. Högre och stabilare nivåer tyder ofta på bättre stressresiliens.",
-      "stress_score": "Stressnivå bygger på HRV och visar den uppskattade fysiologiska belastningen över tid. En stigande trend kan indikera ökad sympatisk aktivering.",
       "resting_hr": "Vilopuls är en känslig markör för stress och återhämtning. En gradvis ökning kan vara ett tidigt tecken på otillräcklig återhämtning."
     }
   },

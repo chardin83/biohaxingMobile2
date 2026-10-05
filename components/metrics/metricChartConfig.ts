@@ -45,7 +45,7 @@ export const cardioTrendMetrics = ['vo2_max', 'resting_hr', 'diastolic_bp', 'sys
 
 export type CardioTrendMetricKey = (typeof cardioTrendMetrics)[number];
 
-export const nervousTrendMetrics = ['hrv', 'stress_score', 'resting_hr'] as const satisfies readonly MetricId[];
+export const nervousTrendMetrics = ['hrv', 'resting_hr'] as const satisfies readonly MetricId[];
 
 export type NervousMetricKey = (typeof nervousTrendMetrics)[number];
 
@@ -129,11 +129,6 @@ const ALL_METRIC_CHART_META: Partial<Record<MetricId, MetricMeta>> = {
     buildData: getMetricHistory => buildHRVDailyTrend(getMetricHistory('hrv_sdnn')),
     unit: 'ms',
     accentColor: colors => colors.chart.hrv,
-  },
-
-  stress_score: {
-    metricNameKey: 'metrics:stressScore.title',
-    accentColor: colors => colors.warmDefault,
   },
 
   sleep_duration: {

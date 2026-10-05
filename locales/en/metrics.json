@@ -246,9 +246,6 @@
         "name": "Training load",
         "sevenDayTotal": "7-day total"  
     },
-    "stressScore": {
-        "title": "Stress Score"
-    },
     "recoveryStatus": {
         "title": "Recovery Status",
         "readyForActivity": "Ready for activity",
