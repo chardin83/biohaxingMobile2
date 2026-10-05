@@ -1,4 +1,4 @@
-import { AdapterStatus, DailyActivity, EnergySignal, HRVSummary, SleepSummary, TimeRange, WearableAdapter } from './types';
+import { AdapterStatus, DailyActivity, HRVSummary, SleepSummary, TimeRange, WearableAdapter } from './types';
 
 function enumerateDates(range: TimeRange): string[] {
   const start = new Date(range.start);
@@ -56,14 +56,6 @@ export class MockAdapter implements WearableAdapter {
       steps: 6000 + index * 350,
       activeMinutes: 35 + (index % 5) * 10,
       intensityMinutes: 12 + (index % 4) * 8,
-    }));
-  }
-
-  async getEnergySignal(range: TimeRange): Promise<EnergySignal[]> {
-    return enumerateDates(range).map((date, index) => ({
-      source: this.source,
-      date,
-      bodyBatteryLevel: 55 + (index % 10) * 3,
     }));
   }
 }

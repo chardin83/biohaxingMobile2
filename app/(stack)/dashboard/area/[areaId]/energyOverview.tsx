@@ -89,31 +89,6 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
         </View>
       </Card>
 
-      {/* Body Battery - Main Energy Indicator */}
-      {/* B<Card title={t('energyOverview.cellularEnergyReserves.title')}>
-        <View style={styles.centerMetric}>
-          <ThemedText type="title2">{energy.bodyBattery ?? '—'}</ThemedText>
-          <ThemedText type="label">{t('energyOverview.cellularEnergyReserves.bodyBattery')}</ThemedText>
-          <ThemedText type="caption">
-            {energy.bodyBatteryChange == null ? '—' : `${energy.bodyBatteryChange} ${t('energyOverview.cellularEnergyReserves.sinceWaking')}`}
-          </ThemedText>
-        </View>
-        <View style={[styles.batteryBar, { backgroundColor: colors.overlayLight }]}>
-          <View
-            style={[
-              styles.batteryFill,
-              {
-                width: `${Math.max(0, energy.bodyBattery ?? 0)}%`,
-                backgroundColor: colors.goldSoft,
-              }
-            ]}
-          />
-        </View>
-        <ThemedText type="explainer" >
-          {t('energyOverview.cellularEnergyReserves.explainer')}
-        </ThemedText>
-      </Card>*/}
-
       {/* DNA & Mitochondria Genetics */}
       <GenesListCard areaId="energy" />
 

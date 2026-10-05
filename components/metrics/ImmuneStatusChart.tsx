@@ -16,12 +16,11 @@ import { buildTrendData } from '@/utils/metrics';
 import { DeepSleepMetric } from './DeepSleepMetric';
 import { HRVMetric } from './HRVMetric';
 import { MetricTrendChart, type MetricTrendPoint } from './MetricTrendChart';
-import { BodyBatteryMetric } from './old/BodyBatteryMetric';
 import { RecoveryStatusMetric } from './old/RecoveryStatusMetric';
 import { RestingHRMetric } from './RestingHRMetric';
 import { SleepMetric } from './SleepMetric';
 
-type ImmuneTrendMetricKey = 'sleep_duration' | 'deep_sleep' | 'body_battery' | 'resting_hr' | 'hrv';
+type ImmuneTrendMetricKey = 'sleep_duration' | 'deep_sleep' | 'resting_hr' | 'hrv';
 
 function formatSleepDuration(valueInMinutes: number) {
   const roundedMinutes = Math.max(0, Math.round(valueInMinutes));
@@ -59,10 +58,6 @@ export function ImmuneStatusChart() {
     return buildTrendData(getMetricHistory('deep_sleep'));
   }, [getMetricHistory]);
 
-  const bodyBatteryTrendData = React.useMemo<MetricTrendPoint[]>(() => {
-    return buildTrendData(getMetricHistory('body_battery'));
-  }, [getMetricHistory]);
-
   const restingHrTrendData = React.useMemo<MetricTrendPoint[]>(() => {
     return buildTrendData(getMetricHistory('resting_hr'));
   }, [getMetricHistory]);
@@ -92,13 +87,6 @@ export function ImmuneStatusChart() {
           data: deepSleepTrendData,
           accentColor: colors.chart.deepSleep,
         };
-      case 'body_battery':
-        return {
-          metricName: t('metrics:bodyBattery.name'),
-          unit: '%',
-          data: bodyBatteryTrendData,
-          accentColor: colors.chart.mindBodyBattery,
-        };
       case 'resting_hr':
         return {
           metricName: t('metrics:resting_hr.shortName', { defaultValue: t('metrics:resting_hr.name') }),
@@ -116,10 +104,8 @@ export function ImmuneStatusChart() {
         };
     }
   }, [
-    bodyBatteryTrendData,
     colors.chart.deepSleep,
     colors.chart.hrv,
-    colors.chart.mindBodyBattery,
     colors.chart.restingHr,
     colors.chart.sleepDuration,
     deepSleepTrendData,
@@ -136,8 +122,7 @@ export function ImmuneStatusChart() {
       <Card title={t('immuneOverview.immuneStatus.title')}>
         <View style={globalStyles.row}>
           <SleepMetric showDivider={true} onPress={() => toggleMetric('sleep_duration')} isSelected={selectedMetric === 'sleep_duration'} />
-          <DeepSleepMetric showDivider={true} onPress={() => toggleMetric('deep_sleep')} isSelected={selectedMetric === 'deep_sleep'} />
-          <BodyBatteryMetric onPress={() => toggleMetric('body_battery')} isSelected={selectedMetric === 'body_battery'} />
+          <DeepSleepMetric showDivider={false} onPress={() => toggleMetric('deep_sleep')} isSelected={selectedMetric === 'deep_sleep'} />
         </View>
 
         <View style={[globalStyles.row, globalStyles.marginTop8]}>

@@ -90,11 +90,10 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
     end: new Date().toISOString(),
   };
 
-  const [sleep, vo2Max, activity, energy, hrvs, restingHeartRates, bloodPressure, userProfile] = await Promise.all([
+  const [sleep, vo2Max, activity, hrvs, restingHeartRates, bloodPressure, userProfile] = await Promise.all([
     adapter.getSleep(range),
     adapter.getVO2Max(range),
     adapter.getDailyActivity(range),
-    adapter.getEnergySignal(range),
 
     adapter.getHRV(range).catch(error => {
       console.warn('[WearableSync] Failed to fetch HRV', error);
@@ -279,19 +278,6 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
             metricId: 'intensity_minutes',
             value: entry.intensityMinutes as number,
             unit: 'min',
-            recordedAt: toRecordedAt(entry.date),
-            notes: notesLabel,
-          }) satisfies MetricEntry
-      ),
-
-    ...energy
-      .filter(entry => typeof entry.bodyBatteryLevel === 'number')
-      .map(
-        entry =>
-          ({
-            metricId: 'body_battery',
-            value: entry.bodyBatteryLevel as number,
-            unit: '%',
             recordedAt: toRecordedAt(entry.date),
             notes: notesLabel,
           }) satisfies MetricEntry

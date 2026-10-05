@@ -239,9 +239,6 @@
         "name": "Träningsbelastning",
         "sevenDayTotal": "7-dagars total"  
     },
-    "bodyBattery": {
-      "name": "Body Battery"
-    },
     "stressScore": {
         "title": "Stressnivå"
     },

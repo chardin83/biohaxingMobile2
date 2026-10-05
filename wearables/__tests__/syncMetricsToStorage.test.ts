@@ -12,7 +12,6 @@ const createAdapter = (hrvs: HRVSummary[]): WearableAdapter => ({
   getSleep: jest.fn().mockResolvedValue([]),
   getVO2Max: jest.fn().mockResolvedValue([]),
   getDailyActivity: jest.fn().mockResolvedValue([]),
-  getEnergySignal: jest.fn().mockResolvedValue([]),
   getHRV: jest.fn().mockResolvedValue(hrvs),
   getRestingHeartRate: jest.fn().mockResolvedValue([]),
   getBloodPressure: jest.fn().mockResolvedValue([]),

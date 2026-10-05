@@ -7,7 +7,6 @@ import { StyleSheet, View } from 'react-native';
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { MetricTrendChart, type MetricTrendPoint } from '@/components/metrics/MetricTrendChart';
-import { BodyBatteryMetric } from '@/components/metrics/old/BodyBatteryMetric';
 import { SleepMetric } from '@/components/metrics/SleepMetric';
 import { StepsMetric } from '@/components/metrics/StepsMetric';
 import { TodaysIntensityMinutesMetric } from '@/components/metrics/TodaysIntensityMinutesMetric';
@@ -18,7 +17,7 @@ import { buildTrendData } from '@/utils/metrics';
 
 import { Card } from '../ui/Card';
 
-export type MindMetricKey = Extract<MetricId, 'body_battery' | 'sleep_duration' | 'steps' | 'intensity_minutes'>;
+export type MindMetricKey = Extract<MetricId, 'sleep_duration' | 'steps' | 'intensity_minutes'>;
 
 function formatSleepDuration(valueInMinutes: number) {
   const roundedMinutes = Math.max(0, Math.round(valueInMinutes));
@@ -41,10 +40,6 @@ export function MindTrendsChart() {
   const openMetricValuesTable = React.useCallback(() => {
     metricValuesBottomSheetRef.current?.snapToIndex(1);
   }, []);
-
-  const bodyBatteryTrendData = React.useMemo<MetricTrendPoint[]>(() => {
-    return buildTrendData(getMetricHistory('body_battery'));
-  }, [getMetricHistory]);
 
   const sleepDurationTrendData = React.useMemo<MetricTrendPoint[]>(() => {
     return buildTrendData(getMetricHistory('sleep_duration'), (value, unit) => {
@@ -92,18 +87,8 @@ export function MindTrendsChart() {
           data: intensityTrendData,
           accentColor: colors.chart.mindIntensity,
         };
-      case 'body_battery':
-      default:
-        return {
-          metricName: t('metrics:bodyBattery.name'),
-          unit: '%',
-          data: bodyBatteryTrendData,
-          accentColor: colors.chart.mindBodyBattery,
-        };
     }
   }, [
-    bodyBatteryTrendData,
-    colors.chart.mindBodyBattery,
     colors.chart.mindIntensity,
     colors.chart.mindSteps,
     colors.chart.sleepDuration,
@@ -118,7 +103,6 @@ export function MindTrendsChart() {
     <>
       <Card title={t('mindTrendsChart.title')}>
         <View style={styles.metricRow}>
-          <BodyBatteryMetric showDivider={true} onPress={() => toggleMetric('body_battery')} isSelected={selectedMetric === 'body_battery'} />
           <SleepMetric showDivider={false} onPress={() => toggleMetric('sleep_duration')} isSelected={selectedMetric === 'sleep_duration'} />
         </View>
         <View style={styles.metricRow}>

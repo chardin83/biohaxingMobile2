@@ -555,7 +555,7 @@
       },
       "recoveryTime": {
         "title": "Återhämtningstid",
-        "description": "Tid som behövs innan din kropp är redo för en annan hård träningssession. Baserat på HRV, sömnkvalitet och body battery. Att respektera återhämtning förhindrar skador och förbättrar prestation. Att träna hårt när återhämtningen är ofullständig leder till minskade resultat."
+        "description": "Tid som behövs innan din kropp är redo för en annan hård träningssession. Baserat på HRV och sömnkvalitet. Att respektera återhämtning förhindrar skador och förbättrar prestation. Att träna hårt när återhämtningen är ofullständig leder till minskade resultat."
       },
       "fitnessAge": {
         "title": "Konditionsålder",
@@ -595,9 +595,8 @@
     "description": "Mitokondriell funktion och cellulär energiproduktion",
     "cellularEnergyReserves": {
       "title": "Cellulära energireserver",
-      "bodyBattery": "Body Battery",
       "sinceWaking": "sedan uppvaknande",
-      "explainer": "Body Battery spårar kroppens energireserver genom att övervaka stress, aktivitet och återhämtning. Det speglar din mitokondriella ATP-produktionskapacitet."
+      "explainer": "Stress, aktivitet och återhämtning påverkar dina energinivåer."
     },
     "mitochondrialHealth": {
       "title": "Mitokondriell hälsa",
@@ -652,8 +651,7 @@
     "description": "Försvar mot patogener och immunreglering",
     "immuneStatus": {
       "title": "Immuntillstånd",
-      "stressLevel": "Stressnivå",
-      "bodyBattery": "Body Battery"
+      "stressLevel": "Stressnivå"
     },
     "whyTheseMetricsMatter": {
       "title": "Varför dessa metrik är viktiga",
@@ -662,8 +660,8 @@
         "description": "Tillräcklig sömn är avgörande för immunfunktionen. Under sömnen producerar kroppen cytokiner som hjälper till att bekämpa infektioner och inflammation."
       },
       "stress": {
-        "title": "Stress & Body Battery",
-        "description": "Kronisk stress undertrycker immunfunktionen. Body Battery speglar dina energireserver och återhämtningsstatus."
+        "title": "Stress & återhämtning",
+        "description": "Kronisk stress undertrycker immunfunktionen."
       },
       "hrv": {
         "title": "HRV (Heart Rate Variability)",
@@ -702,10 +700,6 @@
       "stressScore": {
         "title": "Stresspoäng",
         "description": "Baserat på HRV, vilopuls och andra faktorer. Högre poäng indikerar högre stressnivåer och behov av återhämtning."
-      },
-      "bodyBattery": {
-        "title": "Body Battery",
-        "description": "Spårar kroppens energireserver genom att övervaka stress, aktivitet och återhämtning. Det speglar din autonoma nervsystemsbalans och återhämtningsstatus."
       },
       "ansBalance": {
         "title": "ANS-balans",
@@ -779,11 +773,11 @@
       "title": "Varför dessa metrik är viktiga",
       "focus": {
         "title": "Fokus & Mental Klarhet",
-        "description": "Hög stress och låg energi (body battery) försämrar prefrontala cortex funktion, vilket leder till minskat fokus, mental klarhet och beslutsförmåga."
+        "description": "Hög stress och låg energi försämrar prefrontala cortex funktion, vilket leder till minskat fokus, mental klarhet och beslutsförmåga."
       },
       "stress": {
-        "title": "Stress & Body Battery",
-        "description": "Kronisk stress försämrar kognitiv funktion och mental prestation. Body Battery speglar dina energireserver och återhämtningstatus, vilket är avgörande för optimal hjärnfunktion."
+        "title": "Stress & återhämtning",
+        "description": "Kronisk stress försämrar kognitiv funktion och mental prestation."
       },
       "mood": {
         "title": "Humör & Emotionell Reglering",
@@ -883,7 +877,7 @@
       "title": "Information",
       "trainingReadiness": {
         "title": "Träningsberedskap",
-        "description": "HRV och Body Battery indikerar din träningsberedskap. Hög HRV och full Body Battery tyder på att du är redo för en intensiv styrketräningssession. Låg HRV eller låg Body Battery kan signalera behov av lättare träning eller vila."
+        "description": "HRV indikerar din träningsberedskap. Hög HRV kan tyda på god återhämtning. Låg HRV kan signalera behov av lättare träning eller vila."
       },
       "trainingLoad": {
         "title": "Träningsbelastning",
@@ -1053,7 +1047,6 @@
     "title": "Kognitiva mått",
     "explainer": "Klicka på olika mätvärden för att visa deras trender över tid.",
     "explainers": {
-      "body_battery": "Body Battery-trenden visar hur dina energireserver förändras över tid. Högre och stabilare nivåer brukar hänga ihop med bättre mental uthållighet och fokus.",
       "sleep_duration": "Sömnlängd i timmar och minuter visar din återhämtningsbas. En jämn nivå natt efter natt stödjer minne, koncentration och emotionell reglering.",
       "steps": "Stegtrenden speglar din dagliga rörelse. Konsekvent vardagsaktivitet bidrar till bättre blodflöde till hjärnan och kan förbättra kognitiv skärpa.",
       "intensity_minutes": "Intensitetsminuter visar hur mycket pulshöjande aktivitet du får in. Rätt dos över veckan kan stärka stressresiliens och mental prestationsförmåga."
@@ -1065,18 +1058,16 @@
     "explainers": {
       "sleep_duration": "Tillräcklig sömnlängd stärker immunförsvarets signalering och minskar inflammatorisk belastning. Trenden hjälper dig se om återhämtningen är stabil vecka för vecka.",
       "deep_sleep": "Djupsömn är den mest immunstödjande sömnfasen där kroppen reparerar vävnad och återställer försvarssystem. En sjunkande trend kan signalera ökad sårbarhet.",
-      "body_battery": "Body Battery visar om dina energireserver byggs upp eller bryts ned. Låga nivåer över tid hänger ofta ihop med stress, sämre återhämtning och svagare immunresiliens.",
       "resting_hr": "Vilopuls är en känslig markör för belastning på kroppen. En ovanligt stigande trend kan vara ett tidigt tecken på infektion, inflammation eller underåterhämtning.",
       "hrv": "HRV speglar balansen i autonoma nervsystemet och kroppens återhämtningsförmåga. Högre och stabilare nivåer är ofta kopplade till bättre immunrespons och stressmotstånd."
     }
   },
   "nervousTrendsChart": {
     "title": "Nervsystemets trender",
-    "explainer": "Klicka på HRV, stressnivå, Body Battery eller vilopuls för att se hur ditt autonoma nervsystem belastas och återhämtar sig över tid.",
+    "explainer": "Klicka på HRV, stressnivå eller vilopuls för att se hur ditt autonoma nervsystem belastas och återhämtar sig över tid.",
     "explainers": {
       "hrv": "HRV-trenden visar hur väl ditt autonoma nervsystem växlar till återhämtning. Högre och stabilare nivåer tyder ofta på bättre stressresiliens.",
       "stress_score": "Stressnivå bygger på HRV och visar den uppskattade fysiologiska belastningen över tid. En stigande trend kan indikera ökad sympatisk aktivering.",
-      "body_battery": "Body Battery visar om dina energireserver fylls på eller töms. Låga nivåer under flera dagar kan signalera att nervsystemet är under press.",
       "resting_hr": "Vilopuls är en känslig markör för stress och återhämtning. En gradvis ökning kan vara ett tidigt tecken på otillräcklig återhämtning."
     }
   },

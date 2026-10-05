@@ -555,7 +555,7 @@
       },
       "recoveryTime": {
         "title": "Recovery Time",
-        "description": "Time needed before your body is ready for another hard training session. Based on HRV, sleep quality, and body battery. Respecting recovery prevents injury and improves performance. Training hard when recovery is incomplete leads to diminished returns."
+        "description": "Time needed before your body is ready for another hard training session. Based on HRV and sleep quality. Respecting recovery prevents injury and improves performance. Training hard when recovery is incomplete leads to diminished returns."
       },
       "fitnessAge": {
         "title": "Fitness Age",
@@ -595,9 +595,8 @@
     "description": "Mitochondrial function and cellular energy production",
     "cellularEnergyReserves": {
       "title": "Cellular Energy Reserves",
-      "bodyBattery": "Body Battery",
       "sinceWaking": "since waking",
-      "explainer": "Body Battery tracks your body's energy reserves by monitoring stress, activity, and recovery. It reflects your mitochondrial ATP production capacity."
+      "explainer": "Stress, activity, and recovery affect your energy levels."
     },
     "mitochondrialHealth": {
       "title": "Mitochondrial Health",
@@ -652,8 +651,7 @@
     "description": "Defense against pathogens and immune regulation",
     "immuneStatus": {
       "title": "Immune status",
-      "stressLevel": "Stress level",
-      "bodyBattery": "Body Battery"
+      "stressLevel": "Stress level"
     },
     "whyTheseMetricsMatter": {
       "title": "Why these metrics matter",
@@ -662,8 +660,8 @@
         "description": "Adequate sleep is crucial for immune function. During sleep, the body produces cytokines that help fight infection and inflammation."
       },
       "stress": {
-        "title": "Stress & Body Battery",
-        "description": "Chronic stress suppresses immune function. Body Battery reflects your energy reserves and recovery status."
+        "title": "Stress & Recovery",
+        "description": "Chronic stress suppresses immune function."
       },
       "hrv": {
         "title": "HRV (Heart Rate Variability)",
@@ -702,10 +700,6 @@
       "stressScore": {
         "title": "Stress Score",
         "description": "Based on HRV, activity, and sleep data. Lower scores (0-25) indicate low stress, while higher scores (75-100) show significant sympathetic nervous system activation. Chronic high stress can lead to burnout and health issues."
-      },
-      "bodyBattery": {
-        "title": "Body Battery",
-        "description": "Tracks your body's energy reserves by monitoring stress, activity, and recovery. It reflects your autonomic nervous system balance and recovery status."
       },
       "ansBalance": {
         "title": "ANS Balance",
@@ -779,11 +773,11 @@
       "title": "Why these metrics matter",
       "focus": {
         "title": "Focus & Mental Clarity",
-        "description": "High stress and low energy (body battery) impair prefrontal cortex function, leading to reduced focus, mental clarity, and decision-making ability."
+        "description": "High stress and low energy impair prefrontal cortex function, leading to reduced focus, mental clarity, and decision-making ability."
       },
       "stress": {
-        "title": "Stress & Body Battery",
-        "description": "Chronic stress impairs cognitive function and mental performance. Body Battery reflects your energy reserves and recovery status, which are crucial for optimal brain function."
+        "title": "Stress & Recovery",
+        "description": "Chronic stress impairs cognitive function and mental performance."
       },
       "mood": {
         "title": "Mood & Emotional Regulation",
@@ -1053,7 +1047,6 @@
     "title": "Cognitive metrics",
     "explainer": "Tap different metrics to view their trends over time.",
     "explainers": {
-      "body_battery": "The Body Battery trend shows how your energy reserves change over time. Higher and more stable levels are often linked to better mental stamina and focus.",
       "sleep_duration": "Sleep duration in hours and minutes shows your recovery baseline. A stable level night after night supports memory, concentration, and emotional regulation.",
       "steps": "The steps trend reflects your daily movement volume. Consistent everyday activity supports brain blood flow and can improve cognitive sharpness.",
       "intensity_minutes": "Intensity minutes show how much pulse-raising activity you get. The right weekly dose can improve stress resilience and mental performance."
@@ -1065,18 +1058,16 @@
     "explainers": {
       "sleep_duration": "Adequate sleep duration supports immune signaling and lowers inflammatory load. The trend helps you see whether your recovery foundation is stable week to week.",
       "deep_sleep": "Deep sleep is the most immune-supportive sleep stage, where tissue repair and immune regulation are prioritized. A declining trend can indicate growing vulnerability.",
-      "body_battery": "Body Battery shows whether your energy reserves are rebuilding or draining. Persistently low levels often align with stress, poorer recovery, and lower immune resilience.",
       "resting_hr": "Resting heart rate is a sensitive load marker. An unusual upward trend can be an early signal of infection, inflammation, or under-recovery.",
       "hrv": "HRV reflects autonomic balance and recovery capacity. Higher, more stable levels are often associated with stronger immune response and stress resilience."
     }
   },
   "nervousTrendsChart": {
     "title": "Nervous system trends",
-    "explainer": "Tap HRV, stress score, Body Battery, or resting heart rate to see how your autonomic system is loading and recovering over time.",
+    "explainer": "Tap HRV, stress score, or resting heart rate to see how your autonomic system is loading and recovering over time.",
     "explainers": {
       "hrv": "The HRV trend shows how effectively your autonomic system shifts into recovery. Higher and steadier levels often indicate better stress resilience.",
       "stress_score": "Stress score is derived from HRV and reflects estimated physiological load over time. An upward trend can indicate increasing sympathetic activation.",
-      "body_battery": "Body Battery indicates whether your energy reserves are rebuilding or draining. Persistently low levels can signal ongoing nervous system strain.",
       "resting_hr": "Resting heart rate is a sensitive stress and recovery marker. A gradual upward trend can be an early sign of under-recovery."
     }
   },

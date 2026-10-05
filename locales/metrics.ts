@@ -516,17 +516,6 @@ export const metrics = {
     units: [{ unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
-  body_battery: {
-    id: 'body_battery',
-    emoji: '🔋',
-    nameKey: 'body_battery.name',
-    descriptionKey: 'body_battery.description',
-    canonicalUnit: '%',
-    source: 'wearable',
-    suggestedFrequency: 'daily',
-    units: [{ unit: '%', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
-  },
-
   stress: {
     id: 'stress',
     emoji: '😰',

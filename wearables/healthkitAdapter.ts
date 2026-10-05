@@ -934,10 +934,6 @@ export class HealthKitAdapter implements WearableAdapter {
       .sort((a, b) => b.time - a.time)[0];
     return lastSample?.recordedAt;
   }
-
-  getEnergySignal(): Promise<any[]> {
-    return Promise.resolve([]);
-  }
 }
 
 export default HealthKitAdapter;

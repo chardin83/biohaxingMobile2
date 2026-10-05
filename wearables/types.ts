@@ -51,13 +51,6 @@ export type DailyActivity = {
   lastIntenseExerciseAt?: string;
 };
 
-export type EnergySignal = {
-  source: SourceId;
-  date: string; // YYYY-MM-DD
-  // Garmin Body Battery-like if available:
-  bodyBatteryLevel?: number; // 0..100
-};
-
 type AdapterStatusMeta = {
   lastSyncAt?: string;
 };
@@ -104,6 +97,5 @@ export interface WearableAdapter {
   getRestingHeartRate(range: TimeRange): Promise<RestingHeartRateSummary[]>;
   getDailyActivity(range: TimeRange): Promise<DailyActivity[]>;
   getVO2Max(range: TimeRange): Promise<VO2MaxSummary[]>;
-  getEnergySignal(range: TimeRange): Promise<EnergySignal[]>;
   getBloodPressure(range: TimeRange): Promise<BloodPressureReading[]>;
 }

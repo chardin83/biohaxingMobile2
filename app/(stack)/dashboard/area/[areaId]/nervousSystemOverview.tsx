@@ -75,11 +75,6 @@ export default function NervousSystemScreen({ mainGoalId }: Readonly<{ mainGoalI
         </View>
 
         <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🔋 {t('nervousSystemOverview.informationCard.bodyBattery.title')}</ThemedText>
-          <ThemedText type="default">{t('nervousSystemOverview.informationCard.bodyBattery.description')}</ThemedText>
-        </View>
-
-        <View style={globalStyles.infoSection}>
           <ThemedText type="title3">⚖️ {t('nervousSystemOverview.informationCard.ansBalance.title')}</ThemedText>
           <ThemedText type="default">{t('nervousSystemOverview.informationCard.ansBalance.description')}</ThemedText>
         </View>

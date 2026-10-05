@@ -17,7 +17,6 @@ import { buildTrendData } from '@/utils/metrics';
 import { HRVMetric } from './HRVMetric';
 import { type NervousMetricKey, useMetricConfig } from './metricChartConfig';
 import { MetricTrendChart } from './MetricTrendChart';
-import { BodyBatteryMetric } from './old/BodyBatteryMetric';
 import { RecoveryStatusMetric } from './old/RecoveryStatusMetric';
 import { StressScoreMetric } from './old/StressScoreMetric';
 import { RestingHRMetric } from './RestingHRMetric';
@@ -71,9 +70,8 @@ export function NervousSystemStatusChart() {
         <View style={globalStyles.row}>
           <HRVMetric showDivider onPress={() => toggleMetric('hrv')} isSelected={selectedMetric === 'hrv'} />
 
-          <StressScoreMetric hrvData={hrvData} showDivider onPress={() => toggleMetric('stress_score')} isSelected={selectedMetric === 'stress_score'} />
+          <StressScoreMetric hrvData={hrvData} onPress={() => toggleMetric('stress_score')} isSelected={selectedMetric === 'stress_score'} />
 
-          <BodyBatteryMetric onPress={() => toggleMetric('body_battery')} isSelected={selectedMetric === 'body_battery'} />
         </View>
 
         <View style={[globalStyles.row, globalStyles.marginTop16]}>

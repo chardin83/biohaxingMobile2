@@ -527,10 +527,6 @@ export class HealthConnectAdapter implements WearableAdapter {
     const lastIntenseSample = intenseSamples[0];
     return lastIntenseSample ? new Date(lastIntenseSample.time).toISOString() : undefined;
   }
-
-  getEnergySignal(): Promise<any[]> {
-    return Promise.resolve([]);
-  }
 }
 
 export default HealthConnectAdapter;

@@ -246,9 +246,6 @@
         "name": "Training load",
         "sevenDayTotal": "7-day total"  
     },
-    "bodyBattery": {
-      "name": "Body Battery"
-    },
     "stressScore": {
         "title": "Stress Score"
     },
