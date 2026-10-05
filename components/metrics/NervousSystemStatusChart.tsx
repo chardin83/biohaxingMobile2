@@ -9,7 +9,9 @@ import { globalStyles } from '@/app/theme/globalStyles';
 import { MetricValuesBottomSheet } from '@/components/sections/metrics/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
+import { useHRVTrendSelector } from '@/hooks/useHRVTrendSelector';
 import { useStoredHRVData } from '@/hooks/useStoredHRVData';
+import { getHRVHistory } from '@/utils/hrvHistory';
 import { buildTrendData } from '@/utils/metrics';
 
 import { HRVMetric } from './HRVMetric';
@@ -25,6 +27,7 @@ function clampScore(value: number) {
 }
 
 export function NervousSystemStatusChart() {
+  const hrvTrend = useHRVTrendSelector();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { getMetricHistory } = useStorage();
@@ -46,7 +49,10 @@ export function NervousSystemStatusChart() {
    * Stress score finns inte som separat lagrad metric.
    * Den beräknas därför från HRV och skickas som data-override.
    */
-  const stressScoreTrendData = React.useMemo(() => buildTrendData(getMetricHistory('hrv'), value => clampScore(100 - Math.round(value))), [getMetricHistory]);
+  const stressScoreTrendData = React.useMemo(
+    () => buildTrendData(getHRVHistory(getMetricHistory).entries, value => clampScore(100 - Math.round(value))),
+    [getMetricHistory]
+  );
 
   const selectedConfig = useMetricConfig({
     metricId: selectedMetric,
@@ -78,6 +84,7 @@ export function NervousSystemStatusChart() {
 
         {selectedConfig && (
           <MetricTrendChart
+            seriesSelector={selectedMetric === 'hrv' ? hrvTrend.seriesSelector : undefined}
             data={selectedConfig.data}
             metricName={selectedConfig.metricName}
             unit={selectedConfig.unit}
@@ -103,7 +110,11 @@ export function NervousSystemStatusChart() {
         </ThemedText>
       </Card>
 
-      <MetricValuesBottomSheet bottomSheetRef={metricValuesBottomSheetRef} metricId={selectedMetricId} metricName={selectedConfig?.metricName} />
+      <MetricValuesBottomSheet
+        bottomSheetRef={metricValuesBottomSheetRef}
+        metricId={selectedMetric === 'hrv' ? hrvTrend.metricId : selectedMetricId}
+        metricName={selectedMetric === 'hrv' ? hrvTrend.metricName : selectedConfig?.metricName}
+      />
     </>
   );
 }

@@ -5,11 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { Alert, StyleSheet } from 'react-native';
 import { Portal } from 'react-native-paper';
 
-import { type MetricEntry, useStorage } from '@/app/context/StorageContext';
+import type { MetricEntry } from '@/app/context/storage/metrics/metricTypes';
+import { useStorage } from '@/app/context/StorageContext';
 import { RegisterMetricBottomSheet } from '@/components/RegisterMetricBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import { useBottomSheetDesign } from '@/components/ui/BottomSheetDesign';
 import { MetricId, metrics } from '@/locales/metrics';
+import { getHRVHistory } from '@/utils/hrvHistory';
 
 import { MetricValuesTableSection } from './MetricValuesTableSection';
 import { SleepBatchBottomSheet } from './SleepBatchBottomSheet';
@@ -24,11 +26,18 @@ type MetricValuesBottomSheetProps = {
   metricName?: string;
 };
 
-export function MetricValuesBottomSheet({ bottomSheetRef, metricId, metricName }: Readonly<MetricValuesBottomSheetProps>) {
+export function MetricValuesBottomSheet({
+  bottomSheetRef,
+  metricId: requestedMetricId,
+  metricName: requestedMetricName,
+}: Readonly<MetricValuesBottomSheetProps>) {
   const { colors } = useTheme();
   const sheetDesign = useBottomSheetDesign(colors);
   const { t } = useTranslation(['common', 'metrics']);
   const { addMetricEntry, getMetricHistory, setMetricEntries } = useStorage();
+
+  const metricId = requestedMetricId === 'hrv' ? getHRVHistory(getMetricHistory).metricId : requestedMetricId;
+  const metricName = requestedMetricId === 'hrv' ? t(`metrics:${metricId}.name`) : requestedMetricName;
 
   const registerBottomSheetRef = React.useRef<BottomSheet>(null);
   const registerSleepBatchBottomSheetRef = React.useRef<BottomSheet>(null);
@@ -89,16 +98,15 @@ export function MetricValuesBottomSheet({ bottomSheetRef, metricId, metricName }
 
   const handleCloseSleepBatchSheet = React.useCallback(() => {
     setIsSleepBatchSheetVisible(false);
-  }, [])
-
+  }, []);
 
   const isSameEntry = React.useCallback((left: MetricValueEntry, right: MetricValueEntry) => {
     return (
-      left.metricId === right.metricId
-      && left.recordedAt === right.recordedAt
-      && left.value === right.value
-      && left.unit === right.unit
-      && (left.notes ?? '') === (right.notes ?? '')
+      left.metricId === right.metricId &&
+      left.recordedAt === right.recordedAt &&
+      left.value === right.value &&
+      left.unit === right.unit &&
+      (left.notes ?? '') === (right.notes ?? '')
     );
   }, []);
 
@@ -113,24 +121,25 @@ export function MetricValuesBottomSheet({ bottomSheetRef, metricId, metricName }
     setIsRegisterSheetVisible(true);
   }, []);
 
-  const performDeleteEntry = React.useCallback((entry: MetricValueEntry) => {
-    setMetricEntries(prev => {
-      let removed = false;
-      return prev.filter(current => {
-        if (!removed && isSameEntry(current, entry)) {
-          removed = true;
-          return false;
-        }
-        return true;
+  const performDeleteEntry = React.useCallback(
+    (entry: MetricValueEntry) => {
+      setMetricEntries(prev => {
+        let removed = false;
+        return prev.filter(current => {
+          if (!removed && isSameEntry(current, entry)) {
+            removed = true;
+            return false;
+          }
+          return true;
+        });
       });
-    });
-  }, [isSameEntry, setMetricEntries]);
+    },
+    [isSameEntry, setMetricEntries]
+  );
 
-  const handleDeleteEntry = React.useCallback((entry: MetricValueEntry) => {
-    Alert.alert(
-      t('common:metricValuesBottomSheet.confirmDeleteTitle'),
-      t('common:metricValuesBottomSheet.confirmDeleteMessage'),
-      [
+  const handleDeleteEntry = React.useCallback(
+    (entry: MetricValueEntry) => {
+      Alert.alert(t('common:metricValuesBottomSheet.confirmDeleteTitle'), t('common:metricValuesBottomSheet.confirmDeleteMessage'), [
         {
           text: t('common:general.cancel'),
           style: 'cancel',
@@ -140,9 +149,10 @@ export function MetricValuesBottomSheet({ bottomSheetRef, metricId, metricName }
           style: 'destructive',
           onPress: () => performDeleteEntry(entry),
         },
-      ]
-    );
-  }, [performDeleteEntry, t]);
+      ]);
+    },
+    [performDeleteEntry, t]
+  );
 
   const handleSaveMetric = React.useCallback(() => {
     if (!metricId || !metricValue) return;
@@ -189,7 +199,6 @@ export function MetricValuesBottomSheet({ bottomSheetRef, metricId, metricName }
       setSheetIndex(index);
     }
   }, []);
-
 
   if (!metricId) {
     return null;

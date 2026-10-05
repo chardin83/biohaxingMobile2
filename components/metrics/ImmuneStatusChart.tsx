@@ -9,6 +9,8 @@ import { globalStyles } from '@/app/theme/globalStyles';
 import { MetricValuesBottomSheet } from '@/components/sections/metrics/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
+import { useHRVTrendSelector } from '@/hooks/useHRVTrendSelector';
+import { getHRVHistory } from '@/utils/hrvHistory';
 import { buildTrendData } from '@/utils/metrics';
 
 import { DeepSleepMetric } from './DeepSleepMetric';
@@ -29,6 +31,7 @@ function formatSleepDuration(valueInMinutes: number) {
 }
 
 export function ImmuneStatusChart() {
+  const hrvTrend = useHRVTrendSelector();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { getMetricHistory } = useStorage();
@@ -65,7 +68,7 @@ export function ImmuneStatusChart() {
   }, [getMetricHistory]);
 
   const hrvTrendData = React.useMemo<MetricTrendPoint[]>(() => {
-    return buildTrendData(getMetricHistory('hrv'));
+    return buildTrendData(getHRVHistory(getMetricHistory).entries);
   }, [getMetricHistory]);
 
   const selectedConfig = React.useMemo(() => {
@@ -106,7 +109,7 @@ export function ImmuneStatusChart() {
       case 'hrv':
       default:
         return {
-          metricName: t('metrics:hrv.shortName', { defaultValue: t('metrics:hrv.name') }),
+          metricName: t(`metrics:${getHRVHistory(getMetricHistory).metricId}.shortName`),
           unit: 'ms',
           data: hrvTrendData,
           accentColor: colors.chart.hrv,
@@ -121,6 +124,7 @@ export function ImmuneStatusChart() {
     colors.chart.sleepDuration,
     deepSleepTrendData,
     hrvTrendData,
+    getMetricHistory,
     restingHrTrendData,
     selectedMetric,
     sleepDurationTrendData,
@@ -144,6 +148,7 @@ export function ImmuneStatusChart() {
 
         {selectedConfig && (
           <MetricTrendChart
+            seriesSelector={selectedMetric === 'hrv' ? hrvTrend.seriesSelector : undefined}
             data={selectedConfig.data}
             metricName={selectedConfig.metricName}
             unit={selectedConfig.unit}
@@ -161,7 +166,11 @@ export function ImmuneStatusChart() {
             : t('immuneTrendsChart.explainer')}
         </ThemedText>
       </Card>
-      <MetricValuesBottomSheet bottomSheetRef={metricValuesBottomSheetRef} metricId={selectedMetric} metricName={selectedConfig?.metricName} />
+      <MetricValuesBottomSheet
+        bottomSheetRef={metricValuesBottomSheetRef}
+        metricId={selectedMetric === 'hrv' ? hrvTrend.metricId : selectedMetric}
+        metricName={selectedMetric === 'hrv' ? hrvTrend.metricName : selectedConfig?.metricName}
+      />
     </>
   );
 }

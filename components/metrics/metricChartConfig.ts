@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { type MetricId } from '@/locales/metrics';
+import { getHRVHistory } from '@/utils/hrvHistory';
 import { buildTrendData } from '@/utils/metrics';
 
 import type { MetricTrendPoint } from './MetricTrendChart';
@@ -111,6 +112,7 @@ const ALL_METRIC_CHART_META: Partial<Record<MetricId, MetricMeta>> = {
 
   hrv: {
     metricNameKey: 'metrics:hrv.name',
+    buildData: getMetricHistory => buildTrendData(getHRVHistory(getMetricHistory).entries),
     unit: 'ms',
     accentColor: colors => colors.chart.hrv,
   },
@@ -161,8 +163,9 @@ export function useMetricConfig({ metricId, data: dataOverride }: UseMetricConfi
 
     const data = dataOverride ?? meta?.buildData?.(getMetricHistory, metricId) ?? buildTrendData(getMetricHistory(metricId));
 
+    const nameKey = metricId === 'hrv' ? `metrics:${getHRVHistory(getMetricHistory).metricId}.name` : (meta?.metricNameKey ?? `metrics:${metricId}.name`);
     return {
-      metricName: t(meta?.metricNameKey ?? `metrics:${metricId}.name`),
+      metricName: t(nameKey),
       unit: meta?.unit,
       data,
       accentColor: meta?.accentColor(colors) ?? colors.primary,

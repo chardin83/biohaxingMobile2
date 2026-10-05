@@ -10,10 +10,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 
 import { BloodPressureMetric } from './BloodPressureMetric';
-import {
-  type CardioTrendMetricKey,
-  useMetricConfig,
-} from './metricChartConfig';
+import { type CardioTrendMetricKey, useMetricConfig } from './metricChartConfig';
 import { MetricTrendChart } from './MetricTrendChart';
 import { RestingHRMetric } from './RestingHRMetric';
 import { VO2MaxMetric } from './VO2MaxMetric';
@@ -22,20 +19,13 @@ export function CardioTrendsChart() {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
-  const [selectedMetric, setSelectedMetric] =
-    React.useState<CardioTrendMetricKey | null>(null);
+  const [selectedMetric, setSelectedMetric] = React.useState<CardioTrendMetricKey | null>(null);
 
-  const metricValuesBottomSheetRef =
-    React.useRef<BottomSheet>(null);
+  const metricValuesBottomSheetRef = React.useRef<BottomSheet>(null);
 
-  const toggleMetric = React.useCallback(
-    (metric: CardioTrendMetricKey) => {
-      setSelectedMetric(current =>
-        current === metric ? null : metric,
-      );
-    },
-    [],
-  );
+  const toggleMetric = React.useCallback((metric: CardioTrendMetricKey) => {
+    setSelectedMetric(current => (current === metric ? null : metric));
+  }, []);
 
   const openMetricValuesTable = React.useCallback(() => {
     metricValuesBottomSheetRef.current?.snapToIndex(1);
@@ -48,23 +38,11 @@ export function CardioTrendsChart() {
   return (
     <Card title={t('cardioOverview.yourCardioPerformance')}>
       <View style={globalStyles.row}>
-        <VO2MaxMetric
-          showDivider
-          onPress={() => toggleMetric('vo2_max')}
-          isSelected={selectedMetric === 'vo2_max'}
-        />
+        <VO2MaxMetric showDivider onPress={() => toggleMetric('vo2_max')} isSelected={selectedMetric === 'vo2_max'} />
 
-        <RestingHRMetric
-          showDivider
-          onPress={() => toggleMetric('resting_hr')}
-          isSelected={selectedMetric === 'resting_hr'}
-        />
+        <RestingHRMetric showDivider onPress={() => toggleMetric('resting_hr')} isSelected={selectedMetric === 'resting_hr'} />
 
-        <BloodPressureMetric
-        showDivider
-        onPress={() => toggleMetric('systolic_bp')}
-        isSelected={selectedMetric === 'systolic_bp'}
-      />
+        <BloodPressureMetric showDivider onPress={() => toggleMetric('systolic_bp')} isSelected={selectedMetric === 'systolic_bp'} />
       </View>
 
       {selectedConfig && (
@@ -75,9 +53,7 @@ export function CardioTrendsChart() {
           daysToShow={selectedConfig.daysToShow}
           accentColor={selectedConfig.accentColor}
           valueFormatter={selectedConfig.valueFormatter}
-          xAxisLabelFormatter={
-            selectedConfig.xAxisLabelFormatter
-          }
+          xAxisLabelFormatter={selectedConfig.xAxisLabelFormatter}
           referenceLines={selectedConfig.referenceLines}
           onViewRegisteredValues={openMetricValuesTable}
         />
@@ -92,18 +68,10 @@ export function CardioTrendsChart() {
           },
         ]}
       >
-        {selectedMetric
-          ? t(
-              `cardioTrendsChart.explainers.${selectedMetric}`,
-            )
-          : t('cardioTrendsChart.explainer')}
+        {selectedMetric ? t(`cardioTrendsChart.explainers.${selectedMetric}`) : t('cardioTrendsChart.explainer')}
       </ThemedText>
 
-      <MetricValuesBottomSheet
-        bottomSheetRef={metricValuesBottomSheetRef}
-        metricId={selectedMetric}
-        metricName={selectedConfig?.metricName}
-      />
+      <MetricValuesBottomSheet bottomSheetRef={metricValuesBottomSheetRef} metricId={selectedMetric} metricName={selectedConfig?.metricName} />
     </Card>
   );
 }

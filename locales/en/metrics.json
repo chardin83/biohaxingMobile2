@@ -108,6 +108,16 @@
         "shortName": "VO₂ max",
         "description": "An estimate of your body's aerobic capacity and oxygen utilization during exercise."
     },
+    "hrv_rmssd": {
+        "name": "HRV (heart rate variability), RMSSD",
+        "shortName": "HRV RMSSD",
+        "description": "HRV (RMSSD), ms."
+    },
+    "hrv_sdnn": {
+        "name": "HRV (heart rate variability), SDNN",
+        "shortName": "HRV SDNN",
+        "description": "HRV (SDNN), ms."
+    },
     "hrv": {
         "name": "HRV (heart rate variability)",
         "shortName": "HRV",
@@ -119,6 +129,7 @@
         "highLabel": "High"
     },
     "trendChart": {
+        "selectSeries": "Select measurement type",
         "title": "{{metric}} over time",
         "subtitle": "Last {{count}} registrations",
         "subtitleDays_one": "Last day",

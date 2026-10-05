@@ -13,13 +13,16 @@ import { VO2MaxMetric } from '@/components/metrics/VO2MaxMetric';
 import { MetricValuesBottomSheet } from '@/components/sections/metrics/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
+import { useHRVTrendSelector } from '@/hooks/useHRVTrendSelector';
 import { MetricId } from '@/locales/metrics';
+import { getHRVHistory } from '@/utils/hrvHistory';
 
 type ValidMetricId<T extends MetricId> = T;
 
 type EnergyProductionMetricKey = ValidMetricId<'vo2_max' | 'resting_hr' | 'hrv'>;
 
 export function EnergyProductionCharts() {
+  const hrvTrend = useHRVTrendSelector();
   const { getMetricHistory } = useStorage();
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -36,7 +39,7 @@ export function EnergyProductionCharts() {
 
   const toTrendData = React.useCallback(
     (metricId: EnergyProductionMetricKey): MetricTrendPoint[] =>
-      getMetricHistory(metricId)
+      (metricId === 'hrv' ? getHRVHistory(getMetricHistory).entries : getMetricHistory(metricId))
         .map(entry => ({
           date: entry.recordedAt.slice(0, 10),
           value: entry.value,
@@ -73,13 +76,13 @@ export function EnergyProductionCharts() {
         };
       case 'hrv':
         return {
-          metricName: t('metrics:hrv.name'),
+          metricName: t(`metrics:${getHRVHistory(getMetricHistory).metricId}.name`),
           unit: 'ms',
           data: hrvTrendData,
           accentColor: colors.chart.hrv,
         };
     }
-  }, [selectedMetric, t, vo2MaxTrendData, restingHRTrendData, hrvTrendData, colors.chart.vo2Max, colors.chart.restingHr, colors.chart.hrv]);
+  }, [selectedMetric, getMetricHistory, t, vo2MaxTrendData, restingHRTrendData, hrvTrendData, colors.chart.vo2Max, colors.chart.restingHr, colors.chart.hrv]);
 
   return (
     <>
@@ -91,6 +94,7 @@ export function EnergyProductionCharts() {
         </View>
         {selectedMetricConfig && (
           <MetricTrendChart
+            seriesSelector={selectedMetric === 'hrv' ? hrvTrend.seriesSelector : undefined}
             data={selectedMetricConfig.data}
             metricName={selectedMetricConfig.metricName}
             unit={selectedMetricConfig.unit}
@@ -106,7 +110,11 @@ export function EnergyProductionCharts() {
             : t('energyProductionCharts.explainer')}
         </ThemedText>
       </Card>
-      <MetricValuesBottomSheet bottomSheetRef={metricValuesBottomSheetRef} metricId={selectedMetric} metricName={selectedMetricConfig?.metricName} />
+      <MetricValuesBottomSheet
+        bottomSheetRef={metricValuesBottomSheetRef}
+        metricId={selectedMetric === 'hrv' ? hrvTrend.metricId : selectedMetric}
+        metricName={selectedMetric === 'hrv' ? hrvTrend.metricName : selectedMetricConfig?.metricName}
+      />
     </>
   );
 }

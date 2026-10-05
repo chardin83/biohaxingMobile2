@@ -284,11 +284,34 @@ export const metrics = {
     units: [{ unit: 'bpm', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
+  // Retained for historical records. New HRV measurements use the format-specific IDs below.
   hrv: {
     id: 'hrv',
     emoji: '📈',
     nameKey: 'hrv.name',
     descriptionKey: 'hrv.description',
+    canonicalUnit: 'ms',
+    source: 'wearable',
+    suggestedFrequency: 'daily',
+    units: [{ unit: 'ms', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
+  },
+
+  hrv_rmssd: {
+    id: 'hrv_rmssd',
+    emoji: '📈',
+    nameKey: 'hrv_rmssd.name',
+    descriptionKey: 'hrv_rmssd.description',
+    canonicalUnit: 'ms',
+    source: 'wearable',
+    suggestedFrequency: 'daily',
+    units: [{ unit: 'ms', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
+  },
+
+  hrv_sdnn: {
+    id: 'hrv_sdnn',
+    emoji: '📈',
+    nameKey: 'hrv_sdnn.name',
+    descriptionKey: 'hrv_sdnn.description',
     canonicalUnit: 'ms',
     source: 'wearable',
     suggestedFrequency: 'daily',
@@ -581,7 +604,8 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
   'magnesium': [
     { metricId: 'sleep_quality', kind: 'primary' },
     { metricId: 'sleep_latency', kind: 'secondary' },
-    { metricId: 'hrv', kind: 'secondary' },
+    { metricId: 'hrv_rmssd', kind: 'secondary' },
+    { metricId: 'hrv_sdnn', kind: 'secondary' },
     { metricId: 'resting_hr', kind: 'secondary' },
     { metricId: 'stress', kind: 'subjective' },
   ],
@@ -603,7 +627,8 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
 
   // --- Breathwork / sleep / circadian ---
   'box_breathing': [
-    { metricId: 'hrv', kind: 'primary' },
+    { metricId: 'hrv_rmssd', kind: 'primary' },
+    { metricId: 'hrv_sdnn', kind: 'primary' },
     { metricId: 'resting_hr', kind: 'secondary' },
     { metricId: 'stress', kind: 'subjective' },
   ],
@@ -615,7 +640,8 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
   'sleep_duration_consistency': [
     { metricId: 'sleep_duration', kind: 'primary' },
     { metricId: 'sleep_quality', kind: 'primary' },
-    { metricId: 'hrv', kind: 'secondary' },
+    { metricId: 'hrv_rmssd', kind: 'secondary' },
+    { metricId: 'hrv_sdnn', kind: 'secondary' },
   ],
   'sunlight_circadian': [
     { metricId: 'sleep_latency', kind: 'primary' },
@@ -624,7 +650,8 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
   ],
   'sleep_optimization_recovery': [
     { metricId: 'sleep_quality', kind: 'primary' },
-    { metricId: 'hrv', kind: 'secondary' },
+    { metricId: 'hrv_rmssd', kind: 'secondary' },
+    { metricId: 'hrv_sdnn', kind: 'secondary' },
     { metricId: 'energy', kind: 'subjective' },
   ],
 
@@ -656,7 +683,8 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
 
   // --- HRV monitoring ---
   'hrv_recovery_monitoring': [
-    { metricId: 'hrv', kind: 'primary' },
+    { metricId: 'hrv_rmssd', kind: 'primary' },
+    { metricId: 'hrv_sdnn', kind: 'primary' },
     { metricId: 'resting_hr', kind: 'primary' },
     { metricId: 'sleep_quality', kind: 'secondary' },
   ],
@@ -679,7 +707,8 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
 
   // --- Training Tips ---
   'neuromuscular_training': [
-    { metricId: 'hrv', kind: 'secondary' },
+    { metricId: 'hrv_rmssd', kind: 'secondary' },
+    { metricId: 'hrv_sdnn', kind: 'secondary' },
     { metricId: 'resting_hr', kind: 'secondary' },
     { metricId: 'energy', kind: 'subjective' },
   ],
@@ -689,13 +718,15 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
     { metricId: 'resting_hr', kind: 'secondary' },
     { metricId: 'systolic_bp', kind: 'secondary' },
     { metricId: 'diastolic_bp', kind: 'secondary' },
-    { metricId: 'hrv', kind: 'safety' },
+    { metricId: 'hrv_rmssd', kind: 'safety' },
+    { metricId: 'hrv_sdnn', kind: 'safety' },
   ],
   'fasted_aerobic_training': [
     { metricId: 'fasting_glucose', kind: 'secondary' },
     { metricId: 'vo2_max', kind: 'primary' },
     { metricId: 'resting_hr', kind: 'secondary' },
-    { metricId: 'hrv', kind: 'secondary' },
+    { metricId: 'hrv_rmssd', kind: 'secondary' },
+    { metricId: 'hrv_sdnn', kind: 'secondary' },
     { metricId: 'weight', kind: 'secondary' },
     { metricId: 'energy', kind: 'subjective' },
   ],

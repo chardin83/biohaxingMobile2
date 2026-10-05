@@ -9,6 +9,8 @@ import { globalStyles } from '@/app/theme/globalStyles';
 import { MetricValuesBottomSheet } from '@/components/sections/metrics/MetricValuesBottomSheet';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
+import { useHRVTrendSelector } from '@/hooks/useHRVTrendSelector';
+import { getHRVHistory } from '@/utils/hrvHistory';
 import { buildTrendData } from '@/utils/metrics';
 
 import { HRVMetric } from './HRVMetric';
@@ -33,6 +35,7 @@ function formatTimeFromMinutes(value: number) {
 }
 
 export function StrengthRecoveryTrendsChart() {
+  const hrvTrend = useHRVTrendSelector();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { getMetricHistory } = useStorage();
@@ -50,7 +53,7 @@ export function StrengthRecoveryTrendsChart() {
     [getMetricHistory]
   );
   const sleepBedtimeTrendData = React.useMemo(() => buildTrendData(getMetricHistory('sleep_bedtime')), [getMetricHistory]);
-  const hrvTrendData = React.useMemo(() => buildTrendData(getMetricHistory('hrv')), [getMetricHistory]);
+  const hrvTrendData = React.useMemo(() => buildTrendData(getHRVHistory(getMetricHistory).entries), [getMetricHistory]);
 
   const toggleMetric = React.useCallback((metric: StrengthRecoveryMetricKey) => {
     setSelectedMetric(current => (current === metric ? null : metric));
@@ -75,7 +78,7 @@ export function StrengthRecoveryTrendsChart() {
         };
       case 'hrv':
         return {
-          metricName: t('metrics:hrv.name'),
+          metricName: t(`metrics:${getHRVHistory(getMetricHistory).metricId}.name`),
           unit: 'ms',
           data: hrvTrendData,
           accentColor: colors.chart.hrv,
@@ -92,7 +95,17 @@ export function StrengthRecoveryTrendsChart() {
           explainer: t('strengthOverview.recoveryFactors.explainers.sleep_duration'),
         };
     }
-  }, [selectedMetric, t, sleepBedtimeTrendData, hrvTrendData, sleepDurationTrendData, colors.chart.deepSleep, colors.chart.hrv, colors.chart.sleepDuration]);
+  }, [
+    selectedMetric,
+    getMetricHistory,
+    t,
+    sleepBedtimeTrendData,
+    hrvTrendData,
+    sleepDurationTrendData,
+    colors.chart.deepSleep,
+    colors.chart.hrv,
+    colors.chart.sleepDuration,
+  ]);
 
   return (
     <Card title={t('strengthOverview.recoveryFactors.title')}>
@@ -104,6 +117,7 @@ export function StrengthRecoveryTrendsChart() {
 
       {selectedConfig && (
         <MetricTrendChart
+          seriesSelector={selectedMetric === 'hrv' ? hrvTrend.seriesSelector : undefined}
           data={selectedConfig.data}
           metricName={selectedConfig.metricName}
           unit={selectedConfig.unit}
@@ -119,7 +133,11 @@ export function StrengthRecoveryTrendsChart() {
         </ThemedText>
       </View>
 
-      <MetricValuesBottomSheet bottomSheetRef={metricValuesBottomSheetRef} metricId={selectedMetric} metricName={selectedConfig?.metricName} />
+      <MetricValuesBottomSheet
+        bottomSheetRef={metricValuesBottomSheetRef}
+        metricId={selectedMetric === 'hrv' ? hrvTrend.metricId : selectedMetric}
+        metricName={selectedMetric === 'hrv' ? hrvTrend.metricName : selectedConfig?.metricName}
+      />
     </Card>
   );
 }

@@ -7,6 +7,7 @@ import { useStorage } from '@/app/context/StorageContext';
 import { MetricDataStatus } from '@/components/metrics/MetricDataStatus';
 import { ThemedText } from '@/components/ThemedText';
 import { toDateKey } from '@/utils/dateUtils';
+import { getHRVHistory } from '@/utils/hrvHistory';
 import { getLatestMetricEntry } from '@/utils/metricDateUtils';
 import { WearablePermission } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
@@ -23,7 +24,7 @@ export function HRVMetric({ showDivider = false, onPress, isSelected = false }: 
   const { getMetricHistory } = useStorage();
   const { adapter } = useWearable();
   const [hasPermission, setHasPermission] = React.useState(true);
-  const hrvData = getMetricHistory('hrv');
+  const { entries: hrvData, metricId } = getHRVHistory(getMetricHistory);
 
   React.useEffect(() => {
     adapter
@@ -35,12 +36,12 @@ export function HRVMetric({ showDivider = false, onPress, isSelected = false }: 
   const latest = React.useMemo(() => getLatestMetricEntry(hrvData), [hrvData]);
   const previous = hrvData.at(-2);
   const hrv = latest?.value;
-  const hrvDelta = hrv !== undefined && previous?.value !== undefined ? ((hrv - previous.value) / previous.value) * 100 : undefined;
+  const hrvDelta = hrv !== undefined && previous?.value !== undefined && previous.value > 0 ? ((hrv - previous.value) / previous.value) * 100 : undefined;
   const isLatestToday = latest?.recordedAt !== undefined && toDateKey(new Date(latest.recordedAt)) === toDateKey(new Date());
 
   const content = (
     <View style={styles.contentContainer}>
-      <ThemedText type="label">{t('metrics:hrv.shortName')}</ThemedText>
+      <ThemedText type="label">{t(`metrics:${metricId}.shortName`)}</ThemedText>
       {hrv !== undefined && (
         <View style={styles.metricValueContainer}>
           <ThemedText type="title2">{Math.round(hrv)}</ThemedText>

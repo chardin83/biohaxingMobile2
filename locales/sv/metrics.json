@@ -101,6 +101,16 @@
         "shortName": "VO₂ max",
         "description": "En uppskattning av kroppens aeroba kapacitet och syreanvändning under träning."
     },
+    "hrv_rmssd": {
+        "name": "HRV (hjärtfrekvensvariabilitet), RMSSD",
+        "shortName": "HRV RMSSD",
+        "description": "HRV (RMSSD), ms."
+    },
+    "hrv_sdnn": {
+        "name": "HRV (hjärtfrekvensvariabilitet), SDNN",
+        "shortName": "HRV SDNN",
+        "description": "HRV (SDNN), ms."
+    },
     "hrv": {
         "name": "HRV (hjärtfrekvensvariation)",
         "shortName": "HRV",
@@ -112,6 +122,7 @@
         "highLabel": "Högst"
     },
     "trendChart": {
+        "selectSeries": "Välj mätningstyp",
         "title": "{{metric}} över tid",
         "subtitle": "Senaste {{count}} registreringarna",
         "subtitleDays_one": "Senaste dagen",

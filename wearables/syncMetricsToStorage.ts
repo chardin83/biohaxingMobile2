@@ -297,18 +297,25 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
           }) satisfies MetricEntry
       ),
 
-    ...hrvs
-      .filter(entry => typeof entry.sdnnMs === 'number')
-      .map(
-        entry =>
-          ({
-            metricId: 'hrv',
-            value: entry.sdnnMs as number,
-            unit: 'ms',
-            recordedAt: toRecordedAt(entry.date),
-            notes: notesLabel,
-          }) satisfies MetricEntry
-      ),
+    ...hrvs.flatMap(entry =>
+      (
+        [
+          { metricId: 'hrv_rmssd', value: entry.rmssdMs },
+          { metricId: 'hrv_sdnn', value: entry.sdnnMs },
+        ] as const
+      )
+        .filter((metric): metric is typeof metric & { value: number } => typeof metric.value === 'number' && Number.isFinite(metric.value))
+        .map(
+          metric =>
+            ({
+              metricId: metric.metricId,
+              value: metric.value,
+              unit: 'ms',
+              recordedAt: toRecordedAt(entry.date),
+              notes: notesLabel,
+            }) satisfies MetricEntry
+        )
+    ),
 
     ...restingHeartRates
       .filter(entry => typeof entry.bpm === 'number')

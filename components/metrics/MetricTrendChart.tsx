@@ -1,7 +1,8 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { LayoutChangeEvent, StyleSheet, View } from 'react-native';
+import { LayoutChangeEvent, Pressable, StyleSheet, View } from 'react-native';
+import { Menu } from 'react-native-paper';
 import Svg, { Circle, Defs, Line, LinearGradient, Path, Stop, Text as SvgText } from 'react-native-svg';
 
 import { ThemedText } from '@/components/ThemedText';
@@ -12,6 +13,19 @@ export interface MetricTrendPoint {
   readonly date: string;
   readonly value: number;
 }
+
+export type MetricTrendOption = {
+  readonly value: string;
+  readonly label: string;
+  readonly data: MetricTrendPoint[];
+  readonly metricName: string;
+};
+
+export type MetricTrendSelector = {
+  readonly options: readonly MetricTrendOption[];
+  readonly value: string;
+  readonly onChange: (value: string) => void;
+};
 
 type ChartEventSeries = {
   label: string;
@@ -40,6 +54,7 @@ interface MetricTrendChartProps {
     color?: string;
   }>;
   readonly eventSeries?: ChartEventSeries[];
+  readonly seriesSelector?: MetricTrendSelector;
 }
 
 const CHART_PADDING = {
@@ -80,9 +95,7 @@ function getTodayUtcDateString() {
 }
 
 function buildPath(points: { x: number; y: number }[]) {
-  return points
-    .map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`)
-    .join(' ');
+  return points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`).join(' ');
 }
 
 function buildAreaPath(points: { x: number; y: number }[], chartBottom: number) {
@@ -102,8 +115,8 @@ function buildAreaPath(points: { x: number; y: number }[], chartBottom: number) 
 }
 
 export function MetricTrendChart({
-  data,
-  metricName,
+  data: defaultData,
+  metricName: defaultMetricName,
   unit,
   valueFormatter,
   daysToShow = 7,
@@ -113,10 +126,15 @@ export function MetricTrendChart({
   xAxisLabelFormatter,
   referenceLines,
   eventSeries,
+  seriesSelector,
 }: Readonly<MetricTrendChartProps>) {
   const { colors } = useTheme();
   const { t } = useTranslation('metrics');
   const [chartWidth, setChartWidth] = React.useState(0);
+  const [menuVisible, setMenuVisible] = React.useState(false);
+  const selectedOption = seriesSelector?.options.find(option => option.value === seriesSelector.value);
+  const data = selectedOption?.data ?? defaultData;
+  const metricName = selectedOption?.metricName ?? defaultMetricName;
   const lineColor = accentColor ?? colors.accentStrong;
   const dynamicStyles = React.useMemo(
     () =>
@@ -161,34 +179,33 @@ export function MetricTrendChart({
     [colors.borderLight, colors.overlayLight, colors.primary, colors.text, colors.textMuted, height]
   );
 
-
   const getTargetLabel = React.useCallback(
-  (tag: string) => {
-    const keys = [
-      `journal:nutritionLogger.mineralLabels.${tag}`,
-      `journal:nutritionLogger.polyphenolLabels.${tag}`,
-      `journal:nutritionLogger.vitaminLabels.${tag}`,
-      `journal:nutritionLogger.fiberLabels.${tag}`,
-      `journal:nutritionLogger.aminoAcidLabels.${tag}`,
-      `journal:nutritionLogger.plantDiversityLabels.${tag}`,
-      `journal:nutritionLogger.weeklyTrackingLabels.${tag}`,
-      `journal:nutritionLogger.fiberSubtypeLabels.${tag}`,
-    ];
+    (tag: string) => {
+      const keys = [
+        `journal:nutritionLogger.mineralLabels.${tag}`,
+        `journal:nutritionLogger.polyphenolLabels.${tag}`,
+        `journal:nutritionLogger.vitaminLabels.${tag}`,
+        `journal:nutritionLogger.fiberLabels.${tag}`,
+        `journal:nutritionLogger.aminoAcidLabels.${tag}`,
+        `journal:nutritionLogger.plantDiversityLabels.${tag}`,
+        `journal:nutritionLogger.weeklyTrackingLabels.${tag}`,
+        `journal:nutritionLogger.fiberSubtypeLabels.${tag}`,
+      ];
 
-    for (const key of keys) {
-      const translated = t(key, {
-        defaultValue: '',
-      });
+      for (const key of keys) {
+        const translated = t(key, {
+          defaultValue: '',
+        });
 
-      if (translated) {
-        return translated;
+        if (translated) {
+          return translated;
+        }
       }
-    }
 
-    return tag;
-  },
-  [t],
-);
+      return tag;
+    },
+    [t]
+  );
 
   const chartData = React.useMemo<MetricTrendPoint[]>(() => {
     const MS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -217,17 +234,60 @@ export function MetricTrendChart({
     });
   }, [daysToShow, t]);
 
+  const periodControls = (
+    <View style={styles.periodControls}>
+      <ThemedText type="caption" style={dynamicStyles.subtitleText}>
+        {subtitleText}
+      </ThemedText>
+      {seriesSelector && seriesSelector.options.length > 0 && (
+        <Menu
+          visible={menuVisible}
+          onDismiss={() => setMenuVisible(false)}
+          anchor={
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('trendChart.selectSeries')}
+              accessibilityValue={{ text: selectedOption?.label }}
+              accessibilityState={{ expanded: menuVisible }}
+              onPress={() => setMenuVisible(true)}
+              style={[styles.seriesButton, { borderColor: colors.borderLight }]}
+            >
+              <ThemedText type="caption">{selectedOption?.label}</ThemedText>
+              <IconSymbol name="expandMore" size={16} color={colors.text} />
+            </Pressable>
+          }
+        >
+          {seriesSelector.options.map(option => (
+            <Menu.Item
+              key={option.value}
+              title={option.label}
+              trailingIcon={option.value === seriesSelector.value ? 'check' : undefined}
+              accessibilityState={{ selected: option.value === seriesSelector.value }}
+              onPress={() => {
+                seriesSelector.onChange(option.value);
+                setMenuVisible(false);
+              }}
+            />
+          ))}
+        </Menu>
+      )}
+    </View>
+  );
+
   const latestValue = chartData.at(-1)?.value;
   const minValue = chartData.length > 0 ? Math.min(...chartData.map(entry => entry.value)) : undefined;
   const maxValue = chartData.length > 0 ? Math.max(...chartData.map(entry => entry.value)) : undefined;
-  const formatValue = React.useCallback((value: number) => {
-    if (valueFormatter) {
-      return valueFormatter(value);
-    }
+  const formatValue = React.useCallback(
+    (value: number) => {
+      if (valueFormatter) {
+        return valueFormatter(value);
+      }
 
-    const unitSuffix = unit ? ` ${unit}` : '';
-    return `${value}${unitSuffix}`;
-  }, [unit, valueFormatter]);
+      const unitSuffix = unit ? ` ${unit}` : '';
+      return `${value}${unitSuffix}`;
+    },
+    [unit, valueFormatter]
+  );
 
   const handleLayout = React.useCallback((event: LayoutChangeEvent) => {
     const nextWidth = Math.round(event.nativeEvent.layout.width);
@@ -238,26 +298,17 @@ export function MetricTrendChart({
     const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
     const todayTs = toDateTimestamp(getTodayUtcDateString());
-    const windowStartTs =
-      todayTs - (daysToShow - 1) * MS_PER_DAY;
+    const windowStartTs = todayTs - (daysToShow - 1) * MS_PER_DAY;
 
-    const getDateString = (timestamp: number) =>
-      new Date(timestamp).toISOString().slice(0, 10);
+    const getDateString = (timestamp: number) => new Date(timestamp).toISOString().slice(0, 10);
 
     if (daysToShow <= 7) {
-      return Array.from({ length: daysToShow }, (_, index) =>
-        getDateString(windowStartTs + index * MS_PER_DAY),
-      );
+      return Array.from({ length: daysToShow }, (_, index) => getDateString(windowStartTs + index * MS_PER_DAY));
     }
 
-    const middleTs =
-      windowStartTs + (todayTs - windowStartTs) / 2;
+    const middleTs = windowStartTs + (todayTs - windowStartTs) / 2;
 
-    return [
-      getDateString(windowStartTs),
-      getDateString(middleTs),
-      getDateString(todayTs),
-    ];
+    return [getDateString(windowStartTs), getDateString(middleTs), getDateString(todayTs)];
   }, [daysToShow]);
 
   const chartGeometry = React.useMemo(() => {
@@ -283,9 +334,7 @@ export function MetricTrendChart({
       { id: 'mid', value: (rawMax + rawMin) / 2 },
       { id: 'min', value: rawMin },
     ];
-    const gridLines = axisEntries.map(({ value }) =>
-      CHART_PADDING.top + ((paddedMax - value) / paddedRange) * innerHeight
-    );
+    const gridLines = axisEntries.map(({ value }) => CHART_PADDING.top + ((paddedMax - value) / paddedRange) * innerHeight);
 
     const referenceLinePoints = (referenceLines ?? []).map(line => ({
       y: CHART_PADDING.top + ((paddedMax - line.value) / paddedRange) * innerHeight,
@@ -303,18 +352,13 @@ export function MetricTrendChart({
     const getXForDate = (date: string) => {
       const ts = toDateTimestamp(date);
 
-      return (
-        CHART_PADDING.left +
-        ((ts - windowStartTs) / windowRange) * innerWidth
-      );
+      return CHART_PADDING.left + ((ts - windowStartTs) / windowRange) * innerWidth;
     };
 
     const points = chartData.map(entry => {
       const x = getXForDate(entry.date);
 
-      const y =
-        CHART_PADDING.top +
-        ((paddedMax - entry.value) / paddedRange) * innerHeight;
+      const y = CHART_PADDING.top + ((paddedMax - entry.value) / paddedRange) * innerHeight;
 
       return { x, y };
     });
@@ -350,17 +394,16 @@ export function MetricTrendChart({
     };
   }, [chartData, chartWidth, daysToShow, eventSeries, height, referenceLines, xAxisDates]);
 
-
-
   const yAxisEntries = chartGeometry?.axisEntries ?? [];
   const yAxisLabelStyles = React.useMemo(
     () =>
-      (chartGeometry?.gridLines ?? []).map(gridY =>
-        StyleSheet.create({
-          value: {
-            top: gridY - Y_AXIS_LABEL_OFFSET,
-          },
-        }).value
+      (chartGeometry?.gridLines ?? []).map(
+        gridY =>
+          StyleSheet.create({
+            value: {
+              top: gridY - Y_AXIS_LABEL_OFFSET,
+            },
+          }).value
       ),
     [chartGeometry?.gridLines]
   );
@@ -377,18 +420,13 @@ export function MetricTrendChart({
       <View style={[styles.container, dynamicStyles.containerBorder]}>
         <View style={styles.header}>
           <ThemedText type="title3">{t('metrics:trendChart.title', { metric: metricName })}</ThemedText>
-          <ThemedText type="caption" style={dynamicStyles.subtitleText}>
-            {subtitleText}
-          </ThemedText>
+          {periodControls}
         </View>
 
         <View style={[styles.chartRow, dynamicStyles.chartRow]}>
           <View style={[styles.yAxisColumn, dynamicStyles.yAxisColumn]}>
             {!!unit && (
-              <ThemedText
-                type="caption"
-                style={[styles.yAxisUnit, dynamicStyles.yAxisUnit]}
-              >
+              <ThemedText type="caption" style={[styles.yAxisUnit, dynamicStyles.yAxisUnit]}>
                 {unit}
               </ThemedText>
             )}
@@ -473,12 +511,7 @@ export function MetricTrendChart({
         </View>
 
         {!!onViewRegisteredValues && (
-          <AppButton
-            onPress={onViewRegisteredValues}
-            title={t('trendChart.viewRegisteredValues')}
-            variant="secondary"
-            style={styles.ctaButton}
-          />
+          <AppButton onPress={onViewRegisteredValues} title={t('trendChart.viewRegisteredValues')} variant="secondary" style={styles.ctaButton} />
         )}
       </View>
     );
@@ -489,21 +522,25 @@ export function MetricTrendChart({
       <View style={styles.header}>
         <View>
           <ThemedText type="title3">{t('metrics:trendChart.title', { metric: metricName })}</ThemedText>
-          <ThemedText type="caption" style={dynamicStyles.subtitleText}>
-            {subtitleText}
-          </ThemedText>
+          {periodControls}
         </View>
         <View style={styles.summary}>
           <View style={styles.summaryItem}>
-            <ThemedText type="caption" style={dynamicStyles.subtitleText}>{t('metrics:trendChart.latestLabel')}</ThemedText>
+            <ThemedText type="caption" style={dynamicStyles.subtitleText}>
+              {t('metrics:trendChart.latestLabel')}
+            </ThemedText>
             <ThemedText type="defaultSemiBold">{latestValue == null ? '—' : formatValue(latestValue)}</ThemedText>
           </View>
           <View style={styles.summaryItem}>
-            <ThemedText type="caption" style={dynamicStyles.subtitleText}>{t('metrics:trendChart.lowLabel')}</ThemedText>
+            <ThemedText type="caption" style={dynamicStyles.subtitleText}>
+              {t('metrics:trendChart.lowLabel')}
+            </ThemedText>
             <ThemedText type="defaultSemiBold">{minValue == null ? '—' : formatValue(minValue)}</ThemedText>
           </View>
           <View style={styles.summaryItem}>
-            <ThemedText type="caption" style={dynamicStyles.subtitleText}>{t('metrics:trendChart.highLabel')}</ThemedText>
+            <ThemedText type="caption" style={dynamicStyles.subtitleText}>
+              {t('metrics:trendChart.highLabel')}
+            </ThemedText>
             <ThemedText type="defaultSemiBold">{maxValue == null ? '—' : formatValue(maxValue)}</ThemedText>
           </View>
         </View>
@@ -512,27 +549,17 @@ export function MetricTrendChart({
       <View style={[styles.chartRow, dynamicStyles.chartRow]}>
         <View style={[styles.yAxisColumn, dynamicStyles.yAxisColumn]}>
           {!!unit && (
-            <ThemedText
-              type="caption"
-              style={[styles.yAxisUnit, dynamicStyles.yAxisUnit]}
-            >
+            <ThemedText type="caption" style={[styles.yAxisUnit, dynamicStyles.yAxisUnit]}>
               {unit}
             </ThemedText>
           )}
           {yAxisEntries.map(({ id, value }, index) => (
-            <ThemedText
-              key={id}
-              type="caption"
-              style={[styles.yAxisValue, dynamicStyles.yAxisValue, yAxisLabelStyles[index]]}
-            >
+            <ThemedText key={id} type="caption" style={[styles.yAxisValue, dynamicStyles.yAxisValue, yAxisLabelStyles[index]]}>
               {valueFormatter ? valueFormatter(value) : value.toFixed(1)}
             </ThemedText>
           ))}
         </View>
-        <View
-          onLayout={handleLayout}
-          style={[styles.chartFrame, dynamicStyles.chartFrame]}
-        >
+        <View onLayout={handleLayout} style={[styles.chartFrame, dynamicStyles.chartFrame]}>
           {chartGeometry && (
             <Svg width={chartWidth} height={height}>
               <Defs>
@@ -566,26 +593,14 @@ export function MetricTrendChart({
                       strokeDasharray="3 4"
                       strokeWidth={1.5}
                     />
-                    <SvgText
-                      x={CHART_PADDING.left + 2}
-                      y={referenceLine.y - 4}
-                      fontSize="10"
-                      fill={color}
-                    >
+                    <SvgText x={CHART_PADDING.left + 2} y={referenceLine.y - 4} fontSize="10" fill={color}>
                       {referenceLine.label ?? String(referenceLine.value)}
                     </SvgText>
                   </React.Fragment>
                 );
               })}
               <Path d={buildAreaPath(chartGeometry.points, chartGeometry.chartBottom)} fill="url(#hrvAreaGradient)" />
-              <Path
-                d={buildPath(chartGeometry.points)}
-                fill="none"
-                stroke={lineColor}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={3}
-              />
+              <Path d={buildPath(chartGeometry.points)} fill="none" stroke={lineColor} strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} />
               {chartGeometry.points.map((point, index) => {
                 const isLatestPoint = index === chartGeometry.points.length - 1;
                 return (
@@ -609,28 +624,13 @@ export function MetricTrendChart({
         <>
           <View style={styles.axisLabels}>
             {chartGeometry.xAxisPoints.map(point => {
-              const label = xAxisLabelFormatter
-                ? xAxisLabelFormatter(point.date)
-                : formatShortDate(point.date);
+              const label = xAxisLabelFormatter ? xAxisLabelFormatter(point.date) : formatShortDate(point.date);
 
-              const left =
-                point.x - X_AXIS_LABEL_WIDTH / 2;
+              const left = point.x - X_AXIS_LABEL_WIDTH / 2;
 
               return (
-                <View
-                  key={`xlabel-${point.date}`}
-                  style={[
-                    styles.axisLabelItem,
-                    { left },
-                  ]}
-                >
-                  <ThemedText
-                    type="caption"
-                    style={[
-                      styles.axisLabelText,
-                      dynamicStyles.axisLabelText,
-                    ]}
-                  >
+                <View key={`xlabel-${point.date}`} style={[styles.axisLabelItem, { left }]}>
+                  <ThemedText type="caption" style={[styles.axisLabelText, dynamicStyles.axisLabelText]}>
                     {label}
                   </ThemedText>
                 </View>
@@ -641,10 +641,7 @@ export function MetricTrendChart({
           {!!eventSeries?.length && (
             <View style={styles.eventRows}>
               {chartGeometry.eventSeriesPoints.map((series, seriesIndex) => (
-                <View
-                  key={`${series.label}-${seriesIndex}`}
-                  style={styles.eventRow}
-                >
+                <View key={`${series.label}-${seriesIndex}`} style={styles.eventRow}>
                   {series.points.map(event => (
                     <View
                       key={`${series.label}-${event.date}`}
@@ -652,8 +649,7 @@ export function MetricTrendChart({
                         styles.eventDot,
                         {
                           left: event.x - 4,
-                          backgroundColor:
-                            series.color ?? colors.primary,
+                          backgroundColor: series.color ?? colors.primary,
                         },
                       ]}
                     />
@@ -666,12 +662,7 @@ export function MetricTrendChart({
       )}
       <View style={styles.legend}>
         <View style={styles.legendItem}>
-          <View
-            style={[
-              styles.legendDot,
-              { backgroundColor: colors.primary },
-            ]}
-          />
+          <View style={[styles.legendDot, { backgroundColor: colors.primary }]} />
           <ThemedText type="caption">
             {metricName}
             {unit ? ` (${unit})` : ''}
@@ -679,36 +670,24 @@ export function MetricTrendChart({
         </View>
 
         {eventSeries?.map((series, index) => (
-          <View
-            key={`${series.label}-${index}`}
-            style={styles.legendItem}
-          >
+          <View key={`${series.label}-${index}`} style={styles.legendItem}>
             <View
               style={[
                 styles.legendDot,
                 {
-                  backgroundColor:
-                    series.color ?? colors.primary,
+                  backgroundColor: series.color ?? colors.primary,
                 },
               ]}
             />
 
-            <ThemedText type="caption">
-              {getTargetLabel(series.label)}
-            </ThemedText>
+            <ThemedText type="caption">{getTargetLabel(series.label)}</ThemedText>
           </View>
         ))}
       </View>
 
       {!!onViewRegisteredValues && (
-        <AppButton
-          onPress={onViewRegisteredValues}
-          title={t('trendChart.viewRegisteredValues')}
-          variant="secondary"
-          style={styles.ctaButton}
-        />
+        <AppButton onPress={onViewRegisteredValues} title={t('trendChart.viewRegisteredValues')} variant="secondary" style={styles.ctaButton} />
       )}
-
     </View>
   );
 }
@@ -723,6 +702,8 @@ const styles = StyleSheet.create({
     gap: 12,
     marginBottom: 12,
   },
+  periodControls: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 12 },
+  seriesButton: { flexDirection: 'row', alignItems: 'center', gap: 8, minHeight: 44, paddingHorizontal: 12, borderWidth: 1, borderRadius: 10 },
   summary: {
     flexDirection: 'row',
     gap: 10,
