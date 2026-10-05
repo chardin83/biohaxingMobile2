@@ -11,7 +11,6 @@ import ImmuneOverview from './immuneOverview';
 import LongevityOverview from './longevityOverview';
 import MindOverview from './mindOverview';
 import NervousSystemOverview from './nervousSystemOverview';
-import PhilosophyOverview from './philosophyOverview';
 import SleepOverview from './sleepOverview';
 import StrengthOverview from './strengthOverview';
 
@@ -36,7 +35,6 @@ export default function AreaRootScreen() {
       {areaId === 'digestiveHealth' && <DigestiveOverview mainGoalId={areaId} />}
       {areaId === 'immuneSupport' && <ImmuneOverview mainGoalId={areaId} />}
       {areaId === 'mind' && <MindOverview mainGoalId={areaId} />}
-      {areaId === 'philosophy' && <PhilosophyOverview mainGoalId={areaId} />}
       {areaId === 'longevity' && <LongevityOverview mainGoalId={areaId} />}
     </Container>
   );

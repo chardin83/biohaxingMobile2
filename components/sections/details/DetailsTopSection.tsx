@@ -20,8 +20,6 @@ function getAreaIconColor(areaId: string, colors: any) {
       return colors.area.energy;
     case 'mind':
       return colors.area.mind;
-    case 'philosophy':
-      return colors.area.philosophy;
     case 'sleepQuality':
       return colors.area.sleep;
     case 'nervousSystem':
