@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react-native';
+import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
 
 import { MetricTrendChart, type MetricTrendOption } from '../metrics/MetricTrendChart';
@@ -46,9 +46,20 @@ function SelectableChart() {
 }
 
 describe('MetricTrendChart series selector', () => {
-  it('switches the displayed values from RMSSD to SDNN', () => {
+  it('shows a loading shell before rendering the chart', async () => {
+    const { getByText, queryByText, UNSAFE_getByType, UNSAFE_queryByType } = render(<MetricTrendChart data={[]} metricName="HRV" />);
+    const { ActivityIndicator } = require('react-native');
+    expect(getByText('trendChart.title')).toBeTruthy();
+    expect(UNSAFE_getByType(ActivityIndicator)).toBeTruthy();
+    expect(queryByText('metrics:trendChart.emptyTitle')).toBeNull();
+    await waitFor(() => expect(getByText('metrics:trendChart.emptyTitle')).toBeTruthy());
+    expect(UNSAFE_queryByType(ActivityIndicator)).toBeNull();
+  });
+
+  it('switches the displayed values from RMSSD to SDNN', async () => {
     const { getByLabelText, getByText, queryByText, getAllByText } = render(<SelectableChart />);
-    expect(getAllByText('45 ms').length).toBeGreaterThan(0);
+    await waitFor(() => expect(getAllByText('45 ms').length).toBeGreaterThan(0));
+    await waitFor(() => expect(getByLabelText('trendChart.selectSeries')).toBeTruthy());
     fireEvent.press(getByLabelText('trendChart.selectSeries'));
     fireEvent.press(getByText('SDNN'));
     expect(getAllByText('80 ms').length).toBeGreaterThan(0);
@@ -56,8 +67,9 @@ describe('MetricTrendChart series selector', () => {
     expect(getByLabelText('trendChart.selectSeries').props.accessibilityValue.text).toBe('SDNN');
   });
 
-  it('supports other metric options and keeps the dropdown available for an empty series', () => {
+  it('supports other metric options and keeps the dropdown available for an empty series', async () => {
     const { getByLabelText, getByText } = render(<SelectableChart />);
+    await waitFor(() => expect(getByLabelText('trendChart.selectSeries')).toBeTruthy());
     fireEvent.press(getByLabelText('trendChart.selectSeries'));
     fireEvent.press(getByText('Other measurement'));
     expect(getByText('metrics:trendChart.emptyTitle')).toBeTruthy();
@@ -66,8 +78,9 @@ describe('MetricTrendChart series selector', () => {
     expect(getByLabelText('trendChart.selectSeries').props.accessibilityValue.text).toBe('SDNN');
   });
 
-  it('omits the dropdown when no options are supplied', () => {
-    const { queryByLabelText } = render(<MetricTrendChart data={[]} metricName="Sleep" />);
+  it('omits the dropdown when no options are supplied', async () => {
+    const { queryByLabelText, getByText } = render(<MetricTrendChart data={[]} metricName="Sleep" />);
+    await waitFor(() => expect(getByText('metrics:trendChart.emptyTitle')).toBeTruthy());
     expect(queryByLabelText('trendChart.selectSeries')).toBeNull();
   });
 });

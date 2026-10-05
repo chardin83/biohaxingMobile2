@@ -2,7 +2,7 @@ import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, StyleSheet } from 'react-native';
+import { ActivityIndicator, Alert, StyleSheet } from 'react-native';
 import { Portal } from 'react-native-paper';
 
 import type { MetricEntry } from '@/app/context/storage/metrics/metricTypes';
@@ -42,6 +42,7 @@ export function MetricValuesBottomSheet({
   const registerBottomSheetRef = React.useRef<BottomSheet>(null);
   const registerSleepBatchBottomSheetRef = React.useRef<BottomSheet>(null);
   const [sheetIndex, setSheetIndex] = React.useState(1);
+  const [isTableVisible, setIsTableVisible] = React.useState(false);
   const [isRegisterSheetVisible, setIsRegisterSheetVisible] = React.useState(false);
   const [isSleepBatchSheetVisible, setIsSleepBatchSheetVisible] = React.useState(false);
   const [editingEntry, setEditingEntry] = React.useState<MetricValueEntry | null>(null);
@@ -54,11 +55,28 @@ export function MetricValuesBottomSheet({
 
   const snapPoints = React.useMemo(() => ['30%', '55%', '90%'], []);
 
-  const registeredEntries = React.useMemo(() => {
-    if (!metricId) return [];
+  const [loadedEntries, setLoadedEntries] = React.useState<{
+    metricId: MetricId;
+    history: typeof getMetricHistory;
+    entries: MetricEntry[];
+  } | null>(null);
+  const entriesReady = loadedEntries?.metricId === metricId && loadedEntries?.history === getMetricHistory;
+  const registeredEntries = entriesReady ? (loadedEntries?.entries ?? []) : [];
 
-    return [...getMetricHistory(metricId)].sort((left, right) => right.recordedAt.localeCompare(left.recordedAt));
-  }, [getMetricHistory, metricId]);
+  React.useEffect(() => {
+    if (!metricId || !isTableVisible) return;
+    let nextFrame: number | undefined;
+    const frame = requestAnimationFrame(() => {
+      nextFrame = requestAnimationFrame(() => {
+        const entries = [...getMetricHistory(metricId)].sort((left, right) => right.recordedAt.localeCompare(left.recordedAt));
+        setLoadedEntries({ metricId, history: getMetricHistory, entries });
+      });
+    });
+    return () => {
+      cancelAnimationFrame(frame);
+      if (nextFrame !== undefined) cancelAnimationFrame(nextFrame);
+    };
+  }, [getMetricHistory, metricId, isTableVisible]);
 
   const handleOpenAddMetricSheet = React.useCallback(() => {
     if (!metricId) return;
@@ -195,6 +213,7 @@ export function MetricValuesBottomSheet({
   }, [addMetricEntry, editingEntry, handleCloseAddMetricSheet, isSameEntry, metricId, metricNotes, metricUnit, metricValue, recordedAt, setMetricEntries]);
 
   const handleSheetChange = React.useCallback((index: number) => {
+    setIsTableVisible(index >= 0);
     if (index >= 0) {
       setSheetIndex(index);
     }
@@ -209,19 +228,25 @@ export function MetricValuesBottomSheet({
       <BottomSheet
         ref={bottomSheetRef}
         snapPoints={snapPoints}
+        enableDynamicSizing={false}
         enablePanDownToClose
         backgroundStyle={sheetDesign.backgroundStyle}
         handleComponent={sheetDesign.handleComponent}
         animateOnMount
         index={-1}
         onChange={handleSheetChange}
+        onAnimate={(_from, to) => {
+          if (to >= 0) setIsTableVisible(true);
+        }}
       >
-        <BottomSheetView style={[styles.contentContainer, { backgroundColor: colors.background }]}>
-          <ThemedText type="title3" style={styles.title}>
-            {metricName ?? t(`metrics:${metricId}.name`)}
-          </ThemedText>
-
+        {isTableVisible && entriesReady ? (
           <MetricValuesTableSection
+            virtualized
+            header={
+              <ThemedText type="title3" style={styles.title}>
+                {metricName ?? t(`metrics:${metricId}.name`)}
+              </ThemedText>
+            }
             entries={registeredEntries}
             colors={colors}
             emptyText={t('metrics:trendChart.empty', { metric: metricName ?? t(`metrics:${metricId}.name`) })}
@@ -234,7 +259,12 @@ export function MetricValuesBottomSheet({
             valueLabel={t('common:metricValuesBottomSheet.columns.value')}
             notesLabel={t('common:metricValuesBottomSheet.columns.notes')}
           />
-        </BottomSheetView>
+        ) : (
+          <BottomSheetView style={styles.contentContainer} accessibilityState={{ busy: true }}>
+            <ThemedText type="title3">{metricName ?? t(`metrics:${metricId}.name`)}</ThemedText>
+            <ActivityIndicator size="large" color={colors.primary} style={styles.loadingIndicator} />
+          </BottomSheetView>
+        )}
       </BottomSheet>
 
       <RegisterMetricBottomSheet
@@ -274,6 +304,7 @@ export function MetricValuesBottomSheet({
 }
 
 const styles = StyleSheet.create({
+  loadingIndicator: { marginVertical: 24 },
   contentContainer: {
     flex: 1,
     padding: 16,

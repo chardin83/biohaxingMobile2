@@ -10,7 +10,7 @@ import { MetricValuesBottomSheet } from '@/components/sections/metrics/MetricVal
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { useHRVTrendSelector } from '@/hooks/useHRVTrendSelector';
-import { getHRVHistory } from '@/utils/hrvHistory';
+import { buildHRVDailyTrend, getHRVHistory } from '@/utils/hrvHistory';
 import { buildTrendData } from '@/utils/metrics';
 
 import { DeepSleepMetric } from './DeepSleepMetric';
@@ -68,7 +68,7 @@ export function ImmuneStatusChart() {
   }, [getMetricHistory]);
 
   const hrvTrendData = React.useMemo<MetricTrendPoint[]>(() => {
-    return buildTrendData(getHRVHistory(getMetricHistory).entries);
+    return buildHRVDailyTrend(getHRVHistory(getMetricHistory).entries);
   }, [getMetricHistory]);
 
   const selectedConfig = React.useMemo(() => {

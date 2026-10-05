@@ -25,6 +25,7 @@ export type SleepSummaryWithTarget = SleepSummary & { targetBedtime: string };
 export type HRVSummary = {
   source: SourceId;
   date: string;
+  recordedAt?: string; // Original sample timestamp; daily summaries may omit it.
   rmssdMs?: number;
   sdnnMs?: number;
 };

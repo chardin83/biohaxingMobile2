@@ -119,6 +119,7 @@
         "description": "HRV (SDNN), ms."
     },
     "hrv": {
+        "dailyMeanName": "Daily average HRV ({{format}})",
         "name": "HRV (heart rate variability)",
         "shortName": "HRV",
         "description": "Measure of nervous system balance and recovery capacity.",

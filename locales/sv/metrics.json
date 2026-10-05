@@ -112,6 +112,7 @@
         "description": "HRV (SDNN), ms."
     },
     "hrv": {
+        "dailyMeanName": "Dagens medel-HRV ({{format}})",
         "name": "HRV (hjärtfrekvensvariation)",
         "shortName": "HRV",
         "description": "Mått på nervsystemets balans och kroppens återhämtning.",

@@ -283,23 +283,34 @@ export class HealthConnectAdapter implements WearableAdapter {
   async getHRV(range: TimeRange): Promise<HRVSummary[]> {
     try {
       await this.ensureInit();
-      const result = await readRecords('HeartRateVariabilityRmssd', {
-        timeRangeFilter: {
-          operator: 'between',
-          startTime: range.start,
-          endTime: range.end,
-        },
-        ascendingOrder: true,
-      });
-      return result.records.map(record => ({
-        source: this.source,
-        date: toLocalDateISO(record.time),
-        rmssdMs: record.heartRateVariabilityMillis,
-      }));
+      return await this.getHRVPages(range);
     } catch (err) {
       console.warn('[HealthConnectAdapter] getHRV failed', err);
       return [];
     }
+  }
+
+  private async getHRVPages(range: TimeRange, samples: HRVSummary[] = [], pageToken?: string): Promise<HRVSummary[]> {
+    const result = await readRecords('HeartRateVariabilityRmssd', {
+      timeRangeFilter: {
+        operator: 'between',
+        startTime: range.start,
+        endTime: range.end,
+      },
+      ascendingOrder: true,
+      pageSize: 1000,
+      pageToken,
+    });
+    samples.push(
+      ...result.records.map(record => ({
+        source: this.source,
+        date: toLocalDateISO(record.time),
+        recordedAt: new Date(record.time).toISOString(),
+        rmssdMs: record.heartRateVariabilityMillis,
+      }))
+    );
+    // Each subsequent page depends on the token returned by the previous one.
+    return result.pageToken ? this.getHRVPages(range, samples, result.pageToken) : samples;
   }
 
   async getRestingHeartRate(range: TimeRange): Promise<RestingHeartRateSummary[]> {

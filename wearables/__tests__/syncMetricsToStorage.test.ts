@@ -46,6 +46,22 @@ describe('HRV metric sync', () => {
     ]);
   });
 
+  it('preserves every five-minute HRV measurement and its original timestamp', async () => {
+    const upsert = jest.fn();
+    const samples: HRVSummary[] = Array.from({ length: 288 }, (_, index) => ({
+      source: 'healthconnect',
+      date: '2026-10-05',
+      recordedAt: new Date(Date.UTC(2026, 9, 5, 0, index * 5)).toISOString(),
+      rmssdMs: 40 + index,
+    }));
+    await syncWearableMetricsToStorage(createAdapter(samples), upsert);
+    const entries = upsert.mock.calls[0][0];
+    expect(entries).toHaveLength(288);
+    expect(new Set(entries.map((entry: { recordedAt: string }) => entry.recordedAt)).size).toBe(288);
+    expect(entries[0]).toEqual(expect.objectContaining({ metricId: 'hrv_rmssd', recordedAt: samples[0].recordedAt, value: 40 }));
+    expect(entries[287]).toEqual(expect.objectContaining({ recordedAt: samples[287].recordedAt, value: 327 }));
+  });
+
   it('skips missing and non-finite HRV values', async () => {
     const upsert = jest.fn();
     const summaries: HRVSummary[] = [

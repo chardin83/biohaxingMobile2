@@ -15,7 +15,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { useHRVTrendSelector } from '@/hooks/useHRVTrendSelector';
 import { MetricId } from '@/locales/metrics';
-import { getHRVHistory } from '@/utils/hrvHistory';
+import { buildHRVDailyTrend, getHRVHistory } from '@/utils/hrvHistory';
 
 type ValidMetricId<T extends MetricId> = T;
 
@@ -38,13 +38,15 @@ export function EnergyProductionCharts() {
   }, []);
 
   const toTrendData = React.useCallback(
-    (metricId: EnergyProductionMetricKey): MetricTrendPoint[] =>
-      (metricId === 'hrv' ? getHRVHistory(getMetricHistory).entries : getMetricHistory(metricId))
+    (metricId: EnergyProductionMetricKey): MetricTrendPoint[] => {
+      if (metricId === 'hrv') return buildHRVDailyTrend(getHRVHistory(getMetricHistory).entries);
+      return getMetricHistory(metricId)
         .map(entry => ({
           date: entry.recordedAt.slice(0, 10),
           value: entry.value,
         }))
-        .sort((left, right) => left.date.localeCompare(right.date)),
+        .sort((left, right) => left.date.localeCompare(right.date));
+    },
     [getMetricHistory]
   );
 

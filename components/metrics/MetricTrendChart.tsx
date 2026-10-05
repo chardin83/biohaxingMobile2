@@ -1,7 +1,7 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { LayoutChangeEvent, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, LayoutChangeEvent, Pressable, StyleSheet, View } from 'react-native';
 import { Menu } from 'react-native-paper';
 import Svg, { Circle, Defs, Line, LinearGradient, Path, Stop, Text as SvgText } from 'react-native-svg';
 
@@ -114,7 +114,37 @@ function buildAreaPath(points: { x: number; y: number }[], chartBottom: number) 
   return `${linePath} L ${lastPoint.x} ${chartBottom} L ${firstPoint.x} ${chartBottom} Z`;
 }
 
-export function MetricTrendChart({
+export function MetricTrendChart(props: Readonly<MetricTrendChartProps>) {
+  const { colors } = useTheme();
+  const { t } = useTranslation('metrics');
+  const [ready, setReady] = React.useState(false);
+
+  React.useEffect(() => {
+    let nextFrame: number | undefined;
+    const frame = requestAnimationFrame(() => {
+      nextFrame = requestAnimationFrame(() => setReady(true));
+    });
+    return () => {
+      cancelAnimationFrame(frame);
+      if (nextFrame !== undefined) cancelAnimationFrame(nextFrame);
+    };
+  }, []);
+
+  if (!ready) {
+    return (
+      <View style={[styles.container, { borderTopColor: colors.borderLight }]}>
+        <ThemedText type="title3">{t('trendChart.title', { metric: props.metricName })}</ThemedText>
+        <View style={[styles.loadingChart, { minHeight: props.height ?? 180 }]} accessibilityState={{ busy: true }}>
+          <ActivityIndicator size="large" color={props.accentColor ?? colors.primary} />
+        </View>
+      </View>
+    );
+  }
+
+  return <MetricTrendChartContent {...props} />;
+}
+
+function MetricTrendChartContent({
   data: defaultData,
   metricName: defaultMetricName,
   unit,
@@ -284,7 +314,7 @@ export function MetricTrendChart({
       }
 
       const unitSuffix = unit ? ` ${unit}` : '';
-      return `${value}${unitSuffix}`;
+      return `${Number(value.toFixed(1))}${unitSuffix}`;
     },
     [unit, valueFormatter]
   );
@@ -693,6 +723,7 @@ export function MetricTrendChart({
 }
 
 const styles = StyleSheet.create({
+  loadingChart: { alignItems: 'center', justifyContent: 'center' },
   container: {
     marginTop: 20,
     paddingTop: 16,

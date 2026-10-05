@@ -311,7 +311,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
               metricId: metric.metricId,
               value: metric.value,
               unit: 'ms',
-              recordedAt: toRecordedAt(entry.date),
+              recordedAt: entry.recordedAt ?? toRecordedAt(entry.date),
               notes: notesLabel,
             }) satisfies MetricEntry
         )

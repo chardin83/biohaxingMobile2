@@ -3,8 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useStorage } from '@/app/context/StorageContext';
 import type { MetricTrendSelector } from '@/components/metrics/MetricTrendChart';
-import { getHRVHistory, type HRVMetricId } from '@/utils/hrvHistory';
-import { buildTrendData } from '@/utils/metrics';
+import { buildHRVDailyTrend, getHRVHistory, type HRVMetricId } from '@/utils/hrvHistory';
 
 export function useHRVTrendSelector() {
   const { getMetricHistory } = useStorage();
@@ -17,8 +16,8 @@ export function useHRVTrendSelector() {
     options: (['hrv_rmssd', 'hrv_sdnn'] as const).map(id => ({
       value: id,
       label: id === 'hrv_rmssd' ? 'RMSSD' : 'SDNN',
-      metricName: t(`metrics:${id}.name`),
-      data: buildTrendData(getMetricHistory(id)),
+      metricName: t('metrics:hrv.dailyMeanName', { format: id === 'hrv_rmssd' ? 'RMSSD' : 'SDNN' }),
+      data: buildHRVDailyTrend(getMetricHistory(id)),
     })),
     onChange: value => {
       if (value === 'hrv_rmssd' || value === 'hrv_sdnn') setSelection(value);

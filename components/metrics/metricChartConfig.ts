@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { type MetricId } from '@/locales/metrics';
-import { getHRVHistory } from '@/utils/hrvHistory';
+import { buildHRVDailyTrend, getHRVHistory } from '@/utils/hrvHistory';
 import { buildTrendData } from '@/utils/metrics';
 
 import type { MetricTrendPoint } from './MetricTrendChart';
@@ -112,7 +112,21 @@ const ALL_METRIC_CHART_META: Partial<Record<MetricId, MetricMeta>> = {
 
   hrv: {
     metricNameKey: 'metrics:hrv.name',
-    buildData: getMetricHistory => buildTrendData(getHRVHistory(getMetricHistory).entries),
+    buildData: getMetricHistory => buildHRVDailyTrend(getHRVHistory(getMetricHistory).entries),
+    unit: 'ms',
+    accentColor: colors => colors.chart.hrv,
+  },
+
+  hrv_rmssd: {
+    metricNameKey: 'metrics:hrv_rmssd.name',
+    buildData: getMetricHistory => buildHRVDailyTrend(getMetricHistory('hrv_rmssd')),
+    unit: 'ms',
+    accentColor: colors => colors.chart.hrv,
+  },
+
+  hrv_sdnn: {
+    metricNameKey: 'metrics:hrv_sdnn.name',
+    buildData: getMetricHistory => buildHRVDailyTrend(getMetricHistory('hrv_sdnn')),
     unit: 'ms',
     accentColor: colors => colors.chart.hrv,
   },

@@ -10,7 +10,7 @@ import { MetricValuesBottomSheet } from '@/components/sections/metrics/MetricVal
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { useHRVTrendSelector } from '@/hooks/useHRVTrendSelector';
-import { getHRVHistory } from '@/utils/hrvHistory';
+import { buildHRVDailyTrend, getHRVHistory } from '@/utils/hrvHistory';
 import { buildTrendData } from '@/utils/metrics';
 
 import { HRVMetric } from './HRVMetric';
@@ -53,7 +53,7 @@ export function StrengthRecoveryTrendsChart() {
     [getMetricHistory]
   );
   const sleepBedtimeTrendData = React.useMemo(() => buildTrendData(getMetricHistory('sleep_bedtime')), [getMetricHistory]);
-  const hrvTrendData = React.useMemo(() => buildTrendData(getHRVHistory(getMetricHistory).entries), [getMetricHistory]);
+  const hrvTrendData = React.useMemo(() => buildHRVDailyTrend(getHRVHistory(getMetricHistory).entries), [getMetricHistory]);
 
   const toggleMetric = React.useCallback((metric: StrengthRecoveryMetricKey) => {
     setSelectedMetric(current => (current === metric ? null : metric));
