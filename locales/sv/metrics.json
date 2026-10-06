@@ -241,11 +241,12 @@
     },
     "recoveryStatus": {
         "title": "Återhämtningsstatus",
-        "readyForActivity": "Redo för aktivitet",
-        "goodRecovery": "Bra återhämtning",
-        "needRecovery": "Behöver återhämtning",
-        "sleep": "Sömn",
-        "noSleepData": "Ingen sömndata"
+        "wellRecovered": "Väl återhämtad",
+        "normalRecovery": "Normal återhämtning",
+        "reducedRecovery": "Nedsatt återhämtning",
+        "lowRecovery": "Låg återhämtning",
+        "insufficientData": "Otillräcklig data",
+        "score": "{{score}}/100"
     },
      "warnings": {
         "missing_permission": "Behörighet saknas",

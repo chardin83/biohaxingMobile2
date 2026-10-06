@@ -674,6 +674,10 @@
       "microbiomeButyrate": {
         "title": "Mikrobiom och butyratproducerande bakterier",
         "description": "Tarmmikrobiomet påverkar immunförsvaret direkt. Butyratproducerande bakterier (som producerar kortkedjiga fettsyran butyrat) stärker tarmbarriären, dämpar låggradig inflammation och stödjer immuntolerans. Resistent stärkelse är ett viktigt bränsle för dessa bakterier och finns bland annat i avsvalnad potatis/ris, gröna bananer, baljväxter och havre. En fiberrik kost gynnar därför butyratproduktion och kan förbättra immunbalansen."
+      },
+      "recovery": {
+        "title": "Återhämtningsstatus",
+        "description": "Sömn och återhämtning ger immunförsvaret bättre förutsättningar att fungera. Låga poäng över tid kan tyda på ökad belastning och behov av mer vila. Poängen mäter inte immunförsvarets styrka och visar inte om du har en infektion."
       }
     }
   },
@@ -716,6 +720,10 @@
       "trainingNutritionStress": {
         "title": "Högintensiv träning, kost och stressbelastning",
         "description": "Högintensiv träning är effektiv men ökar den akuta aktiveringen av sympatikus. Om den kombineras med för lågt energi- eller kolhydratintag under längre perioder kan kortisol förbli förhöjt, HRV sjunka och sömnen försämras. Det kan ge tecken på nervsystemsbelastning som trötthet, sämre återhämtning och minskad prestation. För att skydda nervsystemet: periodisera intensiva pass, säkerställ tillräcklig energi och använd återhämtningsdagar med fokus på parasympatisk aktivering."
+      },
+      "recovery": {
+        "title": "Återhämtningsstatus",
+        "description": "För nervsystemet kan god återhämtning tyda på bättre förmåga att växla från anspänning till vila. Låga poäng över tid kan vara en signal om att prioritera sömn, lugna pauser och anpassad träningsbelastning."
       }
     }
   },
@@ -1020,7 +1028,8 @@
       "sleep_duration": "Tillräcklig sömnlängd stärker immunförsvarets signalering och minskar inflammatorisk belastning. Trenden hjälper dig se om återhämtningen är stabil vecka för vecka.",
       "deep_sleep": "Djupsömn är den mest immunstödjande sömnfasen där kroppen reparerar vävnad och återställer försvarssystem. En sjunkande trend kan signalera ökad sårbarhet.",
       "resting_hr": "Vilopuls är en känslig markör för belastning på kroppen. En ovanligt stigande trend kan vara ett tidigt tecken på infektion, inflammation eller underåterhämtning.",
-      "hrv": "HRV speglar balansen i autonoma nervsystemet och kroppens återhämtningsförmåga. Högre och stabilare nivåer är ofta kopplade till bättre immunrespons och stressmotstånd."
+      "hrv": "HRV speglar balansen i autonoma nervsystemet och kroppens återhämtningsförmåga. Högre och stabilare nivåer är ofta kopplade till bättre immunrespons och stressmotstånd.",
+      "recovery": "Återhämtningsstatus uppskattas med HRV (45 %), vilopuls (30 %) och sömn (25 %), jämfört med din baslinje från föregående 28 dagar."
     }
   },
   "nervousTrendsChart": {
@@ -1028,7 +1037,8 @@
     "explainer": "Klicka på HRV eller vilopuls för att se deras trender över tid.",
     "explainers": {
       "hrv": "HRV-trenden visar hur väl ditt autonoma nervsystem växlar till återhämtning. Högre och stabilare nivåer tyder ofta på bättre stressresiliens.",
-      "resting_hr": "Vilopuls är en känslig markör för stress och återhämtning. En gradvis ökning kan vara ett tidigt tecken på otillräcklig återhämtning."
+      "resting_hr": "Vilopuls är en känslig markör för stress och återhämtning. En gradvis ökning kan vara ett tidigt tecken på otillräcklig återhämtning.",
+      "recovery": "Återhämtningsstatus uppskattas med HRV (45 %), vilopuls (30 %) och sömn (25 %), jämfört med din baslinje från föregående 28 dagar."
     }
   },
   "cardioTrendsChart": {

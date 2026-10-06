@@ -32,6 +32,11 @@ export default function ImmuneScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
       {/* Information card */}
       <Card title={t('immuneOverview.whyTheseMetricsMatter.title')}>
         <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🔄 {t('immuneOverview.whyTheseMetricsMatter.recovery.title')}</ThemedText>
+          <ThemedText type="default">{t('immuneOverview.whyTheseMetricsMatter.recovery.description')}</ThemedText>
+        </View>
+
+        <View style={globalStyles.infoSection}>
           <ThemedText type="title3">💤 {t('immuneOverview.whyTheseMetricsMatter.sleep.title')}</ThemedText>
           <ThemedText type="default">
             {t('immuneOverview.whyTheseMetricsMatter.sleep.description')}

@@ -25,6 +25,7 @@ type Props = {
   subtitle?: string;
   iconName?: IconSymbolName;
   iconColor?: string;
+  showIcon?: boolean;
   image?: ImageSourcePropType;
   onPress?: () => void;
   style?: any;
@@ -38,6 +39,7 @@ export const SettingsCardLink: React.FC<Props> = ({
   subtitle,
   iconName = 'public',
   iconColor,
+  showIcon = true,
   image,
   onPress,
   style,
@@ -71,7 +73,7 @@ export const SettingsCardLink: React.FC<Props> = ({
               style={styles.row}
             >
               <View style={styles.leftRow}>
-                <SettingIcon size={40} iconName={r.iconName ?? 'public'} />
+                {showIcon && <SettingIcon size={40} iconName={r.iconName ?? 'public'} />}
                 <View style={styles.textColumn}>
                   <ThemedText type="title3" style={styles.title}>
                     {r.title}
@@ -98,7 +100,8 @@ export const SettingsCardLink: React.FC<Props> = ({
     <CardContainer style={style}>
       <Pressable onPress={onPress} style={styles.container}>
         <View style={styles.leftRow}>
-          {image ? <Image source={image} style={styles.image} resizeMode="contain" /> : <SettingIcon size={40} iconName={iconName} iconColor={iconColor} />}
+          {showIcon &&
+            (image ? <Image source={image} style={styles.image} resizeMode="contain" /> : <SettingIcon size={40} iconName={iconName} iconColor={iconColor} />)}
           <View style={styles.textColumn}>
             <ThemedText type="title3" style={styles.title}>
               {title}

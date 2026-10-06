@@ -29,6 +29,11 @@ export default function NervousSystemScreen({ mainGoalId }: Readonly<{ mainGoalI
       {/* Information card */}
       <Card title={t('nervousSystemOverview.informationCard.title')}>
         <View style={globalStyles.infoSection}>
+          <ThemedText type="title3">🔄 {t('nervousSystemOverview.informationCard.recovery.title')}</ThemedText>
+          <ThemedText type="default">{t('nervousSystemOverview.informationCard.recovery.description')}</ThemedText>
+        </View>
+
+        <View style={globalStyles.infoSection}>
           <ThemedText type="title3">❤️ {t('nervousSystemOverview.informationCard.hrv.title')}</ThemedText>
           <ThemedText type="default">{t('nervousSystemOverview.informationCard.hrv.description')}</ThemedText>
         </View>

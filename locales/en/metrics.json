@@ -247,12 +247,13 @@
         "sevenDayTotal": "7-day total"  
     },
     "recoveryStatus": {
-        "title": "Recovery Status",
-        "readyForActivity": "Ready for activity",
-        "goodRecovery": "Good recovery",
-        "needRecovery": "Need recovery",
-        "sleep": "Sleep",
-        "noSleepData": "No sleep data"
+        "title": "Recovery status",
+        "wellRecovered": "Well recovered",
+        "normalRecovery": "Normal recovery",
+        "reducedRecovery": "Reduced recovery",
+        "lowRecovery": "Low recovery",
+        "insufficientData": "Not enough data",
+        "score": "{{score}}/100"
     },
     "warnings": {
         "missing_permission": "Permission missing",

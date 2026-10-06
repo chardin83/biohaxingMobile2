@@ -674,6 +674,10 @@
       "microbiomeButyrate": {
         "title": "Microbiome and Butyrate-Producing Bacteria",
         "description": "The gut microbiome directly influences immune function. Butyrate-producing bacteria (which produce the short-chain fatty acid butyrate) strengthen the gut barrier, reduce low-grade inflammation, and support immune tolerance. Resistant starch is a key fuel for these bacteria and is found in foods such as cooled potatoes/rice, green bananas, legumes, and oats. A fiber-rich diet therefore supports butyrate production and may improve immune balance."
+      },
+      "recovery": {
+        "title": "Recovery status",
+        "description": "Sleep and recovery support immune function. Persistently low scores may suggest increased strain and a need for more rest. The score does not measure immune strength or indicate whether you have an infection."
       }
     }
   },
@@ -716,6 +720,10 @@
       "trainingNutritionStress": {
         "title": "High-Intensity Training, Nutrition, and Stress Load",
         "description": "High-intensity training is effective but increases acute sympathetic activation. If combined with chronically low energy or carbohydrate intake, cortisol may remain elevated, HRV can drop, and sleep quality may decline. This can present as nervous system overload, including fatigue, poorer recovery, and reduced performance. To protect the nervous system: periodize hard sessions, ensure adequate energy intake, and include recovery days focused on parasympathetic activation."
+      },
+      "recovery": {
+        "title": "Recovery status",
+        "description": "For the nervous system, good recovery may suggest a better ability to shift from activation into rest. Persistently low scores can be a cue to prioritize sleep, calm breaks, and an appropriate training load."
       }
     }
   },
@@ -1020,7 +1028,8 @@
       "sleep_duration": "Adequate sleep duration supports immune signaling and lowers inflammatory load. The trend helps you see whether your recovery foundation is stable week to week.",
       "deep_sleep": "Deep sleep is the most immune-supportive sleep stage, where tissue repair and immune regulation are prioritized. A declining trend can indicate growing vulnerability.",
       "resting_hr": "Resting heart rate is a sensitive load marker. An unusual upward trend can be an early signal of infection, inflammation, or under-recovery.",
-      "hrv": "HRV reflects autonomic balance and recovery capacity. Higher, more stable levels are often associated with stronger immune response and stress resilience."
+      "hrv": "HRV reflects autonomic balance and recovery capacity. Higher, more stable levels are often associated with stronger immune response and stress resilience.",
+      "recovery": "Recovery status is estimated from HRV (45%), resting heart rate (30%), and sleep (25%), compared with your baseline over the previous 28 days."
     }
   },
   "nervousTrendsChart": {
@@ -1028,7 +1037,8 @@
     "explainer": "Tap HRV or resting heart rate to see their trends over time.",
     "explainers": {
       "hrv": "The HRV trend shows how effectively your autonomic system shifts into recovery. Higher and steadier levels often indicate better stress resilience.",
-      "resting_hr": "Resting heart rate is a sensitive stress and recovery marker. A gradual upward trend can be an early sign of under-recovery."
+      "resting_hr": "Resting heart rate is a sensitive stress and recovery marker. A gradual upward trend can be an early sign of under-recovery.",
+      "recovery": "Recovery status is estimated from HRV (45%), resting heart rate (30%), and sleep (25%), compared with your baseline over the previous 28 days."
     }
   },
   "cardioTrendsChart": {

@@ -16,7 +16,8 @@ import { buildTrendData } from '@/utils/metrics';
 import { DeepSleepMetric } from './DeepSleepMetric';
 import { HRVMetric } from './HRVMetric';
 import { MetricTrendChart, type MetricTrendPoint } from './MetricTrendChart';
-import { RecoveryStatusMetric } from './old/RecoveryStatusMetric';
+import { RecoveryStatusMetric } from './RecoveryStatusMetric';
+import { RecoveryTrendChart } from './RecoveryTrendChart';
 import { RestingHRMetric } from './RestingHRMetric';
 import { SleepMetric } from './SleepMetric';
 
@@ -30,6 +31,7 @@ function formatSleepDuration(valueInMinutes: number) {
 }
 
 export function ImmuneStatusChart() {
+  const [recoverySelected, setRecoverySelected] = React.useState(false);
   const hrvTrend = useHRVTrendSelector();
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -38,6 +40,7 @@ export function ImmuneStatusChart() {
   const metricValuesBottomSheetRef = React.useRef<BottomSheet>(null);
 
   const toggleMetric = React.useCallback((metric: ImmuneTrendMetricKey) => {
+    setRecoverySelected(false);
     setSelectedMetric(current => (current === metric ? null : metric));
   }, []);
 
@@ -117,6 +120,13 @@ export function ImmuneStatusChart() {
     t,
   ]);
 
+  let explainer = t('immuneTrendsChart.explainer');
+  if (recoverySelected) {
+    explainer = t('immuneTrendsChart.explainers.recovery');
+  } else if (selectedMetric) {
+    explainer = t(`immuneTrendsChart.explainers.${selectedMetric}`, { defaultValue: explainer });
+  }
+
   return (
     <>
       <Card title={t('immuneOverview.immuneStatus.title')}>
@@ -128,8 +138,16 @@ export function ImmuneStatusChart() {
         <View style={[globalStyles.row, globalStyles.marginTop8]}>
           <RestingHRMetric showDivider={true} onPress={() => toggleMetric('resting_hr')} isSelected={selectedMetric === 'resting_hr'} />
           <HRVMetric showDivider={true} onPress={() => toggleMetric('hrv')} isSelected={selectedMetric === 'hrv'} />
-          <RecoveryStatusMetric />
+          <RecoveryStatusMetric
+            isSelected={recoverySelected}
+            onPress={() => {
+              setSelectedMetric(null);
+              setRecoverySelected(current => !current);
+            }}
+          />
         </View>
+
+        {recoverySelected && <RecoveryTrendChart />}
 
         {selectedConfig && (
           <MetricTrendChart
@@ -144,11 +162,7 @@ export function ImmuneStatusChart() {
         )}
 
         <ThemedText type="explainer" style={[globalStyles.explainer, { borderColor: colors.borderLight }]}>
-          {selectedMetric
-            ? t(`immuneTrendsChart.explainers.${selectedMetric}`, {
-                defaultValue: t('immuneTrendsChart.explainer'),
-              })
-            : t('immuneTrendsChart.explainer')}
+          {explainer}
         </ThemedText>
       </Card>
       <MetricValuesBottomSheet

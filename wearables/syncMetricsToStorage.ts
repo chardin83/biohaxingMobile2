@@ -84,7 +84,7 @@ function getMinutesBeforeBedtime(lastIntenseExerciseAt: string, bedtime: ClockTi
   return Math.round((bedtimeAt.getTime() - intenseAt.getTime()) / 60000);
 }
 
-export async function syncWearableMetricsToStorage(adapter: WearableAdapter, upsertMetricEntries: UpsertMetricEntries, lookbackDays = 7) {
+export async function syncWearableMetricsToStorage(adapter: WearableAdapter, upsertMetricEntries: UpsertMetricEntries, lookbackDays = 30) {
   const range = {
     start: new Date(Date.now() - lookbackDays * 24 * 60 * 60 * 1000).toISOString(),
     end: new Date().toISOString(),

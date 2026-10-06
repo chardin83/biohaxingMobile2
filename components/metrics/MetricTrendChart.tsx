@@ -42,9 +42,11 @@ interface MetricTrendChartProps {
   readonly data: MetricTrendPoint[];
   readonly metricName: string;
   readonly unit?: string;
+  readonly showYAxisUnit?: boolean;
   readonly valueFormatter?: (value: number) => string;
   readonly daysToShow?: number;
   readonly height?: number;
+  readonly yAxisBounds?: { min: number; max: number };
   readonly accentColor?: string;
   readonly onViewRegisteredValues?: () => void;
   readonly xAxisLabelFormatter?: (date: string) => string;
@@ -52,6 +54,7 @@ interface MetricTrendChartProps {
     value: number;
     label?: string;
     color?: string;
+    labelOffsetY?: number;
   }>;
   readonly eventSeries?: ChartEventSeries[];
   readonly seriesSelector?: MetricTrendSelector;
@@ -148,6 +151,7 @@ function MetricTrendChartContent({
   data: defaultData,
   metricName: defaultMetricName,
   unit,
+  showYAxisUnit = true,
   valueFormatter,
   daysToShow = 7,
   height = 180,
@@ -155,6 +159,7 @@ function MetricTrendChartContent({
   onViewRegisteredValues,
   xAxisLabelFormatter,
   referenceLines,
+  yAxisBounds,
   eventSeries,
   seriesSelector,
 }: Readonly<MetricTrendChartProps>) {
@@ -351,12 +356,12 @@ function MetricTrendChartContent({
     const dataValues = chartData.map(entry => entry.value);
     const referenceValues = (referenceLines ?? []).map(line => line.value);
     const allValues = [...dataValues, ...referenceValues];
-    const rawMin = Math.min(...allValues);
-    const rawMax = Math.max(...allValues);
+    const rawMin = yAxisBounds?.min ?? Math.min(...allValues);
+    const rawMax = yAxisBounds?.max ?? Math.max(...allValues);
 
     const baseRange = Math.max(rawMax - rawMin, 1);
-    const paddedMin = Math.max(0, rawMin - baseRange * 0.2);
-    const paddedMax = rawMax + baseRange * 0.2;
+    const paddedMin = yAxisBounds?.min ?? Math.max(0, rawMin - baseRange * 0.2);
+    const paddedMax = yAxisBounds?.max ?? rawMax + baseRange * 0.2;
     const paddedRange = Math.max(paddedMax - paddedMin, 1);
 
     const axisEntries: AxisEntry[] = [
@@ -371,6 +376,10 @@ function MetricTrendChartContent({
       value: line.value,
       label: line.label,
       color: line.color,
+      labelY: Math.max(
+        CHART_PADDING.top + 10,
+        Math.min(height - CHART_PADDING.bottom - 2, CHART_PADDING.top + ((paddedMax - line.value) / paddedRange) * innerHeight + (line.labelOffsetY ?? -4))
+      ),
     }));
 
     const MS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -422,7 +431,7 @@ function MetricTrendChartContent({
       eventSeriesPoints,
       xAxisPoints,
     };
-  }, [chartData, chartWidth, daysToShow, eventSeries, height, referenceLines, xAxisDates]);
+  }, [chartData, chartWidth, daysToShow, eventSeries, height, referenceLines, xAxisDates, yAxisBounds]);
 
   const yAxisEntries = chartGeometry?.axisEntries ?? [];
   const yAxisLabelStyles = React.useMemo(
@@ -578,7 +587,7 @@ function MetricTrendChartContent({
 
       <View style={[styles.chartRow, dynamicStyles.chartRow]}>
         <View style={[styles.yAxisColumn, dynamicStyles.yAxisColumn]}>
-          {!!unit && (
+          {!!unit && showYAxisUnit && (
             <ThemedText type="caption" style={[styles.yAxisUnit, dynamicStyles.yAxisUnit]}>
               {unit}
             </ThemedText>
@@ -623,9 +632,6 @@ function MetricTrendChartContent({
                       strokeDasharray="3 4"
                       strokeWidth={1.5}
                     />
-                    <SvgText x={CHART_PADDING.left + 2} y={referenceLine.y - 4} fontSize="10" fill={color}>
-                      {referenceLine.label ?? String(referenceLine.value)}
-                    </SvgText>
                   </React.Fragment>
                 );
               })}
@@ -645,6 +651,17 @@ function MetricTrendChartContent({
                   />
                 );
               })}
+              {chartGeometry.referenceLinePoints.map(referenceLine => (
+                <SvgText
+                  key={`reference-label-${referenceLine.value}`}
+                  x={CHART_PADDING.left + 2}
+                  y={referenceLine.labelY}
+                  fontSize="10"
+                  fill={referenceLine.color ?? colors.textMuted}
+                >
+                  {referenceLine.label ?? String(referenceLine.value)}
+                </SvgText>
+              ))}
             </Svg>
           )}
         </View>

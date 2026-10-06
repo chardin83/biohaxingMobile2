@@ -8,9 +8,10 @@ import { MetricStatus } from '@/types/metricStatuses';
 
 interface MetricStatusLabelProps {
   readonly status: MetricStatus;
+  readonly label?: string;
 }
 
-export function MetricStatusLabel({ status }: Readonly<MetricStatusLabelProps>) {
+export function MetricStatusLabel({ status, label: customLabel }: Readonly<MetricStatusLabelProps>) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -58,7 +59,7 @@ export function MetricStatusLabel({ status }: Readonly<MetricStatusLabelProps>) 
   return (
     <View style={styles.statusContainer}>
       <ThemedText type="title3" style={{ color }}>
-        {label}
+        {customLabel ?? label}
       </ThemedText>
     </View>
   );
