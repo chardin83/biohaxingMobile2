@@ -10,6 +10,7 @@ import { MACROS } from '@/utils/nutritionGoals';
 
 import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
+import { Card } from '../ui/Card';
 import { IconSymbol } from '../ui/IconSymbol';
 import Pill from '../ui/Pill';
 import SettingsCard from '../ui/SettingsCard';
@@ -126,7 +127,7 @@ export default function MacroGoalsCard({ totals = {} }: Readonly<{ totals?: Dail
   }
 
   return (
-    <SettingsCard style={styles.card}>
+    <Card style={styles.card}>
       <Pressable
         style={styles.header}
         accessibilityRole="button"
@@ -148,9 +149,9 @@ export default function MacroGoalsCard({ totals = {} }: Readonly<{ totals?: Dail
             onPress={() => router.push(goals ? '/settings/nutrition-goals' : '/settings/nutrition')}
             style={styles.editRow}
           >
-            <IconSymbol name="pencil" size={20} color={colors.icon} />
-            <IconSymbol name="chevron.right" size={16} color={colors.text} />
             <ThemedText style={styles.label}>{t('nutritionGoals.logger.edit')}</ThemedText>
+
+            <IconSymbol name="chevron.right" size={16} color={colors.text} />
           </Pressable>
           <View style={styles.toggleRow}>
             <ThemedText style={styles.label}>{t('nutritionGoals.logger.track')}</ThemedText>
@@ -167,7 +168,7 @@ export default function MacroGoalsCard({ totals = {} }: Readonly<{ totals?: Dail
       {goalsContent}
       {error && <ThemedText type="error">{t('nutritionGoals.logger.saveError')}</ThemedText>}
       {expanded && <AppButton title={t('general.close')} variant="secondary" style={styles.closeButton} onPress={() => setExpanded(false)} />}
-    </SettingsCard>
+    </Card>
   );
 }
 

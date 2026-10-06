@@ -9,9 +9,9 @@ import { fromDateKey, getAge, toDateKey } from '@/utils/dateUtils';
 
 import NumberStepper from './NumberStepper';
 import { ThemedText } from './ThemedText';
+import CardLinkList from './ui/CardLinkList';
 import { DateTimeInput } from './ui/DateTimeInput';
 import RadioButton from './ui/RadioButton';
-import SettingsCardLink from './ui/SettingsCardLink';
 
 export default function PersonalDetailsSettings({ style }: Readonly<{ style?: StyleProp<ViewStyle> }>) {
   const { t } = useTranslation('common');
@@ -88,7 +88,7 @@ export default function PersonalDetailsSettings({ style }: Readonly<{ style?: St
   };
 
   return (
-    <SettingsCardLink
+    <CardLinkList
       style={style}
       rows={[
         {

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { type ImageSourcePropType, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
-import SettingsCardLink from '@/components/ui/SettingsCardLink';
+import CardLinkList from '@/components/ui/CardLinkList';
 import { FOOD_IMAGES } from '@/types/nutrition/foodCatalog';
 import { FOOD_KEYS, type FoodKey } from '@/utils/foodProduct';
 
@@ -72,7 +72,9 @@ const FoodPickerBottomSheet = forwardRef<BottomSheetModal, FoodPickerBottomSheet
           </ThemedText>
         }
         renderItem={({ item }: { item: FoodItem }) => (
-          <SettingsCardLink title={item.name} image={FOOD_IMAGES[item.key] as ImageSourcePropType | undefined} onPress={() => onSelect(item.key)} />
+          <CardLinkList
+            rows={[{ key: 'link', title: item.name, image: FOOD_IMAGES[item.key] as ImageSourcePropType | undefined, onPress: () => onSelect(item.key) }]}
+          />
         )}
       />
     </BottomSheetModal>

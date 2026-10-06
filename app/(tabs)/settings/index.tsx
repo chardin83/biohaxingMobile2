@@ -6,8 +6,8 @@ import { StyleSheet, View } from 'react-native';
 
 import HealthSyncSettings from '@/components/HealthSyncSettings';
 import { ThemedText } from '@/components/ThemedText';
+import { CardLinkList } from '@/components/ui/CardLinkList';
 import Container from '@/components/ui/Container';
-import { SettingsCardLink } from '@/components/ui/SettingsCardLink';
 import { LANGUAGE_DISPLAY } from '@/constants/languages';
 
 const STORAGE_KEY = 'preferredLanguage';
@@ -68,7 +68,7 @@ export default function SettingsPage() {
         {t('settings.preferences')}
       </ThemedText>
 
-      <SettingsCardLink
+      <CardLinkList
         rows={[
           {
             key: 'language',
@@ -91,30 +91,41 @@ export default function SettingsPage() {
       <ThemedText type="label" style={styles.title} uppercase>
         {t('settings.integrations')}
       </ThemedText>
-      
+
       <HealthSyncSettings style={styles.cardSpacing} />
 
       <ThemedText type="label" style={styles.title} uppercase>
         {t('settings.myData')}
       </ThemedText>
 
-       <SettingsCardLink
-             title={t('settings.myMultivitamins')}
-             subtitle={t('settings.myMultivitaminsSubtitle')}
-             iconName="pill"
-             onPress={() => router.push('/(stack)/settings/multivitamins')}
-             style={styles.cardSpacing} />
+      <CardLinkList
+        style={styles.cardSpacing}
+        rows={[
+          {
+            key: 'link',
+            title: t('settings.myMultivitamins'),
+            subtitle: t('settings.myMultivitaminsSubtitle'),
+            iconName: 'pill',
+            onPress: () => router.push('/(stack)/settings/multivitamins'),
+          },
+        ]}
+      />
 
       <ThemedText type="label" style={styles.title} uppercase>
         {t('settings.privacy')}
       </ThemedText>
 
-      <SettingsCardLink
-        title={t('settings.privacy')}
-        subtitle={t('settings.privacySubtitle')}
-        iconName="privacy"
-        onPress={() => router.push('/(stack)/settings/privacy')}
+      <CardLinkList
         style={styles.cardSpacing}
+        rows={[
+          {
+            key: 'link',
+            title: t('settings.privacy'),
+            subtitle: t('settings.privacySubtitle'),
+            iconName: 'privacy',
+            onPress: () => router.push('/(stack)/settings/privacy'),
+          },
+        ]}
       />
     </Container>
   );

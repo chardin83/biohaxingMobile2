@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
-import SettingsCardLink from '@/components/ui/SettingsCardLink';
+import CardLinkList from '@/components/ui/CardLinkList';
 
 import { useBottomSheetDesign } from '../ui/BottomSheetDesign';
 import { IconSymbol } from '../ui/IconSymbol';
@@ -61,46 +61,71 @@ const MealLoggerBottomSheet = forwardRef<BottomSheetModal, MealLoggerBottomSheet
           </View>
 
           <View style={styles.options}>
-            <SettingsCardLink
-              title={t('journal:nutritionLogger.mealLogger.analyzePhoto')}
-              subtitle={t('journal:nutritionLogger.mealLogger.takePhotoOfMeal')}
-              iconName="camera"
+            <CardLinkList
               style={[styles.highlighted, { borderColor: colors.primary, backgroundColor: colors.primaryVeryWeak }]}
-              onPress={() => handleAction(onAnalyzePhoto)}
-              accessory={<IconSymbol name="sparkles" size={18} color={colors.textMuted} />}
+              rows={[
+                {
+                  key: 'link',
+                  title: t('journal:nutritionLogger.mealLogger.analyzePhoto'),
+                  subtitle: t('journal:nutritionLogger.mealLogger.takePhotoOfMeal'),
+                  iconName: 'camera',
+                  onPress: () => handleAction(onAnalyzePhoto),
+                  accessory: <IconSymbol name="sparkles" size={18} color={colors.textMuted} />,
+                },
+              ]}
             />
 
-            <SettingsCardLink
-              title={t('journal:nutritionLogger.mealLogger.scanBarcode')}
-              subtitle={t('journal:nutritionLogger.mealLogger.lookupPackagedProduct')}
-              iconName="barcode"
-              onPress={() => handleAction(onScanBarcode)}
-              accessory={
-                <Pressable accessibilityRole="button" hitSlop={10} onPress={() => handleAction(onShowBarcodeInfo)}>
-                  <IconSymbol name="info" size={18} color={colors.textMuted} />
-                </Pressable>
-              }
+            <CardLinkList
+              rows={[
+                {
+                  key: 'link',
+                  title: t('journal:nutritionLogger.mealLogger.scanBarcode'),
+                  subtitle: t('journal:nutritionLogger.mealLogger.lookupPackagedProduct'),
+                  iconName: 'barcode',
+                  onPress: () => handleAction(onScanBarcode),
+                  accessory: (
+                    <Pressable accessibilityRole="button" hitSlop={10} onPress={() => handleAction(onShowBarcodeInfo)}>
+                      <IconSymbol name="info" size={18} color={colors.textMuted} />
+                    </Pressable>
+                  ),
+                },
+              ]}
             />
 
-            <SettingsCardLink
-              title={t('journal:nutritionLogger.mealLogger.previousMeal')}
-              subtitle={t('journal:nutritionLogger.mealLogger.copyPreviousMeal')}
-              iconName="history"
-              onPress={() => handleAction(onPreviousMeal)}
+            <CardLinkList
+              rows={[
+                {
+                  key: 'link',
+                  title: t('journal:nutritionLogger.mealLogger.previousMeal'),
+                  subtitle: t('journal:nutritionLogger.mealLogger.copyPreviousMeal'),
+                  iconName: 'history',
+                  onPress: () => handleAction(onPreviousMeal),
+                },
+              ]}
             />
 
-            <SettingsCardLink
-              title={t('journal:nutritionLogger.mealLogger.chooseFood')}
-              subtitle={t('journal:nutritionLogger.mealLogger.searchNutritiousFoods')}
-              iconName="meal"
-              onPress={() => handleAction(onChooseFood)}
+            <CardLinkList
+              rows={[
+                {
+                  key: 'link',
+                  title: t('journal:nutritionLogger.mealLogger.chooseFood'),
+                  subtitle: t('journal:nutritionLogger.mealLogger.searchNutritiousFoods'),
+                  iconName: 'meal',
+                  onPress: () => handleAction(onChooseFood),
+                },
+              ]}
             />
 
-            <SettingsCardLink
-              title={t('journal:nutritionLogger.mealLogger.addDrink')}
-              subtitle={t('journal:nutritionLogger.mealLogger.chooseDrink')}
-              iconName="caffeine"
-              onPress={() => handleAction(onAddDrink)}
+            <CardLinkList
+              rows={[
+                {
+                  key: 'link',
+                  title: t('journal:nutritionLogger.mealLogger.addDrink'),
+                  subtitle: t('journal:nutritionLogger.mealLogger.chooseDrink'),
+                  iconName: 'caffeine',
+                  onPress: () => handleAction(onAddDrink),
+                },
+              ]}
             />
           </View>
         </BottomSheetView>

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
-import SettingsCardLink from '@/components/ui/SettingsCardLink';
+import CardLinkList from '@/components/ui/CardLinkList';
 import { DRINK_TYPES, getDrinkImage } from '@/locales/drinkCatalog';
 import type { DrinkType } from '@/services/gptServices';
 
@@ -42,7 +42,10 @@ const DrinkPickerBottomSheet = forwardRef<BottomSheetModal, DrinkPickerBottomShe
 
         <View style={styles.options}>
           {DRINK_TYPES.map(type => (
-            <SettingsCardLink key={type} title={t(`journal:nutritionLogger.drinkTypes.${type}`)} image={getDrinkImage(type)} onPress={() => onSelect(type)} />
+            <CardLinkList
+              key={type}
+              rows={[{ key: type, title: t(`journal:nutritionLogger.drinkTypes.${type}`), image: getDrinkImage(type), onPress: () => onSelect(type) }]}
+            />
           ))}
         </View>
       </BottomSheetScrollView>

@@ -10,11 +10,11 @@ import { useStorage } from '@/app/context/StorageContext';
 import NumberStepper from '@/components/NumberStepper';
 import NutritionDistributionSelector from '@/components/NutritionDistributionSelector';
 import { ThemedText } from '@/components/ThemedText';
+import CardLinkList from '@/components/ui/CardLinkList';
 import Container from '@/components/ui/Container';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import PencilEditButton from '@/components/ui/PencilEditButton';
 import SettingsCard from '@/components/ui/SettingsCard';
-import SettingsCardLink from '@/components/ui/SettingsCardLink';
 import { DEFAULT_GOALS, goalsForDistribution, MACROS } from '@/utils/nutritionGoals';
 
 const RADIUS = 46;
@@ -200,14 +200,19 @@ export default function NutritionSettings() {
         </SettingsCard>
       )}
       {error && !editing && <ThemedText type="error">{t('nutritionGoals.saveError')}</ThemedText>}
-      <SettingsCardLink
+      <CardLinkList
         style={styles.distributionCard}
-        iconName="target"
-        title={t('nutritionGoals.distribution')}
-        value={t(`nutritionGoals.distributions.${displayedDistribution}`)}
-        onPress={() => {
-          if (!saving) setChoosingDistribution(current => !current);
-        }}
+        rows={[
+          {
+            key: 'link',
+            iconName: 'target',
+            title: t('nutritionGoals.distribution'),
+            value: t(`nutritionGoals.distributions.${displayedDistribution}`),
+            onPress: () => {
+              if (!saving) setChoosingDistribution(current => !current);
+            },
+          },
+        ]}
       />
       {choosingDistribution && <NutritionDistributionSelector value={displayedDistribution} onChange={selectDistribution} disabled={saving} />}
     </Container>

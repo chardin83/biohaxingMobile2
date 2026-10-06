@@ -6,7 +6,7 @@ import { Portal } from 'react-native-paper';
 
 import { ThemedText } from '@/components/ThemedText';
 import { useBottomSheetDesign } from '@/components/ui/BottomSheetDesign';
-import { SettingsCardLink } from '@/components/ui/SettingsCardLink';
+import { CardLinkList } from '@/components/ui/CardLinkList';
 import type { MetricId } from '@/locales/metrics';
 
 import { MetricValuesBottomSheet } from './MetricValuesBottomSheet';
@@ -52,7 +52,7 @@ export function MetricSourcesBottomSheet({ bottomSheetRef, title, sources }: Pro
         >
           <BottomSheetScrollView contentContainerStyle={styles.content}>
             <ThemedText type="title3">{title}</ThemedText>
-            <SettingsCardLink
+            <CardLinkList
               showIcon={false}
               rows={sources.map(source => ({
                 key: source.metricId,

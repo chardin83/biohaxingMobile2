@@ -13,9 +13,9 @@ import { formatClockTime } from '@/utils/dateUtils';
 
 import NumberStepper from './NumberStepper';
 import PersonalDetailsSettings from './PersonalDetailsSettings';
+import CardLinkList from './ui/CardLinkList';
 import { DateTimeInput } from './ui/DateTimeInput';
 import SettingIcon from './ui/SettingIcon';
-import SettingsCardLink from './ui/SettingsCardLink';
 
 const DEFAULT_BEDTIME: ClockTime = '23:00';
 const RECOMMENDED_BEDTIME_START: ClockTime = '22:00';
@@ -121,11 +121,9 @@ export default function PersonSettings() {
           <NumberStepper value={maxHeartRate} onChange={handleMaxHeartRateChange} min={120} max={230} />
         </View>
       </SettingsCard>
-      <SettingsCardLink
+      <CardLinkList
         style={styles.cardSpacing}
-        iconName="target"
-        title={t('nutritionTargetSection.title')}
-        onPress={() => router.push('/settings/nutrition')}
+        rows={[{ key: 'link', iconName: 'target', title: t('nutritionTargetSection.title'), onPress: () => router.push('/settings/nutrition') }]}
       />
     </Container>
   );

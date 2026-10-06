@@ -8,8 +8,8 @@ const mockOpenValues = jest.fn();
 jest.mock('@react-navigation/native', () => ({ useTheme: () => ({ colors: {} }) }));
 jest.mock('../ui/BottomSheetDesign', () => ({ useBottomSheetDesign: () => ({}) }));
 jest.mock('react-native-paper', () => ({ Portal: ({ children }: any) => children }));
-jest.mock('../ui/SettingsCardLink', () => ({
-  SettingsCardLink: ({ rows, showIcon }: any) => {
+jest.mock('../ui/CardLinkList', () => ({
+  CardLinkList: ({ rows, showIcon }: any) => {
     const mockReact = require('react');
     const { Text, Pressable } = require('react-native');
     return rows.map((row: any) =>
