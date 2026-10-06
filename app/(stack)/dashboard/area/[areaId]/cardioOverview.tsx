@@ -1,13 +1,11 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
 
-import { globalStyles } from '@/app/theme/globalStyles';
 import { CardioTrendsChart } from '@/components/metrics/CardioTrendsChart';
 import { ThemedText } from '@/components/ThemedText';
-import { Card } from '@/components/ui/Card';
 import GenesListCard from '@/components/ui/GenesListCard';
+import { InformationCardLink } from '@/components/ui/InformationCardLink';
 import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
 import RelatedAreasList from '@/components/ui/RelatedAreasList';
 import TipsList from '@/components/ui/TipsList';
@@ -28,40 +26,61 @@ export default function CardioScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
       <CardioTrendsChart />
 
       {/* VO2 Max explanation */}
-      <Card title={t('cardioOverview.understandingYourMetrics.title')}>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🫁 {t('cardioOverview.understandingYourMetrics.vo2Max.title')}</ThemedText>
-          <ThemedText type="default">{t('cardioOverview.understandingYourMetrics.vo2Max.description')}</ThemedText>
-        </View>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">❤️ {t('cardioOverview.understandingYourMetrics.vo2Health.title')}</ThemedText>
-          <ThemedText type="default">{t('cardioOverview.understandingYourMetrics.vo2Health.description')}</ThemedText>
-        </View>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🏃 {t('cardioOverview.understandingYourMetrics.easyRun.title')}</ThemedText>
-          <ThemedText type="default">{t('cardioOverview.understandingYourMetrics.easyRun.description')}</ThemedText>
-        </View>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">⚡ {t('cardioOverview.understandingYourMetrics.lactate.title')}</ThemedText>
-          <ThemedText type="default">{t('cardioOverview.understandingYourMetrics.lactate.description')}</ThemedText>
-        </View>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🫀 {t('cardioOverview.understandingYourMetrics.restingHeartRate.title')}</ThemedText>
-          <ThemedText type="default">{t('cardioOverview.understandingYourMetrics.restingHeartRate.description')}</ThemedText>
-        </View>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">💪 {t('cardioOverview.understandingYourMetrics.trainingLoad.title')}</ThemedText>
-          <ThemedText type="default">{t('cardioOverview.understandingYourMetrics.trainingLoad.description')}</ThemedText>
-        </View>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">⏱️ {t('cardioOverview.understandingYourMetrics.recoveryTime.title')}</ThemedText>
-          <ThemedText type="default">{t('cardioOverview.understandingYourMetrics.recoveryTime.description')}</ThemedText>
-        </View>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🎂 {t('cardioOverview.understandingYourMetrics.fitnessAge.title')}</ThemedText>
-          <ThemedText type="default">{t('cardioOverview.understandingYourMetrics.fitnessAge.description')}</ThemedText>
-        </View>
-      </Card>
+      <InformationCardLink
+        title={t('cardioOverview.understandingYourMetrics.title')}
+        iconName="heart"
+        iconColor={colors.area.cardio}
+        items={[
+          {
+            key: 'vo2Max',
+            icon: '🫁',
+            title: t('cardioOverview.understandingYourMetrics.vo2Max.title'),
+            description: t('cardioOverview.understandingYourMetrics.vo2Max.description'),
+          },
+          {
+            key: 'vo2Health',
+            icon: '❤️',
+            title: t('cardioOverview.understandingYourMetrics.vo2Health.title'),
+            description: t('cardioOverview.understandingYourMetrics.vo2Health.description'),
+          },
+          {
+            key: 'easyRun',
+            icon: '🏃',
+            title: t('cardioOverview.understandingYourMetrics.easyRun.title'),
+            description: t('cardioOverview.understandingYourMetrics.easyRun.description'),
+          },
+          {
+            key: 'lactate',
+            icon: '⚡',
+            title: t('cardioOverview.understandingYourMetrics.lactate.title'),
+            description: t('cardioOverview.understandingYourMetrics.lactate.description'),
+          },
+          {
+            key: 'restingHeartRate',
+            icon: '🫀',
+            title: t('cardioOverview.understandingYourMetrics.restingHeartRate.title'),
+            description: t('cardioOverview.understandingYourMetrics.restingHeartRate.description'),
+          },
+          {
+            key: 'trainingLoad',
+            icon: '💪',
+            title: t('cardioOverview.understandingYourMetrics.trainingLoad.title'),
+            description: t('cardioOverview.understandingYourMetrics.trainingLoad.description'),
+          },
+          {
+            key: 'recoveryTime',
+            icon: '⏱️',
+            title: t('cardioOverview.understandingYourMetrics.recoveryTime.title'),
+            description: t('cardioOverview.understandingYourMetrics.recoveryTime.description'),
+          },
+          {
+            key: 'fitnessAge',
+            icon: '🎂',
+            title: t('cardioOverview.understandingYourMetrics.fitnessAge.title'),
+            description: t('cardioOverview.understandingYourMetrics.fitnessAge.description'),
+          },
+        ]}
+      />
 
       <RelatedAreasList areaId="cardioFitness" />
 

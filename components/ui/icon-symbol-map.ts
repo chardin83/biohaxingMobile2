@@ -8,6 +8,10 @@ type IconDefinition = {
 };
 
 export const ICON_SYMBOLS = {
+  'mitochondrialHealth': {
+    sf: 'bolt.heart',
+    material: 'bolt',
+  },
   'height': {
     sf: 'ruler',
     material: 'straighten',

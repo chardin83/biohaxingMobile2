@@ -1,14 +1,12 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
 
-import { globalStyles } from '@/app/theme/globalStyles';
 import { EnergyProductionCharts } from '@/components/metrics/EnergyProductionCharts';
 import { TodaysActivityCharts } from '@/components/metrics/TodaysActivityCharts';
 import { ThemedText } from '@/components/ThemedText';
-import { Card } from '@/components/ui/Card';
 import GenesListCard from '@/components/ui/GenesListCard';
+import { InformationCardLink } from '@/components/ui/InformationCardLink';
 import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
@@ -32,62 +30,79 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
       <TodaysActivityCharts />
 
       {/* Mitochondrial Health Information */}
-      <Card title={t('energyOverview.mitochondrialHealth.title')}>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🔬 {t('energyOverview.mitochondrialHealth.powerhouses.title')}</ThemedText>
-          <ThemedText type="default">{t('energyOverview.mitochondrialHealth.powerhouses.description')}</ThemedText>
-        </View>
-
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">⚡ {t('energyOverview.mitochondrialHealth.atpProduction.title')}</ThemedText>
-          <ThemedText type="default">{t('energyOverview.mitochondrialHealth.atpProduction.description')}</ThemedText>
-        </View>
-
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🧬 {t('energyOverview.mitochondrialHealth.mitochondrialBiogenesis.title')}</ThemedText>
-          <ThemedText type="default">{t('energyOverview.mitochondrialHealth.mitochondrialBiogenesis.description')}</ThemedText>
-        </View>
-
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🛡️ {t('energyOverview.mitochondrialHealth.oxidativeStress.title')}</ThemedText>
-          <ThemedText type="default">{t('energyOverview.mitochondrialHealth.oxidativeStress.description')}</ThemedText>
-        </View>
-
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">⏰ {t('energyOverview.mitochondrialHealth.nadDecline.title')}</ThemedText>
-          <ThemedText type="default">{t('energyOverview.mitochondrialHealth.nadDecline.description')}</ThemedText>
-        </View>
-
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🔄 {t('energyOverview.mitochondrialHealth.mitophagy.title')}</ThemedText>
-          <ThemedText type="default">{t('energyOverview.mitochondrialHealth.mitophagy.description')}</ThemedText>
-        </View>
-
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🍬 {t('energyOverview.mitochondrialHealth.insulinResistance.title')}</ThemedText>
-          <ThemedText type="default">{t('energyOverview.mitochondrialHealth.insulinResistance.description')}</ThemedText>
-        </View>
-
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">⚠️ {t('energyOverview.mitochondrialHealth.chronicStress.title')}</ThemedText>
-          <ThemedText type="default">{t('energyOverview.mitochondrialHealth.chronicStress.description')}</ThemedText>
-        </View>
-
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🔄 {t('energyOverview.mitochondrialHealth.metabolicFlexibility.title')}</ThemedText>
-          <ThemedText type="default">{t('energyOverview.mitochondrialHealth.metabolicFlexibility.description')}</ThemedText>
-        </View>
-
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🌾 {t('energyOverview.mitochondrialHealth.resistantStarch.title')}</ThemedText>
-          <ThemedText type="default">{t('energyOverview.mitochondrialHealth.resistantStarch.description')}</ThemedText>
-        </View>
-
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🏃 {t('energyOverview.mitochondrialHealth.lowCarbHighIntensityTraining.title')}</ThemedText>
-          <ThemedText type="default">{t('energyOverview.mitochondrialHealth.lowCarbHighIntensityTraining.description')}</ThemedText>
-        </View>
-      </Card>
+      <InformationCardLink
+        title={t('energyOverview.mitochondrialHealth.title')}
+        iconName="mitochondrialHealth"
+        iconColor={colors.area.energy}
+        items={[
+          {
+            key: 'powerhouses',
+            icon: '🔬',
+            title: t('energyOverview.mitochondrialHealth.powerhouses.title'),
+            description: t('energyOverview.mitochondrialHealth.powerhouses.description'),
+          },
+          {
+            key: 'atpProduction',
+            icon: '⚡',
+            title: t('energyOverview.mitochondrialHealth.atpProduction.title'),
+            description: t('energyOverview.mitochondrialHealth.atpProduction.description'),
+          },
+          {
+            key: 'mitochondrialBiogenesis',
+            icon: '🧬',
+            title: t('energyOverview.mitochondrialHealth.mitochondrialBiogenesis.title'),
+            description: t('energyOverview.mitochondrialHealth.mitochondrialBiogenesis.description'),
+          },
+          {
+            key: 'oxidativeStress',
+            icon: '🛡️',
+            title: t('energyOverview.mitochondrialHealth.oxidativeStress.title'),
+            description: t('energyOverview.mitochondrialHealth.oxidativeStress.description'),
+          },
+          {
+            key: 'nadDecline',
+            icon: '⏰',
+            title: t('energyOverview.mitochondrialHealth.nadDecline.title'),
+            description: t('energyOverview.mitochondrialHealth.nadDecline.description'),
+          },
+          {
+            key: 'mitophagy',
+            icon: '🔄',
+            title: t('energyOverview.mitochondrialHealth.mitophagy.title'),
+            description: t('energyOverview.mitochondrialHealth.mitophagy.description'),
+          },
+          {
+            key: 'insulinResistance',
+            icon: '🍬',
+            title: t('energyOverview.mitochondrialHealth.insulinResistance.title'),
+            description: t('energyOverview.mitochondrialHealth.insulinResistance.description'),
+          },
+          {
+            key: 'chronicStress',
+            icon: '⚠️',
+            title: t('energyOverview.mitochondrialHealth.chronicStress.title'),
+            description: t('energyOverview.mitochondrialHealth.chronicStress.description'),
+          },
+          {
+            key: 'metabolicFlexibility',
+            icon: '🔄',
+            title: t('energyOverview.mitochondrialHealth.metabolicFlexibility.title'),
+            description: t('energyOverview.mitochondrialHealth.metabolicFlexibility.description'),
+          },
+          {
+            key: 'resistantStarch',
+            icon: '🌾',
+            title: t('energyOverview.mitochondrialHealth.resistantStarch.title'),
+            description: t('energyOverview.mitochondrialHealth.resistantStarch.description'),
+          },
+          {
+            key: 'lowCarbHighIntensityTraining',
+            icon: '🏃',
+            title: t('energyOverview.mitochondrialHealth.lowCarbHighIntensityTraining.title'),
+            description: t('energyOverview.mitochondrialHealth.lowCarbHighIntensityTraining.description'),
+          },
+        ]}
+      />
 
       {/* DNA & Mitochondria Genetics */}
       <GenesListCard areaId="energy" />

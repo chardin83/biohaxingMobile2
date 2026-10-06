@@ -13,7 +13,6 @@ import AppButton from '../ui/AppButton';
 import { Card } from '../ui/Card';
 import { IconSymbol } from '../ui/IconSymbol';
 import Pill from '../ui/Pill';
-import SettingsCard from '../ui/SettingsCard';
 
 const CHART_SIZE = 104;
 const CHART_RADIUS = 46;
@@ -150,7 +149,6 @@ export default function MacroGoalsCard({ totals = {} }: Readonly<{ totals?: Dail
             style={styles.editRow}
           >
             <ThemedText style={styles.label}>{t('nutritionGoals.logger.edit')}</ThemedText>
-
             <IconSymbol name="chevron.right" size={16} color={colors.text} />
           </Pressable>
           <View style={styles.toggleRow}>

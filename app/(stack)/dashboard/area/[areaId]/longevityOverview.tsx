@@ -1,11 +1,9 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
 
-import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
-import { Card } from '@/components/ui/Card';
+import { InformationCardLink } from '@/components/ui/InformationCardLink';
 import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
@@ -24,37 +22,49 @@ export default function LongevityOverview({ mainGoalId }: Readonly<{ mainGoalId:
 
       <WearableStatus />
 
-      <Card title={t('longevityOverview.pillars.title')}>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">😴 {t('longevityOverview.pillars.sleepRecovery.title')}</ThemedText>
-          <ThemedText type="default">{t('longevityOverview.pillars.sleepRecovery.description')}</ThemedText>
-        </View>
-
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🫀 {t('longevityOverview.pillars.metabolicHealth.title')}</ThemedText>
-          <ThemedText type="default">{t('longevityOverview.pillars.metabolicHealth.description')}</ThemedText>
-        </View>
-
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🏃 {t('longevityOverview.pillars.trainingCapacity.title')}</ThemedText>
-          <ThemedText type="default">{t('longevityOverview.pillars.trainingCapacity.description')}</ThemedText>
-        </View>
-
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🦴 {t('longevityOverview.pillars.fasciaStrength.title')}</ThemedText>
-          <ThemedText type="default">{t('longevityOverview.pillars.fasciaStrength.description')}</ThemedText>
-        </View>
-
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🧘 {t('longevityOverview.pillars.nervousSystemStress.title')}</ThemedText>
-          <ThemedText type="default">{t('longevityOverview.pillars.nervousSystemStress.description')}</ThemedText>
-        </View>
-
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🌿 {t('longevityOverview.pillars.inflammationMicrobiome.title')}</ThemedText>
-          <ThemedText type="default">{t('longevityOverview.pillars.inflammationMicrobiome.description')}</ThemedText>
-        </View>
-      </Card>
+      <InformationCardLink
+        title={t('longevityOverview.pillars.title')}
+        iconName="sparkles"
+        iconColor={colors.area.longevity}
+        items={[
+          {
+            key: 'sleepRecovery',
+            icon: '😴',
+            title: t('longevityOverview.pillars.sleepRecovery.title'),
+            description: t('longevityOverview.pillars.sleepRecovery.description'),
+          },
+          {
+            key: 'metabolicHealth',
+            icon: '🫀',
+            title: t('longevityOverview.pillars.metabolicHealth.title'),
+            description: t('longevityOverview.pillars.metabolicHealth.description'),
+          },
+          {
+            key: 'trainingCapacity',
+            icon: '🏃',
+            title: t('longevityOverview.pillars.trainingCapacity.title'),
+            description: t('longevityOverview.pillars.trainingCapacity.description'),
+          },
+          {
+            key: 'fasciaStrength',
+            icon: '🦴',
+            title: t('longevityOverview.pillars.fasciaStrength.title'),
+            description: t('longevityOverview.pillars.fasciaStrength.description'),
+          },
+          {
+            key: 'nervousSystemStress',
+            icon: '🧘',
+            title: t('longevityOverview.pillars.nervousSystemStress.title'),
+            description: t('longevityOverview.pillars.nervousSystemStress.description'),
+          },
+          {
+            key: 'inflammationMicrobiome',
+            icon: '🌿',
+            title: t('longevityOverview.pillars.inflammationMicrobiome.title'),
+            description: t('longevityOverview.pillars.inflammationMicrobiome.description'),
+          },
+        ]}
+      />
 
       <MicrobiomeListCard areaId="longevity" />
 

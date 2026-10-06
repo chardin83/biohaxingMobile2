@@ -1,13 +1,12 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 
-import { globalStyles } from '@/app/theme/globalStyles';
 import { StrengthRecoveryTrendsChart } from '@/components/metrics/StrengthRecoveryTrendsChart';
 import { ThemedText } from '@/components/ThemedText';
-import { Card } from '@/components/ui/Card';
 import GenesListCard from '@/components/ui/GenesListCard';
+import { InformationCardLink } from '@/components/ui/InformationCardLink';
 import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
 import TipsList from '@/components/ui/TipsList';
 import { WearableStatus } from '@/components/WearableStatus';
@@ -30,44 +29,59 @@ export default function StrengthScreen({ mainGoalId }: Readonly<{ mainGoalId: st
       <StrengthRecoveryTrendsChart />
 
       {/* Protein Timing Card */}
-      <Card title="Anabolic Window">
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">⏰ Post-workout protein timing</ThemedText>
-          <ThemedText type="default">
-            Post-workout protein intake is most effective within 2-3 hours after training. Muscle protein synthesis remains elevated for 24-48 hours after
-            resistance training.
-          </ThemedText>
-        </View>
-        <View style={[globalStyles.topBorder, { borderTopColor: colors.borderLight }]}>
-          <View style={globalStyles.infoSection}>
-            <ThemedText type="title3">Recommended:</ThemedText>
-            <ThemedText type="default">• 20-40g protein within 2h post-workout</ThemedText>
-            <ThemedText type="default">• 1.6-2.2g/kg body weight daily total</ThemedText>
-            <ThemedText type="default">• Leucine-rich sources (whey, eggs, meat)</ThemedText>
-            <ThemedText type="default">• Distribute protein across 3-5 meals</ThemedText>
-          </View>
-        </View>
-      </Card>
+      <InformationCardLink
+        title="Anabolic Window"
+        iconName="protein"
+        iconColor={colors.area.strength}
+        items={[
+          {
+            key: 'proteinTiming',
+            icon: '⏰',
+            title: 'Post-workout protein timing',
+            description:
+              'Post-workout protein intake is most effective within 2-3 hours after training. Muscle protein synthesis remains elevated for 24-48 hours after resistance training.',
+          },
+          {
+            key: 'recommendations',
+            title: 'Recommended:',
+            description:
+              '• 20-40g protein within 2h post-workout\n• 1.6-2.2g/kg body weight daily total\n• Leucine-rich sources (whey, eggs, meat)\n• Distribute protein across 3-5 meals',
+          },
+        ]}
+      />
 
       {/* Information Card */}
-      <Card title={t('strengthOverview.information.title')}>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">💪 {t('strengthOverview.information.trainingReadiness.title')}</ThemedText>
-          <ThemedText type="default">{t('strengthOverview.information.trainingReadiness.description')}</ThemedText>
-        </View>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">📊 {t('strengthOverview.information.trainingLoad.title')}</ThemedText>
-          <ThemedText type="default">{t('strengthOverview.information.trainingLoad.description')}</ThemedText>
-        </View>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">⏱️ {t('strengthOverview.information.recoveryTime.title')}</ThemedText>
-          <ThemedText type="default">{t('strengthOverview.information.recoveryTime.description')}</ThemedText>
-        </View>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🛌 {t('strengthOverview.information.sleepMuscleGrowth.title')}</ThemedText>
-          <ThemedText type="default">{t('strengthOverview.information.sleepMuscleGrowth.description')}</ThemedText>
-        </View>
-      </Card>
+      <InformationCardLink
+        title={t('strengthOverview.information.title')}
+        iconName="trainingGym"
+        iconColor={colors.area.strength}
+        items={[
+          {
+            key: 'trainingReadiness',
+            icon: '💪',
+            title: t('strengthOverview.information.trainingReadiness.title'),
+            description: t('strengthOverview.information.trainingReadiness.description'),
+          },
+          {
+            key: 'trainingLoad',
+            icon: '📊',
+            title: t('strengthOverview.information.trainingLoad.title'),
+            description: t('strengthOverview.information.trainingLoad.description'),
+          },
+          {
+            key: 'recoveryTime',
+            icon: '⏱️',
+            title: t('strengthOverview.information.recoveryTime.title'),
+            description: t('strengthOverview.information.recoveryTime.description'),
+          },
+          {
+            key: 'sleepMuscleGrowth',
+            icon: '🛌',
+            title: t('strengthOverview.information.sleepMuscleGrowth.title'),
+            description: t('strengthOverview.information.sleepMuscleGrowth.description'),
+          },
+        ]}
+      />
 
       {/* DNA & Gener som påverkar styrka */}
       <GenesListCard areaId="strength" />

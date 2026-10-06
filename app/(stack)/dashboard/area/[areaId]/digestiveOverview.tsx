@@ -1,13 +1,11 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
 
-import { globalStyles } from '@/app/theme/globalStyles';
 import { DigestiveTrendsChart } from '@/components/metrics/DigestiveTrendsChart';
 import { ThemedText } from '@/components/ThemedText';
-import { Card } from '@/components/ui/Card';
 import GenesListCard from '@/components/ui/GenesListCard';
+import { InformationCardLink } from '@/components/ui/InformationCardLink';
 import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
 import RelatedAreasList from '@/components/ui/RelatedAreasList';
 import TipsList from '@/components/ui/TipsList';
@@ -31,28 +29,43 @@ export default function DigestiveScreen({ mainGoalId }: Readonly<{ mainGoalId: s
       <DigestiveTrendsChart />
 
       {/* Info section: Understanding your metrics */}
-      <Card title={t('digestiveOverview.understandingYourMetrics.title')}>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🦠 {t('digestiveOverview.understandingYourMetrics.microbiome.title')}</ThemedText>
-          <ThemedText type="default">{t('digestiveOverview.understandingYourMetrics.microbiome.description')}</ThemedText>
-        </View>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">😌 {t('digestiveOverview.understandingYourMetrics.stress.title')}</ThemedText>
-          <ThemedText type="default">{t('digestiveOverview.understandingYourMetrics.stress.description')}</ThemedText>
-        </View>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">💤 {t('digestiveOverview.understandingYourMetrics.sleep.title')}</ThemedText>
-          <ThemedText type="default">{t('digestiveOverview.understandingYourMetrics.sleep.description')}</ThemedText>
-        </View>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">🏃‍♂️ {t('digestiveOverview.understandingYourMetrics.activity.title')}</ThemedText>
-          <ThemedText type="default">{t('digestiveOverview.understandingYourMetrics.activity.description')}</ThemedText>
-        </View>
-        <View style={globalStyles.infoSection}>
-          <ThemedText type="title3">💧 {t('digestiveOverview.understandingYourMetrics.hydration.title')}</ThemedText>
-          <ThemedText type="default">{t('digestiveOverview.understandingYourMetrics.hydration.description')}</ThemedText>
-        </View>
-      </Card>
+      <InformationCardLink
+        title={t('digestiveOverview.understandingYourMetrics.title')}
+        iconName="microbiome"
+        iconColor={colors.area.digestiveHealth}
+        items={[
+          {
+            key: 'microbiome',
+            icon: '🦠',
+            title: t('digestiveOverview.understandingYourMetrics.microbiome.title'),
+            description: t('digestiveOverview.understandingYourMetrics.microbiome.description'),
+          },
+          {
+            key: 'stress',
+            icon: '😌',
+            title: t('digestiveOverview.understandingYourMetrics.stress.title'),
+            description: t('digestiveOverview.understandingYourMetrics.stress.description'),
+          },
+          {
+            key: 'sleep',
+            icon: '💤',
+            title: t('digestiveOverview.understandingYourMetrics.sleep.title'),
+            description: t('digestiveOverview.understandingYourMetrics.sleep.description'),
+          },
+          {
+            key: 'activity',
+            icon: '🏃‍♂️',
+            title: t('digestiveOverview.understandingYourMetrics.activity.title'),
+            description: t('digestiveOverview.understandingYourMetrics.activity.description'),
+          },
+          {
+            key: 'hydration',
+            icon: '💧',
+            title: t('digestiveOverview.understandingYourMetrics.hydration.title'),
+            description: t('digestiveOverview.understandingYourMetrics.hydration.description'),
+          },
+        ]}
+      />
 
       {/* Related areas */}
       <RelatedAreasList areaId="digestiveHealth" />
