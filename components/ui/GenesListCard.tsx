@@ -1,23 +1,23 @@
 import { useTheme } from '@react-navigation/native';
-import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { type StyleProp, StyleSheet, View, type ViewStyle } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
 import { genes } from '@/locales/genes';
 
-import { Card } from './Card';
 import GeneCard from './GeneCard';
+import GeneDetailsBottomSheet from './GeneDetailsBottomSheet';
+import { InformationCardLink } from './InformationCardLink';
 
 interface GenesListCardProps {
   areaId: string;
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 }
 
 const GenesListCard: React.FC<GenesListCardProps> = ({ areaId, style }) => {
-  const router = useRouter();
+  const [selectedGeneId, setSelectedGeneId] = useState<string | null>(null);
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -25,34 +25,30 @@ const GenesListCard: React.FC<GenesListCardProps> = ({ areaId, style }) => {
 
   if (filteredGenes.length === 0) return null;
 
-  const handleGenePress = (geneId: string) => {
-    router.push({
-      pathname: '/dashboard/area/[areaId]/gene',
-      params: { areaId, geneId },
-    });
-  };
-
   return (
-    <Card title={`${t('genesList.title')}`} style={style}>
-      <View style={styles.infoSection}>
-        <ThemedText style={[styles.infoLabel, { color: colors.textSecondary }]}>
-          🧬 {t('genesList.genesLinkedToArea', { area: t(`areas:${areaId}.title`) })}
-        </ThemedText>
-        {filteredGenes.length === 0 ? (
-          <ThemedText style={[styles.infoText, { color: colors.textTertiary }]}>{t('genesList.noGenes')}</ThemedText>
-        ) : (
-          <ThemedText style={[styles.infoText, { color: colors.textTertiary }]}>{t('genesList.genesAffectHealth')}</ThemedText>
-        )}
-      </View>
-      {filteredGenes.map(gene => {
-        const area = gene.areas.find(a => a.id === areaId);
-        if (!area) return null;
-        return <GeneCard key={gene.id} gene={gene} area={area} onPress={() => handleGenePress(gene.id)} />;
-      })}
-      <ThemedText type="explainer" style={[globalStyles.explainer, { color: colors.textMuted, borderColor: colors.borderLight }]}>
-        {t('genesList.explainer')}
-      </ThemedText>
-    </Card>
+    <>
+      <InformationCardLink title={t('genesList.title')} iconName="dna" style={style}>
+        {
+          <>
+            <View style={styles.infoSection}>
+              <ThemedText style={[styles.infoLabel, { color: colors.textSecondary }]}>
+                🧬 {t('genesList.genesLinkedToArea', { area: t(`areas:${areaId}.title`) })}
+              </ThemedText>
+              <ThemedText style={[styles.infoText, { color: colors.textTertiary }]}>{t('genesList.genesAffectHealth')}</ThemedText>
+            </View>
+            {filteredGenes.map(gene => {
+              const area = gene.areas.find(a => a.id === areaId);
+              if (!area) return null;
+              return <GeneCard key={gene.id} gene={gene} area={area} onPress={() => setSelectedGeneId(gene.id)} />;
+            })}
+            <ThemedText type="explainer" style={[globalStyles.explainer, { color: colors.textMuted, borderColor: colors.borderLight }]}>
+              {t('genesList.explainer')}
+            </ThemedText>
+          </>
+        }
+      </InformationCardLink>
+      <GeneDetailsBottomSheet geneId={selectedGeneId} areaId={areaId} onDismiss={() => setSelectedGeneId(null)} />
+    </>
   );
 };
 

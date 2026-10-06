@@ -1,7 +1,7 @@
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import React, { useCallback, useRef } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { type StyleProp, StyleSheet, View, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/ThemedText';
@@ -22,11 +22,13 @@ type Props = Readonly<{
   subtitle?: string;
   iconName?: IconSymbolName;
   iconColor?: string;
-  items: readonly InformationItem[];
+  items?: readonly InformationItem[];
+  children?: React.ReactNode | ((dismiss: () => void) => React.ReactNode);
+  style?: StyleProp<ViewStyle>;
 }>;
 
 /** Data-driven information card shared by overview screens. */
-export function InformationCardLink({ title, subtitle, iconName = 'info', iconColor, items }: Props) {
+export function InformationCardLink({ title, subtitle, iconName = 'info', iconColor, items = [], children, style }: Props) {
   const sheetRef = useRef<BottomSheetModal>(null);
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -40,7 +42,7 @@ export function InformationCardLink({ title, subtitle, iconName = 'info', iconCo
 
   return (
     <>
-      <CardLinkList rows={[{ key: 'information', title, subtitle, iconName, iconColor, onPress: () => sheetRef.current?.present() }]} />
+      <CardLinkList style={style} rows={[{ key: 'information', title, subtitle, iconName, iconColor, onPress: () => sheetRef.current?.present() }]} />
       <BottomSheetModal
         ref={sheetRef}
         snapPoints={['85%']}
@@ -55,6 +57,7 @@ export function InformationCardLink({ title, subtitle, iconName = 'info', iconCo
             {title}
           </ThemedText>
           <BottomSheetScrollView contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + 24 }]}>
+            {typeof children === 'function' ? children(() => sheetRef.current?.dismiss()) : children}
             {items.map(item => (
               <View key={item.key} style={[styles.item, { backgroundColor: colors.overlayLight, borderColor: colors.borderLight }]}>
                 <ThemedText type="title3" accessibilityRole="header">

@@ -8,6 +8,10 @@ type IconDefinition = {
 };
 
 export const ICON_SYMBOLS = {
+  'dna': {
+    sf: 'circle.grid.cross',
+    material: 'biotech',
+  },
   'mitochondrialHealth': {
     sf: 'bolt.heart',
     material: 'bolt',
