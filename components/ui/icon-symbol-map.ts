@@ -236,6 +236,10 @@ export const ICON_SYMBOLS = {
     sf: 'lightbulb',
     material: 'lightbulb',
   },
+  'link': {
+    sf: 'link',
+    material: 'link',
+  },
   'info': {
     sf: 'info.circle',
     material: 'info-outline',

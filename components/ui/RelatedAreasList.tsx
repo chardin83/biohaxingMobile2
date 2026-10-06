@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
-import { Card } from '@/components/ui/Card';
+import { InformationCardLink } from '@/components/ui/InformationCardLink';
 import { PressableCard } from '@/components/ui/PressableCard';
 import { areas } from '@/locales/areas';
 
@@ -19,27 +19,28 @@ export default function RelatedAreasList({ areaId }: Readonly<RelatedAreasListPr
   if (!area?.relatedAreas?.length) return null;
 
   return (
-    <Card title={t(`areas:${areaId}.relatedAreas.sectionTitle`)}>
-      {area.relatedAreas.map((link, index) => (
-        <PressableCard
-          key={link.areaId}
-          style={index > 0 ? styles.cardSpacing : undefined}
-          onPress={() => {
-            router.push({
-              pathname: '/dashboard/area/[areaId]',
-              params: { areaId: link.areaId },
-            });
-          }}
-        >
-          <ThemedText type="title3">
-            {t(`areas:${link.areaId}.title`)}
-          </ThemedText>
-          <ThemedText type="default">
-            {t(`areas:${areaId}.relatedAreas.${link.areaId}`)}
-          </ThemedText>
-        </PressableCard>
-      ))}
-    </Card>
+    <InformationCardLink title={t(`areas:${areaId}.relatedAreas.sectionTitle`)} iconName="link">
+      {dismiss => (
+        <>
+          {area.relatedAreas.map((link, index) => (
+            <PressableCard
+              key={link.areaId}
+              style={index > 0 ? styles.cardSpacing : undefined}
+              onPress={() => {
+                dismiss();
+                router.push({
+                  pathname: '/dashboard/area/[areaId]',
+                  params: { areaId: link.areaId },
+                });
+              }}
+            >
+              <ThemedText type="title3">{t(`areas:${link.areaId}.title`)}</ThemedText>
+              <ThemedText type="default">{t(`areas:${areaId}.relatedAreas.${link.areaId}`)}</ThemedText>
+            </PressableCard>
+          ))}
+        </>
+      )}
+    </InformationCardLink>
   );
 }
 
