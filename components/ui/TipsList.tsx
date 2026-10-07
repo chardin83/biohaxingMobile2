@@ -2,10 +2,11 @@ import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
+import { Collapsible } from '@/components/Collapsible';
 import { Card } from '@/components/ui/Card';
 import { XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW } from '@/constants/XP';
 import { tips } from '@/locales/tips';
@@ -62,18 +63,36 @@ export default function TipsList({ areaId }: Readonly<TipsListProps>) {
     });
   }, [tipsRaw, viewedTips, getVerdictScore]);
 
+  const previewTips = React.useMemo(() => sortedTips.filter(tip => (tip.level ?? 1) <= myLevel + 1), [sortedTips, myLevel]);
+  const lockedLevelCounts = new Map<number, number>();
+  sortedTips.forEach(tip => {
+    const level = tip.level ?? 1;
+    if (level > myLevel + 1) lockedLevelCounts.set(level, (lockedLevelCounts.get(level) ?? 0) + 1);
+  });
+  const lockedLevels = [...lockedLevelCounts.entries()].sort(([a], [b]) => a - b);
+
   // Filtrera tips: dölj "not interested"-liknande om inte "show all"
   const visibleTips = React.useMemo(() => {
     if (showAllTips) {
-      return sortedTips;
+      return previewTips;
     }
-    return sortedTips.filter(tip => {
+    return previewTips.filter(tip => {
+      if ((tip.level ?? 1) > myLevel) return true;
       const viewedTip = viewedTips?.find(v => v.tipId === tip.id);
       return viewedTip?.verdict ? !negativeVerdicts.has(viewedTip.verdict) : true;
     });
-  }, [showAllTips, sortedTips, viewedTips, negativeVerdicts ]);
+  }, [showAllTips, previewTips, viewedTips, negativeVerdicts, myLevel]);
 
-  const hiddenTipsCount = sortedTips.length - visibleTips.length;
+  const tipsByLevel = new Map<number, typeof visibleTips>();
+  visibleTips.forEach(tip => {
+    const level = tip.level ?? 1;
+    const group = tipsByLevel.get(level) ?? [];
+    group.push(tip);
+    tipsByLevel.set(level, group);
+  });
+  const visibleLevels = [...tipsByLevel.entries()].sort(([a], [b]) => a - b);
+
+  const hiddenTipsCount = previewTips.length - visibleTips.length;
 
   const getTipProgress = (tipId: string) => {
     const viewedTip = viewedTips?.find(v => v.tipId === tipId);
@@ -114,30 +133,57 @@ export default function TipsList({ areaId }: Readonly<TipsListProps>) {
     };
   };
 
-  const handleTipPress = (tipIndex: number) => {
-    const tip = sortedTips[tipIndex];
-
-    if (tip) {
-      const routeObj = {
-        pathname: `/dashboard/area/${areaId}/details` as any,
-        params: {
-          tipId: tip.id,
-        },
-      };
-      router.push(routeObj);
-    }
+  const handleTipPress = (tipId: string) => {
+    router.push({
+      pathname: '/dashboard/area/[areaId]/details',
+      params: { areaId, tipId },
+    });
   };
 
   return (
     <Card title={`${t('tipsList.title')} (${sortedTips.length} ${t('general.countSuffix')})`} style={globalStyles.marginTop16}>
-      {visibleTips.map((tip, index) => {
-        const tipProgress = getTipProgress(tip.id);
-        const locked = myLevel < (tip?.level ?? 0);
+      {visibleLevels.map(([level, levelTips]) => {
+        let label = '';
+        if (level === myLevel) {
+          label = t('tipsList.yourLevel');
+        } else if (level === myLevel + 1) {
+          label = t('tipsList.exploreNextLevel');
+        }
+        const title = `${t('tipsList.levelTitle', { level })}`;
 
-        return <TipCard key={tip.id} tip={tip} tipProgress={tipProgress} onPress={() => handleTipPress(index)} areaId={areaId} locked={locked} />;
+        return (
+          <Card key={`${myLevel}-${level}`}>
+            <Collapsible
+              title={title}
+              titleType="title3"
+              initialCollapsed={level !== myLevel}
+              contentStyle={styles.levelContent}
+              rightContent={
+                <View style={styles.levelRightContent}>
+                  <ThemedText type="defaultSemiBold" style={{ color: colors.primary }}>
+                    {label}
+                  </ThemedText>
+                  <ThemedText type="explainer"> {levelTips.length}st</ThemedText>
+                </View>
+              }
+            >
+              {levelTips.map(tip => (
+                <TipCard
+                  key={tip.id}
+                  tip={tip}
+                  tipProgress={getTipProgress(tip.id)}
+                  onPress={() => handleTipPress(tip.id)}
+                  areaId={areaId}
+                  locked={myLevel < (tip.level ?? 1)}
+                />
+              ))}
+            </Collapsible>
+          </Card>
+        );
       })}
 
-      {sortedTips.some(tip => {
+      {previewTips.some(tip => {
+        if ((tip.level ?? 1) > myLevel) return false;
         const viewedTip = viewedTips?.find(v => v.tipId === tip.id);
         return viewedTip?.verdict && negativeVerdicts.has(viewedTip.verdict);
       }) && (
@@ -147,15 +193,31 @@ export default function TipsList({ areaId }: Readonly<TipsListProps>) {
           </ThemedText>
         </Pressable>
       )}
+      <Card>
+        <Collapsible title={t('tipsList.lockedLevels')} titleType="title3" initialCollapsed={true} contentStyle={styles.levelContent}>
+          {lockedLevels.map(([level, count]) => (
+            <Card key={level} style={styles.lockedLevelCard}>
+              <ThemedText type="title3">🔒 {t('tipsList.levelTitle', { level })}</ThemedText>
+              <ThemedText style={{ color: colors.textMuted }}>{t('tipsList.lockedTips', { count })}</ThemedText>
+            </Card>
+          ))}
+        </Collapsible>
+      </Card>
     </Card>
   );
 }
 
 const styles = StyleSheet.create({
+  levelContent: { marginLeft: 0, marginTop: 12 },
+  levelRightContent: { flexDirection: 'row', justifyContent: 'space-between', gap: 12 },
   showAllButton: {
     marginTop: 12,
     paddingVertical: 12,
     alignItems: 'center',
     borderTopWidth: 1,
+  },
+  lockedLevelCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });

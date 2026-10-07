@@ -863,9 +863,15 @@
     }
   },
   "tipsList": {
+    "yourLevel": "Din nivå",
+    "exploreNextLevel": "Utforska nästa nivå",
+    "levelTitle": "Nivå {{level}}",
+    "lockedTips_one": "{{count}} låst tips",
+    "lockedTips_other": "{{count}} låsta tips",
     "title": "Optimeringstips",
     "showAll": "Visa alla ({{count}} dolda)",
-    "hideNotInterested": "Dölj inte intresserad"
+    "hideNotInterested": "Dölj inte intresserad",
+    "lockedLevels": "Låsta nivåer"
   },
   "genesList": {
     "title": "Gener & DNA",

@@ -863,9 +863,15 @@
     }
   },
   "tipsList": {
+    "yourLevel": "Your level",
+    "exploreNextLevel": "Explore the next level",
+    "levelTitle": "Level {{level}}",
+    "lockedTips_one": "{{count}} locked tip",
+    "lockedTips_other": "{{count}} locked tips",
     "title": "Tips for optimization",
     "showAll": "Show all ({{count}} hidden)",
-    "hideNotInterested": "Hide not interested"
+    "hideNotInterested": "Hide not interested",
+    "lockedLevels": "Locked Levels"
   },
   "genesList": {
     "title": "Genes & DNA",
