@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 
-export type DailyProgressState = 'none' | 'partial' | 'fulfilled' | 'disabled';
+export type DailyProgressState = 'none' | 'partial' | 'fulfilled' | 'disabled' | 'missing';
 
 export type DailyProgressStatus = {
   state: DailyProgressState;
@@ -56,6 +56,8 @@ const DailyProgressWeek = ({ days, dayLabels, todayKey, selectedDate, startDate,
         } else if (status.state === 'partial') {
           iconChar = PARTIAL_PROGRESS_ICON;
           iconColor = colors.progressPartialIcon;
+        } else if (status.state === 'missing') {
+          iconChar = '–';
         } else if (status.state === 'none') {
           iconChar = '✗';
         }

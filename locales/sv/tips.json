@@ -145,6 +145,7 @@
   "sleep_timing_circadian": {
     "title": "Sömnrytm och cirkadisk timing",
     "description": "Att synkronisera sömn med kroppens naturliga dygnsrytm optimerar sömnkvalitet och återhämtning. Konsekvent sömn- och vakentid hjälper till att reglera hormonproduktion och metabolism.",
+    "habitTargets": { "description": "Följs upp automatiskt från loggad insomningstid jämfört med läggtiden i dina personinställningar. Dagens mål är uppfyllt om skillnaden är högst 30 minuter." },
     "areas": {
       "sleepQuality": "Regelbunden sömnrytm förbättrar sömnkvalitet genom att stärka kroppens naturliga melatoninproduktion.",
       "immuneSupport": "Cirkadisk synkronisering stödjer immunfunktion genom att optimera kroppens naturliga försvarscykler.",
@@ -1030,6 +1031,7 @@
   "box_breathing": {
     "title": "Låda-andning",
     "description": "Låda-andning (även kallad fyrkantig andning) är en teknik där du andas in, håller, andas ut och håller igen i samma räkning (typiskt 4-4-4-4). Det är utmärkt för snabb stresslindring och fokus.",
+    "habitTargets": { "description": "Registrera dagens totala minuter låda-andning. Målet är tre minuter per dag." },
     "areas": {
       "nervousSystem": "Låda-andning skapar en balanserad rytm som snabbt aktiverar det parasympatiska nervsystemet.",
       "immuneSupport": "Regelbunden övning hjälper till att minska kortisolnivåerna och stödjer immunresiliens."
@@ -1038,6 +1040,7 @@
   "4_7_8_breathing": {
     "title": "4-7-8-andning",
     "description": "4-7-8-tekniken innebär att andas in i 4 slag, hålla i 7 slag och andas ut i 8 slag. Det är särskilt effektivt för avslappning och sömnförberedelse.",
+    "habitTargets": { "description": "Markera när du har genomfört en bekväm 4-7-8-andningsövning idag." },
     "areas": {
       "nervousSystem": "Det förlängda utandningen aktiverar vagusnerven, vilket främjar djup avslappning och minskar ångest.",
       "sleepQuality": "Denna teknik är mycket effektiv för att förbereda kropp och sinne för sömn, vilket förbättrar sömnkvaliteten."
@@ -1046,6 +1049,7 @@
   "alternate_nostril_breathing": {
     "title": "Växlande näsborrs-andning",
     "description": "Nadi Shodhana (växlande näsborrs-andning) innebär att andas genom en näsborr i taget i ett kontrollerat mönster. Det balanserar nervsystemet och förbättrar mental klarhet.",
+    "habitTargets": { "description": "Registrera dagens totala minuter växlande näsborrsandning. Målet är tre minuter per dag." },
     "areas": {
       "nervousSystem": "Denna teknik balanserar vänster och höger sida av nervsystemet, vilket främjar harmoni och lugn.",
       "mind": "Växlande näsborrs-andning förbättrar mental klarhet och koncentration genom att balansera hjärnhalvorna."
@@ -1054,6 +1058,7 @@
   "diaphragmatic_breathing": {
     "title": "Diafragmal andning",
     "description": "Också kallad bukandning eller djup andning, denna teknik fokuserar på att andas djupt in i buken snarare än bröstet. Det är grundläggande för alla andningsövningar.",
+    "habitTargets": { "description": "Registrera dagens totala minuter diafragmal andning (bukandning). Målet är fem minuter per dag." },
     "areas": {
       "nervousSystem": "Djup diafragmal andning minskar kraftigt stress och ångest genom att aktivera avslappningsresponsen.",
       "energy": "Korrekt syrenation genom diafragmal andning förbättrar energinivåerna och mental klarhet."
@@ -1071,6 +1076,7 @@
   "sleep_environment_optimization": {
     "title": "Sömnmiljöoptimering",
     "description": "Att skapa en optimal sömnmiljö är väsentligt för högkvalitativ sömn. Detta inkluderar mörker, cool temperatur, tysta förhållanden och bekväm säng som stödjer återställande sömn.",
+    "habitTargets": { "description": "Markera när du har förberett sovmiljön för natten, till exempel mörklagt rummet och minskat störande ljud." },
     "areas": {
       "sleepQuality": "En mörk, cool (15-19°C), tyst miljö främjar melatoninproduktion och djupare sömnkyclar.",
       "nervousSystem": "En optimerad sömnmiljö minskar externa stressorer och tillåter nervsystemet att helt och hållet vila och återhämta sig."
@@ -1079,6 +1085,7 @@
   "sleep_hygiene_practices": {
     "title": "Sömnhygieniska rutiner",
     "description": "Sömnhygien omfattar dagliga vanor som främjar bättre sömn, såsom att undvika koffein på eftermiddagen, begränsa skärmtid före sänggåendet och upprätthålla regelbundna träningsrutiner.",
+    "habitTargets": { "description": "Markera när du har följt dina valda sömnhygieniska vanor idag, till exempel undvikit sent koffein och begränsat skärmtid före läggdags." },
     "areas": {
       "sleepQuality": "Goda sömnhygieniska rutiner tar bort hinder för högkvalitativ sömn och skapar förhållanden för djupare, mer återställande vila.",
       "immuneSupport": "Högkvalitativ sömn från goda hygienbehov stärker immunfunktionen och stödjer kroppens förmåga att bekämpa infektioner."
@@ -1087,6 +1094,7 @@
   "pre_sleep_wind_down": {
     "title": "Sömnförberedelse och nedvarvning",
     "description": "En strukturerad nedvarvningsrutin 30-60 minuter före sänggåendet signalerar till din kropp att det är dags att sova. Detta kan inkludera avslappningsteknik, lätt läsning, meditation eller mild stretching.",
+    "habitTargets": { "description": "Registrera dagens minuter nedvarvning före läggdags, till exempel lugn läsning eller lätt stretching. Målet är 30 minuter per dag." },
     "areas": {
       "sleepQuality": "En korrekt nedvarvningsrutin hjälper till att övergå nervsystemet från vaksamhet till sömn, vilket främjar snabbare sömnbörjan och djupare sömn.",
       "nervousSystem": "Avslappningsteknik före sänggåendet aktiverar det parasympatiska nervsystemet och förbereder kroppen för återhämtning."

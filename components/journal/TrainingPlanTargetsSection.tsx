@@ -268,6 +268,7 @@ export const TrainingPlanTargetsSection: React.FC<TrainingPlanTargetsSectionProp
                 params: {
                   targetPeriods: period,
                   planCategories: 'training',
+                  goalIntro: 'training',
                 },
               });
             }}
@@ -312,6 +313,7 @@ export const TrainingPlanTargetsSection: React.FC<TrainingPlanTargetsSectionProp
                 params: {
                   targetPeriods: 'daily,weekly',
                   planCategories: 'training',
+                  goalIntro: 'training',
                 },
               });
             }}

@@ -1,3 +1,4 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 type MaterialIconName = React.ComponentProps<typeof MaterialIcons>['name'];
@@ -5,9 +6,31 @@ type MaterialIconName = React.ComponentProps<typeof MaterialIcons>['name'];
 type IconDefinition = {
   sf: string;
   material: MaterialIconName;
+  materialCommunity?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  useMaterialCommunityOnIOS?: boolean;
 };
 
 export const ICON_SYMBOLS = {
+  'calendarCheck': {
+    sf: 'calendar.badge.checkmark',
+    material: 'event-available',
+    materialCommunity: 'calendar-check-outline',
+  },
+  'close': {
+    sf: 'xmark',
+    material: 'close',
+  },
+  'lotus': {
+    sf: 'camera.macro',
+    material: 'spa',
+    materialCommunity: 'spa',
+    useMaterialCommunityOnIOS: true,
+  },
+  'firework': {
+    sf: 'fireworks',
+    material: 'celebration',
+    materialCommunity: 'firework',
+  },
   'dna': {
     sf: 'circle.grid.cross',
     material: 'biotech',

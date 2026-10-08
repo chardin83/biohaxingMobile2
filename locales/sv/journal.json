@@ -262,6 +262,7 @@
     "registeredToday": "Registrerat idag"
   },
   "otherTips": {
+    "sleepSchedule": {"noData": "Kan inte kontrolleras – sömndata saknas", "fulfilled": "Kontrollerat – uppfyllt", "notFulfilled": "Kontrollerat – inte uppfyllt", "details": "Insomning {{actualBedtime}} · mål {{targetBedtime}} · avvikelse {{deviationMinutes}} min (högst 30 min)"},
     "title": "Övriga tips",
     "subtitle": "Följ dagens uppfyllelse av dina övriga tips.",
     "description": "Övriga tips för din hälsa",

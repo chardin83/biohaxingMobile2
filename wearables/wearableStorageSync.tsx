@@ -13,7 +13,7 @@ export function WearableStorageSync() {
       return;
     }
 
-    sync().catch(() => {});
+    sync().catch(error => console.warn('[WearableStorageSync] Sync failed; using saved data', error));
   }, [status.lastSyncAt, sync]);
 
   return null;

@@ -122,10 +122,10 @@ export type ActivityTarget = {
     | 'vigorous_activity_minutes';
 } & BaseTarget<'minutes' | 'km' | 'sessions'>;
 
-export type HabitInputMode = 'number' | 'daily-check' | 'slots';
+export type HabitInputMode = 'number' | 'daily-check' | 'slots' | 'automatic';
 
 export type HabitTarget = {
-  trackingKey: 'sleep_duration' | 'morning_light' | 'meditation' | 'tooth_brushing' | 'nature_time' | 'social_connection';
+  trackingKey: 'sleep_duration' | 'morning_light' | 'meditation' | 'tooth_brushing' | 'nature_time' | 'social_connection' | 'sleep_schedule_consistency' | 'box_breathing' | 'breathing_4_7_8' | 'alternate_nostril_breathing' | 'diaphragmatic_breathing' | 'sleep_environment' | 'sleep_hygiene' | 'pre_sleep_wind_down';
   buttonLabels?: string[];
   inputMode?: HabitInputMode;
 } & BaseTarget<'minutes' | 'hours' | 'count'>;
@@ -444,6 +444,9 @@ const rawTips: Tip[] = [
     preferredDayParts: ['evening'],
     timeRule: 'anytime',
     planCategory: ['other'],
+    targetPeriod: 'daily',
+    targetIconName: 'target',
+    habitTargets: [{ trackingKey: 'sleep_schedule_consistency', amount: 1, unit: 'count', inputMode: 'automatic' }],
     bodyParts: ['nervousSystem'],
   },
   {
@@ -936,6 +939,10 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday', 'afternoon'],
     timeRule: 'anytime',
+    planCategory: ['other'],
+    targetPeriod: 'daily',
+    targetIconName: 'target',
+    habitTargets: [{ trackingKey: 'box_breathing', amount: 3, unit: 'minutes', inputMode: 'number' }],
     bodyParts: ['nervousSystem', 'lungs'],
   },
   {
@@ -953,6 +960,10 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
+    planCategory: ['other'],
+    targetPeriod: 'daily',
+    targetIconName: 'target',
+    habitTargets: [{ trackingKey: 'breathing_4_7_8', amount: 1, unit: 'count', inputMode: 'daily-check' }],
     bodyParts: ['nervousSystem', 'lungs'],
   },
   {
@@ -970,6 +981,10 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
+    planCategory: ['other'],
+    targetPeriod: 'daily',
+    targetIconName: 'target',
+    habitTargets: [{ trackingKey: 'alternate_nostril_breathing', amount: 3, unit: 'minutes', inputMode: 'number' }],
     bodyParts: ['nervousSystem', 'lungs'],
   },
   {
@@ -987,6 +1002,10 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday', 'afternoon'],
     timeRule: 'anytime',
+    planCategory: ['other'],
+    targetPeriod: 'daily',
+    targetIconName: 'target',
+    habitTargets: [{ trackingKey: 'diaphragmatic_breathing', amount: 5, unit: 'minutes', inputMode: 'number' }],
     bodyParts: ['nervousSystem', 'lungs'],
   },
   {
@@ -1043,6 +1062,10 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
+    planCategory: ['other'],
+    targetPeriod: 'daily',
+    targetIconName: 'target',
+    habitTargets: [{ trackingKey: 'sleep_environment', amount: 1, unit: 'count', inputMode: 'daily-check' }],
     bodyParts: ['nervousSystem'],
   },
   {
@@ -1060,6 +1083,10 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening'],
     timeRule: 'anytime',
+    planCategory: ['other'],
+    targetPeriod: 'daily',
+    targetIconName: 'target',
+    habitTargets: [{ trackingKey: 'sleep_hygiene', amount: 1, unit: 'count', inputMode: 'daily-check' }],
     bodyParts: ['nervousSystem'],
   },
   {
@@ -1077,6 +1104,10 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
+    planCategory: ['other'],
+    targetPeriod: 'daily',
+    targetIconName: 'target',
+    habitTargets: [{ trackingKey: 'pre_sleep_wind_down', amount: 30, unit: 'minutes', inputMode: 'number' }],
     bodyParts: ['nervousSystem'],
   },
   {

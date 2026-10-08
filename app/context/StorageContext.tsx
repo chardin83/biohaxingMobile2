@@ -1,6 +1,6 @@
 //import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Crypto from 'expo-crypto';
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { subscribeArchivedPlans, subscribePlans } from '@/app/context/storage/plans/planEvents';
 import { getPlanStorage, saveTrainingPlanSettings } from '@/app/context/storage/plans/planStorage';
@@ -21,8 +21,12 @@ import {
 } from '@/app/context/storage/plans/planTypes';
 import { levels, XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW, XP_PER_CHAT_MESSAGE, type XpSource } from '@/constants/XP';
 import { MetricId } from '@/locales/metrics';
+import { countNewAutomaticHabitGoals, getAutomaticHabitGoalKeys } from '@/services/targetProgress/automaticHabitSummary';
+import { prepareManualHabitResult, storeAutomaticSleepResults } from '@/services/targetProgress/habitResultStorage';
+//import { seedHabitTestDataOnce } from '@/services/testData/temporaryHabitTestData';
 import { type NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import { VerdictValue } from '@/types/verdict';
+import { useWearable } from '@/wearables/wearableProvider';
 
 import { Plan } from '../domain/Plan';
 import { type Supplement } from '../domain/Supplement';
@@ -124,6 +128,8 @@ interface StorageContextType {
   hasCompletedOnboarding: boolean;
   setHasCompletedOnboarding: (val: boolean) => void;
   isInitialized: boolean;
+  isReadyForHealthSync: boolean;
+  automaticHabitSummary: { isReady: boolean; newGoalsCount: number };
   onboardingStep: number;
   setOnboardingStep: (val: number) => void;
   myXP: number;
@@ -219,6 +225,9 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const [trainingPlanSettingsState, setTrainingPlanSettingsState] = useState<Record<string, TrainingPlanSettings>>({});
   const [dailyTrainingTrackingState, setDailyTrainingTrackingState] = useState<DailyTrainingTracking>({});
   const [dailyHabitTrackingState, setDailyHabitTrackingState] = useState<DailyHabitTracking>({});
+  const previousAutomaticGoals = useRef<ReadonlySet<string>>(new Set());
+  const [hasProcessedAutomaticHabits, setHasProcessedAutomaticHabits] = useState(false);
+  const newAutomaticHabitGoals = useMemo(() => countNewAutomaticHabitGoals(dailyHabitTrackingState, previousAutomaticGoals.current), [dailyHabitTrackingState]);
   const [viewedTipsState, setViewedTipsState] = useState<ViewedTip[]>([]);
   const [showMusicState, setShowMusicState] = useState(true);
   const [tempPlans, setTempPlans] = useState<PlansByCategory | null>(null);
@@ -227,6 +236,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const [hideBarcodeInfoState, setHideBarcodeInfoState] = useState(false);
   const [nutritionXpClaimsState, setNutritionXpClaimsState] = useState<Record<string, NutritionXpClaim>>({});
   const [userProfileState, setUserProfileState] = useState<UserProfile>({});
+  const [userProfileInitialized, setUserProfileInitialized] = useState(false);
 
   // useEffect(() => {
   //   AsyncStorage.clear()
@@ -266,6 +276,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
 
       if (mounted) {
         setUserProfileState(profile);
+        setUserProfileInitialized(true);
       }
     };
 
@@ -288,6 +299,8 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   useEffect(() => {
     const loadData = async () => {
       try {
+        // TEMPORARY: seed habit start dates once before loading saved plans.
+        //await seedHabitTestDataOnce();
         const [app, plans, supplements, nutrition, drinks, training, habits, xp, metrics] = await Promise.all([
           getAppStorage(),
           getPlanStorage(),
@@ -359,24 +372,13 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
          * Habits
          */
 
+        // Compare against results saved during the previous visit, before this visit's sync.
+        previousAutomaticGoals.current = getAutomaticHabitGoalKeys(habits.dailyHabitTracking);
         setDailyHabitTrackingState(habits.dailyHabitTracking);
 
         /*
          * XP
          */
-
-        // Temporary startup boost: persists level and XP, so it survives removing this block.
-        const startupLevel = levels.find(level => level.level === 10)!;
-        const startupXP = Math.max(xp.myXP, startupLevel.requiredXP);
-        const startupXpBreakdown = {
-          ...xp.xpBreakdown,
-          education: xp.xpBreakdown.education + (startupXP - xp.myXP),
-        };
-        await Promise.all([saveXP(startupXP), saveLevel(startupLevel.level), saveXpBreakdown(startupXpBreakdown)]);
-        xp.myXP = startupXP;
-        xp.myLevel = startupLevel.level;
-        xp.xpBreakdown = startupXpBreakdown;
-        // End temporary startup boost. Remove the block above after starting the app once.
 
         setMyXPState(xp.myXP);
 
@@ -709,18 +711,36 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     });
   }, []);
 
+  const habitProfile = useRef(userProfileState);
+  const { isSyncing, hasCompletedInitialSync } = useWearable();
+  useEffect(() => {
+    habitProfile.current = userProfileState;
+  }, [userProfileState]);
+  useEffect(() => {
+    if (!isInitialized || !userProfileInitialized || !hasCompletedInitialSync || isSyncing) return;
+    setDailyHabitTracking(previous => storeAutomaticSleepResults(previous, metricEntriesState, plansState.other, habitProfile.current));
+    setHasProcessedAutomaticHabits(true);
+  }, [isInitialized, userProfileInitialized, hasCompletedInitialSync, isSyncing, metricEntriesState, plansState.other, setDailyHabitTracking]);
+
   const addHabitEntry = useCallback(
     (dateKey: string, trackingKey: string, entry: HabitEntry) => {
-      setDailyHabitTracking(prev => addHabitEntryToTracking(prev, dateKey, trackingKey, entry));
+      const result = prepareManualHabitResult(plansState.other, trackingKey, dateKey, entry);
+      if (!result) return;
+      setDailyHabitTracking(prev => addHabitEntryToTracking(prev, dateKey, trackingKey, result));
     },
-    [setDailyHabitTracking]
+    [setDailyHabitTracking, plansState.other]
   );
 
   const updateHabitEntry = useCallback(
     (dateKey: string, trackingKey: string, updates: Partial<HabitEntry>) => {
-      setDailyHabitTracking(prev => updateHabitEntryInTracking(prev, dateKey, trackingKey, updates));
+      setDailyHabitTracking(prev => {
+        const existing = prev[dateKey]?.[trackingKey];
+        if (!existing) return prev;
+        const result = prepareManualHabitResult(plansState.other, trackingKey, dateKey, { ...existing, ...updates });
+        return result ? updateHabitEntryInTracking(prev, dateKey, trackingKey, result) : prev;
+      });
     },
-    [setDailyHabitTracking]
+    [setDailyHabitTracking, plansState.other]
   );
 
   const removeHabitEntry = useCallback(
@@ -1137,6 +1157,11 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       hasCompletedOnboarding: hasCompletedOnboardingState,
       setHasCompletedOnboarding,
       isInitialized,
+      isReadyForHealthSync: isInitialized && userProfileInitialized,
+      automaticHabitSummary: {
+        isReady: hasProcessedAutomaticHabits && hasCompletedInitialSync && !isSyncing,
+        newGoalsCount: newAutomaticHabitGoals,
+      },
       onboardingStep: onboardingStepState,
       setOnboardingStep,
       myXP: myXPState,
@@ -1202,7 +1227,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       clearUserProfile,
     }),
     // prettier-ignore
-    [plansState, setPlans, saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, clearSupplementTakenDates, clearSupplementCustom, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, myXPState, setMyXP, clearNutritionXP, clearEducationXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState, 
+    [plansState, setPlans, saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, clearSupplementTakenDates, clearSupplementCustom, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, userProfileInitialized, hasProcessedAutomaticHabits, hasCompletedInitialSync, isSyncing, newAutomaticHabitGoals, myXPState, setMyXP, clearNutritionXP, clearEducationXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState,
       dailyNutritionTrackingState, addNutritionEntry, updateNutritionEntry, removeNutritionEntry, clearDailyNutritionTracking, weeklyNutritionTrackingState, setWeeklyNutritionTracking, dailyDrinkTrackingState, addDrinkEntry, updateDrinkEntry, removeDrinkEntry, clearDailyDrinkTracking, trainingPlanSettingsState, setTrainingPlanSettings, dailyTrainingTrackingState, addTrainingEntry, updateTrainingEntry, removeTrainingEntry, clearDailyTrainingTracking, dailyHabitTrackingState, addHabitEntry, updateHabitEntry, removeHabitEntry, clearDailyHabitTracking, showMusicState, setShowMusic, tempPlans, setTempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, setMetricEntries, getMetricHistory, clearMetricEntries, healthSyncEnabledState, setHealthSyncEnabled, hideBarcodeInfoState, setHideBarcodeInfo, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
   );
 

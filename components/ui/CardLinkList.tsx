@@ -90,6 +90,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   leftRow: {
+    flex: 1,
+    minWidth: 0,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -98,6 +100,8 @@ const styles = StyleSheet.create({
     height: 40,
   },
   textColumn: {
+    flex: 1,
+    minWidth: 0,
     marginLeft: 12,
   },
   title: {},

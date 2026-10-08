@@ -1,7 +1,14 @@
 import { act, render, waitFor } from '@testing-library/react-native';
 import React from 'react';
 
+import * as habitResults from '@/services/targetProgress/habitResultStorage';
+import { useWearable } from '@/wearables/wearableProvider';
+
 import { StorageProvider, useStorage } from '../StorageContext';
+
+jest.mock('@/wearables/wearableProvider', () => ({
+  useWearable: jest.fn(() => ({ isSyncing: false, hasCompletedInitialSync: true })),
+}));
 
 // Helper component to expose context values for testing
 const TestComponent = ({ callback }: { callback: (ctx: ReturnType<typeof useStorage>) => void }) => {
@@ -13,6 +20,43 @@ const TestComponent = ({ callback }: { callback: (ctx: ReturnType<typeof useStor
 };
 
 describe('StorageContext', () => {
+  it('processes automatic habits only after the initial sync and pauses during later syncs', async () => {
+    const wearable = { isSyncing: false, hasCompletedInitialSync: false };
+    jest.mocked(useWearable).mockImplementation(() => wearable as unknown as ReturnType<typeof useWearable>);
+    const assessment = jest.spyOn(habitResults, 'storeAutomaticSleepResults');
+    let contextValues: ReturnType<typeof useStorage> | undefined;
+    const capture = (context: ReturnType<typeof useStorage>) => { contextValues = context; };
+    const content = () => <StorageProvider><TestComponent callback={capture} /></StorageProvider>;
+    try {
+      const { rerender } = render(content());
+      await waitFor(() => expect(contextValues?.isReadyForHealthSync).toBe(true));
+      expect(assessment).not.toHaveBeenCalled();
+      expect(contextValues?.automaticHabitSummary.isReady).toBe(false);
+
+      wearable.isSyncing = true;
+      rerender(content());
+      expect(assessment).not.toHaveBeenCalled();
+
+      wearable.isSyncing = false;
+      wearable.hasCompletedInitialSync = true;
+      rerender(content());
+      await waitFor(() => expect(assessment).toHaveBeenCalled());
+      expect(contextValues?.automaticHabitSummary.isReady).toBe(true);
+      assessment.mockClear();
+
+      wearable.isSyncing = true;
+      rerender(content());
+      expect(assessment).not.toHaveBeenCalled();
+      expect(contextValues?.automaticHabitSummary.isReady).toBe(false);
+      wearable.isSyncing = false;
+      rerender(content());
+      await waitFor(() => expect(assessment).toHaveBeenCalled());
+    } finally {
+      assessment.mockRestore();
+      jest.mocked(useWearable).mockImplementation(() => ({ isSyncing: false, hasCompletedInitialSync: true }) as unknown as ReturnType<typeof useWearable>);
+    }
+  });
+
   it('provides default values and allows updating plans', async () => {
     let contextValues: any = {};
 

@@ -233,6 +233,7 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                   params: {
                     targetPeriods: 'daily,weekly',
                     planCategories: 'nutrition',
+                    goalIntro: 'nutrition',
                   },
                 });
               }}
@@ -266,6 +267,7 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                       params: {
                         targetPeriods: 'daily',
                         planCategories: 'nutrition',
+                        goalIntro: 'nutrition',
                       },
                     });
                   }}
@@ -297,6 +299,7 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                       params: {
                         targetPeriods: 'weekly',
                         planCategories: 'nutrition',
+                        goalIntro: 'nutrition',
                       },
                     });
                   }}

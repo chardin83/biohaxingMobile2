@@ -12,6 +12,7 @@ import Badge from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
 import LabeledInput from '@/components/ui/LabeledInput';
+import Notice from '@/components/ui/Notice';
 import { PressableCard } from '@/components/ui/PressableCard';
 import { bodyParts as allBodyParts } from '@/locales/bodyParts';
 import { TargetPeriod, Tip, tips } from '@/locales/tips';
@@ -20,7 +21,7 @@ import { PlanCategory } from '@/types/planCategory';
 export default function TipsSearchScreen() {
   const { t } = useTranslation();
   const { myLevel } = useStorage();
-  const params = useLocalSearchParams<{ targetPeriods?: string | string[]; planCategories?: string | string[] }>();
+  const params = useLocalSearchParams<{ targetPeriods?: string | string[]; planCategories?: string | string[]; goalIntro?: string }>();
   const [query, setQuery] = useState('');
   const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
   const [showFilter, setShowFilter] = useState(false);
@@ -29,6 +30,13 @@ export default function TipsSearchScreen() {
   const [selectedBodyParts, setSelectedBodyParts] = useState<string[]>([]);
   const [selectedTargetPeriods, setSelectedTargetPeriods] = useState<TargetPeriod[]>([]);
   const { colors } = useTheme();
+  const introCategory = params.goalIntro;
+  const [dismissedIntro, setDismissedIntro] = useState<string>();
+  const showGoalIntro =
+    introCategory !== dismissedIntro &&
+    (introCategory === 'training' || introCategory === 'nutrition' || introCategory === 'other') &&
+    selectedPlanCategories.length === 1 &&
+    selectedPlanCategories[0] === introCategory;
 
   // Always collapse filter panel on navigation/param change
   useEffect(() => {
@@ -342,6 +350,16 @@ export default function TipsSearchScreen() {
           </View>
         )}
       </TouchableOpacity>
+      {showGoalIntro && (
+        <Notice
+          style={styles.goalIntroNotice}
+          variant="tutorial"
+          iconName="calendarCheck"
+          title={t(`common:search.goalIntro.${introCategory}.title`)}
+          message={t(`common:search.goalIntro.${introCategory}.message`)}
+          onDismiss={() => setDismissedIntro(introCategory)}
+        />
+      )}
       <ThemedText type="default" style={styles.resultCount}>
         {`${matchCount} tips`}
       </ThemedText>
@@ -391,6 +409,7 @@ export default function TipsSearchScreen() {
 }
 
 const styles = StyleSheet.create({
+  goalIntroNotice: { marginBottom: 10 },
   hiddenLevelRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
   hiddenLevelTitle: { flex: 1 },
   levelContent: { marginLeft: 0, marginTop: 12 },

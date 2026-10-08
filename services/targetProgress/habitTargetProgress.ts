@@ -1,42 +1,23 @@
-import type {
-  DailyHabitTracking,
-} from '@/app/context/storage/habits/habitTypes';
+import type { DailyHabitTracking } from '@/app/context/storage/habits/habitTypes';
 
-import {
-  getTargetDates,
-} from './dateRange';
-import type {
-  HabitTargetDefinition,
-} from './targetProgressTypes';
+import { getTargetDates } from './dateRange';
+import type { HabitTargetDefinition } from './targetProgressTypes';
 
 export const resolveHabitTarget = ({
   target,
   selectedDate,
   dailyHabitTracking,
 }: {
-  target:
-    HabitTargetDefinition;
+  target: HabitTargetDefinition;
   selectedDate: string;
-  dailyHabitTracking:
-    DailyHabitTracking;
+  dailyHabitTracking: DailyHabitTracking;
 }): number => {
-  const dates =
-    getTargetDates(
-      selectedDate,
-      target.period
-    );
+  const dates = getTargetDates(selectedDate, target.period);
 
-  return dates.reduce(
-    (total, date) => {
-      const value =
-        dailyHabitTracking[
-          date
-        ]?.[
-          target.trackingKey
-        ]?.value ?? 0;
+  return dates.reduce((total, date) => {
+    if (target.trackingKey === 'sleep_schedule_consistency' && !dailyHabitTracking[date]?.[target.trackingKey]?.sleepSchedule) return total;
+    const value = dailyHabitTracking[date]?.[target.trackingKey]?.value ?? 0;
 
-      return total + value;
-    },
-    0
-  );
+    return total + value;
+  }, 0);
 };

@@ -12,7 +12,7 @@ import { WearablePermission } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
 import { MetricContainer } from './MetricContainer';
-import { DEFAULT_TARGET_BEDTIME_MINUTES, getBedtimeDeviation, minutesToTimeString } from './sleepConsistency';
+import { getBedtimeDeviation, minutesToTimeString, timeStringToMinutes } from './sleepConsistency';
 
 interface SleepConsistencyMetricProps {
   readonly showDivider?: boolean;
@@ -23,7 +23,7 @@ interface SleepConsistencyMetricProps {
 export function SleepConsistencyMetric({ showDivider = false, onPress, isSelected = false }: SleepConsistencyMetricProps) {
   const { colors } = useTheme();
   const { t } = useTranslation('metrics');
-  const { getMetricHistory } = useStorage();
+  const { getMetricHistory, userProfile } = useStorage();
   const { adapter } = useWearable();
   const [hasPermission, setHasPermission] = React.useState(true);
   const bedtimeData = getMetricHistory('sleep_bedtime');
@@ -38,7 +38,7 @@ export function SleepConsistencyMetric({ showDivider = false, onPress, isSelecte
   const latest = React.useMemo(() => getLatestMetricEntry(bedtimeData), [bedtimeData]);
   const actualMinutes = typeof latest?.value === 'number' ? latest.value : undefined;
   const startTime = actualMinutes !== undefined ? minutesToTimeString(actualMinutes) : undefined;
-  const nightlyDeviation = actualMinutes !== undefined ? getBedtimeDeviation(DEFAULT_TARGET_BEDTIME_MINUTES, actualMinutes) : undefined;
+  const nightlyDeviation = actualMinutes !== undefined ? getBedtimeDeviation(timeStringToMinutes(userProfile.bedtime ?? '23:00'), actualMinutes) : undefined;
   const isPerfect = nightlyDeviation?.isPerfect === true;
   const isGood = nightlyDeviation?.isGood === true;
 

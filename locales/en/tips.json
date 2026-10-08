@@ -173,6 +173,7 @@
   "sleep_timing_circadian": {
     "title": "Sleep timing and circadian rhythm",
     "description": "Synchronizing sleep with the body's natural circadian rhythm optimizes sleep quality and recovery. Consistent sleep and wake times help regulate hormone production and metabolism.",
+    "habitTargets": { "description": "Tracked automatically from your logged sleep onset compared with the bedtime in your personal settings. The daily goal is met when the difference is at most 30 minutes." },
     "areas": {
       "sleepQuality": "Regular sleep rhythm improves sleep quality by strengthening the body's natural melatonin production.",
       "immuneSupport": "Circadian synchronization supports immune function by optimizing the body's natural defense cycles.",
@@ -499,6 +500,7 @@
   "box_breathing": {
     "title": "Box breathing",
     "description": "Box breathing (also called square breathing) is a technique where you inhale, hold, exhale, and hold again for equal counts (typically 4-4-4-4). It's excellent for rapid stress relief and focus.",
+    "habitTargets": { "description": "Log today’s total minutes of box breathing. The goal is three minutes per day." },
     "areas": {
       "nervousSystem": "Box breathing creates a balanced rhythm that quickly activates the parasympathetic nervous system.",
       "immuneSupport": "Regular practice helps reduce cortisol levels and supports immune resilience."
@@ -507,6 +509,7 @@
   "4_7_8_breathing": {
     "title": "4-7-8 breathing",
     "description": "The 4-7-8 technique involves inhaling for 4 counts, holding for 7 counts, and exhaling for 8 counts. It's particularly effective for relaxation and sleep preparation.",
+    "habitTargets": { "description": "Mark when you have completed a comfortable 4-7-8 breathing exercise today." },
     "areas": {
       "nervousSystem": "The extended exhale activates the vagus nerve, promoting deep relaxation and reducing anxiety.",
       "sleepQuality": "This technique is highly effective for preparing the body and mind for sleep, improving sleep quality."
@@ -515,6 +518,7 @@
   "alternate_nostril_breathing": {
     "title": "Alternate nostril breathing",
     "description": "Nadi Shodhana (alternate nostril breathing) involves breathing through one nostril at a time in a controlled pattern. It balances the nervous system and enhances mental clarity.",
+    "habitTargets": { "description": "Log today’s total minutes of alternate nostril breathing. The goal is three minutes per day." },
     "areas": {
       "nervousSystem": "This technique balances the left and right sides of the nervous system, promoting harmony and calm.",
       "mind": "Alternate nostril breathing enhances mental clarity and concentration by balancing brain hemispheres."
@@ -523,6 +527,7 @@
   "diaphragmatic_breathing": {
     "title": "Diaphragmatic breathing",
     "description": "Also called belly breathing or deep breathing, this technique focuses on breathing deeply into the abdomen rather than the chest. It's fundamental to all breathwork practices.",
+    "habitTargets": { "description": "Log today’s total minutes of diaphragmatic breathing (belly breathing). The goal is five minutes per day." },
     "areas": {
       "nervousSystem": "Deep diaphragmatic breathing significantly reduces stress and anxiety by activating the relaxation response.",
       "energy": "Proper oxygenation through diaphragmatic breathing improves energy levels and mental clarity."
@@ -551,6 +556,7 @@
   "sleep_environment_optimization": {
     "title": "Sleep environment optimization",
     "description": "Creating an optimal sleep environment is essential for quality sleep. This includes darkness, cool temperature, quiet conditions, and comfortable bedding that support restorative sleep.",
+    "habitTargets": { "description": "Mark when you have prepared your sleep environment for the night, for example by darkening the room and reducing disruptive noise." },
     "areas": {
       "sleepQuality": "A dark, cool (60-67°F), quiet environment promotes melatonin production and deeper sleep cycles.",
       "nervousSystem": "An optimized sleep environment reduces external stressors and allows the nervous system to fully relax and recover."
@@ -559,6 +565,7 @@
   "sleep_hygiene_practices": {
     "title": "Sleep hygiene practices",
     "description": "Sleep hygiene encompasses daily habits that promote better sleep, such as avoiding caffeine in the afternoon, limiting screen time before bed, and maintaining regular exercise routines.",
+    "habitTargets": { "description": "Mark when you have followed your chosen sleep hygiene habits today, for example avoiding late caffeine and limiting screen time before bed." },
     "areas": {
       "sleepQuality": "Good sleep hygiene practices remove barriers to quality sleep and create conditions for deeper, more restorative rest.",
       "immuneSupport": "Quality sleep from good hygiene practices strengthens immune function and supports the body's ability to fight infections."
@@ -567,6 +574,7 @@
   "pre_sleep_wind_down": {
     "title": "Pre-sleep wind-down routine",
     "description": "A structured wind-down routine 30-60 minutes before bed signals to your body that it's time to sleep. This can include relaxation techniques, light reading, meditation, or gentle stretching.",
+    "habitTargets": { "description": "Log today’s minutes of winding down before bed, for example quiet reading or gentle stretching. The goal is 30 minutes per day." },
     "areas": {
       "sleepQuality": "A proper wind-down routine helps transition the nervous system from wakefulness to sleep, promoting faster sleep onset and deeper sleep.",
       "nervousSystem": "Pre-sleep relaxation techniques activate the parasympathetic nervous system, preparing the body for restorative sleep."

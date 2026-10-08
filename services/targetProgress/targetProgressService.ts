@@ -1,6 +1,8 @@
 import type { DailyHabitTracking } from '@/app/context/storage/habits/habitTypes';
+import type { MetricEntry } from '@/app/context/storage/metrics/metricTypes';
 import { DailyNutritionTracking, WeeklyNutritionTracking } from '@/app/context/storage/nutrition/nutritionTypes';
 import type { DailyTrainingTracking } from '@/app/context/storage/training/trainingTypes';
+import type { UserProfile } from '@/app/context/storage/userProfile/userProfileTypes';
 import { SupplementTime } from '@/app/domain/SupplementTime';
 
 import { resolveHabitTarget } from './habitTargetProgress';
@@ -9,6 +11,8 @@ import type { TargetDefinition, TargetProgress } from './targetProgressTypes';
 import { resolveTrainingTarget } from './trainingTargetProgress';
 
 export type TargetProgressStorage = {
+  metricEntries?: MetricEntry[];
+  userProfile?: UserProfile;
   dailyNutritionTracking: DailyNutritionTracking;
 
   weeklyNutritionTracking: WeeklyNutritionTracking;
@@ -61,8 +65,14 @@ export const getTargetProgress = ({
 
   return {
     current,
-    target: target.amount,
+    target:
+      target.source === 'habit' && target.period === 'daily'
+        ? (storage.dailyHabitTracking[selectedDate]?.[target.trackingKey]?.targetAmount ?? target.amount)
+        : target.amount,
     unit: target.unit,
-    isFulfilled: current >= target.amount,
+    isFulfilled:
+      target.source === 'habit' && target.period === 'daily'
+        ? (storage.dailyHabitTracking[selectedDate]?.[target.trackingKey]?.isFulfilled ?? current >= target.amount)
+        : current >= target.amount,
   };
 };

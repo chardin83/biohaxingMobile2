@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SymbolView } from 'expo-symbols';
 import { StyleProp, ViewStyle } from 'react-native';
 
@@ -16,7 +17,11 @@ export function IconSymbol({
   style?: StyleProp<ViewStyle>;
   weight?: 'regular' | 'bold';
 }>) {
-  const sfName = ICON_SYMBOLS[name]?.sf ?? 'questionmark.circle';
+  const definition = ICON_SYMBOLS[name];
+  if (definition && 'useMaterialCommunityOnIOS' in definition && definition.useMaterialCommunityOnIOS) {
+    return <MaterialCommunityIcons name={definition.materialCommunity} size={size} color={color} style={style} />;
+  }
+  const sfName = definition?.sf ?? 'questionmark.circle';
 
   return (
     <SymbolView

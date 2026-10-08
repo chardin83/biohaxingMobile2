@@ -5,25 +5,26 @@ import { syncWearableMetricsToStorage } from '@/wearables/syncMetricsToStorage';
 import { useWearable } from '@/wearables/wearableProvider';
 
 export const useWearableStorageSync = () => {
-  const { adapter, isSyncing, setIsSyncing, markSynced } = useWearable();
+  const { adapter, isSyncing, beginSync, finishSync, markSynced } = useWearable();
 
-  const { upsertMetricEntries } = useStorage();
+  const { upsertMetricEntries, isReadyForHealthSync } = useStorage();
 
   const sync = useCallback(async () => {
-    if (adapter.source === 'none' || isSyncing) {
-      return;
-    }
+    if (!isReadyForHealthSync || !beginSync()) return;
 
-    setIsSyncing(true);
-
+    let syncError: string | undefined;
     try {
+      if (adapter.source === 'none') return;
       await syncWearableMetricsToStorage(adapter, upsertMetricEntries);
 
       markSynced();
+    } catch (error) {
+      syncError = error instanceof Error ? error.message : String(error);
+      throw error;
     } finally {
-      setIsSyncing(false);
+      finishSync(syncError);
     }
-  }, [adapter, isSyncing, setIsSyncing, markSynced, upsertMetricEntries]);
+  }, [adapter, isReadyForHealthSync, beginSync, finishSync, markSynced, upsertMetricEntries]);
 
   return {
     sync,

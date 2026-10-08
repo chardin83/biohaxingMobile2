@@ -5,7 +5,7 @@ import TipsSearchScreen from '@/app/(tabs)/search';
 
 const mockStorage = { myLevel: 2 };
 const mockPush = jest.fn();
-const mockParams = {};
+const mockParams: { planCategories?: string; targetPeriods?: string; goalIntro?: string } = {};
 jest.mock('@/app/context/StorageContext', () => ({ useStorage: () => mockStorage }));
 jest.mock('expo-router', () => ({ router: { push: (...args: unknown[]) => mockPush(...args) }, useLocalSearchParams: () => mockParams }));
 jest.mock('@react-navigation/native', () => ({ useTheme: () => ({ colors: { gradients: { sunrise: { locations1: [] } } } }) }));
@@ -72,6 +72,9 @@ jest.mock('../ui/LabeledInput', () => ({
 beforeEach(() => {
   mockStorage.myLevel = 2;
   mockPush.mockClear();
+  delete mockParams.planCategories;
+  delete mockParams.targetPeriods;
+  delete mockParams.goalIntro;
 });
 
 it('groups results by level, previews the next level with a lock, and counts hidden tips per level', () => {
@@ -90,6 +93,37 @@ it('groups results by level, previews the next level with a lock, and counts hid
   expect(queryByRole('button', { name: 'common:tipsList.levelTitle:4' })).toBeNull();
   expect(queryByText('tips:hidden-a')).toBeNull();
   expect(queryByText('tips:hidden-b')).toBeNull();
+});
+
+it('shows the training introduction below filters when opened from a goal link', () => {
+  Object.assign(mockParams, { planCategories: 'training', targetPeriods: 'daily,weekly', goalIntro: 'training' });
+  const screen = render(<TipsSearchScreen />);
+  expect(screen.getByText('common:search.goalIntro.training.title')).toBeTruthy();
+  expect(screen.getByText('common:search.goalIntro.training.message')).toBeTruthy();
+  fireEvent.press(screen.getByRole('button', { name: 'general.understood' }));
+  expect(screen.queryByText('common:search.goalIntro.training.title')).toBeNull();
+});
+
+it('does not show a plan introduction for ordinary searches', () => {
+  mockParams.planCategories = 'training';
+  const screen = render(<TipsSearchScreen />);
+  expect(screen.queryByText('common:search.goalIntro.training.title')).toBeNull();
+});
+
+it.each(['daily', 'weekly'])('shows the same introduction for a journal %s goal link', period => {
+  Object.assign(mockParams, { planCategories: 'training', targetPeriods: period, goalIntro: 'training' });
+  const screen = render(<TipsSearchScreen />);
+  expect(screen.getByText('common:search.goalIntro.training.title')).toBeTruthy();
+  expect(screen.getByRole('button', { name: 'general.understood' })).toBeTruthy();
+});
+
+it('hides an outdated introduction when the category changes', () => {
+  Object.assign(mockParams, { planCategories: 'training', goalIntro: 'training' });
+  const screen = render(<TipsSearchScreen />);
+  expect(screen.getByText('common:search.goalIntro.training.title')).toBeTruthy();
+  mockParams.planCategories = 'nutrition';
+  screen.rerender(<TipsSearchScreen />);
+  expect(screen.queryByText('common:search.goalIntro.training.title')).toBeNull();
 });
 
 it('counts hidden search matches without revealing their title or description', () => {

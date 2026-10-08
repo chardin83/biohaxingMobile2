@@ -2,6 +2,7 @@
   "back": "Tillbaka",
   "today": "Idag",
   "general": {
+    "understood": "Förstått",
     "loading": "Laddar...",
     "areYouSure": "Är du säker?",
     "add": "Lägg till",
@@ -912,6 +913,33 @@
     "stepOf": "Steg {{current}} av {{total}}"
   },
   "dashboard": {
+    "sync": {
+      "loadingTitle": "Synkar dina framsteg",
+      "loadingDescription": "Vi hämtar hälsodata och kontrollerar dina automatiska vanor.",
+      "progressTitle": "Nya framsteg!",
+      "upToDateTitle": "Allt är uppdaterat!",
+      "upToDateDescription": "Inga nya mål sedan senaste besöket.",
+      "welcomeTitle": "Välkommen!!",
+      "welcomeDescription": "Du verkar inte ha lagt in några tips med mål ännu. Lägg till några tips för att komma igång.",
+      "firstTipTitle": "Lägg till ditt första tips",
+      "firstTipDescription": "Lägg till bra vanor, nutrition eller träning.",
+      "addGoal": {
+        "training": "Lägg till ditt första träningsmål",
+        "nutrition": "Lägg till ditt första nutritionsmål",
+        "other": "Lägg till ditt första mål för goda vanor"
+      },
+      "closingCountdown": "Rutan stängs automatiskt",
+      "habitGoalsLabel": "Goda vanor-mål",
+      "trainingGoalsLabel": "Träningsmål",
+      "progressDescription": "Sedan ditt senaste besök har appen automatiskt registrerat:",
+      "newHabitGoals_zero": "Inga nya habit-mål.",
+      "newHabitGoals_one": "{{count}} nytt habit-mål.",
+      "newHabitGoals_other": "{{count}} nya habit-mål.",
+      "manualTitle": "Kom ihåg att logga manuellt.",
+      "manualDescription": "Kost, dryck, tillskott och andra vanor som inte registreras automatiskt.",
+      "errorTitle": "Synkningen kunde inte slutföras",
+      "errorDescription": "Vi visar framsteg från sparad data. Dra nedåt för att försöka synka igen."
+    },
     "appTitle": "BIOHAXING",
     "level": "LEVEL",
     "noFavorites": "Inga favoriter än",
@@ -923,6 +951,20 @@
     "xpInfo": "XP mäter din utveckling i appen. Kunskaps-XP får du när du utforskar tips och frågor. Nutrition-XP får du när du uppfyller nutritionstips (dagliga/veckovisa mål).\n\nNuvarande uppdelning:\n Kunskaps-XP: {{education}} • Nutrition-XP: {{nutrition}}."
   },
   "search": {
+    "goalIntro": {
+      "training": {
+        "title": "Bygg din träningsplan.",
+        "message": "Välj ett träningstips och lägg till det i din plan. Du kan sedan följa målet dagligen eller veckovis i din dagbok."
+      },
+      "nutrition": {
+        "title": "Bygg din nutritionsplan.",
+        "message": "Välj ett nutritionstips och lägg till det i din plan. Du kan sedan följa målet dagligen eller veckovis i din dagbok."
+      },
+      "other": {
+        "title": "Bygg dina goda vanor.",
+        "message": "Välj ett tips för goda vanor och lägg till det i din plan. Du kan sedan följa målet dagligen eller veckovis i din dagbok."
+      }
+    },
     "label": "Sök tips"
   },
   "planCategory": {

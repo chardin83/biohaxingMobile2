@@ -97,6 +97,11 @@ export default function HabitProgressScreen() {
     return dailyHabitTracking[dateKey]?.[target.trackingKey]?.value ?? 0;
   };
 
+  const isDailyFulfilled = (target: HabitProgressTarget, date: string) => {
+    const entry = dailyHabitTracking[date]?.[target.trackingKey];
+    return entry?.isFulfilled ?? (entry?.value ?? 0) >= target.amount;
+  };
+
   const getWeekValue = (target: HabitProgressTarget, week: PastWeek): number => {
     return week.days.reduce((total, dateKey) => total + getDailyValue(target, dateKey), 0);
   };
@@ -119,6 +124,16 @@ export default function HabitProgressScreen() {
     }
 
     const value = getDailyValue(target, selectedDay);
+    if (target.trackingKey === 'sleep_schedule_consistency') {
+      const assessment = dailyHabitTracking[selectedDay]?.[target.trackingKey]?.sleepSchedule ?? { status: 'noData' as const };
+      return (
+        <View style={[styles.dayDetails, { backgroundColor: colors.overlayLight }]}>
+          <ThemedText type="caption">{formatMonthDay(fromDateKey(selectedDay), language)}</ThemedText>
+          <ThemedText type="defaultSemiBold">{t(`journal:otherTips.sleepSchedule.${assessment.status}`)}</ThemedText>
+          {assessment.status !== 'noData' && <ThemedText type="explainer">{t('journal:otherTips.sleepSchedule.details', assessment)}</ThemedText>}
+        </View>
+      );
+    }
 
     const hasValue = dailyHabitTracking[selectedDay]?.[target.trackingKey]?.value !== undefined;
 
@@ -173,7 +188,7 @@ export default function HabitProgressScreen() {
 
     const visibleDays = selectedWeek.days.filter(dateKey => dateKey <= todayKey && !isDateKeyBefore(dateKey, startDateKey));
 
-    const completedDays = visibleDays.filter(dateKey => getDailyValue(target, dateKey) >= target.amount);
+    const completedDays = visibleDays.filter(dateKey => isDailyFulfilled(target, dateKey));
 
     const pastWeekProgress: PastWeekProgress[] = pastWeeks.map(week => {
       const validDays = week.days.filter(dateKey => dateKey <= todayKey && !isDateKeyBefore(dateKey, startDateKey));
@@ -181,7 +196,7 @@ export default function HabitProgressScreen() {
       return {
         start: week.start,
         label: week.label,
-        completed: validDays.filter(dateKey => getDailyValue(target, dateKey) >= target.amount).length,
+        completed: validDays.filter(dateKey => isDailyFulfilled(target, dateKey)).length,
         total: validDays.length,
         days: week.days.map(dateKey => {
           const disabled = dateKey > todayKey || isDateKeyBefore(dateKey, startDateKey);
@@ -192,7 +207,7 @@ export default function HabitProgressScreen() {
           return {
             date: dateKey,
             ratio,
-            fulfilled: value >= target.amount,
+            fulfilled: isDailyFulfilled(target, dateKey),
             disabled,
           };
         }),
@@ -258,8 +273,12 @@ export default function HabitProgressScreen() {
             startDate={startDateKey}
             getStatus={dateKey => {
               const value = getDailyValue(target, dateKey);
+              if (target.trackingKey === 'sleep_schedule_consistency') {
+                const assessment = dailyHabitTracking[dateKey]?.[target.trackingKey]?.sleepSchedule ?? { status: 'noData' as const };
+                if (assessment.status === 'noData') return { state: 'missing', ratio: 0 };
+              }
 
-              if (value >= target.amount) {
+              if (isDailyFulfilled(target, dateKey)) {
                 return {
                   state: 'fulfilled',
                   ratio: 1,

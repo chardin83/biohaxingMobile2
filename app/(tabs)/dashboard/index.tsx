@@ -2,10 +2,11 @@ import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, Pressable,StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import DarkSmart from '@/assets/images/dark_orange1024.png';
 import LightSmart from '@/assets/images/light_teal1024.png';
+import { DashboardSyncSummary } from '@/components/DashboardSyncSummary';
 import { ThemedText } from '@/components/ThemedText';
 import AppCard from '@/components/ui/AppCard';
 import Container from '@/components/ui/Container';
@@ -19,11 +20,7 @@ import { POSITIVE_VERDICTS, VerdictValue } from '@/types/verdict';
 import { useStorage } from '../../context/StorageContext';
 
 // Helper function to add areaIds to the supplementAreasMap
-function addAreaIdsToSupplementMap(
-  map: Map<string, Set<string>>,
-  refId: string,
-  areaIds: string[]
-) {
+function addAreaIdsToSupplementMap(map: Map<string, Set<string>>, refId: string, areaIds: string[]) {
   if (!map.has(refId)) map.set(refId, new Set<string>());
   const set = map.get(refId);
   if (!set) return;
@@ -45,10 +42,7 @@ export default function DashboardScreen() {
   const levelTitle = levels.find(o => o.level === myLevel)?.titleKey;
 
   const positiveVerdictsSet = React.useMemo(() => new Set(POSITIVE_VERDICTS), []);
-  const viewedTipsByTipId = React.useMemo(
-    () => Array.from(new Map((viewedTips ?? []).map(v => [v.tipId, v])).values()),
-    [viewedTips]
-  );
+  const viewedTipsByTipId = React.useMemo(() => Array.from(new Map((viewedTips ?? []).map(v => [v.tipId, v])).values()), [viewedTips]);
 
   const tipAreasMap = React.useMemo(() => {
     const map = new Map<string, Set<string>>();
@@ -58,82 +52,81 @@ export default function DashboardScreen() {
     return map;
   }, []);
 
-  const getFavoriteTipsForArea = React.useCallback((areaId: string) => {
-    return tips
-      .filter(tip => (tip.areas || []).some(a => a.id === areaId))
-      .filter(tip => {
-        const v = viewedTipsByTipId.find(vt => vt.tipId === tip.id);
-        return v?.verdict && positiveVerdictsSet.has(v.verdict as VerdictValue);
-      })
-      .map(tip => t(`tips:${tip.id}.title`));
-  }, [t, viewedTipsByTipId, positiveVerdictsSet]);
+  const getFavoriteTipsForArea = React.useCallback(
+    (areaId: string) => {
+      return tips
+        .filter(tip => (tip.areas || []).some(a => a.id === areaId))
+        .filter(tip => {
+          const v = viewedTipsByTipId.find(vt => vt.tipId === tip.id);
+          return v?.verdict && positiveVerdictsSet.has(v.verdict as VerdictValue);
+        })
+        .map(tip => t(`tips:${tip.id}.title`));
+    },
+    [t, viewedTipsByTipId, positiveVerdictsSet]
+  );
 
   // Ny: karta från supplement-id till områden (härleds från tips)
-    const supplementAreasMap = React.useMemo(() => {
-      const map = new Map<string, Set<string>>();
-      tips.forEach(tip => {
-        const areaIds = (tip.areas || []).map(a => a.id);
-        (tip.supplements || []).forEach(ref => {
-          if (!ref?.id) return;
-          addAreaIdsToSupplementMap(map, ref.id, areaIds);
-        });
+  const supplementAreasMap = React.useMemo(() => {
+    const map = new Map<string, Set<string>>();
+    tips.forEach(tip => {
+      const areaIds = (tip.areas || []).map(a => a.id);
+      (tip.supplements || []).forEach(ref => {
+        if (!ref?.id) return;
+        addAreaIdsToSupplementMap(map, ref.id, areaIds);
       });
-      return map;
-    }, []);
-  
-    const getTipIdsForSupplementAndArea = React.useCallback(
-  (supId: string, areaId: string) => {
-    const areaSet = supplementAreasMap.get(supId);
+    });
+    return map;
+  }, []);
 
-    if (!areaSet?.has(areaId)) {
-      return [];
-    }
+  const getTipIdsForSupplementAndArea = React.useCallback(
+    (supId: string, areaId: string) => {
+      const areaSet = supplementAreasMap.get(supId);
 
-    return tips
-      .filter(tip => {
-        const hasSupplement = (tip.supplements || []).some(s => s.id === supId);
-        const hasArea = (tip.areas || []).some(a => a.id === areaId);
+      if (!areaSet?.has(areaId)) {
+        return [];
+      }
 
-        return hasSupplement && hasArea;
-      })
-      .map(tip => tip.id);
-  },
-  [supplementAreasMap]
-);
+      return tips
+        .filter(tip => {
+          const hasSupplement = (tip.supplements || []).some(s => s.id === supId);
+          const hasArea = (tip.areas || []).some(a => a.id === areaId);
 
-const getPlannedTipsForArea = React.useCallback(
-  (areaId: string) => {
-    const plannedTipIds = [
-      ...plans.training,
-      ...plans.nutrition,
-      ...plans.other,
-    ]
-      .map(entry => entry.tipId)
-      .filter(Boolean)
-      .filter(tipId => {
-        const areaIds = tipAreasMap.get(tipId);
-        return areaIds?.has(areaId);
-      });
+          return hasSupplement && hasArea;
+        })
+        .map(tip => tip.id);
+    },
+    [supplementAreasMap]
+  );
 
-    const supplementTipIds = (plans.supplements || []).flatMap(plan =>
-      (plan.supplements || [])
-        .map(entry => entry?.supplement?.id)
+  const getPlannedTipsForArea = React.useCallback(
+    (areaId: string) => {
+      const plannedTipIds = [...plans.training, ...plans.nutrition, ...plans.other]
+        .map(entry => entry.tipId)
         .filter(Boolean)
-        .flatMap(supId => getTipIdsForSupplementAndArea(supId, areaId))
-    );
+        .filter(tipId => {
+          const areaIds = tipAreasMap.get(tipId);
+          return areaIds?.has(areaId);
+        });
 
-    const allTipIds = Array.from(new Set([...plannedTipIds, ...supplementTipIds]));
+      const supplementTipIds = (plans.supplements || []).flatMap(plan =>
+        (plan.supplements || [])
+          .map(entry => entry?.supplement?.id)
+          .filter(Boolean)
+          .flatMap(supId => getTipIdsForSupplementAndArea(supId, areaId))
+      );
 
-    return allTipIds.map(tipId => t(`tips:${tipId}.title`));
-  },
-  [plans, t, tipAreasMap, getTipIdsForSupplementAndArea]
-);
+      const allTipIds = Array.from(new Set([...plannedTipIds, ...supplementTipIds]));
 
- /* useEffect(() => {
+      return allTipIds.map(tipId => t(`tips:${tipId}.title`));
+    },
+    [plans, t, tipAreasMap, getTipIdsForSupplementAndArea]
+  );
+
+  /* useEffect(() => {
     setMyXP(600); // Sätt en hög XP för att testa nivå 3
   }, [setMyXP]);*/
 
-    /* const clearAllStorage = async () => {
+  /* const clearAllStorage = async () => {
     try {
       await AsyncStorage.multiRemove([
         "plans",
@@ -151,19 +144,15 @@ const getPlannedTipsForArea = React.useCallback(
   }, []);*/
 
   // Hitta favorit-markerade tips för ett specifikt område
-  
+
   const [activeTab, setActiveTab] = React.useState<'coverage' | 'progress'>('progress');
+  const progressTabBorder = activeTab === 'progress' ? colors.accentStrong : 'transparent';
+  const coverageTabBorder = activeTab === 'coverage' ? colors.accentStrong : 'transparent';
 
   return (
-    <Container
-      background="gradient"
-      gradientKey="sunrise"
-      gradientLocations={colors.gradients?.sunrise?.locations3 as any}
-      centerContent
-    >
-
+    <Container background="gradient" gradientKey="sunrise" gradientLocations={colors.gradients?.sunrise?.locations3 as any} centerContent>
       <View style={styles.imageWrapper}>
-       <Image source={Smart} style={styles.image} resizeMode="cover" testID="dashboard-image"/>
+        <Image source={Smart} style={styles.image} resizeMode="cover" testID="dashboard-image" />
         <Text
           style={[
             styles.levelOverlay,
@@ -177,39 +166,41 @@ const getPlannedTipsForArea = React.useCallback(
         </Text>
       </View>
 
-      <ThemedText type="title3" style={[styles.title, { color: colors.accentStrong }]} uppercase>{t(`levels:${levelTitle}`)}</ThemedText>
+      <ThemedText type="title3" style={[styles.title, { color: colors.accentStrong }]} uppercase>
+        {t(`levels:${levelTitle}`)}
+      </ThemedText>
 
       <View style={styles.progressRow}>
         <View style={styles.progressBarWrap}>
-          
-        <InfoButtonWithText
-          infoTextKey="dashboard.xpInfo"
-          infoTextValues={{
-            education: safeXpBreakdown.education,
-            nutrition: safeXpBreakdown.nutrition,
-          }}
-        >
-          <ProgressBarWithLabel progress={myXP / xpMax} label={progressText} height={12} />
-        </InfoButtonWithText>
+          <InfoButtonWithText
+            infoTextKey="dashboard.xpInfo"
+            infoTextValues={{
+              education: safeXpBreakdown.education,
+              nutrition: safeXpBreakdown.nutrition,
+            }}
+          >
+            <ProgressBarWithLabel progress={myXP / xpMax} label={progressText} height={12} />
+          </InfoButtonWithText>
         </View>
       </View>
-
+      <DashboardSyncSummary />
       {/* Tabbar under progressbaren */}
       <View style={styles.tabBarRow}>
-        
-        <Pressable onPress={() => setActiveTab('progress')}>
-          <ThemedText type="defaultSemiBold"
+        <Pressable style={[styles.tabButton, { borderBottomColor: progressTabBorder }]} onPress={() => setActiveTab('progress')}>
+          <ThemedText
+            type="defaultSemiBold"
             style={{
-              color: activeTab === 'progress' ? colors.accentStrong : colors.textMuted
+              color: activeTab === 'progress' ? colors.accentStrong : colors.textMuted,
             }}
           >
             {t('common:dashboard.myProgress')}
           </ThemedText>
         </Pressable>
-        <Pressable onPress={() => setActiveTab('coverage')}>
-          <ThemedText type="defaultSemiBold"
+        <Pressable style={[styles.tabButton, { borderBottomColor: coverageTabBorder }]} onPress={() => setActiveTab('coverage')}>
+          <ThemedText
+            type="defaultSemiBold"
             style={{
-              color: activeTab === 'coverage' ? colors.accentStrong : colors.textMuted
+              color: activeTab === 'coverage' ? colors.accentStrong : colors.textMuted,
             }}
           >
             {t('common:dashboard.checkCoverage')}
@@ -226,13 +217,9 @@ const getPlannedTipsForArea = React.useCallback(
 
           let description = '';
           if (activeTab === 'coverage') {
-            description = plannedTipsList.length > 0
-              ? plannedTipsList.join('\n')
-              : t('common:dashboard.noPlanned');
+            description = plannedTipsList.length > 0 ? plannedTipsList.join('\n') : t('common:dashboard.noPlanned');
           } else {
-            description = favoriteTipsList.length > 0
-              ? favoriteTipsList.join('\n')
-              : t('common:dashboard.noFavorites');
+            description = favoriteTipsList.length > 0 ? favoriteTipsList.join('\n') : t('common:dashboard.noFavorites');
           }
           const areaEducationXP = viewedTipsByTipId.reduce((sum, viewedTip) => {
             const areaIds = tipAreasMap.get(viewedTip.tipId);
@@ -292,13 +279,8 @@ const getPlannedTipsForArea = React.useCallback(
         })}
 
       <View style={styles.editLinkRow}>
-        <TouchableOpacity
-          onPress={() => router.push('/(manage)/areas')}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <ThemedText style={[styles.editButtonText, { color: colors.accentStrong }]}>
-            {t('common:dashboard.editAreas')}
-          </ThemedText>
+        <TouchableOpacity onPress={() => router.push('/(manage)/areas')} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+          <ThemedText style={[styles.editButtonText, { color: colors.accentStrong }]}>{t('common:dashboard.editAreas')}</ThemedText>
         </TouchableOpacity>
       </View>
     </Container>
@@ -315,11 +297,11 @@ const styles = StyleSheet.create({
     //overflow: 'hidden', // Lägg till denna rad!
   },
   image: {
-     position: 'absolute', // Lägg till denna rad!
-     top: 0,
-     left: 0,
-     width: '100%',
-     height: '100%',
+    position: 'absolute', // Lägg till denna rad!
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
   },
   levelOverlay: {
     position: 'absolute',
@@ -378,8 +360,12 @@ const styles = StyleSheet.create({
   tabBarRow: {
     flexDirection: 'row',
     marginTop: 8,
-    marginBottom: 4,
-    gap: 10
+    marginBottom: 0,
+    gap: 10,
     // 'gap' is not supported in all React Native versions, so use marginRight on children if needed
+  },
+  tabButton: {
+    paddingBottom: 10,
+    borderBottomWidth: 2,
   },
 });

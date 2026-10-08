@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import { NoopAdapter } from './noopAdapter';
 import { AdapterStatus, WearableAdapter } from './types';
@@ -8,7 +8,10 @@ type WearableContextValue = {
   adapter: WearableAdapter;
   status: AdapterStatus;
   isSyncing: boolean;
-  setIsSyncing: (isSyncing: boolean) => void;
+  hasCompletedInitialSync: boolean;
+  beginSync: () => boolean;
+  finishSync: (errorMessage?: string) => void;
+  syncError: string | null;
   setAdapter: (adapter: WearableAdapter) => Promise<void>;
   refreshStatus: () => Promise<void>;
   markSynced: () => void;
@@ -24,6 +27,23 @@ type WearableProviderProps = {
 export function WearableProvider({ children, initialAdapter }: WearableProviderProps) {
   const [adapterState, setAdapterState] = useState<WearableAdapter>(() => initialAdapter ?? createWearableAdapter() ?? new NoopAdapter());
   const [isSyncing, setIsSyncing] = useState(false);
+  const syncInProgress = useRef(false);
+  const [hasCompletedInitialSync, setHasCompletedInitialSync] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
+  const beginSync = useCallback(() => {
+    if (syncInProgress.current) return false;
+    syncInProgress.current = true;
+    setSyncError(null);
+    setIsSyncing(true);
+    return true;
+  }, []);
+  const finishSync = useCallback((errorMessage?: string) => {
+    syncInProgress.current = false;
+    setIsSyncing(false);
+    setSyncError(errorMessage ?? null);
+    // Also release cached-data processing after a failed or skipped sync.
+    setHasCompletedInitialSync(true);
+  }, []);
   const [status, setStatus] = useState<AdapterStatus>(() => ({
     state: 'disconnected',
     source: adapterState.source,
@@ -39,14 +59,12 @@ export function WearableProvider({ children, initialAdapter }: WearableProviderP
   }, [adapterState]);
 
   const setAdapter = useCallback(async (next: WearableAdapter) => {
+    setHasCompletedInitialSync(false);
     setAdapterState(next);
 
     const nextStatus = await next.getStatus();
 
-    setStatus(prev => ({
-      ...nextStatus,
-      lastSyncAt: prev.lastSyncAt,
-    }));
+    setStatus(nextStatus);
   }, []);
 
   const markSynced = useCallback(() => {
@@ -73,12 +91,15 @@ export function WearableProvider({ children, initialAdapter }: WearableProviderP
       adapter: adapterState,
       status,
       isSyncing,
-      setIsSyncing,
+      hasCompletedInitialSync,
+      beginSync,
+      finishSync,
+      syncError,
       setAdapter,
       refreshStatus,
       markSynced,
     }),
-    [adapterState, status, isSyncing, setAdapter, refreshStatus, markSynced]
+    [adapterState, status, isSyncing, hasCompletedInitialSync, beginSync, finishSync, syncError, setAdapter, refreshStatus, markSynced]
   );
 
   return <WearableContext.Provider value={value}>{children}</WearableContext.Provider>;

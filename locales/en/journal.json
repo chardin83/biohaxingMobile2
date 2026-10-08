@@ -262,6 +262,7 @@
     "registeredToday": "Registered today"
   },
   "otherTips": {
+    "sleepSchedule": {"noData": "Cannot check – sleep data missing", "fulfilled": "Checked – fulfilled", "notFulfilled": "Checked – not fulfilled", "details": "Sleep onset {{actualBedtime}} · target {{targetBedtime}} · difference {{deviationMinutes}} min (at most 30 min)"},
     "title": "Other tips",
     "subtitle": "Track today's progress for your other tips.",
     "description": "Additional tips for your health",

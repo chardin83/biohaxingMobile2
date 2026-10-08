@@ -1,23 +1,46 @@
 import { useTheme } from '@react-navigation/native';
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { Pressable, type StyleProp, StyleSheet, View, type ViewStyle } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 
+import { CloseButton } from './CloseButton';
+import type { IconSymbolName } from './icon-symbol-map';
 import { IconSymbol } from './IconSymbol';
 
-type NoticeVariant = 'info' | 'success' | 'warning';
+type NoticeVariant = 'info' | 'success' | 'warning' | 'tutorial';
 
 type NoticeProps = Readonly<{
   title?: string;
   message: string;
   variant?: NoticeVariant;
+  iconName?: IconSymbolName;
   onDismiss?: () => void;
+  dismissLabel?: string;
   dismissAccessibilityLabel?: string;
+  style?: StyleProp<ViewStyle>;
 }>;
 
-export default function Notice({ title, message, variant = 'info', onDismiss, dismissAccessibilityLabel = 'Dismiss' }: NoticeProps) {
+export default function Notice({
+  title,
+  message,
+  variant = 'info',
+  iconName,
+  onDismiss,
+  dismissLabel,
+  dismissAccessibilityLabel = 'Dismiss',
+  style,
+}: NoticeProps) {
   const { colors } = useTheme();
+  const { t } = useTranslation('common');
+  const [dismissed, setDismissed] = React.useState(false);
+  const isTutorial = variant === 'tutorial';
+  const actionLabel = isTutorial ? t('general.understood') : dismissLabel;
+  const dismiss = () => {
+    if (isTutorial) setDismissed(true);
+    onDismiss?.();
+  };
 
   const isWarning = variant === 'warning';
 
@@ -25,9 +48,14 @@ export default function Notice({ title, message, variant = 'info', onDismiss, di
     info: { backgroundColor: colors.infoWeak, accentColor: colors.infoColor, iconName: 'info' },
     success: { backgroundColor: colors.surfaceGreen, accentColor: colors.surfaceGreenBorder, iconName: 'check' },
     warning: { backgroundColor: colors.surfaceWarning, accentColor: colors.warning, iconName: 'warning' },
+    tutorial: { backgroundColor: colors.primaryVeryWeak, accentColor: colors.primary, iconName: 'info' },
   } as const;
 
-  const { backgroundColor, accentColor, iconName } = variantStyles[variant];
+  const { backgroundColor, accentColor, iconName: defaultIconName } = variantStyles[variant];
+  const textColor = isWarning || isTutorial ? accentColor : undefined;
+  const textStyle = textColor ? { color: textColor } : undefined;
+
+  if (dismissed) return null;
 
   return (
     <View
@@ -37,6 +65,7 @@ export default function Notice({ title, message, variant = 'info', onDismiss, di
           backgroundColor,
           borderColor: accentColor,
         },
+        style,
       ]}
     >
       <View
@@ -48,25 +77,27 @@ export default function Notice({ title, message, variant = 'info', onDismiss, di
           },
         ]}
       >
-        <IconSymbol name={iconName} size={16} color={accentColor} />
+        <IconSymbol name={iconName ?? defaultIconName} size={iconName ? 20 : 16} color={accentColor} />
       </View>
       <View style={styles.textContainer}>
         {title ? (
-          <ThemedText type="defaultSemiBold" style={isWarning ? { color: colors.warning } : undefined}>
+          <ThemedText type="defaultSemiBold" style={textStyle}>
             {title}
           </ThemedText>
         ) : null}
-        <ThemedText type="caption" style={isWarning ? { color: colors.warning } : undefined}>
+        <ThemedText type="caption" style={textStyle}>
           {message}
         </ThemedText>
+        {(isTutorial || (onDismiss && actionLabel)) && (
+          <Pressable onPress={dismiss} accessibilityRole="button" accessibilityLabel={actionLabel} style={styles.dismissAction}>
+            <ThemedText type="defaultSemiBold" style={{ color: accentColor }}>
+              {actionLabel}
+            </ThemedText>
+            <IconSymbol name="check" size={18} color={accentColor} />
+          </Pressable>
+        )}
       </View>
-      {onDismiss && (
-        <TouchableOpacity onPress={onDismiss} style={styles.dismissButton} accessibilityLabel={dismissAccessibilityLabel}>
-          <ThemedText type="defaultSemiBold" style={styles.dismissText}>
-            X
-          </ThemedText>
-        </TouchableOpacity>
-      )}
+      {!isTutorial && onDismiss && !actionLabel && <CloseButton onPress={onDismiss} accessibilityLabel={dismissAccessibilityLabel} />}
     </View>
   );
 }
@@ -74,7 +105,7 @@ export default function Notice({ title, message, variant = 'info', onDismiss, di
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginTop: 16,
     padding: 12,
     borderWidth: StyleSheet.hairlineWidth,
@@ -93,14 +124,13 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 2,
   },
-  dismissButton: {
-    width: 32,
-    height: 32,
+  dismissAction: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 8,
-  },
-  dismissText: {
-    fontSize: 16,
+    alignSelf: 'flex-end',
+    gap: 6,
+    minHeight: 24,
+    paddingHorizontal: 4,
+    marginTop: 4,
   },
 });

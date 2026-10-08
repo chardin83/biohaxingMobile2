@@ -11,7 +11,7 @@ import { useTargetProgressList } from '@/hooks/useTargetProgressList';
 import { HabitInputMode, tips } from '@/locales/tips';
 import { getTargetDates } from '@/services/targetProgress/dateRange';
 import { type HabitTargetDefinition } from '@/services/targetProgress/targetProgressTypes';
-import { formatDate } from '@/utils/dateUtils';
+import { formatDate, toDateKey } from '@/utils/dateUtils';
 import { getUnitLabel, getUnitLabelShort } from '@/utils/metrics';
 
 import { ThemedText } from '../ThemedText';
@@ -111,6 +111,8 @@ export default function OtherLoggerTab({
   };
   const targetDefinitions = useMemo<OtherTargetDefinition[]>(() => {
     return plans.other.flatMap(plan => {
+      const start = new Date(plan.startedAt);
+      if (Number.isNaN(start.getTime()) || selectedDate < toDateKey(start)) return [];
       const tip = tips.find(candidate => candidate.id === plan.tipId);
 
       if (!tip) {
@@ -138,7 +140,7 @@ export default function OtherLoggerTab({
         buttonLabels: target.buttonLabels ?? [],
       }));
     });
-  }, [plans.other, t]);
+  }, [plans.other, t, selectedDate]);
 
   const targetProgressList = useTargetProgressList(targetDefinitions, selectedDate);
 
@@ -181,7 +183,7 @@ export default function OtherLoggerTab({
         actual: item.progress.current,
         target: item.progress.target,
         isFulfilled: item.progress.isFulfilled,
-        canMarkManually: item.trackingKey !== 'sleep_duration',
+        canMarkManually: item.trackingKey !== 'sleep_duration' && item.inputMode !== 'automatic',
         buttonLabels: item.buttonLabels,
         inputMode: item.inputMode,
         history,
@@ -319,6 +321,12 @@ export default function OtherLoggerTab({
   };
 
   const renderProgressItem = (item: OtherTipProgress) => {
+    const sleepAssessment =
+      item.trackingKey === 'sleep_schedule_consistency'
+        ? (dailyHabitTracking[selectedDate]?.[item.trackingKey]?.sleepSchedule ?? { status: 'noData' as const })
+        : undefined;
+    let statusLabel = item.isFulfilled ? t('journal:otherTips.fulfilled') : t('journal:otherTips.notFulfilled');
+    if (sleepAssessment) statusLabel = t(`journal:otherTips.sleepSchedule.${sleepAssessment.status}`);
     return (
       <View key={`${item.tipId}-${item.trackingKey}`} style={styles.tip}>
         <View style={styles.header}>
@@ -340,9 +348,12 @@ export default function OtherLoggerTab({
         ) : null}
 
         <View style={styles.statusRow}>
-          <ThemedText type="caption">{item.isFulfilled ? t('journal:otherTips.fulfilled') : t('journal:otherTips.notFulfilled')}</ThemedText>
+          <ThemedText type="caption">{statusLabel}</ThemedText>
           <ThemedText type="explainer">{`${item.actual} / ${item.target} ${translateUnit(item.unit)}`}</ThemedText>
         </View>
+        {sleepAssessment && sleepAssessment.status !== 'noData' && (
+          <ThemedText type="explainer">{t('journal:otherTips.sleepSchedule.details', sleepAssessment)}</ThemedText>
+        )}
         {item.period === 'weekly' && item.history.length > 0 && (
           <View style={styles.history}>
             {item.history.map(entry => (
@@ -419,6 +430,7 @@ export default function OtherLoggerTab({
                   targetPeriods: period,
 
                   planCategories: 'other',
+                  goalIntro: 'other',
                 },
               });
             }}

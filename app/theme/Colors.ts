@@ -3,6 +3,16 @@ const tintColorDark = '#00FFFF'; // anpassad till din accentfärg
 
 export const Colors = {
   light: {
+    dashboardSync: {
+      accent: 'rgba(0,191,174,0.95)',
+      text: '#11181C',
+      highlight: '#CBEA3C',
+      background: 'rgba(252, 239, 225, 0.6)',
+      border: 'rgba(0,191,174,0.95)',
+      innerBorder: 'rgba(255,184,80,0.28)',
+      linkBackground: 'rgba(0,0,0,0.04)',
+      iconBackground: 'rgba(0, 156, 140, 0.05)',
+    },
     text: '#11181C',
     background: 'rgba(248,245,240,1)',
     modalBackground: 'rgba(255,250,240,1)',
@@ -179,6 +189,16 @@ export const Colors = {
     checkboxUncheckedBorder: '#CFC8BD', // light
   },
   dark: {
+    dashboardSync: {
+      accent: '#20DDCA',
+      text: '#F5FAFC',
+      highlight: '#B6F000',
+      background: 'rgba(4, 29, 36, 0.92)',
+      border: '#237F78',
+      innerBorder: '#155453',
+      linkBackground: 'rgba(16, 64, 68, 0.30)',
+      iconBackground: 'rgba(0, 194, 177, 0.13)',
+    },
     text: '#ECEDEE',
     background: '#001326',
     modalBackground: '#122033',
