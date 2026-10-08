@@ -116,8 +116,14 @@ export default function TipsSearchScreen() {
       group.push(tip);
       byLevel.set(level, group);
     });
-    return [...byLevel.entries()].sort(([a], [b]) => a - b).map(([level, levelTips]) => ({ level, levelTips }));
-  }, [filteredTips]);
+    return [...byLevel.entries()]
+      .sort(([a], [b]) => {
+        if (a === myLevel) return -1;
+        if (b === myLevel) return 1;
+        return a - b;
+      })
+      .map(([level, levelTips]) => ({ level, levelTips }));
+  }, [filteredTips, myLevel]);
   const matchCount = filteredTips.filter(tip => (tip.level ?? 1) <= myLevel + 1).length;
 
   const activeFilterCount =
@@ -368,7 +374,7 @@ export default function TipsSearchScreen() {
           }
           return (
             <Card>
-              <Collapsible title={title} titleType="title3" initialCollapsed={level !== myLevel} contentStyle={styles.levelContent}>
+              <Collapsible title={title} titleType="title3" initialCollapsed={false} contentStyle={styles.levelContent}>
                 {levelTips.map(renderTip)}
               </Collapsible>
             </Card>

@@ -1,45 +1,50 @@
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import React, { useEffect } from 'react';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import React, { useCallback } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { useBottomSheetDesign } from './ui/BottomSheetDesign';
 import VerdictSelector from './VerdictSelector';
 
 export type VerdictBottomSheetProps = {
-  verdictSheetRef: React.RefObject<BottomSheet | null>;
+  verdictSheetRef: React.RefObject<BottomSheetModal | null>;
   snapPoints?: string[];
   colors: any;
   currentVerdict?: any;
   onVerdictPress: (v: any) => void;
+  onDismiss?: () => void;
 };
 
 const VerdictBottomSheet: React.FC<VerdictBottomSheetProps> = ({
   verdictSheetRef,
-  snapPoints = ['35%', '60%'],
+  snapPoints = ['85%'],
   colors,
   currentVerdict,
   onVerdictPress,
+  onDismiss,
 }) => {
   const sheetDesign = useBottomSheetDesign(colors);
 
-  useEffect(() => {
-    console.log('VerdictBottomSheet mounted, ref=', !!verdictSheetRef?.current, 'snapPoints=', snapPoints);
-  }, [verdictSheetRef, snapPoints]);
+  const renderBackdrop = useCallback(
+    (props: React.ComponentProps<typeof BottomSheetBackdrop>) => (
+      <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} pressBehavior="close" />
+    ),
+    []
+  );
 
   const handleVerdictPress = (v: any) => {
     try {
       onVerdictPress(v);
     } finally {
       try {
-        verdictSheetRef.current?.collapse();
+        verdictSheetRef.current?.dismiss();
       } catch (err) {
-        console.warn('Failed to collapse sheet', err);
+        console.warn('Failed to dismiss sheet', err);
       }
     }
   };
 
   return (
-    <BottomSheet
+    <BottomSheetModal
       ref={verdictSheetRef}
       snapPoints={snapPoints}
       enablePanDownToClose
@@ -47,17 +52,14 @@ const VerdictBottomSheet: React.FC<VerdictBottomSheetProps> = ({
       enableContentPanningGesture
       handleComponent={sheetDesign.handleComponent}
       backgroundStyle={sheetDesign.backgroundStyle}
-      animateOnMount
-      index={-1}
-      onChange={(index) => console.log('VerdictBottomSheet onChange', index)}
+      enableDynamicSizing={false}
+      backdropComponent={renderBackdrop}
+      onDismiss={onDismiss}
     >
       <BottomSheetView style={styles.content}>
-        <VerdictSelector
-          currentVerdict={currentVerdict}
-          onVerdictPress={handleVerdictPress}
-        />
+        <VerdictSelector currentVerdict={currentVerdict} onVerdictPress={handleVerdictPress} />
       </BottomSheetView>
-    </BottomSheet>
+    </BottomSheetModal>
   );
 };
 

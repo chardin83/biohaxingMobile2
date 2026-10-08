@@ -365,6 +365,19 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
          * XP
          */
 
+        // Temporary startup boost: persists level and XP, so it survives removing this block.
+        const startupLevel = levels.find(level => level.level === 10)!;
+        const startupXP = Math.max(xp.myXP, startupLevel.requiredXP);
+        const startupXpBreakdown = {
+          ...xp.xpBreakdown,
+          education: xp.xpBreakdown.education + (startupXP - xp.myXP),
+        };
+        await Promise.all([saveXP(startupXP), saveLevel(startupLevel.level), saveXpBreakdown(startupXpBreakdown)]);
+        xp.myXP = startupXP;
+        xp.myLevel = startupLevel.level;
+        xp.xpBreakdown = startupXpBreakdown;
+        // End temporary startup boost. Remove the block above after starting the app once.
+
         setMyXPState(xp.myXP);
 
         setXpBreakdownState(xp.xpBreakdown);

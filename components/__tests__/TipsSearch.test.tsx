@@ -77,11 +77,11 @@ beforeEach(() => {
 it('groups results by level, previews the next level with a lock, and counts hidden tips per level', () => {
   const { getByText, queryByText, getByRole, queryByRole } = render(<TipsSearchScreen />);
   expect(getByText('tips:current')).toBeTruthy();
-  expect(queryByText('tips:basic')).toBeNull();
-  expect(getByRole('button', { name: 'common:tipsList.levelTitle:2 · common:tipsList.yourLevel' }).props.accessibilityState.expanded).toBe(true);
-  fireEvent.press(getByText('common:tipsList.levelTitle:1'));
   expect(getByText('tips:basic')).toBeTruthy();
-  fireEvent.press(getByText('common:tipsList.levelTitle:3 · common:tipsList.exploreNextLevel'));
+  expect(getByRole('button', { name: 'common:tipsList.levelTitle:2 · common:tipsList.yourLevel' }).props.accessibilityState.expanded).toBe(true);
+  expect(getByText('tips:basic')).toBeTruthy();
+  expect(getByRole('button', { name: 'common:tipsList.levelTitle:1' }).props.accessibilityState.expanded).toBe(true);
+  expect(getByRole('button', { name: 'common:tipsList.levelTitle:3 · common:tipsList.exploreNextLevel' }).props.accessibilityState.expanded).toBe(true);
   expect(getByText('🔒 tips:advanced')).toBeTruthy();
   fireEvent.press(getByText('🔒 tips:advanced'));
   expect(mockPush).not.toHaveBeenCalled();
@@ -110,11 +110,32 @@ it('updates level groups when the level changes and opens an unlocked tip', () =
   mockStorage.myLevel = 3;
   rerender(<TipsSearchScreen />);
   expect(getByText('tips:advanced')).toBeTruthy();
-  expect(queryByText('tips:current')).toBeNull();
+  expect(getByText('tips:current')).toBeTruthy();
   expect(getByText('common:tipsList.levelTitle:4 · common:tipsList.exploreNextLevel')).toBeTruthy();
   mockStorage.myLevel = 1;
   rerender(<TipsSearchScreen />);
   expect(getByText('tips:basic')).toBeTruthy();
   expect(queryByText('tips:advanced')).toBeNull();
-  expect(queryByText('tips:current')).toBeNull();
+  expect(getByText('🔒 tips:current')).toBeTruthy();
+});
+
+it('puts the current level first and all remaining levels in ascending order', () => {
+  const { getAllByText, rerender } = render(<TipsSearchScreen />);
+  const levelOrder = () => getAllByText(/^common:tipsList.levelTitle:/).map(node => node.props.children);
+  expect(levelOrder()).toEqual([
+    'common:tipsList.levelTitle:2 · common:tipsList.yourLevel',
+    'common:tipsList.levelTitle:1',
+    'common:tipsList.levelTitle:3 · common:tipsList.exploreNextLevel',
+    'common:tipsList.levelTitle:4',
+    'common:tipsList.levelTitle:5',
+  ]);
+  mockStorage.myLevel = 3;
+  rerender(<TipsSearchScreen />);
+  expect(levelOrder()).toEqual([
+    'common:tipsList.levelTitle:3 · common:tipsList.yourLevel',
+    'common:tipsList.levelTitle:1',
+    'common:tipsList.levelTitle:2',
+    'common:tipsList.levelTitle:4 · common:tipsList.exploreNextLevel',
+    'common:tipsList.levelTitle:5',
+  ]);
 });

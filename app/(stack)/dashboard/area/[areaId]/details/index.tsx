@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import BottomSheet from '@gorhom/bottom-sheet';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
@@ -204,7 +204,8 @@ export default function AreaDetailScreen() {
   }, [nutritionXpClaims, tip?.id]);
   const totalXpEarned = educationXpEarned + nutritionXpEarned;
   const currentVerdict = currentTip?.verdict;
-  const verdictSheetRef = React.useRef<BottomSheet>(null);
+  const verdictSheetRef = React.useRef<BottomSheetModal>(null);
+  const leaveAfterVerdictDismiss = React.useRef(false);
   const positiveVerdicts = React.useMemo(() => new Set(POSITIVE_VERDICTS), []);
   const isFavorite = React.useMemo(() => {
     if (!currentVerdict) return false;
@@ -334,7 +335,7 @@ export default function AreaDetailScreen() {
   const openVerdictSheet = React.useCallback(() => {
     console.log('openVerdictSheet called, ref=', !!verdictSheetRef.current);
     try {
-      verdictSheetRef.current?.expand();
+      verdictSheetRef.current?.present();
     } catch (err) {
       console.warn('Failed to open verdict sheet', err);
     }
@@ -390,6 +391,14 @@ export default function AreaDetailScreen() {
       background="gradient"
       gradientLocations={colors.gradients?.sunrise?.locations1 as any}
       showBackButton
+      onBackPress={() => {
+        if (currentVerdict) {
+          router.back();
+          return;
+        }
+        leaveAfterVerdictDismiss.current = true;
+        openVerdictSheet();
+      }}
     >
 
       <DetailsTopSection
@@ -465,10 +474,16 @@ export default function AreaDetailScreen() {
       <MetricsSection tipId={effectiveTipId} />
       <VerdictBottomSheet
         verdictSheetRef={verdictSheetRef}
-        snapPoints={["85%", "35%"]}
+        snapPoints={["85%"]}
         colors={colors}
         currentVerdict={currentVerdict}
         onVerdictPress={(v: any) => handleVerdictPress(v as any)}
+        onDismiss={() => {
+          if (leaveAfterVerdictDismiss.current) {
+            leaveAfterVerdictDismiss.current = false;
+            router.back();
+          }
+        }}
       />
       {(
         resolvedSupplements.length > 0 ||
