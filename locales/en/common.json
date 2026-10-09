@@ -153,6 +153,7 @@
     "tipAddedTitle": "Added to your plan!",
     "tipAddedMessage": "\"{{tipName}}\" can now be tracked in your journal.",
     "showJournal": "View journal",
+    "backToMyPlan": "Back to my plan",
     "chosePlanToEdit": "Choose plan to edit",
     "addTimeSlot": "New time slot",
     "editTimeSlot": "Edit time slot",
@@ -510,8 +511,12 @@
     "saveError": "Could not save goals. Please try again."
   },
   "nutritionTargetSection": {
-    "title": "Nutrition targets",
-    "description": "These are the key nutrition targets related to this tip. Tracking these can help you see how well you're implementing the tip and its impact on your health."
+    "title": "Goals",
+    "showJournal": "View in journal",
+    "daily": "Daily goal",
+    "weekly": "Weekly goal",
+    "periods": { "daily": "day", "weekly": "week" },
+    "units": { "minutes": "min", "hours": "hours", "count": "times", "sessions": "sessions", "items": "items", "plants": "plants" }
   },
   "tipCard": {
     "startExploring": "Start exploring",

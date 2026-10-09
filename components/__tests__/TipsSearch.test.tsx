@@ -6,7 +6,7 @@ import TipsSearchScreen from '@/app/(tabs)/search';
 const mockStorage = { myLevel: 2, plans: { training: [{ tipId: 'current' }], nutrition: [], other: [], supplements: [] } };
 const mockTranslate = jest.fn((key: string, options?: any) => `${key}${options ? ':' + (options.level ?? options.count) : ''}`);
 const mockPush = jest.fn();
-const mockParams: { planCategories?: string; targetPeriods?: string; goalIntro?: string } = {};
+const mockParams: { planCategories?: string; targetPeriods?: string; goalIntro?: string; fromPlan?: string; inPlan?: string; filterRequestId?: string } = {};
 jest.mock('@/app/context/StorageContext', () => ({ useStorage: () => mockStorage }));
 jest.mock('expo-router', () => ({ router: { push: (...args: unknown[]) => mockPush(...args) }, useLocalSearchParams: () => mockParams }));
 jest.mock('@react-navigation/native', () => ({ useTheme: () => ({ colors: jest.requireActual('@/app/theme/Colors').Colors.light, dark: false }) }));
@@ -47,6 +47,29 @@ beforeEach(() => {
   delete mockParams.planCategories;
   delete mockParams.targetPeriods;
   delete mockParams.goalIntro;
+  delete mockParams.fromPlan;
+  delete mockParams.inPlan;
+  delete mockParams.filterRequestId;
+});
+
+it('defaults add-goal searches to unplanned tips and reapplies it on a new add request', () => {
+  Object.assign(mockParams, { inPlan: 'no', filterRequestId: 'first' });
+  const screen = render(<TipsSearchScreen />);
+  expect(screen.queryByText('tips:current')).toBeNull();
+  expect(screen.getByText('tips:basic')).toBeTruthy();
+  expect(screen.getByText('common:filter.inPlan: common:filter.no')).toBeTruthy();
+  fireEvent.press(screen.getByText('common:filter.clearAll'));
+  expect(screen.getByText('tips:current')).toBeTruthy();
+  mockParams.filterRequestId = 'second';
+  screen.rerender(<TipsSearchScreen />);
+  expect(screen.queryByText('tips:current')).toBeNull();
+});
+
+it('preserves the plan origin when opening a tip from search', () => {
+  mockParams.fromPlan = '1';
+  const screen = render(<TipsSearchScreen />);
+  fireEvent.press(screen.getByText('tips:current'));
+  expect(mockPush).toHaveBeenCalledWith(expect.objectContaining({ params: { tipId: 'current', expandAreas: '1', fromPlan: '1' } }));
 });
 
 it('filters planned and unplanned tips and clears the plan filter', () => {

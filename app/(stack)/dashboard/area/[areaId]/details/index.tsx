@@ -29,8 +29,9 @@ import { useSupplements } from '@/locales/supplements';
 import { tips } from '@/locales/tips';
 import { PlanCategory } from '@/types/planCategory';
 import { POSITIVE_VERDICTS } from '@/types/verdict';
+import { toDateKey } from '@/utils/dateUtils';
 
-import NutritionTargetsSection from './sections/NutritionTargetsSection';
+import TargetsSection from './sections/TargetsSection';
 import TimingInfoSection from './sections/TimingInfoSection';
 
 export default function AreaDetailScreen() {
@@ -38,10 +39,11 @@ export default function AreaDetailScreen() {
   const router = useRouter();
   const containerRef = React.useRef<ContainerScrollRef>(null);
   const { colors } = useTheme();
-  const { areaId, tipId, expandAreas } = useLocalSearchParams<{
+  const { areaId, tipId, expandAreas, fromPlan } = useLocalSearchParams<{
     areaId: string;
     tipId?: string;
     expandAreas?: string;
+    fromPlan?: string;
   }>();
   const shouldExpandAreas = expandAreas === '1';
   const supplements = useSupplements();
@@ -58,9 +60,7 @@ export default function AreaDetailScreen() {
 
   const hasMainArea = areas.some(g => g.id === areaId);
   const findTip = (localTipId: string | undefined, searchAreaId: string) => {
-    return localTipId
-      ? tips.find(tipItem => tipItem.id === localTipId)
-      : tips.find(tipItem => tipItem.areas.some(a => a.id === searchAreaId));
+    return localTipId ? tips.find(tipItem => tipItem.id === localTipId) : tips.find(tipItem => tipItem.areas.some(a => a.id === searchAreaId));
   };
 
   const tip = findTip(tipId, areaId);
@@ -96,10 +96,7 @@ export default function AreaDetailScreen() {
     return [];
   };
 
-  const planCategories: PlanCategory[] = React.useMemo(
-    () => getPlanCategories(tip?.planCategory),
-    [tip?.planCategory]
-  );
+  const planCategories: PlanCategory[] = React.useMemo(() => getPlanCategories(tip?.planCategory), [tip?.planCategory]);
 
   const supplementPlans = React.useMemo(() => plans.supplements ?? [], [plans.supplements]);
   const trainingPlans = plans.training;
@@ -113,9 +110,7 @@ export default function AreaDetailScreen() {
   const isNutritionTip = availablePlanCategories.includes('nutrition');
   const isOtherTip = availablePlanCategories.includes('other');
   const effectiveTipId = tipId ?? tip?.id ?? null;
-  const [justAddedPlanCategory, setJustAddedPlanCategory] = React.useState<
-    'training' | 'nutrition' | 'other' | null
-  >(null);
+  const [justAddedPlanCategory, setJustAddedPlanCategory] = React.useState<'training' | 'nutrition' | 'other' | null>(null);
 
   React.useEffect(() => {
     setJustAddedPlanCategory(null);
@@ -151,7 +146,6 @@ export default function AreaDetailScreen() {
     });
   };
 
-
   let addPlanButtonTitle = '';
   if (isTrainingTip) {
     addPlanButtonTitle = t('tipDetails.addTrainingGoal');
@@ -165,9 +159,7 @@ export default function AreaDetailScreen() {
     if (typeof planCategory === 'string' && (planCategory === 'training' || planCategory === 'nutrition' || planCategory === 'other')) {
       return planCategory;
     }
-    const fallbackOption = availablePlanCategories.find(option =>
-      option === 'training' || option === 'nutrition' || option === 'other'
-    );
+    const fallbackOption = availablePlanCategories.find(option => option === 'training' || option === 'nutrition' || option === 'other');
     return fallbackOption;
   }, [planCategory, availablePlanCategories]);
 
@@ -272,7 +264,6 @@ export default function AreaDetailScreen() {
     return refs.some(ref => ref?.id && plannedSupplements.ids.has(ref.id));
   }, [tip?.supplements, plannedSupplements.ids]);
 
-
   const isTipInPlan = React.useMemo(() => {
     if (isTrainingTip && isTipInTrainingPlan) return true;
     if (isNutritionTip && isTipInNutritionPlan) return true;
@@ -282,9 +273,7 @@ export default function AreaDetailScreen() {
   }, [isTrainingTip, isNutritionTip, isTipInTrainingPlan, isTipInNutritionPlan, isOtherTip, isTipInOtherPlan, isTipSupplementScheduled]);
 
   // Show DiscreetButton only if supplement is scheduled and not in any other plan
-  const showSupplementDiscreetButton = isTipSupplementScheduled &&
-    !isTipInTrainingPlan && !isTipInNutritionPlan && !isTipInOtherPlan;
-
+  const showSupplementDiscreetButton = isTipSupplementScheduled && !isTipInTrainingPlan && !isTipInNutritionPlan && !isTipInOtherPlan;
 
   const planBadgeLabel = React.useMemo(() => {
     if (justAddedPlanCategory === 'nutrition' && isTipInNutritionPlan) {
@@ -329,9 +318,7 @@ export default function AreaDetailScreen() {
     return false;
   }, [isTrainingTip, isNutritionTip, isOtherTip, isTipInPlan]);
 
-  const handleVerdictPress = (
-    verdict: 'interested' | 'startNow' | 'wantMore' | 'alreadyWorks' | 'notInterested' | 'noResearch' | 'testedFailed'
-  ) => {
+  const handleVerdictPress = (verdict: 'interested' | 'startNow' | 'wantMore' | 'alreadyWorks' | 'notInterested' | 'noResearch' | 'testedFailed') => {
     if (areaId && tipId) {
       const xpGained = setTipVerdict(areaId, tipId, verdict as any);
       if (xpGained > 0) {
@@ -351,10 +338,7 @@ export default function AreaDetailScreen() {
 
   const maxEducationXp = XP_FOR_VIEW + XP_FOR_CHAT_QUESTION * 3 + XP_FOR_VERDICT;
   const progress = Math.min(educationXpEarned / maxEducationXp, 1);
-  const progressLabel =
-    educationXpEarned >= maxEducationXp
-      ? `${t('common:tipDetails.fullyExplored')} 🎉`
-      : `${educationXpEarned}/${maxEducationXp} XP`;
+  const progressLabel = educationXpEarned >= maxEducationXp ? `${t('common:tipDetails.fullyExplored')} 🎉` : `${educationXpEarned}/${maxEducationXp} XP`;
 
   const handleAIInsightPress = (questionKey: AIPromptKey) => {
     const tipTranslation = t(`tips:${titleKey}`);
@@ -389,9 +373,7 @@ export default function AreaDetailScreen() {
   const isQuestionAsked = (questionType: string) => askedQuestions.includes(questionType);
 
   if (notFound) {
-    return (
-      <NotFound text="Goal not found." />
-    );
+    return <NotFound text="Goal not found." />;
   }
 
   return (
@@ -420,15 +402,32 @@ export default function AreaDetailScreen() {
         >
           <AppButton
             variant="primary"
+            icon="calendar"
             title={t('common:plan.showJournal')}
             style={styles.noticeButton}
-            onPress={() => router.push({
-              pathname: '/(tabs)/journal',
-              params: { openTab: justAddedPlanCategory === 'nutrition' ? 'meal' : 'other' },
-            })}
+            onPress={() =>
+              router.push({
+                pathname: '/(tabs)/journal',
+                params: {
+                  selectedDate: toDateKey(new Date()),
+                  openTab: justAddedPlanCategory === 'nutrition' ? 'meal' : (justAddedPlanCategory ?? 'other'),
+                  focusTipId: effectiveTipId,
+                  focusRequestId: String(Date.now()),
+                },
+              })
+            }
           />
+          {fromPlan === '1' && (
+            <View style={styles.noticePlanLink}>
+              <DiscreetButton
+                title={t('common:plan.backToMyPlan') + ' ›'}
+                onPress={() => router.dismissTo('/(tabs)/plan')}
+              />
+            </View>
+          )}
         </Notice>
       )}
+
       <DetailsTopSection
         areaId={areaId}
         colors={colors}
@@ -451,6 +450,22 @@ export default function AreaDetailScreen() {
         showSupplementDiscreetButton={showSupplementDiscreetButton}
       />
 
+      <TargetsSection tip={tip} colors={colors} t={t} onShowJournal={isTipInPlan ? () => {
+        let openTab = 'supplements';
+        if (isTipInTrainingPlan) openTab = 'training';
+        else if (isTipInNutritionPlan) openTab = 'meal';
+        else if (isTipInOtherPlan) openTab = 'other';
+        router.push({
+          pathname: '/(tabs)/journal',
+          params: {
+            selectedDate: toDateKey(new Date()),
+            openTab,
+            focusTipId: effectiveTipId,
+            focusRequestId: String(Date.now()),
+          },
+        });
+      } : undefined} />
+
       {descriptionKey && (
         <AppBox title={t('common:tipDetails.information')}>
           <ThemedText type="explainer" style={styles.descriptionText}>
@@ -467,19 +482,7 @@ export default function AreaDetailScreen() {
         effectiveTipId={effectiveTipId}
         colors={colors}
       />
-      <TimingInfoSection
-        tip={tip}
-      />
-      {isNutritionTip && (
-        (tip?.fiberTargets?.length || 0)
-        + (tip?.polyphenolTargets?.length || 0)
-        + (tip?.mineralTargets?.length || 0)
-        + (tip?.vitaminTargets?.length || 0)
-        + (tip?.aminoAcidTargets?.length || 0)
-        + (tip?.trackingTargets?.length || 0)
-      ) > 0 && (
-          <NutritionTargetsSection tip={tip} colors={colors} t={t} />
-        )}
+      <TimingInfoSection tip={tip} />
       <NutritionFoodsSection
         tip={tip}
         nutritionFoodItems={nutritionFoodItems}
@@ -491,16 +494,11 @@ export default function AreaDetailScreen() {
         styles={styles}
         colors={colors}
       />
-      <AIInsightsSection
-        handleAIInsightPress={handleAIInsightPress}
-        isQuestionAsked={isQuestionAsked}
-        styles={styles}
-        colors={colors}
-      />
+      <AIInsightsSection handleAIInsightPress={handleAIInsightPress} isQuestionAsked={isQuestionAsked} styles={styles} colors={colors} />
       <MetricsSection tipId={effectiveTipId} />
       <VerdictBottomSheet
         verdictSheetRef={verdictSheetRef}
-        snapPoints={["85%"]}
+        snapPoints={['85%']}
         colors={colors}
         currentVerdict={currentVerdict}
         onVerdictPress={(v: any) => handleVerdictPress(v as any)}
@@ -511,22 +509,16 @@ export default function AreaDetailScreen() {
           }
         }}
       />
-      {(
-        resolvedSupplements.length > 0 ||
-        (supplementPlans?.some(p => Array.isArray(p.supplements) && p.supplements.length > 0))
-      ) && (
-          <SupplementList
-            supplements={resolvedSupplements}
-            plannedSupplements={plannedSupplements}
-            supplementPlans={supplementPlans}
-          />
-        )}
+      {(resolvedSupplements.length > 0 || supplementPlans?.some(p => Array.isArray(p.supplements) && p.supplements.length > 0)) && (
+        <SupplementList supplements={resolvedSupplements} plannedSupplements={plannedSupplements} supplementPlans={supplementPlans} />
+      )}
     </Container>
   );
 }
 
 const styles = StyleSheet.create({
   noticeButton: { marginTop: 10 },
+  noticePlanLink: { alignItems: 'center', marginTop: 16 },
   planActionContainer: {
     width: '100%',
     marginTop: 16,
@@ -595,7 +587,7 @@ function NutritionFoodsSection({
   styles,
   colors,
 }: Readonly<{
-  tip: typeof tips[number] | undefined;
+  tip: (typeof tips)[number] | undefined;
   nutritionFoodItems: { key: string; name: string; details: string }[];
   nutritionFoodsTitle: string | null;
   isTipInPlan: boolean;
@@ -612,7 +604,11 @@ function NutritionFoodsSection({
       {nutritionFoodItems.map(({ key, name, details }) => (
         <View key={key} style={styles.nutritionItem}>
           <ThemedText type="defaultLarge">• {name}</ThemedText>
-          {details ? <ThemedText type="caption" style={styles.nutritionDetailText}>{details}</ThemedText> : null}
+          {details ? (
+            <ThemedText type="caption" style={styles.nutritionDetailText}>
+              {details}
+            </ThemedText>
+          ) : null}
         </View>
       ))}
       <View style={[styles.planActionContainer, styles.nutritionPlanAction]}>
@@ -626,26 +622,17 @@ function NutritionFoodsSection({
             </View>
             {showSupplementDiscreetButton && (
               <View style={styles.centeredDiscreetButton}>
-                <DiscreetButton
-                  title={`+ ${t('tipDetails.addNutritionGoal')}`}
-                  onPress={handleAddTipPlanEntry}
-                />
+                <DiscreetButton title={`+ ${t('tipDetails.addNutritionGoal')}`} onPress={handleAddTipPlanEntry} />
               </View>
             )}
           </>
         ) : (
-          <AppButton
-            title={t('tipDetails.addNutritionGoal')}
-            onPress={handleAddTipPlanEntry}
-            variant="primary"
-            style={styles.planActionButton}
-          />
+          <AppButton title={t('tipDetails.addNutritionGoal')} onPress={handleAddTipPlanEntry} variant="primary" style={styles.planActionButton} />
         )}
       </View>
     </AppBox>
   );
 }
-
 
 function MetricsSection({ tipId }: Readonly<{ tipId: string | null }>) {
   const { colors } = useTheme();
@@ -666,10 +653,7 @@ function MetricsSection({ tipId }: Readonly<{ tipId: string | null }>) {
           </ThemedText>
         );
       })}
-      <ThemedText type="explainer" style={[
-        globalStyles.explainer,
-        { borderTopColor: colors.borderLight }
-      ]}>
+      <ThemedText type="explainer" style={[globalStyles.explainer, { borderTopColor: colors.borderLight }]}>
         {t('common:tipDetails.metricsExplainer')}
       </ThemedText>
     </AppBox>

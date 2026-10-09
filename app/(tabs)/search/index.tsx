@@ -21,7 +21,7 @@ import { PlanCategory } from '@/types/planCategory';
 export default function TipsSearchScreen() {
   const { t } = useTranslation();
   const { myLevel, plans } = useStorage();
-  const params = useLocalSearchParams<{ targetPeriods?: string | string[]; planCategories?: string | string[]; goalIntro?: string }>();
+  const params = useLocalSearchParams<{ targetPeriods?: string | string[]; planCategories?: string | string[]; goalIntro?: string; fromPlan?: string; inPlan?: string; filterRequestId?: string }>();
   const [query, setQuery] = useState('');
   const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
   const [showFilter, setShowFilter] = useState(false);
@@ -30,6 +30,11 @@ export default function TipsSearchScreen() {
   const [selectedBodyParts, setSelectedBodyParts] = useState<string[]>([]);
   const [selectedTargetPeriods, setSelectedTargetPeriods] = useState<TargetPeriod[]>([]);
   const [inPlanFilter, setInPlanFilter] = useState<boolean | null>(null);
+  useEffect(() => {
+    if (params.inPlan === 'no') setInPlanFilter(false);
+    else if (params.inPlan === 'yes') setInPlanFilter(true);
+    else setInPlanFilter(null);
+  }, [params.inPlan, params.filterRequestId]);
   const plannedTipIds = useMemo(() => {
     const ids = new Set([...(plans?.training ?? []), ...(plans?.nutrition ?? []), ...(plans?.other ?? [])].map(entry => entry.tipId));
     const supplementIds = new Set((plans?.supplements ?? []).flatMap(plan => plan.supplements.map(entry => entry.supplement.id)));
@@ -181,6 +186,7 @@ export default function TipsSearchScreen() {
             params: {
               tipId: item.id,
               expandAreas: '1',
+              ...(params.fromPlan === '1' ? { fromPlan: '1' } : {}),
             },
           });
         }}

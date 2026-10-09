@@ -15,6 +15,7 @@ import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
 import { Card } from '../ui/Card';
 import DiscreetButton from '../ui/DiscreetButton';
+import JournalGoalAnchor from './JournalGoalAnchor';
 import ProgressButton from './ProgressButton';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -69,7 +70,8 @@ const TipProgressRow: React.FC<TipProgressRowProps> = ({
     : null;
 
   return (
-    <View
+    <JournalGoalAnchor
+      tipId={tip.tipId}
       onLayout={event => {
         tipRowLocalYByKeyRef.current[tipKey] = event.nativeEvent.layout.y;
         tipRowPeriodByKeyRef.current[tipKey] = tip.period;
@@ -164,7 +166,7 @@ const TipProgressRow: React.FC<TipProgressRowProps> = ({
           )}
         </View>
       </Animated.View>
-    </View>
+    </JournalGoalAnchor>
   );
 };
 
@@ -234,6 +236,8 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                     targetPeriods: 'daily,weekly',
                     planCategories: 'nutrition',
                     goalIntro: 'nutrition',
+                    inPlan: 'no',
+                    filterRequestId: String(Date.now()),
                   },
                 });
               }}
@@ -268,6 +272,8 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                         targetPeriods: 'daily',
                         planCategories: 'nutrition',
                         goalIntro: 'nutrition',
+                        inPlan: 'no',
+                        filterRequestId: String(Date.now()),
                       },
                     });
                   }}
@@ -300,6 +306,8 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                         targetPeriods: 'weekly',
                         planCategories: 'nutrition',
                         goalIntro: 'nutrition',
+                        inPlan: 'no',
+                        filterRequestId: String(Date.now()),
                       },
                     });
                   }}

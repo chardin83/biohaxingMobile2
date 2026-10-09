@@ -304,7 +304,7 @@ export default function PlanDetailsScreen() {
               if (!areaId) return;
               router.push({
                 pathname: `/dashboard/area/${areaId}/details` as any,
-                params: { tipId: tip.id },
+                params: { tipId: tip.id, fromPlan: '1' },
               });
             }}
             style={[styles.tipCard, { backgroundColor: colors.cardBackground, borderColor: colors.cardBorder }]}

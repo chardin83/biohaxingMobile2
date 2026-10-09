@@ -170,6 +170,9 @@ export const OtherPlanSection: React.FC<Props> = () => {
               pathname: '/(tabs)/search',
               params: {
                 planCategories: 'other',
+                inPlan: 'no',
+                filterRequestId: String(Date.now()),
+                fromPlan: '1',
               },
             });
           }}

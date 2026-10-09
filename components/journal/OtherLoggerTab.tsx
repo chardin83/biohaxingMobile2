@@ -19,6 +19,7 @@ import AppButton from '../ui/AppButton';
 import { Card } from '../ui/Card';
 import DiscreetButton from '../ui/DiscreetButton';
 import { IconSymbol } from '../ui/IconSymbol';
+import JournalGoalAnchor from './JournalGoalAnchor';
 import ProgressButton from './ProgressButton';
 import { RegisterHabitValueBottomSheet } from './RegisterHabitValueBottomSheet';
 
@@ -328,7 +329,7 @@ export default function OtherLoggerTab({
     let statusLabel = item.isFulfilled ? t('journal:otherTips.fulfilled') : t('journal:otherTips.notFulfilled');
     if (sleepAssessment) statusLabel = t(`journal:otherTips.sleepSchedule.${sleepAssessment.status}`);
     return (
-      <View key={`${item.tipId}-${item.trackingKey}`} style={styles.tip}>
+      <JournalGoalAnchor tipId={item.tipId} key={`${item.tipId}-${item.trackingKey}`} style={styles.tip}>
         <View style={styles.header}>
           <ThemedText type="title3" style={styles.title}>
             {item.title}
@@ -376,7 +377,7 @@ export default function OtherLoggerTab({
           </View>
         )}
         {renderManualButtons(item)}
-      </View>
+      </JournalGoalAnchor>
     );
   };
 
@@ -431,6 +432,8 @@ export default function OtherLoggerTab({
 
                   planCategories: 'other',
                   goalIntro: 'other',
+                  inPlan: 'no',
+                  filterRequestId: String(Date.now()),
                 },
               });
             }}

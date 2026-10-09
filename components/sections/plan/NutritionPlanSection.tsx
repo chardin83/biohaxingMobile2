@@ -219,6 +219,9 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
               pathname: '/(tabs)/search',
               params: {
                 planCategories: 'nutrition',
+                inPlan: 'no',
+                filterRequestId: String(Date.now()),
+                fromPlan: '1',
               },
             });
           }}

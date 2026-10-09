@@ -153,6 +153,7 @@
     "tipAddedTitle": "Tillagd i planen!",
     "tipAddedMessage": "\"{{tipName}}\" kan nu följas i din dagbok.",
     "showJournal": "Visa dagbok",
+    "backToMyPlan": "Tillbaka till min plan",
     "chosePlanToEdit": "Välj plan att redigera",
     "addTimeSlot": "Ny tidpunkt",
     "editTimeSlot": "Redigera tidpunkt",
@@ -510,8 +511,12 @@
     "saveError": "Kunde inte spara målen. Försök igen."
   },
   "nutritionTargetSection": {
-    "title": "Näringsmål",
-    "description": "Dessa är de viktigaste näringsmålen relaterade till detta tips. Att följa dessa kan hjälpa dig att se hur väl du implementerar tipset och dess påverkan på din hälsa."
+    "title": "Mål",
+    "showJournal": "Visa i dagboken",
+    "daily": "Dagligt mål",
+    "weekly": "Veckomål",
+    "periods": { "daily": "dag", "weekly": "vecka" },
+    "units": { "minutes": "min", "hours": "timmar", "count": "gånger", "sessions": "pass", "items": "st", "plants": "växter" }
   },
   "tipCard": {
     "startExploring": "Börja utforska",

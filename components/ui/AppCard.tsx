@@ -1,27 +1,36 @@
 // components/ui/AppCard.tsx
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { type StyleProp, StyleSheet, TouchableOpacity, View, type ViewStyle } from 'react-native';
 import { Icon } from 'react-native-paper';
 
 import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
+import type { IconSymbolName } from '@/components/ui/icon-symbol-map';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
 interface AppCardProps {
   icon?: string;
+  iconName?: IconSymbolName;
+  children?: React.ReactNode;
+  style?: StyleProp<ViewStyle>;
   title: string;
+  subtitle?: string;
   description?: string;
   isActive?: boolean;
   showCheckbox?: boolean;
   xp?: number;
-  onPress: () => void;
+  onPress?: () => void;
   testID?: string;
 }
 
 const AppCard: React.FC<AppCardProps> = ({
   icon,
+  iconName,
+  children,
+  style,
   title,
+  subtitle,
   description,
   isActive = false,
   showCheckbox = false,
@@ -34,18 +43,20 @@ const AppCard: React.FC<AppCardProps> = ({
   return (
     <TouchableOpacity
       onPress={onPress}
+      disabled={!onPress}
       style={[
         globalStyles.card,
         styles.card,
         { backgroundColor: colors.secondaryBackground, borderColor: colors.border },
         isActive && { backgroundColor: colors.cardActive },
+        style,
       ]}
       testID={testID}
     >
       <View style={styles.cardRow}>
-        {icon && (
+        {(icon || iconName) && (
           <View style={[styles.iconWrapper, { borderColor: colors.iconBorder, backgroundColor: colors.iconBackground }]}>
-            <Icon source={icon} size={24} color={colors.icon} />
+            {iconName ? <IconSymbol name={iconName} size={24} color={colors.icon} /> : <Icon source={icon!} size={24} color={colors.icon} />}
           </View>
         )}
 
@@ -53,6 +64,11 @@ const AppCard: React.FC<AppCardProps> = ({
           <ThemedText type="title3" style={[styles.cardTitle, { color: colors.primary }]}>
             {title}
           </ThemedText>
+          {subtitle && (
+            <ThemedText type="defaultSemiBold" style={{ color: colors.textWhite }}>
+              {subtitle}
+            </ThemedText>
+          )}
           {description && (
             <ThemedText type="default" style={[{ color: colors.textLight }]}>
               {description}
@@ -63,13 +79,7 @@ const AppCard: React.FC<AppCardProps> = ({
         {/* Badge och checkIcon i kolumn */}
         <View style={styles.statusColumn}>
           {typeof xp === 'number' && (
-            <View
-              style={[
-                globalStyles.badge,
-                { backgroundColor: colors.xp },
-                xp === 0 ? styles.badgeLowOpacity : styles.badgeFullOpacity,
-              ]}
-            >
+            <View style={[globalStyles.badge, { backgroundColor: colors.xp }, xp === 0 ? styles.badgeLowOpacity : styles.badgeFullOpacity]}>
               <ThemedText type="defaultSemiBold" style={{ color: colors.secondaryBackground }}>
                 {xp} XP
               </ThemedText>
@@ -77,15 +87,12 @@ const AppCard: React.FC<AppCardProps> = ({
           )}
           {(isActive || showCheckbox) && (
             <View style={styles.checkIcon}>
-              <IconSymbol
-                name={isActive ? 'checkCircle' : 'checkboxBlankOutline'}
-                size={34}
-                color={isActive ? colors.xp : colors.textMuted}
-              />
+              <IconSymbol name={isActive ? 'checkCircle' : 'checkboxBlankOutline'} size={34} color={isActive ? colors.xp : colors.textMuted} />
             </View>
           )}
         </View>
       </View>
+      {children}
     </TouchableOpacity>
   );
 };

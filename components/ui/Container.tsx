@@ -30,6 +30,7 @@ type ContainerProps = ViewProps & {
 export type ContainerScrollRef = {
   scrollToEnd(options?: { animated?: boolean }): void;
   scrollTo(options: { x?: number; y?: number; animated?: boolean }): void;
+  scrollToElement(target: View): void;
 };
 
 const Container = forwardRef<ContainerScrollRef, ContainerProps>(
@@ -62,6 +63,17 @@ const Container = forwardRef<ContainerScrollRef, ContainerProps>(
     useImperativeHandle(ref, () => ({
       scrollToEnd: options => internalScrollRef.current?.scrollToEnd(options),
       scrollTo: options => internalScrollRef.current?.scrollTo(options),
+      scrollToElement: target => {
+        // React Native exposes this native ref, but its ScrollView typings omit it.
+        const scrollView = internalScrollRef.current as (ScrollView & { getInnerViewRef(): View | null }) | null;
+        const contentView = scrollView?.getInnerViewRef();
+        if (!scrollView || !contentView) return;
+        target.measureLayout(contentView, (_x, y, _width, height) => {
+          scrollView.getNativeScrollRef()?.measure((_left, _top, _viewportWidth, viewportHeight) => {
+            scrollView.scrollTo({ y: Math.max(0, y - Math.max(0, (viewportHeight - height) / 2)), animated: true });
+          });
+        });
+      },
     }));
 
     const { dark, colors } = useTheme();

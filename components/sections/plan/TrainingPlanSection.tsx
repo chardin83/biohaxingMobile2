@@ -161,6 +161,9 @@ export const TrainingPlanSection: React.FC<Props> = ({ colors }) => {
               pathname: '/(tabs)/search',
               params: {
                 planCategories: 'training',
+                inPlan: 'no',
+                filterRequestId: String(Date.now()),
+                fromPlan: '1',
               },
             });
           }}

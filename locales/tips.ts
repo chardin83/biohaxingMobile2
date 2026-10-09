@@ -174,6 +174,7 @@ type TipWithoutTargets = {
   hydrationTargets?: never;
   activityTargets?: never;
   habitTargets?: never;
+  nutrientTargets?: never;
 };
 
 type TipWithTargets = {

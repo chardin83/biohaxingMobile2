@@ -8,6 +8,7 @@ import { useHabitTracking } from '@/hooks/useHabitTracking';
 import { tips } from '@/locales/tips';
 
 import { ThemedText } from '../ThemedText';
+import JournalGoalAnchor, { JournalGoalFocusContext } from './JournalGoalAnchor';
 import NutritionLoggerTab from './NutritionLoggerTab';
 import OtherLoggerTab from './OtherLoggerTab';
 import { SupplementsLoggerTab } from './SupplementsLoggerTab';
@@ -20,7 +21,7 @@ interface DayEditProps {
 
   onTipCompleted?: (targetY?: number) => void;
 
-  initialTab?: 'supplements' | 'meal' | 'other';
+  initialTab?: DayEditTab;
 
   activeTab?: DayEditTab;
 
@@ -50,6 +51,7 @@ const DayEdit: React.FC<DayEditProps> = ({
   const [uncontrolledActiveTab, setUncontrolledActiveTab] = useState<DayEditTab>(initialTab ?? 'meal');
 
   const activeTab = controlledActiveTab ?? uncontrolledActiveTab;
+  const goalFocus = React.useContext(JournalGoalFocusContext);
 
   const { takenDates, dailyNutritionTracking, dailyTrainingTracking, plans, metricEntries } = useStorage();
 
@@ -282,7 +284,11 @@ const DayEdit: React.FC<DayEditProps> = ({
           </TouchableOpacity>
         </View>
 
-        {activeTab === 'supplements' && <SupplementsLoggerTab selectedDate={selectedDate} preselectedSupplementId={preselectedSupplementId} />}
+        {activeTab === 'supplements' && (
+          <JournalGoalAnchor tipId={goalFocus?.tipId ?? ''}>
+            <SupplementsLoggerTab selectedDate={selectedDate} preselectedSupplementId={preselectedSupplementId} />
+          </JournalGoalAnchor>
+        )}
 
         {activeTab === 'meal' && (
           <View

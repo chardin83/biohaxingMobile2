@@ -1,8 +1,10 @@
 import { useTheme } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useWindowDimensions, View } from 'react-native';
 
 import DayEdit, { type DayEditTab } from '@/components/journal/DayEdit';
+import { JournalGoalFocusContext } from '@/components/journal/JournalGoalAnchor';
 import JournalComponent from '@/components/JournalComponent';
 import Container, { ContainerScrollRef } from '@/components/ui/Container';
 
@@ -16,8 +18,10 @@ const toLocalDateKey = (date: Date): string => {
 export default function Journal() {
   const params = useLocalSearchParams<{
     selectedDate?: string;
-    openTab?: 'supplements' | 'meal' | 'other';
+    openTab?: DayEditTab;
     supplementId?: string;
+    focusTipId?: string;
+    focusRequestId?: string;
   }>();
   const today = toLocalDateKey(new Date());
   const initialDate = params.selectedDate ?? today;
@@ -26,6 +30,15 @@ export default function Journal() {
   const journalRef = useRef<any>(null);
   const containerRef = useRef<ContainerScrollRef>(null);
   const { colors } = useTheme();
+  const { height } = useWindowDimensions();
+  const handledFocusRequest = useRef<string | undefined>(undefined);
+  const focusRequest = params.focusRequestId ?? params.focusTipId;
+  const handleGoalFocus = useCallback((target: View) => {
+    if (!focusRequest || handledFocusRequest.current === focusRequest) return;
+    handledFocusRequest.current = focusRequest;
+    containerRef.current?.scrollToElement(target);
+  }, [focusRequest]);
+  const goalFocus = useMemo(() => ({ tipId: params.focusTipId, requestId: focusRequest, onFocus: handleGoalFocus }), [params.focusTipId, focusRequest, handleGoalFocus]);
 
   const handleDayPress = (day: string) => {
     setSelectedDate(day);
@@ -52,18 +65,25 @@ export default function Journal() {
   }, [params.openTab]);
 
   return (
-    <Container ref={containerRef} background="gradient" gradientLocations={colors.gradients?.sunrise?.locations1 as any}>
+    <Container
+      ref={containerRef}
+      background="gradient"
+      gradientLocations={colors.gradients?.sunrise?.locations1 as any}
+      contentContainerStyle={{ paddingBottom: Math.max(200, height / 2) }}
+    >
       <JournalComponent onDayPress={handleDayPress} selectedDate={selectedDate ?? undefined} ref={journalRef} />
       {selectedDate && (
-        <DayEdit
-          key={selectedDate}
-          selectedDate={selectedDate}
-          onTipCompleted={handleTipCompleted}
-          initialTab={params.openTab}
-          activeTab={activeDayEditTab}
-          onActiveTabChange={setActiveDayEditTab}
-          preselectedSupplementId={params.supplementId}
-        />
+        <JournalGoalFocusContext.Provider value={goalFocus}>
+          <DayEdit
+            key={selectedDate}
+            selectedDate={selectedDate}
+            onTipCompleted={handleTipCompleted}
+            initialTab={params.openTab}
+            activeTab={activeDayEditTab}
+            onActiveTabChange={setActiveDayEditTab}
+            preselectedSupplementId={params.supplementId}
+          />
+        </JournalGoalFocusContext.Provider>
       )}
     </Container>
   );

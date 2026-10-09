@@ -15,6 +15,7 @@ import { useTargetProgressList } from '@/hooks/useTargetProgressList';
 import { tips } from '@/locales/tips';
 import type { TargetPeriod, TrainingTargetDefinition } from '@/services/targetProgress/targetProgressTypes';
 
+import JournalGoalAnchor from './JournalGoalAnchor';
 import ProgressButton from './ProgressButton';
 
 type TrainingPlanTargetsSectionProps = {
@@ -178,7 +179,8 @@ export const TrainingPlanTargetsSection: React.FC<TrainingPlanTargetsSectionProp
 
   const renderTip = (tip: TrainingTipProgress) => {
     return (
-      <View
+      <JournalGoalAnchor
+        tipId={tip.tipId}
         key={`${tip.tipId}-${tip.period}`}
         style={[
           styles.tipRow,
@@ -227,7 +229,7 @@ export const TrainingPlanTargetsSection: React.FC<TrainingPlanTargetsSectionProp
         </View>
 
         {tip.targets.map(renderTarget)}
-      </View>
+      </JournalGoalAnchor>
     );
   };
 
@@ -269,6 +271,8 @@ export const TrainingPlanTargetsSection: React.FC<TrainingPlanTargetsSectionProp
                   targetPeriods: period,
                   planCategories: 'training',
                   goalIntro: 'training',
+                  inPlan: 'no',
+                  filterRequestId: String(Date.now()),
                 },
               });
             }}
@@ -314,6 +318,8 @@ export const TrainingPlanTargetsSection: React.FC<TrainingPlanTargetsSectionProp
                   targetPeriods: 'daily,weekly',
                   planCategories: 'training',
                   goalIntro: 'training',
+                  inPlan: 'no',
+                  filterRequestId: String(Date.now()),
                 },
               });
             }}
