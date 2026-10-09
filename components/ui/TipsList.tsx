@@ -8,7 +8,7 @@ import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { Collapsible } from '@/components/Collapsible';
 import { Card } from '@/components/ui/Card';
-import { XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW } from '@/constants/XP';
+import { MAX_TIP_EDUCATION_XP } from '@/constants/tipXP';
 import { tips } from '@/locales/tips';
 import { NEGATIVE_VERDICTS, POSITIVE_VERDICTS, VerdictValue } from '@/types/verdict';
 
@@ -120,7 +120,7 @@ export default function TipsList({ areaId }: Readonly<TipsListProps>) {
       };
     }
 
-    const maxEducationXp = XP_FOR_VIEW + XP_FOR_CHAT_QUESTION * 3 + XP_FOR_VERDICT;
+    const maxEducationXp = MAX_TIP_EDUCATION_XP;
     const progress = Math.min(educationXp / maxEducationXp, 1);
 
     return {

@@ -8,6 +8,7 @@ import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
 import type { IconSymbolName } from '@/components/ui/icon-symbol-map';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import XPBadge from '@/components/ui/XPBadge';
 
 interface AppCardProps {
   icon?: string;
@@ -76,20 +77,9 @@ const AppCard: React.FC<AppCardProps> = ({
           )}
         </View>
 
-        {/* Badge och checkIcon i kolumn */}
         <View style={styles.statusColumn}>
-          {typeof xp === 'number' && (
-            <View style={[globalStyles.badge, { backgroundColor: colors.xp }, xp === 0 ? styles.badgeLowOpacity : styles.badgeFullOpacity]}>
-              <ThemedText type="defaultSemiBold" style={{ color: colors.secondaryBackground }}>
-                {xp} XP
-              </ThemedText>
-            </View>
-          )}
-          {(isActive || showCheckbox) && (
-            <View style={styles.checkIcon}>
-              <IconSymbol name={isActive ? 'checkCircle' : 'checkboxBlankOutline'} size={34} color={isActive ? colors.xp : colors.textMuted} />
-            </View>
-          )}
+          {(typeof xp === 'number' || isActive) && <XPBadge amount={xp} checked={isActive} size={34} />}
+          {!isActive && showCheckbox && <IconSymbol name="checkboxBlankOutline" size={34} color={colors.textMuted} />}
         </View>
       </View>
       {children}
@@ -98,12 +88,6 @@ const AppCard: React.FC<AppCardProps> = ({
 };
 
 const styles = StyleSheet.create({
-  badgeLowOpacity: {
-    opacity: 0.5,
-  },
-  badgeFullOpacity: {
-    opacity: 1,
-  },
   card: {
     width: '90%',
     borderRadius: globalStyles.borders.borderRadius,
@@ -126,9 +110,6 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     textTransform: 'uppercase',
-  },
-  checkIcon: {
-    marginLeft: 'auto',
   },
   statusColumn: {
     flexDirection: 'column',

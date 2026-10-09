@@ -1,15 +1,15 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import SupplementList from '@/app/components/SupplementList';
 import { useStorage } from '@/app/context/StorageContext';
 import { Supplement } from '@/app/domain/Supplement';
 import AreaRelevanceSection from '@/components/sections/details/AreaRelevanceSection';
+import CriticalThinkingSection from '@/components/sections/details/CriticalThinkingSection';
 import DetailsTopSection from '@/components/sections/details/DetailsTopSection';
 import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
@@ -20,7 +20,7 @@ import { NotFound } from '@/components/ui/NotFound';
 import Notice from '@/components/ui/Notice';
 import VerdictBottomSheet from '@/components/VerdictBottomSheet';
 import { AIPromptKey, AIPrompts } from '@/constants/AIPrompts';
-import { XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW } from '@/constants/XP';
+import { MAX_TIP_EDUCATION_XP } from '@/constants/tipXP';
 import { areas } from '@/locales/areas';
 import { useSupplements } from '@/locales/supplements';
 import { tips } from '@/locales/tips';
@@ -312,11 +312,11 @@ export default function AreaDetailScreen() {
     }
   }, []);
 
-  const maxEducationXp = XP_FOR_VIEW + XP_FOR_CHAT_QUESTION * 3 + XP_FOR_VERDICT;
+  const maxEducationXp = MAX_TIP_EDUCATION_XP;
   const progress = Math.min(educationXpEarned / maxEducationXp, 1);
   const progressLabel = educationXpEarned >= maxEducationXp ? `${t('common:tipDetails.fullyExplored')} 🎉` : `${educationXpEarned}/${maxEducationXp} XP`;
 
-  const handleAIInsightPress = (questionKey: AIPromptKey) => {
+  const handleCriticalThinkingPress = (questionKey: AIPromptKey) => {
     const tipTranslation = t(`tips:${titleKey}`);
     const informationTranslation = t(`tips:${descriptionKey}`) || '';
     const tipInfo = `Tip: ${tipTranslation}\nInformation: ${informationTranslation}`;
@@ -345,8 +345,6 @@ export default function AreaDetailScreen() {
       },
     });
   };
-
-  const isQuestionAsked = (questionType: string) => askedQuestions.includes(questionType);
 
   if (notFound) {
     return <NotFound text="Goal not found." />;
@@ -465,7 +463,7 @@ export default function AreaDetailScreen() {
         colors={colors}
       />
       <TimingInfoSection tip={tip} />
-      <AIInsightsSection handleAIInsightPress={handleAIInsightPress} isQuestionAsked={isQuestionAsked} styles={styles} colors={colors} />
+      <CriticalThinkingSection askedQuestions={askedQuestions} onPress={handleCriticalThinkingPress} />
       <RelatedMetricsSection tipId={effectiveTipId} />
       <VerdictBottomSheet
         verdictSheetRef={verdictSheetRef}
@@ -509,60 +507,3 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
 });
-
-function AIInsightsSection({
-  handleAIInsightPress,
-  isQuestionAsked,
-  styles,
-  colors,
-}: Readonly<{
-  handleAIInsightPress: (questionKey: AIPromptKey) => void;
-  isQuestionAsked: (questionType: string) => boolean;
-  styles: { [key: string]: any };
-  colors: any;
-}>) {
-  const { t } = useTranslation();
-  return (
-    <AppBox title={t(`common:tipDetails.aiInsights`)}>
-      <Pressable
-        onPress={() => handleAIInsightPress('insights.studies')}
-        style={[
-          styles.insightButton,
-          { backgroundColor: colors.accentVeryWeak, borderColor: colors.accentMedium },
-          isQuestionAsked('studies') && [styles.insightButtonAsked, { backgroundColor: colors.accentWeak }],
-        ]}
-      >
-        <ThemedText type="caption" style={[styles.insightText, { color: colors.textLight }]}>
-          {isQuestionAsked('studies') ? '✅' : '📚'} {t('common:tipDetails.whatStudiesExist')}
-          {!isQuestionAsked('studies') && ' (+5 XP)'}
-        </ThemedText>
-      </Pressable>
-      <Pressable
-        onPress={() => handleAIInsightPress('insights.experts')}
-        style={[
-          styles.insightButton,
-          { backgroundColor: colors.accentVeryWeak, borderColor: colors.accentMedium },
-          isQuestionAsked('experts') && [styles.insightButtonAsked, { backgroundColor: colors.accentWeak }],
-        ]}
-      >
-        <ThemedText type="caption" style={[styles.insightText, { color: colors.textLight }]}>
-          {isQuestionAsked('experts') ? '✅' : '👥'} {t('common:tipDetails.whoAreTheExperts')}
-          {!isQuestionAsked('experts') && ' (+5 XP)'}
-        </ThemedText>
-      </Pressable>
-      <Pressable
-        onPress={() => handleAIInsightPress('insights.risks')}
-        style={[
-          styles.insightButton,
-          { backgroundColor: colors.accentVeryWeak, borderColor: colors.accentMedium },
-          isQuestionAsked('risks') && [styles.insightButtonAsked, { backgroundColor: colors.accentWeak }],
-        ]}
-      >
-        <ThemedText type="caption" style={[styles.insightText, { color: colors.textLight }]}>
-          {isQuestionAsked('risks') ? '✅' : '⚠️'} {t('common:tipDetails.whatAreTheRisks')}
-          {!isQuestionAsked('risks') && ' (+5 XP)'}
-        </ThemedText>
-      </Pressable>
-    </AppBox>
-  );
-}

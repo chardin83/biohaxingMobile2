@@ -250,6 +250,10 @@ export const ICON_SYMBOLS = {
     sf: 'person.fill',
     material: 'person',
   },
+  'book': {
+    sf: 'book.closed',
+    material: 'menu-book',
+  },
   'privacy': {
     sf: 'hand.raised.fill',
     material: 'privacy-tip',

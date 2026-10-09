@@ -19,7 +19,8 @@ import {
   type PlansByCategory,
   type TrainingPlanSettings,
 } from '@/app/context/storage/plans/planTypes';
-import { levels, XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW, XP_PER_CHAT_MESSAGE, type XpSource } from '@/constants/XP';
+import { getInsightQuestionXP } from '@/constants/tipXP';
+import { levels, XP_FOR_VERDICT, XP_FOR_VIEW, XP_PER_CHAT_MESSAGE, type XpSource } from '@/constants/XP';
 import { MetricId } from '@/locales/metrics';
 import { countNewAutomaticHabitGoals, getAutomaticHabitGoalKeys } from '@/services/targetProgress/automaticHabitSummary';
 import { prepareManualHabitResult, storeAutomaticSleepResults } from '@/services/targetProgress/habitResultStorage';
@@ -932,11 +933,10 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     (_areaId: string, tipId: string, questionType: string): number => {
       const existing = viewedTipsState.find(view => view.tipId === tipId);
 
-      if (existing?.askedQuestions.includes(questionType)) {
+      const xpForChat = getInsightQuestionXP(existing?.askedQuestions ?? [], questionType);
+      if (xpForChat === 0) {
         return 0;
       }
-
-      const xpForChat = XP_FOR_CHAT_QUESTION;
 
       setViewedTips(prev =>
         prev.map(view => {
