@@ -16,9 +16,10 @@ import DetailsTopSection from '@/components/sections/details/DetailsTopSection';
 import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
-import Container from '@/components/ui/Container';
+import Container, { ContainerScrollRef } from '@/components/ui/Container';
 import DiscreetButton from '@/components/ui/DiscreetButton';
 import { NotFound } from '@/components/ui/NotFound';
+import Notice from '@/components/ui/Notice';
 import VerdictBottomSheet from '@/components/VerdictBottomSheet';
 import { AIPromptKey, AIPrompts } from '@/constants/AIPrompts';
 import { XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW } from '@/constants/XP';
@@ -35,6 +36,7 @@ import TimingInfoSection from './sections/TimingInfoSection';
 export default function AreaDetailScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const containerRef = React.useRef<ContainerScrollRef>(null);
   const { colors } = useTheme();
   const { areaId, tipId, expandAreas } = useLocalSearchParams<{
     areaId: string;
@@ -123,6 +125,7 @@ export default function AreaDetailScreen() {
     if (!effectiveTipId) return;
     const targetCategory = getDefaultPlanCategory();
     if (!targetCategory) return;
+    if (plans[targetCategory].some(entry => entry.tipId === effectiveTipId && entry.planCategory === targetCategory)) return;
     setJustAddedPlanCategory(targetCategory);
     let listKey: keyof typeof plans;
     if (targetCategory === 'training') listKey = 'training';
@@ -187,6 +190,11 @@ export default function AreaDetailScreen() {
   const isTipInTrainingPlan = React.useMemo(() => isTipInPlanCategory('training'), [isTipInPlanCategory]);
   const isTipInNutritionPlan = React.useMemo(() => isTipInPlanCategory('nutrition'), [isTipInPlanCategory]);
   const isTipInOtherPlan = React.useMemo(() => isTipInPlanCategory('other'), [isTipInPlanCategory]);
+  const showAddedNotice = justAddedPlanCategory !== null && isTipInPlanCategory(justAddedPlanCategory);
+
+  React.useEffect(() => {
+    if (showAddedNotice) containerRef.current?.scrollTo({ y: 0, animated: true });
+  }, [showAddedNotice]);
 
   const currentTip = viewedTips?.find(v => v.tipId === tipId);
   const askedQuestions = currentTip?.askedQuestions || [];
@@ -388,6 +396,7 @@ export default function AreaDetailScreen() {
 
   return (
     <Container
+      ref={containerRef}
       background="gradient"
       gradientLocations={colors.gradients?.sunrise?.locations1 as any}
       showBackButton
@@ -400,7 +409,26 @@ export default function AreaDetailScreen() {
         openVerdictSheet();
       }}
     >
-
+      {showAddedNotice && (
+        <Notice
+          variant="success"
+          showIcon={false}
+          onDismiss={() => setJustAddedPlanCategory(null)}
+          dismissAccessibilityLabel={t('common:general.close')}
+          title={t('common:plan.tipAddedTitle')}
+          message={t('common:plan.tipAddedMessage', { tipName: t(`tips:${titleKey}`) })}
+        >
+          <AppButton
+            variant="primary"
+            title={t('common:plan.showJournal')}
+            style={styles.noticeButton}
+            onPress={() => router.push({
+              pathname: '/(tabs)/journal',
+              params: { openTab: justAddedPlanCategory === 'nutrition' ? 'meal' : 'other' },
+            })}
+          />
+        </Notice>
+      )}
       <DetailsTopSection
         areaId={areaId}
         colors={colors}
@@ -421,8 +449,6 @@ export default function AreaDetailScreen() {
         addPlanButtonTitle={addPlanButtonTitle}
         handleAddPlanEntry={handleAddTipPlanEntry}
         showSupplementDiscreetButton={showSupplementDiscreetButton}
-        currentVerdict={currentVerdict}
-        onOpenVerdict={openVerdictSheet}
       />
 
       {descriptionKey && (
@@ -500,6 +526,7 @@ export default function AreaDetailScreen() {
 }
 
 const styles = StyleSheet.create({
+  noticeButton: { marginTop: 10 },
   planActionContainer: {
     width: '100%',
     marginTop: 16,

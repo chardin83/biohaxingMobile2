@@ -150,6 +150,9 @@
     "choosenFor": "Supplements taken"
   },
   "plan": {
+    "tipAddedTitle": "Added to your plan!",
+    "tipAddedMessage": "\"{{tipName}}\" can now be tracked in your journal.",
+    "showJournal": "View journal",
     "chosePlanToEdit": "Choose plan to edit",
     "addTimeSlot": "New time slot",
     "editTimeSlot": "Edit time slot",
@@ -872,7 +875,8 @@
     "title": "Tips for optimization",
     "showAll": "Show all ({{count}} hidden)",
     "hideNotInterested": "Hide not interested",
-    "lockedLevels": "Locked Levels"
+    "lockedLevels": "Locked Levels",
+    "noTipsFound": "No tips found"
   },
   "genesList": {
     "title": "Genes & DNA",
@@ -974,6 +978,10 @@
     "supplement": "Supplement"
   },
   "filter": {
+    "inPlan": "In plan",
+    "yes": "Yes",
+    "no": "No",
+    "clearAll": "Clear all",
     "area": "Area",
     "level": "Level",
     "planCategory": "Plan category",

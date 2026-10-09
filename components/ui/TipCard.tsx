@@ -138,7 +138,7 @@ export default function TipCard({ tip, tipProgress, onPress, areaId, locked=fals
       )}
 
       {isStarted && (
-        <ThemedText type="explainer" style={[styles.xpBreakdownText, { color: colors.textMuted }]}> 
+        <ThemedText type="explainer" style={[styles.xpBreakdownText, { color: colors.textMuted }]}>
           {t('common:dashboard.xpBreakdown', {
             education: tipProgress.educationXp,
             nutrition: tipProgress.nutritionXp,

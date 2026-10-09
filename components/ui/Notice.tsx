@@ -16,10 +16,12 @@ type NoticeProps = Readonly<{
   message: string;
   variant?: NoticeVariant;
   iconName?: IconSymbolName;
+  showIcon?: boolean;
   onDismiss?: () => void;
   dismissLabel?: string;
   dismissAccessibilityLabel?: string;
   style?: StyleProp<ViewStyle>;
+  children?: React.ReactNode;
 }>;
 
 export default function Notice({
@@ -27,10 +29,12 @@ export default function Notice({
   message,
   variant = 'info',
   iconName,
+  showIcon = true,
   onDismiss,
   dismissLabel,
   dismissAccessibilityLabel = 'Dismiss',
   style,
+  children,
 }: NoticeProps) {
   const { colors } = useTheme();
   const { t } = useTranslation('common');
@@ -68,7 +72,7 @@ export default function Notice({
         style,
       ]}
     >
-      <View
+      {showIcon && <View
         style={[
           styles.icon,
           {
@@ -78,7 +82,7 @@ export default function Notice({
         ]}
       >
         <IconSymbol name={iconName ?? defaultIconName} size={iconName ? 20 : 16} color={accentColor} />
-      </View>
+      </View>}
       <View style={styles.textContainer}>
         {title ? (
           <ThemedText type="defaultSemiBold" style={textStyle}>
@@ -88,6 +92,7 @@ export default function Notice({
         <ThemedText type="caption" style={textStyle}>
           {message}
         </ThemedText>
+        {children}
         {(isTutorial || (onDismiss && actionLabel)) && (
           <Pressable onPress={dismiss} accessibilityRole="button" accessibilityLabel={actionLabel} style={styles.dismissAction}>
             <ThemedText type="defaultSemiBold" style={{ color: accentColor }}>

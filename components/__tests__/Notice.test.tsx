@@ -1,5 +1,6 @@
 import { fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
+import { Pressable, Text } from 'react-native';
 
 import { Colors } from '@/app/theme/Colors';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -8,6 +9,24 @@ import Notice from '@/components/ui/Notice';
 jest.mock('@react-navigation/native', () => ({ useTheme: () => ({ colors: jest.requireActual('@/app/theme/Colors').Colors.light }) }));
 jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: () => 'Förstått' }) }));
 jest.mock('@/components/ui/IconSymbol', () => ({ IconSymbol: jest.fn(() => null) }));
+beforeEach(() => jest.clearAllMocks());
+
+it('shows a success message with a working journal action', () => {
+  const openJournal = jest.fn();
+  const dismiss = jest.fn();
+  const screen = render(
+    <Notice variant="success" showIcon={false} onDismiss={dismiss} dismissAccessibilityLabel="Stäng" title="Tillagd i planen!" message={'"Ät färgglada grönsaker" kan nu följas i din dagbok.'}>
+      <Pressable accessibilityRole="button" onPress={openJournal}><Text>Visa dagbok</Text></Pressable>
+    </Notice>
+  );
+  expect(screen.getByText('Tillagd i planen!')).toBeTruthy();
+  expect(screen.getByText('"Ät färgglada grönsaker" kan nu följas i din dagbok.')).toBeTruthy();
+  fireEvent.press(screen.getByRole('button', { name: 'Visa dagbok' }));
+  expect(openJournal).toHaveBeenCalledTimes(1);
+  expect(jest.mocked(IconSymbol).mock.calls.map(([props]) => props.name)).toEqual(['close']);
+  fireEvent.press(screen.getByRole('button', { name: 'Stäng' }));
+  expect(dismiss).toHaveBeenCalledTimes(1);
+});
 
 it('supports a custom calendar icon and the primary theme palette', () => {
   const screen = render(<Notice title="Bygg din träningsplan." message="Välj ett träningstips." variant="tutorial" iconName="calendarCheck" />);

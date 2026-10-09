@@ -150,6 +150,9 @@
     "choosenFor": "Tagna kosttillskott"
   },
   "plan": {
+    "tipAddedTitle": "Tillagd i planen!",
+    "tipAddedMessage": "\"{{tipName}}\" kan nu följas i din dagbok.",
+    "showJournal": "Visa dagbok",
     "chosePlanToEdit": "Välj plan att redigera",
     "addTimeSlot": "Ny tidpunkt",
     "editTimeSlot": "Redigera tidpunkt",
@@ -872,7 +875,8 @@
     "title": "Optimeringstips",
     "showAll": "Visa alla ({{count}} dolda)",
     "hideNotInterested": "Dölj inte intresserad",
-    "lockedLevels": "Låsta nivåer"
+    "lockedLevels": "Låsta nivåer",
+    "noTipsFound": "Inga tips hittades"
   },
   "genesList": {
     "title": "Gener & DNA",
@@ -974,6 +978,10 @@
     "supplement": "Tillskott  "
   },
   "filter": {
+    "inPlan": "Ligger i plan",
+    "yes": "Ja",
+    "no": "Nej",
+    "clearAll": "Rensa alla",
     "area": "Område",
     "level": "Level",
     "planCategory": "Plankategori",

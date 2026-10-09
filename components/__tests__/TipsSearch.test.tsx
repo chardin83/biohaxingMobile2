@@ -3,14 +3,15 @@ import React from 'react';
 
 import TipsSearchScreen from '@/app/(tabs)/search';
 
-const mockStorage = { myLevel: 2 };
+const mockStorage = { myLevel: 2, plans: { training: [{ tipId: 'current' }], nutrition: [], other: [], supplements: [] } };
+const mockTranslate = jest.fn((key: string, options?: any) => `${key}${options ? ':' + (options.level ?? options.count) : ''}`);
 const mockPush = jest.fn();
 const mockParams: { planCategories?: string; targetPeriods?: string; goalIntro?: string } = {};
 jest.mock('@/app/context/StorageContext', () => ({ useStorage: () => mockStorage }));
 jest.mock('expo-router', () => ({ router: { push: (...args: unknown[]) => mockPush(...args) }, useLocalSearchParams: () => mockParams }));
-jest.mock('@react-navigation/native', () => ({ useTheme: () => ({ colors: { gradients: { sunrise: { locations1: [] } } } }) }));
+jest.mock('@react-navigation/native', () => ({ useTheme: () => ({ colors: jest.requireActual('@/app/theme/Colors').Colors.light, dark: false }) }));
 jest.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (key: string, options?: any) => `${key}${options ? ':' + (options.level ?? options.count) : ''}` }),
+  useTranslation: () => ({ t: mockTranslate }),
 }));
 jest.mock('@/locales/tips', () => ({
   tips: [
@@ -23,12 +24,6 @@ jest.mock('@/locales/tips', () => ({
   ].map(tip => ({ ...tip, title: tip.id, descriptionKey: `${tip.id}.description`, areas: [{ id: 'energy' }] })),
 }));
 jest.mock('@/locales/bodyParts', () => ({ bodyParts: [] }));
-jest.mock('../ThemedText', () => ({
-  ThemedText: ({ children }: any) => {
-    const mockReact = require('react');
-    return mockReact.createElement(require('react-native').Text, null, children);
-  },
-}));
 jest.mock('../ui/Container', () => ({
   __esModule: true,
   default: ({ children }: any) => {
@@ -37,30 +32,6 @@ jest.mock('../ui/Container', () => ({
   },
 }));
 jest.mock('../ui/IconSymbol', () => ({ IconSymbol: () => null }));
-jest.mock('../ui/Card', () => ({
-  Card: ({ children, title }: any) => {
-    const mockReact = require('react');
-    return mockReact.createElement(
-      require('react-native').View,
-      null,
-      title ? mockReact.createElement(require('react-native').Text, null, title) : null,
-      children
-    );
-  },
-}));
-jest.mock('../ui/Badge', () => ({
-  __esModule: true,
-  default: ({ children, onPress }: any) => {
-    const mockReact = require('react');
-    return mockReact.createElement(require('react-native').Pressable, { onPress }, children);
-  },
-}));
-jest.mock('../ui/PressableCard', () => ({
-  PressableCard: ({ children, onPress }: any) => {
-    const mockReact = require('react');
-    return mockReact.createElement(require('react-native').Pressable, { onPress }, children);
-  },
-}));
 jest.mock('../ui/LabeledInput', () => ({
   __esModule: true,
   default: ({ value, onChangeText }: any) => {
@@ -71,10 +42,25 @@ jest.mock('../ui/LabeledInput', () => ({
 
 beforeEach(() => {
   mockStorage.myLevel = 2;
+  mockTranslate.mockClear();
   mockPush.mockClear();
   delete mockParams.planCategories;
   delete mockParams.targetPeriods;
   delete mockParams.goalIntro;
+});
+
+it('filters planned and unplanned tips and clears the plan filter', () => {
+  const screen = render(<TipsSearchScreen />);
+  fireEvent.press(screen.getByText('Filter'));
+  fireEvent.press(screen.getByText('common:filter.yes'));
+  expect(screen.getByText('tips:current')).toBeTruthy();
+  expect(screen.queryByText('tips:basic')).toBeNull();
+  fireEvent.press(screen.getByText('common:filter.no'));
+  expect(screen.queryByText('tips:current')).toBeNull();
+  expect(screen.getByText('tips:basic')).toBeTruthy();
+  fireEvent.press(screen.getByText('common:filter.clearAll'));
+  expect(screen.getByText('tips:current')).toBeTruthy();
+  expect(screen.getByText('tips:basic')).toBeTruthy();
 });
 
 it('groups results by level, previews the next level with a lock, and counts hidden tips per level', () => {
@@ -87,7 +73,7 @@ it('groups results by level, previews the next level with a lock, and counts hid
   expect(getByRole('button', { name: 'common:tipsList.levelTitle:3 · common:tipsList.exploreNextLevel' }).props.accessibilityState.expanded).toBe(true);
   expect(getByText('🔒 tips:advanced')).toBeTruthy();
   fireEvent.press(getByText('🔒 tips:advanced'));
-  expect(mockPush).not.toHaveBeenCalled();
+  expect(mockPush).toHaveBeenCalledWith(expect.objectContaining({ params: { tipId: 'advanced', expandAreas: '1' } }));
   expect(getByText('🔒 common:tipsList.lockedTips:2')).toBeTruthy();
   expect(getByText('🔒 common:tipsList.lockedTips:1')).toBeTruthy();
   expect(queryByRole('button', { name: 'common:tipsList.levelTitle:4' })).toBeNull();
@@ -140,7 +126,7 @@ it('counts hidden search matches without revealing their title or description', 
 it('updates level groups when the level changes and opens an unlocked tip', () => {
   const { getByText, queryByText, rerender } = render(<TipsSearchScreen />);
   fireEvent.press(getByText('tips:current'));
-  expect(mockPush).toHaveBeenCalledWith(expect.objectContaining({ params: { tipId: 'current', expandAreas: '1' } }));
+  expect(mockPush).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/dashboard/area/energy/details', params: { tipId: 'current', expandAreas: '1' } }));
   mockStorage.myLevel = 3;
   rerender(<TipsSearchScreen />);
   expect(getByText('tips:advanced')).toBeTruthy();
@@ -172,4 +158,16 @@ it('puts the current level first and all remaining levels in ascending order', (
     'common:tipsList.levelTitle:4 · common:tipsList.exploreNextLevel',
     'common:tipsList.levelTitle:5',
   ]);
+});
+
+
+it('opens an unlocked result through the real card after entering a search query', () => {
+  const screen = render(<TipsSearchScreen />);
+  fireEvent.changeText(screen.getByTestId('search-input'), 'current');
+  fireEvent.press(screen.getByText('tips:current'));
+  expect(mockPush).toHaveBeenCalledTimes(1);
+  expect(mockPush).toHaveBeenCalledWith({
+    pathname: '/dashboard/area/energy/details',
+    params: { tipId: 'current', expandAreas: '1' },
+  });
 });

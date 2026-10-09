@@ -20,7 +20,7 @@ import { PlanCategory } from '@/types/planCategory';
 
 export default function TipsSearchScreen() {
   const { t } = useTranslation();
-  const { myLevel } = useStorage();
+  const { myLevel, plans } = useStorage();
   const params = useLocalSearchParams<{ targetPeriods?: string | string[]; planCategories?: string | string[]; goalIntro?: string }>();
   const [query, setQuery] = useState('');
   const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
@@ -29,6 +29,15 @@ export default function TipsSearchScreen() {
   const [selectedPlanCategories, setSelectedPlanCategories] = useState<PlanCategory[]>([]);
   const [selectedBodyParts, setSelectedBodyParts] = useState<string[]>([]);
   const [selectedTargetPeriods, setSelectedTargetPeriods] = useState<TargetPeriod[]>([]);
+  const [inPlanFilter, setInPlanFilter] = useState<boolean | null>(null);
+  const plannedTipIds = useMemo(() => {
+    const ids = new Set([...(plans?.training ?? []), ...(plans?.nutrition ?? []), ...(plans?.other ?? [])].map(entry => entry.tipId));
+    const supplementIds = new Set((plans?.supplements ?? []).flatMap(plan => plan.supplements.map(entry => entry.supplement.id)));
+    tips.forEach(tip => {
+      if (tip.supplements?.some(supplement => supplementIds.has(supplement.id))) ids.add(tip.id);
+    });
+    return ids;
+  }, [plans]);
   const { colors } = useTheme();
   const introCategory = params.goalIntro;
   const [dismissedIntro, setDismissedIntro] = useState<string>();
@@ -105,6 +114,7 @@ export default function TipsSearchScreen() {
             (tip.planCategory ?? ['other' as PlanCategory]).some(category => selectedPlanCategories.includes(category))) &&
           (selectedBodyParts.length === 0 || (tip.bodyParts ?? []).some(bodyPart => selectedBodyParts.includes(bodyPart))) &&
           (selectedTargetPeriods.length === 0 || (tip.targetPeriod ? selectedTargetPeriods.includes(tip.targetPeriod) : false)) &&
+          (inPlanFilter === null || plannedTipIds.has(tip.id) === inPlanFilter) &&
           (!q ||
             t('tips:' + tip.title)
               .toLowerCase()
@@ -114,7 +124,7 @@ export default function TipsSearchScreen() {
               .includes(q))
       )
       .sort((a, b) => t('tips:' + a.title).localeCompare(t('tips:' + b.title)));
-  }, [query, t, selectedAreas, selectedLevels, selectedPlanCategories, selectedBodyParts, selectedTargetPeriods]);
+  }, [query, t, selectedAreas, selectedLevels, selectedPlanCategories, selectedBodyParts, selectedTargetPeriods, inPlanFilter, plannedTipIds]);
 
   const groupedResults = useMemo(() => {
     const byLevel = new Map<number, Tip[]>();
@@ -135,7 +145,7 @@ export default function TipsSearchScreen() {
   const matchCount = filteredTips.filter(tip => (tip.level ?? 1) <= myLevel + 1).length;
 
   const activeFilterCount =
-    selectedAreas.length + selectedLevels.length + selectedPlanCategories.length + selectedBodyParts.length + selectedTargetPeriods.length;
+    selectedAreas.length + selectedLevels.length + selectedPlanCategories.length + selectedBodyParts.length + selectedTargetPeriods.length + Number(inPlanFilter !== null);
 
   const allLevels = [...new Set(tips.map(tip => tip.level ?? 1))].sort((a, b) => a - b);
 
@@ -146,10 +156,11 @@ export default function TipsSearchScreen() {
       ...selectedPlanCategories.map(category => t('common:planCategory.' + category)),
       ...selectedBodyParts.map(bodyPart => t('bodyParts.' + bodyPart)),
       ...selectedTargetPeriods.map(period => t(`common:filter.${period}`)),
+      ...(inPlanFilter === null ? [] : [`${t('common:filter.inPlan')}: ${t(inPlanFilter ? 'common:filter.yes' : 'common:filter.no')}`]),
     ];
 
     return labels;
-  }, [selectedAreas, selectedLevels, selectedPlanCategories, selectedBodyParts, selectedTargetPeriods, t]);
+  }, [selectedAreas, selectedLevels, selectedPlanCategories, selectedBodyParts, selectedTargetPeriods, inPlanFilter, t]);
 
   const visibleSelectedFilterLabels = selectedFilterLabels.slice(0, 3);
   const hiddenSelectedFilterCount = Math.max(0, selectedFilterLabels.length - visibleSelectedFilterLabels.length);
@@ -161,7 +172,7 @@ export default function TipsSearchScreen() {
       <PressableCard
         key={item.id}
         onPress={() => {
-          if (!firstAreaId || (item.level ?? 1) > myLevel) {
+          if (!firstAreaId || (item.level ?? 1) > myLevel + 1) {
             return;
           }
 
@@ -234,6 +245,23 @@ export default function TipsSearchScreen() {
       <LabeledInput label={t('search.label')} value={query} onChangeText={setQuery} containerStyle={styles.inputMargin} />
       {showFilter && (
         <ScrollView style={styles.filterScrollView} contentContainerStyle={styles.filterContentContainer} showsVerticalScrollIndicator={false}>
+          <ThemedText type="label" style={styles.filterLabel}>
+            {t('common:filter.inPlan')}
+          </ThemedText>
+          <View style={styles.filterView}>
+            {[true, false].map(value => (
+              <Badge
+                key={String(value)}
+                variant="overlay"
+                style={[styles.toggleBadge, inPlanFilter === value && { backgroundColor: colors.accentDefault }]}
+                onPress={() => setInPlanFilter(current => current === value ? null : value)}
+              >
+                <ThemedText type="caption" style={styles.badgeLabel}>
+                  {t(value ? 'common:filter.yes' : 'common:filter.no')}
+                </ThemedText>
+              </Badge>
+            ))}
+          </View>
           {/* Area-filter */}
           <ThemedText type="label" style={styles.filterLabel}>
             {t('common:filter.area')}
@@ -323,10 +351,29 @@ export default function TipsSearchScreen() {
           </View>
         </ScrollView>
       )}
+      <View style={styles.filterActionsRow}>
+        <TouchableOpacity onPress={() => setShowFilter(v => !v)}>
+          <ThemedText type="default" style={[styles.filterButtonLabel, { color: colors.accentDefault }]}>
+            {showFilter ? `Filter (${activeFilterCount})` : 'Filter'}
+          </ThemedText>
+        </TouchableOpacity>
+        <TouchableOpacity
+          accessibilityRole="button"
+          onPress={() => {
+            setSelectedAreas([]);
+            setSelectedLevels([]);
+            setSelectedPlanCategories([]);
+            setSelectedBodyParts([]);
+            setSelectedTargetPeriods([]);
+            setInPlanFilter(null);
+          }}
+        >
+          <ThemedText type="default" style={[styles.filterButtonLabel, { color: colors.accentDefault }]}>
+            {t('common:filter.clearAll')}
+          </ThemedText>
+        </TouchableOpacity>
+      </View>
       <TouchableOpacity onPress={() => setShowFilter(v => !v)}>
-        <ThemedText type="default" style={[styles.filterButtonLabel, { color: colors.accentDefault }]}>
-          {showFilter ? `Filter (${activeFilterCount})` : 'Filter'}
-        </ThemedText>
         {!showFilter && selectedFilterLabels.length > 0 && (
           <View style={styles.collapsedFilterPills}>
             {visibleSelectedFilterLabels.map((label, index) => (
@@ -400,7 +447,7 @@ export default function TipsSearchScreen() {
         }}
         ListEmptyComponent={
           <ThemedText type="default" style={styles.empty}>
-            Inga tips hittades.
+            {t('common:search.noTipsFound')}
           </ThemedText>
         }
       />
@@ -532,6 +579,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     paddingVertical: 8,
+  },
+  filterActionsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   collapsedFilterPills: {
     flexDirection: 'row',
