@@ -113,7 +113,14 @@ export const ICON_SYMBOLS = {
   },
   'target': {
     sf: 'target',
-    material: 'emoji-events',
+    material: 'my-location',
+    materialCommunity: 'bullseye-arrow',
+  },
+  'bullseyeArrow': {
+    sf: 'target',
+    material: 'my-location',
+    materialCommunity: 'bullseye-arrow',
+    useMaterialCommunityOnIOS: true,
   },
   'chat': {
     sf: 'bubble.left.and.bubble.right.fill',

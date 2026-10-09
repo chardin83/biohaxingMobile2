@@ -1,10 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
 
-import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
-import AppBox from '@/components/ui/AppBox';
+import { InformationCard } from '@/components/ui/InformationCard';
+import { InformationCardLink } from '@/components/ui/InformationCardLink';
 
 export type TimingInfoSectionProps = {
   tip: any;
@@ -22,13 +21,15 @@ export default function TimingInfoSection({ tip }: Readonly<TimingInfoSectionPro
   const timeRuleLabel = tip?.timeRule ? t(`timingInfoSection.timeRules.${tip.timeRule}`) : null;
 
   return (
-    <AppBox title={t('timingInfoSection.title')}>
-      <View style={globalStyles.marginBottom16}>
-        <ThemedText type="label">{t('timingInfoSection.trainingRelation.title')}</ThemedText>
+    <InformationCardLink
+      title={t('timingInfoSection.title')}
+      subtitle={t('timingInfoSection.subtitle')}
+      iconName="bullseyeArrow"
+    >
+      <InformationCard title={t('timingInfoSection.trainingRelation.title')} iconName="trainingGym" variant="primary">
         <ThemedText type="defaultLarge">{trainingRelationLabel || '-'}</ThemedText>
-      </View>
-      <View style={globalStyles.marginBottom16}>
-        <ThemedText type="label">{t('timingInfoSection.preferredDayParts.title')}</ThemedText>
+      </InformationCard>
+      <InformationCard title={t('timingInfoSection.preferredDayParts.title')} iconName="sunny" variant="info">
         {preferredDayPartLabels.length > 0
           ? preferredDayPartLabels.map((label: string) => (
               <ThemedText key={label} type="defaultLarge">
@@ -37,11 +38,10 @@ export default function TimingInfoSection({ tip }: Readonly<TimingInfoSectionPro
             ))
           : <ThemedText type="defaultLarge" >-</ThemedText>
         }
-      </View>
-      <View style={globalStyles.marginBottom16}>
-        <ThemedText type="label">{t('timingInfoSection.timeRules.title')}</ThemedText>
+      </InformationCard>
+      <InformationCard title={t('timingInfoSection.timeRules.title')} iconName="clock" variant="warm">
         <ThemedText type="defaultLarge" >{timeRuleLabel || '-'}</ThemedText>
-      </View>
-    </AppBox>
+      </InformationCard>
+    </InformationCardLink>
   );
 }

@@ -394,7 +394,8 @@
     "relevance": "Områden som påverkas"
   },
   "timingInfoSection": {
-    "title": "Tidsrekommendationer",
+    "title": "När passar det?",
+    "subtitle": "Tips på situationer där tekniken ger mest effekt.",
     "trainingRelation": {
       "title": "Relation till träning",
       "anytime": "Kan tas oavsett träning",

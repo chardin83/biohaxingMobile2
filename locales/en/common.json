@@ -394,7 +394,8 @@
     "relevance": "Areas impacted"
   },
   "timingInfoSection": {
-    "title": "Timing",
+    "title": "When does it work best?",
+    "subtitle": "Tips on situations where the technique has the greatest effect.",
     "trainingRelation": {
       "title": "Workout timing",
       "anytime": "No special workout timing",
