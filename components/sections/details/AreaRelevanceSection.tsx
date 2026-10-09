@@ -1,130 +1,61 @@
-import { useRouter } from 'expo-router';
-import React from 'react';
+import { useTheme } from '@react-navigation/native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet,View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 
-import ShowAllButton from '@/components/ShowAllButton';
+import { useStorage } from '@/app/context/StorageContext';
 import { ThemedText } from '@/components/ThemedText';
-import AppBox from '@/components/ui/AppBox';
+import AppButton from '@/components/ui/AppButton';
+import { InformationCardLink } from '@/components/ui/InformationCardLink';
+import XPBadge from '@/components/ui/XPBadge';
+import { getAreaViewXP } from '@/constants/tipXP';
 import { areas } from '@/locales/areas';
-import { tips } from '@/locales/tips';
+import type { Tip } from '@/locales/tips';
 
+type Props = Readonly<{ tip?: Tip; areaId: string }>;
 
-type AreaRelevanceSectionProps = {
-  tip: typeof tips[number] | undefined;
-  areaId: string;
-  showAllAreas: boolean;
-  setShowAllAreas: React.Dispatch<React.SetStateAction<boolean>>;
-  expandAreas: boolean;
-  effectiveTipId: string | null;
-  colors: any;
-};
-
-const AreaRelevanceSection: React.FC<AreaRelevanceSectionProps> = ({
-  tip,
-  areaId,
-  showAllAreas,
-  setShowAllAreas,
-  expandAreas,
-  effectiveTipId,
-  colors,
-}) => {
+export default function AreaRelevanceSection({ tip, areaId }: Props) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const router = useRouter();
-  const hiddenAreasCount = Math.max((tip?.areas?.length ?? 0) - 1, 0);
-  const showAllLabel = `${t('general.showAll')} (${hiddenAreasCount})`;
+  const { viewedTips, claimTipAreaXP } = useStorage();
+  const viewedAreaIds = viewedTips.find(view => view.tipId === tip?.id)?.viewedAreaIds ?? [];
+  const { fromPlan } = useLocalSearchParams<{ fromPlan?: string }>();
+  const pendingAreaId = useRef<string | null>(null);
+  if (!tip?.areas.length) return null;
+  const orderedAreas = [...tip.areas].sort((a, b) => Number(b.id === areaId) - Number(a.id === areaId));
+  const title = t('common:areaRelevanceSection.relevance');
 
-  if (!tip?.areas?.length) return null;
   return (
-    <>
-      <View style={styles.rowWithGap}>
-        <ThemedText type="subtitle" style={[styles.relevanceHeading, { color: colors.textPrimary }]}>
-          {t('common:areaRelevanceSection.relevance')}
-        </ThemedText>
-      </View>
-      {(showAllAreas ? tip.areas : tip.areas.filter(a => a.id === areaId)).map(a => {
-        const areaTitle = t(`areas:${a.id}.title`);
-        const isCurrentArea = a.id === areaId;
-        const areaMeta = areas.find(ar => ar.id === a.id);
-        const appBoxContent = (
-          <AppBox title={areaTitle} key={a.id}>
-            <View style={styles.rowWithGap}>
-              {areaMeta?.icon ? (
-                <Icon source={areaMeta.icon} size={16} color={colors.primary} />
-              ) : null}
-              <ThemedText type="explainer" style={styles.descriptionText}>
-                {t(`tips:${a.descriptionKey}`)}
-              </ThemedText>
-            </View>
-          </AppBox>
-        );
-        if (isCurrentArea) {
-          return appBoxContent;
-        }
-        return (
-          <Pressable
-            key={a.id}
-            onPress={() => {
-              router.replace({
-                pathname: `/dashboard/area/${a.id}/details` as any,
-                params: {
-                  prevAreaId: areaId,
-                  tipId: effectiveTipId,
-                  ...(expandAreas ? { expandAreas: '1' } : {}),
-                },
-              });
-            }}
-            accessibilityRole="button"
-          >
-            {appBoxContent}
-          </Pressable>
-        );
-      })}
-      {tip.areas.length > 1 && (
-        <ShowAllButton
-          showAll={showAllAreas}
-          onPress={() => {
-            setShowAllAreas(v => !v);
-          }}
-          style={styles.showAllButton}
-          textStyle={styles.showAllText}
-          accentColor={colors.accentDefault}
-          showAllText={showAllLabel}
-        />
-      )}
-    </>
+    <View style={styles.section}>
+      <ThemedText type="subtitle">{title}</ThemedText>
+      <InformationCardLink title={title} snapPoints={['60%', '85%']} onDismiss={() => {
+        const nextAreaId = pendingAreaId.current;
+        if (!nextAreaId) return;
+        pendingAreaId.current = null;
+        router.replace({
+          pathname: '/dashboard/area/[areaId]/details',
+          params: { areaId: nextAreaId, prevAreaId: areaId, tipId: tip.id, ...(fromPlan === '1' ? { fromPlan: '1' } : {}) },
+        });
+      }} rows={orderedAreas.map(area => ({
+        key: area.id,
+        onPress: () => { claimTipAreaXP(tip.id, area.id); },
+        accessory: <XPBadge amount={getAreaViewXP(viewedAreaIds, area.id)} showPlus checked={viewedAreaIds.includes(area.id)} />,
+        title: t(`areas:${area.id}.title`),
+        subtitle: area.id === areaId ? t(`tips:${area.descriptionKey}`) : undefined,
+        icon: <Icon source={areas.find(item => item.id === area.id)?.icon ?? 'information-outline'} size={24} color={colors.primary} />,
+        renderContent: dismiss => <>
+          <ThemedText>{t(`tips:${area.descriptionKey}`)}</ThemedText>
+          {area.id !== areaId && <AppButton title={t('common:areaRelevanceSection.openArea', { area: t(`areas:${area.id}.title`) })} rightIcon="chevron.right" onPress={() => {
+            pendingAreaId.current = area.id;
+            dismiss();
+          }} />}
+        </>,
+      }))} />
+    </View>
   );
-};
+}
 
-
-const styles = StyleSheet.create({
-  relevanceHeading: {
-    alignSelf: 'flex-start',
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 6,
-  },
-  rowWithGap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  descriptionText: {
-    paddingBottom: 8,
-    paddingRight: 20
-  },
-  showAllButton: {
-    alignSelf: 'flex-end',
-    paddingHorizontal: 10,
-    marginTop: -6,
-    marginBottom: 20,
-  },
-  showAllText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-
-});
-
-export default AreaRelevanceSection;
+const styles = StyleSheet.create({ section: { gap: 12, marginBottom: 20 } });

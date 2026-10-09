@@ -20,7 +20,7 @@ import { NotFound } from '@/components/ui/NotFound';
 import Notice from '@/components/ui/Notice';
 import VerdictBottomSheet from '@/components/VerdictBottomSheet';
 import { AIPromptKey, AIPrompts } from '@/constants/AIPrompts';
-import { MAX_TIP_EDUCATION_XP } from '@/constants/tipXP';
+import { getMaxTipEducationXP } from '@/constants/tipXP';
 import { areas } from '@/locales/areas';
 import { useSupplements } from '@/locales/supplements';
 import { tips } from '@/locales/tips';
@@ -38,13 +38,11 @@ export default function AreaDetailScreen() {
   const router = useRouter();
   const containerRef = React.useRef<ContainerScrollRef>(null);
   const { colors } = useTheme();
-  const { areaId, tipId, expandAreas, fromPlan } = useLocalSearchParams<{
+  const { areaId, tipId, fromPlan } = useLocalSearchParams<{
     areaId: string;
     tipId?: string;
-    expandAreas?: string;
     fromPlan?: string;
   }>();
-  const shouldExpandAreas = expandAreas === '1';
   const supplements = useSupplements();
   const { addTipView, incrementTipChat, viewedTips, setTipVerdict, plans, setPlans, myLevel, nutritionXpClaims } = useStorage();
 
@@ -63,12 +61,6 @@ export default function AreaDetailScreen() {
   };
 
   const tip = findTip(tipId, areaId);
-
-  const [showAllAreas, setShowAllAreas] = React.useState(shouldExpandAreas);
-
-  React.useEffect(() => {
-    setShowAllAreas(shouldExpandAreas);
-  }, [areaId, tipId, shouldExpandAreas]);
 
   let infoText = '';
   if (myLevel < (tip?.level ?? 0)) {
@@ -312,7 +304,7 @@ export default function AreaDetailScreen() {
     }
   }, []);
 
-  const maxEducationXp = MAX_TIP_EDUCATION_XP;
+  const maxEducationXp = getMaxTipEducationXP(tip?.areas.length ?? 0);
   const progress = Math.min(educationXpEarned / maxEducationXp, 1);
   const progressLabel = educationXpEarned >= maxEducationXp ? `${t('common:tipDetails.fullyExplored')} 🎉` : `${educationXpEarned}/${maxEducationXp} XP`;
 
@@ -453,15 +445,7 @@ export default function AreaDetailScreen() {
           </ThemedText>
         </AppBox>
       )}
-      <AreaRelevanceSection
-        tip={tip}
-        areaId={areaId}
-        showAllAreas={showAllAreas}
-        setShowAllAreas={setShowAllAreas}
-        expandAreas={shouldExpandAreas}
-        effectiveTipId={effectiveTipId}
-        colors={colors}
-      />
+      <AreaRelevanceSection tip={tip} areaId={areaId} />
       <TimingInfoSection tip={tip} />
       <CriticalThinkingSection askedQuestions={askedQuestions} onPress={handleCriticalThinkingPress} />
       <RelatedMetricsSection tipId={effectiveTipId} />

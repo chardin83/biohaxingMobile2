@@ -15,6 +15,7 @@ export type CardLinkListRow = {
   readonly subtitle?: string;
   readonly value?: string;
   readonly iconName?: IconSymbolName;
+  readonly icon?: React.ReactNode;
   readonly iconColor?: string;
   readonly image?: ImageSourcePropType;
   readonly accessory?: React.ReactNode;
@@ -33,6 +34,11 @@ type Props = {
 export function CardLinkList({ rows, showIcon = true, style }: Props) {
   const { colors } = useTheme();
   const singleRow = rows.length === 1;
+  const renderIcon = (row: CardLinkListRow) => {
+    if (row.icon) return <View style={[styles.customIcon, { backgroundColor: colors.overlayLight }]}>{row.icon}</View>;
+    if (row.image) return <Image source={row.image} style={styles.image} resizeMode="contain" />;
+    return <SettingIcon size={40} iconName={row.iconName ?? 'public'} iconColor={row.iconColor} />;
+  };
 
   return (
     <CardContainer style={style}>
@@ -46,12 +52,7 @@ export function CardLinkList({ rows, showIcon = true, style }: Props) {
             style={singleRow ? styles.container : styles.row}
           >
             <View style={styles.leftRow}>
-              {showIcon &&
-                (row.image ? (
-                  <Image source={row.image} style={styles.image} resizeMode="contain" />
-                ) : (
-                  <SettingIcon size={40} iconName={row.iconName ?? 'public'} iconColor={row.iconColor} />
-                ))}
+              {showIcon && renderIcon(row)}
               <View style={styles.textColumn}>
                 <ThemedText type="title3" style={styles.title}>
                   {row.title}
@@ -81,6 +82,7 @@ export function CardLinkList({ rows, showIcon = true, style }: Props) {
 }
 
 const styles = StyleSheet.create({
+  customIcon: { width: 40, height: 40, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
   container: {
     flexDirection: 'row',
     alignItems: 'center',

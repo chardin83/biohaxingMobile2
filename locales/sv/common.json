@@ -394,7 +394,8 @@
     "metricsExplainer": "Dessa mätvärden är relaterade till ditt tips och kan hjälpa dig att följa din utveckling."
   },
   "areaRelevanceSection": {
-    "relevance": "Områden som påverkas"
+    "relevance": "Områden som påverkas",
+    "openArea": "Visa tipset i {{area}}"
   },
   "timingInfoSection": {
     "title": "När passar det?",

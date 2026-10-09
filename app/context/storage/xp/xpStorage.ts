@@ -26,6 +26,7 @@ const normalizeViewedTips = (value: unknown): ViewedTip[] => {
         tipId: item.tipId,
         viewedAt: typeof item.viewedAt === 'string' ? item.viewedAt : new Date().toISOString(),
         askedQuestions: Array.isArray(item.askedQuestions) ? item.askedQuestions.filter((q: unknown) => typeof q === 'string') : [],
+        viewedAreaIds: Array.isArray(item.viewedAreaIds) ? item.viewedAreaIds.filter((id: unknown) => typeof id === 'string') : [],
         xpEarned: Number.isFinite(item.xpEarned) ? item.xpEarned : 0,
         verdict: item.verdict,
       };

@@ -19,7 +19,7 @@ import {
   type PlansByCategory,
   type TrainingPlanSettings,
 } from '@/app/context/storage/plans/planTypes';
-import { getInsightQuestionXP } from '@/constants/tipXP';
+import { getAreaViewXP, getInsightQuestionXP } from '@/constants/tipXP';
 import { levels, XP_FOR_VERDICT, XP_FOR_VIEW, XP_PER_CHAT_MESSAGE, type XpSource } from '@/constants/XP';
 import { MetricId } from '@/locales/metrics';
 import { countNewAutomaticHabitGoals, getAutomaticHabitGoalKeys } from '@/services/targetProgress/automaticHabitSummary';
@@ -146,6 +146,7 @@ interface StorageContextType {
   clearNewLevelReached: () => void;
   viewedTips: ViewedTip[];
   setViewedTips: (tips: ViewedTip[] | ((prev: ViewedTip[]) => ViewedTip[])) => void;
+  claimTipAreaXP: (tipId: string, areaId: string) => number;
   addTipView: (areaId: string, tipId: string) => number;
   incrementTipChat: (areaId: string, tipId: string, questionType: string) => number;
   addChatMessageXP: (areaId: string, tipId: string) => number;
@@ -903,6 +904,27 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     });
   }, []);
 
+  const pendingAreaClaims = useRef(new Set<string>());
+  useEffect(() => {
+    pendingAreaClaims.current.clear();
+  }, [viewedTipsState]);
+
+  const claimTipAreaXP = useCallback((tipId: string, areaId: string): number => {
+    const existing = viewedTipsState.find(view => view.tipId === tipId);
+    const claimKey = JSON.stringify([tipId, areaId]);
+    if (!existing || pendingAreaClaims.current.has(claimKey)) return 0;
+    const amount = getAreaViewXP(existing.viewedAreaIds ?? [], areaId);
+    if (amount === 0) return 0;
+    pendingAreaClaims.current.add(claimKey);
+    setViewedTips(prev => prev.map(view => view.tipId === tipId ? {
+      ...view,
+      viewedAreaIds: [...(view.viewedAreaIds ?? []), areaId],
+      xpEarned: view.xpEarned + amount,
+    } : view));
+    awardXP(amount, 'education');
+    return amount;
+  }, [viewedTipsState, setViewedTips, awardXP]);
+
   const addTipView = useCallback(
     (_areaId: string, tipId: string): number => {
       const hasExistingTip = viewedTipsState.some(view => view.tipId === tipId);
@@ -1177,6 +1199,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       clearNewLevelReached,
       viewedTips: viewedTipsState,
       setViewedTips,
+      claimTipAreaXP,
       addTipView,
       incrementTipChat,
       addChatMessageXP,
@@ -1227,7 +1250,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       clearUserProfile,
     }),
     // prettier-ignore
-    [plansState, setPlans, saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, clearSupplementTakenDates, clearSupplementCustom, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, userProfileInitialized, hasProcessedAutomaticHabits, hasCompletedInitialSync, isSyncing, newAutomaticHabitGoals, myXPState, setMyXP, clearNutritionXP, clearEducationXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, viewedTipsState, setViewedTips, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState,
+    [plansState, setPlans, saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, clearSupplementTakenDates, clearSupplementCustom, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, userProfileInitialized, hasProcessedAutomaticHabits, hasCompletedInitialSync, isSyncing, newAutomaticHabitGoals, myXPState, setMyXP, clearNutritionXP, clearEducationXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, viewedTipsState, setViewedTips, claimTipAreaXP, addTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState,
       dailyNutritionTrackingState, addNutritionEntry, updateNutritionEntry, removeNutritionEntry, clearDailyNutritionTracking, weeklyNutritionTrackingState, setWeeklyNutritionTracking, dailyDrinkTrackingState, addDrinkEntry, updateDrinkEntry, removeDrinkEntry, clearDailyDrinkTracking, trainingPlanSettingsState, setTrainingPlanSettings, dailyTrainingTrackingState, addTrainingEntry, updateTrainingEntry, removeTrainingEntry, clearDailyTrainingTracking, dailyHabitTrackingState, addHabitEntry, updateHabitEntry, removeHabitEntry, clearDailyHabitTracking, showMusicState, setShowMusic, tempPlans, setTempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, setMetricEntries, getMetricHistory, clearMetricEntries, healthSyncEnabledState, setHealthSyncEnabled, hideBarcodeInfoState, setHideBarcodeInfo, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
   );
 

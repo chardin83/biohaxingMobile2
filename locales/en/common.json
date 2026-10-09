@@ -394,7 +394,8 @@
     "metricsExplainer": "These metrics are related to your tip and can help you track your progress."
   },
   "areaRelevanceSection": {
-    "relevance": "Areas impacted"
+    "relevance": "Areas impacted",
+    "openArea": "View this tip in {{area}}"
   },
   "timingInfoSection": {
     "title": "When does it work best?",

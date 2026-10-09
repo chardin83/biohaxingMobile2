@@ -1,4 +1,5 @@
 // Central XP configuration for awards across the app
+export const XP_FOR_AREA_VIEW = 5; // First time opening each area of a tip
 export const XP_FOR_VIEW = 10; // First time viewing a tip
 export const XP_FOR_CHAT_QUESTION = 5; // Per unique question type (studies/experts/risks)
 export const XP_PER_CHAT_MESSAGE = 2; // Per chat message
