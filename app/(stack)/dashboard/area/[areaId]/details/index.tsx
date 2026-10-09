@@ -10,7 +10,6 @@ import { Icon } from 'react-native-paper';
 import SupplementList from '@/app/components/SupplementList';
 import { useStorage } from '@/app/context/StorageContext';
 import { Supplement } from '@/app/domain/Supplement';
-import { globalStyles } from '@/app/theme/globalStyles';
 import AreaRelevanceSection from '@/components/sections/details/AreaRelevanceSection';
 import DetailsTopSection from '@/components/sections/details/DetailsTopSection';
 import { ThemedText } from '@/components/ThemedText';
@@ -24,13 +23,13 @@ import VerdictBottomSheet from '@/components/VerdictBottomSheet';
 import { AIPromptKey, AIPrompts } from '@/constants/AIPrompts';
 import { XP_FOR_CHAT_QUESTION, XP_FOR_VERDICT, XP_FOR_VIEW } from '@/constants/XP';
 import { areas } from '@/locales/areas';
-import { metrics, tipMetricLinks } from '@/locales/metrics';
 import { useSupplements } from '@/locales/supplements';
 import { tips } from '@/locales/tips';
 import { PlanCategory } from '@/types/planCategory';
 import { POSITIVE_VERDICTS } from '@/types/verdict';
 import { toDateKey } from '@/utils/dateUtils';
 
+import RelatedMetricsSection from './sections/RelatedMetricsSection';
 import TargetsSection from './sections/TargetsSection';
 import TimingInfoSection from './sections/TimingInfoSection';
 
@@ -495,7 +494,7 @@ export default function AreaDetailScreen() {
         colors={colors}
       />
       <AIInsightsSection handleAIInsightPress={handleAIInsightPress} isQuestionAsked={isQuestionAsked} styles={styles} colors={colors} />
-      <MetricsSection tipId={effectiveTipId} />
+      <RelatedMetricsSection tipId={effectiveTipId} />
       <VerdictBottomSheet
         verdictSheetRef={verdictSheetRef}
         snapPoints={['85%']}
@@ -630,32 +629,6 @@ function NutritionFoodsSection({
           <AppButton title={t('tipDetails.addNutritionGoal')} onPress={handleAddTipPlanEntry} variant="primary" style={styles.planActionButton} />
         )}
       </View>
-    </AppBox>
-  );
-}
-
-function MetricsSection({ tipId }: Readonly<{ tipId: string | null }>) {
-  const { colors } = useTheme();
-  const { t } = useTranslation(['common', 'metrics']);
-  if (!tipId) return null;
-
-  const metricLinks = tipMetricLinks[tipId];
-  if (!metricLinks || metricLinks.length === 0) return null;
-
-  return (
-    <AppBox title={t('common:tipDetails.metricsTitle')}>
-      {metricLinks.map(link => {
-        const metric = metrics[link.metricId];
-        if (!metric) return null;
-        return (
-          <ThemedText key={link.metricId} type="default">
-            {metric.emoji} {t(`metrics:${link.metricId}.name`)}
-          </ThemedText>
-        );
-      })}
-      <ThemedText type="explainer" style={[globalStyles.explainer, { borderTopColor: colors.borderLight }]}>
-        {t('common:tipDetails.metricsExplainer')}
-      </ThemedText>
     </AppBox>
   );
 }

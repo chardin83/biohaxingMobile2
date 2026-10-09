@@ -19,16 +19,20 @@ export type InformationItem = Readonly<{
 
 type Props = Readonly<{
   title: string;
+  sheetTitle?: string;
   subtitle?: string;
   iconName?: IconSymbolName;
   iconColor?: string;
   items?: readonly InformationItem[];
   children?: React.ReactNode | ((dismiss: () => void) => React.ReactNode);
   style?: StyleProp<ViewStyle>;
+  onPress?: () => void;
+  onDismiss?: () => void;
+  snapPoints?: string[];
 }>;
 
 /** Data-driven information card shared by overview screens. */
-export function InformationCardLink({ title, subtitle, iconName = 'info', iconColor, items = [], children, style }: Props) {
+export function InformationCardLink({ title, sheetTitle, subtitle, iconName = 'info', iconColor, items = [], children, style, onPress, onDismiss, snapPoints = ['85%'] }: Props) {
   const sheetRef = useRef<BottomSheetModal>(null);
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -42,19 +46,20 @@ export function InformationCardLink({ title, subtitle, iconName = 'info', iconCo
 
   return (
     <>
-      <CardLinkList style={style} rows={[{ key: 'information', title, subtitle, iconName, iconColor, onPress: () => sheetRef.current?.present() }]} />
-      <BottomSheetModal
+      <CardLinkList style={style} rows={[{ key: 'information', title, subtitle, iconName, iconColor, onPress: onPress ?? (() => sheetRef.current?.present()) }]} />
+      {!onPress && <BottomSheetModal
         ref={sheetRef}
-        snapPoints={['85%']}
+        snapPoints={snapPoints}
         enableDynamicSizing={false}
         enablePanDownToClose
         backdropComponent={renderBackdrop}
         backgroundStyle={sheetDesign.backgroundStyle}
         handleComponent={sheetDesign.handleComponent}
+        onDismiss={onDismiss}
       >
         <BottomSheetView style={styles.sheet}>
           <ThemedText type="title2" style={styles.heading} accessibilityRole="header">
-            {title}
+            {sheetTitle ?? title}
           </ThemedText>
           <BottomSheetScrollView contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + 24 }]}>
             {typeof children === 'function' ? children(() => sheetRef.current?.dismiss()) : children}
@@ -69,7 +74,7 @@ export function InformationCardLink({ title, subtitle, iconName = 'info', iconCo
             ))}
           </BottomSheetScrollView>
         </BottomSheetView>
-      </BottomSheetModal>
+      </BottomSheetModal>}
     </>
   );
 }
