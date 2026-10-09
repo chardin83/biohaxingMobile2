@@ -158,3 +158,17 @@ describe('StorageContext', () => {
     spy.mockRestore();
   });
 });
+
+it('records opening a tip without awarding XP and still rewards reading once', async () => {
+  let context: ReturnType<typeof useStorage> | undefined;
+  render(<StorageProvider><TestComponent callback={value => { context = value; }} /></StorageProvider>);
+  await waitFor(() => expect(context?.isReadyForHealthSync).toBe(true));
+  const initialXP = context!.myXP;
+  act(() => { context!.recordTipView('reading-reward-test'); });
+  expect(context!.myXP).toBe(initialXP);
+  expect(context!.viewedTips.find(tip => tip.tipId === 'reading-reward-test')?.xpEarned).toBe(0);
+  act(() => { context!.claimTipInformationXP('reading-reward-test'); });
+  expect(context!.myXP).toBe(initialXP + 5);
+  act(() => { context!.claimTipInformationXP('reading-reward-test'); });
+  expect(context!.myXP).toBe(initialXP + 5);
+});

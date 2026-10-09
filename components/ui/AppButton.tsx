@@ -7,7 +7,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { IconSymbolName } from '@/components/ui/icon-symbol-map';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
-type Variant = 'primary' | 'secondary' | 'danger';
+type Variant = 'primary' | 'secondary' | 'danger' | 'xp';
 
 interface AppButtonProps {
   title: string;
@@ -46,7 +46,9 @@ const AppButton: React.FC<AppButtonProps> = ({
 
   let buttonVariantStyle;
 
-  if (isPrimary) {
+  if (variant === 'xp') {
+    buttonVariantStyle = { borderColor: colors.xp };
+  } else if (isPrimary) {
     buttonVariantStyle = {
       borderColor: colors.primary,
     };
@@ -64,7 +66,9 @@ const AppButton: React.FC<AppButtonProps> = ({
 
   let textColorStyle;
 
-  if (isPrimary) {
+  if (variant === 'xp') {
+    textColorStyle = { color: colors.xp };
+  } else if (isPrimary) {
     textColorStyle = {
       color: colors.primary,
     };

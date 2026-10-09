@@ -9,9 +9,10 @@ interface DiscreetButtonProps {
     onPress: () => void;
     disabled?: boolean;
     larger?: boolean;
+    color?: string;
 }
 
-const DiscreetButton: React.FC<DiscreetButtonProps> = ({ title, onPress, disabled, larger }) => {
+const DiscreetButton: React.FC<DiscreetButtonProps> = ({ title, onPress, disabled, larger, color }) => {
     const { colors } = useTheme();
     return (
         <TouchableOpacity
@@ -19,7 +20,7 @@ const DiscreetButton: React.FC<DiscreetButtonProps> = ({ title, onPress, disable
             onPress={disabled ? undefined : onPress}
             activeOpacity={0.6}
         >
-            <ThemedText type="buttonText" style={[larger && styles.addTargetButtonText, { color: disabled ? colors.textMuted : colors.primary }]}>
+            <ThemedText type="buttonText" style={[larger && styles.addTargetButtonText, { color: disabled ? colors.textMuted : color ?? colors.primary }]}>
                 {title}
             </ThemedText>
         </TouchableOpacity>

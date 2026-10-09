@@ -11,8 +11,7 @@ import { Supplement } from '@/app/domain/Supplement';
 import AreaRelevanceSection from '@/components/sections/details/AreaRelevanceSection';
 import CriticalThinkingSection from '@/components/sections/details/CriticalThinkingSection';
 import DetailsTopSection from '@/components/sections/details/DetailsTopSection';
-import { ThemedText } from '@/components/ThemedText';
-import AppBox from '@/components/ui/AppBox';
+import InformationSection, { type InformationSectionRef } from '@/components/sections/details/InformationSection';
 import AppButton from '@/components/ui/AppButton';
 import Container, { ContainerScrollRef } from '@/components/ui/Container';
 import DiscreetButton from '@/components/ui/DiscreetButton';
@@ -20,7 +19,7 @@ import { NotFound } from '@/components/ui/NotFound';
 import Notice from '@/components/ui/Notice';
 import VerdictBottomSheet from '@/components/VerdictBottomSheet';
 import { AIPromptKey, AIPrompts } from '@/constants/AIPrompts';
-import { getMaxTipEducationXP } from '@/constants/tipXP';
+import { MAX_TIP_EDUCATION_XP } from '@/constants/tipXP';
 import { areas } from '@/locales/areas';
 import { useSupplements } from '@/locales/supplements';
 import { tips } from '@/locales/tips';
@@ -36,6 +35,7 @@ import TimingInfoSection from './sections/TimingInfoSection';
 export default function AreaDetailScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const informationRef = React.useRef<InformationSectionRef>(null);
   const containerRef = React.useRef<ContainerScrollRef>(null);
   const { colors } = useTheme();
   const { areaId, tipId, fromPlan } = useLocalSearchParams<{
@@ -44,16 +44,8 @@ export default function AreaDetailScreen() {
     fromPlan?: string;
   }>();
   const supplements = useSupplements();
-  const { addTipView, incrementTipChat, viewedTips, setTipVerdict, plans, setPlans, myLevel, nutritionXpClaims } = useStorage();
+  const { recordTipView, incrementTipChat, viewedTips, setTipVerdict, plans, setPlans, myLevel, nutritionXpClaims } = useStorage();
 
-  React.useEffect(() => {
-    if (areaId && tipId) {
-      const xpGained = addTipView(areaId, tipId);
-      if (xpGained > 0) {
-        console.log(`🎉 You gained ${xpGained} XP for viewing this tip!`);
-      }
-    }
-  }, [addTipView, areaId, tipId]);
 
   const hasMainArea = areas.some(g => g.id === areaId);
   const findTip = (localTipId: string | undefined, searchAreaId: string) => {
@@ -61,6 +53,10 @@ export default function AreaDetailScreen() {
   };
 
   const tip = findTip(tipId, areaId);
+
+  React.useEffect(() => {
+    if (tip) recordTipView(tip.id);
+  }, [recordTipView, tip]);
 
   let infoText = '';
   if (myLevel < (tip?.level ?? 0)) {
@@ -304,7 +300,7 @@ export default function AreaDetailScreen() {
     }
   }, []);
 
-  const maxEducationXp = getMaxTipEducationXP(tip?.areas.length ?? 0);
+  const maxEducationXp = MAX_TIP_EDUCATION_XP;
   const progress = Math.min(educationXpEarned / maxEducationXp, 1);
   const progressLabel = educationXpEarned >= maxEducationXp ? `${t('common:tipDetails.fullyExplored')} 🎉` : `${educationXpEarned}/${maxEducationXp} XP`;
 
@@ -345,6 +341,8 @@ export default function AreaDetailScreen() {
   return (
     <Container
       ref={containerRef}
+      onScroll={() => informationRef.current?.checkVisibility()}
+      scrollEventThrottle={100}
       background="gradient"
       gradientLocations={colors.gradients?.sunrise?.locations1 as any}
       showBackButton
@@ -438,13 +436,7 @@ export default function AreaDetailScreen() {
         }
       />
 
-      {descriptionKey && (
-        <AppBox title={t('common:tipDetails.information')}>
-          <ThemedText type="explainer" style={styles.descriptionText}>
-            {t(`tips:${descriptionKey}`)}
-          </ThemedText>
-        </AppBox>
-      )}
+      {tip && <InformationSection key={tip.id} ref={informationRef} tipId={tip.id} descriptionKey={tip.descriptionKey} />}
       <AreaRelevanceSection tip={tip} areaId={areaId} />
       <TimingInfoSection tip={tip} />
       <CriticalThinkingSection askedQuestions={askedQuestions} onPress={handleCriticalThinkingPress} />
@@ -486,8 +478,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 16,
     marginTop: 'auto',
-  },
-  descriptionText: {
-    marginBottom: 8,
   },
 });

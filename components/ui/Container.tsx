@@ -2,7 +2,7 @@ import { useTheme } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RefreshControl, ScrollView, StyleSheet, Text, View, ViewProps } from 'react-native';
+import { RefreshControl, ScrollView, ScrollViewProps,StyleSheet, Text, View, ViewProps } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Colors } from '@/app/theme/Colors';
@@ -25,6 +25,8 @@ type ContainerProps = ViewProps & {
   totalSteps?: number;
   footer?: React.ReactNode;
   syncWearableOnRefresh?: boolean;
+  onScroll?: ScrollViewProps['onScroll'];
+  scrollEventThrottle?: number;
 };
 
 export type ContainerScrollRef = {

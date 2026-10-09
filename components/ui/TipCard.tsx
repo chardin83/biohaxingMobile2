@@ -12,7 +12,7 @@ import { ThemedText } from '@/components/ThemedText';
 import Badge from '@/components/ui/Badge';
 import { PressableCard } from '@/components/ui/PressableCard';
 import ProgressBarWithLabel from '@/components/ui/ProgressbarWithLabel';
-import { getMaxTipEducationXP } from '@/constants/tipXP';
+import { MAX_TIP_EDUCATION_XP } from '@/constants/tipXP';
 import { Tip } from '@/locales/tips';
 import { isNegativeVerdict, isPositiveVerdict, VerdictValue } from '@/types/verdict';
 
@@ -41,7 +41,7 @@ export default function TipCard({ tip, tipProgress, onPress, areaId, locked=fals
   const { t } = useTranslation();
   const { colors } = useTheme();
   const area = tip.areas.find(a => a.id === areaId) ?? tip.areas[0];
-  const maxEducationXp = getMaxTipEducationXP(tip.areas.length);
+  const maxEducationXp = MAX_TIP_EDUCATION_XP;
 
   const isStarted = tipProgress.xp > 0;
   const isCompleted = tipProgress.progress >= 1;

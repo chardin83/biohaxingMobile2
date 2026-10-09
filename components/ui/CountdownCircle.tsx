@@ -7,11 +7,12 @@ import { ThemedText } from '@/components/ThemedText';
 
 type Props = Readonly<{
   seconds?: number;
+  color?: string;
   onComplete: () => void;
   accessibilityLabel?: string;
 }>;
 
-export function CountdownCircle({ seconds = 5, onComplete, accessibilityLabel }: Props) {
+export function CountdownCircle({ seconds = 5, color, onComplete, accessibilityLabel }: Props) {
   const { colors } = useTheme();
   const duration = Math.max(1, seconds);
   const [remaining, setRemaining] = useState(duration);
@@ -52,7 +53,7 @@ export function CountdownCircle({ seconds = 5, onComplete, accessibilityLabel }:
           cx={27}
           cy={27}
           r={23}
-          stroke={colors.dashboardSync.accent}
+          stroke={color ?? colors.dashboardSync.accent}
           strokeWidth={3}
           fill="none"
           strokeDasharray={[circumference, circumference]}
@@ -61,7 +62,7 @@ export function CountdownCircle({ seconds = 5, onComplete, accessibilityLabel }:
           transform="rotate(-90 27 27)"
         />
       </Svg>
-      <ThemedText style={[styles.number, { color: colors.dashboardSync.text }]}>{remaining}</ThemedText>
+      <ThemedText style={[styles.number, { color: color ?? colors.dashboardSync.text }]}>{remaining}</ThemedText>
     </View>
   );
 }

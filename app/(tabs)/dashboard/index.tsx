@@ -12,7 +12,7 @@ import AppCard from '@/components/ui/AppCard';
 import Container from '@/components/ui/Container';
 import { InfoButtonWithText } from '@/components/ui/InfoButtonWithText';
 import ProgressBarWithLabel from '@/components/ui/ProgressbarWithLabel';
-import { levels, XP_FOR_VIEW } from '@/constants/XP';
+import { levels } from '@/constants/XP';
 import { areas } from '@/locales/areas';
 import { tips } from '@/locales/tips';
 import { POSITIVE_VERDICTS, VerdictValue } from '@/types/verdict';
@@ -226,7 +226,7 @@ export default function DashboardScreen() {
             if (!areaIds?.has(areaId)) {
               return sum;
             }
-            return sum + XP_FOR_VIEW;
+            return sum + viewedTip.xpEarned;
           }, 0);
 
           const areaNutritionXP = Object.values(nutritionXpClaims ?? {}).reduce((sum, claim) => {

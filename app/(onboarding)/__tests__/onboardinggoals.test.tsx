@@ -88,7 +88,7 @@ const mockStorageContext = {
   clearNewLevelReached: jest.fn(),
   viewedTips: [],
   setViewedTips: jest.fn(),
-  addTipView: jest.fn(),
+  recordTipView: jest.fn(),
   completedGoals: [],
   setCompletedGoals: jest.fn(),
   completedGoalDates: {},

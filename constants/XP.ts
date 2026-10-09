@@ -1,6 +1,6 @@
 // Central XP configuration for awards across the app
+export const XP_FOR_INFORMATION_READ = 5; // Reading a tip information section once
 export const XP_FOR_AREA_VIEW = 5; // First time opening each area of a tip
-export const XP_FOR_VIEW = 10; // First time viewing a tip
 export const XP_FOR_CHAT_QUESTION = 5; // Per unique question type (studies/experts/risks)
 export const XP_PER_CHAT_MESSAGE = 2; // Per chat message
 export const XP_FOR_VERDICT = 5; // First time setting a verdict
@@ -9,10 +9,9 @@ export const XP_FOR_NUTRITION_TIP_WEEKLY_COMPLETION = 25; // Per tip/week when a
 
 export type XpSource = 'education' | 'nutrition';
 
-export type XpEventType = 'view' | 'chat-question' | 'chat-message' | 'verdict';
+export type XpEventType = 'chat-question' | 'chat-message' | 'verdict';
 
 export const XP_LABELS: Record<XpEventType, string> = {
-  'view': 'Tip viewed',
   'chat-question': 'Insight question asked',
   'chat-message': 'Chat message',
   'verdict': 'Verdict set',
