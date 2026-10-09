@@ -11,6 +11,10 @@ type IconDefinition = {
 };
 
 export const ICON_SYMBOLS = {
+  'question': {
+    sf: 'questionmark',
+    material: 'question-mark',
+  },
   'calendarCheck': {
     sf: 'calendar.badge.checkmark',
     material: 'event-available',

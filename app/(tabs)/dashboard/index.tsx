@@ -3,7 +3,9 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Svg, { Line } from 'react-native-svg';
 
+import { globalStyles } from '@/app/theme/globalStyles';
 import DarkSmart from '@/assets/images/dark_orange1024.png';
 import LightSmart from '@/assets/images/light_teal1024.png';
 import { DashboardSyncSummary } from '@/components/DashboardSyncSummary';
@@ -11,6 +13,7 @@ import { ThemedText } from '@/components/ThemedText';
 import AppCard from '@/components/ui/AppCard';
 import Container from '@/components/ui/Container';
 import { InfoButtonWithText } from '@/components/ui/InfoButtonWithText';
+import { InformationCardLink } from '@/components/ui/InformationCardLink';
 import ProgressBarWithLabel from '@/components/ui/ProgressbarWithLabel';
 import { levels } from '@/constants/XP';
 import { areas } from '@/locales/areas';
@@ -51,6 +54,19 @@ export default function DashboardScreen() {
     });
     return map;
   }, []);
+
+  const areaXP = React.useMemo(() => {
+    const scores = new Map<string, number>();
+    const addTipXP = (tipId: string, xp: number) => {
+      if (!Number.isFinite(xp) || xp <= 0) return;
+      tipAreasMap.get(tipId)?.forEach(areaId => scores.set(areaId, (scores.get(areaId) ?? 0) + xp));
+    };
+    viewedTipsByTipId.forEach(view => addTipXP(view.tipId, view.xpEarned));
+    Object.values(nutritionXpClaims ?? {}).forEach(claim => addTipXP(claim.tipId, claim.xp));
+    return scores;
+  }, [viewedTipsByTipId, nutritionXpClaims, tipAreasMap]);
+  const hiddenAreasWithXP = areas.filter(area => !myAreas.includes(area.id) && (areaXP.get(area.id) ?? 0) > 0);
+  const [showHiddenAreas, setShowHiddenAreas] = React.useState(false);
 
   const getFavoriteTipsForArea = React.useCallback(
     (areaId: string) => {
@@ -209,7 +225,8 @@ export default function DashboardScreen() {
       </View>
 
       {areas
-        .filter(item => myAreas.includes(item.id))
+        .filter(item => myAreas.includes(item.id) || (showHiddenAreas && (areaXP.get(item.id) ?? 0) > 0))
+        .sort((a, b) => Number(myAreas.includes(b.id)) - Number(myAreas.includes(a.id)))
         .map(item => {
           const areaId = item.id;
           const favoriteTipsList = getFavoriteTipsForArea(areaId);
@@ -221,24 +238,7 @@ export default function DashboardScreen() {
           } else {
             description = favoriteTipsList.length > 0 ? favoriteTipsList.join('\n') : t('common:dashboard.noFavorites');
           }
-          const areaEducationXP = viewedTipsByTipId.reduce((sum, viewedTip) => {
-            const areaIds = tipAreasMap.get(viewedTip.tipId);
-            if (!areaIds?.has(areaId)) {
-              return sum;
-            }
-            return sum + viewedTip.xpEarned;
-          }, 0);
-
-          const areaNutritionXP = Object.values(nutritionXpClaims ?? {}).reduce((sum, claim) => {
-            const areaIds = tipAreasMap.get(claim.tipId);
-            if (!areaIds?.has(areaId)) {
-              return sum;
-            }
-            const xp = Number.isFinite(claim.xp) ? claim.xp : 0;
-            return sum + xp;
-          }, 0);
-
-          const totalXPForArea = Math.round(areaEducationXP + areaNutritionXP);
+          const totalXPForArea = Math.round(areaXP.get(areaId) ?? 0);
 
           const hasAnyGoalInArea = [...plans.training, ...plans.nutrition, ...plans.other].some(entry => {
             const areaIds = tipAreasMap.get(entry.tipId);
@@ -261,8 +261,13 @@ export default function DashboardScreen() {
           const xpForCard = activeTab === 'coverage' ? undefined : totalXPForArea;
 
           return (
+            <React.Fragment key={areaId}>
+              {showHiddenAreas && areaId === hiddenAreasWithXP[0]?.id && (
+                <Svg width="90%" height={2} style={styles.hiddenAreasDivider}>
+                  <Line x1={0} y1={1} x2="100%" y2={1} stroke={colors.primary} strokeWidth={1} strokeDasharray="6 6" />
+                </Svg>
+              )}
             <AppCard
-              key={areaId}
               icon={item.icon}
               title={t(`areas:${item.id}.title`)}
               description={description}
@@ -275,9 +280,21 @@ export default function DashboardScreen() {
                 })
               }
             />
+            </React.Fragment>
           );
         })}
 
+      {hiddenAreasWithXP.length > 0 && !showHiddenAreas && (
+        <InformationCardLink
+          title={t('common:dashboard.hiddenAreasXP')}
+          subtitle={t('common:dashboard.hiddenAreasXPSubtitle')}
+          accessory={<ThemedText style={{ color: colors.primary }}>{t('common:dashboard.showHiddenAreas')}</ThemedText>}
+          iconName="question"
+          iconColor={colors.primary}
+          style={[globalStyles.card, styles.hiddenAreasCard, { backgroundColor: colors.primaryVeryWeak, borderColor: colors.primary }]}
+          onPress={() => setShowHiddenAreas(true)}
+        />
+      )}
       <View style={styles.editLinkRow}>
         <TouchableOpacity onPress={() => router.push('/(manage)/areas')} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
           <ThemedText style={[styles.editButtonText, { color: colors.accentStrong }]}>{t('common:dashboard.editAreas')}</ThemedText>
@@ -288,6 +305,12 @@ export default function DashboardScreen() {
 }
 
 const styles = StyleSheet.create({
+  hiddenAreasDivider: { marginVertical: 12 },
+  hiddenAreasCard: {
+    width: '90%',
+    paddingVertical: 2,
+    borderRadius: globalStyles.borders.borderRadius,
+  },
   imageWrapper: {
     position: 'relative',
     width: '100%',
