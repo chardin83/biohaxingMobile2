@@ -294,6 +294,12 @@ export const ICON_SYMBOLS = {
     sf: 'fork.knife',
     material: 'restaurant',
   },
+  'vegetables': {
+    sf: 'carrot',
+    material: 'eco',
+    materialCommunity: 'carrot',
+    useMaterialCommunityOnIOS: true,
+  },
   'drink': {
     sf: 'cup.and.saucer.fill',
     material: 'local-drink',

@@ -5,7 +5,6 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { Icon } from 'react-native-paper';
 
 import SupplementList from '@/app/components/SupplementList';
 import { useStorage } from '@/app/context/StorageContext';
@@ -29,6 +28,7 @@ import { PlanCategory } from '@/types/planCategory';
 import { POSITIVE_VERDICTS } from '@/types/verdict';
 import { toDateKey } from '@/utils/dateUtils';
 
+import NutritionFoodsSection from './sections/NutritionFoodsSection';
 import RelatedMetricsSection from './sections/RelatedMetricsSection';
 import TargetsSection from './sections/TargetsSection';
 import TimingInfoSection from './sections/TimingInfoSection';
@@ -211,32 +211,6 @@ export default function AreaDetailScreen() {
     return positiveVerdicts.has(currentVerdict as any);
   }, [currentVerdict, positiveVerdicts]);
 
-  const nutritionFoodsTitle = React.useMemo(() => {
-    if (!tip?.id || !tip.nutritionFoods?.length) return null;
-    return t(`tips:${tip.id}.nutritionFoods.title`, {
-      defaultValue: t('plan.nutritionHeader'),
-    });
-  }, [tip?.id, tip?.nutritionFoods, t]);
-
-  const nutritionFoodItems = React.useMemo(() => {
-    if (!tip?.nutritionFoods?.length || !tip.id) return [] as { key: string; name: string; details: string }[];
-    return tip.nutritionFoods.map(food => {
-      const itemKey = food.key;
-      const detailKey = food.detailsKey ?? itemKey;
-      const name = t(`tips:${tip.id}.nutritionFoods.items.${itemKey}.name`, {
-        defaultValue: itemKey,
-      });
-      const details = t(`tips:${tip.id}.nutritionFoods.items.${detailKey}.details`, {
-        defaultValue: '',
-      });
-      return {
-        key: `${itemKey}:${detailKey}`,
-        name,
-        details,
-      };
-    });
-  }, [tip?.nutritionFoods, tip?.id, t]);
-
   const resolvedSupplements: Supplement[] = React.useMemo(() => {
     if (!tip?.supplements?.length) return [] as any[];
     return tip.supplements.map(ref => supplements?.find(s => s.id === ref.id)).filter(Boolean) as any[];
@@ -275,6 +249,9 @@ export default function AreaDetailScreen() {
   const showSupplementDiscreetButton = isTipSupplementScheduled && !isTipInTrainingPlan && !isTipInNutritionPlan && !isTipInOtherPlan;
 
   const planBadgeLabel = React.useMemo(() => {
+    if (isTipInNutritionPlan && isTipSupplementScheduled) {
+      return t('tipDetails.alreadyInNutritionAndSupplementPlan');
+    }
     if (justAddedPlanCategory === 'nutrition' && isTipInNutritionPlan) {
       return t('tipDetails.addedToPlanNutrition');
     }
@@ -418,10 +395,7 @@ export default function AreaDetailScreen() {
           />
           {fromPlan === '1' && (
             <View style={styles.noticePlanLink}>
-              <DiscreetButton
-                title={t('common:plan.backToMyPlan') + ' ›'}
-                onPress={() => router.dismissTo('/(tabs)/plan')}
-              />
+              <DiscreetButton title={t('common:plan.backToMyPlan') + ' ›'} onPress={() => router.dismissTo('/(tabs)/plan')} />
             </View>
           )}
         </Notice>
@@ -449,21 +423,30 @@ export default function AreaDetailScreen() {
         showSupplementDiscreetButton={showSupplementDiscreetButton}
       />
 
-      <TargetsSection tip={tip} colors={colors} t={t} onShowJournal={isTipInPlan ? () => {
-        let openTab = 'supplements';
-        if (isTipInTrainingPlan) openTab = 'training';
-        else if (isTipInNutritionPlan) openTab = 'meal';
-        else if (isTipInOtherPlan) openTab = 'other';
-        router.push({
-          pathname: '/(tabs)/journal',
-          params: {
-            selectedDate: toDateKey(new Date()),
-            openTab,
-            focusTipId: effectiveTipId,
-            focusRequestId: String(Date.now()),
-          },
-        });
-      } : undefined} />
+      <TargetsSection
+        tip={tip}
+        colors={colors}
+        t={t}
+        onShowJournal={
+          isTipInPlan
+            ? () => {
+                let openTab = 'supplements';
+                if (isTipInTrainingPlan) openTab = 'training';
+                else if (isTipInNutritionPlan) openTab = 'meal';
+                else if (isTipInOtherPlan) openTab = 'other';
+                router.push({
+                  pathname: '/(tabs)/journal',
+                  params: {
+                    selectedDate: toDateKey(new Date()),
+                    openTab,
+                    focusTipId: effectiveTipId,
+                    focusRequestId: String(Date.now()),
+                  },
+                });
+              }
+            : undefined
+        }
+      />
 
       {descriptionKey && (
         <AppBox title={t('common:tipDetails.information')}>
@@ -482,17 +465,6 @@ export default function AreaDetailScreen() {
         colors={colors}
       />
       <TimingInfoSection tip={tip} />
-      <NutritionFoodsSection
-        tip={tip}
-        nutritionFoodItems={nutritionFoodItems}
-        nutritionFoodsTitle={nutritionFoodsTitle}
-        isTipInPlan={isTipInPlan}
-        planBadgeLabel={planBadgeLabel}
-        showSupplementDiscreetButton={showSupplementDiscreetButton}
-        handleAddTipPlanEntry={handleAddTipPlanEntry}
-        styles={styles}
-        colors={colors}
-      />
       <AIInsightsSection handleAIInsightPress={handleAIInsightPress} isQuestionAsked={isQuestionAsked} styles={styles} colors={colors} />
       <RelatedMetricsSection tipId={effectiveTipId} />
       <VerdictBottomSheet
@@ -508,6 +480,8 @@ export default function AreaDetailScreen() {
           }
         }}
       />
+
+      <NutritionFoodsSection tip={tip} />
       {(resolvedSupplements.length > 0 || supplementPlans?.some(p => Array.isArray(p.supplements) && p.supplements.length > 0)) && (
         <SupplementList supplements={resolvedSupplements} plannedSupplements={plannedSupplements} supplementPlans={supplementPlans} />
       )}
@@ -518,31 +492,6 @@ export default function AreaDetailScreen() {
 const styles = StyleSheet.create({
   noticeButton: { marginTop: 10 },
   noticePlanLink: { alignItems: 'center', marginTop: 16 },
-  planActionContainer: {
-    width: '100%',
-    marginTop: 16,
-    alignSelf: 'stretch',
-  },
-  nutritionPlanAction: {
-    marginTop: 12,
-  },
-  planActionButton: {
-    alignSelf: 'stretch',
-  },
-  planActionAdded: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'stretch',
-    justifyContent: 'center',
-    borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-  },
-  planActionAddedText: {
-    fontWeight: '600',
-    fontSize: 14,
-    marginLeft: 6,
-  },
   favoriteChip: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -556,82 +505,10 @@ const styles = StyleSheet.create({
     gap: 16,
     marginTop: 'auto',
   },
-  nutritionItem: {
-    alignSelf: 'flex-start',
-    marginBottom: 8,
-  },
-  nutritionDetailText: {
-    opacity: 0.8,
-    fontSize: 14,
-    marginLeft: 18,
-    marginTop: -2,
-  },
   descriptionText: {
     marginBottom: 8,
   },
-  centeredDiscreetButton: {
-    alignItems: 'center',
-    marginTop: 8,
-  },
 });
-
-function NutritionFoodsSection({
-  tip,
-  nutritionFoodItems,
-  nutritionFoodsTitle,
-  isTipInPlan,
-  planBadgeLabel,
-  showSupplementDiscreetButton,
-  handleAddTipPlanEntry,
-  styles,
-  colors,
-}: Readonly<{
-  tip: (typeof tips)[number] | undefined;
-  nutritionFoodItems: { key: string; name: string; details: string }[];
-  nutritionFoodsTitle: string | null;
-  isTipInPlan: boolean;
-  planBadgeLabel: string;
-  showSupplementDiscreetButton: boolean;
-  handleAddTipPlanEntry: () => void;
-  styles: { [key: string]: any };
-  colors: any;
-}>) {
-  const { t } = useTranslation();
-  if (!tip?.nutritionFoods?.length || !nutritionFoodsTitle) return null;
-  return (
-    <AppBox title={nutritionFoodsTitle}>
-      {nutritionFoodItems.map(({ key, name, details }) => (
-        <View key={key} style={styles.nutritionItem}>
-          <ThemedText type="defaultLarge">• {name}</ThemedText>
-          {details ? (
-            <ThemedText type="caption" style={styles.nutritionDetailText}>
-              {details}
-            </ThemedText>
-          ) : null}
-        </View>
-      ))}
-      <View style={[styles.planActionContainer, styles.nutritionPlanAction]}>
-        {isTipInPlan ? (
-          <>
-            <View style={[styles.planActionAdded, { backgroundColor: colors.accentVeryWeak }]}>
-              <Icon source="check" size={18} color={colors.primary} />
-              <ThemedText type="caption" style={[styles.planActionAddedText, { color: colors.primary }]}>
-                {planBadgeLabel}
-              </ThemedText>
-            </View>
-            {showSupplementDiscreetButton && (
-              <View style={styles.centeredDiscreetButton}>
-                <DiscreetButton title={`+ ${t('tipDetails.addNutritionGoal')}`} onPress={handleAddTipPlanEntry} />
-              </View>
-            )}
-          </>
-        ) : (
-          <AppButton title={t('tipDetails.addNutritionGoal')} onPress={handleAddTipPlanEntry} variant="primary" style={styles.planActionButton} />
-        )}
-      </View>
-    </AppBox>
-  );
-}
 
 function AIInsightsSection({
   handleAIInsightPress,

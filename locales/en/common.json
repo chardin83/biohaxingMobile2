@@ -332,6 +332,7 @@
     "addedToPlan": "Added to plan",
     "addedToPlanTraining": "Added to plan (training)",
     "addedToPlanNutrition": "Added to plan (diet)",
+    "alreadyInNutritionAndSupplementPlan": "In both your nutrition and supplement plans",
     "addedToPlanOther": "Added to plan (other)",
     "alreadyInPlan": "Already in plan",
     "alreadyInPlanTraining": "Already in plan (training)",
@@ -389,6 +390,7 @@
     "whoAreTheExperts": "Who are the experts?",
     "fullyExplored": "Fully explored!",
     "metricsTitle": "Related metrics",
+    "relatedFoodsTitle": "Related foods",
     "metricsExplainer": "These metrics are related to your tip and can help you track your progress."
   },
   "areaRelevanceSection": {

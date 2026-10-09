@@ -332,6 +332,7 @@
     "addedToPlan": "Tillagd i planen",
     "addedToPlanTraining": "Tillagd i planen (träning)",
     "addedToPlanNutrition": "Tillagd i planen (kost)",
+    "alreadyInNutritionAndSupplementPlan": "Ligger i både kost- och tillskottsplan",
     "addedToPlanOther": "Tillagd i planen (övrigt)",
     "alreadyInPlan": "Finns redan i planen",
     "alreadyInPlanTraining": "Finns redan i planen (träning)",
@@ -389,6 +390,7 @@
     "whoAreTheExperts": "Vilka experter finns?",
     "fullyExplored": "Fullt utforskat!",
     "metricsTitle": "Relaterade mätvärden",
+    "relatedFoodsTitle": "Relaterade livsmedel",
     "metricsExplainer": "Dessa mätvärden är relaterade till ditt tips och kan hjälpa dig att följa din utveckling."
   },
   "areaRelevanceSection": {
