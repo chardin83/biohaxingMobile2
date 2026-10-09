@@ -1,4 +1,4 @@
-import { fireEvent, render, within } from '@testing-library/react-native';
+import { act, fireEvent, render, within } from '@testing-library/react-native';
 import React from 'react';
 
 import AreaRelevanceSection from '@/components/sections/details/AreaRelevanceSection';
@@ -29,13 +29,16 @@ jest.mock('@gorhom/bottom-sheet', () => {
   const mockReact = require('react');
   const { View } = require('react-native');
   return {
-    BottomSheetModal: mockReact.forwardRef(({ children, onDismiss }: any, ref: any) => {
+    BottomSheetModal: mockReact.forwardRef(({ children, onDismiss, onChange }: any, ref: any) => {
       mockReact.useImperativeHandle(ref, () => ({ present: mockPresent, dismiss: mockDismiss }));
-      return mockReact.createElement(View, { testID: 'sheet', onDismiss }, children);
+      return mockReact.createElement(View, { testID: 'sheet', onDismiss, onChange }, children);
     }),
     BottomSheetBackdrop: View, BottomSheetView: View, BottomSheetScrollView: View,
   };
 });
+
+beforeEach(() => { jest.useFakeTimers(); jest.clearAllMocks(); });
+afterEach(() => jest.useRealTimers());
 
 it('puts the current area first, shows only its subtitle and opens each area information', () => {
   const tip: Tip = { id: 'example', title: 'example.title', descriptionKey: 'example.description', areas: [
@@ -50,6 +53,11 @@ it('puts the current area first, shows only its subtitle and opens each area inf
   expect(screen.getByTestId('energy').props.icon.props.source).toBe('flash');
   fireEvent.press(screen.getByTestId('energy'));
   expect(mockPresent).toHaveBeenCalled();
+  expect(mockClaimTipAreaXP).not.toHaveBeenCalled();
+  fireEvent(screen.getByTestId('sheet'), 'change', 0);
+  act(() => jest.advanceTimersByTime(5000));
+  expect(mockClaimTipAreaXP).not.toHaveBeenCalled();
+  fireEvent.press(screen.getByText('common:tipDetails.iHaveRead'));
   expect(mockClaimTipAreaXP).toHaveBeenCalledWith('example', 'energy');
   expect(within(screen.getByTestId('sheet')).getByText('areas:energy.title')).toBeTruthy();
   expect(within(screen.getByTestId('sheet')).getByText('tips:example.areas.energy')).toBeTruthy();
@@ -60,4 +68,6 @@ it('puts the current area first, shows only its subtitle and opens each area inf
   expect(mockReplace).toHaveBeenCalledWith({ pathname: '/dashboard/area/[areaId]/details', params: { areaId: 'energy', prevAreaId: 'sleepQuality', tipId: 'example', fromPlan: '1' } });
   fireEvent.press(screen.getByTestId('sleepQuality'));
   expect(within(screen.getByTestId('sheet')).getByText('tips:example.areas.sleep')).toBeTruthy();
+  expect(screen.queryByText('common:areaRelevanceSection.openArea')).toBeNull();
+  expect(screen.queryByText('common:tipDetails.iHaveRead')).toBeNull();
 });

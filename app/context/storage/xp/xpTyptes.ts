@@ -6,6 +6,9 @@ export interface ViewedTip {
   viewedAt: string;
   askedQuestions: string[];
   informationRead?: boolean;
+  timingRead?: boolean;
+  metricsRead?: boolean;
+  foodsRead?: boolean;
   viewedAreaIds?: string[];
   xpEarned: number;
   verdict?: VerdictValue;

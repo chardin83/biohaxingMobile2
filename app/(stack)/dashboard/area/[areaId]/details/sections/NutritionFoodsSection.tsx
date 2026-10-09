@@ -3,10 +3,14 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, type ImageSourcePropType, StyleSheet, View } from 'react-native';
 
+import { useStorage } from '@/app/context/StorageContext';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { InformationCardLink } from '@/components/ui/InformationCardLink';
+import ReadConfirmation from '@/components/ui/ReadConfirmation';
+import XPBadge from '@/components/ui/XPBadge';
+import { XP_FOR_RELATED_FOODS_READ } from '@/constants/XP';
 import type { Tip } from '@/locales/tips';
 import { FOOD_IMAGES } from '@/types/nutrition/foodCatalog';
 
@@ -17,6 +21,9 @@ type Props = Readonly<{
 export default function NutritionFoodsSection({ tip }: Props) {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { viewedTips, claimTipReadingXP } = useStorage();
+  const isRead = viewedTips.find(view => view.tipId === tip?.id)?.foodsRead === true;
+  const [sheetOpen, setSheetOpen] = React.useState(false);
   if (!tip?.nutritionFoods?.length) return null;
 
   const foods = tip.nutritionFoods.map(food => ({
@@ -31,7 +38,12 @@ export default function NutritionFoodsSection({ tip }: Props) {
   const subtitle = foods.map((food, index) => (index === 0 ? food.name : food.name.charAt(0).toLocaleLowerCase() + food.name.slice(1))).join(', ');
 
   return (
-    <InformationCardLink title={title + ` (${foods.length})`} sheetTitle={title} subtitle={subtitle} iconName="vegetables" snapPoints={['70%', '95%']}>
+    <InformationCardLink title={title + ` (${foods.length})`} sheetTitle={title} subtitle={subtitle} iconName="vegetables" snapPoints={['70%', '95%']}
+      accessory={<XPBadge amount={XP_FOR_RELATED_FOODS_READ} showPlus checked={isRead} />}
+      onSheetChange={index => setSheetOpen(index >= 0)}
+      onDismiss={() => setSheetOpen(false)}
+      footer={<ReadConfirmation key={tip.id} read={isRead} active={sheetOpen} xp={XP_FOR_RELATED_FOODS_READ} onConfirm={() => { claimTipReadingXP(tip.id, 'foods'); }} />}
+    >
       <View style={styles.foods}>
         {foods.map(food => (
           <Card key={food.key} style={styles.foodCard}>

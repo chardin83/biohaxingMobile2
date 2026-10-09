@@ -1,7 +1,11 @@
-import { fireEvent, render } from '@testing-library/react-native';
+import { act, fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
 
 import RelatedMetricsSection from '@/app/(stack)/dashboard/area/[areaId]/details/sections/RelatedMetricsSection';
+
+const mockClaimReadingXP = jest.fn();
+jest.mock('@/app/context/StorageContext', () => ({ useStorage: () => ({ viewedTips: [], claimTipReadingXP: mockClaimReadingXP }) }));
+jest.mock('../ui/IconSymbol', () => ({ IconSymbol: () => null }));
 
 const mockPresent = jest.fn();
 const mockDismiss = jest.fn();
@@ -27,9 +31,9 @@ jest.mock('@gorhom/bottom-sheet', () => {
   const mockReact = require('react');
   const { View } = require('react-native');
   return {
-    BottomSheetModal: mockReact.forwardRef(({ children, onDismiss }: any, ref: any) => {
+    BottomSheetModal: mockReact.forwardRef(({ children, onDismiss, onChange }: any, ref: any) => {
       mockReact.useImperativeHandle(ref, () => ({ present: mockPresent, dismiss: mockDismiss }));
-      return mockReact.createElement(View, { testID: 'information-sheet', onDismiss }, children);
+      return mockReact.createElement(View, { testID: 'information-sheet', onDismiss, onChange }, children);
     }),
     BottomSheetBackdrop: View,
     BottomSheetView: View,
@@ -44,7 +48,8 @@ jest.mock('../sections/metrics/MetricValuesBottomSheet', () => ({
   },
 }));
 
-beforeEach(() => jest.clearAllMocks());
+beforeEach(() => { jest.clearAllMocks(); jest.useFakeTimers(); });
+afterEach(() => jest.useRealTimers());
 
 it('lists five related metrics and opens the existing value sheet after dismissing the list', () => {
   const screen = render(<RelatedMetricsSection tipId="example" />);
@@ -54,6 +59,12 @@ it('lists five related metrics and opens the existing value sheet after dismissi
   expect(screen.getAllByTestId('information-sheet')).toHaveLength(1);
   fireEvent.press(overview);
   expect(mockPresent).toHaveBeenCalledTimes(1);
+  expect(mockClaimReadingXP).not.toHaveBeenCalled();
+  fireEvent(screen.getByTestId('information-sheet'), 'change', 0);
+  act(() => jest.advanceTimersByTime(5000));
+  expect(mockClaimReadingXP).not.toHaveBeenCalled();
+  fireEvent.press(screen.getByText('common:tipDetails.iHaveRead'));
+  expect(mockClaimReadingXP).toHaveBeenCalledWith('example', 'metrics');
   fireEvent.press(screen.getByTestId('metrics:deep_sleep.name'));
   expect(mockDismiss).toHaveBeenCalledTimes(1);
   expect(screen.getByText('Table: deep_sleep')).toBeTruthy();

@@ -3,6 +3,8 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 
 import { ThemedText } from '../ThemedText';
+import type { IconSymbolName } from './icon-symbol-map';
+import { IconSymbol } from './IconSymbol';
 
 interface DiscreetButtonProps {
     title: string;
@@ -10,9 +12,10 @@ interface DiscreetButtonProps {
     disabled?: boolean;
     larger?: boolean;
     color?: string;
+    rightIcon?: IconSymbolName;
 }
 
-const DiscreetButton: React.FC<DiscreetButtonProps> = ({ title, onPress, disabled, larger, color }) => {
+const DiscreetButton: React.FC<DiscreetButtonProps> = ({ title, onPress, disabled, larger, color, rightIcon }) => {
     const { colors } = useTheme();
     return (
         <TouchableOpacity
@@ -23,6 +26,7 @@ const DiscreetButton: React.FC<DiscreetButtonProps> = ({ title, onPress, disable
             <ThemedText type="buttonText" style={[larger && styles.addTargetButtonText, { color: disabled ? colors.textMuted : color ?? colors.primary }]}>
                 {title}
             </ThemedText>
+            {rightIcon && <IconSymbol name={rightIcon} size={18} color={disabled ? colors.textMuted : color ?? colors.primary} />}
         </TouchableOpacity>
     );
 };
@@ -34,6 +38,9 @@ const styles = StyleSheet.create({
     button: {
         paddingVertical: 4,
         paddingHorizontal: 8,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
         
     },
 });

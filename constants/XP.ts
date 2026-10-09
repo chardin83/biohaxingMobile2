@@ -1,6 +1,9 @@
 // Central XP configuration for awards across the app
+export const XP_FOR_RELATED_FOODS_READ = 5; // Reading related foods, once per tip
+export const XP_FOR_RELATED_METRICS_READ = 5; // Reading related metrics, once per tip
+export const XP_FOR_TIMING_READ = 5; // Reading when a tip fits, once per tip
 export const XP_FOR_INFORMATION_READ = 5; // Reading a tip information section once
-export const XP_FOR_AREA_VIEW = 5; // First time opening each area of a tip
+export const XP_FOR_AREA_VIEW = 5; // Confirming each area has been read, once per tip
 export const XP_FOR_CHAT_QUESTION = 5; // Per unique question type (studies/experts/risks)
 export const XP_PER_CHAT_MESSAGE = 2; // Per chat message
 export const XP_FOR_VERDICT = 5; // First time setting a verdict

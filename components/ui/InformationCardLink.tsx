@@ -27,11 +27,15 @@ export type InformationCardLinkRow = Readonly<{
   accessory?: React.ReactNode;
   onPress?: () => void;
   renderContent?: (dismiss: () => void) => React.ReactNode;
+  footer?: React.ReactNode;
 }>;
 
 type Props = Readonly<{
   title: string;
   sheetTitle?: string;
+  accessory?: React.ReactNode;
+  footer?: React.ReactNode;
+  onSheetChange?: (index: number) => void;
   rows?: readonly InformationCardLinkRow[];
   subtitle?: string;
   iconName?: IconSymbolName;
@@ -45,12 +49,13 @@ type Props = Readonly<{
 }>;
 
 /** Data-driven information card shared by overview screens. */
-export function InformationCardLink({ title, sheetTitle, rows, subtitle, iconName = 'info', iconColor, items = [], children, style, onPress, onDismiss, snapPoints = ['85%'] }: Props) {
+export function InformationCardLink({ title, sheetTitle, accessory, footer, onSheetChange, rows, subtitle, iconName = 'info', iconColor, items = [], children, style, onPress, onDismiss, snapPoints = ['85%'] }: Props) {
   const sheetRef = useRef<BottomSheetModal>(null);
   const [selectedRowKey, setSelectedRowKey] = useState<string>();
   const selectedRow = rows?.find(row => row.key === selectedRowKey);
   const content = selectedRow ? selectedRow.renderContent ?? selectedRow.content : children;
   const sheetContent = typeof content === 'function' ? content(() => sheetRef.current?.dismiss()) : content;
+  const sheetFooter = selectedRow?.footer ?? footer;
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const sheetDesign = useBottomSheetDesign(colors);
@@ -76,7 +81,7 @@ export function InformationCardLink({ title, sheetTitle, rows, subtitle, iconNam
           setSelectedRowKey(row.key);
           sheetRef.current?.present();
         },
-      })) : [{ key: 'information', title, subtitle, iconName, iconColor, onPress: onPress ?? (() => sheetRef.current?.present()) }]} />
+      })) : [{ key: 'information', title, subtitle, iconName, iconColor, accessory, onPress: onPress ?? (() => sheetRef.current?.present()) }]} />
       {!onPress && <BottomSheetModal
         ref={sheetRef}
         snapPoints={snapPoints}
@@ -85,6 +90,7 @@ export function InformationCardLink({ title, sheetTitle, rows, subtitle, iconNam
         backdropComponent={renderBackdrop}
         backgroundStyle={sheetDesign.backgroundStyle}
         handleComponent={sheetDesign.handleComponent}
+        onChange={onSheetChange}
         onDismiss={onDismiss}
       >
         <BottomSheetView style={styles.sheet}>
@@ -105,6 +111,7 @@ export function InformationCardLink({ title, sheetTitle, rows, subtitle, iconNam
                 <ThemedText>{item.description}</ThemedText>
               </View>
             ))}
+            {sheetFooter && <View style={styles.footer}>{sheetFooter}</View>}
           </BottomSheetScrollView>
         </BottomSheetView>
       </BottomSheetModal>}
@@ -116,6 +123,7 @@ const styles = StyleSheet.create({
   sheet: { flex: 1 },
   heading: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 20, flexDirection: 'row', alignItems: 'center', gap: 12 },
   headingText: { flex: 1 },
-  list: { paddingHorizontal: 20, gap: 12 },
+  list: { flexGrow: 1, paddingHorizontal: 20, gap: 12 },
+  footer: { marginTop: 'auto', paddingTop: 16 },
   item: { padding: 16, gap: 8, borderRadius: 16, borderWidth: StyleSheet.hairlineWidth },
 });

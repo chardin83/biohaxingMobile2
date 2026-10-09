@@ -3,7 +3,7 @@ import React from 'react';
 
 import CriticalThinkingSection from '@/components/sections/details/CriticalThinkingSection';
 import { getInsightQuestionXP, MAX_TIP_EDUCATION_XP } from '@/constants/tipXP';
-import { XP_FOR_CHAT_QUESTION, XP_FOR_INFORMATION_READ,XP_FOR_VERDICT } from '@/constants/XP';
+import { XP_FOR_CHAT_QUESTION, XP_FOR_INFORMATION_READ, XP_FOR_RELATED_FOODS_READ, XP_FOR_RELATED_METRICS_READ, XP_FOR_TIMING_READ,XP_FOR_VERDICT } from '@/constants/XP';
 
 jest.mock('@react-navigation/native', () => ({ useTheme: () => ({ colors: jest.requireActual('@/app/theme/Colors').Colors.light }) }));
 jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
@@ -37,5 +37,5 @@ it('uses the central XP values and prevents repeat question rewards', () => {
   expect(getInsightQuestionXP([], 'studies')).toBe(XP_FOR_CHAT_QUESTION);
   expect(getInsightQuestionXP(['studies'], 'studies')).toBe(0);
   expect(getInsightQuestionXP(['studies'], 'experts')).toBe(XP_FOR_CHAT_QUESTION);
-  expect(MAX_TIP_EDUCATION_XP).toBe(XP_FOR_INFORMATION_READ + 3 * XP_FOR_CHAT_QUESTION + XP_FOR_VERDICT);
+  expect(MAX_TIP_EDUCATION_XP).toBe(XP_FOR_RELATED_FOODS_READ + XP_FOR_RELATED_METRICS_READ + XP_FOR_TIMING_READ + XP_FOR_INFORMATION_READ + 3 * XP_FOR_CHAT_QUESTION + XP_FOR_VERDICT);
 });
