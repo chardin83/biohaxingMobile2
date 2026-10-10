@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +16,7 @@ const STORAGE_KEY = 'preferredLanguage';
 export default function SettingsPage() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { colors } = useTheme();
   const [selectedLabel, setSelectedLabel] = React.useState<string>('');
   const [themeLabel, setThemeLabel] = React.useState<string>(t('themeSelector.device'));
 
@@ -86,6 +88,21 @@ export default function SettingsPage() {
           },
         ]}
         style={styles.cardSpacing}
+      />
+
+      <ThemedText type="label" style={styles.title} uppercase>
+        {t('settings.subscription')}
+      </ThemedText>
+      <CardLinkList
+        style={styles.cardSpacing}
+        rows={[{
+          key: 'premium',
+          title: t('common:premium.premium'),
+          subtitle: t('settings.premiumDescription'),
+          iconName: 'crown',
+          iconColor: colors.gold,
+          onPress: () => router.push('/(stack)/settings/premium'),
+        }]}
       />
 
       <ThemedText type="label" style={styles.title} uppercase>

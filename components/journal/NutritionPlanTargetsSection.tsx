@@ -8,6 +8,9 @@ import { Icon } from 'react-native-paper';
 import { TipProgressItem, TipTargetPeriod } from '@/app/context/storage/nutrition/nutritionTypes';
 import { globalStyles } from '@/app/theme/globalStyles';
 import TipTarget from '@/components/TipTarget';
+import { IconSymbol } from '@/components/ui/IconSymbol';
+import PremiumLink from '@/components/ui/PremiumLink';
+import type { Tip } from '@/locales/tips';
 import { formatMonthDay, toDateKey } from '@/utils/dateUtils';
 import { getTipProgressKey } from '@/utils/nutritionTipProgress';
 
@@ -26,6 +29,8 @@ type ThemeColors = ReturnType<typeof useTheme>['colors'];
 // ── Props ──────────────────────────────────────────────────────────────────────
 
 export type NutritionPlanTargetsSectionProps = {
+  untrackedTips?: Tip[];
+  onDiscoverPremium?: () => void;
   fulfilledTipsSectionYRef: CurrentRef<number>;
   periodSectionYRef: CurrentRef<Record<TipTargetPeriod, number>>;
   nutritionPlanTipProgressByPeriod: {
@@ -173,6 +178,8 @@ const TipProgressRow: React.FC<TipProgressRowProps> = ({
 // ── Component ──────────────────────────────────────────────────────────────────
 
 const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = ({
+  untrackedTips = [],
+  onDiscoverPremium,
   fulfilledTipsSectionYRef,
   periodSectionYRef,
   nutritionPlanTipProgressByPeriod,
@@ -183,6 +190,10 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
   const router = useRouter();
+
+  const untrackedIds = new Set(untrackedTips.map(tip => tip.id));
+  const dailyTips = nutritionPlanTipProgressByPeriod.daily.filter(tip => !untrackedIds.has(tip.tipId));
+  const weeklyTips = nutritionPlanTipProgressByPeriod.weekly.filter(tip => !untrackedIds.has(tip.tipId));
 
   const renderTipProgressItems = (tipsForPeriod: TipProgressItem[]) =>
     tipsForPeriod.map(tip => {
@@ -219,7 +230,7 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
       }}
     >
       <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
-        {nutritionPlanTipProgressByPeriod.daily.length === 0 && nutritionPlanTipProgressByPeriod.weekly.length === 0 ? (
+        {dailyTips.length === 0 && weeklyTips.length === 0 && untrackedTips.length === 0 ? (
           <View style={styles.emptyTargetsContainer}>
             <ThemedText type="title3" style={styles.emptyTargetsHeading}>
               {t('journal:nutritionLogger.targetsTitle')}
@@ -256,8 +267,8 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
               <ThemedText type="title3" style={styles.periodSectionHeading}>
                 {t('journal:nutritionLogger.periodDaily')}
               </ThemedText>
-              {nutritionPlanTipProgressByPeriod.daily.length > 0 ? (
-                renderTipProgressList(nutritionPlanTipProgressByPeriod.daily)
+              {dailyTips.length > 0 ? (
+                renderTipProgressList(dailyTips)
               ) : (
                 <ThemedText type="explainer" style={styles.noFulfilledTipsText}>
                   {t('journal:nutritionLogger.noPlanTipsWithTargets')}
@@ -290,8 +301,8 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
               <ThemedText type="title3" style={styles.periodSectionHeading}>
                 {t('journal:nutritionLogger.periodWeekly')}
               </ThemedText>
-              {nutritionPlanTipProgressByPeriod.weekly.length > 0 ? (
-                renderTipProgressList(nutritionPlanTipProgressByPeriod.weekly)
+              {weeklyTips.length > 0 ? (
+                renderTipProgressList(weeklyTips)
               ) : (
                 <ThemedText type="explainer" style={styles.noFulfilledTipsText}>
                   {t('journal:nutritionLogger.noPlanTipsWithTargets')}
@@ -315,6 +326,38 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                 />
               </View>
             </View>
+            {untrackedTips.length > 0 && (
+              <View style={[styles.untrackedSection, { borderTopColor: colors.borderLight }]}>
+                <ThemedText type="title3">{t('journal:nutritionLogger.untrackedTargets', { count: untrackedTips.length })}</ThemedText>
+                {untrackedTips.map(tip => {
+                  const progress = [...nutritionPlanTipProgressByPeriod.daily, ...nutritionPlanTipProgressByPeriod.weekly].find(item => item.tipId === tip.id);
+                  const trackingKeys = new Set(tip.trackingTargets?.map(target => target.trackingKey));
+                  const targets = progress?.targets.filter(target => trackingKeys.has(target.tag)) ?? [];
+                  return (
+                    <JournalGoalAnchor key={tip.id} tipId={tip.id}>
+                      <TouchableOpacity
+                        accessibilityRole="link"
+                        onPress={() => router.push({
+                          pathname: `/dashboard/area/${tip.areas[0].id}/details` as any,
+                          params: { tipId: tip.id },
+                        })}
+                        style={styles.untrackedTipTitle}
+                      >
+                        <ThemedText type="defaultSemiBold" style={styles.untrackedTitleText}>{t(`tips:${tip.title}`)}</ThemedText>
+                        <IconSymbol name="crown" size={20} color={colors.gold} />
+                      </TouchableOpacity>
+                      {targets.map(target => (
+                        <TipTarget key={target.tag} tip={progress!} target={target} colors={colors} />
+                      ))}
+                    </JournalGoalAnchor>
+                  );
+                })}
+                <View style={[styles.premiumRow, { borderTopColor: colors.borderLight }]}>
+                  <ThemedText type="explainer" style={styles.premiumText}>{t('journal:nutritionLogger.untrackedTargetsExplainer')}</ThemedText>
+                  {onDiscoverPremium && <PremiumLink onPress={onDiscoverPremium} />}
+                </View>
+              </View>
+            )}
             <ProgressButton href="/(stack)/journal/nutrition/progress" label={t('journal:nutritionLogger.seeProgress')} />
           </>
         )}
@@ -324,6 +367,11 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
 };
 
 const styles = StyleSheet.create({
+  premiumRow: { borderTopWidth: StyleSheet.hairlineWidth, paddingTop: 12, marginTop: 4, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  premiumText: { flex: 1 },
+  untrackedTipTitle: { paddingVertical: 8, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  untrackedTitleText: { flex: 1 },
+  untrackedSection: { borderTopWidth: StyleSheet.hairlineWidth, marginTop: 16, paddingTop: 16, marginBottom: 16, gap: 10 },
   fulfilledTipTextBlock: {
     flex: 1,
   },

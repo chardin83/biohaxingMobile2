@@ -5,9 +5,16 @@ import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
 import AppCard from '@/components/ui/AppCard';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import PremiumLink from '@/components/ui/PremiumLink';
 import type { Tip } from '@/locales/tips';
 
-export default function TargetsSection({ tip, colors, t, onShowJournal }: Readonly<{ tip?: Tip; colors: any; t: any; onShowJournal?: () => void }>) {
+export default function TargetsSection({
+  tip,
+  colors,
+  t,
+  onShowJournal,
+  onDiscoverPremium,
+}: Readonly<{ tip?: Tip; colors: any; t: any; onShowJournal?: () => void; onDiscoverPremium?: () => void }>) {
   if (!tip) return null;
 
   const nutritionGroups = [
@@ -86,12 +93,19 @@ export default function TargetsSection({ tip, colors, t, onShowJournal }: Readon
           <IconSymbol name="chevron.right" size={16} color={colors.primary} />
         </TouchableOpacity>
       )}
+      {tip.trackingTargets?.some(target => Boolean(target.aiInstruction?.trim())) && (
+        <View style={[styles.premiumInfo, { borderTopColor: colors.borderLight }]}>
+          <ThemedText type="explainer">{t('common:nutritionTargetSection.premiumExplainer')}</ThemedText>
+          {onDiscoverPremium && <PremiumLink onPress={onDiscoverPremium} />}
+        </View>
+      )}
     </AppCard>
   );
 }
 
 const styles = StyleSheet.create({
   card: { width: '100%' },
+  premiumInfo: { borderTopWidth: StyleSheet.hairlineWidth, marginTop: 16, paddingTop: 16, gap: 10 },
   targets: { marginTop: 16, gap: 12 },
   targetRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 },
   journalLink: {

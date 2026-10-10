@@ -65,6 +65,8 @@
     "dark": "Mörkt"
   },
   "settings": {
+    "subscription": "Abonnemang",
+    "premiumDescription": "Upptäck AI-coach, AI-planer och fotoanalys",
     "preferences": "Utseende",
     "integrations": "Integrationer",
     "myData": "Min data",
@@ -515,6 +517,7 @@
     "saveError": "Kunde inte spara målen. Försök igen."
   },
   "nutritionTargetSection": {
+    "premiumExplainer": "Du kan lägga till tipset i din plan, men måluppföljelse kräver premium.",
     "title": "Mål",
     "showJournal": "Visa i dagboken",
     "daily": "Dagligt mål",
@@ -911,7 +914,63 @@
     "good": "Bra",
     "optimal": "Optimal"
   },
+  "premium": {
+    "activeSubscription": "Ditt Premium-abonnemang är aktivt.",
+    "cancelSubscription": "Avsluta abonnemang",
+    "cancelExplainer": "Hantera och avsluta ditt abonnemang i App Store eller Google Play.",
+    "manageUnavailable": "Det gick inte att öppna abonnemangsinställningarna.",
+    "title": "Upptäck Premium",
+    "subtitle": "Få mer av AI-coachen, fotoanalys och personliga planer.",
+    "free": "Gratis",
+    "premium": "Premium",
+    "features": {
+      "photo": {
+        "title": "AI-fotoanalys",
+        "free": "{{count}} totalt",
+        "premium": "{{count}}/mån"
+      },
+      "coach": {
+        "title": "AI-coach",
+        "free": "{{count}} frågor/vecka",
+        "premium": "Fler frågor"
+      },
+      "plans": {
+        "title": "Skapa plan med AI",
+        "free": "{{count}} totalt",
+        "premium": "Fler planer"
+      },
+      "nutrition": {
+        "title": "Näringsanalys",
+        "free": "Grundnivå",
+        "premium": "Fördjupad"
+      },
+      "goals": {
+        "title": "Avancerade AI-mål",
+        "free": "—",
+        "premium": "Ingår"
+      }
+    },
+    "monthly": {
+      "price": "129 kr / mån",
+      "description": "Mer flexibilitet"
+    },
+    "yearly": {
+      "price": "999 kr / år",
+      "description": "Mest för pengarna"
+    },
+    "savings": "Spara {{percent}}%",
+    "start": "Starta Premium",
+    "notNow": "Inte nu",
+    "purchaseUnavailable": "Premiumköp är inte tillgängligt ännu."
+  },
   "chat": {
+    "tabTitle": "Coach",
+    "weeklyQuestions": "Veckans frågor",
+    "questionsRemaining": "{{remaining}} av {{total}} kvar",
+    "questionsReset": "Frågorna fylls på varje måndag.",
+    "premiumTitle": "Vill du prata mer med coachen?",
+    "premiumDescription": "Med premium får du fler frågor och möjlighet till längre samtal.",
+    "discoverPremium": "Upptäck premium",
     "welcomeMessage": "Hej! Jag är din personliga hälsocoach – specialiserad på biohacking och kosttillskott. Ställ gärna en fråga om tillskott, dagliga rutiner eller hur du optimerar din hälsa. 💪🌿",
     "introPrompt": "Jag har precis lagt till ett nytt hälsomål: {{goal}}. Det innehåller dessa tillskott: {{supplements}}. Kan du gå igenom varje tillskott, ge råd om fördelar, tidpunkt att ta det, och varningar om det behövs?",
     "askToAddSupplements": "Vill du att jag lägger till dessa tillskott i din plan?",

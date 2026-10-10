@@ -65,6 +65,8 @@
     "dark": "Dark"
   },
   "settings": {
+    "subscription": "Subscription",
+    "premiumDescription": "Discover AI coaching, AI plans and photo analysis",
     "preferences": "Preferences",
     "integrations": "Integrations",
     "myData": "My data",
@@ -515,6 +517,7 @@
     "saveError": "Could not save goals. Please try again."
   },
   "nutritionTargetSection": {
+    "premiumExplainer": "You can add this tip to your plan, but goal tracking requires Premium.",
     "title": "Goals",
     "showJournal": "View in journal",
     "daily": "Daily goal",
@@ -911,7 +914,63 @@
     "good": "Good",
     "optimal": "Optimal"
   },
+  "premium": {
+    "activeSubscription": "Your Premium subscription is active.",
+    "cancelSubscription": "Cancel subscription",
+    "cancelExplainer": "Manage and cancel your subscription in the App Store or Google Play.",
+    "manageUnavailable": "Could not open subscription settings.",
+    "title": "Discover Premium",
+    "subtitle": "Get more from the AI coach, photo analysis and personal plans.",
+    "free": "Free",
+    "premium": "Premium",
+    "features": {
+      "photo": {
+        "title": "AI photo analysis",
+        "free": "{{count}} total",
+        "premium": "{{count}}/month"
+      },
+      "coach": {
+        "title": "AI coach",
+        "free": "{{count}} questions/week",
+        "premium": "More questions"
+      },
+      "plans": {
+        "title": "Create plans with AI",
+        "free": "{{count}} total",
+        "premium": "More plans"
+      },
+      "nutrition": {
+        "title": "Nutrition analysis",
+        "free": "Basic",
+        "premium": "Detailed"
+      },
+      "goals": {
+        "title": "Advanced AI goals",
+        "free": "—",
+        "premium": "Included"
+      }
+    },
+    "monthly": {
+      "price": "SEK 129 / month",
+      "description": "More flexibility"
+    },
+    "yearly": {
+      "price": "SEK 999 / year",
+      "description": "Best value"
+    },
+    "savings": "Save {{percent}}%",
+    "start": "Start Premium",
+    "notNow": "Not now",
+    "purchaseUnavailable": "Premium purchases are not available yet."
+  },
   "chat": {
+    "tabTitle": "Coach",
+    "weeklyQuestions": "This week’s questions",
+    "questionsRemaining": "{{remaining}} of {{total}} remaining",
+    "questionsReset": "Questions are replenished every Monday.",
+    "premiumTitle": "Want to talk more with your coach?",
+    "premiumDescription": "Premium gives you more questions and the opportunity for longer conversations.",
+    "discoverPremium": "Discover premium",
     "welcomeMessage": "Hi! I'm your personal health coach – specialized in biohacking and supplements. Ask me about daily routines or optimizing your health. 💪🌿",
     "introPrompt": "I just added a new health goal ({{goal}}). It includes these supplements: {{supplements}}. Do you have any tips or warnings?",
     "askToAddSupplements": "Do you want me to add these supplements to your plan? Reply 'yes' or 'no'.",

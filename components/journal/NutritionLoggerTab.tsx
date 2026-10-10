@@ -8,6 +8,7 @@ import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import type { MealEntry, NutritionEntry, NutritionTrackingContribution } from '@/app/context/storage/nutrition/nutritionTypes';
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
+import { PREMIUM } from '@/constants/Premium';
 import { useNutritionAnalysis } from '@/hooks/nutrition/useNutritionAnalysis';
 import { useNutritionBarcodeActions } from '@/hooks/nutrition/useNutritionBarcodeActions';
 import { useNutritionLoggerData } from '@/hooks/nutrition/useNutritionLoggerData';
@@ -26,6 +27,7 @@ import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
 import { Card } from '../ui/Card';
 import { IconSymbol } from '../ui/IconSymbol';
+import PremiumBottomSheet, { type PremiumBottomSheetRef } from '../ui/PremiumBottomSheet';
 import AnalysisStatus from './AnalysisStatus';
 import BarcodeInfoBottomSheet from './BarcodeInfoBottomSheet';
 import BarcodeScannerBottomSheet from './BarcodeScannerBottomSheet';
@@ -115,6 +117,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   } | null>(null);
   const copyMealBottomSheetRef = useRef<BottomSheetModal>(null);
   const nutritionAnalysisBottomSheetRef = useRef<BottomSheetModal>(null);
+  const premiumBottomSheetRef = useRef<PremiumBottomSheetRef>(null);
   const mealLoggerBottomSheetRef = useRef<BottomSheetModal>(null);
   const drinkPickerBottomSheetRef = useRef<BottomSheetModal>(null);
   const foodPickerBottomSheetRef = useRef<BottomSheetModal>(null);
@@ -158,6 +161,12 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
   }, []);
 
+  const untrackedNutritionTips = useMemo(() => {
+    const planTipIds = new Set((plans?.nutrition ?? []).map(planTip => planTip.tipId));
+    if (PREMIUM) return [];
+    return tips.filter(tip => planTipIds.has(tip.id) && tip.trackingTargets?.some(target => Boolean(target.aiInstruction?.trim())));
+  }, [plans]);
+
   const activeTrackingTargetsForAI = useMemo(() => {
     const byKey = new Map<
       string,
@@ -171,6 +180,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     (plans?.nutrition ?? []).forEach(planTip => {
       const tip = tips.find(candidate => candidate.id === planTip.tipId);
       (tip?.trackingTargets ?? []).forEach((target: { trackingKey: string; unit: 'items' | 'count'; amount?: number; aiInstruction?: string }) => {
+        if (!PREMIUM && target.aiInstruction?.trim()) return;
         const key = target.trackingKey?.trim();
         if (!key) return;
         if (!byKey.has(key)) {
@@ -190,7 +200,8 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     const keys = new Set<string>();
     (plans?.nutrition ?? []).forEach(planTip => {
       const tip = tips.find(candidate => candidate.id === planTip.tipId);
-      (tip?.trackingTargets ?? []).forEach((target: { trackingKey: string }) => {
+      (tip?.trackingTargets ?? []).forEach((target: { trackingKey: string; aiInstruction?: string }) => {
+        if (!PREMIUM && target.aiInstruction?.trim()) return;
         if (typeof target.trackingKey === 'string' && target.trackingKey.trim().length > 0) {
           keys.add(target.trackingKey.trim());
         }
@@ -529,6 +540,8 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           <LoggedDrinksSection drinks={drinks} onEdit={handleStartEditDrink} onDelete={handleRemoveDrink} onSelect={handleSelectLoggedDrink} />
         )}
         <NutritionPlanTargetsSection
+          untrackedTips={untrackedNutritionTips}
+          onDiscoverPremium={() => premiumBottomSheetRef.current?.present()}
           fulfilledTipsSectionYRef={fulfilledTipsSectionYRef}
           periodSectionYRef={periodSectionYRef}
           nutritionPlanTipProgressByPeriod={nutritionPlanTipProgressByPeriod}
@@ -579,8 +592,10 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           roundToOneDecimal={roundToOneDecimal}
         />
         <NutritionAnalysisBottomSheet ref={nutritionAnalysisBottomSheetRef} image={packagingMealImage} />
+        <PremiumBottomSheet ref={premiumBottomSheetRef} />
         <MealLoggerBottomSheet
           ref={mealLoggerBottomSheetRef}
+          onDiscoverPremium={() => premiumBottomSheetRef.current?.present()}
           onAnalyzePhoto={handleAnalyzePhoto}
           onScanBarcode={() => {
             requestAnimationFrame(() => {

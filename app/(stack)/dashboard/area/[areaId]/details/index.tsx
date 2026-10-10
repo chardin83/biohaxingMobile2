@@ -17,6 +17,7 @@ import Container, { ContainerScrollRef } from '@/components/ui/Container';
 import DiscreetButton from '@/components/ui/DiscreetButton';
 import { NotFound } from '@/components/ui/NotFound';
 import Notice from '@/components/ui/Notice';
+import PremiumBottomSheet, { type PremiumBottomSheetRef } from '@/components/ui/PremiumBottomSheet';
 import VerdictBottomSheet from '@/components/VerdictBottomSheet';
 import { AIPromptKey, AIPrompts } from '@/constants/AIPrompts';
 import { MAX_TIP_EDUCATION_XP } from '@/constants/tipXP';
@@ -35,6 +36,7 @@ import TimingInfoSection from './sections/TimingInfoSection';
 export default function AreaDetailScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const premiumSheetRef = React.useRef<PremiumBottomSheetRef>(null);
   const informationRef = React.useRef<InformationSectionRef>(null);
   const containerRef = React.useRef<ContainerScrollRef>(null);
   const { colors } = useTheme();
@@ -412,6 +414,7 @@ export default function AreaDetailScreen() {
       />
 
       <TargetsSection
+        onDiscoverPremium={() => premiumSheetRef.current?.present()}
         tip={tip}
         colors={colors}
         t={t}
@@ -459,6 +462,7 @@ export default function AreaDetailScreen() {
       {(resolvedSupplements.length > 0 || supplementPlans?.some(p => Array.isArray(p.supplements) && p.supplements.length > 0)) && (
         <SupplementList supplements={resolvedSupplements} plannedSupplements={plannedSupplements} supplementPlans={supplementPlans} />
       )}
+      <PremiumBottomSheet ref={premiumSheetRef} />
     </Container>
   );
 }

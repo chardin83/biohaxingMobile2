@@ -1,5 +1,7 @@
 {
   "nutritionLogger": {
+    "untrackedTargets": "Goals without tracking ({{count}})",
+    "untrackedTargetsExplainer": "Premium is required to track these goals.",
     "addNutrition": "Log food and drink",
     "analyzing": "Analyzing with AI",
     "mealTitle": "Logged meal",
@@ -165,6 +167,8 @@
     "analysisNutrition": "Calculating nutrition",
     "analysisPreparingResult": "Preparing result",
     "mealLogger": {
+      "analysesRemaining": "{{remaining}} of {{total}} analyses remaining",
+      "noAnalysesRemaining": "You have used your free analyses. Discover Premium for more analyses.",
       "addMeal": "Add food or drink",
       "chooseHowToAddMeal": "Choose how to add the meal",
       "analyzePhoto": "Analyze photo",

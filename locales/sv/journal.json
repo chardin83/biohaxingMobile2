@@ -1,5 +1,7 @@
 {
   "nutritionLogger": {
+    "untrackedTargets": "Mål utan uppföljning ({{count}})",
+    "untrackedTargetsExplainer": "Premium krävs för att spåra dessa.",
     "addNutrition": "Logga mat och dryck",
     "analyzing": "Analyserar med AI",
     "mealTitle": "Loggad måltid",
@@ -165,6 +167,8 @@
     "analysisNutrition": "Beräknar näringsinnehåll",
     "analysisPreparingResult": "Förbereder resultatet",
     "mealLogger": {
+      "analysesRemaining": "{{remaining}} av {{total}} analyser kvar",
+      "noAnalysesRemaining": "Dina gratisanalyser är slut. Upptäck Premium för fler analyser.",
       "addMeal": "Lägg till måltid eller dryck ",
       "chooseHowToAddMeal": "Välj hur du vill lägga till måltiden",
       "analyzePhoto": "Analysera foto",

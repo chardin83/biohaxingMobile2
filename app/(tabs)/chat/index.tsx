@@ -11,8 +11,12 @@ import { subscribeToChatClear } from '@/app/context/chatEvents';
 import { globalStyles } from '@/app/theme/globalStyles';
 import AIInfoPopup from '@/components/AllInfoPopup';
 import BackButton from '@/components/BackButton';
+import CoachOverview from '@/components/CoachOverview';
 import { ThemedText } from '@/components/ThemedText';
 import LabeledInput from '@/components/ui/LabeledInput';
+import PremiumBottomSheet, { type PremiumBottomSheetRef } from '@/components/ui/PremiumBottomSheet';
+import { PREMIUM } from '@/constants/Premium';
+import { useCoachQuestions } from '@/hooks/useCoachQuestions';
 import { useGPTFunctionHandler } from '@/hooks/useGPTFunctionHandler';
 import { useKeyboardVisible } from '@/hooks/useKeyboardVisible';
 import { askGPT, buildSystemPrompt } from '@/services/gptServices';
@@ -29,8 +33,11 @@ function createMessage(message: Omit<Message, 'id'> & { id?: string }): Message 
 }
 
 export default function ChatWithGPT4o(): JSX.Element {
+  const premiumRef = useRef<PremiumBottomSheetRef>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>('');
+  const { remaining, total, ready: quotaReady, consumeQuestion } = useCoachQuestions();
+  const sendingQuestion = useRef(false);
   const [loading, setLoading] = useState<boolean>(false);
   const { handleGPTFunctionCall } = useGPTFunctionHandler();
   const router = useRouter();
@@ -210,7 +217,7 @@ export default function ChatWithGPT4o(): JSX.Element {
 
   useEffect(() => {
     // Scrolla endast om användaren redan är nära botten
-    if (isNearBottom.current) {
+    if (isNearBottom.current && messages.some(message => message.role === 'user')) {
       setTimeout(() => {
         scrollRef.current?.scrollToEnd({ animated: true });
       }, 100);
@@ -218,7 +225,16 @@ export default function ChatWithGPT4o(): JSX.Element {
   }, [messages, loading]);
 
   const sendMessage = async (): Promise<void> => {
-    if (!input.trim()) return;
+    if (!input.trim() || loading || !quotaReady || sendingQuestion.current) return;
+    sendingQuestion.current = true;
+    try {
+      if (!(await consumeQuestion())) return;
+    } catch (error) {
+      console.error('Could not save coach question usage:', error);
+      return;
+    } finally {
+      sendingQuestion.current = false;
+    }
 
     const userMessage = createMessage({ role: 'user', content: input });
     const planOverviewMessage = createMessage({
@@ -301,6 +317,7 @@ export default function ChatWithGPT4o(): JSX.Element {
               { paddingBottom: tabBarHeight + 80, paddingTop: paddingTopValue }
             ]}
           >
+            {!PREMIUM && <CoachOverview remaining={remaining} total={total} onDiscoverPremium={() => premiumRef.current?.present()} />}
             {messages.map((msg, index) => (
               <View
                 key={`${msg.role}-${index}`}
@@ -312,7 +329,7 @@ export default function ChatWithGPT4o(): JSX.Element {
                 ]}
               >
                 <ThemedText type="label" uppercase style={{ color: colors.textLight }}>
-                  {msg.role === 'user' ? 'Du' : 'GPT'}:
+                  {msg.role === 'user' ? 'Du' : t('chat.tabTitle')}:
                 </ThemedText>
                 <ThemedText type="default">
                   {msg.content}
@@ -322,7 +339,7 @@ export default function ChatWithGPT4o(): JSX.Element {
 
             {loading && (
               <View style={[styles.messageBubble, styles.assistantBubble, { backgroundColor: colors.assistantBubble }]}>
-                <ThemedText type="label" uppercase style={{ color: colors.textLight }}>GPT:</ThemedText>
+                <ThemedText type="label" uppercase style={{ color: colors.textLight }}>{t('chat.tabTitle')}:</ThemedText>
                 <View style={styles.typingIndicator}>
                   <Animated.View style={[styles.typingDot, { opacity: dot1Anim, backgroundColor: colors.primary }]} />
                   <Animated.View style={[styles.typingDot, { opacity: dot2Anim, backgroundColor: colors.primary }]} />
@@ -350,8 +367,8 @@ export default function ChatWithGPT4o(): JSX.Element {
               <MaterialIcons
                 name="send"
                 size={32}
-                color={loading || !input.trim() ? colors.textMuted : colors.primary}
-                onPress={loading || !input.trim() ? undefined : sendMessage}
+                color={loading || !quotaReady || remaining === 0 || !input.trim() ? colors.textMuted : colors.primary}
+                onPress={loading || !quotaReady || remaining === 0 || !input.trim() ? undefined : sendMessage}
                 style={[
                   styles.sendIcon,
                   {
@@ -365,6 +382,7 @@ export default function ChatWithGPT4o(): JSX.Element {
           </View>
         </View>
       </KeyboardAvoidingView>
+      <PremiumBottomSheet ref={premiumRef} />
       <AIInfoPopup visible={showAIPopup} setVisible={setShowAIPopup} />
     </>
   );
@@ -378,7 +396,7 @@ const styles = StyleSheet.create({
   },
   scrollContentContainer: {
     flexGrow: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
   },
   messageBubble: {
     borderRadius: 16,

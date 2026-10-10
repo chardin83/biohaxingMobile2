@@ -3,7 +3,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 
+import { PREMIUM } from '@/constants/Premium';
 import { type NutritionAnalysisResponse, NutritionAnalyze } from '@/services/gptServices';
+import { refundFreePhotoAnalysis,reserveFreePhotoAnalysis } from '@/services/nutrition/photoAnalysisQuota';
 import type { PendingAnalysisReview, SelectedImageFile } from '@/types/nutrition/nutritionAnalysis';
 import { extractAndValidateNutritionAnalysis, type WeeklyTrackingSignals } from '@/utils/analyzeNutrition';
 import { toDateKey } from '@/utils/dateUtils';
@@ -119,7 +121,15 @@ export const useNutritionAnalysis = ({
       setPendingAnalysisReview(null);
       setIsAnalysisReviewModalVisible(false);
       clearSelectedNutrition();
+      let reservedAnalysis = false;
+      let successfulAnalysis = false;
       try {
+        if (!PREMIUM) reservedAnalysis = await reserveFreePhotoAnalysis();
+        if (!PREMIUM && !reservedAnalysis) {
+          setAnalysisResult(t('journal:nutritionLogger.mealLogger.noAnalysesRemaining'));
+          Alert.alert(t('common:premium.title'), t('journal:nutritionLogger.mealLogger.noAnalysesRemaining'));
+          return;
+        }
         const data = await NutritionAnalyze({
           uri: mealFile.uri,
           name: mealFile.name,
@@ -129,8 +139,9 @@ export const useNutritionAnalysis = ({
           ingredientListName: ingredientFile?.name,
           ingredientListType: ingredientFile?.type,
           locale,
+          analysisTier: PREMIUM ? 'premium' : 'free',
           prompt: trackingPrompt,
-          trackingTargets,
+          trackingTargets: trackingTargets.filter(target => PREMIUM || !target.aiInstruction?.trim()),
         });
         if (data?.type === 'error') {
           handleNutritionError(data);
@@ -148,6 +159,7 @@ export const useNutritionAnalysis = ({
           },
         });
         if (!result) return;
+        successfulAnalysis = true;
         setPendingAnalysisReview({
           analysis: result.analysis,
           weeklyTrackingSignals: result.mealWeeklyTrackingSignals,
@@ -177,6 +189,7 @@ export const useNutritionAnalysis = ({
         setIsAnalysisReviewModalVisible(true);
         clearSelectedNutrition();
       } finally {
+        if (reservedAnalysis && !successfulAnalysis) await refundFreePhotoAnalysis().catch(console.error);
         setIsAnalyzing(false);
       }
     },

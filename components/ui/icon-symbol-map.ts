@@ -11,6 +11,11 @@ type IconDefinition = {
 };
 
 export const ICON_SYMBOLS = {
+  'crown': {
+    sf: 'crown.fill',
+    material: 'workspace-premium',
+    materialCommunity: 'crown',
+  },
   'question': {
     sf: 'questionmark',
     material: 'question-mark',

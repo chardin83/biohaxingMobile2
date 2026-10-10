@@ -28,10 +28,11 @@ export type CardLinkListRow = {
 type Props = {
   readonly rows: readonly CardLinkListRow[];
   readonly showIcon?: boolean;
+  readonly footer?: React.ReactNode;
   readonly style?: StyleProp<ViewStyle>;
 };
 
-export function CardLinkList({ rows, showIcon = true, style }: Props) {
+export function CardLinkList({ rows, showIcon = true, style, footer }: Props) {
   const { colors } = useTheme();
   const singleRow = rows.length === 1;
   const renderIcon = (row: CardLinkListRow) => {
@@ -77,6 +78,7 @@ export function CardLinkList({ rows, showIcon = true, style }: Props) {
           {row.expanded && row.content}
         </View>
       ))}
+      {footer}
     </CardContainer>
   );
 }

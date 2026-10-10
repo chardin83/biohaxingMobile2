@@ -8,6 +8,7 @@ import { GPTResponse } from '@/app/domain/GPTResponse';
 import { Message } from '@/app/domain/Message';
 import i18n from '@/app/i18n';
 import { ENDPOINTS } from '@/config';
+import { PREMIUM } from '@/constants/Premium';
 import { tips } from '@/locales/tips';
 
 const log = debug('app:gptServices');
@@ -264,7 +265,7 @@ function appendIngredientFile(form: FormData, params: AnalyseParams): void {
 }
 
 function appendNutritionOptions(form: FormData, params: AnalyseParams, locale: 'sv' | 'en'): NutritionAnalysisTier {
-  const analysisTier: NutritionAnalysisTier = params.analysisTier ?? 'premium';
+  const analysisTier: NutritionAnalysisTier = PREMIUM ? (params.analysisTier ?? 'premium') : 'free';
   const languageInstruction = locale === 'sv' ? 'Write all free-text outputs in Swedish.' : 'Write all free-text outputs in English.';
 
   form.append('prompt', `${params.prompt ?? ''}\n${languageInstruction}`.trim());
@@ -276,8 +277,9 @@ function appendNutritionOptions(form: FormData, params: AnalyseParams, locale: '
   if (params.analysisFeatures && Object.keys(params.analysisFeatures).length > 0) {
     form.append('analysisFeatures', JSON.stringify(params.analysisFeatures));
   }
-  if (params.trackingTargets && params.trackingTargets.length > 0) {
-    form.append('trackingTargets', JSON.stringify(params.trackingTargets));
+  const trackingTargets = params.trackingTargets?.filter(target => analysisTier === 'premium' || !target.aiInstruction?.trim());
+  if (trackingTargets?.length) {
+    form.append('trackingTargets', JSON.stringify(trackingTargets));
   }
 
   return analysisTier;

@@ -80,7 +80,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="chat/index"
         options={{
-          title: 'AI',
+          title: t('common:chat.tabTitle'),
           tabBarIcon: ChatTabIcon,
         }}
       />
