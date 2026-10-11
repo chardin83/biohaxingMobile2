@@ -1,4 +1,5 @@
 {
+  "recovery_status": { "name": "Återhämtningsstatus", "description": "Återhämtningspoäng beräknad vid synk från vilopuls, sömn och HRV jämfört med din personliga baslinje." },
     "units": {
         "miu_l": "mIU/L",
         "uiu_ml": "µIU/mL",
@@ -240,6 +241,8 @@
         "sevenDayTotal": "7-dagars total"  
     },
     "recoveryStatus": {
+        "detailedAnalysis": "Fördjupad analys",
+    "changeInfo": "Vilopuls, sömntid och HRV påverkar återhämtningsstatus. När du ändrar eller tar bort ett värde räknas den dagens status om och sparas. Ändringen kan också påverka följande 28 dagar eftersom värdet ingår i din baslinje. Saknas underlag tas dagens poäng bort.",
         "title": "Återhämtningsstatus",
         "wellRecovered": "Väl återhämtad",
         "normalRecovery": "Normal återhämtning",

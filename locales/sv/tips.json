@@ -522,6 +522,7 @@
     }
   },
   "hrv_recovery_monitoring": {
+    "habitTargets": { "description": "Gå igenom dagens HRV och återhämtning en gång." },
     "title": "HRV och återhämtningsovervakning",
     "description": "Hjärtfrekvensvariabilitet (HRV) är ett nyckelmått för att spåra nervsystemets balans och återhämtningstatus. Övervakning av HRV hjälper till att optimera träningsintensitet, förhindra överträning och säkerställa tillräcklig återhämtning mellan träningspass.",
     "areas": {
@@ -544,6 +545,7 @@
     }
   },
   "calming_music_waves": {
+    "habitTargets": { "description": "Lyssna på lugnande musik eller naturljud i 10 minuter." },
     "title": "Lugnande musik och ljudterapi",
     "description": "Att lyssna på lugnande musik, binaurala beats eller naturljud kan minska stress, sänka hjärtfrekvens och aktivera det parasympatiska nervsystemet. Ljudterapi har använts i århundraden för att främja avslappning och läkning.",
     "areas": {
@@ -1265,6 +1267,7 @@
     }
   },
   "nasal_breathing_nitric_oxide": {
+    "habitTargets": { "description": "Öva lugn näsandning i 5 minuter." },
     "title": "Näsandning och kväveoxid",
     "description": "Att andas genom näsan ökar produktionen av kväveoxid (NO), vilket vidgar blodkärlen, förbättrar syreupptaget och stödjer hjärt-kärlhälsa. Näsandning kan även minska stress och förbättra energinivåer.",
     "areas": {

@@ -125,7 +125,7 @@ export type ActivityTarget = {
 export type HabitInputMode = 'number' | 'daily-check' | 'slots' | 'automatic';
 
 export type HabitTarget = {
-  trackingKey: 'sleep_duration' | 'morning_light' | 'meditation' | 'tooth_brushing' | 'nature_time' | 'social_connection' | 'sleep_schedule_consistency' | 'box_breathing' | 'breathing_4_7_8' | 'alternate_nostril_breathing' | 'diaphragmatic_breathing' | 'sleep_environment' | 'sleep_hygiene' | 'pre_sleep_wind_down';
+  trackingKey: 'sleep_duration' | 'morning_light' | 'meditation' | 'tooth_brushing' | 'nature_time' | 'social_connection' | 'sleep_schedule_consistency' | 'box_breathing' | 'breathing_4_7_8' | 'alternate_nostril_breathing' | 'diaphragmatic_breathing' | 'sleep_environment' | 'sleep_hygiene' | 'pre_sleep_wind_down' | 'nasal_breathing' | 'calming_music' | 'hrv_recovery_review';
   buttonLabels?: string[];
   inputMode?: HabitInputMode;
 } & BaseTarget<'minutes' | 'hours' | 'count'>;
@@ -1204,6 +1204,9 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['morning'],
     timeRule: 'anytime',
+    targetPeriod: 'daily',
+    targetIconName: 'target',
+    habitTargets: [{ trackingKey: 'hrv_recovery_review', amount: 1, unit: 'count', inputMode: 'daily-check' }],
     bodyParts: ['heart', 'nervousSystem'],
   },
   {
@@ -1239,6 +1242,9 @@ const rawTips: Tip[] = [
     trainingRelation: 'anytime',
     preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
+    targetPeriod: 'daily',
+    targetIconName: 'target',
+    habitTargets: [{ trackingKey: 'calming_music', amount: 10, unit: 'minutes', inputMode: 'number' }],
     bodyParts: ['nervousSystem'],
   },
   {
@@ -2225,6 +2231,9 @@ const rawTips: Tip[] = [
     descriptionKey: 'nasal_breathing_nitric_oxide.description',
     trainingRelation: 'anytime',
     timeRule: 'anytime',
+    targetPeriod: 'daily',
+    targetIconName: 'target',
+    habitTargets: [{ trackingKey: 'nasal_breathing', amount: 5, unit: 'minutes', inputMode: 'number' }],
     planCategory: ['other'],
     bodyParts: ['bloodVessels'],
   },

@@ -8,7 +8,9 @@ import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
 import { useBottomSheetDesign } from '@/components/ui/BottomSheetDesign';
 import { DateTimeInput } from '@/components/ui/DateTimeInput';
+import Notice from '@/components/ui/Notice';
 import { translateMetricUnit } from '@/utils/translateMetricUnit';
+import { RECOVERY_INPUT_METRIC_IDS } from '@/wearables/recoveryMetrics';
 
 interface RegisterMetricBottomSheetProps {
   bottomSheetRef: React.RefObject<BottomSheet | null>;
@@ -236,6 +238,7 @@ export function RegisterMetricBottomSheet({
       onChange={handleSheetChange}
     >
       <BottomSheetScrollView contentContainerStyle={[styles.contentContainer, { backgroundColor: colors.background }]} keyboardShouldPersistTaps="handled">
+        {metricId && RECOVERY_INPUT_METRIC_IDS.has(metricId) && <Notice message={t('metrics:recoveryStatus.changeInfo')} />}
         <ThemedText type="title3" style={styles.title}>
           Registrera mätvärde
         </ThemedText>

@@ -1,4 +1,5 @@
 {
+  "recovery_status": { "name": "Recovery status", "description": "Recovery score calculated during sync from resting heart rate, sleep and HRV compared with your personal baseline." },
     "common": {
         "low": "Low",
         "moderate": "Moderate",
@@ -247,6 +248,8 @@
         "sevenDayTotal": "7-day total"  
     },
     "recoveryStatus": {
+        "detailedAnalysis": "In-depth analysis",
+    "changeInfo": "Resting heart rate, sleep duration and HRV affect recovery status. Editing or deleting a value recalculates and saves that day’s status. The following 28 days may also change because the value contributes to your baseline. Scores are removed when data is insufficient.",
         "title": "Recovery status",
         "wellRecovered": "Well recovered",
         "normalRecovery": "Normal recovery",

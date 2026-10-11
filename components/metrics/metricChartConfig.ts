@@ -6,6 +6,7 @@ import { useStorage } from '@/app/context/StorageContext';
 import { type MetricId } from '@/locales/metrics';
 import { buildHRVDailyTrend, getHRVHistory } from '@/utils/hrvHistory';
 import { buildTrendData } from '@/utils/metrics';
+import { RECOVERY_THRESHOLDS } from '@/utils/recoveryStatus';
 
 import type { MetricTrendPoint } from './MetricTrendChart';
 
@@ -14,6 +15,7 @@ type ThemeColors = ReturnType<typeof useTheme>['colors'];
 export type MetricChartConfig = {
   metricName: string;
   unit?: string;
+  yAxisBounds?: { min: number; max: number };
   data: MetricTrendPoint[];
   accentColor: string;
   daysToShow?: number;
@@ -29,6 +31,7 @@ export type MetricChartConfig = {
 type MetricMeta = {
   metricNameKey?: string;
   unit?: string;
+  yAxisBounds?: { min: number; max: number };
   accentColor: (colors: ThemeColors) => string;
   daysToShow?: number;
   xAxisLabelFormatter?: (date: string) => string;
@@ -37,6 +40,7 @@ type MetricMeta = {
   referenceLines?: Array<{
     value: number;
     label?: string;
+    labelKey?: string;
     color: (colors: ThemeColors) => string;
   }>;
 };
@@ -63,6 +67,18 @@ function formatSleepDuration(valueInMinutes: number) {
 }
 
 const ALL_METRIC_CHART_META: Partial<Record<MetricId, MetricMeta>> = {
+  recovery_status: {
+    metricNameKey: 'metrics:recoveryStatus.title',
+    unit: '/100',
+    yAxisBounds: { min: 0, max: 100 },
+    accentColor: colors => colors.primary,
+    buildData: getMetricHistory => buildHRVDailyTrend(getMetricHistory('recovery_status')),
+    referenceLines: RECOVERY_THRESHOLDS.map(({ level, minScore }) => ({
+      value: minScore,
+      labelKey: `metrics:recoveryStatus.${level}`,
+      color: colors => colors.textMuted,
+    })),
+  },
   vo2_max: {
     metricNameKey: 'metrics:vo2_max.shortName',
     unit: '',
@@ -170,6 +186,7 @@ export function useMetricConfig({ metricId, data: dataOverride }: UseMetricConfi
     return {
       metricName: t(nameKey),
       unit: meta?.unit,
+      yAxisBounds: meta?.yAxisBounds,
       data,
       accentColor: meta?.accentColor(colors) ?? colors.primary,
       daysToShow: meta?.daysToShow,
@@ -177,7 +194,7 @@ export function useMetricConfig({ metricId, data: dataOverride }: UseMetricConfi
       valueFormatter: meta?.valueFormatter,
       referenceLines: meta?.referenceLines?.map(line => ({
         value: line.value,
-        label: line.label,
+        label: line.labelKey ? t(line.labelKey) : line.label,
         color: line.color(colors),
       })),
     };

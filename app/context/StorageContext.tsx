@@ -27,6 +27,7 @@ import { prepareManualHabitResult, storeAutomaticSleepResults } from '@/services
 //import { seedHabitTestDataOnce } from '@/services/testData/temporaryHabitTestData';
 import { type NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import { VerdictValue } from '@/types/verdict';
+import { refreshRecoveryAfterMetricChanges } from '@/wearables/recoveryMetrics';
 import { useWearable } from '@/wearables/wearableProvider';
 
 import { Plan } from '../domain/Plan';
@@ -382,6 +383,20 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
         /*
          * XP
          */
+
+        // TEMPORARY: unlock level 10 for development. Remove this block after starting the app.
+        // Save the matching XP too, so normal XP updates keep level 10 afterwards.
+        // if (__DEV__) {
+        //   const level10XP = levels.find(level => level.level === 10)?.requiredXP;
+        //   if (level10XP !== undefined && xp.myXP < level10XP) {
+        //     const addedXP = level10XP - xp.myXP;
+        //     xp.myXP = level10XP;
+        //     xp.xpBreakdown = { ...xp.xpBreakdown, education: (xp.xpBreakdown.education ?? 0) + addedXP };
+        //     await Promise.all([saveXP(xp.myXP), saveXpBreakdown(xp.xpBreakdown)]);
+        //   }
+        //   xp.myLevel = levels.findLast(level => level.requiredXP <= xp.myXP)?.level ?? 10;
+        //   await saveLevel(xp.myLevel);
+        // }
 
         setMyXPState(xp.myXP);
 
@@ -763,7 +778,8 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
 
   const setMetricEntries = useCallback((updater: MetricEntry[] | ((prev: MetricEntry[]) => MetricEntry[])) => {
     setMetricEntriesState(prev => {
-      const updated = typeof updater === 'function' ? updater(prev) : updater;
+      const proposed = typeof updater === 'function' ? updater(prev) : updater;
+      const updated = refreshRecoveryAfterMetricChanges(prev, proposed);
 
       syncMetricEntries(prev, updated);
 
@@ -915,47 +931,73 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     pendingInformationClaims.current.clear();
   }, [viewedTipsState]);
 
-  const claimTipReadingXP = useCallback((tipId: string, section: TipReadingSection = 'information'): number => {
-    const existing = viewedTipsState.find(view => view.tipId === tipId);
-    const readField = TIP_READING_FIELDS[section];
-    const claimKey = JSON.stringify([tipId, section]);
-    if (!existing || existing[readField] || pendingInformationClaims.current.has(claimKey)) return 0;
-    pendingInformationClaims.current.add(claimKey);
-    const amount = getTipReadingXP(section);
-    setViewedTips(prev => prev.map(view => view.tipId === tipId ? {
-      ...view, [readField]: true, xpEarned: view.xpEarned + amount,
-    } : view));
-    awardXP(amount, 'education');
-    return amount;
-  }, [viewedTipsState, setViewedTips, awardXP]);
+  const claimTipReadingXP = useCallback(
+    (tipId: string, section: TipReadingSection = 'information'): number => {
+      const existing = viewedTipsState.find(view => view.tipId === tipId);
+      const readField = TIP_READING_FIELDS[section];
+      const claimKey = JSON.stringify([tipId, section]);
+      if (!existing || existing[readField] || pendingInformationClaims.current.has(claimKey)) return 0;
+      pendingInformationClaims.current.add(claimKey);
+      const amount = getTipReadingXP(section);
+      setViewedTips(prev =>
+        prev.map(view =>
+          view.tipId === tipId
+            ? {
+                ...view,
+                [readField]: true,
+                xpEarned: view.xpEarned + amount,
+              }
+            : view
+        )
+      );
+      awardXP(amount, 'education');
+      return amount;
+    },
+    [viewedTipsState, setViewedTips, awardXP]
+  );
 
-  const claimTipAreaXP = useCallback((tipId: string, areaId: string): number => {
-    const existing = viewedTipsState.find(view => view.tipId === tipId);
-    const claimKey = JSON.stringify([tipId, areaId]);
-    if (!existing || pendingAreaClaims.current.has(claimKey)) return 0;
-    const amount = getAreaViewXP(existing.viewedAreaIds ?? [], areaId);
-    if (amount === 0) return 0;
-    pendingAreaClaims.current.add(claimKey);
-    setViewedTips(prev => prev.map(view => view.tipId === tipId ? {
-      ...view,
-      viewedAreaIds: [...(view.viewedAreaIds ?? []), areaId],
-      xpEarned: view.xpEarned + amount,
-    } : view));
-    awardXP(amount, 'education');
-    return amount;
-  }, [viewedTipsState, setViewedTips, awardXP]);
+  const claimTipAreaXP = useCallback(
+    (tipId: string, areaId: string): number => {
+      const existing = viewedTipsState.find(view => view.tipId === tipId);
+      const claimKey = JSON.stringify([tipId, areaId]);
+      if (!existing || pendingAreaClaims.current.has(claimKey)) return 0;
+      const amount = getAreaViewXP(existing.viewedAreaIds ?? [], areaId);
+      if (amount === 0) return 0;
+      pendingAreaClaims.current.add(claimKey);
+      setViewedTips(prev =>
+        prev.map(view =>
+          view.tipId === tipId
+            ? {
+                ...view,
+                viewedAreaIds: [...(view.viewedAreaIds ?? []), areaId],
+                xpEarned: view.xpEarned + amount,
+              }
+            : view
+        )
+      );
+      awardXP(amount, 'education');
+      return amount;
+    },
+    [viewedTipsState, setViewedTips, awardXP]
+  );
 
-  const recordTipView = useCallback((tipId: string): void => {
-    setViewedTips(prev => {
-      if (prev.some(view => view.tipId === tipId)) return prev;
-      return [...prev, {
-        tipId,
-        viewedAt: new Date().toISOString(),
-        askedQuestions: [],
-        xpEarned: 0,
-      }];
-    });
-  }, [setViewedTips]);
+  const recordTipView = useCallback(
+    (tipId: string): void => {
+      setViewedTips(prev => {
+        if (prev.some(view => view.tipId === tipId)) return prev;
+        return [
+          ...prev,
+          {
+            tipId,
+            viewedAt: new Date().toISOString(),
+            askedQuestions: [],
+            xpEarned: 0,
+          },
+        ];
+      });
+    },
+    [setViewedTips]
+  );
 
   const incrementTipChat = useCallback(
     (_areaId: string, tipId: string, questionType: string): number => {

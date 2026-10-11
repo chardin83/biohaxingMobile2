@@ -622,6 +622,7 @@
     }
   },
   "hrv_recovery_monitoring": {
+    "habitTargets": { "description": "Review today’s HRV and recovery once." },
     "title": "HRV and recovery monitoring",
     "description": "Heart Rate Variability (HRV) is a key metric for tracking nervous system balance and recovery status. Monitoring HRV helps optimize training intensity, prevent overtraining, and ensure adequate recovery between workouts.",
     "areas": {
@@ -644,6 +645,7 @@
     }
   },
   "calming_music_waves": {
+    "habitTargets": { "description": "Listen to calming music or nature sounds for 10 minutes." },
     "title": "Calming music and sound therapy",
     "description": "Listening to calming music, binaural beats, or nature sounds can reduce stress, lower heart rate, and activate the parasympathetic nervous system. Sound therapy has been used for centuries to promote relaxation and healing.",
     "areas": {
@@ -1263,6 +1265,7 @@
     }
   },
   "nasal_breathing_nitric_oxide": {
+    "habitTargets": { "description": "Practise calm nasal breathing for 5 minutes." },
     "title": "Nasal Breathing and Nitric Oxide",
     "description": "Breathing through the nose increases nitric oxide (NO) production, which dilates blood vessels, improves oxygen uptake, and supports cardiovascular health. Nasal breathing can also reduce stress and improve energy levels.",
     "areas": {

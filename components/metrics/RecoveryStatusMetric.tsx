@@ -6,8 +6,7 @@ import { useStorage } from '@/app/context/StorageContext';
 import { MetricContainer } from '@/components/metrics/MetricContainer';
 import { MetricStatusLabel } from '@/components/metrics/MetricStatusLabel';
 import { ThemedText } from '@/components/ThemedText';
-import { getHRVHistory } from '@/utils/hrvHistory';
-import { calculateRecoveryScore, getRecoveryLevel } from '@/utils/recoveryStatus';
+import { getRecoveryLevel } from '@/utils/recoveryStatus';
 
 export function RecoveryStatusMetric({
   showDivider = false,
@@ -17,10 +16,7 @@ export function RecoveryStatusMetric({
   const { colors } = useTheme();
   const { t } = useTranslation('metrics');
   const { getMetricHistory } = useStorage();
-  const score = React.useMemo(
-    () => calculateRecoveryScore(getMetricHistory('resting_hr'), getMetricHistory('sleep_duration'), getHRVHistory(getMetricHistory).entries),
-    [getMetricHistory]
-  );
+  const score = getMetricHistory('recovery_status').at(-1)?.value ?? null;
   const level = score === null ? null : getRecoveryLevel(score);
   const statusByLevel = {
     wellRecovered: 'optimal',

@@ -1,7 +1,9 @@
+import { getAllMetricEntries } from '@/app/context/storage/metrics/metricStorage';
 import { MetricEntry } from '@/app/context/storage/metrics/metricTypes';
 import { getUserProfile } from '@/app/context/storage/userProfile/userProfileStore';
 import { ClockTime } from '@/types/ClockTime';
 
+import { buildSyncedRecoveryMetrics } from './recoveryMetrics';
 import { BloodPressureReading, WearableAdapter } from './types';
 
 export const WEARABLE_SYNC_INTERVAL_MS = 5 * 60 * 1000;
@@ -90,7 +92,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
     end: new Date().toISOString(),
   };
 
-  const [sleep, vo2Max, activity, hrvs, restingHeartRates, bloodPressure, userProfile] = await Promise.all([
+  const [sleep, vo2Max, activity, hrvs, restingHeartRates, bloodPressure, userProfile, savedMetrics] = await Promise.all([
     adapter.getSleep(range),
     adapter.getVO2Max(range),
     adapter.getDailyActivity(range),
@@ -113,6 +115,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
       return [];
     }),
     getUserProfile(),
+    getAllMetricEntries(),
   ]);
 
   console.log(
@@ -319,6 +322,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
     ...bloodPressureEntries,
   ];
 
+  entries.push(...buildSyncedRecoveryMetrics(savedMetrics, entries));
   upsertMetricEntries(entries);
 
   return {

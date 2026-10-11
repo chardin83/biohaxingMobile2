@@ -22,6 +22,7 @@ export type MetricUnit =
   | 'lb'
   | 'cm'
   | 'in'
+  | 'score_0_100'
   | 'score_0_10'
   | 'count'
   | 'min'
@@ -272,6 +273,17 @@ export const metrics = {
   },
 
   // ---------------- RECOVERY ----------------
+
+  recovery_status: {
+    id: 'recovery_status',
+    emoji: '💚',
+    nameKey: 'recovery_status.name',
+    descriptionKey: 'recovery_status.description',
+    canonicalUnit: 'score_0_100',
+    source: 'wearable',
+    suggestedFrequency: 'daily',
+    units: [{ unit: 'score_0_100', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
+  },
 
   resting_hr: {
     id: 'resting_hr',
