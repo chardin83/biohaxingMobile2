@@ -45,12 +45,12 @@
     }
   },
   "layout": {
+    "more": "Mer",
     "dashboard": "Dashboard",
     "journal": "Dagbok",
     "plan": "Plan",
-    "other": "Övrigt",
-    "settings": "Inställningar",
-    "areas": "Områden"
+    "coach": "Coach",
+    "search": "Sök"
   },
   "languageSelector": {
     "title": "Välj språk",
@@ -65,6 +65,7 @@
     "dark": "Mörkt"
   },
   "settings": {
+    "myMetrics": "Mina mätvärden",
     "subscription": "Abonnemang",
     "premiumDescription": "Upptäck AI-coach, AI-planer och fotoanalys",
     "preferences": "Utseende",
@@ -964,7 +965,6 @@
     "purchaseUnavailable": "Premiumköp är inte tillgängligt ännu."
   },
   "chat": {
-    "tabTitle": "Coach",
     "weeklyQuestions": "Veckans frågor",
     "questionsRemaining": "{{remaining}} av {{total}} kvar",
     "questionsReset": "Frågorna fylls på varje måndag.",

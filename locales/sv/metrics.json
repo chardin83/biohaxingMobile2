@@ -1,4 +1,6 @@
 {
+  "availability": {"noData": "Inga registrerade värden"},
+  "groups": {"cardio": "Hjärta och kärl", "bloodSugar": "Blodsocker", "nutrients": "Vitaminer och mineraler", "hormones": "Hormoner", "recovery": "Nervsystem och återhämtning", "sleep": "Sömn", "body": "Kroppsmått", "digestion": "Matsmältning", "activity": "Träning och aktivitet", "energy": "Energi", "mind": "Stress och fokus"},
   "recovery_status": { "name": "Återhämtningsstatus", "description": "Återhämtningspoäng beräknad vid synk från vilopuls, sömn och HRV jämfört med din personliga baslinje." },
     "units": {
         "miu_l": "mIU/L",
@@ -98,9 +100,9 @@
         "description": "Hjärtfrekvens i vila – indikator på kondition och återhämtning."
     },
     "vo2_max": {
-        "name": "VO₂ max (maximal syreupptagningsförmåga)",
+        "name": "VO₂ max",
         "shortName": "VO₂ max",
-        "description": "En uppskattning av kroppens aeroba kapacitet och syreanvändning under träning."
+        "description": "Maximal syreupptagningsförmåga – en uppskattning av kroppens aeroba kapacitet och syreanvändning under träning."
     },
     "hrv_rmssd": {
         "name": "HRV (hjärtfrekvensvariabilitet), RMSSD",
@@ -111,17 +113,6 @@
         "name": "HRV (hjärtfrekvensvariabilitet), SDNN",
         "shortName": "HRV SDNN",
         "description": "HRV (SDNN), ms."
-    },
-    "hrv": {
-        "dailyMeanName": "Dagens medel-HRV ({{format}})",
-        "name": "HRV (hjärtfrekvensvariation)",
-        "shortName": "HRV",
-        "description": "Mått på nervsystemets balans och kroppens återhämtning.",
-        "trendTitle": "HRV-trend",
-        "trendSubtitle": "Senaste {{count}} registreringarna",
-        "latestLabel": "Senast",
-        "lowLabel": "Lägst",
-        "highLabel": "Högst"
     },
     "trendChart": {
         "compareMetrics": "Jämför mätvärden",

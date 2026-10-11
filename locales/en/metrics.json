@@ -1,4 +1,6 @@
 {
+  "availability": {"noData": "No registered values"},
+  "groups": {"cardio": "Heart and circulation", "bloodSugar": "Blood sugar", "nutrients": "Vitamins and minerals", "hormones": "Hormones", "recovery": "Nervous system and recovery", "sleep": "Sleep", "body": "Body measurements", "digestion": "Digestion", "activity": "Training and activity", "energy": "Energy", "mind": "Stress and focus"},
   "recovery_status": { "name": "Recovery status", "description": "Recovery score calculated during sync from resting heart rate, sleep and HRV compared with your personal baseline." },
     "common": {
         "low": "Low",
@@ -105,9 +107,9 @@
         "description": "Heart rate at rest — an indicator of fitness and recovery."
     },
     "vo2_max": {
-        "name": "VO₂ max (maximal oxygen uptake)",
+        "name": "VO₂ max",
         "shortName": "VO₂ max",
-        "description": "An estimate of your body's aerobic capacity and oxygen utilization during exercise."
+        "description": "Maximal oxygen uptake — an estimate of your body's aerobic capacity and oxygen utilization during exercise."
     },
     "hrv_rmssd": {
         "name": "HRV (heart rate variability), RMSSD",
@@ -118,17 +120,6 @@
         "name": "HRV (heart rate variability), SDNN",
         "shortName": "HRV SDNN",
         "description": "HRV (SDNN), ms."
-    },
-    "hrv": {
-        "dailyMeanName": "Daily average HRV ({{format}})",
-        "name": "HRV (heart rate variability)",
-        "shortName": "HRV",
-        "description": "Measure of nervous system balance and recovery capacity.",
-        "trendTitle": "HRV trend",
-        "trendSubtitle": "Last {{count}} registrations",
-        "latestLabel": "Latest",
-        "lowLabel": "Low",
-        "highLabel": "High"
     },
     "trendChart": {
         "compareMetrics": "Compare metrics",

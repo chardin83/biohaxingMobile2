@@ -45,12 +45,12 @@
     }
   },
   "layout": {
+    "more": "More",
     "dashboard": "Dashboard",
     "journal": "Journal",
     "plan": "Plan",
-    "other": "Other",
-    "settings": "Settings",
-    "areas": "Areas"
+    "coach": "Coach",
+    "search": "Search"
   },
   "languageSelector": {
     "title": "Language",
@@ -65,6 +65,7 @@
     "dark": "Dark"
   },
   "settings": {
+    "myMetrics": "My metrics",
     "subscription": "Subscription",
     "premiumDescription": "Discover AI coaching, AI plans and photo analysis",
     "preferences": "Preferences",
@@ -964,7 +965,6 @@
     "purchaseUnavailable": "Premium purchases are not available yet."
   },
   "chat": {
-    "tabTitle": "Coach",
     "weeklyQuestions": "This week’s questions",
     "questionsRemaining": "{{remaining}} of {{total}} remaining",
     "questionsReset": "Questions are replenished every Monday.",

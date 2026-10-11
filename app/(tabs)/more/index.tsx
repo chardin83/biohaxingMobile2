@@ -63,7 +63,7 @@ export default function SettingsPage() {
   return (
     <Container background="default">
       <View style={styles.headerRow}>
-        <ThemedText type="title2">{t('layout.settings')}</ThemedText>
+        <ThemedText type="title2">{t('layout.more')}</ThemedText>
       </View>
 
       <ThemedText type="label" style={styles.title} uppercase>
@@ -119,11 +119,17 @@ export default function SettingsPage() {
         style={styles.cardSpacing}
         rows={[
           {
+            key: 'metrics',
+            title: t('settings.myMetrics'),
+            iconName: 'chart',
+            onPress: () => router.push('/(stack)/metrics'),
+          },
+          {
             key: 'link',
             title: t('settings.myMultivitamins'),
             subtitle: t('settings.myMultivitaminsSubtitle'),
             iconName: 'pill',
-            onPress: () => router.push('/(stack)/settings/multivitamins'),
+            onPress: () => router.push('/(stack)/supplements/multivitamins'),
           },
         ]}
       />

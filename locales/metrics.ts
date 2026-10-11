@@ -1,3 +1,5 @@
+import type { IconSymbolName } from '@/components/ui/icon-symbol-map';
+
 // measurements.ts
 
 export type MetricSystem = 'EU' | 'US' | 'all';
@@ -33,8 +35,13 @@ export type MetricUnit =
 
 export type MetricSource = 'lab' | 'home' | 'wearable' | 'questionnaire';
 
+export const METRIC_GROUPS = ['cardio', 'bloodSugar', 'nutrients', 'hormones', 'recovery', 'sleep', 'body', 'digestion', 'activity', 'energy', 'mind'] as const;
+export type MetricGroup = (typeof METRIC_GROUPS)[number];
+
 export type MetricDefinition = {
   id: string;
+  group: MetricGroup;
+  iconName: IconSymbolName;
   emoji: string; // ✅ NYTT
   nameKey: string;
   descriptionKey?: string;
@@ -57,6 +64,8 @@ export const metrics = {
 
   ldl: {
     id: 'ldl',
+    group: 'cardio',
+    iconName: 'heart',
     emoji: '🫀',
     nameKey: 'ldl.name',
     descriptionKey: 'ldl.description',
@@ -71,6 +80,8 @@ export const metrics = {
 
   apob: {
     id: 'apob',
+    group: 'cardio',
+    iconName: 'heart',
     emoji: '🧬',
     nameKey: 'apob.name',
     descriptionKey: 'apob.description',
@@ -85,6 +96,8 @@ export const metrics = {
 
   triglycerides: {
     id: 'triglycerides',
+    group: 'cardio',
+    iconName: 'heart',
     emoji: '🩸',
     nameKey: 'triglycerides.name',
     descriptionKey: 'triglycerides.description',
@@ -99,6 +112,8 @@ export const metrics = {
 
   hdl: {
     id: 'hdl',
+    group: 'cardio',
+    iconName: 'heart',
     emoji: '💙',
     nameKey: 'hdl.name',
     descriptionKey: 'hdl.description',
@@ -113,6 +128,8 @@ export const metrics = {
 
   blood_lactate: {
     id: 'blood_lactate',
+    group: 'activity',
+    iconName: 'bloodDrop',
     emoji: '🩸',
     nameKey: 'blood_lactate.name',
     descriptionKey: 'blood_lactate.description',
@@ -134,6 +151,8 @@ export const metrics = {
 
   systolic_bp: {
     id: 'systolic_bp',
+    group: 'cardio',
+    iconName: 'bloodPressure',
     emoji: '📈',
     nameKey: 'systolic_bp.name',
     descriptionKey: 'systolic_bp.description',
@@ -145,6 +164,8 @@ export const metrics = {
 
   diastolic_bp: {
     id: 'diastolic_bp',
+    group: 'cardio',
+    iconName: 'bloodPressure',
     emoji: '📉',
     nameKey: 'diastolic_bp.name',
     descriptionKey: 'diastolic_bp.description',
@@ -158,6 +179,8 @@ export const metrics = {
 
   fasting_glucose: {
     id: 'fasting_glucose',
+    group: 'bloodSugar',
+    iconName: 'bloodDrop',
     emoji: '🍬',
     nameKey: 'fasting_glucose.name',
     descriptionKey: 'fasting_glucose.description',
@@ -172,6 +195,8 @@ export const metrics = {
 
   hba1c: {
     id: 'hba1c',
+    group: 'bloodSugar',
+    iconName: 'bloodDrop',
     emoji: '📊',
     nameKey: 'hba1c.name',
     descriptionKey: 'hba1c.description',
@@ -186,6 +211,8 @@ export const metrics = {
 
   fasting_insulin: {
     id: 'fasting_insulin',
+    group: 'bloodSugar',
+    iconName: 'bloodDrop',
     emoji: '🧪',
     nameKey: 'fasting_insulin.name',
     descriptionKey: 'fasting_insulin.description',
@@ -202,6 +229,8 @@ export const metrics = {
 
   vitd_25oh: {
     id: 'vitd_25oh',
+    group: 'nutrients',
+    iconName: 'vitamin',
     emoji: '☀️',
     nameKey: 'vitd_25oh.name',
     descriptionKey: 'vitd_25oh.description',
@@ -216,6 +245,8 @@ export const metrics = {
 
   calcium: {
     id: 'calcium',
+    group: 'nutrients',
+    iconName: 'mineral',
     emoji: '🦴',
     nameKey: 'calcium.name',
     descriptionKey: 'calcium.description',
@@ -230,6 +261,8 @@ export const metrics = {
 
   pth: {
     id: 'pth',
+    group: 'hormones',
+    iconName: 'hormones',
     emoji: '🧠',
     nameKey: 'pth.name',
     descriptionKey: 'pth.description',
@@ -246,6 +279,8 @@ export const metrics = {
 
   tsh: {
     id: 'tsh',
+    group: 'hormones',
+    iconName: 'hormones',
     emoji: '🦋',
     nameKey: 'tsh.name',
     descriptionKey: 'tsh.description',
@@ -260,6 +295,8 @@ export const metrics = {
 
   free_t4: {
     id: 'free_t4',
+    group: 'hormones',
+    iconName: 'hormones',
     emoji: '⚡',
     nameKey: 'free_t4.name',
     descriptionKey: 'free_t4.description',
@@ -276,6 +313,8 @@ export const metrics = {
 
   recovery_status: {
     id: 'recovery_status',
+    group: 'recovery',
+    iconName: 'lotus',
     emoji: '💚',
     nameKey: 'recovery_status.name',
     descriptionKey: 'recovery_status.description',
@@ -287,6 +326,8 @@ export const metrics = {
 
   resting_hr: {
     id: 'resting_hr',
+    group: 'cardio',
+    iconName: 'heartPulse',
     emoji: '❤️',
     nameKey: 'resting_hr.name',
     descriptionKey: 'resting_hr.description',
@@ -296,20 +337,10 @@ export const metrics = {
     units: [{ unit: 'bpm', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
-  // Retained for historical records. New HRV measurements use the format-specific IDs below.
-  hrv: {
-    id: 'hrv',
-    emoji: '📈',
-    nameKey: 'hrv.name',
-    descriptionKey: 'hrv.description',
-    canonicalUnit: 'ms',
-    source: 'wearable',
-    suggestedFrequency: 'daily',
-    units: [{ unit: 'ms', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
-  },
-
   hrv_rmssd: {
     id: 'hrv_rmssd',
+    group: 'recovery',
+    iconName: 'heartPulse',
     emoji: '📈',
     nameKey: 'hrv_rmssd.name',
     descriptionKey: 'hrv_rmssd.description',
@@ -321,6 +352,8 @@ export const metrics = {
 
   hrv_sdnn: {
     id: 'hrv_sdnn',
+    group: 'recovery',
+    iconName: 'heartPulse',
     emoji: '📈',
     nameKey: 'hrv_sdnn.name',
     descriptionKey: 'hrv_sdnn.description',
@@ -332,6 +365,8 @@ export const metrics = {
 
   intense_exercise_before_sleep: {
     id: 'intense_exercise_before_sleep',
+    group: 'sleep',
+    iconName: 'moon',
     emoji: '🏋️‍♂️',
     nameKey: 'intense_exercise_before_sleep.name',
     descriptionKey: 'intense_exercise_before_sleep.description',
@@ -345,6 +380,8 @@ export const metrics = {
 
   sleep_duration: {
     id: 'sleep_duration',
+    group: 'sleep',
+    iconName: 'moon',
     emoji: '😴',
     nameKey: 'sleep_duration.name',
     descriptionKey: 'sleep_duration.description',
@@ -356,6 +393,8 @@ export const metrics = {
 
   sleep_bedtime: {
     id: 'sleep_bedtime',
+    group: 'sleep',
+    iconName: 'clock',
     emoji: '🛏️',
     nameKey: 'sleep_bedtime.name',
     descriptionKey: 'sleep_bedtime.description',
@@ -367,6 +406,8 @@ export const metrics = {
 
   deep_sleep: {
     id: 'deep_sleep',
+    group: 'sleep',
+    iconName: 'moon',
     emoji: '💤',
     nameKey: 'deep_sleep.name',
     descriptionKey: 'deep_sleep.description',
@@ -378,6 +419,8 @@ export const metrics = {
 
   rem_sleep: {
     id: 'rem_sleep',
+    group: 'sleep',
+    iconName: 'moon',
     emoji: '💭',
     nameKey: 'rem_sleep.name',
     descriptionKey: 'rem_sleep.description',
@@ -389,6 +432,8 @@ export const metrics = {
 
   sleep_wake: {
     id: 'sleep_wake',
+    group: 'sleep',
+    iconName: 'sunny',
     emoji: '⏰',
     nameKey: 'sleep_wake.name',
     descriptionKey: 'sleep_wake.description',
@@ -400,6 +445,8 @@ export const metrics = {
 
   sleep_quality: {
     id: 'sleep_quality',
+    group: 'sleep',
+    iconName: 'moon',
     emoji: '🌙',
     nameKey: 'sleep_quality.name',
     descriptionKey: 'sleep_quality.description',
@@ -411,6 +458,8 @@ export const metrics = {
 
   sleep_latency: {
     id: 'sleep_latency',
+    group: 'sleep',
+    iconName: 'moon',
     emoji: '⏳',
     nameKey: 'sleep_latency.name',
     descriptionKey: 'sleep_latency.description',
@@ -424,6 +473,8 @@ export const metrics = {
 
   weight: {
     id: 'weight',
+    group: 'body',
+    iconName: 'weight',
     emoji: '⚖️',
     nameKey: 'weight.name',
     descriptionKey: 'weight.description',
@@ -438,6 +489,8 @@ export const metrics = {
 
   waist: {
     id: 'waist',
+    group: 'body',
+    iconName: 'height',
     emoji: '📏',
     nameKey: 'waist.name',
     descriptionKey: 'waist.description',
@@ -454,6 +507,8 @@ export const metrics = {
 
   bss: {
     id: 'bss',
+    group: 'digestion',
+    iconName: 'digestion',
     emoji: '💩',
     nameKey: 'bss.name',
     descriptionKey: 'bss.description',
@@ -465,6 +520,8 @@ export const metrics = {
 
   bloating: {
     id: 'bloating',
+    group: 'digestion',
+    iconName: 'digestion',
     emoji: '🎈',
     nameKey: 'bloating.name',
     descriptionKey: 'bloating.description',
@@ -475,6 +532,8 @@ export const metrics = {
   },
   active_minutes: {
     id: 'active_minutes',
+    group: 'activity',
+    iconName: 'trainingRunning',
     emoji: '🏃‍♂️',
     nameKey: 'activeMinutes.name',
     descriptionKey: 'activeMinutes.description',
@@ -485,6 +544,8 @@ export const metrics = {
   },
   steps: {
     id: 'steps',
+    group: 'activity',
+    iconName: 'trainingWalking',
     emoji: '👣',
     nameKey: 'steps.name',
     descriptionKey: 'steps.description',
@@ -495,6 +556,8 @@ export const metrics = {
   },
   intensity_minutes: {
     id: 'intensity_minutes',
+    group: 'activity',
+    iconName: 'trainingRunning',
     emoji: '🔥',
     nameKey: 'intensityMinutes.name',
     descriptionKey: 'intensityMinutes.description',
@@ -508,6 +571,8 @@ export const metrics = {
 
   energy: {
     id: 'energy',
+    group: 'energy',
+    iconName: 'mitochondrialHealth',
     emoji: '⚡',
     nameKey: 'energy.name',
     descriptionKey: 'energy.description',
@@ -519,6 +584,8 @@ export const metrics = {
 
   stress: {
     id: 'stress',
+    group: 'mind',
+    iconName: 'brain',
     emoji: '😰',
     nameKey: 'stress.name',
     descriptionKey: 'stress.description',
@@ -530,6 +597,8 @@ export const metrics = {
 
   focus: {
     id: 'focus',
+    group: 'mind',
+    iconName: 'brain',
     emoji: '🎯',
     nameKey: 'focus.name',
     descriptionKey: 'focus.description',
@@ -540,6 +609,8 @@ export const metrics = {
   },
   vo2_max: {
     id: 'vo2_max',
+    group: 'cardio',
+    iconName: 'heart',
     emoji: '🫁',
     nameKey: 'vo2_max.name',
     descriptionKey: 'vo2_max.description',

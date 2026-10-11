@@ -11,6 +11,13 @@ type IconDefinition = {
 };
 
 export const ICON_SYMBOLS = {
+  'bloodDrop': { sf: 'drop.fill', material: 'water-drop' },
+  'bloodPressure': { sf: 'gauge.medium', material: 'speed', materialCommunity: 'gauge' },
+  'hormones': { sf: 'atom', material: 'science', materialCommunity: 'molecule' },
+  'heartPulse': { sf: 'waveform.path.ecg', material: 'monitor-heart', materialCommunity: 'heart-pulse' },
+  'digestion': { sf: 'stomach', material: 'restaurant', materialCommunity: 'stomach', useMaterialCommunityOnIOS: true },
+  'brain': { sf: 'brain', material: 'psychology', materialCommunity: 'brain' },
+
   'crown': {
     sf: 'crown.fill',
     material: 'workspace-premium',

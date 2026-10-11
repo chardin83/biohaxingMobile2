@@ -20,7 +20,7 @@ const JournalTabIcon = ({ color }: TabIconProps) => <IconSymbol size={28} name="
 const PlanTabIcon = ({ color }: TabIconProps) => <IconSymbol size={28} name="checklist" color={color} />;
 const ChatTabIcon = ({ color }: TabIconProps) => <IconSymbol size={28} name="chat" color={color} />;
 const SearchTabIcon = ({ color }: TabIconProps) => <IconSymbol size={28} name="search" color={color} />;
-const SettingsTabIcon = ({ color }: TabIconProps) => <IconSymbol size={28} name="settings" color={color} />;
+const SettingsTabIcon = ({ color }: TabIconProps) => <IconSymbol size={28} name="ellipsis" color={color} />;
 
 export default function TabLayout() {
   const { t } = useTranslation();
@@ -72,7 +72,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="plan/index"
         options={{
-          title: 'Plan',
+          title: t('layout.plan'),
           tabBarIcon: PlanTabIcon,
         }}
       />
@@ -80,21 +80,21 @@ export default function TabLayout() {
       <Tabs.Screen
         name="chat/index"
         options={{
-          title: t('common:chat.tabTitle'),
+          title: t('layout.coach'),
           tabBarIcon: ChatTabIcon,
         }}
       />
       <Tabs.Screen
         name="search/index"
         options={{
-          title: t('layout.search', { defaultValue: 'Sök' }),
+          title: t('layout.search'),
           tabBarIcon: SearchTabIcon,
         }}
       />
       <Tabs.Screen
         name="settings/index"
         options={{
-          title: t('layout.settings', { defaultValue: 'Settings' }),
+          title: t('layout.more'),
           tabBarIcon: SettingsTabIcon,
         }}
       />
