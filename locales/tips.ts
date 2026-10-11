@@ -1,3 +1,5 @@
+import type { Href } from 'expo-router';
+
 import { type IconSymbolName } from '@/components/ui/icon-symbol-map';
 import { AminoAcidType } from '@/constants/aminoAcids';
 import { FiberSubtype, FiberType } from '@/constants/fiber';
@@ -157,6 +159,20 @@ type TipBase = {
   preferredDayParts?: DayPart[]; // (när på dagen det passar)
   timeRule?: TimeOfDayRule; // (tidsrestriktioner)
   planCategory?: PlanCategory[]; // Markerar övergripande plan-kategori
+  goalLinks?: ReadonlyArray<{
+    id: string;
+    titleKey: string;
+    icon: IconSymbolName;
+    href: Href;
+  }>;
+  goalConfirmation?: {
+    trackingKey: HabitTarget['trackingKey'];
+    seconds: number;
+    pendingTitleKey: string;
+    pendingDescriptionKey: string;
+    completedTitleKey: string;
+    completedDescriptionKey: string;
+  };
   targetIconName?: TipTargetIconName; // Valfri ikon för target-rader i UI
   nutritionFoods?: TipNutritionFood[]; // Rekommenderade livsmedel för nutritionstips
   bodyParts?: string[]; // Rekommenderade delar av kroppen för detta tip
@@ -1207,6 +1223,23 @@ const rawTips: Tip[] = [
     targetPeriod: 'daily',
     targetIconName: 'target',
     habitTargets: [{ trackingKey: 'hrv_recovery_review', amount: 1, unit: 'count', inputMode: 'daily-check' }],
+    goalLinks: [{
+      id: 'recovery-status',
+      titleKey: 'hrv_recovery_monitoring.goalReview.link',
+      icon: 'chart',
+      href: {
+        pathname: '/(stack)/plan/[tipId]/metric/[metricId]',
+        params: { tipId: 'hrv_recovery_monitoring', metricId: 'recovery_status' },
+      },
+    }],
+    goalConfirmation: {
+      trackingKey: 'hrv_recovery_review',
+      seconds: 5,
+      pendingTitleKey: 'hrv_recovery_monitoring.goalReview.pendingTitle',
+      pendingDescriptionKey: 'hrv_recovery_monitoring.goalReview.pendingDescription',
+      completedTitleKey: 'hrv_recovery_monitoring.goalReview.completedTitle',
+      completedDescriptionKey: 'hrv_recovery_monitoring.goalReview.completedDescription',
+    },
     bodyParts: ['heart', 'nervousSystem'],
   },
   {

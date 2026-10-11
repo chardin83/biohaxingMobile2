@@ -131,6 +131,8 @@
         "highLabel": "High"
     },
     "trendChart": {
+        "compareMetrics": "Compare metrics",
+        "noComparison": "No comparison",
         "selectSeries": "Select measurement type",
         "title": "{{metric}} over time",
         "subtitle": "Last {{count}} registrations",

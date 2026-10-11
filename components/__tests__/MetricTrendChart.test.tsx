@@ -84,3 +84,18 @@ describe('MetricTrendChart series selector', () => {
     expect(queryByLabelText('trendChart.selectSeries')).toBeNull();
   });
 });
+
+it('draws comparison data on the shared time axis with a separate right scale', async () => {
+  const screen = render(<MetricTrendChart data={options[0].data} metricName="Recovery" unit="/100" comparison={{
+    data: [{ date: yesterday, value: 1000 }, { date: today, value: 2000 }], metricName: 'Steps', unit: 'count', color: 'orange',
+  }} />);
+  const { View } = require('react-native');
+  await waitFor(() => expect(screen.UNSAFE_getAllByType(View).some(node => node.props.onLayout)).toBe(true));
+  const frame = screen.UNSAFE_getAllByType(View).find(node => node.props.onLayout)!;
+  fireEvent(frame, 'layout', { nativeEvent: { layout: { width: 260, height: 180, x: 0, y: 0 } } });
+  expect(screen.getByTestId('comparison-line').props.d).toMatch(/^M .* L /);
+  const rightAxis = screen.getByTestId('comparison-y-axis');
+  expect(rightAxis).toBeTruthy();
+  expect(screen.getAllByText('2000').length).toBeGreaterThan(0);
+  expect(screen.getByText('Steps (count)')).toBeTruthy();
+});

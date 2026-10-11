@@ -236,6 +236,24 @@ export default function OtherLoggerTab({
   };
 
   const renderManualButtons = (item: OtherTipProgress) => {
+    const goalLinks = tips.find(tip => tip.id === item.tipId)?.goalLinks;
+    if (goalLinks?.length) {
+      return (
+        <View style={styles.goalLinks}>
+          {goalLinks.map(link => (
+            <AppButton
+              key={link.id}
+              title={t(`tips:${link.titleKey}`)}
+              icon={link.icon}
+              rightIcon="chevron.right"
+              style={styles.completeButton}
+              onPress={() => router.push(link.href)}
+            />
+          ))}
+        </View>
+      );
+    }
+
     if (!item.canMarkManually) {
       return null;
     }
@@ -488,6 +506,7 @@ export default function OtherLoggerTab({
 }
 
 const styles = StyleSheet.create({
+  goalLinks: { gap: 8 },
   container: {
     gap: 10,
   },

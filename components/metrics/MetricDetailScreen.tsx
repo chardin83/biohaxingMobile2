@@ -4,9 +4,11 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 import { Colors } from '@/app/theme/Colors';
 import { ThemedText } from '@/components/ThemedText';
+import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
 import { useNutritionPlanProgressHistory } from '@/hooks/nutrition/useNutritionPlanProgressHistory';
 import { type MetricId, metrics } from '@/locales/metrics';
@@ -16,6 +18,7 @@ import { toDateKey } from '@/utils/dateUtils';
 import { MetricValuesBottomSheet } from '../sections/metrics/MetricValuesBottomSheet';
 import { useMetricConfig } from './metricChartConfig';
 import { MetricTrendChart } from './MetricTrendChart';
+import TipGoalConfirmation from './TipGoalConfirmation';
 
 type TimeWindowOption = 7 | 30 | 90;
 
@@ -47,6 +50,8 @@ export default function MetricDetailScreen() {
     metricId?: string | string[];
   }>();
 
+  const [comparisonMetricId, setComparisonMetricId] = React.useState<MetricId | ''>('');
+  const [comparisonDropdownOpen, setComparisonDropdownOpen] = React.useState(false);
   const [selectedDays, setSelectedDays] = React.useState<TimeWindowOption>(30);
 
   const resolvedTipId = React.useMemo(() => {
@@ -128,6 +133,8 @@ export default function MetricDetailScreen() {
     metricId: resolvedMetricId,
   });
 
+  const comparisonConfig = useMetricConfig({ metricId: comparisonMetricId || null });
+
   const metricValuesBottomSheetRef = React.useRef<BottomSheet>(null);
 
   const openMetricValuesTable = React.useCallback(() => {
@@ -153,6 +160,7 @@ export default function MetricDetailScreen() {
   return (
     <Container background="default" gradientLocations={themeGradients.sunrise.locations2 as any} showBackButton onBackPress={() => router.back()}>
       <View style={styles.content}>
+        {tip?.goalConfirmation && <TipGoalConfirmation key={tip.id} tip={tip} />}
         <ThemedText
           type="title"
           style={{
@@ -197,7 +205,36 @@ export default function MetricDetailScreen() {
           })}
         </View>
 
+        <Card title={t('metrics:trendChart.compareMetrics')}>
+          <DropDownPicker<MetricId | ''>
+            open={comparisonDropdownOpen}
+            setOpen={setComparisonDropdownOpen}
+            value={comparisonMetricId}
+            setValue={setComparisonMetricId}
+            items={[
+              { label: t('metrics:trendChart.noComparison'), value: '' },
+              ...(Object.keys(metrics) as MetricId[]).map(id => ({ label: t(`metrics:${metrics[id].nameKey}`, { defaultValue: id }), value: id })),
+            ]}
+            listMode="MODAL"
+            searchable
+            searchPlaceholder={t('metrics:trendChart.compareMetrics')}
+            style={{ backgroundColor: colors.cardBackground, borderColor: colors.borderLight }}
+            textStyle={{ color: colors.text }}
+            modalContentContainerStyle={{ backgroundColor: colors.background }}
+            searchContainerStyle={{ borderBottomColor: colors.borderLight }}
+            searchTextInputStyle={{ color: colors.text, borderColor: colors.borderLight }}
+          />
+        </Card>
+
         <MetricTrendChart
+          comparison={comparisonConfig && comparisonMetricId ? {
+            data: comparisonConfig.data,
+            metricName: comparisonConfig.metricName,
+            unit: comparisonConfig.unit ?? metrics[comparisonMetricId].canonicalUnit,
+            color: colors.warmColor,
+            valueFormatter: comparisonConfig.valueFormatter,
+            yAxisBounds: comparisonConfig.yAxisBounds,
+          } : undefined}
           data={selectedConfig.data}
           metricName={selectedConfig.metricName}
           unit={selectedConfig.unit || undefined}

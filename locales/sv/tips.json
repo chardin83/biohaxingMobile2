@@ -522,6 +522,7 @@
     }
   },
   "hrv_recovery_monitoring": {
+    "goalReview": {"link": "Återhämtningsstatus", "completedTitle": "Dagens mål uppfyllt", "completedDescription": "Du har följt upp din återhämtningsstatus idag.", "pendingTitle": "Följ upp din återhämtning", "pendingDescription": "Dagens mål registreras efter 5 sekunder."},
     "habitTargets": { "description": "Gå igenom dagens HRV och återhämtning en gång." },
     "title": "HRV och återhämtningsovervakning",
     "description": "Hjärtfrekvensvariabilitet (HRV) är ett nyckelmått för att spåra nervsystemets balans och återhämtningstatus. Övervakning av HRV hjälper till att optimera träningsintensitet, förhindra överträning och säkerställa tillräcklig återhämtning mellan träningspass.",

@@ -38,7 +38,17 @@ type AxisEntry = {
   readonly value: number;
 };
 
+export type MetricComparisonSeries = {
+  readonly data: MetricTrendPoint[];
+  readonly metricName: string;
+  readonly unit?: string;
+  readonly color: string;
+  readonly valueFormatter?: (value: number) => string;
+  readonly yAxisBounds?: { min: number; max: number };
+};
+
 interface MetricTrendChartProps {
+  readonly comparison?: MetricComparisonSeries;
   readonly data: MetricTrendPoint[];
   readonly metricName: string;
   readonly unit?: string;
@@ -162,6 +172,7 @@ function MetricTrendChartContent({
   yAxisBounds,
   eventSeries,
   seriesSelector,
+  comparison,
 }: Readonly<MetricTrendChartProps>) {
   const { colors } = useTheme();
   const { t } = useTranslation('metrics');
@@ -346,8 +357,17 @@ function MetricTrendChartContent({
     return [getDateString(windowStartTs), getDateString(middleTs), getDateString(todayTs)];
   }, [daysToShow]);
 
+  const comparisonData = React.useMemo(() => {
+    const end = toDateTimestamp(getTodayUtcDateString());
+    const start = end - (daysToShow - 1) * 86400000;
+    return (comparison?.data ?? []).filter(point => {
+      const date = toDateTimestamp(point.date);
+      return Number.isFinite(point.value) && date >= start && date <= end;
+    }).sort((a, b) => a.date.localeCompare(b.date));
+  }, [comparison?.data, daysToShow]);
+
   const chartGeometry = React.useMemo(() => {
-    if (chartWidth === 0 || chartData.length === 0) {
+    if (chartWidth === 0 || (chartData.length === 0 && comparisonData.length === 0)) {
       return null;
     }
 
@@ -356,8 +376,8 @@ function MetricTrendChartContent({
     const dataValues = chartData.map(entry => entry.value);
     const referenceValues = (referenceLines ?? []).map(line => line.value);
     const allValues = [...dataValues, ...referenceValues];
-    const rawMin = yAxisBounds?.min ?? Math.min(...allValues);
-    const rawMax = yAxisBounds?.max ?? Math.max(...allValues);
+    const rawMin = yAxisBounds?.min ?? Math.min(...(allValues.length ? allValues : [0, 1]));
+    const rawMax = yAxisBounds?.max ?? Math.max(...(allValues.length ? allValues : [0, 1]));
 
     const baseRange = Math.max(rawMax - rawMin, 1);
     const paddedMin = yAxisBounds?.min ?? Math.max(0, rawMin - baseRange * 0.2);
@@ -402,6 +422,16 @@ function MetricTrendChartContent({
       return { x, y };
     });
 
+    const comparisonValues = comparisonData.map(point => point.value);
+    const comparisonMin = comparison?.yAxisBounds?.min ?? Math.min(...comparisonValues);
+    const comparisonMax = comparison?.yAxisBounds?.max ?? Math.max(...comparisonValues);
+    const comparisonRange = Math.max(comparisonMax - comparisonMin, 1);
+    const comparisonBottom = comparison?.yAxisBounds?.min ?? comparisonMin - comparisonRange * 0.2;
+    const comparisonTop = comparison?.yAxisBounds?.max ?? comparisonMax + comparisonRange * 0.2;
+    const comparisonY = (value: number) => CHART_PADDING.top + (comparisonTop - value) / Math.max(comparisonTop - comparisonBottom, 1) * innerHeight;
+    const comparisonPoints = comparisonData.map(point => ({ x: getXForDate(point.date), y: comparisonY(point.value) }));
+    const comparisonAxis = comparisonData.length ? [comparisonMax, (comparisonMax + comparisonMin) / 2, comparisonMin].map((value, index) => ({ id: index, value, y: comparisonY(value) })) : [];
+
     const eventSeriesPoints = (eventSeries ?? []).map(series => ({
       label: series.label,
       color: series.color,
@@ -423,6 +453,8 @@ function MetricTrendChartContent({
     }));
 
     return {
+      comparisonPoints,
+      comparisonAxis,
       axisEntries,
       points,
       chartBottom: CHART_PADDING.top + innerHeight,
@@ -431,7 +463,7 @@ function MetricTrendChartContent({
       eventSeriesPoints,
       xAxisPoints,
     };
-  }, [chartData, chartWidth, daysToShow, eventSeries, height, referenceLines, xAxisDates, yAxisBounds]);
+  }, [chartData, comparisonData, comparison?.yAxisBounds, chartWidth, daysToShow, eventSeries, height, referenceLines, xAxisDates, yAxisBounds]);
 
   const yAxisEntries = chartGeometry?.axisEntries ?? [];
   const yAxisLabelStyles = React.useMemo(
@@ -447,7 +479,7 @@ function MetricTrendChartContent({
     [chartGeometry?.gridLines]
   );
 
-  if (chartData.length < 2) {
+  if (chartData.length < 2 && comparisonData.length === 0) {
     const emptyGridLineRows = Array.from({ length: EMPTY_GRID_LINE_COUNT }, (_, index) => index);
     const emptyAxisLabels: EmptyChartLabel[] = [
       { id: 'start', left: CHART_PADDING.left, textAlign: 'left' },
@@ -637,6 +669,8 @@ function MetricTrendChartContent({
               })}
               <Path d={buildAreaPath(chartGeometry.points, chartGeometry.chartBottom)} fill="url(#hrvAreaGradient)" />
               <Path d={buildPath(chartGeometry.points)} fill="none" stroke={lineColor} strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} />
+              {comparison && <Path testID="comparison-line" d={buildPath(chartGeometry.comparisonPoints)} fill="none" stroke={comparison.color} strokeWidth={3} />}
+              {comparison && chartGeometry.comparisonPoints.map((point, index) => <Circle key={`comparison-${index}`} cx={point.x} cy={point.y} r={3} fill={comparison.color} />)}
               {chartGeometry.points.map((point, index) => {
                 const isLatestPoint = index === chartGeometry.points.length - 1;
                 return (
@@ -665,6 +699,16 @@ function MetricTrendChartContent({
             </Svg>
           )}
         </View>
+        {comparison && (
+          <View testID="comparison-y-axis" style={[styles.yAxisColumn, dynamicStyles.yAxisColumn]}>
+            <ThemedText type="caption" style={[styles.yAxisUnit, { color: comparison.color }]}>{comparison.unit}</ThemedText>
+            {chartGeometry?.comparisonAxis.map(axis => (
+              <ThemedText key={axis.id} type="caption" style={[styles.yAxisValue, { top: axis.y - Y_AXIS_LABEL_OFFSET, color: comparison.color }]}>
+                {comparison.valueFormatter ? comparison.valueFormatter(axis.value) : Number(axis.value.toFixed(1))}
+              </ThemedText>
+            ))}
+          </View>
+        )}
       </View>
 
       {!!chartGeometry && (
@@ -716,6 +760,10 @@ function MetricTrendChartContent({
           </ThemedText>
         </View>
 
+        {comparison && <View style={styles.legendItem}>
+          <View style={[styles.legendDot, { backgroundColor: comparison.color }]} />
+          <ThemedText type="caption">{comparison.metricName}{comparison.unit ? ` (${comparison.unit})` : ''}</ThemedText>
+        </View>}
         {eventSeries?.map((series, index) => (
           <View key={`${series.label}-${index}`} style={styles.legendItem}>
             <View

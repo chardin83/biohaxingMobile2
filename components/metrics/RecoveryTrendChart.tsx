@@ -49,8 +49,8 @@ export function RecoveryTrendChart() {
         icon="chart"
         rightIcon="chevron.right"
         onPress={() => router.push({
-          pathname: '/(stack)/plan/[tipId]/metric/[metricId]',
-          params: { tipId: 'hrv_recovery_monitoring', metricId: 'recovery_status' },
+          pathname: '/(stack)/metrics/[metricId]',
+          params: { metricId: 'recovery_status' },
         })}
       />
       <MetricSourcesBottomSheet

@@ -124,6 +124,8 @@
         "highLabel": "Högst"
     },
     "trendChart": {
+        "compareMetrics": "Jämför mätvärden",
+        "noComparison": "Ingen jämförelse",
         "selectSeries": "Välj mätningstyp",
         "title": "{{metric}} över tid",
         "subtitle": "Senaste {{count}} registreringarna",

@@ -622,6 +622,7 @@
     }
   },
   "hrv_recovery_monitoring": {
+    "goalReview": {"link": "Recovery status", "completedTitle": "Today’s goal completed", "completedDescription": "You have reviewed your recovery status today.", "pendingTitle": "Review your recovery", "pendingDescription": "Today’s goal is recorded after 5 seconds."},
     "habitTargets": { "description": "Review today’s HRV and recovery once." },
     "title": "HRV and recovery monitoring",
     "description": "Heart Rate Variability (HRV) is a key metric for tracking nervous system balance and recovery status. Monitoring HRV helps optimize training intensity, prevent overtraining, and ensure adequate recovery between workouts.",
