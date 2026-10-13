@@ -20,7 +20,7 @@ export type NutritionTipHistoryItem = {
 export type NutritionProgressHistory = Record<string, NutritionTipHistoryItem[]>;
 
 export const useNutritionPlanProgressHistory = (dateKeys: string[]): NutritionProgressHistory => {
-  const { plans, dailyNutritionTracking, weeklyNutritionTracking, dailyHabitTracking, dailyTrainingTracking, takenDates } = useStorage();
+  const { plans, userProfile, dailyNutritionTracking, weeklyNutritionTracking, dailyHabitTracking, dailyTrainingTracking, takenDates } = useStorage();
 
   return React.useMemo(() => {
     const result: NutritionProgressHistory = {};
@@ -35,7 +35,7 @@ export const useNutritionPlanProgressHistory = (dateKeys: string[]): NutritionPr
           return;
         }
 
-        const nutritionTargets = normalizeNutritionTargets(tip);
+        const nutritionTargets = normalizeNutritionTargets(tip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein);
 
         if (nutritionTargets.length === 0) {
           return;
@@ -75,5 +75,15 @@ export const useNutritionPlanProgressHistory = (dateKeys: string[]): NutritionPr
     });
 
     return result;
-  }, [dateKeys, plans?.nutrition, dailyNutritionTracking, weeklyNutritionTracking, dailyHabitTracking, dailyTrainingTracking, takenDates]);
+  }, [
+    dateKeys,
+    plans?.nutrition,
+    userProfile?.weightKg,
+    userProfile?.nutritionGoals?.protein,
+    dailyNutritionTracking,
+    weeklyNutritionTracking,
+    dailyHabitTracking,
+    dailyTrainingTracking,
+    takenDates,
+  ]);
 };

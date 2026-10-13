@@ -139,6 +139,10 @@ const resolveFoodActual = ({ target, summary }: { target: NutritionTargetDefinit
   }
 
   const trackingKey = target.trackingKey;
+  if (target.trackingKeys?.length) {
+    const rawValue = [...new Set(target.trackingKeys)].reduce((sum, key) => sum + resolveNutritionValueFromEntries(summary.entries, key), 0);
+    return convertFoodValueToTargetUnit(rawValue, target.unit);
+  }
 
   switch (trackingKey) {
     case 'fiber_total':

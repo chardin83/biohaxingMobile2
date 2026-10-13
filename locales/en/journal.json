@@ -64,7 +64,7 @@
     "confidenceMedium": "Medium confidence",
     "confidenceLow": "Low confidence",
     "confidenceUnknown": "Unknown confidence",
-        "fiberLabels": {
+    "fiberLabels": {
       "fiber_total": "Fiber total",
       "fiber_gel_forming": "Gel-forming fiber",
       "fiber_non_gel_forming": "Non-gel-forming fiber",
@@ -134,7 +134,9 @@
       "proline": "Proline",
       "tyrosine": "Tyrosine",
       "citrulline": "Citrulline",
-      "tmg": "Trimethylglycine (TMG)"
+      "tmg": "Trimethylglycine (TMG)",
+      "methionineCysteine": "Methionine + cysteine",
+      "phenylalanineTyrosine": "Phenylalanine + tyrosine"
     },
     "plantDiversityLabels": {
       "plant_diversity": "Plant diversity"
@@ -247,6 +249,9 @@
       "continue": "Continue",
       "usePhotoAnalysis": "Use photo analysis instead",
       "dontShowAgain": "Don't show again"
+    },
+    "macroLabels": {
+      "protein": "Total protein"
     }
   },
   "dayEdit": {

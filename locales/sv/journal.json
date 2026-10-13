@@ -134,7 +134,9 @@
       "proline": "Prolin",
       "tyrosine": "Tyrosin",
       "citrulline": "Citrullin",
-      "tmg": "Trimethylglycin (TMG)"
+      "tmg": "Trimethylglycin (TMG)",
+      "methionineCysteine": "Metionin + cystein",
+      "phenylalanineTyrosine": "Fenylalanin + tyrosin"
     },
     "plantDiversityLabels": {
       "plant_diversity": "Växtdiversitet"
@@ -247,6 +249,9 @@
       "continue": "Fortsätt",
       "usePhotoAnalysis": "Använd fotoanalys istället",
       "dontShowAgain": "Visa inte igen"
+    },
+    "macroLabels": {
+      "protein": "Totalprotein"
     }
   },
   "dayEdit": {

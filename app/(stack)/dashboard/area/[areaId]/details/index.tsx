@@ -48,7 +48,6 @@ export default function AreaDetailScreen() {
   const supplements = useSupplements();
   const { recordTipView, incrementTipChat, viewedTips, setTipVerdict, plans, setPlans, myLevel, nutritionXpClaims } = useStorage();
 
-
   const hasMainArea = areas.some(g => g.id === areaId);
   const findTip = (localTipId: string | undefined, searchAreaId: string) => {
     return localTipId ? tips.find(tipItem => tipItem.id === localTipId) : tips.find(tipItem => tipItem.areas.some(a => a.id === searchAreaId));
@@ -412,6 +411,15 @@ export default function AreaDetailScreen() {
         handleAddPlanEntry={handleAddTipPlanEntry}
         showSupplementDiscreetButton={showSupplementDiscreetButton}
       />
+
+      {tip?.veganInfo && (
+        <Notice
+          variant="success"
+          iconName="vegan"
+          title={t(`tips:${tip.veganInfo}.title`)}
+          message={t(`tips:${tip.veganInfo}.description`)}
+        />
+      )}
 
       <TargetsSection
         onDiscoverPremium={() => premiumSheetRef.current?.present()}

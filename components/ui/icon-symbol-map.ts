@@ -192,6 +192,10 @@ export const ICON_SYMBOLS = {
     sf: 'leaf',
     material: 'restaurant',
   },
+  'vegan': {
+    sf: 'leaf',
+    material: 'eco',
+  },
   'fat': {
     sf: 'drop',
     material: 'opacity',

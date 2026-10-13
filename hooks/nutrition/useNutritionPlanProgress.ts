@@ -14,7 +14,7 @@ type NutritionPlanTarget = NutritionTargetDefinition & {
 };
 
 export const useNutritionPlanProgress = (selectedDate: string): TipProgressItem[] => {
-  const { plans } = useStorage();
+  const { plans, userProfile } = useStorage();
 
   const { t } = useTranslation();
 
@@ -28,7 +28,7 @@ export const useNutritionPlanProgress = (selectedDate: string): TipProgressItem[
 
       const title = t(`tips:${tip.id}.title`);
 
-      return normalizeNutritionTargets(tip).map(target => ({
+      return normalizeNutritionTargets(tip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein).map(target => ({
         ...target,
 
         tipId: tip.id,
@@ -36,7 +36,7 @@ export const useNutritionPlanProgress = (selectedDate: string): TipProgressItem[
         title,
       }));
     });
-  }, [plans?.nutrition, t]);
+  }, [plans?.nutrition, userProfile?.weightKg, userProfile?.nutritionGoals?.protein, t]);
 
   const targetProgress = useTargetProgressList(targets, selectedDate);
 
@@ -49,7 +49,7 @@ export const useNutritionPlanProgress = (selectedDate: string): TipProgressItem[
       const targetTag = item.tag ?? item.trackingKey;
 
       const targetLabel = item.labelGroup
-        ? t(`journal:nutritionLogger.${item.labelGroup}.${targetTag}`, {
+        ? t(`journal:nutritionLogger.${item.labelGroup}.${item.labelKey ?? targetTag}`, {
             defaultValue: targetTag,
           })
         : targetTag;

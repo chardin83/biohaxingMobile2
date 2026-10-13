@@ -6,6 +6,7 @@ import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 
 import { TipProgressItem, TipTargetPeriod } from '@/app/context/storage/nutrition/nutritionTypes';
+import type { UserProfile } from '@/app/context/storage/userProfile/userProfileTypes';
 import { globalStyles } from '@/app/theme/globalStyles';
 import TipTarget from '@/components/TipTarget';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -13,6 +14,7 @@ import PremiumLink from '@/components/ui/PremiumLink';
 import type { Tip } from '@/locales/tips';
 import { formatMonthDay, toDateKey } from '@/utils/dateUtils';
 import { getTipProgressKey } from '@/utils/nutritionTipProgress';
+import { getMissingNutritionSettings } from '@/utils/resolveNutritionTip';
 
 import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
@@ -30,6 +32,7 @@ type ThemeColors = ReturnType<typeof useTheme>['colors'];
 
 export type NutritionPlanTargetsSectionProps = {
   untrackedTips?: Tip[];
+  userProfile?: UserProfile;
   onDiscoverPremium?: () => void;
   fulfilledTipsSectionYRef: CurrentRef<number>;
   periodSectionYRef: CurrentRef<Record<TipTargetPeriod, number>>;
@@ -179,6 +182,7 @@ const TipProgressRow: React.FC<TipProgressRowProps> = ({
 
 const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = ({
   untrackedTips = [],
+  userProfile,
   onDiscoverPremium,
   fulfilledTipsSectionYRef,
   periodSectionYRef,
@@ -194,6 +198,10 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
   const untrackedIds = new Set(untrackedTips.map(tip => tip.id));
   const dailyTips = nutritionPlanTipProgressByPeriod.daily.filter(tip => !untrackedIds.has(tip.tipId));
   const weeklyTips = nutritionPlanTipProgressByPeriod.weekly.filter(tip => !untrackedIds.has(tip.tipId));
+  const hasPremiumBlockedTips = untrackedTips.some(tip => {
+    const missing = getMissingNutritionSettings(tip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein);
+    return !missing.weight && !missing.proteinGoal && tip.trackingTargets?.some(target => target.aiInstruction?.trim());
+  });
 
   const renderTipProgressItems = (tipsForPeriod: TipProgressItem[]) =>
     tipsForPeriod.map(tip => {
@@ -329,32 +337,83 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
             {untrackedTips.length > 0 && (
               <View style={[styles.untrackedSection, { borderTopColor: colors.borderLight }]}>
                 <ThemedText type="title3">{t('journal:nutritionLogger.untrackedTargets', { count: untrackedTips.length })}</ThemedText>
-                {untrackedTips.map(tip => {
-                  const progress = [...nutritionPlanTipProgressByPeriod.daily, ...nutritionPlanTipProgressByPeriod.weekly].find(item => item.tipId === tip.id);
-                  const trackingKeys = new Set(tip.trackingTargets?.map(target => target.trackingKey));
-                  const targets = progress?.targets.filter(target => trackingKeys.has(target.tag)) ?? [];
-                  return (
-                    <JournalGoalAnchor key={tip.id} tipId={tip.id}>
-                      <TouchableOpacity
-                        accessibilityRole="link"
-                        onPress={() => router.push({
-                          pathname: `/dashboard/area/${tip.areas[0].id}/details` as any,
-                          params: { tipId: tip.id },
-                        })}
-                        style={styles.untrackedTipTitle}
+                <View style={[styles.untrackedGroup, { borderColor: colors.warning }]}>
+                  {untrackedTips.map((tip, index) => {
+                    const missing = getMissingNutritionSettings(tip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein);
+                    const needsProfile = missing.weight || missing.proteinGoal;
+                    const progress = [...nutritionPlanTipProgressByPeriod.daily, ...nutritionPlanTipProgressByPeriod.weekly].find(
+                      item => item.tipId === tip.id
+                    );
+                    const trackingKeys = new Set(tip.trackingTargets?.map(target => target.trackingKey));
+                    const targets = progress?.targets.filter(target => trackingKeys.has(target.tag)) ?? [];
+                    return (
+                      <JournalGoalAnchor
+                        key={tip.id}
+                        tipId={tip.id}
+                        style={[
+                          styles.untrackedTip,
+                          index < untrackedTips.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.textMuted },
+                        ]}
                       >
-                        <ThemedText type="defaultSemiBold" style={styles.untrackedTitleText}>{t(`tips:${tip.title}`)}</ThemedText>
-                        <IconSymbol name="crown" size={20} color={colors.gold} />
-                      </TouchableOpacity>
-                      {targets.map(target => (
-                        <TipTarget key={target.tag} tip={progress!} target={target} colors={colors} />
-                      ))}
-                    </JournalGoalAnchor>
-                  );
-                })}
-                <View style={[styles.premiumRow, { borderTopColor: colors.borderLight }]}>
-                  <ThemedText type="explainer" style={styles.premiumText}>{t('journal:nutritionLogger.untrackedTargetsExplainer')}</ThemedText>
-                  {onDiscoverPremium && <PremiumLink onPress={onDiscoverPremium} />}
+                        <TouchableOpacity
+                          accessibilityRole="link"
+                          onPress={() =>
+                            router.push({
+                              pathname: `/dashboard/area/${tip.areas[0].id}/details` as any,
+                              params: { tipId: tip.id },
+                            })
+                          }
+                          style={styles.untrackedTipTitle}
+                        >
+                          <ThemedText type="defaultSemiBold" style={styles.untrackedTitleText}>
+                            {t(`tips:${tip.title}`)}
+                          </ThemedText>
+                          <IconSymbol name={needsProfile ? 'person' : 'crown'} size={20} color={needsProfile ? colors.primary : colors.gold} />
+                        </TouchableOpacity>
+                        {!needsProfile && targets.map(target => <TipTarget key={target.tag} tip={progress!} target={target} colors={colors} />)}
+                        {needsProfile && (
+                          <View style={styles.profileLinks}>
+                            {missing.weight && (
+                              <View style={styles.profileRow}>
+                                <ThemedText type="explainer" style={globalStyles.flex1}>
+                                  {t('common:nutritionTargetSection.weightRequired')}
+                                </ThemedText>
+                                <DiscreetButton
+                                  title={t('common:nutritionTargetSection.enterWeight')}
+                                  onPress={() => router.push('/(stack)/settings/person')}
+                                  icon="person"
+                                  rightIcon="chevron.right"
+                                  accessibilityRole="link"
+                                />
+                              </View>
+                            )}
+                            {missing.proteinGoal && (
+                              <View style={styles.profileRow}>
+                                <ThemedText type="explainer" style={globalStyles.flex1}>
+                                  {t('common:nutritionTargetSection.proteinGoalRequired')}
+                                </ThemedText>
+                                <DiscreetButton
+                                  title={t('common:nutritionTargetSection.setProteinGoal')}
+                                  onPress={() => router.push('/settings/nutrition')}
+                                  icon="person"
+                                  rightIcon="chevron.right"
+                                  accessibilityRole="link"
+                                />
+                              </View>
+                            )}
+                          </View>
+                        )}
+                      </JournalGoalAnchor>
+                    );
+                  })}
+                  {hasPremiumBlockedTips && (
+                    <View style={[styles.premiumRow, { borderTopColor: colors.borderLight }]}>
+                      <ThemedText type="explainer" style={styles.premiumText}>
+                        {t('journal:nutritionLogger.untrackedTargetsExplainer')}
+                      </ThemedText>
+                      {onDiscoverPremium && <PremiumLink onPress={onDiscoverPremium} />}
+                    </View>
+                  )}
                 </View>
               </View>
             )}
@@ -367,7 +426,19 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
 };
 
 const styles = StyleSheet.create({
-  premiumRow: { borderTopWidth: StyleSheet.hairlineWidth, paddingTop: 12, marginTop: 4, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  untrackedGroup: { borderWidth: 1, borderRadius: 12, paddingHorizontal: 12 },
+  untrackedTip: { paddingVertical: 8 },
+  profileLinks: { marginTop: 8, gap: 12 },
+  profileRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  premiumRow: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingTop: 12,
+    paddingBottom: 12,
+    marginTop: 4,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
   premiumText: { flex: 1 },
   untrackedTipTitle: { paddingVertical: 8, flexDirection: 'row', alignItems: 'center', gap: 12 },
   untrackedTitleText: { flex: 1 },

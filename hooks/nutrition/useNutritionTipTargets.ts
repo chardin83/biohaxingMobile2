@@ -12,10 +12,12 @@ import { tips } from '@/locales/tips';
 import { resolveDailyNutritionTargetDetails } from '@/services/targetProgress/nutritionTargetProgress';
 import type { NutritionTargetDefinition } from '@/services/targetProgress/targetProgressTypes';
 import type { NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
+import { hasProfileProteinTargets, hasValidProteinGoal, hasValidTargetWeight, hasWeightBasedTargets, resolveNutritionTip } from '@/utils/resolveNutritionTip';
 
-type NutritionLabelGroup = 'aminoAcidLabels' | 'mineralLabels' | 'vitaminLabels' | 'fiberLabels' | 'polyphenolLabels';
+type NutritionLabelGroup = 'macroLabels' | 'aminoAcidLabels' | 'mineralLabels' | 'vitaminLabels' | 'fiberLabels' | 'polyphenolLabels';
 
 const getNutritionLabelGroup = (tag: string, unit: NutritionTargetUnit): NutritionLabelGroup => {
+  if (tag === 'protein') return 'macroLabels';
   if (isAminoAcidTargetTag(tag)) {
     return 'aminoAcidLabels';
   }
@@ -40,7 +42,7 @@ const getNutritionLabelGroup = (tag: string, unit: NutritionTargetUnit): Nutriti
 };
 
 export const useNutritionTipTargets = (dateKeys: string[]): Record<string, Record<string, TipTargetItem[]>> => {
-  const { plans, dailyNutritionTracking, takenDates } = useStorage();
+  const { plans, userProfile, dailyNutritionTracking, takenDates } = useStorage();
 
   const { t } = useTranslation();
 
@@ -54,13 +56,17 @@ export const useNutritionTipTargets = (dateKeys: string[]): Record<string, Recor
     });
 
     (plans?.nutrition ?? []).forEach(planTip => {
-      const tip = tips.find(candidate => candidate.id === planTip.tipId);
+      const sourceTip = tips.find(candidate => candidate.id === planTip.tipId);
+      if (hasWeightBasedTargets(sourceTip) && !hasValidTargetWeight(userProfile?.weightKg)) return;
+      if (hasProfileProteinTargets(sourceTip) && !hasValidProteinGoal(userProfile?.nutritionGoals?.protein)) return;
+      const tip = sourceTip ? resolveNutritionTip(sourceTip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein) : undefined;
 
       if (tip?.targetPeriod !== 'daily') {
         return;
       }
 
       const rawTargets = [
+        ...(tip.proteinTargets ?? []),
         ...(tip.mineralTargets ?? []),
         ...(tip.vitaminTargets ?? []),
         ...(tip.aminoAcidTargets ?? []),
@@ -100,6 +106,7 @@ export const useNutritionTipTargets = (dateKeys: string[]): Record<string, Recor
           const supplementIds = explicitSupplementIds?.length ? explicitSupplementIds : tipSupplementIds;
 
           const target: NutritionTargetDefinition = {
+            ...rawTarget,
             source: 'nutrition',
             trackingKey: tag,
             amount: rawTarget.amount,
@@ -128,7 +135,7 @@ export const useNutritionTipTargets = (dateKeys: string[]): Record<string, Recor
               foodActual: details.foodActual,
               supplementActual: details.supplementActual,
               isMet: details.actual >= rawTarget.amount,
-              label: t(`journal:nutritionLogger.${labelGroup}.${tag}`),
+              label: t(`journal:nutritionLogger.${labelGroup}.${'labelKey' in rawTarget ? (rawTarget.labelKey ?? tag) : tag}`),
               supplementIds,
             },
           ];
@@ -139,5 +146,5 @@ export const useNutritionTipTargets = (dateKeys: string[]): Record<string, Recor
     });
 
     return result;
-  }, [dateKeys, plans, dailyNutritionTracking, takenDates, t]);
+  }, [dateKeys, plans, userProfile?.weightKg, userProfile?.nutritionGoals?.protein, dailyNutritionTracking, takenDates, t]);
 };

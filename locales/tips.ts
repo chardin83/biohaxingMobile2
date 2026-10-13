@@ -6,6 +6,7 @@ import { FiberSubtype, FiberType } from '@/constants/fiber';
 import { MineralType } from '@/constants/minerals';
 import { NutrientType } from '@/constants/nutrients';
 import { PolyphenolType } from '@/constants/polyphenols';
+import { WHO_ADULT_AMINO_ACID_TARGETS } from '@/constants/proteinRotation';
 import { VitaminType } from '@/constants/vitamins';
 import { type NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import { PlanCategory } from '@/types/planCategory';
@@ -90,8 +91,16 @@ export type VitaminTarget = {
 
 export type AminoAcidTarget = {
   tag: AminoAcidType;
+  amountPerKg?: number;
+  trackingKeys?: readonly AminoAcidType[];
+  labelKey?: string;
 } & BaseTarget<'mg'> &
   WeightedTarget;
+
+export type ProteinTarget = BaseTarget<'g'> & {
+  tag: 'protein';
+  fromUserProteinGoal?: boolean;
+};
 
 export type NutrientTarget = {
   tag: NutrientType;
@@ -191,6 +200,8 @@ type TipBase = {
     completedDescriptionKey: string;
   };
   targetIconName?: TipTargetIconName; // Valfri ikon för target-rader i UI
+  targetDescriptionKey?: string;
+  veganInfo?: string;
   nutritionFoods?: TipNutritionFood[]; // Rekommenderade livsmedel för nutritionstips
   bodyParts?: string[]; // Rekommenderade delar av kroppen för detta tip
   microbiomeIds?: string[]; // Koppling till microbiome-bakterier
@@ -203,6 +214,7 @@ type TipWithoutTargets = {
   mineralTargets?: never;
   vitaminTargets?: never;
   aminoAcidTargets?: never;
+  proteinTargets?: never;
   trackingTargets?: never;
   hydrationTargets?: never;
   activityTargets?: never;
@@ -217,6 +229,7 @@ type TipWithTargets = {
   mineralTargets?: MineralTarget[]; // Mineralmål som används för plan-uppföljning
   vitaminTargets?: VitaminTarget[]; // Vitaminmål som används för plan-uppföljning
   aminoAcidTargets?: AminoAcidTarget[]; // Aminosyramål som används för plan-uppföljning
+  proteinTargets?: ProteinTarget[];
   trackingTargets?: TrackingTarget[]; // Flexibla tracking-mål (växter, färger, fisk, etc.)
   hydrationTargets?: HydrationTarget[]; // Vätskemål
   activityTargets?: ActivityTarget[]; // Träningsmål som kan verifieras från aktivitetsdata
@@ -1429,6 +1442,31 @@ const rawTips: Tip[] = [
     planCategory: ['supplement'],
     bodyParts: ['digestiveSystem', 'immuneSystem', 'teeth'],
     microbiomeIds: ['Lactobacillus'],
+  },
+  {
+    id: 'protein_rotation',
+    level: 2,
+    xp: 300,
+    areas: [
+      { id: 'strength', descriptionKey: 'protein_rotation.areas.strength' },
+      { id: 'womenHealth', descriptionKey: 'protein_rotation.areas.womenHealth' },
+      { id: 'menHealth', descriptionKey: 'protein_rotation.areas.menHealth' },
+      { id: 'longevity', descriptionKey: 'protein_rotation.areas.longevity' },
+    ],
+    title: 'protein_rotation.title',
+    descriptionKey: 'protein_rotation.description',
+    targetDescriptionKey: 'protein_rotation.targets.description',
+    veganInfo: 'protein_rotation.veganInfo',
+    trainingRelation: 'anytime',
+    preferredDayParts: ['morning', 'midday', 'evening'],
+    timeRule: 'anytime',
+    planCategory: ['nutrition'],
+    targetPeriod: 'daily',
+    targetIconName: 'protein',
+    aminoAcidTargets: [...WHO_ADULT_AMINO_ACID_TARGETS],
+    proteinTargets: [{ tag: 'protein', amount: 0, unit: 'g', fromUserProteinGoal: true }],
+    nutritionFoods: [{ key: 'chickpeas' }, { key: 'soybeans' }, { key: 'oats' }, { key: 'eggs' }],
+    bodyParts: ['muscles'],
   },
   {
     id: 'fiber_microbiome',

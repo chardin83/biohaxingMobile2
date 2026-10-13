@@ -529,7 +529,14 @@
       "sessions": "pass",
       "items": "st",
       "plants": "växter"
-    }
+    },
+    "weightRequired": "Ange vikt för att aktivera målet.",
+    "weightBased": "Dagsmål beräknade för {{weight}} kg.",
+    "enterWeight": "Ange vikt",
+    "proteinGoalRequired": "Ange proteinmål för att aktivera målet.",
+    "trackingUnavailable": "Detta mål finns i din plan men kan inte följas ännu",
+    "setProteinGoal": "Ange proteinmål",
+    "setPersonalGoals": "Ange personmål"
   },
   "tipCard": {
     "startExploring": "Börja utforska",

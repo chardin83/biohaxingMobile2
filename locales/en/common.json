@@ -529,7 +529,14 @@
       "sessions": "sessions",
       "items": "items",
       "plants": "plants"
-    }
+    },
+    "weightRequired": "Enter weight to activate the goal.",
+    "weightBased": "Daily targets calculated for {{weight}} kg.",
+    "enterWeight": "Enter weight",
+    "proteinGoalRequired": "Set protein goal to activate the goal.",
+    "trackingUnavailable": "This goal is in your plan but cannot be tracked yet",
+    "setProteinGoal": "Set protein goal",
+    "setPersonalGoals": "Set personal goals"
   },
   "tipCard": {
     "startExploring": "Start exploring",

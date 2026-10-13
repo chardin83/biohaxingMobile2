@@ -21,7 +21,7 @@ export type TrainingTargetDefinition = BaseTargetDefinition & {
   activityTypes: readonly TrainingActivityType[];
 };
 
-export type NutritionLabelGroup = 'fiberLabels' | 'polyphenolLabels' | 'mineralLabels' | 'vitaminLabels' | 'aminoAcidLabels' | 'trackingLabels';
+export type NutritionLabelGroup = 'fiberLabels' | 'polyphenolLabels' | 'mineralLabels' | 'vitaminLabels' | 'aminoAcidLabels' | 'trackingLabels' | 'macroLabels';
 
 export type NutritionTargetDefinition = Omit<BaseTargetDefinition, 'unit' | 'period'> & {
   source: 'nutrition';
@@ -31,6 +31,8 @@ export type NutritionTargetDefinition = Omit<BaseTargetDefinition, 'unit' | 'per
   aiInstruction?: string;
   supplementIds?: string[];
   labelGroup?: NutritionLabelGroup;
+  labelKey?: string;
+  trackingKeys?: readonly string[];
 };
 
 export type TargetDefinition = HabitTargetDefinition | TrainingTargetDefinition | NutritionTargetDefinition;

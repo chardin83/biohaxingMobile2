@@ -1333,6 +1333,39 @@
         }
       }
     }
+  },
+  "protein_rotation": {
+    "title": "Rotate your protein sources",
+    "veganInfo": {
+      "title": "Especially relevant for vegans",
+      "description": "Plant proteins have varying amino acid profiles. Eating a varied diet and enough protein throughout the day makes it easier to meet your essential amino acid needs."
+    },
+    "targets": {
+      "description": "WHO/FAO/UNU mean adult requirements. Methionine + cysteine and phenylalanine + tyrosine are assessed together."
+    },
+    "description": "Vary your protein sources throughout the day: pulses, tofu, grains, nuts and seeds, and if you eat them, eggs, dairy or fish. Different sources complement each other’s amino acid profiles. Eat enough energy and protein across the day.\n\nDaily targets use the weight in your profile and WHO/FAO/UNU mean adult amino acid requirements. Methionine is counted together with cysteine, and phenylalanine with tyrosine. These reference values are not individual recommendations or training targets, and do not alone establish whether your total protein intake or absorption is adequate.\n\nThe total protein target follows your protein goal in nutrition settings.",
+    "areas": {
+      "strength": "Varied protein sources provide essential amino acids for muscle and recovery. WHO targets reflect mean baseline needs, not optimal intake for strength training.",
+      "womenHealth": "Rotating protein sources helps supply different essential amino acids. Targets reflect adult baseline needs and are not specifically adjusted for pregnancy or breastfeeding.",
+      "menHealth": "Essential amino acids are needed for protein synthesis. Rotating protein sources is dietary guidance, not treatment for testosterone deficiency.",
+      "longevity": "A varied diet with enough protein helps meet essential amino acid needs. Individual assessment may be needed, for example in older age or illness."
+    },
+    "nutritionFoods": {
+      "title": "Vary your protein sources",
+      "items": {
+        "chickpeas": {
+          "details": "Beans, lentils and peas provide protein and lysine. Include grains throughout the day for variety."
+        },
+        "soybeans": {
+          "details": "Soybeans, tofu and tempeh are plant protein sources that provide all nine essential amino acids."
+        },
+        "oats": {
+          "details": "Oats and other grains can complement pulses in a varied diet."
+        },
+        "eggs": {
+          "details": "Eggs provide all nine essential amino acids if you eat animal foods."
+        }
+      }
+    }
   }
 }
-

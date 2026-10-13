@@ -1,4 +1,5 @@
 import { NutritionTargetDefinition } from '@/services/targetProgress/targetProgressTypes';
+import { hasProfileProteinTargets, hasValidProteinGoal, hasValidTargetWeight, hasWeightBasedTargets, resolveNutritionTip } from '@/utils/resolveNutritionTip';
 
 type NutritionTip = {
   targetPeriod?: 'daily' | 'weekly';
@@ -12,10 +13,15 @@ type NutritionTip = {
   mineralTargets?: any[];
   vitaminTargets?: any[];
   aminoAcidTargets?: any[];
+  proteinTargets?: any[];
   trackingTargets?: any[];
 };
 
-export const normalizeNutritionTargets = (tip: NutritionTip): NutritionTargetDefinition[] => {
+export const normalizeNutritionTargets = (inputTip: NutritionTip, weightKg?: number, proteinGoal?: number): NutritionTargetDefinition[] => {
+  // A completed protein goal must not complete a tip with unresolved amino acid goals.
+  if (hasWeightBasedTargets(inputTip) && !hasValidTargetWeight(weightKg)) return [];
+  if (hasProfileProteinTargets(inputTip) && !hasValidProteinGoal(proteinGoal)) return [];
+  const tip = resolveNutritionTip(inputTip, weightKg, proteinGoal);
   const period = tip.targetPeriod;
 
   if (!period) {
@@ -25,6 +31,13 @@ export const normalizeNutritionTargets = (tip: NutritionTip): NutritionTargetDef
   const tipSupplementIds = (tip.supplements ?? []).map(supplement => supplement.id).filter((id): id is string => Boolean(id));
 
   const targets: NutritionTargetDefinition[] = [
+    ...(tip.proteinTargets ?? []).map(target => ({
+      ...target,
+      source: 'nutrition' as const,
+      trackingKey: target.tag,
+      period,
+      labelGroup: 'macroLabels' as const,
+    })),
     ...(tip.fiberTargets ?? []).map(target => ({
       ...target,
 

@@ -19,6 +19,7 @@ import type { DrinkType } from '@/services/gptServices';
 import { roundToOneDecimal, type WeeklyTrackingSignals } from '@/utils/analyzeNutrition';
 import { toDateKey, toRecordedAt } from '@/utils/dateUtils';
 import { type FoodKey, getFoodProduct, getMealProduct } from '@/utils/foodProduct';
+import { isNutritionTipUntracked } from '@/utils/untrackedNutritionTips';
 
 import { Collapsible } from '../Collapsible';
 import CopyMealBottomSheet from '../CopyMealBottomSheet';
@@ -163,9 +164,8 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
 
   const untrackedNutritionTips = useMemo(() => {
     const planTipIds = new Set((plans?.nutrition ?? []).map(planTip => planTip.tipId));
-    if (PREMIUM) return [];
-    return tips.filter(tip => planTipIds.has(tip.id) && tip.trackingTargets?.some(target => Boolean(target.aiInstruction?.trim())));
-  }, [plans]);
+    return tips.filter(tip => planTipIds.has(tip.id) && isNutritionTipUntracked(tip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein, PREMIUM));
+  }, [plans, userProfile?.weightKg, userProfile?.nutritionGoals?.protein]);
 
   const activeTrackingTargetsForAI = useMemo(() => {
     const byKey = new Map<
@@ -541,6 +541,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
         )}
         <NutritionPlanTargetsSection
           untrackedTips={untrackedNutritionTips}
+          userProfile={userProfile}
           onDiscoverPremium={() => premiumBottomSheetRef.current?.present()}
           fulfilledTipsSectionYRef={fulfilledTipsSectionYRef}
           periodSectionYRef={periodSectionYRef}

@@ -11,6 +11,7 @@ import { ThemedText } from '@/components/ThemedText';
 import Badge from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import LabeledInput from '@/components/ui/LabeledInput';
 import Notice from '@/components/ui/Notice';
 import { PressableCard } from '@/components/ui/PressableCard';
@@ -232,6 +233,12 @@ export default function TipsSearchScreen() {
             </Badge>
           )}
         </View>
+        {item.veganInfo && (
+          <Badge style={[styles.veganBadge, { backgroundColor: colors.surfaceGreen, borderColor: colors.surfaceGreenBorder }]}>
+            <IconSymbol name="vegan" size={16} color={colors.surfaceGreenBorder} />
+            <ThemedText type="pill" style={styles.veganBadgeText}>{t(`tips:${item.veganInfo}.title`)}</ThemedText>
+          </Badge>
+        )}
         <ThemedText type="default" style={styles.desc} numberOfLines={2} ellipsizeMode="tail">
           {t('tips:' + item.descriptionKey)}
         </ThemedText>
@@ -502,6 +509,8 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   desc: { marginBottom: 4 },
+  veganBadge: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4, marginBottom: 6 },
+  veganBadgeText: { flexShrink: 1 },
   areaBadgeRowNoWrap: {
     flexDirection: 'row',
     flexWrap: 'nowrap',

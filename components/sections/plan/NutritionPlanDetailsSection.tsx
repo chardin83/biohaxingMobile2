@@ -3,8 +3,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
+import type { TipTargetProgress } from '@/app/context/storage/nutrition/nutritionTypes';
+import { useStorage } from '@/app/context/StorageContext';
 import { ThemedText } from '@/components/ThemedText';
-import TipTarget, { type TipTargetProgress } from '@/components/TipTarget';
+import TipTarget from '@/components/TipTarget';
 import AppBox from '@/components/ui/AppBox';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { ALL_AMINO_ACID_KEYS } from '@/constants/aminoAcids';
@@ -12,6 +14,7 @@ import { MINERAL_TYPE_KEYS } from '@/constants/minerals';
 import { VITAMIN_TYPE_KEYS } from '@/constants/vitamins';
 import type { Tip } from '@/locales/tips';
 import { NutritionTargetPeriod, NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
+import { hasProfileProteinTargets, hasValidProteinGoal, hasValidTargetWeight, hasWeightBasedTargets, resolveNutritionTip } from '@/utils/resolveNutritionTip';
 
 export type NutritionPlanDetailsTarget = {
   key: string;
@@ -27,6 +30,7 @@ type NutritionTargetSource = {
   unit: NutritionTargetUnit;
   period?: NutritionTargetPeriod;
   amount: number;
+  labelKey?: string;
   trackingKey?: string;
 };
 
@@ -40,6 +44,10 @@ type Props = {
 export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgressMap, selectedDateKey, title }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
   const { colors } = useTheme();
+  const { userProfile } = useStorage();
+  const weightBased = hasWeightBasedTargets(tip);
+  const weightMissing = weightBased && !hasValidTargetWeight(userProfile?.weightKg);
+  const proteinGoalMissing = hasProfileProteinTargets(tip) && !hasValidProteinGoal(userProfile?.nutritionGoals?.protein);
 
   const targets = React.useMemo<NutritionPlanDetailsTarget[]>(() => {
     if (!tip) return [];
@@ -48,12 +56,15 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgre
     const polyphenolTargets = tip.polyphenolTargets ?? [];
     const mineralTargets = tip.mineralTargets ?? [];
     const vitaminTargets = tip.vitaminTargets ?? [];
-    const aminoAcidTargets = tip.aminoAcidTargets ?? [];
+    const resolvedTip = resolveNutritionTip(tip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein);
+    const proteinTargets = resolvedTip.proteinTargets ?? [];
+    const aminoAcidTargets = resolvedTip.aminoAcidTargets ?? [];
     const trackingTargets = (tip.trackingTargets ?? []).map(target => ({
       ...target,
       tag: target.trackingKey,
     }));
     const allTargets: NutritionTargetSource[] = [
+      ...proteinTargets,
       ...fiberTargets,
       ...polyphenolTargets,
       ...mineralTargets,
@@ -88,9 +99,12 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgre
 
     return allTargets.map((target: NutritionTargetSource) => {
       const trackingKey = target.trackingKey ?? target.tag;
-      let labelGroup: 'weeklyTrackingLabels' | 'fiberLabels' | 'aminoAcidLabels' | 'mineralLabels' | 'vitaminLabels' | 'polyphenolLabels' = 'polyphenolLabels';
+      let labelGroup: 'macroLabels' | 'weeklyTrackingLabels' | 'fiberLabels' | 'aminoAcidLabels' | 'mineralLabels' | 'vitaminLabels' | 'polyphenolLabels' =
+        'polyphenolLabels';
 
-      if (target.unit === 'plants' || target.unit === 'items' || target.unit === 'count') {
+      if (trackingKey === 'protein') {
+        labelGroup = 'macroLabels';
+      } else if (target.unit === 'plants' || target.unit === 'items' || target.unit === 'count') {
         labelGroup = 'weeklyTrackingLabels';
       } else if (target.unit === 'g') {
         labelGroup = 'fiberLabels';
@@ -108,11 +122,11 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgre
         unit: target.unit,
         period: target.period ?? 'daily',
         amount: target.amount,
-        label: t(`journal:nutritionLogger.${labelGroup}.${trackingKey}`, { defaultValue: trackingKey }),
+        label: t(`journal:nutritionLogger.${labelGroup}.${target.labelKey ?? trackingKey}`, { defaultValue: trackingKey }),
         value: formatValue(target.amount, target.unit),
       };
     });
-  }, [t, tip]);
+  }, [t, tip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein]);
 
   const targetProgressInfoText = React.useMemo(() => {
     const hasDailyTargets = targets.some(target => target.period === 'daily');
@@ -134,6 +148,13 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgre
       <ThemedText type="explainer" style={styles.targetInfoText}>
         {targetProgressInfoText}
       </ThemedText>
+      {weightBased && (
+        <ThemedText type="explainer">
+          {t(weightMissing ? 'nutritionTargetSection.weightRequired' : 'nutritionTargetSection.weightBased', { weight: userProfile?.weightKg })}
+        </ThemedText>
+      )}
+      {weightBased && <ThemedText type="explainer">{t('nutritionTargetSection.whoAverageReference')}</ThemedText>}
+      {proteinGoalMissing && <ThemedText type="explainer">{t('nutritionTargetSection.proteinGoalRequired')}</ThemedText>}
       <View style={styles.targetList}>
         {targets.map(target => {
           const progressTarget = targetProgressMap.get(`${target.tag}|${target.unit}|${target.period}`);

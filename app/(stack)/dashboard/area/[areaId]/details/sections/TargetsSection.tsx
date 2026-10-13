@@ -1,12 +1,16 @@
+import { router } from 'expo-router';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
 import AppCard from '@/components/ui/AppCard';
 import DiscreetButton from '@/components/ui/DiscreetButton';
+import Notice from '@/components/ui/Notice';
 import PremiumLink from '@/components/ui/PremiumLink';
 import type { Tip } from '@/locales/tips';
+import { hasProfileProteinTargets, hasValidProteinGoal, hasValidTargetWeight, hasWeightBasedTargets, resolveNutritionTip } from '@/utils/resolveNutritionTip';
 
 export default function TargetsSection({
   tip,
@@ -15,9 +19,17 @@ export default function TargetsSection({
   onShowJournal,
   onDiscoverPremium,
 }: Readonly<{ tip?: Tip; colors: any; t: any; onShowJournal?: () => void; onDiscoverPremium?: () => void }>) {
+  const { userProfile, plans } = useStorage();
+  const weightBased = hasWeightBasedTargets(tip);
+  const weightMissing = weightBased && !hasValidTargetWeight(userProfile?.weightKg);
+  const proteinGoalMissing = hasProfileProteinTargets(tip) && !hasValidProteinGoal(userProfile?.nutritionGoals?.protein);
   if (!tip) return null;
+  const tipId = tip.id;
+  const trackingUnavailable = (weightMissing || proteinGoalMissing) && plans?.nutrition?.some(plan => plan.tipId === tipId);
+  tip = resolveNutritionTip(tip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein);
 
   const nutritionGroups = [
+    { targets: tip.proteinTargets, labelGroup: 'macroLabels' },
     { targets: tip.fiberTargets, labelGroup: 'fiberLabels' },
     { targets: tip.polyphenolTargets, labelGroup: 'polyphenolLabels' },
     { targets: tip.mineralTargets, labelGroup: 'mineralLabels' },
@@ -34,7 +46,7 @@ export default function TargetsSection({
         return {
           ...target,
           key: `${labelGroup}-${key}`,
-          label: t(`journal:nutritionLogger.${labelPrefix}${key}`, { defaultValue: key }),
+          label: t(`journal:nutritionLogger.${labelPrefix}${'labelKey' in target ? (target.labelKey ?? key) : key}`, { defaultValue: key }),
         };
       })
     ),
@@ -47,7 +59,7 @@ export default function TargetsSection({
     })),
   ];
 
-  if (!rows.length) return null;
+  if (!rows.length && !weightMissing && !proteinGoalMissing) return null;
 
   const formatValue = (value: number, unit: string) => {
     let decimals = 1;
@@ -73,6 +85,11 @@ export default function TargetsSection({
       iconName="target"
       style={styles.card}
     >
+      {weightBased && !weightMissing && (
+        <ThemedText type="explainer">{t('common:nutritionTargetSection.weightBased', { weight: userProfile?.weightKg })}</ThemedText>
+      )}
+      {tip.targetDescriptionKey && <ThemedText type="explainer">{t(`tips:${tip.targetDescriptionKey}`)}</ThemedText>}
+      {trackingUnavailable && <Notice variant="warning" message={t('common:nutritionTargetSection.trackingUnavailable')} />}
       <View style={styles.targets}>
         {rows.map(target => (
           <View key={target.key} style={styles.targetRow}>
@@ -84,7 +101,7 @@ export default function TargetsSection({
           </View>
         ))}
       </View>
-      {onShowJournal && (
+      {onShowJournal && !weightMissing && !proteinGoalMissing && (
         <View style={[styles.journalLink, { borderTopColor: colors.borderLight }]}>
           <DiscreetButton
             title={t('common:nutritionTargetSection.showJournal')}
@@ -102,6 +119,36 @@ export default function TargetsSection({
           {onDiscoverPremium && <PremiumLink onPress={onDiscoverPremium} />}
         </View>
       )}
+      {weightMissing && (
+        <View style={[styles.settingsRow, { borderTopColor: colors.borderLight }]}>
+          <ThemedText type="explainer" style={globalStyles.flex1}>
+            {t('common:nutritionTargetSection.weightRequired')}
+          </ThemedText>
+          <DiscreetButton
+            title={t('common:nutritionTargetSection.enterWeight')}
+            onPress={() => router.push('/(stack)/settings/person')}
+            color={colors.primary}
+            icon="person"
+            rightIcon="chevron.right"
+            accessibilityRole="link"
+          />
+        </View>
+      )}
+      {proteinGoalMissing && (
+        <View style={[styles.settingsRow, { borderTopColor: colors.borderLight }]}>
+          <ThemedText type="explainer" style={globalStyles.flex1}>
+            {t('common:nutritionTargetSection.proteinGoalRequired')}
+          </ThemedText>
+          <DiscreetButton
+            title={t('common:nutritionTargetSection.setProteinGoal')}
+            onPress={() => router.push('/settings/nutrition')}
+            color={colors.primary}
+            icon="person"
+            rightIcon="chevron.right"
+            accessibilityRole="link"
+          />
+        </View>
+      )}
     </AppCard>
   );
 }
@@ -111,6 +158,14 @@ const styles = StyleSheet.create({
   premiumInfo: { borderTopWidth: StyleSheet.hairlineWidth, marginTop: 16, paddingTop: 16, gap: 10 },
   targets: { marginTop: 16, gap: 12 },
   targetRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 },
+  settingsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 16,
+    paddingTop: 16,
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
   journalLink: {
     alignItems: 'flex-end',
     marginTop: 16,
