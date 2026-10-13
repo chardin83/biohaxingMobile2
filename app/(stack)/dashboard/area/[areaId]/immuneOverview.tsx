@@ -12,15 +12,15 @@ import { WearableStatus } from '@/components/WearableStatus';
 
 export default function ImmuneScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { colors } = useTheme();
-  const { t } = useTranslation();
+  const { t } = useTranslation('areas');
 
   return (
     <>
       <ThemedText type="title" style={{ color: colors.area.immuneSystem }}>
-        {t('immuneOverview.title')}
+        {t('immuneSupport.title')}
       </ThemedText>
       <ThemedText type="subtitle" style={{ color: colors.textTertiary }}>
-        {t('immuneOverview.description')}
+        {t('immuneSupport.description')}
       </ThemedText>
 
       <WearableStatus />
@@ -29,47 +29,45 @@ export default function ImmuneScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
 
       {/* Information card */}
       <InformationCardLink
-        title={t('immuneOverview.whyTheseMetricsMatter.title')}
+        title={t('immuneSupport.information.title')}
         iconName="privacy"
         iconColor={colors.area.immuneSystem}
         items={[
           {
             key: 'recovery',
             icon: '🔄',
-            title: t('immuneOverview.whyTheseMetricsMatter.recovery.title'),
-            description: t('immuneOverview.whyTheseMetricsMatter.recovery.description'),
+            title: t('immuneSupport.information.recovery.title'),
+            description: t('immuneSupport.information.recovery.description'),
           },
           {
             key: 'sleep',
             icon: '💤',
-            title: t('immuneOverview.whyTheseMetricsMatter.sleep.title'),
-            description:
-              t('immuneOverview.whyTheseMetricsMatter.sleep.description') +
-              ' Adequate sleep is crucial for immune function. During sleep, the body produces cytokines that help fight infection and inflammation.',
+            title: t('immuneSupport.information.sleep.title'),
+            description: t('immuneSupport.information.sleep.description'),
           },
           {
             key: 'stress',
             icon: '😌',
-            title: t('immuneOverview.whyTheseMetricsMatter.stress.title'),
-            description: t('immuneOverview.whyTheseMetricsMatter.stress.description'),
+            title: t('immuneSupport.information.stress.title'),
+            description: t('immuneSupport.information.stress.description'),
           },
           {
             key: 'hrv',
             icon: '❤️',
-            title: t('immuneOverview.whyTheseMetricsMatter.hrv.title'),
-            description: t('immuneOverview.whyTheseMetricsMatter.hrv.description'),
+            title: t('immuneSupport.information.hrv.title'),
+            description: t('immuneSupport.information.hrv.description'),
           },
           {
             key: 'restingHeartRate',
             icon: '🫀',
-            title: t('immuneOverview.whyTheseMetricsMatter.restingHeartRate.title'),
-            description: t('immuneOverview.whyTheseMetricsMatter.restingHeartRate.description'),
+            title: t('immuneSupport.information.restingHeartRate.title'),
+            description: t('immuneSupport.information.restingHeartRate.description'),
           },
           {
             key: 'microbiomeButyrate',
             icon: '🦠',
-            title: t('immuneOverview.whyTheseMetricsMatter.microbiomeButyrate.title'),
-            description: t('immuneOverview.whyTheseMetricsMatter.microbiomeButyrate.description'),
+            title: t('immuneSupport.information.microbiomeButyrate.title'),
+            description: t('immuneSupport.information.microbiomeButyrate.description'),
           },
         ]}
       />

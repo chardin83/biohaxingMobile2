@@ -47,7 +47,7 @@ export function NervousSystemStatusChart() {
 
   return (
     <>
-      <Card title={t('nervousSystemOverview.autonomicNervousSystem.title')}>
+      <Card title={t('areas:nervousSystem.autonomicNervousSystem.title')}>
         <View style={globalStyles.row}>
           <HRVMetric onPress={() => toggleMetric('hrv')} isSelected={selectedMetric === 'hrv'} />
         </View>

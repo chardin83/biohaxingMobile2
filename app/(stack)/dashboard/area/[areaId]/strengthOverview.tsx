@@ -13,15 +13,15 @@ import { WearableStatus } from '@/components/WearableStatus';
 
 export default function StrengthScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { colors } = useTheme();
-  const { t } = useTranslation();
+  const { t } = useTranslation('areas');
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <ThemedText type="title" style={{ color: colors.area.strength }}>
-        {t('strengthOverview.title')}
+        {t('strength.title')}
       </ThemedText>
       <ThemedText type="subtitle" style={{ color: colors.textTertiary }}>
-        {t('strengthOverview.description')}
+        {t('strength.description')}
       </ThemedText>
 
       <WearableStatus />
@@ -30,55 +30,53 @@ export default function StrengthScreen({ mainGoalId }: Readonly<{ mainGoalId: st
 
       {/* Protein Timing Card */}
       <InformationCardLink
-        title="Anabolic Window"
+        title={t('strength.proteinTiming.title')}
         iconName="protein"
         iconColor={colors.area.strength}
         items={[
           {
             key: 'proteinTiming',
             icon: '⏰',
-            title: 'Post-workout protein timing',
-            description:
-              'Post-workout protein intake is most effective within 2-3 hours after training. Muscle protein synthesis remains elevated for 24-48 hours after resistance training.',
+            title: t('strength.proteinTiming.proteinTiming.title'),
+            description: t('strength.proteinTiming.proteinTiming.description'),
           },
           {
             key: 'recommendations',
-            title: 'Recommended:',
-            description:
-              '• 20-40g protein within 2h post-workout\n• 1.6-2.2g/kg body weight daily total\n• Leucine-rich sources (whey, eggs, meat)\n• Distribute protein across 3-5 meals',
+            title: t('strength.proteinTiming.recommendations.title'),
+            description: t('strength.proteinTiming.recommendations.description'),
           },
         ]}
       />
 
       {/* Information Card */}
       <InformationCardLink
-        title={t('strengthOverview.information.title')}
+        title={t('strength.information.title')}
         iconName="trainingGym"
         iconColor={colors.area.strength}
         items={[
           {
             key: 'trainingReadiness',
             icon: '💪',
-            title: t('strengthOverview.information.trainingReadiness.title'),
-            description: t('strengthOverview.information.trainingReadiness.description'),
+            title: t('strength.information.trainingReadiness.title'),
+            description: t('strength.information.trainingReadiness.description'),
           },
           {
             key: 'trainingLoad',
             icon: '📊',
-            title: t('strengthOverview.information.trainingLoad.title'),
-            description: t('strengthOverview.information.trainingLoad.description'),
+            title: t('strength.information.trainingLoad.title'),
+            description: t('strength.information.trainingLoad.description'),
           },
           {
             key: 'recoveryTime',
             icon: '⏱️',
-            title: t('strengthOverview.information.recoveryTime.title'),
-            description: t('strengthOverview.information.recoveryTime.description'),
+            title: t('strength.information.recoveryTime.title'),
+            description: t('strength.information.recoveryTime.description'),
           },
           {
             key: 'sleepMuscleGrowth',
             icon: '🛌',
-            title: t('strengthOverview.information.sleepMuscleGrowth.title'),
-            description: t('strengthOverview.information.sleepMuscleGrowth.description'),
+            title: t('strength.information.sleepMuscleGrowth.title'),
+            description: t('strength.information.sleepMuscleGrowth.description'),
           },
         ]}
       />

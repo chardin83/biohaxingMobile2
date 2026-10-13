@@ -15,6 +15,8 @@ export function Collapsible({
   accessibilityLabel,
   accessibilityHint,
   initialCollapsed = false, // ny prop
+  isOpen: controlledIsOpen,
+  onOpenChange,
   titleType = 'defaultSemiBold', // ny prop
 }: PropsWithChildren & {
   title: string;
@@ -25,24 +27,23 @@ export function Collapsible({
   accessibilityLabel?: string;
   accessibilityHint?: string;
   initialCollapsed?: boolean; // ny prop
+  isOpen?: boolean;
+  onOpenChange?: (isOpen: boolean) => void;
   titleType?: 'default' | 'title' | 'title2' | 'title3' | 'defaultSemiBold' | 'subtitle' | 'link' | 'caption' | 'value' | 'label' | 'explainer'; // ny prop
 }) {
-  const [isOpen, setIsOpen] = useState(!initialCollapsed);
+  const [internalIsOpen, setIsOpen] = useState(!initialCollapsed);
+  const isOpen = controlledIsOpen ?? internalIsOpen;
   const { colors } = useTheme();
-  const chevron = (
-    <IconSymbol
-      name="chevron.right"
-      size={18}
-      color={colors.icon}
-      style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}
-    />
-  );
+  const chevron = <IconSymbol name="chevron.right" size={18} color={colors.icon} style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }} />;
 
   return (
     <>
       <TouchableOpacity
         style={styles.heading}
-        onPress={() => setIsOpen(value => !value)}
+        onPress={() => {
+          setIsOpen(!isOpen);
+          onOpenChange?.(!isOpen);
+        }}
         activeOpacity={0.8}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel ?? title}
@@ -58,7 +59,7 @@ export function Collapsible({
         {chevronPosition === 'right' && chevron}
       </TouchableOpacity>
       {isOpen && <View style={[styles.content, contentStyle]}>{children}</View>}
-      </>
+    </>
   );
 }
 

@@ -30,7 +30,7 @@ import { ThemedText } from '@/components/ThemedText';
 import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
-import Container from '@/components/ui/Container';
+import Container, { type ContainerScrollRef } from '@/components/ui/Container';
 import DiscreetButton from '@/components/ui/DiscreetButton';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import PlanEditActions from '@/components/ui/PlanEditActions';
@@ -108,7 +108,23 @@ export default function Plans() {
       console.error('Failed to request notification permission:', error);
     });
   }, []);
-  const params = useLocalSearchParams<{ openCreate?: string }>();
+  const params = useLocalSearchParams<{ openCreate?: string; openSection?: string }>();
+  const containerRef = React.useRef<ContainerScrollRef>(null);
+  const supplementSectionRef = React.useRef<View>(null);
+  const [supplementSectionOpen, setSupplementSectionOpen] = useState(false);
+
+  useEffect(() => {
+    if (params.openSection !== 'supplements') return;
+    if (!supplementSectionOpen) {
+      setSupplementSectionOpen(true);
+      return;
+    }
+    const frame = requestAnimationFrame(() => {
+      if (supplementSectionRef.current) containerRef.current?.scrollToElement(supplementSectionRef.current);
+      router.setParams({ openSection: undefined });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [params.openSection, supplementSectionOpen]);
   const { colors } = useTheme();
 
   const styles = StyleSheet.create({
@@ -573,7 +589,7 @@ export default function Plans() {
 
 
   return (
-    <Container background="gradient">
+    <Container ref={containerRef} background="gradient">
       <PressableCard style={styles.aiCard} onPress={handleGoToCreatePlan}>
         <ThemedText type="title3" style={styles.aiCardText}>
           ✨ {t('plan.aiCreateTitle')}
@@ -648,7 +664,7 @@ export default function Plans() {
             />
           </Collapsible>
         </View>
-        <View style={styles.sectionBlock}>
+        <View ref={supplementSectionRef} collapsable={false} style={styles.sectionBlock}>
           <Collapsible
             title={`${t('plan.supplementSectionTitle')}`}
             leftContent={<PlanCategoryIcon category="supplement" />}
@@ -662,7 +678,8 @@ export default function Plans() {
             chevronPosition="right"
             contentStyle={styles.collapsibleContentFlush}
             titleType="title3"
-            initialCollapsed={true}
+            isOpen={supplementSectionOpen}
+            onOpenChange={setSupplementSectionOpen}
           >
             <View>{renderSupplementPlans()}</View>
             <View style={styles.addTimeSlotButtonWrapper}>

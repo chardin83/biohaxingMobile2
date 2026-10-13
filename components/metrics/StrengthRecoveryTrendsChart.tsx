@@ -74,7 +74,7 @@ export function StrengthRecoveryTrendsChart() {
           valueFormatter: formatTimeFromMinutes,
           data: sleepBedtimeTrendData,
           accentColor: colors.chart.deepSleep,
-          explainer: t('strengthOverview.recoveryFactors.explainers.sleep_bedtime'),
+          explainer: t('areas:strength.recoveryFactors.explainers.sleep_bedtime'),
         };
       case 'hrv':
         return {
@@ -82,7 +82,7 @@ export function StrengthRecoveryTrendsChart() {
           unit: 'ms',
           data: hrvTrendData,
           accentColor: colors.chart.hrv,
-          explainer: t('strengthOverview.recoveryFactors.explainers.hrv'),
+          explainer: t('areas:strength.recoveryFactors.explainers.hrv'),
         };
       case 'sleep_duration':
       default:
@@ -92,7 +92,7 @@ export function StrengthRecoveryTrendsChart() {
           valueFormatter: formatSleepDuration,
           data: sleepDurationTrendData,
           accentColor: colors.chart.sleepDuration,
-          explainer: t('strengthOverview.recoveryFactors.explainers.sleep_duration'),
+          explainer: t('areas:strength.recoveryFactors.explainers.sleep_duration'),
         };
     }
   }, [
@@ -108,7 +108,7 @@ export function StrengthRecoveryTrendsChart() {
   ]);
 
   return (
-    <Card title={t('strengthOverview.recoveryFactors.title')}>
+    <Card title={t('areas:strength.recoveryFactors.title')}>
       <View style={globalStyles.row}>
         <SleepMetric showDivider onPress={() => toggleMetric('sleep_duration')} isSelected={selectedMetric === 'sleep_duration'} />
         <SleepConsistencyMetric showDivider onPress={() => toggleMetric('sleep_bedtime')} isSelected={selectedMetric === 'sleep_bedtime'} />
@@ -129,7 +129,7 @@ export function StrengthRecoveryTrendsChart() {
 
       <View style={globalStyles.infoSection}>
         <ThemedText type="explainer" style={[globalStyles.topBorder, { borderColor: colors.borderLight }]}>
-          {selectedConfig?.explainer ?? t('strengthOverview.recoveryFactors.explainer')}
+          {selectedConfig?.explainer ?? t('areas:strength.recoveryFactors.explainer')}
         </ThemedText>
       </View>
 

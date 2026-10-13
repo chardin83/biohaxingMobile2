@@ -9,10 +9,12 @@ import DigestiveOverview from './digestiveOverview';
 import EnergyOverview from './energyOverview';
 import ImmuneOverview from './immuneOverview';
 import LongevityOverview from './longevityOverview';
+import MenHealthOverview from './menHealthOverview';
 import MindOverview from './mindOverview';
 import NervousSystemOverview from './nervousSystemOverview';
 import SleepOverview from './sleepOverview';
 import StrengthOverview from './strengthOverview';
+import WomenHealthOverview from './womenHealthOverview';
 
 export default function AreaRootScreen() {
   const { areaId } = useLocalSearchParams<{ areaId: string }>();
@@ -36,6 +38,8 @@ export default function AreaRootScreen() {
       {areaId === 'immuneSupport' && <ImmuneOverview mainGoalId={areaId} />}
       {areaId === 'mind' && <MindOverview mainGoalId={areaId} />}
       {areaId === 'longevity' && <LongevityOverview mainGoalId={areaId} />}
+      {areaId === 'womenHealth' && <WomenHealthOverview mainGoalId={areaId} />}
+      {areaId === 'menHealth' && <MenHealthOverview mainGoalId={areaId} />}
     </Container>
   );
 }

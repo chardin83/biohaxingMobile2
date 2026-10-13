@@ -11,6 +11,12 @@ type IconDefinition = {
 };
 
 export const ICON_SYMBOLS = {
+  'healthCheck': {
+    sf: 'stethoscope',
+    material: 'local-hospital',
+    materialCommunity: 'stethoscope',
+    useMaterialCommunityOnIOS: true,
+  },
   'bloodDrop': { sf: 'drop.fill', material: 'water-drop' },
   'bloodPressure': { sf: 'gauge.medium', material: 'speed', materialCommunity: 'gauge' },
   'hormones': { sf: 'atom', material: 'science', materialCommunity: 'molecule' },

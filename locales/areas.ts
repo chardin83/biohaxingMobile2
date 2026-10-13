@@ -12,6 +12,8 @@ export type Area = {
 };
 
 export const areas: Area[] = [
+  { id: 'womenHealth', title: 'womenHealth.title', description: 'womenHealth.description', icon: 'gender-female' },
+  { id: 'menHealth', title: 'menHealth.title', description: 'menHealth.description', icon: 'gender-male' },
   { id: 'energy', title: 'energy.title', description: 'energy.description', icon: 'flash' },
   { id: 'sleepQuality', title: 'sleepQuality.title', description: 'sleepQuality.description', icon: 'sleep', relatedAreas: [{ areaId: 'nervousSystem' }, { areaId: 'digestiveHealth' }, { areaId: 'energy' }] },
   { id: 'longevity', title: 'longevity.title', description: 'longevity.description', icon: 'infinity' },

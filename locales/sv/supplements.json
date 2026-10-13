@@ -94,5 +94,11 @@
         { "id": "cordyceps", "name": "Cordyceps", "quantity": "", "unit": "" },
         { "id": "caffeine", "name": "Caffeine", "quantity": "200", "unit": "mg" },
         { "id": "beetrootExtract", "name": "Beetroot extract (nitrates)", "quantity": "500", "unit": "mg" }
-      ]   
-    }   
+      ],
+  "warnings": {
+    "zinc": {
+      "title": "Viktigt om zinktillskott",
+      "message": "Höga doser zink under längre tid kan hämma kopparupptaget och orsaka kopparbrist. Räkna in zink från andra tillskott, till exempel multivitaminer."
+    }
+  }
+}

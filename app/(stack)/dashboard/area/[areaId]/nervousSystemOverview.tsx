@@ -10,14 +10,14 @@ import { WearableStatus } from '@/components/WearableStatus';
 
 export default function NervousSystemScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { colors } = useTheme();
-  const { t } = useTranslation();
+  const { t } = useTranslation('areas');
   return (
     <>
       <ThemedText type="title" style={{ color: colors.area.nervousSystem }}>
-        {t('nervousSystemOverview.title')}
+        {t('nervousSystem.title')}
       </ThemedText>
       <ThemedText type="subtitle" style={{ color: colors.textTertiary }}>
-        {t('nervousSystemOverview.description')}
+        {t('nervousSystem.description')}
       </ThemedText>
 
       <WearableStatus />
@@ -26,63 +26,63 @@ export default function NervousSystemScreen({ mainGoalId }: Readonly<{ mainGoalI
 
       {/* Information card */}
       <InformationCardLink
-        title={t('nervousSystemOverview.informationCard.title')}
+        title={t('nervousSystem.information.title')}
         iconName="chart"
         iconColor={colors.area.nervousSystem}
         items={[
           {
             key: 'recovery',
             icon: '🔄',
-            title: t('nervousSystemOverview.informationCard.recovery.title'),
-            description: t('nervousSystemOverview.informationCard.recovery.description'),
+            title: t('nervousSystem.information.recovery.title'),
+            description: t('nervousSystem.information.recovery.description'),
           },
           {
             key: 'hrv',
             icon: '❤️',
-            title: t('nervousSystemOverview.informationCard.hrv.title'),
-            description: t('nervousSystemOverview.informationCard.hrv.description'),
+            title: t('nervousSystem.information.hrv.title'),
+            description: t('nervousSystem.information.hrv.description'),
           },
           {
             key: 'nutrients',
             icon: '🥦',
-            title: t('nervousSystemOverview.informationCard.nutrients.title'),
-            description: t('nervousSystemOverview.informationCard.nutrients.description'),
+            title: t('nervousSystem.information.nutrients.title'),
+            description: t('nervousSystem.information.nutrients.description'),
           },
           {
             key: 'overstimulationScreenTime',
             icon: '📱',
-            title: t('nervousSystemOverview.informationCard.overstimulationScreenTime.title'),
-            description: t('nervousSystemOverview.informationCard.overstimulationScreenTime.description'),
+            title: t('nervousSystem.information.overstimulationScreenTime.title'),
+            description: t('nervousSystem.information.overstimulationScreenTime.description'),
           },
           {
             key: 'breathing',
             icon: '🫁',
-            title: t('nervousSystemOverview.informationCard.breathing.title'),
-            description: t('nervousSystemOverview.informationCard.breathing.description'),
+            title: t('nervousSystem.information.breathing.title'),
+            description: t('nervousSystem.information.breathing.description'),
           },
           {
             key: 'immuneInflammation',
             icon: '🛡️',
-            title: t('nervousSystemOverview.informationCard.immuneInflammation.title'),
-            description: t('nervousSystemOverview.informationCard.immuneInflammation.description'),
+            title: t('nervousSystem.information.immuneInflammation.title'),
+            description: t('nervousSystem.information.immuneInflammation.description'),
           },
           {
             key: 'gutVagusMicrobiome',
             icon: '🦠',
-            title: t('nervousSystemOverview.informationCard.gutVagusMicrobiome.title'),
-            description: t('nervousSystemOverview.informationCard.gutVagusMicrobiome.description'),
+            title: t('nervousSystem.information.gutVagusMicrobiome.title'),
+            description: t('nervousSystem.information.gutVagusMicrobiome.description'),
           },
           {
             key: 'trainingStrengthens',
             icon: '💪',
-            title: t('nervousSystemOverview.informationCard.trainingStrengthens.title'),
-            description: t('nervousSystemOverview.informationCard.trainingStrengthens.description'),
+            title: t('nervousSystem.information.trainingStrengthens.title'),
+            description: t('nervousSystem.information.trainingStrengthens.description'),
           },
           {
             key: 'trainingNutritionStress',
             icon: '🏃',
-            title: t('nervousSystemOverview.informationCard.trainingNutritionStress.title'),
-            description: t('nervousSystemOverview.informationCard.trainingNutritionStress.description'),
+            title: t('nervousSystem.information.trainingNutritionStress.title'),
+            description: t('nervousSystem.information.trainingNutritionStress.description'),
           },
         ]}
       />

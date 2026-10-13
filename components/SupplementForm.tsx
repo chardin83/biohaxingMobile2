@@ -6,8 +6,9 @@ import { StyleSheet, View } from 'react-native';
 
 import { Supplement } from '@/app/domain/Supplement';
 import SupplementDropdown from '@/components/SupplementsDropdown';
+import { SupplementWarnings } from '@/components/SupplementWarnings';
 import { ThemedText } from '@/components/ThemedText';
-import LabeledInput from '@/components/ui/LabeledInput';
+import LabeledInput, { LabeledInputRow } from '@/components/ui/LabeledInput';
 
 import AppButton from './ui/AppButton';
 import { useBottomSheetDesign } from './ui/BottomSheetDesign';
@@ -17,16 +18,18 @@ import { DateTimeInput } from './ui/DateTimeInput';
 interface SupplementFormProps {
   selectedTime: Date;
   isEditing: boolean;
+  lockSupplement?: boolean;
   preselectedSupplement: Supplement | null;
   onSelectedTimeChange?: (time: Date) => void;
   footer?: React.ReactNode;
-  onSave: (supplement: Supplement) => void;
+  onSave: (supplement: Supplement) => void | boolean | Promise<void | boolean>;
   onCancel: () => void;
 }
 
 const SupplementForm: React.FC<SupplementFormProps> = ({
   selectedTime,
   isEditing,
+  lockSupplement = false,
   preselectedSupplement,
   onSelectedTimeChange,
   footer,
@@ -38,6 +41,7 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const sheetDesign = useBottomSheetDesign(colors);
   const [supplement, setSupplement] = useState<Supplement | null>(preselectedSupplement);
+  const [isSaving, setIsSaving] = useState(false);
   const hasFixedUnit = Boolean(supplement?.id && supplement.unit?.trim());
   const canEditSelectedTime = Boolean(onSelectedTimeChange);
 
@@ -58,10 +62,7 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
       handleComponent={sheetDesign.handleComponent}
       onDismiss={onCancel}
     >
-      <BottomSheetScrollView
-        contentContainerStyle={styles.sheetContent}
-        keyboardShouldPersistTaps="handled"
-      >
+      <BottomSheetScrollView contentContainerStyle={styles.sheetContent} keyboardShouldPersistTaps="handled">
         <DateTimeInput
           value={selectedTime}
           onChange={onSelectedTimeChange ?? (() => undefined)}
@@ -75,10 +76,10 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
             selectedTime={selectedTime}
             onSupplementSelect={(selectedSupplement: Supplement) => setSupplement(selectedSupplement)}
             preselectedSupplement={supplement?.name ?? null}
-            disabled={isEditing}
+            disabled={isEditing || lockSupplement}
           />
         </View>
-        <View style={styles.row}>
+        <LabeledInputRow helperText={t('supplementForm.exampleDosage')}>
           <LabeledInput
             label={t('supplementForm.dosage')}
             placeholder={t('supplementForm.dosage')}
@@ -86,15 +87,13 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
             keyboardType="decimal-pad"
             isOptional={false}
             onChangeText={text => setSupplement({ ...supplement, quantity: text } as Supplement)}
-            containerStyle={[styles.inputHalf, styles.inputSpacing]}
+            containerStyle={styles.inputHalf}
           />
 
           {hasFixedUnit ? (
             <View style={styles.inputHalf}>
               <ThemedText type="label">{t('supplementForm.unit')}</ThemedText>
-              <View
-                style={[styles.lockedUnitRow, { backgroundColor: colors.secondaryBackground }]}
-              >
+              <View style={[styles.lockedUnitRow, { backgroundColor: colors.secondaryBackground }]}>
                 <ThemedText type="defaultSemiBold">{supplement?.unit}</ThemedText>
                 <ThemedText type="explainer" style={{ color: colors.textMuted }}>
                   {t('general.fixed', { defaultValue: 'Fast' })}
@@ -110,16 +109,25 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
               containerStyle={styles.inputHalf}
             />
           )}
-        </View>
+        </LabeledInputRow>
 
+        <SupplementWarnings supplement={supplement} />
         <View style={styles.buttonColumn}>
           <AppButton
             title={isEditing ? t('general.save') : t('general.add')}
             variant="primary"
-            onPress={() => {
+            disabled={isSaving}
+            onPress={async () => {
               if (supplement?.name && supplement?.quantity.trim() !== '') {
-                onSave(supplement);
-                closeForm();
+                setIsSaving(true);
+                try {
+                  const saved = await onSave(supplement);
+                  if (saved !== false) closeForm();
+                } catch (error) {
+                  console.error('Failed to save supplement:', error);
+                } finally {
+                  setIsSaving(false);
+                }
               }
             }}
           />
@@ -142,9 +150,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     marginTop: 24,
     marginBottom: 10,
-  },
-  inputSpacing: {
-    marginRight: 12,
   },
   inputHalf: {
     flex: 1,

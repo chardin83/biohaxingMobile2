@@ -127,7 +127,24 @@ export type ActivityTarget = {
 export type HabitInputMode = 'number' | 'daily-check' | 'slots' | 'automatic';
 
 export type HabitTarget = {
-  trackingKey: 'sleep_duration' | 'morning_light' | 'meditation' | 'tooth_brushing' | 'nature_time' | 'social_connection' | 'sleep_schedule_consistency' | 'box_breathing' | 'breathing_4_7_8' | 'alternate_nostril_breathing' | 'diaphragmatic_breathing' | 'sleep_environment' | 'sleep_hygiene' | 'pre_sleep_wind_down' | 'nasal_breathing' | 'calming_music' | 'hrv_recovery_review';
+  trackingKey:
+    | 'sleep_duration'
+    | 'morning_light'
+    | 'meditation'
+    | 'tooth_brushing'
+    | 'nature_time'
+    | 'social_connection'
+    | 'sleep_schedule_consistency'
+    | 'box_breathing'
+    | 'breathing_4_7_8'
+    | 'alternate_nostril_breathing'
+    | 'diaphragmatic_breathing'
+    | 'sleep_environment'
+    | 'sleep_hygiene'
+    | 'pre_sleep_wind_down'
+    | 'nasal_breathing'
+    | 'calming_music'
+    | 'hrv_recovery_review';
   buttonLabels?: string[];
   inputMode?: HabitInputMode;
 } & BaseTarget<'minutes' | 'hours' | 'count'>;
@@ -496,6 +513,8 @@ const rawTips: Tip[] = [
       { id: 'immuneSupport', descriptionKey: 'zinc_comprehensive_support.areas.immuneSupport' },
       { id: 'nervousSystem', descriptionKey: 'zinc_comprehensive_support.areas.nervousSystem' },
       { id: 'energy', descriptionKey: 'zinc_comprehensive_support.areas.energy' },
+      { id: 'womenHealth', descriptionKey: 'zinc_comprehensive_support.areas.womenHealth' },
+      { id: 'menHealth', descriptionKey: 'zinc_comprehensive_support.areas.menHealth' },
     ],
     title: 'zinc_comprehensive_support.title',
     descriptionKey: 'zinc_comprehensive_support.description',
@@ -913,6 +932,7 @@ const rawTips: Tip[] = [
     areas: [
       { id: 'immuneSupport', descriptionKey: 'glutathione.areas.immuneSupport' },
       { id: 'energy', descriptionKey: 'glutathione.areas.energy' },
+      { id: 'womenHealth', descriptionKey: 'glutathione.areas.womenHealth' },
     ],
     title: 'glutathione.title',
     descriptionKey: 'glutathione.description',
@@ -1223,15 +1243,17 @@ const rawTips: Tip[] = [
     targetPeriod: 'daily',
     targetIconName: 'target',
     habitTargets: [{ trackingKey: 'hrv_recovery_review', amount: 1, unit: 'count', inputMode: 'daily-check' }],
-    goalLinks: [{
-      id: 'recovery-status',
-      titleKey: 'hrv_recovery_monitoring.goalReview.link',
-      icon: 'chart',
-      href: {
-        pathname: '/(stack)/plan/[tipId]/metric/[metricId]',
-        params: { tipId: 'hrv_recovery_monitoring', metricId: 'recovery_status' },
+    goalLinks: [
+      {
+        id: 'recovery-status',
+        titleKey: 'hrv_recovery_monitoring.goalReview.link',
+        icon: 'chart',
+        href: {
+          pathname: '/(stack)/plan/[tipId]/metric/[metricId]',
+          params: { tipId: 'hrv_recovery_monitoring', metricId: 'recovery_status' },
+        },
       },
-    }],
+    ],
     goalConfirmation: {
       trackingKey: 'hrv_recovery_review',
       seconds: 5,
@@ -1416,6 +1438,8 @@ const rawTips: Tip[] = [
       { id: 'digestiveHealth', descriptionKey: 'fiber_microbiome.areas.digestiveHealth' },
       { id: 'immuneSupport', descriptionKey: 'fiber_microbiome.areas.immuneSupport' },
       { id: 'longevity', descriptionKey: 'fiber_microbiome.areas.longevity' },
+      { id: 'womenHealth', descriptionKey: 'fiber_microbiome.areas.womenHealth' },
+      { id: 'menHealth', descriptionKey: 'fiber_microbiome.areas.menHealth' },
     ],
     title: 'fiber_microbiome.title',
     descriptionKey: 'fiber_microbiome.description',

@@ -1,16 +1,281 @@
 {
+  "womenHealth": {
+    "title": "Kvinnohälsa",
+    "description": "Lär dig hur kvinnors hälsa påverkas av hormoner och livets olika faser – och varför kost, rörelse och återhämtning är viktiga.",
+    "lifeStages": {
+      "fertility": {
+        "title": "Fertil ålder",
+        "subtitle": "Menscykel, PCOS, endometrios och reproduktiv hälsa",
+        "items": {
+          "pcos": {
+            "title": "PCOS",
+            "description": "PCOS är ett hormonellt och metabolt tillstånd som kan påverka menscykel, ägglossning och androgenproduktion. Insulinresistens är vanligt och kan förstärka hormonella obalanser.",
+            "healthAdvice": {
+              "training": {
+                "title": "Träning",
+                "description": "Både styrke- och konditionsträning förbättrar musklernas förmåga att ta upp glukos, även utan viktnedgång. Det kan minska kroppens insulinbehov och därmed den stimulering av androgenproduktion som förhöjda insulinnivåer kan bidra till vid PCOS."
+              },
+              "diet": {
+                "title": "Kost",
+                "description": "Fiberrika livsmedel som grönsaker, baljväxter och fullkorn kan bromsa upptaget av kolhydrater och bidra till jämnare blodsocker. Det är särskilt relevant vid PCOS eftersom insulinresistens är vanligt. Ingen enskild diet har visats vara bäst för alla med PCOS."
+              },
+              "recovery": {
+                "title": "Återhämtning",
+                "description": "Sömn är viktig för kroppens glukosreglering. Sömnbrist kan försämra insulinkänsligheten och därmed öka kroppens behov av insulin. Regelbundna sömnvanor stödjer både återhämtning och metabol hälsa."
+              },
+              "checkups": {
+                "title": "Stöd från vården",
+                "description": "PCOS upptäcks ofta vid oregelbunden mens eller fertilitetsproblem, men kan påverka hälsan även när symtomen är lindriga. Vården kan ge individuellt stöd och bedöma behov av uppföljning eller behandling."
+              }
+            }
+          },
+          "endometriosis": {
+            "title": "Endometrios",
+            "description": "Endometrios innebär att vävnad som liknar livmoderslemhinnan finns utanför livmodern. Tillståndet är kopplat till inflammation och kan orsaka smärta, trötthet och ibland fertilitetsproblem.",
+            "healthAdvice": {
+              "training": {
+                "title": "Rörelse",
+                "description": "Fysisk aktivitet kan stödja välmåendet och kroppens naturliga smärtreglering. Vid långvarig smärta kan även musklerna kring bäckenet bli spända och känsliga. Anpassad rörelse kan hjälpa vissa att minska muskelspänningar, men forskningen om träningens specifika effekt på endometrios är fortfarande begränsad."
+              },
+              "diet": {
+                "title": "Kost",
+                "description": "Endometrios är förknippat med inflammatoriska processer. En varierad kost med grönsaker, frukt, fullkorn och omättade fetter bidrar med fibrer, vitaminer och andra ämnen som stödjer kroppens normala funktioner. Det saknas däremot tillräckligt vetenskapligt stöd för att en viss kosthållning minskar själva endometriosen. Vid magbesvär kan en mat- och symtomdagbok hjälpa till att identifiera individuella samband."
+              },
+              "recovery": {
+                "title": "Återhämtning",
+                "description": "Långvarig smärta kan störa sömnen och påverka nervsystemets smärtreglering. Sömnbrist kan i sin tur öka smärtkänsligheten. Tillräcklig sömn, pauser och avslappning kan därför vara värdefulla för återhämtning och livskvalitet."
+              },
+              "checkups": {
+                "title": "Stöd från vården",
+                "description": "Endometrios kan påverka vardagen genom återkommande eller långvarig smärta. Svår menssmärta behöver inte accepteras som normalt. Vården kan hjälpa till med bedömning, stöd och behandling."
+              }
+            }
+          }
+        }
+      },
+      "perimenopause": {
+        "title": "Förklimakteriet",
+        "subtitle": "Hormonförändringar, sömn och återhämtning",
+        "items": {
+          "transition": {
+            "title": "En gradvis förändring",
+            "description": "Under förklimakteriet börjar äggstockarnas hormonproduktion förändras. Östrogen och progesteron kan variera kraftigt, vilket kan påverka menscykeln, sömnen, temperaturregleringen och humöret.",
+            "healthAdvice": {
+              "training": {
+                "title": "Träning",
+                "description": "Styrketräning stimulerar musklerna och hjälper till att bevara styrka och muskelmassa. Konditionsträning förbättrar hjärtats och blodkärlens funktion samt kroppens insulinkänslighet. Det är värdefullt när hormonförändringar och stigande ålder kan påverka kroppssammansättning och metabol hälsa."
+              },
+              "diet": {
+                "title": "Kost",
+                "description": "Protein behövs för att bygga upp och underhålla muskler, särskilt tillsammans med styrketräning. Fiberrika livsmedel som baljväxter, grönsaker och fullkorn bidrar till god tarmfunktion och metabol hälsa. Tillräckligt med kalcium och D-vitamin är också viktigt för skelettet, eftersom minskande östrogennivåer längre fram kan påskynda benförlusten."
+              },
+              "recovery": {
+                "title": "Sömn och återhämtning",
+                "description": "Hormonvariationer kan påverka kroppens temperaturreglering och bidra till nattliga svettningar och uppvaknanden. Ett svalt sovrum och regelbundna sömnvanor kan underlätta. Sömnbrist påverkar dessutom humör, återhämtning och insulinkänslighet, vilket gör sömn särskilt viktig under denna period."
+              },
+              "checkups": {
+                "title": "Stöd från vården",
+                "description": "Hormonförändringarna kan ge mycket olika symtom och behöver inte alltid behandlas. Om besvären påverkar livskvaliteten finns stöd och behandlingsalternativ inom vården. Ovanligt kraftiga eller återkommande mellanblödningar bör också bedömas."
+              }
+            }
+          }
+        }
+      },
+      "menopause": {
+        "title": "Klimakteriet och tiden efter",
+        "subtitle": "Menopaus, skelett och långsiktig hälsa",
+        "items": {
+          "menopause": {
+            "title": "Menopaus och tiden efter",
+            "description": "Menopaus är den sista menstruationen och fastställs vanligtvis efter tolv månader utan mens. Därefter ligger östrogennivåerna generellt lägre, vilket kan påverka skelett, kroppssammansättning och slemhinnor.",
+            "healthAdvice": {
+              "training": {
+                "title": "Träning",
+                "description": "När östrogennivåerna sjunker ökar vanligtvis förlusten av benmassa. Styrketräning belastar muskler och skelett och hjälper till att bevara styrka och bentäthet. Viktbärande aktivitet och konditionsträning kompletterar genom att stödja skelett, balans och hjärt-kärlhälsa."
+              },
+              "diet": {
+                "title": "Kost",
+                "description": "Lägre östrogennivåer kan bidra till snabbare benförlust, vilket gör tillräckligt med kalcium och D-vitamin viktigt för skelettet. Protein tillsammans med styrketräning hjälper till att bevara muskelmassa. Fibrer och omättade fetter stödjer samtidigt hjärt-kärlhälsan, som blir allt viktigare med stigande ålder."
+              },
+              "recovery": {
+                "title": "Återhämtning",
+                "description": "Vallningar och nattliga svettningar kan störa sömnen även efter menopaus. Långvarig sömnbrist kan påverka energi, humör och metabol hälsa. Regelbundna sömnvanor, en sval sovmiljö och återhämtning kan bidra till bättre sömnkvalitet och välmående."
+              },
+              "checkups": {
+                "title": "Stöd från vården",
+                "description": "Klimakteriebesvär varierar mycket mellan individer. Vården kan ge stöd och information om behandlingsalternativ när besvären påverkar vardagen. Blödning efter menopaus bör alltid bedömas av vården."
+              }
+            }
+          }
+        }
+      }
+    },
+    "healthAdviceLink": "Så kan du stödja din hälsa",
+    "healthAdviceTitle": "Vad kan du göra – och varför?",
+    "conditions": {
+      "autoimmune": {
+        "title": "Autoimmuna sjukdomar",
+        "subtitle": "Immunförsvar, hormoner och levnadsvanor",
+        "description": "Autoimmuna sjukdomar uppstår när immunförsvaret reagerar mot kroppens egna vävnader. Flera av dessa sjukdomar är vanligare hos kvinnor. Skillnader i immunförsvarets reglering, könshormoner och gener på X-kromosomen tros bidra. Orsakerna varierar mellan sjukdomar och är ännu inte helt klarlagda.",
+        "items": {
+          "understanding": {
+            "title": "Hormoner och immunförsvaret",
+            "description": "Östrogen och andra könshormoner påverkar immunförsvarets aktivitet. Kvinnor har generellt starkare immunsvar än män, vilket kan ge bättre skydd mot vissa infektioner men också bidra till ökad benägenhet för autoimmuna reaktioner. Sambanden är komplexa och skiljer sig mellan sjukdomar."
+          },
+          "dailyLife": {
+            "title": "Kost, rörelse och återhämtning",
+            "description": "Regelbunden fysisk aktivitet, varierad näringsrik kost och tillräcklig sömn stödjer kroppens normala funktioner och allmänna hälsa. Vid autoimmuna sjukdomar kan trötthet, smärta och inflammation påverka orken, vilket gör det värdefullt att anpassa belastning och återhämtning. Ingen enskild diet har visats behandla alla autoimmuna sjukdomar."
+          },
+          "checkups": {
+            "title": "Stöd från vården",
+            "description": "Autoimmuna sjukdomar kan ge många olika symtom, exempelvis ledvärk, hudförändringar och långvarig trötthet. Symtomen har ofta andra orsaker, men återkommande eller ihållande besvär kan behöva bedömas av vården. Behandling och uppföljning varierar mellan olika sjukdomar."
+          }
+        }
+      },
+      "breastCancer": {
+        "title": "Bröstcancer",
+        "subtitle": "Förebyggande vanor och tidig upptäckt",
+        "description": "Bröstcancer är betydligt vanligare hos kvinnor än hos män. Bröstvävnad och livslång exponering för könshormoner spelar en roll. Risken påverkas också av ålder, ärftlighet och levnadsvanor.",
+        "items": {
+          "lifestyle": {
+            "title": "Rörelse och alkohol",
+            "description": "Rör dig regelbundet och begränsa alkohol, gärna genom att avstå. Fysisk aktivitet är kopplad till lägre risk för bröstcancer, medan alkohol ökar risken även vid låg konsumtion."
+          },
+          "diet": {
+            "title": "Kost och långsiktig hälsa",
+            "description": "Ät varierat med grönsaker, frukt, fullkorn och baljväxter. Det stödjer en hållbar vikt och allmän hälsa. Efter menopaus är överskott av kroppsfett kopplat till högre bröstcancerrisk, bland annat eftersom fettvävnad producerar östrogen. Ingen enskild matvara ger skydd mot bröstcancer."
+          },
+          "breastfeeding": {
+            "title": "Amning",
+            "description": "Om du vill och kan amma är amning kopplad till lägre risk för bröstcancer, särskilt vid längre sammanlagd amningstid. Färre ägglossningscykler och förändringar i bröstvävnaden kan bidra. Amning är ett personligt val och ger inget fullständigt skydd."
+          },
+          "checkups": {
+            "title": "Screening och stöd från vården",
+            "description": "Gå på mammografi när du blir kallad; screening kan upptäcka cancer innan den ger symtom. Sök vård vid en ny knöl, förändrad bröstform eller blodig vätska från bröstvårtan, även mellan screeningtillfällena. Berätta om flera nära släktingar haft bröst- eller äggstockscancer, eftersom det kan motivera bedömning av ärftlig risk."
+          }
+        }
+      }
+    },
+    "conditionsTitle": "Kvinnors hälsorisker"
+  },
+  "menHealth": {
+    "title": "Manshälsa",
+    "description": "Tips för mäns hälsa och välmående.",
+    "information": {
+      "title": "Testosteron och hälsa",
+      "subtitle": "Vad kan du göra – och varför?",
+      "description": "Testosteron påverkar bland annat sexlust, muskelmassa och skelett. Minskad sexlust, färre spontana erektioner och nedsatt ork kan förekomma vid testosteronbrist, men kan också ha andra orsaker.",
+      "training": {
+        "title": "Träning",
+        "description": "Styrketräna regelbundet och kombinera med konditionsträning. Det stödjer muskler och metabol hälsa. Vid obesitas kan hållbar viktnedgång förbättra låga testosteronnivåer; träning innebär däremot inte automatiskt en bestående höjning av testosteron."
+      },
+      "diet": {
+        "title": "Kost",
+        "description": "Ät varierat och tillräckligt för din aktivitetsnivå. Undvik långvarig kraftig energibrist, som kan sänka testosteron. Ingen enskild mat eller något ”testosteronhöjande” tillskott ersätter utredning och behandling av testosteronbrist."
+      },
+      "recovery": {
+        "title": "Sömn och återhämtning",
+        "description": "Prioritera tillräcklig sömn och balans mellan träning och återhämtning. Sömnproblem och överdriven träning kan påverka testosteronnivåerna. Sök vård vid kraftig snarkning, andningsuppehåll eller uttalad dagtrötthet; sömnapné kan behöva utredas."
+      },
+      "checkups": {
+        "title": "Utredning av testosteronbrist",
+        "description": "Kontakta vården vid ihållande minskad sexlust, färre spontana erektioner eller andra besvär. Trötthet eller erektionsproblem räcker inte ensamt för att fastställa testosteronbrist.\n\nDiagnosen kräver både förenliga symtom och upprepade låga testosteronvärden. Prov tas vanligen fastande på morgonen och ett lågt värde kontrolleras en annan dag. Vården bedömer även möjliga orsaker och behov av kompletterande prover.\n\nBerätta om du vill kunna få barn. Testosteronbehandling kan hämma spermieproduktionen och behöver bedömas särskilt vid fertilitetsönskemål."
+      }
+    }
+  },
   "energy": {
-    "title": "Energi & Vitalitet",
-    "description": "Öka din dagliga energi och övervinn trötthet"
+    "title": "Energi system",
+    "description": "Mitokondriell funktion och cellulär energiproduktion",
+    "cellularEnergyReserves": {
+      "title": "Cellulära energireserver",
+      "sinceWaking": "sedan uppvaknande",
+      "explainer": "Stress, aktivitet och återhämtning påverkar dina energinivåer."
+    },
+    "information": {
+      "title": "Mitokondriell hälsa",
+      "powerhouses": {
+        "title": "Cellernas kraftverk",
+        "description": "Mitokondrier är organeller som producerar ATP (adenosintrifosfat), cellernas energivaluta. Varje cell innehåller hundratals till tusentals mitokondrier. De omvandlar näringsämnen och syre till ~90% av kroppens energi."
+      },
+      "atpProduction": {
+        "title": "ATP-produktion",
+        "description": "Genom oxidativ fosforylering producerar mitokondrier 30-32 ATP-molekyler per glukosmolekyl (jämfört med endast 2 ATP från glykolys). Denna process kräver syre, vilket är anledningen till att VO₂ max korrelerar med energikapacitet."
+      },
+      "mitochondrialBiogenesis": {
+        "title": "Mitokondriell biogenes",
+        "description": "Träning (särskilt zon 2-konditionsträning) aktiverar PGC-1α, vilket ökar mitokondrietätheten. Fler mitokondrier = större kapacitet för energiproduktion. Detta är anledningen till att vältränade idrottare har högre VO₂ max."
+      },
+      "oxidativeStress": {
+        "title": "Oxidativ stress",
+        "description": "Mitokondrier producerar reaktiva syreföreningar (ROS) som biprodukter vid ATP-produktion. Överskott av ROS orsakar oxidativ skada på mitokondriellt DNA. Antioxidanter (vitamin C, E, CoQ10, glutation) hjälper till att neutralisera ROS och skydda mitokondriell funktion."
+      },
+      "nadDecline": {
+        "title": "NAD+ och energinedgång",
+        "description": "NAD+ (nikotinamidadenindinukleotid) är avgörande för mitokondriell funktion. NAD+-nivåer minskar med ~50% mellan 20-80 års ålder, vilket minskar effektiviteten i ATP-produktionen. NAD+-prekursorer (NR, NMN) och sirtuinaktivatorer kan stödja mitokondriell hälsa."
+      },
+      "mitophagy": {
+        "title": "Mitofagi och cellulär rengöring",
+        "description": "Mitofagi är selektiv autofagi av skadade mitokondrier. Det sker under fasta och djupsömn. Regelbunden mitofagi förhindrar ackumulering av dysfunktionella mitokondrier som producerar överskott av ROS och mindre ATP."
+      },
+      "insulinResistance": {
+        "title": "Insulin och insulinresistens",
+        "description": "Insulin hjälper celler att ta upp glukos för energiproduktion. Vid insulinresistens svarar cellerna sämre på insulin, vilket kan leda till högre blodsocker och minskad metabol flexibilitet. Kroniskt förhöjt insulin kan belasta mitokondrierna och bidra till lägre energinivåer över tid. Baserat på epidemiologiska uppskattningar har cirka 15-30% av vuxna i EU och cirka 30-40% av vuxna i USA insulinresistens, beroende på definition och mätmetod."
+      },
+      "chronicStress": {
+        "title": "Kronisk stress och mitokondriell funktion",
+        "description": "Kronisk stress ökar kortisol- och adrenalinproduktion, vilket öppnar energi för omedelbar överlevnad men undertrycker långsiktig mitokondriell reparation och biogenesis. Högt kortisol ökar ROS-produktion, försämrar DNA-reparation och minskar NAD+-nivåer. Stress-inducerad hjärnaktivering kan också reducera blodflödet till mag-tarmkanalen och framkallar immunundertryckande. Regelbunden vila, djupsömn och parasympatisk aktivering (djupandning, meditation) är kritiska för att återställa mitokondriell hälsa."
+      },
+      "metabolicFlexibility": {
+        "title": "Metabol flexibilitet",
+        "description": "Metabol flexibilitet är kroppens förmåga att smidigt växla mellan att bränna glukos och fett för energi beroende på tillgänglighet och behov. Väl utvecklad metabol flexibilitet minskar beroendet av frekventa måltider, förbättrar insulinkänsligheten och ökar mental klarhet. Intermittend fasta, låg-kohlenhydrat-perioder och aerob träning förbättrar denna växlingsförmåga. Kronisk överföring av socker kan försämra metabol flexibilitet, vilket gör kroppen låst vid glukosförbränning och mindre motståndskraftig mot energifluktuationer."
+      },
+      "resistantStarch": {
+        "title": "Resistent stärkelse och energi",
+        "description": "Resistent stärkelse är en nyckelfiber för energi och metabol hälsa. Den bryts inte ner i tunntarmen utan fermenteras i tjocktarmen till kortkedjiga fettsyror, särskilt butyrat. Detta kan förbättra insulinkänslighet, stödja metabol flexibilitet och dämpa låggradig inflammation, vilket indirekt gynnar energiproduktion och mitokondriell hälsa. Exempel är avsvalnad potatis/ris, gröna bananer, baljväxter och havre. Bäst total effekt fås ofta när resistent stärkelse kombineras med andra fibertyper i en varierad kost."
+      },
+      "lowCarbHighIntensityTraining": {
+        "title": "Lågkolhydratkost och högintensiv träning",
+        "description": "Lågkolhydratkost i kombination med högintensiv träning kan vara effektiv för fettminskning, förbättrad insulinkänslighet och metabol hälsa, men kräver planering. Högintensiva pass är mer beroende av glykogen, så för låg kolhydratnivå kan sänka prestationsförmåga och återhämtning. Om belastningen blir för hög kan kortisol stiga och nervsystemet fastna i sympatisk dominans (högre stresspåslag, sämre sömn och lägre HRV). En periodiserad strategi fungerar ofta bäst: lägre kolhydratintag i vila eller lågintensiva dagar, och riktade kolhydrater före eller efter hårda pass för att stödja kraftutveckling, hormonbalans och återgång till parasympatisk återhämtning."
+      }
+    }
   },
   "sleepQuality": {
-    "title": "Sömnkvalitet",
-    "description": "Förbättra sömnens längd och kvalitet",
+    "title": "Sömn",
+    "description": "Återhämtning, reparation och cirkadisk hälsa",
     "relatedAreas": {
       "sectionTitle": "Relaterade områden",
       "nervousSystem": "Sömn och nervsystemet är djupt sammanlänkade. Under sömn återhämtar sig det autonoma nervsystemet, HRV återställs och kortisolnivåerna sjunker. Dålig sömn driver upp stressresponsen och försämrar återhämtning.",
       "digestiveHealth": "Under sömn repareras och stärks tarmbarriären. Sömnbrist ökar kortisolnivåer som kan öka tarmens genomsläpplighet och störa mikrobiomets balans. God sömn stödjer en hälsosam tarmflora.",
       "energy": "Djupsömn är när mitokondriell reparation och autofagi sker. Sömnbrist försämrar cellernas ATP-produktion och minskar insulinkänsligheten, vilket direkt sänker energinivån under dagen."
+    },
+    "overview": {
+      "title": "Översikt",
+      "consistency": {
+        "title": "Sömnkonsistens",
+        "pattern": "7 dagars mönster",
+        "moderate": "Måttlig",
+        "low": "Låg",
+        "high": "Hög"
+      }
+    },
+    "information": {
+      "title": "Förstå sömn",
+      "stages": {
+        "title": "Faser",
+        "description": "Sömn cyklas genom 4 faser: Lätt (N1, N2), Djup (N3) och REM. Varje fas har unika fördelar. Vuxna behöver 7-9 timmar med balanserad fasfördelning för optimal återhämtning."
+      },
+      "deepSleep": {
+        "title": "Djup sömn",
+        "description": "Djup sömn (långsamvågssömn) är när din kropp reparerar vävnader, bygger muskler, stärker immunförsvaret och konsoliderar minnen. Tillväxthormon når sin topp under denna fas. Sikta på 15-25% av den totala sömntiden."
+      },
+      "remSleep": {
+        "title": "REM-sömn",
+        "description": "REM (Rapid Eye Movement)-sömn bearbetar känslor, konsoliderar lärande och stödjer kreativitet. De flesta livliga drömmar sker här. REM bör vara 20-25% av den totala sömnen och ökar i senare cykler."
+      },
+      "circadianRhythm": {
+        "title": "Cirkadisk rytm",
+        "description": "Din interna 24-timmarsklocka reglerar sömn-vaken-cykler, hormonfrisättning och kroppstemperatur. Konsekventa sömn/vaken-tider stärker den cirkadiska rytmen och förbättrar sömnkvaliteten."
+      }
     }
   },
   "focus": {
@@ -18,43 +283,280 @@
     "description": "Förbättra mental klarhet och utmattad uppmärksamhet"
   },
   "immuneSupport": {
-    "title": "Immunt Stöd",
-    "description": "Stärk ditt immunförsvar"
+    "title": "Immunsystemet",
+    "description": "Försvar mot patogener och immunreglering",
+    "immuneStatus": {
+      "title": "Immuntillstånd",
+      "stressLevel": "Stressnivå"
+    },
+    "information": {
+      "title": "Varför dessa metrik är viktiga",
+      "sleep": {
+        "title": "Sömn",
+        "description": "Tillräcklig sömn är avgörande för immunfunktionen. Under sömnen producerar kroppen cytokiner som hjälper till att bekämpa infektioner och inflammation. Tillräcklig sömn är viktig för immunförsvaret. Under sömnen producerar kroppen cytokiner som hjälper till att bekämpa infektion och inflammation."
+      },
+      "stress": {
+        "title": "Stress & återhämtning",
+        "description": "Kronisk stress undertrycker immunfunktionen."
+      },
+      "hrv": {
+        "title": "HRV (Heart Rate Variability)",
+        "description": "Högre HRV indikerar bättre återhämtning och resiliens. Låg HRV kan signalera stress, trötthet eller sjukdom."
+      },
+      "restingHeartRate": {
+        "title": "Vilopuls",
+        "description": "En förhöjd vilopuls kan vara ett tidigt tecken på sjukdom, inflammation eller otillräcklig återhämtning."
+      },
+      "microbiomeButyrate": {
+        "title": "Mikrobiom och butyratproducerande bakterier",
+        "description": "Tarmmikrobiomet påverkar immunförsvaret direkt. Butyratproducerande bakterier (som producerar kortkedjiga fettsyran butyrat) stärker tarmbarriären, dämpar låggradig inflammation och stödjer immuntolerans. Resistent stärkelse är ett viktigt bränsle för dessa bakterier och finns bland annat i avsvalnad potatis/ris, gröna bananer, baljväxter och havre. En fiberrik kost gynnar därför butyratproduktion och kan förbättra immunbalansen."
+      },
+      "recovery": {
+        "title": "Återhämtningsstatus",
+        "description": "Sömn och återhämtning ger immunförsvaret bättre förutsättningar att fungera. Låga poäng över tid kan tyda på ökad belastning och behov av mer vila. Poängen mäter inte immunförsvarets styrka och visar inte om du har en infektion."
+      }
+    }
   },
   "nervousSystem": {
-    "title": "Nervsystem",
-    "description": "Balansera ditt autonoma nervsystem för bättre stressresiliens"
+    "title": "Nervsystemet",
+    "description": "Autonom nervsystembalans och återhämtningsmetrik",
+    "autonomicNervousSystem": {
+      "title": "Autonoma nervsystemet"
+    },
+    "information": {
+      "title": "Förstå ditt nervsystem",
+      "hrv": {
+        "title": "HRV (Heart Rate Variability)",
+        "description": "HRV mäter variationen i tid mellan hjärtslag. Hög HRV indikerar en stark parasympatisk aktivitet och god återhämtning. Låg HRV kan signalera stress, trötthet eller sjukdom."
+      },
+      "nutrients": {
+        "title": "Näringsämnen som stöder nervsystemet",
+        "description": "Flera näringsämnen är särskilt viktiga för nervsystemets funktion: B-vitaminer (särskilt B1, B6, B12 och folat) för nervsignalering och energimetabolism, magnesium för avslappning och stressreglering, omega-3 (EPA/DHA) för nervcellernas membran, D-vitamin för neuroimmun balans, kolin för acetylkolinproduktion samt tillräckligt natrium, kalium och vätska för stabil nervledning."
+      },
+      "overstimulationScreenTime": {
+        "title": "Överstimulering och skärmtid",
+        "description": "Hög skärmtid, snabba dopaminstimuli och konstant informationsflöde kan hålla nervsystemet i ett mer aktiverat läge. Särskilt kvällstid kan blått ljus och mental stimulans fördröja melatoninfrisättning, försämra sömnkvalitet och minska nattlig återhämtning. Detta kan över tid bidra till högre stresskänslighet, lägre HRV och svårare reglering mellan fokus och vila. Regelbundna pauser, skärmfria kvällsrutiner och nedvarvning före sömn stödjer parasympatisk balans."
+      },
+      "breathing": {
+        "title": "Andning och nervsystemet",
+        "description": "Långsam och kontrollerad andning kan snabbt sänka stresspåslag och öka parasympatisk aktivitet via vagusnerven. Förlängd utandning (till exempel 4 sek in, 6-8 sek ut) signalerar trygghet till nervsystemet och kan förbättra HRV, fokus och återhämtning. Några minuters andningsövning före sömn eller efter stressiga perioder kan ge tydlig effekt."
+      },
+      "immuneInflammation": {
+        "title": "Immunförsvar och låggradig inflammation",
+        "description": "Nervsystemet och immunförsvaret är tätt sammankopplade. Låggradig inflammation med förhöjda inflammationssignaler kan öka stresskänslighet, försämra sömn och minska återhämtning i nervsystemet. Samtidigt kan långvarig stress driva mer inflammation. Antiinflammatoriska vanor som god sömn, regelbunden rörelse, stabilt blodsocker och näringstät kost kan hjälpa till att bryta denna negativa loop."
+      },
+      "gutVagusMicrobiome": {
+        "title": "Tarmhälsa, vagusnerven och tarmfloran",
+        "description": "Tarmen och hjärnan kommunicerar kontinuerligt via tarm-hjärna-axeln, där vagusnerven är en central signalväg. En balanserad tarmflora producerar metaboliter och signalsubstanser som kan stödja lugnare stressrespons och bättre återhämtning, medan dysbios kan bidra till inflammation och ökad nervsystemsbelastning. Fiberrik kost, fermenterade livsmedel, god sömn och stresshantering kan stärka tarmmiljön och därmed även nervsystemets reglering."
+      },
+      "trainingStrengthens": {
+        "title": "Hur träning stärker nervsystemet",
+        "description": "Rätt dos träning stärker nervsystemets regleringsförmåga. Regelbunden aerob träning och styrketräning kan höja HRV över tid, förbättra stressresiliens och göra att du snabbare växlar tillbaka till parasympatisk återhämtning efter belastning. HIT är bra för nervsystemet eftersom korta, intensiva intervaller tränar kroppen att tåla snabb sympatisk aktivering och därefter återgå effektivt till återhämtning. Med tiden kan detta förbättra autonom flexibilitet, stressrespons och mental skärpa. Progressiv upptrappning med tillräcklig återhämtning är nyckeln, oftast 1-3 HIT-pass per vecka."
+      },
+      "trainingNutritionStress": {
+        "title": "Högintensiv träning, kost och stressbelastning",
+        "description": "Högintensiv träning är effektiv men ökar den akuta aktiveringen av sympatikus. Om den kombineras med för lågt energi- eller kolhydratintag under längre perioder kan kortisol förbli förhöjt, HRV sjunka och sömnen försämras. Det kan ge tecken på nervsystemsbelastning som trötthet, sämre återhämtning och minskad prestation. För att skydda nervsystemet: periodisera intensiva pass, säkerställ tillräcklig energi och använd återhämtningsdagar med fokus på parasympatisk aktivering."
+      },
+      "recovery": {
+        "title": "Återhämtningsstatus",
+        "description": "För nervsystemet kan god återhämtning tyda på bättre förmåga att växla från anspänning till vila. Låga poäng över tid kan vara en signal om att prioritera sömn, lugna pauser och anpassad träningsbelastning."
+      }
+    }
   },
   "strength": {
-    "title": "Styrka",
-    "description": "Bygga styrka"
+    "title": "Styrka & muskelhälsa",
+    "description": "Muskelprestanda, styrketräning och återhämtning",
+    "recoveryFactors": {
+      "title": "Återhämtningsfaktorer",
+      "explainer": "Sömn och HRV är primära drivkrafter för muskelåterhämtning och proteinsyntes. Djupsömn utlöser tillväxthormonfrisättning för muskelreparation. Att respektera återhämtning förhindrar skador och främjar styrkeökningar. Att träna hårt när återhämtningen är ofullständig leder till minskade resultat och ökad skaderisk.",
+      "explainers": {
+        "sleep_duration": "Sömnlängd styr hur väl du återhämtar muskler och nervsystem mellan passen. För kort sömn försämrar kraftutveckling, teknik och förmågan att klara progressiv överbelastning.",
+        "sleep_bedtime": "Regelbunden läggtid förbättrar återhämtningens timing och sömnkvalitet. Stabil dygnsrytm gör att du lättare presterar tungt och återhämtar dig till nästa styrkepass.",
+        "hrv": "HRV visar hur återhämtat ditt autonoma nervsystem är inför träning. Lägre HRV kan signalera hög stressbelastning och behov av att justera volym, intensitet eller vilodag."
+      }
+    },
+    "information": {
+      "title": "Information",
+      "trainingReadiness": {
+        "title": "Träningsberedskap",
+        "description": "HRV indikerar din träningsberedskap. Hög HRV kan tyda på god återhämtning. Låg HRV kan signalera behov av lättare träning eller vila."
+      },
+      "trainingLoad": {
+        "title": "Träningsbelastning",
+        "description": "Kvantiﬁerar träningsstress från de senaste 7 dagarna. Anaerob belastning mäter specifikt högintensivt arbete (tung styrketräning, HIIT). Att hålla belastningen inom ditt optimala intervall förhindrar överträning samtidigt som progression säkerställs."
+      },
+      "recoveryTime": {
+        "title": "Återhämtningstid",
+        "description": "Uppskattade timmar tills full muskulär och CNS-återhämtning. Tunga sammansatta lyft (knäböj, marklyft) kräver 48-72 timmar för fullständig återhämtning. Att träna samma muskelgrupper innan återhämtningen är klar försämrar anpassningen."
+      },
+      "sleepMuscleGrowth": {
+        "title": "Sömn & muskelväxt",
+        "description": "80% av tillväxthormonet frisätts under djupsömn. Sömnbrist minskar proteinsyntesen med ~20% och ökar kortisol (katabolt). Sikta på 7-9 timmar med sömnkvalitet över 80% för optimal hypertrofi."
+      }
+    },
+    "proteinTiming": {
+      "title": "Anabola fönstret",
+      "proteinTiming": {
+        "title": "Protein efter träning",
+        "description": "Proteinintag efter träning är mest effektivt inom 2–3 timmar. Muskelproteinsyntesen förblir förhöjd i 24–48 timmar efter styrketräning."
+      },
+      "recommendations": {
+        "title": "Rekommendationer:",
+        "description": "• 20–40 g protein inom 2 timmar efter träning\n• Totalt 1,6–2,2 g/kg kroppsvikt per dag\n• Leucinrika källor (vassle, ägg, kött)\n• Fördela protein över 3–5 måltider"
+      }
+    }
   },
   "digestiveHealth": {
-    "title": "Matsmältningshälsa",
-    "description": "Stöd hälsosam matsmältning och tarmflora",
+    "title": "Matsmältning",
+    "description": "Faktorer som påverkar matsmältningshälsa och tarmfunktion",
     "relatedAreas": {
       "sectionTitle": "Relaterade områden",
       "nervousSystem": "Tarm och hjärna kommunicerar konstant via tarm-hjärn-axeln. Stress aktiverar det sympatiska nervsystemet och hämmar matsmältningen. Att lugna nervsystemet – med andning, sömn och återhämtning – förbättrar direkt tarmfunktionen.",
       "immuneSupport": "Cirka 70 % av immunsystemets celler finns i och längs tarmväggen. En välmående tarmflora och en intakt tarmbarriär är grundläggande för ett starkt och balanserat immunförsvar.",
       "cardioFitness": "Regelbunden zon 2-träning ökar blodflödet, stärker tarmens rörlighet och gynnar mångfalden i mikrobiom. Hög träningsintensitet kan däremot tillfälligt minska blodflödet till tarmarna – timing och återhämtning är nyckeln."
+    },
+    "information": {
+      "title": "Förstå dina matsmältnings-mått",
+      "microbiome": {
+        "title": "Tarmmikrobiom",
+        "description": "Ett varierat och balanserat tarmmikrobiom stödjer matsmältning, näringsupptag och immunfunktion."
+      },
+      "stress": {
+        "title": "Stress",
+        "description": "Hög stress aktiverar det sympatiska nervsystemet (fight-or-flight), vilket kan minska blodflödet till mag-tarmkanalen och bromsa matsmältningen. Det kan ge mer uppblåsthet, magont, förändrad tarmmotilitet och sämre näringsupptag. Stress kan också påverka tarmbarriären och mikrobiomet negativt samt öka låggradig inflammation. Att hantera stress stödjer därför både tarmfunktion och matsmältningshälsa."
+      },
+      "sleep": {
+        "title": "Sömn",
+        "description": "Kvalitativ sömn är avgörande för matsmältningsreparation och för att bibehålla en hälsosam tarmbarriär."
+      },
+      "activity": {
+        "title": "Fysisk aktivitet",
+        "description": "Regelbunden rörelse stimulerar matsmältningen och stödjer tarmens rörlighet. Lätt aktivitet som promenader (särskilt 10-20 minuter efter måltid) passar bra för blodsocker och minskad uppblåsthet. Styrketräning 2-4 gånger per vecka stödjer metabol hälsa och insulinrespons. Högintensiv träning kan vara effektiv men passar oftast bäst när magen är lugn och inte direkt efter större måltider. Vid känslig mage eller stressad period är låg- till medelintensiv träning ofta skonsammare."
+      },
+      "hydration": {
+        "title": "Vätskebalans",
+        "description": "Tillräckligt med vatten är avgörande för matsmältning och näringstransport."
+      }
     }
   },
   "cardioFitness": {
-    "title": "Kardiovaskulär Fitness",
-    "description": "Förbättra hjärthälsa och aerob kapacitet",
+    "title": "Kardiovaskulär hälsa",
+    "description": "Hjärta, blodkärl och övergripande kardiovaskulär funktion",
     "relatedAreas": {
       "sectionTitle": "Relaterade områden",
       "digestiveHealth": "När man tränar mycket minskar blodflödet till magen, vilket kan påverka tarmbarriären och i vissa fall bidra till ökad genomsläpplighet (\"läckande tarm\"). Genom att stötta matsmältningen med återhämtning, vätska, tillräckligt energiintag och lugnare pass mellan hårda block kan du skydda maghälsan och samtidigt prestera bättre.",
       "nervousSystem": "Hög träningsbelastning kan driva upp stresspåslag i nervsystemet. Genom att balansera hårda pass med återhämtning, sömn och lugna zon 2-pass stöttar du HRV, återhämtning och hållbar konditionsutveckling.",
       "sleepQuality": "Sömn är den viktigaste återhämtningsfaktorn för konditionsidrottare. Under djupsömn frigörs tillväxthormon, muskelreparation sker och hjärtats slag-för-slag-variabilitet återhämtas. Prioritera 7–9 timmars sömn för optimal konditionsutveckling."
+    },
+    "yourCardioPerformance": "Din konditionsprestanda",
+    "recoveryTime": "Återhämtningstid",
+    "untilNextHardEffort": "till nästa hårda ansträngning",
+    "fitnessAge": "Konditionsålder",
+    "yearsYounger": "år yngre",
+    "information": {
+      "title": "Förstå dina metrik",
+      "vo2Max": {
+        "title": "VO₂ Max",
+        "description": "VO₂ max mäter den maximala mängden syre din kropp kan använda under intensiv träning. Det är guldstandarden för kondition. Högre värden indikerar bättre uthållighetskapacitet."
+      },
+      "vo2Health": {
+        "title": "Varför VO₂ max är bra för hälsan",
+        "description": "Högre VO₂ max är starkt kopplat till lägre risk för hjärt-kärlsjukdom, bättre metabol hälsa och lägre total dödlighet. Det speglar hur effektivt hjärta, lungor, blodkärl och muskler samarbetar för att leverera och använda syre."
+      },
+      "easyRun": {
+        "title": "Varför Easy run är bra för hälsan",
+        "description": "Lugna pass (zon 2/easy run) bygger aerob bas med låg stressbelastning. De förbättrar kapillärtäthet, mitokondriell funktion och fettförbränning, samtidigt som återhämtningen blir bättre än vid för många hårda pass."
+      },
+      "lactate": {
+        "title": "Varför laktat är bra för hälsan",
+        "description": "Laktat är inte bara en restprodukt utan ett viktigt bränsle och en signalmolekyl. Det kan användas av hjärta, muskler och hjärna, och är kopplat till träningseffekter som förbättrad kondition, metabol flexibilitet och mitokondriell anpassning."
+      },
+      "restingHeartRate": {
+        "title": "Vilopuls",
+        "description": "Lägre vilopuls indikerar vanligtvis bättre kardiovaskulär kondition. Idrottare har ofta vilopulser under 60 bpm. Övervaka trender över tid. En plötslig ökning kan signalera överträning, sjukdom eller stress."
+      },
+      "trainingLoad": {
+        "title": "Träningsbelastning",
+        "description": "Träningsbelastning spårar den kumulativa intensiteten och volymen av dina träningspass över 7 dagar. Optimal belastning innebär att du tränar effektivt utan överträning. För hög = risk för skada/utmattning. För låg = otillräcklig stimulans för anpassning."
+      },
+      "recoveryTime": {
+        "title": "Återhämtningstid",
+        "description": "Tid som behövs innan din kropp är redo för en annan hård träningssession. Baserat på HRV och sömnkvalitet. Att respektera återhämtning förhindrar skador och förbättrar prestation. Att träna hårt när återhämtningen är ofullständig leder till minskade resultat."
+      },
+      "fitnessAge": {
+        "title": "Konditionsålder",
+        "description": "Baserat på din VO₂ max, vilopuls och andra faktorer. En lägre konditionsålder indikerar överlägsen kardiovaskulär hälsa. Regelbunden aerob träning kan minska din konditionsålder med 10-20 år jämfört med stillasittande jämnåriga."
+      }
     }
   },
   "mind": {
-    "title": "Sinne & Kognition",
-    "description": "Stöd kognitiv funktion och mental prestanda"
+    "title": "Hjärna & Kognition",
+    "description": "Kognitiv funktion, mental prestation och hjärnhälsa",
+    "information": {
+      "title": "Varför dessa metrik är viktiga",
+      "focus": {
+        "title": "Fokus & Mental Klarhet",
+        "description": "Hög stress och låg energi försämrar prefrontala cortex funktion, vilket leder till minskat fokus, mental klarhet och beslutsförmåga."
+      },
+      "stress": {
+        "title": "Stress & återhämtning",
+        "description": "Kronisk stress försämrar kognitiv funktion och mental prestation."
+      },
+      "mood": {
+        "title": "Humör & Emotionell Reglering",
+        "description": "Kronisk stress och dålig återhämtning kan leda till humörstörningar, ångest och depression. Att prioritera återhämtning och stresshantering stödjer emotionellt välbefinnande."
+      },
+      "sleepQuality": {
+        "title": "Sömnkvalitet",
+        "description": "Dålig sömnkvalitet påverkar negativt minne, uppmärksamhet och exekutiva funktioner. Att prioritera god sömn är avgörande för att upprätthålla kognitiv hälsa."
+      },
+      "steps": {
+        "title": "🚶‍♂️ Steg och hjärnhälsa",
+        "description": "Fysisk aktivitet och dagliga steg ökar blodflödet till hjärnan, förbättrar minne och koncentration samt minskar stress och risken för psykisk ohälsa."
+      },
+      "bdnf": {
+        "title": "🧬 BDNF och hjärnans utveckling",
+        "description": "BDNF (Brain-Derived Neurotrophic Factor) är ett protein som spelar en avgörande roll för hjärnans plasticitet, inlärning och minne. Fysisk aktivitet, särskilt intensiv träning, ökar nivåerna av BDNF och bidrar till bättre kognitiv funktion och skydd mot psykisk ohälsa."
+      },
+      "ketones": {
+        "title": "Ketoner och mental prestation",
+        "description": "Ketoner är en alternativ energikälla för hjärnan, särskilt under fasta eller lågkolhydratkost. De kan förbättra mental klarhet, fokus och kognitiv funktion, särskilt i situationer där glukosmetabolismen är nedsatt."
+      },
+      "lactate": {
+        "title": "Laktat och hjärnfunktion",
+        "description": "Laktat, som produceras under intensiv träning, kan fungera som en energikälla för hjärnan och kan ha neuroprotektiva effekter. Det stödjer kognitiv funktion och mental motståndskraft."
+      }
+    }
   },
   "longevity": {
     "title": "Longevity",
-    "description": "Bygg vanor som förbättrar långsiktig hälsospan"
+    "description": "Grunderna som stöttar långsiktig hälsospan och motståndskraft",
+    "information": {
+      "title": "Kärnpelare för longevity",
+      "sleepRecovery": {
+        "title": "Sömn och återhämtning",
+        "description": "Konsekvent sömn av hög kvalitet stödjer hormonbalans, immunreglering, hjärnans återhämtning och lägre kronisk belastning över tid."
+      },
+      "metabolicHealth": {
+        "title": "Metabol hälsa",
+        "description": "Stabilt blodsocker, god insulinkänslighet och fungerande mitokondrier är starkt kopplat till friskare åldrande och lägre kardiometabol risk."
+      },
+      "trainingCapacity": {
+        "title": "Träningskapacitet",
+        "description": "En kombination av zon 2, styrketräning, rörlighet och riktad högintensiv träning hjälper till att bevara VO2 max, muskelmassa och funktionell självständighet med åldern. För helkropps-longevity, sikta på minst 4-5 olika rörelsetyper per vecka så att överkropp, underkropp, bål, balans och stöttålighet tränas."
+      },
+      "fasciaStrength": {
+        "title": "Fascia och bindvävsstyrka",
+        "description": "Fascian är bindvävsnätverket som överför kraft genom hela kroppen och stödjer ledstabilitet, elasticitet och rörelseeffektivitet. Den svarar bäst på varierad belastning: styrketräning, carries, rotationer, plyometriska eller stötbärande moment och rörlighet i flera plan. Den typen av helkroppsträning stödjer muskler, senor, ligament och skelettets anpassning över tid."
+      },
+      "nervousSystemStress": {
+        "title": "Nervsystem och stressbelastning",
+        "description": "Minska kronisk sympatisk dominans med återhämtningsrutiner, andningsövningar och smart periodisering av träningen för att skydda långsiktig resiliens."
+      },
+      "inflammationMicrobiome": {
+        "title": "Inflammation och mikrobiom",
+        "description": "En fiberrik och näringstät kost stödjer butyratproducerande bakterier, bättre tarmbarriärfunktion och lägre låggradig inflammation."
+      }
+    }
   }
 }

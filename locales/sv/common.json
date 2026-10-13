@@ -289,15 +289,7 @@
     "duplicateWarning": "AI-planen innehaller {{count}} dubbletter som redan finns i din plan.",
     "goals": {
       "title": "Vad är ditt/dina mål?",
-      "suggestions": [
-        "Bygga muskler",
-        "Gå ner i vikt",
-        "Få mer energi",
-        "Förbättra konditionen",
-        "Må bättre",
-        "Bli starkare",
-        "Bättre matvanor"
-      ],
+      "suggestions": ["Bygga muskler", "Gå ner i vikt", "Få mer energi", "Förbättra konditionen", "Må bättre", "Bli starkare", "Bättre matvanor"],
       "customPlaceholder": "Eget mål..."
     },
     "sharePlanText": "Obligatoriskt för att generera en AI-plan.",
@@ -305,7 +297,8 @@
   },
   "supplementForm": {
     "dosage": "Dos",
-    "unit": "Enhet"
+    "unit": "Enhet",
+    "exampleDosage": "Förifylld dos är endast ett exempel, inte en rekommendation. Anpassa efter din produkt."
   },
   "planSupplementsPicker": {
     "chooseSupplementsFromPlan": "Välj tillskott från"
@@ -523,8 +516,18 @@
     "showJournal": "Visa i dagboken",
     "daily": "Dagligt mål",
     "weekly": "Veckomål",
-    "periods": { "daily": "dag", "weekly": "vecka" },
-    "units": { "minutes": "min", "hours": "timmar", "count": "gånger", "sessions": "pass", "items": "st", "plants": "växter" }
+    "periods": {
+      "daily": "dag",
+      "weekly": "vecka"
+    },
+    "units": {
+      "minutes": "min",
+      "hours": "timmar",
+      "count": "gånger",
+      "sessions": "pass",
+      "items": "st",
+      "plants": "växter"
+    }
   },
   "tipCard": {
     "startExploring": "Börja utforska",
@@ -535,350 +538,8 @@
     "moreInfo": "Mer info",
     "lessInfo": "Dölj info",
     "addToPlan": "Lägg till i plan",
-    "chooseTime": "Välj tid"
-  },
-  "cardioOverview": {
-    "title": "Kardiovaskulär hälsa",
-    "description": "Hjärta, blodkärl och övergripande kardiovaskulär funktion",
-    "yourCardioPerformance": "Din konditionsprestanda",
-    "recoveryTime": "Återhämtningstid",
-    "untilNextHardEffort": "till nästa hårda ansträngning",
-    "fitnessAge": "Konditionsålder",
-    "yearsYounger": "år yngre",
-    "understandingYourMetrics": {
-      "title": "Förstå dina metrik",
-      "vo2Max": {
-        "title": "VO₂ Max",
-        "description": "VO₂ max mäter den maximala mängden syre din kropp kan använda under intensiv träning. Det är guldstandarden för kondition. Högre värden indikerar bättre uthållighetskapacitet."
-      },
-      "vo2Health": {
-        "title": "Varför VO₂ max är bra för hälsan",
-        "description": "Högre VO₂ max är starkt kopplat till lägre risk för hjärt-kärlsjukdom, bättre metabol hälsa och lägre total dödlighet. Det speglar hur effektivt hjärta, lungor, blodkärl och muskler samarbetar för att leverera och använda syre."
-      },
-      "easyRun": {
-        "title": "Varför Easy run är bra för hälsan",
-        "description": "Lugna pass (zon 2/easy run) bygger aerob bas med låg stressbelastning. De förbättrar kapillärtäthet, mitokondriell funktion och fettförbränning, samtidigt som återhämtningen blir bättre än vid för många hårda pass."
-      },
-      "lactate": {
-        "title": "Varför laktat är bra för hälsan",
-        "description": "Laktat är inte bara en restprodukt utan ett viktigt bränsle och en signalmolekyl. Det kan användas av hjärta, muskler och hjärna, och är kopplat till träningseffekter som förbättrad kondition, metabol flexibilitet och mitokondriell anpassning."
-      },
-      "restingHeartRate": {
-        "title": "Vilopuls",
-        "description": "Lägre vilopuls indikerar vanligtvis bättre kardiovaskulär kondition. Idrottare har ofta vilopulser under 60 bpm. Övervaka trender över tid. En plötslig ökning kan signalera överträning, sjukdom eller stress."
-      },
-      "trainingLoad": {
-        "title": "Träningsbelastning",
-        "description": "Träningsbelastning spårar den kumulativa intensiteten och volymen av dina träningspass över 7 dagar. Optimal belastning innebär att du tränar effektivt utan överträning. För hög = risk för skada/utmattning. För låg = otillräcklig stimulans för anpassning."
-      },
-      "recoveryTime": {
-        "title": "Återhämtningstid",
-        "description": "Tid som behövs innan din kropp är redo för en annan hård träningssession. Baserat på HRV och sömnkvalitet. Att respektera återhämtning förhindrar skador och förbättrar prestation. Att träna hårt när återhämtningen är ofullständig leder till minskade resultat."
-      },
-      "fitnessAge": {
-        "title": "Konditionsålder",
-        "description": "Baserat på din VO₂ max, vilopuls och andra faktorer. En lägre konditionsålder indikerar överlägsen kardiovaskulär hälsa. Regelbunden aerob träning kan minska din konditionsålder med 10-20 år jämfört med stillasittande jämnåriga."
-      }
-    }
-  },
-  "digestiveOverview": {
-    "title": "Matsmältning",
-    "description": "Faktorer som påverkar matsmältningshälsa och tarmfunktion",
-    "understandingYourMetrics": {
-      "title": "Förstå dina matsmältnings-mått",
-      "microbiome": {
-        "title": "Tarmmikrobiom",
-        "description": "Ett varierat och balanserat tarmmikrobiom stödjer matsmältning, näringsupptag och immunfunktion."
-      },
-      "stress": {
-        "title": "Stress",
-        "description": "Hög stress aktiverar det sympatiska nervsystemet (fight-or-flight), vilket kan minska blodflödet till mag-tarmkanalen och bromsa matsmältningen. Det kan ge mer uppblåsthet, magont, förändrad tarmmotilitet och sämre näringsupptag. Stress kan också påverka tarmbarriären och mikrobiomet negativt samt öka låggradig inflammation. Att hantera stress stödjer därför både tarmfunktion och matsmältningshälsa."
-      },
-      "sleep": {
-        "title": "Sömn",
-        "description": "Kvalitativ sömn är avgörande för matsmältningsreparation och för att bibehålla en hälsosam tarmbarriär."
-      },
-      "activity": {
-        "title": "Fysisk aktivitet",
-        "description": "Regelbunden rörelse stimulerar matsmältningen och stödjer tarmens rörlighet. Lätt aktivitet som promenader (särskilt 10-20 minuter efter måltid) passar bra för blodsocker och minskad uppblåsthet. Styrketräning 2-4 gånger per vecka stödjer metabol hälsa och insulinrespons. Högintensiv träning kan vara effektiv men passar oftast bäst när magen är lugn och inte direkt efter större måltider. Vid känslig mage eller stressad period är låg- till medelintensiv träning ofta skonsammare."
-      },
-      "hydration": {
-        "title": "Vätskebalans",
-        "description": "Tillräckligt med vatten är avgörande för matsmältning och näringstransport."
-      }
-    }
-  },
-  "energyOverview": {
-    "title": "Energi system",
-    "description": "Mitokondriell funktion och cellulär energiproduktion",
-    "cellularEnergyReserves": {
-      "title": "Cellulära energireserver",
-      "sinceWaking": "sedan uppvaknande",
-      "explainer": "Stress, aktivitet och återhämtning påverkar dina energinivåer."
-    },
-    "mitochondrialHealth": {
-      "title": "Mitokondriell hälsa",
-      "powerhouses": {
-        "title": "Cellernas kraftverk",
-        "description": "Mitokondrier är organeller som producerar ATP (adenosintrifosfat), cellernas energivaluta. Varje cell innehåller hundratals till tusentals mitokondrier. De omvandlar näringsämnen och syre till ~90% av kroppens energi."
-      },
-      "atpProduction": {
-        "title": "ATP-produktion",
-        "description": "Genom oxidativ fosforylering producerar mitokondrier 30-32 ATP-molekyler per glukosmolekyl (jämfört med endast 2 ATP från glykolys). Denna process kräver syre, vilket är anledningen till att VO₂ max korrelerar med energikapacitet."
-      },
-      "mitochondrialBiogenesis": {
-        "title": "Mitokondriell biogenes",
-        "description": "Träning (särskilt zon 2-konditionsträning) aktiverar PGC-1α, vilket ökar mitokondrietätheten. Fler mitokondrier = större kapacitet för energiproduktion. Detta är anledningen till att vältränade idrottare har högre VO₂ max."
-      },
-      "oxidativeStress": {
-        "title": "Oxidativ stress",
-        "description": "Mitokondrier producerar reaktiva syreföreningar (ROS) som biprodukter vid ATP-produktion. Överskott av ROS orsakar oxidativ skada på mitokondriellt DNA. Antioxidanter (vitamin C, E, CoQ10, glutation) hjälper till att neutralisera ROS och skydda mitokondriell funktion."
-      },
-      "nadDecline": {
-        "title": "NAD+ och energinedgång",
-        "description": "NAD+ (nikotinamidadenindinukleotid) är avgörande för mitokondriell funktion. NAD+-nivåer minskar med ~50% mellan 20-80 års ålder, vilket minskar effektiviteten i ATP-produktionen. NAD+-prekursorer (NR, NMN) och sirtuinaktivatorer kan stödja mitokondriell hälsa."
-      },
-      "mitophagy": {
-        "title": "Mitofagi och cellulär rengöring",
-        "description": "Mitofagi är selektiv autofagi av skadade mitokondrier. Det sker under fasta och djupsömn. Regelbunden mitofagi förhindrar ackumulering av dysfunktionella mitokondrier som producerar överskott av ROS och mindre ATP."
-      },
-      "insulinResistance": {
-        "title": "Insulin och insulinresistens",
-        "description": "Insulin hjälper celler att ta upp glukos för energiproduktion. Vid insulinresistens svarar cellerna sämre på insulin, vilket kan leda till högre blodsocker och minskad metabol flexibilitet. Kroniskt förhöjt insulin kan belasta mitokondrierna och bidra till lägre energinivåer över tid. Baserat på epidemiologiska uppskattningar har cirka 15-30% av vuxna i EU och cirka 30-40% av vuxna i USA insulinresistens, beroende på definition och mätmetod."
-      },
-      "chronicStress": {
-        "title": "Kronisk stress och mitokondriell funktion",
-        "description": "Kronisk stress ökar kortisol- och adrenalinproduktion, vilket öppnar energi för omedelbar överlevnad men undertrycker långsiktig mitokondriell reparation och biogenesis. Högt kortisol ökar ROS-produktion, försämrar DNA-reparation och minskar NAD+-nivåer. Stress-inducerad hjärnaktivering kan också reducera blodflödet till mag-tarmkanalen och framkallar immunundertryckande. Regelbunden vila, djupsömn och parasympatisk aktivering (djupandning, meditation) är kritiska för att återställa mitokondriell hälsa."
-      },
-      "metabolicFlexibility": {
-        "title": "Metabol flexibilitet",
-        "description": "Metabol flexibilitet är kroppens förmåga att smidigt växla mellan att bränna glukos och fett för energi beroende på tillgänglighet och behov. Väl utvecklad metabol flexibilitet minskar beroendet av frekventa måltider, förbättrar insulinkänsligheten och ökar mental klarhet. Intermittend fasta, låg-kohlenhydrat-perioder och aerob träning förbättrar denna växlingsförmåga. Kronisk överföring av socker kan försämra metabol flexibilitet, vilket gör kroppen låst vid glukosförbränning och mindre motståndskraftig mot energifluktuationer."
-      },
-      "resistantStarch": {
-        "title": "Resistent stärkelse och energi",
-        "description": "Resistent stärkelse är en nyckelfiber för energi och metabol hälsa. Den bryts inte ner i tunntarmen utan fermenteras i tjocktarmen till kortkedjiga fettsyror, särskilt butyrat. Detta kan förbättra insulinkänslighet, stödja metabol flexibilitet och dämpa låggradig inflammation, vilket indirekt gynnar energiproduktion och mitokondriell hälsa. Exempel är avsvalnad potatis/ris, gröna bananer, baljväxter och havre. Bäst total effekt fås ofta när resistent stärkelse kombineras med andra fibertyper i en varierad kost."
-      },
-      "lowCarbHighIntensityTraining": {
-        "title": "Lågkolhydratkost och högintensiv träning",
-        "description": "Lågkolhydratkost i kombination med högintensiv träning kan vara effektiv för fettminskning, förbättrad insulinkänslighet och metabol hälsa, men kräver planering. Högintensiva pass är mer beroende av glykogen, så för låg kolhydratnivå kan sänka prestationsförmåga och återhämtning. Om belastningen blir för hög kan kortisol stiga och nervsystemet fastna i sympatisk dominans (högre stresspåslag, sämre sömn och lägre HRV). En periodiserad strategi fungerar ofta bäst: lägre kolhydratintag i vila eller lågintensiva dagar, och riktade kolhydrater före eller efter hårda pass för att stödja kraftutveckling, hormonbalans och återgång till parasympatisk återhämtning."
-      }
-    }
-  },
-  "immuneOverview": {
-    "title": "Immunsystemet",
-    "description": "Försvar mot patogener och immunreglering",
-    "immuneStatus": {
-      "title": "Immuntillstånd",
-      "stressLevel": "Stressnivå"
-    },
-    "whyTheseMetricsMatter": {
-      "title": "Varför dessa metrik är viktiga",
-      "sleep": {
-        "title": "Sömn",
-        "description": "Tillräcklig sömn är avgörande för immunfunktionen. Under sömnen producerar kroppen cytokiner som hjälper till att bekämpa infektioner och inflammation."
-      },
-      "stress": {
-        "title": "Stress & återhämtning",
-        "description": "Kronisk stress undertrycker immunfunktionen."
-      },
-      "hrv": {
-        "title": "HRV (Heart Rate Variability)",
-        "description": "Högre HRV indikerar bättre återhämtning och resiliens. Låg HRV kan signalera stress, trötthet eller sjukdom."
-      },
-      "restingHeartRate": {
-        "title": "Vilopuls",
-        "description": "En förhöjd vilopuls kan vara ett tidigt tecken på sjukdom, inflammation eller otillräcklig återhämtning."
-      },
-      "microbiomeButyrate": {
-        "title": "Mikrobiom och butyratproducerande bakterier",
-        "description": "Tarmmikrobiomet påverkar immunförsvaret direkt. Butyratproducerande bakterier (som producerar kortkedjiga fettsyran butyrat) stärker tarmbarriären, dämpar låggradig inflammation och stödjer immuntolerans. Resistent stärkelse är ett viktigt bränsle för dessa bakterier och finns bland annat i avsvalnad potatis/ris, gröna bananer, baljväxter och havre. En fiberrik kost gynnar därför butyratproduktion och kan förbättra immunbalansen."
-      },
-      "recovery": {
-        "title": "Återhämtningsstatus",
-        "description": "Sömn och återhämtning ger immunförsvaret bättre förutsättningar att fungera. Låga poäng över tid kan tyda på ökad belastning och behov av mer vila. Poängen mäter inte immunförsvarets styrka och visar inte om du har en infektion."
-      }
-    }
-  },
-  "nervousSystemOverview": {
-    "title": "Nervsystemet",
-    "description": "Autonom nervsystembalans och återhämtningsmetrik",
-    "autonomicNervousSystem": {
-      "title": "Autonoma nervsystemet"
-    },
-    "informationCard": {
-      "title": "Förstå ditt nervsystem",
-      "hrv": {
-        "title": "HRV (Heart Rate Variability)",
-        "description": "HRV mäter variationen i tid mellan hjärtslag. Hög HRV indikerar en stark parasympatisk aktivitet och god återhämtning. Låg HRV kan signalera stress, trötthet eller sjukdom."
-      },
-      "nutrients": {
-        "title": "Näringsämnen som stöder nervsystemet",
-        "description": "Flera näringsämnen är särskilt viktiga för nervsystemets funktion: B-vitaminer (särskilt B1, B6, B12 och folat) för nervsignalering och energimetabolism, magnesium för avslappning och stressreglering, omega-3 (EPA/DHA) för nervcellernas membran, D-vitamin för neuroimmun balans, kolin för acetylkolinproduktion samt tillräckligt natrium, kalium och vätska för stabil nervledning."
-      },
-      "overstimulationScreenTime": {
-        "title": "Överstimulering och skärmtid",
-        "description": "Hög skärmtid, snabba dopaminstimuli och konstant informationsflöde kan hålla nervsystemet i ett mer aktiverat läge. Särskilt kvällstid kan blått ljus och mental stimulans fördröja melatoninfrisättning, försämra sömnkvalitet och minska nattlig återhämtning. Detta kan över tid bidra till högre stresskänslighet, lägre HRV och svårare reglering mellan fokus och vila. Regelbundna pauser, skärmfria kvällsrutiner och nedvarvning före sömn stödjer parasympatisk balans."
-      },
-      "breathing": {
-        "title": "Andning och nervsystemet",
-        "description": "Långsam och kontrollerad andning kan snabbt sänka stresspåslag och öka parasympatisk aktivitet via vagusnerven. Förlängd utandning (till exempel 4 sek in, 6-8 sek ut) signalerar trygghet till nervsystemet och kan förbättra HRV, fokus och återhämtning. Några minuters andningsövning före sömn eller efter stressiga perioder kan ge tydlig effekt."
-      },
-      "immuneInflammation": {
-        "title": "Immunförsvar och låggradig inflammation",
-        "description": "Nervsystemet och immunförsvaret är tätt sammankopplade. Låggradig inflammation med förhöjda inflammationssignaler kan öka stresskänslighet, försämra sömn och minska återhämtning i nervsystemet. Samtidigt kan långvarig stress driva mer inflammation. Antiinflammatoriska vanor som god sömn, regelbunden rörelse, stabilt blodsocker och näringstät kost kan hjälpa till att bryta denna negativa loop."
-      },
-      "gutVagusMicrobiome": {
-        "title": "Tarmhälsa, vagusnerven och tarmfloran",
-        "description": "Tarmen och hjärnan kommunicerar kontinuerligt via tarm-hjärna-axeln, där vagusnerven är en central signalväg. En balanserad tarmflora producerar metaboliter och signalsubstanser som kan stödja lugnare stressrespons och bättre återhämtning, medan dysbios kan bidra till inflammation och ökad nervsystemsbelastning. Fiberrik kost, fermenterade livsmedel, god sömn och stresshantering kan stärka tarmmiljön och därmed även nervsystemets reglering."
-      },
-      "trainingStrengthens": {
-        "title": "Hur träning stärker nervsystemet",
-        "description": "Rätt dos träning stärker nervsystemets regleringsförmåga. Regelbunden aerob träning och styrketräning kan höja HRV över tid, förbättra stressresiliens och göra att du snabbare växlar tillbaka till parasympatisk återhämtning efter belastning. HIT är bra för nervsystemet eftersom korta, intensiva intervaller tränar kroppen att tåla snabb sympatisk aktivering och därefter återgå effektivt till återhämtning. Med tiden kan detta förbättra autonom flexibilitet, stressrespons och mental skärpa. Progressiv upptrappning med tillräcklig återhämtning är nyckeln, oftast 1-3 HIT-pass per vecka."
-      },
-      "trainingNutritionStress": {
-        "title": "Högintensiv träning, kost och stressbelastning",
-        "description": "Högintensiv träning är effektiv men ökar den akuta aktiveringen av sympatikus. Om den kombineras med för lågt energi- eller kolhydratintag under längre perioder kan kortisol förbli förhöjt, HRV sjunka och sömnen försämras. Det kan ge tecken på nervsystemsbelastning som trötthet, sämre återhämtning och minskad prestation. För att skydda nervsystemet: periodisera intensiva pass, säkerställ tillräcklig energi och använd återhämtningsdagar med fokus på parasympatisk aktivering."
-      },
-      "recovery": {
-        "title": "Återhämtningsstatus",
-        "description": "För nervsystemet kan god återhämtning tyda på bättre förmåga att växla från anspänning till vila. Låga poäng över tid kan vara en signal om att prioritera sömn, lugna pauser och anpassad träningsbelastning."
-      }
-    }
-  },
-  "longevityOverview": {
-    "title": "Longevity",
-    "description": "Grunderna som stöttar långsiktig hälsospan och motståndskraft",
-    "pillars": {
-      "title": "Kärnpelare för longevity",
-      "sleepRecovery": {
-        "title": "Sömn och återhämtning",
-        "description": "Konsekvent sömn av hög kvalitet stödjer hormonbalans, immunreglering, hjärnans återhämtning och lägre kronisk belastning över tid."
-      },
-      "metabolicHealth": {
-        "title": "Metabol hälsa",
-        "description": "Stabilt blodsocker, god insulinkänslighet och fungerande mitokondrier är starkt kopplat till friskare åldrande och lägre kardiometabol risk."
-      },
-      "trainingCapacity": {
-        "title": "Träningskapacitet",
-        "description": "En kombination av zon 2, styrketräning, rörlighet och riktad högintensiv träning hjälper till att bevara VO2 max, muskelmassa och funktionell självständighet med åldern. För helkropps-longevity, sikta på minst 4-5 olika rörelsetyper per vecka så att överkropp, underkropp, bål, balans och stöttålighet tränas."
-      },
-      "fasciaStrength": {
-        "title": "Fascia och bindvävsstyrka",
-        "description": "Fascian är bindvävsnätverket som överför kraft genom hela kroppen och stödjer ledstabilitet, elasticitet och rörelseeffektivitet. Den svarar bäst på varierad belastning: styrketräning, carries, rotationer, plyometriska eller stötbärande moment och rörlighet i flera plan. Den typen av helkroppsträning stödjer muskler, senor, ligament och skelettets anpassning över tid."
-      },
-      "nervousSystemStress": {
-        "title": "Nervsystem och stressbelastning",
-        "description": "Minska kronisk sympatisk dominans med återhämtningsrutiner, andningsövningar och smart periodisering av träningen för att skydda långsiktig resiliens."
-      },
-      "inflammationMicrobiome": {
-        "title": "Inflammation och mikrobiom",
-        "description": "En fiberrik och näringstät kost stödjer butyratproducerande bakterier, bättre tarmbarriärfunktion och lägre låggradig inflammation."
-      }
-    }
-  },
-  "mindOverview": {
-    "title": "Hjärna & Kognition",
-    "description": "Kognitiv funktion, mental prestation och hjärnhälsa",
-    "informationCard": {
-      "title": "Varför dessa metrik är viktiga",
-      "focus": {
-        "title": "Fokus & Mental Klarhet",
-        "description": "Hög stress och låg energi försämrar prefrontala cortex funktion, vilket leder till minskat fokus, mental klarhet och beslutsförmåga."
-      },
-      "stress": {
-        "title": "Stress & återhämtning",
-        "description": "Kronisk stress försämrar kognitiv funktion och mental prestation."
-      },
-      "mood": {
-        "title": "Humör & Emotionell Reglering",
-        "description": "Kronisk stress och dålig återhämtning kan leda till humörstörningar, ångest och depression. Att prioritera återhämtning och stresshantering stödjer emotionellt välbefinnande."
-      },
-      "sleepQuality": {
-        "title": "Sömnkvalitet",
-        "description": "Dålig sömnkvalitet påverkar negativt minne, uppmärksamhet och exekutiva funktioner. Att prioritera god sömn är avgörande för att upprätthålla kognitiv hälsa."
-      },
-      "steps": {
-        "title": "🚶‍♂️ Steg och hjärnhälsa",
-        "description": "Fysisk aktivitet och dagliga steg ökar blodflödet till hjärnan, förbättrar minne och koncentration samt minskar stress och risken för psykisk ohälsa."
-      },
-      "bdnf": {
-        "title": "🧬 BDNF och hjärnans utveckling",
-        "description": "BDNF (Brain-Derived Neurotrophic Factor) är ett protein som spelar en avgörande roll för hjärnans plasticitet, inlärning och minne. Fysisk aktivitet, särskilt intensiv träning, ökar nivåerna av BDNF och bidrar till bättre kognitiv funktion och skydd mot psykisk ohälsa."
-      },
-      "ketones": {
-        "title": "Ketoner och mental prestation",
-        "description": "Ketoner är en alternativ energikälla för hjärnan, särskilt under fasta eller lågkolhydratkost. De kan förbättra mental klarhet, fokus och kognitiv funktion, särskilt i situationer där glukosmetabolismen är nedsatt."
-      },
-      "lactate": {
-        "title": "Laktat och hjärnfunktion",
-        "description": "Laktat, som produceras under intensiv träning, kan fungera som en energikälla för hjärnan och kan ha neuroprotektiva effekter. Det stödjer kognitiv funktion och mental motståndskraft."
-      }
-    }
-  },
-  "sleepOverview": {
-    "title": "Sömn",
-    "description": "Återhämtning, reparation och cirkadisk hälsa",
-    "overview": {
-      "title": "Översikt",
-      "consistency": {
-        "title": "Sömnkonsistens",
-        "pattern": "7 dagars mönster",
-        "moderate": "Måttlig",
-        "low": "Låg",
-        "high": "Hög"
-      }
-    },
-    "understandingSleep": {
-      "title": "Förstå sömn",
-      "stages": {
-        "title": "Faser",
-        "description": "Sömn cyklas genom 4 faser: Lätt (N1, N2), Djup (N3) och REM. Varje fas har unika fördelar. Vuxna behöver 7-9 timmar med balanserad fasfördelning för optimal återhämtning."
-      },
-      "deepSleep": {
-        "title": "Djup sömn",
-        "description": "Djup sömn (långsamvågssömn) är när din kropp reparerar vävnader, bygger muskler, stärker immunförsvaret och konsoliderar minnen. Tillväxthormon når sin topp under denna fas. Sikta på 15-25% av den totala sömntiden."
-      },
-      "remSleep": {
-        "title": "REM-sömn",
-        "description": "REM (Rapid Eye Movement)-sömn bearbetar känslor, konsoliderar lärande och stödjer kreativitet. De flesta livliga drömmar sker här. REM bör vara 20-25% av den totala sömnen och ökar i senare cykler."
-      },
-      "circadianRhythm": {
-        "title": "Cirkadisk rytm",
-        "description": "Din interna 24-timmarsklocka reglerar sömn-vaken-cykler, hormonfrisättning och kroppstemperatur. Konsekventa sömn/vaken-tider stärker den cirkadiska rytmen och förbättrar sömnkvaliteten."
-      }
-    }
-  },
-  "strengthOverview": {
-    "title": "Styrka & muskelhälsa",
-    "description": "Muskelprestanda, styrketräning och återhämtning",
-    "recoveryFactors": {
-      "title": "Återhämtningsfaktorer",
-      "explainer": "Sömn och HRV är primära drivkrafter för muskelåterhämtning och proteinsyntes. Djupsömn utlöser tillväxthormonfrisättning för muskelreparation. Att respektera återhämtning förhindrar skador och främjar styrkeökningar. Att träna hårt när återhämtningen är ofullständig leder till minskade resultat och ökad skaderisk.",
-      "explainers": {
-        "sleep_duration": "Sömnlängd styr hur väl du återhämtar muskler och nervsystem mellan passen. För kort sömn försämrar kraftutveckling, teknik och förmågan att klara progressiv överbelastning.",
-        "sleep_bedtime": "Regelbunden läggtid förbättrar återhämtningens timing och sömnkvalitet. Stabil dygnsrytm gör att du lättare presterar tungt och återhämtar dig till nästa styrkepass.",
-        "hrv": "HRV visar hur återhämtat ditt autonoma nervsystem är inför träning. Lägre HRV kan signalera hög stressbelastning och behov av att justera volym, intensitet eller vilodag."
-      }
-    },
-    "information": {
-      "title": "Information",
-      "trainingReadiness": {
-        "title": "Träningsberedskap",
-        "description": "HRV indikerar din träningsberedskap. Hög HRV kan tyda på god återhämtning. Låg HRV kan signalera behov av lättare träning eller vila."
-      },
-      "trainingLoad": {
-        "title": "Träningsbelastning",
-        "description": "Kvantiﬁerar träningsstress från de senaste 7 dagarna. Anaerob belastning mäter specifikt högintensivt arbete (tung styrketräning, HIIT). Att hålla belastningen inom ditt optimala intervall förhindrar överträning samtidigt som progression säkerställs."
-      },
-      "recoveryTime": {
-        "title": "Återhämtningstid",
-        "description": "Uppskattade timmar tills full muskulär och CNS-återhämtning. Tunga sammansatta lyft (knäböj, marklyft) kräver 48-72 timmar för fullständig återhämtning. Att träna samma muskelgrupper innan återhämtningen är klar försämrar anpassningen."
-      },
-      "sleepMuscleGrowth": {
-        "title": "Sömn & muskelväxt",
-        "description": "80% av tillväxthormonet frisätts under djupsömn. Sömnbrist minskar proteinsyntesen med ~20% och ökar kortisol (katabolt). Sikta på 7-9 timmar med sömnkvalitet över 80% för optimal hypertrofi."
-      }
-    }
+    "chooseTime": "Välj tid",
+    "mySupplements": "Mina tillskott"
   },
   "tipsList": {
     "yourLevel": "Din nivå",
@@ -1203,7 +864,8 @@
   },
   "labeledInput": {
     "optional": "valfritt",
-    "required": "obligatoriskt"
+    "required": "obligatoriskt",
+    "requiredError": "Obligatorisk"
   },
   "wearableStatus": {
     "lastSync": "Senaste synkronisering",

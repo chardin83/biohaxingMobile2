@@ -289,15 +289,7 @@
     "duplicateWarning": "The AI plan includes {{count}} duplicates already in your plan.",
     "goals": {
       "title": "What is your goal/goals?",
-      "suggestions": [
-        "Build muscle",
-        "Lose weight",
-        "Get more energy",
-        "Improve fitness",
-        "Feel better",
-        "Get stronger",
-        "Better eating habits"
-      ],
+      "suggestions": ["Build muscle", "Lose weight", "Get more energy", "Improve fitness", "Feel better", "Get stronger", "Better eating habits"],
       "customPlaceholder": "Custom goal..."
     },
     "sharePlanText": "Required to generate an AI plan.",
@@ -305,7 +297,8 @@
   },
   "supplementForm": {
     "dosage": "Dosage",
-    "unit": "Unit"
+    "unit": "Unit",
+    "exampleDosage": "Pre-filled dosage is only an example, not a recommendation. Adjust to your product."
   },
   "planSupplementsPicker": {
     "chooseSupplementsFromPlan": "Choose supplements from"
@@ -523,8 +516,18 @@
     "showJournal": "View in journal",
     "daily": "Daily goal",
     "weekly": "Weekly goal",
-    "periods": { "daily": "day", "weekly": "week" },
-    "units": { "minutes": "min", "hours": "hours", "count": "times", "sessions": "sessions", "items": "items", "plants": "plants" }
+    "periods": {
+      "daily": "day",
+      "weekly": "week"
+    },
+    "units": {
+      "minutes": "min",
+      "hours": "hours",
+      "count": "times",
+      "sessions": "sessions",
+      "items": "items",
+      "plants": "plants"
+    }
   },
   "tipCard": {
     "startExploring": "Start exploring",
@@ -535,350 +538,8 @@
     "moreInfo": "More info",
     "lessInfo": "Hide info",
     "addToPlan": "Add to plan",
-    "chooseTime": "Choose time"
-  },
-  "cardioOverview": {
-    "title": "Cardiovascular Health",
-    "description": "Heart, blood vessels, and overall cardiovascular function",
-    "yourCardioPerformance": "Your cardio performance",
-    "recoveryTime": "Recovery time",
-    "untilNextHardEffort": "Until next hard effort",
-    "fitnessAge": "Fitness age",
-    "yearsYounger": "years younger",
-    "understandingYourMetrics": {
-      "title": "Understanding your metrics",
-      "vo2Max": {
-        "title": "VO₂ Max",
-        "description": "VO₂ max measures the maximum amount of oxygen your body can use during intense exercise. It's the gold standard for cardiovascular fitness. Higher values indicate better endurance capacity."
-      },
-      "vo2Health": {
-        "title": "Why VO₂ max is good for health",
-        "description": "Higher VO₂ max is strongly linked to lower cardiovascular risk, better metabolic health, and lower all-cause mortality. It reflects how efficiently your heart, lungs, blood vessels, and muscles work together to deliver and use oxygen."
-      },
-      "easyRun": {
-        "title": "Why easy runs are good for health",
-        "description": "Easy Zone 2 sessions build your aerobic base with relatively low stress load. They improve capillary density, mitochondrial function, and fat oxidation while being easier to recover from than too many hard sessions."
-      },
-      "lactate": {
-        "title": "Why lactate is good for health",
-        "description": "Lactate is not only a byproduct, but also a useful fuel and signaling molecule. It can be used by the heart, muscles, and brain and is linked to training adaptations such as improved endurance, metabolic flexibility, and mitochondrial adaptation."
-      },
-      "restingHeartRate": {
-        "title": "Resting Heart Rate",
-        "description": "Lower resting heart rate typically indicates better cardiovascular fitness. Athletes often have resting heart rates below 60 bpm. Monitor trends over time. A sudden increase may signal overtraining, illness, or stress."
-      },
-      "trainingLoad": {
-        "title": "Training Load",
-        "description": "Training Load tracks the cumulative intensity and volume of your workouts over 7 days. Optimal load means you're training effectively without overtraining. Too high = risk of injury/burnout. Too low = insufficient stimulus for adaptation."
-      },
-      "recoveryTime": {
-        "title": "Recovery Time",
-        "description": "Time needed before your body is ready for another hard training session. Based on HRV and sleep quality. Respecting recovery prevents injury and improves performance. Training hard when recovery is incomplete leads to diminished returns."
-      },
-      "fitnessAge": {
-        "title": "Fitness Age",
-        "description": "Based on your VO₂ max, resting heart rate, and other factors. A lower fitness age indicates superior cardiovascular health. Regular aerobic training can reduce your fitness age by 10-20 years compared to sedentary peers."
-      }
-    }
-  },
-  "digestiveOverview": {
-    "title": "Digestive Health",
-    "description": "Gut function, microbiome, and digestive wellness",
-    "understandingYourMetrics": {
-      "title": "Understanding Your Digestive Metrics",
-      "microbiome": {
-        "title": "Gut Microbiome",
-        "description": "A diverse and balanced gut microbiome supports digestion, nutrient absorption, and immune function."
-      },
-      "stress": {
-        "title": "Stress",
-        "description": "High stress activates the sympathetic nervous system (fight-or-flight), which can reduce blood flow to the gastrointestinal tract and slow digestion. This may lead to more bloating, abdominal discomfort, altered gut motility, and poorer nutrient absorption. Stress can also negatively affect the gut barrier and microbiome and increase low-grade inflammation. Managing stress therefore supports both gut function and digestive health."
-      },
-      "sleep": {
-        "title": "Sleep",
-        "description": "Quality sleep is essential for digestive repair and maintaining a healthy gut barrier."
-      },
-      "activity": {
-        "title": "Physical Activity",
-        "description": "Regular movement stimulates digestion and supports gut motility. Light activity such as walking (especially 10-20 minutes after meals) is great for blood glucose control and reduced bloating. Strength training 2-4 times per week supports metabolic health and insulin response. High-intensity training can be effective, but it usually works best when the stomach feels settled and not immediately after larger meals. During periods of gut sensitivity or high stress, low- to moderate-intensity training is often better tolerated."
-      },
-      "hydration": {
-        "title": "Hydration",
-        "description": "Adequate water intake is crucial for digestion and nutrient transport."
-      }
-    }
-  },
-  "energyOverview": {
-    "title": "Energy Systems",
-    "description": "Mitochondrial function and cellular energy production",
-    "cellularEnergyReserves": {
-      "title": "Cellular Energy Reserves",
-      "sinceWaking": "since waking",
-      "explainer": "Stress, activity, and recovery affect your energy levels."
-    },
-    "mitochondrialHealth": {
-      "title": "Mitochondrial Health",
-      "powerhouses": {
-        "title": "The Powerhouses of Your Cells",
-        "description": "Mitochondria are organelles that produce ATP (adenosine triphosphate), the energy currency of all cells. Each cell contains hundreds to thousands of mitochondria. They convert nutrients and oxygen into ~90% of your body's energy."
-      },
-      "atpProduction": {
-        "title": "ATP Production",
-        "description": "Through oxidative phosphorylation, mitochondria produce 30-32 ATP molecules per glucose molecule (vs only 2 ATP from glycolysis). This process requires oxygen, which is why VO₂ max correlates with energy capacity."
-      },
-      "mitochondrialBiogenesis": {
-        "title": "Mitochondrial Biogenesis",
-        "description": "Exercise (especially Zone 2 cardio) triggers PGC-1α activation, which increases mitochondrial density. More mitochondria = more energy production capacity. This is why trained athletes have higher VO₂ max."
-      },
-      "oxidativeStress": {
-        "title": "Oxidative Stress",
-        "description": "Mitochondria produce reactive oxygen species (ROS) as byproducts of ATP production. Excessive ROS causes oxidative damage to mitochondrial DNA. Antioxidants (Vitamin C, E, CoQ10, glutathione) help neutralize ROS and protect mitochondrial function."
-      },
-      "nadDecline": {
-        "title": "NAD+ and Energy Decline",
-        "description": "NAD+ (nicotinamide adenine dinucleotide) is essential for mitochondrial function. NAD+ levels decline ~50% between ages 20-80, reducing ATP production efficiency. NAD+ precursors (NR, NMN) and sirtuins activators may support mitochondrial health."
-      },
-      "mitophagy": {
-        "title": "Mitophagy & Cellular Cleanup",
-        "description": "Mitophagy is the selective autophagy of damaged mitochondria. Occurs during fasting and deep sleep. Regular mitophagy prevents accumulation of dysfunctional mitochondria that produce excess ROS and less ATP."
-      },
-      "insulinResistance": {
-        "title": "Insulin and Insulin Resistance",
-        "description": "Insulin helps cells take up glucose for energy production. In insulin resistance, cells respond less effectively to insulin, which can lead to higher blood glucose and reduced metabolic flexibility. Chronically elevated insulin can strain mitochondrial function and contribute to lower energy levels over time. Based on epidemiological estimates, around 15-30% of adults in the EU and around 30-40% of adults in the USA have insulin resistance, depending on definition and measurement method."
-      },
-      "chronicStress": {
-        "title": "Chronic Stress and Mitochondrial Function",
-        "description": "Chronic stress increases cortisol and adrenaline production, mobilizing energy for immediate survival but suppressing long-term mitochondrial repair and biogenesis. High cortisol increases ROS production, impairs DNA repair, and reduces NAD+ levels. Stress-induced brain activation can also redirect blood flow away from the digestive system and trigger immune suppression. Regular rest, deep sleep, and parasympathetic activation (deep breathing, meditation) are critical for restoring mitochondrial health."
-      },
-      "metabolicFlexibility": {
-        "title": "Metabolic Flexibility",
-        "description": "Metabolic flexibility is your body's ability to smoothly switch between burning glucose and fat for energy depending on availability and demand. Well-developed metabolic flexibility reduces dependence on frequent meals, improves insulin sensitivity, and enhances mental clarity. Intermittent fasting, low-carbohydrate periods, and aerobic training improve this switching capacity. Chronic sugar overfeeding can impair metabolic flexibility, locking your body into glucose-burning mode and making it less resilient to energy fluctuations."
-      },
-      "resistantStarch": {
-        "title": "Resistant Starch and Energy",
-        "description": "Resistant starch is a key fiber for energy and metabolic health. It is not digested in the small intestine but fermented in the colon into short-chain fatty acids, especially butyrate. This may improve insulin sensitivity, support metabolic flexibility, and reduce low-grade inflammation, which indirectly supports energy production and mitochondrial health. Examples include cooled potatoes/rice, green bananas, legumes, and oats. The best overall effect is often achieved when resistant starch is combined with other fiber types in a varied diet."
-      },
-      "lowCarbHighIntensityTraining": {
-        "title": "Low-Carb Nutrition and High-Intensity Training",
-        "description": "Low-carbohydrate nutrition combined with high-intensity training can be effective for fat loss, improved insulin sensitivity, and metabolic health, but it requires planning. High-intensity sessions rely more on glycogen, so very low carbohydrate availability can reduce performance and recovery. If training stress gets too high, cortisol may rise and the autonomic nervous system can remain in sympathetic dominance (higher stress load, poorer sleep, and lower HRV). A periodized approach often works best: lower carbohydrate intake on rest or low-intensity days, and targeted carbohydrates before or after hard sessions to support power output, hormonal balance, and a return to parasympathetic recovery."
-      }
-    }
-  },
-  "immuneOverview": {
-    "title": "Immune System",
-    "description": "Defense against pathogens and immune regulation",
-    "immuneStatus": {
-      "title": "Immune status",
-      "stressLevel": "Stress level"
-    },
-    "whyTheseMetricsMatter": {
-      "title": "Why these metrics matter",
-      "sleep": {
-        "title": "Sleep",
-        "description": "Adequate sleep is crucial for immune function. During sleep, the body produces cytokines that help fight infection and inflammation."
-      },
-      "stress": {
-        "title": "Stress & Recovery",
-        "description": "Chronic stress suppresses immune function."
-      },
-      "hrv": {
-        "title": "HRV (Heart Rate Variability)",
-        "description": "Higher HRV indicates better recovery and resilience. Low HRV may signal stress, fatigue, or illness."
-      },
-      "restingHeartRate": {
-        "title": "Resting Heart Rate",
-        "description": "An elevated resting heart rate can be an early sign of illness, inflammation, or inadequate recovery."
-      },
-      "microbiomeButyrate": {
-        "title": "Microbiome and Butyrate-Producing Bacteria",
-        "description": "The gut microbiome directly influences immune function. Butyrate-producing bacteria (which produce the short-chain fatty acid butyrate) strengthen the gut barrier, reduce low-grade inflammation, and support immune tolerance. Resistant starch is a key fuel for these bacteria and is found in foods such as cooled potatoes/rice, green bananas, legumes, and oats. A fiber-rich diet therefore supports butyrate production and may improve immune balance."
-      },
-      "recovery": {
-        "title": "Recovery status",
-        "description": "Sleep and recovery support immune function. Persistently low scores may suggest increased strain and a need for more rest. The score does not measure immune strength or indicate whether you have an infection."
-      }
-    }
-  },
-  "nervousSystemOverview": {
-    "title": "Nervous System",
-    "description": "Autonomic nervous system balance and recovery metrics",
-    "autonomicNervousSystem": {
-      "title": "Autonomic Nervous System"
-    },
-    "informationCard": {
-      "title": "Understanding your nervous system",
-      "hrv": {
-        "title": "HRV (Heart Rate Variability)",
-        "description": "HRV measures the variation in time between heartbeats. Higher HRV indicates better autonomic nervous system function, resilience, and recovery capacity. It's influenced by stress, sleep, fitness, and overall health."
-      },
-      "nutrients": {
-        "title": "Nutrients That Support the Nervous System",
-        "description": "Several nutrients are especially important for nervous system function: B vitamins (especially B1, B6, B12, and folate) for nerve signaling and energy metabolism, magnesium for relaxation and stress regulation, omega-3 (EPA/DHA) for neuronal membrane health, vitamin D for neuroimmune balance, choline for acetylcholine production, and adequate sodium, potassium, and hydration for stable nerve conduction."
-      },
-      "overstimulationScreenTime": {
-        "title": "Overstimulation and Screen Time",
-        "description": "High screen time, rapid dopamine stimuli, and constant information flow can keep the nervous system in a more activated state. Especially in the evening, blue light and cognitive stimulation can delay melatonin release, reduce sleep quality, and impair overnight recovery. Over time, this may contribute to higher stress sensitivity, lower HRV, and poorer switching between focus and rest. Regular breaks, screen-light evening routines, and pre-sleep wind-down support parasympathetic balance."
-      },
-      "breathing": {
-        "title": "Breathing and the Nervous System",
-        "description": "Slow, controlled breathing can quickly reduce stress load and increase parasympathetic activity through the vagus nerve. Longer exhales (for example, 4 seconds in and 6-8 seconds out) signal safety to the nervous system and may improve HRV, focus, and recovery. A few minutes of breathwork before sleep or after stressful periods can have a clear effect."
-      },
-      "immuneInflammation": {
-        "title": "Immune Defense and Low-Grade Inflammation",
-        "description": "The nervous system and immune system are closely linked. Low-grade inflammation with elevated inflammatory signaling can increase stress sensitivity, impair sleep, and reduce nervous system recovery. At the same time, chronic stress can further drive inflammation. Anti-inflammatory habits such as good sleep, regular movement, stable blood glucose, and a nutrient-dense diet can help break this negative loop."
-      },
-      "gutVagusMicrobiome": {
-        "title": "Gut Health, the Vagus Nerve, and the Microbiome",
-        "description": "The gut and brain continuously communicate through the gut-brain axis, with the vagus nerve as a key signaling pathway. A balanced microbiome produces metabolites and signaling compounds that can support calmer stress responses and better recovery, while dysbiosis may contribute to inflammation and higher nervous system load. A fiber-rich diet, fermented foods, good sleep, and stress management can strengthen gut ecology and support nervous system regulation."
-      },
-      "trainingStrengthens": {
-        "title": "How Training Strengthens the Nervous System",
-        "description": "The right training dose strengthens nervous system regulation. Regular aerobic and strength training can increase HRV over time, improve stress resilience, and help you shift back to parasympathetic recovery faster after strain. HIT can support the nervous system because short intense intervals train the body to tolerate rapid sympathetic activation and then return to recovery more efficiently. Over time, this can improve autonomic flexibility, stress response, and mental sharpness. Progressive overload with sufficient recovery is key, typically 1-3 HIT sessions per week."
-      },
-      "trainingNutritionStress": {
-        "title": "High-Intensity Training, Nutrition, and Stress Load",
-        "description": "High-intensity training is effective but increases acute sympathetic activation. If combined with chronically low energy or carbohydrate intake, cortisol may remain elevated, HRV can drop, and sleep quality may decline. This can present as nervous system overload, including fatigue, poorer recovery, and reduced performance. To protect the nervous system: periodize hard sessions, ensure adequate energy intake, and include recovery days focused on parasympathetic activation."
-      },
-      "recovery": {
-        "title": "Recovery status",
-        "description": "For the nervous system, good recovery may suggest a better ability to shift from activation into rest. Persistently low scores can be a cue to prioritize sleep, calm breaks, and an appropriate training load."
-      }
-    }
-  },
-  "longevityOverview": {
-    "title": "Longevity",
-    "description": "The foundations that support long-term healthspan and resilience",
-    "pillars": {
-      "title": "Core pillars for longevity",
-      "sleepRecovery": {
-        "title": "Sleep and Recovery",
-        "description": "Consistent high-quality sleep supports hormonal balance, immune regulation, brain recovery, and lower allostatic load over time."
-      },
-      "metabolicHealth": {
-        "title": "Metabolic Health",
-        "description": "Stable blood glucose, good insulin sensitivity, and mitochondrial function are strongly linked to healthier aging and reduced cardiometabolic risk."
-      },
-      "trainingCapacity": {
-        "title": "Training Capacity",
-        "description": "A mix of Zone 2, strength, mobility, and targeted high-intensity work helps preserve VO2 max, muscle mass, and functional independence with age. For whole-body longevity, aim for at least 4-5 different movement types across the week so both upper and lower body, core, balance, and impact tolerance are trained."
-      },
-      "fasciaStrength": {
-        "title": "Fascia and Connective Tissue Strength",
-        "description": "Fascia is the connective network that transfers force through the entire body and supports joint stability, elasticity, and movement efficiency. It responds best to varied loading: strength training, carries, rotational work, plyometric or impact elements, and multi-planar mobility. This type of whole-body training supports muscles, tendons, ligaments, and bone remodeling over time."
-      },
-      "nervousSystemStress": {
-        "title": "Nervous System and Stress Load",
-        "description": "Lower chronic sympathetic dominance through recovery practices, breathwork, and smart training periodization to protect long-term resilience."
-      },
-      "inflammationMicrobiome": {
-        "title": "Inflammation and Microbiome",
-        "description": "A fiber-rich, nutrient-dense diet supports butyrate-producing bacteria, better gut barrier function, and lower low-grade inflammation."
-      }
-    }
-  },
-  "mindOverview": {
-    "title": "Mind & Cognition",
-    "description": "Cognitive function, mental performance, and brain health",
-    "informationCard": {
-      "title": "Why these metrics matter",
-      "focus": {
-        "title": "Focus & Mental Clarity",
-        "description": "High stress and low energy impair prefrontal cortex function, leading to reduced focus, mental clarity, and decision-making ability."
-      },
-      "stress": {
-        "title": "Stress & Recovery",
-        "description": "Chronic stress impairs cognitive function and mental performance."
-      },
-      "mood": {
-        "title": "Mood & Emotional Regulation",
-        "description": "Chronic stress and poor recovery can lead to mood disturbances, anxiety, and depression. Prioritizing recovery and stress management supports emotional well-being."
-      },
-      "sleepQuality": {
-        "title": "Sleep Quality",
-        "description": "Poor sleep quality negatively impacts memory, attention, and executive function. Prioritizing good sleep is essential for maintaining cognitive health."
-      },
-      "steps": {
-        "title": "🚶‍♂️ Steps & Brain Health",
-        "description": "Physical activity and daily steps increase blood flow to the brain, improving memory and concentration while reducing stress and risk of mental health issues."
-      },
-      "bdnf": {
-        "title": "🧬 BDNF and Brain Development",
-        "description": "BDNF (Brain-Derived Neurotrophic Factor) is a protein that plays a crucial role in brain plasticity, learning, and memory. Physical activity, especially intense exercise, increases BDNF levels, contributing to better cognitive function and protection against mental health issues."
-      },
-      "ketones": {
-        "title": "🧬 Ketones and Cognitive Function",
-        "description": "Ketones are an alternative fuel source for the brain, produced during fasting or ketogenic diets. They may enhance cognitive function, mental clarity, and focus, especially in individuals with insulin resistance or neurodegenerative conditions."
-      },
-      "lactate": {
-        "title": "Lactate and Brain Function",
-        "description": "Lactate, produced during intense exercise, can serve as an energy source for the brain and may have neuroprotective effects. It supports cognitive function and mental resilience."
-      }
-    }
-  },
-  "sleepOverview": {
-    "title": "Sleep",
-    "description": "Recovery, restoration, and circadian health",
-    "overview": {
-      "title": "Overview",
-      "consistency": {
-        "title": "Sleep consistency",
-        "pattern": "7 day pattern",
-        "moderate": "Moderate",
-        "low": "Low",
-        "high": "High"
-      }
-    },
-    "understandingSleep": {
-      "title": "Understanding sleep",
-      "stages": {
-        "title": "Stages",
-        "description": "Sleep cycles through 4 stages: Light (N1, N2), Deep (N3), and REM. Each stage has unique benefits. Adults need 7-9 hours with balanced stage distribution for optimal recovery."
-      },
-      "deepSleep": {
-        "title": "Deep Sleep",
-        "description": "Deep sleep (slow-wave sleep) is when your body repairs tissues, builds muscle, strengthens immune system, and consolidates memories. Growth hormone peaks during this stage. Aim for 15-25% of total sleep time."
-      },
-      "remSleep": {
-        "title": "REM Sleep",
-        "description": "REM (Rapid Eye Movement) sleep processes emotions, consolidates learning, and supports creativity. Most vivid dreams occur here. REM should be 20-25% of total sleep and increases in later cycles."
-      },
-      "circadianRhythm": {
-        "title": "Circadian Rhythm",
-        "description": "Your internal 24-hour clock regulates sleep-wake cycles, hormone release, and body temperature. Consistent sleep/wake times strengthen circadian rhythm and improve sleep quality."
-      }
-    }
-  },
-  "strengthOverview": {
-    "title": "Strength & Muscle Health",
-    "description": "Muscle function, strength training, and recovery",
-    "recoveryFactors": {
-      "title": "Recovery factors",
-      "explainer": "Sleep and HRV are primary drivers of muscle recovery and protein synthesis. Deep sleep stages trigger growth hormone release for muscle repair. Respecting recovery prevents injury and promotes strength gains. Training hard when recovery is incomplete leads to diminished returns and increased injury risk.",
-      "explainers": {
-        "sleep_duration": "Sleep duration directly affects muscular and nervous-system recovery between sessions. Too little sleep reduces force output, movement quality, and your ability to handle progressive overload.",
-        "sleep_bedtime": "A consistent bedtime improves recovery timing and sleep quality. A stable rhythm makes it easier to perform heavy lifts and recover for the next strength session.",
-        "hrv": "HRV reflects autonomic recovery readiness before training. Lower HRV can indicate higher stress load and a need to adjust volume, intensity, or rest days."
-      }
-    },
-    "information": {
-      "title": "Information",
-      "trainingReadiness": {
-        "title": "Training Readiness",
-        "description": "Combines HRV, sleep quality, recovery time, and recent training load to predict your body's preparedness for high-intensity strength training. Scores above 75 indicate optimal conditions for progressive overload."
-      },
-      "trainingLoad": {
-        "title": "Training Load",
-        "description": "Quantifies training stress from the past 7 days. Anaerobic load specifically measures high-intensity work (heavy lifting, HIIT). Maintaining load within your optimal range prevents overtraining while ensuring progression."
-      },
-      "recoveryTime": {
-        "title": "Recovery Time",
-        "description": "Estimated hours until full muscular and CNS recovery. Heavy compound lifts (squats, deadlifts) require 48-72h for complete recovery. Training the same muscle groups before recovery is complete impairs adaptation."
-      },
-      "sleepMuscleGrowth": {
-        "title": "Sleep & Muscle Growth",
-        "description": "80% of growth hormone is released during deep sleep. Sleep deprivation reduces protein synthesis by ~20% and increases cortisol (catabolic). Aim for 7-9 hours with sleep quality above 80% for optimal hypertrophy."
-      }
-    }
+    "chooseTime": "Choose time",
+    "mySupplements": "My supplements"
   },
   "tipsList": {
     "yourLevel": "Your level",
@@ -1203,7 +864,8 @@
   },
   "labeledInput": {
     "optional": "optional",
-    "required": "required"
+    "required": "required",
+    "requiredError": "Required"
   },
   "wearableStatus": {
     "lastSync": "Last sync",

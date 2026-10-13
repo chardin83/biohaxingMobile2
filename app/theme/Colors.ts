@@ -166,6 +166,8 @@ export const Colors = {
     },
 
     area: {
+      womenHealth: '#B65CC4',
+      menHealth: '#657BDC',
       energy: 'rgba(255,191,0, 0.95)', // gold
       mind: 'rgba(0,191,174,0.95)', // accentStrong
       sleep: '#32D1A6', // primary
@@ -349,6 +351,8 @@ export const Colors = {
     },
 
     area: {
+      womenHealth: '#B65CC4',
+      menHealth: '#657BDC',
       energy: 'rgba(255,215,100,0.95)', // gold
       mind: 'rgba(0,191,174,0.95)', // accentStrong
       sleep: '#1FAE9E', // primary

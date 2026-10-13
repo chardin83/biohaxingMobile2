@@ -12,47 +12,47 @@ import { WearableStatus } from '@/components/WearableStatus';
 
 export default function SleepScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { colors } = useTheme();
-  const { t } = useTranslation();
+  const { t } = useTranslation('areas');
 
   return (
     <>
       <ThemedText type="title" style={{ color: colors.area.sleep }}>
-        {t('sleepOverview.title')}
+        {t('sleepQuality.title')}
       </ThemedText>
-      <ThemedText type="subtitle">{t('sleepOverview.description')}</ThemedText>
+      <ThemedText type="subtitle">{t('sleepQuality.description')}</ThemedText>
       <WearableStatus />
 
       <SleepTrendsChart />
 
       {/* Information card */}
       <InformationCardLink
-        title={t('sleepOverview.understandingSleep.title')}
+        title={t('sleepQuality.information.title')}
         iconName="moon"
         iconColor={colors.area.sleep}
         items={[
           {
             key: 'stages',
             icon: '🌙',
-            title: t('sleepOverview.understandingSleep.stages.title'),
-            description: t('sleepOverview.understandingSleep.stages.description'),
+            title: t('sleepQuality.information.stages.title'),
+            description: t('sleepQuality.information.stages.description'),
           },
           {
             key: 'deepSleep',
             icon: '🧠',
-            title: t('sleepOverview.understandingSleep.deepSleep.title'),
-            description: t('sleepOverview.understandingSleep.deepSleep.description'),
+            title: t('sleepQuality.information.deepSleep.title'),
+            description: t('sleepQuality.information.deepSleep.description'),
           },
           {
             key: 'remSleep',
             icon: '💭',
-            title: t('sleepOverview.understandingSleep.remSleep.title'),
-            description: t('sleepOverview.understandingSleep.remSleep.description'),
+            title: t('sleepQuality.information.remSleep.title'),
+            description: t('sleepQuality.information.remSleep.description'),
           },
           {
             key: 'circadianRhythm',
             icon: '⏰',
-            title: t('sleepOverview.understandingSleep.circadianRhythm.title'),
-            description: t('sleepOverview.understandingSleep.circadianRhythm.description'),
+            title: t('sleepQuality.information.circadianRhythm.title'),
+            description: t('sleepQuality.information.circadianRhythm.description'),
           },
         ]}
       />

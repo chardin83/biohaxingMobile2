@@ -10,58 +10,58 @@ import { WearableStatus } from '@/components/WearableStatus';
 
 export default function LongevityOverview({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { colors } = useTheme();
-  const { t } = useTranslation();
+  const { t } = useTranslation('areas');
   return (
     <>
       <ThemedText type="title" style={{ color: colors.area.longevity }}>
-        {t('longevityOverview.title')}
+        {t('longevity.title')}
       </ThemedText>
       <ThemedText type="subtitle" style={{ color: colors.textTertiary }}>
-        {t('longevityOverview.description')}
+        {t('longevity.description')}
       </ThemedText>
 
       <WearableStatus />
 
       <InformationCardLink
-        title={t('longevityOverview.pillars.title')}
+        title={t('longevity.information.title')}
         iconName="sparkles"
         iconColor={colors.area.longevity}
         items={[
           {
             key: 'sleepRecovery',
             icon: '😴',
-            title: t('longevityOverview.pillars.sleepRecovery.title'),
-            description: t('longevityOverview.pillars.sleepRecovery.description'),
+            title: t('longevity.information.sleepRecovery.title'),
+            description: t('longevity.information.sleepRecovery.description'),
           },
           {
             key: 'metabolicHealth',
             icon: '🫀',
-            title: t('longevityOverview.pillars.metabolicHealth.title'),
-            description: t('longevityOverview.pillars.metabolicHealth.description'),
+            title: t('longevity.information.metabolicHealth.title'),
+            description: t('longevity.information.metabolicHealth.description'),
           },
           {
             key: 'trainingCapacity',
             icon: '🏃',
-            title: t('longevityOverview.pillars.trainingCapacity.title'),
-            description: t('longevityOverview.pillars.trainingCapacity.description'),
+            title: t('longevity.information.trainingCapacity.title'),
+            description: t('longevity.information.trainingCapacity.description'),
           },
           {
             key: 'fasciaStrength',
             icon: '🦴',
-            title: t('longevityOverview.pillars.fasciaStrength.title'),
-            description: t('longevityOverview.pillars.fasciaStrength.description'),
+            title: t('longevity.information.fasciaStrength.title'),
+            description: t('longevity.information.fasciaStrength.description'),
           },
           {
             key: 'nervousSystemStress',
             icon: '🧘',
-            title: t('longevityOverview.pillars.nervousSystemStress.title'),
-            description: t('longevityOverview.pillars.nervousSystemStress.description'),
+            title: t('longevity.information.nervousSystemStress.title'),
+            description: t('longevity.information.nervousSystemStress.description'),
           },
           {
             key: 'inflammationMicrobiome',
             icon: '🌿',
-            title: t('longevityOverview.pillars.inflammationMicrobiome.title'),
-            description: t('longevityOverview.pillars.inflammationMicrobiome.description'),
+            title: t('longevity.information.inflammationMicrobiome.title'),
+            description: t('longevity.information.inflammationMicrobiome.description'),
           },
         ]}
       />

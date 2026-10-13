@@ -1,10 +1,10 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
 import AppCard from '@/components/ui/AppCard';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import DiscreetButton from '@/components/ui/DiscreetButton';
 import PremiumLink from '@/components/ui/PremiumLink';
 import type { Tip } from '@/locales/tips';
 
@@ -85,13 +85,16 @@ export default function TargetsSection({
         ))}
       </View>
       {onShowJournal && (
-        <TouchableOpacity accessibilityRole="link" onPress={onShowJournal} style={[styles.journalLink, { borderColor: colors.borderLight }]}>
-          <IconSymbol name="calendar" size={20} color={colors.primary} />
-          <ThemedText type="defaultSemiBold" style={{ color: colors.primary }}>
-            {t('common:nutritionTargetSection.showJournal')}
-          </ThemedText>
-          <IconSymbol name="chevron.right" size={16} color={colors.primary} />
-        </TouchableOpacity>
+        <View style={[styles.journalLink, { borderTopColor: colors.borderLight }]}>
+          <DiscreetButton
+            title={t('common:nutritionTargetSection.showJournal')}
+            onPress={onShowJournal}
+            color={colors.primary}
+            icon="calendar"
+            rightIcon="chevron.right"
+            accessibilityRole="link"
+          />
+        </View>
       )}
       {tip.trackingTargets?.some(target => Boolean(target.aiInstruction?.trim())) && (
         <View style={[styles.premiumInfo, { borderTopColor: colors.borderLight }]}>
@@ -109,14 +112,9 @@ const styles = StyleSheet.create({
   targets: { marginTop: 16, gap: 12 },
   targetRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 },
   journalLink: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'stretch',
-    justifyContent: 'flex-end',
-    gap: 6,
-    paddingVertical: 10,
+    alignItems: 'flex-end',
     marginTop: 16,
     paddingTop: 16,
-    borderTopWidth: 1,
+    borderTopWidth: StyleSheet.hairlineWidth,
   },
 });

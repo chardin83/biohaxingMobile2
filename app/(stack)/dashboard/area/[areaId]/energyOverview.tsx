@@ -13,14 +13,14 @@ import { WearableStatus } from '@/components/WearableStatus';
 
 export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { colors } = useTheme();
-  const { t } = useTranslation();
+  const { t } = useTranslation('areas');
 
   return (
     <>
       <ThemedText type="title" style={{ color: colors.area.energy }}>
-        {t('energyOverview.title')}
+        {t('energy.title')}
       </ThemedText>
-      <ThemedText type="subtitle">{t('energyOverview.description')}</ThemedText>
+      <ThemedText type="subtitle">{t('energy.description')}</ThemedText>
       <WearableStatus />
 
       {/* Energy Production Factors */}
@@ -31,75 +31,75 @@ export default function EnergyScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
 
       {/* Mitochondrial Health Information */}
       <InformationCardLink
-        title={t('energyOverview.mitochondrialHealth.title')}
+        title={t('energy.information.title')}
         iconName="mitochondrialHealth"
         iconColor={colors.area.energy}
         items={[
           {
             key: 'powerhouses',
             icon: '🔬',
-            title: t('energyOverview.mitochondrialHealth.powerhouses.title'),
-            description: t('energyOverview.mitochondrialHealth.powerhouses.description'),
+            title: t('energy.information.powerhouses.title'),
+            description: t('energy.information.powerhouses.description'),
           },
           {
             key: 'atpProduction',
             icon: '⚡',
-            title: t('energyOverview.mitochondrialHealth.atpProduction.title'),
-            description: t('energyOverview.mitochondrialHealth.atpProduction.description'),
+            title: t('energy.information.atpProduction.title'),
+            description: t('energy.information.atpProduction.description'),
           },
           {
             key: 'mitochondrialBiogenesis',
             icon: '🧬',
-            title: t('energyOverview.mitochondrialHealth.mitochondrialBiogenesis.title'),
-            description: t('energyOverview.mitochondrialHealth.mitochondrialBiogenesis.description'),
+            title: t('energy.information.mitochondrialBiogenesis.title'),
+            description: t('energy.information.mitochondrialBiogenesis.description'),
           },
           {
             key: 'oxidativeStress',
             icon: '🛡️',
-            title: t('energyOverview.mitochondrialHealth.oxidativeStress.title'),
-            description: t('energyOverview.mitochondrialHealth.oxidativeStress.description'),
+            title: t('energy.information.oxidativeStress.title'),
+            description: t('energy.information.oxidativeStress.description'),
           },
           {
             key: 'nadDecline',
             icon: '⏰',
-            title: t('energyOverview.mitochondrialHealth.nadDecline.title'),
-            description: t('energyOverview.mitochondrialHealth.nadDecline.description'),
+            title: t('energy.information.nadDecline.title'),
+            description: t('energy.information.nadDecline.description'),
           },
           {
             key: 'mitophagy',
             icon: '🔄',
-            title: t('energyOverview.mitochondrialHealth.mitophagy.title'),
-            description: t('energyOverview.mitochondrialHealth.mitophagy.description'),
+            title: t('energy.information.mitophagy.title'),
+            description: t('energy.information.mitophagy.description'),
           },
           {
             key: 'insulinResistance',
             icon: '🍬',
-            title: t('energyOverview.mitochondrialHealth.insulinResistance.title'),
-            description: t('energyOverview.mitochondrialHealth.insulinResistance.description'),
+            title: t('energy.information.insulinResistance.title'),
+            description: t('energy.information.insulinResistance.description'),
           },
           {
             key: 'chronicStress',
             icon: '⚠️',
-            title: t('energyOverview.mitochondrialHealth.chronicStress.title'),
-            description: t('energyOverview.mitochondrialHealth.chronicStress.description'),
+            title: t('energy.information.chronicStress.title'),
+            description: t('energy.information.chronicStress.description'),
           },
           {
             key: 'metabolicFlexibility',
             icon: '🔄',
-            title: t('energyOverview.mitochondrialHealth.metabolicFlexibility.title'),
-            description: t('energyOverview.mitochondrialHealth.metabolicFlexibility.description'),
+            title: t('energy.information.metabolicFlexibility.title'),
+            description: t('energy.information.metabolicFlexibility.description'),
           },
           {
             key: 'resistantStarch',
             icon: '🌾',
-            title: t('energyOverview.mitochondrialHealth.resistantStarch.title'),
-            description: t('energyOverview.mitochondrialHealth.resistantStarch.description'),
+            title: t('energy.information.resistantStarch.title'),
+            description: t('energy.information.resistantStarch.description'),
           },
           {
             key: 'lowCarbHighIntensityTraining',
             icon: '🏃',
-            title: t('energyOverview.mitochondrialHealth.lowCarbHighIntensityTraining.title'),
-            description: t('energyOverview.mitochondrialHealth.lowCarbHighIntensityTraining.description'),
+            title: t('energy.information.lowCarbHighIntensityTraining.title'),
+            description: t('energy.information.lowCarbHighIntensityTraining.description'),
           },
         ]}
       />

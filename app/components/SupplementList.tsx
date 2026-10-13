@@ -1,17 +1,25 @@
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import CreateTimeSlotModal, { CreatePlanData } from '@/components/modals/CreateTimeSlotModal';
-import { ThemedModal } from '@/components/ThemedModal';
+import SupplementForm from '@/components/SupplementForm';
+import { SupplementWarnings } from '@/components/SupplementWarnings';
 import { ThemedText } from '@/components/ThemedText';
 import AddButton from '@/components/ui/AddButton';
 import AppBox from '@/components/ui/AppBox';
 import AppButton from '@/components/ui/AppButton';
+import { useBottomSheetDesign } from '@/components/ui/BottomSheetDesign';
+import { CancelButton } from '@/components/ui/CancelButton';
+import DiscreetButton from '@/components/ui/DiscreetButton';
 
 import { useStorage } from '../context/StorageContext';
+import type { Plan } from '../domain/Plan';
 import { Supplement } from '../domain/Supplement';
 import { SupplementPlanEntry } from '../domain/SupplementPlanEntry';
 
@@ -23,12 +31,31 @@ interface SupplementListProps {
 
 const SupplementList: React.FC<SupplementListProps> = ({ supplements, plannedSupplements, supplementPlans }) => {
   const { t } = useTranslation();
+  const router = useRouter();
   const { saveSupplementToPlan } = useStorage();
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
+  const sheetDesign = useBottomSheetDesign(colors);
+  const addToPlanRef = React.useRef<BottomSheetModal>(null);
+  const openingCreatePlan = React.useRef(false);
+  const openingDosagePlan = React.useRef<Plan | null>(null);
+  const [dosagePlan, setDosagePlan] = React.useState<Plan | null>(null);
   const [expandedSupplements, setExpandedSupplements] = React.useState<string[]>([]);
   const [addToPlanVisible, setAddToPlanVisible] = React.useState(false);
   const [pendingSupplement, setPendingSupplement] = React.useState<Supplement | null>(null);
   const [createPlanVisible, setCreatePlanVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    if (addToPlanVisible) addToPlanRef.current?.present();
+    else addToPlanRef.current?.dismiss();
+  }, [addToPlanVisible]);
+
+  const renderBackdrop = React.useCallback(
+    (props: React.ComponentProps<typeof BottomSheetBackdrop>) => (
+      <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} pressBehavior="close" />
+    ),
+    []
+  );
 
   const toggleSupplementInfo = (supplementId: string) => {
     setExpandedSupplements(prev => (prev.includes(supplementId) ? prev.filter(id => id !== supplementId) : [...prev, supplementId]));
@@ -39,28 +66,10 @@ const SupplementList: React.FC<SupplementListProps> = ({ supplements, plannedSup
     setAddToPlanVisible(true);
   };
 
-  const handleAddSupplementToPlan = async (plan: any) => {
+  const handleChoosePlan = (plan: Plan) => {
     if (!pendingSupplement) return;
-
-    const entry: SupplementPlanEntry = {
-      supplement: pendingSupplement,
-      startedAt: new Date().toISOString(),
-      createdBy: 'local',
-      planName: plan.name,
-      prefferedTime: plan.prefferedTime,
-      notify: plan.notify,
-    };
-
-    const savedPlan = await saveSupplementToPlan(
-      { name: plan.name, prefferedTime: plan.prefferedTime, supplements: plan.supplements ?? [], notify: plan.notify },
-      entry,
-      false
-    );
-    if (!savedPlan) return;
-
-    // Stäng modal och nollställ valet
+    openingDosagePlan.current = plan;
     setAddToPlanVisible(false);
-    setPendingSupplement(null);
   };
 
   if (!supplements.length) return null;
@@ -99,35 +108,55 @@ const SupplementList: React.FC<SupplementListProps> = ({ supplements, plannedSup
         );
       })}
 
-      {/* Modal: välj tidpunkt + lista planer */}
-      <ThemedModal
-        visible={addToPlanVisible}
-        title={t('plan.addSupplement')}
-        onClose={() => {
+      {/* Bottom sheet: välj tidpunkt + lista planer */}
+      <BottomSheetModal
+        ref={addToPlanRef}
+        snapPoints={['65%', '90%']}
+        enableDynamicSizing={false}
+        enablePanDownToClose
+        backdropComponent={renderBackdrop}
+        backgroundStyle={sheetDesign.backgroundStyle}
+        handleComponent={sheetDesign.handleComponent}
+        onDismiss={() => {
           setAddToPlanVisible(false);
+          if (openingCreatePlan.current) {
+            openingCreatePlan.current = false;
+            setCreatePlanVisible(true);
+            return;
+          }
+          if (openingDosagePlan.current) {
+            setDosagePlan(openingDosagePlan.current);
+            openingDosagePlan.current = null;
+            return;
+          }
           setPendingSupplement(null);
         }}
-        showCancelButton
       >
-        <View>
+        <BottomSheetScrollView contentContainerStyle={[styles.sheetContent, { paddingBottom: insets.bottom + 24 }]}>
+          <ThemedText type="title2" accessibilityRole="header">
+            {t('plan.addSupplement')}
+          </ThemedText>
+          <ThemedText type="title3">{pendingSupplement?.name}</ThemedText>
+          <SupplementWarnings supplement={pendingSupplement} />
           <ThemedText type="default">{t('supplementList.chooseTime')}</ThemedText>
           {supplementPlans.map(p => (
             <View key={p.name} style={styles.supplementPlanItem}>
-              <AppButton title={`${p.name} (${p.prefferedTime})`} onPress={() => handleAddSupplementToPlan(p)} variant="primary" />
+              <AppButton title={`${p.name} (${p.prefferedTime})`} onPress={() => handleChoosePlan(p)} variant="primary" />
             </View>
           ))}
           <View style={styles.supplementPlanItem}>
             <AppButton
               title={t('plan.addTimeSlot')}
               onPress={() => {
+                openingCreatePlan.current = true;
                 setAddToPlanVisible(false);
-                setCreatePlanVisible(true);
               }}
               variant="secondary"
             />
           </View>
-        </View>
-      </ThemedModal>
+          <CancelButton onPress={() => setAddToPlanVisible(false)} />
+        </BottomSheetScrollView>
+      </BottomSheetModal>
 
       {/* Modal: skapa ny plan inline */}
       <CreateTimeSlotModal
@@ -135,40 +164,61 @@ const SupplementList: React.FC<SupplementListProps> = ({ supplements, plannedSup
         onClose={() => {
           // Stäng endast create-modal
           setCreatePlanVisible(false);
-        }}
-        onCreate={async (newPlan: CreatePlanData) => {
-          if (!pendingSupplement) {
-            setCreatePlanVisible(false);
-            return;
-          }
-
-          const entry: SupplementPlanEntry = {
-            supplement: pendingSupplement,
-            startedAt: new Date().toISOString(),
-            createdBy: 'local',
-            planName: newPlan.name,
-            prefferedTime: newPlan.prefferedTime,
-            notify: newPlan.notify,
-          };
-
-          const savedPlan = await saveSupplementToPlan(
-            { name: newPlan.name, prefferedTime: newPlan.prefferedTime, supplements: [], notify: newPlan.notify },
-            entry,
-            false
-          );
-          if (!savedPlan) return;
-
-          // Stäng båda modalerna och nollställ pending
           setPendingSupplement(null);
+        }}
+        onCreate={(newPlan: CreatePlanData) => {
           setCreatePlanVisible(false);
-          setAddToPlanVisible(false);
+          if (pendingSupplement) setDosagePlan({ ...newPlan, supplements: [] });
         }}
       />
+      {dosagePlan && pendingSupplement && (
+        <SupplementForm
+          selectedTime={(() => {
+            const date = new Date();
+            const [hours, minutes] = dosagePlan.prefferedTime.split(':').map(Number);
+            date.setHours(hours, minutes, 0, 0);
+            return date;
+          })()}
+          isEditing={false}
+          lockSupplement
+          preselectedSupplement={pendingSupplement}
+          onCancel={() => {
+            setDosagePlan(null);
+            setPendingSupplement(null);
+          }}
+          onSave={async selectedSupplement => {
+            const entry: SupplementPlanEntry = {
+              supplement: selectedSupplement,
+              startedAt: new Date().toISOString(),
+              createdBy: 'local',
+              planName: dosagePlan.name,
+              prefferedTime: dosagePlan.prefferedTime,
+              notify: dosagePlan.notify,
+            };
+            const savedPlan = await saveSupplementToPlan(dosagePlan, entry, false);
+            if (!savedPlan) return false;
+            setDosagePlan(null);
+            setPendingSupplement(null);
+          }}
+        />
+      )}
+      <View style={[styles.planLink, { borderTopColor: colors.borderLight }]}>
+        <DiscreetButton
+          title={t('supplementList.mySupplements')}
+          color={colors.primary}
+          icon="checklist"
+          rightIcon="chevron.right"
+          accessibilityRole="link"
+          onPress={() => router.push({ pathname: '/plan', params: { openSection: 'supplements' } })}
+        />
+      </View>
     </AppBox>
   );
 };
 
 const styles = StyleSheet.create({
+  planLink: { alignItems: 'flex-end', marginTop: 16, paddingTop: 16, borderTopWidth: StyleSheet.hairlineWidth },
+  sheetContent: { paddingHorizontal: 20, paddingTop: 8, gap: 12 },
   supplementContainer: {
     width: '100%',
     paddingVertical: 10,

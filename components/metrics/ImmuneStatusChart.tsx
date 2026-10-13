@@ -129,7 +129,7 @@ export function ImmuneStatusChart() {
 
   return (
     <>
-      <Card title={t('immuneOverview.immuneStatus.title')}>
+      <Card title={t('areas:immuneSupport.immuneStatus.title')}>
         <View style={globalStyles.row}>
           <SleepMetric showDivider={true} onPress={() => toggleMetric('sleep_duration')} isSelected={selectedMetric === 'sleep_duration'} />
           <DeepSleepMetric showDivider={false} onPress={() => toggleMetric('deep_sleep')} isSelected={selectedMetric === 'deep_sleep'} />

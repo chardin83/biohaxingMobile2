@@ -443,7 +443,8 @@
     "description": "Glutation är en av kroppens viktigaste intracellulära antioxidanter. Det byggs upp av aminosyrorna glycin, glutamat och cystein och hjälper till att neutralisera reaktiva syreföreningar, stödjer leverns avgiftningsvägar och skyddar celler vid stress, inflammation och hög metabol belastning. Direkt glutation kan användas, men många stödjer även glutationstatus via prekursorer som NAC. Tillgång på glycin kan vara viktig för glutationsyntesen, medan glutamat är en av de grundläggande byggstenarna i själva molekylen.",
     "areas": {
       "immuneSupport": "Glutation hjälper immunceller att hantera oxidativ stress och bibehålla balanserad inflammatorisk signalering.",
-      "energy": "Genom att skydda mitokondrier och andra cellstrukturer mot oxidativ skada stödjer glutation effektiv cellulär energiproduktion."
+      "energy": "Genom att skydda mitokondrier och andra cellstrukturer mot oxidativ skada stödjer glutation effektiv cellulär energiproduktion.",
+      "womenHealth": "NAC, en prekursor till glutation, har studerats vid PCOS och endometrios med möjliga men osäkra effekter. Resultaten visar inte att glutationtillskott ger samma nytta. NAC ersätter inte etablerad behandling."
     },
     "nutritionFoods": {
       "title": "Livsmedel som stödjer glutationstatus",
@@ -638,7 +639,9 @@
     "areas": {
       "digestiveHealth": "Fiber främjar regelbundna tarmrörelser, matar nyttiga bakterier och stödjer tarmbarriärens integritet genom att producera kortkedjiga fettsyror.",
       "immuneSupport": "En fiberrik kost stärker tarmmikrobiomet, som producerar metaboliter som reglerar immunfunktionen och minskar systemisk inflammation.",
-      "longevity": "Fiberintag stödjer butyratproduktion och lägre låggradig inflammation, två centrala mekanismer kopplade till friskare åldrande."
+      "longevity": "Fiberintag stödjer butyratproduktion och lägre låggradig inflammation, två centrala mekanismer kopplade till friskare åldrande.",
+      "womenHealth": "Fiberrik mat stödjer tarmhälsa, mättnad och blodsockerreglering och passar som en del av kostråden vid PCOS och klimakteriet.",
+      "menHealth": "Fiberrik mat stödjer tarmhälsa, mättnad och metabol hälsa. Det kompletterar kostråden för manshälsa, men är inte en behandling för testosteronbrist."
     },
     "nutritionFoods": {
       "title": "Fiberrika livsmedel",
@@ -890,7 +893,9 @@
     "areas": {
       "immuneSupport": "Zink stödjer både det medfödda och adaptiva immunförsvaret genom att reglera cytokinsignalering och vita blodkroppars aktivitet.",
       "nervousSystem": "Tillräckligt med zink hjälper till att bibehålla signalsubstansbalans, vilket stödjer humör och stresstålighet.",
-      "energy": "Zink krävs för hundratals enzymreaktioner kopplade till energimetabolism och återhämtning."
+      "energy": "Zink krävs för hundratals enzymreaktioner kopplade till energimetabolism och återhämtning.",
+      "womenHealth": "Zink behövs för normal reproduktiv funktion, celldelning och immunförsvar. Zink behövs också för hårväxt och hudhälsa.",
+      "menHealth": "Zink behövs för normal reproduktiv funktion. Zinkbrist kan påverka hormonfunktionen, men extra zink är inte en etablerad behandling för testosteronbrist när intaget redan är tillräckligt."
     },
     "nutritionFoods": {
       "title": "Livsmedel rika på zink",

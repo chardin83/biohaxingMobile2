@@ -471,7 +471,8 @@
     "description": "Glutathione is one of the body's most important intracellular antioxidants. It is built from the amino acids glycine, glutamate, and cysteine, and helps neutralize reactive oxygen species, supports liver detoxification pathways, and protects cells during stress, inflammation, and high metabolic demand. Direct glutathione can be used, but many people also support glutathione status through precursors such as NAC. Glycine availability can matter for glutathione synthesis, while glutamate is one of the core building blocks already required in the molecule itself.",
     "areas": {
       "immuneSupport": "Glutathione helps immune cells manage oxidative stress and maintain balanced inflammatory signaling.",
-      "energy": "By protecting mitochondria and other cell structures from oxidative damage, glutathione supports efficient cellular energy production."
+      "energy": "By protecting mitochondria and other cell structures from oxidative damage, glutathione supports efficient cellular energy production.",
+      "womenHealth": "NAC, a glutathione precursor, has been studied in PCOS and endometriosis with possible but uncertain benefits. These findings do not establish the same benefits for glutathione supplements. NAC does not replace established treatment."
     },
     "nutritionFoods": {
       "title": "Foods that support glutathione status",
@@ -738,7 +739,9 @@
     "areas": {
       "digestiveHealth": "Fiber promotes regular bowel movements, feeds beneficial bacteria, and supports gut barrier integrity by producing short-chain fatty acids.",
       "immuneSupport": "A fiber-rich diet strengthens the gut microbiome, which produces metabolites that regulate immune function and reduce systemic inflammation.",
-      "longevity": "Fiber intake supports butyrate production and lower low-grade inflammation, two central mechanisms linked to healthier aging."
+      "longevity": "Fiber intake supports butyrate production and lower low-grade inflammation, two central mechanisms linked to healthier aging.",
+      "womenHealth": "Fibre-rich foods support gut health, fullness and blood glucose regulation and fit into dietary advice for PCOS and menopause.",
+      "menHealth": "Fibre-rich foods support gut health, fullness and metabolic health. They complement dietary advice for men’s health but do not treat testosterone deficiency."
     },
     "nutritionFoods": {
       "title": "High-fiber foods",
@@ -988,7 +991,9 @@
     "areas": {
       "immuneSupport": "Zinc supports innate and adaptive immunity by regulating cytokine signaling and white blood cell activity.",
       "nervousSystem": "Adequate zinc helps maintain neurotransmitter balance, supporting mood and stress tolerance.",
-      "energy": "Zinc is required for hundreds of enzymatic reactions linked to energy metabolism and recovery."
+      "energy": "Zinc is required for hundreds of enzymatic reactions linked to energy metabolism and recovery.",
+      "womenHealth": "Zinc is needed for normal reproductive function, cell division and immune function. Zinc is also important for hair growth and skin health.",
+      "menHealth": "Zinc is needed for normal reproductive function. Zinc deficiency can affect hormone function, but extra zinc is not an established treatment for testosterone deficiency when intake is already adequate."
     },
     "nutritionFoods": {
       "title": "Zinc-rich foods",

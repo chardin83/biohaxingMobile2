@@ -13,15 +13,15 @@ import { WearableStatus } from '@/components/WearableStatus';
 
 export default function DigestiveScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { colors } = useTheme();
-  const { t } = useTranslation();
+  const { t } = useTranslation('areas');
 
   return (
     <>
       <ThemedText type="title" style={{ color: colors.area.digestiveHealth }}>
-        {t('digestiveOverview.title')}
+        {t('digestiveHealth.title')}
       </ThemedText>
       <ThemedText type="subtitle" style={{ color: colors.textTertiary }}>
-        {t('digestiveOverview.description')}
+        {t('digestiveHealth.description')}
       </ThemedText>
 
       <WearableStatus />
@@ -30,39 +30,39 @@ export default function DigestiveScreen({ mainGoalId }: Readonly<{ mainGoalId: s
 
       {/* Info section: Understanding your metrics */}
       <InformationCardLink
-        title={t('digestiveOverview.understandingYourMetrics.title')}
+        title={t('digestiveHealth.information.title')}
         iconName="microbiome"
         iconColor={colors.area.digestiveHealth}
         items={[
           {
             key: 'microbiome',
             icon: '🦠',
-            title: t('digestiveOverview.understandingYourMetrics.microbiome.title'),
-            description: t('digestiveOverview.understandingYourMetrics.microbiome.description'),
+            title: t('digestiveHealth.information.microbiome.title'),
+            description: t('digestiveHealth.information.microbiome.description'),
           },
           {
             key: 'stress',
             icon: '😌',
-            title: t('digestiveOverview.understandingYourMetrics.stress.title'),
-            description: t('digestiveOverview.understandingYourMetrics.stress.description'),
+            title: t('digestiveHealth.information.stress.title'),
+            description: t('digestiveHealth.information.stress.description'),
           },
           {
             key: 'sleep',
             icon: '💤',
-            title: t('digestiveOverview.understandingYourMetrics.sleep.title'),
-            description: t('digestiveOverview.understandingYourMetrics.sleep.description'),
+            title: t('digestiveHealth.information.sleep.title'),
+            description: t('digestiveHealth.information.sleep.description'),
           },
           {
             key: 'activity',
             icon: '🏃‍♂️',
-            title: t('digestiveOverview.understandingYourMetrics.activity.title'),
-            description: t('digestiveOverview.understandingYourMetrics.activity.description'),
+            title: t('digestiveHealth.information.activity.title'),
+            description: t('digestiveHealth.information.activity.description'),
           },
           {
             key: 'hydration',
             icon: '💧',
-            title: t('digestiveOverview.understandingYourMetrics.hydration.title'),
-            description: t('digestiveOverview.understandingYourMetrics.hydration.description'),
+            title: t('digestiveHealth.information.hydration.title'),
+            description: t('digestiveHealth.information.hydration.description'),
           },
         ]}
       />

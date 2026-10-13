@@ -11,15 +11,15 @@ import { WearableStatus } from '@/components/WearableStatus';
 
 export default function MindOverviewScreen({ mainGoalId }: Readonly<{ mainGoalId: string }>) {
   const { colors } = useTheme();
-  const { t } = useTranslation();
+  const { t } = useTranslation('areas');
 
   return (
     <>
       <ThemedText type="title" style={{ color: colors.accentStrong }}>
-        {t('mindOverview.title')}
+        {t('mind.title')}
       </ThemedText>
       <ThemedText type="subtitle" style={{ color: colors.textTertiary }}>
-        {t('mindOverview.description')}
+        {t('mind.description')}
       </ThemedText>
 
       <WearableStatus />
@@ -29,37 +29,37 @@ export default function MindOverviewScreen({ mainGoalId }: Readonly<{ mainGoalId
 
       {/* Information card */}
       <InformationCardLink
-        title={t('mindOverview.informationCard.title')}
+        title={t('mind.information.title')}
         iconName="lightbulb"
         iconColor={colors.accentStrong}
         items={[
-          { key: 'focus', icon: '🧠', title: t('mindOverview.informationCard.focus.title'), description: t('mindOverview.informationCard.focus.description') },
+          { key: 'focus', icon: '🧠', title: t('mind.information.focus.title'), description: t('mind.information.focus.description') },
           {
             key: 'stress',
             icon: '😰',
-            title: t('mindOverview.informationCard.stress.title'),
-            description: t('mindOverview.informationCard.stress.description'),
+            title: t('mind.information.stress.title'),
+            description: t('mind.information.stress.description'),
           },
-          { key: 'mood', icon: '🙂', title: t('mindOverview.informationCard.mood.title'), description: t('mindOverview.informationCard.mood.description') },
+          { key: 'mood', icon: '🙂', title: t('mind.information.mood.title'), description: t('mind.information.mood.description') },
           {
             key: 'sleepQuality',
             icon: '💤',
-            title: t('mindOverview.informationCard.sleepQuality.title'),
-            description: t('mindOverview.informationCard.sleepQuality.description'),
+            title: t('mind.information.sleepQuality.title'),
+            description: t('mind.information.sleepQuality.description'),
           },
-          { key: 'steps', icon: '🚶‍♂️', title: t('mindOverview.informationCard.steps.title'), description: t('mindOverview.informationCard.steps.description') },
-          { key: 'bdnf', icon: '🧬', title: t('mindOverview.informationCard.bdnf.title'), description: t('mindOverview.informationCard.bdnf.description') },
+          { key: 'steps', icon: '🚶‍♂️', title: t('mind.information.steps.title'), description: t('mind.information.steps.description') },
+          { key: 'bdnf', icon: '🧬', title: t('mind.information.bdnf.title'), description: t('mind.information.bdnf.description') },
           {
             key: 'ketones',
             icon: '🧬',
-            title: t('mindOverview.informationCard.ketones.title'),
-            description: t('mindOverview.informationCard.ketones.description'),
+            title: t('mind.information.ketones.title'),
+            description: t('mind.information.ketones.description'),
           },
           {
             key: 'lactate',
             icon: '🧬',
-            title: t('mindOverview.informationCard.lactate.title'),
-            description: t('mindOverview.informationCard.lactate.description'),
+            title: t('mind.information.lactate.title'),
+            description: t('mind.information.lactate.description'),
           },
         ]}
       />

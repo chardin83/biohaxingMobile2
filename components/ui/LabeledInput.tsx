@@ -5,6 +5,44 @@ import { StyleProp, StyleSheet, TextInput, TextInputProps, TextStyle, View, View
 
 import { ThemedText } from '@/components/ThemedText';
 
+import { IconSymbol } from './IconSymbol';
+
+const InputRowErrorContext = React.createContext<((id: string, hasError: boolean) => void) | null>(null);
+
+function InputHelp({ text }: Readonly<{ text: string }>) {
+  const { colors } = useTheme();
+  return (
+    <View style={styles.helpRow}>
+      <IconSymbol name="info" size={14} color={colors.textMuted} />
+      <ThemedText type="caption" style={[styles.helpText, { color: colors.textMuted }]}>
+        {text}
+      </ThemedText>
+    </View>
+  );
+}
+
+/** Shared helper text spans the full width beneath adjacent inputs. */
+export function LabeledInputRow({ children, helperText }: Readonly<{ children: React.ReactNode; helperText?: string }>) {
+  const [errors, setErrors] = React.useState<Set<string>>(() => new Set());
+  const reportError = React.useCallback((id: string, hasError: boolean) => {
+    setErrors(current => {
+      if (current.has(id) === hasError) return current;
+      const next = new Set(current);
+      if (hasError) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+  }, []);
+  return (
+    <InputRowErrorContext.Provider value={reportError}>
+      <View>
+        <View style={styles.fieldsRow}>{children}</View>
+        {helperText && errors.size === 0 && <InputHelp text={helperText} />}
+      </View>
+    </InputRowErrorContext.Provider>
+  );
+}
+
 type Props = TextInputProps & {
   label: string;
   containerStyle?: StyleProp<ViewStyle>;
@@ -13,6 +51,8 @@ type Props = TextInputProps & {
   isOptional?: boolean;
   disabled?: boolean;
   suffix?: string;
+  helperText?: string;
+  errorText?: string;
 };
 
 const LabeledInput: React.FC<Props> = ({
@@ -23,6 +63,8 @@ const LabeledInput: React.FC<Props> = ({
   isOptional,
   disabled = false,
   suffix,
+  helperText,
+  errorText,
   ...textInputProps
 }) => {
   const { colors } = useTheme();
@@ -32,7 +74,16 @@ const LabeledInput: React.FC<Props> = ({
   const baseMinHeight = multilineInput && typeof flattenedInputStyle?.minHeight === 'number' ? flattenedInputStyle.minHeight : 40;
 
   const [inputHeight, setInputHeight] = React.useState(baseMinHeight);
+  const [hasEdited, setHasEdited] = React.useState(false);
   const textValue = typeof restProps.value === 'string' ? restProps.value : '';
+  const displayedError = errorText || (!disabled && isOptional === false && hasEdited && textValue.trim() === '' ? t('labeledInput.requiredError') : undefined);
+  const reportError = React.useContext(InputRowErrorContext);
+  const inputId = React.useId();
+  const hasError = Boolean(displayedError);
+  React.useEffect(() => {
+    reportError?.(inputId, hasError);
+    return () => reportError?.(inputId, false);
+  }, [reportError, inputId, hasError]);
 
   const height = multilineInput ? Math.max(baseMinHeight, inputHeight) : 40;
 
@@ -68,7 +119,7 @@ const LabeledInput: React.FC<Props> = ({
           styles.inputContainer,
           disabled && styles.disabledInput,
           {
-            borderColor: colors.border,
+            borderColor: displayedError ? colors.error : colors.border,
             height,
           },
         ]}
@@ -89,6 +140,10 @@ const LabeledInput: React.FC<Props> = ({
           editable={!disabled}
           {...restProps}
           value={textValue}
+          onChangeText={text => {
+            setHasEdited(true);
+            restProps.onChangeText?.(text);
+          }}
         />
 
         {suffix ? (
@@ -105,6 +160,12 @@ const LabeledInput: React.FC<Props> = ({
           </ThemedText>
         ) : null}
       </View>
+      {displayedError && (
+        <ThemedText type="caption" accessibilityLiveRegion="polite" style={[styles.errorText, { color: colors.error }]}>
+          {displayedError}
+        </ThemedText>
+      )}
+      {helperText && !displayedError && <InputHelp text={helperText} />}
     </View>
   );
 };
@@ -112,6 +173,10 @@ const LabeledInput: React.FC<Props> = ({
 export default LabeledInput;
 
 const styles = StyleSheet.create({
+  errorText: { marginTop: 4 },
+  fieldsRow: { flexDirection: 'row', gap: 12, alignItems: 'flex-start' },
+  helpRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 6, marginTop: 4 },
+  helpText: { flex: 1, marginTop: -4 },
   container: {
     width: '100%',
   },

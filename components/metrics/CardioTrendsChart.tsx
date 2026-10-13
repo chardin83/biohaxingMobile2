@@ -36,7 +36,7 @@ export function CardioTrendsChart() {
   });
 
   return (
-    <Card title={t('cardioOverview.yourCardioPerformance')}>
+    <Card title={t('areas:cardioFitness.yourCardioPerformance')}>
       <View style={globalStyles.row}>
         <VO2MaxMetric showDivider onPress={() => toggleMetric('vo2_max')} isSelected={selectedMetric === 'vo2_max'} />
 
