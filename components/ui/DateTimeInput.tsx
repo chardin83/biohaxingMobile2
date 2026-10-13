@@ -3,6 +3,7 @@ import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, StyleSheet, View } from 'react-native';
+import { NativeViewGestureHandler } from 'react-native-gesture-handler';
 
 import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
@@ -22,6 +23,7 @@ interface DateTimeInputProps {
   minDate?: Date;
   maxDate?: Date;
   disabled?: boolean;
+  onPickerOpenChange?: (isOpen: boolean) => void;
 }
 
 export function DateTimeInput({
@@ -36,6 +38,7 @@ export function DateTimeInput({
   minDate,
   maxDate,
   disabled = false,
+  onPickerOpenChange,
 }: Readonly<DateTimeInputProps>) {
   const { colors } = useTheme();
   const { t, i18n } = useTranslation();
@@ -121,16 +124,13 @@ export function DateTimeInput({
       return;
     }
 
-    setShowPicker(prev => {
-      const next = !prev;
-
-      if (next) {
-        setShowDatePicker(showDate);
-        setShowTimePicker(showTime);
-      }
-
-      return next;
-    });
+    const next = !showPicker;
+    if (next) {
+      setShowDatePicker(showDate);
+      setShowTimePicker(showTime);
+    }
+    setShowPicker(next);
+    onPickerOpenChange?.(next);
   };
 
   return (
@@ -170,6 +170,7 @@ export function DateTimeInput({
                 {timeLabel}
               </ThemedText>
 
+              <NativeViewGestureHandler disallowInterruption enabled={Platform.OS === 'ios'}>
               <View style={[styles.pickerContainer, { borderColor: colors.border }]}>
                 <DateTimePicker
                   value={value}
@@ -181,6 +182,7 @@ export function DateTimeInput({
                   {...maximumDateProp}
                 />
               </View>
+              </NativeViewGestureHandler>
             </View>
           )}
         </>

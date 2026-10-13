@@ -7,7 +7,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import CreateTimeSlotModal, { CreatePlanData } from '@/components/modals/CreateTimeSlotModal';
+import CreateTimeSlotBottomSheet, { CreatePlanData } from '@/components/CreateTimeSlotBottomSheet';
 import SupplementForm from '@/components/SupplementForm';
 import { SupplementWarnings } from '@/components/SupplementWarnings';
 import { ThemedText } from '@/components/ThemedText';
@@ -159,7 +159,7 @@ const SupplementList: React.FC<SupplementListProps> = ({ supplements, plannedSup
       </BottomSheetModal>
 
       {/* Modal: skapa ny plan inline */}
-      <CreateTimeSlotModal
+      <CreateTimeSlotBottomSheet
         visible={createPlanVisible}
         onClose={() => {
           // Stäng endast create-modal

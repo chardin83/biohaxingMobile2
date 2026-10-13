@@ -174,7 +174,9 @@
     "defaultPlan": {
       "morning": "Morgon",
       "lunch": "Lunch",
-      "dinner": "Middag"
+      "dinner": "Middag",
+      "evening": "Kväll",
+      "night": "Natt"
     },
     "noSupplementsInPlan": "Inga tillskott i {{plan}} ännu.",
     "supplementExists": "Tillskottet \"{{supplementName}}\" finns redan i vald plan.",

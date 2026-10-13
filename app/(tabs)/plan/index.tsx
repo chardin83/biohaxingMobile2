@@ -14,7 +14,7 @@ import { useStorage } from '@/app/context/StorageContext';
 import { type Supplement } from '@/app/domain/Supplement';
 import { SupplementPlanEntry } from '@/app/domain/SupplementPlanEntry';
 import { Collapsible } from '@/components/Collapsible';
-import CreateTimeSlotModal from '@/components/modals/CreateTimeSlotModal';
+import CreateTimeSlotBottomSheet from '@/components/CreateTimeSlotBottomSheet';
 import PlanCategoryIcon from '@/components/plan/PlanCategoryIcon';
 import SaveMultivitaminBottomSheet from '@/components/SaveMultivitaminBottomSheet';
 import { NutritionPlanSection } from '@/components/sections/plan/NutritionPlanSection';
@@ -301,7 +301,7 @@ export default function Plans() {
     setPlans(prev => ({ ...prev, supplements: updatedPlans }));
   };
 
-  // Removed unused handleSavePlan; CreateTimeSlotModal handles creation flow
+  // Removed unused handleSavePlan; CreateTimeSlotBottomSheet handles creation flow
 
 
 
@@ -748,7 +748,7 @@ export default function Plans() {
             />
           )}
 
-        <CreateTimeSlotModal
+        <CreateTimeSlotBottomSheet
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           initialName={isEditingPlan && selectedPlan ? selectedPlan.name : ''}

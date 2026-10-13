@@ -174,7 +174,9 @@
     "defaultPlan": {
       "morning": "Morning",
       "lunch": "Lunch",
-      "dinner": "Dinner"
+      "dinner": "Dinner",
+      "evening": "Evening",
+      "night": "Night"
     },
     "noSupplementsInPlan": "No supplements in {{plan}} yet.",
     "supplementExists": "The supplement \"{{supplementName}}\" already exists in the selected plan.",
