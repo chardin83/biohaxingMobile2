@@ -748,62 +748,64 @@ export default function Plans() {
             />
           )}
 
-        <CreateTimeSlotBottomSheet
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          initialName={isEditingPlan && selectedPlan ? selectedPlan.name : ''}
-          initialTime={isEditingPlan && selectedPlan ? timeStringToDate(selectedPlan.prefferedTime) : new Date()}
-          onCreate={async planData => {
-            if (isEditingPlan && selectedPlan) {
-              // Uppdatera befintlig plan
-              const updatedPlans = await Promise.all(
-                supplementPlans.map(async plan => {
-                  if (plan.name === selectedPlan.name && plan.prefferedTime === selectedPlan.prefferedTime) {
-                    // Avboka ev. gammal notis
-                    await cancelNotificationById(plan.notificationId);
-                    let notificationId = plan.notificationId;
-                    if (plan.notify) {
-                      notificationId = await scheduleSupplementNotification({
-                        ...plan,
-                        name: planData.name,
-                        prefferedTime: planData.prefferedTime,
-                      });
-                    }
-                    return { ...plan, name: planData.name, prefferedTime: planData.prefferedTime, notificationId };
-                  }
-                  return plan;
-                })
-              );
-              savePlans(updatedPlans);
-            } else {
-              // Skapa ny plan
-              const newPlan = {
-                name: planData.name,
-                supplements: [],
-                prefferedTime: planData.prefferedTime,
-                notify: planData.notify,
-              };
-              let notificationId;
-              if (planData.notify) {
-                notificationId = await scheduleSupplementNotification({ ...newPlan, notificationId: undefined });
-              }
-              const updatedPlans = [...supplementPlans, { ...newPlan, notificationId }];
-              savePlans(updatedPlans);
-            }
-            setModalVisible(false);
-            setIsEditingPlan(false);
-            setSelectedPlan(null);
-          }}
-          onDelete={
-            isEditingPlan && selectedPlan
-              ? () => {
-                setModalVisible(false);
-                openPlanActions(selectedPlan);
-              }
-              : undefined
-          }
-        />
       </Portal>
+
+      <CreateTimeSlotBottomSheet
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        initialName={isEditingPlan && selectedPlan ? selectedPlan.name : ''}
+        initialTime={isEditingPlan && selectedPlan ? timeStringToDate(selectedPlan.prefferedTime) : new Date()}
+        onCreate={async planData => {
+          if (isEditingPlan && selectedPlan) {
+            // Uppdatera befintlig plan
+            const updatedPlans = await Promise.all(
+              supplementPlans.map(async plan => {
+                if (plan.name === selectedPlan.name && plan.prefferedTime === selectedPlan.prefferedTime) {
+                  // Avboka ev. gammal notis
+                  await cancelNotificationById(plan.notificationId);
+                  let notificationId = plan.notificationId;
+                  if (plan.notify) {
+                    notificationId = await scheduleSupplementNotification({
+                      ...plan,
+                      name: planData.name,
+                      prefferedTime: planData.prefferedTime,
+                    });
+                  }
+                  return { ...plan, name: planData.name, prefferedTime: planData.prefferedTime, notificationId };
+                }
+                return plan;
+              })
+            );
+            savePlans(updatedPlans);
+          } else {
+            // Skapa ny plan
+            const newPlan = {
+              name: planData.name,
+              supplements: [],
+              prefferedTime: planData.prefferedTime,
+              notify: planData.notify,
+            };
+            let notificationId;
+            if (planData.notify) {
+              notificationId = await scheduleSupplementNotification({ ...newPlan, notificationId: undefined });
+            }
+            const updatedPlans = [...supplementPlans, { ...newPlan, notificationId }];
+            savePlans(updatedPlans);
+          }
+          setModalVisible(false);
+          setIsEditingPlan(false);
+          setSelectedPlan(null);
+        }}
+        onDelete={
+          isEditingPlan && selectedPlan
+            ? () => {
+              setModalVisible(false);
+              openPlanActions(selectedPlan);
+            }
+            : undefined
+        }
+      />
+
 
       {/* Lägg till eller redigera supplement */}
       {planForSupplementEdit && (

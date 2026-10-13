@@ -124,7 +124,7 @@ export default function CreateTimeSlotBottomSheet({ visible, onClose, onCreate, 
             }
           }}
         />
-        {initialName && onDelete && <AppButton title={t('general.delete')} onPress={onDelete} variant="danger" />}
+        {Boolean(initialName) && onDelete !== undefined && <AppButton title={t('general.delete')} onPress={onDelete} variant="danger" />}
         <CancelButton onPress={() => sheetRef.current?.dismiss()} />
       </BottomSheetScrollView>
     </BottomSheetModal>
