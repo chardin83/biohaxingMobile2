@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import type { NutritionDistribution } from '@/app/context/storage/userProfile/userProfileTypes';
-import { DISTRIBUTION_CHOICES, DISTRIBUTIONS, MACROS } from '@/utils/nutritionGoals';
+import { DISTRIBUTION_CHOICES, distributionForAge, MACROS } from '@/utils/nutritionGoals';
 
 import { ThemedText } from './ThemedText';
 import { IconSymbol } from './ui/IconSymbol';
@@ -14,10 +14,12 @@ export default function NutritionDistributionSelector({
   value,
   onChange,
   disabled = false,
+  birthDate,
 }: Readonly<{
   value: NutritionDistribution;
   onChange: (value: NutritionDistribution) => void;
   disabled?: boolean;
+  birthDate?: string;
 }>) {
   const { t } = useTranslation('common');
   const { colors } = useTheme();
@@ -25,7 +27,8 @@ export default function NutritionDistributionSelector({
     <SettingsCard>
       {DISTRIBUTION_CHOICES.map((choice, index) => {
         const title = t(`nutritionGoals.distributions.${choice}`);
-        const description = choice === 'custom' ? t('nutritionGoals.customDescription') : t('nutritionGoals.distributionRatio', DISTRIBUTIONS[choice]);
+        const percentages = choice === 'custom' ? undefined : distributionForAge(choice, birthDate);
+        const description = choice === 'custom' ? t('nutritionGoals.customDescription') : t('nutritionGoals.distributionRatio', percentages);
         return (
           <RadioButton
             key={choice}
@@ -51,7 +54,7 @@ export default function NutritionDistributionSelector({
                     <View key={macro.key} style={styles.distributionMacro}>
                       <IconSymbol name={macro.icon} size={16} color={macro.color} />
                       <View style={styles.distributionValue}>
-                        <ThemedText type="default">{DISTRIBUTIONS[choice][macro.key]} %</ThemedText>
+                        <ThemedText type="default">{percentages![macro.key]} %</ThemedText>
                         <ThemedText type="caption" style={[styles.distributionLabel, { color: colors.textMuted }]}>
                           {t(`nutritionGoals.${macro.key}`).toLowerCase()}
                         </ThemedText>

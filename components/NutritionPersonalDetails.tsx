@@ -1,46 +1,65 @@
-import { useTheme } from '@react-navigation/native';
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
+import { useStorage } from '@/app/context/StorageContext';
 import AppButton from '@/components/ui/AppButton';
-import Container from '@/components/ui/Container';
+import DiscreetButton from '@/components/ui/DiscreetButton';
 import Notice from '@/components/ui/Notice';
+import StepsContainer from '@/components/ui/StepsContainer';
+import { fromDateKey, getAge } from '@/utils/dateUtils';
 
+import HenryInfoNotice from './HenryInfoNotice';
 import PersonalDetailsSettings from './PersonalDetailsSettings';
-import { ThemedText } from './ThemedText';
 
 export default function NutritionPersonalDetails() {
   const { t } = useTranslation('common');
-  const { colors } = useTheme();
+  const { userProfile } = useStorage();
+  const [submitted, setSubmitted] = useState(false);
+  const required = t('labeledInput.requiredError');
+  const today = new Date();
+  const birthday = userProfile.birthDate ? fromDateKey(userProfile.birthDate.slice(0, 10)) : null;
+  const validBirthday = birthday && Number.isFinite(birthday.getTime()) && birthday <= today;
+  let ageError: string | undefined;
+  if (!validBirthday) ageError = required;
+  else if (getAge(birthday, today) < 18) ageError = t('nutritionGoals.adultRequired');
+  const errors = {
+    age: ageError,
+    weight: !Number.isFinite(userProfile.weightKg) || !userProfile.weightKg || userProfile.weightKg <= 0 ? required : undefined,
+    height: !Number.isFinite(userProfile.heightCm) || !userProfile.heightCm || userProfile.heightCm <= 0 ? required : undefined,
+    sex: !userProfile.biologicalSex ? required : undefined,
+  };
+  const unsupportedSex = userProfile.biologicalSex === 'intersex';
+  const continueGuide = () => {
+    setSubmitted(true);
+    if (Object.values(errors).some(Boolean)) return;
+    router.push('/settings/nutrition-activity');
+  };
 
   return (
-    <Container
-      background="gradient"
-      gradientKey="sunrise"
-      gradientLocations={colors.gradients?.sunrise?.locations3}
-      showBackButton
+    <StepsContainer
+      title={t('nutritionTargetSection.title')}
+      subtitle={t('nutritionGoals.personalDetailsTitle')}
       currentStep={1}
-      totalSteps={4}
-      contentContainerStyle={styles.container}
-      footer={
-        <AppButton title={t('onboarding.continue')} variant="primary" rightIcon="chevron.right" onPress={() => router.push('/settings/nutrition-activity')} />
-      }
+      footer={<AppButton title={t('onboarding.continue')} variant="primary" rightIcon="chevron.right" onPress={continueGuide} />}
     >
-      <ThemedText type="title2" style={styles.heading}>
-        {t('nutritionTargetSection.title')}
-      </ThemedText>
-      <ThemedText type="title3" style={styles.stepTitle}>
-        {t('nutritionGoals.personalDetailsTitle')}
-      </ThemedText>
-      <PersonalDetailsSettings />
-      <Notice variant="info" message={t('nutritionGoals.personalDetailsNotice')} />
-    </Container>
+      <PersonalDetailsSettings errors={submitted ? errors : undefined} />
+      {submitted && unsupportedSex && <Notice title={t('nutritionGoals.summary.unsupportedSexTitle')} message={t('nutritionGoals.summary.unsupportedSex')} />}
+      <HenryInfoNotice />
+      <View style={styles.manualContainer}>
+        <DiscreetButton
+          title={t('nutritionGoals.manualTitle')}
+          explainer={t('nutritionGoals.manualDescription')}
+          icon="pencil"
+          rightIcon="chevron.right"
+          onPress={() => router.push('/settings/nutrition-manual')}
+        />
+      </View>
+    </StepsContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  heading: { marginBottom: 24 },
-  stepTitle: { marginBottom: 12 },
-  container: { paddingHorizontal: 20, paddingBottom: 140 },
+  manualContainer: { marginTop: 20, marginBottom: 40 },
 });

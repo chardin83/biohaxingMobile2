@@ -1343,7 +1343,7 @@
       "description": "Olika växtproteiner har varierande aminosyraprofiler. Genom att äta varierat och tillräckligt med protein under dagen blir det lättare att täcka behovet av essentiella aminosyror."
     },
     "targets": {
-      "description": "WHO/FAO/UNU:s genomsnittliga behov för vuxna. Metionin + cystein och fenylalanin + tyrosin bedöms tillsammans."
+      "description": "Aminosyramålen följer WHO/FAO/UNU:s genomsnittliga behov för vuxna. Metionin + cystein och fenylalanin + tyrosin bedöms tillsammans. Totalprotein följer ditt personliga proteinmål. Förinställda mål använder 15 energiprocent och minst 0,83 g/kg per dag under 65 år. Från och med 65 år använder appen 18 % och minst 1,5 g/kg per dag. NNR anger 1,2–1,5 g/kg för äldre; appen använder intervallets övre nivå som minimum. Viktminimum kan ge en högre proteinandel."
     },
     "description": "Variera dina proteinkällor under dagen: baljväxter, tofu, spannmål, nötter och frön, och om du äter dem även ägg, mejeriprodukter eller fisk. Olika källor kompletterar varandras aminosyraprofiler. Ät tillräckligt med energi och protein över dagen.\n\nDagsmålen räknas från vikten i din profil enligt WHO/FAO/UNU:s genomsnittliga aminosyrabehov för vuxna. Metionin räknas tillsammans med cystein och fenylalanin med tyrosin. Referensvärdena är inte individuella rekommendationer eller träningsmål, och säger inte ensamma om ditt totala proteinintag eller upptag är tillräckligt.\n\nMålet för totalprotein följer ditt proteinmål i näringsinställningarna.",
     "areas": {

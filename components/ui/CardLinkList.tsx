@@ -13,6 +13,7 @@ export type CardLinkListRow = {
   readonly key: string;
   readonly title: string;
   readonly subtitle?: string;
+  readonly subtitleContent?: React.ReactNode;
   readonly value?: string;
   readonly iconName?: IconSymbolName;
   readonly icon?: React.ReactNode;
@@ -23,6 +24,7 @@ export type CardLinkListRow = {
   readonly expanded?: boolean;
   readonly disabled?: boolean;
   readonly content?: React.ReactNode;
+  readonly errorText?: string;
 };
 
 type Props = {
@@ -44,7 +46,7 @@ export function CardLinkList({ rows, showIcon = true, style, footer }: Props) {
   return (
     <CardContainer style={style}>
       {rows.map((row, index) => (
-        <View key={row.key} style={index === rows.length - 1 ? styles.rowNoBorder : [styles.rowBorder, { borderBottomColor: colors.borderLight }]}>
+        <View key={row.key} style={[index === rows.length - 1 ? styles.rowNoBorder : [styles.rowBorder, { borderBottomColor: colors.borderLight }], Boolean(row.errorText) && [styles.errorRow, { borderColor: colors.surfaceRedBorder, borderBottomColor: colors.surfaceRedBorder, backgroundColor: colors.surfaceRed }]]}>
           <Pressable
             onPress={row.onPress}
             disabled={row.disabled}
@@ -58,11 +60,18 @@ export function CardLinkList({ rows, showIcon = true, style, footer }: Props) {
                 <ThemedText type="title3" style={styles.title}>
                   {row.title}
                 </ThemedText>
+                {Boolean(row.errorText) && (
+                  <View style={styles.errorText}>
+                    <IconSymbol name="error" size={16} color={colors.error} />
+                    <ThemedText type="caption" accessibilityLiveRegion="polite" style={{ color: colors.error }}>{row.errorText}</ThemedText>
+                  </View>
+                )}
                 {row.subtitle && (
                   <ThemedText type="caption" style={styles.subtitle}>
                     {row.subtitle}
                   </ThemedText>
                 )}
+                {row.subtitleContent}
               </View>
             </View>
             <View style={styles.rightColumn}>
@@ -84,6 +93,8 @@ export function CardLinkList({ rows, showIcon = true, style, footer }: Props) {
 }
 
 const styles = StyleSheet.create({
+  errorRow: { borderWidth: 1, borderBottomWidth: 1, borderRadius: 8 },
+  errorText: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 },
   customIcon: { width: 40, height: 40, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
   container: {
     flexDirection: 'row',

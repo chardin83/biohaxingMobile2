@@ -4,5 +4,5 @@ import NutritionSettings from '@/components/NutritionSettings';
 
 export default function NutritionPage() {
   const { userProfile } = useStorage();
-  return userProfile.nutritionGuideCompleted ? <NutritionSettings /> : <NutritionPersonalDetails />;
+  return userProfile.nutritionGuideCompleted || userProfile.nutritionGuideSkipped ? <NutritionSettings /> : <NutritionPersonalDetails />;
 }

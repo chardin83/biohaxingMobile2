@@ -143,6 +143,9 @@
       "age": "{{count}} years old",
       "birthdaySaveError": "Could not save your birthday. Please try again.",
       "training": "Training",
+      "healthNutrition": "Health and nutrition",
+      "nutritionGoals": "Nutrition goals",
+      "manualNutritionGoals": "Manual",
       "maxHeartRate": "Max heart rate",
       "bedtime": "Bedtime",
       "bedtimeDescription": "Your usual bedtime",
@@ -445,12 +448,12 @@
       "title": "Summary",
       "description": "Your estimated energy needs based on your details and activity level.",
       "basal": "Basal metabolism",
-      "basalDescription": "Estimated resting energy expenditure using Mifflin–St Jeor",
+      "basalDescription": "Estimated resting energy expenditure according to NNR using the Henry equations",
       "activity": "Extra for activity",
       "total": "Total energy needs",
       "perDay": "per day",
-      "missingDetails": "Enter age, weight, height, biological sex and activity level in the previous steps. This calculation applies to adults.",
-      "unsupportedSex": "We use Mifflin–St Jeor, an established model for estimating resting energy expenditure in adults. It has separate equations for women and men, but no validated equation for intersex people. Therefore, no automatic estimate is shown here. You can still set your nutrition goals manually."
+      "unsupportedSexTitle": "Automatic calculation unavailable",
+      "unsupportedSex": "We use the Henry equations according to NNR 2023 to estimate resting energy expenditure from weight and height. The equations have separate variants for women and men. The app does not provide an automatic estimate for intersex people. You can set your nutrition goals manually."
     },
     "activity": {
       "title": "How active are you?",
@@ -489,11 +492,49 @@
         "description": "Physically demanding work and plenty of movement throughout most of the day."
       }
     },
+    "henry": {
+      "moreInfo": "More info",
+      "title": "How NNR and Henry calculate energy",
+      "rest": {
+        "title": "Energy at rest",
+        "description": "NNR 2023 uses the Henry equations (Oxford, 2005) for resting energy. The app uses your weight, height and biological sex with the NNR age bands 18–24, 25–50 and 51+ years."
+      },
+      "formula": {
+        "title": "Weight and height in the equation",
+        "description": "W is weight in kg, H is height in metres. The result is MJ per day.\n\nWomen:\n18–24: 0.0433 × W + 2.57 × H − 1.180\n25–50: 0.0342 × W + 2.10 × H − 0.0486\n51+: 0.0356 × W + 1.76 × H + 0.0448\n\nMen:\n18–24: 0.0600 × W + 1.31 × H + 0.473\n25–50: 0.0476 × W + 2.26 × H − 0.574\n51+: 0.0478 × W + 2.26 × H − 1.070"
+      },
+      "activity": {
+        "title": "Daily needs with PAL",
+        "description": "Resting energy is multiplied by the selected PAL activity factor and by 239 to convert MJ to kcal. PAL 1.4, 1.6 and 1.8 are the NNR reference levels for low, moderate and high activity."
+      },
+      "estimate": {
+        "title": "An estimate",
+        "description": "The result estimates maintenance needs. The app uses your own measurements rather than the reference measurements in the NNR tables. The app has no automatic estimate for intersex people; set a goal manually instead."
+      },
+      "source": "Read the NNR calculation method"
+    },
     "personalDetailsTitle": "1. Your details",
-    "personalDetailsNotice": "These details are used to calculate energy needs.",
+    "endGuide": "End the guide",
+    "endGuideHelp": "You will go to the goals page, where you can set your nutrition goals manually",
+    "manualTitle": "Skip the guide",
+    "energySource": { "henry": "NNR / Henry", "custom": "Custom goal" },
+    "unsaved": {
+      "title": "Unsaved changes",
+      "description": "You have changed your nutrition goals but have not saved them yet.",
+      "saveAndBack": "Save and go back",
+      "continueEditing": "Continue editing",
+      "discard": "Discard changes"
+    },
+    "manualDescription": "Set nutrition goals manually",
+    "adultRequired": "This calculation applies from age 18",
+    "personalDetailsNotice": "These details are used to estimate your energy needs according to NNR 2023 using the Henry weight and height equations. Activity level is added in the next step.",
     "calculatorTitle": "Need help finding the right level?",
     "calculatorDescription": "Calculate based on age, weight, height and activity level.",
     "customDescription": "Set your own goals for protein, carbohydrates and fat",
+    "proteinReference": {
+      "title": "Protein according to WHO and NNR",
+      "description": "NNR 2023 gives 15% of energy from protein as a planning target for adults and 18% for older adults, with a recommended range of 1.2–1.5 g/kg per day for older adults. The app uses 18% and at least 1.5 g/kg from age 65. Below age 65, it uses 15% and at least 0.83 g/kg, in line with NNR and the WHO/FAO/UNU reference for healthy adults. The weight-based minimum takes priority and may result in a higher protein share than the preset percentage. Enter your weight and birth date to personalise the target."
+    },
     "distribution": "Distribution",
     "distributionRatio": "Protein {{protein}}% · Carbohydrates {{carbohydrates}}% · Fat {{fat}}%",
     "distributions": {
@@ -678,6 +719,7 @@
       "newHabitGoals_zero": "No new habit goals.",
       "newHabitGoals_one": "{{count}} new habit goal.",
       "newHabitGoals_other": "{{count}} new habit goals.",
+    "endGuide": "End the guide",
       "manualTitle": "Remember to log manually.",
       "manualDescription": "Food, drinks, supplements and other habits that are not recorded automatically.",
       "errorTitle": "Sync could not be completed",

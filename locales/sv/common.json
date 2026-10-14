@@ -143,6 +143,9 @@
       "age": "{{count}} år",
       "birthdaySaveError": "Kunde inte spara födelsedagen. Försök igen.",
       "training": "Träning",
+      "healthNutrition": "Hälsa och näring",
+      "nutritionGoals": "Näringsmål",
+      "manualNutritionGoals": "Manuell",
       "maxHeartRate": "Maxpuls",
       "bedtime": "Läggtid",
       "bedtimeDescription": "Din vanliga läggtid",
@@ -445,12 +448,12 @@
       "title": "Sammanfattning",
       "description": "Ditt uppskattade energibehov utifrån dina uppgifter och din aktivitetsnivå.",
       "basal": "Basalmetabolism",
-      "basalDescription": "Uppskattad viloförbrukning enligt Mifflin–St Jeor",
+      "basalDescription": "Uppskattad viloförbrukning enligt NNR med Henrys ekvationer",
       "activity": "Extra för aktivitet",
       "total": "Totalt energibehov",
       "perDay": "per dag",
-      "missingDetails": "Fyll i ålder, vikt, längd, biologiskt kön och aktivitetsnivå i föregående steg. Beräkningen gäller vuxna.",
-      "unsupportedSex": "Vi använder Mifflin–St Jeor, en vedertagen beräkningsmodell för att uppskatta energiförbrukning i vila hos vuxna. Modellen har separata formler för kvinnor och män, men ingen validerad formel för intersexpersoner. Därför visas ingen automatisk uppskattning här. Du kan fortfarande ställa in dina näringsmål manuellt."
+      "unsupportedSexTitle": "Automatisk beräkning saknas",
+      "unsupportedSex": "Vi använder Henrys ekvationer enligt NNR 2023 för att uppskatta energiförbrukning i vila utifrån vikt och längd. Ekvationerna har separata varianter för kvinnor och män. Appen ger ingen automatisk uppskattning för intersexpersoner. Du kan ställa in dina näringsmål manuellt."
     },
     "activity": {
       "title": "Hur aktiv är du?",
@@ -489,11 +492,49 @@
         "description": "Fysiskt krävande arbete och mycket rörelse under större delen av dagen."
       }
     },
+    "henry": {
+      "moreInfo": "Mer info",
+      "title": "Så räknar NNR och Henry",
+      "rest": {
+        "title": "Energi i vila",
+        "description": "NNR 2023 använder Henrys ekvationer (Oxford, 2005) för viloenergi. Appen använder din vikt, längd och biologiska kön samt NNR:s åldersgrupper 18–24, 25–50 och 51+ år."
+      },
+      "formula": {
+        "title": "Vikt och längd i formeln",
+        "description": "V är vikt i kg, L är längd i meter. Resultatet är MJ per dag.\n\nKvinnor:\n18–24: 0,0433 × V + 2,57 × L − 1,180\n25–50: 0,0342 × V + 2,10 × L − 0,0486\n51+: 0,0356 × V + 1,76 × L + 0,0448\n\nMän:\n18–24: 0,0600 × V + 1,31 × L + 0,473\n25–50: 0,0476 × V + 2,26 × L − 0,574\n51+: 0,0478 × V + 2,26 × L − 1,070"
+      },
+      "activity": {
+        "title": "Dagsbehov med PAL",
+        "description": "Viloenergin multipliceras med vald aktivitetsfaktor PAL och med 239 för att omvandla MJ till kcal. PAL 1,4, 1,6 och 1,8 motsvarar NNR:s referenser för låg, måttlig och hög aktivitet."
+      },
+      "estimate": {
+        "title": "En uppskattning",
+        "description": "Resultatet är en uppskattning av underhållsbehovet. Appen använder dina egna mått, inte NNR-tabellernas referensmått. Intersex har ingen automatisk beräkning i appen; ange då målet manuellt."
+      },
+      "source": "Läs NNR:s beräkningsmetod"
+    },
     "personalDetailsTitle": "1. Dina uppgifter",
-    "personalDetailsNotice": "Dessa uppgifter används för att beräkna energibehov.",
+    "endGuide": "Avsluta guiden",
+    "endGuideHelp": "Du kommer till målsidan där du kan ange dina näringsmål manuellt",
+    "manualTitle": "Hoppa över guiden",
+    "energySource": { "henry": "NNR / Henry", "custom": "Eget mål" },
+    "unsaved": {
+      "title": "Osparade ändringar",
+      "description": "Du har ändrat dina näringsmål men har inte sparat ännu.",
+      "saveAndBack": "Spara och gå tillbaka",
+      "continueEditing": "Fortsätt redigera",
+      "discard": "Ignorera ändringar"
+    },
+    "manualDescription": "Ange näringsmål manuellt",
+    "adultRequired": "Beräkningen gäller från 18 år",
+    "personalDetailsNotice": "Dessa uppgifter används för att uppskatta ditt energibehov enligt NNR 2023 med Henrys ekvationer för vikt och längd. Aktivitetsnivån läggs till i nästa steg.",
     "calculatorTitle": "Vill du ha hjälp att hitta rätt nivå?",
     "calculatorDescription": "Beräkna utifrån ålder, vikt, längd och aktivitetsnivå.",
     "customDescription": "Ställ in egna mål för protein, kolhydrater och fett",
+    "proteinReference": {
+      "title": "Protein enligt WHO och NNR",
+      "description": "NNR 2023 anger 15 energiprocent protein som planeringsmål för vuxna och 18 % för äldre, med ett rekommenderat intervall på 1,2–1,5 g/kg och dag för äldre. Appen använder 18 % och minst 1,5 g/kg från och med 65 år. Under 65 år används 15 % och minst 0,83 g/kg, i linje med NNR och WHO/FAO/UNU:s referens för friska vuxna. Viktminimum har företräde och kan ge en högre proteinandel än standardfördelningen. Ange vikt och födelsedatum för att anpassa målet."
+    },
     "distribution": "Fördelning",
     "distributionRatio": "Protein {{protein}} % · Kolhydrater {{carbohydrates}} % · Fett {{fat}} %",
     "distributions": {
@@ -678,6 +719,7 @@
       "newHabitGoals_zero": "Inga nya habit-mål.",
       "newHabitGoals_one": "{{count}} nytt habit-mål.",
       "newHabitGoals_other": "{{count}} nya habit-mål.",
+    "endGuide": "Avsluta guiden",
       "manualTitle": "Kom ihåg att logga manuellt.",
       "manualDescription": "Kost, dryck, tillskott och andra vanor som inte registreras automatiskt.",
       "errorTitle": "Synkningen kunde inte slutföras",

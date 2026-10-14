@@ -308,6 +308,10 @@ export const ICON_SYMBOLS = {
     sf: 'exclamationmark.triangle.fill',
     material: 'warning',
   },
+  'error': {
+    sf: 'exclamationmark.circle',
+    material: 'error-outline',
+  },
   'plus': {
     sf: 'plus',
     material: 'add',

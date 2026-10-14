@@ -1341,7 +1341,7 @@
       "description": "Plant proteins have varying amino acid profiles. Eating a varied diet and enough protein throughout the day makes it easier to meet your essential amino acid needs."
     },
     "targets": {
-      "description": "WHO/FAO/UNU mean adult requirements. Methionine + cysteine and phenylalanine + tyrosine are assessed together."
+      "description": "Amino acid targets follow WHO/FAO/UNU mean adult requirements. Methionine + cysteine and phenylalanine + tyrosine are assessed together. Total protein follows your personal protein goal. Presets use 15% of energy and at least 0.83 g/kg per day below age 65. From age 65, the app uses 18% and at least 1.5 g/kg per day. NNR gives a range of 1.2–1.5 g/kg for older adults; the app uses the upper end as its minimum. The weight-based minimum may result in a higher protein share."
     },
     "description": "Vary your protein sources throughout the day: pulses, tofu, grains, nuts and seeds, and if you eat them, eggs, dairy or fish. Different sources complement each other’s amino acid profiles. Eat enough energy and protein across the day.\n\nDaily targets use the weight in your profile and WHO/FAO/UNU mean adult amino acid requirements. Methionine is counted together with cysteine, and phenylalanine with tyrosine. These reference values are not individual recommendations or training targets, and do not alone establish whether your total protein intake or absorption is adequate.\n\nThe total protein target follows your protein goal in nutrition settings.",
     "areas": {

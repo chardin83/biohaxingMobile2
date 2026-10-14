@@ -6,7 +6,7 @@ import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 
 interface NumberStepperProps {
-  value: number;
+  value: number | undefined;
   onChange: (value: number) => void;
   min?: number;
   max?: number;
@@ -27,14 +27,14 @@ export default function NumberStepper({
   accessibilityLabel,
 }: Readonly<NumberStepperProps>) {
   const { colors } = useTheme();
-  const [text, setText] = useState(String(value));
+  const [text, setText] = useState(value === undefined ? '' : String(value));
   const lastValue = useRef(value);
   const Input = inBottomSheet ? BottomSheetTextInput : TextInput;
   const clamp = (number: number) => Math.min(max, Math.max(min, number));
 
   useEffect(() => {
     if (value !== lastValue.current) {
-      setText(String(value));
+      setText(value === undefined ? '' : String(value));
       lastValue.current = value;
     }
   }, [value]);
@@ -46,7 +46,7 @@ export default function NumberStepper({
 
   const adjust = (delta: number) => {
     const parsed = Number(text.replace(',', '.'));
-    const next = clamp((Number.isFinite(parsed) ? parsed : value) + delta);
+    const next = clamp((Number.isFinite(parsed) ? parsed : (value ?? 0)) + delta);
     setText(String(next));
     emit(next);
   };
@@ -61,6 +61,7 @@ export default function NumberStepper({
         accessibilityLabel={accessibilityLabel}
         style={[styles.input, { color: colors.text }]}
         value={text}
+        placeholder="–"
         editable={!disabled}
         keyboardType="decimal-pad"
         selectTextOnFocus
@@ -77,7 +78,8 @@ export default function NumberStepper({
         }}
         onBlur={() => {
           const parsed = Number(text.replace(',', '.'));
-          const next = clamp(Number.isFinite(parsed) ? parsed : value);
+          if (!text.trim() && value === undefined) return;
+          const next = clamp(Number.isFinite(parsed) ? parsed : (value ?? 0));
           setText(String(next));
           if (next !== value) emit(next);
         }}

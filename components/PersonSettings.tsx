@@ -10,11 +10,13 @@ import Container from '@/components/ui/Container';
 import SettingsCard from '@/components/ui/SettingsCard';
 import { ClockTime } from '@/types/ClockTime';
 import { formatClockTime } from '@/utils/dateUtils';
+import { MACROS } from '@/utils/nutritionGoals';
 
 import NumberStepper from './NumberStepper';
 import PersonalDetailsSettings from './PersonalDetailsSettings';
 import CardLinkList from './ui/CardLinkList';
 import { DateTimeInput } from './ui/DateTimeInput';
+import { IconSymbol } from './ui/IconSymbol';
 import SettingIcon from './ui/SettingIcon';
 
 const DEFAULT_BEDTIME: ClockTime = '23:00';
@@ -38,6 +40,10 @@ export default function PersonSettings() {
   const { userProfile, updateUserProfile } = useStorage();
   const [maxHeartRate, setMaxHeartRate] = React.useState(195);
   const [bedtime, setBedtime] = React.useState<Date>(() => timeStringToDate(DEFAULT_BEDTIME));
+  const nutritionGoals = userProfile.nutritionGoals;
+  const nutritionEnergy = nutritionGoals ? MACROS.reduce((sum, macro) => sum + nutritionGoals[macro.key] * macro.caloriesPerGram, 0) : 0;
+  const distribution = userProfile.nutritionDistribution ?? (nutritionGoals ? 'custom' : 'balanced');
+  const distributionLabel = t(distribution === 'custom' ? 'privacy.person.manualNutritionGoals' : `nutritionGoals.distributions.${distribution}`);
 
   const recommendedBedtimeStart = formatClockTime(timeStringToDate(RECOMMENDED_BEDTIME_START), i18n.language);
 
@@ -79,8 +85,31 @@ export default function PersonSettings() {
       </ThemedText>
       <PersonalDetailsSettings style={styles.cardSpacing} />
       <ThemedText type="label" style={styles.title} uppercase>
-        {t('privacy.person.sleep')}
+        {t('privacy.person.healthNutrition')}
       </ThemedText>
+      <CardLinkList
+        style={styles.cardSpacing}
+        rows={[
+          {
+            key: 'nutrition',
+            iconName: 'target',
+            title: t('privacy.person.nutritionGoals'),
+            subtitle: distributionLabel,
+            subtitleContent: nutritionGoals ? (
+              <View style={styles.macroSummary}>
+                {MACROS.map(macro => (
+                  <View key={macro.key} style={styles.macroValue} accessible accessibilityLabel={`${t(`nutritionGoals.${macro.key}`)} ${nutritionGoals[macro.key]} g`}>
+                    <IconSymbol name={macro.icon} size={14} color={macro.color} />
+                    <ThemedText type="caption">{nutritionGoals[macro.key]} g</ThemedText>
+                  </View>
+                ))}
+              </View>
+            ) : undefined,
+            value: nutritionEnergy > 0 ? `${Math.round(nutritionEnergy)} kcal` : undefined,
+            onPress: () => router.push('/settings/nutrition'),
+          },
+        ]}
+      />
       <SettingsCard style={styles.cardSpacing}>
         <View style={styles.bedtimeRow}>
           <View style={styles.labelContainer}>
@@ -121,15 +150,13 @@ export default function PersonSettings() {
           <NumberStepper value={maxHeartRate} onChange={handleMaxHeartRateChange} min={120} max={230} />
         </View>
       </SettingsCard>
-      <CardLinkList
-        style={styles.cardSpacing}
-        rows={[{ key: 'link', iconName: 'target', title: t('nutritionTargetSection.title'), onPress: () => router.push('/settings/nutrition') }]}
-      />
     </Container>
   );
 }
 
 const styles = StyleSheet.create({
+  macroSummary: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 4 },
+  macroValue: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   cardSpacing: {
     marginTop: 8,
     marginBottom: 16,

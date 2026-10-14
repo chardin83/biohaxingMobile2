@@ -6,10 +6,10 @@ import { StyleSheet, View } from 'react-native';
 import { useStorage } from '@/app/context/StorageContext';
 import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
-import Container from '@/components/ui/Container';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import Notice from '@/components/ui/Notice';
 import SettingsCard from '@/components/ui/SettingsCard';
+import StepsContainer from '@/components/ui/StepsContainer';
 import { calculateEnergyNeeds } from '@/utils/energyNeeds';
 
 export default function NutritionEnergySummary() {
@@ -20,27 +20,21 @@ export default function NutritionEnergySummary() {
   const pal = energy ? new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 1 }).format(energy.pal) : '';
 
   return (
-    <Container
-      background="gradient"
-      gradientKey="sunrise"
-      gradientLocations={colors.gradients?.sunrise?.locations3}
-      showBackButton
+    <StepsContainer
+      title={t('nutritionGoals.summary.title')}
+      description={t('nutritionGoals.summary.description')}
       currentStep={3}
-      totalSteps={4}
-      contentContainerStyle={styles.container}
+      footerHelp={userProfile.biologicalSex === 'intersex' ? t('nutritionGoals.endGuideHelp') : undefined}
       footer={
         <AppButton
-          title={t('onboarding.continue')}
+          title={t(userProfile.biologicalSex === 'intersex' ? 'nutritionGoals.endGuide' : 'onboarding.continue')}
           variant="primary"
           rightIcon="chevron.right"
-          onPress={() => router.push('/settings/nutrition-distribution')}
+          disabled={!energy && userProfile.biologicalSex !== 'intersex'}
+          onPress={() => router.push(userProfile.biologicalSex === 'intersex' ? '/settings/nutrition-manual' : '/settings/nutrition-distribution')}
         />
       }
     >
-      <ThemedText type="title2" style={styles.title}>
-        {t('nutritionGoals.summary.title')}
-      </ThemedText>
-      <ThemedText style={styles.description}>{t('nutritionGoals.summary.description')}</ThemedText>
       {energy ? (
         <>
           <SettingsCard>
@@ -69,20 +63,19 @@ export default function NutritionEnergySummary() {
             <ThemedText type="caption">{t('nutritionGoals.summary.perDay')}</ThemedText>
           </SettingsCard>
         </>
-      ) : (
+      ) : null}
+      {!energy && userProfile.biologicalSex === 'intersex' && (
         <Notice
           variant="info"
-          message={t(userProfile.biologicalSex === 'intersex' ? 'nutritionGoals.summary.unsupportedSex' : 'nutritionGoals.summary.missingDetails')}
+          title={t('nutritionGoals.summary.unsupportedSexTitle')}
+          message={t('nutritionGoals.summary.unsupportedSex')}
         />
       )}
-    </Container>
+    </StepsContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 20, paddingBottom: 140 },
-  title: { marginBottom: 12 },
-  description: { marginBottom: 20 },
   row: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 12 },
   label: { flex: 1, gap: 4 },
   totalCard: { marginTop: 16, padding: 20, alignItems: 'center', gap: 8 },

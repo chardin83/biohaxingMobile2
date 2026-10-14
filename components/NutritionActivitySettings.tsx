@@ -7,9 +7,9 @@ import { StyleSheet, View } from 'react-native';
 import { useStorage } from '@/app/context/StorageContext';
 import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
-import Container from '@/components/ui/Container';
 import RadioButton from '@/components/ui/RadioButton';
 import SettingsCard from '@/components/ui/SettingsCard';
+import StepsContainer from '@/components/ui/StepsContainer';
 
 const ACTIVITY_LEVELS = [
   { key: 'bedbound', pal: 1.1 },
@@ -43,14 +43,10 @@ export default function NutritionActivitySettings() {
   };
 
   return (
-    <Container
-      background="gradient"
-      gradientKey="sunrise"
-      gradientLocations={colors.gradients?.sunrise?.locations3}
-      showBackButton
+    <StepsContainer
+      title={t('nutritionGoals.activity.title')}
+      description={t('nutritionGoals.activity.description')}
       currentStep={2}
-      totalSteps={4}
-      contentContainerStyle={styles.container}
       footer={
         <AppButton
           title={t('onboarding.continue')}
@@ -61,10 +57,6 @@ export default function NutritionActivitySettings() {
         />
       }
     >
-      <ThemedText type="title2" style={styles.title}>
-        {t('nutritionGoals.activity.title')}
-      </ThemedText>
-      <ThemedText style={styles.description}>{t('nutritionGoals.activity.description')}</ThemedText>
       <SettingsCard>
         {ACTIVITY_LEVELS.map((level, index) => {
           const title = t(`nutritionGoals.activity.${level.key}.title`);
@@ -100,14 +92,11 @@ export default function NutritionActivitySettings() {
           {t('nutritionGoals.activity.saveError')}
         </ThemedText>
       )}
-    </Container>
+    </StepsContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 20, paddingBottom: 140 },
-  title: { marginBottom: 12 },
-  description: { marginBottom: 20 },
   option: { padding: 16 },
   optionText: { flex: 1, gap: 6 },
   error: { marginTop: 12 },

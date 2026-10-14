@@ -9,10 +9,12 @@ export interface UserProfile {
   heightCm?: number;
   activityPal?: number;
   nutritionGuideCompleted?: boolean;
+  nutritionGuideSkipped?: boolean;
   trackMacros?: boolean;
   biologicalSex?: 'female' | 'male' | 'intersex';
   bedtime?: ClockTime;
   nutritionDistribution?: NutritionDistribution;
+  nutritionEnergySource?: 'henry' | 'custom';
   nutritionGoals?: {
     protein: number;
     carbohydrates: number;

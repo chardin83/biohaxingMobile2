@@ -7,13 +7,14 @@ import { StyleSheet, View } from 'react-native';
 import type { NutritionDistribution } from '@/app/context/storage/userProfile/userProfileTypes';
 import { useStorage } from '@/app/context/StorageContext';
 import AppButton from '@/components/ui/AppButton';
-import Container from '@/components/ui/Container';
 import SettingsCard from '@/components/ui/SettingsCard';
+import StepsContainer from '@/components/ui/StepsContainer';
 import { calculateEnergyNeeds } from '@/utils/energyNeeds';
-import { DEFAULT_GOALS, goalsForDistribution,MACROS } from '@/utils/nutritionGoals';
+import { DEFAULT_GOALS, goalsForDistribution, MACROS, minimumProteinGoal } from '@/utils/nutritionGoals';
 
 import NumberStepper from './NumberStepper';
 import NutritionDistributionSelector from './NutritionDistributionSelector';
+import ProteinReferenceNotice from './ProteinReferenceNotice';
 import { ThemedText } from './ThemedText';
 import { IconSymbol } from './ui/IconSymbol';
 
@@ -22,19 +23,30 @@ export default function NutritionDistributionStep() {
   const { t } = useTranslation('common');
   const { userProfile, updateUserProfile } = useStorage();
   const initialGoals = userProfile.nutritionGoals ?? DEFAULT_GOALS;
-  const energy = calculateEnergyNeeds(userProfile)?.total ?? MACROS.reduce((total, macro) => total + initialGoals[macro.key] * macro.caloriesPerGram, 0);
+  const minimumProtein = minimumProteinGoal(userProfile.weightKg, userProfile.birthDate);
+  const energyNeeds = calculateEnergyNeeds(userProfile);
+  const energy = energyNeeds?.total ?? MACROS.reduce((total, macro) => total + initialGoals[macro.key] * macro.caloriesPerGram, 0);
   const initialDistribution = userProfile.nutritionDistribution ?? (userProfile.nutritionGoals ? 'custom' : 'balanced');
   const [distribution, setDistribution] = useState<NutritionDistribution>(initialDistribution);
-  const [goals, setGoals] = useState(() => (initialDistribution === 'custom' ? initialGoals : goalsForDistribution(initialDistribution, energy)));
+  const [customGoals, setCustomGoals] = useState(initialGoals);
+  const goals =
+    distribution === 'custom'
+      ? { ...customGoals, protein: Math.max(customGoals.protein, minimumProtein) }
+      : goalsForDistribution(distribution, energy, userProfile.weightKg, userProfile.birthDate);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
 
   const finish = async () => {
-    if (saving) return;
+    if (saving || !energyNeeds) return;
     setSaving(true);
     setError(false);
     try {
-      await updateUserProfile({ nutritionGoals: goals, nutritionDistribution: distribution, nutritionGuideCompleted: true });
+      await updateUserProfile({
+        nutritionGoals: goals,
+        nutritionDistribution: distribution,
+        nutritionEnergySource: distribution === 'custom' ? 'custom' : 'henry',
+        nutritionGuideCompleted: true,
+      });
       router.dismissTo('/settings/nutrition');
     } catch {
       setError(true);
@@ -44,25 +56,18 @@ export default function NutritionDistributionStep() {
   };
 
   return (
-    <Container
-      background="gradient"
-      gradientKey="sunrise"
-      gradientLocations={colors.gradients?.sunrise?.locations3}
-      showBackButton
+    <StepsContainer
+      title={t('nutritionGoals.distribution')}
       currentStep={4}
-      totalSteps={4}
-      contentContainerStyle={styles.container}
-      footer={<AppButton title={t('onboarding.finish')} variant="primary" rightIcon="chevron.right" disabled={saving} onPress={finish} />}
+      footer={<AppButton title={t('onboarding.finish')} variant="primary" rightIcon="chevron.right" disabled={saving || !energyNeeds} onPress={finish} />}
     >
-      <ThemedText type="title2" style={styles.title}>
-        {t('nutritionGoals.distribution')}
-      </ThemedText>
       <NutritionDistributionSelector
+        birthDate={userProfile.birthDate}
         value={distribution}
         disabled={saving}
         onChange={choice => {
+          if (choice === 'custom') setCustomGoals(goals);
           setDistribution(choice);
-          if (choice !== 'custom') setGoals(goalsForDistribution(choice, energy));
         }}
       />
       <SettingsCard style={styles.preview}>
@@ -73,12 +78,12 @@ export default function NutritionDistributionStep() {
             {distribution === 'custom' ? (
               <NumberStepper
                 value={goals[macro.key]}
-                min={0}
+                min={macro.key === 'protein' ? minimumProtein : 0}
                 max={1000}
                 step={5}
                 disabled={saving}
                 accessibilityLabel={t(`nutritionGoals.${macro.key}`)}
-                onChange={value => setGoals(current => ({ ...current, [macro.key]: value }))}
+                onChange={value => setCustomGoals(current => ({ ...current, [macro.key]: value }))}
               />
             ) : (
               <ThemedText>{goals[macro.key]}</ThemedText>
@@ -92,14 +97,13 @@ export default function NutritionDistributionStep() {
           <ThemedText>{Math.round(MACROS.reduce((total, macro) => total + goals[macro.key] * macro.caloriesPerGram, 0))} kcal</ThemedText>
         </View>
       </SettingsCard>
+      <ProteinReferenceNotice />
       {error && <ThemedText type="error">{t('nutritionGoals.summary.saveError')}</ThemedText>}
-    </Container>
+    </StepsContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 20, paddingBottom: 140 },
-  title: { marginBottom: 20 },
   preview: { marginTop: 16, padding: 12 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 10 },
   label: { flex: 1 },

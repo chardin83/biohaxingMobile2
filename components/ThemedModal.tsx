@@ -10,10 +10,13 @@ import { ThemedText } from '@/components/ThemedText';
 
 import AppButton from './ui/AppButton';
 import { CancelButton } from './ui/CancelButton';
+import type { IconSymbolName } from './ui/icon-symbol-map';
+import { IconSymbol } from './ui/IconSymbol';
 
 interface ThemedModalProps {
   visible: boolean;
   title: string;
+  iconName?: IconSymbolName;
   onClose: () => void;
   onSave?: () => void;
   onSaveDisabled?: boolean;
@@ -31,6 +34,7 @@ interface ThemedModalProps {
 export const ThemedModal = ({
   visible,
   title,
+  iconName,
   onClose,
   onSave,
   onSaveDisabled = false,
@@ -46,7 +50,7 @@ export const ThemedModal = ({
   const { colors, dark } = useTheme();
 
   return (
-    <Modal animationType="slide" transparent visible={visible}>
+    <Modal animationType="slide" transparent visible={visible} onRequestClose={onClose}>
       <BlurView intensity={25} tint={dark ? 'dark' : 'light'} style={styles.overlay}>
         <View
           style={[
@@ -58,6 +62,7 @@ export const ThemedModal = ({
             style,
           ]}
         >
+          {iconName && <IconSymbol name={iconName} size={40} color={colors.warning} />}
           <ThemedText type="title2" style={[styles.title, { color: colors.primary }]}>
             {title}
           </ThemedText>

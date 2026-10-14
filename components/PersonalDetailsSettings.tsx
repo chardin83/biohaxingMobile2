@@ -13,7 +13,7 @@ import CardLinkList from './ui/CardLinkList';
 import { DateTimeInput } from './ui/DateTimeInput';
 import RadioButton from './ui/RadioButton';
 
-export default function PersonalDetailsSettings({ style }: Readonly<{ style?: StyleProp<ViewStyle> }>) {
+export default function PersonalDetailsSettings({ style, errors }: Readonly<{ style?: StyleProp<ViewStyle>; errors?: Partial<Record<'age' | 'weight' | 'height' | 'sex', string>> }>) {
   const { t } = useTranslation('common');
   const { colors } = useTheme();
   const { userProfile, updateUserProfile } = useStorage();
@@ -93,6 +93,7 @@ export default function PersonalDetailsSettings({ style }: Readonly<{ style?: St
       rows={[
         {
           key: 'age',
+          errorText: errors?.age,
           title: t(birthday ? 'privacy.person.ageTitle' : 'privacy.person.birthday'),
           iconName: 'calendar',
           value: birthday ? t('privacy.person.age', { count: getAge(birthday, today) }) : undefined,
@@ -118,6 +119,7 @@ export default function PersonalDetailsSettings({ style }: Readonly<{ style?: St
         },
         {
           key: 'weight',
+          errorText: errors?.weight,
           title: t('privacy.person.weight'),
           iconName: 'weight',
           value: displayedWeight ? `${displayedWeight} kg` : t('privacy.person.notSet'),
@@ -139,6 +141,7 @@ export default function PersonalDetailsSettings({ style }: Readonly<{ style?: St
         },
         {
           key: 'height',
+          errorText: errors?.height,
           title: t('privacy.person.height'),
           iconName: 'height',
           value: displayedHeight ? `${displayedHeight} cm` : t('privacy.person.notSet'),
@@ -160,6 +163,7 @@ export default function PersonalDetailsSettings({ style }: Readonly<{ style?: St
         },
         {
           key: 'sex',
+          errorText: errors?.sex,
           title: t('privacy.person.biologicalSex'),
           iconName: 'person',
           value: userProfile.biologicalSex ? t(`privacy.person.sexOptions.${userProfile.biologicalSex}`) : t('privacy.person.notSet'),

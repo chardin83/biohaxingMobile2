@@ -92,7 +92,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="settings/index"
+        name="more/index"
         options={{
           title: t('layout.more'),
           tabBarIcon: SettingsTabIcon,

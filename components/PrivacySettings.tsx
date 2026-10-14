@@ -37,19 +37,6 @@ export default function PrivacySettings() {
         rows={[
           {
             key: 'link',
-            title: t('privacy.person.title'),
-            subtitle: t('privacy.person.subtitle'),
-            iconName: 'person',
-            onPress: () => router.push('/(stack)/settings/person'),
-          },
-        ]}
-      />
-
-      <CardLinkList
-        style={styles.cardSpacing}
-        rows={[
-          {
-            key: 'link',
             title: t('privacy.deleteData.title'),
             subtitle: t('privacy.deleteData.subtitle'),
             iconName: 'trash',

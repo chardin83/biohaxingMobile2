@@ -65,6 +65,16 @@ export default function SettingsPage() {
       <View style={styles.headerRow}>
         <ThemedText type="title2">{t('layout.more')}</ThemedText>
       </View>
+      <CardLinkList
+        style={styles.cardSpacing}
+        rows={[{
+          key: 'person',
+          title: t('common:privacy.person.title'),
+          subtitle: t('common:privacy.person.subtitle'),
+          iconName: 'person',
+          onPress: () => router.push('/(stack)/settings/person'),
+        }]}
+      />
 
       <ThemedText type="label" style={styles.title} uppercase>
         {t('settings.preferences')}
