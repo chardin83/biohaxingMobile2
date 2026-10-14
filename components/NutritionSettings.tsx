@@ -25,7 +25,29 @@ import { distributionForAge, goalsForDistribution, MACROS, minimumProteinGoal } 
 const RADIUS = 46;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-export default function NutritionSettings({ manual = false }: Readonly<{ manual?: boolean }>) {
+const MANUAL_SAVE_UPDATES = { nutritionGuideCompleted: true };
+const backToPerson = () => router.dismissTo('/settings/person');
+const showNutritionGoals = () => router.replace('/settings/nutrition');
+const backToPreviousPage = () => router.back();
+
+export function ManualNutritionSettings() {
+  const { userProfile, updateUserProfile } = useStorage();
+  const onOpen = useCallback(async () => {
+    if (userProfile.nutritionGuideCompleted || userProfile.nutritionGuideSkipped) return;
+    await updateUserProfile({ nutritionGuideSkipped: true });
+  }, [userProfile.nutritionGuideCompleted, userProfile.nutritionGuideSkipped, updateUserProfile]);
+  return <NutritionSettings initiallyEditing onBack={backToPerson} onSaved={showNutritionGoals} onOpen={onOpen} saveProfileUpdates={MANUAL_SAVE_UPDATES} />;
+}
+
+type NutritionSettingsProps = {
+  initiallyEditing?: boolean;
+  onBack?: () => void;
+  onSaved?: () => void;
+  onOpen?: () => Promise<void>;
+  saveProfileUpdates?: Partial<UserProfile>;
+};
+
+export default function NutritionSettings({ initiallyEditing = false, onBack = backToPreviousPage, onSaved, onOpen, saveProfileUpdates }: Readonly<NutritionSettingsProps>) {
   const { colors } = useTheme();
   const { t } = useTranslation('common');
   const { userProfile, updateUserProfile } = useStorage();
@@ -37,22 +59,21 @@ export default function NutritionSettings({ manual = false }: Readonly<{ manual?
   const [draft, setDraft] = useState(goals);
   const [draftDistribution, setDraftDistribution] = useState<NutritionDistribution>(distribution);
   const [choosingDistribution, setChoosingDistribution] = useState(false);
-  const [editing, setEditing] = useState(manual);
-  const [energyExpanded, setEnergyExpanded] = useState(manual);
+  const [editing, setEditing] = useState(initiallyEditing);
+  const [energyExpanded, setEnergyExpanded] = useState(initiallyEditing);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
   const [showUnsavedModal, setShowUnsavedModal] = useState(false);
   useEffect(() => {
-    if (!manual || userProfile.nutritionGuideCompleted || userProfile.nutritionGuideSkipped) return;
-    updateUserProfile({ nutritionGuideSkipped: true }).catch(() => setError(true));
-  }, [manual, userProfile.nutritionGuideCompleted, userProfile.nutritionGuideSkipped, updateUserProfile]);
+    onOpen?.().catch(() => setError(true));
+  }, [onOpen]);
   useFocusEffect(
     useCallback(() => {
-      setEditing(manual);
-      setEnergyExpanded(manual);
+      setEditing(initiallyEditing);
+      setEnergyExpanded(initiallyEditing);
       setChoosingDistribution(false);
       setError(false);
-    }, [manual])
+    }, [initiallyEditing])
   );
   const displayedDistribution = editing ? draftDistribution : distribution;
   const displayedGoals = editing ? draft : goals;
@@ -61,17 +82,14 @@ export default function NutritionSettings({ manual = false }: Readonly<{ manual?
   const totalEnergy = MACROS.reduce((total, macro) => total + (displayedGoals[macro.key] ?? 0) * macro.caloriesPerGram, 0);
   const canSave = MACROS.every(macro => Number.isFinite(draft[macro.key])) && totalEnergy > 0;
   const hasUnsavedChanges = editing && (draftDistribution !== distribution || MACROS.some(macro => draft[macro.key] !== goals[macro.key]));
-  const goBack = () => {
-    if (manual) router.dismissTo('/settings/person');
-    else router.back();
-  };
+  const goBack = onBack;
   const handleBack = () => {
     if (saving) return;
     if (hasUnsavedChanges) setShowUnsavedModal(true);
     else goBack();
   };
 
-  const save = async (leaveAfterSaving = false) => {
+  const save = async (afterSave?: () => void) => {
     if (!canSave || saving) return;
     setSaving(true);
     setError(false);
@@ -80,13 +98,12 @@ export default function NutritionSettings({ manual = false }: Readonly<{ manual?
         nutritionGoals: { protein: Math.max(draft.protein!, minimumProtein), carbohydrates: draft.carbohydrates!, fat: draft.fat! },
         nutritionDistribution: draftDistribution,
         nutritionEnergySource: draftEnergySource,
-        ...(manual ? { nutritionGuideCompleted: true } : {}),
+        ...saveProfileUpdates,
       });
       setEditing(false);
       setEnergyExpanded(false);
       setShowUnsavedModal(false);
-      if (leaveAfterSaving) goBack();
-      else if (manual) router.replace('/settings/nutrition');
+      afterSave?.();
     } catch {
       setError(true);
     } finally {
@@ -118,7 +135,7 @@ export default function NutritionSettings({ manual = false }: Readonly<{ manual?
       footer={
         editing ? (
           <View style={styles.actions}>
-            <AppButton style={styles.footerButton} title={t('general.save')} variant="primary" disabled={saving || !canSave} onPress={() => save()} />
+            <AppButton style={styles.footerButton} title={t('general.save')} variant="primary" disabled={saving || !canSave} onPress={() => save(onSaved)} />
             <AppButton
               style={styles.footerButton}
               title={t('general.cancel')}
@@ -160,11 +177,12 @@ export default function NutritionSettings({ manual = false }: Readonly<{ manual?
           {MACROS.map(macro => {
             const grams = displayedGoals[macro.key];
             const macroLabel = t(`nutritionGoals.${macro.key}`);
+            const gramsLabel = grams === undefined ? '–' : `${grams} g`;
             const share = totalEnergy > 0 ? ((grams ?? 0) * macro.caloriesPerGram) / totalEnergy : 0;
             const percent = grams === undefined ? presetPercentages?.[macro.key] : Math.round(share * 100);
             return (
               <View key={macro.key} style={styles.macro}>
-                <View style={styles.chart} accessible accessibilityLabel={`${grams === undefined ? '–' : `${grams} g`} ${macroLabel}`}>
+                <View style={styles.chart} accessible accessibilityLabel={`${gramsLabel} ${macroLabel}`}>
                   <Svg width="100%" height="100%" viewBox="0 0 108 108">
                     <Circle cx={54} cy={54} r={RADIUS} stroke={colors.border} strokeWidth={8} fill="none" />
                     <Circle
@@ -349,7 +367,7 @@ export default function NutritionSettings({ manual = false }: Readonly<{ manual?
       >
         <ThemedText>{t('nutritionGoals.unsaved.description')}</ThemedText>
         <View style={styles.unsavedActions}>
-          <AppButton title={t('nutritionGoals.unsaved.saveAndBack')} variant="primary" disabled={saving || !canSave} onPress={() => save(true)} />
+          <AppButton title={t('nutritionGoals.unsaved.saveAndBack')} variant="primary" disabled={saving || !canSave} onPress={() => save(goBack)} />
           <AppButton title={t('nutritionGoals.unsaved.continueEditing')} variant="secondary" disabled={saving} onPress={() => setShowUnsavedModal(false)} />
           <View style={styles.discardAction}>
             <DiscreetButton

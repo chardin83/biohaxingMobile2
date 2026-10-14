@@ -1,5 +1,5 @@
-import NutritionSettings from '@/components/NutritionSettings';
+import { ManualNutritionSettings } from '@/components/NutritionSettings';
 
 export default function ManualNutritionPage() {
-  return <NutritionSettings manual />;
+  return <ManualNutritionSettings />;
 }

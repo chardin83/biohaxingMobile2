@@ -15,6 +15,12 @@ jest.mock('@gorhom/bottom-sheet', () => ({
 }));
 
 describe('NumberStepper', () => {
+  it.each(['1..2', '1,2.3', '1-2', '--2', '1e3', '1'.repeat(10000) + 'x'])('rejects malformed numeric input', input => {
+    const onChange = jest.fn();
+    const { getByLabelText } = render(<NumberStepper value={10} onChange={onChange} accessibilityLabel="Amount" />);
+    fireEvent.changeText(getByLabelText('Amount'), input);
+    expect(onChange).not.toHaveBeenCalled();
+  });
   it('increments and decrements by one by default', () => {
     const onChange = jest.fn();
     const { getByLabelText, rerender } = render(<NumberStepper value={100} onChange={onChange} />);

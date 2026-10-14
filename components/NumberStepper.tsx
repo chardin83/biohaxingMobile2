@@ -16,6 +16,20 @@ interface NumberStepperProps {
   accessibilityLabel?: string;
 }
 
+function isNumericInput(text: string): boolean {
+  let hasDecimalSeparator = false;
+  for (let index = text.startsWith('-') ? 1 : 0; index < text.length; index += 1) {
+    const character = text[index];
+    if (character === '.' || character === ',') {
+      if (hasDecimalSeparator) return false;
+      hasDecimalSeparator = true;
+    } else if (character < '0' || character > '9') {
+      return false;
+    }
+  }
+  return true;
+}
+
 export default function NumberStepper({
   value,
   onChange,
@@ -66,7 +80,7 @@ export default function NumberStepper({
         keyboardType="decimal-pad"
         selectTextOnFocus
         onChangeText={nextText => {
-          if (disabled || !/^-?\d*[.,]?\d*$/.test(nextText)) return;
+          if (disabled || !isNumericInput(nextText)) return;
           const parsed = Number(nextText.replace(',', '.'));
           if (Number.isFinite(parsed)) {
             const next = clamp(parsed);

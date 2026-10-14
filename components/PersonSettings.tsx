@@ -97,12 +97,15 @@ export default function PersonSettings() {
             subtitle: distributionLabel,
             subtitleContent: nutritionGoals ? (
               <View style={styles.macroSummary}>
-                {MACROS.map(macro => (
-                  <View key={macro.key} style={styles.macroValue} accessible accessibilityLabel={`${t(`nutritionGoals.${macro.key}`)} ${nutritionGoals[macro.key]} g`}>
-                    <IconSymbol name={macro.icon} size={14} color={macro.color} />
-                    <ThemedText type="caption">{nutritionGoals[macro.key]} g</ThemedText>
-                  </View>
-                ))}
+                {MACROS.map(macro => {
+                  const macroLabel = t(`nutritionGoals.${macro.key}`);
+                  return (
+                    <View key={macro.key} style={styles.macroValue} accessible accessibilityLabel={`${macroLabel} ${nutritionGoals[macro.key]} g`}>
+                      <IconSymbol name={macro.icon} size={14} color={macro.color} />
+                      <ThemedText type="caption">{nutritionGoals[macro.key]} g</ThemedText>
+                    </View>
+                  );
+                })}
               </View>
             ) : undefined,
             value: nutritionEnergy > 0 ? `${Math.round(nutritionEnergy)} kcal` : undefined,

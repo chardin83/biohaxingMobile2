@@ -158,10 +158,10 @@ describe('nutrition guide completion', () => {
   });
 
   it('saves manual calories and macros without personal details and skips the guide after saving', async () => {
-    const ManualSettings = jest.requireActual('@/components/NutritionSettings').default;
+    const ManualSettings = jest.requireActual('@/components/NutritionSettings').ManualNutritionSettings;
     mockProfile = {};
     mockUpdateProfile.mockResolvedValueOnce({});
-    const screen = render(<ManualSettings manual />);
+    const screen = render(<ManualSettings />);
     fireEvent.changeText(screen.getByLabelText('nutritionGoals.totalEnergy'), '2400');
     fireEvent.press(screen.getByText('general.save'));
     await waitFor(() => expect(mockReplace).toHaveBeenCalledWith('/settings/nutrition'));
@@ -173,9 +173,9 @@ describe('nutrition guide completion', () => {
   });
 
   it('shows dashes and empty inputs when no macro goals are saved', () => {
-    const ManualSettings = jest.requireActual('@/components/NutritionSettings').default;
+    const ManualSettings = jest.requireActual('@/components/NutritionSettings').ManualNutritionSettings;
     mockProfile = {};
-    const screen = render(<ManualSettings manual />);
+    const screen = render(<ManualSettings />);
     expect(screen.getAllByText('–').length).toBeGreaterThanOrEqual(4);
     expect(screen.queryByText('2003 kcal')).toBeNull();
     expect(screen.getByText('nutritionGoals.distributions.balanced')).toBeTruthy();
@@ -188,9 +188,9 @@ describe('nutrition guide completion', () => {
   });
 
   it('returns from manual goals to the person card instead of the guide', () => {
-    const ManualSettings = jest.requireActual('@/components/NutritionSettings').default;
+    const ManualSettings = jest.requireActual('@/components/NutritionSettings').ManualNutritionSettings;
     mockProfile = {};
-    const screen = render(<ManualSettings manual />);
+    const screen = render(<ManualSettings />);
     fireEvent.press(screen.getByText('back'));
     expect(mockDismissTo).toHaveBeenCalledWith('/settings/person');
     expect(mockUpdateProfile).toHaveBeenCalledWith({ nutritionGuideSkipped: true });
@@ -227,7 +227,7 @@ describe('nutrition guide completion', () => {
   it('allows editing macros only after selecting custom distribution', () => {
     const Settings = jest.requireActual('@/components/NutritionSettings').default;
     mockProfile = { nutritionGuideSkipped: true };
-    const screen = render(<Settings manual />);
+    const screen = render(<Settings initiallyEditing />);
     expect(screen.queryByLabelText('nutritionGoals.protein')).toBeNull();
     fireEvent.press(screen.getByText('nutritionGoals.distribution'));
     fireEvent.press(screen.getByText('nutritionGoals.distributions.custom'));
@@ -235,9 +235,9 @@ describe('nutrition guide completion', () => {
   });
 
   it('keeps unsaved edits when continuing and discards them only when explicitly requested', () => {
-    const ManualSettings = jest.requireActual('@/components/NutritionSettings').default;
+    const ManualSettings = jest.requireActual('@/components/NutritionSettings').ManualNutritionSettings;
     mockProfile = { nutritionGuideSkipped: true };
-    const screen = render(<ManualSettings manual />);
+    const screen = render(<ManualSettings />);
     fireEvent.changeText(screen.getByLabelText('nutritionGoals.totalEnergy'), '2400');
     fireEvent.press(screen.getByText('back'));
     expect(screen.getByText('nutritionGoals.unsaved.title')).toBeTruthy();
@@ -252,9 +252,9 @@ describe('nutrition guide completion', () => {
   });
 
   it('saves before returning from the unsaved changes modal', async () => {
-    const ManualSettings = jest.requireActual('@/components/NutritionSettings').default;
+    const ManualSettings = jest.requireActual('@/components/NutritionSettings').ManualNutritionSettings;
     mockProfile = { nutritionGuideSkipped: true };
-    const screen = render(<ManualSettings manual />);
+    const screen = render(<ManualSettings />);
     fireEvent.changeText(screen.getByLabelText('nutritionGoals.totalEnergy'), '2400');
     fireEvent.press(screen.getByText('back'));
     fireEvent.press(screen.getByText('nutritionGoals.unsaved.saveAndBack'));
@@ -263,10 +263,10 @@ describe('nutrition guide completion', () => {
   });
 
   it('keeps the modal and edits open if saving fails', async () => {
-    const ManualSettings = jest.requireActual('@/components/NutritionSettings').default;
+    const ManualSettings = jest.requireActual('@/components/NutritionSettings').ManualNutritionSettings;
     mockProfile = { nutritionGuideSkipped: true };
     mockUpdateProfile.mockRejectedValueOnce(new Error('save failed'));
-    const screen = render(<ManualSettings manual />);
+    const screen = render(<ManualSettings />);
     fireEvent.changeText(screen.getByLabelText('nutritionGoals.totalEnergy'), '2400');
     fireEvent.press(screen.getByText('back'));
     fireEvent.press(screen.getByText('nutritionGoals.unsaved.saveAndBack'));
