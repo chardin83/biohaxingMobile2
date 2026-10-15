@@ -122,6 +122,9 @@
         "description": "HRV (SDNN), ms."
     },
     "trendChart": {
+        "lifeStyleLog": "Lifestyle log",
+        "noLifeStyleEntries": "No lifestyle entries logged for this day.",
+        "lifeStyleEntries": "{{date}}: {{count}} lifestyle entries logged",
         "compareMetrics": "Compare metrics",
         "noComparison": "No comparison",
         "selectSeries": "Select measurement type",

@@ -5,9 +5,11 @@ import { ActivityIndicator, LayoutChangeEvent, Pressable, StyleSheet, View } fro
 import { Menu } from 'react-native-paper';
 import Svg, { Circle, Defs, Line, LinearGradient, Path, Stop, Text as SvgText } from 'react-native-svg';
 
+import { useStorage } from '@/app/context/StorageContext';
 import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { LIFE_STYLE_ITEMS } from '@/constants/lifeStyle';
 
 export interface MetricTrendPoint {
   readonly date: string;
@@ -178,6 +180,7 @@ function MetricTrendChartContent({
   const { colors } = useTheme();
   const { t } = useTranslation('metrics');
   const [chartWidth, setChartWidth] = React.useState(0);
+  const { lifeStyleLog } = useStorage();
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [selectedDate, setSelectedDate] = React.useState<string>();
   const selectedOption = seriesSelector?.options.find(option => option.value === seriesSelector.value);
@@ -480,6 +483,8 @@ function MetricTrendChartContent({
   };
   const selectedValue = chartData.find(point => point.date === selectedDate)?.value;
   const selectedComparisonValue = comparisonData.find(point => point.date === selectedDate)?.value;
+  const lifeStyleDate = selectedDate ?? getTodayUtcDateString();
+  const selectedLifeStyleEntries = Object.entries(lifeStyleLog[lifeStyleDate] ?? {}).filter(([, entry]) => entry !== undefined);
   const selectionVisible = selectedDate !== undefined && xAxisDates[0] !== undefined && selectedDate >= xAxisDates[0];
   const yAxisLabelStyles = React.useMemo(
     () =>
@@ -757,11 +762,11 @@ function MetricTrendChartContent({
                 <View style={styles.tooltipRow}>
                   <View style={[styles.legendDot, { backgroundColor: comparison.color }]} />
                   <ThemedText type="caption" style={[styles.tooltipText, styles.tooltipValue]}>
-                  {comparison.metricName}:{' '}
-                  {selectedComparisonValue === undefined
-                    ? '—'
-                    : (comparison.valueFormatter?.(selectedComparisonValue) ??
-                      `${Number(selectedComparisonValue.toFixed(1))}${comparison.unit ? ` ${comparison.unit}` : ''}`)}
+                    {comparison.metricName}:{' '}
+                    {selectedComparisonValue === undefined
+                      ? '—'
+                      : (comparison.valueFormatter?.(selectedComparisonValue) ??
+                        `${Number(selectedComparisonValue.toFixed(1))}${comparison.unit ? ` ${comparison.unit}` : ''}`)}
                   </ThemedText>
                 </View>
               )}
@@ -783,45 +788,23 @@ function MetricTrendChartContent({
       </View>
 
       {!!chartGeometry && (
-        <>
-          <View style={styles.axisLabels}>
-            {chartGeometry.xAxisPoints.map(point => {
-              const label = xAxisLabelFormatter ? xAxisLabelFormatter(point.date) : formatShortDate(point.date);
+        <View style={styles.axisLabels}>
+          {chartGeometry.xAxisPoints.map(point => {
+            const label = xAxisLabelFormatter ? xAxisLabelFormatter(point.date) : formatShortDate(point.date);
 
-              const left = point.x - X_AXIS_LABEL_WIDTH / 2;
+            const left = point.x - X_AXIS_LABEL_WIDTH / 2;
 
-              return (
-                <View key={`xlabel-${point.date}`} style={[styles.axisLabelItem, { left }]}>
-                  <ThemedText type="caption" style={[styles.axisLabelText, dynamicStyles.axisLabelText]}>
-                    {label}
-                  </ThemedText>
-                </View>
-              );
-            })}
-          </View>
-
-          {!!eventSeries?.length && (
-            <View style={styles.eventRows}>
-              {chartGeometry.eventSeriesPoints.map((series, seriesIndex) => (
-                <View key={`${series.label}-${seriesIndex}`} style={styles.eventRow}>
-                  {series.points.map(event => (
-                    <View
-                      key={`${series.label}-${event.date}`}
-                      style={[
-                        styles.eventDot,
-                        {
-                          left: event.x - 4,
-                          backgroundColor: series.color ?? colors.primary,
-                        },
-                      ]}
-                    />
-                  ))}
-                </View>
-              ))}
-            </View>
-          )}
-        </>
+            return (
+              <View key={`xlabel-${point.date}`} style={[styles.axisLabelItem, { left }]}>
+                <ThemedText type="caption" style={[styles.axisLabelText, dynamicStyles.axisLabelText]}>
+                  {label}
+                </ThemedText>
+              </View>
+            );
+          })}
+        </View>
       )}
+
       <View style={styles.legend}>
         <View style={styles.legendItem}>
           <View style={[styles.legendDot, { backgroundColor: colors.primary }]} />
@@ -856,6 +839,89 @@ function MetricTrendChartContent({
         ))}
       </View>
 
+      {!!chartGeometry && (
+        <>
+          <View style={styles.lifeStyleRow}>
+            <View style={styles.lifeStyleIcon} accessibilityLabel={t('trendChart.lifeStyleLog')}>
+              <IconSymbol name="book" size={16} color={colors.textMuted} />
+            </View>
+            <View style={styles.lifeStyleTrack}>
+              <Svg width={chartWidth} height={24}>
+                <Line x1={CHART_PADDING.left} x2={chartWidth - CHART_PADDING.right} y1={12} y2={12} stroke={colors.borderLight} strokeWidth={1} />
+                {Object.entries(lifeStyleLog).map(([date, entries]) => {
+                  const x = chartGeometry.getXForDate(date);
+                  const count = Object.values(entries).filter(entry => entry !== undefined).length;
+                  if (!count || x < CHART_PADDING.left || x > chartWidth - CHART_PADDING.right) return null;
+                  return (
+                    <Circle
+                      key={date}
+                      testID={`lifestyle-dot-${date}`}
+                      onPress={() => setSelectedDate(date)}
+                      accessibilityLabel={t('trendChart.lifeStyleEntries', { date, count })}
+                      cx={x}
+                      cy={12}
+                      r={date === lifeStyleDate ? 5 : 4}
+                      fill={date === lifeStyleDate ? '#c4b5fd' : '#afa2ff'}
+                      opacity={0.25 + 0.75 * Math.min(count / Object.keys(LIFE_STYLE_ITEMS).length, 1)}
+                    />
+                  );
+                })}
+              </Svg>
+            </View>
+          </View>
+
+          <View
+            testID="metric-chart-lifestyle-details"
+            style={[styles.lifeStyleDetails, { backgroundColor: colors.cardBackground, borderColor: colors.borderLight }]}
+          >
+            <View style={styles.lifeStyleDetailHeader}>
+              <IconSymbol name="book" size={40} color="#afa2ff" />
+              <View style={styles.lifeStyleDetailLabel}>
+                <ThemedText type="defaultSemiBold">{t('trendChart.lifeStyleLog')}</ThemedText>
+                <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                  {formatShortDate(lifeStyleDate)} {lifeStyleDate.slice(0, 4)}
+                </ThemedText>
+              </View>
+            </View>
+            <View style={[styles.lifeStyleDivider, { backgroundColor: colors.borderLight }]} />
+            {selectedLifeStyleEntries.length === 0 && (
+              <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                {t('trendChart.noLifeStyleEntries')}
+              </ThemedText>
+            )}
+            {selectedLifeStyleEntries.map(([id, entry]) => (
+              <View key={id} style={styles.lifeStyleDetailRow}>
+                <ThemedText type="caption" style={styles.lifeStyleDetailLabel}>
+                  {t(`common:lifeStyle.items.${id}`)}
+                </ThemedText>
+                <ThemedText type="defaultSemiBold">{t(entry?.value ? 'common:filter.yes' : 'common:filter.no')}</ThemedText>
+              </View>
+            ))}
+          </View>
+
+          {!!eventSeries?.length && (
+            <View style={styles.eventRows}>
+              {chartGeometry.eventSeriesPoints.map((series, seriesIndex) => (
+                <View key={`${series.label}-${seriesIndex}`} style={styles.eventRow}>
+                  {series.points.map(event => (
+                    <View
+                      key={`${series.label}-${event.date}`}
+                      style={[
+                        styles.eventDot,
+                        {
+                          left: event.x - 4,
+                          backgroundColor: series.color ?? colors.primary,
+                        },
+                      ]}
+                    />
+                  ))}
+                </View>
+              ))}
+            </View>
+          )}
+        </>
+      )}
+
       {!!onViewRegisteredValues && (
         <AppButton onPress={onViewRegisteredValues} title={t('trendChart.viewRegisteredValues')} variant="secondary" style={styles.ctaButton} />
       )}
@@ -864,6 +930,14 @@ function MetricTrendChartContent({
 }
 
 const styles = StyleSheet.create({
+  lifeStyleDetails: { marginTop: 8, borderWidth: 1, borderRadius: 12, padding: 12, gap: 8 },
+  lifeStyleDetailHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  lifeStyleDivider: { height: StyleSheet.hairlineWidth, marginVertical: 4 },
+  lifeStyleDetailRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  lifeStyleDetailLabel: { flex: 1 },
+  lifeStyleRow: { height: 24, marginTop: 8, position: 'relative' },
+  lifeStyleIcon: { position: 'absolute', left: 0, top: 4 },
+  lifeStyleTrack: { marginLeft: CHART_FRAME_OFFSET },
   tooltipText: { color: '#FFFFFF' },
   tooltipRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   tooltipValue: { flexShrink: 1 },

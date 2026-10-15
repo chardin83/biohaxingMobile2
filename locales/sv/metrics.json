@@ -115,6 +115,9 @@
         "description": "HRV (SDNN), ms."
     },
     "trendChart": {
+        "lifeStyleLog": "Livsstilslogg",
+        "noLifeStyleEntries": "Inga livsstilsuppgifter loggade den här dagen.",
+        "lifeStyleEntries": "{{date}}: {{count}} livsstilsuppgifter loggade",
         "compareMetrics": "Jämför mätvärden",
         "noComparison": "Ingen jämförelse",
         "selectSeries": "Välj mätningstyp",

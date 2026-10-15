@@ -7,6 +7,15 @@ jest.mock('@react-navigation/native', () => ({ useTheme: () => ({ colors: {} }) 
 jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
 jest.mock('../ui/IconSymbol', () => ({ IconSymbol: () => null }));
 jest.mock('../ui/AppButton', () => () => null);
+jest.mock('@/app/context/StorageContext', () => ({
+  useStorage: () => ({ lifeStyleLog: {
+    [new Date().toISOString().slice(0, 10)]: {
+      dimmedLights: { value: true }, calmActivity: { value: false }, reducedScreens: { value: true },
+    },
+    [new Date(Date.now() - 86400000).toISOString().slice(0, 10)]: { dimmedLights: { value: false } },
+    '2000-01-01': { dimmedLights: { value: true } },
+  } }),
+}));
 jest.mock('react-native-paper', () => {
   const mockReact = require('react');
   const { View, Pressable, Text } = require('react-native');
@@ -99,6 +108,9 @@ it('draws comparison data on the shared time axis with a separate right scale', 
   expect(screen.getAllByText('2000').length).toBeGreaterThan(0);
   expect(screen.queryByText('2650')).toBeNull();
   expect(screen.getByText('Steps (count)')).toBeTruthy();
+  expect(screen.getByTestId(`lifestyle-dot-${today}`).props.opacity).toBe(1);
+  expect(screen.getByTestId(`lifestyle-dot-${yesterday}`).props.opacity).toBe(0.5);
+  expect(screen.queryByTestId('lifestyle-dot-2000-01-01')).toBeNull();
 });
 
 it('shows both series for the touched day in one tooltip and updates while dragging', async () => {
@@ -114,11 +126,18 @@ it('shows both series for the touched day in one tooltip and updates while dragg
   const tooltip = within(screen.getByTestId('metric-chart-tooltip'));
   expect(tooltip.getByText('HRV: 40 ms')).toBeTruthy();
   expect(tooltip.getByText('Sleep: 8h')).toBeTruthy();
+  const lifeStyleDetails = within(screen.getByTestId('metric-chart-lifestyle-details'));
+  expect(lifeStyleDetails.getByText('common:lifeStyle.items.dimmedLights')).toBeTruthy();
+  expect(lifeStyleDetails.getByText('common:filter.no')).toBeTruthy();
+  expect(lifeStyleDetails.queryByText('common:lifeStyle.items.calmActivity')).toBeNull();
   fireEvent(touchArea, 'responderMove', { nativeEvent: { locationX: 248 } });
   expect(tooltip.getByText('HRV: 45 ms')).toBeTruthy();
   expect(tooltip.getByText('Sleep: —')).toBeTruthy();
   fireEvent(touchArea, 'responderMove', { nativeEvent: { locationX: -10 } });
   expect(tooltip.getByText('HRV: —')).toBeTruthy();
+  expect(lifeStyleDetails.getByText('trendChart.noLifeStyleEntries')).toBeTruthy();
+  fireEvent.press(screen.getByTestId(`lifestyle-dot-${today}`));
+  expect(lifeStyleDetails.getByText('common:lifeStyle.items.calmActivity')).toBeTruthy();
 });
 
 it('allows inspecting a single registered value without a comparison', async () => {
