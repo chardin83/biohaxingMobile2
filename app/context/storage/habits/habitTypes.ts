@@ -3,6 +3,7 @@ import type { ClockTime } from '@/types/ClockTime';
 import type { DailyTracking } from '../types/trackingTypes';
 
 export type HabitEntry = {
+  source?: 'lifeStyle';
   value: number;
   isFulfilled?: boolean;
   targetAmount?: number;

@@ -575,7 +575,10 @@
   "pre_sleep_wind_down": {
     "title": "Pre-sleep wind-down routine",
     "description": "A structured wind-down routine 30-60 minutes before bed signals to your body that it's time to sleep. This can include relaxation techniques, light reading, meditation, or gentle stretching.",
-    "habitTargets": { "description": "Log today’s minutes of winding down before bed, for example quiet reading or gentle stretching. The goal is 30 minutes per day." },
+    "habitTargets": {
+      "description": "Answer Yes or No to all three questions about tonight’s wind-down. The goal is checked off once all questions are answered, including No answers.",
+      "progress": "{{count}} of {{total}} questions answered"
+    },
     "areas": {
       "sleepQuality": "A proper wind-down routine helps transition the nervous system from wakefulness to sleep, promoting faster sleep onset and deeper sleep.",
       "nervousSystem": "Pre-sleep relaxation techniques activate the parasympathetic nervous system, preparing the body for restorative sleep."

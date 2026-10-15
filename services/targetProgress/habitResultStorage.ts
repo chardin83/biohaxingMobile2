@@ -21,11 +21,13 @@ export const getActiveHabitTarget = (plans: PlanTipEntry[], key: string, date: s
 
 export const prepareManualHabitResult = (plans: PlanTipEntry[], key: string, date: string, entry: HabitEntry): HabitEntry | undefined => {
   const active = getActiveHabitTarget(plans, key, date);
-  if (!active || active.target.inputMode === 'automatic' || !Number.isFinite(entry.value) || entry.value < 0) return undefined;
+  if (!active || active.target.inputMode === 'automatic' || active.target.lifeStyleKeys || !Number.isFinite(entry.value) || entry.value < 0) return undefined;
+  const value = entry.value;
   return {
     ...entry,
+    value,
     targetAmount: active.target.amount,
-    isFulfilled: active.period === 'daily' ? entry.value >= active.target.amount : undefined,
+    isFulfilled: active.period === 'daily' ? value >= active.target.amount : undefined,
   };
 };
 

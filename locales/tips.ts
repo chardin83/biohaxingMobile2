@@ -3,6 +3,7 @@ import type { Href } from 'expo-router';
 import { type IconSymbolName } from '@/components/ui/icon-symbol-map';
 import { AminoAcidType } from '@/constants/aminoAcids';
 import { FiberSubtype, FiberType } from '@/constants/fiber';
+import type { LifeStyleId } from '@/constants/lifeStyle';
 import { MineralType } from '@/constants/minerals';
 import { NutrientType } from '@/constants/nutrients';
 import { PolyphenolType } from '@/constants/polyphenols';
@@ -133,7 +134,7 @@ export type ActivityTarget = {
     | 'vigorous_activity_minutes';
 } & BaseTarget<'minutes' | 'km' | 'sessions'>;
 
-export type HabitInputMode = 'number' | 'daily-check' | 'slots' | 'automatic';
+export type HabitInputMode = 'number' | 'daily-check' | 'slots' | 'automatic' | 'questionnaire';
 
 export type HabitTarget = {
   trackingKey:
@@ -155,6 +156,7 @@ export type HabitTarget = {
     | 'calming_music'
     | 'hrv_recovery_review';
   buttonLabels?: string[];
+  lifeStyleKeys?: LifeStyleId[];
   inputMode?: HabitInputMode;
 } & BaseTarget<'minutes' | 'hours' | 'count'>;
 
@@ -1157,7 +1159,7 @@ const rawTips: Tip[] = [
     planCategory: ['other'],
     targetPeriod: 'daily',
     targetIconName: 'target',
-    habitTargets: [{ trackingKey: 'pre_sleep_wind_down', amount: 30, unit: 'minutes', inputMode: 'number' }],
+    habitTargets: [{ trackingKey: 'pre_sleep_wind_down', amount: 3, unit: 'count', inputMode: 'questionnaire', lifeStyleKeys: ['dimmedLights', 'calmActivity', 'reducedScreens'] }],
     bodyParts: ['nervousSystem'],
   },
   {

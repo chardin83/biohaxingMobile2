@@ -12,10 +12,11 @@ export const useTargetProgressList = <T extends TargetDefinition>(
     progress: TargetProgress;
   }
 > => {
-  const { dailyNutritionTracking, weeklyNutritionTracking, dailyTrainingTracking, dailyHabitTracking, takenDates } = useStorage();
+  const { dailyNutritionTracking, weeklyNutritionTracking, dailyTrainingTracking, dailyHabitTracking, takenDates, lifeStyleLog } = useStorage();
 
   return useMemo(() => {
     const storage = {
+      lifeStyleLog,
       dailyNutritionTracking,
       weeklyNutritionTracking,
       dailyTrainingTracking,
@@ -32,5 +33,5 @@ export const useTargetProgressList = <T extends TargetDefinition>(
         storage,
       }),
     }));
-  }, [targets, selectedDate, dailyNutritionTracking, weeklyNutritionTracking, dailyTrainingTracking, dailyHabitTracking, takenDates]);
+  }, [targets, selectedDate, dailyNutritionTracking, weeklyNutritionTracking, dailyTrainingTracking, dailyHabitTracking, takenDates, lifeStyleLog]);
 };

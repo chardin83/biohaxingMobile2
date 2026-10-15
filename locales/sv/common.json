@@ -1,4 +1,14 @@
 {
+  "lifeStyle": {
+    "title": "Livsstilslogg",
+    "items": {
+      "dimmedLights": "Dämpade belysningen",
+      "calmActivity": "Gjorde något lugnt",
+      "reducedScreens": "Drog ned på skärmljuset / ingen skärm"
+    },
+    "loadError": "Kunde inte läsa livsstilsloggen.",
+    "saveError": "Kunde inte spara registreringen. Försök igen."
+  },
   "back": "Tillbaka",
   "today": "Idag",
   "general": {

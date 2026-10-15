@@ -19,15 +19,18 @@ interface OptionSelectorProps<T extends string> {
   value?: T;
   onChange: (value: T) => void;
   disabled?: boolean;
+  accessibilityLabel?: string;
+  compact?: boolean;
 }
 
-const OptionSelector = <T extends string>({ options, value, onChange, disabled = false }: OptionSelectorProps<T>) => {
+const OptionSelector = <T extends string>({ options, value, onChange, disabled = false, accessibilityLabel, compact = false }: OptionSelectorProps<T>) => {
   const { colors } = useTheme();
 
   return (
     <View
       style={[
         styles.container,
+        compact && styles.compactContainer,
         {
           borderColor: colors.border,
         },
@@ -41,9 +44,13 @@ const OptionSelector = <T extends string>({ options, value, onChange, disabled =
           <Pressable
             key={option.value}
             disabled={disabled}
+            accessibilityRole="radio"
+            accessibilityState={{ checked: selected, disabled }}
+            accessibilityLabel={accessibilityLabel ? `${accessibilityLabel}: ${option.label}` : option.label}
             onPress={() => onChange(option.value)}
             style={({ pressed }) => [
               styles.option,
+              compact && styles.compactOption,
               selected && {
                 backgroundColor: colors.primary,
               },
@@ -59,6 +66,7 @@ const OptionSelector = <T extends string>({ options, value, onChange, disabled =
                 numberOfLines={1}
                 style={[
                   styles.optionText,
+                  compact && styles.compactText,
                   {
                     color: contentColor,
                   },
@@ -74,6 +82,9 @@ const OptionSelector = <T extends string>({ options, value, onChange, disabled =
   );
 };
 const styles = StyleSheet.create({
+  compactContainer: { width: 'auto', flexShrink: 0, padding: 2, gap: 2, borderRadius: 9 },
+  compactOption: { flex: 0, height: 36, minWidth: 44, paddingHorizontal: 10, borderRadius: 6 },
+  compactText: { fontSize: 14, lineHeight: 18 },
   container: {
     width: '100%',
     flexDirection: 'row',

@@ -9,6 +9,7 @@ import { clearChat } from '@/app/context/chatEvents';
 import { getHealthSettingsStorageSize, getKnowledgeSettingsStorageSize, getSharingStorageSize } from '@/app/context/storage/app/appStorage';
 import { getDrinkStorageSize } from '@/app/context/storage/drinks/drinkStorage';
 import { getHabitStorageSize } from '@/app/context/storage/habits/habitStorage';
+import { getLifeStyleStorageSize } from '@/app/context/storage/lifeStyle/lifeStyleStorage';
 import { getMetricStorageSize } from '@/app/context/storage/metrics/metricStorage';
 import { getNutritionStorageSize } from '@/app/context/storage/nutrition/nutritionStorage';
 import { getPlanStorageSize } from '@/app/context/storage/plans/planStorage';
@@ -84,6 +85,7 @@ export default function DeleteDataPage() {
     setWeeklyNutritionTracking,
     setTrainingPlanSettings,
     clearDailyTrainingTracking,
+    clearLifeStyleLog,
     clearDailyHabitTracking,
     clearDailyDrinkTracking,
     setViewedTips,
@@ -144,7 +146,7 @@ export default function DeleteDataPage() {
         getMetricStorageSize(),
         getHealthSettingsStorageSize(),
         getTrainingStorageSize(),
-        getHabitStorageSize(),
+        Promise.all([getHabitStorageSize(), getLifeStyleStorageSize()]).then(sizes => sizes.reduce((sum, size) => sum + size, 0)),
         getNutritionStorageSize(),
         getDrinkStorageSize(),
         getNutritionXpStorageSize(),
@@ -230,6 +232,7 @@ export default function DeleteDataPage() {
     }
 
     if (selected.logs) {
+      await clearLifeStyleLog();
       clearDailyTrainingTracking();
       clearDailyHabitTracking();
       setWeeklyNutritionTracking({});
@@ -257,6 +260,7 @@ export default function DeleteDataPage() {
       await clearChat();
     }
   }, [
+    clearLifeStyleLog,
     clearArchivedPlans,
     clearEducationXP,
     clearNutritionXP,

@@ -24,6 +24,7 @@ import { levels, XP_FOR_VERDICT, XP_PER_CHAT_MESSAGE, type XpSource } from '@/co
 import { MetricId } from '@/locales/metrics';
 import { countNewAutomaticHabitGoals, getAutomaticHabitGoalKeys } from '@/services/targetProgress/automaticHabitSummary';
 import { prepareManualHabitResult, storeAutomaticSleepResults } from '@/services/targetProgress/habitResultStorage';
+import { storeLifeStyleHabitResults } from '@/services/targetProgress/lifeStyleHabitResults';
 //import { seedHabitTestDataOnce } from '@/services/testData/temporaryHabitTestData';
 import { type NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import { VerdictValue } from '@/types/verdict';
@@ -61,6 +62,7 @@ import {
   updateHabitEntryInTracking,
 } from './storage/habits/habitStorage';
 import type { DailyHabitTracking, HabitEntry } from './storage/habits/habitTypes';
+import { type LifeStyleStorageValue,useLifeStyleStorage } from './storage/lifeStyle/useLifeStyleStorage';
 import { getAllMetricEntries, syncMetricEntries } from './storage/metrics/metricStorage';
 import { MetricEntry } from './storage/metrics/metricTypes';
 import {
@@ -104,7 +106,7 @@ export type ReasonSummary = {
   createdAt: string;
 };
 
-interface StorageContextType {
+interface StorageContextType extends LifeStyleStorageValue {
   plans: PlansByCategory;
   setPlans: (plans: PlansByCategory | ((prev: PlansByCategory) => PlansByCategory)) => void;
   saveSupplementToPlan: (selectedPlan: Plan, supplement: SupplementPlanEntry, isEditingSupplement: boolean) => Promise<Plan | null>;
@@ -204,6 +206,7 @@ interface StorageContextType {
 const StorageContext = createContext<StorageContextType | undefined>(undefined);
 
 export const StorageProvider = ({ children }: { children: React.ReactNode }) => {
+  const lifeStyle = useLifeStyleStorage();
   const [plansState, setPlansState] = useState<PlansByCategory>(EMPTY_PLANS);
   const [archivedPlansState, setArchivedPlansState] = useState<ArchivedPlansByCategory>(EMPTY_ARCHIVED_PLANS);
   const [hasVisitedChatState, setHasVisitedChatState] = useState(false);
@@ -740,6 +743,11 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     setHasProcessedAutomaticHabits(true);
   }, [isInitialized, userProfileInitialized, hasCompletedInitialSync, isSyncing, metricEntriesState, plansState.other, setDailyHabitTracking]);
 
+  useEffect(() => {
+    if (!isInitialized || lifeStyle.lifeStyleLoading || lifeStyle.lifeStyleError) return;
+    setDailyHabitTracking(previous => storeLifeStyleHabitResults(previous, lifeStyle.lifeStyleLog, plansState.other));
+  }, [isInitialized, lifeStyle.lifeStyleLoading, lifeStyle.lifeStyleError, lifeStyle.lifeStyleLog, plansState.other, setDailyHabitTracking]);
+
   const addHabitEntry = useCallback(
     (dateKey: string, trackingKey: string, entry: HabitEntry) => {
       const result = prepareManualHabitResult(plansState.other, trackingKey, dateKey, entry);
@@ -1202,6 +1210,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
 
   const value = useMemo<StorageContextType>(
     () => ({
+      ...lifeStyle,
       plans: plansState,
       setPlans,
       saveSupplementToPlan,
@@ -1299,7 +1308,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       clearUserProfile,
     }),
     // prettier-ignore
-    [plansState, setPlans, saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, clearSupplementTakenDates, clearSupplementCustom, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, userProfileInitialized, hasProcessedAutomaticHabits, hasCompletedInitialSync, isSyncing, newAutomaticHabitGoals, myXPState, setMyXP, clearNutritionXP, clearEducationXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, viewedTipsState, setViewedTips, claimTipReadingXP, claimTipAreaXP, recordTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState,
+    [lifeStyle, plansState, setPlans, saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, clearSupplementTakenDates, clearSupplementCustom, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, userProfileInitialized, hasProcessedAutomaticHabits, hasCompletedInitialSync, isSyncing, newAutomaticHabitGoals, myXPState, setMyXP, clearNutritionXP, clearEducationXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, viewedTipsState, setViewedTips, claimTipReadingXP, claimTipAreaXP, recordTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState,
       dailyNutritionTrackingState, addNutritionEntry, updateNutritionEntry, removeNutritionEntry, clearDailyNutritionTracking, weeklyNutritionTrackingState, setWeeklyNutritionTracking, dailyDrinkTrackingState, addDrinkEntry, updateDrinkEntry, removeDrinkEntry, clearDailyDrinkTracking, trainingPlanSettingsState, setTrainingPlanSettings, dailyTrainingTrackingState, addTrainingEntry, updateTrainingEntry, removeTrainingEntry, clearDailyTrainingTracking, dailyHabitTrackingState, addHabitEntry, updateHabitEntry, removeHabitEntry, clearDailyHabitTracking, showMusicState, setShowMusic, tempPlans, setTempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, setMetricEntries, getMetricHistory, clearMetricEntries, healthSyncEnabledState, setHealthSyncEnabled, hideBarcodeInfoState, setHideBarcodeInfo, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
   );
 

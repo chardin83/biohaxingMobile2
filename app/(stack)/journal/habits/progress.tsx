@@ -13,6 +13,7 @@ import ProgressTipHeader from '@/components/journal/progress/ProgressTipHeader';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
+import type { LifeStyleId } from '@/constants/lifeStyle';
 import { PastWeek, useProgressWeeks } from '@/hooks/useWeekProgress';
 import { HabitInputMode, TargetPeriod, tips } from '@/locales/tips';
 import { formatMonthDay, fromDateKey, toDateKey } from '@/utils/dateUtils';
@@ -28,6 +29,7 @@ type HabitProgressTarget = {
   period: TargetPeriod;
   inputMode?: HabitInputMode;
   buttonLabels: string[];
+  lifeStyleKeys?: readonly LifeStyleId[];
   startedAt: string;
 };
 
@@ -35,7 +37,7 @@ export default function HabitProgressScreen() {
   const router = useRouter();
   const { colors } = useTheme();
   const { t, i18n } = useTranslation();
-  const { plans, dailyHabitTracking } = useStorage();
+  const { plans, dailyHabitTracking, lifeStyleLog } = useStorage();
   const language = i18n.resolvedLanguage ?? i18n.language;
   const todayKey = useMemo(() => toDateKey(new Date()), []);
   const [selectedDay, setSelectedDay] = useState(todayKey);
@@ -83,6 +85,7 @@ export default function HabitProgressScreen() {
         unit: target.unit,
         period,
         inputMode: target.inputMode,
+        lifeStyleKeys: target.lifeStyleKeys,
         buttonLabels: target.buttonLabels ?? [],
         startedAt: plan.startedAt,
       }));
@@ -94,10 +97,20 @@ export default function HabitProgressScreen() {
   const weeklyTargets = useMemo(() => targets.filter(target => target.period === 'weekly'), [targets]);
 
   const getDailyValue = (target: HabitProgressTarget, dateKey: string): number => {
+    if (target.lifeStyleKeys) {
+      const saved = dailyHabitTracking[dateKey]?.[target.trackingKey];
+      if (saved?.source === 'lifeStyle') return saved.value;
+      return target.lifeStyleKeys.filter(key => typeof lifeStyleLog[dateKey]?.[key]?.value === 'boolean').length;
+    }
     return dailyHabitTracking[dateKey]?.[target.trackingKey]?.value ?? 0;
   };
 
   const isDailyFulfilled = (target: HabitProgressTarget, date: string) => {
+    if (target.lifeStyleKeys) {
+      const saved = dailyHabitTracking[date]?.[target.trackingKey];
+      if (saved?.source === 'lifeStyle') return saved.isFulfilled ?? getDailyValue(target, date) >= target.amount;
+      return getDailyValue(target, date) >= target.amount;
+    }
     const entry = dailyHabitTracking[date]?.[target.trackingKey];
     return entry?.isFulfilled ?? (entry?.value ?? 0) >= target.amount;
   };
@@ -135,7 +148,7 @@ export default function HabitProgressScreen() {
       );
     }
 
-    const hasValue = dailyHabitTracking[selectedDay]?.[target.trackingKey]?.value !== undefined;
+    const hasValue = target.lifeStyleKeys ? getDailyValue(target, selectedDay) > 0 : dailyHabitTracking[selectedDay]?.[target.trackingKey]?.value !== undefined;
 
     if (!hasValue) {
       return null;

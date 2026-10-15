@@ -1102,7 +1102,10 @@
   "pre_sleep_wind_down": {
     "title": "Sömnförberedelse och nedvarvning",
     "description": "En strukturerad nedvarvningsrutin 30-60 minuter före sänggåendet signalerar till din kropp att det är dags att sova. Detta kan inkludera avslappningsteknik, lätt läsning, meditation eller mild stretching.",
-    "habitTargets": { "description": "Registrera dagens minuter nedvarvning före läggdags, till exempel lugn läsning eller lätt stretching. Målet är 30 minuter per dag." },
+    "habitTargets": {
+      "description": "Svara Ja eller Nej på alla tre frågor om kvällens nedvarvning. Målet bockas av när alla frågor är besvarade, även om du svarar Nej.",
+      "progress": "{{count}} av {{total}} frågor besvarade"
+    },
     "areas": {
       "sleepQuality": "En korrekt nedvarvningsrutin hjälper till att övergå nervsystemet från vaksamhet till sömn, vilket främjar snabbare sömnbörjan och djupare sömn.",
       "nervousSystem": "Avslappningsteknik före sänggåendet aktiverar det parasympatiska nervsystemet och förbereder kroppen för återhämtning."

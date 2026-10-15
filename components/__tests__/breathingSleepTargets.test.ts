@@ -21,7 +21,7 @@ it('gives breathing and sleep tips independent targets and makes them available 
   const expected = [
     ['sleep_environment_optimization', 'sleep_environment', 1, 'count', 'daily-check'],
     ['sleep_hygiene_practices', 'sleep_hygiene', 1, 'count', 'daily-check'],
-    ['pre_sleep_wind_down', 'pre_sleep_wind_down', 30, 'minutes', 'number'],
+    ['pre_sleep_wind_down', 'pre_sleep_wind_down', 3, 'count', 'questionnaire'],
     ['sleep_timing_circadian', 'sleep_schedule_consistency', 1, 'count', 'automatic'],
     ['box_breathing', 'box_breathing', 3, 'minutes', 'number'],
     ['4_7_8_breathing', 'breathing_4_7_8', 1, 'count', 'daily-check'],
@@ -35,7 +35,7 @@ it('gives breathing and sleep tips independent targets and makes them available 
     const tip = tips.find(item => item.id === id)!;
     expect(tip.planCategory).toContain('other');
     expect(tip.targetPeriod).toBe('daily');
-    expect(tip.habitTargets).toEqual([{ trackingKey, amount, unit, inputMode }]);
+    expect(tip.habitTargets).toMatchObject([{ trackingKey, amount, unit, inputMode }]);
   }
 });
 
@@ -87,13 +87,23 @@ it.each(['sleep_environment_optimization', 'sleep_hygiene_practices'])('tracks %
   expect(getTargetProgress({ target, selectedDate: date, storage: data }).isFulfilled).toBe(false);
 });
 
-it('completes wind-down at 30 minutes without completing the sleep checks', () => {
+it('reads wind-down completion from the independent lifestyle log, including No answers', () => {
   const data = storage();
   const target = targetFor('pre_sleep_wind_down');
-  data.dailyHabitTracking[date] = { [target.trackingKey]: logHabitTarget({ value: 29 }) };
+  data.lifeStyleLog = { [date]: { dimmedLights: { value: true, recordedAt: date } } };
+  expect(getTargetProgress({ target, selectedDate: date, storage: data })).toMatchObject({ current: 1, isFulfilled: false });
+  data.lifeStyleLog[date].calmActivity = { value: false, recordedAt: date };
   expect(getTargetProgress({ target, selectedDate: date, storage: data }).isFulfilled).toBe(false);
-  data.dailyHabitTracking[date][target.trackingKey] = logHabitTarget({ value: 30 });
-  expect(getTargetProgress({ target, selectedDate: date, storage: data }).isFulfilled).toBe(true);
-  expect(getTargetProgress({ target: targetFor('sleep_environment_optimization'), selectedDate: date, storage: data }).isFulfilled).toBe(false);
+  data.lifeStyleLog[date].reducedScreens = { value: false, recordedAt: date };
+  expect(getTargetProgress({ target, selectedDate: date, storage: data })).toMatchObject({ current: 3, isFulfilled: true });
+  expect(data.dailyHabitTracking).toEqual({});
+  expect(getTargetProgress({ target, selectedDate: '2026-10-08', storage: data }).isFulfilled).toBe(false);
   expect(getTargetProgress({ target: targetFor('sleep_hygiene_practices'), selectedDate: date, storage: data }).isFulfilled).toBe(false);
+});
+
+it('does not count minute values or old fulfillment flags as questionnaire answers', () => {
+  const data = storage();
+  const target = targetFor('pre_sleep_wind_down');
+  data.dailyHabitTracking[date] = { [target.trackingKey]: { value: 30, isFulfilled: true, targetAmount: 30 } };
+  expect(getTargetProgress({ target, selectedDate: date, storage: data })).toMatchObject({ current: 0, target: 3, isFulfilled: false });
 });

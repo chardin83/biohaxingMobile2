@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
+import type { LifeStyleId } from '@/constants/lifeStyle';
 import { useHabitTracking } from '@/hooks/useHabitTracking';
 import { useTargetProgressList } from '@/hooks/useTargetProgressList';
 import { HabitInputMode, tips } from '@/locales/tips';
@@ -19,6 +20,7 @@ import AppButton from '../ui/AppButton';
 import { Card } from '../ui/Card';
 import DiscreetButton from '../ui/DiscreetButton';
 import { IconSymbol } from '../ui/IconSymbol';
+import OptionSelector from '../ui/OptionSelector';
 import JournalGoalAnchor from './JournalGoalAnchor';
 import ProgressButton from './ProgressButton';
 import { RegisterHabitValueBottomSheet } from './RegisterHabitValueBottomSheet';
@@ -35,6 +37,7 @@ type OtherTipProgress = {
   isFulfilled: boolean;
   canMarkManually: boolean;
   buttonLabels: string[];
+  lifeStyleKeys?: readonly LifeStyleId[];
   inputMode?: HabitInputMode;
   history: {
     date: string;
@@ -58,8 +61,9 @@ export default function OtherLoggerTab({
   const { colors } = useTheme();
   const { t, i18n } = useTranslation();
   const router = useRouter();
-  const { plans, dailyHabitTracking } = useStorage();
+  const { plans, dailyHabitTracking, lifeStyleLog, logLifeStyleEntry, lifeStyleLoading, lifeStyleError: lifeStyleLoadError } = useStorage();
   const { logHabit, isHabitSlotCompleted } = useHabitTracking();
+  const [lifeStyleSaveError, setLifeStyleSaveError] = useState(false);
   const [expandedTipIds, setExpandedTipIds] = useState<Set<string>>(() => new Set());
   const registerHabitValueBottomSheetRef = useRef<BottomSheetModal>(null);
   const [valueTarget, setValueTarget] = useState<OtherTipProgress | null>(null);
@@ -130,6 +134,7 @@ export default function OtherLoggerTab({
         unit: target.unit,
         period,
         inputMode: target.inputMode,
+        lifeStyleKeys: target.lifeStyleKeys,
         title: t(`tips:${tip.title}`, {
           defaultValue: tip.id,
         }),
@@ -187,6 +192,7 @@ export default function OtherLoggerTab({
         canMarkManually: item.trackingKey !== 'sleep_duration' && item.inputMode !== 'automatic',
         buttonLabels: item.buttonLabels,
         inputMode: item.inputMode,
+        lifeStyleKeys: item.lifeStyleKeys,
         history,
       };
     });
@@ -264,6 +270,39 @@ export default function OtherLoggerTab({
       return null;
     }
 
+    if (item.inputMode === 'questionnaire') {
+      const answers = lifeStyleLog[selectedDate];
+      return (
+        <View style={styles.questions}>
+          {(item.lifeStyleKeys ?? []).map((question, index) => {
+            const answer = answers?.[question];
+            return (
+              <View key={question} style={styles.question}>
+                <ThemedText style={styles.questionText}>
+                  {index + 1}. {t(`common:lifeStyle.items.${question}`)}
+                </ThemedText>
+                <OptionSelector
+                  compact
+                  value={answer ? String(answer.value) : undefined}
+                  options={[
+                    { value: 'true', label: t('common:filter.yes') },
+                    { value: 'false', label: t('common:filter.no') },
+                  ]}
+                  accessibilityLabel={t(`common:lifeStyle.items.${question}`)}
+                  disabled={lifeStyleLoading || Boolean(lifeStyleLoadError)}
+                  onChange={value => {
+                    setLifeStyleSaveError(false);
+                    logLifeStyleEntry(selectedDate, question, value === 'true').catch(() => setLifeStyleSaveError(true));
+                  }}
+                />
+              </View>
+            );
+          })}
+          {lifeStyleSaveError && <ThemedText type="error">{t('common:lifeStyle.saveError')}</ThemedText>}
+          {lifeStyleLoadError && <ThemedText type="error">{t('common:' + lifeStyleLoadError)}</ThemedText>}
+        </View>
+      );
+    }
     if (item.inputMode === 'daily-check') {
       const completedToday = isCompletedToday(item);
 
@@ -368,7 +407,11 @@ export default function OtherLoggerTab({
 
         <View style={styles.statusRow}>
           <ThemedText type="caption">{statusLabel}</ThemedText>
-          <ThemedText type="explainer">{`${item.actual} / ${item.target} ${translateUnit(item.unit)}`}</ThemedText>
+          <ThemedText type="explainer">
+            {item.inputMode === 'questionnaire'
+              ? t(`tips:${item.tipId}.habitTargets.progress`, { count: item.actual, total: item.target })
+              : `${item.actual} / ${item.target} ${translateUnit(item.unit)}`}
+          </ThemedText>
         </View>
         {sleepAssessment && sleepAssessment.status !== 'noData' && (
           <ThemedText type="explainer">{t('journal:otherTips.sleepSchedule.details', sleepAssessment)}</ThemedText>
@@ -506,6 +549,9 @@ export default function OtherLoggerTab({
 }
 
 const styles = StyleSheet.create({
+  questions: { gap: 16 },
+  question: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  questionText: { flex: 1 },
   goalLinks: { gap: 8 },
   container: {
     gap: 10,

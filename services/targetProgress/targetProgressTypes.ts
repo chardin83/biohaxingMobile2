@@ -1,3 +1,4 @@
+import type { LifeStyleId } from '@/constants/lifeStyle';
 import { NutritionTargetPeriod, NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
 import type { TrainingActivityType } from '@/types/training';
 
@@ -14,6 +15,7 @@ export type BaseTargetDefinition = {
 
 export type HabitTargetDefinition = BaseTargetDefinition & {
   source: 'habit';
+  lifeStyleKeys?: readonly LifeStyleId[];
 };
 
 export type TrainingTargetDefinition = BaseTargetDefinition & {

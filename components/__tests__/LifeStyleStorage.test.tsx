@@ -1,0 +1,55 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { act, renderHook, waitFor } from '@testing-library/react-native';
+
+import { useLifeStyleStorage } from '@/app/context/storage/lifeStyle/useLifeStyleStorage';
+
+const date = '2026-10-15';
+beforeEach(async () => { await AsyncStorage.clear(); });
+
+it('stores concurrent answers independently of plans and habit target logs', async () => {
+  const { result, unmount } = renderHook(useLifeStyleStorage);
+  await waitFor(() => expect(result.current.lifeStyleLoading).toBe(false));
+  await act(async () => {
+    await Promise.all([
+      result.current.logLifeStyleEntry(date, 'dimmedLights', true),
+      result.current.logLifeStyleEntry(date, 'calmActivity', false),
+      result.current.logLifeStyleEntry(date, 'reducedScreens', false),
+    ]);
+  });
+  expect(result.current.lifeStyleLog[date]).toMatchObject({ dimmedLights: { value: true }, calmActivity: { value: false }, reducedScreens: { value: false } });
+  expect(await AsyncStorage.getItem('dailyHabitTracking:' + date)).toBeNull();
+  expect(JSON.parse((await AsyncStorage.getItem('lifeStyleLog:' + date))!)).toEqual(result.current.lifeStyleLog[date]);
+  unmount();
+  const restored = renderHook(useLifeStyleStorage);
+  await waitFor(() => expect(restored.result.current.lifeStyleLog[date]?.calmActivity?.value).toBe(false));
+});
+
+it('distinguishes No from an unanswered item and can remove entries and clear the log', async () => {
+  const { result } = renderHook(useLifeStyleStorage);
+  await waitFor(() => expect(result.current.lifeStyleLoading).toBe(false));
+  await act(async () => { await result.current.logLifeStyleEntry(date, 'dimmedLights', false); });
+  expect(result.current.lifeStyleLog[date].dimmedLights?.value).toBe(false);
+  expect(result.current.lifeStyleLog[date].calmActivity).toBeUndefined();
+  await act(async () => { await result.current.removeLifeStyleEntry(date, 'dimmedLights'); });
+  expect(result.current.lifeStyleLog[date]).toBeUndefined();
+  expect(await AsyncStorage.getItem('lifeStyleLog:' + date)).toBeNull();
+  await act(async () => {
+    await result.current.logLifeStyleEntry(date, 'calmActivity', true);
+    await result.current.clearLifeStyleLog();
+  });
+  expect(result.current.lifeStyleLog).toEqual({});
+  expect(await AsyncStorage.getItem('lifeStyleLog:' + date)).toBeNull();
+});
+
+it('does not publish failed writes and allows retrying without losing other entries', async () => {
+  const { result } = renderHook(useLifeStyleStorage);
+  await waitFor(() => expect(result.current.lifeStyleLoading).toBe(false));
+  const failingWrite = jest.spyOn(AsyncStorage, 'setItem').mockRejectedValueOnce(new Error('Storage unavailable'));
+  await act(async () => {
+    await expect(result.current.logLifeStyleEntry(date, 'dimmedLights', true)).rejects.toThrow('Storage unavailable');
+  });
+  expect(result.current.lifeStyleLog).toEqual({});
+  failingWrite.mockRestore();
+  await act(async () => { await result.current.logLifeStyleEntry(date, 'dimmedLights', false); });
+  expect(result.current.lifeStyleLog[date].dimmedLights?.value).toBe(false);
+});

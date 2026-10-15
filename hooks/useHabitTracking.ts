@@ -5,7 +5,6 @@ import { getHabitTrackedDates, isHabitSlotCompleted, logHabitTarget } from '@/se
 
 export const useHabitTracking = () => {
   const { dailyHabitTracking, addHabitEntry, updateHabitEntry } = useStorage();
-
   const logHabit = useCallback(
     ({ trackingKey, selectedDate, value, slot }: { trackingKey: string; selectedDate: string; value: number; slot?: string }) => {
       const existing = dailyHabitTracking[selectedDate]?.[trackingKey];
