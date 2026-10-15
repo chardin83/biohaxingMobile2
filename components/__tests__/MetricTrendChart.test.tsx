@@ -97,5 +97,35 @@ it('draws comparison data on the shared time axis with a separate right scale', 
   const rightAxis = screen.getByTestId('comparison-y-axis');
   expect(rightAxis).toBeTruthy();
   expect(screen.getAllByText('2000').length).toBeGreaterThan(0);
+  expect(screen.queryByText('2650')).toBeNull();
   expect(screen.getByText('Steps (count)')).toBeTruthy();
+});
+
+it('shows both series for the touched day in one tooltip and updates while dragging', async () => {
+  const { within } = require('@testing-library/react-native');
+  const screen = render(<MetricTrendChart data={options[0].data} metricName="HRV" unit="ms" comparison={{
+    data: [{ date: yesterday, value: 480 }], metricName: 'Sleep', color: 'blue', valueFormatter: value => `${value / 60}h`,
+  }} />);
+  const { View } = require('react-native');
+  await waitFor(() => expect(screen.UNSAFE_getAllByType(View).some(node => node.props.onLayout)).toBe(true));
+  fireEvent(screen.UNSAFE_getAllByType(View).find(node => node.props.onLayout)!, 'layout', { nativeEvent: { layout: { width: 256 } } });
+  const touchArea = screen.getByTestId('metric-chart-touch-area');
+  fireEvent(touchArea, 'responderGrant', { nativeEvent: { locationX: 208 } });
+  const tooltip = within(screen.getByTestId('metric-chart-tooltip'));
+  expect(tooltip.getByText('HRV: 40 ms')).toBeTruthy();
+  expect(tooltip.getByText('Sleep: 8h')).toBeTruthy();
+  fireEvent(touchArea, 'responderMove', { nativeEvent: { locationX: 248 } });
+  expect(tooltip.getByText('HRV: 45 ms')).toBeTruthy();
+  expect(tooltip.getByText('Sleep: —')).toBeTruthy();
+  fireEvent(touchArea, 'responderMove', { nativeEvent: { locationX: -10 } });
+  expect(tooltip.getByText('HRV: —')).toBeTruthy();
+});
+
+it('allows inspecting a single registered value without a comparison', async () => {
+  const screen = render(<MetricTrendChart data={[{ date: today, value: 0 }]} metricName="Score" />);
+  const { View } = require('react-native');
+  await waitFor(() => expect(screen.UNSAFE_getAllByType(View).some(node => node.props.onLayout)).toBe(true));
+  fireEvent(screen.UNSAFE_getAllByType(View).find(node => node.props.onLayout)!, 'layout', { nativeEvent: { layout: { width: 256 } } });
+  fireEvent(screen.getByTestId('metric-chart-touch-area'), 'responderGrant', { nativeEvent: { locationX: 248 } });
+  expect(screen.getByText('Score: 0')).toBeTruthy();
 });

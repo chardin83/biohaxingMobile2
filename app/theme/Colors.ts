@@ -130,6 +130,7 @@ export const Colors = {
       },
     },
     cardBackground: 'rgba(252, 239, 225, 0.6)', // Transparent card bakgrund
+    chartTooltipBackground: 'rgba(252, 239, 225, 0.95)',
     cardBorder: 'rgba(255,190,120,0.45)', // Transparent card border
     cardTitle: 'rgba(17,24,28,0.85)',
     //checkmark: '#C3FF00',
@@ -316,6 +317,7 @@ export const Colors = {
       },
     },
     cardBackground: 'rgba(255,255,255,0.06)', // Transparent card bakgrund
+    chartTooltipBackground: 'rgba(255,255,255,0.16)',
     cardBorder: 'rgba(255,215,100,0.18)', // Transparent card border
     cardTitle: 'rgba(255,255,255,0.85)',
     //checkmark: '',

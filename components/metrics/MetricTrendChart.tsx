@@ -86,6 +86,7 @@ const Y_AXIS_LABEL_LINE_HEIGHT = 20;
 const Y_AXIS_LABEL_OFFSET = Y_AXIS_LABEL_LINE_HEIGHT / 2;
 const X_AXIS_LABEL_WIDTH = 44;
 const EMPTY_GRID_LINE_COUNT = 3;
+const Y_AXIS_HEADROOM = 0.65;
 
 type EmptyChartLabel = {
   readonly id: 'start' | 'mid' | 'end';
@@ -178,6 +179,7 @@ function MetricTrendChartContent({
   const { t } = useTranslation('metrics');
   const [chartWidth, setChartWidth] = React.useState(0);
   const [menuVisible, setMenuVisible] = React.useState(false);
+  const [selectedDate, setSelectedDate] = React.useState<string>();
   const selectedOption = seriesSelector?.options.find(option => option.value === seriesSelector.value);
   const data = selectedOption?.data ?? defaultData;
   const metricName = selectedOption?.metricName ?? defaultMetricName;
@@ -360,10 +362,12 @@ function MetricTrendChartContent({
   const comparisonData = React.useMemo(() => {
     const end = toDateTimestamp(getTodayUtcDateString());
     const start = end - (daysToShow - 1) * 86400000;
-    return (comparison?.data ?? []).filter(point => {
-      const date = toDateTimestamp(point.date);
-      return Number.isFinite(point.value) && date >= start && date <= end;
-    }).sort((a, b) => a.date.localeCompare(b.date));
+    return (comparison?.data ?? [])
+      .filter(point => {
+        const date = toDateTimestamp(point.date);
+        return Number.isFinite(point.value) && date >= start && date <= end;
+      })
+      .sort((a, b) => a.date.localeCompare(b.date));
   }, [comparison?.data, daysToShow]);
 
   const chartGeometry = React.useMemo(() => {
@@ -381,7 +385,7 @@ function MetricTrendChartContent({
 
     const baseRange = Math.max(rawMax - rawMin, 1);
     const paddedMin = yAxisBounds?.min ?? Math.max(0, rawMin - baseRange * 0.2);
-    const paddedMax = yAxisBounds?.max ?? rawMax + baseRange * 0.2;
+    const paddedMax = rawMax + baseRange * Y_AXIS_HEADROOM;
     const paddedRange = Math.max(paddedMax - paddedMin, 1);
 
     const axisEntries: AxisEntry[] = [
@@ -427,10 +431,12 @@ function MetricTrendChartContent({
     const comparisonMax = comparison?.yAxisBounds?.max ?? Math.max(...comparisonValues);
     const comparisonRange = Math.max(comparisonMax - comparisonMin, 1);
     const comparisonBottom = comparison?.yAxisBounds?.min ?? comparisonMin - comparisonRange * 0.2;
-    const comparisonTop = comparison?.yAxisBounds?.max ?? comparisonMax + comparisonRange * 0.2;
-    const comparisonY = (value: number) => CHART_PADDING.top + (comparisonTop - value) / Math.max(comparisonTop - comparisonBottom, 1) * innerHeight;
+    const comparisonTop = comparisonMax + comparisonRange * Y_AXIS_HEADROOM;
+    const comparisonY = (value: number) => CHART_PADDING.top + ((comparisonTop - value) / Math.max(comparisonTop - comparisonBottom, 1)) * innerHeight;
     const comparisonPoints = comparisonData.map(point => ({ x: getXForDate(point.date), y: comparisonY(point.value) }));
-    const comparisonAxis = comparisonData.length ? [comparisonMax, (comparisonMax + comparisonMin) / 2, comparisonMin].map((value, index) => ({ id: index, value, y: comparisonY(value) })) : [];
+    const comparisonAxis = comparisonData.length
+      ? [comparisonMax, (comparisonMax + comparisonMin) / 2, comparisonMin].map((value, index) => ({ id: index, value, y: comparisonY(value) }))
+      : [];
 
     const eventSeriesPoints = (eventSeries ?? []).map(series => ({
       label: series.label,
@@ -453,6 +459,7 @@ function MetricTrendChartContent({
     }));
 
     return {
+      getXForDate,
       comparisonPoints,
       comparisonAxis,
       axisEntries,
@@ -466,6 +473,14 @@ function MetricTrendChartContent({
   }, [chartData, comparisonData, comparison?.yAxisBounds, chartWidth, daysToShow, eventSeries, height, referenceLines, xAxisDates, yAxisBounds]);
 
   const yAxisEntries = chartGeometry?.axisEntries ?? [];
+  const selectDateAtX = (x: number) => {
+    const fraction = Math.max(0, Math.min(1, (x - CHART_PADDING.left) / Math.max(chartWidth - CHART_PADDING.left - CHART_PADDING.right, 1)));
+    const daysAgo = daysToShow - 1 - Math.round(fraction * (daysToShow - 1));
+    setSelectedDate(new Date(toDateTimestamp(getTodayUtcDateString()) - daysAgo * 86400000).toISOString().slice(0, 10));
+  };
+  const selectedValue = chartData.find(point => point.date === selectedDate)?.value;
+  const selectedComparisonValue = comparisonData.find(point => point.date === selectedDate)?.value;
+  const selectionVisible = selectedDate !== undefined && xAxisDates[0] !== undefined && selectedDate >= xAxisDates[0];
   const yAxisLabelStyles = React.useMemo(
     () =>
       (chartGeometry?.gridLines ?? []).map(
@@ -479,7 +494,7 @@ function MetricTrendChartContent({
     [chartGeometry?.gridLines]
   );
 
-  if (chartData.length < 2 && comparisonData.length === 0) {
+  if (chartData.length === 0 && comparisonData.length === 0) {
     const emptyGridLineRows = Array.from({ length: EMPTY_GRID_LINE_COUNT }, (_, index) => index);
     const emptyAxisLabels: EmptyChartLabel[] = [
       { id: 'start', left: CHART_PADDING.left, textAlign: 'left' },
@@ -669,8 +684,13 @@ function MetricTrendChartContent({
               })}
               <Path d={buildAreaPath(chartGeometry.points, chartGeometry.chartBottom)} fill="url(#hrvAreaGradient)" />
               <Path d={buildPath(chartGeometry.points)} fill="none" stroke={lineColor} strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} />
-              {comparison && <Path testID="comparison-line" d={buildPath(chartGeometry.comparisonPoints)} fill="none" stroke={comparison.color} strokeWidth={3} />}
-              {comparison && chartGeometry.comparisonPoints.map((point, index) => <Circle key={`comparison-${index}`} cx={point.x} cy={point.y} r={3} fill={comparison.color} />)}
+              {comparison && (
+                <Path testID="comparison-line" d={buildPath(chartGeometry.comparisonPoints)} fill="none" stroke={comparison.color} strokeWidth={3} />
+              )}
+              {comparison &&
+                chartGeometry.comparisonPoints.map((point, index) => (
+                  <Circle key={`comparison-${index}`} cx={point.x} cy={point.y} r={3} fill={comparison.color} />
+                ))}
               {chartGeometry.points.map((point, index) => {
                 const isLatestPoint = index === chartGeometry.points.length - 1;
                 return (
@@ -696,12 +716,63 @@ function MetricTrendChartContent({
                   {referenceLine.label ?? String(referenceLine.value)}
                 </SvgText>
               ))}
+              {selectionVisible && (
+                <Line
+                  x1={chartGeometry.getXForDate(selectedDate)}
+                  x2={chartGeometry.getXForDate(selectedDate)}
+                  y1={CHART_PADDING.top}
+                  y2={chartGeometry.chartBottom}
+                  stroke={colors.textMuted}
+                  strokeDasharray="3 3"
+                />
+              )}
             </Svg>
+          )}
+          {chartGeometry && (
+            <View
+              testID="metric-chart-touch-area"
+              style={StyleSheet.absoluteFill}
+              onStartShouldSetResponder={() => true}
+              onResponderGrant={event => selectDateAtX(event.nativeEvent.locationX)}
+              onResponderMove={event => selectDateAtX(event.nativeEvent.locationX)}
+            />
+          )}
+          {selectionVisible && (
+            <View
+              testID="metric-chart-tooltip"
+              pointerEvents="none"
+              accessibilityLiveRegion="polite"
+              style={[styles.tooltip, { backgroundColor: colors.chartTooltipBackground, borderColor: colors.borderLight }]}
+            >
+              <ThemedText type="defaultSemiBold" style={styles.tooltipText}>
+                {formatShortDate(selectedDate)} {selectedDate.slice(0, 4)}
+              </ThemedText>
+              <View style={styles.tooltipRow}>
+                <View style={[styles.legendDot, { backgroundColor: lineColor }]} />
+                <ThemedText type="caption" style={[styles.tooltipText, styles.tooltipValue]}>
+                  {metricName}: {selectedValue === undefined ? '—' : formatValue(selectedValue)}
+                </ThemedText>
+              </View>
+              {comparison && (
+                <View style={styles.tooltipRow}>
+                  <View style={[styles.legendDot, { backgroundColor: comparison.color }]} />
+                  <ThemedText type="caption" style={[styles.tooltipText, styles.tooltipValue]}>
+                  {comparison.metricName}:{' '}
+                  {selectedComparisonValue === undefined
+                    ? '—'
+                    : (comparison.valueFormatter?.(selectedComparisonValue) ??
+                      `${Number(selectedComparisonValue.toFixed(1))}${comparison.unit ? ` ${comparison.unit}` : ''}`)}
+                  </ThemedText>
+                </View>
+              )}
+            </View>
           )}
         </View>
         {comparison && (
           <View testID="comparison-y-axis" style={[styles.yAxisColumn, dynamicStyles.yAxisColumn]}>
-            <ThemedText type="caption" style={[styles.yAxisUnit, { color: comparison.color }]}>{comparison.unit}</ThemedText>
+            <ThemedText type="caption" style={[styles.yAxisUnit, { color: comparison.color }]}>
+              {comparison.unit}
+            </ThemedText>
             {chartGeometry?.comparisonAxis.map(axis => (
               <ThemedText key={axis.id} type="caption" style={[styles.yAxisValue, { top: axis.y - Y_AXIS_LABEL_OFFSET, color: comparison.color }]}>
                 {comparison.valueFormatter ? comparison.valueFormatter(axis.value) : Number(axis.value.toFixed(1))}
@@ -760,10 +831,15 @@ function MetricTrendChartContent({
           </ThemedText>
         </View>
 
-        {comparison && <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: comparison.color }]} />
-          <ThemedText type="caption">{comparison.metricName}{comparison.unit ? ` (${comparison.unit})` : ''}</ThemedText>
-        </View>}
+        {comparison && (
+          <View style={styles.legendItem}>
+            <View style={[styles.legendDot, { backgroundColor: comparison.color }]} />
+            <ThemedText type="caption">
+              {comparison.metricName}
+              {comparison.unit ? ` (${comparison.unit})` : ''}
+            </ThemedText>
+          </View>
+        )}
         {eventSeries?.map((series, index) => (
           <View key={`${series.label}-${index}`} style={styles.legendItem}>
             <View
@@ -788,6 +864,10 @@ function MetricTrendChartContent({
 }
 
 const styles = StyleSheet.create({
+  tooltipText: { color: '#FFFFFF' },
+  tooltipRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  tooltipValue: { flexShrink: 1 },
+  tooltip: { position: 'absolute', top: 8, left: 8, maxWidth: '85%', borderWidth: 1, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 6 },
   loadingChart: { alignItems: 'center', justifyContent: 'center' },
   container: {
     marginTop: 20,
