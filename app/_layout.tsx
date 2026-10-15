@@ -17,6 +17,7 @@ import GlobalLevelUpModal from '@/components/GlobalLevelUpModal';
 import { MusicProvider } from '@/components/MusicContext';
 import Sparks from '@/components/Sparks';
 import { SparksProvider, useSparks } from '@/components/SparksContext';
+//  import { logAsyncStorage } from '@/debugging/logAsyncStorage';
 import { WearableProvider } from '@/wearables/wearableProvider';
 import { WearableStorageSync } from '@/wearables/WearableStorageSync';
 
@@ -67,6 +68,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync().catch(() => undefined);
+      // if (__DEV__) logAsyncStorage().catch(error => console.error('Kunde inte läsa AsyncStorage', error));
     }
   }, [loaded]);
 
