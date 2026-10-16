@@ -93,6 +93,7 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
     carbohydrates,
     fat,
     fiber,
+    caffeineMg,
     fiberByType,
     fiberSubtypeTotals,
     polyphenolByType,
@@ -228,33 +229,6 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
         </View>
       )}
 
-      {hasAnyTypedTotals(polyphenolByType) && (
-        <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
-          <Collapsible
-            {...collapsibleHeader(
-              t('journal:nutritionLogger.polyphenols', {
-                value: (polyphenolByType?.polyphenols_total ?? 0).toFixed(1),
-              })
-            )}
-            titleType="default"
-            initialCollapsed
-            leftContent={<IconSymbol name="polyphenol" size={14} color={colors.textMuted} />}
-          >
-            {POLYPHENOL_TYPE_KEYS.filter(key => key !== 'polyphenols_total').map(key => {
-              const value = polyphenolByType?.[key] ?? 0;
-
-              if (value <= 0) return null;
-
-              return (
-                <ThemedText key={`${keyPrefix}_${key}`} type="default">
-                  • {t(`journal:nutritionLogger.polyphenolLabels.${key}`)}: {value.toFixed(1)} mg
-                </ThemedText>
-              );
-            })}
-          </Collapsible>
-        </View>
-      )}
-
       {hasAnyTypedTotals(mineralsByType) && (
         <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
           <Collapsible
@@ -339,6 +313,37 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
           ))}
         </Collapsible>
       )}
+      {hasAnyTypedTotals(polyphenolByType) && (
+        <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
+          <Collapsible
+            {...collapsibleHeader(
+              t('journal:nutritionLogger.polyphenols', {
+                value: (polyphenolByType?.polyphenols_total ?? 0).toFixed(1),
+              })
+            )}
+            titleType="default"
+            initialCollapsed
+            leftContent={<IconSymbol name="polyphenol" size={14} color={colors.textMuted} />}
+          >
+            {POLYPHENOL_TYPE_KEYS.filter(key => key !== 'polyphenols_total').map(key => {
+              const value = polyphenolByType?.[key] ?? 0;
+
+              if (value <= 0) return null;
+
+              return (
+                <ThemedText key={`${keyPrefix}_${key}`} type="default">
+                  • {t(`journal:nutritionLogger.polyphenolLabels.${key}`)}: {value.toFixed(1)} mg
+                </ThemedText>
+              );
+            })}
+          </Collapsible>
+        </View>
+      )}
+
+      <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
+        <IconSymbol name="caffeine" size={16} color={colors.textMuted} />
+        <NutrientText text={t('journal:nutritionLogger.caffeineAmount', { value: caffeineMg === undefined ? '—' : Math.round(caffeineMg) })} />
+      </View>
     </>
   );
 };

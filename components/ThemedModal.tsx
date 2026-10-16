@@ -17,6 +17,7 @@ interface ThemedModalProps {
   visible: boolean;
   title: string;
   iconName?: IconSymbolName;
+  iconColor?: string;
   onClose: () => void;
   onSave?: () => void;
   onSaveDisabled?: boolean;
@@ -35,6 +36,7 @@ export const ThemedModal = ({
   visible,
   title,
   iconName,
+  iconColor,
   onClose,
   onSave,
   onSaveDisabled = false,
@@ -62,7 +64,7 @@ export const ThemedModal = ({
             style,
           ]}
         >
-          {iconName && <IconSymbol name={iconName} size={40} color={colors.warning} />}
+          {iconName && <IconSymbol name={iconName} size={40} color={iconColor ?? colors.warning} />}
           <ThemedText type="title2" style={[styles.title, { color: colors.primary }]}>
             {title}
           </ThemedText>
@@ -80,7 +82,7 @@ export const ThemedModal = ({
               />
               {showCancelButton && <CancelButton onPress={onClose} />}
               {onSecondarySave && <AppButton onPress={onSecondarySave} title={ok2Label ?? t('general.secondary')} variant="primary" />}
-              {onSave && <AppButton onPress={onSave} title={okLabel ?? t('general.save')} variant="primary" disabled={onSaveDisabled} glow={onSaveGlow} />}
+              {onSave && <AppButton onPress={onSave} title={okLabel ?? t('general.save')} variant="primary" disabled={onSaveDisabled} glow={onSaveGlow} style={!showCancelButton && !onSecondarySave ? styles.fullWidthButton : undefined} />}
             </View>
           )}
         </View>
@@ -90,6 +92,7 @@ export const ThemedModal = ({
 };
 
 const styles = StyleSheet.create({
+  fullWidthButton: { width: '100%' },
   overlay: {
     flex: 1,
     justifyContent: 'center',

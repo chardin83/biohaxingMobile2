@@ -5,6 +5,7 @@ import type { NutritionEntry } from '@/app/context/storage/nutrition/nutritionTy
 import { useStorage } from '@/app/context/StorageContext';
 import type { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFacts';
 import { toRecordedAt } from '@/utils/dateUtils';
+import { hasCaffeine } from '@/utils/drinkCaffeine';
 import { scaleNutritionComposition } from '@/utils/nutritionComposition';
 
 interface UseNutritionBarcodeActionsParams {
@@ -16,8 +17,8 @@ export const useNutritionBarcodeActions = ({ selectedDate, onNutritionEntrySelec
   const { addNutritionEntry, addDrinkEntry } = useStorage();
 
   return useCallback(
-    (product: BarcodeProduct, amount: number, productType: BarcodeProductType) => {
-      const recordedAt = toRecordedAt(selectedDate, new Date());
+    (product: BarcodeProduct, amount: number, productType: BarcodeProductType, time = new Date()) => {
+      const recordedAt = toRecordedAt(selectedDate, time);
       const factor = amount / 100;
       const nutrition = {
         name: product.name,
@@ -26,6 +27,7 @@ export const useNutritionBarcodeActions = ({ selectedDate, onNutritionEntrySelec
         carbohydrates: (product.nutrition.carbohydratesPer100g ?? 0) * factor,
         fat: (product.nutrition.fatPer100g ?? 0) * factor,
         fiber: (product.nutrition.fiberPer100g ?? 0) * factor,
+        caffeineMg: product.nutrition.caffeineMgPer100g === undefined ? undefined : Math.round(product.nutrition.caffeineMgPer100g * factor),
         ...(product.composition && scaleNutritionComposition(product.composition, factor)),
         ...(product.nutrition.polyphenolsMgPer100g && {
           polyphenolByType: Object.fromEntries(
@@ -44,6 +46,7 @@ export const useNutritionBarcodeActions = ({ selectedDate, onNutritionEntrySelec
         addDrinkEntry(selectedDate, {
           nutritionEntryId: nutritionEntry.id,
           type: product.drinkType ?? 'drink',
+          caffeinated: hasCaffeine({ type: product.drinkType, caffeinated: product.caffeinated }),
           name: product.name,
           amountMl: amount,
           recordedAt,

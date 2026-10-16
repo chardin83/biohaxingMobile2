@@ -1,16 +1,17 @@
 import { useTheme } from '@react-navigation/native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { ThemedText } from '@/components/ThemedText';
-import Container from '@/components/ui/Container';
+import Container, { type ContainerScrollRef } from '@/components/ui/Container';
 import SettingsCard from '@/components/ui/SettingsCard';
 import { ClockTime } from '@/types/ClockTime';
 import { formatClockTime } from '@/utils/dateUtils';
 import { MACROS } from '@/utils/nutritionGoals';
+import { DEFAULT_BEDTIME } from '@/utils/sleepTimeUtils';
 
 import NumberStepper from './NumberStepper';
 import PersonalDetailsSettings from './PersonalDetailsSettings';
@@ -19,7 +20,6 @@ import { DateTimeInput } from './ui/DateTimeInput';
 import { IconSymbol } from './ui/IconSymbol';
 import SettingIcon from './ui/SettingIcon';
 
-const DEFAULT_BEDTIME: ClockTime = '23:00';
 const RECOMMENDED_BEDTIME_START: ClockTime = '22:00';
 const RECOMMENDED_BEDTIME_END: ClockTime = '23:00';
 
@@ -35,6 +35,9 @@ export function dateToClockTime(date: Date): ClockTime {
 }
 
 export default function PersonSettings() {
+  const { focus } = useLocalSearchParams<{ focus?: string }>();
+  const containerRef = React.useRef<ContainerScrollRef>(null);
+  const bedtimeRef = React.useRef<View>(null);
   const { t, i18n } = useTranslation('common');
   const { colors } = useTheme();
   const { userProfile, updateUserProfile } = useStorage();
@@ -56,9 +59,7 @@ export default function PersonSettings() {
   }, [userProfile.maxHeartRate]);
 
   React.useEffect(() => {
-    if (userProfile.bedtime) {
-      setBedtime(timeStringToDate(userProfile.bedtime));
-    }
+    setBedtime(timeStringToDate(userProfile.bedtime ?? DEFAULT_BEDTIME));
   }, [userProfile.bedtime]);
 
   const handleMaxHeartRateChange = async (value: number) => {
@@ -76,7 +77,7 @@ export default function PersonSettings() {
   };
 
   return (
-    <Container background="default" showBackButton>
+    <Container ref={containerRef} background="default" showBackButton>
       <View style={styles.headerRow}>
         <ThemedText type="title2">{t('privacy.person.title')}</ThemedText>
       </View>
@@ -114,7 +115,13 @@ export default function PersonSettings() {
         ]}
       />
       <SettingsCard style={styles.cardSpacing}>
-        <View style={styles.bedtimeRow}>
+        <View
+          ref={bedtimeRef}
+          style={styles.bedtimeRow}
+          onLayout={() => {
+            if (focus === 'bedtime' && bedtimeRef.current) containerRef.current?.scrollToElement(bedtimeRef.current);
+          }}
+        >
           <View style={styles.labelContainer}>
             <SettingIcon size={36} iconName="moon" />
             <View style={styles.titleText}>

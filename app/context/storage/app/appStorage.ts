@@ -22,6 +22,7 @@ const STORAGE_KEYS = {
   SHOW_MUSIC: 'showMusic',
   HEALTH_SYNC_ENABLED: 'healthSyncEnabled',
   HIDE_BARCODE_INFO: 'hideBarcodeInfo',
+  CAFFEINE_LOGGING_INFO_SEEN: 'caffeineLoggingInfoSeen',
 } as const;
 
 export const getAppStorage = async (): Promise<AppStorageData> => {
@@ -63,6 +64,9 @@ export const saveShowMusic = (value: boolean) => AsyncStorage.setItem(STORAGE_KE
 export const saveHealthSyncEnabled = (value: boolean) => AsyncStorage.setItem(STORAGE_KEYS.HEALTH_SYNC_ENABLED, String(value));
 
 export const saveHideBarcodeInfo = (value: boolean) => AsyncStorage.setItem(STORAGE_KEYS.HIDE_BARCODE_INFO, String(value));
+
+export const getCaffeineLoggingInfoSeen = async () => (await AsyncStorage.getItem(STORAGE_KEYS.CAFFEINE_LOGGING_INFO_SEEN)) === 'true';
+export const saveCaffeineLoggingInfoSeen = () => AsyncStorage.setItem(STORAGE_KEYS.CAFFEINE_LOGGING_INFO_SEEN, 'true');
 
 export const getHealthSettingsStorageSize = (): Promise<number> => getStorageSize([STORAGE_KEYS.HEALTH_SYNC_ENABLED]);
 

@@ -85,6 +85,26 @@ export const removeDrinkEntryFromTracking = (tracking: DailyDrinkTracking, dateK
   return updated;
 };
 
+export const removeDrinksForNutritionEntry = (tracking: DailyDrinkTracking, dateKey: string, nutritionEntryId: string): DailyDrinkTracking => {
+  const entries = tracking[dateKey];
+  if (!entries) return tracking;
+  const remaining = entries.filter(entry => entry.nutritionEntryId !== nutritionEntryId);
+  if (remaining.length === entries.length) return tracking;
+  const next = { ...tracking };
+  if (remaining.length) next[dateKey] = remaining;
+  else delete next[dateKey];
+  return next;
+};
+
+export const updateDrinkTimesForNutritionEntry = (tracking: DailyDrinkTracking, dateKey: string, nutritionEntryId: string, recordedAt: string): DailyDrinkTracking => {
+  const entries = tracking[dateKey];
+  if (!entries?.some(entry => entry.nutritionEntryId === nutritionEntryId && entry.recordedAt !== recordedAt)) return tracking;
+  return {
+    ...tracking,
+    [dateKey]: entries.map(entry => entry.nutritionEntryId === nutritionEntryId ? { ...entry, recordedAt } : entry),
+  };
+};
+
 export const getDrinkStorage = async (): Promise<DrinkStorage> => {
   const dateKeys = await getTrackingKeys(DAILY_DRINK_NAMESPACE);
 

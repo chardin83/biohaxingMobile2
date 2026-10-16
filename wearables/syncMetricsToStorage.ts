@@ -118,7 +118,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
     getAllMetricEntries(),
   ]);
 
-  console.log(
+  /*console.log(
     '[HealthConnectAdapter] intense exercise',
     JSON.stringify(
       activity.map(entry => ({
@@ -129,7 +129,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
       null,
       2
     )
-  );
+  );*/
 
   const detectedVendor = (
     adapter as WearableAdapter & {

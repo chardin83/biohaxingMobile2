@@ -1,4 +1,14 @@
 {
+  "caffeineLoggingInfo": {
+    "title": "Koffein i din livsstilslogg",
+    "description": "När du loggar en koffeinhaltig dryck i journalen registreras koffeinintaget även i din livsstilslogg.",
+    "caffeine": "Markeras automatiskt för dagen när du loggar en koffeinhaltig dryck, till exempel kaffe, te eller energidryck.",
+    "beforeSleep": "Markeras om du intar koffein mindre än åtta timmar före din planerade läggtid, som är {{bedtime}}. Det avgörs av den tid du anger för drycken.",
+    "updates": "Ändrar du tiden eller tar bort drycken uppdateras de automatiska taggarna.",
+    "changeBedtime": "Ändra läggtid",
+    "understood": "Jag har förstått",
+    "saveError": "Kunde inte spara bekräftelsen. Försök igen."
+  },
   "nutritionLogger": {
     "untrackedTargets": "Mål utan uppföljning ({{count}})",
     "untrackedTargetsExplainer": "Premium krävs för att spåra dessa.",
@@ -19,6 +29,9 @@
     "packageFlowAddIngredientImage": "Fota näringsetikett",
     "packageFlowHint": "Foto på näringsetiketten hjälper till att analysera måltiden mer exakt.",
     "mealTime": "Måltidstid",
+    "drinkTime": "Tid för drycken",
+    "drinkNameLabel": "Dryckens namn",
+    "editDrinkTitle": "Redigera dryck",
     "analysisReviewTitle": "Granska AI-analysen innan du sparar",
     "analysisReviewAiDescriptionTitle": "AI-beskrivning av bilden",
     "detectedfFoodTitle": "Mat ({{st}})",
@@ -44,6 +57,7 @@
     "vitamins": "Vitaminer: {{value}} mg",
     "alcohol": "Alkohol",
     "caffeine": "Koffein",
+    "caffeineAmount": "Koffein: {{value}} mg",
     "sugarFree": "Sockerfri",
     "microbiomeYes": "Mikrobiom-support: Ja ({{count}})",
     "fulfilledTargetsCount": "{{met}}/{{total}} uppfyllda",

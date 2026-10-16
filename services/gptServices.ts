@@ -51,8 +51,10 @@ export interface NutritionAnalysisResponse {
     carbohydrates?: number;
     fat?: number;
     fiber?: number;
+    caffeineMg?: number;
 
     nutritionDetails?: {
+      caffeineMg?: number;
       fiber?: {
         total?: number;
         gelForming?: number;
@@ -137,6 +139,7 @@ export interface NutritionAnalysisResponse {
   };
 
   nutritionDetails?: {
+    caffeineMg?: number;
     fiber?: {
       total?: number;
       gelForming?: number;

@@ -18,6 +18,7 @@ import { tips } from '@/locales/tips';
 import type { DrinkType } from '@/services/gptServices';
 import { roundToOneDecimal, type WeeklyTrackingSignals } from '@/utils/analyzeNutrition';
 import { toDateKey, toRecordedAt } from '@/utils/dateUtils';
+import { hasCaffeine } from '@/utils/drinkCaffeine';
 import { type FoodKey, getFoodProduct, getMealProduct } from '@/utils/foodProduct';
 import { isNutritionTipUntracked } from '@/utils/untrackedNutritionTips';
 
@@ -32,6 +33,7 @@ import PremiumBottomSheet, { type PremiumBottomSheetRef } from '../ui/PremiumBot
 import AnalysisStatus from './AnalysisStatus';
 import BarcodeInfoBottomSheet from './BarcodeInfoBottomSheet';
 import BarcodeScannerBottomSheet from './BarcodeScannerBottomSheet';
+import CaffeineLoggingInfoModal from './CaffeineLoggingInfoModal';
 import DrinkPickerBottomSheet from './DrinkPickerBottomSheet';
 import EntryEditModal from './EntryEditModal';
 import FoodPickerBottomSheet from './FoodPickerBottomSheet';
@@ -104,6 +106,8 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   } = useStorage();
   const { weekStartISO: weekStartKey } = getWeekBoundsFromDateKey(selectedDate);
   const { summary, drinks, recentMeals, dailyNutrition } = useNutritionLoggerData(selectedDate);
+  const [caffeineInfoRequest, setCaffeineInfoRequest] = useState(0);
+  const loggedMeals = summary?.entries.filter(entry => entry.type !== 'drink') ?? [];
   const { fulfilledTipsSectionYRef, periodSectionYRef, nutritionPlanTipProgressByPeriod, getCompletionAnimValue, tipRowLocalYByKeyRef, tipRowPeriodByKeyRef } =
     useNutritionTipCompletion({ selectedDate, weekStartKey, onTipCompleted });
 
@@ -326,6 +330,12 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   };
 
   const handleRemoveDrink = (drinkId: string) => {
+    const drink = dailyDrinkTracking[selectedDate]?.find(entry => entry.id === drinkId);
+    const nutritionEntry = dailyNutritionTracking[selectedDate]?.entries.find(entry => entry.id === drink?.nutritionEntryId);
+    if (nutritionEntry?.type === 'drink') {
+      handleRemoveMeal(nutritionEntry.id);
+      return;
+    }
     removeDrinkEntry(selectedDate, drinkId);
   };
 
@@ -357,6 +367,16 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
         name,
         recordedAt: toRecordedAt(selectedDate, editingEntry.recordedAt),
       });
+      const drink = dailyDrinkTracking[selectedDate]?.find(entry => entry.id === editingEntry.id);
+      const nutritionEntry = dailyNutritionTracking[selectedDate]?.entries.find(entry => entry.id === drink?.nutritionEntryId);
+      if (nutritionEntry?.type === 'drink') {
+        const recordedAt = toRecordedAt(selectedDate, editingEntry.recordedAt);
+        updateNutritionEntry(selectedDate, nutritionEntry.id, { name, recordedAt });
+        if (nutritionEntry.id === selectedNutritionEntryId) {
+          setSelectedNutrition(prev => prev ? { ...prev, name, recordedAt } : prev);
+          setSelectedNutritionName(name);
+        }
+      }
     }
 
     setEditingEntry(null);
@@ -403,6 +423,9 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
         source: 'meal_analysis',
       });
     });
+    if (confirmedDrinks.some(hasCaffeine)) {
+      setCaffeineInfoRequest(current => current + 1);
+    }
 
     setSelectedNutritionEntryId(nutritionEntryId);
     setSelectedNutritionName(newEntry.name);
@@ -533,8 +556,8 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
             </Collapsible>
           </Card>
         )}
-        {summary && summary.entries.length > 0 && (
-          <LoggedMealsSection meals={summary.entries} onEdit={handleStartEditMeal} onDelete={handleRemoveMeal} onSelect={handleSelectNutritionEntry} />
+        {loggedMeals.length > 0 && (
+          <LoggedMealsSection meals={loggedMeals} onEdit={handleStartEditMeal} onDelete={handleRemoveMeal} onSelect={handleSelectNutritionEntry} />
         )}
         {drinks.length > 0 && (
           <LoggedDrinksSection drinks={drinks} onEdit={handleStartEditDrink} onDelete={handleRemoveDrink} onSelect={handleSelectLoggedDrink} />
@@ -630,12 +653,16 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
         <DrinkPickerBottomSheet ref={drinkPickerBottomSheetRef} onSelect={handleAddManualDrink} />
         <ProductAmountBottomSheet
           ref={productAmountBottomSheetRef}
-          onSave={(barcodeProduct, amount, productType) => {
+          onSave={(barcodeProduct, amount, productType, time) => {
             productAmountBottomSheetRef.current?.dismiss();
             copySourceMealIdRef.current = barcodeProduct.sourceMealId ?? null;
-            handleSaveBarcodeProduct(barcodeProduct, amount, productType);
+            handleSaveBarcodeProduct(barcodeProduct, amount, productType, time);
+            if (productType === 'drink' && hasCaffeine({ type: barcodeProduct.drinkType, caffeinated: barcodeProduct.caffeinated })) {
+              setCaffeineInfoRequest(current => current + 1);
+            }
           }}
         />
+        <CaffeineLoggingInfoModal requestKey={caffeineInfoRequest} />
         <BarcodeInfoBottomSheet
           ref={barcodeInfoBottomSheetRef}
           onContinue={() => {

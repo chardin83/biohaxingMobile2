@@ -8,6 +8,7 @@ import { globalStyles } from '@/app/theme/globalStyles';
 import { MetricDataStatus } from '@/components/metrics/MetricDataStatus';
 import { ThemedText } from '@/components/ThemedText';
 import { getLatestMetricEntry } from '@/utils/metricDateUtils';
+import { DEFAULT_BEDTIME } from '@/utils/sleepTimeUtils';
 import { WearablePermission } from '@/wearables/types';
 import { useWearable } from '@/wearables/wearableProvider';
 
@@ -38,7 +39,7 @@ export function SleepConsistencyMetric({ showDivider = false, onPress, isSelecte
   const latest = React.useMemo(() => getLatestMetricEntry(bedtimeData), [bedtimeData]);
   const actualMinutes = typeof latest?.value === 'number' ? latest.value : undefined;
   const startTime = actualMinutes !== undefined ? minutesToTimeString(actualMinutes) : undefined;
-  const nightlyDeviation = actualMinutes !== undefined ? getBedtimeDeviation(timeStringToMinutes(userProfile.bedtime ?? '23:00'), actualMinutes) : undefined;
+  const nightlyDeviation = actualMinutes !== undefined ? getBedtimeDeviation(timeStringToMinutes(userProfile.bedtime ?? DEFAULT_BEDTIME), actualMinutes) : undefined;
   const isPerfect = nightlyDeviation?.isPerfect === true;
   const isGood = nightlyDeviation?.isGood === true;
 

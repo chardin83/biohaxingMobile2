@@ -7,5 +7,3 @@ export type BloodPressureStatus = MetricStatusSubset<'unknown' | 'optimal' | 'lo
 export type ExerciseBeforeSleepStatus = MetricStatusSubset<'unknown' | 'optimal' | 'closeToBedtime' | 'tooCloseToBedtime'>;
 
 export type SleepConsistencyStatus = MetricStatusSubset<'low' | 'moderate' | 'good' | 'optimal'>;
-
-export type CaffeineBeforeSleepStatus = MetricStatusSubset<'unknown' | 'optimal' | 'closeToBedtime' | 'tooCloseToBedtime'>;

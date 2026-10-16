@@ -50,8 +50,10 @@ import {
   addDrinkEntryToTracking,
   getDrinkStorage,
   removeDrinkEntryFromTracking,
+  removeDrinksForNutritionEntry,
   syncDailyDrinkTracking,
   updateDrinkEntryInTracking,
+  updateDrinkTimesForNutritionEntry,
 } from './storage/drinks/drinkStorage';
 import { DailyDrinkTracking, DrinkEntry, DrinkEntryInput } from './storage/drinks/drinkTypes';
 import {
@@ -565,20 +567,6 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     [setDailyNutritionTracking]
   );
 
-  const updateNutritionEntry = useCallback(
-    (dateKey: string, entryId: string, updates: Partial<NutritionEntryInput>) => {
-      setDailyNutritionTracking(prev => updateNutritionEntryInTracking(prev, dateKey, entryId, updates));
-    },
-    [setDailyNutritionTracking]
-  );
-
-  const removeNutritionEntry = useCallback(
-    (dateKey: string, entryId: string) => {
-      setDailyNutritionTracking(prev => removeNutritionEntryFromTracking(prev, dateKey, entryId));
-    },
-    [setDailyNutritionTracking]
-  );
-
   const setWeeklyNutritionTracking = useCallback((updater: WeeklyNutritionTracking | ((prev: WeeklyNutritionTracking) => WeeklyNutritionTracking)) => {
     setWeeklyNutritionTrackingState(prev => {
       const updated = typeof updater === 'function' ? updater(prev) : updater;
@@ -625,6 +613,25 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     });
   }, []);
 
+  const removeNutritionEntry = useCallback(
+    (dateKey: string, entryId: string) => {
+      setDailyNutritionTracking(prev => removeNutritionEntryFromTracking(prev, dateKey, entryId));
+      setDailyDrinkTracking(prev => removeDrinksForNutritionEntry(prev, dateKey, entryId));
+    },
+    [setDailyNutritionTracking, setDailyDrinkTracking]
+  );
+
+  const updateNutritionEntry = useCallback(
+    (dateKey: string, entryId: string, updates: Partial<NutritionEntryInput>) => {
+      setDailyNutritionTracking(prev => updateNutritionEntryInTracking(prev, dateKey, entryId, updates));
+      const recordedAt = updates.recordedAt;
+      if (recordedAt !== undefined) {
+        setDailyDrinkTracking(prev => updateDrinkTimesForNutritionEntry(prev, dateKey, entryId, recordedAt));
+      }
+    },
+    [setDailyNutritionTracking, setDailyDrinkTracking]
+  );
+
   const addDrinkEntry = useCallback(
     (dateKey: string, entry: DrinkEntryInput): DrinkEntry => {
       const nextEntry: DrinkEntry = {
@@ -656,6 +663,12 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const clearDailyDrinkTracking = useCallback(() => {
     setDailyDrinkTracking({});
   }, [setDailyDrinkTracking]);
+
+  const { syncCaffeine, lifeStyleLoading, lifeStyleError } = lifeStyle;
+  useEffect(() => {
+    if (!isInitialized || !userProfileInitialized || lifeStyleLoading || lifeStyleError) return;
+    syncCaffeine(dailyDrinkTrackingState, userProfileState.bedtime).catch(console.error);
+  }, [isInitialized, userProfileInitialized, lifeStyleLoading, lifeStyleError, syncCaffeine, dailyDrinkTrackingState, userProfileState.bedtime]);
 
   /*
    * Training

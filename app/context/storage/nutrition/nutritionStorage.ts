@@ -14,7 +14,10 @@ export type NutritionStorage = {
 
 // Private
 
-const buildDailyNutritionSummary = (entries: NutritionEntry[], dateKey: string): DailyNutritionSummary => {
+const buildDailyNutritionSummary = (sourceEntries: NutritionEntry[], dateKey: string): DailyNutritionSummary => {
+  const entries = sourceEntries.map(entry => entry.caffeineMg === undefined || Number.isInteger(entry.caffeineMg)
+    ? entry
+    : { ...entry, caffeineMg: Math.round(entry.caffeineMg) });
   const rawTotals = entries.reduce(
     (acc, entry) => ({
       protein: acc.protein + (entry.protein ?? 0),
@@ -22,6 +25,7 @@ const buildDailyNutritionSummary = (entries: NutritionEntry[], dateKey: string):
       carbohydrates: acc.carbohydrates + (entry.carbohydrates ?? 0),
       fat: acc.fat + (entry.fat ?? 0),
       fiber: acc.fiber + (entry.fiber ?? 0),
+      caffeineMg: acc.caffeineMg + (entry.caffeineMg ?? 0),
     }),
     {
       protein: 0,
@@ -29,6 +33,7 @@ const buildDailyNutritionSummary = (entries: NutritionEntry[], dateKey: string):
       carbohydrates: 0,
       fat: 0,
       fiber: 0,
+      caffeineMg: 0,
     }
   );
 
@@ -38,6 +43,7 @@ const buildDailyNutritionSummary = (entries: NutritionEntry[], dateKey: string):
     carbohydrates: roundToOneDecimal(rawTotals.carbohydrates),
     fat: roundToOneDecimal(rawTotals.fat),
     fiber: roundToOneDecimal(rawTotals.fiber),
+    caffeineMg: entries.some(entry => entry.caffeineMg !== undefined) ? Math.round(rawTotals.caffeineMg) : undefined,
   };
 
   return {

@@ -4,7 +4,9 @@
     "items": {
       "dimmedLights": "Dämpade belysningen",
       "calmActivity": "Gjorde något lugnt",
-      "reducedScreens": "Drog ned på skärmljuset / ingen skärm"
+      "reducedScreens": "Drog ned på skärmljuset / ingen skärm",
+      "caffeineBeforeSleep": "Intog koffein nära läggdags",
+      "caffeine": "Intog koffein"
     },
     "loadError": "Kunde inte läsa livsstilsloggen.",
     "saveError": "Kunde inte spara registreringen. Försök igen."

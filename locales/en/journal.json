@@ -1,4 +1,14 @@
 {
+  "caffeineLoggingInfo": {
+    "title": "Caffeine in your lifestyle log",
+    "description": "When you log a caffeinated drink in the journal, your caffeine intake is also recorded in your lifestyle log.",
+    "caffeine": "Automatically marked for the day when you log a caffeinated drink, such as coffee, tea or an energy drink.",
+    "beforeSleep": "Marked if you consume caffeine less than eight hours before your planned bedtime, which is {{bedtime}}. This uses the time you enter for the drink.",
+    "updates": "Changing the time or deleting the drink updates the automatic tags.",
+    "changeBedtime": "Change bedtime",
+    "understood": "I understand",
+    "saveError": "Could not save the confirmation. Please try again."
+  },
   "nutritionLogger": {
     "untrackedTargets": "Goals without tracking ({{count}})",
     "untrackedTargetsExplainer": "Premium is required to track these goals.",
@@ -19,6 +29,9 @@
     "packageFlowAddIngredientImage": "Scan label",
     "packageFlowHint": "A photo of the nutrition label helps analyze the meal more accurately.",
     "mealTime": "Meal time",
+    "drinkTime": "Drink time",
+    "drinkNameLabel": "Drink name",
+    "editDrinkTitle": "Edit drink",
     "analysisReviewTitle": "Review AI analysis before saving",
     "analysisReviewAiDescriptionTitle": "AI description of the image",
     "detectedfFoodTitle": "Food ({{st}})",
@@ -44,6 +57,7 @@
     "vitamins": "Vitamins: {{value}} mg",
     "alcohol": "Alcohol",
     "caffeine": "Caffeine",
+    "caffeineAmount": "Caffeine: {{value}} mg",
     "sugarFree": "Sugar-free",
     "microbiomeYes": "Microbiome support: Yes ({{count}})",
     "fulfilledTargetsCount": "{{met}}/{{total}} completed",

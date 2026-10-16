@@ -13,11 +13,13 @@ export type NutritionComposition = {
   // - vitaminsByType/mineralsByType/aminoAcidsByType: milligrams (mg)
   //   Example: vitamin_a: 0.0035 means 0.0035 mg (= 3.5 mcg)
   // - polyphenolByType: milligrams (mg)
+  // - caffeineMg: milligrams (mg), for foods as well as drinks
   protein: number;
   calories: number;
   carbohydrates: number;
   fat: number;
   fiber: number;
+  caffeineMg?: number;
   fiberByType?: Partial<Record<FiberType, number>>;
   fiberSubtypeTotals?: Partial<Record<FiberSubtype, number>>;
   polyphenolByType?: Partial<Record<PolyphenolType, number>>;

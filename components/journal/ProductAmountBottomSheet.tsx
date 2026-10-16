@@ -13,6 +13,7 @@ import NutritionBreakdown from '../NutritionBreakdown';
 import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
 import { useBottomSheetDesign } from '../ui/BottomSheetDesign';
+import { DateTimeInput } from '../ui/DateTimeInput';
 import OptionSelector from '../ui/OptionSelector';
 
 export interface ProductAmountBottomSheetRef {
@@ -21,7 +22,7 @@ export interface ProductAmountBottomSheetRef {
 }
 
 interface ProductAmountBottomSheetProps {
-  onSave: (product: BarcodeProduct, grams: number, productType: BarcodeProductType) => void;
+  onSave: (product: BarcodeProduct, grams: number, productType: BarcodeProductType, time?: Date) => void;
 }
 
 const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, ProductAmountBottomSheetProps>(({ onSave }, ref) => {
@@ -34,6 +35,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
   const [product, setProduct] = useState<BarcodeProduct | null>(null);
   const [gramsText, setGramsText] = useState('100');
   const [productType, setProductType] = useState<'food' | 'drink'>();
+  const [time, setTime] = useState(() => new Date());
 
   const snapPoints = useMemo(() => ['75%'], []);
 
@@ -44,6 +46,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
         setProduct(nextProduct);
         setGramsText(String(nextProduct.fromCatalog ? (nextProduct.quantityValue ?? 100) : 100));
         setProductType(nextProduct.productType);
+        setTime(new Date());
 
         requestAnimationFrame(() => {
           bottomSheetRef.current?.present();
@@ -97,6 +100,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
       carbohydrates: round1((per100.carbohydratesPer100g ?? 0) * factor),
       fat: round1((per100.fatPer100g ?? 0) * factor),
       fiber: round1((per100.fiberPer100g ?? 0) * factor),
+      caffeineMg: per100.caffeineMgPer100g === undefined ? undefined : Math.round(per100.caffeineMgPer100g * factor),
       ...(per100.polyphenolsMgPer100g && {
         polyphenolByType: Object.fromEntries(Object.entries(per100.polyphenolsMgPer100g).map(([key, value]) => [key, value * factor])),
       }),
@@ -114,7 +118,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
     if (!product || grams <= 0 || !productType) return;
 
     Keyboard.dismiss();
-    onSave(product, grams, productType);
+    onSave(product, grams, productType, productType === 'drink' ? time : undefined);
     bottomSheetRef.current?.dismiss();
   };
 
@@ -179,6 +183,13 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
                     ]}
                   />
                 </View>
+              </View>
+            )}
+
+            {productType === 'drink' && (
+              <View style={styles.timeSection}>
+                <ThemedText type="defaultSemiBold">{t('journal:nutritionLogger.drinkTime')}</ThemedText>
+                <DateTimeInput value={time} onChange={setTime} showTime showDate={false} />
               </View>
             )}
 
@@ -270,6 +281,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
 ProductAmountBottomSheet.displayName = 'ProductAmountBottomSheet';
 
 const styles = StyleSheet.create({
+  timeSection: { gap: 8, marginBottom: 20, alignItems: 'flex-start' },
   content: {
     flex: 1,
     paddingHorizontal: 20,

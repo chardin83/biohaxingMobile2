@@ -98,6 +98,7 @@ export type DailyNutritionSummary = {
   date: string;
   entries: NutritionEntry[];
   totals: {
+    caffeineMg?: number;
     protein: number;
     calories: number;
     carbohydrates: number;

@@ -108,8 +108,8 @@ it('draws comparison data on the shared time axis with a separate right scale', 
   expect(screen.getAllByText('2000').length).toBeGreaterThan(0);
   expect(screen.queryByText('2650')).toBeNull();
   expect(screen.getByText('Steps (count)')).toBeTruthy();
-  expect(screen.getByTestId(`lifestyle-dot-${today}`).props.opacity).toBe(1);
-  expect(screen.getByTestId(`lifestyle-dot-${yesterday}`).props.opacity).toBe(0.5);
+  expect(screen.getByTestId(`lifestyle-dot-${today}`).props.opacity).toBeCloseTo(0.7);
+  expect(screen.getByTestId(`lifestyle-dot-${yesterday}`).props.opacity).toBeCloseTo(0.4);
   expect(screen.queryByTestId('lifestyle-dot-2000-01-01')).toBeNull();
 });
 

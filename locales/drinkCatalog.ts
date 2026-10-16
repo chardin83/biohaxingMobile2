@@ -4,6 +4,7 @@ import type { NutritionData } from '@/app/context/storage/nutrition/nutritionTyp
 import type { PolyphenolType } from '@/constants/polyphenols';
 import type { DrinkType } from '@/services/gptServices';
 import type { BarcodeProduct } from '@/services/openFoodFacts';
+import { hasCaffeine } from '@/utils/drinkCaffeine';
 
 const DRINK_IMAGES: Record<DrinkType, ImageSourcePropType> = {
   water: require('@/assets/images/drinks/water.png'),
@@ -37,6 +38,7 @@ type DrinkDefaults = {
   amountMl: number;
   per100ml: DrinkNutritionPer100ml;
   polyphenolsMgPer100ml?: Partial<Record<PolyphenolType, number>>;
+  caffeineMgPer100ml?: number;
 };
 
 const n = (calories: number, protein: number, carbohydrates: number, fat: number, fiber = 0): DrinkNutritionPer100ml => ({
@@ -48,12 +50,13 @@ const n = (calories: number, protein: number, carbohydrates: number, fat: number
 });
 
 // Approximate typical values per 100 ml and a common serving size.
+// Caffeine estimates: https://www.efsa.europa.eu/en/topics/topic/caffeine
 const DRINK_DEFAULTS: Record<DrinkType, DrinkDefaults> = {
   water: { amountMl: 250, per100ml: n(0, 0, 0, 0) },
-  coffee: { amountMl: 200, per100ml: n(1, 0.1, 0, 0), polyphenolsMgPer100ml: { polyphenols_total: 200, chlorogenic_acids: 150, phenolic_acids: 170 } },
-  tea: { amountMl: 250, per100ml: n(1, 0, 0.2, 0), polyphenolsMgPer100ml: { polyphenols_total: 110, flavonoids_total: 80, flavanols: 60, catechins: 40 } },
+  coffee: { amountMl: 200, per100ml: n(1, 0.1, 0, 0), caffeineMgPer100ml: 45, polyphenolsMgPer100ml: { polyphenols_total: 200, chlorogenic_acids: 150, phenolic_acids: 170 } },
+  tea: { amountMl: 250, per100ml: n(1, 0, 0.2, 0), caffeineMgPer100ml: 50 / 2.2, polyphenolsMgPer100ml: { polyphenols_total: 110, flavonoids_total: 80, flavanols: 60, catechins: 40 } },
   soft_drink: { amountMl: 330, per100ml: n(42, 0, 10.6, 0) },
-  energy_drink: { amountMl: 250, per100ml: n(45, 0, 11, 0) },
+  energy_drink: { amountMl: 250, per100ml: n(45, 0, 11, 0), caffeineMgPer100ml: 32 },
   juice: { amountMl: 200, per100ml: n(45, 0.5, 10.5, 0.1, 0.2), polyphenolsMgPer100ml: { polyphenols_total: 70, flavonoids_total: 45 } },
   milk: { amountMl: 200, per100ml: n(46, 3.4, 4.8, 1.5) },
   red_wine: {
@@ -69,7 +72,7 @@ const DRINK_DEFAULTS: Record<DrinkType, DrinkDefaults> = {
 };
 
 export const getDrinkProduct = (type: DrinkType, name: string): BarcodeProduct => {
-  const { amountMl, per100ml, polyphenolsMgPer100ml } = DRINK_DEFAULTS[type];
+  const { amountMl, per100ml, polyphenolsMgPer100ml, caffeineMgPer100ml } = DRINK_DEFAULTS[type];
 
   return {
     barcode: '',
@@ -78,6 +81,7 @@ export const getDrinkProduct = (type: DrinkType, name: string): BarcodeProduct =
     quantityUnit: 'ml',
     productType: 'drink',
     drinkType: type,
+    caffeinated: hasCaffeine({ type }),
     fromCatalog: true,
     nutrition: {
       caloriesPer100g: per100ml.calories,
@@ -85,19 +89,21 @@ export const getDrinkProduct = (type: DrinkType, name: string): BarcodeProduct =
       carbohydratesPer100g: per100ml.carbohydrates,
       fatPer100g: per100ml.fat,
       fiberPer100g: per100ml.fiber,
+      caffeineMgPer100g: caffeineMgPer100ml ?? 0,
       polyphenolsMgPer100g: polyphenolsMgPer100ml,
     },
   };
 };
 
 export const getDrinkNutritionData = (type: DrinkType, name: string, amountMl?: number): NutritionData => {
-  const { amountMl: defaultAmountMl, per100ml, polyphenolsMgPer100ml } = DRINK_DEFAULTS[type];
+  const { amountMl: defaultAmountMl, per100ml, polyphenolsMgPer100ml, caffeineMgPer100ml } = DRINK_DEFAULTS[type];
   const factor = (amountMl ?? defaultAmountMl) / 100;
   const round1 = (value: number) => Math.round(value * 10) / 10;
 
   return {
     name,
     calories: Math.round(per100ml.calories * factor),
+    caffeineMg: Math.round((caffeineMgPer100ml ?? 0) * factor),
     protein: round1(per100ml.protein * factor),
     carbohydrates: round1(per100ml.carbohydrates * factor),
     fat: round1(per100ml.fat * factor),

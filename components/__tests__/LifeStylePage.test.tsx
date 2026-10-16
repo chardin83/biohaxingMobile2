@@ -18,6 +18,12 @@ jest.mock('@/app/context/StorageContext', () => ({ useStorage: () => ({
 
 beforeEach(() => mockSave.mockReset().mockResolvedValue(undefined));
 
+it.each(['caffeine', 'caffeineBeforeSleep'])('logs %s as a lifestyle entry', async id => {
+  const screen = render(<LifeStylePage />);
+  fireEvent.press(screen.getByLabelText(`common:lifeStyle.items.${id}: common:filter.yes`));
+  await waitFor(() => expect(mockSave).toHaveBeenCalledWith(toDateKey(new Date()), id, true));
+});
+
 it('saves yes and no for the selected day and navigates back to today', async () => {
   const screen = render(<LifeStylePage />);
   fireEvent.press(screen.getByLabelText('common:lifeStyle.items.dimmedLights: common:filter.no'));
