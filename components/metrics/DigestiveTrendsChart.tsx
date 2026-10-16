@@ -23,6 +23,19 @@ export function DigestiveTrendsChart() {
 
   const [selectedMetric, setSelectedMetric] = React.useState<DigestiveTrendMetricKey | null>(null);
 
+  const isHRVSelected = selectedMetric === 'hrv_rmssd' || selectedMetric === 'hrv_sdnn';
+  const toggleHRV = () => {
+    setSelectedMetric(isHRVSelected ? null : hrvTrend.metricId);
+  };
+  const hrvSelector = {
+    ...hrvTrend.seriesSelector,
+    onChange: (value: string) => {
+      if (value !== 'hrv_rmssd' && value !== 'hrv_sdnn') return;
+      hrvTrend.seriesSelector.onChange(value);
+      setSelectedMetric(value);
+    },
+  };
+
   const metricValuesBottomSheetRef = React.useRef<BottomSheet>(null);
 
   const toggleMetric = React.useCallback((metric: DigestiveTrendMetricKey) => {
@@ -40,7 +53,7 @@ export function DigestiveTrendsChart() {
   return (
     <Card title={t('digestiveTrendsChart.title')}>
       <View style={globalStyles.row}>
-        <HRVMetric showDivider onPress={() => toggleMetric('hrv')} isSelected={selectedMetric === 'hrv'} />
+        <HRVMetric showDivider onPress={toggleHRV} isSelected={isHRVSelected} />
 
         <SleepMetric showDivider onPress={() => toggleMetric('sleep_duration')} isSelected={selectedMetric === 'sleep_duration'} />
 
@@ -49,7 +62,7 @@ export function DigestiveTrendsChart() {
 
       {selectedConfig && (
         <MetricTrendChart
-          seriesSelector={selectedMetric === 'hrv' ? hrvTrend.seriesSelector : undefined}
+          seriesSelector={isHRVSelected ? hrvSelector : undefined}
           data={selectedConfig.data}
           metricName={selectedConfig.metricName}
           unit={selectedConfig.unit}
@@ -72,7 +85,7 @@ export function DigestiveTrendsChart() {
         ]}
       >
         {selectedMetric
-          ? t(`digestiveTrendsChart.explainers.${selectedMetric}`, {
+          ? t(`digestiveTrendsChart.explainers.${isHRVSelected ? 'hrv' : selectedMetric}`, {
               defaultValue: t('digestiveTrendsChart.explainer'),
             })
           : t('digestiveTrendsChart.explainer')}
@@ -80,8 +93,8 @@ export function DigestiveTrendsChart() {
 
       <MetricValuesBottomSheet
         bottomSheetRef={metricValuesBottomSheetRef}
-        metricId={selectedMetric === 'hrv' ? hrvTrend.metricId : selectedMetric}
-        metricName={selectedMetric === 'hrv' ? hrvTrend.metricName : selectedConfig?.metricName}
+        metricId={selectedMetric}
+        metricName={selectedConfig?.metricName}
       />
     </Card>
   );

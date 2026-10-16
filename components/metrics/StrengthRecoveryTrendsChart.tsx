@@ -10,7 +10,7 @@ import { MetricValuesBottomSheet } from '@/components/sections/metrics/MetricVal
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { useHRVTrendSelector } from '@/hooks/useHRVTrendSelector';
-import { buildHRVDailyTrend, getHRVHistory } from '@/utils/hrvHistory';
+import { buildHRVDailyTrend } from '@/utils/hrvHistory';
 import { buildTrendData } from '@/utils/metrics';
 
 import { HRVMetric } from './HRVMetric';
@@ -18,7 +18,7 @@ import { MetricTrendChart } from './MetricTrendChart';
 import { SleepConsistencyMetric } from './SleepConsistencyMetric';
 import { SleepMetric } from './SleepMetric';
 
-type StrengthRecoveryMetricKey = 'sleep_duration' | 'sleep_bedtime' | 'hrv';
+type StrengthRecoveryMetricKey = 'sleep_duration' | 'sleep_bedtime' | 'hrv_rmssd' | 'hrv_sdnn';
 
 function formatSleepDuration(valueInMinutes: number) {
   const roundedMinutes = Math.max(0, Math.round(valueInMinutes));
@@ -40,6 +40,18 @@ export function StrengthRecoveryTrendsChart() {
   const { t } = useTranslation();
   const { getMetricHistory } = useStorage();
   const [selectedMetric, setSelectedMetric] = React.useState<StrengthRecoveryMetricKey | null>(null);
+  const isHRVSelected = selectedMetric === 'hrv_rmssd' || selectedMetric === 'hrv_sdnn';
+  const toggleHRV = () => {
+    setSelectedMetric(isHRVSelected ? null : hrvTrend.metricId);
+  };
+  const hrvSelector = {
+    ...hrvTrend.seriesSelector,
+    onChange: (value: string) => {
+      if (value !== 'hrv_rmssd' && value !== 'hrv_sdnn') return;
+      hrvTrend.seriesSelector.onChange(value);
+      setSelectedMetric(value);
+    },
+  };
   const metricValuesBottomSheetRef = React.useRef<BottomSheet>(null);
 
   const sleepDurationTrendData = React.useMemo(
@@ -53,7 +65,7 @@ export function StrengthRecoveryTrendsChart() {
     [getMetricHistory]
   );
   const sleepBedtimeTrendData = React.useMemo(() => buildTrendData(getMetricHistory('sleep_bedtime')), [getMetricHistory]);
-  const hrvTrendData = React.useMemo(() => buildHRVDailyTrend(getHRVHistory(getMetricHistory).entries), [getMetricHistory]);
+  const hrvTrendData = React.useMemo(() => selectedMetric === 'hrv_rmssd' || selectedMetric === 'hrv_sdnn' ? buildHRVDailyTrend(getMetricHistory(selectedMetric)) : [], [getMetricHistory, selectedMetric]);
 
   const toggleMetric = React.useCallback((metric: StrengthRecoveryMetricKey) => {
     setSelectedMetric(current => (current === metric ? null : metric));
@@ -76,9 +88,10 @@ export function StrengthRecoveryTrendsChart() {
           accentColor: colors.chart.deepSleep,
           explainer: t('areas:strength.recoveryFactors.explainers.sleep_bedtime'),
         };
-      case 'hrv':
+      case 'hrv_rmssd':
+      case 'hrv_sdnn':
         return {
-          metricName: t(`metrics:${getHRVHistory(getMetricHistory).metricId}.name`),
+          metricName: t(`metrics:${selectedMetric}.name`),
           unit: 'ms',
           data: hrvTrendData,
           accentColor: colors.chart.hrv,
@@ -97,7 +110,6 @@ export function StrengthRecoveryTrendsChart() {
     }
   }, [
     selectedMetric,
-    getMetricHistory,
     t,
     sleepBedtimeTrendData,
     hrvTrendData,
@@ -112,12 +124,12 @@ export function StrengthRecoveryTrendsChart() {
       <View style={globalStyles.row}>
         <SleepMetric showDivider onPress={() => toggleMetric('sleep_duration')} isSelected={selectedMetric === 'sleep_duration'} />
         <SleepConsistencyMetric showDivider onPress={() => toggleMetric('sleep_bedtime')} isSelected={selectedMetric === 'sleep_bedtime'} />
-        <HRVMetric showDivider={false} onPress={() => toggleMetric('hrv')} isSelected={selectedMetric === 'hrv'} />
+        <HRVMetric showDivider={false} onPress={toggleHRV} isSelected={isHRVSelected} />
       </View>
 
       {selectedConfig && (
         <MetricTrendChart
-          seriesSelector={selectedMetric === 'hrv' ? hrvTrend.seriesSelector : undefined}
+          seriesSelector={isHRVSelected ? hrvSelector : undefined}
           data={selectedConfig.data}
           metricName={selectedConfig.metricName}
           unit={selectedConfig.unit}
@@ -135,8 +147,8 @@ export function StrengthRecoveryTrendsChart() {
 
       <MetricValuesBottomSheet
         bottomSheetRef={metricValuesBottomSheetRef}
-        metricId={selectedMetric === 'hrv' ? hrvTrend.metricId : selectedMetric}
-        metricName={selectedMetric === 'hrv' ? hrvTrend.metricName : selectedConfig?.metricName}
+        metricId={selectedMetric}
+        metricName={selectedConfig?.metricName}
       />
     </Card>
   );

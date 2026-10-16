@@ -11,7 +11,6 @@ import { RegisterMetricBottomSheet } from '@/components/RegisterMetricBottomShee
 import { ThemedText } from '@/components/ThemedText';
 import { useBottomSheetDesign } from '@/components/ui/BottomSheetDesign';
 import { MetricId, metrics } from '@/locales/metrics';
-import { getHRVHistory } from '@/utils/hrvHistory';
 
 import { MetricValuesTableSection } from './MetricValuesTableSection';
 import { SleepBatchBottomSheet } from './SleepBatchBottomSheet';
@@ -28,16 +27,13 @@ type MetricValuesBottomSheetProps = {
 
 export function MetricValuesBottomSheet({
   bottomSheetRef,
-  metricId: requestedMetricId,
-  metricName: requestedMetricName,
+  metricId,
+  metricName,
 }: Readonly<MetricValuesBottomSheetProps>) {
   const { colors } = useTheme();
   const sheetDesign = useBottomSheetDesign(colors);
   const { t } = useTranslation(['common', 'metrics']);
   const { addMetricEntry, getMetricHistory, setMetricEntries } = useStorage();
-
-  const metricId = requestedMetricId === 'hrv' ? getHRVHistory(getMetricHistory).metricId : requestedMetricId;
-  const metricName = requestedMetricId === 'hrv' ? t(`metrics:${metricId}.name`) : requestedMetricName;
 
   const registerBottomSheetRef = React.useRef<BottomSheet>(null);
   const registerSleepBatchBottomSheetRef = React.useRef<BottomSheet>(null);

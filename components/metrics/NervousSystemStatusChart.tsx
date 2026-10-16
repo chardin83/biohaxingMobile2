@@ -25,6 +25,20 @@ export function NervousSystemStatusChart() {
 
   const [selectedMetric, setSelectedMetric] = React.useState<NervousMetricKey | null>(null);
 
+  const isHRVSelected = selectedMetric === 'hrv_rmssd' || selectedMetric === 'hrv_sdnn';
+  const toggleHRV = () => {
+    setRecoverySelected(false);
+    setSelectedMetric(isHRVSelected ? null : hrvTrend.metricId);
+  };
+  const hrvSelector = {
+    ...hrvTrend.seriesSelector,
+    onChange: (value: string) => {
+      if (value !== 'hrv_rmssd' && value !== 'hrv_sdnn') return;
+      hrvTrend.seriesSelector.onChange(value);
+      setSelectedMetric(value);
+    },
+  };
+
   const metricValuesBottomSheetRef = React.useRef<BottomSheet>(null);
 
   const toggleMetric = React.useCallback((metric: NervousMetricKey) => {
@@ -42,14 +56,14 @@ export function NervousSystemStatusChart() {
   if (recoverySelected) {
     explainer = t('nervousTrendsChart.explainers.recovery');
   } else if (selectedMetric) {
-    explainer = t(`nervousTrendsChart.explainers.${selectedMetric}`, { defaultValue: explainer });
+    explainer = t(`nervousTrendsChart.explainers.${isHRVSelected ? 'hrv' : selectedMetric}`, { defaultValue: explainer });
   }
 
   return (
     <>
       <Card title={t('areas:nervousSystem.autonomicNervousSystem.title')}>
         <View style={globalStyles.row}>
-          <HRVMetric onPress={() => toggleMetric('hrv')} isSelected={selectedMetric === 'hrv'} />
+          <HRVMetric onPress={toggleHRV} isSelected={isHRVSelected} />
         </View>
 
         <View style={[globalStyles.row, globalStyles.marginTop16]}>
@@ -68,7 +82,7 @@ export function NervousSystemStatusChart() {
 
         {selectedConfig && (
           <MetricTrendChart
-            seriesSelector={selectedMetric === 'hrv' ? hrvTrend.seriesSelector : undefined}
+            seriesSelector={isHRVSelected ? hrvSelector : undefined}
             data={selectedConfig.data}
             metricName={selectedConfig.metricName}
             unit={selectedConfig.unit}
@@ -96,8 +110,8 @@ export function NervousSystemStatusChart() {
 
       <MetricValuesBottomSheet
         bottomSheetRef={metricValuesBottomSheetRef}
-        metricId={selectedMetric === 'hrv' ? hrvTrend.metricId : selectedMetric}
-        metricName={selectedMetric === 'hrv' ? hrvTrend.metricName : selectedConfig?.metricName}
+        metricId={selectedMetric}
+        metricName={selectedConfig?.metricName}
       />
     </>
   );

@@ -16,7 +16,7 @@ export function useHRVTrendSelector() {
     options: (['hrv_rmssd', 'hrv_sdnn'] as const).map(id => ({
       value: id,
       label: id === 'hrv_rmssd' ? 'RMSSD' : 'SDNN',
-      metricName: t('metrics:hrv.dailyMeanName', { format: id === 'hrv_rmssd' ? 'RMSSD' : 'SDNN' }),
+      metricName: t(`metrics:${id}.name`),
       data: buildHRVDailyTrend(getMetricHistory(id)),
     })),
     onChange: value => {

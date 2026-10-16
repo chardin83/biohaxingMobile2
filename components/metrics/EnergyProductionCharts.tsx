@@ -15,11 +15,11 @@ import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { useHRVTrendSelector } from '@/hooks/useHRVTrendSelector';
 import { MetricId } from '@/locales/metrics';
-import { buildHRVDailyTrend, getHRVHistory } from '@/utils/hrvHistory';
+import { buildHRVDailyTrend } from '@/utils/hrvHistory';
 
 type ValidMetricId<T extends MetricId> = T;
 
-type EnergyProductionMetricKey = ValidMetricId<'vo2_max' | 'resting_hr' | 'hrv'>;
+type EnergyProductionMetricKey = ValidMetricId<'vo2_max' | 'resting_hr' | 'hrv_rmssd' | 'hrv_sdnn'>;
 
 export function EnergyProductionCharts() {
   const hrvTrend = useHRVTrendSelector();
@@ -27,6 +27,18 @@ export function EnergyProductionCharts() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const [selectedMetric, setSelectedMetric] = React.useState<EnergyProductionMetricKey | null>(null);
+  const isHRVSelected = selectedMetric === 'hrv_rmssd' || selectedMetric === 'hrv_sdnn';
+  const toggleHRV = () => {
+    setSelectedMetric(isHRVSelected ? null : hrvTrend.metricId);
+  };
+  const hrvSelector = {
+    ...hrvTrend.seriesSelector,
+    onChange: (value: string) => {
+      if (value !== 'hrv_rmssd' && value !== 'hrv_sdnn') return;
+      hrvTrend.seriesSelector.onChange(value);
+      setSelectedMetric(value);
+    },
+  };
   const metricValuesBottomSheetRef = React.useRef<BottomSheet>(null);
 
   const toggleMetric = React.useCallback((metric: EnergyProductionMetricKey) => {
@@ -39,7 +51,7 @@ export function EnergyProductionCharts() {
 
   const toTrendData = React.useCallback(
     (metricId: EnergyProductionMetricKey): MetricTrendPoint[] => {
-      if (metricId === 'hrv') return buildHRVDailyTrend(getHRVHistory(getMetricHistory).entries);
+      if (metricId === 'hrv_rmssd' || metricId === 'hrv_sdnn') return buildHRVDailyTrend(getMetricHistory(metricId));
       return getMetricHistory(metricId)
         .map(entry => ({
           date: entry.recordedAt.slice(0, 10),
@@ -54,7 +66,7 @@ export function EnergyProductionCharts() {
 
   const restingHRTrendData = React.useMemo(() => toTrendData('resting_hr'), [toTrendData]);
 
-  const hrvTrendData = React.useMemo(() => toTrendData('hrv'), [toTrendData]);
+  const hrvTrendData = React.useMemo(() => selectedMetric === 'hrv_rmssd' || selectedMetric === 'hrv_sdnn' ? toTrendData(selectedMetric) : [], [toTrendData, selectedMetric]);
 
   const selectedMetricConfig = React.useMemo(() => {
     if (!selectedMetric) {
@@ -76,15 +88,22 @@ export function EnergyProductionCharts() {
           data: restingHRTrendData,
           accentColor: colors.chart.restingHr,
         };
-      case 'hrv':
+      case 'hrv_rmssd':
+      case 'hrv_sdnn':
         return {
-          metricName: t(`metrics:${getHRVHistory(getMetricHistory).metricId}.name`),
+          metricName: t(`metrics:${selectedMetric}.name`),
           unit: 'ms',
           data: hrvTrendData,
           accentColor: colors.chart.hrv,
         };
     }
-  }, [selectedMetric, getMetricHistory, t, vo2MaxTrendData, restingHRTrendData, hrvTrendData, colors.chart.vo2Max, colors.chart.restingHr, colors.chart.hrv]);
+  }, [selectedMetric, t, vo2MaxTrendData, restingHRTrendData, hrvTrendData, colors.chart.vo2Max, colors.chart.restingHr, colors.chart.hrv]);
+
+  let explainer = t('energyProductionCharts.explainer');
+  if (selectedMetric) {
+    const explainerMetric = isHRVSelected ? 'hrv' : selectedMetric;
+    explainer = t(`energyProductionCharts.explainers.${explainerMetric}`, { defaultValue: explainer });
+  }
 
   return (
     <>
@@ -92,11 +111,11 @@ export function EnergyProductionCharts() {
         <View style={globalStyles.row}>
           <VO2MaxMetric showDivider onPress={() => toggleMetric('vo2_max')} isSelected={selectedMetric === 'vo2_max'} />
           <RestingHRMetric showDivider onPress={() => toggleMetric('resting_hr')} isSelected={selectedMetric === 'resting_hr'} />
-          <HRVMetric onPress={() => toggleMetric('hrv')} isSelected={selectedMetric === 'hrv'} />
+          <HRVMetric onPress={toggleHRV} isSelected={isHRVSelected} />
         </View>
         {selectedMetricConfig && (
           <MetricTrendChart
-            seriesSelector={selectedMetric === 'hrv' ? hrvTrend.seriesSelector : undefined}
+            seriesSelector={isHRVSelected ? hrvSelector : undefined}
             data={selectedMetricConfig.data}
             metricName={selectedMetricConfig.metricName}
             unit={selectedMetricConfig.unit}
@@ -105,17 +124,13 @@ export function EnergyProductionCharts() {
           />
         )}
         <ThemedText type="explainer" style={[globalStyles.explainer, { borderColor: colors.borderLight }]}>
-          {selectedMetric
-            ? t(`energyProductionCharts.explainers.${selectedMetric}`, {
-                defaultValue: t('energyProductionCharts.explainer'),
-              })
-            : t('energyProductionCharts.explainer')}
+          {explainer}
         </ThemedText>
       </Card>
       <MetricValuesBottomSheet
         bottomSheetRef={metricValuesBottomSheetRef}
-        metricId={selectedMetric === 'hrv' ? hrvTrend.metricId : selectedMetric}
-        metricName={selectedMetric === 'hrv' ? hrvTrend.metricName : selectedMetricConfig?.metricName}
+        metricId={selectedMetric}
+        metricName={selectedMetricConfig?.metricName}
       />
     </>
   );

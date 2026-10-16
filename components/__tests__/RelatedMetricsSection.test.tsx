@@ -2,6 +2,7 @@ import { act, fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
 
 import RelatedMetricsSection from '@/app/(stack)/dashboard/area/[areaId]/details/sections/RelatedMetricsSection';
+import type { MetricId } from '@/locales/metrics';
 
 const mockClaimReadingXP = jest.fn();
 jest.mock('@/app/context/StorageContext', () => ({ useStorage: () => ({ viewedTips: [], claimTipReadingXP: mockClaimReadingXP }) }));
@@ -15,8 +16,9 @@ jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) =>
 jest.mock('react-native-safe-area-context', () => ({ useSafeAreaInsets: () => ({ bottom: 0 }) }));
 jest.mock('../ui/BottomSheetDesign', () => ({ useBottomSheetDesign: () => ({}) }));
 jest.mock('@/locales/metrics', () => {
-  const ids = ['sleep_duration', 'deep_sleep', 'rem_sleep', 'resting_hr', 'hrv'];
-  return { metrics: Object.fromEntries(ids.map(id => [id, {}])), tipMetricLinks: { example: ids.map(metricId => ({ metricId })) } };
+  const actual = jest.requireActual('@/locales/metrics');
+  const ids = ['sleep_duration', 'deep_sleep', 'rem_sleep', 'resting_hr', 'hrv_rmssd', 'hrv_sdnn'] as const satisfies readonly MetricId[];
+  return { ...actual, tipMetricLinks: { ...actual.tipMetricLinks, example: ids.map(metricId => ({ metricId })) } };
 });
 jest.mock('../ui/CardLinkList', () => ({
   CardLinkList: ({ rows }: any) => {
@@ -51,11 +53,11 @@ jest.mock('../sections/metrics/MetricValuesBottomSheet', () => ({
 beforeEach(() => { jest.clearAllMocks(); jest.useFakeTimers(); });
 afterEach(() => jest.useRealTimers());
 
-it('lists five related metrics and opens the existing value sheet after dismissing the list', () => {
+it('lists six related metrics and opens the existing value sheet after dismissing the list', () => {
   const screen = render(<RelatedMetricsSection tipId="example" />);
-  const overview = screen.getByTestId('common:tipDetails.metricsTitle (5)');
+  const overview = screen.getByTestId('common:tipDetails.metricsTitle (6)');
   expect(overview.props.iconName).toBe('chart');
-  expect(screen.getByText('metrics:sleep_duration.name, metrics:deep_sleep.name, metrics:rem_sleep.name, metrics:resting_hr.name, metrics:hrv.name')).toBeTruthy();
+  expect(screen.getByText('metrics:sleep_duration.name, metrics:deep_sleep.name, metrics:rem_sleep.name, metrics:resting_hr.name, metrics:hrv_rmssd.name, metrics:hrv_sdnn.name')).toBeTruthy();
   expect(screen.getAllByTestId('information-sheet')).toHaveLength(1);
   fireEvent.press(overview);
   expect(mockPresent).toHaveBeenCalledTimes(1);
@@ -73,6 +75,16 @@ it('lists five related metrics and opens the existing value sheet after dismissi
   expect(mockOpenValues).toHaveBeenCalledWith(1);
   fireEvent(screen.getByTestId('information-sheet'), 'dismiss');
   expect(mockOpenValues).toHaveBeenCalledTimes(1);
+});
+
+it.each(['hrv_rmssd', 'hrv_sdnn'] as const)('opens the value sheet for %s', metricId => {
+  const screen = render(<RelatedMetricsSection tipId="example" />);
+  fireEvent.press(screen.getByTestId('common:tipDetails.metricsTitle (6)'));
+  fireEvent.press(screen.getByTestId(`metrics:${metricId}.name`));
+  expect(screen.getByText(`Table: ${metricId}`)).toBeTruthy();
+  expect(mockOpenValues).not.toHaveBeenCalled();
+  fireEvent(screen.getByTestId('information-sheet'), 'dismiss');
+  expect(mockOpenValues).toHaveBeenCalledWith(1);
 });
 
 it('hides the card when the tip has no related metrics', () => {

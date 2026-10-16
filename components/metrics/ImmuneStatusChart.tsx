@@ -10,7 +10,7 @@ import { MetricValuesBottomSheet } from '@/components/sections/metrics/MetricVal
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import { useHRVTrendSelector } from '@/hooks/useHRVTrendSelector';
-import { buildHRVDailyTrend, getHRVHistory } from '@/utils/hrvHistory';
+import { buildHRVDailyTrend } from '@/utils/hrvHistory';
 import { buildTrendData } from '@/utils/metrics';
 
 import { DeepSleepMetric } from './DeepSleepMetric';
@@ -21,7 +21,7 @@ import { RecoveryTrendChart } from './RecoveryTrendChart';
 import { RestingHRMetric } from './RestingHRMetric';
 import { SleepMetric } from './SleepMetric';
 
-type ImmuneTrendMetricKey = 'sleep_duration' | 'deep_sleep' | 'resting_hr' | 'hrv';
+type ImmuneTrendMetricKey = 'sleep_duration' | 'deep_sleep' | 'resting_hr' | 'hrv_rmssd' | 'hrv_sdnn';
 
 function formatSleepDuration(valueInMinutes: number) {
   const roundedMinutes = Math.max(0, Math.round(valueInMinutes));
@@ -37,6 +37,19 @@ export function ImmuneStatusChart() {
   const { t } = useTranslation();
   const { getMetricHistory } = useStorage();
   const [selectedMetric, setSelectedMetric] = React.useState<ImmuneTrendMetricKey | null>(null);
+  const isHRVSelected = selectedMetric === 'hrv_rmssd' || selectedMetric === 'hrv_sdnn';
+  const toggleHRV = () => {
+    setRecoverySelected(false);
+    setSelectedMetric(isHRVSelected ? null : hrvTrend.metricId);
+  };
+  const hrvSelector = {
+    ...hrvTrend.seriesSelector,
+    onChange: (value: string) => {
+      if (value !== 'hrv_rmssd' && value !== 'hrv_sdnn') return;
+      hrvTrend.seriesSelector.onChange(value);
+      setSelectedMetric(value);
+    },
+  };
   const metricValuesBottomSheetRef = React.useRef<BottomSheet>(null);
 
   const toggleMetric = React.useCallback((metric: ImmuneTrendMetricKey) => {
@@ -66,8 +79,8 @@ export function ImmuneStatusChart() {
   }, [getMetricHistory]);
 
   const hrvTrendData = React.useMemo<MetricTrendPoint[]>(() => {
-    return buildHRVDailyTrend(getHRVHistory(getMetricHistory).entries);
-  }, [getMetricHistory]);
+    return selectedMetric === 'hrv_rmssd' || selectedMetric === 'hrv_sdnn' ? buildHRVDailyTrend(getMetricHistory(selectedMetric)) : [];
+  }, [getMetricHistory, selectedMetric]);
 
   const selectedConfig = React.useMemo(() => {
     if (!selectedMetric) {
@@ -97,10 +110,11 @@ export function ImmuneStatusChart() {
           data: restingHrTrendData,
           accentColor: colors.chart.restingHr,
         };
-      case 'hrv':
+      case 'hrv_rmssd':
+      case 'hrv_sdnn':
       default:
         return {
-          metricName: t(`metrics:${getHRVHistory(getMetricHistory).metricId}.shortName`),
+          metricName: t(`metrics:${selectedMetric}.shortName`),
           unit: 'ms',
           data: hrvTrendData,
           accentColor: colors.chart.hrv,
@@ -113,7 +127,6 @@ export function ImmuneStatusChart() {
     colors.chart.sleepDuration,
     deepSleepTrendData,
     hrvTrendData,
-    getMetricHistory,
     restingHrTrendData,
     selectedMetric,
     sleepDurationTrendData,
@@ -124,7 +137,7 @@ export function ImmuneStatusChart() {
   if (recoverySelected) {
     explainer = t('immuneTrendsChart.explainers.recovery');
   } else if (selectedMetric) {
-    explainer = t(`immuneTrendsChart.explainers.${selectedMetric}`, { defaultValue: explainer });
+    explainer = t(`immuneTrendsChart.explainers.${isHRVSelected ? 'hrv' : selectedMetric}`, { defaultValue: explainer });
   }
 
   return (
@@ -137,7 +150,7 @@ export function ImmuneStatusChart() {
 
         <View style={[globalStyles.row, globalStyles.marginTop8]}>
           <RestingHRMetric showDivider={true} onPress={() => toggleMetric('resting_hr')} isSelected={selectedMetric === 'resting_hr'} />
-          <HRVMetric showDivider={true} onPress={() => toggleMetric('hrv')} isSelected={selectedMetric === 'hrv'} />
+          <HRVMetric showDivider={true} onPress={toggleHRV} isSelected={isHRVSelected} />
           <RecoveryStatusMetric
             isSelected={recoverySelected}
             onPress={() => {
@@ -151,7 +164,7 @@ export function ImmuneStatusChart() {
 
         {selectedConfig && (
           <MetricTrendChart
-            seriesSelector={selectedMetric === 'hrv' ? hrvTrend.seriesSelector : undefined}
+            seriesSelector={isHRVSelected ? hrvSelector : undefined}
             data={selectedConfig.data}
             metricName={selectedConfig.metricName}
             unit={selectedConfig.unit}
@@ -167,8 +180,8 @@ export function ImmuneStatusChart() {
       </Card>
       <MetricValuesBottomSheet
         bottomSheetRef={metricValuesBottomSheetRef}
-        metricId={selectedMetric === 'hrv' ? hrvTrend.metricId : selectedMetric}
-        metricName={selectedMetric === 'hrv' ? hrvTrend.metricName : selectedConfig?.metricName}
+        metricId={selectedMetric}
+        metricName={selectedConfig?.metricName}
       />
     </>
   );

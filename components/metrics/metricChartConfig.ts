@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { type MetricId } from '@/locales/metrics';
-import { buildHRVDailyTrend, getHRVHistory } from '@/utils/hrvHistory';
+import { buildHRVDailyTrend } from '@/utils/hrvHistory';
 import { buildTrendData } from '@/utils/metrics';
 import { RECOVERY_THRESHOLDS } from '@/utils/recoveryStatus';
 
@@ -49,11 +49,11 @@ export const cardioTrendMetrics = ['vo2_max', 'resting_hr', 'diastolic_bp', 'sys
 
 export type CardioTrendMetricKey = (typeof cardioTrendMetrics)[number];
 
-export const nervousTrendMetrics = ['hrv', 'resting_hr'] as const satisfies readonly MetricId[];
+export const nervousTrendMetrics = ['hrv_rmssd', 'hrv_sdnn', 'resting_hr'] as const satisfies readonly MetricId[];
 
 export type NervousMetricKey = (typeof nervousTrendMetrics)[number];
 
-export const digestiveTrendMetrics = ['hrv', 'sleep_duration', 'active_minutes'] as const satisfies readonly MetricId[];
+export const digestiveTrendMetrics = ['hrv_rmssd', 'hrv_sdnn', 'sleep_duration', 'active_minutes'] as const satisfies readonly MetricId[];
 
 export type DigestiveTrendMetricKey = (typeof digestiveTrendMetrics)[number];
 
@@ -126,13 +126,6 @@ const ALL_METRIC_CHART_META: Partial<Record<MetricId, MetricMeta>> = {
     ],
   },*/
 
-  hrv: {
-    metricNameKey: 'metrics:hrv.name',
-    buildData: getMetricHistory => buildHRVDailyTrend(getHRVHistory(getMetricHistory).entries),
-    unit: 'ms',
-    accentColor: colors => colors.chart.hrv,
-  },
-
   hrv_rmssd: {
     metricNameKey: 'metrics:hrv_rmssd.name',
     buildData: getMetricHistory => buildHRVDailyTrend(getMetricHistory('hrv_rmssd')),
@@ -182,7 +175,7 @@ export function useMetricConfig({ metricId, data: dataOverride }: UseMetricConfi
 
     const data = dataOverride ?? meta?.buildData?.(getMetricHistory, metricId) ?? buildTrendData(getMetricHistory(metricId));
 
-    const nameKey = metricId === 'hrv' ? `metrics:${getHRVHistory(getMetricHistory).metricId}.name` : (meta?.metricNameKey ?? `metrics:${metricId}.name`);
+    const nameKey = meta?.metricNameKey ?? `metrics:${metricId}.name`;
     return {
       metricName: t(nameKey),
       unit: meta?.unit,
