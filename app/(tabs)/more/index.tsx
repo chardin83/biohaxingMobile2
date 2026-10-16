@@ -135,6 +135,13 @@ export default function SettingsPage() {
             onPress: () => router.push('/(stack)/metrics'),
           },
           {
+            key: 'lifeStyle',
+            title: t('common:lifeStyle.title'),
+            iconName: 'book',
+            iconColor: '#afa2ff',
+            onPress: () => router.push('/(stack)/lifestyle'),
+          },
+          {
             key: 'link',
             title: t('settings.myMultivitamins'),
             subtitle: t('settings.myMultivitaminsSubtitle'),
