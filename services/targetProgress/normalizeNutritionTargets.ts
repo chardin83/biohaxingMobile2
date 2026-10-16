@@ -14,6 +14,7 @@ type NutritionTip = {
   vitaminTargets?: any[];
   aminoAcidTargets?: any[];
   proteinTargets?: any[];
+  nutrientTargets?: any[];
   trackingTargets?: any[];
 };
 
@@ -31,6 +32,13 @@ export const normalizeNutritionTargets = (inputTip: NutritionTip, weightKg?: num
   const tipSupplementIds = (tip.supplements ?? []).map(supplement => supplement.id).filter((id): id is string => Boolean(id));
 
   const targets: NutritionTargetDefinition[] = [
+    ...(tip.nutrientTargets ?? []).map(target => ({
+      ...target,
+      source: 'nutrition' as const,
+      trackingKey: target.tag,
+      period,
+      labelGroup: 'nutrientLabels' as const,
+    })),
     ...(tip.proteinTargets ?? []).map(target => ({
       ...target,
       source: 'nutrition' as const,

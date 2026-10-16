@@ -6,6 +6,7 @@ import { useStorage } from '@/app/context/StorageContext';
 import { isAminoAcidTargetTag } from '@/constants/aminoAcids';
 import { isFiberTargetTag } from '@/constants/fiber';
 import { isMineralTargetTag } from '@/constants/minerals';
+import { isNutrientTargetTag } from '@/constants/nutrients';
 import { isPolyphenolTargetTag } from '@/constants/polyphenols';
 import { isVitaminTargetTag } from '@/constants/vitamins';
 import { tips } from '@/locales/tips';
@@ -14,10 +15,11 @@ import type { NutritionTargetDefinition } from '@/services/targetProgress/target
 import type { NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
 import { hasProfileProteinTargets, hasValidProteinGoal, hasValidTargetWeight, hasWeightBasedTargets, resolveNutritionTip } from '@/utils/resolveNutritionTip';
 
-type NutritionLabelGroup = 'macroLabels' | 'aminoAcidLabels' | 'mineralLabels' | 'vitaminLabels' | 'fiberLabels' | 'polyphenolLabels';
+type NutritionLabelGroup = 'macroLabels' | 'aminoAcidLabels' | 'mineralLabels' | 'vitaminLabels' | 'fiberLabels' | 'polyphenolLabels' | 'nutrientLabels';
 
 const getNutritionLabelGroup = (tag: string, unit: NutritionTargetUnit): NutritionLabelGroup => {
   if (tag === 'protein') return 'macroLabels';
+  if (isNutrientTargetTag(tag)) return 'nutrientLabels';
   if (isAminoAcidTargetTag(tag)) {
     return 'aminoAcidLabels';
   }
@@ -67,6 +69,7 @@ export const useNutritionTipTargets = (dateKeys: string[]): Record<string, Recor
 
       const rawTargets = [
         ...(tip.proteinTargets ?? []),
+        ...(tip.nutrientTargets ?? []),
         ...(tip.mineralTargets ?? []),
         ...(tip.vitaminTargets ?? []),
         ...(tip.aminoAcidTargets ?? []),

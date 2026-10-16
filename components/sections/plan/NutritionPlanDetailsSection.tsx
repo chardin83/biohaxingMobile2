@@ -11,6 +11,7 @@ import AppBox from '@/components/ui/AppBox';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { ALL_AMINO_ACID_KEYS } from '@/constants/aminoAcids';
 import { MINERAL_TYPE_KEYS } from '@/constants/minerals';
+import { isNutrientTargetTag } from '@/constants/nutrients';
 import { VITAMIN_TYPE_KEYS } from '@/constants/vitamins';
 import type { Tip } from '@/locales/tips';
 import { NutritionTargetPeriod, NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
@@ -64,6 +65,7 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgre
       tag: target.trackingKey,
     }));
     const allTargets: NutritionTargetSource[] = [
+      ...(tip.nutrientTargets ?? []),
       ...proteinTargets,
       ...fiberTargets,
       ...polyphenolTargets,
@@ -99,11 +101,13 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgre
 
     return allTargets.map((target: NutritionTargetSource) => {
       const trackingKey = target.trackingKey ?? target.tag;
-      let labelGroup: 'macroLabels' | 'weeklyTrackingLabels' | 'fiberLabels' | 'aminoAcidLabels' | 'mineralLabels' | 'vitaminLabels' | 'polyphenolLabels' =
+      let labelGroup: 'macroLabels' | 'weeklyTrackingLabels' | 'fiberLabels' | 'aminoAcidLabels' | 'mineralLabels' | 'vitaminLabels' | 'polyphenolLabels' | 'nutrientLabels' =
         'polyphenolLabels';
 
       if (trackingKey === 'protein') {
         labelGroup = 'macroLabels';
+      } else if (isNutrientTargetTag(trackingKey)) {
+        labelGroup = 'nutrientLabels';
       } else if (target.unit === 'plants' || target.unit === 'items' || target.unit === 'count') {
         labelGroup = 'weeklyTrackingLabels';
       } else if (target.unit === 'g') {

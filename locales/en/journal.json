@@ -264,6 +264,7 @@
       "usePhotoAnalysis": "Use photo analysis instead",
       "dontShowAgain": "Don't show again"
     },
+    "nutrientLabels": { "caffeine": "Caffeine" },
     "macroLabels": {
       "protein": "Total protein"
     }

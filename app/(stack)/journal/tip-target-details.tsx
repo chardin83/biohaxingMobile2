@@ -227,6 +227,10 @@ const getNutritionEntryContributionForTarget = (entry: NutritionEntry, targetTag
     return 0;
   }
 
+  if (targetTag === 'caffeine') {
+    return getTargetValueFromMilligrams(entry.caffeineMg ?? 0, targetUnit);
+  }
+
   if (isMineralTargetTag(targetTag) && entry.mineralsByType?.[targetTag]) {
     return getTargetValueFromMilligrams(Number(entry.mineralsByType[targetTag]) || 0, targetUnit);
   }

@@ -2173,7 +2173,7 @@ const rawTips: Tip[] = [
     nutrientTargets: [
       {
         tag: 'caffeine',
-        amount: 50,
+        amount: 270,
         unit: 'mg',
       },
     ],

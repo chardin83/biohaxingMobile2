@@ -112,6 +112,7 @@ const getNumericRecordValue = (source: object | undefined, key: string): number 
 
 const resolveNutritionValueFromEntries = (entries: NutritionEntry[], trackingKey: string): number =>
   entries.reduce((total, entry) => {
+    if (trackingKey === 'caffeine') return total + getNumericRecordValue(entry, 'caffeineMg');
     const sources = [entry.fiberByType, entry.fiberSubtypeTotals, entry.polyphenolByType, entry.mineralsByType, entry.vitaminsByType, entry.aminoAcidsByType];
 
     for (const source of sources) {
@@ -145,6 +146,8 @@ const resolveFoodActual = ({ target, summary }: { target: NutritionTargetDefinit
   }
 
   switch (trackingKey) {
+    case 'caffeine':
+      return convertQuantity(resolveNutritionValueFromEntries(summary.entries, trackingKey), 'mg', target.unit) ?? 0;
     case 'fiber_total':
       return summary.totals.fiber;
     case 'protein':

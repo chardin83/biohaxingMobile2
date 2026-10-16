@@ -23,7 +23,7 @@ export type TrainingTargetDefinition = BaseTargetDefinition & {
   activityTypes: readonly TrainingActivityType[];
 };
 
-export type NutritionLabelGroup = 'fiberLabels' | 'polyphenolLabels' | 'mineralLabels' | 'vitaminLabels' | 'aminoAcidLabels' | 'trackingLabels' | 'macroLabels';
+export type NutritionLabelGroup = 'fiberLabels' | 'polyphenolLabels' | 'mineralLabels' | 'vitaminLabels' | 'aminoAcidLabels' | 'trackingLabels' | 'macroLabels' | 'nutrientLabels';
 
 export type NutritionTargetDefinition = Omit<BaseTargetDefinition, 'unit' | 'period'> & {
   source: 'nutrition';
