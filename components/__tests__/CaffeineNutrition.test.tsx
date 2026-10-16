@@ -1,4 +1,4 @@
-import { render, renderHook } from '@testing-library/react-native';
+import { fireEvent, render, renderHook } from '@testing-library/react-native';
 import React from 'react';
 
 import { addNutritionEntryToTracking, removeNutritionEntryFromTracking } from '@/app/context/storage/nutrition/nutritionStorage';
@@ -11,9 +11,27 @@ import { scaleNutritionComposition } from '@/utils/nutritionComposition';
 
 let mockTracking: DailyNutritionTracking = {};
 jest.mock('@/app/context/StorageContext', () => ({ useStorage: () => ({ dailyNutritionTracking: mockTracking, dailyDrinkTracking: {} }) }));
+jest.mock('@gorhom/bottom-sheet', () => {
+  const mockReact = require('react');
+  const { View } = require('react-native');
+  return {
+    BottomSheetModal: mockReact.forwardRef(({ children, onDismiss }: any, ref: any) => {
+      mockReact.useImperativeHandle(ref, () => ({ present: jest.fn(), dismiss: onDismiss }));
+      return <View>{children}</View>;
+    }),
+    BottomSheetScrollView: View,
+    BottomSheetBackdrop: () => null,
+  };
+});
+jest.mock('@/components/ui/BottomSheetDesign', () => ({ useBottomSheetDesign: () => ({}) }));
+jest.mock('react-native-safe-area-context', () => ({ useSafeAreaInsets: () => ({ bottom: 0 }) }));
 jest.mock('@react-navigation/native', () => ({ useTheme: () => ({ colors: {} }) }));
 jest.mock('@/components/ui/IconSymbol', () => ({ IconSymbol: () => null }));
 jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string, options?: { value?: unknown }) => {
+  if (key.endsWith('.alcoholLabel')) return 'Alkohol';
+  if (key.endsWith('.alcoholGrams')) return `${options?.value} g`;
+  if (key.endsWith('.alcoholStandardDrinks')) return `${options?.value}`;
+  if (key.endsWith('.alcoholAmount')) return `Alkohol: ${options?.value} g`;
   if (key.endsWith('.caffeineAmount')) return `Koffein: ${options?.value} mg`;
   if (key.endsWith('.polyphenols')) return `Polyfenoler: ${options?.value} mg`;
   return key;
@@ -61,4 +79,34 @@ it('preserves caffeine values returned for analyzed food', () => {
   expect(extractStructuredAnalysis({ nutrition: { calories: 100, caffeineMg: 20 } }, null)?.caffeineMg).toBe(20);
   expect(extractStructuredAnalysis({ nutrition: { calories: 100, nutritionDetails: { caffeineMg: 20 } } }, null)?.caffeineMg).toBe(20);
   expect(extractStructuredAnalysis({ nutrition: { calories: 100 }, nutritionDetails: { caffeineMg: 20 } }, null)?.caffeineMg).toBe(20);
+});
+
+it('tracks alcohol portions, daily totals and removal', () => {
+  const wine: NutritionEntry = { ...drink, id: 'wine', ...getDrinkNutritionData('red_wine', 'Wine', 150) };
+  expect(wine.alcoholGrams).toBe(14.8);
+  expect(scaleNutritionComposition(wine, 2).alcoholGrams).toBe(29.6);
+  mockTracking = addNutritionEntryToTracking({}, date, wine);
+  expect(mockTracking[date].totals.alcoholGrams).toBe(14.8);
+  const { result, rerender } = renderHook(() => useNutritionLoggerData(date));
+  expect(result.current.dailyNutrition.alcoholGrams).toBe(14.8);
+  const screen = render(<NutritionBreakdown nutrition={wine} keyPrefix="alcohol" />);
+  expect(screen.getByText('Alkohol')).toBeTruthy();
+  expect(screen.getByText('14.8 g')).toBeTruthy();
+  mockTracking = removeNutritionEntryFromTracking(mockTracking, date, 'wine');
+  rerender({});
+  expect(result.current.dailyNutrition.alcoholGrams ?? 0).toBe(0);
+});
+
+it('shows grams with the Swedish standard drink equivalent below', () => {
+  const screen = render(<NutritionBreakdown nutrition={getDrinkNutritionData('white_wine', 'Wine', 150)} keyPrefix="wine" />);
+  expect(screen.getByText('1.2')).toBeTruthy();
+});
+
+it('opens and closes the standard drink explanation from the alcohol info button', () => {
+  const screen = render(<NutritionBreakdown nutrition={food} keyPrefix="info" />);
+  expect(screen.queryByText('journal:nutritionLogger.alcoholInfo.description')).toBeNull();
+  fireEvent.press(screen.getByRole('button', { name: 'journal:nutritionLogger.alcoholInfo.title' }));
+  expect(screen.getByText('journal:nutritionLogger.alcoholInfo.description')).toBeTruthy();
+  fireEvent.press(screen.getByText('common:general.understood'));
+  expect(screen.queryByText('journal:nutritionLogger.alcoholInfo.description')).toBeNull();
 });

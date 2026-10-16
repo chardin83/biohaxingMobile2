@@ -4,6 +4,8 @@ export const LIFE_STYLE_ITEMS = {
   reducedScreens: { category: 'sleep' },
   caffeineBeforeSleep: { category: 'sleep' },
   caffeine: { category: 'nutrition' },
+  alcohol: { category: 'nutrition' },
+  alcoholBeforeSleep: { category: 'sleep' },
 } as const;
 
 export type LifeStyleId = keyof typeof LIFE_STYLE_ITEMS;

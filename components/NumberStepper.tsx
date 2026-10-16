@@ -12,6 +12,7 @@ interface NumberStepperProps {
   max?: number;
   step?: number;
   disabled?: boolean;
+  compact?: boolean;
   inBottomSheet?: boolean;
   accessibilityLabel?: string;
 }
@@ -37,6 +38,7 @@ export default function NumberStepper({
   max = Number.MAX_SAFE_INTEGER,
   step = 1,
   disabled = false,
+  compact = false,
   inBottomSheet = false,
   accessibilityLabel,
 }: Readonly<NumberStepperProps>) {
@@ -66,14 +68,14 @@ export default function NumberStepper({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, compact && styles.compactContainer]}>
       <Pressable accessibilityRole="button" accessibilityLabel={`-${step}`} disabled={disabled} onPress={() => adjust(-step)} hitSlop={10}>
         <ThemedText type="title2">−</ThemedText>
       </Pressable>
 
       <Input
         accessibilityLabel={accessibilityLabel}
-        style={[styles.input, { color: colors.text }]}
+        style={[styles.input, compact && styles.compactInput, { color: colors.text }]}
         value={text}
         placeholder="–"
         editable={!disabled}
@@ -107,6 +109,8 @@ export default function NumberStepper({
 }
 
 const styles = StyleSheet.create({
+  compactContainer: { gap: 8 },
+  compactInput: { minWidth: 36, maxWidth: 64 },
   input: { minWidth: 48, maxWidth: 90, paddingVertical: 0, fontSize: 16, fontWeight: '700', textAlign: 'center' },
   container: {
     flexDirection: 'row',

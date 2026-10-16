@@ -1,7 +1,7 @@
 import { useTheme } from '@react-navigation/native';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import type { NutritionData } from '@/app/context/storage/nutrition/nutritionTypes';
 import { ESSENTIAL_AMINO_ACID_KEYS, OTHER_AMINO_ACID_KEYS } from '@/constants/aminoAcids';
@@ -11,6 +11,7 @@ import { POLYPHENOL_TYPE_KEYS } from '@/constants/polyphenols';
 import { VITAMIN_TYPE_KEYS } from '@/constants/vitamins';
 
 import { Collapsible } from './Collapsible';
+import AlcoholInfoBottomSheet from './journal/AlcoholInfoBottomSheet';
 import { ThemedText } from './ThemedText';
 import { IconSymbol } from './ui/IconSymbol';
 
@@ -83,9 +84,13 @@ const collapsibleHeader = (text: string) => {
   return { title: label, rightContent: value ? <ThemedText type="default">{value}</ThemedText> : undefined };
 };
 
+// Swedish standard drink: 12 grams of pure alcohol.
+const ALCOHOL_GRAMS_PER_STANDARD_DRINK = 12;
+
 const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyPrefix }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const [alcoholInfoVisible, setAlcoholInfoVisible] = useState(false);
 
   const {
     calories,
@@ -94,6 +99,7 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
     fat,
     fiber,
     caffeineMg,
+    alcoholGrams,
     fiberByType,
     fiberSubtypeTotals,
     polyphenolByType,
@@ -344,6 +350,30 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
         <IconSymbol name="caffeine" size={16} color={colors.textMuted} />
         <NutrientText text={t('journal:nutritionLogger.caffeineAmount', { value: caffeineMg === undefined ? '—' : Math.round(caffeineMg) })} />
       </View>
+      <View style={[styles.nutrientRow, { borderBottomColor: colors.textMuted }]}>
+        <View style={styles.alcoholRow}>
+          <IconSymbol name="alcohol" size={16} color={colors.textMuted} />
+          <View style={styles.alcoholLabel}>
+            <ThemedText>{t('journal:nutritionLogger.alcoholLabel')}</ThemedText>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('journal:nutritionLogger.alcoholInfo.title')}
+              hitSlop={10}
+              onPress={() => setAlcoholInfoVisible(true)}
+            >
+              <IconSymbol name="info" size={16} color={colors.textMuted} />
+            </Pressable>
+          </View>
+          <ThemedText>{t('journal:nutritionLogger.alcoholGrams', { value: alcoholGrams === undefined ? '—' : Math.round(alcoholGrams * 10) / 10 })}</ThemedText>
+        </View>
+        <View style={styles.standardDrinksRow}>
+          <ThemedText style={[styles.standardDrinks, { color: colors.textMuted }]}>
+            {t('journal:nutritionLogger.alcoholStandardDrinks', { value: alcoholGrams === undefined ? '—' : Math.round(alcoholGrams / ALCOHOL_GRAMS_PER_STANDARD_DRINK * 10) / 10 })}
+          </ThemedText>
+          <IconSymbol name="alcohol" size={12} color={colors.textMuted} />
+        </View>
+      </View>
+      {alcoholInfoVisible && <AlcoholInfoBottomSheet onClose={() => setAlcoholInfoVisible(false)} />}
     </>
   );
 };
@@ -364,6 +394,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+  },
+  alcoholLabel: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 6 },
+  alcoholRow: {
+    paddingLeft: 22,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  standardDrinksRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    gap: 4,
+  },
+  standardDrinks: {
+    fontSize: 12,
+    lineHeight: 18,
   },
   nutrientLabel: {
     flex: 1,

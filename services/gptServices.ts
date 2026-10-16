@@ -52,9 +52,11 @@ export interface NutritionAnalysisResponse {
     fat?: number;
     fiber?: number;
     caffeineMg?: number;
+  alcoholGrams?: number;
 
     nutritionDetails?: {
       caffeineMg?: number;
+  alcoholGrams?: number;
       fiber?: {
         total?: number;
         gelForming?: number;
@@ -140,6 +142,7 @@ export interface NutritionAnalysisResponse {
 
   nutritionDetails?: {
     caffeineMg?: number;
+  alcoholGrams?: number;
     fiber?: {
       total?: number;
       gelForming?: number;

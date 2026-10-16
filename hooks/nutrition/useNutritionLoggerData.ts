@@ -128,6 +128,7 @@ export const useNutritionLoggerData = (selectedDate: string) => {
       carbohydrates: summary?.totals.carbohydrates,
       fat: summary?.totals.fat,
       fiber: summary?.totals.fiber,
+      alcoholGrams: entries.some(entry => entry.alcoholGrams !== undefined) ? entries.reduce((sum, entry) => sum + (entry.alcoholGrams ?? 0), 0) : undefined,
       caffeineMg: entries.some(entry => entry.caffeineMg !== undefined) ? entries.reduce((sum, entry) => sum + Math.round(entry.caffeineMg ?? 0), 0) : undefined,
       fiberByType: sumTypedTotals(entries, 'fiberByType'),
       fiberSubtypeTotals: sumTypedTotals(entries, 'fiberSubtypeTotals'),

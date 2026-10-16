@@ -20,6 +20,7 @@ export type NutritionComposition = {
   fat: number;
   fiber: number;
   caffeineMg?: number;
+  alcoholGrams?: number;
   fiberByType?: Partial<Record<FiberType, number>>;
   fiberSubtypeTotals?: Partial<Record<FiberSubtype, number>>;
   polyphenolByType?: Partial<Record<PolyphenolType, number>>;

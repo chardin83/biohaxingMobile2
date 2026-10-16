@@ -3,6 +3,7 @@ import { act, fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
 
 import CaffeineLoggingInfoModal from '@/components/journal/CaffeineLoggingInfoModal';
+import DrinkLoggingInfoModal from '@/components/journal/DrinkLoggingInfoModal';
 
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
@@ -52,4 +53,19 @@ it('opens person settings at bedtime from the discreet link', async () => {
   fireEvent.press(screen.getByText('caffeineLoggingInfo.changeBedtime'));
   expect(screen.queryByTestId('coffee-info')).toBeNull();
   expect(mockPush).toHaveBeenCalledWith({ pathname: '/(stack)/settings/person', params: { focus: 'bedtime' } });
+});
+
+it('shows both alcohol tags and remembers alcohol acknowledgement independently of caffeine', async () => {
+  await AsyncStorage.setItem('caffeineLoggingInfoSeen', 'true');
+  const screen = render(<DrinkLoggingInfoModal requestKey={1} kind="alcohol" />);
+  await finishOpening();
+  expect(screen.getByText('common:lifeStyle.items.alcohol')).toBeTruthy();
+  expect(screen.getByText('common:lifeStyle.items.alcoholBeforeSleep')).toBeTruthy();
+  expect(screen.getByText('alcoholLoggingInfo.beforeSleep')).toBeTruthy();
+  await act(async () => fireEvent.press(screen.getByText('alcoholLoggingInfo.understood')));
+  expect(await AsyncStorage.getItem('alcoholLoggingInfoSeen')).toBe('true');
+  screen.unmount();
+  const next = render(<DrinkLoggingInfoModal requestKey={1} kind="alcohol" />);
+  await finishOpening();
+  expect(next.queryByTestId('coffee-info')).toBeNull();
 });

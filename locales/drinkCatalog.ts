@@ -39,6 +39,7 @@ type DrinkDefaults = {
   per100ml: DrinkNutritionPer100ml;
   polyphenolsMgPer100ml?: Partial<Record<PolyphenolType, number>>;
   caffeineMgPer100ml?: number;
+  alcoholPercent?: number;
 };
 
 const n = (calories: number, protein: number, carbohydrates: number, fat: number, fiber = 0): DrinkNutritionPer100ml => ({
@@ -60,19 +61,20 @@ const DRINK_DEFAULTS: Record<DrinkType, DrinkDefaults> = {
   juice: { amountMl: 200, per100ml: n(45, 0.5, 10.5, 0.1, 0.2), polyphenolsMgPer100ml: { polyphenols_total: 70, flavonoids_total: 45 } },
   milk: { amountMl: 200, per100ml: n(46, 3.4, 4.8, 1.5) },
   red_wine: {
+    alcoholPercent: 12.5,
     amountMl: 150,
     per100ml: n(85, 0.1, 2.6, 0),
     polyphenolsMgPer100ml: { polyphenols_total: 220, flavonoids_total: 90, anthocyanins: 25, flavanols: 30, phenolic_acids: 40, ellagitannins: 8 },
   },
-  white_wine: { amountMl: 150, per100ml: n(82, 0.1, 2.6, 0), polyphenolsMgPer100ml: { polyphenols_total: 25, phenolic_acids: 15, ellagitannins: 2 } },
-  beer: { amountMl: 330, per100ml: n(43, 0.5, 3.6, 0), polyphenolsMgPer100ml: { polyphenols_total: 40, phenolic_acids: 15, flavonoids_total: 10 } },
-  spirits: { amountMl: 40, per100ml: n(231, 0, 0, 0) },
-  oak_aged_spirits: { amountMl: 40, per100ml: n(235, 0, 0.1, 0), polyphenolsMgPer100ml: { polyphenols_total: 5, ellagitannins: 3 } },
+  white_wine: { alcoholPercent: 12, amountMl: 150, per100ml: n(82, 0.1, 2.6, 0), polyphenolsMgPer100ml: { polyphenols_total: 25, phenolic_acids: 15, ellagitannins: 2 } },
+  beer: { alcoholPercent: 5, amountMl: 330, per100ml: n(43, 0.5, 3.6, 0), polyphenolsMgPer100ml: { polyphenols_total: 40, phenolic_acids: 15, flavonoids_total: 10 } },
+  spirits: { alcoholPercent: 40, amountMl: 40, per100ml: n(231, 0, 0, 0) },
+  oak_aged_spirits: { alcoholPercent: 40, amountMl: 40, per100ml: n(235, 0, 0.1, 0), polyphenolsMgPer100ml: { polyphenols_total: 5, ellagitannins: 3 } },
   drink: { amountMl: 200, per100ml: n(40, 0, 10, 0) },
 };
 
 export const getDrinkProduct = (type: DrinkType, name: string): BarcodeProduct => {
-  const { amountMl, per100ml, polyphenolsMgPer100ml, caffeineMgPer100ml } = DRINK_DEFAULTS[type];
+  const { amountMl, per100ml, polyphenolsMgPer100ml, caffeineMgPer100ml, alcoholPercent } = DRINK_DEFAULTS[type];
 
   return {
     barcode: '',
@@ -81,6 +83,7 @@ export const getDrinkProduct = (type: DrinkType, name: string): BarcodeProduct =
     quantityUnit: 'ml',
     productType: 'drink',
     drinkType: type,
+    alcoholPercent,
     caffeinated: hasCaffeine({ type }),
     fromCatalog: true,
     nutrition: {
@@ -89,6 +92,7 @@ export const getDrinkProduct = (type: DrinkType, name: string): BarcodeProduct =
       carbohydratesPer100g: per100ml.carbohydrates,
       fatPer100g: per100ml.fat,
       fiberPer100g: per100ml.fiber,
+      alcoholGramsPer100g: (alcoholPercent ?? 0) * 0.789,
       caffeineMgPer100g: caffeineMgPer100ml ?? 0,
       polyphenolsMgPer100g: polyphenolsMgPer100ml,
     },
@@ -96,13 +100,14 @@ export const getDrinkProduct = (type: DrinkType, name: string): BarcodeProduct =
 };
 
 export const getDrinkNutritionData = (type: DrinkType, name: string, amountMl?: number): NutritionData => {
-  const { amountMl: defaultAmountMl, per100ml, polyphenolsMgPer100ml, caffeineMgPer100ml } = DRINK_DEFAULTS[type];
+  const { amountMl: defaultAmountMl, per100ml, polyphenolsMgPer100ml, caffeineMgPer100ml, alcoholPercent } = DRINK_DEFAULTS[type];
   const factor = (amountMl ?? defaultAmountMl) / 100;
   const round1 = (value: number) => Math.round(value * 10) / 10;
 
   return {
     name,
     calories: Math.round(per100ml.calories * factor),
+    alcoholGrams: round1((alcoholPercent ?? 0) * 0.789 * factor),
     caffeineMg: Math.round((caffeineMgPer100ml ?? 0) * factor),
     protein: round1(per100ml.protein * factor),
     carbohydrates: round1(per100ml.carbohydrates * factor),

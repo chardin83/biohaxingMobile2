@@ -1,8 +1,18 @@
 {
+  "alcoholLoggingInfo": {
+    "title": "Alcohol in your lifestyle log",
+    "description": "When you log an alcoholic drink in the journal, alcohol consumption is also recorded in your lifestyle log.",
+    "beforeSleep": "Marked if you consume alcohol less than four hours before your planned bedtime of {{bedtime}}. This uses the time you enter for the drink.",
+    "updates": "Changing the time or deleting the drink updates the automatic tags.",
+    "changeBedtime": "Change bedtime",
+    "understood": "I understand",
+    "saveError": "Could not save the confirmation. Please try again.",
+    "intake": "Marked automatically for the day when you log an alcoholic drink, such as wine, beer or spirits."
+  },
   "caffeineLoggingInfo": {
     "title": "Caffeine in your lifestyle log",
     "description": "When you log a caffeinated drink in the journal, your caffeine intake is also recorded in your lifestyle log.",
-    "caffeine": "Automatically marked for the day when you log a caffeinated drink, such as coffee, tea or an energy drink.",
+    "intake": "Automatically marked for the day when you log a caffeinated drink, such as coffee, tea or an energy drink.",
     "beforeSleep": "Marked if you consume caffeine less than eight hours before your planned bedtime, which is {{bedtime}}. This uses the time you enter for the drink.",
     "updates": "Changing the time or deleting the drink updates the automatic tags.",
     "changeBedtime": "Change bedtime",
@@ -57,6 +67,18 @@
     "vitamins": "Vitamins: {{value}} mg",
     "alcohol": "Alcohol",
     "caffeine": "Caffeine",
+    "alcoholPortionInfo": "{{grams}} g alcohol · {{glasses}} standard drinks",
+    "alcoholStrength": "Alcohol strength",
+    "alcoholLabel": "Alcohol",
+    "alcoholGrams": "{{value}} g",
+    "alcoholInfo": {
+      "title": "What is a standard drink?",
+      "description": "A Swedish standard drink contains 12 grams of pure alcohol. This makes it possible to compare the alcohol content of different drinks.",
+      "examples": "This is approximately 33 cl of beer (5%), 12.5 cl of wine (12%) or just under 4 cl of spirits (40%).",
+      "calculation": "The number beside the glass icon is calculated by dividing the alcohol content in grams by 12. Serving size and alcohol strength affect the amount. Drinks in the catalogue use estimated alcohol strengths."
+    },
+    "alcoholAmount": "Alcohol: {{value}} g",
+    "alcoholStandardDrinks": "{{value}}",
     "caffeineAmount": "Caffeine: {{value}} mg",
     "sugarFree": "Sugar-free",
     "microbiomeYes": "Microbiome support: Yes ({{count}})",

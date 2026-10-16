@@ -666,11 +666,11 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     setDailyDrinkTracking({});
   }, [setDailyDrinkTracking]);
 
-  const { syncCaffeine, lifeStyleLoading, lifeStyleError } = lifeStyle;
+  const { syncDrinkTags, lifeStyleLoading, lifeStyleError } = lifeStyle;
   useEffect(() => {
     if (!isInitialized || !userProfileInitialized || lifeStyleLoading || lifeStyleError) return;
-    syncCaffeine(dailyDrinkTrackingState, userProfileState.bedtime).catch(console.error);
-  }, [isInitialized, userProfileInitialized, lifeStyleLoading, lifeStyleError, syncCaffeine, dailyDrinkTrackingState, userProfileState.bedtime]);
+    syncDrinkTags(dailyDrinkTrackingState, userProfileState.bedtime).catch(console.error);
+  }, [isInitialized, userProfileInitialized, lifeStyleLoading, lifeStyleError, syncDrinkTags, dailyDrinkTrackingState, userProfileState.bedtime]);
 
   /*
    * Training

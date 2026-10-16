@@ -513,6 +513,10 @@ export const extractTypedTotals = (data: any, parsedContent: any) => {
 
 export const hasAnyTypedTotals = (values: Record<string, number>) => Object.values(values).some(value => (value ?? 0) > 0);
 
+const readAlcoholGrams = (candidate: any): number | null =>
+  pickFirstNumber(candidate, ['alcoholGrams', 'alcohol_grams'])
+  ?? pickFirstNumber(candidate?.nutritionDetails, ['alcoholGrams', 'alcohol_grams']);
+
 const readCaffeineMg = (candidate: any): number | null =>
   pickFirstNumber(candidate, ['caffeineMg', 'caffeine_mg'])
   ?? pickFirstNumber(candidate?.nutritionDetails, ['caffeineMg', 'caffeine_mg'])
@@ -527,8 +531,9 @@ const extractFromCandidate = (candidate: any): NutritionData | null => {
   const fat = pickFirstNumber(candidate, ['fat', 'fats', 'fat_g', 'total_fat']);
   const fiber = pickFirstNumber(candidate, ['fiber', 'fibre', 'fiber_g', 'dietary_fiber']);
   const caffeineMg = readCaffeineMg(candidate);
+  const alcoholGrams = readAlcoholGrams(candidate);
 
-  if (protein === null && calories === null && carbohydrates === null && fat === null && fiber === null && caffeineMg === null) {
+  if (protein === null && calories === null && carbohydrates === null && fat === null && fiber === null && caffeineMg === null && alcoholGrams === null) {
     return null;
   }
 
@@ -550,6 +555,7 @@ const extractFromCandidate = (candidate: any): NutritionData | null => {
     carbohydrates: carbohydrates ?? 0,
     fat: fat ?? 0,
     fiber: fiber ?? 0,
+    alcoholGrams: alcoholGrams === null ? undefined : Math.max(0, alcoholGrams),
     caffeineMg: caffeineMg === null ? undefined : Math.round(Math.max(0, caffeineMg)),
     fiberByType: emptyFiberTotals(),
     fiberSubtypeTotals: emptyFiberSubtypeTotals(),
@@ -616,7 +622,8 @@ export const extractStructuredAnalysis = (data: any, parsedContent: any): Nutrit
     const extracted = extractFromCandidate(candidate);
     if (extracted) {
       const caffeineMg = extracted.caffeineMg ?? readCaffeineMg(data) ?? readCaffeineMg(parsedContent);
-      return { ...extracted, caffeineMg: caffeineMg === null ? undefined : Math.round(Math.max(0, caffeineMg)) };
+      const alcoholGrams = extracted.alcoholGrams ?? readAlcoholGrams(data) ?? readAlcoholGrams(parsedContent);
+      return { ...extracted, alcoholGrams: alcoholGrams === null ? undefined : Math.max(0, alcoholGrams), caffeineMg: caffeineMg === null ? undefined : Math.round(Math.max(0, caffeineMg)) };
     }
   }
 
@@ -902,6 +909,7 @@ export const extractAndValidateNutritionAnalysis = ({
 
   const hasTypedNutritionData =
     (analysis.caffeineMg ?? 0) > 0 ||
+    (analysis.alcoholGrams ?? 0) > 0 ||
     hasAnyTypedTotals(typedTotals.fiberByType) ||
     hasAnyTypedTotals(typedTotals.fiberSubtypeTotals) ||
     hasAnyTypedTotals(typedTotals.polyphenolByType) ||

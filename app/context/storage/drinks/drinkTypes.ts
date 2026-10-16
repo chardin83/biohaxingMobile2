@@ -10,6 +10,7 @@ export type DrinkEntry = {
   amountMl?: number;
   sugarFree?: boolean;
   caffeinated?: boolean;
+  alcoholPercent?: number;
   recordedAt: string;
   source: 'meal_analysis' | 'manual';
 };

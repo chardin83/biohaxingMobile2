@@ -5,8 +5,10 @@
       "dimmedLights": "Dämpade belysningen",
       "calmActivity": "Gjorde något lugnt",
       "reducedScreens": "Drog ned på skärmljuset / ingen skärm",
-      "caffeineBeforeSleep": "Intog koffein nära läggdags",
-      "caffeine": "Intog koffein"
+      "caffeineBeforeSleep": "Koffein nära läggdags",
+      "caffeine": "Koffein",
+      "alcohol": "Alkohol",
+      "alcoholBeforeSleep": "Alkohol nära läggdags"
     },
     "loadError": "Kunde inte läsa livsstilsloggen.",
     "saveError": "Kunde inte spara registreringen. Försök igen."

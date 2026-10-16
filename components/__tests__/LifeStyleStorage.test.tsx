@@ -10,10 +10,10 @@ it('persists the bedtime tag when coffee is moved from morning to evening', asyn
   const { result } = renderHook(useLifeStyleStorage);
   await waitFor(() => expect(result.current.lifeStyleLoading).toBe(false));
   const coffee = { id: 'coffee', type: 'coffee' as const, name: 'Coffee', source: 'manual' as const, recordedAt: new Date(2026, 9, 15, 8).toISOString() };
-  await act(async () => { await result.current.syncCaffeine({ [date]: [coffee] }, '23:00'); });
+  await act(async () => { await result.current.syncDrinkTags({ [date]: [coffee] }, '23:00'); });
   expect(result.current.lifeStyleLog[date].caffeineBeforeSleep).toBeUndefined();
   const eveningCoffee = { ...coffee, recordedAt: new Date(2026, 9, 15, 20, 51).toISOString() };
-  await act(async () => { await result.current.syncCaffeine({ [date]: [eveningCoffee] }); });
+  await act(async () => { await result.current.syncDrinkTags({ [date]: [eveningCoffee] }); });
   expect(result.current.lifeStyleLog[date].caffeineBeforeSleep?.value).toBe(true);
   expect(JSON.parse((await AsyncStorage.getItem(`lifeStyleLog:${date}`))!).caffeineBeforeSleep.value).toBe(true);
 });
@@ -22,11 +22,11 @@ it('persists automatic coffee tags and removes them when the drink is deleted', 
   const { result } = renderHook(useLifeStyleStorage);
   await waitFor(() => expect(result.current.lifeStyleLoading).toBe(false));
   await act(async () => {
-    await result.current.syncCaffeine({ [date]: [{ id: 'coffee', type: 'coffee', name: 'Coffee', source: 'manual', recordedAt: new Date(2026, 9, 15, 18).toISOString() }] }, '22:00');
+    await result.current.syncDrinkTags({ [date]: [{ id: 'coffee', type: 'coffee', name: 'Coffee', source: 'manual', recordedAt: new Date(2026, 9, 15, 18).toISOString() }] }, '22:00');
   });
   expect(result.current.lifeStyleLog[date].caffeineBeforeSleep?.value).toBe(true);
   expect(JSON.parse((await AsyncStorage.getItem(`lifeStyleLog:${date}`))!).caffeine.value).toBe(true);
-  await act(async () => { await result.current.syncCaffeine({}, '22:00'); });
+  await act(async () => { await result.current.syncDrinkTags({}, '22:00'); });
   expect(result.current.lifeStyleLog[date]).toBeUndefined();
   expect(await AsyncStorage.getItem(`lifeStyleLog:${date}`)).toBeNull();
 });

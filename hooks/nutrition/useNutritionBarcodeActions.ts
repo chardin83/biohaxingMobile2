@@ -27,6 +27,7 @@ export const useNutritionBarcodeActions = ({ selectedDate, onNutritionEntrySelec
         carbohydrates: (product.nutrition.carbohydratesPer100g ?? 0) * factor,
         fat: (product.nutrition.fatPer100g ?? 0) * factor,
         fiber: (product.nutrition.fiberPer100g ?? 0) * factor,
+      alcoholGrams: product.nutrition.alcoholGramsPer100g === undefined ? undefined : product.nutrition.alcoholGramsPer100g * factor,
         caffeineMg: product.nutrition.caffeineMgPer100g === undefined ? undefined : Math.round(product.nutrition.caffeineMgPer100g * factor),
         ...(product.composition && scaleNutritionComposition(product.composition, factor)),
         ...(product.nutrition.polyphenolsMgPer100g && {
@@ -46,6 +47,7 @@ export const useNutritionBarcodeActions = ({ selectedDate, onNutritionEntrySelec
         addDrinkEntry(selectedDate, {
           nutritionEntryId: nutritionEntry.id,
           type: product.drinkType ?? 'drink',
+          alcoholPercent: product.alcoholPercent,
           caffeinated: hasCaffeine({ type: product.drinkType, caffeinated: product.caffeinated }),
           name: product.name,
           amountMl: amount,

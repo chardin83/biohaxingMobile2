@@ -14,6 +14,7 @@ export const scaleNutritionComposition = (composition: NutritionComposition, fac
     carbohydrates: round1(composition.carbohydrates * factor),
     fat: round1(composition.fat * factor),
     fiber: round1(composition.fiber * factor),
+    alcoholGrams: composition.alcoholGrams === undefined ? undefined : composition.alcoholGrams * factor,
     caffeineMg: composition.caffeineMg === undefined ? undefined : Math.round(composition.caffeineMg * factor),
     fiberByType: scaleRecord(composition.fiberByType, factor),
     fiberSubtypeTotals: scaleRecord(composition.fiberSubtypeTotals, factor),

@@ -21,6 +21,7 @@ export interface BarcodeNutrition {
   sodiumPer100g?: number;
   polyphenolsMgPer100g?: Partial<Record<PolyphenolType, number>>;
   caffeineMgPer100g?: number;
+  alcoholGramsPer100g?: number;
 }
 
 export type BarcodeProductType = 'food' | 'drink';
@@ -39,6 +40,7 @@ export interface BarcodeProduct {
   productType?: BarcodeProductType;
   drinkType?: DrinkType;
   caffeinated?: boolean;
+  alcoholPercent?: number;
   fromCatalog?: boolean;
   sourceMealId?: string;
   image?: ImageSourcePropType;
@@ -59,6 +61,7 @@ interface OpenFoodFactsNutriments {
   'salt_100g'?: number;
   'sodium_100g'?: number;
   'caffeine_100g'?: number;
+  'alcohol_100g'?: number;
 }
 
 interface OpenFoodFactsProduct {
@@ -201,6 +204,7 @@ const fetchProductByBarcode = async (normalizedBarcode: string): Promise<Barcode
 
     productType: classification.productType,
     drinkType: classification.drinkType,
+    alcoholPercent: nutriments.alcohol_100g,
     caffeinated: nutriments.caffeine_100g === undefined ? undefined : nutriments.caffeine_100g > 0,
 
     nutrition: {
@@ -214,6 +218,7 @@ const fetchProductByBarcode = async (normalizedBarcode: string): Promise<Barcode
       saltPer100g: nutriments.salt_100g,
       sodiumPer100g: nutriments.sodium_100g,
       // Open Food Facts standardizes mass nutrients to grams.
+      alcoholGramsPer100g: nutriments.alcohol_100g === undefined ? undefined : nutriments.alcohol_100g * 0.789,
       caffeineMgPer100g: nutriments.caffeine_100g === undefined ? undefined : nutriments.caffeine_100g * 1000,
     },
   };

@@ -5,8 +5,10 @@
       "dimmedLights": "Dimmed the lights",
       "calmActivity": "Did something calming",
       "reducedScreens": "Reduced screen brightness / no screen",
-      "caffeineBeforeSleep": "Consumed caffeine close to bedtime",
-      "caffeine": "Consumed caffeine"
+      "caffeineBeforeSleep": "Caffeine close to bedtime",
+      "caffeine": "Caffeine",
+      "alcohol": "Alcohol",
+      "alcoholBeforeSleep": "Alcohol close to bedtime"
     },
     "loadError": "Could not load the lifestyle log.",
     "saveError": "Could not save the entry. Please try again."

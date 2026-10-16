@@ -18,6 +18,7 @@ import { tips } from '@/locales/tips';
 import type { DrinkType } from '@/services/gptServices';
 import { roundToOneDecimal, type WeeklyTrackingSignals } from '@/utils/analyzeNutrition';
 import { toDateKey, toRecordedAt } from '@/utils/dateUtils';
+import { hasAlcohol } from '@/utils/drinkAlcohol';
 import { hasCaffeine } from '@/utils/drinkCaffeine';
 import { type FoodKey, getFoodProduct, getMealProduct } from '@/utils/foodProduct';
 import { isNutritionTipUntracked } from '@/utils/untrackedNutritionTips';
@@ -34,6 +35,7 @@ import AnalysisStatus from './AnalysisStatus';
 import BarcodeInfoBottomSheet from './BarcodeInfoBottomSheet';
 import BarcodeScannerBottomSheet from './BarcodeScannerBottomSheet';
 import CaffeineLoggingInfoModal from './CaffeineLoggingInfoModal';
+import DrinkLoggingInfoModal from './DrinkLoggingInfoModal';
 import DrinkPickerBottomSheet from './DrinkPickerBottomSheet';
 import EntryEditModal from './EntryEditModal';
 import FoodPickerBottomSheet from './FoodPickerBottomSheet';
@@ -106,6 +108,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   } = useStorage();
   const { weekStartISO: weekStartKey } = getWeekBoundsFromDateKey(selectedDate);
   const { summary, drinks, recentMeals, dailyNutrition } = useNutritionLoggerData(selectedDate);
+  const [alcoholInfoRequest, setAlcoholInfoRequest] = useState(0);
   const [caffeineInfoRequest, setCaffeineInfoRequest] = useState(0);
   const loggedMeals = summary?.entries.filter(entry => entry.type !== 'drink') ?? [];
   const { fulfilledTipsSectionYRef, periodSectionYRef, nutritionPlanTipProgressByPeriod, getCompletionAnimValue, tipRowLocalYByKeyRef, tipRowPeriodByKeyRef } =
@@ -423,6 +426,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
         source: 'meal_analysis',
       });
     });
+    if (confirmedDrinks.some(hasAlcohol)) setAlcoholInfoRequest(current => current + 1);
     if (confirmedDrinks.some(hasCaffeine)) {
       setCaffeineInfoRequest(current => current + 1);
     }
@@ -657,12 +661,14 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
             productAmountBottomSheetRef.current?.dismiss();
             copySourceMealIdRef.current = barcodeProduct.sourceMealId ?? null;
             handleSaveBarcodeProduct(barcodeProduct, amount, productType, time);
+            if (productType === 'drink' && hasAlcohol({ type: barcodeProduct.drinkType, alcoholPercent: barcodeProduct.alcoholPercent })) setAlcoholInfoRequest(current => current + 1);
             if (productType === 'drink' && hasCaffeine({ type: barcodeProduct.drinkType, caffeinated: barcodeProduct.caffeinated })) {
               setCaffeineInfoRequest(current => current + 1);
             }
           }}
         />
         <CaffeineLoggingInfoModal requestKey={caffeineInfoRequest} />
+        <DrinkLoggingInfoModal requestKey={alcoholInfoRequest} kind="alcohol" />
         <BarcodeInfoBottomSheet
           ref={barcodeInfoBottomSheetRef}
           onContinue={() => {

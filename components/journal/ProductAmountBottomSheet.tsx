@@ -5,7 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { Image, Keyboard, Pressable, StyleSheet, View } from 'react-native';
 
 import type { NutritionData } from '@/app/context/storage/nutrition/nutritionTypes';
+import { getDrinkImage } from '@/locales/drinkCatalog';
 import type { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFacts';
+import { getAlcoholPercent, withAlcoholPercent } from '@/utils/drinkAlcohol';
 import { scaleNutritionComposition } from '@/utils/nutritionComposition';
 
 import NumberStepper from '../NumberStepper';
@@ -14,6 +16,7 @@ import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
 import { useBottomSheetDesign } from '../ui/BottomSheetDesign';
 import { DateTimeInput } from '../ui/DateTimeInput';
+import Notice from '../ui/Notice';
 import OptionSelector from '../ui/OptionSelector';
 
 export interface ProductAmountBottomSheetRef {
@@ -27,7 +30,7 @@ interface ProductAmountBottomSheetProps {
 
 const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, ProductAmountBottomSheetProps>(({ onSave }, ref) => {
   const { colors } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const sheetDesign = useBottomSheetDesign(colors);
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
@@ -35,6 +38,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
   const [product, setProduct] = useState<BarcodeProduct | null>(null);
   const [gramsText, setGramsText] = useState('100');
   const [productType, setProductType] = useState<'food' | 'drink'>();
+  const [alcoholPercent, setAlcoholPercent] = useState<number>();
   const [time, setTime] = useState(() => new Date());
 
   const snapPoints = useMemo(() => ['75%'], []);
@@ -44,6 +48,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
     () => ({
       present: nextProduct => {
         setProduct(nextProduct);
+        setAlcoholPercent(getAlcoholPercent(nextProduct));
         setGramsText(String(nextProduct.fromCatalog ? (nextProduct.quantityValue ?? 100) : 100));
         setProductType(nextProduct.productType);
         setTime(new Date());
@@ -68,6 +73,9 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
   }, [product]);
 
   const amountUnit = product?.quantityUnit ?? 'g';
+  const productImage = productType === 'drink' && product?.drinkType
+    ? getDrinkImage(product.drinkType)
+    : product?.image ?? (product?.imageUrl ? { uri: product.imageUrl } : undefined);
 
   const grams = useMemo(() => {
     const normalized = gramsText.replace(',', '.').trim();
@@ -82,30 +90,36 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
   }, [gramsText]);
 
   const factor = grams / 100;
+  const adjustedProduct = useMemo(() => product && alcoholPercent !== undefined && productType === 'drink'
+    ? withAlcoholPercent(product, alcoholPercent) : product, [product, alcoholPercent, productType]);
 
   const scaledNutrition = useMemo<NutritionData | null>(() => {
-    if (!product) return null;
+    const nutritionProduct = adjustedProduct;
+    if (!nutritionProduct) return null;
 
-    if (product.composition) {
-      return { name: product.name, ...scaleNutritionComposition(product.composition, factor) };
+    if (nutritionProduct.composition) {
+      return { name: nutritionProduct.name, ...scaleNutritionComposition(nutritionProduct.composition, factor) };
     }
 
-    const per100 = product.nutrition;
+    const per100 = nutritionProduct.nutrition;
     const round1 = (value: number) => Math.round(value * 10) / 10;
 
     return {
-      name: product.name,
+      name: nutritionProduct.name,
       calories: Math.round((per100.caloriesPer100g ?? 0) * factor),
       protein: round1((per100.proteinPer100g ?? 0) * factor),
       carbohydrates: round1((per100.carbohydratesPer100g ?? 0) * factor),
       fat: round1((per100.fatPer100g ?? 0) * factor),
       fiber: round1((per100.fiberPer100g ?? 0) * factor),
+      alcoholGrams: per100.alcoholGramsPer100g === undefined ? undefined : per100.alcoholGramsPer100g * factor,
       caffeineMg: per100.caffeineMgPer100g === undefined ? undefined : Math.round(per100.caffeineMgPer100g * factor),
       ...(per100.polyphenolsMgPer100g && {
         polyphenolByType: Object.fromEntries(Object.entries(per100.polyphenolsMgPer100g).map(([key, value]) => [key, value * factor])),
       }),
     };
-  }, [product, factor]);
+  }, [adjustedProduct, factor]);
+
+  const alcoholFormatter = new Intl.NumberFormat(i18n.resolvedLanguage ?? i18n.language, { maximumFractionDigits: 1 });
 
   let calculationNoteKey = 'nutritionCalculatedPer100g';
   if (product?.sourceMealId) {
@@ -118,7 +132,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
     if (!product || grams <= 0 || !productType) return;
 
     Keyboard.dismiss();
-    onSave(product, grams, productType, productType === 'drink' ? time : undefined);
+    onSave(adjustedProduct ?? product, grams, productType, productType === 'drink' ? time : undefined);
     bottomSheetRef.current?.dismiss();
   };
 
@@ -138,12 +152,17 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
         {product ? (
           <>
             <View style={styles.productHeader}>
-              {product.image || product.imageUrl ? (
-                <Image source={product.image ?? { uri: product.imageUrl }} style={styles.productImage} resizeMode="contain" />
+              {productImage ? (
+                <Image source={productImage} style={styles.productImage} resizeMode="contain" />
               ) : null}
 
               <View style={styles.productInfo}>
                 <ThemedText type="title2">{product.name}</ThemedText>
+                {productType === 'drink' && (
+                  <View style={styles.timeSection}>
+                    <DateTimeInput value={time} onChange={setTime} showTime showDate={false} />
+                  </View>
+                )}
 
                 {product.brand ? (
                   <ThemedText
@@ -186,29 +205,38 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
               </View>
             )}
 
-            {productType === 'drink' && (
-              <View style={styles.timeSection}>
-                <ThemedText type="defaultSemiBold">{t('journal:nutritionLogger.drinkTime')}</ThemedText>
-                <DateTimeInput value={time} onChange={setTime} showTime showDate={false} />
-              </View>
-            )}
-
             <View style={styles.amountSection}>
-              <ThemedText type="defaultSemiBold">{t('journal:nutritionLogger.barcodeProduct.amount')}</ThemedText>
-
-              <View style={styles.amountRow}>
-                <NumberStepper
-                  value={grams}
-                  onChange={value => setGramsText(String(value))}
-                  min={0}
-                  step={10}
-                  inBottomSheet
-                  accessibilityLabel={t('journal:nutritionLogger.barcodeProduct.amount')}
-                />
-                <ThemedText type="default" style={{ color: colors.textMuted }}>
-                  {amountUnit}
-                </ThemedText>
+              <View style={styles.quantityFields}>
+                {productType === 'drink' && alcoholPercent !== undefined && (
+                  <View style={[styles.quantityField, { borderColor: colors.border }]}>
+                    <ThemedText type="caption">{t('journal:nutritionLogger.alcoholStrength')} (%)</ThemedText>
+                    <NumberStepper value={alcoholPercent} onChange={setAlcoholPercent} min={0} max={100} step={0.5} compact inBottomSheet accessibilityLabel={t('journal:nutritionLogger.alcoholStrength')} />
+                  </View>
+                )}
+                <View style={[styles.quantityField, { borderColor: colors.border }]}>
+                  <ThemedText type="caption">{t('journal:nutritionLogger.barcodeProduct.amount')} ({amountUnit})</ThemedText>
+                  <NumberStepper
+                    value={grams}
+                    onChange={value => setGramsText(String(value))}
+                    min={0}
+                    step={10}
+                    compact
+                    inBottomSheet
+                    accessibilityLabel={t('journal:nutritionLogger.barcodeProduct.amount')}
+                  />
+                </View>
               </View>
+
+              {productType === 'drink' && alcoholPercent !== undefined && scaledNutrition && (
+                <Notice
+                  variant="info"
+                  iconName="alcohol"
+                  message={t('journal:nutritionLogger.alcoholPortionInfo', {
+                    grams: alcoholFormatter.format(scaledNutrition.alcoholGrams ?? 0),
+                    glasses: alcoholFormatter.format((scaledNutrition.alcoholGrams ?? 0) / 12),
+                  })}
+                />
+              )}
 
               {product.servings && product.servings.length > 0 && (
                 <View style={styles.servings}>
@@ -281,7 +309,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
 ProductAmountBottomSheet.displayName = 'ProductAmountBottomSheet';
 
 const styles = StyleSheet.create({
-  timeSection: { gap: 8, marginBottom: 20, alignItems: 'flex-start' },
+  timeSection: { marginTop: 6, alignItems: 'flex-start' },
   content: {
     flex: 1,
     paddingHorizontal: 20,
@@ -291,7 +319,7 @@ const styles = StyleSheet.create({
 
   productHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: 16,
     marginBottom: 24,
   },
@@ -325,6 +353,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 
+  quantityFields: { flexDirection: 'row', gap: 10 },
+  quantityField: { flex: 1, minWidth: 0, borderWidth: 1, borderRadius: 8, padding: 12, gap: 8 },
   amountRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
 
   servings: {

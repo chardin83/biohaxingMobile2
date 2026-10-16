@@ -25,6 +25,7 @@ const buildDailyNutritionSummary = (sourceEntries: NutritionEntry[], dateKey: st
       carbohydrates: acc.carbohydrates + (entry.carbohydrates ?? 0),
       fat: acc.fat + (entry.fat ?? 0),
       fiber: acc.fiber + (entry.fiber ?? 0),
+      alcoholGrams: acc.alcoholGrams + (entry.alcoholGrams ?? 0),
       caffeineMg: acc.caffeineMg + (entry.caffeineMg ?? 0),
     }),
     {
@@ -34,6 +35,7 @@ const buildDailyNutritionSummary = (sourceEntries: NutritionEntry[], dateKey: st
       fat: 0,
       fiber: 0,
       caffeineMg: 0,
+      alcoholGrams: 0,
     }
   );
 
@@ -43,6 +45,7 @@ const buildDailyNutritionSummary = (sourceEntries: NutritionEntry[], dateKey: st
     carbohydrates: roundToOneDecimal(rawTotals.carbohydrates),
     fat: roundToOneDecimal(rawTotals.fat),
     fiber: roundToOneDecimal(rawTotals.fiber),
+    alcoholGrams: entries.some(entry => entry.alcoholGrams !== undefined) ? roundToOneDecimal(rawTotals.alcoholGrams) : undefined,
     caffeineMg: entries.some(entry => entry.caffeineMg !== undefined) ? Math.round(rawTotals.caffeineMg) : undefined,
   };
 

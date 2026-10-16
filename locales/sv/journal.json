@@ -1,8 +1,18 @@
 {
+  "alcoholLoggingInfo": {
+    "title": "Alkohol i din livsstilslogg",
+    "description": "När du loggar en alkoholhaltig dryck i journalen registreras alkoholintaget även i din livsstilslogg.",
+    "beforeSleep": "Markeras om du intar alkohol mindre än fyra timmar före din planerade läggtid, som är {{bedtime}}. Det avgörs av den tid du anger för drycken.",
+    "updates": "Ändrar du tiden eller tar bort drycken uppdateras de automatiska taggarna.",
+    "changeBedtime": "Ändra läggtid",
+    "understood": "Jag har förstått",
+    "saveError": "Kunde inte spara bekräftelsen. Försök igen.",
+    "intake": "Markeras automatiskt för dagen när du loggar en alkoholhaltig dryck, till exempel vin, öl eller sprit."
+  },
   "caffeineLoggingInfo": {
     "title": "Koffein i din livsstilslogg",
     "description": "När du loggar en koffeinhaltig dryck i journalen registreras koffeinintaget även i din livsstilslogg.",
-    "caffeine": "Markeras automatiskt för dagen när du loggar en koffeinhaltig dryck, till exempel kaffe, te eller energidryck.",
+    "intake": "Markeras automatiskt för dagen när du loggar en koffeinhaltig dryck, till exempel kaffe, te eller energidryck.",
     "beforeSleep": "Markeras om du intar koffein mindre än åtta timmar före din planerade läggtid, som är {{bedtime}}. Det avgörs av den tid du anger för drycken.",
     "updates": "Ändrar du tiden eller tar bort drycken uppdateras de automatiska taggarna.",
     "changeBedtime": "Ändra läggtid",
@@ -57,6 +67,18 @@
     "vitamins": "Vitaminer: {{value}} mg",
     "alcohol": "Alkohol",
     "caffeine": "Koffein",
+    "alcoholPortionInfo": "{{grams}} g alkohol · {{glasses}} standardglas",
+    "alcoholStrength": "Alkoholhalt",
+    "alcoholLabel": "Alkohol",
+    "alcoholGrams": "{{value}} g",
+    "alcoholInfo": {
+      "title": "Vad är ett standardglas?",
+      "description": "Ett standardglas innehåller 12 gram ren alkohol. Det gör det möjligt att jämföra alkoholmängden i olika drycker.",
+      "examples": "Det motsvarar ungefär 33 cl starköl (5 %), 12,5 cl vin (12 %) eller knappt 4 cl sprit (40 %).",
+      "calculation": "Antalet vid glasikonen beräknas genom att dela alkoholmängden i gram med 12. Storleken på glaset och alkoholhalten påverkar mängden. För drycker i katalogen används uppskattade alkoholhalter."
+    },
+    "alcoholAmount": "Alkohol: {{value}} g",
+    "alcoholStandardDrinks": "{{value}}",
     "caffeineAmount": "Koffein: {{value}} mg",
     "sugarFree": "Sockerfri",
     "microbiomeYes": "Mikrobiom-support: Ja ({{count}})",

@@ -4,6 +4,7 @@ import { LIFE_STYLE_ITEMS, type LifeStyleId } from '@/constants/lifeStyle';
 import type { ClockTime } from '@/types/ClockTime';
 
 import type { DailyDrinkTracking } from '../drinks/drinkTypes';
+import { syncAlcoholLifeStyle } from './alcoholLifeStyle';
 import { syncCaffeineLifeStyle } from './caffeineLifeStyle';
 import { clearLifeStyleStorage, getLifeStyleLog, saveLifeStyleDay } from './lifeStyleStorage';
 import type { LifeStyleLog } from './lifeStyleTypes';
@@ -74,8 +75,8 @@ export function useLifeStyleStorage() {
     [enqueue, publish]
   );
 
-  const syncCaffeine = useCallback((drinks: DailyDrinkTracking, bedtime?: ClockTime) => enqueue(async () => {
-    const next = syncCaffeineLifeStyle(current.current, drinks, bedtime);
+  const syncDrinkTags = useCallback((drinks: DailyDrinkTracking, bedtime?: ClockTime) => enqueue(async () => {
+    const next = syncAlcoholLifeStyle(syncCaffeineLifeStyle(current.current, drinks, bedtime), drinks, bedtime);
     if (next === current.current) return;
     for (const date of new Set([...Object.keys(current.current), ...Object.keys(next)])) {
       if (next[date] === current.current[date]) continue;
@@ -95,8 +96,8 @@ export function useLifeStyleStorage() {
       logLifeStyleEntry: logEntry,
       removeLifeStyleEntry: removeEntry,
       clearLifeStyleLog: clearLog,
-      syncCaffeine,
+      syncDrinkTags,
     }),
-    [lifeStyleLog, isLoading, error, logEntry, removeEntry, clearLog, syncCaffeine]
+    [lifeStyleLog, isLoading, error, logEntry, removeEntry, clearLog, syncDrinkTags]
   );
 }
