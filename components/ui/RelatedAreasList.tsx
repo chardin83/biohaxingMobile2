@@ -22,7 +22,7 @@ export default function RelatedAreasList({ areaId }: Readonly<RelatedAreasListPr
     <InformationCardLink title={t(`areas:${areaId}.relatedAreas.sectionTitle`)} iconName="link">
       {dismiss => (
         <>
-          {area.relatedAreas.map((link, index) => (
+          {area.relatedAreas?.map((link, index) => (
             <PressableCard
               key={link.areaId}
               style={index > 0 ? styles.cardSpacing : undefined}

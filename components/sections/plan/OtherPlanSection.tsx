@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 
-import { PlanTipEntry, useStorage } from '@/app/context/StorageContext';
+import { PlanTipEntry } from '@/app/context/storage/plans/planTypes';
+import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import DefaultSettingsModal from '@/components/modals/DefaultSettingsModal';
 import { PlanMeta } from '@/components/sections/plan/PlanMeta';
@@ -54,9 +55,7 @@ export const OtherPlanSection: React.FC<Props> = () => {
     setPlans(prev => ({
       ...prev,
       other: prev.other.map(plan =>
-        plan.tipId === otherEditTipId
-          ? { ...plan, comment: otherCommentInput, editedAt: new Date().toISOString(), editedBy: 'you' }
-          : plan
+        plan.tipId === otherEditTipId ? { ...plan, comment: otherCommentInput, editedAt: new Date().toISOString(), editedBy: 'you' } : plan
       ),
     }));
     closeOtherSettingsModal();
@@ -97,26 +96,18 @@ export const OtherPlanSection: React.FC<Props> = () => {
 
   const handleEditOther = (plan: PlanTipEntry): void => {
     if (!plan.tipId) return;
-    const title = plan.tipId
-      ? t(`tips:${plan.tipId}.title`)
-      : t('plan.untitled');
+    const title = plan.tipId ? t(`tips:${plan.tipId}.title`) : t('plan.untitled');
     openOtherSettingsModal(plan.tipId, title);
-    };
+  };
 
   if (!otherPlans.length) {
-    return (
-      <ThemedText type="default">
-        {t('otherPlanSection.noActiveOther')}
-      </ThemedText>
-    );
+    return <ThemedText type="default">{t('otherPlanSection.noActiveOther')}</ThemedText>;
   }
 
   return (
     <>
       {otherPlans.map((plan, index) => {
-        const tipTitle = plan.tipId
-          ? t(`tips:${plan.tipId}.title`)
-          : t('plan.untitled');
+        const tipTitle = plan.tipId ? t(`tips:${plan.tipId}.title`) : t('plan.untitled');
 
         const editAction = (
           <PlanHeaderActions
@@ -129,19 +120,9 @@ export const OtherPlanSection: React.FC<Props> = () => {
         );
 
         return (
-          <Card
-            key={plan.tipId ?? `other-${index}`}
-            style={[
-              styles.otherGoalCard,
-              { borderLeftColor: colors.planSectionOtherIcon },
-            ]}
-          >
+          <Card key={plan.tipId ?? `other-${index}`} style={[styles.otherGoalCard, { borderLeftColor: colors.planSectionOtherIcon }]}>
             <View style={styles.otherCardHeaderRow}>
-              <TouchableOpacity
-                style={styles.otherCardHeaderMain}
-                onPress={() => openPlanDetails(plan, tipTitle)}
-                activeOpacity={0.85}
-              >
+              <TouchableOpacity style={styles.otherCardHeaderMain} onPress={() => openPlanDetails(plan, tipTitle)} activeOpacity={0.85}>
                 <IconSymbol name="ellipsis" size={18} color={colors.planSectionOtherIcon} />
                 <ThemedText type="title3" style={[styles.otherCardTitle, { color: colors.planSectionOtherIcon }]}>
                   {tipTitle}
@@ -150,10 +131,7 @@ export const OtherPlanSection: React.FC<Props> = () => {
               </TouchableOpacity>
               <View style={styles.otherCardHeaderRight}>{editAction}</View>
             </View>
-            <PlanMeta
-              startedAt={plan.startedAt}
-              createdBy={plan.createdBy}
-            />
+            <PlanMeta startedAt={plan.startedAt} createdBy={plan.createdBy} />
             {plan.comment ? (
               <ThemedText type="default" style={styles.commentText}>
                 {plan.comment}
@@ -191,7 +169,6 @@ export const OtherPlanSection: React.FC<Props> = () => {
           onClose={closeOtherSettingsModal}
           onDelete={handleDeleteOther}
           saveLabel={t('general.save')}
-          cancelLabel={t('general.cancel')}
           deleteLabel={t('general.delete')}
         />
       </Portal>

@@ -153,7 +153,7 @@ export function MetricValuesTableSection({
         ListFooterComponent={
           count < entries.length ? <ActivityIndicator accessibilityRole="progressbar" color={colors.primary} style={styles.loadingIndicator} /> : null
         }
-        keyExtractor={entry => `${entry.metricId}-${entry.recordedAt}-${entry.value}`}
+        keyExtractor={(entry: MetricValueEntry) => `${entry.metricId}-${entry.recordedAt}-${entry.value}`}
         renderItem={renderEntry}
         initialNumToRender={12}
         maxToRenderPerBatch={12}

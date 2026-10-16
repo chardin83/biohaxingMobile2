@@ -18,7 +18,6 @@ type DefaultSettingsModalProps = {
   onClose: () => void;
   onDelete?: () => void;
   saveLabel: string;
-  cancelLabel: string;
   deleteLabel: string;
   nutritionTitle?: string | null;
 };
@@ -34,7 +33,6 @@ const DefaultSettingsModal: React.FC<DefaultSettingsModalProps> = ({
   onClose,
   onDelete,
   saveLabel,
-  cancelLabel,
   deleteLabel,
   nutritionTitle,
 }) => {
@@ -45,14 +43,7 @@ const DefaultSettingsModal: React.FC<DefaultSettingsModalProps> = ({
   }, [visible]);
 
   return (
-    <ThemedModal
-      visible={visible}
-      title={title}
-      onSave={onSave}
-      onClose={onClose}
-      okLabel={saveLabel}
-      cancelLabel={cancelLabel}
-    >
+    <ThemedModal visible={visible} title={title} onSave={onSave} onClose={onClose} okLabel={saveLabel}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.content}>
           {nutritionTitle ? (
@@ -67,19 +58,11 @@ const DefaultSettingsModal: React.FC<DefaultSettingsModalProps> = ({
             onChangeText={onChangeComment}
             containerStyle={styles.fieldBlock}
             returnKeyType="done"
-            blurOnSubmit
             multilineInput
 
             isOptional={true}
           />
-          {onDelete ? (
-            <AppButton
-              title={deleteLabel}
-              onPress={onDelete}
-              variant="danger"
-              style={globalStyles.marginTop16}
-            />
-          ) : null}
+          {onDelete ? <AppButton title={deleteLabel} onPress={onDelete} variant="danger" style={globalStyles.marginTop16} /> : null}
         </View>
       </TouchableWithoutFeedback>
     </ThemedModal>

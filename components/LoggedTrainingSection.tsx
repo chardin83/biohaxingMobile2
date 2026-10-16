@@ -3,7 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { type TrainingLogEntry } from '@/app/context/StorageContext';
+import { type TrainingLogEntry } from '@/app/context/storage/training/trainingTypes';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { TRAINING_ACTIVITY_LABEL_KEYS } from '@/types/trainingActivityOptions';
 
@@ -33,23 +33,10 @@ export const LoggedTrainingSection: React.FC<LoggedTrainingSectionProps> = ({ en
   return (
     <Card style={{ borderRadius: globalStyles.borders.borderRadius }}>
       <View style={styles.loggedTrainingSection}>
-        <Collapsible
-          title={`${t('training:trainingListTitle')} (${entries.length})`}
-          titleType="default"
-          initialCollapsed
-        >
+        <Collapsible title={`${t('training:trainingListTitle')} (${entries.length})`} titleType="default" initialCollapsed>
           {entries.map(entry => (
-            <SwipeableRow
-              key={entry.id}
-              onEdit={() => onEdit(entry.id)}
-              onDelete={() => onDelete(entry.id)}
-              containerStyle={styles.loggedTrainingSwipeContent}
-            >
-              <TouchableOpacity
-                style={styles.loggedTrainingPressable}
-                onPress={() => onEdit(entry.id)}
-                activeOpacity={0.8}
-              >
+            <SwipeableRow key={entry.id} onEdit={() => onEdit(entry.id)} onDelete={() => onDelete(entry.id)} containerStyle={styles.loggedTrainingSwipeContent}>
+              <TouchableOpacity style={styles.loggedTrainingPressable} onPress={() => onEdit(entry.id)} activeOpacity={0.8}>
                 <View style={styles.loggedTrainingRow}>
                   <View style={styles.loggedTrainingMain}>
                     <ThemedText type="defaultSemiBold" style={styles.loggedTrainingName}>

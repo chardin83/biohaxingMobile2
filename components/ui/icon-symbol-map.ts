@@ -1,10 +1,11 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import type { SFSymbol } from 'sf-symbols-typescript';
 
 type MaterialIconName = React.ComponentProps<typeof MaterialIcons>['name'];
 
 type IconDefinition = {
-  sf: string;
+  sf: SFSymbol;
   material: MaterialIconName;
   materialCommunity?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
   useMaterialCommunityOnIOS?: boolean;
@@ -21,7 +22,7 @@ export const ICON_SYMBOLS = {
   'bloodPressure': { sf: 'gauge.medium', material: 'speed', materialCommunity: 'gauge' },
   'hormones': { sf: 'atom', material: 'science', materialCommunity: 'molecule' },
   'heartPulse': { sf: 'waveform.path.ecg', material: 'monitor-heart', materialCommunity: 'heart-pulse' },
-  'digestion': { sf: 'stomach', material: 'restaurant', materialCommunity: 'stomach', useMaterialCommunityOnIOS: true },
+  'digestion': { sf: 'figure.core.training', material: 'restaurant', materialCommunity: 'stomach', useMaterialCommunityOnIOS: true },
   'brain': { sf: 'brain', material: 'psychology', materialCommunity: 'brain' },
 
   'crown': {
@@ -70,7 +71,7 @@ export const ICON_SYMBOLS = {
     material: 'monitor-weight',
   },
   'calculator': {
-    sf: 'calculator',
+    sf: 'plus.forwardslash.minus',
     material: 'calculate',
   },
   'pencil': {

@@ -38,13 +38,10 @@ type Props = {
   tipId?: string;
 };
 
-export const TrainingPlanDetailsSection: React.FC<Props> = ({
-  cardData,
-  tipId,
-}) => {
+export const TrainingPlanDetailsSection: React.FC<Props> = ({ cardData, tipId }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
   const { colors } = useTheme();
-  const { trainingPlanSettings, trainingEntries, setTrainingPlanSettings } = useStorage();
+  const { trainingPlanSettings, dailyTrainingTracking, setTrainingPlanSettings } = useStorage();
   const [trainingSettingsVisible, setTrainingSettingsVisible] = React.useState(false);
   const [trainingSessionsInput, setTrainingSessionsInput] = React.useState('');
   const [trainingDurationInput, setTrainingDurationInput] = React.useState('');
@@ -61,9 +58,7 @@ export const TrainingPlanDetailsSection: React.FC<Props> = ({
 
     const existing = trainingPlanSettings[tipId];
     setTrainingSessionsInput(existing?.sessionsPerWeek === undefined ? '' : existing.sessionsPerWeek.toString());
-    setTrainingDurationInput(
-      typeof existing?.sessionDurationMinutes === 'number' ? existing.sessionDurationMinutes.toString() : ''
-    );
+    setTrainingDurationInput(typeof existing?.sessionDurationMinutes === 'number' ? existing.sessionDurationMinutes.toString() : '');
     setTrainingActivityTypeInput(existing?.activityType ?? 'any');
     setTrainingMinimumIntensityInput(existing?.minimumIntensity ?? 'any');
     setTrainingSettingsVisible(true);
@@ -97,12 +92,7 @@ export const TrainingPlanDetailsSection: React.FC<Props> = ({
 
     setTrainingPlanSettings(prev => {
       const next = { ...prev };
-      if (
-        sessionsValue === undefined &&
-        durationValue === undefined &&
-        activityTypeValue === undefined &&
-        minimumIntensityValue === undefined
-      ) {
+      if (sessionsValue === undefined && durationValue === undefined && activityTypeValue === undefined && minimumIntensityValue === undefined) {
         delete next[tipId];
       } else {
         next[tipId] = {
@@ -116,7 +106,15 @@ export const TrainingPlanDetailsSection: React.FC<Props> = ({
     });
 
     closeTrainingSettingsModal();
-  }, [closeTrainingSettingsModal, setTrainingPlanSettings, tipId, trainingActivityTypeInput, trainingDurationInput, trainingMinimumIntensityInput, trainingSessionsInput]);
+  }, [
+    closeTrainingSettingsModal,
+    setTrainingPlanSettings,
+    tipId,
+    trainingActivityTypeInput,
+    trainingDurationInput,
+    trainingMinimumIntensityInput,
+    trainingSessionsInput,
+  ]);
 
   const trainingWeeklyProgress = React.useMemo<TrainingPlanDetailsProgress | null>(() => {
     if (!tipId) return null;
@@ -144,7 +142,7 @@ export const TrainingPlanDetailsSection: React.FC<Props> = ({
     weekEnd.setDate(weekStart.getDate() + 6);
     const weekEndKey = toDateKey(weekEnd);
 
-    const weekEntries = Object.entries(trainingEntries)
+    const weekEntries = Object.entries(dailyTrainingTracking)
       .filter(([dateKey]) => dateKey >= weekStartKey && dateKey <= weekEndKey)
       .flatMap(([, entries]) => entries);
 
@@ -161,7 +159,7 @@ export const TrainingPlanDetailsSection: React.FC<Props> = ({
       progress: progressInfo.progress,
       isFulfilled: progressInfo.isFulfilled,
     };
-  }, [tipId, trainingEntries, trainingPlanSettings]);
+  }, [tipId, dailyTrainingTracking, trainingPlanSettings]);
 
   const shouldShowTrainingTargetsUnset = !cardData?.badges?.length && !trainingWeeklyProgress;
 
@@ -170,64 +168,54 @@ export const TrainingPlanDetailsSection: React.FC<Props> = ({
       <AppBox
         title={t('plan.trainingTargetsTitle')}
         leading={<IconSymbol name="target" size={18} color={colors.primary} />}
-        headerRight={tipId ? (
-          <PlanEditActions
-            onEdit={openTrainingSettingsModal}
-            editLabel={t('plan.editTrainingTargets')}
-          />
-        ) : undefined}
+        headerRight={tipId ? <PlanEditActions onEdit={openTrainingSettingsModal} editLabel={t('plan.editTrainingTargets')} /> : undefined}
       >
-      {!!cardData?.badges?.length && (
-        <View style={styles.badgeRow}>
-          {cardData.badges.map(badge => (
-            <Badge key={`${badge.label}-${badge.icon ?? 'default'}`} variant="overlay" style={styles.inlineBadge}>
-              {badge.icon ? (
-                <IconSymbol
-                  name={badge.icon as React.ComponentProps<typeof IconSymbol>['name']}
-                  size={14}
-                  color={colors.icon}
-                  style={styles.badgeIcon}
-                />
-              ) : null}
-              <ThemedText type="caption">{badge.label}</ThemedText>
-            </Badge>
-          ))}
-        </View>
-      )}
-
-      {trainingWeeklyProgress && (
-        <View style={styles.trainingProgressContainer}>
-          <ThemedText type="caption" style={styles.trainingProgressWeekLabel}>
-            {t('plan.trainingTargetsWeekLabel', {
-              weekStart: trainingWeeklyProgress.weekStartKey,
-              weekEnd: trainingWeeklyProgress.weekEndKey,
-            })}
-          </ThemedText>
-          <ThemedText type="caption" style={styles.trainingProgressStatus}>
-            {t('plan.trainingWeeklyProgress', {
-              actual: trainingWeeklyProgress.actual,
-              target: trainingWeeklyProgress.target,
-            })}
-          </ThemedText>
-          <View style={[styles.progressTrack, { backgroundColor: colors.secondaryBackground }]}>
-            <View
-              style={[
-                styles.progressFill,
-                {
-                  width: `${Math.round(trainingWeeklyProgress.progress * 100)}%`,
-                  backgroundColor: trainingWeeklyProgress.isFulfilled ? colors.accentMedium : colors.icon,
-                },
-              ]}
-            />
+        {!!cardData?.badges?.length && (
+          <View style={styles.badgeRow}>
+            {cardData.badges.map(badge => (
+              <Badge key={`${badge.label}-${badge.icon ?? 'default'}`} variant="overlay" style={styles.inlineBadge}>
+                {badge.icon ? (
+                  <IconSymbol name={badge.icon as React.ComponentProps<typeof IconSymbol>['name']} size={14} color={colors.icon} style={styles.badgeIcon} />
+                ) : null}
+                <ThemedText type="caption">{badge.label}</ThemedText>
+              </Badge>
+            ))}
           </View>
-        </View>
-      )}
+        )}
 
-      {shouldShowTrainingTargetsUnset && (
-        <ThemedText type="default" style={styles.emptyText}>
-          {t('plan.trainingTargetsUnset')}
-        </ThemedText>
-      )}
+        {trainingWeeklyProgress && (
+          <View style={styles.trainingProgressContainer}>
+            <ThemedText type="caption" style={styles.trainingProgressWeekLabel}>
+              {t('plan.trainingTargetsWeekLabel', {
+                weekStart: trainingWeeklyProgress.weekStartKey,
+                weekEnd: trainingWeeklyProgress.weekEndKey,
+              })}
+            </ThemedText>
+            <ThemedText type="caption" style={styles.trainingProgressStatus}>
+              {t('plan.trainingWeeklyProgress', {
+                actual: trainingWeeklyProgress.actual,
+                target: trainingWeeklyProgress.target,
+              })}
+            </ThemedText>
+            <View style={[styles.progressTrack, { backgroundColor: colors.secondaryBackground }]}>
+              <View
+                style={[
+                  styles.progressFill,
+                  {
+                    width: `${Math.round(trainingWeeklyProgress.progress * 100)}%`,
+                    backgroundColor: trainingWeeklyProgress.isFulfilled ? colors.accentMedium : colors.icon,
+                  },
+                ]}
+              />
+            </View>
+          </View>
+        )}
+
+        {shouldShowTrainingTargetsUnset && (
+          <ThemedText type="default" style={styles.emptyText}>
+            {t('plan.trainingTargetsUnset')}
+          </ThemedText>
+        )}
       </AppBox>
 
       <Portal>
@@ -250,7 +238,6 @@ export const TrainingPlanDetailsSection: React.FC<Props> = ({
           onSave={handleSaveTrainingSettings}
           onClose={closeTrainingSettingsModal}
           saveLabel={t('general.save')}
-          cancelLabel={t('general.cancel')}
         />
       </Portal>
     </>

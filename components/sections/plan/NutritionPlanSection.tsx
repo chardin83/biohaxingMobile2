@@ -1,9 +1,10 @@
 import { useRouter } from 'expo-router';
-import React, { useCallback,useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { PlanTipEntry, useStorage } from '@/app/context/StorageContext';
+import { PlanTipEntry } from '@/app/context/storage/plans/planTypes';
+import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { PlanMeta } from '@/components/sections/plan/PlanMeta';
 import { ThemedText } from '@/components/ThemedText';
@@ -12,7 +13,7 @@ import { Card } from '@/components/ui/Card';
 import DiscreetButton from '@/components/ui/DiscreetButton';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useSupplementMap } from '@/locales/supplements';
-import { Tip,tips } from '@/locales/tips';
+import { Tip, tips } from '@/locales/tips';
 
 type Props = {
   colors: any;
@@ -62,8 +63,13 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
     }));
   }, []);
 
-
-  const openPlanDetails = (tipId: string, plan?: PlanTipEntry, title?: string | null, foodItems?: Array<{ name: string; details?: string; imageKey?: string }>, recommendedDoseLabel?: string | null) => {
+  const openPlanDetails = (
+    tipId: string,
+    plan?: PlanTipEntry,
+    title?: string | null,
+    foodItems?: Array<{ name: string; details?: string; imageKey?: string }>,
+    recommendedDoseLabel?: string | null
+  ) => {
     if (!tipId) return;
     const cardData = JSON.stringify({
       foodItems: foodItems ?? [],
@@ -87,14 +93,8 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
   };
 
   if (!nutritionGroups.length) {
-    return (
-      <ThemedText type="default">
-        {t('nutritionPlanSection.noActiveNutrition')}
-      </ThemedText>
-    );
+    return <ThemedText type="default">{t('nutritionPlanSection.noActiveNutrition')}</ThemedText>;
   }
-
-
 
   return (
     <>
@@ -133,13 +133,7 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
         const arrowRotation = isExpanded ? '-90deg' : '0deg';
 
         return (
-          <Card
-            key={tipId}
-            style={[
-              styles.nutritionGoalCard,
-              { borderLeftColor: colors.planSectionNutritionIcon },
-            ]}
-          >
+          <Card key={tipId} style={[styles.nutritionGoalCard, { borderLeftColor: colors.planSectionNutritionIcon }]}>
             <View style={styles.nutritionCardHeaderRow}>
               <TouchableOpacity
                 style={styles.nutritionCardHeaderMain}
@@ -147,18 +141,13 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
                 activeOpacity={0.85}
               >
                 <IconSymbol name="flame" size={18} color={colors.planSectionNutritionIcon} />
-                  <ThemedText type="title3" style={[styles.nutritionCardTitle, { color: colors.planSectionNutritionIcon }]}>
-                    {tipTitle}
-                  </ThemedText>
+                <ThemedText type="title3" style={[styles.nutritionCardTitle, { color: colors.planSectionNutritionIcon }]}>
+                  {tipTitle}
+                </ThemedText>
                 <IconSymbol name="chevron.right" size={16} color={colors.icon} />
               </TouchableOpacity>
             </View>
-            {plan?.startedAt && (
-              <PlanMeta
-                startedAt={plan.startedAt}
-                createdBy={plan.createdBy}
-              />
-            )}
+            {plan?.startedAt && <PlanMeta startedAt={plan.startedAt} createdBy={plan.createdBy} />}
             {recommendedDoseLabel && (
               <ThemedText type="default" style={styles.recommendedDose}>
                 {recommendedDoseLabel}
@@ -175,9 +164,7 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
                 {visibleFoodItems.map(({ key, name, details }) => (
                   <Badge key={`food-${key}`} variant="overlay">
                     <View>
-                      <ThemedText type="defaultSemiBold">
-                        {name}
-                      </ThemedText>
+                      <ThemedText type="defaultSemiBold">{name}</ThemedText>
                       {!!details && isExpanded && (
                         <ThemedText type="default" style={styles.badgeDetail}>
                           {details}
@@ -187,18 +174,11 @@ export const NutritionPlanSection: React.FC<Props> = ({ colors }) => {
                   </Badge>
                 ))}
                 {hasExtraFoods && (
-                  <Badge
-                    key={`toggle-${tipId}`}
-                    variant="overlay"
-                    style={styles.toggleBadge}
-                    onPress={() => toggleNutritionFoods(tipId)}
-                  >
+                  <Badge key={`toggle-${tipId}`} variant="overlay" style={styles.toggleBadge} onPress={() => toggleNutritionFoods(tipId)}>
                     <ThemedText type="default">
-                      {isExpanded
-                        ? t('general.showLess')
-                        : t('nutritionPlanSection.showMoreNutritionFoods', { count: hiddenCount })}
+                      {isExpanded ? t('general.showLess') : t('nutritionPlanSection.showMoreNutritionFoods', { count: hiddenCount })}
                     </ThemedText>
-                     <IconSymbol
+                    <IconSymbol
                       name="chevron.right"
                       size={18}
                       color={colors.icon}

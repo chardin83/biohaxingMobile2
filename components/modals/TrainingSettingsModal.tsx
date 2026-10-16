@@ -27,7 +27,6 @@ type TrainingSettingsModalProps = {
   onSave: () => void;
   onClose: () => void;
   saveLabel: string;
-  cancelLabel: string;
   trainingTitle?: string | null;
 };
 
@@ -49,7 +48,6 @@ const TrainingSettingsModal: React.FC<TrainingSettingsModalProps> = ({
   onSave,
   onClose,
   saveLabel,
-  cancelLabel,
   trainingTitle,
 }) => {
   const { t } = useTranslation('common');
@@ -80,14 +78,7 @@ const TrainingSettingsModal: React.FC<TrainingSettingsModalProps> = ({
   }, [visible]);
 
   return (
-    <ThemedModal
-      visible={visible}
-      title={title}
-      onSave={onSave}
-      onClose={onClose}
-      okLabel={saveLabel}
-      cancelLabel={cancelLabel}
-    >
+    <ThemedModal visible={visible} title={title} onSave={onSave} onClose={onClose} okLabel={saveLabel}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.content}>
           {trainingTitle ? (
@@ -123,10 +114,14 @@ const TrainingSettingsModal: React.FC<TrainingSettingsModalProps> = ({
                 const isSelected = activityTypeValue === option.key;
                 return (
                   <TouchableOpacity
-                      key={option.key}
-                      style={[styles.optionChip, { borderColor: colors.borderLight }, isSelected && [styles.optionChipSelected, { borderColor: colors.primary, backgroundColor: colors.primaryVeryWeak }]]}
-                      onPress={() => onChangeActivityType(option.key)}
-                    >
+                    key={option.key}
+                    style={[
+                      styles.optionChip,
+                      { borderColor: colors.borderLight },
+                      isSelected && [styles.optionChipSelected, { borderColor: colors.primary, backgroundColor: colors.primaryVeryWeak }],
+                    ]}
+                    onPress={() => onChangeActivityType(option.key)}
+                  >
                     <ThemedText type="explainer">{option.label}</ThemedText>
                   </TouchableOpacity>
                 );
@@ -141,10 +136,14 @@ const TrainingSettingsModal: React.FC<TrainingSettingsModalProps> = ({
                 const isSelected = minimumIntensityValue === option.key;
                 return (
                   <TouchableOpacity
-                      key={option.key}
-                      style={[styles.optionChip, { borderColor: colors.borderLight }, isSelected && [styles.optionChipSelected, { borderColor: colors.primary, backgroundColor: colors.primaryVeryWeak }]]}
-                      onPress={() => onChangeMinimumIntensity(option.key)}
-                    >
+                    key={option.key}
+                    style={[
+                      styles.optionChip,
+                      { borderColor: colors.borderLight },
+                      isSelected && [styles.optionChipSelected, { borderColor: colors.primary, backgroundColor: colors.primaryVeryWeak }],
+                    ]}
+                    onPress={() => onChangeMinimumIntensity(option.key)}
+                  >
                     <ThemedText type="explainer">{option.label}</ThemedText>
                   </TouchableOpacity>
                 );

@@ -1,4 +1,4 @@
-import { type TrainingLogEntry } from '@/app/context/StorageContext';
+import { type TrainingLogEntry } from '@/app/context/storage/training/trainingTypes';
 import { type TrainingActivityFilter, type TrainingIntensity, type TrainingIntensityFilter } from '@/types/training';
 
 const TRAINING_INTENSITY_RANK: Record<TrainingIntensity, number> = {
@@ -38,14 +38,12 @@ export const calculateTrainingWeeklyProgress = ({
     const matchesActivity = !hasActivityFilter || entry.activityType === target.activityType;
 
     const matchesIntensity =
-      !hasIntensityFilter ||
-      TRAINING_INTENSITY_RANK[entry.intensity] >= TRAINING_INTENSITY_RANK[target.minimumIntensity as TrainingIntensity];
+      !hasIntensityFilter || TRAINING_INTENSITY_RANK[entry.intensity] >= TRAINING_INTENSITY_RANK[target.minimumIntensity as TrainingIntensity];
 
     return meetsDuration && matchesActivity && matchesIntensity;
   });
 
-  const hasExplicitSessionTarget =
-    typeof target.sessionsPerWeek === 'number' && Number.isFinite(target.sessionsPerWeek) && target.sessionsPerWeek > 0;
+  const hasExplicitSessionTarget = typeof target.sessionsPerWeek === 'number' && Number.isFinite(target.sessionsPerWeek) && target.sessionsPerWeek > 0;
 
   if (!hasExplicitSessionTarget) {
     return {

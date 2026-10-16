@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SymbolView } from 'expo-symbols';
-import { StyleProp, ViewStyle } from 'react-native';
+import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 import { ICON_SYMBOLS, IconSymbolName } from './icon-symbol-map';
 
@@ -14,7 +14,7 @@ export function IconSymbol({
   name: IconSymbolName;
   size?: number;
   color: string;
-  style?: StyleProp<ViewStyle>;
+  style?: StyleProp<ViewStyle & TextStyle>;
   weight?: 'regular' | 'bold';
 }>) {
   const definition = ICON_SYMBOLS[name];
