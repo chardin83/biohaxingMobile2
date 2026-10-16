@@ -1,6 +1,8 @@
 import type { NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import { VerdictValue } from '@/types/verdict';
 
+import type { TipTargetItem } from '../nutrition/nutritionTypes';
+
 export interface ViewedTip {
   tipId: string;
   viewedAt: string;
@@ -20,6 +22,8 @@ export type XpBreakdown = {
 };
 
 export type NutritionXpClaim = {
+  inputSignature: string;
+  targets: TipTargetItem[];
   xp: number;
   awardedAt: string;
   period: NutritionTargetPeriod;

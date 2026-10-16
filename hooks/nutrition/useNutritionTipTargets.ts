@@ -10,6 +10,7 @@ import { isNutrientTargetTag } from '@/constants/nutrients';
 import { isPolyphenolTargetTag } from '@/constants/polyphenols';
 import { isVitaminTargetTag } from '@/constants/vitamins';
 import { tips } from '@/locales/tips';
+import { getNutritionCompletion, restoreCompletedNutritionTargets } from '@/services/targetProgress/completedNutritionProgress';
 import { resolveDailyNutritionTargetDetails } from '@/services/targetProgress/nutritionTargetProgress';
 import type { NutritionTargetDefinition } from '@/services/targetProgress/targetProgressTypes';
 import type { NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
@@ -44,7 +45,7 @@ const getNutritionLabelGroup = (tag: string, unit: NutritionTargetUnit): Nutriti
 };
 
 export const useNutritionTipTargets = (dateKeys: string[]): Record<string, Record<string, TipTargetItem[]>> => {
-  const { plans, userProfile, dailyNutritionTracking, takenDates } = useStorage();
+  const { plans, userProfile, dailyNutritionTracking, takenDates, nutritionCompletions: nutritionXpClaims } = useStorage();
 
   const { t } = useTranslation();
 
@@ -144,10 +145,10 @@ export const useNutritionTipTargets = (dateKeys: string[]): Record<string, Recor
           ];
         });
 
-        result[dateKey][tip.id] = targets;
+        result[dateKey][tip.id] = restoreCompletedNutritionTargets(targets, getNutritionCompletion(nutritionXpClaims, tip.id, 'daily', dateKey));
       });
     });
 
     return result;
-  }, [dateKeys, plans, userProfile?.weightKg, userProfile?.nutritionGoals?.protein, dailyNutritionTracking, takenDates, t]);
+  }, [dateKeys, plans, userProfile?.weightKg, userProfile?.nutritionGoals?.protein, dailyNutritionTracking, takenDates, nutritionXpClaims, t]);
 };

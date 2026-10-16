@@ -23,6 +23,7 @@ import { getAreaViewXP, getInsightQuestionXP, getTipReadingXP, TIP_READING_FIELD
 import { levels, XP_FOR_VERDICT, XP_PER_CHAT_MESSAGE, type XpSource } from '@/constants/XP';
 import { MetricId } from '@/locales/metrics';
 import { countNewAutomaticHabitGoals, getAutomaticHabitGoalKeys } from '@/services/targetProgress/automaticHabitSummary';
+import { getCurrentNutritionCompletions, getNutritionInputSignature } from '@/services/targetProgress/completedNutritionProgress';
 import { prepareManualHabitResult, storeAutomaticSleepResults } from '@/services/targetProgress/habitResultStorage';
 import { storeLifeStyleHabitResults } from '@/services/targetProgress/lifeStyleHabitResults';
 //import { seedHabitTestDataOnce } from '@/services/testData/temporaryHabitTestData';
@@ -157,8 +158,9 @@ interface StorageContextType extends LifeStyleStorageValue {
   incrementTipChat: (areaId: string, tipId: string, questionType: string) => number;
   addChatMessageXP: (areaId: string, tipId: string) => number;
   setTipVerdict: (areaId: string, tipId: string, verdict: VerdictValue) => number;
-  claimNutritionTipCompletionXP?: (input: { claimKey: string; tipId: string; period: NutritionTargetPeriod; periodKey: string; amount: number }) => number;
+  claimNutritionTipCompletionXP?: (input: { claimKey: string; tipId: string; period: NutritionTargetPeriod; periodKey: string; amount: number; targets: NutritionXpClaim['targets'] }) => number;
   nutritionXpClaims?: Record<string, NutritionXpClaim>;
+  nutritionCompletions?: Record<string, NutritionXpClaim>;
   dailyNutritionTracking: DailyNutritionTracking;
   addNutritionEntry: (dateKey: string, entry: NutritionEntryInput) => NutritionEntry;
   updateNutritionEntry: (dateKey: string, entryId: string, updates: Partial<NutritionEntryInput>) => void;
@@ -1115,31 +1117,35 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   );
 
   const claimNutritionTipCompletionXP = useCallback(
-    (input: { claimKey: string; tipId: string; period: NutritionTargetPeriod; periodKey: string; amount: number }): number => {
-      const { claimKey, tipId, period, periodKey, amount } = input;
+    (input: { claimKey: string; tipId: string; period: NutritionTargetPeriod; periodKey: string; amount: number; targets: NutritionXpClaim['targets'] }): number => {
+      const { claimKey, tipId, period, periodKey, amount, targets } = input;
 
       if (!claimKey || !Number.isFinite(amount) || amount <= 0) {
         return 0;
       }
 
-      if (nutritionXpClaimsState[claimKey]) {
-        return 0;
-      }
+      const inputSignature = getNutritionInputSignature(period, periodKey, {
+        dailyNutritionTracking: dailyNutritionTrackingState,
+        weeklyNutritionTracking: weeklyNutritionTrackingState,
+        takenDates: takenDatesState,
+      });
+      const existingClaim = nutritionXpClaimsState[claimKey];
+      if (existingClaim?.inputSignature === inputSignature) return 0;
 
       setNutritionXpClaimsState(prev => {
-        if (prev[claimKey]) {
-          return prev;
-        }
+        if (prev[claimKey]?.inputSignature === inputSignature) return prev;
 
         const next: Record<string, NutritionXpClaim> = {
           ...prev,
 
           [claimKey]: {
-            xp: amount,
-            awardedAt: new Date().toISOString(),
+            xp: prev[claimKey]?.xp ?? amount,
+            awardedAt: prev[claimKey]?.awardedAt ?? new Date().toISOString(),
+            inputSignature,
             period,
             periodKey,
             tipId,
+            targets: targets.map(target => ({ ...target })),
           },
         };
 
@@ -1148,11 +1154,12 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
         return next;
       });
 
+      if (existingClaim) return 0;
       awardXP(amount, 'nutrition');
 
       return amount;
     },
-    [awardXP, nutritionXpClaimsState]
+    [awardXP, nutritionXpClaimsState, dailyNutritionTrackingState, weeklyNutritionTrackingState, takenDatesState]
   );
 
   const clearNutritionXP = useCallback(() => {
@@ -1277,6 +1284,11 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       setTipVerdict,
       claimNutritionTipCompletionXP,
       nutritionXpClaims: nutritionXpClaimsState,
+      nutritionCompletions: getCurrentNutritionCompletions(nutritionXpClaimsState, {
+        dailyNutritionTracking: dailyNutritionTrackingState,
+        weeklyNutritionTracking: weeklyNutritionTrackingState,
+        takenDates: takenDatesState,
+      }),
       dailyNutritionTracking: dailyNutritionTrackingState,
       addNutritionEntry,
       updateNutritionEntry,

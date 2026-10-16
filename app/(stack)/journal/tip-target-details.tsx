@@ -31,6 +31,8 @@ import { isVitaminTargetTag } from '@/constants/vitamins';
 import { useSupplementMap } from '@/locales/supplements';
 import { getTipTargetIconName, type NutrientTag, tips } from '@/locales/tips';
 import type { BarcodeProduct } from '@/services/openFoodFacts';
+import { getNutritionCompletion } from '@/services/targetProgress/completedNutritionProgress';
+import { normalizeNutritionTargets } from '@/services/targetProgress/normalizeNutritionTargets';
 import { toGrams, toMicrograms, toMilligrams } from '@/services/targetProgress/nutritionTargetProgress';
 import { FOOD_IMAGES, FOOD_NUTRIENT_PROFILES, type FoodServing } from '@/types/nutrition/foodCatalog';
 import { type NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
@@ -497,7 +499,7 @@ export default function TipTargetDetailsScreen() {
   const supplementMap = useSupplementMap();
   const foodAmountBottomSheetRef = useRef<ProductAmountBottomSheetRef>(null);
   const medalInfoBottomSheetRef = useRef<BottomSheetModal | null>(null);
-  const { dailyNutritionTracking, takenDates, weeklyNutritionTracking, addNutritionEntry } = useStorage();
+  const { dailyNutritionTracking, takenDates, weeklyNutritionTracking, addNutritionEntry, nutritionCompletions: nutritionXpClaims, userProfile } = useStorage();
   const params = useLocalSearchParams<{
     tipId?: string;
     tipTitle?: string;
@@ -555,8 +557,14 @@ export default function TipTargetDetailsScreen() {
   const selectedWeekBounds = useMemo(() => getWeekBoundsFromDateKey(selectedDateKey), [selectedDateKey]);
   const currentWeekStartKey = useMemo(() => getWeekBoundsFromDateKey(today).weekStartKey, [today]);
   const canGoForward = getCanGoForward(isWeeklyTarget, selectedDateKey, today, selectedWeekBounds.weekStartKey, currentWeekStartKey);
-  const targetAmount = parseNumber(params.targetAmount);
   const targetUnit = parseTargetUnit(params.targetUnit) ?? 'mg';
+  const completion = getNutritionCompletion(nutritionXpClaims, tipId, isWeeklyTarget ? 'weekly' : 'daily', selectedDateKey);
+  const completedTarget = completion?.targets?.find(target => target.tag === targetTagParam && target.unit === targetUnit);
+  const currentTarget = tipMeta
+    ? normalizeNutritionTargets(tipMeta, userProfile?.weightKg, userProfile?.nutritionGoals?.protein)
+      .find(target => target.trackingKey === targetTagParam && target.unit === targetUnit)
+    : undefined;
+  const targetAmount = completedTarget?.amount ?? currentTarget?.amount ?? parseNumber(params.targetAmount);
   const selectedDateKeys = useMemo(
     () => (isWeeklyTarget ? getDateKeysInRange(selectedWeekBounds.weekStartKey, selectedWeekBounds.weekEndKey) : [selectedDateKey]),
     [isWeeklyTarget, selectedDateKey, selectedWeekBounds.weekEndKey, selectedWeekBounds.weekStartKey]
@@ -585,8 +593,8 @@ export default function TipTargetDetailsScreen() {
     return calculateIntakeForTarget(targetTagParam, targetUnit, mealSummaries, supplementsForPeriod, selectedTrackingValue);
   }, [selectedDateKeys, dailyNutritionTracking, takenDates, targetTagParam, targetUnit, targetSupplementIds, selectedTrackingValue]);
 
-  const foodActual = foodAmount;
-  const supplementActual = supplementAmount;
+  const supplementActual = completedTarget ? (completedTarget.supplementActual ?? 0) : supplementAmount;
+  const foodActual = completedTarget ? (completedTarget.foodActual ?? Math.max(0, completedTarget.actual - supplementActual)) : foodAmount;
   const totalActual = foodActual + supplementActual;
   const contributingMeals = useMemo(() => {
     if (isWeeklyTarget && (targetUnit === 'items' || targetUnit === 'count' || targetUnit === 'plants')) {

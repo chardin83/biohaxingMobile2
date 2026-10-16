@@ -19,6 +19,7 @@ import Container from '@/components/ui/Container';
 import { useNutritionTipTargets } from '@/hooks/nutrition/useNutritionTipTargets';
 import { useProgressWeeks } from '@/hooks/useWeekProgress';
 import { tips } from '@/locales/tips';
+import { getNutritionCompletion, restoreCompletedNutritionTargets } from '@/services/targetProgress/completedNutritionProgress';
 import { aggregateWeeklyNutritionTracking } from '@/services/targetProgress/nutritionTargetProgress';
 import { NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import { formatMonthDay, fromDateKey, toDateKey } from '@/utils/dateUtils';
@@ -100,7 +101,7 @@ export default function NutritionProgressScreen() {
   const router = useRouter();
   const { colors } = useTheme();
   const { t, i18n } = useTranslation();
-  const { plans, nutritionXpClaims, weeklyNutritionTracking } = useStorage();
+  const { plans, nutritionCompletions: nutritionXpClaims, weeklyNutritionTracking } = useStorage();
   const language = i18n.resolvedLanguage ?? i18n.language;
 
   const {
@@ -422,7 +423,7 @@ export default function NutritionProgressScreen() {
         </View>
 
         <View style={styles.weekSummaryBlock}>
-          {summaryTargets.map(target => (
+          {restoreCompletedNutritionTargets(summaryTargets, getNutritionCompletion(nutritionXpClaims, tip.tipId, 'weekly', selectedWeek.start)).map(target => (
             <TipTarget key={`${tip.tipId}-${target.tag}-${target.period}`} tip={tip} target={target} colors={colors} />
           ))}
         </View>

@@ -1159,7 +1159,15 @@ const rawTips: Tip[] = [
     planCategory: ['other'],
     targetPeriod: 'daily',
     targetIconName: 'target',
-    habitTargets: [{ trackingKey: 'pre_sleep_wind_down', amount: 3, unit: 'count', inputMode: 'questionnaire', lifeStyleKeys: ['dimmedLights', 'calmActivity', 'reducedScreens'] }],
+    habitTargets: [
+      {
+        trackingKey: 'pre_sleep_wind_down',
+        amount: 3,
+        unit: 'count',
+        inputMode: 'questionnaire',
+        lifeStyleKeys: ['dimmedLights', 'calmActivity', 'reducedScreens'],
+      },
+    ],
     bodyParts: ['nervousSystem'],
   },
   {

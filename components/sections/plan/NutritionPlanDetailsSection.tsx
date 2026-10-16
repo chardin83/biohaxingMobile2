@@ -14,6 +14,7 @@ import { MINERAL_TYPE_KEYS } from '@/constants/minerals';
 import { isNutrientTargetTag } from '@/constants/nutrients';
 import { VITAMIN_TYPE_KEYS } from '@/constants/vitamins';
 import type { Tip } from '@/locales/tips';
+import { getNutritionCompletion } from '@/services/targetProgress/completedNutritionProgress';
 import { NutritionTargetPeriod, NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
 import { hasProfileProteinTargets, hasValidProteinGoal, hasValidTargetWeight, hasWeightBasedTargets, resolveNutritionTip } from '@/utils/resolveNutritionTip';
 
@@ -45,7 +46,7 @@ type Props = {
 export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgressMap, selectedDateKey, title }) => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
   const { colors } = useTheme();
-  const { userProfile } = useStorage();
+  const { userProfile, nutritionCompletions: nutritionXpClaims } = useStorage();
   const weightBased = hasWeightBasedTargets(tip);
   const weightMissing = weightBased && !hasValidTargetWeight(userProfile?.weightKg);
   const proteinGoalMissing = hasProfileProteinTargets(tip) && !hasValidProteinGoal(userProfile?.nutritionGoals?.protein);
@@ -64,7 +65,8 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgre
       ...target,
       tag: target.trackingKey,
     }));
-    const allTargets: NutritionTargetSource[] = [
+    const completion = getNutritionCompletion(nutritionXpClaims, tip.id, tip.targetPeriod ?? 'daily', selectedDateKey);
+    const allTargets: NutritionTargetSource[] = completion?.targets ?? [
       ...(tip.nutrientTargets ?? []),
       ...proteinTargets,
       ...fiberTargets,
@@ -130,7 +132,7 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgre
         value: formatValue(target.amount, target.unit),
       };
     });
-  }, [t, tip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein]);
+  }, [t, tip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein, nutritionXpClaims, selectedDateKey]);
 
   const targetProgressInfoText = React.useMemo(() => {
     const hasDailyTargets = targets.some(target => target.period === 'daily');
@@ -171,7 +173,7 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgre
                 tag: target.tag,
                 unit: target.unit,
                 period: target.period,
-                amount: target.amount,
+                amount: progressTarget?.amount ?? target.amount,
                 actual: progressTarget?.actual ?? 0,
                 foodActual: progressTarget?.foodActual,
                 supplementActual: progressTarget?.supplementActual,

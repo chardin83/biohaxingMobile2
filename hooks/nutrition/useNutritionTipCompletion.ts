@@ -238,6 +238,7 @@ export const useNutritionTipCompletion = ({ selectedDate, weekStartKey, onTipCom
           period: 'daily',
           periodKey: selectedDate,
           amount: XP_FOR_NUTRITION_TIP_DAILY_COMPLETION,
+          targets: tipProgress.targets,
         });
       }
       if (tipProgress.period === 'weekly') {
@@ -247,6 +248,7 @@ export const useNutritionTipCompletion = ({ selectedDate, weekStartKey, onTipCom
           period: 'weekly',
           periodKey: weekStartKey,
           amount: XP_FOR_NUTRITION_TIP_WEEKLY_COMPLETION,
+          targets: tipProgress.targets,
         });
       }
     });

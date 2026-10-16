@@ -5,6 +5,7 @@ import { TipProgressItem } from '@/app/context/storage/nutrition/nutritionTypes'
 import { useStorage } from '@/app/context/StorageContext';
 import { useTargetProgressList } from '@/hooks/useTargetProgressList';
 import { tips } from '@/locales/tips';
+import { getNutritionCompletion, restoreCompletedNutritionTargets } from '@/services/targetProgress/completedNutritionProgress';
 import { normalizeNutritionTargets } from '@/services/targetProgress/normalizeNutritionTargets';
 import type { NutritionTargetDefinition } from '@/services/targetProgress/targetProgressTypes';
 
@@ -14,7 +15,7 @@ type NutritionPlanTarget = NutritionTargetDefinition & {
 };
 
 export const useNutritionPlanProgress = (selectedDate: string): TipProgressItem[] => {
-  const { plans, userProfile } = useStorage();
+  const { plans, userProfile, nutritionCompletions: nutritionXpClaims } = useStorage();
 
   const { t } = useTranslation();
 
@@ -124,6 +125,11 @@ export const useNutritionPlanProgress = (selectedDate: string): TipProgressItem[
       existing.progress = (existing.progress * previousTargetCount + targetProgressValue) / existing.totalCount;
     });
 
-    return Array.from(byTip.values());
-  }, [targetProgress, t]);
+    return Array.from(byTip.values()).map(progress => {
+      const completion = getNutritionCompletion(nutritionXpClaims, progress.tipId, progress.period, selectedDate);
+      if (!completion) return progress;
+      const savedTargets = restoreCompletedNutritionTargets(progress.targets, completion);
+      return { ...progress, targets: savedTargets, isFulfilled: true, progress: 1, metCount: savedTargets.length, totalCount: savedTargets.length };
+    });
+  }, [targetProgress, t, nutritionXpClaims, selectedDate]);
 };

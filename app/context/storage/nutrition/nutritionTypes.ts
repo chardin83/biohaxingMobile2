@@ -21,7 +21,7 @@ export type TipTargetItem = {
 export type TipTargetProgress = Pick<
   TipTargetItem,
   'tag' | 'unit' | 'period' | 'actual' | 'foodActual' | 'supplementActual' | 'isMet' | 'trackedItems' | 'supplementIds'
->;
+> & { amount?: number };
 
 export type TipTargetUnit = NutritionTargetUnit;
 export type TipTargetPeriod = NutritionTargetPeriod;
