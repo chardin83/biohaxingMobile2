@@ -647,12 +647,6 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
     { metricId: 'energy', kind: 'subjective' },
   ],
 
-  // --- Multivitamin ---
-  'multivitamin_general': [
-    { metricId: 'energy', kind: 'subjective' },
-    // lägg ev labb du vill spåra här (B12, folat, ferritin) när/om du skapar metric-defs för dem
-  ],
-
   // --- Vitamin D ---
   'vitamin_d': [
     { metricId: 'vitd_25oh', kind: 'primary' },

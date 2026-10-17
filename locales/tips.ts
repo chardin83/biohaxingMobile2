@@ -242,41 +242,6 @@ type TipWithTargets = {
 export type Tip = TipBase & (TipWithoutTargets | TipWithTargets);
 
 const rawTips: Tip[] = [
-  // Lågkolhydratkost
-  {
-    id: 'low_carb_diet',
-    level: 4,
-    xp: 800,
-    areas: [
-      { id: 'energy', descriptionKey: 'low_carb_diet.areas.energy' },
-      { id: 'digestiveHealth', descriptionKey: 'low_carb_diet.areas.digestiveHealth' },
-    ],
-    title: 'low_carb_diet.title',
-    descriptionKey: 'low_carb_diet.description',
-    trainingRelation: 'anytime',
-    timeRule: 'anytime',
-    planCategory: ['nutrition'],
-    nutritionFoods: [{ key: 'kale' }, { key: 'eggs' }],
-    bodyParts: ['digestiveSystem', 'cells'],
-  },
-  // Ketogen kost
-  {
-    id: 'ketogenic_diet',
-    level: 8,
-    xp: 1200,
-    areas: [
-      { id: 'energy', descriptionKey: 'ketogenic_diet.areas.energy' },
-      { id: 'mind', descriptionKey: 'ketogenic_diet.areas.mind' },
-      { id: 'digestiveHealth', descriptionKey: 'ketogenic_diet.areas.digestiveHealth' },
-    ],
-    title: 'ketogenic_diet.title',
-    descriptionKey: 'ketogenic_diet.description',
-    trainingRelation: 'anytime',
-    timeRule: 'anytime',
-    planCategory: ['nutrition'],
-    nutritionFoods: [{ key: 'avocado' }, { key: 'coconutOil' }, { key: 'sardines' }, { key: 'eggs' }],
-    bodyParts: ['brain', 'cells'],
-  },
   {
     id: 'berberine',
     level: 7,
@@ -376,24 +341,6 @@ const rawTips: Tip[] = [
     planCategory: ['nutrition'],
     bodyParts: ['digestiveSystem'],
     microbiomeIds: ['Akkermansia'],
-  },
-  {
-    id: 'multivitamin_general',
-    level: 5,
-    xp: 300,
-    areas: [
-      { id: 'energy', descriptionKey: 'multivitamin_general.areas.energy' },
-      { id: 'immuneSupport', descriptionKey: 'multivitamin_general.areas.immuneSupport' },
-    ],
-    title: 'multivitamin_general.title',
-    descriptionKey: 'multivitamin_general.description',
-    supplements: [{ id: 'multivitamin' }],
-    startPrompt: 'multivitamin_general.startPrompt',
-    trainingRelation: 'anytime',
-    preferredDayParts: ['morning'],
-    timeRule: 'anytime',
-    planCategory: ['nutrition'],
-    bodyParts: ['immuneSystem'],
   },
   {
     id: 'vitamin_d',

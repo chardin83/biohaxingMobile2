@@ -1,49 +1,4 @@
 {
-  "low_carb_diet": {
-    "title": "Low-carb diet",
-    "description": "A low-carb diet focuses on reducing carbohydrate intake and increasing healthy fats and proteins. It may support metabolic health, weight management, and stable energy levels.",
-    "areas": {
-      "energy": "Low-carb diets can help stabilize energy levels and reduce blood sugar fluctuations.",
-      "digestiveHealth": "May improve insulin sensitivity and support metabolic health."
-    },
-    "nutritionFoods": {
-      "title": "Low-carb foods",
-      "items": {
-        "eggs": {
-          "details": "Eggs are a versatile, low-carb source of protein and healthy fats."
-        },
-        "kale": {
-          "details": "Spinach, kale, lettuce, and other greens are low in carbs and high in nutrients."
-        }
-      }
-    }
-  },
-  "ketogenic_diet": {
-    "title": "Ketogenic diet",
-    "description": "The ketogenic diet is a very low-carb, high-fat diet that induces ketosis, a metabolic state where the body burns fat for fuel. It may support brain health, metabolic flexibility, and sustained energy.",
-    "areas": {
-      "energy": "Ketogenic diets can provide stable energy by relying on fat as the primary fuel source.",
-      "digestiveHealth": "May improve metabolic flexibility and support blood sugar regulation.",
-      "mind": "Ketones produced during ketosis may support brain health and cognitive function."
-    },
-    "nutritionFoods": {
-      "title": "Keto-friendly foods",
-      "items": {
-        "avocado": {
-          "details": "Avocados are high in healthy fats and fiber, and very low in carbs."
-        },
-        "coconutOil": {
-          "details": "Coconut oil is a source of medium-chain triglycerides (MCTs) that support ketosis."
-        },
-        "sardines": {
-          "details": "Salmon, mackerel, and sardines are rich in omega-3 fats and low in carbs."
-        },
-        "eggs": {
-          "details": "Eggs are a staple in ketogenic diets for their protein and fat content."
-        }
-      }
-    }
-  },
   "berberine": {
     "title": "Berberine for blood sugar, lipids and metabolism",
     "description": "Berberine is a plant compound that may support blood sugar balance, blood lipids, gut health, and metabolism. Often used as a supplement for insulin resistance, to improve gut flora, and may also inhibit Helicobacter pylori.",
@@ -946,14 +901,6 @@
     "areas": {
       "cardioFitness": "Slow Zone 2 running strengthens the heart and increases capillary density in working muscles, improving oxygen delivery and aerobic endurance.",
       "energy": "Easy aerobic movement stimulates the creation of more mitochondria and improves day-to-day energy with relatively low strain."
-    }
-  },
-  "multivitamin_general": {
-    "title": "Multivitamin",
-    "description": "A multivitamin provides essential vitamins and minerals that support overall health, energy, and vitality. It can help fill nutritional gaps in the diet.",
-    "areas": {
-      "energy": "Multivitamins support energy production by providing B-vitamins and minerals necessary for cellular metabolism.",
-      "immuneSupport": "Vitamins and minerals in multivitamins strengthen the immune system and help the body defend against infections."
     }
   },
   "magnesium": {

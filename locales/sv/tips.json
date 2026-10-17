@@ -1,49 +1,4 @@
 {
-  "low_carb_diet": {
-    "title": "Lågkolhydratkost",
-    "description": "Lågkolhydratkost innebär att man minskar intaget av kolhydrater och ökar mängden hälsosamma fetter och proteiner. Kan stödja metabol hälsa, viktkontroll och stabila energinivåer.",
-    "areas": {
-      "energy": "Lågkolhydratkost kan bidra till stabilare energinivåer och mindre blodsockersvängningar.",
-      "digestiveHealth": "Kan förbättra insulinkänslighet och stödja metabol hälsa."
-    },
-    "nutritionFoods": {
-      "title": "Livsmedel för lågkolhydratkost",
-      "items": {
-        "eggs": {
-          "details": "Ägg är ett mångsidigt, lågkolhydrat protein och fettkälla."
-        },
-        "kale": {
-          "details": "Spenat, grönkål, sallad och andra bladgrönsaker är näringsrika och låga på kolhydrater."
-        }
-      }
-    }
-  },
-  "ketogenic_diet": {
-    "title": "Ketogen kost",
-    "description": "Ketogen kost är en mycket lågkolhydrat, högfettsdiet som inducerar ketos, ett tillstånd där kroppen förbränner fett som bränsle. Kan stödja hjärnhälsa, metabol flexibilitet och uthållig energi.",
-    "areas": {
-      "energy": "Ketogen kost kan ge stabil energi genom att kroppen använder fett som primär energikälla.",
-      "digestiveHealth": "Kan förbättra metabol flexibilitet och stödja blodsockerreglering.",
-      "mind": "Ketoner som bildas vid ketos kan stödja hjärnhälsa och kognitiv funktion."
-    },
-    "nutritionFoods": {
-      "title": "Livsmedel för ketogen kost",
-      "items": {
-        "avocado": {
-          "details": "Avokado är rik på nyttiga fetter och fiber, och mycket låg på kolhydrater."
-        },
-        "coconutOil": {
-          "details": "Kokosolja är en källa till MCT-fetter som stödjer ketos."
-        },
-        "sardines": {
-          "details": "Lax, makrill och sardiner är rika på omega-3 och låga på kolhydrater."
-        },
-        "eggs": {
-          "details": "Ägg är en bas i ketogen kost tack vare sitt protein- och fettinnehåll."
-        }
-      }
-    }
-  },
   "berberine": {
     "title": "Berberin för blodsocker, blodfetter och metabolism",
     "description": "Berberin är en växtförening som kan stödja blodsockerbalans, blodfetter, tarmhälsa och metabolism. Används ofta som supplement vid insulinresistens, för att förbättra tarmfloran och kan även hämma Helicobacter pylori.",
@@ -845,14 +800,6 @@
     "areas": {
       "cardioFitness": "Långsam Zon 2-löpning stärker hjärtat och ökar kapillärtätheten i arbetande muskler, vilket förbättrar syreleverans och aerob uthållighet.",
       "energy": "Lätt aerob rörelse stimulerar nybildning av mitokondrier och förbättrar energin i vardagen med relativt låg belastning."
-    }
-  },
-  "multivitamin_general": {
-    "title": "Multivitamin",
-    "description": "Ett multivitamin tillhandahåller essentiella vitaminer och mineraler som stödjer övergripande hälsa, energi och vitalitet. Det kan hjälpa till att fylla näringsbrister i kosten.",
-    "areas": {
-      "energy": "Multivitaminer stödjer energiproduktion genom att tillhandahålla B-vitaminer och mineraler som är nödvändiga för cellulär metabolism.",
-      "immuneSupport": "Vitaminer och mineraler i multivitaminer stärker immunförsvaret och hjälper kroppen att försvara sig mot infektioner."
     }
   },
   "magnesium": {
