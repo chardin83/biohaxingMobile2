@@ -2,7 +2,7 @@ import type { ImageSourcePropType } from 'react-native';
 
 import type { MealEntry } from '@/app/context/storage/nutrition/nutritionTypes';
 import type { BarcodeProduct } from '@/services/openFoodFacts';
-import { FOOD_IMAGES, FOOD_NUTRIENT_PROFILES, type FoodNutrientProfile } from '@/types/nutrition/foodCatalog';
+import { FOOD_IMAGES, FOOD_NUTRIENT_PROFILES, type FoodNutrientProfile } from '@/types/nutrition/foodProfiles';
 
 export type FoodKey = keyof typeof FOOD_NUTRIENT_PROFILES;
 

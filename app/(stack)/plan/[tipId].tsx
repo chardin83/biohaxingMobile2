@@ -25,7 +25,7 @@ import { PressableCard } from '@/components/ui/PressableCard';
 import { useNutritionPlanProgress } from '@/hooks/nutrition/useNutritionPlanProgress';
 import { metrics, tipMetricLinks } from '@/locales/metrics';
 import { tips } from '@/locales/tips';
-import { FOOD_IMAGES } from '@/types/nutrition/foodCatalog';
+import { FOOD_IMAGES } from '@/types/nutrition/foodImages';
 import { formatDate, toDateKey } from '@/utils/dateUtils';
 
 type PlanDetailsParams = {

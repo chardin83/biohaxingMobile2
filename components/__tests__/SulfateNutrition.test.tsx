@@ -9,7 +9,7 @@ import { useNutritionTipTargets } from '@/hooks/nutrition/useNutritionTipTargets
 import { tips } from '@/locales/tips';
 import { normalizeNutritionTargets } from '@/services/targetProgress/normalizeNutritionTargets';
 import { resolveNutritionTarget } from '@/services/targetProgress/nutritionTargetProgress';
-import { FOOD_NUTRIENT_PROFILES } from '@/types/nutrition/foodCatalog';
+import { FOOD_NUTRIENT_PROFILES } from '@/types/nutrition/foodProfiles';
 import { extractTypedTotals } from '@/utils/analyzeNutrition';
 import { getFoodProduct } from '@/utils/foodProduct';
 import { scaleNutritionComposition } from '@/utils/nutritionComposition';

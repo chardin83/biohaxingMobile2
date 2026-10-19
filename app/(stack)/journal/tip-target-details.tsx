@@ -34,7 +34,7 @@ import type { BarcodeProduct } from '@/services/openFoodFacts';
 import { getNutritionCompletion } from '@/services/targetProgress/completedNutritionProgress';
 import { normalizeNutritionTargets } from '@/services/targetProgress/normalizeNutritionTargets';
 import { toGrams, toMicrograms, toMilligrams } from '@/services/targetProgress/nutritionTargetProgress';
-import { FOOD_IMAGES, FOOD_NUTRIENT_PROFILES, type FoodServing } from '@/types/nutrition/foodCatalog';
+import { FOOD_IMAGES, FOOD_NUTRIENT_PROFILES, type FoodServing } from '@/types/nutrition/foodProfiles';
 import { type NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
 import { formatMonthDayRange, fromDateKey, toDateKey, toRecordedAt } from '@/utils/dateUtils';
 import { type FoodKey, getFoodProduct } from '@/utils/foodProduct';

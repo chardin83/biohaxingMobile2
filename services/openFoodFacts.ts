@@ -3,7 +3,7 @@
 import type { ImageSourcePropType } from 'react-native';
 
 import type { PolyphenolType } from '@/constants/polyphenols';
-import type { FoodServing } from '@/types/nutrition/foodCatalog';
+import type { FoodServing } from '@/types/nutrition/foodCatalogTypes';
 import type { NutritionComposition } from '@/types/nutrition/nutritionProfile';
 
 import { OPEN_FOOD_FACTS_BASE_URL } from '../config';

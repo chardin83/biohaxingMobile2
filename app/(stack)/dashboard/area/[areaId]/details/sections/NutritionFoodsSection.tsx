@@ -12,7 +12,7 @@ import ReadConfirmation from '@/components/ui/ReadConfirmation';
 import XPBadge from '@/components/ui/XPBadge';
 import { XP_FOR_RELATED_FOODS_READ } from '@/constants/XP';
 import type { Tip } from '@/locales/tips';
-import { FOOD_IMAGES } from '@/types/nutrition/foodCatalog';
+import { FOOD_IMAGES } from '@/types/nutrition/foodImages';
 
 type Props = Readonly<{
   tip?: Tip;

@@ -6,7 +6,7 @@ import { type ImageSourcePropType, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import CardLinkList from '@/components/ui/CardLinkList';
-import { FOOD_IMAGES } from '@/types/nutrition/foodCatalog';
+import { FOOD_IMAGES } from '@/types/nutrition/foodImages';
 import { FOOD_KEYS, type FoodKey } from '@/utils/foodProduct';
 
 import { useBottomSheetDesign } from '../ui/BottomSheetDesign';
