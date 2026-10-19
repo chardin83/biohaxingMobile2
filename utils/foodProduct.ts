@@ -2,14 +2,15 @@ import type { ImageSourcePropType } from 'react-native';
 
 import type { MealEntry } from '@/app/context/storage/nutrition/nutritionTypes';
 import type { BarcodeProduct } from '@/services/openFoodFacts';
-import { FOOD_IMAGES, FOOD_NUTRIENT_PROFILES } from '@/types/nutrition/foodCatalog';
+import { FOOD_IMAGES, FOOD_NUTRIENT_PROFILES, type FoodNutrientProfile } from '@/types/nutrition/foodCatalog';
 
 export type FoodKey = keyof typeof FOOD_NUTRIENT_PROFILES;
 
 export const FOOD_KEYS = Object.keys(FOOD_NUTRIENT_PROFILES) as FoodKey[];
 
 export const getFoodProduct = (key: FoodKey, name: string): BarcodeProduct => {
-  const { defaultServings, ...composition } = FOOD_NUTRIENT_PROFILES[key];
+  const { defaultServings, ...composition } = FOOD_NUTRIENT_PROFILES[key] as FoodNutrientProfile;
+  delete composition.sulfurRichVegetable;
 
   return {
     barcode: '',

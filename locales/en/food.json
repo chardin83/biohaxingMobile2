@@ -29,6 +29,13 @@
     "gramsShort": "g"
   },
   "foods": {
+    "cauliflower": { "name": "Cauliflower" },
+    "cabbage": { "name": "White cabbage" },
+    "garlic": { "name": "Garlic" },
+    "onions": { "name": "Onions" },
+    "leeks": { "name": "Leeks" },
+    "brusselsSprouts": { "name": "Brussels sprouts" },
+
     "almonds": {
       "name": "Almonds"
     },

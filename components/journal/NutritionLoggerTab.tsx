@@ -21,6 +21,7 @@ import { toDateKey, toRecordedAt } from '@/utils/dateUtils';
 import { hasAlcohol } from '@/utils/drinkAlcohol';
 import { hasCaffeine } from '@/utils/drinkCaffeine';
 import { type FoodKey, getFoodProduct, getMealProduct } from '@/utils/foodProduct';
+import { getNutritionTrackingAnalysis } from '@/utils/nutritionTrackingPrompt';
 import { isNutritionTipUntracked } from '@/utils/untrackedNutritionTips';
 
 import { Collapsible } from '../Collapsible';
@@ -174,62 +175,10 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     return tips.filter(tip => planTipIds.has(tip.id) && isNutritionTipUntracked(tip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein, PREMIUM));
   }, [plans, userProfile?.weightKg, userProfile?.nutritionGoals?.protein]);
 
-  const activeTrackingTargetsForAI = useMemo(() => {
-    const byKey = new Map<
-      string,
-      {
-        key: string;
-        unit: 'items' | 'count';
-        amount?: number;
-        aiInstruction?: string;
-      }
-    >();
-    (plans?.nutrition ?? []).forEach(planTip => {
-      const tip = tips.find(candidate => candidate.id === planTip.tipId);
-      (tip?.trackingTargets ?? []).forEach((target: { trackingKey: string; unit: 'items' | 'count'; amount?: number; aiInstruction?: string }) => {
-        if (!PREMIUM && target.aiInstruction?.trim()) return;
-        const key = target.trackingKey?.trim();
-        if (!key) return;
-        if (!byKey.has(key)) {
-          byKey.set(key, {
-            key,
-            unit: target.unit,
-            amount: target.amount,
-            aiInstruction: target.aiInstruction,
-          });
-        }
-      });
-    });
-    return Array.from(byKey.values());
-  }, [plans]);
-
-  const activeTrackingKeys = useMemo(() => {
-    const keys = new Set<string>();
-    (plans?.nutrition ?? []).forEach(planTip => {
-      const tip = tips.find(candidate => candidate.id === planTip.tipId);
-      (tip?.trackingTargets ?? []).forEach((target: { trackingKey: string; aiInstruction?: string }) => {
-        if (!PREMIUM && target.aiInstruction?.trim()) return;
-        if (typeof target.trackingKey === 'string' && target.trackingKey.trim().length > 0) {
-          keys.add(target.trackingKey.trim());
-        }
-      });
-    });
-    return keys;
-  }, [plans]);
-
-  const trackingPromptForAI = useMemo(() => {
-    if (!activeTrackingTargetsForAI.length) {
-      return 'nutrition_analysis';
-    }
-    const targetsJson = JSON.stringify(activeTrackingTargetsForAI);
-    return [
-      'nutrition_analysis',
-      'tracking_targets_for_this_user:',
-      targetsJson,
-      'Only return weeklyTrackingSignals keys that exist in tracking_targets_for_this_user.',
-      'For unit=items return items[]. For unit=count return countIncrement.',
-    ].join('\n');
-  }, [activeTrackingTargetsForAI]);
+  const { targets: activeTrackingTargetsForAI, keys: activeTrackingKeys, prompt: trackingPromptForAI } = useMemo(
+    () => getNutritionTrackingAnalysis(plans?.nutrition ?? [], PREMIUM),
+    [plans?.nutrition]
+  );
 
   const {
     isAnalyzing,

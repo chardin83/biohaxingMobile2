@@ -178,12 +178,14 @@
       "plant_diversity": "Växtdiversitet"
     },
     "weeklyTrackingLabels": {
+      "sulfur_rich_vegetables": "Svavelrika grönsaker",
       "unique_plants": "Unika växter",
       "vegetable_colors": "Grönsaksfarger",
       "fish_meals": "Fiskåtagningar",
       "fatty_fish_meals": "Fet fiskåtagningar"
     },
     "fiberSubtypeLabels": {
+      "inulin_type_fructans": "Fruktaner (inulin och FOS)",
       "beta_glucans": "Beta-glukaner",
       "pectin": "Pektin",
       "psyllium": "Psyllium",

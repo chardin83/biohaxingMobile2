@@ -17,6 +17,8 @@ export type FiberNonGelForming = (typeof FIBER_NON_GEL_FORMING_SUBTYPES)[number]
 const FIBER_FERMENTABLE_SUBTYPES = [
   'resistant_starch',
   'inulin',
+  // Combined analytical value, used only when inulin and FOS are not separately measured.
+  'inulin_type_fructans',
   'fructooligosaccharides',
   'galactooligosaccharides',
   'pectic_oligosaccharides',

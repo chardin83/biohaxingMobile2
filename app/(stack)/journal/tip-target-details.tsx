@@ -570,14 +570,10 @@ export default function TipTargetDetailsScreen() {
     [isWeeklyTarget, selectedDateKey, selectedWeekBounds.weekEndKey, selectedWeekBounds.weekStartKey]
   );
   const selectedTrackingValue = useMemo(() => {
-    if (!isWeeklyTarget) {
-      return undefined;
-    }
-
-    const contributions = weeklyNutritionTracking[selectedWeekBounds.weekStartKey] ?? [];
+    const contributions = (weeklyNutritionTracking[selectedWeekBounds.weekStartKey] ?? []).filter(item => isWeeklyTarget || item.date === selectedDateKey);
 
     return aggregateTrackingValue(contributions, targetTagParam);
-  }, [isWeeklyTarget, weeklyNutritionTracking, selectedWeekBounds.weekStartKey, targetTagParam]);
+  }, [isWeeklyTarget, weeklyNutritionTracking, selectedWeekBounds.weekStartKey, selectedDateKey, targetTagParam]);
 
   const { foodAmount, supplementAmount } = useMemo(() => {
     const mealSummaries = selectedDateKeys.map(dateKey => dailyNutritionTracking[dateKey]);
@@ -597,8 +593,8 @@ export default function TipTargetDetailsScreen() {
   const foodActual = completedTarget ? (completedTarget.foodActual ?? Math.max(0, completedTarget.actual - supplementActual)) : foodAmount;
   const totalActual = foodActual + supplementActual;
   const contributingMeals = useMemo(() => {
-    if (isWeeklyTarget && (targetUnit === 'items' || targetUnit === 'count' || targetUnit === 'plants')) {
-      const contributions = weeklyNutritionTracking[selectedWeekBounds.weekStartKey] ?? [];
+    if (targetUnit === 'items' || targetUnit === 'count' || targetUnit === 'plants') {
+      const contributions = (weeklyNutritionTracking[selectedWeekBounds.weekStartKey] ?? []).filter(item => isWeeklyTarget || selectedDateKeys.includes(item.date));
 
       return contributions
         .map((contribution): ContributingNutritionEntry | null => {

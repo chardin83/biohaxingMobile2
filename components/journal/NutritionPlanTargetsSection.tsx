@@ -344,8 +344,7 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                     const progress = [...nutritionPlanTipProgressByPeriod.daily, ...nutritionPlanTipProgressByPeriod.weekly].find(
                       item => item.tipId === tip.id
                     );
-                    const trackingKeys = new Set(tip.trackingTargets?.map(target => target.trackingKey));
-                    const targets = progress?.targets.filter(target => trackingKeys.has(target.tag)) ?? [];
+                    const targets = progress?.targets ?? [];
                     return (
                       <JournalGoalAnchor
                         key={tip.id}

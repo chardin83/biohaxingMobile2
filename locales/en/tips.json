@@ -1237,11 +1237,40 @@
     }
   },
   "sulfate": {
-    "title": "Sulfate",
-    "description": "Sulfate is important for detoxification processes, liver function, cellular metabolism, and sulfur balance. It helps neutralize and excrete toxins, supports glutathione production, and also contributes sulfur needed for keratin structures in hair, skin, and nails.",
+    "title": "Sulfur from food",
+    "description": "Sulfur is part of the amino acids methionine and cysteine, which help build and maintain muscles, enzymes and keratin in hair and nails. Cysteine is also needed to produce glutathione, which protects cells against oxidative stress and participates in the body’s detoxification processes. In the liver, glutathione and sulfate help convert certain medicines and foreign substances into forms that can be excreted more easily. Sulfate is also needed for compounds in cartilage and other connective tissues.",
     "areas": {
       "digestiveHealth": "Sulfate supports digestion and gut detoxification processes.",
       "energy": "Sulfate is necessary for cellular energy metabolism and mitochondrial function."
+    },
+    "nutritionFoods": {
+      "title": "Sulfur-rich vegetables and protein sources",
+      "description": "Brassicas and allium vegetables provide various sulfur compounds. Eggs and other protein sources provide methionine and cysteine.",
+      "items": {
+        "garlic": {
+          "details": "A sulfur-rich vegetable that counts towards the daily goal. Also contains sulfur compounds other than methionine and cysteine.",
+          "name": "Garlic"
+        },
+        "onions": {
+          "details": "Onions are sulfur-rich vegetables and count towards the daily goal when present in a meal.",
+          "name": "Onions"
+        },
+        "eggs": {
+          "details": "Eggs provide methionine and cysteine, counted as amino acids in the nutrition summary. Eggs do not count towards the vegetable goal.",
+          "name": "Eggs"
+        },
+        "cauliflower": {
+          "details": "A sulfur-rich brassica that counts towards the daily goal. Methionine and cysteine are recorded separately when amounts are available.",
+          "name": "Cauliflower"
+        },
+        "broccoli": {
+          "details": "A sulfur-rich brassica that counts towards the daily goal. Methionine and cysteine are recorded separately when amounts are available.",
+          "name": "Broccoli"
+        }
+      }
+    },
+    "targets": {
+      "description": "The combined methionine and cysteine goal is 15 mg per kg body weight per day, using the same weight-based reference as the app’s other amino acid goals. A second goal tracks at least one sulfur-rich vegetable per day, such as broccoli, cauliflower, cabbage, garlic or onions. Food amino acids are summed in mg and are not converted into sulfate."
     }
   },
   "msm_joint_health": {

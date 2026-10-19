@@ -2,6 +2,7 @@ import { fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
 import { Animated } from 'react-native';
 
+import type { TipProgressItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import NutritionPlanTargetsSection from '@/components/journal/NutritionPlanTargetsSection';
 import { tips } from '@/locales/tips';
 
@@ -12,7 +13,10 @@ jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) =>
 jest.mock('react-native-paper', () => ({ Icon: () => null }));
 jest.mock('../ui/IconSymbol', () => ({ IconSymbol: () => null }));
 jest.mock('../journal/ProgressButton', () => ({ __esModule: true, default: () => null }));
-jest.mock('../TipTarget', () => ({ __esModule: true, default: () => null }));
+jest.mock('../TipTarget', () => {
+  const { Text } = require('react-native');
+  return { __esModule: true, default: ({ target }: any) => <Text>{target.label}</Text> };
+});
 
 const tip = tips.find(item => item.id === 'protein_rotation')!;
 const props = {
@@ -46,4 +50,20 @@ it('shows only the link for the setting that is missing', () => {
   rerender(<NutritionPlanTargetsSection {...props} userProfile={{ nutritionGoals: { protein: 140, carbohydrates: 250, fat: 67 } }} />);
   expect(getByText('common:nutritionTargetSection.enterWeight')).toBeTruthy();
   expect(queryByText('common:nutritionTargetSection.setProteinGoal')).toBeNull();
+});
+
+it('shows both the amino acid and vegetable targets for a premium-blocked sulfur tip', () => {
+  const sulfurTip = tips.find(item => item.id === 'sulfate')!;
+  const progress: TipProgressItem = {
+    tipId: sulfurTip.id, title: sulfurTip.title, period: 'daily',
+    targets: [
+      { tag: 'methionine', unit: 'mg', period: 'daily', amount: 1050, actual: 100, isMet: false, label: 'Metionin + cystein' },
+      { tag: 'sulfur_rich_vegetables', unit: 'items', period: 'daily', amount: 1, actual: 0, isMet: false, label: 'Svavelrika grönsaker' },
+    ],
+    metCount: 0, totalCount: 2, isFulfilled: false, progress: 0,
+  };
+  const screen = render(<NutritionPlanTargetsSection {...props} untrackedTips={[sulfurTip]} userProfile={{ weightKg: 70 }} nutritionPlanTipProgressByPeriod={{ daily: [progress], weekly: [] }} />);
+  expect(screen.getByText('Metionin + cystein')).toBeTruthy();
+  expect(screen.getByText('Svavelrika grönsaker')).toBeTruthy();
+  expect(screen.getByText('journal:nutritionLogger.untrackedTargetsExplainer')).toBeTruthy();
 });

@@ -178,12 +178,14 @@
       "plant_diversity": "Plant diversity"
     },
     "weeklyTrackingLabels": {
+      "sulfur_rich_vegetables": "Sulfur-rich vegetables",
       "unique_plants": "Unique plants",
       "vegetable_colors": "Vegetable colors",
       "fish_meals": "Fish meals",
       "fatty_fish_meals": "Fatty fish meals"
     },
     "fiberSubtypeLabels": {
+      "inulin_type_fructans": "Fructans (inulin and FOS)",
       "beta_glucans": "Beta-glucans",
       "pectin": "Pectin",
       "psyllium": "Psyllium",

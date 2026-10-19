@@ -6,6 +6,7 @@ export type FoodServing = {
 };
 
 export type FoodNutrientProfile = NutritionComposition & {
+  sulfurRichVegetable?: boolean;
   defaultServings: FoodServing[];
 };
 
@@ -102,7 +103,235 @@ const GRAM_150_300_450: FoodServing[] = [{ grams: 150 }, { grams: 300 }, { grams
 // Unit reminder for all values below (per 100g):
 // macros/fiber in grams, vitamins/minerals/amino acids/polyphenols in mg.
 export const FOOD_NUTRIENT_PROFILES = {
+  // Raw edible portions per 100 g, USDA SR28 vegetable tables.
+  // https://www.ars.usda.gov/ARSUserFiles/80400535/Data/SR/SR28/reports/sr28fg11.pdf
+  // Legacy USDA total fibre can exclude fructans. Fructan assays below are independent
+  // reference estimates; do not add them to, or clamp them to, the USDA total.
+  // USDA cystine is represented by the catalog cysteine key (sulfur amino acids).
+  // USDA NDB 11135.
+  cauliflower: {
+    sulfurRichVegetable: true,
+    calories: 25, protein: 1.92, carbohydrates: 4.97, fat: 0.28, fiber: 2,
+    fiberByType: { fiber_total: 2, fiber_fermentable: 0.09 },
+    // Fructans, fresh-weight mean: https://doi.org/10.3389/fnut.2024.1446771, Table 1.
+    // This is the quantified fermentable fructan fraction, not all fermentable fibre.
+    fiberSubtypeTotals: { inulin_type_fructans: 0.09 },
+    mineralsByType: {
+      calcium: 22,
+      iron: 0.42,
+      magnesium: 15,
+      phosphorus: 44,
+      potassium: 299,
+      sodium: 30,
+      zinc: 0.27,
+      copper: 0.039,
+      manganese: 0.155,
+      selenium: 0.0006,
+    },
+    vitaminsByType: {
+      vitamin_a: 0,
+      vitamin_c: 48.2,
+      vitamin_d: 0,
+      vitamin_e: 0.08,
+      vitamin_k: 0.0155,
+      vitamin_b1: 0.05,
+      vitamin_b2: 0.06,
+      vitamin_b3: 0.507,
+      vitamin_b5: 0.667,
+      vitamin_b6: 0.184,
+      vitamin_b9: 0.057,
+      vitamin_b12: 0,
+    },
+    aminoAcidsByType: { methionine: 20, cysteine: 20 },
+    defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }],
+  },
+  // USDA NDB 11109.
+  cabbage: {
+    sulfurRichVegetable: true,
+    calories: 25, protein: 1.28, carbohydrates: 5.8, fat: 0.1, fiber: 2.5,
+    fiberByType: { fiber_total: 2.5, fiber_fermentable: 0.03 },
+    // Fructans, fresh-weight mean: https://doi.org/10.3389/fnut.2024.1446771, Table 1.
+    // This is the quantified fermentable fructan fraction, not all fermentable fibre.
+    fiberSubtypeTotals: { inulin_type_fructans: 0.03 },
+    mineralsByType: {
+      calcium: 40,
+      iron: 0.47,
+      magnesium: 12,
+      phosphorus: 26,
+      potassium: 170,
+      sodium: 18,
+      zinc: 0.18,
+      copper: 0.019,
+      manganese: 0.16,
+      selenium: 0.0003,
+    },
+    vitaminsByType: {
+      vitamin_a: 0.005,
+      vitamin_c: 36.6,
+      vitamin_d: 0,
+      vitamin_e: 0.15,
+      vitamin_k: 0.076,
+      vitamin_b1: 0.061,
+      vitamin_b2: 0.04,
+      vitamin_b3: 0.234,
+      vitamin_b5: 0.212,
+      vitamin_b6: 0.124,
+      vitamin_b9: 0.043,
+      vitamin_b12: 0,
+    },
+    aminoAcidsByType: { methionine: 12, cysteine: 11 },
+    defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }],
+  },
+  // USDA NDB 11215.
+  garlic: {
+    sulfurRichVegetable: true,
+    calories: 149, protein: 6.36, carbohydrates: 33.06, fat: 0.5, fiber: 2.1,
+    fiberByType: { fiber_total: 2.1, fiber_fermentable: 12.5 },
+    // Moshfegh et al. 1999, Table 1: raw garlic inulin-type fructans midpoint 9–16 g/100 g. FOS overlaps this amount; do not add it again. https://doi.org/10.1093/jn/129.7.1407S
+    // This is the quantified fermentable fructan fraction, not all fermentable fibre.
+    fiberSubtypeTotals: { inulin_type_fructans: 12.5 },
+    mineralsByType: {
+      calcium: 181,
+      iron: 1.7,
+      magnesium: 25,
+      phosphorus: 153,
+      potassium: 401,
+      sodium: 17,
+      zinc: 1.16,
+      copper: 0.299,
+      manganese: 1.672,
+      selenium: 0.0142,
+    },
+    vitaminsByType: {
+      vitamin_a: 0,
+      vitamin_c: 31.2,
+      vitamin_d: 0,
+      vitamin_e: 0.08,
+      vitamin_k: 0.0017,
+      vitamin_b1: 0.2,
+      vitamin_b2: 0.11,
+      vitamin_b3: 0.7,
+      vitamin_b5: 0.596,
+      vitamin_b6: 1.235,
+      vitamin_b9: 0.003,
+      vitamin_b12: 0,
+    },
+    aminoAcidsByType: { methionine: 76, cysteine: 65 },
+    defaultServings: [{ grams: 3 }, { grams: 6 }, { grams: 9 }],
+  },
+  // USDA NDB 11282.
+  onions: {
+    sulfurRichVegetable: true,
+    calories: 40, protein: 1.1, carbohydrates: 9.34, fat: 0.1, fiber: 1.7,
+    fiberByType: { fiber_total: 1.7, fiber_fermentable: 1.97 },
+    // Fructans, fresh-weight mean: https://doi.org/10.3389/fnut.2024.1446771, Table 1.
+    // This is the quantified fermentable fructan fraction, not all fermentable fibre.
+    fiberSubtypeTotals: { inulin_type_fructans: 1.97 },
+    mineralsByType: {
+      calcium: 23,
+      iron: 0.21,
+      magnesium: 10,
+      phosphorus: 29,
+      potassium: 146,
+      sodium: 4,
+      zinc: 0.17,
+      copper: 0.039,
+      manganese: 0.129,
+      selenium: 0.0005,
+    },
+    vitaminsByType: {
+      vitamin_a: 0,
+      vitamin_c: 7.4,
+      vitamin_d: 0,
+      vitamin_e: 0.02,
+      vitamin_k: 0.0004,
+      vitamin_b1: 0.046,
+      vitamin_b2: 0.027,
+      vitamin_b3: 0.116,
+      vitamin_b5: 0.123,
+      vitamin_b6: 0.12,
+      vitamin_b9: 0.019,
+      vitamin_b12: 0,
+    },
+    aminoAcidsByType: { methionine: 2, cysteine: 4 },
+    defaultServings: [{ grams: 25 }, { grams: 50 }, { grams: 100 }],
+  },
+  // USDA NDB 11246.
+  leeks: {
+    sulfurRichVegetable: true,
+    calories: 61, protein: 1.5, carbohydrates: 14.15, fat: 0.3, fiber: 1.8,
+    fiberByType: { fiber_total: 1.8, fiber_fermentable: 0.24 },
+    // Fructans, fresh-weight mean: https://doi.org/10.3389/fnut.2024.1446771, Table 1.
+    // This is the quantified fermentable fructan fraction, not all fermentable fibre.
+    fiberSubtypeTotals: { inulin_type_fructans: 0.24 },
+    mineralsByType: {
+      calcium: 59,
+      iron: 2.1,
+      magnesium: 28,
+      phosphorus: 35,
+      potassium: 180,
+      sodium: 20,
+      zinc: 0.12,
+      copper: 0.12,
+      manganese: 0.481,
+      selenium: 0.001,
+    },
+    vitaminsByType: {
+      vitamin_a: 0.083,
+      vitamin_c: 12,
+      vitamin_d: 0,
+      vitamin_e: 0.92,
+      vitamin_k: 0.047,
+      vitamin_b1: 0.06,
+      vitamin_b2: 0.03,
+      vitamin_b3: 0.4,
+      vitamin_b5: 0.14,
+      vitamin_b6: 0.233,
+      vitamin_b9: 0.064,
+      vitamin_b12: 0,
+    },
+    aminoAcidsByType: { methionine: 18, cysteine: 25 },
+    defaultServings: [{ grams: 25 }, { grams: 50 }, { grams: 100 }],
+  },
+  // USDA NDB 11098.
+  brusselsSprouts: {
+    sulfurRichVegetable: true,
+    calories: 43, protein: 3.38, carbohydrates: 8.95, fat: 0.3, fiber: 3.8,
+    fiberByType: { fiber_total: 3.8, fiber_fermentable: 0.14 },
+    // Kalala et al. 2017, Tables 1–2: 0.9 g/100 g dry matter × 15.2% DM = 0.1368 g/100 g fresh. https://doi.org/10.1080/09637486.2017.1412404
+    // This is the quantified fermentable fructan fraction, not all fermentable fibre.
+    fiberSubtypeTotals: { inulin_type_fructans: 0.14 },
+    mineralsByType: {
+      calcium: 42,
+      iron: 1.4,
+      magnesium: 23,
+      phosphorus: 69,
+      potassium: 389,
+      sodium: 25,
+      zinc: 0.42,
+      copper: 0.07,
+      manganese: 0.337,
+      selenium: 0.0016,
+    },
+    vitaminsByType: {
+      vitamin_a: 0.038,
+      vitamin_c: 85,
+      vitamin_d: 0,
+      vitamin_e: 0.88,
+      vitamin_k: 0.177,
+      vitamin_b1: 0.139,
+      vitamin_b2: 0.09,
+      vitamin_b3: 0.745,
+      vitamin_b5: 0.309,
+      vitamin_b6: 0.219,
+      vitamin_b9: 0.061,
+      vitamin_b12: 0,
+    },
+    aminoAcidsByType: { methionine: 32, cysteine: 22 },
+    defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }],
+  },
   kale: {
+    sulfurRichVegetable: true,
     calories: 49,
     protein: 4.3,
     carbohydrates: 8.8,
@@ -573,6 +802,7 @@ export const FOOD_NUTRIENT_PROFILES = {
     ],
   },
   broccoli: {
+    sulfurRichVegetable: true,
     calories: 34,
     protein: 2.8,
     carbohydrates: 6.6,

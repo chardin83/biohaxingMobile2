@@ -29,6 +29,13 @@
     "gramsShort": "g"
   },
   "foods": {
+    "cauliflower": { "name": "Blomkål" },
+    "cabbage": { "name": "Vitkål" },
+    "garlic": { "name": "Vitlök" },
+    "onions": { "name": "Lök" },
+    "leeks": { "name": "Purjolök" },
+    "brusselsSprouts": { "name": "Brysselkål" },
+
     "almonds": {
       "name": "Mandlar"
     },

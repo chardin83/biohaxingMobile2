@@ -29,7 +29,8 @@ export function getNutritionInputSignature(period: NutritionTargetPeriod, date: 
   const dates = getTargetDates(date, period);
   return JSON.stringify({
     days: dates.map(day => [day, inputs.dailyNutritionTracking[day] ?? null, inputs.takenDates[day] ?? []]),
-    weekly: period === 'weekly' ? inputs.weeklyNutritionTracking[dates[0]] ?? null : null,
+    weekly: period === 'weekly' ? inputs.weeklyNutritionTracking[dates[0]] ?? null
+      : (inputs.weeklyNutritionTracking[getTargetDates(date, 'weekly')[0]] ?? []).filter(item => item.date === date),
   });
 }
 

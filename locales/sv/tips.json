@@ -1239,11 +1239,40 @@
     }
   },
   "sulfate": {
-    "title": "Sulfat",
-    "description": "Sulfat är viktigt för avgiftningsprocesser, leverfunktion, cellernas ämnesomsättning och kroppens svavelbalans. Sulfat bidrar till att neutralisera och utsöndra toxiner, stödjer bildning av glutation och behövs också för keratinstrukturer i hår, hud och naglar.",
+    "title": "Svavel från maten",
+    "description": "Svavel ingår i aminosyrorna metionin och cystein, som används för att bygga och underhålla bland annat muskler, enzymer och keratin i hår och naglar. Cystein behövs också för att bilda glutation, som skyddar cellerna mot oxidativ stress och deltar i kroppens avgiftningsprocesser. I levern används glutation och sulfat för att omvandla vissa läkemedel och främmande ämnen till former som lättare kan utsöndras. Sulfat behövs dessutom för ämnen som ingår i brosk och annan bindväv.",
     "areas": {
       "digestiveHealth": "Sulfat stödjer matsmältning och tarmens avgiftningsprocesser.",
       "energy": "Sulfat är nödvändigt för cellernas energiomsättning och mitokondriell funktion."
+    },
+    "nutritionFoods": {
+      "title": "Svavelrika grönsaker och proteinkällor",
+      "description": "Kål- och lökgrönsaker bidrar med olika svavelföreningar. Ägg och andra proteinkällor ger metionin och cystein.",
+      "items": {
+        "garlic": {
+          "details": "En svavelrik grönsak som räknas mot dagsmålet. Innehåller även andra svavelföreningar än metionin och cystein.",
+          "name": "Vitlök"
+        },
+        "onions": {
+          "details": "Lök är en svavelrik grönsak och räknas mot dagsmålet när den finns i måltiden.",
+          "name": "Lök"
+        },
+        "eggs": {
+          "details": "Ägg bidrar med metionin och cystein. Mängderna räknas som aminosyror i näringssammanfattningen. Ägg räknas inte mot grönsaksmålet.",
+          "name": "Ägg"
+        },
+        "cauliflower": {
+          "details": "En svavelrik kålgrönsak som räknas mot dagsmålet. Metionin och cystein registreras separat när mängduppgifter finns.",
+          "name": "Blomkål"
+        },
+        "broccoli": {
+          "details": "En svavelrik kålgrönsak som räknas mot dagsmålet. Metionin och cystein registreras separat när mängduppgifter finns.",
+          "name": "Broccoli"
+        }
+      }
+    },
+    "targets": {
+      "description": "Målet är metionin och cystein tillsammans: 15 mg per kilo kroppsvikt och dag, samma viktbaserade referensnivå som i appens övriga aminosyramål. Därtill följs minst en svavelrik grönsak per dag, till exempel broccoli, blomkål, kål, vitlök eller lök. Aminosyrorna summeras från maten i mg och räknas inte om till sulfat."
     }
   },
   "msm_joint_health": {
