@@ -30,7 +30,8 @@ export type PendingAnalysisReview = {
 export type IdentifiedFood = {
   name: string;
   preparation?: string | null;
-  grams: number;
+  amount: number;
+  unit: 'g' | 'ml';
   identificationConfidence?: 'high' | 'medium' | 'low';
   source?: 'image' | 'user';
 };

@@ -22,8 +22,8 @@ test('opens an ingredient and forwards the edited gram amount', () => {
       mealName="Lunch"
       onMealNameChange={jest.fn()}
       value={[
-        { name: 'Lax', grams: 100 },
-        { name: 'Ris', grams: 150 },
+        { name: 'Lax', amount: 100, unit: 'g' },
+        { name: 'Ris', amount: 150, unit: 'g' },
       ]}
       onChange={onChange}
       onClose={jest.fn()}
@@ -34,11 +34,11 @@ test('opens an ingredient and forwards the edited gram amount', () => {
   expect(screen.getByLabelText('grams').props.value).toBe('100');
   fireEvent.changeText(screen.getByLabelText('grams'), '125,5');
   expect(onChange).toHaveBeenLastCalledWith([
-    { name: 'Lax', grams: 125.5 },
-    { name: 'Ris', grams: 150 },
+    { name: 'Lax', amount: 125.5, unit: 'g' },
+    { name: 'Ris', amount: 150, unit: 'g' },
   ]);
   fireEvent.press(screen.getByText('remove'));
-  expect(onChange).toHaveBeenLastCalledWith([{ name: 'Ris', grams: 150 }]);
+  expect(onChange).toHaveBeenLastCalledWith([{ name: 'Ris', amount: 150, unit: 'g' }]);
 });
 
 test('adds a separate ingredient with its own gram amount', () => {
@@ -47,7 +47,7 @@ test('adds a separate ingredient with its own gram amount', () => {
     <FoodIdentificationModal
       mealName="Lunch"
       onMealNameChange={jest.fn()}
-      value={[{ name: 'Ris', grams: 150 }]}
+      value={[{ name: 'Ris', amount: 150, unit: 'g' }]}
       onChange={onChange}
       onClose={jest.fn()}
       onConfirm={jest.fn()}
@@ -57,8 +57,8 @@ test('adds a separate ingredient with its own gram amount', () => {
   fireEvent.changeText(screen.getByLabelText('ingredientName'), 'Tofu');
   fireEvent.changeText(screen.getByLabelText('grams'), '150');
   expect(onChange).toHaveBeenLastCalledWith([
-    { name: 'Ris', grams: 150 },
-    { name: 'Tofu', grams: 150, source: 'user', identificationConfidence: 'high' },
+    { name: 'Ris', amount: 150, unit: 'g' },
+    { name: 'Tofu', amount: 150, unit: 'g', source: 'user', identificationConfidence: 'high' },
   ]);
 });
 
@@ -67,7 +67,7 @@ test('uses the grams field directly and preserves names containing numbers', () 
     <FoodIdentificationModal
       mealName="Lunch"
       onMealNameChange={jest.fn()}
-      value={[{ name: 'Yoghurt 3% fett', grams: 175.5 }]}
+      value={[{ name: 'Yoghurt 3% fett', amount: 175.5, unit: 'g' }]}
       onChange={jest.fn()}
       onClose={jest.fn()}
       onConfirm={jest.fn()}
@@ -87,8 +87,8 @@ test('marks uncertain ingredients and distinguishes user-supplied identities', (
       mealName="Lunch"
       onMealNameChange={jest.fn()}
       value={[
-        { name: 'Rotfrukt', grams: 60, identificationConfidence: 'low', source: 'image' },
-        { name: 'Morot', grams: 40, identificationConfidence: 'high', source: 'user' },
+        { name: 'Rotfrukt', amount: 60, unit: 'g', identificationConfidence: 'low', source: 'image' },
+        { name: 'Morot', amount: 40, unit: 'g', identificationConfidence: 'high', source: 'user' },
       ]}
       onChange={onChange}
       onClose={jest.fn()}
@@ -103,8 +103,8 @@ test('marks uncertain ingredients and distinguishes user-supplied identities', (
   fireEvent.changeText(screen.getByLabelText('ingredientName'), 'Palsternacka');
   expect(screen.queryByText('uncertain')).toBeNull();
   expect(onChange).toHaveBeenLastCalledWith([
-    { name: 'Palsternacka', grams: 75, identificationConfidence: 'high', source: 'user' },
-    { name: 'Morot', grams: 40, identificationConfidence: 'high', source: 'user' },
+    { name: 'Palsternacka', amount: 75, unit: 'g', identificationConfidence: 'high', source: 'user' },
+    { name: 'Morot', amount: 40, unit: 'g', identificationConfidence: 'high', source: 'user' },
   ]);
 });
 
@@ -115,8 +115,8 @@ test('shows the dish name separately from ingredients and allows renaming it', (
       mealName="Nötköttsgryta med potatismos"
       onMealNameChange={onMealNameChange}
       value={[
-        { name: 'Nötkött', grams: 150 },
-        { name: 'Potatismos', grams: 200 },
+        { name: 'Nötkött', amount: 150, unit: 'g' },
+        { name: 'Potatismos', amount: 200, unit: 'g' },
       ]}
       onChange={jest.fn()}
       onClose={jest.fn()}
@@ -135,7 +135,7 @@ test('shows preparation separately and preserves edited preparation with the wei
     <FoodIdentificationModal
       mealName="Gryta"
       onMealNameChange={jest.fn()}
-      value={[{ name: 'Morot', grams: 60, preparation: 'i gryta' }]}
+      value={[{ name: 'Morot', amount: 60, unit: 'g', preparation: 'i gryta' }]}
       onChange={onChange}
       onClose={jest.fn()}
       onConfirm={jest.fn()}
@@ -146,5 +146,40 @@ test('shows preparation separately and preserves edited preparation with the wei
   expect(screen.getByLabelText('preparation').props.value).toBe('i gryta');
   fireEvent.changeText(screen.getByLabelText('preparation'), 'kokt');
   fireEvent.changeText(screen.getByLabelText('grams'), '75');
-  expect(onChange).toHaveBeenLastCalledWith([{ name: 'Morot', grams: 75, preparation: 'kokt' }]);
+  expect(onChange).toHaveBeenLastCalledWith([{ name: 'Morot', amount: 75, unit: 'g', preparation: 'kokt' }]);
+});
+
+test('shows and edits drinks in ml and lets manually added rows use ml', () => {
+  const onChange = jest.fn();
+  const screen = render(
+    <FoodIdentificationModal
+      mealName="Middag"
+      onMealNameChange={jest.fn()}
+      value={[
+        { name: 'Rödvin', amount: 150, unit: 'ml' },
+        { name: 'Morot', amount: 60, unit: 'g' },
+      ]}
+      onChange={onChange}
+      onClose={jest.fn()}
+      onConfirm={jest.fn()}
+    />
+  );
+  expect(screen.getByText('150 ml')).toBeTruthy();
+  expect(screen.getByText('60 g')).toBeTruthy();
+  fireEvent.press(screen.getByText('Rödvin'));
+  expect(screen.getByLabelText('milliliters').props.value).toBe('150');
+  fireEvent.changeText(screen.getByLabelText('milliliters'), '175');
+  expect(onChange).toHaveBeenLastCalledWith([
+    { name: 'Rödvin', amount: 175, unit: 'ml' },
+    { name: 'Morot', amount: 60, unit: 'g' },
+  ]);
+  fireEvent.press(screen.getByText('add'));
+  fireEvent.changeText(screen.getByLabelText('ingredientName'), 'Vatten');
+  fireEvent.press(screen.getByLabelText('useMilliliters'));
+  fireEvent.changeText(screen.getByLabelText('milliliters'), '250');
+  expect(onChange).toHaveBeenLastCalledWith([
+    { name: 'Rödvin', amount: 175, unit: 'ml' },
+    { name: 'Morot', amount: 60, unit: 'g' },
+    { name: 'Vatten', amount: 250, unit: 'ml', source: 'user', identificationConfidence: 'high' },
+  ]);
 });

@@ -16,7 +16,7 @@ export function IngredientList({ ingredients, style }: { ingredients: Identified
             <ThemedText>{food.name}</ThemedText>
             {food.preparation ? <ThemedText type="caption" style={{ color: colors.textMuted }}>{`(${food.preparation})`}</ThemedText> : null}
           </View>
-          <ThemedText type="defaultSemiBold" style={{ color: colors.accentStrong }}>{`${String(food.grams).replace('.', ',')} g`}</ThemedText>
+          <ThemedText type="defaultSemiBold" style={{ color: colors.accentStrong }}>{`${String(food.amount).replace('.', ',')} ${food.unit}`}</ThemedText>
         </View>
       ))}
     </View>

@@ -9,8 +9,8 @@ import { ThemedModal } from '../ThemedModal';
 import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
 
-interface Ingredient extends Omit<IdentifiedFood, 'grams'> {
-  grams: string;
+interface Ingredient extends Omit<IdentifiedFood, 'amount'> {
+  amount: string;
 }
 
 export default function FoodIdentificationModal({
@@ -41,7 +41,7 @@ export default function FoodIdentificationModal({
       setIngredients([]);
       setExpanded(null);
     } else if (value !== emittedValue.current) {
-      setIngredients(value.map(food => ({ ...food, grams: String(food.grams).replace('.', ',') })));
+      setIngredients(value.map(food => ({ ...food, amount: String(food.amount).replace('.', ',') })));
       setExpanded(null);
       emittedValue.current = value;
     }
@@ -49,14 +49,14 @@ export default function FoodIdentificationModal({
 
   const update = (next: Ingredient[]) => {
     setIngredients(next);
-    const foods = next.map(item => ({ ...item, grams: Number(item.grams.replace(',', '.')) }));
+    const foods = next.map(item => ({ ...item, amount: Number(item.amount.replace(',', '.')) }));
     emittedValue.current = foods;
     onChange(foods);
   };
   const invalid =
     !mealName.trim() ||
     ingredients.length === 0 ||
-    ingredients.some(item => !item.name.trim() || !/^\d+(?:[.,]\d+)?$/.test(item.grams) || Number(item.grams.replace(',', '.')) <= 0);
+    ingredients.some(item => !item.name.trim() || !/^\d+(?:[.,]\d+)?$/.test(item.amount) || Number(item.amount.replace(',', '.')) <= 0);
   const inputStyle = [styles.input, { color: colors.text, borderColor: colors.border }];
 
   return (
@@ -93,7 +93,9 @@ export default function FoodIdentificationModal({
                   </ThemedText>
                 ) : null}
               </View>
-              <ThemedText style={{ color: colors.primary }}>{item.grams ? `${item.grams} g` : t(key + 'setGrams')}</ThemedText>
+              <ThemedText style={{ color: colors.primary }}>
+                {item.amount ? `${item.amount} ${item.unit}` : t(key + (item.unit === 'ml' ? 'setMilliliters' : 'setGrams'))}
+              </ThemedText>
             </Pressable>
             {expanded === index && (
               <View style={styles.editor}>
@@ -122,15 +124,29 @@ export default function FoodIdentificationModal({
                     update(ingredients.map((row, i) => (i === index ? { ...row, preparation: preparation.replace(/\r?\n/g, ' ') || null } : row)))
                   }
                 />
-                <ThemedText type="caption">{t(key + 'grams')}</ThemedText>
+                <View style={styles.unitRow}>
+                  {(['g', 'ml'] as const).map(unit => (
+                    <Pressable
+                      key={unit}
+                      accessibilityRole="button"
+                      accessibilityLabel={t(key + (unit === 'ml' ? 'useMilliliters' : 'useGrams'))}
+                      accessibilityState={{ selected: item.unit === unit }}
+                      style={[styles.unitButton, { borderColor: item.unit === unit ? colors.primary : colors.border }]}
+                      onPress={() => update(ingredients.map((row, i) => (i === index ? { ...row, unit } : row)))}
+                    >
+                      <ThemedText style={{ color: item.unit === unit ? colors.primary : colors.textMuted }}>{unit}</ThemedText>
+                    </Pressable>
+                  ))}
+                </View>
+                <ThemedText type="caption">{t(key + (item.unit === 'ml' ? 'milliliters' : 'grams'))}</ThemedText>
                 <TextInput
-                  value={item.grams}
+                  value={item.amount}
                   keyboardType="decimal-pad"
                   placeholder={t(key + 'optional')}
                   placeholderTextColor={colors.textMuted}
-                  accessibilityLabel={t(key + 'grams')}
+                  accessibilityLabel={t(key + (item.unit === 'ml' ? 'milliliters' : 'grams'))}
                   style={inputStyle}
-                  onChangeText={grams => update(ingredients.map((row, i) => (i === index ? { ...row, grams } : row)))}
+                  onChangeText={amount => update(ingredients.map((row, i) => (i === index ? { ...row, amount } : row)))}
                 />
                 <Pressable
                   accessibilityRole="button"
@@ -150,7 +166,7 @@ export default function FoodIdentificationModal({
           title={t(key + 'add')}
           variant="secondary"
           onPress={() => {
-            update([...ingredients, { name: '', grams: '', source: 'user', identificationConfidence: 'high' }]);
+            update([...ingredients, { name: '', amount: '', unit: 'g', source: 'user', identificationConfidence: 'high' }]);
             setExpanded(ingredients.length);
           }}
         />
@@ -160,6 +176,8 @@ export default function FoodIdentificationModal({
 }
 
 const styles = StyleSheet.create({
+  unitRow: { flexDirection: 'row', gap: 8 },
+  unitButton: { borderWidth: 1, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 10 },
   scroll: { maxHeight: 350, width: '100%' },
   content: { gap: 10, paddingBottom: 12 },
   card: { borderWidth: 1, borderRadius: 12, overflow: 'hidden' },

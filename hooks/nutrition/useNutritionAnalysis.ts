@@ -169,8 +169,9 @@ export const useNutritionAnalysis = ({
                 food &&
                 typeof food.name === 'string' &&
                 food.name.trim() &&
-                Number.isFinite(food.grams) &&
-                food.grams > 0 &&
+                Number.isFinite(food.amount) &&
+                food.amount > 0 &&
+                (food.unit === 'g' || food.unit === 'ml') &&
                 (food.preparation == null || (typeof food.preparation === 'string' && food.preparation.length <= 200))
             )
           ) {
@@ -193,7 +194,8 @@ export const useNutritionAnalysis = ({
             (food, index) =>
               food &&
               food.name === confirmedFoods[index].name.trim() &&
-              food.grams === confirmedFoods[index].grams &&
+              food.amount === confirmedFoods[index].amount &&
+              food.unit === confirmedFoods[index].unit &&
               (food.preparation?.trim() || null) === (confirmedFoods[index].preparation?.trim() || null)
           )
         ) {
@@ -344,7 +346,13 @@ export const useNutritionAnalysis = ({
   const confirmFoods = useCallback(() => {
     const last = lastAnalyzedFilesRef.current;
     const foods = foodReviewFoods ?? [];
-    if (!last || !foods.length || isAnalyzing || foods.some(food => !food.name.trim() || !Number.isFinite(food.grams) || food.grams <= 0)) return;
+    if (
+      !last ||
+      !foods.length ||
+      isAnalyzing ||
+      foods.some(food => !food.name.trim() || !Number.isFinite(food.amount) || food.amount <= 0 || (food.unit !== 'g' && food.unit !== 'ml'))
+    )
+      return;
     if (!foodReviewMealName.trim()) return;
     last.confirmedMealName = foodReviewMealName.trim();
     last.confirmedFoods = foods;

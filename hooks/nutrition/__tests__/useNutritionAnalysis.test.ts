@@ -38,23 +38,23 @@ test('waits for confirmation and sends corrected foods only in the nutrition req
       type: 'identification',
       mealName: 'Nötköttsgryta med potatismos',
       detectedFoods: [
-        { name: 'Lax', grams: 125 },
-        { name: 'Ris', grams: 150 },
+        { name: 'Lax', amount: 125, unit: 'g' as const },
+        { name: 'Ris', amount: 150, unit: 'g' as const },
       ],
     })
     .mockResolvedValueOnce({
       type: 'nutrition',
       analyzedFoods: [
-        { name: 'Tofu', grams: 100 },
-        { name: 'Potatis', grams: 150 },
+        { name: 'Tofu', amount: 100, unit: 'g' as const },
+        { name: 'Potatis', amount: 150, unit: 'g' as const },
       ],
     });
   const { result } = renderHook(() => useNutritionAnalysis(params));
   act(() => result.current.handleAnalyzePackaging(file, '', null));
   await waitFor(() =>
     expect(result.current.foodReviewFoods).toEqual([
-      { name: 'Lax', grams: 125 },
-      { name: 'Ris', grams: 150 },
+      { name: 'Lax', amount: 125, unit: 'g' as const },
+      { name: 'Ris', amount: 150, unit: 'g' as const },
     ])
   );
   expect(NutritionAnalyze).toHaveBeenCalledTimes(1);
@@ -63,8 +63,8 @@ test('waits for confirmation and sends corrected foods only in the nutrition req
   expect(extractAndValidateNutritionAnalysis).not.toHaveBeenCalled();
   act(() =>
     result.current.setFoodReviewFoods([
-      { name: 'Tofu', grams: 100 },
-      { name: 'Potatis', grams: 150 },
+      { name: 'Tofu', amount: 100, unit: 'g' as const },
+      { name: 'Potatis', amount: 150, unit: 'g' as const },
     ])
   );
   act(() => result.current.confirmFoods());
@@ -73,8 +73,8 @@ test('waits for confirmation and sends corrected foods only in the nutrition req
     expect.objectContaining({
       stage: 'analyze',
       confirmedFoods: [
-        { name: 'Tofu', grams: 100 },
-        { name: 'Potatis', grams: 150 },
+        { name: 'Tofu', amount: 100, unit: 'g' as const },
+        { name: 'Potatis', amount: 150, unit: 'g' as const },
       ],
     })
   );
@@ -103,20 +103,26 @@ test('keeps edited weights and added ingredients in the final review and when re
   });
   jest
     .mocked(NutritionAnalyze)
-    .mockResolvedValueOnce({ type: 'identification', mealName: 'Nötköttsgryta med potatismos', detectedFoods: [{ name: 'Nötfärs', grams: 150 }] })
+    .mockResolvedValueOnce({
+      type: 'identification',
+      mealName: 'Nötköttsgryta med potatismos',
+      detectedFoods: [{ name: 'Nötfärs', amount: 150, unit: 'g' as const }],
+    })
     .mockResolvedValueOnce({
       type: 'nutrition',
       analyzedFoods: [
-        { name: 'Nötfärs', grams: 200, preparation: 'i gryta' },
-        { name: 'Olivolja', grams: 12.5, preparation: 'tillsatt efter tillagning' },
+        { name: 'Nötfärs', amount: 200, unit: 'g' as const, preparation: 'i gryta' },
+        { name: 'Olivolja', amount: 12.5, unit: 'g' as const, preparation: 'tillsatt efter tillagning' },
+        { name: 'Rödvin', amount: 175, unit: 'ml' as const },
       ],
     });
   const { result } = renderHook(() => useNutritionAnalysis(params));
   act(() => result.current.handleAnalyzePackaging(file, '', null));
   await waitFor(() => expect(result.current.foodReviewFoods).not.toBeNull());
   const corrected = [
-    { name: 'Nötfärs', grams: 200, preparation: 'i gryta' },
-    { name: 'Olivolja', grams: 12.5, preparation: 'tillsatt efter tillagning' },
+    { name: 'Nötfärs', amount: 200, unit: 'g' as const, preparation: 'i gryta' },
+    { name: 'Olivolja', amount: 12.5, unit: 'g' as const, preparation: 'tillsatt efter tillagning' },
+    { name: 'Rödvin', amount: 175, unit: 'ml' as const },
   ];
   act(() => result.current.setFoodReviewFoods(corrected));
   act(() => result.current.setFoodReviewMealName('Min nötköttsgryta med potatismos'));
@@ -130,28 +136,39 @@ test('keeps edited weights and added ingredients in the final review and when re
   expect(NutritionAnalyze).toHaveBeenCalledTimes(2);
 });
 
-test.each([undefined, [{ name: 'Lax', grams: 999 }]])('rejects a backend response without matching analyzed weights: %j', async analyzedFoods => {
-  jest.spyOn(console, 'error').mockImplementation(() => {});
-  jest
-    .mocked(NutritionAnalyze)
-    .mockResolvedValueOnce({ type: 'identification', mealName: 'Nötköttsgryta med potatismos', detectedFoods: [{ name: 'Lax', grams: 125 }] })
-    .mockResolvedValueOnce({ type: 'nutrition', analyzedFoods });
-  const { result } = renderHook(() => useNutritionAnalysis(params));
-  act(() => result.current.handleAnalyzePackaging(file, '', null));
-  await waitFor(() => expect(result.current.foodReviewFoods).not.toBeNull());
-  act(() => result.current.confirmFoods());
-  await waitFor(() => expect(result.current.analysisResult).toBe('journal:nutritionLogger.analysisIngredientsMismatch'));
-  expect(result.current.pendingAnalysisReview?.analysis).toBeNull();
-  expect(extractAndValidateNutritionAnalysis).not.toHaveBeenCalled();
-  jest.restoreAllMocks();
-});
+test.each([undefined, [{ name: 'Lax', amount: 999, unit: 'g' as const }], [{ name: 'Lax', amount: 125, unit: 'ml' as const }]])(
+  'rejects a backend response without matching analyzed weights: %j',
+  async analyzedFoods => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest
+      .mocked(NutritionAnalyze)
+      .mockResolvedValueOnce({
+        type: 'identification',
+        mealName: 'Nötköttsgryta med potatismos',
+        detectedFoods: [{ name: 'Lax', amount: 125, unit: 'g' as const }],
+      })
+      .mockResolvedValueOnce({ type: 'nutrition', analyzedFoods });
+    const { result } = renderHook(() => useNutritionAnalysis(params));
+    act(() => result.current.handleAnalyzePackaging(file, '', null));
+    await waitFor(() => expect(result.current.foodReviewFoods).not.toBeNull());
+    act(() => result.current.confirmFoods());
+    await waitFor(() => expect(result.current.analysisResult).toBe('journal:nutritionLogger.analysisIngredientsMismatch'));
+    expect(result.current.pendingAnalysisReview?.analysis).toBeNull();
+    expect(extractAndValidateNutritionAnalysis).not.toHaveBeenCalled();
+    jest.restoreAllMocks();
+  }
+);
 
 test('rejects a response that dropped the confirmed preparation', async () => {
   const errorLog = jest.spyOn(console, 'error').mockImplementation(() => {});
   jest
     .mocked(NutritionAnalyze)
-    .mockResolvedValueOnce({ type: 'identification', mealName: 'Gryta', detectedFoods: [{ name: 'Morot', grams: 60, preparation: 'i gryta' }] })
-    .mockResolvedValueOnce({ type: 'nutrition', analyzedFoods: [{ name: 'Morot', grams: 60 }] });
+    .mockResolvedValueOnce({
+      type: 'identification',
+      mealName: 'Gryta',
+      detectedFoods: [{ name: 'Morot', amount: 60, unit: 'g' as const, preparation: 'i gryta' }],
+    })
+    .mockResolvedValueOnce({ type: 'nutrition', analyzedFoods: [{ name: 'Morot', amount: 60, unit: 'g' as const }] });
   const { result } = renderHook(() => useNutritionAnalysis(params));
   act(() => result.current.handleAnalyzePackaging(file, '', null));
   await waitFor(() => expect(result.current.foodReviewFoods).not.toBeNull());

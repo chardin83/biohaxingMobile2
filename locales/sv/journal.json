@@ -22,7 +22,7 @@
   "nutritionLogger": {
     "foodIdentification": {
       "title": "Steg 1 av 2: Bekräfta matvarorna",
-      "description": "AI delar upp måltiden i ingredienser och uppskattar gram. Uppgifter från din beskrivning märks ut. Kontrollera särskilt osäkra ingredienser och justera listan innan du fortsätter.",
+      "description": "AI delar upp måltiden i ingredienser och uppskattar mängden: mat i gram, dryck i ml. Uppgifter från din beskrivning märks ut. Kontrollera osäkra ingredienser och justera listan innan du fortsätter.",
       "confirm": "Fortsätt",
       "label": "Matvaror och mängder",
       "newIngredient": "Ny ingrediens",
@@ -35,7 +35,11 @@
       "fromDescription": "Uppgivet av dig",
       "uncertain": "Osäker identifiering – kontrollera",
       "preparation": "Tillagning / sammanhang",
-      "preparationPlaceholder": "Exempel: i gryta, kokt, rå"
+      "preparationPlaceholder": "Exempel: i gryta, kokt, rå",
+      "milliliters": "Mängd (ml)",
+      "setMilliliters": "Ange ml",
+      "useMilliliters": "Använd milliliter",
+      "useGrams": "Använd gram"
     },
     "untrackedTargets": "Mål utan uppföljning ({{count}})",
     "untrackedTargetsExplainer": "Premium krävs för att spåra dessa.",
@@ -314,7 +318,7 @@
       "protein": "Totalprotein"
     },
     "reviewIngredientsTitle": "Ingredienser i analysen",
-    "reviewIngredientsDescription": "Ingredienser och mängder som används i beräkningen.",
+    "reviewIngredientsDescription": "Ingredienser, mängder och enheter från backendens svar på näringsanalysen.",
     "editIngredients": "Ändra ingredienser och analysera igen",
     "analysisIngredientsMismatch": "Backend kunde inte bekräfta ingredienserna och mängderna. Uppdatera backend och försök igen.",
     "packageFlowDescriptionHint": "Ange ingredienser du känner till. Skriv gärna vad som ingår i rätten och vad som serveras vid sidan."

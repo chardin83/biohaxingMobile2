@@ -22,7 +22,7 @@
   "nutritionLogger": {
     "foodIdentification": {
       "title": "Step 1 of 2: Confirm foods",
-      "description": "AI separates the meal into ingredients and estimates grams. Ingredients you supplied are marked. Check uncertain ingredients and adjust the list before continuing.",
+      "description": "AI separates the meal into ingredients and estimates quantities: food in grams, drinks in ml. Ingredients you supplied are marked. Check uncertain ingredients and adjust the list before continuing.",
       "confirm": "Continue",
       "label": "Foods and quantities",
       "newIngredient": "New ingredient",
@@ -35,7 +35,11 @@
       "fromDescription": "Provided by you",
       "uncertain": "Uncertain identification – please check",
       "preparation": "Preparation / context",
-      "preparationPlaceholder": "Example: in stew, boiled, raw"
+      "preparationPlaceholder": "Example: in stew, boiled, raw",
+      "milliliters": "Amount (ml)",
+      "setMilliliters": "Set ml",
+      "useMilliliters": "Use milliliters",
+      "useGrams": "Use grams"
     },
     "untrackedTargets": "Goals without tracking ({{count}})",
     "untrackedTargetsExplainer": "Premium is required to track these goals.",
@@ -314,7 +318,7 @@
       "protein": "Total protein"
     },
     "reviewIngredientsTitle": "Ingredients in the analysis",
-    "reviewIngredientsDescription": "Ingredients and amounts used in the calculation.",
+    "reviewIngredientsDescription": "Ingredients, amounts and units returned by the nutrition analysis backend.",
     "editIngredients": "Edit ingredients and analyze again",
     "analysisIngredientsMismatch": "The backend could not confirm the ingredients and quantities. Update the backend and try again.",
     "packageFlowDescriptionHint": "List ingredients you know. Specify what is in the dish and what is served on the side."
