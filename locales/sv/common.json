@@ -308,7 +308,15 @@
     "duplicateWarning": "AI-planen innehaller {{count}} dubbletter som redan finns i din plan.",
     "goals": {
       "title": "Vad är ditt/dina mål?",
-      "suggestions": ["Bygga muskler", "Gå ner i vikt", "Få mer energi", "Förbättra konditionen", "Må bättre", "Bli starkare", "Bättre matvanor"],
+      "suggestions": [
+        "Bygga muskler",
+        "Gå ner i vikt",
+        "Få mer energi",
+        "Förbättra konditionen",
+        "Må bättre",
+        "Bli starkare",
+        "Bättre matvanor"
+      ],
       "customPlaceholder": "Eget mål..."
     },
     "sharePlanText": "Obligatoriskt för att generera en AI-plan.",
@@ -531,7 +539,10 @@
     "endGuide": "Avsluta guiden",
     "endGuideHelp": "Du kommer till målsidan där du kan ange dina näringsmål manuellt",
     "manualTitle": "Hoppa över guiden",
-    "energySource": { "henry": "NNR / Henry", "custom": "Eget mål" },
+    "energySource": {
+      "henry": "NNR / Henry",
+      "custom": "Eget mål"
+    },
     "unsaved": {
       "title": "Osparade ändringar",
       "description": "Du har ändrat dina näringsmål men har inte sparat ännu.",
@@ -652,7 +663,7 @@
     "features": {
       "photo": {
         "title": "AI-fotoanalys",
-        "free": "{{count}} totalt",
+        "free": "{{count}} provningar",
         "premium": "{{count}}/mån"
       },
       "coach": {
@@ -667,7 +678,7 @@
       },
       "nutrition": {
         "title": "Näringsanalys",
-        "free": "Grundnivå",
+        "free": "Ingår i provning",
         "premium": "Fördjupad"
       },
       "goals": {
@@ -733,7 +744,7 @@
       "newHabitGoals_zero": "Inga nya habit-mål.",
       "newHabitGoals_one": "{{count}} nytt habit-mål.",
       "newHabitGoals_other": "{{count}} nya habit-mål.",
-    "endGuide": "Avsluta guiden",
+      "endGuide": "Avsluta guiden",
       "manualTitle": "Kom ihåg att logga manuellt.",
       "manualDescription": "Kost, dryck, tillskott och andra vanor som inte registreras automatiskt.",
       "errorTitle": "Synkningen kunde inte slutföras",

@@ -36,6 +36,7 @@ export type DetectedDrink = {
 };
 
 export interface NutritionAnalysisResponse {
+  analysisTier?: NutritionAnalysisTier;
   mealName?: string;
   detectedFoods?: IdentifiedFood[];
   analyzedFoods?: IdentifiedFood[];
@@ -208,7 +209,7 @@ type TrackingTargetInput = {
   aiInstruction?: string;
 };
 
-export type NutritionAnalysisTier = 'free' | 'premium';
+export type NutritionAnalysisTier = 'free' | 'premium' | 'trial';
 
 export type NutritionAnalysisFeatures = {
   fiberBreakdown?: boolean;
@@ -278,7 +279,7 @@ function appendIngredientFile(form: FormData, params: AnalyseParams): void {
 }
 
 function appendNutritionOptions(form: FormData, params: AnalyseParams, locale: 'sv' | 'en'): NutritionAnalysisTier {
-  const analysisTier: NutritionAnalysisTier = PREMIUM ? (params.analysisTier ?? 'premium') : 'free';
+  const analysisTier: NutritionAnalysisTier = PREMIUM ? (params.analysisTier ?? 'premium') : params.analysisTier === 'trial' ? 'trial' : 'free';
   const languageInstruction = locale === 'sv' ? 'Write all free-text outputs in Swedish.' : 'Write all free-text outputs in English.';
 
   form.append('prompt', `${params.prompt ?? ''}\n${languageInstruction}`.trim());
@@ -293,7 +294,7 @@ function appendNutritionOptions(form: FormData, params: AnalyseParams, locale: '
   if (params.analysisFeatures && Object.keys(params.analysisFeatures).length > 0) {
     form.append('analysisFeatures', JSON.stringify(params.analysisFeatures));
   }
-  const trackingTargets = params.trackingTargets?.filter(target => analysisTier === 'premium' || !target.aiInstruction?.trim());
+  const trackingTargets = params.trackingTargets?.filter(target => analysisTier !== 'free' || !target.aiInstruction?.trim());
   if (trackingTargets?.length) {
     form.append('trackingTargets', JSON.stringify(trackingTargets));
   }

@@ -230,8 +230,8 @@
     "analysisNutrition": "Beräknar näringsinnehåll",
     "analysisPreparingResult": "Förbereder resultatet",
     "mealLogger": {
-      "analysesRemaining": "{{remaining}} av {{total}} analyser kvar",
-      "noAnalysesRemaining": "Dina gratisanalyser är slut. Upptäck Premium för fler analyser.",
+      "analysesRemaining": "{{remaining}} av {{total}} kostnadsfria Premium-provningar kvar",
+      "noAnalysesRemaining": "Dina kostnadsfria Premium-provningar är slut. Upptäck Premium för fler fullständiga analyser.",
       "addMeal": "Lägg till måltid eller dryck ",
       "chooseHowToAddMeal": "Välj hur du vill lägga till måltiden",
       "analyzePhoto": "Analysera foto",
@@ -321,7 +321,11 @@
     "reviewIngredientsDescription": "Ingredienser, mängder och enheter från backendens svar på näringsanalysen.",
     "editIngredients": "Ändra ingredienser och analysera igen",
     "analysisIngredientsMismatch": "Backend kunde inte bekräfta ingredienserna och mängderna. Uppdatera backend och försök igen.",
-    "packageFlowDescriptionHint": "Ange ingredienser du känner till. Skriv gärna vad som ingår i rätten och vad som serveras vid sidan."
+    "packageFlowDescriptionHint": "Ange ingredienser du känner till. Skriv gärna vad som ingår i rätten och vad som serveras vid sidan.",
+    "fiberTypesPremium": "Fibertyper är en Premiumfunktion. Med Premium kan du se fördelningen mellan olika fibertyper. Total fiber ingår alltid.",
+    "fiberPremiumExpired": "Premium har löpt ut. Dina tidigare analyserade fibertyper visas fortfarande. Återaktivera Premium för att analysera fibertyper i nya måltider.",
+    "reactivatePremium": "Återaktivera Premium",
+    "fiberTrialResult": "Fibertyperna ingick i din kostnadsfria Premium-provning. Skaffa Premium för fler fullständiga analyser."
   },
   "dayEdit": {
     "tabMeal": "Måltid",

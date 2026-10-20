@@ -230,8 +230,8 @@
     "analysisNutrition": "Calculating nutrition",
     "analysisPreparingResult": "Preparing result",
     "mealLogger": {
-      "analysesRemaining": "{{remaining}} of {{total}} analyses remaining",
-      "noAnalysesRemaining": "You have used your free analyses. Discover Premium for more analyses.",
+      "analysesRemaining": "{{remaining}} of {{total}} free Premium trial analyses remaining",
+      "noAnalysesRemaining": "You have used your free Premium trial analyses. Discover Premium for more full analyses.",
       "addMeal": "Add food or drink",
       "chooseHowToAddMeal": "Choose how to add the meal",
       "analyzePhoto": "Analyze photo",
@@ -321,7 +321,11 @@
     "reviewIngredientsDescription": "Ingredients, amounts and units returned by the nutrition analysis backend.",
     "editIngredients": "Edit ingredients and analyze again",
     "analysisIngredientsMismatch": "The backend could not confirm the ingredients and quantities. Update the backend and try again.",
-    "packageFlowDescriptionHint": "List ingredients you know. Specify what is in the dish and what is served on the side."
+    "packageFlowDescriptionHint": "List ingredients you know. Specify what is in the dish and what is served on the side.",
+    "fiberTypesPremium": "Fiber types are a Premium feature. Premium lets you see the breakdown by fiber type. Total fiber is always included.",
+    "fiberPremiumExpired": "Premium has expired. Your previously analyzed fiber types remain visible. Reactivate Premium to analyze fiber types in new meals.",
+    "reactivatePremium": "Reactivate Premium",
+    "fiberTrialResult": "Fiber types were included in your free Premium trial analysis. Get Premium for more full analyses."
   },
   "dayEdit": {
     "tabMeal": "Meal",

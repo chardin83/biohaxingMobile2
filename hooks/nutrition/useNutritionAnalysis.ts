@@ -154,9 +154,9 @@ export const useNutritionAnalysis = ({
           ingredientListName: ingredientFile?.name,
           ingredientListType: ingredientFile?.type,
           locale,
-          analysisTier: PREMIUM ? 'premium' : 'free',
+          analysisTier: PREMIUM ? 'premium' : reservedAnalysis ? 'trial' : 'free',
           prompt: trackingPrompt,
-          trackingTargets: trackingTargets.filter(target => PREMIUM || !target.aiInstruction?.trim()),
+          trackingTargets: trackingTargets.filter(target => PREMIUM || reservedAnalysis || !target.aiInstruction?.trim()),
         });
         if (!confirmedFoods) {
           if (
@@ -216,7 +216,7 @@ export const useNutritionAnalysis = ({
         successfulAnalysis = true;
         setPendingAnalysisReview({
           analyzedFoods: analyzedFoods.map(food => ({ ...food })),
-          analysis: result.analysis,
+          analysis: { ...result.analysis, analysisTier: data.analysisTier ?? (PREMIUM ? 'premium' : 'trial') },
           weeklyTrackingSignals: result.mealWeeklyTrackingSignals,
           detectedDrinks: (data.detectedDrinks ?? []).map(drink => ({
             ...drink,

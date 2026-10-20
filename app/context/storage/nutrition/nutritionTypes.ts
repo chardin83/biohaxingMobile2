@@ -69,6 +69,7 @@ export type WeeklyNutritionTracking = WeeklyTracking<NutritionTrackingContributi
 export type NutritionEntryType = 'meal' | 'food' | 'drink';
 
 export type NutritionData = NutritionComposition & {
+  analysisTier?: 'free' | 'premium' | 'trial';
   name: string;
   mineralsConfidenceByType?: Partial<Record<MineralType, 'high' | 'medium' | 'low' | 'unknown'>>;
 };
@@ -99,7 +100,7 @@ export type DailyNutritionSummary = {
   entries: NutritionEntry[];
   totals: {
     caffeineMg?: number;
-  alcoholGrams?: number;
+    alcoholGrams?: number;
     protein: number;
     calories: number;
     carbohydrates: number;

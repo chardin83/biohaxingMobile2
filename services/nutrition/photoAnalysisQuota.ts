@@ -2,7 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { FREE_PHOTO_ANALYSIS_LIMIT } from '@/constants/Premium';
 
-const STORAGE_KEY = 'freePhotoAnalysesUsed';
+// Full Premium trials are a new allowance; older limited free analyses do not consume it.
+const STORAGE_KEY = 'premiumTrialPhotoAnalysesUsed';
 const listeners = new Set<() => void>();
 let pendingUpdate: Promise<unknown> = Promise.resolve();
 
@@ -14,7 +15,9 @@ export async function getFreePhotoAnalysesRemaining(): Promise<number> {
 
 export function subscribePhotoAnalysisQuota(listener: () => void): () => void {
   listeners.add(listener);
-  return () => { listeners.delete(listener); };
+  return () => {
+    listeners.delete(listener);
+  };
 }
 
 function updateQuota(refund: boolean): Promise<boolean> {
@@ -32,3 +35,12 @@ function updateQuota(refund: boolean): Promise<boolean> {
 
 export const reserveFreePhotoAnalysis = () => updateQuota(false);
 export const refundFreePhotoAnalysis = () => updateQuota(true);
+
+export function resetFreePhotoAnalysisQuota(): Promise<void> {
+  const reset = pendingUpdate.then(async () => {
+    await AsyncStorage.setItem(STORAGE_KEY, '0');
+    listeners.forEach(listener => listener());
+  });
+  pendingUpdate = reset.catch(() => undefined);
+  return reset;
+}

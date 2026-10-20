@@ -308,7 +308,15 @@
     "duplicateWarning": "The AI plan includes {{count}} duplicates already in your plan.",
     "goals": {
       "title": "What is your goal/goals?",
-      "suggestions": ["Build muscle", "Lose weight", "Get more energy", "Improve fitness", "Feel better", "Get stronger", "Better eating habits"],
+      "suggestions": [
+        "Build muscle",
+        "Lose weight",
+        "Get more energy",
+        "Improve fitness",
+        "Feel better",
+        "Get stronger",
+        "Better eating habits"
+      ],
       "customPlaceholder": "Custom goal..."
     },
     "sharePlanText": "Required to generate an AI plan.",
@@ -531,7 +539,10 @@
     "endGuide": "End the guide",
     "endGuideHelp": "You will go to the goals page, where you can set your nutrition goals manually",
     "manualTitle": "Skip the guide",
-    "energySource": { "henry": "NNR / Henry", "custom": "Custom goal" },
+    "energySource": {
+      "henry": "NNR / Henry",
+      "custom": "Custom goal"
+    },
     "unsaved": {
       "title": "Unsaved changes",
       "description": "You have changed your nutrition goals but have not saved them yet.",
@@ -652,7 +663,7 @@
     "features": {
       "photo": {
         "title": "AI photo analysis",
-        "free": "{{count}} total",
+        "free": "{{count}} trials",
         "premium": "{{count}}/month"
       },
       "coach": {
@@ -667,7 +678,7 @@
       },
       "nutrition": {
         "title": "Nutrition analysis",
-        "free": "Basic",
+        "free": "Full trial included",
         "premium": "Detailed"
       },
       "goals": {
@@ -733,7 +744,7 @@
       "newHabitGoals_zero": "No new habit goals.",
       "newHabitGoals_one": "{{count}} new habit goal.",
       "newHabitGoals_other": "{{count}} new habit goals.",
-    "endGuide": "End the guide",
+      "endGuide": "End the guide",
       "manualTitle": "Remember to log manually.",
       "manualDescription": "Food, drinks, supplements and other habits that are not recorded automatically.",
       "errorTitle": "Sync could not be completed",

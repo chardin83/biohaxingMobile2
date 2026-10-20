@@ -1,3 +1,4 @@
+import { Alert } from 'react-native';
 import { act, renderHook, waitFor } from '@testing-library/react-native';
 
 import { NutritionAnalyze } from '@/services/gptServices';
@@ -72,6 +73,7 @@ test('waits for confirmation and sends corrected foods only in the nutrition req
   expect(NutritionAnalyze).toHaveBeenLastCalledWith(
     expect.objectContaining({
       stage: 'analyze',
+      analysisTier: 'trial',
       confirmedFoods: [
         { name: 'Tofu', amount: 100, unit: 'g' as const },
         { name: 'Potatis', amount: 150, unit: 'g' as const },
@@ -130,6 +132,7 @@ test('keeps edited weights and added ingredients in the final review and when re
   await waitFor(() => expect(result.current.isAnalysisReviewModalVisible).toBe(true));
   expect(NutritionAnalyze).toHaveBeenLastCalledWith(expect.objectContaining({ confirmedFoods: corrected, mealName: 'Min nötköttsgryta med potatismos' }));
   expect(result.current.pendingAnalysisReview?.analyzedFoods).toEqual(corrected);
+  expect(result.current.pendingAnalysisReview?.analysis?.analysisTier).toBe('trial');
   act(() => result.current.handleReAnalyze());
   expect(result.current.foodReviewFoods).toEqual(corrected);
   expect(result.current.foodReviewMealName).toBe('Min nötköttsgryta med potatismos');
@@ -176,4 +179,20 @@ test('rejects a response that dropped the confirmed preparation', async () => {
   await waitFor(() => expect(result.current.analysisResult).toBe('journal:nutritionLogger.analysisIngredientsMismatch'));
   expect(extractAndValidateNutritionAnalysis).not.toHaveBeenCalled();
   errorLog.mockRestore();
+});
+
+test('does not request a trial analysis when all three attempts have been used', async () => {
+  const alert = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+  jest.mocked(reserveFreePhotoAnalysis).mockResolvedValueOnce(false);
+  jest
+    .mocked(NutritionAnalyze)
+    .mockResolvedValueOnce({ type: 'identification', mealName: 'Lunch', detectedFoods: [{ name: 'Morot', amount: 100, unit: 'g' }] });
+  const { result } = renderHook(() => useNutritionAnalysis(params));
+  act(() => result.current.handleAnalyzePackaging(file, '', null));
+  await waitFor(() => expect(result.current.foodReviewFoods).not.toBeNull());
+  act(() => result.current.confirmFoods());
+  await waitFor(() => expect(result.current.analysisResult).toBe('journal:nutritionLogger.mealLogger.noAnalysesRemaining'));
+  expect(NutritionAnalyze).toHaveBeenCalledTimes(1);
+  expect(alert).toHaveBeenCalled();
+  alert.mockRestore();
 });

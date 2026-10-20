@@ -7,7 +7,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { IconSymbolName } from '@/components/ui/icon-symbol-map';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
-type Variant = 'primary' | 'secondary' | 'danger' | 'xp';
+type Variant = 'primary' | 'secondary' | 'danger' | 'xp' | 'premium';
 
 interface AppButtonProps {
   title: string;
@@ -46,7 +46,9 @@ const AppButton: React.FC<AppButtonProps> = ({
 
   let buttonVariantStyle;
 
-  if (variant === 'xp') {
+  if (variant === 'premium') {
+    buttonVariantStyle = { borderColor: colors.gold };
+  } else if (variant === 'xp') {
     buttonVariantStyle = { borderColor: colors.xp };
   } else if (isPrimary) {
     buttonVariantStyle = {
@@ -66,7 +68,9 @@ const AppButton: React.FC<AppButtonProps> = ({
 
   let textColorStyle;
 
-  if (variant === 'xp') {
+  if (variant === 'premium') {
+    textColorStyle = { color: colors.gold };
+  } else if (variant === 'xp') {
     textColorStyle = { color: colors.xp };
   } else if (isPrimary) {
     textColorStyle = {
@@ -117,10 +121,10 @@ const AppButton: React.FC<AppButtonProps> = ({
         accessible
       >
         <View style={styles.buttonContent}>
-          <View style={styles.content}>
+          <View style={[styles.content, variant === 'premium' && styles.premiumContent]}>
             {leftIcon && <IconSymbol name={leftIcon} size={26} color={iconColor} />}
 
-            <ThemedText type="defaultSemiBold" style={[styles.text, textColorStyle]}>
+            <ThemedText type="defaultSemiBold" style={[styles.text, textColorStyle, variant === 'premium' && styles.premiumText]}>
               {title}
             </ThemedText>
 
@@ -166,6 +170,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 10,
   },
+  premiumContent: { width: '100%' },
+  premiumText: { flex: 1, flexShrink: 1 },
   text: {
     fontWeight: 'bold',
     textTransform: 'uppercase',

@@ -180,7 +180,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     targets: activeTrackingTargetsForAI,
     keys: activeTrackingKeys,
     prompt: trackingPromptForAI,
-  } = useMemo(() => getNutritionTrackingAnalysis(plans?.nutrition ?? [], PREMIUM), [plans?.nutrition]);
+  } = useMemo(() => getNutritionTrackingAnalysis(plans?.nutrition ?? [], true), [plans?.nutrition]);
 
   const {
     foodReviewMealName,

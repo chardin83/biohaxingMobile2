@@ -1,19 +1,24 @@
 import { useTheme } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import type { NutritionData } from '@/app/context/storage/nutrition/nutritionTypes';
 import { ESSENTIAL_AMINO_ACID_KEYS, OTHER_AMINO_ACID_KEYS } from '@/constants/aminoAcids';
 import { FIBER_CATEGORY_SUBTYPES, FIBER_TYPE_KEYS, type FiberSubtype } from '@/constants/fiber';
 import { MINERAL_TYPE_KEYS } from '@/constants/minerals';
 import { POLYPHENOL_TYPE_KEYS } from '@/constants/polyphenols';
+import { PREMIUM } from '@/constants/Premium';
 import { VITAMIN_TYPE_KEYS } from '@/constants/vitamins';
 
 import { Collapsible } from './Collapsible';
 import AlcoholInfoBottomSheet from './journal/AlcoholInfoBottomSheet';
+import { ThemedModal } from './ThemedModal';
 import { ThemedText } from './ThemedText';
+import AppButton from './ui/AppButton';
 import { IconSymbol } from './ui/IconSymbol';
+import PremiumLink from './ui/PremiumLink';
+import PremiumOffer from './ui/PremiumOffer';
 
 type ConfidenceLevel = 'high' | 'medium' | 'low' | 'unknown';
 
@@ -90,6 +95,7 @@ const ALCOHOL_GRAMS_PER_STANDARD_DRINK = 12;
 const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyPrefix }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const [premiumVisible, setPremiumVisible] = useState(false);
   const [alcoholInfoVisible, setAlcoholInfoVisible] = useState(false);
 
   const {
@@ -109,6 +115,9 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
     aminoAcidsByType,
     microbiomeSupport,
   } = nutrition;
+
+  const isTrialAnalysis = nutrition.analysisTier === 'trial';
+  const hasAnalyzedFiberTypes = FIBER_TYPE_KEYS.some(key => key !== 'fiber_total' && (fiberByType?.[key] ?? 0) > 0) || hasAnyTypedTotals(fiberSubtypeTotals);
 
   const getFiberSubtypeAmountsForCategory = (category: (typeof FIBER_TYPE_KEYS)[number]): Array<{ subtype: FiberSubtype; label: string; amount: number }> => {
     if (category === 'fiber_total') return [];
@@ -197,35 +206,61 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
         <NutrientText text={t('journal:nutritionLogger.fat', { value: fat })} />
       </View>
 
-      {hasAnyTypedTotals(fiberByType) ? (
+      {!PREMIUM || hasAnalyzedFiberTypes ? (
         <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
           <Collapsible
             {...collapsibleHeader(t('journal:nutritionLogger.fiber', { value: fiber }))}
             titleType="default"
+            contentStyle={[styles.premiumDropdown, { borderColor: colors.goldSoft, backgroundColor: colors.goldTransparent }]}
             initialCollapsed
             leftContent={<IconSymbol name="fiber" size={14} color={colors.textMuted} />}
           >
-            {FIBER_TYPE_KEYS.map(key => {
-              const value = fiberByType?.[key] ?? 0;
+            {!PREMIUM ? (
+              <View style={styles.fiberPremium}>
+                <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                  {t(
+                    isTrialAnalysis
+                      ? 'journal:nutritionLogger.fiberTrialResult'
+                      : hasAnalyzedFiberTypes
+                        ? 'journal:nutritionLogger.fiberPremiumExpired'
+                        : 'journal:nutritionLogger.fiberTypesPremium'
+                  )}
+                </ThemedText>
+                {hasAnalyzedFiberTypes && !isTrialAnalysis ? (
+                  <AppButton
+                    title={t('journal:nutritionLogger.reactivatePremium')}
+                    variant="premium"
+                    icon="crown"
+                    rightIcon="chevron.right"
+                    onPress={() => setPremiumVisible(true)}
+                  />
+                ) : (
+                  <PremiumLink onPress={() => setPremiumVisible(true)} />
+                )}
+              </View>
+            ) : null}
+            {hasAnalyzedFiberTypes &&
+              FIBER_TYPE_KEYS.map(key => {
+                const value = fiberByType?.[key] ?? 0;
 
-              if (value <= 0) return null;
+                const subtypeRows = getFiberSubtypeAmountsForCategory(key);
+                if (value <= 0 && subtypeRows.length === 0) return null;
 
-              const subtypeRows = getFiberSubtypeAmountsForCategory(key);
-
-              return (
-                <View key={`${keyPrefix}_${key}`} style={styles.fiberCategoryRow}>
-                  <ThemedText type="default">
-                    • {t(`journal:nutritionLogger.fiberLabels.${key}`)}: {value.toFixed(1)} g
-                  </ThemedText>
-
-                  {subtypeRows.map(row => (
-                    <ThemedText key={`${keyPrefix}_${key}_${row.subtype}`} type="caption" style={styles.fiberSubtypeText}>
-                      - {row.label}: {row.amount.toFixed(1)} g
+                return (
+                  <View key={`${keyPrefix}_${key}`} style={styles.fiberCategoryRow}>
+                    <ThemedText type="default">
+                      • {t(`journal:nutritionLogger.fiberLabels.${key}`)}
+                      {value > 0 ? `: ${value.toFixed(1)} g` : ''}
                     </ThemedText>
-                  ))}
-                </View>
-              );
-            })}
+
+                    {subtypeRows.map(row => (
+                      <ThemedText key={`${keyPrefix}_${key}_${row.subtype}`} type="caption" style={styles.fiberSubtypeText}>
+                        - {row.label}: {row.amount.toFixed(1)} g
+                      </ThemedText>
+                    ))}
+                  </View>
+                );
+              })}
           </Collapsible>
         </View>
       ) : (
@@ -368,11 +403,20 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
         </View>
         <View style={styles.standardDrinksRow}>
           <ThemedText style={[styles.standardDrinks, { color: colors.textMuted }]}>
-            {t('journal:nutritionLogger.alcoholStandardDrinks', { value: alcoholGrams === undefined ? '—' : Math.round(alcoholGrams / ALCOHOL_GRAMS_PER_STANDARD_DRINK * 10) / 10 })}
+            {t('journal:nutritionLogger.alcoholStandardDrinks', {
+              value: alcoholGrams === undefined ? '—' : Math.round((alcoholGrams / ALCOHOL_GRAMS_PER_STANDARD_DRINK) * 10) / 10,
+            })}
           </ThemedText>
           <IconSymbol name="alcohol" size={12} color={colors.textMuted} />
         </View>
       </View>
+      {premiumVisible && (
+        <ThemedModal visible title={t('common:premium.premium')} onClose={() => setPremiumVisible(false)} showCancelButton={false}>
+          <ScrollView style={{ maxHeight: 500, width: '100%' }}>
+            <PremiumOffer onDismiss={() => setPremiumVisible(false)} />
+          </ScrollView>
+        </ThemedModal>
+      )}
       {alcoholInfoVisible && <AlcoholInfoBottomSheet onClose={() => setAlcoholInfoVisible(false)} />}
     </>
   );
@@ -381,6 +425,8 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
 export default NutritionBreakdown;
 
 const styles = StyleSheet.create({
+  premiumDropdown: { borderWidth: StyleSheet.hairlineWidth, borderRadius: 12, padding: 12, overflow: 'hidden' },
+  fiberPremium: { gap: 10, paddingVertical: 8 },
   nutrientRow: {
     paddingBottom: 6,
     marginBottom: 6,
