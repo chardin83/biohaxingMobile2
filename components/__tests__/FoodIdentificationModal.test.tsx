@@ -128,3 +128,23 @@ test('shows the dish name separately from ingredients and allows renaming it', (
   fireEvent.changeText(screen.getByLabelText('mealNameLabel'), 'Min köttgryta');
   expect(onMealNameChange).toHaveBeenCalledWith('Min köttgryta');
 });
+
+test('shows preparation separately and preserves edited preparation with the weight', () => {
+  const onChange = jest.fn();
+  const screen = render(
+    <FoodIdentificationModal
+      mealName="Gryta"
+      onMealNameChange={jest.fn()}
+      value={[{ name: 'Morot', grams: 60, preparation: 'i gryta' }]}
+      onChange={onChange}
+      onClose={jest.fn()}
+      onConfirm={jest.fn()}
+    />
+  );
+  expect(screen.getByText('(i gryta)')).toBeTruthy();
+  fireEvent.press(screen.getByText('Morot'));
+  expect(screen.getByLabelText('preparation').props.value).toBe('i gryta');
+  fireEvent.changeText(screen.getByLabelText('preparation'), 'kokt');
+  fireEvent.changeText(screen.getByLabelText('grams'), '75');
+  expect(onChange).toHaveBeenLastCalledWith([{ name: 'Morot', grams: 75, preparation: 'kokt' }]);
+});

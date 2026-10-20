@@ -33,7 +33,9 @@
       "remove": "Ta bort",
       "add": "+ Lägg till ingrediens",
       "fromDescription": "Uppgivet av dig",
-      "uncertain": "Osäker identifiering – kontrollera"
+      "uncertain": "Osäker identifiering – kontrollera",
+      "preparation": "Tillagning / sammanhang",
+      "preparationPlaceholder": "Exempel: i gryta, kokt, rå"
     },
     "untrackedTargets": "Mål utan uppföljning ({{count}})",
     "untrackedTargetsExplainer": "Premium krävs för att spåra dessa.",

@@ -81,6 +81,7 @@ export default function FoodIdentificationModal({
             >
               <View style={styles.name}>
                 <ThemedText>{item.name || t(key + 'newIngredient')}</ThemedText>
+                {item.preparation ? <ThemedText type="caption" style={{ color: colors.textMuted }}>{`(${item.preparation})`}</ThemedText> : null}
                 {item.source === 'user' ? (
                   <ThemedText type="caption" style={{ color: colors.textMuted }}>
                     {t(key + 'fromDescription')}
@@ -107,6 +108,18 @@ export default function FoodIdentificationModal({
                         i === index ? { ...row, name: name.replace(/\r?\n/g, ' '), source: 'user', identificationConfidence: 'high' } : row
                       )
                     )
+                  }
+                />
+                <ThemedText type="caption">{t(key + 'preparation')}</ThemedText>
+                <TextInput
+                  value={item.preparation ?? ''}
+                  maxLength={200}
+                  accessibilityLabel={t(key + 'preparation')}
+                  placeholder={t(key + 'preparationPlaceholder')}
+                  placeholderTextColor={colors.textMuted}
+                  style={inputStyle}
+                  onChangeText={preparation =>
+                    update(ingredients.map((row, i) => (i === index ? { ...row, preparation: preparation.replace(/\r?\n/g, ' ') || null } : row)))
                   }
                 />
                 <ThemedText type="caption">{t(key + 'grams')}</ThemedText>

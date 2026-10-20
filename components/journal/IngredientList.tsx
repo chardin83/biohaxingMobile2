@@ -12,7 +12,10 @@ export function IngredientList({ ingredients, style }: { ingredients: Identified
     <View style={[styles.list, { borderColor: colors.border }, style]}>
       {ingredients.map((food, index) => (
         <View key={`${index}-${food.name}`} style={[styles.row, { borderColor: colors.border }]}>
-          <ThemedText style={styles.name}>{food.name}</ThemedText>
+          <View style={styles.name}>
+            <ThemedText>{food.name}</ThemedText>
+            {food.preparation ? <ThemedText type="caption" style={{ color: colors.textMuted }}>{`(${food.preparation})`}</ThemedText> : null}
+          </View>
           <ThemedText type="defaultSemiBold" style={{ color: colors.accentStrong }}>{`${String(food.grams).replace('.', ',')} g`}</ThemedText>
         </View>
       ))}

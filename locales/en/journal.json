@@ -33,7 +33,9 @@
       "remove": "Remove",
       "add": "+ Add ingredient",
       "fromDescription": "Provided by you",
-      "uncertain": "Uncertain identification – please check"
+      "uncertain": "Uncertain identification – please check",
+      "preparation": "Preparation / context",
+      "preparationPlaceholder": "Example: in stew, boiled, raw"
     },
     "untrackedTargets": "Goals without tracking ({{count}})",
     "untrackedTargetsExplainer": "Premium is required to track these goals.",

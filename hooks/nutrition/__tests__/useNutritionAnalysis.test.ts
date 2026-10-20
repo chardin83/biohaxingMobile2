@@ -107,16 +107,16 @@ test('keeps edited weights and added ingredients in the final review and when re
     .mockResolvedValueOnce({
       type: 'nutrition',
       analyzedFoods: [
-        { name: 'Nötfärs', grams: 200 },
-        { name: 'Olivolja', grams: 12.5 },
+        { name: 'Nötfärs', grams: 200, preparation: 'i gryta' },
+        { name: 'Olivolja', grams: 12.5, preparation: 'tillsatt efter tillagning' },
       ],
     });
   const { result } = renderHook(() => useNutritionAnalysis(params));
   act(() => result.current.handleAnalyzePackaging(file, '', null));
   await waitFor(() => expect(result.current.foodReviewFoods).not.toBeNull());
   const corrected = [
-    { name: 'Nötfärs', grams: 200 },
-    { name: 'Olivolja', grams: 12.5 },
+    { name: 'Nötfärs', grams: 200, preparation: 'i gryta' },
+    { name: 'Olivolja', grams: 12.5, preparation: 'tillsatt efter tillagning' },
   ];
   act(() => result.current.setFoodReviewFoods(corrected));
   act(() => result.current.setFoodReviewMealName('Min nötköttsgryta med potatismos'));
@@ -144,4 +144,19 @@ test.each([undefined, [{ name: 'Lax', grams: 999 }]])('rejects a backend respons
   expect(result.current.pendingAnalysisReview?.analysis).toBeNull();
   expect(extractAndValidateNutritionAnalysis).not.toHaveBeenCalled();
   jest.restoreAllMocks();
+});
+
+test('rejects a response that dropped the confirmed preparation', async () => {
+  const errorLog = jest.spyOn(console, 'error').mockImplementation(() => {});
+  jest
+    .mocked(NutritionAnalyze)
+    .mockResolvedValueOnce({ type: 'identification', mealName: 'Gryta', detectedFoods: [{ name: 'Morot', grams: 60, preparation: 'i gryta' }] })
+    .mockResolvedValueOnce({ type: 'nutrition', analyzedFoods: [{ name: 'Morot', grams: 60 }] });
+  const { result } = renderHook(() => useNutritionAnalysis(params));
+  act(() => result.current.handleAnalyzePackaging(file, '', null));
+  await waitFor(() => expect(result.current.foodReviewFoods).not.toBeNull());
+  act(() => result.current.confirmFoods());
+  await waitFor(() => expect(result.current.analysisResult).toBe('journal:nutritionLogger.analysisIngredientsMismatch'));
+  expect(extractAndValidateNutritionAnalysis).not.toHaveBeenCalled();
+  errorLog.mockRestore();
 });

@@ -29,7 +29,7 @@ test('shows the confirmed ingredient names and exact weights instead of AI prose
         statusMessage: null,
         analyzedFoods: [
           { name: 'Nötfärs', grams: 200 },
-          { name: 'Olivolja', grams: 12.5 },
+          { name: 'Olivolja', grams: 12.5, preparation: 'i gryta' },
         ],
       }}
       analysisResult={null}
@@ -47,6 +47,7 @@ test('shows the confirmed ingredient names and exact weights instead of AI prose
   expect(screen.getByText('200 g')).toBeTruthy();
   expect(screen.getByText('Olivolja')).toBeTruthy();
   expect(screen.getByText('12,5 g')).toBeTruthy();
+  expect(screen.getByText('(i gryta)')).toBeTruthy();
   expect(screen.queryByText('Outdated AI interpretation')).toBeNull();
   expect(screen.queryByText('AI Interpretation')).toBeNull();
 });

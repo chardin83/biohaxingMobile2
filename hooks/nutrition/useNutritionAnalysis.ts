@@ -164,7 +164,15 @@ export const useNutritionAnalysis = ({
             typeof data.mealName !== 'string' ||
             (data.detectedFoods?.length && !data.mealName.trim()) ||
             !Array.isArray(data.detectedFoods) ||
-            !data.detectedFoods.every(food => food && typeof food.name === 'string' && food.name.trim() && Number.isFinite(food.grams) && food.grams > 0)
+            !data.detectedFoods.every(
+              food =>
+                food &&
+                typeof food.name === 'string' &&
+                food.name.trim() &&
+                Number.isFinite(food.grams) &&
+                food.grams > 0 &&
+                (food.preparation == null || (typeof food.preparation === 'string' && food.preparation.length <= 200))
+            )
           ) {
             throw new Error(data.message || 'Invalid food identification response');
           }
@@ -181,7 +189,13 @@ export const useNutritionAnalysis = ({
         if (
           !Array.isArray(analyzedFoods) ||
           analyzedFoods.length !== confirmedFoods.length ||
-          !analyzedFoods.every((food, index) => food && food.name === confirmedFoods[index].name.trim() && food.grams === confirmedFoods[index].grams)
+          !analyzedFoods.every(
+            (food, index) =>
+              food &&
+              food.name === confirmedFoods[index].name.trim() &&
+              food.grams === confirmedFoods[index].grams &&
+              (food.preparation?.trim() || null) === (confirmedFoods[index].preparation?.trim() || null)
+          )
         ) {
           throw new Error(t('journal:nutritionLogger.analysisIngredientsMismatch'));
         }

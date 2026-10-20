@@ -29,6 +29,7 @@ export type PendingAnalysisReview = {
 
 export type IdentifiedFood = {
   name: string;
+  preparation?: string | null;
   grams: number;
   identificationConfidence?: 'high' | 'medium' | 'low';
   source?: 'image' | 'user';
