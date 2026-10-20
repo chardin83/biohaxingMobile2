@@ -325,7 +325,10 @@
     "fiberTypesPremium": "Fibertyper är en Premiumfunktion. Med Premium kan du se fördelningen mellan olika fibertyper. Total fiber ingår alltid.",
     "fiberPremiumExpired": "Premium har löpt ut. Dina tidigare analyserade fibertyper visas fortfarande. Återaktivera Premium för att analysera fibertyper i nya måltider.",
     "reactivatePremium": "Återaktivera Premium",
-    "fiberTrialResult": "Fibertyperna ingick i din kostnadsfria Premium-provning. Skaffa Premium för fler fullständiga analyser."
+    "fiberTrialResult": "Fibertyperna ingick i din kostnadsfria Premium-provning. Skaffa Premium för fler fullständiga analyser.",
+    "polyphenolTypesPremium": "Polyfenoltyper är en Premiumfunktion. Med Premium kan du se fördelningen mellan olika polyfenoltyper. Total mängd polyfenoler ingår alltid.",
+    "polyphenolPremiumExpired": "Premium har löpt ut. Dina tidigare analyserade polyfenoltyper visas fortfarande. Återaktivera Premium för att analysera polyfenoltyper i nya måltider.",
+    "polyphenolTrialResult": "Polyfenoltyperna ingick i din kostnadsfria Premium-provning. Skaffa Premium för fler fullständiga analyser."
   },
   "dayEdit": {
     "tabMeal": "Måltid",

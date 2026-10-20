@@ -325,7 +325,10 @@
     "fiberTypesPremium": "Fiber types are a Premium feature. Premium lets you see the breakdown by fiber type. Total fiber is always included.",
     "fiberPremiumExpired": "Premium has expired. Your previously analyzed fiber types remain visible. Reactivate Premium to analyze fiber types in new meals.",
     "reactivatePremium": "Reactivate Premium",
-    "fiberTrialResult": "Fiber types were included in your free Premium trial analysis. Get Premium for more full analyses."
+    "fiberTrialResult": "Fiber types were included in your free Premium trial analysis. Get Premium for more full analyses.",
+    "polyphenolTypesPremium": "Polyphenol types are a Premium feature. Premium lets you see the breakdown by polyphenol type. Total polyphenols are always included.",
+    "polyphenolPremiumExpired": "Premium has expired. Your previously analyzed polyphenol types remain visible. Reactivate Premium to analyze polyphenol types in new meals.",
+    "polyphenolTrialResult": "Polyphenol types were included in your free Premium trial analysis. Get Premium for more full analyses."
   },
   "dayEdit": {
     "tabMeal": "Meal",

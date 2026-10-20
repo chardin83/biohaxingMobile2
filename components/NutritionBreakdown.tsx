@@ -117,6 +117,7 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
   } = nutrition;
 
   const isTrialAnalysis = nutrition.analysisTier === 'trial';
+  const hasAnalyzedPolyphenolTypes = POLYPHENOL_TYPE_KEYS.some(key => key !== 'polyphenols_total' && (polyphenolByType?.[key] ?? 0) > 0);
   const hasAnalyzedFiberTypes = FIBER_TYPE_KEYS.some(key => key !== 'fiber_total' && (fiberByType?.[key] ?? 0) > 0) || hasAnyTypedTotals(fiberSubtypeTotals);
 
   const getFiberSubtypeAmountsForCategory = (category: (typeof FIBER_TYPE_KEYS)[number]): Array<{ subtype: FiberSubtype; label: string; amount: number }> => {
@@ -354,7 +355,7 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
           ))}
         </Collapsible>
       )}
-      {hasAnyTypedTotals(polyphenolByType) && (
+      {(!PREMIUM || hasAnyTypedTotals(polyphenolByType)) && (
         <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
           <Collapsible
             {...collapsibleHeader(
@@ -364,8 +365,33 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
             )}
             titleType="default"
             initialCollapsed
+            contentStyle={[styles.premiumDropdown, { borderColor: colors.goldSoft, backgroundColor: colors.goldTransparent }]}
             leftContent={<IconSymbol name="polyphenol" size={14} color={colors.textMuted} />}
           >
+            {!PREMIUM ? (
+              <View style={styles.fiberPremium}>
+                <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                  {t(
+                    isTrialAnalysis
+                      ? 'journal:nutritionLogger.polyphenolTrialResult'
+                      : hasAnalyzedPolyphenolTypes
+                        ? 'journal:nutritionLogger.polyphenolPremiumExpired'
+                        : 'journal:nutritionLogger.polyphenolTypesPremium'
+                  )}
+                </ThemedText>
+                {hasAnalyzedPolyphenolTypes && !isTrialAnalysis ? (
+                  <AppButton
+                    title={t('journal:nutritionLogger.reactivatePremium')}
+                    variant="premium"
+                    icon="crown"
+                    rightIcon="chevron.right"
+                    onPress={() => setPremiumVisible(true)}
+                  />
+                ) : (
+                  <PremiumLink onPress={() => setPremiumVisible(true)} />
+                )}
+              </View>
+            ) : null}
             {POLYPHENOL_TYPE_KEYS.filter(key => key !== 'polyphenols_total').map(key => {
               const value = polyphenolByType?.[key] ?? 0;
 
