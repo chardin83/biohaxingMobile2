@@ -1,3 +1,4 @@
+import type { IdentifiedFood } from '@/types/nutrition/nutritionAnalysis';
 // services/gptService.ts
 import debug from 'debug';
 import { t } from 'i18next';
@@ -35,7 +36,9 @@ export type DetectedDrink = {
 };
 
 export interface NutritionAnalysisResponse {
-  type: 'match_result' | 'text' | 'nutrition' | 'error';
+  detectedFoods?: IdentifiedFood[];
+  analyzedFoods?: IdentifiedFood[];
+  type: 'identification' | 'match_result' | 'text' | 'nutrition' | 'error';
   content?: string;
   match?: boolean;
   confidence?: number;
@@ -52,11 +55,11 @@ export interface NutritionAnalysisResponse {
     fat?: number;
     fiber?: number;
     caffeineMg?: number;
-  alcoholGrams?: number;
+    alcoholGrams?: number;
 
     nutritionDetails?: {
       caffeineMg?: number;
-  alcoholGrams?: number;
+      alcoholGrams?: number;
       fiber?: {
         total?: number;
         gelForming?: number;
@@ -142,7 +145,7 @@ export interface NutritionAnalysisResponse {
 
   nutritionDetails?: {
     caffeineMg?: number;
-  alcoholGrams?: number;
+    alcoholGrams?: number;
     fiber?: {
       total?: number;
       gelForming?: number;
@@ -214,6 +217,8 @@ export type NutritionAnalysisFeatures = {
 };
 
 type AnalyseParams = {
+  stage?: 'identify' | 'analyze';
+  confirmedFoods?: IdentifiedFood[];
   uri?: string;
   name?: string;
   type?: string;
@@ -275,6 +280,8 @@ function appendNutritionOptions(form: FormData, params: AnalyseParams, locale: '
   const languageInstruction = locale === 'sv' ? 'Write all free-text outputs in Swedish.' : 'Write all free-text outputs in English.';
 
   form.append('prompt', `${params.prompt ?? ''}\n${languageInstruction}`.trim());
+  if (params.stage) form.append('stage', params.stage);
+  if (params.confirmedFoods) form.append('confirmedFoods', JSON.stringify(params.confirmedFoods));
   form.append('mealDescription', params.mealDescription ?? '');
   form.append('supplement', params.supplement ?? '');
   form.append('locale', locale);

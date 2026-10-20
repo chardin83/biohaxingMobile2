@@ -20,6 +20,21 @@
     "saveError": "Could not save the confirmation. Please try again."
   },
   "nutritionLogger": {
+    "foodIdentification": {
+      "title": "Step 1 of 2: Confirm foods",
+      "description": "AI separates the meal into ingredients and estimates grams. Ingredients you supplied are marked. Check uncertain ingredients and adjust the list before continuing.",
+      "confirm": "Continue",
+      "label": "Foods and quantities",
+      "newIngredient": "New ingredient",
+      "setGrams": "Set grams",
+      "ingredientName": "Ingredient",
+      "grams": "Amount (g)",
+      "optional": "Optional",
+      "remove": "Remove",
+      "add": "+ Add ingredient",
+      "fromDescription": "Provided by you",
+      "uncertain": "Uncertain identification – please check"
+    },
     "untrackedTargets": "Goals without tracking ({{count}})",
     "untrackedTargetsExplainer": "Premium is required to track these goals.",
     "addNutrition": "Log food and drink",
@@ -34,8 +49,8 @@
     "packageFlowAnalyze": "Analyze meal",
     "packageFlowAddMealImage": "Add meal image",
     "packageFlowRemoveMealImage": "Remove meal image",
-    "packageFlowDescriptionLabel": "Meal description",
-    "packageFlowDescriptionPlaceholder": "Example: chicken salad with avocado, feta, and pumpkin seeds",
+    "packageFlowDescriptionLabel": "What is in the meal?",
+    "packageFlowDescriptionPlaceholder": "Example: beef stew with beef, carrot and mushrooms. Potatoes on the side.",
     "packageFlowAddIngredientImage": "Scan label",
     "packageFlowHint": "A photo of the nutrition label helps analyze the meal more accurately.",
     "mealTime": "Meal time",
@@ -201,6 +216,8 @@
       "pectic_oligosaccharides": "Pectic oligosaccharides"
     },
     "seeProgress": "See progress",
+    "ingredientsAnalysisInProgress": "Calculating nutrition from ingredients",
+    "foodIdentificationInProgress": "Identifying food in the image",
     "analysisInProgress": "Analysis in progress",
     "analysisDoNotCloseApp": "Do not close the app while the analysis is in progress. It is okay to navigate to other parts of the app.",
     "analysisImage": "Analyzing image",
@@ -288,10 +305,17 @@
       "usePhotoAnalysis": "Use photo analysis instead",
       "dontShowAgain": "Don't show again"
     },
-    "nutrientLabels": { "caffeine": "Caffeine" },
+    "nutrientLabels": {
+      "caffeine": "Caffeine"
+    },
     "macroLabels": {
       "protein": "Total protein"
-    }
+    },
+    "reviewIngredientsTitle": "Ingredients in the analysis",
+    "reviewIngredientsDescription": "Ingredients and amounts used in the calculation.",
+    "editIngredients": "Edit ingredients and analyze again",
+    "analysisIngredientsMismatch": "The backend could not confirm the ingredients and quantities. Update the backend and try again.",
+    "packageFlowDescriptionHint": "List ingredients you know. Specify what is in the dish and what is served on the side."
   },
   "dayEdit": {
     "tabMeal": "Meal",
@@ -310,7 +334,12 @@
     "registeredToday": "Registered today"
   },
   "otherTips": {
-    "sleepSchedule": {"noData": "Cannot check – sleep data missing", "fulfilled": "Checked – fulfilled", "notFulfilled": "Checked – not fulfilled", "details": "Sleep onset {{actualBedtime}} · target {{targetBedtime}} · difference {{deviationMinutes}} min (at most 30 min)"},
+    "sleepSchedule": {
+      "noData": "Cannot check – sleep data missing",
+      "fulfilled": "Checked – fulfilled",
+      "notFulfilled": "Checked – not fulfilled",
+      "details": "Sleep onset {{actualBedtime}} · target {{targetBedtime}} · difference {{deviationMinutes}} min (at most 30 min)"
+    },
     "title": "Other tips",
     "subtitle": "Track today's progress for your other tips.",
     "description": "Additional tips for your health",

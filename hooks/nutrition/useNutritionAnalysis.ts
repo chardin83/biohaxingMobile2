@@ -5,8 +5,8 @@ import { Alert } from 'react-native';
 
 import { PREMIUM } from '@/constants/Premium';
 import { type NutritionAnalysisResponse, NutritionAnalyze } from '@/services/gptServices';
-import { refundFreePhotoAnalysis,reserveFreePhotoAnalysis } from '@/services/nutrition/photoAnalysisQuota';
-import type { PendingAnalysisReview, SelectedImageFile } from '@/types/nutrition/nutritionAnalysis';
+import { refundFreePhotoAnalysis, reserveFreePhotoAnalysis } from '@/services/nutrition/photoAnalysisQuota';
+import type { IdentifiedFood, PendingAnalysisReview, SelectedImageFile } from '@/types/nutrition/nutritionAnalysis';
 import { extractAndValidateNutritionAnalysis, type WeeklyTrackingSignals } from '@/utils/analyzeNutrition';
 import { toDateKey } from '@/utils/dateUtils';
 
@@ -48,6 +48,8 @@ export const useNutritionAnalysis = ({
   dismissAnalysisSheet,
 }: UseNutritionAnalysisParams) => {
   const { t, i18n } = useTranslation();
+  const [foodReviewFoods, setFoodReviewFoods] = useState<IdentifiedFood[] | null>(null);
+  const [analyzingFoods, setAnalyzingFoods] = useState<IdentifiedFood[] | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [isAnalysisReviewModalVisible, setIsAnalysisReviewModalVisible] = useState(false);
@@ -59,6 +61,7 @@ export const useNutritionAnalysis = ({
     mealFile: SelectedImageFile;
     mealDescription: string;
     ingredientFile: SelectedImageFile | null;
+    confirmedFoods?: IdentifiedFood[];
   } | null>(null);
 
   const closeAnalysisReviewModal = useCallback(() => {
@@ -107,7 +110,7 @@ export const useNutritionAnalysis = ({
   );
 
   const runNutritionImageAnalysis = useCallback(
-    async (mealFile: SelectedImageFile, mealDescription?: string, ingredientFile?: SelectedImageFile | null) => {
+    async (mealFile: SelectedImageFile, mealDescription?: string, ingredientFile?: SelectedImageFile | null, confirmedFoods?: IdentifiedFood[]) => {
       const todayKey = toDateKey(new Date());
       if (selectedDate > todayKey) {
         setAnalysisResult(t('journal:nutritionLogger.futureDateLocked'));
@@ -116,6 +119,7 @@ export const useNutritionAnalysis = ({
       }
       const activeLanguage = (i18n.resolvedLanguage ?? i18n.language ?? 'en').toLowerCase();
       const locale: 'sv' | 'en' = activeLanguage.startsWith('sv') ? 'sv' : 'en';
+      setAnalyzingFoods(confirmedFoods ? confirmedFoods.map(food => ({ ...food })) : null);
       setIsAnalyzing(true);
       setAnalysisResult(null);
       setPendingAnalysisReview(null);
@@ -124,13 +128,15 @@ export const useNutritionAnalysis = ({
       let reservedAnalysis = false;
       let successfulAnalysis = false;
       try {
-        if (!PREMIUM) reservedAnalysis = await reserveFreePhotoAnalysis();
-        if (!PREMIUM && !reservedAnalysis) {
+        if (confirmedFoods && !PREMIUM) reservedAnalysis = await reserveFreePhotoAnalysis();
+        if (confirmedFoods && !PREMIUM && !reservedAnalysis) {
           setAnalysisResult(t('journal:nutritionLogger.mealLogger.noAnalysesRemaining'));
           Alert.alert(t('common:premium.title'), t('journal:nutritionLogger.mealLogger.noAnalysesRemaining'));
           return;
         }
         const data = await NutritionAnalyze({
+          stage: confirmedFoods ? 'analyze' : 'identify',
+          confirmedFoods,
           uri: mealFile.uri,
           name: mealFile.name,
           type: mealFile.type,
@@ -143,9 +149,29 @@ export const useNutritionAnalysis = ({
           prompt: trackingPrompt,
           trackingTargets: trackingTargets.filter(target => PREMIUM || !target.aiInstruction?.trim()),
         });
+        if (!confirmedFoods) {
+          if (
+            data?.type !== 'identification' ||
+            !Array.isArray(data.detectedFoods) ||
+            !data.detectedFoods.every(food => food && typeof food.name === 'string' && food.name.trim() && Number.isFinite(food.grams) && food.grams > 0)
+          ) {
+            throw new Error(data.message || 'Invalid food identification response');
+          }
+          dismissAnalysisSheet();
+          setFoodReviewFoods(data.detectedFoods);
+          return;
+        }
         if (data?.type === 'error') {
           handleNutritionError(data);
           return;
+        }
+        const analyzedFoods = data.analyzedFoods;
+        if (
+          !Array.isArray(analyzedFoods) ||
+          analyzedFoods.length !== confirmedFoods.length ||
+          !analyzedFoods.every((food, index) => food && food.name === confirmedFoods[index].name.trim() && food.grams === confirmedFoods[index].grams)
+        ) {
+          throw new Error(t('journal:nutritionLogger.analysisIngredientsMismatch'));
         }
         const result = extractAndValidateNutritionAnalysis({
           data,
@@ -161,6 +187,7 @@ export const useNutritionAnalysis = ({
         if (!result) return;
         successfulAnalysis = true;
         setPendingAnalysisReview({
+          analyzedFoods: analyzedFoods.map(food => ({ ...food })),
           analysis: result.analysis,
           weeklyTrackingSignals: result.mealWeeklyTrackingSignals,
           detectedDrinks: (data.detectedDrinks ?? []).map(drink => ({
@@ -183,7 +210,9 @@ export const useNutritionAnalysis = ({
         const errMsg = err instanceof Error ? err.message : '';
         const statusMessage = errMsg.toLowerCase().includes('socket hang up')
           ? '❌ Backend tappade anslutning till AI (socket hang up). Prova igen med en mindre bild.'
-          : (t('journal:dayEdit.analysisFailed') ?? '❌ Misslyckades med att analysera bilden.');
+          : errMsg === t('journal:nutritionLogger.analysisIngredientsMismatch')
+            ? errMsg
+            : (t('journal:dayEdit.analysisFailed') ?? '❌ Misslyckades med att analysera bilden.');
         setAnalysisResult(statusMessage);
         setPendingAnalysisReview(emptyReview({ statusMessage }));
         setIsAnalysisReviewModalVisible(true);
@@ -277,15 +306,35 @@ export const useNutritionAnalysis = ({
     const last = lastAnalyzedFilesRef.current;
     if (!last) return;
     closeAnalysisReviewModal();
+    if (last.confirmedFoods?.length) {
+      setFoodReviewFoods(last.confirmedFoods.map(food => ({ ...food })));
+      return;
+    }
+    setFoodReviewFoods(null);
     runNutritionImageAnalysis(last.mealFile, last.mealDescription || undefined, last.ingredientFile).catch(console.error);
   }, [closeAnalysisReviewModal, runNutritionImageAnalysis]);
 
+  const confirmFoods = useCallback(() => {
+    const last = lastAnalyzedFilesRef.current;
+    const foods = foodReviewFoods ?? [];
+    if (!last || !foods.length || isAnalyzing || foods.some(food => !food.name.trim() || !Number.isFinite(food.grams) || food.grams <= 0)) return;
+    last.confirmedFoods = foods;
+    setFoodReviewFoods(null);
+    requestAnimationFrame(presentAnalysisSheet);
+    runNutritionImageAnalysis(last.mealFile, last.mealDescription || undefined, last.ingredientFile, foods).catch(console.error);
+  }, [foodReviewFoods, isAnalyzing, presentAnalysisSheet, runNutritionImageAnalysis]);
+
   useEffect(() => {
+    setFoodReviewFoods(null);
     setIsPackagingModalVisible(false);
     setPackagingMealImage(null);
   }, [selectedDate]);
 
   return {
+    analyzingFoods,
+    foodReviewFoods,
+    setFoodReviewFoods,
+    confirmFoods,
     isAnalyzing,
     analysisResult,
     setAnalysisResult,

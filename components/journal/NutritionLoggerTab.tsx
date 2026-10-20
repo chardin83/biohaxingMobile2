@@ -44,6 +44,7 @@ import { LoggedDrinksSection } from './LoggedDrinksSection';
 import { LoggedMealsSection } from './LoggedMealsSection';
 import MacroGoalsCard from './MacroGoalsCard';
 import MealLoggerBottomSheet from './MealLoggerBottomSheet';
+import FoodIdentificationModal from './FoodIdentificationModal';
 import NutritionAnalysisBottomSheet from './NutritionAnalysisBottomSheet';
 import NutritionAnalysisReviewModal from './NutritionAnalysisReviewModal';
 import NutritionPlanTargetsSection from './NutritionPlanTargetsSection';
@@ -175,12 +176,17 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     return tips.filter(tip => planTipIds.has(tip.id) && isNutritionTipUntracked(tip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein, PREMIUM));
   }, [plans, userProfile?.weightKg, userProfile?.nutritionGoals?.protein]);
 
-  const { targets: activeTrackingTargetsForAI, keys: activeTrackingKeys, prompt: trackingPromptForAI } = useMemo(
-    () => getNutritionTrackingAnalysis(plans?.nutrition ?? [], PREMIUM),
-    [plans?.nutrition]
-  );
+  const {
+    targets: activeTrackingTargetsForAI,
+    keys: activeTrackingKeys,
+    prompt: trackingPromptForAI,
+  } = useMemo(() => getNutritionTrackingAnalysis(plans?.nutrition ?? [], PREMIUM), [plans?.nutrition]);
 
   const {
+    analyzingFoods,
+    foodReviewFoods,
+    setFoodReviewFoods,
+    confirmFoods,
     isAnalyzing,
     analysisResult,
     setAnalysisResult,
@@ -325,7 +331,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
         const recordedAt = toRecordedAt(selectedDate, editingEntry.recordedAt);
         updateNutritionEntry(selectedDate, nutritionEntry.id, { name, recordedAt });
         if (nutritionEntry.id === selectedNutritionEntryId) {
-          setSelectedNutrition(prev => prev ? { ...prev, name, recordedAt } : prev);
+          setSelectedNutrition(prev => (prev ? { ...prev, name, recordedAt } : prev));
           setSelectedNutritionName(name);
         }
       }
@@ -533,6 +539,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           onClose={handleClosePackagingModal}
           onAnalyze={handleAnalyzePackaging}
         />
+        <FoodIdentificationModal value={foodReviewFoods} onChange={setFoodReviewFoods} onClose={() => setFoodReviewFoods(null)} onConfirm={confirmFoods} />
         <NutritionAnalysisReviewModal
           visible={isAnalysisReviewModalVisible}
           pendingReview={pendingAnalysisReview}
@@ -568,7 +575,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           handleCopyMeal={handleCopyMeal}
           roundToOneDecimal={roundToOneDecimal}
         />
-        <NutritionAnalysisBottomSheet ref={nutritionAnalysisBottomSheetRef} image={packagingMealImage} />
+        <NutritionAnalysisBottomSheet ref={nutritionAnalysisBottomSheetRef} image={packagingMealImage} ingredients={analyzingFoods} isAnalyzing={isAnalyzing} />
         <PremiumBottomSheet ref={premiumBottomSheetRef} />
         <MealLoggerBottomSheet
           ref={mealLoggerBottomSheetRef}
@@ -610,7 +617,8 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
             productAmountBottomSheetRef.current?.dismiss();
             copySourceMealIdRef.current = barcodeProduct.sourceMealId ?? null;
             handleSaveBarcodeProduct(barcodeProduct, amount, productType, time);
-            if (productType === 'drink' && hasAlcohol({ type: barcodeProduct.drinkType, alcoholPercent: barcodeProduct.alcoholPercent })) setAlcoholInfoRequest(current => current + 1);
+            if (productType === 'drink' && hasAlcohol({ type: barcodeProduct.drinkType, alcoholPercent: barcodeProduct.alcoholPercent }))
+              setAlcoholInfoRequest(current => current + 1);
             if (productType === 'drink' && hasCaffeine({ type: barcodeProduct.drinkType, caffeinated: barcodeProduct.caffeinated })) {
               setCaffeineInfoRequest(current => current + 1);
             }

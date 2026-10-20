@@ -1,5 +1,5 @@
 import { useTheme } from '@react-navigation/native';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
@@ -15,6 +15,7 @@ import AddButton from '../ui/AddButton';
 import { Card } from '../ui/Card';
 import { DateTimeInput } from '../ui/DateTimeInput';
 import { IconSymbol } from '../ui/IconSymbol';
+import { IngredientList } from './IngredientList';
 
 interface NutritionAnalysisReviewModalProps {
   visible: boolean;
@@ -29,8 +30,6 @@ interface NutritionAnalysisReviewModalProps {
   onClose: () => void;
   onSave: () => void;
 }
-
-const BULLET_REGEX = /^([•*-]\s+|\d+[.)]\s+)/;
 
 const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> = ({
   visible,
@@ -49,31 +48,6 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
   const { colors } = useTheme();
 
   const [expandedDrinks, setExpandedDrinks] = useState<Record<number, boolean>>({});
-
-  const interpretationItems = useMemo(() => {
-    if (!pendingReview) return null;
-    const aiText = pendingReview.aiDescription?.trim();
-    if (aiText) {
-      const lines = aiText
-        .split(/\r?\n+/g)
-        .map(line => line.replace(BULLET_REGEX, '').trim())
-        .filter(line => line.length > 0);
-      if (lines.length > 0) return lines;
-    }
-    const inferred = pendingReview.evidence?.inferred ?? [];
-    if (inferred.length > 0) {
-      const items = inferred
-        .flatMap(item => item.split(/\r?\n+/g))
-        .map(item => item.replace(BULLET_REGEX, '').trim())
-        .filter(item => item.length > 0);
-      if (items.length > 0) return Array.from(new Set(items));
-    }
-    return [t('journal:nutritionLogger.analysisNoStructuredData')];
-  }, [pendingReview, t]);
-
-  const reAnalyzeTextStyle = [styles.reAnalyzeText, isAnalyzing && styles.reAnalyzeTextDisabled, { color: colors.text }];
-  const reAnalyzePrefixStyle = [styles.reAnalyzePrefix, { color: colors.text }];
-  const reAnalyzeHighlightStyle = [styles.reAnalyzeHighlight, { color: colors.showAllAccent }];
 
   return (
     <ThemedModal
@@ -96,49 +70,18 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
             {pendingReview?.statusMessage ?? analysisResult}
           </ThemedText>
         ) : null}
-        {interpretationItems?.length ? (
+        {pendingReview?.analyzedFoods?.length ? (
           <View style={styles.section}>
-            <ThemedText type="label">AI Interpretation</ThemedText>
-            {interpretationItems.map((item, index) => (
-              <ThemedText key={`interp-${item.slice(0, 32)}`} type="default" style={styles.body}>
-                {`${index + 1}. ${item}`}
-              </ThemedText>
-            ))}
-            {(() => {
-              let confidenceColor = colors.textMuted;
-              if (pendingReview?.evidence?.confidence === 'high') {
-                confidenceColor = colors.surfaceGreenBorder;
-              } else if (pendingReview?.evidence?.confidence === 'medium') {
-                confidenceColor = colors.successColor;
-              } else if (pendingReview?.evidence?.confidence === 'low') {
-                confidenceColor = colors.warmColor;
-              }
-              const confidenceKey = 'general.confidence.' + (pendingReview?.evidence?.confidence ?? 'unknown');
-              const confidenceText = t('general.confidence.label') + ': ' + t(confidenceKey);
-              return (
-                <ThemedText type="caption" style={[styles.evidence, styles.interpretationMeta, { color: confidenceColor }]}>
-                  {confidenceText}
-                </ThemedText>
-              );
-            })()}
+            <ThemedText type="title3">{t('journal:nutritionLogger.reviewIngredientsTitle')}</ThemedText>
+            <ThemedText type="caption" style={{ color: colors.textMuted }}>
+              {t('journal:nutritionLogger.reviewIngredientsDescription')}
+            </ThemedText>
+            <IngredientList ingredients={pendingReview.analyzedFoods} />
           </View>
         ) : null}
         {canReAnalyze ? (
-          <Pressable onPress={onReAnalyze} disabled={isAnalyzing}>
-            <ThemedText type="default" style={reAnalyzeTextStyle}>
-              {`${t('general.reAnalyzePrompt.prefix')} `}
-              <ThemedText type="defaultSemiBold" style={reAnalyzeHighlightStyle}>
-                {t('general.reAnalyzePrompt.correct')}
-              </ThemedText>
-              {`${t('general.reAnalyzePrompt.question')} `}
-              <ThemedText type="defaultSemiBold" style={reAnalyzePrefixStyle}>
-                {t('general.reAnalyzePrompt.rePrefix')}
-              </ThemedText>
-              <ThemedText type="defaultSemiBold" style={reAnalyzeHighlightStyle}>
-                {t('general.reAnalyzePrompt.analyze')}
-              </ThemedText>
-              {t('general.reAnalyzePrompt.suffix') ? ` ${t('general.reAnalyzePrompt.suffix')}` : ''}
-            </ThemedText>
+          <Pressable accessibilityRole="button" onPress={onReAnalyze} disabled={isAnalyzing}>
+            <ThemedText style={{ color: colors.showAllAccent, opacity: isAnalyzing ? 0.5 : 1 }}>{t('journal:nutritionLogger.editIngredients')}</ThemedText>
           </Pressable>
         ) : null}
         {pendingReview?.analysis ? (
@@ -241,24 +184,6 @@ const styles = StyleSheet.create({
   section: {
     gap: 6,
   },
-  body: {
-    lineHeight: 20,
-  },
-  evidence: {
-    lineHeight: 18,
-  },
-  interpretationMeta: {
-    marginTop: 2,
-    opacity: 0.9,
-  },
-  reAnalyzeText: {
-    marginTop: 8,
-  },
-  reAnalyzeTextDisabled: {
-    opacity: 0.5,
-  },
-  reAnalyzePrefix: {},
-  reAnalyzeHighlight: {},
   detectedDrinkCard: {
     padding: 12,
   },

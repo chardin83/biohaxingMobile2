@@ -13,6 +13,7 @@ export type ReviewDrink = DetectedDrink & {
 };
 
 export type PendingAnalysisReview = {
+  analyzedFoods?: IdentifiedFood[];
   analysis: NutritionData | null;
   weeklyTrackingSignals: WeeklyTrackingSignals;
   detectedDrinks?: ReviewDrink[];
@@ -24,4 +25,11 @@ export type PendingAnalysisReview = {
   aiDescription: string | null;
   evidenceMessage: string | null;
   statusMessage: string | null;
+};
+
+export type IdentifiedFood = {
+  name: string;
+  grams: number;
+  identificationConfidence?: 'high' | 'medium' | 'low';
+  source?: 'image' | 'user';
 };

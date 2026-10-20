@@ -20,6 +20,21 @@
     "saveError": "Kunde inte spara bekräftelsen. Försök igen."
   },
   "nutritionLogger": {
+    "foodIdentification": {
+      "title": "Steg 1 av 2: Bekräfta matvarorna",
+      "description": "AI delar upp måltiden i ingredienser och uppskattar gram. Uppgifter från din beskrivning märks ut. Kontrollera särskilt osäkra ingredienser och justera listan innan du fortsätter.",
+      "confirm": "Fortsätt",
+      "label": "Matvaror och mängder",
+      "newIngredient": "Ny ingrediens",
+      "setGrams": "Ange gram",
+      "ingredientName": "Ingrediens",
+      "grams": "Mängd (g)",
+      "optional": "Valfritt",
+      "remove": "Ta bort",
+      "add": "+ Lägg till ingrediens",
+      "fromDescription": "Uppgivet av dig",
+      "uncertain": "Osäker identifiering – kontrollera"
+    },
     "untrackedTargets": "Mål utan uppföljning ({{count}})",
     "untrackedTargetsExplainer": "Premium krävs för att spåra dessa.",
     "addNutrition": "Logga mat och dryck",
@@ -34,8 +49,8 @@
     "packageFlowAnalyze": "Analysera måltid",
     "packageFlowAddMealImage": "Lägg till måltidsbild",
     "packageFlowRemoveMealImage": "Ta bort måltidsbild",
-    "packageFlowDescriptionLabel": "Måltidsbeskrivning",
-    "packageFlowDescriptionPlaceholder": "Exempel: kycklingsallad med avokado, fetaost och pumpafrön",
+    "packageFlowDescriptionLabel": "Vad innehåller måltiden?",
+    "packageFlowDescriptionPlaceholder": "Exempel: köttgryta med nötkött, morot och champinjoner. Potatis vid sidan.",
     "packageFlowAddIngredientImage": "Fota näringsetikett",
     "packageFlowHint": "Foto på näringsetiketten hjälper till att analysera måltiden mer exakt.",
     "mealTime": "Måltidstid",
@@ -201,6 +216,8 @@
       "pectic_oligosaccharides": "Pektiska oligosackarider"
     },
     "seeProgress": "Se utveckling",
+    "ingredientsAnalysisInProgress": "Beräknar näring från ingredienserna",
+    "foodIdentificationInProgress": "Identifierar mat i bilden",
     "analysisInProgress": "Analys pågår",
     "analysisDoNotCloseApp": "Stäng inte appen medan analysen pågår. Det går bra att navigera till andra delar av appen.",
     "analysisImage": "Analyserar bilden",
@@ -288,10 +305,17 @@
       "usePhotoAnalysis": "Använd fotoanalys istället",
       "dontShowAgain": "Visa inte igen"
     },
-    "nutrientLabels": { "caffeine": "Koffein" },
+    "nutrientLabels": {
+      "caffeine": "Koffein"
+    },
     "macroLabels": {
       "protein": "Totalprotein"
-    }
+    },
+    "reviewIngredientsTitle": "Ingredienser i analysen",
+    "reviewIngredientsDescription": "Ingredienser och mängder som används i beräkningen.",
+    "editIngredients": "Ändra ingredienser och analysera igen",
+    "analysisIngredientsMismatch": "Backend kunde inte bekräfta ingredienserna och mängderna. Uppdatera backend och försök igen.",
+    "packageFlowDescriptionHint": "Ange ingredienser du känner till. Skriv gärna vad som ingår i rätten och vad som serveras vid sidan."
   },
   "dayEdit": {
     "tabMeal": "Måltid",
@@ -310,7 +334,12 @@
     "registeredToday": "Registrerat idag"
   },
   "otherTips": {
-    "sleepSchedule": {"noData": "Kan inte kontrolleras – sömndata saknas", "fulfilled": "Kontrollerat – uppfyllt", "notFulfilled": "Kontrollerat – inte uppfyllt", "details": "Insomning {{actualBedtime}} · mål {{targetBedtime}} · avvikelse {{deviationMinutes}} min (högst 30 min)"},
+    "sleepSchedule": {
+      "noData": "Kan inte kontrolleras – sömndata saknas",
+      "fulfilled": "Kontrollerat – uppfyllt",
+      "notFulfilled": "Kontrollerat – inte uppfyllt",
+      "details": "Insomning {{actualBedtime}} · mål {{targetBedtime}} · avvikelse {{deviationMinutes}} min (högst 30 min)"
+    },
     "title": "Övriga tips",
     "subtitle": "Följ dagens uppfyllelse av dina övriga tips.",
     "description": "Övriga tips för din hälsa",

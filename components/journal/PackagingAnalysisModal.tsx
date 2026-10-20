@@ -82,6 +82,9 @@ const PackagingAnalysisModal: React.FC<PackagingAnalysisModalProps> = ({ visible
           autoCorrect={false}
           containerStyle={styles.descriptionInput}
         />
+        <ThemedText type="caption" style={{ color: colors.textMuted }}>
+          {t('journal:nutritionLogger.packageFlowDescriptionHint')}
+        </ThemedText>
         <View
           style={[
             styles.ingredientBox,
