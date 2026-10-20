@@ -36,6 +36,7 @@ export type DetectedDrink = {
 };
 
 export interface NutritionAnalysisResponse {
+  mealName?: string;
   detectedFoods?: IdentifiedFood[];
   analyzedFoods?: IdentifiedFood[];
   type: 'identification' | 'match_result' | 'text' | 'nutrition' | 'error';
@@ -217,6 +218,7 @@ export type NutritionAnalysisFeatures = {
 };
 
 type AnalyseParams = {
+  mealName?: string;
   stage?: 'identify' | 'analyze';
   confirmedFoods?: IdentifiedFood[];
   uri?: string;
@@ -281,6 +283,7 @@ function appendNutritionOptions(form: FormData, params: AnalyseParams, locale: '
 
   form.append('prompt', `${params.prompt ?? ''}\n${languageInstruction}`.trim());
   if (params.stage) form.append('stage', params.stage);
+  if (params.mealName) form.append('mealName', params.mealName);
   if (params.confirmedFoods) form.append('confirmedFoods', JSON.stringify(params.confirmedFoods));
   form.append('mealDescription', params.mealDescription ?? '');
   form.append('supplement', params.supplement ?? '');

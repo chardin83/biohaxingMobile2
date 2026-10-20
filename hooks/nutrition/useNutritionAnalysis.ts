@@ -48,6 +48,7 @@ export const useNutritionAnalysis = ({
   dismissAnalysisSheet,
 }: UseNutritionAnalysisParams) => {
   const { t, i18n } = useTranslation();
+  const [foodReviewMealName, setFoodReviewMealName] = useState('');
   const [foodReviewFoods, setFoodReviewFoods] = useState<IdentifiedFood[] | null>(null);
   const [analyzingFoods, setAnalyzingFoods] = useState<IdentifiedFood[] | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -62,6 +63,7 @@ export const useNutritionAnalysis = ({
     mealDescription: string;
     ingredientFile: SelectedImageFile | null;
     confirmedFoods?: IdentifiedFood[];
+    confirmedMealName?: string;
   } | null>(null);
 
   const closeAnalysisReviewModal = useCallback(() => {
@@ -110,7 +112,13 @@ export const useNutritionAnalysis = ({
   );
 
   const runNutritionImageAnalysis = useCallback(
-    async (mealFile: SelectedImageFile, mealDescription?: string, ingredientFile?: SelectedImageFile | null, confirmedFoods?: IdentifiedFood[]) => {
+    async (
+      mealFile: SelectedImageFile,
+      mealDescription?: string,
+      ingredientFile?: SelectedImageFile | null,
+      confirmedFoods?: IdentifiedFood[],
+      confirmedMealName?: string
+    ) => {
       const todayKey = toDateKey(new Date());
       if (selectedDate > todayKey) {
         setAnalysisResult(t('journal:nutritionLogger.futureDateLocked'));
@@ -137,6 +145,7 @@ export const useNutritionAnalysis = ({
         const data = await NutritionAnalyze({
           stage: confirmedFoods ? 'analyze' : 'identify',
           confirmedFoods,
+          mealName: confirmedMealName,
           uri: mealFile.uri,
           name: mealFile.name,
           type: mealFile.type,
@@ -152,12 +161,15 @@ export const useNutritionAnalysis = ({
         if (!confirmedFoods) {
           if (
             data?.type !== 'identification' ||
+            typeof data.mealName !== 'string' ||
+            (data.detectedFoods?.length && !data.mealName.trim()) ||
             !Array.isArray(data.detectedFoods) ||
             !data.detectedFoods.every(food => food && typeof food.name === 'string' && food.name.trim() && Number.isFinite(food.grams) && food.grams > 0)
           ) {
             throw new Error(data.message || 'Invalid food identification response');
           }
           dismissAnalysisSheet();
+          setFoodReviewMealName(data.mealName);
           setFoodReviewFoods(data.detectedFoods);
           return;
         }
@@ -307,6 +319,7 @@ export const useNutritionAnalysis = ({
     if (!last) return;
     closeAnalysisReviewModal();
     if (last.confirmedFoods?.length) {
+      setFoodReviewMealName(last.confirmedMealName ?? '');
       setFoodReviewFoods(last.confirmedFoods.map(food => ({ ...food })));
       return;
     }
@@ -318,19 +331,24 @@ export const useNutritionAnalysis = ({
     const last = lastAnalyzedFilesRef.current;
     const foods = foodReviewFoods ?? [];
     if (!last || !foods.length || isAnalyzing || foods.some(food => !food.name.trim() || !Number.isFinite(food.grams) || food.grams <= 0)) return;
+    if (!foodReviewMealName.trim()) return;
+    last.confirmedMealName = foodReviewMealName.trim();
     last.confirmedFoods = foods;
     setFoodReviewFoods(null);
     requestAnimationFrame(presentAnalysisSheet);
-    runNutritionImageAnalysis(last.mealFile, last.mealDescription || undefined, last.ingredientFile, foods).catch(console.error);
-  }, [foodReviewFoods, isAnalyzing, presentAnalysisSheet, runNutritionImageAnalysis]);
+    runNutritionImageAnalysis(last.mealFile, last.mealDescription || undefined, last.ingredientFile, foods, last.confirmedMealName).catch(console.error);
+  }, [foodReviewFoods, foodReviewMealName, isAnalyzing, presentAnalysisSheet, runNutritionImageAnalysis]);
 
   useEffect(() => {
     setFoodReviewFoods(null);
+    setFoodReviewMealName('');
     setIsPackagingModalVisible(false);
     setPackagingMealImage(null);
   }, [selectedDate]);
 
   return {
+    foodReviewMealName,
+    setFoodReviewMealName,
     analyzingFoods,
     foodReviewFoods,
     setFoodReviewFoods,

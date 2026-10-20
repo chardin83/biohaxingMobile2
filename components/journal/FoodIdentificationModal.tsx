@@ -15,11 +15,15 @@ interface Ingredient extends Omit<IdentifiedFood, 'grams'> {
 
 export default function FoodIdentificationModal({
   value,
+  mealName,
+  onMealNameChange,
   onChange,
   onClose,
   onConfirm,
 }: {
   value: IdentifiedFood[] | null;
+  mealName: string;
+  onMealNameChange: (value: string) => void;
   onChange: (value: IdentifiedFood[]) => void;
   onClose: () => void;
   onConfirm: () => void;
@@ -50,6 +54,7 @@ export default function FoodIdentificationModal({
     onChange(foods);
   };
   const invalid =
+    !mealName.trim() ||
     ingredients.length === 0 ||
     ingredients.some(item => !item.name.trim() || !/^\d+(?:[.,]\d+)?$/.test(item.grams) || Number(item.grams.replace(',', '.')) <= 0);
   const inputStyle = [styles.input, { color: colors.text, borderColor: colors.border }];
@@ -57,6 +62,14 @@ export default function FoodIdentificationModal({
   return (
     <ThemedModal visible={value !== null} title={t(key + 'title')} onClose={onClose} onSave={onConfirm} onSaveDisabled={invalid} okLabel={t(key + 'confirm')}>
       <ScrollView keyboardShouldPersistTaps="handled" style={styles.scroll} contentContainerStyle={styles.content}>
+        <ThemedText type="caption">{t('journal:nutritionLogger.mealNameLabel')}</ThemedText>
+        <TextInput
+          value={mealName}
+          onChangeText={onMealNameChange}
+          maxLength={200}
+          accessibilityLabel={t('journal:nutritionLogger.mealNameLabel')}
+          style={inputStyle}
+        />
         <ThemedText>{t(key + 'description')}</ThemedText>
         {ingredients.map((item, index) => (
           <View key={index} style={[styles.card, { borderColor: colors.border }]}>

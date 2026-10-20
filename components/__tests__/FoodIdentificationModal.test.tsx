@@ -19,6 +19,8 @@ test('opens an ingredient and forwards the edited gram amount', () => {
   const onChange = jest.fn();
   const screen = render(
     <FoodIdentificationModal
+      mealName="Lunch"
+      onMealNameChange={jest.fn()}
       value={[
         { name: 'Lax', grams: 100 },
         { name: 'Ris', grams: 150 },
@@ -41,7 +43,16 @@ test('opens an ingredient and forwards the edited gram amount', () => {
 
 test('adds a separate ingredient with its own gram amount', () => {
   const onChange = jest.fn();
-  const screen = render(<FoodIdentificationModal value={[{ name: 'Ris', grams: 150 }]} onChange={onChange} onClose={jest.fn()} onConfirm={jest.fn()} />);
+  const screen = render(
+    <FoodIdentificationModal
+      mealName="Lunch"
+      onMealNameChange={jest.fn()}
+      value={[{ name: 'Ris', grams: 150 }]}
+      onChange={onChange}
+      onClose={jest.fn()}
+      onConfirm={jest.fn()}
+    />
+  );
   fireEvent.press(screen.getByText('add'));
   fireEvent.changeText(screen.getByLabelText('ingredientName'), 'Tofu');
   fireEvent.changeText(screen.getByLabelText('grams'), '150');
@@ -53,7 +64,14 @@ test('adds a separate ingredient with its own gram amount', () => {
 
 test('uses the grams field directly and preserves names containing numbers', () => {
   const screen = render(
-    <FoodIdentificationModal value={[{ name: 'Yoghurt 3% fett', grams: 175.5 }]} onChange={jest.fn()} onClose={jest.fn()} onConfirm={jest.fn()} />
+    <FoodIdentificationModal
+      mealName="Lunch"
+      onMealNameChange={jest.fn()}
+      value={[{ name: 'Yoghurt 3% fett', grams: 175.5 }]}
+      onChange={jest.fn()}
+      onClose={jest.fn()}
+      onConfirm={jest.fn()}
+    />
   );
   expect(screen.getByText('175,5 g')).toBeTruthy();
   expect(screen.queryByText('setGrams')).toBeNull();
@@ -66,6 +84,8 @@ test('marks uncertain ingredients and distinguishes user-supplied identities', (
   const onChange = jest.fn();
   const screen = render(
     <FoodIdentificationModal
+      mealName="Lunch"
+      onMealNameChange={jest.fn()}
       value={[
         { name: 'Rotfrukt', grams: 60, identificationConfidence: 'low', source: 'image' },
         { name: 'Morot', grams: 40, identificationConfidence: 'high', source: 'user' },
@@ -86,4 +106,25 @@ test('marks uncertain ingredients and distinguishes user-supplied identities', (
     { name: 'Palsternacka', grams: 75, identificationConfidence: 'high', source: 'user' },
     { name: 'Morot', grams: 40, identificationConfidence: 'high', source: 'user' },
   ]);
+});
+
+test('shows the dish name separately from ingredients and allows renaming it', () => {
+  const onMealNameChange = jest.fn();
+  const screen = render(
+    <FoodIdentificationModal
+      mealName="Nötköttsgryta med potatismos"
+      onMealNameChange={onMealNameChange}
+      value={[
+        { name: 'Nötkött', grams: 150 },
+        { name: 'Potatismos', grams: 200 },
+      ]}
+      onChange={jest.fn()}
+      onClose={jest.fn()}
+      onConfirm={jest.fn()}
+    />
+  );
+  expect(screen.getByLabelText('mealNameLabel').props.value).toBe('Nötköttsgryta med potatismos');
+  expect(screen.getByText('Nötkött')).toBeTruthy();
+  fireEvent.changeText(screen.getByLabelText('mealNameLabel'), 'Min köttgryta');
+  expect(onMealNameChange).toHaveBeenCalledWith('Min köttgryta');
 });

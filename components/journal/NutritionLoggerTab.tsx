@@ -183,6 +183,8 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
   } = useMemo(() => getNutritionTrackingAnalysis(plans?.nutrition ?? [], PREMIUM), [plans?.nutrition]);
 
   const {
+    foodReviewMealName,
+    setFoodReviewMealName,
     analyzingFoods,
     foodReviewFoods,
     setFoodReviewFoods,
@@ -539,7 +541,14 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           onClose={handleClosePackagingModal}
           onAnalyze={handleAnalyzePackaging}
         />
-        <FoodIdentificationModal value={foodReviewFoods} onChange={setFoodReviewFoods} onClose={() => setFoodReviewFoods(null)} onConfirm={confirmFoods} />
+        <FoodIdentificationModal
+          mealName={foodReviewMealName}
+          onMealNameChange={setFoodReviewMealName}
+          value={foodReviewFoods}
+          onChange={setFoodReviewFoods}
+          onClose={() => setFoodReviewFoods(null)}
+          onConfirm={confirmFoods}
+        />
         <NutritionAnalysisReviewModal
           visible={isAnalysisReviewModalVisible}
           pendingReview={pendingAnalysisReview}

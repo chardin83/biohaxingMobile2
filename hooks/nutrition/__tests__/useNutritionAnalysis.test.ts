@@ -36,6 +36,7 @@ test('waits for confirmation and sends corrected foods only in the nutrition req
     .mocked(NutritionAnalyze)
     .mockResolvedValueOnce({
       type: 'identification',
+      mealName: 'Nötköttsgryta med potatismos',
       detectedFoods: [
         { name: 'Lax', grams: 125 },
         { name: 'Ris', grams: 150 },
@@ -78,10 +79,11 @@ test('waits for confirmation and sends corrected foods only in the nutrition req
     })
   );
   expect(reserveFreePhotoAnalysis).toHaveBeenCalledTimes(1);
+  expect(NutritionAnalyze).toHaveBeenLastCalledWith(expect.objectContaining({ mealName: 'Nötköttsgryta med potatismos' }));
 });
 
 test('canceling identification never starts nutrition analysis', async () => {
-  jest.mocked(NutritionAnalyze).mockResolvedValueOnce({ type: 'identification', detectedFoods: [] });
+  jest.mocked(NutritionAnalyze).mockResolvedValueOnce({ type: 'identification', mealName: 'Nötköttsgryta med potatismos', detectedFoods: [] });
   const { result } = renderHook(() => useNutritionAnalysis(params));
   act(() => result.current.handleAnalyzePackaging(file, '', null));
   await waitFor(() => expect(result.current.foodReviewFoods).toEqual([]));
@@ -93,15 +95,15 @@ test('canceling identification never starts nutrition analysis', async () => {
 
 test('keeps edited weights and added ingredients in the final review and when reopening it', async () => {
   jest.mocked(extractAndValidateNutritionAnalysis).mockReturnValue({
-    analysis: { name: 'Lunch', calories: 450 },
+    analysis: { name: 'Lunch', calories: 450, protein: 30, carbohydrates: 40, fat: 15, fiber: 5 },
     mealWeeklyTrackingSignals: {},
     evidence: { sources: [], inferred: [], confidence: 'medium' },
     aiResponseDescription: 'An old description without the extra ingredient',
     evidenceMessage: '',
-  } as ReturnType<typeof extractAndValidateNutritionAnalysis>);
+  });
   jest
     .mocked(NutritionAnalyze)
-    .mockResolvedValueOnce({ type: 'identification', detectedFoods: [{ name: 'Nötfärs', grams: 150 }] })
+    .mockResolvedValueOnce({ type: 'identification', mealName: 'Nötköttsgryta med potatismos', detectedFoods: [{ name: 'Nötfärs', grams: 150 }] })
     .mockResolvedValueOnce({
       type: 'nutrition',
       analyzedFoods: [
@@ -117,19 +119,22 @@ test('keeps edited weights and added ingredients in the final review and when re
     { name: 'Olivolja', grams: 12.5 },
   ];
   act(() => result.current.setFoodReviewFoods(corrected));
+  act(() => result.current.setFoodReviewMealName('Min nötköttsgryta med potatismos'));
   act(() => result.current.confirmFoods());
   await waitFor(() => expect(result.current.isAnalysisReviewModalVisible).toBe(true));
-  expect(NutritionAnalyze).toHaveBeenLastCalledWith(expect.objectContaining({ confirmedFoods: corrected }));
+  expect(NutritionAnalyze).toHaveBeenLastCalledWith(expect.objectContaining({ confirmedFoods: corrected, mealName: 'Min nötköttsgryta med potatismos' }));
   expect(result.current.pendingAnalysisReview?.analyzedFoods).toEqual(corrected);
   act(() => result.current.handleReAnalyze());
   expect(result.current.foodReviewFoods).toEqual(corrected);
+  expect(result.current.foodReviewMealName).toBe('Min nötköttsgryta med potatismos');
   expect(NutritionAnalyze).toHaveBeenCalledTimes(2);
 });
 
 test.each([undefined, [{ name: 'Lax', grams: 999 }]])('rejects a backend response without matching analyzed weights: %j', async analyzedFoods => {
   jest.spyOn(console, 'error').mockImplementation(() => {});
-  jest.mocked(NutritionAnalyze)
-    .mockResolvedValueOnce({ type: 'identification', detectedFoods: [{ name: 'Lax', grams: 125 }] })
+  jest
+    .mocked(NutritionAnalyze)
+    .mockResolvedValueOnce({ type: 'identification', mealName: 'Nötköttsgryta med potatismos', detectedFoods: [{ name: 'Lax', grams: 125 }] })
     .mockResolvedValueOnce({ type: 'nutrition', analyzedFoods });
   const { result } = renderHook(() => useNutritionAnalysis(params));
   act(() => result.current.handleAnalyzePackaging(file, '', null));
