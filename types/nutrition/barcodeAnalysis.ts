@@ -9,7 +9,9 @@ export type BarcodeEnrichmentInput = {
   ingredientsText?: string;
   amount: number;
   unit: 'g' | 'ml';
+  productType: BarcodeProductType;
   knownNutritionPer100: KnownBarcodeNutrition;
+  energyReview?: { kcalPer100: number; kjPer100: number };
 };
 
 export type BarcodeAnalysisContext = {

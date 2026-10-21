@@ -5,12 +5,14 @@ import type { ImageSourcePropType } from 'react-native';
 import type { PolyphenolType } from '@/constants/polyphenols';
 import type { FoodServing } from '@/types/nutrition/foodCatalogTypes';
 import type { NutritionComposition } from '@/types/nutrition/nutritionProfile';
+import { getOpenFoodFactsCalories } from '@/utils/openFoodFactsEnergy';
 
 import { OPEN_FOOD_FACTS_BASE_URL } from '../config';
 import { DrinkType } from './gptServices';
 
 export interface BarcodeNutrition {
   caloriesPer100g?: number;
+  energyKjPer100g?: number;
   proteinPer100g?: number;
   carbohydratesPer100g?: number;
   fatPer100g?: number;
@@ -52,6 +54,8 @@ export interface BarcodeProduct {
 
 interface OpenFoodFactsNutriments {
   'energy-kcal_100g'?: number;
+  'energy-kj_100g'?: number;
+  'energy_100g'?: number;
   'proteins_100g'?: number;
   'carbohydrates_100g'?: number;
   'fat_100g'?: number;
@@ -208,7 +212,8 @@ const fetchProductByBarcode = async (normalizedBarcode: string): Promise<Barcode
     caffeinated: nutriments.caffeine_100g === undefined ? undefined : nutriments.caffeine_100g > 0,
 
     nutrition: {
-      caloriesPer100g: nutriments['energy-kcal_100g'],
+      caloriesPer100g: getOpenFoodFactsCalories(nutriments),
+      energyKjPer100g: nutriments.energy_100g ?? nutriments['energy-kj_100g'],
       proteinPer100g: nutriments.proteins_100g,
       carbohydratesPer100g: nutriments.carbohydrates_100g,
       fatPer100g: nutriments.fat_100g,

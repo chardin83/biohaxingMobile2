@@ -367,10 +367,10 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
 
     const barcodeContext = pendingAnalysisReview.barcodeContext;
     const newEntry = addNutritionEntry(selectedDate, {
-      type: barcodeContext?.productType === 'drink' ? 'drink' : 'meal',
       recordedAt,
       name: name?.trim() || t('journal:nutritionLogger.unnamedMeal'),
       ...nutrition,
+      type: barcodeContext?.productType === 'drink' ? 'drink' : 'meal',
     });
 
     const nutritionEntryId = newEntry.id;
@@ -409,7 +409,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     setSelectedNutritionName(newEntry.name);
     setSelectedNutrition(newEntry);
 
-    setAnalysisResult('✅ Måltid loggad och analyserad!');
+    setAnalysisResult(t(barcodeContext?.productType === 'drink' ? 'journal:nutritionLogger.drinkAnalysisSaved' : 'journal:nutritionLogger.mealAnalysisSaved'));
     triggerLightHaptic();
     closeAnalysisReviewModal();
   };

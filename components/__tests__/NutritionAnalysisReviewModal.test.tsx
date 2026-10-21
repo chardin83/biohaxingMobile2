@@ -53,3 +53,34 @@ test('shows the confirmed ingredient names and exact weights instead of AI prose
   expect(screen.queryByText('Outdated AI interpretation')).toBeNull();
   expect(screen.queryByText('AI Interpretation')).toBeNull();
 });
+
+test.each(['drink', 'food'] as const)('preserves the confirmed barcode product type %s in the review', productType => {
+  const screen = render(
+    <NutritionAnalysisReviewModal
+      visible
+      pendingReview={{
+        analysis: { name: 'Red Bull', calories: 46, protein: 0, carbohydrates: 11, fat: 0, fiber: 0 },
+        barcodeContext: { product: { barcode: '90162602', name: 'Red Bull', nutrition: {} }, amount: 100, productType },
+        weeklyTrackingSignals: {},
+        evidence: null,
+        aiDescription: null,
+        evidenceMessage: null,
+        statusMessage: null,
+      }}
+      analysisResult={null}
+      mealTime={new Date()}
+      onMealTimeChange={jest.fn()}
+      isAnalyzing={false}
+      canReAnalyze
+      onReAnalyze={jest.fn()}
+      onToggleDrink={jest.fn()}
+      onClose={jest.fn()}
+      onSave={jest.fn()}
+    />
+  );
+  const drinkTitle = 'journal:nutritionLogger.detectedDrinksTitle';
+  const mealTitle = 'journal:nutritionLogger.detectedfFoodTitle';
+  expect(screen.getByText(productType === 'drink' ? drinkTitle : mealTitle)).toBeTruthy();
+  expect(screen.queryByText(productType === 'drink' ? mealTitle : drinkTitle)).toBeNull();
+  expect(screen.getByText(productType === 'drink' ? 'journal:nutritionLogger.drinkTime' : 'journal:nutritionLogger.mealTime')).toBeTruthy();
+});

@@ -11,6 +11,7 @@ import { getFreePhotoAnalysesRemaining } from '@/services/nutrition/photoAnalysi
 import type { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFacts';
 import { getAlcoholPercent, withAlcoholPercent } from '@/utils/drinkAlcohol';
 import { scaleNutritionComposition } from '@/utils/nutritionComposition';
+import { hasEnergyConflict } from '@/utils/openFoodFactsEnergy';
 
 import NumberStepper from '../NumberStepper';
 import NutritionBreakdown from '../NutritionBreakdown';
@@ -45,6 +46,28 @@ const getCalculationNoteKey = (product: BarcodeProduct | null, productType?: Bar
   return 'nutritionCalculatedPer100g';
 };
 
+type ProductEnergyWarningProps = {
+  product: BarcodeProduct;
+  productType?: BarcodeProductType;
+  calorieOverride?: number;
+  onChange: (value: number) => void;
+};
+
+const ProductEnergyWarning = ({ product, productType, calorieOverride, onChange }: ProductEnergyWarningProps) => {
+  const { t } = useTranslation();
+  const { caloriesPer100g, energyKjPer100g } = product.nutrition;
+  if (!hasEnergyConflict(caloriesPer100g, energyKjPer100g)) return null;
+  const unit = productType === 'drink' ? 'ml' : 'g';
+  const label = t('journal:nutritionLogger.barcodeProduct.editCalories', { unit });
+  return (
+    <View style={styles.energyWarning}>
+      <Notice variant="warning" message={t('journal:nutritionLogger.barcodeProduct.energyConflict', { kcal: caloriesPer100g, kj: energyKjPer100g, unit })} />
+      <ThemedText type="caption">{label}</ThemedText>
+      <NumberStepper value={calorieOverride ?? caloriesPer100g} onChange={onChange} min={0} inBottomSheet accessibilityLabel={label} />
+    </View>
+  );
+};
+
 const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, ProductAmountBottomSheetProps>(
   ({ onSave, onAnalyzePremium, onDiscoverPremium }, ref) => {
     const { colors } = useTheme();
@@ -55,6 +78,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
 
     const [product, setProduct] = useState<BarcodeProduct | null>(null);
     const [gramsText, setGramsText] = useState('100');
+    const [calorieOverride, setCalorieOverride] = useState<number>();
     const [productType, setProductType] = useState<'food' | 'drink'>();
     const [alcoholPercent, setAlcoholPercent] = useState<number>();
     const [time, setTime] = useState(() => new Date());
@@ -66,6 +90,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
       () => ({
         present: nextProduct => {
           setProduct(nextProduct);
+          setCalorieOverride(undefined);
           setAlcoholPercent(getAlcoholPercent(nextProduct));
           setGramsText(String(nextProduct.fromCatalog ? (nextProduct.quantityValue ?? 100) : 100));
           setProductType(nextProduct.productType);
@@ -106,10 +131,18 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
     }, [gramsText]);
 
     const factor = grams / 100;
-    const adjustedProduct = useMemo(
+    const alcoholAdjustedProduct = useMemo(
       () => (product && alcoholPercent !== undefined && productType === 'drink' ? withAlcoholPercent(product, alcoholPercent) : product),
       [product, alcoholPercent, productType]
     );
+    const adjustedProduct = useMemo(() => {
+      if (!alcoholAdjustedProduct || calorieOverride === undefined) return alcoholAdjustedProduct;
+      return {
+        ...alcoholAdjustedProduct,
+        nutrition: { ...alcoholAdjustedProduct.nutrition, caloriesPer100g: calorieOverride, energyKjPer100g: calorieOverride * 4.184 },
+        ...(alcoholAdjustedProduct.composition && { composition: { ...alcoholAdjustedProduct.composition, calories: calorieOverride } }),
+      };
+    }, [alcoholAdjustedProduct, calorieOverride]);
 
     const scaledNutrition = useMemo<NutritionData | null>(() => {
       const nutritionProduct = adjustedProduct;
@@ -284,6 +317,8 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
                 )}
               </View>
 
+              <ProductEnergyWarning product={product} productType={productType} calorieOverride={calorieOverride} onChange={setCalorieOverride} />
+
               {scaledNutrition && (
                 <View style={[styles.nutrition, { borderColor: colors.border }]}>
                   <NutritionBreakdown nutrition={scaledNutrition} keyPrefix="product" existingDataOnly={product.fromCatalog === true} />
@@ -359,6 +394,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
 ProductAmountBottomSheet.displayName = 'ProductAmountBottomSheet';
 
 const styles = StyleSheet.create({
+  energyWarning: { gap: 8, marginBottom: 16 },
   premiumAnalysis: { marginTop: 16, gap: 10 },
   timeSection: { marginTop: 6, alignItems: 'flex-start' },
   content: {

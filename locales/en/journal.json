@@ -20,6 +20,9 @@
     "saveError": "Could not save the confirmation. Please try again."
   },
   "nutritionLogger": {
+    "aiEstimatedValue": "Estimated or recalculated by AI",
+    "drinkAnalysisSaved": "✅ Drink logged and analyzed!",
+    "mealAnalysisSaved": "✅ Meal logged and analyzed!",
     "foodIdentification": {
       "title": "Step 1 of 2: Confirm foods",
       "description": "AI separates the meal into ingredients and estimates quantities: food in grams, drinks in ml. Ingredients you supplied are marked. Check uncertain ingredients and adjust the list before continuing.",
@@ -256,6 +259,8 @@
       "lookupFailedMessage": "Failed to fetch the product. Please try again."
     },
     "barcodeProduct": {
+      "energyConflict": "The Open Food Facts energy values do not agree: {{kcal}} kcal and {{kj}} kJ per 100 {{unit}}. Check the packaging and enter the correct kcal value below, or choose Complete with Premium for an AI estimate. A manually edited value is preserved.",
+      "editCalories": "Energy (kcal per 100 {{unit}})",
       "type": "Type",
       "meal": "Meal",
       "drink": "Drink",

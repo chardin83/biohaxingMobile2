@@ -17,15 +17,17 @@ jest.mock('@react-navigation/native', () => ({
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, options?: { value?: number }) =>
-      key.endsWith('.polyphenols')
-        ? `Polyfenoler: ${options?.value} mg`
-        : key.endsWith('.minerals')
-          ? `Mineraler: ${options?.value} mg`
-          : key.endsWith('.vitamins')
-            ? `Vitaminer: ${options?.value} mg`
-            : key.endsWith('.caffeineAmount')
-              ? `Koffein: ${options?.value} mg`
-              : key,
+      key.endsWith('.calories')
+        ? `Kalorier: ${options?.value} kcal`
+        : key.endsWith('.polyphenols')
+          ? `Polyfenoler: ${options?.value} mg`
+          : key.endsWith('.minerals')
+            ? `Mineraler: ${options?.value} mg`
+            : key.endsWith('.vitamins')
+              ? `Vitaminer: ${options?.value} mg`
+              : key.endsWith('.caffeineAmount')
+                ? `Koffein: ${options?.value} mg`
+                : key,
   }),
 }));
 jest.mock('../ThemedText', () => ({ ThemedText: require('react-native').Text }));
@@ -189,4 +191,18 @@ test('caffeine and alcohol remain outside the Premium panel', () => {
     expect(screen.getByTestId(id)).toBeTruthy();
     expect(panel.findAll(node => node.props.testID === id)).toHaveLength(0);
   }
+});
+
+test('marks AI values beside calories, caffeine and alcohol outside the premium panel', () => {
+  const screen = render(
+    <NutritionBreakdown
+      nutrition={{ ...nutrition, caffeineMg: 80, alcoholGrams: 0, aiEstimatedNutrients: ['calories', 'caffeineMg', 'alcoholGrams'] }}
+      keyPrefix="ai"
+    />
+  );
+  expect(screen.getAllByLabelText('journal:nutritionLogger.aiEstimatedValue')).toHaveLength(3);
+  const panel = screen.getByTestId('nutrition-biohaxing-extras');
+  expect(panel.findAll(node => node.props.accessibilityLabel === 'journal:nutritionLogger.aiEstimatedValue')).toHaveLength(0);
+  screen.rerender(<NutritionBreakdown nutrition={{ ...nutrition, caffeineMg: 80, alcoholGrams: 0 }} keyPrefix="label" />);
+  expect(screen.queryByLabelText('journal:nutritionLogger.aiEstimatedValue')).toBeNull();
 });

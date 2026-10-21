@@ -37,7 +37,10 @@ jest.mock('../ThemedText', () => ({ ThemedText: require('react-native').Text }))
 jest.mock('../NutritionBreakdown', () => () => null);
 jest.mock('../ui/IconSymbol', () => ({ IconSymbol: () => null }));
 jest.mock('../ui/OptionSelector', () => () => null);
-jest.mock('../ui/Notice', () => () => null);
+jest.mock('../ui/Notice', () => ({ message }: any) => {
+  const { Text } = require('react-native');
+  return <Text>{message}</Text>;
+});
 jest.mock('../ui/DateTimeInput', () => ({ DateTimeInput: () => null }));
 jest.mock('../NumberStepper', () => ({
   __esModule: true,
@@ -113,4 +116,25 @@ test('Premium users can analyze even with no trials remaining', async () => {
   });
   expect(analyze).toHaveBeenCalledTimes(1);
   expect(discover).not.toHaveBeenCalled();
+});
+
+test('warns about conflicting energy and saves the manually entered kcal value', () => {
+  const ref = React.createRef<ProductAmountBottomSheetRef>();
+  const onSave = jest.fn();
+  const screen = render(<ProductAmountBottomSheet ref={ref} onSave={onSave} />);
+  act(() => ref.current?.present({ ...product, nutrition: { ...product.nutrition, caloriesPer100g: 463, energyKjPer100g: 194 } }));
+  expect(screen.getByText('journal:nutritionLogger.barcodeProduct.energyConflict')).toBeTruthy();
+  fireEvent.press(screen.getByLabelText('journal:nutritionLogger.barcodeProduct.editCalories'));
+  fireEvent.press(screen.getByText('journal:nutritionLogger.barcodeProduct.add'));
+  expect(onSave).toHaveBeenCalledWith(
+    expect.objectContaining({ nutrition: expect.objectContaining({ caloriesPer100g: 200, energyKjPer100g: expect.any(Number) }) }),
+    100,
+    'food',
+    undefined
+  );
+  expect(onSave.mock.calls[0][0].nutrition.energyKjPer100g).toBeCloseTo(836.8);
+  act(() => ref.current?.present(product));
+  expect(screen.queryByText('journal:nutritionLogger.barcodeProduct.energyConflict')).toBeNull();
+  fireEvent.press(screen.getByText('journal:nutritionLogger.barcodeProduct.add'));
+  expect(onSave).toHaveBeenLastCalledWith(product, 100, 'food', undefined);
 });

@@ -1,4 +1,5 @@
 import { MineralType } from '@/constants/minerals';
+import type { AiEstimatedNutrient } from '@/types/nutrition/nutrientProvenance';
 import { NutritionComposition } from '@/types/nutrition/nutritionProfile';
 import { NutritionTargetPeriod, NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
 
@@ -70,6 +71,7 @@ export type NutritionEntryType = 'meal' | 'food' | 'drink';
 
 export type NutritionData = NutritionComposition & {
   analysisTier?: 'free' | 'premium' | 'trial';
+  aiEstimatedNutrients?: AiEstimatedNutrient[];
   name: string;
   mineralsConfidenceByType?: Partial<Record<MineralType, 'high' | 'medium' | 'low' | 'unknown'>>;
 };

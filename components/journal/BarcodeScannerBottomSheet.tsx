@@ -1,16 +1,15 @@
-import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import { BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
 import React, { forwardRef, useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, Keyboard, StyleSheet, View } from 'react-native';
 
 import { BarcodeProduct, getProductByBarcode } from '@/services/openFoodFacts';
 
 import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
 import { useBottomSheetDesign } from '../ui/BottomSheetDesign';
-import LabeledInput from '../ui/LabeledInput';
 
 interface BarcodeScannerBottomSheetProps {
   onProductFound: (product: BarcodeProduct) => void;
@@ -36,6 +35,7 @@ const BarcodeScannerBottomSheet = forwardRef<BottomSheetModal, BarcodeScannerBot
         return;
       }
 
+      Keyboard.dismiss();
       scanningRef.current = true;
       setHasScanned(true);
 
@@ -70,7 +70,15 @@ const BarcodeScannerBottomSheet = forwardRef<BottomSheetModal, BarcodeScannerBot
     [submitBarcode]
   );
 
+  const renderBackdrop = useCallback(
+    (props: React.ComponentProps<typeof BottomSheetBackdrop>) => (
+      <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} pressBehavior="none" onPress={Keyboard.dismiss} />
+    ),
+    []
+  );
+
   const handleDismiss = () => {
+    Keyboard.dismiss();
     scanningRef.current = false;
     setHasScanned(false);
     setManualBarcode('');
@@ -88,12 +96,18 @@ const BarcodeScannerBottomSheet = forwardRef<BottomSheetModal, BarcodeScannerBot
     <BottomSheetModal
       ref={ref}
       enablePanDownToClose
-      enableDynamicSizing
+      snapPoints={['85%']}
+      enableDynamicSizing={false}
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
+      android_keyboardInputMode="adjustResize"
+      enableBlurKeyboardOnGesture
+      backdropComponent={renderBackdrop}
       backgroundStyle={sheetDesign.backgroundStyle}
       handleComponent={sheetDesign.handleComponent}
       onDismiss={handleDismiss}
     >
-      <BottomSheetView style={styles.content}>
+      <BottomSheetScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
         <View style={styles.header}>
           <ThemedText type="title2">{t('journal:nutritionLogger.barcodeScanner.title')}</ThemedText>
 
@@ -117,7 +131,7 @@ const BarcodeScannerBottomSheet = forwardRef<BottomSheetModal, BarcodeScannerBot
           </View>
         ) : (
           <>
-            <View style={styles.cameraContainer}>
+            <View style={styles.cameraContainer} onTouchStart={Keyboard.dismiss}>
               <CameraView
                 style={StyleSheet.absoluteFillObject}
                 facing="back"
@@ -144,8 +158,11 @@ const BarcodeScannerBottomSheet = forwardRef<BottomSheetModal, BarcodeScannerBot
                 {t('journal:nutritionLogger.barcodeScanner.manualDescription')}
               </ThemedText>
 
-              <LabeledInput
-                label={t('journal:nutritionLogger.barcodeScanner.barcode')}
+              <ThemedText type="label">{t('journal:nutritionLogger.barcodeScanner.barcode')}</ThemedText>
+              <BottomSheetTextInput
+                accessibilityLabel={t('journal:nutritionLogger.barcodeScanner.barcode')}
+                style={[styles.barcodeInput, { color: colors.text, borderColor: colors.border }]}
+                placeholderTextColor={colors.textMuted}
                 value={manualBarcode}
                 onChangeText={setManualBarcode}
                 keyboardType="number-pad"
@@ -163,7 +180,7 @@ const BarcodeScannerBottomSheet = forwardRef<BottomSheetModal, BarcodeScannerBot
             </View>
           </>
         )}
-      </BottomSheetView>
+      </BottomSheetScrollView>
     </BottomSheetModal>
   );
 });
@@ -171,6 +188,7 @@ const BarcodeScannerBottomSheet = forwardRef<BottomSheetModal, BarcodeScannerBot
 BarcodeScannerBottomSheet.displayName = 'BarcodeScannerBottomSheet';
 
 const styles = StyleSheet.create({
+  barcodeInput: { borderWidth: 1, borderRadius: 8, paddingHorizontal: 12, minHeight: 44, fontSize: 16 },
   content: {
     paddingHorizontal: 20,
     paddingTop: 8,

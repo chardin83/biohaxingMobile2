@@ -1,6 +1,3 @@
-import type { BarcodeAnalysisContext } from '@/types/nutrition/barcodeAnalysis';
-import type { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFacts';
-import { buildBarcodeEnrichmentInput } from '@/utils/barcodeAnalysis';
 import * as ImagePicker from 'expo-image-picker';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,8 +6,11 @@ import { Alert } from 'react-native';
 import { PREMIUM } from '@/constants/Premium';
 import { type NutritionAnalysisResponse, NutritionAnalyze } from '@/services/gptServices';
 import { refundFreePhotoAnalysis, reserveFreePhotoAnalysis } from '@/services/nutrition/photoAnalysisQuota';
+import type { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFacts';
+import type { BarcodeAnalysisContext } from '@/types/nutrition/barcodeAnalysis';
 import type { IdentifiedFood, PendingAnalysisReview, SelectedImageFile } from '@/types/nutrition/nutritionAnalysis';
 import { extractAndValidateNutritionAnalysis, type WeeklyTrackingSignals } from '@/utils/analyzeNutrition';
+import { buildBarcodeEnrichmentInput, getAiEstimatedBarcodeNutrients } from '@/utils/barcodeAnalysis';
 import { toDateKey } from '@/utils/dateUtils';
 
 interface NutritionAnalysisTrackingTarget {
@@ -224,7 +224,11 @@ export const useNutritionAnalysis = ({
         setPendingAnalysisReview({
           barcodeContext,
           analyzedFoods: analyzedFoods.map(food => ({ ...food })),
-          analysis: { ...result.analysis, analysisTier: data.analysisTier ?? (PREMIUM ? 'premium' : 'trial') },
+          analysis: {
+            ...result.analysis,
+            analysisTier: data.analysisTier ?? (PREMIUM ? 'premium' : 'trial'),
+            ...(barcodeContext && { aiEstimatedNutrients: getAiEstimatedBarcodeNutrients(barcodeContext, result.analysis) }),
+          },
           weeklyTrackingSignals: result.mealWeeklyTrackingSignals,
           detectedDrinks: (barcodeContext ? [] : (data.detectedDrinks ?? [])).map(drink => ({
             ...drink,

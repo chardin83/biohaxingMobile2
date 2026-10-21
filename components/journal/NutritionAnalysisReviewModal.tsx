@@ -47,6 +47,8 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
   const { t } = useTranslation();
   const { colors } = useTheme();
 
+  const isBarcodeDrink = pendingReview?.barcodeContext?.productType === 'drink';
+
   const [expandedDrinks, setExpandedDrinks] = useState<Record<number, boolean>>({});
 
   return (
@@ -61,7 +63,7 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator>
         <View style={styles.mealTimeRow}>
           <ThemedText type="caption" style={{ color: colors.textMuted }}>
-            {t('journal:nutritionLogger.mealTime')}
+            {t(isBarcodeDrink ? 'journal:nutritionLogger.drinkTime' : 'journal:nutritionLogger.mealTime')}
           </ThemedText>
           <DateTimeInput value={mealTime} showTime showDate={false} onChange={onMealTimeChange} />
         </View>
@@ -93,14 +95,16 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
         ) : null}
         {pendingReview?.analysis ? (
           <View style={styles.section}>
-            <ThemedText type="title3">{t('journal:nutritionLogger.detectedfFoodTitle', { st: '1' })}</ThemedText>
+            <ThemedText type="title3">
+              {t(isBarcodeDrink ? 'journal:nutritionLogger.detectedDrinksTitle' : 'journal:nutritionLogger.detectedfFoodTitle', { st: '1' })}
+            </ThemedText>
             <Card style={[styles.detectedDrinkCard]}>
               <Collapsible
                 title={pendingReview.analysis.name?.trim() || t('journal:nutritionLogger.unnamedMeal')}
                 titleType="defaultSemiBold"
                 chevronPosition="right"
                 initialCollapsed
-                leftContent={<IconSymbol name="meal" size={28} color={colors.textMuted} />}
+                leftContent={<IconSymbol name={isBarcodeDrink ? 'drink' : 'meal'} size={28} color={colors.textMuted} />}
                 rightContent={
                   <ThemedText type="caption" style={{ color: colors.textMuted }}>{`${Math.round(pendingReview.analysis.calories)} kcal`}</ThemedText>
                 }

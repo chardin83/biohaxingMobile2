@@ -20,6 +20,9 @@
     "saveError": "Kunde inte spara bekräftelsen. Försök igen."
   },
   "nutritionLogger": {
+    "aiEstimatedValue": "Uppskattat eller omräknat av AI",
+    "drinkAnalysisSaved": "✅ Dryck loggad och analyserad!",
+    "mealAnalysisSaved": "✅ Måltid loggad och analyserad!",
     "foodIdentification": {
       "title": "Steg 1 av 2: Bekräfta matvarorna",
       "description": "AI delar upp måltiden i ingredienser och uppskattar mängden: mat i gram, dryck i ml. Uppgifter från din beskrivning märks ut. Kontrollera osäkra ingredienser och justera listan innan du fortsätter.",
@@ -260,6 +263,8 @@
       "lookupFailedMessage": "Försök igen."
     },
     "barcodeProduct": {
+      "energyConflict": "Energivärdena från Open Food Facts stämmer inte överens: {{kcal}} kcal och {{kj}} kJ per 100 {{unit}}. Kontrollera förpackningen och ange rätt kcal-värde nedan, eller välj Komplettera med Premium för en AI-uppskattning. Ett manuellt ändrat värde behålls.",
+      "editCalories": "Energi (kcal per 100 {{unit}})",
       "type": "Typ",
       "meal": "Måltid",
       "drink": "Dryck",

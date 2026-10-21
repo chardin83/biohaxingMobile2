@@ -74,7 +74,22 @@ const splitLabelValue = (text: string): { label: string; value?: string } => {
   return index < 0 ? { label: text } : { label: text.slice(0, index), value: text.slice(index + 2) };
 };
 
-const NutrientText: React.FC<{ text: string }> = ({ text }) => {
+const NutrientValue = ({ children, aiEstimated = false }: React.PropsWithChildren<{ aiEstimated?: boolean }>) => {
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+  return (
+    <View style={styles.nutrientValue}>
+      {children}
+      {aiEstimated && (
+        <View accessible accessibilityLabel={t('journal:nutritionLogger.aiEstimatedValue')}>
+          <IconSymbol name="sparkles" size={15} color={colors.primary} />
+        </View>
+      )}
+    </View>
+  );
+};
+
+const NutrientText: React.FC<{ text: string; aiEstimated?: boolean }> = ({ text, aiEstimated }) => {
   const { label, value } = splitLabelValue(text);
 
   return (
@@ -82,15 +97,26 @@ const NutrientText: React.FC<{ text: string }> = ({ text }) => {
       <ThemedText type="default" style={styles.nutrientLabel}>
         {label}
       </ThemedText>
-      {value ? <ThemedText type="default">{value}</ThemedText> : null}
+      {value ? (
+        <NutrientValue aiEstimated={aiEstimated}>
+          <ThemedText type="default">{value}</ThemedText>
+        </NutrientValue>
+      ) : null}
     </>
   );
 };
 
-const collapsibleHeader = (text: string) => {
+const collapsibleHeader = (text: string, aiEstimated = false) => {
   const { label, value } = splitLabelValue(text);
 
-  return { title: label, rightContent: value ? <ThemedText type="default">{value}</ThemedText> : undefined };
+  return {
+    title: label,
+    rightContent: value ? (
+      <NutrientValue aiEstimated={aiEstimated}>
+        <ThemedText type="default">{value}</ThemedText>
+      </NutrientValue>
+    ) : undefined,
+  };
 };
 
 // Swedish standard drink: 12 grams of pure alcohol.
@@ -129,7 +155,7 @@ const ProteinSection = ({
   return (
     <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
       <Collapsible
-        {...collapsibleHeader(t('journal:nutritionLogger.protein', { value: protein }))}
+        {...collapsibleHeader(t('journal:nutritionLogger.protein', { value: protein }), nutrition.aiEstimatedNutrients?.includes('protein'))}
         titleType="default"
         initialCollapsed
         leftContent={<IconSymbol name="protein" size={14} color={colors.textMuted} />}
@@ -236,7 +262,7 @@ const FiberSection = ({
   return (
     <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
       <Collapsible
-        {...collapsibleHeader(t('journal:nutritionLogger.fiber', { value: fiber }))}
+        {...collapsibleHeader(t('journal:nutritionLogger.fiber', { value: fiber }), nutrition.aiEstimatedNutrients?.includes('fiber'))}
         titleType="default"
         contentStyle={[styles.premiumDropdown, analysisPanelColor]}
         initialCollapsed
@@ -491,7 +517,9 @@ const AlcoholSection = ({ nutrition, onAlcoholInfo }: AlcoholSectionProps) => {
             <IconSymbol name="info" size={16} color={colors.textMuted} />
           </Pressable>
         </View>
-        <ThemedText>{t('journal:nutritionLogger.alcoholGrams', { value: alcoholGrams === undefined ? '—' : Math.round(alcoholGrams * 10) / 10 })}</ThemedText>
+        <NutrientValue aiEstimated={nutrition.aiEstimatedNutrients?.includes('alcoholGrams')}>
+          <ThemedText>{t('journal:nutritionLogger.alcoholGrams', { value: alcoholGrams === undefined ? '—' : Math.round(alcoholGrams * 10) / 10 })}</ThemedText>
+        </NutrientValue>
       </View>
       <View style={styles.standardDrinksRow}>
         <ThemedText style={[styles.standardDrinks, { color: colors.textMuted }]}>
@@ -525,7 +553,7 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
     <>
       <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
         <IconSymbol name="flame" size={16} color={colors.textMuted} />
-        <NutrientText text={t('journal:nutritionLogger.calories', { value: calories })} />
+        <NutrientText aiEstimated={nutrition.aiEstimatedNutrients?.includes('calories')} text={t('journal:nutritionLogger.calories', { value: calories })} />
       </View>
 
       <ProteinSection
@@ -540,12 +568,15 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
 
       <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
         <IconSymbol name="carbs" size={16} color={colors.textMuted} />
-        <NutrientText text={t('journal:nutritionLogger.carbohydrates', { value: carbohydrates })} />
+        <NutrientText
+          aiEstimated={nutrition.aiEstimatedNutrients?.includes('carbohydrates')}
+          text={t('journal:nutritionLogger.carbohydrates', { value: carbohydrates })}
+        />
       </View>
 
       <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
         <IconSymbol name="fat" size={16} color={colors.textMuted} />
-        <NutrientText text={t('journal:nutritionLogger.fat', { value: fat })} />
+        <NutrientText aiEstimated={nutrition.aiEstimatedNutrients?.includes('fat')} text={t('journal:nutritionLogger.fat', { value: fat })} />
       </View>
 
       <FiberSection
@@ -560,7 +591,10 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
 
       <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]} testID="nutrition-caffeine">
         <IconSymbol name="caffeine" size={16} color={colors.textMuted} />
-        <NutrientText text={t('journal:nutritionLogger.caffeineAmount', { value: caffeineMg === undefined ? '—' : Math.round(caffeineMg) })} />
+        <NutrientText
+          aiEstimated={nutrition.aiEstimatedNutrients?.includes('caffeineMg')}
+          text={t('journal:nutritionLogger.caffeineAmount', { value: caffeineMg === undefined ? '—' : Math.round(caffeineMg) })}
+        />
       </View>
       <AlcoholSection nutrition={nutrition} onAlcoholInfo={() => setAlcoholInfoVisible(true)} />
 
@@ -606,6 +640,7 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
 export default NutritionBreakdown;
 
 const styles = StyleSheet.create({
+  nutrientValue: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   premiumOfferScroll: { maxHeight: 500, width: '100%' },
   premiumFooter: { marginTop: 6 },
   premiumFooterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 12 },
