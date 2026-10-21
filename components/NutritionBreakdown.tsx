@@ -110,7 +110,6 @@ type PremiumNutrientDetailsProps = NutrientDetailsProps & {
 type AlcoholSectionProps = {
   nutrition: NutritionData;
   onAlcoholInfo: () => void;
-  hasAnalysisAccess: boolean;
 };
 
 const ProteinSection = ({
@@ -477,13 +476,13 @@ const PolyphenolsSection = ({ nutrition, keyPrefix, hasAnalysisAccess, showAnaly
   );
 };
 
-const AlcoholSection = ({ nutrition, onAlcoholInfo, hasAnalysisAccess }: AlcoholSectionProps) => {
+const AlcoholSection = ({ nutrition, onAlcoholInfo }: AlcoholSectionProps) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { alcoholGrams } = nutrition;
 
   return (
-    <View style={[styles.nutrientRow, { borderBottomColor: hasAnalysisAccess ? colors.infoDefault : colors.goldSoft }]} testID="nutrition-alcohol">
+    <View style={[styles.nutrientRow, { borderBottomColor: colors.textMuted }]} testID="nutrition-alcohol">
       <View style={styles.alcoholRow}>
         <IconSymbol name="alcohol" size={16} color={colors.textMuted} />
         <View style={styles.alcoholLabel}>
@@ -559,6 +558,12 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
         onPremium={() => setPremiumVisible(true)}
       />
 
+      <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]} testID="nutrition-caffeine">
+        <IconSymbol name="caffeine" size={16} color={colors.textMuted} />
+        <NutrientText text={t('journal:nutritionLogger.caffeineAmount', { value: caffeineMg === undefined ? '—' : Math.round(caffeineMg) })} />
+      </View>
+      <AlcoholSection nutrition={nutrition} onAlcoholInfo={() => setAlcoholInfoVisible(true)} />
+
       <View style={[styles.biohaxingPanel, analysisPanelColor]} testID="nutrition-biohaxing-extras">
         <MineralsSection nutrition={nutrition} keyPrefix={keyPrefix} hasAnalysisAccess={hasAnalysisAccess} showAnalysisInfo={showAnalysisInfo} />
 
@@ -568,11 +573,6 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
 
         <PolyphenolsSection nutrition={nutrition} keyPrefix={keyPrefix} hasAnalysisAccess={hasAnalysisAccess} showAnalysisInfo={showAnalysisInfo} />
 
-        <View style={[styles.nutrientRowWithIcon, { borderBottomColor: analysisPanelColor.borderColor }]} testID="nutrition-caffeine">
-          <IconSymbol name="caffeine" size={16} color={colors.textMuted} />
-          <NutrientText text={t('journal:nutritionLogger.caffeineAmount', { value: caffeineMg === undefined ? '—' : Math.round(caffeineMg) })} />
-        </View>
-        <AlcoholSection nutrition={nutrition} hasAnalysisAccess={hasAnalysisAccess} onAlcoholInfo={() => setAlcoholInfoVisible(true)} />
         {showPremiumLink && (
           <View style={styles.premiumFooter} testID="nutrition-extras-premium-footer">
             {!hasAnalysisAccess && (

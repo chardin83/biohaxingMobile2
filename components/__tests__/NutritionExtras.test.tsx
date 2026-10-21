@@ -105,7 +105,7 @@ test('uses a shared panel including vitamins and keeps one shared Premium link a
   mockTrialsRemaining = 0;
   const screen = render(<NutritionBreakdown nutrition={nutrition} keyPrefix="test" />);
   const panel = screen.getByTestId('nutrition-biohaxing-extras');
-  for (const id of ['nutrition-minerals', 'nutrition-vitamins', 'nutrition-microbiome', 'nutrition-polyphenols', 'nutrition-caffeine', 'nutrition-alcohol']) {
+  for (const id of ['nutrition-minerals', 'nutrition-vitamins', 'nutrition-microbiome', 'nutrition-polyphenols']) {
     expect(panel.findAll(node => node.props.testID === id).length).toBeGreaterThan(0);
     expect(require('react-native').StyleSheet.flatten(screen.getByTestId(id).props.style)?.backgroundColor).toBeUndefined();
   }
@@ -180,4 +180,13 @@ test('active Premium hides promotional descriptions but still explains missing v
   expect(screen.queryByText(/BiohaxingInfo$/)).toBeNull();
   expect(screen.queryByLabelText('common:premium.premium')).toBeNull();
   expect(screen.getAllByText('journal:nutritionLogger.extraNutritionMissing')).toHaveLength(6);
+});
+
+test('caffeine and alcohol remain outside the Premium panel', () => {
+  const screen = render(<NutritionBreakdown nutrition={{ ...nutrition, caffeineMg: 80, alcoholGrams: 10 }} keyPrefix="test" />);
+  const panel = screen.getByTestId('nutrition-biohaxing-extras');
+  for (const id of ['nutrition-caffeine', 'nutrition-alcohol']) {
+    expect(screen.getByTestId(id)).toBeTruthy();
+    expect(panel.findAll(node => node.props.testID === id)).toHaveLength(0);
+  }
 });

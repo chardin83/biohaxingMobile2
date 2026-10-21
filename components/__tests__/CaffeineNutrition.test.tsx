@@ -68,12 +68,12 @@ it('sums food and drink caffeine once and recalculates after removal', () => {
   expect(result.current.dailyNutrition.caffeineMg).toBe(20);
 });
 
-it('shows caffeine as the last nutrient after polyphenols', () => {
+it('shows caffeine before the extra nutrition panel', () => {
   const screen = render(<NutritionBreakdown nutrition={{ ...food, polyphenolByType: { polyphenols_total: 100 } }} keyPrefix="test" />);
   expect(screen.getByText('Koffein')).toBeTruthy();
   expect(screen.getByText('20 mg')).toBeTruthy();
   const output = JSON.stringify(screen.toJSON());
-  expect(output.indexOf('Polyfenoler')).toBeLessThan(output.indexOf('Koffein'));
+  expect(output.indexOf('Koffein')).toBeLessThan(output.indexOf('Polyfenoler'));
 });
 
 it('preserves caffeine values returned for analyzed food', () => {
