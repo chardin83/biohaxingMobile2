@@ -1,3 +1,8 @@
+import { act, fireEvent, render } from '@testing-library/react-native';
+import React from 'react';
+
+import ProductAmountBottomSheet, { type ProductAmountBottomSheetRef } from '../journal/ProductAmountBottomSheet';
+
 let mockRemaining = 3;
 let mockPremium = false;
 jest.mock('@/constants/Premium', () => ({
@@ -14,17 +19,13 @@ jest.mock('@/services/gptServices', () => ({
   ALCOHOL_TYPES: ['red_wine', 'white_wine', 'beer', 'spirits', 'oak_aged_spirits'],
   isAlcohol: (type: string) => ['red_wine', 'white_wine', 'beer', 'spirits', 'oak_aged_spirits'].includes(type),
 }));
-import { act, fireEvent, render } from '@testing-library/react-native';
-import React from 'react';
-
-import ProductAmountBottomSheet, { type ProductAmountBottomSheetRef } from '../journal/ProductAmountBottomSheet';
 
 jest.mock('@gorhom/bottom-sheet', () => {
-  const React = require('react');
+  const ReactModule = require('react');
   const { View } = require('react-native');
   return {
-    BottomSheetModal: React.forwardRef(({ children }: any, ref: any) => {
-      React.useImperativeHandle(ref, () => ({ present: jest.fn(), dismiss: jest.fn() }));
+    BottomSheetModal: ReactModule.forwardRef(({ children }: any, ref: any) => {
+      ReactModule.useImperativeHandle(ref, () => ({ present: jest.fn(), dismiss: jest.fn() }));
       return <View>{children}</View>;
     }),
     BottomSheetScrollView: View,
@@ -137,4 +138,16 @@ test('warns about conflicting energy and saves the manually entered kcal value',
   expect(screen.queryByText('journal:nutritionLogger.barcodeProduct.energyConflict')).toBeNull();
   fireEvent.press(screen.getByText('journal:nutritionLogger.barcodeProduct.add'));
   expect(onSave).toHaveBeenLastCalledWith(product, 100, 'food', undefined);
+});
+
+test.each([
+  { quantityValue: 250, quantityUnit: 'ml', expected: 250 },
+  { servingSize: '12 OZA (355 ml)', expected: 355 },
+])('starts a scanned drink at its known volume: $expected ml', ({ expected, ...volume }) => {
+  const ref = React.createRef<ProductAmountBottomSheetRef>();
+  const onSave = jest.fn();
+  const screen = render(<ProductAmountBottomSheet ref={ref} onSave={onSave} />);
+  act(() => ref.current?.present({ ...product, productType: 'drink', ...volume }));
+  fireEvent.press(screen.getByText('journal:nutritionLogger.barcodeProduct.add'));
+  expect(onSave).toHaveBeenCalledWith(expect.objectContaining(volume), expected, 'drink', expect.any(Date));
 });

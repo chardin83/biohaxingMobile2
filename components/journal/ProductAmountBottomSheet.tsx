@@ -9,6 +9,7 @@ import { PREMIUM } from '@/constants/Premium';
 import { getDrinkImage } from '@/locales/drinkCatalog';
 import { getFreePhotoAnalysesRemaining } from '@/services/nutrition/photoAnalysisQuota';
 import type { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFacts';
+import { getDefaultProductAmount, getProductQuantityLabel } from '@/utils/barcodeQuantity';
 import { getAlcoholPercent, withAlcoholPercent } from '@/utils/drinkAlcohol';
 import { scaleNutritionComposition } from '@/utils/nutritionComposition';
 import { hasEnergyConflict } from '@/utils/openFoodFactsEnergy';
@@ -93,7 +94,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
           setProduct(nextProduct);
           setCalorieOverride(undefined);
           setAlcoholPercent(getAlcoholPercent(nextProduct));
-          setGramsText(String(nextProduct.fromCatalog ? (nextProduct.quantityValue ?? 100) : 100));
+          setGramsText(String(getDefaultProductAmount(nextProduct)));
           setProductType(nextProduct.productType);
           setTime(new Date());
 
@@ -221,16 +222,21 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
                     </ThemedText>
                   ) : null}
 
-                  {product.quantity ? (
+                  {getProductQuantityLabel(product) ? (
                     <ThemedText
                       type="caption"
                       style={{
                         color: colors.textMuted,
                       }}
                     >
-                      {product.quantity}
+                      {getProductQuantityLabel(product)}
                     </ThemedText>
                   ) : null}
+                  {!getProductQuantityLabel(product) && product.servingSize && (
+                    <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                      {t('journal:nutritionLogger.barcodeProduct.servingSize', { value: product.servingSize })}
+                    </ThemedText>
+                  )}
                 </View>
               </View>
 

@@ -260,6 +260,7 @@
       "lookupFailedMessage": "Failed to fetch the product. Please try again."
     },
     "barcodeProduct": {
+      "servingSize": "Serving: {{value}}",
       "energyConflict": "The Open Food Facts energy values do not agree: {{kcal}} kcal and {{kj}} kJ per 100 {{unit}}. Check the packaging and enter the correct kcal value below, or choose Complete with Premium for an AI estimate. A manually edited value is preserved.",
       "editCalories": "Energy (kcal per 100 {{unit}})",
       "type": "Type",
