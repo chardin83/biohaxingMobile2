@@ -196,3 +196,45 @@ test('does not request a trial analysis when all three attempts have been used',
   expect(alert).toHaveBeenCalled();
   alert.mockRestore();
 });
+
+test('enriches a barcode serving directly, preserving label values and the chosen drink identity', async () => {
+  const product = {
+    barcode: '1234567890123',
+    name: 'Testdryck',
+    ingredientsText: 'Vatten, te',
+    drinkType: 'tea' as const,
+    nutrition: { caloriesPer100g: 0, proteinPer100g: 0, caffeineMgPer100g: 20 },
+  };
+  jest
+    .mocked(NutritionAnalyze)
+    .mockResolvedValueOnce({
+      type: 'nutrition',
+      analysisTier: 'trial',
+      analyzedFoods: [{ name: product.name, amount: 250, unit: 'ml', preparation: null }],
+      detectedDrinks: [{ type: 'tea', name: product.name, amountMl: 250, confidence: 'high' }],
+    });
+  jest.mocked(extractAndValidateNutritionAnalysis).mockReturnValue({
+    analysis: { name: product.name, calories: 0, protein: 0, carbohydrates: 0, fat: 0, fiber: 0, caffeineMg: 50 },
+    mealWeeklyTrackingSignals: {},
+    evidence: { sources: [], inferred: [], confidence: 'medium' },
+    aiResponseDescription: null,
+    evidenceMessage: '',
+  });
+  const { result } = renderHook(() => useNutritionAnalysis(params));
+  const time = new Date('2026-10-20T12:00:00Z');
+  act(() => result.current.handleAnalyzeBarcodeProduct(product, 250, 'drink', time));
+  await waitFor(() => expect(result.current.isAnalysisReviewModalVisible).toBe(true));
+  expect(NutritionAnalyze).toHaveBeenCalledTimes(1);
+  expect(NutritionAnalyze).toHaveBeenCalledWith(
+    expect.objectContaining({
+      stage: 'enrich',
+      uri: undefined,
+      analysisTier: 'trial',
+      barcodeProduct: expect.objectContaining({ amount: 250, unit: 'ml', knownNutritionPer100: { calories: 0, protein: 0, caffeineMg: 20 } }),
+    })
+  );
+  expect(result.current.pendingAnalysisReview?.barcodeContext).toEqual({ product, amount: 250, productType: 'drink' });
+  expect(result.current.pendingAnalysisReview?.detectedDrinks).toEqual([]);
+  expect(result.current.mealTime).toEqual(time);
+  expect(result.current.analyzingFoods).toEqual([{ name: product.name, amount: 250, unit: 'ml', preparation: null }]);
+});

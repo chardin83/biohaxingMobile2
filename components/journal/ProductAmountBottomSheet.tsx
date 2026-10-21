@@ -5,7 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { Image, Keyboard, Pressable, StyleSheet, View } from 'react-native';
 
 import type { NutritionData } from '@/app/context/storage/nutrition/nutritionTypes';
+import { PREMIUM } from '@/constants/Premium';
 import { getDrinkImage } from '@/locales/drinkCatalog';
+import { getFreePhotoAnalysesRemaining } from '@/services/nutrition/photoAnalysisQuota';
 import type { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFacts';
 import { getAlcoholPercent, withAlcoholPercent } from '@/utils/drinkAlcohol';
 import { scaleNutritionComposition } from '@/utils/nutritionComposition';
@@ -25,293 +27,342 @@ export interface ProductAmountBottomSheetRef {
 }
 
 interface ProductAmountBottomSheetProps {
+  onDiscoverPremium?: () => void;
+  onAnalyzePremium?: (product: BarcodeProduct, amount: number, productType: BarcodeProductType, time: Date) => void;
   onSave: (product: BarcodeProduct, grams: number, productType: BarcodeProductType, time?: Date) => void;
 }
 
-const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, ProductAmountBottomSheetProps>(({ onSave }, ref) => {
-  const { colors } = useTheme();
-  const { t, i18n } = useTranslation();
-  const sheetDesign = useBottomSheetDesign(colors);
+const getProductImage = (product: BarcodeProduct | null, productType?: BarcodeProductType) => {
+  if (productType === 'drink' && product?.drinkType) return getDrinkImage(product.drinkType);
+  if (product?.image) return product.image;
+  if (product?.imageUrl) return { uri: product.imageUrl };
+  return undefined;
+};
 
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
+const getCalculationNoteKey = (product: BarcodeProduct | null, productType?: BarcodeProductType): string => {
+  if (product?.sourceMealId) return 'nutritionCalculatedPerMeal';
+  if (productType === 'drink') return 'nutritionCalculatedPer100ml';
+  return 'nutritionCalculatedPer100g';
+};
 
-  const [product, setProduct] = useState<BarcodeProduct | null>(null);
-  const [gramsText, setGramsText] = useState('100');
-  const [productType, setProductType] = useState<'food' | 'drink'>();
-  const [alcoholPercent, setAlcoholPercent] = useState<number>();
-  const [time, setTime] = useState(() => new Date());
+const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, ProductAmountBottomSheetProps>(
+  ({ onSave, onAnalyzePremium, onDiscoverPremium }, ref) => {
+    const { colors } = useTheme();
+    const { t, i18n } = useTranslation();
+    const sheetDesign = useBottomSheetDesign(colors);
 
-  const snapPoints = useMemo(() => ['75%'], []);
+    const bottomSheetRef = useRef<BottomSheetModal>(null);
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      present: nextProduct => {
-        setProduct(nextProduct);
-        setAlcoholPercent(getAlcoholPercent(nextProduct));
-        setGramsText(String(nextProduct.fromCatalog ? (nextProduct.quantityValue ?? 100) : 100));
-        setProductType(nextProduct.productType);
-        setTime(new Date());
+    const [product, setProduct] = useState<BarcodeProduct | null>(null);
+    const [gramsText, setGramsText] = useState('100');
+    const [productType, setProductType] = useState<'food' | 'drink'>();
+    const [alcoholPercent, setAlcoholPercent] = useState<number>();
+    const [time, setTime] = useState(() => new Date());
 
-        requestAnimationFrame(() => {
-          bottomSheetRef.current?.present();
-        });
-      },
+    const snapPoints = useMemo(() => ['75%'], []);
 
-      dismiss: () => {
-        Keyboard.dismiss();
-        bottomSheetRef.current?.dismiss();
-      },
-    }),
-    []
-  );
+    useImperativeHandle(
+      ref,
+      () => ({
+        present: nextProduct => {
+          setProduct(nextProduct);
+          setAlcoholPercent(getAlcoholPercent(nextProduct));
+          setGramsText(String(nextProduct.fromCatalog ? (nextProduct.quantityValue ?? 100) : 100));
+          setProductType(nextProduct.productType);
+          setTime(new Date());
 
-  useEffect(() => {
-    if (!product) {
-      setGramsText('100');
-    }
-  }, [product]);
+          requestAnimationFrame(() => {
+            bottomSheetRef.current?.present();
+          });
+        },
 
-  const amountUnit = product?.quantityUnit ?? 'g';
-  const productImage = productType === 'drink' && product?.drinkType
-    ? getDrinkImage(product.drinkType)
-    : product?.image ?? (product?.imageUrl ? { uri: product.imageUrl } : undefined);
-
-  const grams = useMemo(() => {
-    const normalized = gramsText.replace(',', '.').trim();
-
-    const value = Number(normalized);
-
-    if (!Number.isFinite(value) || value <= 0) {
-      return 0;
-    }
-
-    return value;
-  }, [gramsText]);
-
-  const factor = grams / 100;
-  const adjustedProduct = useMemo(() => product && alcoholPercent !== undefined && productType === 'drink'
-    ? withAlcoholPercent(product, alcoholPercent) : product, [product, alcoholPercent, productType]);
-
-  const scaledNutrition = useMemo<NutritionData | null>(() => {
-    const nutritionProduct = adjustedProduct;
-    if (!nutritionProduct) return null;
-
-    if (nutritionProduct.composition) {
-      return { name: nutritionProduct.name, ...scaleNutritionComposition(nutritionProduct.composition, factor) };
-    }
-
-    const per100 = nutritionProduct.nutrition;
-    const round1 = (value: number) => Math.round(value * 10) / 10;
-
-    return {
-      name: nutritionProduct.name,
-      calories: Math.round((per100.caloriesPer100g ?? 0) * factor),
-      protein: round1((per100.proteinPer100g ?? 0) * factor),
-      carbohydrates: round1((per100.carbohydratesPer100g ?? 0) * factor),
-      fat: round1((per100.fatPer100g ?? 0) * factor),
-      fiber: round1((per100.fiberPer100g ?? 0) * factor),
-      alcoholGrams: per100.alcoholGramsPer100g === undefined ? undefined : per100.alcoholGramsPer100g * factor,
-      caffeineMg: per100.caffeineMgPer100g === undefined ? undefined : Math.round(per100.caffeineMgPer100g * factor),
-      ...(per100.polyphenolsMgPer100g && {
-        polyphenolByType: Object.fromEntries(Object.entries(per100.polyphenolsMgPer100g).map(([key, value]) => [key, value * factor])),
+        dismiss: () => {
+          Keyboard.dismiss();
+          bottomSheetRef.current?.dismiss();
+        },
       }),
+      []
+    );
+
+    useEffect(() => {
+      if (!product) {
+        setGramsText('100');
+      }
+    }, [product]);
+
+    const amountUnit = productType === 'drink' ? 'ml' : (product?.quantityUnit ?? 'g');
+    const productImage = getProductImage(product, productType);
+
+    const grams = useMemo(() => {
+      const normalized = gramsText.replace(',', '.').trim();
+
+      const value = Number(normalized);
+
+      if (!Number.isFinite(value) || value <= 0) {
+        return 0;
+      }
+
+      return value;
+    }, [gramsText]);
+
+    const factor = grams / 100;
+    const adjustedProduct = useMemo(
+      () => (product && alcoholPercent !== undefined && productType === 'drink' ? withAlcoholPercent(product, alcoholPercent) : product),
+      [product, alcoholPercent, productType]
+    );
+
+    const scaledNutrition = useMemo<NutritionData | null>(() => {
+      const nutritionProduct = adjustedProduct;
+      if (!nutritionProduct) return null;
+
+      if (nutritionProduct.composition) {
+        return { name: nutritionProduct.name, ...scaleNutritionComposition(nutritionProduct.composition, factor) };
+      }
+
+      const per100 = nutritionProduct.nutrition;
+      const round1 = (value: number) => Math.round(value * 10) / 10;
+
+      return {
+        name: nutritionProduct.name,
+        calories: Math.round((per100.caloriesPer100g ?? 0) * factor),
+        protein: round1((per100.proteinPer100g ?? 0) * factor),
+        carbohydrates: round1((per100.carbohydratesPer100g ?? 0) * factor),
+        fat: round1((per100.fatPer100g ?? 0) * factor),
+        fiber: round1((per100.fiberPer100g ?? 0) * factor),
+        alcoholGrams: per100.alcoholGramsPer100g === undefined ? undefined : per100.alcoholGramsPer100g * factor,
+        caffeineMg: per100.caffeineMgPer100g === undefined ? undefined : Math.round(per100.caffeineMgPer100g * factor),
+        ...(per100.polyphenolsMgPer100g && {
+          polyphenolByType: Object.fromEntries(Object.entries(per100.polyphenolsMgPer100g).map(([key, value]) => [key, value * factor])),
+        }),
+      };
+    }, [adjustedProduct, factor]);
+
+    const alcoholFormatter = new Intl.NumberFormat(i18n.resolvedLanguage ?? i18n.language, { maximumFractionDigits: 1 });
+
+    const calculationNoteKey = getCalculationNoteKey(product, productType);
+
+    const handleSave = () => {
+      if (!product || grams <= 0 || !productType) return;
+
+      Keyboard.dismiss();
+      onSave(adjustedProduct ?? product, grams, productType, productType === 'drink' ? time : undefined);
+      bottomSheetRef.current?.dismiss();
     };
-  }, [adjustedProduct, factor]);
 
-  const alcoholFormatter = new Intl.NumberFormat(i18n.resolvedLanguage ?? i18n.language, { maximumFractionDigits: 1 });
+    return (
+      <BottomSheetModal
+        ref={bottomSheetRef}
+        snapPoints={snapPoints}
+        enablePanDownToClose
+        backgroundStyle={sheetDesign.backgroundStyle}
+        handleComponent={sheetDesign.handleComponent}
+        onDismiss={() => {
+          setProduct(null);
+          setProductType(undefined);
+        }}
+      >
+        <BottomSheetScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+          {product ? (
+            <>
+              <View style={styles.productHeader}>
+                {productImage ? <Image source={productImage} style={styles.productImage} resizeMode="contain" /> : null}
 
-  let calculationNoteKey = 'nutritionCalculatedPer100g';
-  if (product?.sourceMealId) {
-    calculationNoteKey = 'nutritionCalculatedPerMeal';
-  } else if (productType === 'drink') {
-    calculationNoteKey = 'nutritionCalculatedPer100ml';
-  }
+                <View style={styles.productInfo}>
+                  <ThemedText type="title2">{product.name}</ThemedText>
+                  {productType === 'drink' && (
+                    <View style={styles.timeSection}>
+                      <DateTimeInput value={time} onChange={setTime} showTime showDate={false} />
+                    </View>
+                  )}
 
-  const handleSave = () => {
-    if (!product || grams <= 0 || !productType) return;
+                  {product.brand ? (
+                    <ThemedText
+                      type="caption"
+                      style={{
+                        color: colors.textMuted,
+                      }}
+                    >
+                      {product.brand}
+                    </ThemedText>
+                  ) : null}
 
-    Keyboard.dismiss();
-    onSave(adjustedProduct ?? product, grams, productType, productType === 'drink' ? time : undefined);
-    bottomSheetRef.current?.dismiss();
-  };
+                  {product.quantity ? (
+                    <ThemedText
+                      type="caption"
+                      style={{
+                        color: colors.textMuted,
+                      }}
+                    >
+                      {product.quantity}
+                    </ThemedText>
+                  ) : null}
+                </View>
+              </View>
 
-  return (
-    <BottomSheetModal
-      ref={bottomSheetRef}
-      snapPoints={snapPoints}
-      enablePanDownToClose
-      backgroundStyle={sheetDesign.backgroundStyle}
-      handleComponent={sheetDesign.handleComponent}
-      onDismiss={() => {
-        setProduct(null);
-        setProductType(undefined);
-      }}
-    >
-      <BottomSheetScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        {product ? (
-          <>
-            <View style={styles.productHeader}>
-              {productImage ? (
-                <Image source={productImage} style={styles.productImage} resizeMode="contain" />
+              {!product.fromCatalog && (
+                <View style={styles.typeSection}>
+                  <ThemedText type="defaultSemiBold">{t('journal:nutritionLogger.barcodeProduct.type')}</ThemedText>
+
+                  <View style={styles.typeOptions}>
+                    <OptionSelector
+                      value={productType}
+                      onChange={setProductType}
+                      options={[
+                        { value: 'food', label: t('journal:nutritionLogger.barcodeProduct.meal'), icon: 'meal' },
+                        { value: 'drink', label: t('journal:nutritionLogger.barcodeProduct.drink'), icon: 'drink' },
+                      ]}
+                    />
+                  </View>
+                </View>
+              )}
+
+              <View style={styles.amountSection}>
+                <View style={styles.quantityFields}>
+                  {productType === 'drink' && alcoholPercent !== undefined && (
+                    <View style={[styles.quantityField, { borderColor: colors.border }]}>
+                      <ThemedText type="caption">{t('journal:nutritionLogger.alcoholStrength')} (%)</ThemedText>
+                      <NumberStepper
+                        value={alcoholPercent}
+                        onChange={setAlcoholPercent}
+                        min={0}
+                        max={100}
+                        step={0.5}
+                        compact
+                        inBottomSheet
+                        accessibilityLabel={t('journal:nutritionLogger.alcoholStrength')}
+                      />
+                    </View>
+                  )}
+                  <View style={[styles.quantityField, { borderColor: colors.border }]}>
+                    <ThemedText type="caption">
+                      {t('journal:nutritionLogger.barcodeProduct.amount')} ({amountUnit})
+                    </ThemedText>
+                    <NumberStepper
+                      value={grams}
+                      onChange={value => setGramsText(String(value))}
+                      min={0}
+                      step={10}
+                      compact
+                      inBottomSheet
+                      accessibilityLabel={t('journal:nutritionLogger.barcodeProduct.amount')}
+                    />
+                  </View>
+                </View>
+
+                {productType === 'drink' && alcoholPercent !== undefined && scaledNutrition && (
+                  <Notice
+                    variant="info"
+                    iconName="alcohol"
+                    message={t('journal:nutritionLogger.alcoholPortionInfo', {
+                      grams: alcoholFormatter.format(scaledNutrition.alcoholGrams ?? 0),
+                      glasses: alcoholFormatter.format((scaledNutrition.alcoholGrams ?? 0) / 12),
+                    })}
+                  />
+                )}
+
+                {product.servings && product.servings.length > 0 && (
+                  <View style={styles.servings}>
+                    {product.servings.map(serving => {
+                      const selected = serving.grams === grams;
+                      const gramsLabel = `${serving.grams} g`;
+                      const servingName = serving.labelKey ? t(`food:servingSizes.${serving.labelKey}`, { defaultValue: gramsLabel }) : null;
+                      const servingLabel = servingName === null ? gramsLabel : `${servingName} · ${gramsLabel}`;
+
+                      return (
+                        <Pressable
+                          key={`${serving.labelKey ?? 'grams'}-${serving.grams}`}
+                          onPress={() => setGramsText(String(serving.grams))}
+                          style={[styles.servingChip, { borderColor: selected ? colors.primary : colors.border }]}
+                        >
+                          <ThemedText type="caption" style={selected ? { color: colors.primary } : undefined}>
+                            {servingLabel}
+                          </ThemedText>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                )}
+              </View>
+
+              {scaledNutrition && (
+                <View style={[styles.nutrition, { borderColor: colors.border }]}>
+                  <NutritionBreakdown nutrition={scaledNutrition} keyPrefix="product" existingDataOnly={product.fromCatalog === true} />
+                </View>
+              )}
+
+              <ThemedText
+                type="caption"
+                style={[
+                  styles.per100g,
+                  {
+                    color: colors.textMuted,
+                  },
+                ]}
+              >
+                {t('journal:nutritionLogger.barcodeProduct.nutritionForAmount')}
+              </ThemedText>
+
+              {!product.fromCatalog && product.barcode && onAnalyzePremium ? (
+                <View style={styles.premiumAnalysis}>
+                  <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                    {t('journal:nutritionLogger.barcodeProduct.premiumAnalysisHint')}
+                  </ThemedText>
+                  <AppButton
+                    title={t('journal:nutritionLogger.barcodeProduct.analyzePremium')}
+                    variant="premium"
+                    icon="crown"
+                    rightIcon="chevron.right"
+                    disabled={grams <= 0 || !productType}
+                    onPress={async () => {
+                      if (!productType || grams <= 0) return;
+                      Keyboard.dismiss();
+                      if (!PREMIUM && (await getFreePhotoAnalysesRemaining()) === 0) {
+                        onDiscoverPremium?.();
+                        return;
+                      }
+                      onAnalyzePremium(adjustedProduct ?? product, grams, productType, time);
+                      bottomSheetRef.current?.dismiss();
+                    }}
+                  />
+                </View>
               ) : null}
 
-              <View style={styles.productInfo}>
-                <ThemedText type="title2">{product.name}</ThemedText>
-                {productType === 'drink' && (
-                  <View style={styles.timeSection}>
-                    <DateTimeInput value={time} onChange={setTime} showTime showDate={false} />
-                  </View>
-                )}
+              <AppButton
+                title={t('journal:nutritionLogger.barcodeProduct.add')}
+                onPress={handleSave}
+                disabled={grams <= 0}
+                variant="primary"
+                style={styles.saveButton}
+              />
 
-                {product.brand ? (
-                  <ThemedText
-                    type="caption"
-                    style={{
-                      color: colors.textMuted,
-                    }}
-                  >
-                    {product.brand}
-                  </ThemedText>
-                ) : null}
+              <ThemedText
+                type="caption"
+                style={[
+                  styles.per100g,
+                  {
+                    color: colors.textMuted,
+                  },
+                ]}
+              >
+                {t(`journal:nutritionLogger.barcodeProduct.${calculationNoteKey}`)}
+              </ThemedText>
 
-                {product.quantity ? (
-                  <ThemedText
-                    type="caption"
-                    style={{
-                      color: colors.textMuted,
-                    }}
-                  >
-                    {product.quantity}
-                  </ThemedText>
-                ) : null}
-              </View>
-            </View>
-
-            {!product.fromCatalog && (
-              <View style={styles.typeSection}>
-                <ThemedText type="defaultSemiBold">{t('journal:nutritionLogger.barcodeProduct.type')}</ThemedText>
-
-                <View style={styles.typeOptions}>
-                  <OptionSelector
-                    value={productType}
-                    onChange={setProductType}
-                    options={[
-                      { value: 'food', label: t('journal:nutritionLogger.barcodeProduct.meal'), icon: 'meal' },
-                      { value: 'drink', label: t('journal:nutritionLogger.barcodeProduct.drink'), icon: 'drink' },
-                    ]}
-                  />
-                </View>
-              </View>
-            )}
-
-            <View style={styles.amountSection}>
-              <View style={styles.quantityFields}>
-                {productType === 'drink' && alcoholPercent !== undefined && (
-                  <View style={[styles.quantityField, { borderColor: colors.border }]}>
-                    <ThemedText type="caption">{t('journal:nutritionLogger.alcoholStrength')} (%)</ThemedText>
-                    <NumberStepper value={alcoholPercent} onChange={setAlcoholPercent} min={0} max={100} step={0.5} compact inBottomSheet accessibilityLabel={t('journal:nutritionLogger.alcoholStrength')} />
-                  </View>
-                )}
-                <View style={[styles.quantityField, { borderColor: colors.border }]}>
-                  <ThemedText type="caption">{t('journal:nutritionLogger.barcodeProduct.amount')} ({amountUnit})</ThemedText>
-                  <NumberStepper
-                    value={grams}
-                    onChange={value => setGramsText(String(value))}
-                    min={0}
-                    step={10}
-                    compact
-                    inBottomSheet
-                    accessibilityLabel={t('journal:nutritionLogger.barcodeProduct.amount')}
-                  />
-                </View>
-              </View>
-
-              {productType === 'drink' && alcoholPercent !== undefined && scaledNutrition && (
-                <Notice
-                  variant="info"
-                  iconName="alcohol"
-                  message={t('journal:nutritionLogger.alcoholPortionInfo', {
-                    grams: alcoholFormatter.format(scaledNutrition.alcoholGrams ?? 0),
-                    glasses: alcoholFormatter.format((scaledNutrition.alcoholGrams ?? 0) / 12),
-                  })}
-                />
-              )}
-
-              {product.servings && product.servings.length > 0 && (
-                <View style={styles.servings}>
-                  {product.servings.map(serving => {
-                    const selected = serving.grams === grams;
-                    const gramsLabel = `${serving.grams} g`;
-
-                    return (
-                      <Pressable
-                        key={`${serving.labelKey ?? 'grams'}-${serving.grams}`}
-                        onPress={() => setGramsText(String(serving.grams))}
-                        style={[styles.servingChip, { borderColor: selected ? colors.primary : colors.border }]}
-                      >
-                        <ThemedText type="caption" style={selected ? { color: colors.primary } : undefined}>
-                          {serving.labelKey ? `${t(`food:servingSizes.${serving.labelKey}`, { defaultValue: gramsLabel })} · ${gramsLabel}` : gramsLabel}
-                        </ThemedText>
-                      </Pressable>
-                    );
-                  })}
-                </View>
-              )}
-            </View>
-
-            {scaledNutrition && (
-              <View style={[styles.nutrition, { borderColor: colors.border }]}>
-                <NutritionBreakdown nutrition={scaledNutrition} keyPrefix="product" />
-              </View>
-            )}
-
-            <ThemedText
-              type="caption"
-              style={[
-                styles.per100g,
-                {
-                  color: colors.textMuted,
-                },
-              ]}
-            >
-              {t('journal:nutritionLogger.barcodeProduct.nutritionForAmount')}
-            </ThemedText>
-
-            <AppButton
-              title={t('journal:nutritionLogger.barcodeProduct.add')}
-              onPress={handleSave}
-              disabled={grams <= 0}
-              variant="primary"
-              style={styles.saveButton}
-            />
-
-            <ThemedText
-              type="caption"
-              style={[
-                styles.per100g,
-                {
-                  color: colors.textMuted,
-                },
-              ]}
-            >
-              {t(`journal:nutritionLogger.barcodeProduct.${calculationNoteKey}`)}
-            </ThemedText>
-
-            {/* <AppButton title="Lägg till" onPress={handleSave} disabled={grams <= 0} variant="primary" style={styles.saveButton} /> */}
-          </>
-        ) : null}
-      </BottomSheetScrollView>
-    </BottomSheetModal>
-  );
-});
+              {/* <AppButton title="Lägg till" onPress={handleSave} disabled={grams <= 0} variant="primary" style={styles.saveButton} /> */}
+            </>
+          ) : null}
+        </BottomSheetScrollView>
+      </BottomSheetModal>
+    );
+  }
+);
 
 ProductAmountBottomSheet.displayName = 'ProductAmountBottomSheet';
 
 const styles = StyleSheet.create({
+  premiumAnalysis: { marginTop: 16, gap: 10 },
   timeSection: { marginTop: 6, alignItems: 'flex-start' },
   content: {
-    flex: 1,
+    flexGrow: 1,
     paddingHorizontal: 20,
     paddingTop: 8,
     paddingBottom: 24,

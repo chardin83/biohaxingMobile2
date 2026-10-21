@@ -273,7 +273,10 @@
       "barcodePlaceholder": "E.g. 7310865004703",
       "search": "Find product",
       "nutritionCalculatedPer100ml": "Nutrition values calculated from values per 100 ml",
-      "nutritionCalculatedPerMeal": "Nutrition values for the whole meal (100 % = the logged amount)"
+      "nutritionCalculatedPerMeal": "Nutrition values for the whole meal (100 % = the logged amount)",
+      "analyzePremium": "Add Premium analysis",
+      "reanalyzePremium": "Analyze this product again",
+      "premiumAnalysisHint": "Known barcode nutrition values are preserved. Missing values are estimated by AI. Requires Premium or a free Premium trial analysis."
     },
     "drinkPicker": {
       "title": "Choose drink",
@@ -328,7 +331,17 @@
     "fiberTrialResult": "Fiber types were included in your free Premium trial analysis. Get Premium for more full analyses.",
     "polyphenolTypesPremium": "Polyphenol types are a Premium feature. Premium lets you see the breakdown by polyphenol type. Total polyphenols are always included.",
     "polyphenolPremiumExpired": "Premium has expired. Your previously analyzed polyphenol types remain visible. Reactivate Premium to analyze polyphenol types in new meals.",
-    "polyphenolTrialResult": "Polyphenol types were included in your free Premium trial analysis. Get Premium for more full analyses."
+    "polyphenolTrialResult": "Polyphenol types were included in your free Premium trial analysis. Get Premium for more full analyses.",
+    "microbiomeTitle": "Microbiome support",
+    "extraNutritionMissing": "No values available yet. Add Biohaxing analysis for an estimate.",
+    "aminoAcidsBiohaxingInfo": "Amino acids are part of Biohaxing’s detailed nutrition analysis.",
+    "biohaxingPremiumRequired": "Biohaxing’s detailed analysis is a Premium feature.",
+    "premiumTrialsExhausted": "Your three free trial analyses have been used.",
+    "fiberBiohaxingInfo": "Fiber types are included in Biohaxing’s detailed analysis with Premium or a free trial analysis.",
+    "microbiomeBiohaxingInfo": "Premium estimates which gut bacteria the meal’s nutrients may support and which ingredients contribute.",
+    "mineralsBiohaxingInfo": "Premium estimates minerals such as iron, magnesium and zinc, including the amount of each mineral.",
+    "vitaminsBiohaxingInfo": "Premium estimates vitamins such as A, C and D, including the amount of each vitamin.",
+    "polyphenolBiohaxingInfo": "Polyphenol types are included in Biohaxing’s detailed analysis with Premium or a free trial analysis."
   },
   "dayEdit": {
     "tabMeal": "Meal",

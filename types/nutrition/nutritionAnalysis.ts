@@ -1,3 +1,4 @@
+import type { BarcodeAnalysisContext } from './barcodeAnalysis';
 import type { NutritionData } from '@/app/context/storage/nutrition/nutritionTypes';
 import type { DetectedDrink } from '@/services/gptServices';
 import type { WeeklyTrackingSignals } from '@/utils/analyzeNutrition';
@@ -13,6 +14,7 @@ export type ReviewDrink = DetectedDrink & {
 };
 
 export type PendingAnalysisReview = {
+  barcodeContext?: BarcodeAnalysisContext;
   analyzedFoods?: IdentifiedFood[];
   analysis: NutritionData | null;
   weeklyTrackingSignals: WeeklyTrackingSignals;

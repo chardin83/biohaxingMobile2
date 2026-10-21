@@ -1,7 +1,7 @@
 import { useTheme } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View, type ViewStyle } from 'react-native';
 
 import type { NutritionData } from '@/app/context/storage/nutrition/nutritionTypes';
 import { ESSENTIAL_AMINO_ACID_KEYS, OTHER_AMINO_ACID_KEYS } from '@/constants/aminoAcids';
@@ -10,21 +10,25 @@ import { MINERAL_TYPE_KEYS } from '@/constants/minerals';
 import { POLYPHENOL_TYPE_KEYS } from '@/constants/polyphenols';
 import { PREMIUM } from '@/constants/Premium';
 import { VITAMIN_TYPE_KEYS } from '@/constants/vitamins';
+import { useFreePhotoAnalysesRemaining } from '@/hooks/nutrition/useFreePhotoAnalysesRemaining';
 
 import { Collapsible } from './Collapsible';
 import AlcoholInfoBottomSheet from './journal/AlcoholInfoBottomSheet';
 import { ThemedModal } from './ThemedModal';
 import { ThemedText } from './ThemedText';
-import AppButton from './ui/AppButton';
 import { IconSymbol } from './ui/IconSymbol';
 import PremiumLink from './ui/PremiumLink';
 import PremiumOffer from './ui/PremiumOffer';
 
 type ConfidenceLevel = 'high' | 'medium' | 'low' | 'unknown';
 
-type NutritionBreakdownProps = {
+type NutritionContentProps = {
   nutrition: NutritionData;
   keyPrefix: string;
+};
+
+type NutritionBreakdownProps = NutritionContentProps & {
+  existingDataOnly?: boolean;
 };
 
 const hasAnyTypedTotals = (values?: Partial<Record<string, number>>): boolean => Object.values(values ?? {}).some(value => (value ?? 0) > 0);
@@ -92,34 +96,123 @@ const collapsibleHeader = (text: string) => {
 // Swedish standard drink: 12 grams of pure alcohol.
 const ALCOHOL_GRAMS_PER_STANDARD_DRINK = 12;
 
-const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyPrefix }) => {
+type NutrientDetailsProps = NutritionContentProps & {
+  hasAnalysisAccess: boolean;
+  showAnalysisInfo: boolean;
+};
+
+type PremiumNutrientDetailsProps = NutrientDetailsProps & {
+  showPremiumLink: boolean;
+  analysisPanelColor: ViewStyle;
+  onPremium: () => void;
+};
+
+type AlcoholSectionProps = {
+  nutrition: NutritionData;
+  onAlcoholInfo: () => void;
+  hasAnalysisAccess: boolean;
+};
+
+const ProteinSection = ({
+  nutrition,
+  keyPrefix,
+  hasAnalysisAccess,
+  showAnalysisInfo,
+  showPremiumLink,
+  analysisPanelColor,
+  onPremium,
+}: PremiumNutrientDetailsProps) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const [premiumVisible, setPremiumVisible] = useState(false);
-  const [alcoholInfoVisible, setAlcoholInfoVisible] = useState(false);
+  const { protein, aminoAcidsByType } = nutrition;
+  const hasAminoAcids = hasAnyTypedTotals(aminoAcidsByType);
 
-  const {
-    calories,
-    protein,
-    carbohydrates,
-    fat,
-    fiber,
-    caffeineMg,
-    alcoholGrams,
-    fiberByType,
-    fiberSubtypeTotals,
-    polyphenolByType,
-    mineralsByType,
-    mineralsConfidenceByType,
-    vitaminsByType,
-    aminoAcidsByType,
-    microbiomeSupport,
-  } = nutrition;
+  return (
+    <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
+      <Collapsible
+        {...collapsibleHeader(t('journal:nutritionLogger.protein', { value: protein }))}
+        titleType="default"
+        initialCollapsed
+        leftContent={<IconSymbol name="protein" size={14} color={colors.textMuted} />}
+      >
+        <View style={[styles.biohaxingPanel, analysisPanelColor]} testID="nutrition-amino-acids">
+          {showAnalysisInfo && !PREMIUM && (
+            <ThemedText type="caption" style={{ color: colors.textMuted }}>
+              {t('journal:nutritionLogger.aminoAcidsBiohaxingInfo')}
+            </ThemedText>
+          )}
+          {hasAminoAcids && (
+            <>
+              <ThemedText type="caption" style={[styles.aminoGroupHeader, { color: colors.textMuted }]}>
+                {t('journal:nutritionLogger.essentialAminoAcidsTitle')}
+              </ThemedText>
 
+              <ThemedText type="default" style={{ color: colors.textMuted }}>
+                • {t('journal:nutritionLogger.essentialAminoAcidsTotal')}: {(getEssentialAminoTotalMg(aminoAcidsByType!) / 1000).toFixed(1)} g
+              </ThemedText>
+
+              {ESSENTIAL_AMINO_ACID_KEYS.map(key => {
+                const value = aminoAcidsByType?.[key] ?? 0;
+
+                if (value <= 0) return null;
+
+                return (
+                  <ThemedText key={`${keyPrefix}_${key}`} type="default">
+                    • {t(`journal:nutritionLogger.aminoAcidLabels.${key}`)}: {(value / 1000).toFixed(1)} g
+                  </ThemedText>
+                );
+              })}
+
+              {OTHER_AMINO_ACID_KEYS.some(key => (aminoAcidsByType?.[key] ?? 0) > 0) && (
+                <>
+                  <ThemedText type="caption" style={[styles.aminoGroupHeader, styles.aminoGroupHeaderSecond, { color: colors.textMuted }]}>
+                    {t('journal:nutritionLogger.otherAminoAcidsTitle')}
+                  </ThemedText>
+
+                  {OTHER_AMINO_ACID_KEYS.map(key => {
+                    const value = aminoAcidsByType?.[key] ?? 0;
+
+                    if (value <= 0) return null;
+
+                    return (
+                      <ThemedText key={`${keyPrefix}_${key}`} type="default">
+                        • {t(`journal:nutritionLogger.aminoAcidLabels.${key}`)}: {(value / 1000).toFixed(1)} g
+                      </ThemedText>
+                    );
+                  })}
+                </>
+              )}
+            </>
+          )}
+          {!hasAminoAcids && hasAnalysisAccess && showAnalysisInfo && (
+            <ThemedText type="caption" style={{ color: colors.textMuted }}>
+              {t('journal:nutritionLogger.extraNutritionMissing')}
+            </ThemedText>
+          )}
+          {showPremiumLink && <PremiumLink onPress={onPremium} />}
+        </View>
+      </Collapsible>
+    </View>
+  );
+};
+
+const FiberSection = ({
+  nutrition,
+  keyPrefix,
+  hasAnalysisAccess,
+  showAnalysisInfo,
+  showPremiumLink,
+  analysisPanelColor,
+  onPremium,
+}: PremiumNutrientDetailsProps) => {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const { fiber, fiberByType, fiberSubtypeTotals } = nutrition;
   const isTrialAnalysis = nutrition.analysisTier === 'trial';
-  const hasAnalyzedPolyphenolTypes = POLYPHENOL_TYPE_KEYS.some(key => key !== 'polyphenols_total' && (polyphenolByType?.[key] ?? 0) > 0);
+  const hasFiberDetails =
+    FIBER_TYPE_KEYS.some(key => key !== 'fiber_total' && fiberByType?.[key] !== undefined) ||
+    Object.values(fiberSubtypeTotals ?? {}).some(value => value !== undefined);
   const hasAnalyzedFiberTypes = FIBER_TYPE_KEYS.some(key => key !== 'fiber_total' && (fiberByType?.[key] ?? 0) > 0) || hasAnyTypedTotals(fiberSubtypeTotals);
-
   const getFiberSubtypeAmountsForCategory = (category: (typeof FIBER_TYPE_KEYS)[number]): Array<{ subtype: FiberSubtype; label: string; amount: number }> => {
     if (category === 'fiber_total') return [];
 
@@ -134,6 +227,301 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
       .filter(item => item.amount > 0);
   };
 
+  let premiumMessageKey = 'journal:nutritionLogger.fiberTypesPremium';
+  if (isTrialAnalysis) {
+    premiumMessageKey = 'journal:nutritionLogger.fiberTrialResult';
+  } else if (hasAnalyzedFiberTypes) {
+    premiumMessageKey = 'journal:nutritionLogger.fiberPremiumExpired';
+  }
+
+  return (
+    <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
+      <Collapsible
+        {...collapsibleHeader(t('journal:nutritionLogger.fiber', { value: fiber }))}
+        titleType="default"
+        contentStyle={[styles.premiumDropdown, analysisPanelColor]}
+        initialCollapsed
+        leftContent={<IconSymbol name="fiber" size={14} color={colors.textMuted} />}
+      >
+        {!hasAnalysisAccess ? (
+          <View style={styles.fiberPremium}>
+            <ThemedText type="caption" style={{ color: colors.textMuted }}>
+              {t(premiumMessageKey)}
+            </ThemedText>
+          </View>
+        ) : null}
+        {showAnalysisInfo && hasAnalysisAccess && !hasFiberDetails && (
+          <ThemedText type="caption" style={{ color: colors.textMuted }}>
+            {t('journal:nutritionLogger.extraNutritionMissing')}
+          </ThemedText>
+        )}
+        {hasAnalyzedFiberTypes &&
+          FIBER_TYPE_KEYS.map(key => {
+            const value = fiberByType?.[key] ?? 0;
+
+            const subtypeRows = getFiberSubtypeAmountsForCategory(key);
+            if (value <= 0 && subtypeRows.length === 0) return null;
+
+            return (
+              <View key={`${keyPrefix}_${key}`} style={styles.fiberCategoryRow}>
+                <ThemedText type="default">
+                  • {t(`journal:nutritionLogger.fiberLabels.${key}`)}
+                  {value > 0 ? `: ${value.toFixed(1)} g` : ''}
+                </ThemedText>
+
+                {subtypeRows.map(row => (
+                  <ThemedText key={`${keyPrefix}_${key}_${row.subtype}`} type="caption" style={styles.fiberSubtypeText}>
+                    - {row.label}: {row.amount.toFixed(1)} g
+                  </ThemedText>
+                ))}
+              </View>
+            );
+          })}
+        {showPremiumLink && <PremiumLink onPress={onPremium} />}
+      </Collapsible>
+    </View>
+  );
+};
+
+const MineralsSection = ({ nutrition, keyPrefix, hasAnalysisAccess, showAnalysisInfo }: NutrientDetailsProps) => {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const { mineralsByType, mineralsConfidenceByType } = nutrition;
+
+  return (
+    <View style={[styles.nutrientRow, { borderBottomColor: hasAnalysisAccess ? colors.infoDefault : colors.goldSoft }]} testID="nutrition-minerals">
+      <Collapsible
+        {...collapsibleHeader(
+          t('journal:nutritionLogger.minerals', {
+            value: hasAnyTypedTotals(mineralsByType) ? getMineralsTotal(mineralsByType!).toFixed(1) : '—',
+          })
+        )}
+        titleType="default"
+        initialCollapsed
+      >
+        {showAnalysisInfo && !PREMIUM && (
+          <ThemedText type="caption" style={{ color: colors.textMuted }}>
+            {t('journal:nutritionLogger.mineralsBiohaxingInfo')}
+          </ThemedText>
+        )}
+        {showAnalysisInfo && hasAnalysisAccess && !hasAnyTypedTotals(mineralsByType) ? (
+          <ThemedText type="caption" style={{ color: colors.textMuted }}>
+            {t('journal:nutritionLogger.extraNutritionMissing')}
+          </ThemedText>
+        ) : null}
+        {MINERAL_TYPE_KEYS.filter(key => key !== 'minerals_total').map(key => {
+          const value = mineralsByType?.[key] ?? 0;
+
+          if (value <= 0) return null;
+
+          return (
+            <ThemedText key={`${keyPrefix}_${key}`} type="default">
+              • {t(`journal:nutritionLogger.mineralLabels.${key}`)}: {value.toFixed(1)} mg
+              {' • '}
+              {t(getConfidenceLabelKey(mineralsConfidenceByType?.[key] ?? 'unknown'))}
+            </ThemedText>
+          );
+        })}
+      </Collapsible>
+    </View>
+  );
+};
+
+const VitaminsSection = ({ nutrition, keyPrefix, hasAnalysisAccess, showAnalysisInfo }: NutrientDetailsProps) => {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const { vitaminsByType } = nutrition;
+
+  return (
+    <View style={[styles.nutrientRow, { borderBottomColor: hasAnalysisAccess ? colors.infoDefault : colors.goldSoft }]} testID="nutrition-vitamins">
+      <Collapsible
+        {...collapsibleHeader(
+          t('journal:nutritionLogger.vitamins', {
+            value: hasAnyTypedTotals(vitaminsByType) ? getVitaminsTotal(vitaminsByType!).toFixed(1) : '—',
+          })
+        )}
+        titleType="default"
+        initialCollapsed
+      >
+        {showAnalysisInfo && !PREMIUM && (
+          <ThemedText type="caption" style={{ color: colors.textMuted }}>
+            {t('journal:nutritionLogger.vitaminsBiohaxingInfo')}
+          </ThemedText>
+        )}
+        {showAnalysisInfo && hasAnalysisAccess && !hasAnyTypedTotals(vitaminsByType) ? (
+          <ThemedText type="caption" style={{ color: colors.textMuted }}>
+            {t('journal:nutritionLogger.extraNutritionMissing')}
+          </ThemedText>
+        ) : null}
+        {VITAMIN_TYPE_KEYS.filter(key => key !== 'vitamins_total').map(key => {
+          const value = vitaminsByType?.[key] ?? 0;
+
+          if (value <= 0) return null;
+
+          return (
+            <ThemedText key={`${keyPrefix}_${key}`} type="default">
+              • {t(`journal:nutritionLogger.vitaminLabels.${key}`)}: {formatMilligramValue(value)} mg
+            </ThemedText>
+          );
+        })}
+      </Collapsible>
+    </View>
+  );
+};
+
+const MicrobiomeSection = ({ nutrition, keyPrefix, hasAnalysisAccess, showAnalysisInfo }: NutrientDetailsProps) => {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const { microbiomeSupport } = nutrition;
+
+  return (
+    <View style={[styles.nutrientRow, { borderBottomColor: hasAnalysisAccess ? colors.infoDefault : colors.goldSoft }]} testID="nutrition-microbiome">
+      <Collapsible
+        title={t('journal:nutritionLogger.microbiomeTitle')}
+        rightContent={<ThemedText>{microbiomeSupport?.length ? String(microbiomeSupport.length) : '—'}</ThemedText>}
+        titleType="default"
+        initialCollapsed
+        leftContent={<IconSymbol name="microbiome" size={14} color={colors.textMuted} />}
+      >
+        {showAnalysisInfo && !PREMIUM && (
+          <ThemedText type="caption" style={{ color: colors.textMuted }}>
+            {t('journal:nutritionLogger.microbiomeBiohaxingInfo')}
+          </ThemedText>
+        )}
+        {showAnalysisInfo && hasAnalysisAccess && !microbiomeSupport?.length ? (
+          <ThemedText type="caption" style={{ color: colors.textMuted }}>
+            {t('journal:nutritionLogger.extraNutritionMissing')}
+          </ThemedText>
+        ) : null}
+        {microbiomeSupport?.map(item => (
+          <View key={`${keyPrefix}_${item.microbe}`} style={styles.microbeRow}>
+            <ThemedText type="default">
+              • {item.microbe}: {item.supportLevel}
+            </ThemedText>
+
+            {item.linkedNutrients.length > 0 && (
+              <ThemedText type="caption" style={styles.fiberSubtypeText}>
+                {t('journal:nutritionLogger.linkedNutrients')}: {item.linkedNutrients.join(', ')}
+              </ThemedText>
+            )}
+
+            {item.likelyFoods.length > 0 && (
+              <ThemedText type="caption" style={styles.fiberSubtypeText}>
+                {t('journal:nutritionLogger.sources')}: {item.likelyFoods.join(', ')}
+              </ThemedText>
+            )}
+          </View>
+        ))}
+      </Collapsible>
+    </View>
+  );
+};
+
+const PolyphenolsSection = ({ nutrition, keyPrefix, hasAnalysisAccess, showAnalysisInfo }: NutrientDetailsProps) => {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const { polyphenolByType } = nutrition;
+  const isTrialAnalysis = nutrition.analysisTier === 'trial';
+  const hasPolyphenolDetails = POLYPHENOL_TYPE_KEYS.some(key => key !== 'polyphenols_total' && polyphenolByType?.[key] !== undefined);
+  const hasAnalyzedPolyphenolTypes = POLYPHENOL_TYPE_KEYS.some(key => key !== 'polyphenols_total' && (polyphenolByType?.[key] ?? 0) > 0);
+
+  let premiumMessageKey = 'journal:nutritionLogger.polyphenolTypesPremium';
+  if (isTrialAnalysis) {
+    premiumMessageKey = 'journal:nutritionLogger.polyphenolTrialResult';
+  } else if (hasAnalyzedPolyphenolTypes) {
+    premiumMessageKey = 'journal:nutritionLogger.polyphenolPremiumExpired';
+  }
+
+  return (
+    <View style={[styles.nutrientRow, { borderBottomColor: hasAnalysisAccess ? colors.infoDefault : colors.goldSoft }]} testID="nutrition-polyphenols">
+      <Collapsible
+        {...collapsibleHeader(
+          t('journal:nutritionLogger.polyphenols', {
+            value: polyphenolByType?.polyphenols_total !== undefined ? polyphenolByType.polyphenols_total.toFixed(1) : '—',
+          })
+        )}
+        titleType="default"
+        initialCollapsed
+        leftContent={<IconSymbol name="polyphenol" size={14} color={colors.textMuted} />}
+      >
+        {showAnalysisInfo && !hasAnalysisAccess && (
+          <View style={styles.fiberPremium}>
+            <ThemedText type="caption" style={{ color: colors.textMuted }}>
+              {t(premiumMessageKey)}
+            </ThemedText>
+          </View>
+        )}
+        {showAnalysisInfo && !PREMIUM && hasAnalysisAccess && (
+          <ThemedText type="caption" style={{ color: colors.textMuted }}>
+            {t('journal:nutritionLogger.polyphenolBiohaxingInfo')}
+          </ThemedText>
+        )}
+        {showAnalysisInfo && hasAnalysisAccess && !hasPolyphenolDetails && (
+          <ThemedText type="caption" style={{ color: colors.textMuted }}>
+            {t('journal:nutritionLogger.extraNutritionMissing')}
+          </ThemedText>
+        )}
+        {POLYPHENOL_TYPE_KEYS.filter(key => key !== 'polyphenols_total').map(key => {
+          const value = polyphenolByType?.[key] ?? 0;
+
+          if (value <= 0) return null;
+
+          return (
+            <ThemedText key={`${keyPrefix}_${key}`} type="default">
+              • {t(`journal:nutritionLogger.polyphenolLabels.${key}`)}: {value.toFixed(1)} mg
+            </ThemedText>
+          );
+        })}
+      </Collapsible>
+    </View>
+  );
+};
+
+const AlcoholSection = ({ nutrition, onAlcoholInfo, hasAnalysisAccess }: AlcoholSectionProps) => {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const { alcoholGrams } = nutrition;
+
+  return (
+    <View style={[styles.nutrientRow, { borderBottomColor: hasAnalysisAccess ? colors.infoDefault : colors.goldSoft }]} testID="nutrition-alcohol">
+      <View style={styles.alcoholRow}>
+        <IconSymbol name="alcohol" size={16} color={colors.textMuted} />
+        <View style={styles.alcoholLabel}>
+          <ThemedText>{t('journal:nutritionLogger.alcoholLabel')}</ThemedText>
+          <Pressable accessibilityRole="button" accessibilityLabel={t('journal:nutritionLogger.alcoholInfo.title')} hitSlop={10} onPress={onAlcoholInfo}>
+            <IconSymbol name="info" size={16} color={colors.textMuted} />
+          </Pressable>
+        </View>
+        <ThemedText>{t('journal:nutritionLogger.alcoholGrams', { value: alcoholGrams === undefined ? '—' : Math.round(alcoholGrams * 10) / 10 })}</ThemedText>
+      </View>
+      <View style={styles.standardDrinksRow}>
+        <ThemedText style={[styles.standardDrinks, { color: colors.textMuted }]}>
+          {t('journal:nutritionLogger.alcoholStandardDrinks', {
+            value: alcoholGrams === undefined ? '—' : Math.round((alcoholGrams / ALCOHOL_GRAMS_PER_STANDARD_DRINK) * 10) / 10,
+          })}
+        </ThemedText>
+        <IconSymbol name="alcohol" size={12} color={colors.textMuted} />
+      </View>
+    </View>
+  );
+};
+
+const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyPrefix, existingDataOnly = false }) => {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+  const trialsRemaining = useFreePhotoAnalysesRemaining();
+  // While the counter loads, avoid briefly showing an expired-Premium message.
+  const hasAnalysisAccess = existingDataOnly || PREMIUM || trialsRemaining === null || trialsRemaining > 0;
+  const showAnalysisInfo = !existingDataOnly;
+  const showPremiumLink = !PREMIUM && !existingDataOnly;
+  const analysisPanelColor = hasAnalysisAccess
+    ? { borderColor: colors.infoDefault, backgroundColor: colors.infoWeak }
+    : { borderColor: colors.goldSoft, backgroundColor: colors.goldTransparent };
+  const [premiumVisible, setPremiumVisible] = useState(false);
+  const [alcoholInfoVisible, setAlcoholInfoVisible] = useState(false);
+
+  const { calories, carbohydrates, fat, caffeineMg } = nutrition;
+
   return (
     <>
       <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
@@ -141,61 +529,15 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
         <NutrientText text={t('journal:nutritionLogger.calories', { value: calories })} />
       </View>
 
-      {hasAnyTypedTotals(aminoAcidsByType) ? (
-        <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
-          <Collapsible
-            {...collapsibleHeader(t('journal:nutritionLogger.protein', { value: protein }))}
-            titleType="default"
-            initialCollapsed
-            leftContent={<IconSymbol name="protein" size={14} color={colors.textMuted} />}
-          >
-            <ThemedText type="caption" style={[styles.aminoGroupHeader, { color: colors.textMuted }]}>
-              {t('journal:nutritionLogger.essentialAminoAcidsTitle')}
-            </ThemedText>
-
-            <ThemedText type="default" style={{ color: colors.textMuted }}>
-              • {t('journal:nutritionLogger.essentialAminoAcidsTotal')}: {(getEssentialAminoTotalMg(aminoAcidsByType!) / 1000).toFixed(1)} g
-            </ThemedText>
-
-            {ESSENTIAL_AMINO_ACID_KEYS.map(key => {
-              const value = aminoAcidsByType?.[key] ?? 0;
-
-              if (value <= 0) return null;
-
-              return (
-                <ThemedText key={`${keyPrefix}_${key}`} type="default">
-                  • {t(`journal:nutritionLogger.aminoAcidLabels.${key}`)}: {(value / 1000).toFixed(1)} g
-                </ThemedText>
-              );
-            })}
-
-            {OTHER_AMINO_ACID_KEYS.some(key => (aminoAcidsByType?.[key] ?? 0) > 0) && (
-              <>
-                <ThemedText type="caption" style={[styles.aminoGroupHeader, styles.aminoGroupHeaderSecond, { color: colors.textMuted }]}>
-                  {t('journal:nutritionLogger.otherAminoAcidsTitle')}
-                </ThemedText>
-
-                {OTHER_AMINO_ACID_KEYS.map(key => {
-                  const value = aminoAcidsByType?.[key] ?? 0;
-
-                  if (value <= 0) return null;
-
-                  return (
-                    <ThemedText key={`${keyPrefix}_${key}`} type="default">
-                      • {t(`journal:nutritionLogger.aminoAcidLabels.${key}`)}: {(value / 1000).toFixed(1)} g
-                    </ThemedText>
-                  );
-                })}
-              </>
-            )}
-          </Collapsible>
-        </View>
-      ) : (
-        <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
-          <IconSymbol name="protein" size={16} color={colors.textMuted} />
-          <NutrientText text={t('journal:nutritionLogger.protein', { value: protein })} />
-        </View>
-      )}
+      <ProteinSection
+        nutrition={nutrition}
+        keyPrefix={keyPrefix}
+        hasAnalysisAccess={hasAnalysisAccess}
+        showAnalysisInfo={showAnalysisInfo}
+        showPremiumLink={showPremiumLink}
+        analysisPanelColor={analysisPanelColor}
+        onPremium={() => setPremiumVisible(true)}
+      />
 
       <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
         <IconSymbol name="carbs" size={16} color={colors.textMuted} />
@@ -207,238 +549,51 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
         <NutrientText text={t('journal:nutritionLogger.fat', { value: fat })} />
       </View>
 
-      {!PREMIUM || hasAnalyzedFiberTypes ? (
-        <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
-          <Collapsible
-            {...collapsibleHeader(t('journal:nutritionLogger.fiber', { value: fiber }))}
-            titleType="default"
-            contentStyle={[styles.premiumDropdown, { borderColor: colors.goldSoft, backgroundColor: colors.goldTransparent }]}
-            initialCollapsed
-            leftContent={<IconSymbol name="fiber" size={14} color={colors.textMuted} />}
-          >
-            {!PREMIUM ? (
-              <View style={styles.fiberPremium}>
-                <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                  {t(
-                    isTrialAnalysis
-                      ? 'journal:nutritionLogger.fiberTrialResult'
-                      : hasAnalyzedFiberTypes
-                        ? 'journal:nutritionLogger.fiberPremiumExpired'
-                        : 'journal:nutritionLogger.fiberTypesPremium'
-                  )}
-                </ThemedText>
-                {hasAnalyzedFiberTypes && !isTrialAnalysis ? (
-                  <AppButton
-                    title={t('journal:nutritionLogger.reactivatePremium')}
-                    variant="premium"
-                    icon="crown"
-                    rightIcon="chevron.right"
-                    onPress={() => setPremiumVisible(true)}
-                  />
-                ) : (
-                  <PremiumLink onPress={() => setPremiumVisible(true)} />
-                )}
-              </View>
-            ) : null}
-            {hasAnalyzedFiberTypes &&
-              FIBER_TYPE_KEYS.map(key => {
-                const value = fiberByType?.[key] ?? 0;
+      <FiberSection
+        nutrition={nutrition}
+        keyPrefix={keyPrefix}
+        hasAnalysisAccess={hasAnalysisAccess}
+        showAnalysisInfo={showAnalysisInfo}
+        showPremiumLink={showPremiumLink}
+        analysisPanelColor={analysisPanelColor}
+        onPremium={() => setPremiumVisible(true)}
+      />
 
-                const subtypeRows = getFiberSubtypeAmountsForCategory(key);
-                if (value <= 0 && subtypeRows.length === 0) return null;
+      <View style={[styles.biohaxingPanel, analysisPanelColor]} testID="nutrition-biohaxing-extras">
+        <MineralsSection nutrition={nutrition} keyPrefix={keyPrefix} hasAnalysisAccess={hasAnalysisAccess} showAnalysisInfo={showAnalysisInfo} />
 
-                return (
-                  <View key={`${keyPrefix}_${key}`} style={styles.fiberCategoryRow}>
-                    <ThemedText type="default">
-                      • {t(`journal:nutritionLogger.fiberLabels.${key}`)}
-                      {value > 0 ? `: ${value.toFixed(1)} g` : ''}
-                    </ThemedText>
+        <VitaminsSection nutrition={nutrition} keyPrefix={keyPrefix} hasAnalysisAccess={hasAnalysisAccess} showAnalysisInfo={showAnalysisInfo} />
 
-                    {subtypeRows.map(row => (
-                      <ThemedText key={`${keyPrefix}_${key}_${row.subtype}`} type="caption" style={styles.fiberSubtypeText}>
-                        - {row.label}: {row.amount.toFixed(1)} g
-                      </ThemedText>
-                    ))}
-                  </View>
-                );
-              })}
-          </Collapsible>
+        <MicrobiomeSection nutrition={nutrition} keyPrefix={keyPrefix} hasAnalysisAccess={hasAnalysisAccess} showAnalysisInfo={showAnalysisInfo} />
+
+        <PolyphenolsSection nutrition={nutrition} keyPrefix={keyPrefix} hasAnalysisAccess={hasAnalysisAccess} showAnalysisInfo={showAnalysisInfo} />
+
+        <View style={[styles.nutrientRowWithIcon, { borderBottomColor: analysisPanelColor.borderColor }]} testID="nutrition-caffeine">
+          <IconSymbol name="caffeine" size={16} color={colors.textMuted} />
+          <NutrientText text={t('journal:nutritionLogger.caffeineAmount', { value: caffeineMg === undefined ? '—' : Math.round(caffeineMg) })} />
         </View>
-      ) : (
-        <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
-          <IconSymbol name="fiber" size={16} color={colors.textMuted} />
-          <NutrientText text={t('journal:nutritionLogger.fiber', { value: fiber })} />
-        </View>
-      )}
-
-      {hasAnyTypedTotals(mineralsByType) && (
-        <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
-          <Collapsible
-            {...collapsibleHeader(
-              t('journal:nutritionLogger.minerals', {
-                value: getMineralsTotal(mineralsByType!).toFixed(1),
-              })
-            )}
-            titleType="default"
-            initialCollapsed
-          >
-            {MINERAL_TYPE_KEYS.filter(key => key !== 'minerals_total').map(key => {
-              const value = mineralsByType?.[key] ?? 0;
-
-              if (value <= 0) return null;
-
-              return (
-                <ThemedText key={`${keyPrefix}_${key}`} type="default">
-                  • {t(`journal:nutritionLogger.mineralLabels.${key}`)}: {value.toFixed(1)} mg
-                  {' • '}
-                  {t(getConfidenceLabelKey(mineralsConfidenceByType?.[key] ?? 'unknown'))}
-                </ThemedText>
-              );
-            })}
-          </Collapsible>
-        </View>
-      )}
-
-      {hasAnyTypedTotals(vitaminsByType) && (
-        <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
-          <Collapsible
-            {...collapsibleHeader(
-              t('journal:nutritionLogger.vitamins', {
-                value: getVitaminsTotal(vitaminsByType!).toFixed(1),
-              })
-            )}
-            titleType="default"
-            initialCollapsed
-          >
-            {VITAMIN_TYPE_KEYS.filter(key => key !== 'vitamins_total').map(key => {
-              const value = vitaminsByType?.[key] ?? 0;
-
-              if (value <= 0) return null;
-
-              return (
-                <ThemedText key={`${keyPrefix}_${key}`} type="default">
-                  • {t(`journal:nutritionLogger.vitaminLabels.${key}`)}: {formatMilligramValue(value)} mg
-                </ThemedText>
-              );
-            })}
-          </Collapsible>
-        </View>
-      )}
-
-      {(microbiomeSupport?.length ?? 0) > 0 && (
-        <Collapsible
-          title={t('journal:nutritionLogger.microbiomeYes', {
-            count: microbiomeSupport?.length ?? 0,
-          })}
-          titleType="default"
-          initialCollapsed
-          leftContent={<IconSymbol name="microbiome" size={14} color={colors.textMuted} />}
-        >
-          {microbiomeSupport?.map(item => (
-            <View key={`${keyPrefix}_${item.microbe}`} style={styles.microbeRow}>
-              <ThemedText type="default">
-                • {item.microbe}: {item.supportLevel}
+        <AlcoholSection nutrition={nutrition} hasAnalysisAccess={hasAnalysisAccess} onAlcoholInfo={() => setAlcoholInfoVisible(true)} />
+        {showPremiumLink && (
+          <View style={styles.premiumFooter} testID="nutrition-extras-premium-footer">
+            {!hasAnalysisAccess && (
+              <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                {t('journal:nutritionLogger.biohaxingPremiumRequired')}
               </ThemedText>
-
-              {item.linkedNutrients.length > 0 && (
-                <ThemedText type="caption" style={styles.fiberSubtypeText}>
-                  {t('journal:nutritionLogger.linkedNutrients')}: {item.linkedNutrients.join(', ')}
-                </ThemedText>
-              )}
-
-              {item.likelyFoods.length > 0 && (
-                <ThemedText type="caption" style={styles.fiberSubtypeText}>
-                  {t('journal:nutritionLogger.sources')}: {item.likelyFoods.join(', ')}
-                </ThemedText>
-              )}
-            </View>
-          ))}
-        </Collapsible>
-      )}
-      {(!PREMIUM || hasAnyTypedTotals(polyphenolByType)) && (
-        <View style={[styles.nutrientRow, { borderColor: colors.textMuted }]}>
-          <Collapsible
-            {...collapsibleHeader(
-              t('journal:nutritionLogger.polyphenols', {
-                value: (polyphenolByType?.polyphenols_total ?? 0).toFixed(1),
-              })
             )}
-            titleType="default"
-            initialCollapsed
-            contentStyle={[styles.premiumDropdown, { borderColor: colors.goldSoft, backgroundColor: colors.goldTransparent }]}
-            leftContent={<IconSymbol name="polyphenol" size={14} color={colors.textMuted} />}
-          >
-            {!PREMIUM ? (
-              <View style={styles.fiberPremium}>
-                <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                  {t(
-                    isTrialAnalysis
-                      ? 'journal:nutritionLogger.polyphenolTrialResult'
-                      : hasAnalyzedPolyphenolTypes
-                        ? 'journal:nutritionLogger.polyphenolPremiumExpired'
-                        : 'journal:nutritionLogger.polyphenolTypesPremium'
-                  )}
+            <View style={styles.premiumFooterRow}>
+              {!hasAnalysisAccess && (
+                <ThemedText type="caption" style={[styles.premiumFooterText, { color: colors.textMuted }]}>
+                  {t('journal:nutritionLogger.premiumTrialsExhausted')}
                 </ThemedText>
-                {hasAnalyzedPolyphenolTypes && !isTrialAnalysis ? (
-                  <AppButton
-                    title={t('journal:nutritionLogger.reactivatePremium')}
-                    variant="premium"
-                    icon="crown"
-                    rightIcon="chevron.right"
-                    onPress={() => setPremiumVisible(true)}
-                  />
-                ) : (
-                  <PremiumLink onPress={() => setPremiumVisible(true)} />
-                )}
-              </View>
-            ) : null}
-            {POLYPHENOL_TYPE_KEYS.filter(key => key !== 'polyphenols_total').map(key => {
-              const value = polyphenolByType?.[key] ?? 0;
-
-              if (value <= 0) return null;
-
-              return (
-                <ThemedText key={`${keyPrefix}_${key}`} type="default">
-                  • {t(`journal:nutritionLogger.polyphenolLabels.${key}`)}: {value.toFixed(1)} mg
-                </ThemedText>
-              );
-            })}
-          </Collapsible>
-        </View>
-      )}
-
-      <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]}>
-        <IconSymbol name="caffeine" size={16} color={colors.textMuted} />
-        <NutrientText text={t('journal:nutritionLogger.caffeineAmount', { value: caffeineMg === undefined ? '—' : Math.round(caffeineMg) })} />
-      </View>
-      <View style={[styles.nutrientRow, { borderBottomColor: colors.textMuted }]}>
-        <View style={styles.alcoholRow}>
-          <IconSymbol name="alcohol" size={16} color={colors.textMuted} />
-          <View style={styles.alcoholLabel}>
-            <ThemedText>{t('journal:nutritionLogger.alcoholLabel')}</ThemedText>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={t('journal:nutritionLogger.alcoholInfo.title')}
-              hitSlop={10}
-              onPress={() => setAlcoholInfoVisible(true)}
-            >
-              <IconSymbol name="info" size={16} color={colors.textMuted} />
-            </Pressable>
+              )}
+              <PremiumLink onPress={() => setPremiumVisible(true)} />
+            </View>
           </View>
-          <ThemedText>{t('journal:nutritionLogger.alcoholGrams', { value: alcoholGrams === undefined ? '—' : Math.round(alcoholGrams * 10) / 10 })}</ThemedText>
-        </View>
-        <View style={styles.standardDrinksRow}>
-          <ThemedText style={[styles.standardDrinks, { color: colors.textMuted }]}>
-            {t('journal:nutritionLogger.alcoholStandardDrinks', {
-              value: alcoholGrams === undefined ? '—' : Math.round((alcoholGrams / ALCOHOL_GRAMS_PER_STANDARD_DRINK) * 10) / 10,
-            })}
-          </ThemedText>
-          <IconSymbol name="alcohol" size={12} color={colors.textMuted} />
-        </View>
+        )}
       </View>
       {premiumVisible && (
         <ThemedModal visible title={t('common:premium.premium')} onClose={() => setPremiumVisible(false)} showCancelButton={false}>
-          <ScrollView style={{ maxHeight: 500, width: '100%' }}>
+          <ScrollView style={styles.premiumOfferScroll}>
             <PremiumOffer onDismiss={() => setPremiumVisible(false)} />
           </ScrollView>
         </ThemedModal>
@@ -451,6 +606,11 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
 export default NutritionBreakdown;
 
 const styles = StyleSheet.create({
+  premiumOfferScroll: { maxHeight: 500, width: '100%' },
+  premiumFooter: { marginTop: 6 },
+  premiumFooterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 12 },
+  premiumFooterText: { flex: 1, flexShrink: 1 },
+  biohaxingPanel: { borderWidth: StyleSheet.hairlineWidth, borderRadius: 12, padding: 12, marginVertical: 4 },
   premiumDropdown: { borderWidth: StyleSheet.hairlineWidth, borderRadius: 12, padding: 12, overflow: 'hidden' },
   fiberPremium: { gap: 10, paddingVertical: 8 },
   nutrientRow: {

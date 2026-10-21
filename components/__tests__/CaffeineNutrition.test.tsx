@@ -1,3 +1,4 @@
+jest.mock('@/hooks/nutrition/useFreePhotoAnalysesRemaining', () => ({ useFreePhotoAnalysesRemaining: () => 0 }));
 import { fireEvent, render, renderHook } from '@testing-library/react-native';
 import React from 'react';
 

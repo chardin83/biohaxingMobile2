@@ -1,3 +1,4 @@
+import type { BarcodeEnrichmentInput } from '@/types/nutrition/barcodeAnalysis';
 import type { IdentifiedFood } from '@/types/nutrition/nutritionAnalysis';
 // services/gptService.ts
 import debug from 'debug';
@@ -220,7 +221,8 @@ export type NutritionAnalysisFeatures = {
 
 type AnalyseParams = {
   mealName?: string;
-  stage?: 'identify' | 'analyze';
+  stage?: 'identify' | 'analyze' | 'enrich';
+  barcodeProduct?: BarcodeEnrichmentInput;
   confirmedFoods?: IdentifiedFood[];
   uri?: string;
   name?: string;
@@ -242,6 +244,7 @@ type AnalyseParams = {
 };
 
 function appendNutritionFile(form: FormData, params: AnalyseParams): void {
+  if (params.stage === 'enrich' && params.barcodeProduct) return;
   if (params.file_base64) {
     const raw = params.file_base64.includes(',') ? params.file_base64.split(',')[1] : params.file_base64;
     form.append('file_base64', raw);
@@ -284,6 +287,7 @@ function appendNutritionOptions(form: FormData, params: AnalyseParams, locale: '
 
   form.append('prompt', `${params.prompt ?? ''}\n${languageInstruction}`.trim());
   if (params.stage) form.append('stage', params.stage);
+  if (params.barcodeProduct) form.append('barcodeProduct', JSON.stringify(params.barcodeProduct));
   if (params.mealName) form.append('mealName', params.mealName);
   if (params.confirmedFoods) form.append('confirmedFoods', JSON.stringify(params.confirmedFoods));
   form.append('mealDescription', params.mealDescription ?? '');

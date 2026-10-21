@@ -273,7 +273,10 @@
       "add": "Lägg till",
       "nutritionCalculatedPer100g": "Näringsvärden beräknade från värden per 100 g",
       "nutritionCalculatedPer100ml": "Näringsvärden beräknade från värden per 100 ml",
-      "nutritionCalculatedPerMeal": "Näringsvärden för hela måltiden (100 % = den loggade mängden)"
+      "nutritionCalculatedPerMeal": "Näringsvärden för hela måltiden (100 % = den loggade mängden)",
+      "analyzePremium": "Komplettera med Premium",
+      "reanalyzePremium": "Analysera produkten igen",
+      "premiumAnalysisHint": "Kända näringsvärden från streckkoden behålls. Saknade värden uppskattas med AI. Kräver Premium eller en kostnadsfri Premium-provning."
     },
     "drinkPicker": {
       "title": "Välj dryck",
@@ -328,7 +331,17 @@
     "fiberTrialResult": "Fibertyperna ingick i din kostnadsfria Premium-provning. Skaffa Premium för fler fullständiga analyser.",
     "polyphenolTypesPremium": "Polyfenoltyper är en Premiumfunktion. Med Premium kan du se fördelningen mellan olika polyfenoltyper. Total mängd polyfenoler ingår alltid.",
     "polyphenolPremiumExpired": "Premium har löpt ut. Dina tidigare analyserade polyfenoltyper visas fortfarande. Återaktivera Premium för att analysera polyfenoltyper i nya måltider.",
-    "polyphenolTrialResult": "Polyfenoltyperna ingick i din kostnadsfria Premium-provning. Skaffa Premium för fler fullständiga analyser."
+    "polyphenolTrialResult": "Polyfenoltyperna ingick i din kostnadsfria Premium-provning. Skaffa Premium för fler fullständiga analyser.",
+    "microbiomeTitle": "Mikrobiomstöd",
+    "extraNutritionMissing": "Inga värden tillgängliga ännu. Komplettera med Biohaxings analys för en uppskattning.",
+    "aminoAcidsBiohaxingInfo": "Aminosyror ingår i Biohaxings fördjupade näringsanalys.",
+    "biohaxingPremiumRequired": "Biohaxings fördjupade analys kräver Premium.",
+    "premiumTrialsExhausted": "Dina tre kostnadsfria analyser är slut.",
+    "fiberBiohaxingInfo": "Fibertyper ingår i Biohaxings fördjupade analys med Premium eller en kostnadsfri provning.",
+    "microbiomeBiohaxingInfo": "Med Premium får du en uppskattning av vilka tarmbakterier måltidens näringsämnen kan stödja och vilka ingredienser som bidrar.",
+    "mineralsBiohaxingInfo": "Med Premium får du en uppskattning av mineraler som järn, magnesium och zink samt mängden av varje mineral.",
+    "vitaminsBiohaxingInfo": "Med Premium får du en uppskattning av vitaminer som A, C och D samt mängden av varje vitamin.",
+    "polyphenolBiohaxingInfo": "Polyfenoltyper ingår i Biohaxings fördjupade analys med Premium eller en kostnadsfri provning."
   },
   "dayEdit": {
     "tabMeal": "Måltid",

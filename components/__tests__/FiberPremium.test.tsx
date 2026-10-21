@@ -1,3 +1,4 @@
+jest.mock('@/hooks/nutrition/useFreePhotoAnalysesRemaining', () => ({ useFreePhotoAnalysesRemaining: () => 0 }));
 import { fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
 
@@ -34,7 +35,7 @@ test('expired premium keeps previously analyzed fiber types visible and offers r
   expect(screen.getByText('8 g')).toBeTruthy();
   expect(screen.getByText('journal:nutritionLogger.fiberPremiumExpired')).toBeTruthy();
   expect(screen.getByText(/fiberLabels.fiber_gel_forming/)).toBeTruthy();
-  fireEvent.press(screen.getByText('journal:nutritionLogger.reactivatePremium'));
+  fireEvent.press(screen.getAllByLabelText('common:premium.premium')[0]);
   expect(screen.getByText('Premium offer')).toBeTruthy();
 });
 
@@ -43,7 +44,7 @@ test('free users can open fiber when only the total exists', () => {
   fireEvent.press(screen.getByText('Fibrer'));
   expect(screen.getByText('journal:nutritionLogger.fiberTypesPremium')).toBeTruthy();
   expect(screen.queryByText('journal:nutritionLogger.fiberPremiumExpired')).toBeNull();
-  fireEvent.press(screen.getByLabelText('common:premium.premium'));
+  fireEvent.press(screen.getAllByLabelText('common:premium.premium')[0]);
   expect(screen.getByText('Premium offer')).toBeTruthy();
 });
 

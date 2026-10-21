@@ -1,3 +1,4 @@
+jest.mock('@/hooks/nutrition/useFreePhotoAnalysesRemaining', () => ({ useFreePhotoAnalysesRemaining: () => 0 }));
 import { fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
 
@@ -50,7 +51,7 @@ test('expired premium preserves old polyphenol types with a reactivation button'
   fireEvent.press(screen.getByText('Polyfenoler'));
   expect(screen.getByText(/polyphenolLabels.catechins/)).toBeTruthy();
   expect(screen.getByText('journal:nutritionLogger.polyphenolPremiumExpired')).toBeTruthy();
-  fireEvent.press(screen.getByText('journal:nutritionLogger.reactivatePremium'));
+  fireEvent.press(screen.getByLabelText('common:premium.premium'));
   expect(screen.getByText('Premium offer')).toBeTruthy();
 });
 

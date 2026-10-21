@@ -1,3 +1,6 @@
+import type { BarcodeAnalysisContext } from '@/types/nutrition/barcodeAnalysis';
+import type { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFacts';
+import { buildBarcodeEnrichmentInput } from '@/utils/barcodeAnalysis';
 import * as ImagePicker from 'expo-image-picker';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -59,7 +62,8 @@ export const useNutritionAnalysis = ({
   const [packagingMealImage, setPackagingMealImage] = useState<SelectedImageFile | null>(null);
   const [mealTime, setMealTime] = useState<Date>(() => new Date());
   const lastAnalyzedFilesRef = useRef<{
-    mealFile: SelectedImageFile;
+    mealFile: SelectedImageFile | null;
+    barcodeContext?: BarcodeAnalysisContext;
     mealDescription: string;
     ingredientFile: SelectedImageFile | null;
     confirmedFoods?: IdentifiedFood[];
@@ -89,7 +93,7 @@ export const useNutritionAnalysis = ({
   }, []);
 
   const handleNutritionError = useCallback(
-    (data: NutritionAnalysisResponse) => {
+    (data: NutritionAnalysisResponse, barcodeContext?: BarcodeAnalysisContext) => {
       const backendMessage = data.message || data.content || t('journal:dayEdit.analysisFailed') || '❌ Misslyckades med att analysera bilden.';
       let rawDetails: string | null = null;
       if (typeof data.raw === 'string') {
@@ -101,6 +105,7 @@ export const useNutritionAnalysis = ({
       setAnalysisResult(statusMessage);
       setPendingAnalysisReview(
         emptyReview({
+          barcodeContext,
           aiDescription: typeof data.content === 'string' ? data.content : null,
           evidenceMessage: rawDetails ? `Backend details: ${rawDetails}` : null,
           statusMessage,
@@ -113,11 +118,12 @@ export const useNutritionAnalysis = ({
 
   const runNutritionImageAnalysis = useCallback(
     async (
-      mealFile: SelectedImageFile,
+      mealFile: SelectedImageFile | null,
       mealDescription?: string,
       ingredientFile?: SelectedImageFile | null,
       confirmedFoods?: IdentifiedFood[],
-      confirmedMealName?: string
+      confirmedMealName?: string,
+      barcodeContext?: BarcodeAnalysisContext
     ) => {
       const todayKey = toDateKey(new Date());
       if (selectedDate > todayKey) {
@@ -143,12 +149,13 @@ export const useNutritionAnalysis = ({
           return;
         }
         const data = await NutritionAnalyze({
-          stage: confirmedFoods ? 'analyze' : 'identify',
+          stage: barcodeContext ? 'enrich' : confirmedFoods ? 'analyze' : 'identify',
+          barcodeProduct: barcodeContext ? buildBarcodeEnrichmentInput(barcodeContext) : undefined,
           confirmedFoods,
           mealName: confirmedMealName,
-          uri: mealFile.uri,
-          name: mealFile.name,
-          type: mealFile.type,
+          uri: mealFile?.uri,
+          name: mealFile?.name,
+          type: mealFile?.type,
           mealDescription,
           ingredientListUri: ingredientFile?.uri,
           ingredientListName: ingredientFile?.name,
@@ -183,7 +190,7 @@ export const useNutritionAnalysis = ({
           return;
         }
         if (data?.type === 'error') {
-          handleNutritionError(data);
+          handleNutritionError(data, barcodeContext);
           return;
         }
         const analyzedFoods = data.analyzedFoods;
@@ -215,10 +222,11 @@ export const useNutritionAnalysis = ({
         if (!result) return;
         successfulAnalysis = true;
         setPendingAnalysisReview({
+          barcodeContext,
           analyzedFoods: analyzedFoods.map(food => ({ ...food })),
           analysis: { ...result.analysis, analysisTier: data.analysisTier ?? (PREMIUM ? 'premium' : 'trial') },
           weeklyTrackingSignals: result.mealWeeklyTrackingSignals,
-          detectedDrinks: (data.detectedDrinks ?? []).map(drink => ({
+          detectedDrinks: (barcodeContext ? [] : (data.detectedDrinks ?? [])).map(drink => ({
             ...drink,
             confirmed: false,
           })),
@@ -242,10 +250,11 @@ export const useNutritionAnalysis = ({
             ? errMsg
             : (t('journal:dayEdit.analysisFailed') ?? '❌ Misslyckades med att analysera bilden.');
         setAnalysisResult(statusMessage);
-        setPendingAnalysisReview(emptyReview({ statusMessage }));
+        setPendingAnalysisReview(emptyReview({ statusMessage, barcodeContext }));
         setIsAnalysisReviewModalVisible(true);
         clearSelectedNutrition();
       } finally {
+        if (confirmedFoods && !successfulAnalysis) dismissAnalysisSheet();
         if (reservedAnalysis && !successfulAnalysis) await refundFreePhotoAnalysis().catch(console.error);
         setIsAnalyzing(false);
       }
@@ -292,6 +301,27 @@ export const useNutritionAnalysis = ({
     [presentAnalysisSheet, runNutritionImageAnalysis]
   );
 
+  const handleAnalyzeBarcodeProduct = useCallback(
+    (product: BarcodeProduct, amount: number, productType: BarcodeProductType, time = new Date()) => {
+      if (!product.barcode || !Number.isFinite(amount) || amount <= 0) return;
+      const barcodeContext = { product, amount, productType };
+      const foods: IdentifiedFood[] = [{ name: product.name, amount, unit: productType === 'drink' ? 'ml' : 'g', preparation: null }];
+      lastAnalyzedFilesRef.current = {
+        mealFile: null,
+        mealDescription: '',
+        ingredientFile: null,
+        barcodeContext,
+        confirmedFoods: foods,
+        confirmedMealName: product.name,
+      };
+      setMealTime(time);
+      setPackagingMealImage(null);
+      requestAnimationFrame(presentAnalysisSheet);
+      runNutritionImageAnalysis(null, undefined, null, foods, product.name, barcodeContext).catch(console.error);
+    },
+    [presentAnalysisSheet, runNutritionImageAnalysis]
+  );
+
   const handleClosePackagingModal = useCallback(() => {
     setIsPackagingModalVisible(false);
     setPackagingMealImage(null);
@@ -334,6 +364,11 @@ export const useNutritionAnalysis = ({
     const last = lastAnalyzedFilesRef.current;
     if (!last) return;
     closeAnalysisReviewModal();
+    if (last.barcodeContext) {
+      requestAnimationFrame(presentAnalysisSheet);
+      runNutritionImageAnalysis(null, undefined, null, last.confirmedFoods, last.confirmedMealName, last.barcodeContext).catch(console.error);
+      return;
+    }
     if (last.confirmedFoods?.length) {
       setFoodReviewMealName(last.confirmedMealName ?? '');
       setFoodReviewFoods(last.confirmedFoods.map(food => ({ ...food })));
@@ -341,7 +376,7 @@ export const useNutritionAnalysis = ({
     }
     setFoodReviewFoods(null);
     runNutritionImageAnalysis(last.mealFile, last.mealDescription || undefined, last.ingredientFile).catch(console.error);
-  }, [closeAnalysisReviewModal, runNutritionImageAnalysis]);
+  }, [closeAnalysisReviewModal, presentAnalysisSheet, runNutritionImageAnalysis]);
 
   const confirmFoods = useCallback(() => {
     const last = lastAnalyzedFilesRef.current;
@@ -392,5 +427,6 @@ export const useNutritionAnalysis = ({
     handleAnalyzePackaging,
     handleClosePackagingModal,
     handleAnalyzePhoto,
+    handleAnalyzeBarcodeProduct,
   };
 };

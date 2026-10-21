@@ -70,6 +70,11 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
             {pendingReview?.statusMessage ?? analysisResult}
           </ThemedText>
         ) : null}
+        {pendingReview?.barcodeContext ? (
+          <ThemedText type="caption" style={{ color: colors.textMuted }}>
+            {t('journal:nutritionLogger.barcodeProduct.premiumAnalysisHint')}
+          </ThemedText>
+        ) : null}
         {pendingReview?.analyzedFoods?.length ? (
           <View style={styles.section}>
             <ThemedText type="title3">{t('journal:nutritionLogger.reviewIngredientsTitle')}</ThemedText>
@@ -81,7 +86,9 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
         ) : null}
         {canReAnalyze ? (
           <Pressable accessibilityRole="button" onPress={onReAnalyze} disabled={isAnalyzing}>
-            <ThemedText style={{ color: colors.showAllAccent, opacity: isAnalyzing ? 0.5 : 1 }}>{t('journal:nutritionLogger.editIngredients')}</ThemedText>
+            <ThemedText style={{ color: colors.showAllAccent, opacity: isAnalyzing ? 0.5 : 1 }}>
+              {t(pendingReview?.barcodeContext ? 'journal:nutritionLogger.barcodeProduct.reanalyzePremium' : 'journal:nutritionLogger.editIngredients')}
+            </ThemedText>
           </Pressable>
         ) : null}
         {pendingReview?.analysis ? (

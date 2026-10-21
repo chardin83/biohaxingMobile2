@@ -205,6 +205,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     handleAnalyzePackaging,
     handleClosePackagingModal,
     handleAnalyzePhoto,
+    handleAnalyzeBarcodeProduct,
   } = useNutritionAnalysis({
     selectedDate,
     trackingPrompt: trackingPromptForAI,
@@ -364,14 +365,30 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
 
     const confirmedDrinks = (pendingAnalysisReview.detectedDrinks ?? []).filter(drink => drink.confirmed).map(({ confirmed: _confirmed, ...drink }) => drink);
 
+    const barcodeContext = pendingAnalysisReview.barcodeContext;
     const newEntry = addNutritionEntry(selectedDate, {
-      type: 'meal',
+      type: barcodeContext?.productType === 'drink' ? 'drink' : 'meal',
       recordedAt,
       name: name?.trim() || t('journal:nutritionLogger.unnamedMeal'),
       ...nutrition,
     });
 
     const nutritionEntryId = newEntry.id;
+    if (barcodeContext?.productType === 'drink') {
+      const product = barcodeContext.product;
+      addDrinkEntry(selectedDate, {
+        nutritionEntryId,
+        recordedAt,
+        type: product.drinkType ?? 'drink',
+        name: product.name,
+        amountMl: barcodeContext.amount,
+        alcoholPercent: product.alcoholPercent,
+        caffeinated: hasCaffeine({ type: product.drinkType, caffeinated: product.caffeinated }),
+        source: 'manual',
+      });
+      if (hasAlcohol({ type: product.drinkType, alcoholPercent: product.alcoholPercent })) setAlcoholInfoRequest(current => current + 1);
+      if (hasCaffeine({ type: product.drinkType, caffeinated: product.caffeinated })) setCaffeineInfoRequest(current => current + 1);
+    }
 
     addWeeklyTrackingContribution(nutritionEntryId, selectedDate, pendingAnalysisReview.weeklyTrackingSignals);
 
@@ -621,6 +638,8 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
         <FoodPickerBottomSheet ref={foodPickerBottomSheetRef} onSelect={handleChooseFood} />
         <DrinkPickerBottomSheet ref={drinkPickerBottomSheetRef} onSelect={handleAddManualDrink} />
         <ProductAmountBottomSheet
+          onAnalyzePremium={handleAnalyzeBarcodeProduct}
+          onDiscoverPremium={() => premiumBottomSheetRef.current?.present()}
           ref={productAmountBottomSheetRef}
           onSave={(barcodeProduct, amount, productType, time) => {
             productAmountBottomSheetRef.current?.dismiss();
