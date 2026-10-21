@@ -1170,12 +1170,15 @@
       "digestiveHealth": "Ett längre fastefönster kan ge tarmen mer tid för återhämtning och stödja en sund tarmflora."
     }
   },
-  "avoid_flat_hard_shoes": {
-    "title": "Undvik hårda platta skor på platt mark",
-    "description": "Att använda hårda, platta skor på platt underlag kan öka belastningen på kroppen och stressa leder, muskler och nervsystem. Välj skor med viss dämpning eller variera underlaget för att minska risken för överbelastning och stödja en mer naturlig rörelse.",
+  "foot_balance_training": {
+    "habitTargets": {
+      "description": "Träna balans i minimalistiska skor på varierande underlag i 5 minuter om dagen."
+    },
+    "title": "Skornas betydelse för balans och fotens känsel",
+    "description": "Skor som klämmer kan begränsa tårnas rörelse och göra det svårare för foten att anpassa sig till underlaget. Styva och tjocka sulor kan minska känselintrycken från marken och begränsa fotens naturliga rörelse. Nervsystemet får då mindre varierad information från fötterna när det samordnar balans och kroppsposition. Även ensidigt gående på plan mark ger mindre variation än gräs, grus och skogsstigar. Skornas passform, flexibilitet och kontakt med underlaget spelar därför roll för hur fötter, muskler och nervsystem samarbetar.",
     "areas": {
-      "strength": "Att undvika hårda platta skor minskar onödig belastning på muskler och senor.",
-      "nervousSystem": "Variation i underlag och skor stödjer nervsystemets anpassningsförmåga."
+      "strength": "Varierat underlag utmanar fotens och underbenets muskler när du stabiliserar kroppen och anpassar stegen.",
+      "nervousSystem": "Varierade känselintryck från fötterna utmanar nervsystemets samordning av balans, kroppsposition och rörelse."
     }
   },
   "eat_colorful_veggies": {

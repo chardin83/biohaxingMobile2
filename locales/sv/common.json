@@ -617,6 +617,7 @@
     "mySupplements": "Mina tillskott"
   },
   "tipsList": {
+    "minimumAge": "Från {{age}} år",
     "yourLevel": "Din nivå",
     "exploreNextLevel": "Utforska nästa nivå",
     "levelTitle": "Nivå {{level}}",
@@ -787,6 +788,8 @@
     "supplement": "Tillskott  "
   },
   "filter": {
+    "ageMatching": "Anpassa efter min ålder",
+    "ageUnknown": "Ange födelsedatum i personliga inställningar för att filtrera efter ålder.",
     "inPlan": "Ligger i plan",
     "yes": "Ja",
     "no": "Nej",

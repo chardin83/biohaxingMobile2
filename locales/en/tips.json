@@ -1196,12 +1196,15 @@
       "digestiveHealth": "A longer fasting window can give the gut more time to recover and support a healthy gut microbiome."
     }
   },
-  "avoid_flat_hard_shoes": {
-    "title": "Avoid hard flat shoes on flat surfaces",
-    "description": "Wearing hard, flat shoes on flat ground can increase stress on the body, joints, muscles, and nervous system. Choose shoes with some cushioning or vary the surface to reduce overload risk and support more natural movement.",
+  "foot_balance_training": {
+    "habitTargets": {
+      "description": "Practise balance in minimalist shoes on varied terrain for 5 minutes a day."
+    },
+    "title": "How shoes affect balance and foot sensation",
+    "description": "Shoes that squeeze the feet can restrict toe movement and make it harder for the foot to adapt to the ground. Stiff, thick soles can reduce sensory input from the ground and limit natural foot movement. The nervous system then receives less varied information from the feet when coordinating balance and body position. Walking exclusively on flat ground also provides less variety than grass, gravel and woodland trails. Shoe fit, flexibility and ground contact therefore matter for how the feet, muscles and nervous system work together.",
     "areas": {
-      "strength": "Avoiding hard flat shoes reduces unnecessary strain on muscles and tendons.",
-      "nervousSystem": "Varying surfaces and footwear supports nervous system adaptability."
+      "strength": "Varied terrain challenges the muscles of the feet and lower legs as you stabilize your body and adjust your steps.",
+      "nervousSystem": "Varied sensory input from the feet challenges the nervous system’s coordination of balance, body position and movement."
     }
   },
   "near_infrared_red_light": {

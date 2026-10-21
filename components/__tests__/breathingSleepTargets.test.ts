@@ -27,6 +27,7 @@ it('gives breathing and sleep tips independent targets and makes them available 
     ['4_7_8_breathing', 'breathing_4_7_8', 1, 'count', 'daily-check'],
     ['alternate_nostril_breathing', 'alternate_nostril_breathing', 3, 'minutes', 'number'],
     ['diaphragmatic_breathing', 'diaphragmatic_breathing', 5, 'minutes', 'number'],
+    ['foot_balance_training', 'balance_training', 5, 'minutes', 'number'],
     ['nasal_breathing_nitric_oxide', 'nasal_breathing', 5, 'minutes', 'number'],
     ['calming_music_waves', 'calming_music', 10, 'minutes', 'number'],
     ['hrv_recovery_monitoring', 'hrv_recovery_review', 1, 'count', 'daily-check'],
@@ -63,6 +64,7 @@ it('completes box breathing at three logged minutes and starts fresh on another 
 it.each([
   ['alternate_nostril_breathing', 3],
   ['diaphragmatic_breathing', 5],
+  ['foot_balance_training', 5],
 ] as const)('tracks %s independently and completes at its minute target', (id, minutes) => {
   const data = storage();
   const target = targetFor(id);

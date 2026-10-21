@@ -62,7 +62,7 @@ Detta är en implementerbarhetsbedömning och förslag till produktmål. Inga ta
 |---|---|---|
 | Köldexponering — `cold_exposure_ans` | Antal genomförda sessioner enligt ett valt protokoll. | Behöver protokoll, temperatur och varaktighet; längre/kallare ska inte automatiskt räknas som bättre. |
 | Brunfett och sval inomhusmiljö — `brown_fat_cool_home` | Tid i ett individuellt valt temperaturintervall, om temperatur kan registreras. | Mäter exponering, inte brunfett. Kräver intervallmål, °C och tidslogg; inte ett generellt mål om lägsta temperatur. |
-| Undvik hårda platta skor på platt mark — `avoid_flat_hard_shoes` | Daglig check av vald sko-/underlagsrutin. | Kan tekniskt loggas som vana, men den generella rekommendationen behöver sakgranskas innan target skapas. |
+| Skornas betydelse för balans och fotens känsel — `foot_balance_training` | Loggade minuter balansträning, 5 minuter per dag. | Implementerat som habit trackingKey: balance_training; minutes; daily. |
 | Near Infrared / Rött ljus — `near_infrared_red_light` | Genomförd session enligt dokumenterat apparatprotokoll. | Behöver våglängd, irradians, exponeringstid och avstånd. Minuter ensamt är inte tillräckligt för dos. |
 | Far Infrared — `far_infrared_light` | Genomförd session enligt dokumenterat värme-/apparatprotokoll. | Behöver temperatur, tid och individuell tolerans. Mäter användning, inte djupvävnadsåterhämtning. |
 

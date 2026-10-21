@@ -18,11 +18,22 @@ import { PressableCard } from '@/components/ui/PressableCard';
 import { bodyParts as allBodyParts } from '@/locales/bodyParts';
 import { TargetPeriod, Tip, tips } from '@/locales/tips';
 import { PlanCategory } from '@/types/planCategory';
+import { getTipUserAge, matchesTipAge } from '@/utils/tipAge';
 
 export default function TipsSearchScreen() {
   const { t } = useTranslation();
-  const { myLevel, plans } = useStorage();
-  const params = useLocalSearchParams<{ targetPeriods?: string | string[]; planCategories?: string | string[]; goalIntro?: string; fromPlan?: string; inPlan?: string; filterRequestId?: string }>();
+  const { myLevel, plans, userProfile } = useStorage();
+  const age = getTipUserAge(userProfile?.birthDate);
+  const [filterByAge, setFilterByAge] = useState(true);
+  const ageFilterActive = filterByAge && age !== undefined;
+  const params = useLocalSearchParams<{
+    targetPeriods?: string | string[];
+    planCategories?: string | string[];
+    goalIntro?: string;
+    fromPlan?: string;
+    inPlan?: string;
+    filterRequestId?: string;
+  }>();
   const [query, setQuery] = useState('');
   const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
   const [showFilter, setShowFilter] = useState(false);
@@ -112,6 +123,7 @@ export default function TipsSearchScreen() {
   const filteredTips = useMemo(() => {
     const q = query.trim().toLowerCase();
     return tips
+      .filter(tip => !filterByAge || matchesTipAge(tip, age))
       .filter(
         tip =>
           (selectedAreas.length === 0 || tip.areas.some(a => selectedAreas.includes(a.id))) &&
@@ -130,7 +142,19 @@ export default function TipsSearchScreen() {
               .includes(q))
       )
       .sort((a, b) => t('tips:' + a.title).localeCompare(t('tips:' + b.title)));
-  }, [query, t, selectedAreas, selectedLevels, selectedPlanCategories, selectedBodyParts, selectedTargetPeriods, inPlanFilter, plannedTipIds]);
+  }, [
+    query,
+    t,
+    selectedAreas,
+    selectedLevels,
+    selectedPlanCategories,
+    selectedBodyParts,
+    selectedTargetPeriods,
+    inPlanFilter,
+    plannedTipIds,
+    filterByAge,
+    age,
+  ]);
 
   const groupedResults = useMemo(() => {
     const byLevel = new Map<number, Tip[]>();
@@ -151,12 +175,19 @@ export default function TipsSearchScreen() {
   const matchCount = filteredTips.filter(tip => (tip.level ?? 1) <= myLevel + 1).length;
 
   const activeFilterCount =
-    selectedAreas.length + selectedLevels.length + selectedPlanCategories.length + selectedBodyParts.length + selectedTargetPeriods.length + Number(inPlanFilter !== null);
+    selectedAreas.length +
+    selectedLevels.length +
+    selectedPlanCategories.length +
+    selectedBodyParts.length +
+    selectedTargetPeriods.length +
+    Number(inPlanFilter !== null) +
+    Number(ageFilterActive);
 
   const allLevels = [...new Set(tips.map(tip => tip.level ?? 1))].sort((a, b) => a - b);
 
   const selectedFilterLabels = useMemo(() => {
     const labels = [
+      ...(ageFilterActive ? [t('common:filter.ageMatching')] : []),
       ...selectedAreas.map(areaId => t('areas:' + areaId + '.title')),
       ...selectedLevels.map(level => `${t('common:filter.level')} ${level}`),
       ...selectedPlanCategories.map(category => t('common:planCategory.' + category)),
@@ -166,7 +197,7 @@ export default function TipsSearchScreen() {
     ];
 
     return labels;
-  }, [selectedAreas, selectedLevels, selectedPlanCategories, selectedBodyParts, selectedTargetPeriods, inPlanFilter, t]);
+  }, [selectedAreas, selectedLevels, selectedPlanCategories, selectedBodyParts, selectedTargetPeriods, inPlanFilter, t, ageFilterActive]);
 
   const visibleSelectedFilterLabels = selectedFilterLabels.slice(0, 3);
   const hiddenSelectedFilterCount = Math.max(0, selectedFilterLabels.length - visibleSelectedFilterLabels.length);
@@ -236,9 +267,12 @@ export default function TipsSearchScreen() {
         {item.veganInfo && (
           <Badge style={[styles.veganBadge, { backgroundColor: colors.surfaceGreen, borderColor: colors.surfaceGreenBorder }]}>
             <IconSymbol name="vegan" size={16} color={colors.surfaceGreenBorder} />
-            <ThemedText type="pill" style={styles.veganBadgeText}>{t(`tips:${item.veganInfo}.title`)}</ThemedText>
+            <ThemedText type="pill" style={styles.veganBadgeText}>
+              {t(`tips:${item.veganInfo}.title`)}
+            </ThemedText>
           </Badge>
         )}
+        {item.minAge !== undefined && <ThemedText type="caption">{t('common:tipsList.minimumAge', { age: item.minAge })}</ThemedText>}
         <ThemedText type="default" style={styles.desc} numberOfLines={2} ellipsizeMode="tail">
           {t('tips:' + item.descriptionKey)}
         </ThemedText>
@@ -258,6 +292,23 @@ export default function TipsSearchScreen() {
       <LabeledInput label={t('search.label')} value={query} onChangeText={setQuery} containerStyle={styles.inputMargin} />
       {showFilter && (
         <ScrollView style={styles.filterScrollView} contentContainerStyle={styles.filterContentContainer} showsVerticalScrollIndicator={false}>
+          <TouchableOpacity
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: filterByAge }}
+            accessibilityLabel={t('common:filter.ageMatching')}
+            onPress={() => setFilterByAge(value => !value)}
+          >
+            <Badge variant="overlay" style={[styles.toggleBadge, filterByAge && { backgroundColor: colors.accentDefault }]}>
+              <ThemedText type="caption" style={styles.badgeLabel}>
+                {t('common:filter.ageMatching')}
+              </ThemedText>
+            </Badge>
+          </TouchableOpacity>
+          {age === undefined && (
+            <ThemedText type="caption" style={{ color: colors.textMuted }}>
+              {t('common:filter.ageUnknown')}
+            </ThemedText>
+          )}
           <ThemedText type="label" style={styles.filterLabel}>
             {t('common:filter.inPlan')}
           </ThemedText>
@@ -267,7 +318,7 @@ export default function TipsSearchScreen() {
                 key={String(value)}
                 variant="overlay"
                 style={[styles.toggleBadge, inPlanFilter === value && { backgroundColor: colors.accentDefault }]}
-                onPress={() => setInPlanFilter(current => current === value ? null : value)}
+                onPress={() => setInPlanFilter(current => (current === value ? null : value))}
               >
                 <ThemedText type="caption" style={styles.badgeLabel}>
                   {t(value ? 'common:filter.yes' : 'common:filter.no')}
@@ -379,6 +430,7 @@ export default function TipsSearchScreen() {
             setSelectedBodyParts([]);
             setSelectedTargetPeriods([]);
             setInPlanFilter(null);
+            setFilterByAge(false);
           }}
         >
           <ThemedText type="default" style={[styles.filterButtonLabel, { color: colors.accentDefault }]}>

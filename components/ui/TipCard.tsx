@@ -112,6 +112,11 @@ export default function TipCard({ tip, tipProgress, onPress, areaId, locked=fals
           <ThemedText type="default">
             {t(`tips:${area.descriptionKey}`)}
           </ThemedText>
+          {tip.minAge !== undefined && (
+            <ThemedText type="caption" style={{ color: colors.textMuted }}>
+              {t('tipsList.minimumAge', { age: tip.minAge })}
+            </ThemedText>
+          )}
         </View>
 
         {isStarted && (

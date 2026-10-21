@@ -153,6 +153,7 @@ export type HabitTarget = {
     | 'sleep_environment'
     | 'sleep_hygiene'
     | 'pre_sleep_wind_down'
+    | 'balance_training'
     | 'nasal_breathing'
     | 'calming_music'
     | 'hrv_recovery_review';
@@ -173,6 +174,7 @@ export type TipNutritionFood = {
 
 type TipBase = {
   id: string;
+  minAge?: number; // Ålder i hela år för åldersanpassade tips.
   level?: number;
   xp?: number;
   areas: TipArea[];
@@ -2201,17 +2203,22 @@ const rawTips: Tip[] = [
     bodyParts: ['fattyTissue'],
   },
   {
-    id: 'avoid_flat_hard_shoes',
+    id: 'foot_balance_training',
+    minAge: 65,
     level: 1,
     xp: 200,
     areas: [
-      { id: 'strength', descriptionKey: 'avoid_flat_hard_shoes.areas.strength' },
-      { id: 'nervousSystem', descriptionKey: 'avoid_flat_hard_shoes.areas.nervousSystem' },
+      { id: 'strength', descriptionKey: 'foot_balance_training.areas.strength' },
+      { id: 'nervousSystem', descriptionKey: 'foot_balance_training.areas.nervousSystem' },
     ],
-    title: 'avoid_flat_hard_shoes.title',
-    descriptionKey: 'avoid_flat_hard_shoes.description',
+    title: 'foot_balance_training.title',
+    descriptionKey: 'foot_balance_training.description',
     trainingRelation: 'anytime',
     timeRule: 'anytime',
+    targetPeriod: 'daily',
+    targetIconName: 'target',
+    habitTargets: [{ trackingKey: 'balance_training', amount: 5, unit: 'minutes', inputMode: 'number' }],
+    planCategory: ['other'],
     bodyParts: ['feet', 'nervousSystem', 'joints', 'bones'],
   },
   {

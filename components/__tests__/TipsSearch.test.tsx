@@ -3,7 +3,11 @@ import React from 'react';
 
 import TipsSearchScreen from '@/app/(tabs)/search';
 
-const mockStorage = { myLevel: 2, plans: { training: [{ tipId: 'current' }], nutrition: [], other: [], supplements: [] } };
+const mockStorage = {
+  userProfile: {} as { birthDate?: string },
+  myLevel: 2,
+  plans: { training: [{ tipId: 'current' }], nutrition: [], other: [], supplements: [] },
+};
 const mockTranslate = jest.fn((key: string, options?: any) => `${key}${options ? ':' + (options.level ?? options.count) : ''}`);
 const mockPush = jest.fn();
 const mockParams: { planCategories?: string; targetPeriods?: string; goalIntro?: string; fromPlan?: string; inPlan?: string; filterRequestId?: string } = {};
@@ -16,7 +20,7 @@ jest.mock('react-i18next', () => ({
 jest.mock('@/locales/tips', () => ({
   tips: [
     { id: 'basic', level: 1 },
-    { id: 'current', level: 2 },
+    { id: 'current', level: 2, minAge: 65 },
     { id: 'advanced', level: 3 },
     { id: 'hidden-a', level: 4 },
     { id: 'hidden-b', level: 4 },
@@ -42,6 +46,7 @@ jest.mock('../ui/LabeledInput', () => ({
 
 beforeEach(() => {
   mockStorage.myLevel = 2;
+  mockStorage.userProfile = {};
   mockTranslate.mockClear();
   mockPush.mockClear();
   delete mockParams.planCategories;
@@ -149,7 +154,9 @@ it('counts hidden search matches without revealing their title or description', 
 it('updates level groups when the level changes and opens an unlocked tip', () => {
   const { getByText, queryByText, rerender } = render(<TipsSearchScreen />);
   fireEvent.press(getByText('tips:current'));
-  expect(mockPush).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/dashboard/area/energy/details', params: { tipId: 'current', expandAreas: '1' } }));
+  expect(mockPush).toHaveBeenCalledWith(
+    expect.objectContaining({ pathname: '/dashboard/area/energy/details', params: { tipId: 'current', expandAreas: '1' } })
+  );
   mockStorage.myLevel = 3;
   rerender(<TipsSearchScreen />);
   expect(getByText('tips:advanced')).toBeTruthy();
@@ -183,7 +190,6 @@ it('puts the current level first and all remaining levels in ascending order', (
   ]);
 });
 
-
 it('opens an unlocked result through the real card after entering a search query', () => {
   const screen = render(<TipsSearchScreen />);
   fireEvent.changeText(screen.getByTestId('search-input'), 'current');
@@ -193,4 +199,31 @@ it('opens an unlocked result through the real card after entering a search query
     pathname: '/dashboard/area/energy/details',
     params: { tipId: 'current', expandAreas: '1' },
   });
+});
+
+it('filters by age by default and allows turning the age filter off and on', () => {
+  mockStorage.userProfile = { birthDate: '1980-01-01' };
+  const screen = render(<TipsSearchScreen />);
+  expect(screen.queryByText('tips:current')).toBeNull();
+  expect(screen.getByText('tips:basic')).toBeTruthy();
+  fireEvent.press(screen.getByText('Filter'));
+  const toggle = screen.getByRole('checkbox', { name: 'common:filter.ageMatching' });
+  expect(toggle.props.accessibilityState.checked).toBe(true);
+  fireEvent.press(toggle);
+  expect(screen.getByText('tips:current')).toBeTruthy();
+  fireEvent.press(screen.getByRole('checkbox', { name: 'common:filter.ageMatching' }));
+  expect(screen.queryByText('tips:current')).toBeNull();
+  fireEvent.press(screen.getByText('common:filter.clearAll'));
+  expect(screen.getByText('tips:current')).toBeTruthy();
+});
+
+it('shows age-targeted tips for older users and handles a missing birth date without guessing', () => {
+  mockStorage.userProfile = { birthDate: '1950-01-01' };
+  const screen = render(<TipsSearchScreen />);
+  expect(screen.getByText('tips:current')).toBeTruthy();
+  mockStorage.userProfile = {};
+  screen.rerender(<TipsSearchScreen />);
+  expect(screen.getByText('tips:current')).toBeTruthy();
+  fireEvent.press(screen.getByText('Filter'));
+  expect(screen.getByText('common:filter.ageUnknown')).toBeTruthy();
 });

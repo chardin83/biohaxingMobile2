@@ -617,6 +617,7 @@
     "mySupplements": "My supplements"
   },
   "tipsList": {
+    "minimumAge": "Ages {{age}} and up",
     "yourLevel": "Your level",
     "exploreNextLevel": "Explore the next level",
     "levelTitle": "Level {{level}}",
@@ -787,6 +788,8 @@
     "supplement": "Supplement"
   },
   "filter": {
+    "ageMatching": "Match my age",
+    "ageUnknown": "Add your birth date in personal settings to filter by age.",
     "inPlan": "In plan",
     "yes": "Yes",
     "no": "No",
