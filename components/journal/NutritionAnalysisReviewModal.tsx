@@ -94,6 +94,14 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
           </Pressable>
         ) : null}
         {pendingReview?.analysis ? (
+          <View style={styles.aiLegend}>
+            <IconSymbol name="sparkles" size={16} color={colors.primary} />
+            <ThemedText type="caption" style={[styles.aiLegendText, { color: colors.textMuted }]}>
+              {t('journal:nutritionLogger.aiUpdatedLegend')}
+            </ThemedText>
+          </View>
+        ) : null}
+        {pendingReview?.analysis ? (
           <View style={styles.section}>
             <ThemedText type="title3">
               {t(isBarcodeDrink ? 'journal:nutritionLogger.detectedDrinksTitle' : 'journal:nutritionLogger.detectedfFoodTitle', { st: '1' })}
@@ -174,6 +182,8 @@ const NutritionAnalysisReviewModal: React.FC<NutritionAnalysisReviewModalProps> 
 };
 
 const styles = StyleSheet.create({
+  aiLegend: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  aiLegendText: { flex: 1 },
   scroll: {
     maxHeight: 420,
     width: '100%',

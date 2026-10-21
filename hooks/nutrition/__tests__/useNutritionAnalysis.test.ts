@@ -205,16 +205,25 @@ test('enriches a barcode serving directly, preserving label values and the chose
     drinkType: 'tea' as const,
     nutrition: { caloriesPer100g: 0, proteinPer100g: 0, caffeineMgPer100g: 20 },
   };
-  jest
-    .mocked(NutritionAnalyze)
-    .mockResolvedValueOnce({
-      type: 'nutrition',
-      analysisTier: 'trial',
-      analyzedFoods: [{ name: product.name, amount: 250, unit: 'ml', preparation: null }],
-      detectedDrinks: [{ type: 'tea', name: product.name, amountMl: 250, confidence: 'high' }],
-    });
+  jest.mocked(NutritionAnalyze).mockResolvedValueOnce({
+    type: 'nutrition',
+    analysisTier: 'trial',
+    nutritionDetails: { vitamins: { vitamin_c: 80 }, minerals: { calcium: 120 } },
+    analyzedFoods: [{ name: product.name, amount: 250, unit: 'ml', preparation: null }],
+    detectedDrinks: [{ type: 'tea', name: product.name, amountMl: 250, confidence: 'high' }],
+  });
   jest.mocked(extractAndValidateNutritionAnalysis).mockReturnValue({
-    analysis: { name: product.name, calories: 0, protein: 0, carbohydrates: 0, fat: 0, fiber: 0, caffeineMg: 50 },
+    analysis: {
+      name: product.name,
+      calories: 0,
+      protein: 0,
+      carbohydrates: 0,
+      fat: 0,
+      fiber: 0,
+      caffeineMg: 50,
+      vitaminsByType: { vitamin_c: 80 },
+      mineralsByType: { calcium: 120 },
+    },
     mealWeeklyTrackingSignals: {},
     evidence: { sources: [], inferred: [], confidence: 'medium' },
     aiResponseDescription: null,
@@ -235,6 +244,8 @@ test('enriches a barcode serving directly, preserving label values and the chose
   );
   expect(result.current.pendingAnalysisReview?.barcodeContext).toEqual({ product, amount: 250, productType: 'drink' });
   expect(result.current.pendingAnalysisReview?.detectedDrinks).toEqual([]);
+  expect(result.current.pendingAnalysisReview?.analysis?.aiEstimatedVitamins).toEqual(['vitamin_c']);
+  expect(result.current.pendingAnalysisReview?.analysis?.aiEstimatedMinerals).toEqual(['calcium']);
   expect(result.current.mealTime).toEqual(time);
   expect(result.current.analyzingFoods).toEqual([{ name: product.name, amount: 250, unit: 'ml', preparation: null }]);
 });

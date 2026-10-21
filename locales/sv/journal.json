@@ -20,6 +20,7 @@
     "saveError": "Kunde inte spara bekräftelsen. Försök igen."
   },
   "nutritionLogger": {
+    "aiUpdatedLegend": "Stjärnikonen visar att värdet har kompletterats eller uppdaterats av AI.",
     "aiEstimatedValue": "Uppskattat eller omräknat av AI",
     "drinkAnalysisSaved": "✅ Dryck loggad och analyserad!",
     "mealAnalysisSaved": "✅ Måltid loggad och analyserad!",
@@ -344,8 +345,8 @@
     "premiumTrialsExhausted": "Dina tre kostnadsfria analyser är slut.",
     "fiberBiohaxingInfo": "Fibertyper ingår i Biohaxings fördjupade analys med Premium eller en kostnadsfri provning.",
     "microbiomeBiohaxingInfo": "Med Premium får du en uppskattning av vilka tarmbakterier måltidens näringsämnen kan stödja och vilka ingredienser som bidrar.",
-    "mineralsBiohaxingInfo": "Med Premium får du en uppskattning av mineraler som järn, magnesium och zink samt mängden av varje mineral.",
-    "vitaminsBiohaxingInfo": "Med Premium får du en uppskattning av vitaminer som A, C och D samt mängden av varje vitamin.",
+    "mineralsBiohaxingInfo": "Registrerade mineralvärden visas direkt. Med Premium kan AI komplettera mineraler som saknas.",
+    "vitaminsBiohaxingInfo": "Registrerade vitaminvärden visas direkt. Med Premium kan AI komplettera vitaminer som saknas.",
     "polyphenolBiohaxingInfo": "Polyfenoltyper ingår i Biohaxings fördjupade analys med Premium eller en kostnadsfri provning."
   },
   "dayEdit": {

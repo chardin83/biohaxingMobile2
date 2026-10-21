@@ -78,6 +78,7 @@ test.each(['drink', 'food'] as const)('preserves the confirmed barcode product t
       onSave={jest.fn()}
     />
   );
+  expect(screen.getByText('journal:nutritionLogger.aiUpdatedLegend')).toBeTruthy();
   const drinkTitle = 'journal:nutritionLogger.detectedDrinksTitle';
   const mealTitle = 'journal:nutritionLogger.detectedfFoodTitle';
   expect(screen.getByText(productType === 'drink' ? drinkTitle : mealTitle)).toBeTruthy();

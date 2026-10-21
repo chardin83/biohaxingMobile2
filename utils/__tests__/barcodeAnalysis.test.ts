@@ -1,4 +1,4 @@
-import { buildBarcodeEnrichmentInput, getAiEstimatedBarcodeNutrients } from '../barcodeAnalysis';
+import { buildBarcodeEnrichmentInput, getAiEstimatedBarcodeNutrients, getAiEstimatedBarcodeMicronutrients } from '../barcodeAnalysis';
 
 test('sends declared zero values, leaves missing nutrients absent, and uses ml for drinks', () => {
   const result = buildBarcodeEnrichmentInput({
@@ -71,4 +71,32 @@ test('marks recalculated energy and missing caffeine or alcohol, but not known l
     product: { ...context.product, nutrition: { ...context.product.nutrition, caloriesPer100g: 46, energyKjPer100g: 46 * 4.184 } },
   };
   expect(getAiEstimatedBarcodeNutrients(manuallyCorrected, analysis)).toEqual(['caffeineMg', 'alcoholGrams']);
+});
+
+test('sends known vitamin and mineral values including zero and keeps absent types unknown', () => {
+  const product = {
+    ...redBullContext.product,
+    nutrition: { ...redBullContext.product.nutrition, vitaminsMgPer100g: { vitamin_c: 80, vitamin_b12: 0.0025 }, mineralsMgPer100g: { calcium: 120, iron: 0 } },
+  };
+  const result = buildBarcodeEnrichmentInput({ ...redBullContext, product });
+  expect(result.knownVitaminsMgPer100).toEqual({ vitamin_c: 80, vitamin_b12: 0.0025 });
+  expect(result.knownMineralsMgPer100).toEqual({ calcium: 120, iron: 0 });
+  expect(result.knownVitaminsMgPer100?.vitamin_d).toBeUndefined();
+});
+
+test('tracks only reported AI micronutrients missing in the original product, preserving known zero', () => {
+  const context = {
+    ...redBullContext,
+    product: {
+      ...redBullContext.product,
+      nutrition: { ...redBullContext.product.nutrition, vitaminsMgPer100g: { vitamin_c: 80 }, mineralsMgPer100g: { calcium: 120, iron: 0 } },
+    },
+  };
+  expect(
+    getAiEstimatedBarcodeMicronutrients(context, {
+      vitamins: { vitamin_c: 200, vitamin_d: 0.01, vitamin_b12: 0 },
+      minerals: { calcium: 300, iron: 0, zinc: 2, totalMg: 302 },
+    })
+  ).toEqual({ aiEstimatedVitamins: ['vitamin_d', 'vitamin_b12'], aiEstimatedMinerals: ['zinc'] });
+  expect(getAiEstimatedBarcodeMicronutrients(context)).toEqual({ aiEstimatedVitamins: [], aiEstimatedMinerals: [] });
 });

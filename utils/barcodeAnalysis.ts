@@ -1,4 +1,6 @@
 import type { NutritionData } from '@/app/context/storage/nutrition/nutritionTypes';
+import { MINERAL_TYPE_KEYS } from '@/constants/minerals';
+import { VITAMIN_TYPE_KEYS } from '@/constants/vitamins';
 import type { BarcodeAnalysisContext, BarcodeEnrichmentInput, KnownBarcodeNutrition } from '@/types/nutrition/barcodeAnalysis';
 import type { AiEstimatedNutrient } from '@/types/nutrition/nutrientProvenance';
 
@@ -29,6 +31,8 @@ export function buildBarcodeEnrichmentInput({ product, amount, productType }: Ba
     productType,
     unit: productType === 'drink' ? 'ml' : 'g',
     knownNutritionPer100,
+    ...(product.nutrition.vitaminsMgPer100g && { knownVitaminsMgPer100: product.nutrition.vitaminsMgPer100g }),
+    ...(product.nutrition.mineralsMgPer100g && { knownMineralsMgPer100: product.nutrition.mineralsMgPer100g }),
     // Explicitly request review of contradictory data, rather than presenting it as missing.
     ...(energyConflict && { energyReview: { kcalPer100: product.nutrition.caloriesPer100g!, kjPer100: product.nutrition.energyKjPer100g! } }),
   };
@@ -44,4 +48,25 @@ export function getAiEstimatedBarcodeNutrients(context: BarcodeAnalysisContext, 
     if (key === 'calories' && input.energyReview) return true;
     return input.knownNutritionPer100[key] === undefined;
   });
+}
+
+function getEstimatedMicronutrientKeys<T extends string>(keys: readonly T[], reported: unknown, known?: Partial<Record<T, number>>): T[] {
+  if (!reported || typeof reported !== 'object' || Array.isArray(reported)) return [];
+  const values = reported as Record<string, unknown>;
+  return keys.filter(key => typeof values[key] === 'number' && Number.isFinite(values[key]) && known?.[key] === undefined);
+}
+
+export function getAiEstimatedBarcodeMicronutrients(context: BarcodeAnalysisContext, reported?: { vitamins?: unknown; minerals?: unknown }) {
+  return {
+    aiEstimatedVitamins: getEstimatedMicronutrientKeys(
+      VITAMIN_TYPE_KEYS.filter(key => key !== 'vitamins_total'),
+      reported?.vitamins,
+      context.product.nutrition.vitaminsMgPer100g
+    ),
+    aiEstimatedMinerals: getEstimatedMicronutrientKeys(
+      MINERAL_TYPE_KEYS.filter(key => key !== 'minerals_total'),
+      reported?.minerals,
+      context.product.nutrition.mineralsMgPer100g
+    ),
+  };
 }

@@ -103,11 +103,11 @@ test('active Premium keeps the panels blue even when no trial analyses remain', 
   expect(screen.queryByText('journal:nutritionLogger.biohaxingPremiumRequired')).toBeNull();
 });
 
-test('uses a shared panel including vitamins and keeps one shared Premium link and separate links for amino acids and fiber', () => {
+test('keeps vitamins and minerals outside the shared panel with one shared Premium link and separate links for amino acids and fiber', () => {
   mockTrialsRemaining = 0;
   const screen = render(<NutritionBreakdown nutrition={nutrition} keyPrefix="test" />);
   const panel = screen.getByTestId('nutrition-biohaxing-extras');
-  for (const id of ['nutrition-minerals', 'nutrition-vitamins', 'nutrition-microbiome', 'nutrition-polyphenols']) {
+  for (const id of ['nutrition-microbiome', 'nutrition-polyphenols']) {
     expect(panel.findAll(node => node.props.testID === id).length).toBeGreaterThan(0);
     expect(require('react-native').StyleSheet.flatten(screen.getByTestId(id).props.style)?.backgroundColor).toBeUndefined();
   }
@@ -187,7 +187,7 @@ test('active Premium hides promotional descriptions but still explains missing v
 test('caffeine and alcohol remain outside the Premium panel', () => {
   const screen = render(<NutritionBreakdown nutrition={{ ...nutrition, caffeineMg: 80, alcoholGrams: 10 }} keyPrefix="test" />);
   const panel = screen.getByTestId('nutrition-biohaxing-extras');
-  for (const id of ['nutrition-caffeine', 'nutrition-alcohol']) {
+  for (const id of ['nutrition-caffeine', 'nutrition-alcohol', 'nutrition-minerals', 'nutrition-vitamins']) {
     expect(screen.getByTestId(id)).toBeTruthy();
     expect(panel.findAll(node => node.props.testID === id)).toHaveLength(0);
   }
@@ -204,5 +204,45 @@ test('marks AI values beside calories, caffeine and alcohol outside the premium 
   const panel = screen.getByTestId('nutrition-biohaxing-extras');
   expect(panel.findAll(node => node.props.accessibilityLabel === 'journal:nutritionLogger.aiEstimatedValue')).toHaveLength(0);
   screen.rerender(<NutritionBreakdown nutrition={{ ...nutrition, caffeineMg: 80, alcoholGrams: 0 }} keyPrefix="label" />);
+  expect(screen.queryByLabelText('journal:nutritionLogger.aiEstimatedValue')).toBeNull();
+});
+
+test('shows registered micronutrients even without premium and preserves explicit zero', () => {
+  mockTrialsRemaining = 0;
+  const screen = render(
+    <NutritionBreakdown
+      nutrition={{ ...nutrition, vitaminsByType: { vitamin_c: 80, vitamin_b12: 0.0025 }, mineralsByType: { calcium: 120, iron: 0 } }}
+      keyPrefix="off"
+    />
+  );
+  fireEvent.press(screen.getByText('Mineraler'));
+  fireEvent.press(screen.getByText('Vitaminer'));
+  expect(screen.getByText(/mineralLabels.calcium.*120.0 mg/)).toBeTruthy();
+  expect(screen.getByText(/mineralLabels.iron.*0.0 mg/)).toBeTruthy();
+  expect(screen.getByText(/vitaminLabels.vitamin_c.*80 mg/)).toBeTruthy();
+  expect(screen.getByText(/vitaminLabels.vitamin_b12.*0.0025 mg/)).toBeTruthy();
+  expect(screen.queryByText('journal:nutritionLogger.extraNutritionMissing')).toBeNull();
+});
+
+test('marks only AI-completed individual vitamins and minerals and their headings', () => {
+  const screen = render(
+    <NutritionBreakdown
+      nutrition={{
+        ...nutrition,
+        vitaminsByType: { vitamin_c: 80, vitamin_d: 0.01 },
+        mineralsByType: { calcium: 120, iron: 2 },
+        aiEstimatedVitamins: ['vitamin_d'],
+        aiEstimatedMinerals: ['iron'],
+      }}
+      keyPrefix="micros"
+    />
+  );
+  expect(screen.getAllByLabelText('journal:nutritionLogger.aiEstimatedValue')).toHaveLength(2);
+  fireEvent.press(screen.getByText('Vitaminer'));
+  fireEvent.press(screen.getByText('Mineraler'));
+  expect(screen.getAllByLabelText('journal:nutritionLogger.aiEstimatedValue')).toHaveLength(4);
+  const vitaminC = screen.getByText(/vitaminLabels.vitamin_c.*80 mg/);
+  expect(vitaminC.parent?.findAll(node => node.props.accessibilityLabel === 'journal:nutritionLogger.aiEstimatedValue')).toHaveLength(0);
+  screen.rerender(<NutritionBreakdown nutrition={{ ...nutrition, vitaminsByType: { vitamin_c: 80 }, mineralsByType: { calcium: 120 } }} keyPrefix="micros" />);
   expect(screen.queryByLabelText('journal:nutritionLogger.aiEstimatedValue')).toBeNull();
 });

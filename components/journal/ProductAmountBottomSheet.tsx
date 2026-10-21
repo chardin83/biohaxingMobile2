@@ -12,6 +12,7 @@ import type { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFact
 import { getAlcoholPercent, withAlcoholPercent } from '@/utils/drinkAlcohol';
 import { scaleNutritionComposition } from '@/utils/nutritionComposition';
 import { hasEnergyConflict } from '@/utils/openFoodFactsEnergy';
+import { scaleBarcodeMicronutrients } from '@/utils/openFoodFactsMicronutrients';
 
 import NumberStepper from '../NumberStepper';
 import NutritionBreakdown from '../NutritionBreakdown';
@@ -156,6 +157,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
       const round1 = (value: number) => Math.round(value * 10) / 10;
 
       return {
+        ...scaleBarcodeMicronutrients(per100, factor),
         name: nutritionProduct.name,
         calories: Math.round((per100.caloriesPer100g ?? 0) * factor),
         protein: round1((per100.proteinPer100g ?? 0) * factor),

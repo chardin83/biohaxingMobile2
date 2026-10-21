@@ -33,6 +33,9 @@ type NutritionBreakdownProps = NutritionContentProps & {
 
 const hasAnyTypedTotals = (values?: Partial<Record<string, number>>): boolean => Object.values(values ?? {}).some(value => (value ?? 0) > 0);
 
+const hasRecordedTotals = (values?: Partial<Record<string, number>>): boolean =>
+  Object.values(values ?? {}).some(value => typeof value === 'number' && Number.isFinite(value));
+
 const getEssentialAminoTotalMg = (values: NonNullable<NutritionData['aminoAcidsByType']>): number =>
   ESSENTIAL_AMINO_ACID_KEYS.reduce((sum, key) => sum + (values[key] ?? 0), 0);
 
@@ -314,12 +317,13 @@ const MineralsSection = ({ nutrition, keyPrefix, hasAnalysisAccess, showAnalysis
   const { mineralsByType, mineralsConfidenceByType } = nutrition;
 
   return (
-    <View style={[styles.nutrientRow, { borderBottomColor: hasAnalysisAccess ? colors.infoDefault : colors.goldSoft }]} testID="nutrition-minerals">
+    <View style={[styles.nutrientRow, { borderBottomColor: colors.textMuted }]} testID="nutrition-minerals">
       <Collapsible
         {...collapsibleHeader(
           t('journal:nutritionLogger.minerals', {
-            value: hasAnyTypedTotals(mineralsByType) ? getMineralsTotal(mineralsByType!).toFixed(1) : '—',
-          })
+            value: hasRecordedTotals(mineralsByType) ? getMineralsTotal(mineralsByType!).toFixed(1) : '—',
+          }),
+          Boolean(nutrition.aiEstimatedMinerals?.length)
         )}
         titleType="default"
         initialCollapsed
@@ -329,22 +333,24 @@ const MineralsSection = ({ nutrition, keyPrefix, hasAnalysisAccess, showAnalysis
             {t('journal:nutritionLogger.mineralsBiohaxingInfo')}
           </ThemedText>
         )}
-        {showAnalysisInfo && hasAnalysisAccess && !hasAnyTypedTotals(mineralsByType) ? (
+        {showAnalysisInfo && hasAnalysisAccess && !hasRecordedTotals(mineralsByType) ? (
           <ThemedText type="caption" style={{ color: colors.textMuted }}>
             {t('journal:nutritionLogger.extraNutritionMissing')}
           </ThemedText>
         ) : null}
         {MINERAL_TYPE_KEYS.filter(key => key !== 'minerals_total').map(key => {
-          const value = mineralsByType?.[key] ?? 0;
+          const value = mineralsByType?.[key];
 
-          if (value <= 0) return null;
+          if (value === undefined) return null;
 
           return (
-            <ThemedText key={`${keyPrefix}_${key}`} type="default">
-              • {t(`journal:nutritionLogger.mineralLabels.${key}`)}: {value.toFixed(1)} mg
-              {' • '}
-              {t(getConfidenceLabelKey(mineralsConfidenceByType?.[key] ?? 'unknown'))}
-            </ThemedText>
+            <NutrientValue key={`${keyPrefix}_${key}`} aiEstimated={nutrition.aiEstimatedMinerals?.includes(key)}>
+              <ThemedText type="default">
+                • {t(`journal:nutritionLogger.mineralLabels.${key}`)}: {value.toFixed(1)} mg
+                {' • '}
+                {t(getConfidenceLabelKey(mineralsConfidenceByType?.[key] ?? 'unknown'))}
+              </ThemedText>
+            </NutrientValue>
           );
         })}
       </Collapsible>
@@ -358,12 +364,13 @@ const VitaminsSection = ({ nutrition, keyPrefix, hasAnalysisAccess, showAnalysis
   const { vitaminsByType } = nutrition;
 
   return (
-    <View style={[styles.nutrientRow, { borderBottomColor: hasAnalysisAccess ? colors.infoDefault : colors.goldSoft }]} testID="nutrition-vitamins">
+    <View style={[styles.nutrientRow, { borderBottomColor: colors.textMuted }]} testID="nutrition-vitamins">
       <Collapsible
         {...collapsibleHeader(
           t('journal:nutritionLogger.vitamins', {
-            value: hasAnyTypedTotals(vitaminsByType) ? getVitaminsTotal(vitaminsByType!).toFixed(1) : '—',
-          })
+            value: hasRecordedTotals(vitaminsByType) ? getVitaminsTotal(vitaminsByType!).toFixed(1) : '—',
+          }),
+          Boolean(nutrition.aiEstimatedVitamins?.length)
         )}
         titleType="default"
         initialCollapsed
@@ -373,20 +380,22 @@ const VitaminsSection = ({ nutrition, keyPrefix, hasAnalysisAccess, showAnalysis
             {t('journal:nutritionLogger.vitaminsBiohaxingInfo')}
           </ThemedText>
         )}
-        {showAnalysisInfo && hasAnalysisAccess && !hasAnyTypedTotals(vitaminsByType) ? (
+        {showAnalysisInfo && hasAnalysisAccess && !hasRecordedTotals(vitaminsByType) ? (
           <ThemedText type="caption" style={{ color: colors.textMuted }}>
             {t('journal:nutritionLogger.extraNutritionMissing')}
           </ThemedText>
         ) : null}
         {VITAMIN_TYPE_KEYS.filter(key => key !== 'vitamins_total').map(key => {
-          const value = vitaminsByType?.[key] ?? 0;
+          const value = vitaminsByType?.[key];
 
-          if (value <= 0) return null;
+          if (value === undefined) return null;
 
           return (
-            <ThemedText key={`${keyPrefix}_${key}`} type="default">
-              • {t(`journal:nutritionLogger.vitaminLabels.${key}`)}: {formatMilligramValue(value)} mg
-            </ThemedText>
+            <NutrientValue key={`${keyPrefix}_${key}`} aiEstimated={nutrition.aiEstimatedVitamins?.includes(key)}>
+              <ThemedText type="default">
+                • {t(`journal:nutritionLogger.vitaminLabels.${key}`)}: {formatMilligramValue(value)} mg
+              </ThemedText>
+            </NutrientValue>
           );
         })}
       </Collapsible>
@@ -589,6 +598,10 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
         onPremium={() => setPremiumVisible(true)}
       />
 
+      <MineralsSection nutrition={nutrition} keyPrefix={keyPrefix} hasAnalysisAccess={hasAnalysisAccess} showAnalysisInfo={showAnalysisInfo} />
+
+      <VitaminsSection nutrition={nutrition} keyPrefix={keyPrefix} hasAnalysisAccess={hasAnalysisAccess} showAnalysisInfo={showAnalysisInfo} />
+
       <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]} testID="nutrition-caffeine">
         <IconSymbol name="caffeine" size={16} color={colors.textMuted} />
         <NutrientText
@@ -599,10 +612,6 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
       <AlcoholSection nutrition={nutrition} onAlcoholInfo={() => setAlcoholInfoVisible(true)} />
 
       <View style={[styles.biohaxingPanel, analysisPanelColor]} testID="nutrition-biohaxing-extras">
-        <MineralsSection nutrition={nutrition} keyPrefix={keyPrefix} hasAnalysisAccess={hasAnalysisAccess} showAnalysisInfo={showAnalysisInfo} />
-
-        <VitaminsSection nutrition={nutrition} keyPrefix={keyPrefix} hasAnalysisAccess={hasAnalysisAccess} showAnalysisInfo={showAnalysisInfo} />
-
         <MicrobiomeSection nutrition={nutrition} keyPrefix={keyPrefix} hasAnalysisAccess={hasAnalysisAccess} showAnalysisInfo={showAnalysisInfo} />
 
         <PolyphenolsSection nutrition={nutrition} keyPrefix={keyPrefix} hasAnalysisAccess={hasAnalysisAccess} showAnalysisInfo={showAnalysisInfo} />

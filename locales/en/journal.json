@@ -20,6 +20,7 @@
     "saveError": "Could not save the confirmation. Please try again."
   },
   "nutritionLogger": {
+    "aiUpdatedLegend": "The star icon indicates that the value has been added or updated by AI.",
     "aiEstimatedValue": "Estimated or recalculated by AI",
     "drinkAnalysisSaved": "✅ Drink logged and analyzed!",
     "mealAnalysisSaved": "✅ Meal logged and analyzed!",
@@ -344,8 +345,8 @@
     "premiumTrialsExhausted": "Your three free trial analyses have been used.",
     "fiberBiohaxingInfo": "Fiber types are included in Biohaxing’s detailed analysis with Premium or a free trial analysis.",
     "microbiomeBiohaxingInfo": "Premium estimates which gut bacteria the meal’s nutrients may support and which ingredients contribute.",
-    "mineralsBiohaxingInfo": "Premium estimates minerals such as iron, magnesium and zinc, including the amount of each mineral.",
-    "vitaminsBiohaxingInfo": "Premium estimates vitamins such as A, C and D, including the amount of each vitamin.",
+    "mineralsBiohaxingInfo": "Registered mineral values are shown directly. With Premium, AI can estimate missing minerals.",
+    "vitaminsBiohaxingInfo": "Registered vitamin values are shown directly. With Premium, AI can estimate missing vitamins.",
     "polyphenolBiohaxingInfo": "Polyphenol types are included in Biohaxing’s detailed analysis with Premium or a free trial analysis."
   },
   "dayEdit": {

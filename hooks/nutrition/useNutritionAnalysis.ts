@@ -10,7 +10,7 @@ import type { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFact
 import type { BarcodeAnalysisContext } from '@/types/nutrition/barcodeAnalysis';
 import type { IdentifiedFood, PendingAnalysisReview, SelectedImageFile } from '@/types/nutrition/nutritionAnalysis';
 import { extractAndValidateNutritionAnalysis, type WeeklyTrackingSignals } from '@/utils/analyzeNutrition';
-import { buildBarcodeEnrichmentInput, getAiEstimatedBarcodeNutrients } from '@/utils/barcodeAnalysis';
+import { buildBarcodeEnrichmentInput, getAiEstimatedBarcodeMicronutrients, getAiEstimatedBarcodeNutrients } from '@/utils/barcodeAnalysis';
 import { toDateKey } from '@/utils/dateUtils';
 
 interface NutritionAnalysisTrackingTarget {
@@ -227,7 +227,10 @@ export const useNutritionAnalysis = ({
           analysis: {
             ...result.analysis,
             analysisTier: data.analysisTier ?? (PREMIUM ? 'premium' : 'trial'),
-            ...(barcodeContext && { aiEstimatedNutrients: getAiEstimatedBarcodeNutrients(barcodeContext, result.analysis) }),
+            ...(barcodeContext && {
+              aiEstimatedNutrients: getAiEstimatedBarcodeNutrients(barcodeContext, result.analysis),
+              ...getAiEstimatedBarcodeMicronutrients(barcodeContext, data.nutritionDetails),
+            }),
           },
           weeklyTrackingSignals: result.mealWeeklyTrackingSignals,
           detectedDrinks: (barcodeContext ? [] : (data.detectedDrinks ?? [])).map(drink => ({

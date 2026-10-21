@@ -7,6 +7,7 @@ import type { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFact
 import { toRecordedAt } from '@/utils/dateUtils';
 import { hasCaffeine } from '@/utils/drinkCaffeine';
 import { scaleNutritionComposition } from '@/utils/nutritionComposition';
+import { scaleBarcodeMicronutrients } from '@/utils/openFoodFactsMicronutrients';
 
 interface UseNutritionBarcodeActionsParams {
   selectedDate: string;
@@ -21,13 +22,14 @@ export const useNutritionBarcodeActions = ({ selectedDate, onNutritionEntrySelec
       const recordedAt = toRecordedAt(selectedDate, time);
       const factor = amount / 100;
       const nutrition = {
+        ...scaleBarcodeMicronutrients(product.nutrition, factor),
         name: product.name,
         calories: (product.nutrition.caloriesPer100g ?? 0) * factor,
         protein: (product.nutrition.proteinPer100g ?? 0) * factor,
         carbohydrates: (product.nutrition.carbohydratesPer100g ?? 0) * factor,
         fat: (product.nutrition.fatPer100g ?? 0) * factor,
         fiber: (product.nutrition.fiberPer100g ?? 0) * factor,
-      alcoholGrams: product.nutrition.alcoholGramsPer100g === undefined ? undefined : product.nutrition.alcoholGramsPer100g * factor,
+        alcoholGrams: product.nutrition.alcoholGramsPer100g === undefined ? undefined : product.nutrition.alcoholGramsPer100g * factor,
         caffeineMg: product.nutrition.caffeineMgPer100g === undefined ? undefined : Math.round(product.nutrition.caffeineMgPer100g * factor),
         ...(product.composition && scaleNutritionComposition(product.composition, factor)),
         ...(product.nutrition.polyphenolsMgPer100g && {
