@@ -545,6 +545,10 @@
         "title": "Training Capacity",
         "description": "A mix of Zone 2, strength, mobility, and targeted high-intensity work helps preserve VO2 max, muscle mass, and functional independence with age. For whole-body longevity, aim for at least 4-5 different movement types across the week so both upper and lower body, core, balance, and impact tolerance are trained."
       },
+      "musclePreservation": {
+        "title": "Muscle preservation and protein synthesis",
+        "description": "With increasing age, muscle protein synthesis may respond less strongly to dietary protein and exercise. This is called anabolic resistance and can contribute to loss of muscle mass and strength. It does not mean all protein synthesis in the body declines or that muscle can no longer be built. Regular resistance training, adequate energy and protein, and protein-rich meals spread across the day can help preserve muscle mass and function. Needs and exercise routines should be adapted to the individual."
+      },
       "fasciaStrength": {
         "title": "Fascia and Connective Tissue Strength",
         "description": "Fascia is the connective network that transfers force through the entire body and supports joint stability, elasticity, and movement efficiency. It responds best to varied loading: strength training, carries, rotational work, plyometric or impact elements, and multi-planar mobility. This type of whole-body training supports muscles, tendons, ligaments, and bone remodeling over time."

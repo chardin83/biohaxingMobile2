@@ -26,5 +26,9 @@
   "sulfate": {
     "title": "Sulfur from food",
     "description": "Sulfur is part of the amino acids methionine and cysteine, which help build and maintain muscles, enzymes and keratin in hair and nails. Cysteine is also needed to produce glutathione, which protects cells against oxidative stress and participates in the body’s detoxification processes. In the liver, glutathione and sulfate help convert certain medicines and foreign substances into forms that can be excreted more easily. Sulfate is also needed for compounds in cartilage and other connective tissues."
+  },
+  "amino_acids": {
+    "title": "Amino acids and related compounds",
+    "description": "Amino acids are protein building blocks and also participate in signaling and metabolism. This group includes individual amino acids, combinations, and related compounds such as NAC. A biological role does not establish a need for supplementation; nutrition targets, evidence, and safety differ between tips."
   }
 }

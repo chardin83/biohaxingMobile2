@@ -27,14 +27,14 @@ beforeEach(() => { jest.clearAllMocks(); mockLevel = 10; });
 it('keeps all groups separate from tips, with valid membership and translations', () => {
   for (const id of tipGroupIds) {
     expect(tips.some(tip => tip.id === id)).toBe(false);
-    expect(tips.some(tip => tip.groupId === id)).toBe(true);
+    expect(tips.some(tip => tip.groupIds?.includes(id))).toBe(true);
     expect(svGroups[id].title).toBeTruthy();
     expect(svGroups[id].description).toBeTruthy();
     expect(enGroups[id].title).toBeTruthy();
     expect(enGroups[id].description).toBeTruthy();
   }
   for (const tip of tips) {
-    if (tip.groupId) expect(tipGroupIds).toContain(tip.groupId);
+    for (const groupId of tip.groupIds ?? []) expect(tipGroupIds).toContain(groupId);
   }
 });
 
@@ -62,6 +62,20 @@ it('keeps higher-level group members locked', () => {
 });
 
 it('does not show a group for a tip without membership', () => {
-  const screen = render(<TipGroupSection tip={tips.find(item => !item.groupId)} />);
+  const screen = render(<TipGroupSection tip={tips.find(item => !item.groupIds?.length)} />);
   expect(screen.queryByText('common:tipGroupSection.title')).toBeNull();
+});
+
+it('shows both groups for GlyNAC and keeps it free of nutrition targets', () => {
+  const tip = tips.find(item => item.id === 'glynac')!;
+  const screen = render(<TipGroupSection tip={tip} />);
+  expect(screen.getByText('tipGroups:sulfate.title')).toBeTruthy();
+  expect(screen.getByText('tipGroups:amino_acids.title')).toBeTruthy();
+  expect(screen.getByText('tips:msm_joint_health.title')).toBeTruthy();
+  expect(screen.getByText('tips:muscle_leucine.title')).toBeTruthy();
+  expect(tip.areas[0].id).toBe('longevity');
+  expect(tip.areas.some(area => area.id === 'mind')).toBe(true);
+  expect(tip.targetPeriod).toBeUndefined();
+  expect(tip.aminoAcidTargets).toBeUndefined();
+  expect(tip.supplements).toEqual([{ id: 'glycine' }, { id: 'nac' }]);
 });

@@ -46,6 +46,12 @@ export default function LongevityOverview({ mainGoalId }: Readonly<{ mainGoalId:
             description: t('longevity.information.trainingCapacity.description'),
           },
           {
+            key: 'musclePreservation',
+            icon: '💪',
+            title: t('longevity.information.musclePreservation.title'),
+            description: t('longevity.information.musclePreservation.description'),
+          },
+          {
             key: 'fasciaStrength',
             icon: '🦴',
             title: t('longevity.information.fasciaStrength.title'),

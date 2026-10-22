@@ -138,7 +138,7 @@ it('links to the person card nutrition goals and hides tracking when protein is 
   expect(screen.getByText('common:nutritionTargetSection.showJournal')).toBeTruthy();
 });
 
-it.each(['berberine', 'ashwagandha_adaptogen', 'astaxanthin_recovery_antioxidant', 'reishi_mushroom', 'rhodiola_adaptogen', 'lions_mane_mushroom', 'cordyceps_adaptogen', 'chaga_mushroom'])('shows an explanatory target card without inventing a nutrition goal for %s', tipId => {
+it.each(['berberine', 'ashwagandha_adaptogen', 'astaxanthin_recovery_antioxidant', 'reishi_mushroom', 'rhodiola_adaptogen', 'lions_mane_mushroom', 'cordyceps_adaptogen', 'chaga_mushroom', 'glynac'])('shows an explanatory target card without inventing a nutrition goal for %s', tipId => {
   const tip = tips.find(item => item.id === tipId)!;
   const screen = render(<TargetsSection tip={tip} colors={Colors.light} t={t} />);
   expect(tip.targetPeriod).toBeUndefined();

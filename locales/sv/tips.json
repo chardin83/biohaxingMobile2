@@ -206,27 +206,14 @@
       "immuneSupport": "Echinacea stimulerar immuncellsaktivitet och kan hjälpa kroppen att reagera mer effektivt på infektioner samt stödja övergripande immunresiliens."
     }
   },
-  "calming_glycine": {
-    "title": "Lugna aminosyror",
-    "description": "Glycin är en aminosyra som fungerar som en neurotransmitter i det centrala nervsystemet. Den har studerats för sina lugnande effekter och sin roll i att främja avslappning och bättre sömn.",
+  "glynac": {
+    "title": "GlyNAC",
+    "description": "GlyNAC är kombinationen glycin och N-acetylcystein (NAC). Glycin är en aminosyra och NAC kan bidra med cystein. Tillsammans med glutamat används dessa som byggstenar för glutation, ett ämne som deltar i cellernas skydd mot oxidativ stress. Kopplingen till svavelgruppen kommer från cysteinets svavel; glycin innehåller inte svavel.\n\nForskningsläge: En liten placebokontrollerad studie på äldre vuxna rapporterade förbättrad glutationstatus och vissa mått på oxidativ stress, ämnesomsättning och fysisk funktion efter 16 veckor. En annan studie på friska äldre med två veckors behandling fann ingen generell ökning av totalt glutation jämfört med placebo. Skillnader i deltagare, dos och behandlingstid begränsar jämförelser.\n\nMinne och hjärna: En öppen pilotstudie på åtta äldre personer rapporterade förbättrade kognitiva testresultat efter 24 veckor med GlyNAC. Studien saknade placebogrupp och kan inte fastställa behandlingseffekt. Resultaten behöver bekräftas i större kontrollerade studier.\n\nHypotesen är att tillgång till byggstenar kan underlätta glutationbildning när tillgången är begränsande. Det betyder inte att alla har brist eller att mer alltid är bättre. GlyNAC är inte bevisat föryngrande, livsförlängande eller en behandling mot trötthet hos friska. Studier av glycin för sömn är inte i sig belägg för att kombinationen GlyNAC förbättrar sömnen.\n\nSäkerhet: NAC kan ge bland annat illamående och magbesvär och kan förstärka nitroglycerins blodtryckssänkande effekt och huvudvärk. Vid läkemedelsbehandling, kronisk sjukdom, graviditet eller amning bör tillskott diskuteras med vården. Något allmänt näringsmål för GlyNAC fastställs inte i appen; försöksdoser ska inte tolkas som en personlig rekommendation.",
     "areas": {
-      "nervousSystem": "Glycin fungerar som en hämmande neurotransmitter som hjälper till att lugna nervsystemet och minska stress.",
-      "sleepQuality": "Glycin har visat sig förbättra sömnkvaliteten genom att främja avslappning och reglera kroppstemperaturen.",
-      "immuneSupport": "Glycin stödjer immunfunktionen genom att minska inflammation och främja cellulär reparation."
-    },
-    "nutritionFoods": {
-      "title": "Livsmedel rika på glycin",
-      "items": {
-        "beefShank": {
-          "details": "120 g långkokt bringa eller lägg ger ungefär 3 g glycinrikt kollagen."
-        },
-        "chickenWings": {
-          "details": "100 g kycklingvingar med skinn ger ungefär 2 g glycin."
-        },
-        "legumes": {
-          "details": "1 kopp kokta sojabönor eller linser (~180 g) ger cirka 2 g glycin."
-        }
-      }
+      "longevity": "GlyNAC studeras inom forskning om hälsosamt åldrande, med fokus på glutation, oxidativ stress, mitokondriell funktion och fysisk förmåga. Små människostudier har rapporterat förbättringar av vissa markörer, men andra har gett mindre tydliga resultat. Förändrade åldersrelaterade markörer är inte bevis för långsammare biologiskt åldrande eller längre liv. GlyNAC är ännu inte en etablerad behandling för att förlänga människors livslängd.",
+      "mind": "Den lilla pilotstudien undersökte bland annat uppmärksamhet och exekutiv förmåga, alltså att planera och växla mellan uppgifter. Förbättrade testresultat är lovande men visar inte att GlyNAC förebygger demens eller generellt förbättrar minnet hos friska.",
+      "energy": "Glycin och cystein från NAC är byggstenar för glutation. Glutation deltar i cellernas redoxreglering, som är nära kopplad till mitokondriernas funktion. Små studier på äldre har undersökt om GlyNAC påverkar glutationstatus och energiomsättning, med varierande resultat. Det är inte fastställt att kombinationen ökar vardagsenergi eller ATP-produktion hos friska personer.",
+      "immuneSupport": "Glutation deltar i immuncellers funktion och hantering av oxidativ stress. GlyNAC studeras som ett sätt att tillföra byggstenar för glutation, men förändrade laboratoriemarkörer visar inte i sig bättre immunförsvar eller färre infektioner. Nyttan kan bero på utgångsläge och behöver undersökas vidare."
     }
   },
   "muscle_leucine": {
@@ -404,10 +391,11 @@
   },
   "glutathione": {
     "title": "Glutation för antioxidantskydd",
-    "description": "Glutation är en av kroppens viktigaste intracellulära antioxidanter. Det byggs upp av aminosyrorna glycin, glutamat och cystein och hjälper till att neutralisera reaktiva syreföreningar, stödjer leverns avgiftningsvägar och skyddar celler vid stress, inflammation och hög metabol belastning. Direkt glutation kan användas, men många stödjer även glutationstatus via prekursorer som NAC. Tillgång på glycin kan vara viktig för glutationsyntesen, medan glutamat är en av de grundläggande byggstenarna i själva molekylen.",
+    "description": "Glutation är en liten molekyl som byggs av aminosyrorna glutamat, cystein och glycin. Det finns i många celler och deltar i redoxreglering, skydd mot peroxider och omsättning av vissa främmande ämnen. Funktionen beror både på att nytt glutation bildas och att använt glutation återvinns.\n\nByggstenar och nybildning: Två enzymsteg kopplar ihop aminosyrorna och använder ATP. Magnesium behövs i dessa reaktioner. Cystein kan tillföras via protein i maten eller bildas genom bland annat B6-beroende omvandling av homocystein; NAC kan bidra med cystein. Glycin kan också vara begränsande i vissa situationer. Att byggstenar behövs innebär inte att tillskott alltid ökar glutation eller förbättrar hälsan.\n\nSelen – när glutation används: Flera glutationperoxidaser innehåller selen som en del av aminosyran selenocystein. Dessa enzymer använder reducerat glutation (GSH) för att oskadliggöra väteperoxid och andra peroxider. Då bildas oxiderat glutation (GSSG). Selen ingår alltså i enzymet, inte i själva glutationmolekylen. Brist kan begränsa funktionen, medan extra selen vid tillräcklig status inte automatiskt förbättrar den.\n\nB2 – när glutation återvinns: Enzymet glutationreduktas omvandlar GSSG tillbaka till GSH. Det behöver FAD, ett koenzym som kroppen bildar från riboflavin (vitamin B2). Därför handlar glutationstatus inte bara om glycin och cystein, utan också om fungerande återvinning.\n\nNADPH – elektroner till återvinningen: Glutationreduktas använder NADPH som elektrondonator för att återbilda GSH. NADPH bildas i cellernas ämnesomsättning, bland annat i pentosfosfatvägen. NADP-systemet har koppling till niacin (B3), men NADPH är inte samma sak som NADH eller ATP. Det är inte en rekommendation att ta höga doser B3, NAD-prekursorer eller äta mer socker för att öka glutation.\n\nZink och det omgivande försvaret: Zink är ingen direkt kofaktor för glutationreduktas eller de selenberoende glutationperoxidaserna. Däremot ingår zink tillsammans med koppar i superoxiddismutas (SOD1), som omvandlar superoxid till väteperoxid. Denna kan sedan hanteras av bland annat glutationperoxidas och katalas. Antioxidantförsvaret är alltså ett nätverk där olika ämnen har olika uppgifter.\n\nPraktisk betydelse: Tillräckligt protein och ett varierat intag av vitaminer och mineraler ger förutsättningar för systemet. Ett biokemiskt samband visar inte att en kombination av glutation, NAC, selen, zink och B-vitaminer behövs som tillskott. För mycket selen kan vara skadligt, och långvarigt högt zinkintag kan orsaka kopparbrist. Effekten av glutationtillskott varierar med beredning och sammanhang; en förändrad blodmarkör är inte i sig bevis för bättre hälsa.",
     "areas": {
-      "immuneSupport": "Glutation hjälper immunceller att hantera oxidativ stress och bibehålla balanserad inflammatorisk signalering.",
-      "energy": "Genom att skydda mitokondrier och andra cellstrukturer mot oxidativ skada stödjer glutation effektiv cellulär energiproduktion.",
+      "longevity": "Glutation studeras inom forskning om åldrande eftersom redoxbalans, mitokondriernas funktion och hantering av oxidativ stress förändras med åldern. Små studier av glutationprekursorer som GlyNAC har undersökt vissa åldersrelaterade markörer, men resultaten kan inte direkt överföras till glutationtillskott. Det är inte visat att glutationtillskott förlänger människors liv eller bromsar biologiskt åldrande.",
+      "immuneSupport": "Immunceller använder glutation för redoxreglering och hantering av peroxider. Flera selenberoende glutationperoxidaser använder GSH, medan glutationreduktas återvinner det med hjälp av B2-baserat FAD och NADPH. Detta är etablerade biokemiska funktioner, men innebär inte att tillskott stärker immunförsvaret eller förebygger infektioner hos personer med tillräcklig näringsstatus.",
+      "energy": "Glutation bidrar till redoxbalansen i bland annat mitokondrierna. Nybildningen använder ATP, medan återvinningen kräver NADPH och B2-baserat FAD. NADPH förmedlar elektroner till antioxidantförsvaret och ska inte likställas med ATP som driver energikrävande arbete. Systemet är kopplat till cellernas ämnesomsättning, men mer glutation som tillskott ger inte automatiskt mer ork.",
       "womenHealth": "NAC, en prekursor till glutation, har studerats vid PCOS och endometrios med möjliga men osäkra effekter. Resultaten visar inte att glutationtillskott ger samma nytta. NAC ersätter inte etablerad behandling."
     },
     "nutritionFoods": {

@@ -545,6 +545,10 @@
         "title": "Träningskapacitet",
         "description": "En kombination av zon 2, styrketräning, rörlighet och riktad högintensiv träning hjälper till att bevara VO2 max, muskelmassa och funktionell självständighet med åldern. För helkropps-longevity, sikta på minst 4-5 olika rörelsetyper per vecka så att överkropp, underkropp, bål, balans och stöttålighet tränas."
       },
+      "musclePreservation": {
+        "title": "Muskelbevarande och proteinsyntes",
+        "description": "Med stigande ålder kan musklernas proteinsyntes reagera svagare på protein i maten och på träning. Det kallas anabol resistens och kan bidra till förlust av muskelmassa och styrka. Det innebär inte att all proteinsyntes i kroppen minskar eller att muskler slutar kunna byggas. Regelbunden styrketräning, tillräckligt med energi och protein samt proteinrika måltider fördelade över dagen kan hjälpa till att bevara muskelmassa och funktion. Behov och träningsupplägg behöver anpassas efter individen."
+      },
       "fasciaStrength": {
         "title": "Fascia och bindvävsstyrka",
         "description": "Fascian är bindvävsnätverket som överför kraft genom hela kroppen och stödjer ledstabilitet, elasticitet och rörelseeffektivitet. Den svarar bäst på varierad belastning: styrketräning, carries, rotationer, plyometriska eller stötbärande moment och rörlighet i flera plan. Den typen av helkroppsträning stödjer muskler, senor, ligament och skelettets anpassning över tid."

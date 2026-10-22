@@ -26,5 +26,9 @@
   "sulfate": {
     "title": "Svavel från maten",
     "description": "Svavel ingår i aminosyrorna metionin och cystein, som används för att bygga och underhålla bland annat muskler, enzymer och keratin i hår och naglar. Cystein behövs också för att bilda glutation, som skyddar cellerna mot oxidativ stress och deltar i kroppens avgiftningsprocesser. I levern används glutation och sulfat för att omvandla vissa läkemedel och främmande ämnen till former som lättare kan utsöndras. Sulfat behövs dessutom för ämnen som ingår i brosk och annan bindväv."
+  },
+  "amino_acids": {
+    "title": "Aminosyror och relaterade ämnen",
+    "description": "Aminosyror är byggstenar i proteiner och deltar även i bland annat signalering och ämnesomsättning. Gruppen samlar tips om enskilda aminosyror, kombinationer och relaterade ämnen som NAC. Att ett ämne har en biologisk roll innebär inte att tillskott behövs; näringsmål, forskningsläge och säkerhet skiljer sig mellan tipsen."
   }
 }

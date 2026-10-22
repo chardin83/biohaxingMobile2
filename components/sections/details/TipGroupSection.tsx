@@ -7,23 +7,30 @@ import { useStorage } from '@/app/context/StorageContext';
 import { ThemedText } from '@/components/ThemedText';
 import { CardLinkList } from '@/components/ui/CardLinkList';
 import { InformationCardLink } from '@/components/ui/InformationCardLink';
+import type { TipGroupId } from '@/locales/tipGroups';
 import { type Tip, tips } from '@/locales/tips';
 
 export default function TipGroupSection({ tip, fromPlan }: Readonly<{ tip?: Tip; fromPlan?: string }>) {
   const { t } = useTranslation();
-  const router = useRouter();
-  const { myLevel } = useStorage();
-  const pendingTip = useRef<Tip | null>(null);
-  if (!tip?.groupId) return null;
-
-  const groupId = tip.groupId;
-  const otherTips = tips.filter(item => item.groupId === groupId && item.id !== tip.id);
-  const title = t(`tipGroups:${groupId}.title`);
-
+  if (!tip?.groupIds?.length) return null;
   return (
     <View style={styles.section}>
       <ThemedText type="subtitle">{t('common:tipGroupSection.title')}</ThemedText>
-      <InformationCardLink
+      {tip.groupIds.map(groupId => <TipGroupLink key={`${tip.id}:${groupId}`} tip={tip} groupId={groupId} fromPlan={fromPlan} />)}
+    </View>
+  );
+}
+
+function TipGroupLink({ tip, groupId, fromPlan }: Readonly<{ tip: Tip; groupId: TipGroupId; fromPlan?: string }>) {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const { myLevel } = useStorage();
+  const pendingTip = useRef<Tip | null>(null);
+  const otherTips = tips.filter(item => item.groupIds?.includes(groupId) && item.id !== tip.id);
+  const title = t(`tipGroups:${groupId}.title`);
+
+  return (
+    <InformationCardLink
         key={`${groupId}:${tip.id}`}
         title={title}
         iconName="link"
@@ -60,8 +67,7 @@ export default function TipGroupSection({ tip, fromPlan }: Readonly<{ tip?: Tip;
             ) : <ThemedText type="explainer">{t('common:tipGroupSection.empty')}</ThemedText>}
           </>
         )}
-      </InformationCardLink>
-    </View>
+    </InformationCardLink>
   );
 }
 

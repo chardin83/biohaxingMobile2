@@ -234,27 +234,14 @@
       "immuneSupport": "Echinacea stimulates immune cell activity and may help the body respond more effectively to infections and support overall immune resilience."
     }
   },
-  "calming_glycine": {
-    "title": "Calming amino acids",
-    "description": "Glycine is an amino acid that acts as a neurotransmitter in the central nervous system. It has been studied for its calming effects and its role in promoting relaxation and better sleep.",
+  "glynac": {
+    "title": "GlyNAC",
+    "description": "GlyNAC combines glycine and N-acetylcysteine (NAC). Glycine is an amino acid, and NAC can supply cysteine. Together with glutamate, these are building blocks for glutathione, which contributes to cellular protection against oxidative stress. The sulfur-group connection comes from cysteine’s sulfur; glycine does not contain sulfur.\n\nResearch: A small placebo-controlled trial in older adults reported improved glutathione status and some measures of oxidative stress, metabolism, and physical function after 16 weeks. Another trial in healthy older adults using two weeks of treatment found no general increase in total glutathione compared with placebo. Differences in participants, doses, and treatment duration limit comparisons.\n\nMemory and brain: An open-label pilot trial in eight older adults reported improved cognitive test scores after 24 weeks of GlyNAC. It lacked a placebo group and cannot establish treatment effects. Larger controlled studies are needed to confirm the findings.\n\nThe hypothesis is that providing building blocks may support glutathione synthesis when their availability is limiting. This does not mean everyone is deficient or that more is always better. GlyNAC has not been established to rejuvenate people, extend human lifespan, or treat fatigue in healthy people. Glycine sleep studies do not themselves establish sleep benefits for the GlyNAC combination.\n\nSafety: NAC may cause nausea and digestive discomfort and can amplify nitroglycerin-related blood-pressure reductions and headache. Discuss supplementation with a healthcare professional during medication use, chronic illness, pregnancy, or breastfeeding. The app does not set a general nutrition target for GlyNAC; research doses should not be interpreted as a personal recommendation.",
     "areas": {
-      "nervousSystem": "Glycine acts as an inhibitory neurotransmitter, helping to calm the nervous system and reduce stress.",
-      "sleepQuality": "Glycine has been shown to improve sleep quality by promoting relaxation and regulating body temperature.",
-      "immuneSupport": "Glycine supports immune function by reducing inflammation and promoting cellular repair."
-    },
-    "nutritionFoods": {
-      "title": "Glycine-rich foods",
-      "items": {
-        "beefShank": {
-          "details": "120 g braised brisket or shank supplies roughly 3 g glycine-rich collagen."
-        },
-        "chickenWings": {
-          "details": "100 g chicken wings with skin provides about 2 g glycine."
-        },
-        "legumes": {
-          "details": "1 cup cooked soybeans or lentils (~180 g) offers about 2 g glycine."
-        }
-      }
+      "longevity": "GlyNAC is being studied in healthy-aging research, focusing on glutathione, oxidative stress, mitochondrial function, and physical ability. Small human trials have reported improvements in some markers, while others found less clear effects. Changes in age-related markers do not establish slower biological aging or a longer life. GlyNAC is not an established treatment for extending human lifespan.",
+      "mind": "The small pilot trial assessed attention and executive function, including planning and switching between tasks. Improved test scores are promising but do not establish dementia prevention or general memory enhancement in healthy people.",
+      "energy": "Glycine and cysteine supplied by NAC are building blocks for glutathione. Glutathione participates in cellular redox regulation, which is closely linked to mitochondrial function. Small trials in older adults have examined whether GlyNAC affects glutathione status and energy metabolism, with varying findings. Increased everyday energy or ATP production in healthy people has not been established.",
+      "immuneSupport": "Glutathione participates in immune-cell function and responses to oxidative stress. GlyNAC is being studied as a way to supply glutathione precursors, but changes in laboratory markers do not themselves establish better immunity or fewer infections. Benefits may depend on baseline status and require further investigation."
     }
   },
   "muscle_leucine": {
@@ -432,10 +419,11 @@
   },
   "glutathione": {
     "title": "Glutathione for antioxidant defense",
-    "description": "Glutathione is one of the body's most important intracellular antioxidants. It is built from the amino acids glycine, glutamate, and cysteine, and helps neutralize reactive oxygen species, supports liver detoxification pathways, and protects cells during stress, inflammation, and high metabolic demand. Direct glutathione can be used, but many people also support glutathione status through precursors such as NAC. Glycine availability can matter for glutathione synthesis, while glutamate is one of the core building blocks already required in the molecule itself.",
+    "description": "Glutathione is a small molecule built from the amino acids glutamate, cysteine, and glycine. It is present in many cells and participates in redox regulation, protection against peroxides, and metabolism of certain foreign compounds. Its function depends both on new synthesis and on recycling used glutathione.\n\nBuilding blocks and synthesis: Two enzymatic steps join the amino acids and consume ATP. Magnesium is needed in these reactions. Cysteine can come from dietary protein or be formed through processes including B6-dependent conversion of homocysteine; NAC can supply cysteine. Glycine may also be limiting in some circumstances. A requirement for building blocks does not establish that supplementation always increases glutathione or improves health.\n\nSelenium – using glutathione: Several glutathione peroxidases contain selenium within the amino acid selenocysteine. These enzymes use reduced glutathione (GSH) to detoxify hydrogen peroxide and other peroxides, producing oxidized glutathione (GSSG). Selenium is part of the enzyme, not the glutathione molecule. Deficiency can limit function, whereas additional selenium at adequate status does not automatically improve it.\n\nB2 – recycling glutathione: Glutathione reductase converts GSSG back to GSH. It requires FAD, a coenzyme made from riboflavin (vitamin B2). Glutathione status therefore depends on functioning recycling as well as glycine and cysteine availability.\n\nNADPH – electrons for recycling: Glutathione reductase uses NADPH as an electron donor to regenerate GSH. Cells produce NADPH through metabolic pathways including the pentose phosphate pathway. The NADP system is linked to niacin (B3), but NADPH is not the same as NADH or ATP. This is not a recommendation to take high-dose B3, NAD precursors, or consume more sugar to increase glutathione.\n\nZinc and surrounding defenses: Zinc is not a direct cofactor for glutathione reductase or selenium-dependent glutathione peroxidases. However, zinc and copper are present in superoxide dismutase (SOD1), which converts superoxide to hydrogen peroxide. That peroxide can then be handled by glutathione peroxidase and catalase, among other systems. Antioxidant defenses form a network with distinct roles for different substances.\n\nPractical implications: Adequate protein and a varied intake of vitamins and minerals support this system’s requirements. A biochemical relationship does not establish a need for a supplement combination of glutathione, NAC, selenium, zinc, and B vitamins. Excess selenium can be harmful, and prolonged high zinc intake can cause copper deficiency. Effects of glutathione supplements vary with formulation and context; changes in blood markers do not themselves establish better health.",
     "areas": {
-      "immuneSupport": "Glutathione helps immune cells manage oxidative stress and maintain balanced inflammatory signaling.",
-      "energy": "By protecting mitochondria and other cell structures from oxidative damage, glutathione supports efficient cellular energy production.",
+      "longevity": "Glutathione is studied in aging research because redox balance, mitochondrial function, and responses to oxidative stress change with age. Small trials of glutathione precursors such as GlyNAC have examined some age-related markers, but these findings cannot be directly generalized to glutathione supplements. Glutathione supplementation has not been established to extend human lifespan or slow biological aging.",
+      "immuneSupport": "Immune cells use glutathione in redox regulation and peroxide handling. Several selenium-dependent glutathione peroxidases use GSH, while glutathione reductase recycles it using B2-derived FAD and NADPH. These are established biochemical functions, but do not establish that supplements strengthen immunity or prevent infections in adequately nourished people.",
+      "energy": "Glutathione contributes to redox balance, including within mitochondria. Synthesis consumes ATP, while recycling requires NADPH and B2-derived FAD. NADPH supplies electrons to antioxidant defenses and should not be equated with ATP powering energy-demanding work. The system is linked to cellular metabolism, but more supplemental glutathione does not automatically mean more energy.",
       "womenHealth": "NAC, a glutathione precursor, has been studied in PCOS and endometriosis with possible but uncertain benefits. These findings do not establish the same benefits for glutathione supplements. NAC does not replace established treatment."
     },
     "nutritionFoods": {

@@ -184,7 +184,7 @@ type TipBase = {
   supplements?: SupplementReference[];
   analyzePrompt?: string;
   startPrompt?: string;
-  groupId?: TipGroupId;
+  groupIds?: TipGroupId[];
 
   trainingRelation?: TrainingRelation; // (kopplat till workout)
   preferredDayParts?: DayPart[]; // (när på dagen det passar)
@@ -542,6 +542,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'calm_alertness_ltheanine',
+    groupIds: ['amino_acids'],
     level: 6,
     xp: 500,
     areas: [{ id: 'mind', descriptionKey: 'calm_alertness_ltheanine.areas.mind' }],
@@ -556,6 +557,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'neurotransmitter_ltyrosine',
+    groupIds: ['amino_acids'],
     level: 7,
     xp: 700,
     areas: [{ id: 'mind', descriptionKey: 'neurotransmitter_ltyrosine.areas.mind' }],
@@ -674,33 +676,28 @@ const rawTips: Tip[] = [
     bodyParts: ['immuneSystem'],
   },
   {
-    id: 'calming_glycine',
+    id: 'glynac',
     level: 6,
     xp: 500,
+    groupIds: ['sulfate', 'amino_acids'],
     areas: [
-      { id: 'nervousSystem', descriptionKey: 'calming_glycine.areas.nervousSystem' },
-      { id: 'sleepQuality', descriptionKey: 'calming_glycine.areas.sleepQuality' },
-      { id: 'immuneSupport', descriptionKey: 'calming_glycine.areas.immuneSupport' },
+      { id: 'longevity', descriptionKey: 'glynac.areas.longevity' },
+      { id: 'mind', descriptionKey: 'glynac.areas.mind' },
+      { id: 'energy', descriptionKey: 'glynac.areas.energy' },
+      { id: 'immuneSupport', descriptionKey: 'glynac.areas.immuneSupport' },
     ],
-    title: 'calming_glycine.title',
-    descriptionKey: 'calming_glycine.description',
-    supplements: [{ id: 'glycine' }],
+    title: 'glynac.title',
+    descriptionKey: 'glynac.description',
+    noNutritionTarget: true,
+    supplements: [{ id: 'glycine' }, { id: 'nac' }],
     trainingRelation: 'anytime',
-    preferredDayParts: ['evening', 'night'],
     timeRule: 'anytime',
-    planCategory: ['nutrition', 'supplement'],
-    targetPeriod: 'daily',
-    targetIconName: 'protein',
-    aminoAcidTargets: [{ tag: 'glycine', amount: 2000, unit: 'mg', sourceBackedWeight: 1, inferredWeight: 0.6 }],
-    nutritionFoods: [
-      { key: 'beefShank', nutrientTags: ['glycine'] },
-      { key: 'chickenWings', nutrientTags: ['glycine'] },
-      { key: 'soybeans', nutrientTags: ['glycine'] },
-    ],
-    bodyParts: ['nervousSystem', 'bloodVessels', 'bones'],
+    planCategory: ['supplement'],
+    bodyParts: ['cells', 'liver', 'brain'],
   },
   {
     id: 'muscle_leucine',
+    groupIds: ['amino_acids'],
     level: 7,
     xp: 600,
     areas: [{ id: 'strength', descriptionKey: 'muscle_leucine.areas.strength' }],
@@ -726,6 +723,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'bcaa_complex',
+    groupIds: ['amino_acids'],
     level: 8,
     xp: 700,
     areas: [
@@ -750,6 +748,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'arginine_pump',
+    groupIds: ['amino_acids'],
     level: 6,
     xp: 500,
     areas: [
@@ -870,6 +869,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'citrulline_bloodflow_gut',
+    groupIds: ['amino_acids'],
     level: 7,
     xp: 500,
     areas: [
@@ -894,16 +894,18 @@ const rawTips: Tip[] = [
   },
   {
     id: 'glutathione',
+    groupIds: ['amino_acids'],
     level: 8,
     xp: 500,
     areas: [
+      { id: 'longevity', descriptionKey: 'glutathione.areas.longevity' },
       { id: 'immuneSupport', descriptionKey: 'glutathione.areas.immuneSupport' },
       { id: 'energy', descriptionKey: 'glutathione.areas.energy' },
       { id: 'womenHealth', descriptionKey: 'glutathione.areas.womenHealth' },
     ],
     title: 'glutathione.title',
     descriptionKey: 'glutathione.description',
-    supplements: [{ id: 'glutathione' }, { id: 'nac' }, { id: 'glycine' }, { id: 'glutamate' }],
+    supplements: [{ id: 'glutathione' }, { id: 'nac' }, { id: 'glycine' }, { id: 'glutamate' }, { id: 'selenium' }, { id: 'magnesium' }, { id: 'niacin' }],
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday'],
     timeRule: 'anytime',
@@ -915,7 +917,7 @@ const rawTips: Tip[] = [
     id: 'box_breathing',
     level: 2,
     xp: 0,
-    groupId: 'breathwork_parasympathetic',
+    groupIds: ['breathwork_parasympathetic'],
     areas: [
       { id: 'nervousSystem', descriptionKey: 'box_breathing.areas.nervousSystem' },
       { id: 'immuneSupport', descriptionKey: 'box_breathing.areas.immuneSupport' },
@@ -936,7 +938,7 @@ const rawTips: Tip[] = [
     id: '4_7_8_breathing',
     level: 3,
     xp: 0,
-    groupId: 'breathwork_parasympathetic',
+    groupIds: ['breathwork_parasympathetic'],
     areas: [
       { id: 'nervousSystem', descriptionKey: '4_7_8_breathing.areas.nervousSystem' },
       { id: 'sleepQuality', descriptionKey: '4_7_8_breathing.areas.sleepQuality' },
@@ -957,7 +959,7 @@ const rawTips: Tip[] = [
     id: 'alternate_nostril_breathing',
     level: 3,
     xp: 0,
-    groupId: 'breathwork_parasympathetic',
+    groupIds: ['breathwork_parasympathetic'],
     areas: [
       { id: 'nervousSystem', descriptionKey: 'alternate_nostril_breathing.areas.nervousSystem' },
       { id: 'mind', descriptionKey: 'alternate_nostril_breathing.areas.mind' },
@@ -978,7 +980,7 @@ const rawTips: Tip[] = [
     id: 'diaphragmatic_breathing',
     level: 2,
     xp: 0,
-    groupId: 'breathwork_parasympathetic',
+    groupIds: ['breathwork_parasympathetic'],
     areas: [
       { id: 'nervousSystem', descriptionKey: 'diaphragmatic_breathing.areas.nervousSystem' },
       { id: 'energy', descriptionKey: 'diaphragmatic_breathing.areas.energy' },
@@ -999,7 +1001,7 @@ const rawTips: Tip[] = [
     id: 'sleep_duration_consistency',
     level: 1,
     xp: 0,
-    groupId: 'sleep_optimization_recovery',
+    groupIds: ['sleep_optimization_recovery'],
     areas: [
       { id: 'sleepQuality', descriptionKey: 'sleep_duration_consistency.areas.sleepQuality' },
       { id: 'energy', descriptionKey: 'sleep_duration_consistency.areas.energy' },
@@ -1019,7 +1021,7 @@ const rawTips: Tip[] = [
     id: 'sleep_environment_optimization',
     level: 1,
     xp: 0,
-    groupId: 'sleep_optimization_recovery',
+    groupIds: ['sleep_optimization_recovery'],
     areas: [
       { id: 'sleepQuality', descriptionKey: 'sleep_environment_optimization.areas.sleepQuality' },
       { id: 'nervousSystem', descriptionKey: 'sleep_environment_optimization.areas.nervousSystem' },
@@ -1040,7 +1042,7 @@ const rawTips: Tip[] = [
     id: 'sleep_hygiene_practices',
     level: 1,
     xp: 0,
-    groupId: 'sleep_optimization_recovery',
+    groupIds: ['sleep_optimization_recovery'],
     areas: [
       { id: 'sleepQuality', descriptionKey: 'sleep_hygiene_practices.areas.sleepQuality' },
       { id: 'immuneSupport', descriptionKey: 'sleep_hygiene_practices.areas.immuneSupport' },
@@ -1061,7 +1063,7 @@ const rawTips: Tip[] = [
     id: 'pre_sleep_wind_down',
     level: 1,
     xp: 0,
-    groupId: 'sleep_optimization_recovery',
+    groupIds: ['sleep_optimization_recovery'],
     areas: [
       { id: 'sleepQuality', descriptionKey: 'pre_sleep_wind_down.areas.sleepQuality' },
       { id: 'nervousSystem', descriptionKey: 'pre_sleep_wind_down.areas.nervousSystem' },
@@ -1303,7 +1305,7 @@ const rawTips: Tip[] = [
     id: 'lactobacillus_reuteri',
     level: 2,
     xp: 500,
-    groupId: 'probiotics_microbiota',
+    groupIds: ['probiotics_microbiota'],
     areas: [
       { id: 'digestiveHealth', descriptionKey: 'lactobacillus_reuteri.areas.digestiveHealth' },
       { id: 'immuneSupport', descriptionKey: 'lactobacillus_reuteri.areas.immuneSupport' },
@@ -1320,6 +1322,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'protein_rotation',
+    groupIds: ['amino_acids'],
     level: 2,
     xp: 300,
     areas: [
@@ -1347,7 +1350,7 @@ const rawTips: Tip[] = [
     id: 'fiber_butyrate',
     level: 2,
     xp: 500,
-    groupId: 'fiber_microbiome',
+    groupIds: ['fiber_microbiome'],
     areas: [
       { id: 'digestiveHealth', descriptionKey: 'fiber_butyrate.areas.digestiveHealth' },
       { id: 'immuneSupport', descriptionKey: 'fiber_butyrate.areas.immuneSupport' },
@@ -1414,7 +1417,7 @@ const rawTips: Tip[] = [
     id: 'fiber_gel_forming_focus',
     level: 3,
     xp: 500,
-    groupId: 'fiber_microbiome',
+    groupIds: ['fiber_microbiome'],
     areas: [
       { id: 'digestiveHealth', descriptionKey: 'fiber_gel_forming_focus.areas.digestiveHealth' },
       { id: 'immuneSupport', descriptionKey: 'fiber_gel_forming_focus.areas.immuneSupport' },
@@ -1481,7 +1484,7 @@ const rawTips: Tip[] = [
     id: 'fiber_non_gel_forming_focus',
     level: 3,
     xp: 500,
-    groupId: 'fiber_microbiome',
+    groupIds: ['fiber_microbiome'],
     areas: [
       { id: 'digestiveHealth', descriptionKey: 'fiber_non_gel_forming_focus.areas.digestiveHealth' },
       { id: 'immuneSupport', descriptionKey: 'fiber_non_gel_forming_focus.areas.immuneSupport' },
@@ -1523,7 +1526,7 @@ const rawTips: Tip[] = [
     id: 'plant_diversity_30_week',
     level: 2,
     xp: 450,
-    groupId: 'fiber_microbiome',
+    groupIds: ['fiber_microbiome'],
     areas: [
       { id: 'digestiveHealth', descriptionKey: 'plant_diversity_30_week.areas.digestiveHealth' },
       { id: 'immuneSupport', descriptionKey: 'plant_diversity_30_week.areas.immuneSupport' },
@@ -1726,7 +1729,7 @@ const rawTips: Tip[] = [
     id: 'ashwagandha_adaptogen',
     level: 6,
     xp: 0,
-    groupId: 'adaptogenic_herbs',
+    groupIds: ['adaptogenic_herbs'],
     areas: [
       { id: 'nervousSystem', descriptionKey: 'ashwagandha_adaptogen.areas.nervousSystem' },
       { id: 'energy', descriptionKey: 'ashwagandha_adaptogen.areas.energy' },
@@ -1746,7 +1749,7 @@ const rawTips: Tip[] = [
     id: 'rhodiola_adaptogen',
     level: 7,
     xp: 0,
-    groupId: 'adaptogenic_herbs',
+    groupIds: ['adaptogenic_herbs'],
     areas: [
       { id: 'nervousSystem', descriptionKey: 'rhodiola_adaptogen.areas.nervousSystem' },
       { id: 'energy', descriptionKey: 'rhodiola_adaptogen.areas.energy' },
@@ -1766,7 +1769,7 @@ const rawTips: Tip[] = [
     id: 'holy_basil_adaptogen',
     level: 7,
     xp: 0,
-    groupId: 'adaptogenic_herbs',
+    groupIds: ['adaptogenic_herbs'],
     areas: [
       { id: 'nervousSystem', descriptionKey: 'holy_basil_adaptogen.areas.nervousSystem' },
       { id: 'immuneSupport', descriptionKey: 'holy_basil_adaptogen.areas.immuneSupport' },
@@ -1784,7 +1787,7 @@ const rawTips: Tip[] = [
     id: 'reishi_mushroom',
     level: 7,
     xp: 0,
-    groupId: 'medicinal_mushrooms',
+    groupIds: ['medicinal_mushrooms'],
     areas: [
       { id: 'immuneSupport', descriptionKey: 'reishi_mushroom.areas.immuneSupport' },
       { id: 'nervousSystem', descriptionKey: 'reishi_mushroom.areas.nervousSystem' },
@@ -1803,7 +1806,7 @@ const rawTips: Tip[] = [
     id: 'lions_mane_mushroom',
     level: 8,
     xp: 0,
-    groupId: 'medicinal_mushrooms',
+    groupIds: ['medicinal_mushrooms'],
     areas: [
       { id: 'mind', descriptionKey: 'lions_mane_mushroom.areas.mind' },
       { id: 'nervousSystem', descriptionKey: 'lions_mane_mushroom.areas.nervousSystem' },
@@ -1822,7 +1825,7 @@ const rawTips: Tip[] = [
     id: 'chaga_mushroom',
     level: 8,
     xp: 0,
-    groupId: 'medicinal_mushrooms',
+    groupIds: ['medicinal_mushrooms'],
     areas: [
       { id: 'immuneSupport', descriptionKey: 'chaga_mushroom.areas.immuneSupport' },
       { id: 'energy', descriptionKey: 'chaga_mushroom.areas.energy' },
@@ -1841,7 +1844,7 @@ const rawTips: Tip[] = [
     id: 'cordyceps_adaptogen',
     level: 7,
     xp: 0,
-    groupId: 'medicinal_mushrooms',
+    groupIds: ['medicinal_mushrooms'],
     areas: [
       { id: 'energy', descriptionKey: 'cordyceps_adaptogen.areas.energy' },
       { id: 'cardioFitness', descriptionKey: 'cordyceps_adaptogen.areas.cardioFitness' },
@@ -2190,7 +2193,7 @@ const rawTips: Tip[] = [
       { id: 'immuneSupport', descriptionKey: 'msm_joint_health.areas.recovery' },
     ],
     title: 'msm_joint_health.title',
-    groupId: 'sulfate',
+    groupIds: ['sulfate'],
     descriptionKey: 'msm_joint_health.description',
     supplements: [{ id: 'msm' }],
     trainingRelation: 'anytime',
