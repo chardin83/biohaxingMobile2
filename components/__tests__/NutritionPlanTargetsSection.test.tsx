@@ -4,7 +4,7 @@ import { Animated } from 'react-native';
 
 import type { TipProgressItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import NutritionPlanTargetsSection from '@/components/journal/NutritionPlanTargetsSection';
-import { tips } from '@/locales/tips';
+import { type Tip, tips } from '@/locales/tips';
 
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: (...args: unknown[]) => mockPush(...args) }) }));
@@ -52,8 +52,8 @@ it('shows only the link for the setting that is missing', () => {
   expect(queryByText('common:nutritionTargetSection.setProteinGoal')).toBeNull();
 });
 
-it('shows both the amino acid and vegetable targets for a premium-blocked sulfur tip', () => {
-  const sulfurTip = tips.find(item => item.id === 'sulfate')!;
+it('shows all targets for a premium-blocked tip', () => {
+  const sulfurTip: Tip = { ...tip, trackingTargets: [{ trackingKey: 'sulfur_rich_vegetables', amount: 1, unit: 'items', aiInstruction: 'Detect visible vegetables' }] };
   const progress: TipProgressItem = {
     tipId: sulfurTip.id, title: sulfurTip.title, period: 'daily',
     targets: [
@@ -62,7 +62,7 @@ it('shows both the amino acid and vegetable targets for a premium-blocked sulfur
     ],
     metCount: 0, totalCount: 2, isFulfilled: false, progress: 0,
   };
-  const screen = render(<NutritionPlanTargetsSection {...props} untrackedTips={[sulfurTip]} userProfile={{ weightKg: 70 }} nutritionPlanTipProgressByPeriod={{ daily: [progress], weekly: [] }} />);
+  const screen = render(<NutritionPlanTargetsSection {...props} untrackedTips={[sulfurTip]} userProfile={{ weightKg: 70, nutritionGoals: { protein: 140, carbohydrates: 250, fat: 67 } }} nutritionPlanTipProgressByPeriod={{ daily: [progress], weekly: [] }} />);
   expect(screen.getByText('Metionin + cystein')).toBeTruthy();
   expect(screen.getByText('Svavelrika grönsaker')).toBeTruthy();
   expect(screen.getByText('journal:nutritionLogger.untrackedTargetsExplainer')).toBeTruthy();

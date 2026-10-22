@@ -1,18 +1,16 @@
 import { extractAndValidateNutritionAnalysis } from '@/utils/analyzeNutrition';
 import { getNutritionTrackingAnalysis } from '@/utils/nutritionTrackingPrompt';
 
-it('includes the sulfur vegetable instruction only for an active premium goal', () => {
-  const active = [{ tipId: 'sulfate' }];
-  const premium = getNutritionTrackingAnalysis(active, true);
-  expect(premium.targets).toEqual([expect.objectContaining({ key: 'sulfur_rich_vegetables', unit: 'items', amount: 1 })]);
-  expect(premium.prompt).toContain('broccoli, cauliflower, cabbage, Brussels sprouts, kale, garlic, onions and leeks');
-  expect(premium.prompt).toContain('nutritionDetails.aminoAcids');
-  expect(premium.keys.has('sulfur_rich_vegetables')).toBe(true);
-  expect(getNutritionTrackingAnalysis(active, false).keys.has('sulfur_rich_vegetables')).toBe(false);
-  expect(getNutritionTrackingAnalysis([], true).prompt).toBe('nutrition_analysis');
+it('does not request AI tracking for a group identifier', () => {
+  for (const premium of [true, false]) {
+    const analysis = getNutritionTrackingAnalysis([{ tipId: 'sulfate' }], premium);
+    expect(analysis.targets).toEqual([]);
+    expect(analysis.keys.has('sulfur_rich_vegetables')).toBe(false);
+    expect(analysis.prompt).toBe('nutrition_analysis');
+  }
 });
 it('extracts detected vegetables and separate sulfur amino acids from the analysis response', () => {
-  const { keys } = getNutritionTrackingAnalysis([{ tipId: 'sulfate' }], true);
+  const keys = new Set(['sulfur_rich_vegetables']);
   const result = extractAndValidateNutritionAnalysis({
     data: { nutrition: { name: 'Eggs and broccoli', calories: 200, protein: 15 },
       nutritionDetails: { aminoAcids: { methionine: 300, cysteine: 150 } },

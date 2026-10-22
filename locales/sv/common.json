@@ -1,4 +1,10 @@
 {
+  "tipGroupSection": {
+    "title": "Grupp",
+    "otherTips": "Andra tips i gruppen",
+    "locked": "Tillgängligt på nivå {{level}}",
+    "empty": "Inga andra tips i gruppen."
+  },
   "lifeStyle": {
     "title": "Livsstilslogg",
     "items": {

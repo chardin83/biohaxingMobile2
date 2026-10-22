@@ -12,6 +12,7 @@ import AreaRelevanceSection from '@/components/sections/details/AreaRelevanceSec
 import CriticalThinkingSection from '@/components/sections/details/CriticalThinkingSection';
 import DetailsTopSection from '@/components/sections/details/DetailsTopSection';
 import InformationSection, { type InformationSectionRef } from '@/components/sections/details/InformationSection';
+import TipGroupSection from '@/components/sections/details/TipGroupSection';
 import AppButton from '@/components/ui/AppButton';
 import Container, { ContainerScrollRef } from '@/components/ui/Container';
 import DiscreetButton from '@/components/ui/DiscreetButton';
@@ -447,6 +448,7 @@ export default function AreaDetailScreen() {
       />
 
       {tip && <InformationSection key={tip.id} ref={informationRef} tipId={tip.id} descriptionKey={tip.descriptionKey} />}
+      <TipGroupSection tip={tip} fromPlan={fromPlan} />
       <AreaRelevanceSection tip={tip} areaId={areaId} />
       <TimingInfoSection tip={tip} />
       <CriticalThinkingSection askedQuestions={askedQuestions} onPress={handleCriticalThinkingPress} />

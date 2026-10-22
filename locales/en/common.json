@@ -1,4 +1,10 @@
 {
+  "tipGroupSection": {
+    "title": "Group",
+    "otherTips": "Other tips in this group",
+    "locked": "Available at level {{level}}",
+    "empty": "No other tips in this group."
+  },
   "lifeStyle": {
     "title": "Lifestyle log",
     "items": {

@@ -1,0 +1,30 @@
+{
+  "breathwork_parasympathetic": {
+    "title": "Andningsövningar",
+    "description": "Andningsövningar har en lång historia, bland annat inom yogans pranayama. I dag används de också för avslappning och stresshantering.\n\nAndning och hjärta samspelar: När lungorna fylls och töms ändras deras volym och trycket i bröstkorgen. Det påverkar blodets återflöde till hjärtat. Sträckreceptorer i lungorna skickar också signaler via vagusnerven till hjärnstammen. Tillsammans med hjärnans andningsstyrning och blodtrycksreflexer bidrar detta till att pulsen normalt ökar vid inandning och sjunker vid utandning.\n\nLugn, långsam andning kan förstärka denna rytmiska variation och påverka vagusnervens reglering av hjärtat. Det kan hjälpa vissa att varva ned. Sambandet gäller hur lungornas volym förändras under andetaget, inte att större lungor automatiskt ger bättre hjärthälsa. Andas bekvämt utan att pressa; avbryt om du blir yr."
+  },
+  "sleep_optimization_recovery": {
+    "title": "Sömnoptimering för återhämtning",
+    "description": "Gruppen samlar tips om sömnens längd, regelbundenhet, miljö och förberedelser inför natten."
+  },
+  "adaptogenic_herbs": {
+    "title": "Adaptogena örter",
+    "description": "Adaptogener är ett samlingsnamn för ämnen som antas påverka kroppens anpassning till stress. Flera av växterna har en lång traditionell användning, men begreppet beskriver ingen gemensam, bevisad effekt.\n\nStressystemet kopplar ihop hjärnan, det autonoma nervsystemet och hormoner. En del är HPA-axeln: hypotalamus och hypofysen signalerar till binjurarna, som frisätter bland annat kortisol. Forskare undersöker om vissa växtextrakt kan påverka denna signalering och cellernas stresshantering. Vissa studier på ashwagandha har visat lägre upplevd stress och kortisol, men det betyder inte att alla adaptogener sänker kortisol eller återställer en hormonell balans.\n\nRosenrot, ashwagandha och helig basilika innehåller olika ämnen och behöver bedömas var för sig. Mekanismerna är delvis hypoteser från cell- och djurförsök. Läs varje tips för människostudier, personrapporter och säkerhet; vissa preparat kan även ge oro, sömnproblem eller läkemedelsinteraktioner."
+  },
+  "medicinal_mushrooms": {
+    "title": "Medicinalsvampar",
+    "description": "Historia och tradition: Svampar har använts som mat och i läkekonst i många kulturer. I delar av Östasien har vissa arter använts medicinskt i hundratals år. Reishi, även kallad lingzhi i Kina, har en lång historia där den förknippats med livskraft och långt liv. Sådana historiska föreställningar beskriver traditionen, inte bevisade effekter.\n\nFrån tradition till extrakt: Förr användes bland annat torkat material och avkok. I dag finns pulver, kapslar och extrakt från fruktkropp eller mycel. Det gör jämförelser viktiga: två produkter med samma svampnamn kan ha olika innehåll och koncentration. Ett modernt extrakt motsvarar inte automatiskt den traditionella beredningen.\n\nVad forskningen undersöker: Intresset gäller bland annat polysackarider som betaglukaner och artspecifika ämnen. Forskare studerar påverkan på immunsignalering, nervsystem och ämnesomsättning. En stor del av underlaget kommer från cell- och djurförsök; människostudiernas omfattning och kvalitet skiljer sig mellan arter och preparat.\n\nI den här gruppen: Reishi, Lion’s Mane, Chaga och Cordyceps har olika profiler och ska bedömas var för sig. Läs varje tips för forskningsläge, personrapporter och säkerhet. Lång tradition innebär inte att alla preparat är effektiva eller lämpliga för alla."
+  },
+  "probiotics_microbiota": {
+    "title": "Probiotika och tarmflora",
+    "description": "Gruppen samlar tips om probiotika och specifika mikroorganismer. Olika arter, stammar och produkter behöver bedömas var för sig."
+  },
+  "fiber_microbiome": {
+    "title": "Fiber och mikrobiomhälsa",
+    "description": "Kostfibrer bryts inte ned fullständigt av våra egna matsmältningsenzymer. Vissa når tjocktarmen och blir bränsle för mikrobiomet – samhället av mikroorganismer i tarmen. När bakterier fermenterar fibrer bildas bland annat kortkedjiga fettsyror: acetat, propionat och butyrat. Butyrat är en viktig energikälla för tjocktarmens slemhinneceller och bidrar till deras funktion.\n\nOlika fibrer gör olika saker. Fermenterbara fibrer, exempelvis inulin och resistent stärkelse, kan användas av olika bakterier. Vissa gelbildande fibrer binder vatten och påverkar tarminnehållets konsistens, medan andra framför allt bidrar med volym. Gelbildning och fermenterbarhet är olika egenskaper; en fiber kan ha båda. Därför säger det totala antalet gram inte allt om effekten.\n\nKolesterol: Framför allt trögflytande, gelbildande fibrer kan sänka LDL-kolesterol. Exempel är betaglukaner från havre och korn samt psyllium. Även vissa pektiner och guargummi har visat effekt. Gelen minskar återupptaget av gallsyror i tarmen, så att mer lämnar kroppen med avföringen. Levern använder då kolesterol för att bilda nya gallsyror och kan öka upptaget av LDL från blodet. Effekten beror bland annat på fiberns viskositet, mängd och beredning; alla lösliga eller fermenterbara fibrer har inte samma kolesterolsänkande effekt.\n\nVariera gärna fullkorn, baljväxter, grönsaker, frukt, nötter och frön. Bakterier kan också samarbeta genom att använda varandras nedbrytningsprodukter, men responsen på en viss fiber skiljer sig mellan personer. Öka mängden gradvis om du är ovan, eftersom fermentering även bildar gas. I gruppens tips kan du läsa mer om fibertyper och deras respektive mål."
+  },
+  "sulfate": {
+    "title": "Svavel från maten",
+    "description": "Svavel ingår i aminosyrorna metionin och cystein, som används för att bygga och underhålla bland annat muskler, enzymer och keratin i hår och naglar. Cystein behövs också för att bilda glutation, som skyddar cellerna mot oxidativ stress och deltar i kroppens avgiftningsprocesser. I levern används glutation och sulfat för att omvandla vissa läkemedel och främmande ämnen till former som lättare kan utsöndras. Sulfat behövs dessutom för ämnen som ingår i brosk och annan bindväv."
+  }
+}

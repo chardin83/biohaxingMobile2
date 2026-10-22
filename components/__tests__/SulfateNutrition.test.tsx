@@ -18,7 +18,7 @@ const mockAddNutrition = jest.fn().mockReturnValue({ id: 'nutrition-meal' });
 const mockSetWeekly = jest.fn();
 let mockTracking: DailyNutritionTracking = {};
 let mockPlanTips = [{ tipId: 'sulfate' }];
-let mockSignals: WeeklyNutritionTracking = {};
+const mockSignals: WeeklyNutritionTracking = {};
 jest.mock('@/app/context/StorageContext', () => ({ useStorage: () => ({ addNutritionEntry: mockAddNutrition, addDrinkEntry: jest.fn(), setWeeklyNutritionTracking: mockSetWeekly, plans: { nutrition: mockPlanTips }, userProfile: { weightKg: 70 }, dailyNutritionTracking: mockTracking, weeklyNutritionTracking: mockSignals, dailyDrinkTracking: {}, takenDates: {} }) }));
 jest.mock('expo-haptics', () => ({ impactAsync: jest.fn().mockResolvedValue(undefined), ImpactFeedbackStyle: { Light: 'light' } }));
 jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
@@ -32,29 +32,15 @@ it('removes sulfate from minerals and preserves separate food amino acid amounts
   expect(result.current.dailyNutrition.aminoAcidsByType).toMatchObject({ methionine: 50, cysteine: 30 });
   expect(extractTypedTotals({ nutritionDetails: { aminoAcids: { methionine: 50, cysteine: 30 } } }, null).aminoAcidsByType).toMatchObject({ methionine: 50, cysteine: 30 });
 });
-it('tracks one sulfur-rich vegetable daily without counting other days or deleted signals', () => {
-  const tip = tips.find(item => item.id === 'sulfate')!;
-  const targets = normalizeNutritionTargets(tip, 70);
-  const target = targets.find(item => item.trackingKey === 'sulfur_rich_vegetables')!;
-  expect(tip.mineralTargets).toBeUndefined();
-  expect(target).toMatchObject({ trackingKey: 'sulfur_rich_vegetables', amount: 1, unit: 'items', period: 'daily' });
-  mockSignals = { '2026-10-12': [
-    { nutritionEntryId: 'old', date: '2026-10-16', signals: { sulfur_rich_vegetables: [{ en: 'garlic', local: 'vitlök' }] } },
-    { nutritionEntryId: 'meal', date, signals: { sulfur_rich_vegetables: [{ en: 'broccoli', local: 'broccoli' }] } },
-  ] };
-  const actual = () => resolveNutritionTarget({ target, selectedDate: date, dailyNutritionTracking: mockTracking, weeklyNutritionTracking: mockSignals });
-  expect(actual()).toBe(1);
-  const { result, rerender } = renderHook(() => useNutritionTipTargets([date]));
-  expect(result.current[date].sulfate.find(item => item.tag === 'sulfur_rich_vegetables')).toMatchObject({ actual: 1, isMet: true });
-  mockSignals = { '2026-10-12': mockSignals['2026-10-12'].slice(0, 1) };
-  rerender({});
-  expect(actual()).toBe(0);
-  expect(result.current[date].sulfate.find(item => item.tag === 'sulfur_rich_vegetables')).toMatchObject({ actual: 0, isMet: false });
+it('does not create nutrition goals from a group identifier', () => {
+  expect(tips.find(item => item.id === 'sulfate')).toBeUndefined();
+  const { result } = renderHook(() => useNutritionTipTargets([date]));
+  expect(result.current[date]?.sulfate).toBeUndefined();
 });
 
-it('requires the combined food methionine and cysteine goal and the vegetable goal', () => {
-  const tip = tips.find(item => item.id === 'sulfate')!;
-  const targets = normalizeNutritionTargets(tip, 70);
+it('preserves the combined food methionine and cysteine goal in protein rotation', () => {
+  const tip = tips.find(item => item.id === 'protein_rotation')!;
+  const targets = normalizeNutritionTargets(tip, 70, 140);
   const aminoTarget = targets.find(item => item.trackingKey === 'methionine')!;
   expect(aminoTarget).toMatchObject({ amount: 1050, unit: 'mg', period: 'daily', trackingKeys: ['methionine', 'cysteine'], labelKey: 'methionineCysteine' });
   expect(resolveNutritionTarget({ target: aminoTarget, selectedDate: date, dailyNutritionTracking: mockTracking, weeklyNutritionTracking: {} })).toBe(80);

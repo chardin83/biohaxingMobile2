@@ -425,26 +425,6 @@
       }
     }
   },
-  "breathwork_parasympathetic": {
-    "title": "Andningsövningar",
-    "description": "Andningsarbete är ett kraftfullt verktyg för att aktivera det parasympatiska nervsystemet, minska stress och främja avslappning. Olika andningsteknik kan användas för specifika resultat såsom lugn, fokus eller bättre sömn.",
-    "areas": {
-      "nervousSystem": "Kontrollerad andning aktiverar direkt det parasympatiska nervsystemet, vilket minskar stresshormoner och främjar avslappning.",
-      "immuneSupport": "Regelbundet andningsarbete kan förbättra immunfunktionen genom att minska kronisk stress och främja bättre sömn och återhämtning.",
-      "energy": "Korrekta andningsteknik förbättrar syrenanvändning och energinivåer under dagen."
-    }
-  },
-  "sleep_optimization_recovery": {
-    "title": "Sömnoptimering för återhämtning",
-    "description": "Högkvalitativ sömn är grundläggande för fysisk återhämtning, immunfunktion, mental klarhet och övergripande hälsa. Sömnoptimering omfattar flera faktorer inklusive varaktighet, konsistens, miljö och sömnförberedelser.",
-    "areas": {
-      "nervousSystem": "Kvalitetssömn stödjer nervsystemets återhämtning och balans mellan sympatiska och parasympatiska systemet.",
-      "immuneSupport": "Sömn är avgörande för immunfunktionen och kroppens förmåga att bekämpa infektioner och läka.",
-      "energy": "Tillräcklig sömn återställer energinivåer och optimerar kroppens metaboliska processer.",
-      "cardioFitness": "Sömn stödjer kardiovaskulär hälsa genom att reglera blodtryck och hjärtfrekvens.",
-      "sleepQuality": "Optimerade sömnvanor förbättrar sömnkvalitet, djupsömn och REM-sömn för maximal återhämtning."
-    }
-  },
   "sunlight_circadian": {
     "title": "Morgonsolljus exponering",
     "description": "Exponering för naturligt solljus, särskilt inom 30-60 minuter efter uppvaknande, är avgörande för att reglera cirkadisk rytm och optimera sömn-vaken-cykler. Morgonljus undertrycker melatonin och signalerar början av dagen.",
@@ -520,21 +500,6 @@
       "mind": "Vissa frekvenser som binaurala beats och naturljud kan förbättra koncentrationen, minska mental trötthet och förbättra kognitiv prestanda."
     }
   },
-  "adaptogenic_herbs": {
-    "title": "Adaptogena örter",
-    "description": "Adaptogena örter hjälper kroppen att anpassa sig till stress och främja balans. De stödjer energi, stresstålighet och övergripande välbefinnande.",
-    "areas": {
-      "nervousSystem": "Adaptogena örter stödjer nervsystemet genom att modulera stressresponsen och främja mental och fysisk resiliens."
-    }
-  },
-  "medicinal_mushrooms": {
-    "title": "Medicinalsvampar",
-    "description": "Medicinalsvampar används traditionellt för att stödja immunförsvar, energi, nervsystem och kognitiv funktion. Olika svampar har olika profiler, så valet bör matcha ditt mål.",
-    "areas": {
-      "immuneSupport": "Många medicinalsvampar innehåller beta-glukaner och andra bioaktiva ämnen som kan stödja immunförsvarets balans.",
-      "mind": "Vissa medicinalsvampar kan även stödja fokus, mental klarhet och nervsystemets återhämtning."
-    }
-  },
   "neuromuscular_training": {
     "title": "Neuromuskulära träningsbegrepp",
     "description": "Neuromuskulär träning fokuserar på att förbättra kopplingen mellan nervsystemet och musklerna för att öka styrka, koordination och övergripande prestation.",
@@ -564,62 +529,12 @@
       "cardioFitness": "Shilajit förbättrar syrgasutnyttjande och kardiovaskulär effektivitet, vilket förbättrar aerob kapacitet och uthållighetsprestation."
     }
   },
-  "probiotics_microbiota": {
-    "title": "Probiotika och tarmflora",
-    "description": "Probiotika är nyttiga bakterier som stödjer tarmhälsa, stärker immunsystemet och förbättrar näringsupptag. En hälsosam tarmflora är avgörande för övergripande hälsa, humörreglering och sjukdomsförebyggande.",
-    "areas": {
-      "digestiveHealth": "Probiotika återställer och upprätthåller hälsosam bakteriebalans i tarmen, förbättrar matsmältningen, minskar uppblåsthet och stödjer tarmbarriärfunktionen.",
-      "immuneSupport": "Cirka 70% av immunsystemet finns i tarmen. Probiotika stärker immunfunktionen, minskar inflammation och skyddar mot patogener."
-    },
-    "nutritionFoods": {
-      "title": "Probiotiska livsmedel",
-      "items": {
-        "greekYogurt": {
-          "details": "200 g grekisk yoghurt med levande kultur ger ungefär 5-10 miljarder CFU."
-        },
-        "kefir": {
-          "details": "200 ml kefir ger ca 10-20 miljarder CFU av olika stammar."
-        },
-        "sauerkraut": {
-          "details": "1/2 kopp rå surkål (~70 g) ger levande mjölksyrabakterier."
-        },
-        "kimchi": {
-          "details": "1/2 kopp kimchi (~85 g) ger probiotika plus prebiotiska grönsaker."
-        }
-      }
-    }
-  },
   "lactobacillus_reuteri": {
     "title": "Lactobacillus reuteri",
     "description": "Lactobacillus reuteri är en probiotisk bakteriestam som har studerats för tarmbalans, immunsignalering, stöd till tarmbarriären och delar av munhälsan. Effekterna är stamspecifika, men vissa L. reuteri-stammar kan bidra till mindre magbesvär, ett mer motståndskraftigt tarmekosystem och potentiellt en mer gynnsam oral mikrobiota kopplad till lägre kariesrisk och bättre balans i tandköttet.",
     "areas": {
       "digestiveHealth": "L. reuteri kan stödja tarmbarriärens funktion, minska obalans i tarmfloran och hjälpa vid uppblåsthet eller magbesvär hos vissa personer.",
       "immuneSupport": "Genom att interagera med immunförsvaret i tarmen kan L. reuteri stödja mer balanserad immunsignalering och lägre överdriven inflammatorisk ton. Vissa stammar har också studerats för bättre immunbalans i munnen och minskad tillväxt av bakterier kopplade till karies och irriterat tandkött."
-    }
-  },
-  "fiber_microbiome": {
-    "title": "Fiber och mikrobiomhälsa",
-    "description": "Kostfiber fungerar som prebiotika och matar nyttiga tarmbakterier och stödjer ett hälsosamt mikrobiom. Börja med att nå 25 g totalfiber per dag via varierade vegetabilier.",
-    "areas": {
-      "digestiveHealth": "Fiber främjar regelbundna tarmrörelser, matar nyttiga bakterier och stödjer tarmbarriärens integritet genom att producera kortkedjiga fettsyror.",
-      "immuneSupport": "En fiberrik kost stärker tarmmikrobiomet, som producerar metaboliter som reglerar immunfunktionen och minskar systemisk inflammation.",
-      "longevity": "Fiberintag stödjer butyratproduktion och lägre låggradig inflammation, två centrala mekanismer kopplade till friskare åldrande.",
-      "womenHealth": "Fiberrik mat stödjer tarmhälsa, mättnad och blodsockerreglering och passar som en del av kostråden vid PCOS och klimakteriet.",
-      "menHealth": "Fiberrik mat stödjer tarmhälsa, mättnad och metabol hälsa. Det kompletterar kostråden för manshälsa, men är inte en behandling för testosteronbrist."
-    },
-    "nutritionFoods": {
-      "title": "Fiberrika livsmedel",
-      "items": {
-        "oats": {
-          "details": "1/2 kopp havregryn (~40 g) ger omkring 4 g betaglukanfiber."
-        },
-        "legumes": {
-          "details": "1 kopp kokta bönor eller linser (~180 g) ger ca 15 g fiber."
-        },
-        "chiaSeeds": {
-          "details": "2 matskedar chiafrön (~28 g) ger ungefär 10 g fiber."
-        }
-      }
     }
   },
   "fiber_butyrate": {
@@ -1239,43 +1154,6 @@
     "description": "Lutein och zeaxantin är antioxidanter som skyddar ögonen mot skadligt ljus och kan minska risken för åldersrelaterad makuladegeneration. Finns i grönkål, spenat och äggula.",
     "areas": {
       "energy": "Stödjer ögonens energimetabolism och skydd."
-    }
-  },
-  "sulfate": {
-    "title": "Svavel från maten",
-    "description": "Svavel ingår i aminosyrorna metionin och cystein, som används för att bygga och underhålla bland annat muskler, enzymer och keratin i hår och naglar. Cystein behövs också för att bilda glutation, som skyddar cellerna mot oxidativ stress och deltar i kroppens avgiftningsprocesser. I levern används glutation och sulfat för att omvandla vissa läkemedel och främmande ämnen till former som lättare kan utsöndras. Sulfat behövs dessutom för ämnen som ingår i brosk och annan bindväv.",
-    "areas": {
-      "digestiveHealth": "Sulfat stödjer matsmältning och tarmens avgiftningsprocesser.",
-      "energy": "Sulfat är nödvändigt för cellernas energiomsättning och mitokondriell funktion."
-    },
-    "nutritionFoods": {
-      "title": "Svavelrika grönsaker och proteinkällor",
-      "description": "Kål- och lökgrönsaker bidrar med olika svavelföreningar. Ägg och andra proteinkällor ger metionin och cystein.",
-      "items": {
-        "garlic": {
-          "details": "En svavelrik grönsak som räknas mot dagsmålet. Innehåller även andra svavelföreningar än metionin och cystein.",
-          "name": "Vitlök"
-        },
-        "onions": {
-          "details": "Lök är en svavelrik grönsak och räknas mot dagsmålet när den finns i måltiden.",
-          "name": "Lök"
-        },
-        "eggs": {
-          "details": "Ägg bidrar med metionin och cystein. Mängderna räknas som aminosyror i näringssammanfattningen. Ägg räknas inte mot grönsaksmålet.",
-          "name": "Ägg"
-        },
-        "cauliflower": {
-          "details": "En svavelrik kålgrönsak som räknas mot dagsmålet. Metionin och cystein registreras separat när mängduppgifter finns.",
-          "name": "Blomkål"
-        },
-        "broccoli": {
-          "details": "En svavelrik kålgrönsak som räknas mot dagsmålet. Metionin och cystein registreras separat när mängduppgifter finns.",
-          "name": "Broccoli"
-        }
-      }
-    },
-    "targets": {
-      "description": "Målet är metionin och cystein tillsammans: 15 mg per kilo kroppsvikt och dag, samma viktbaserade referensnivå som i appens övriga aminosyramål. Därtill följs minst en svavelrik grönsak per dag, till exempel broccoli, blomkål, kål, vitlök eller lök. Aminosyrorna summeras från maten i mg och räknas inte om till sulfat."
     }
   },
   "msm_joint_health": {

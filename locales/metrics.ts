@@ -703,12 +703,6 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
     { metricId: 'sleep_quality', kind: 'secondary' },
     { metricId: 'energy', kind: 'subjective' },
   ],
-  'sleep_optimization_recovery': [
-    { metricId: 'sleep_quality', kind: 'primary' },
-    { metricId: 'hrv_rmssd', kind: 'secondary' },
-    { metricId: 'hrv_sdnn', kind: 'secondary' },
-    { metricId: 'energy', kind: 'subjective' },
-  ],
 
   // --- Hydration ---
   'maintain_hydration': [
@@ -719,14 +713,6 @@ export const tipMetricLinks: Record<string, TipMetricLink[]> = {
   ],
 
   // --- Gut tips ---
-  'probiotics_microbiota': [
-    { metricId: 'bss', kind: 'primary' },
-    { metricId: 'bloating', kind: 'secondary' },
-  ],
-  'fiber_microbiome': [
-    { metricId: 'bss', kind: 'primary' },
-    { metricId: 'bloating', kind: 'secondary' },
-  ],
   'eat_pomegranate': [
     { metricId: 'bloating', kind: 'secondary' },
     { metricId: 'energy', kind: 'subjective' },
