@@ -1,11 +1,22 @@
 {
-  "berberine": {
-    "title": "Berberine for blood sugar, lipids and metabolism",
-    "description": "Berberine is a plant compound that may support blood sugar balance, blood lipids, gut health, and metabolism. Often used as a supplement for insulin resistance, to improve gut flora, and may also inhibit Helicobacter pylori.",
+  "ashwagandha_adaptogen": {
+    "targetInfo": "This substance is not a usual dietary nutrient and therefore has no nutrition target in the app. You can still add it as a product to your supplement plan, at your own risk.",
+    "title": "Ashwagandha",
+    "description": "Evidence: Ashwagandha (Withania somnifera) is a plant whose extracts contain compounds including withanolides. Small, short-term randomized trials of certain standardized extracts have reported reduced perceived stress and sometimes improved sleep compared with placebo. These findings cannot be generalized to every product or user.\n\nHypotheses: Effects on the hypothalamic–pituitary–adrenal (HPA) stress axis have been proposed as one explanation. Some studies measured lower cortisol, but this does not prove that a “cortisol imbalance” was corrected or that the same mechanism applies to everyone. The role of withanolides remains under investigation.\n\nUser reports about emotional experience: Some people describe emotional blunting, with reduced positive and negative feelings, lower motivation or a reduced ability to experience pleasure (anhedonia). Some report that symptoms persist after stopping. These experiences deserve attention, but they do not establish how common this is, how long it may last or whether ashwagandha is the cause. Feeling emotionally blunted should not be equated with a desirable reduction in stress. Short follow-up in clinical trials means that possible persistent effects remain insufficiently studied.\n\nUncertainties: Larger, longer studies are needed. Benefits for immune function and sustained increases in energy are unproven.\n\nSafety: Avoid during pregnancy, breastfeeding, before surgery and in people with autoimmune or thyroid disorders. Other chronic conditions, impaired kidney function or regular medication use require medical assessment; kidney transplant recipients also need approval from their transplant specialist. Long-term safety is unclear, and liver injury and drug interactions have been reported.",
     "areas": {
-      "digestiveHealth": "Supports gut flora balance and health. May inhibit Helicobacter pylori.",
-      "cardioFitness": "May improve blood lipid profile (cholesterol and triglycerides).",
-      "energy": "Supports metabolism and fat burning. May help regulate blood sugar levels."
+      "nervousSystem": "Some short-term studies report reduced perceived stress. Users also report emotional blunting, sometimes after stopping; its cause, frequency and duration remain uncertain.",
+      "energy": "Reduced fatigue has been reported in some studies, but a general, lasting energy-enhancing effect is unproven.",
+      "immuneSupport": "Immunomodulatory effects are investigated mainly in preclinical research. Clinically meaningful enhancement of immune function has not been established."
+    }
+  },
+  "berberine": {
+    "targetInfo": "This substance is not a usual dietary nutrient and therefore has no nutrition target in the app. You can still add it as a product to your supplement plan.",
+    "title": "Berberine for blood sugar, lipids and metabolism",
+    "description": "Origin: Berberine is an intensely yellow plant compound found in barberry species including Berberis aristata (Indian barberry) and Berberis vulgaris (common barberry), particularly in roots and bark. It contributes to the yellow colour of these plant parts. Berberine extracts should not be confused with the familiar ornamental hedge shrub Berberis thunbergii (Japanese barberry). Ornamental species can also contain berberine, but a garden shrub is not equivalent to a standardized extract.\n\nEvidence: Berberine is a plant alkaloid studied mainly in people with type 2 diabetes and abnormal blood lipids. Some randomized trials report lower blood glucose, HbA1c and lipid levels, but study quality and results vary. Comparable benefits in healthy people have not been established.\n\nHypotheses: Cell and animal studies suggest that berberine affects mitochondrial energy production and activates the energy sensor AMPK. This may contribute to altered glucose metabolism, but does not establish that this mechanism explains clinical effects in humans.\n\nAnimal studies and autoimmunity: In mouse models of autoimmune arthritis and MS-like disease (experimental autoimmune encephalomyelitis, EAE), berberine reduced some disease signs and inflammatory markers. Changes in T cells have also been observed. These findings generate hypotheses about immune modulation, but do not establish that berberine is an effective or safe treatment for autoimmune diseases in humans.\n\nBlood pressure: Berberine has also been investigated for high blood pressure. Some studies report reductions, but findings are inconsistent and the evidence is limited. A meta-analysis of placebo-controlled trials in metabolic syndrome found no statistically significant effect on systolic or diastolic blood pressure. Berberine is therefore not an established treatment for hypertension and does not replace prescribed treatment.\n\nHelicobacter pylori and stomach cancer: Persistent infection with the bacterium Helicobacter pylori (H. pylori) can cause chronic stomach inflammation and increases the risk of stomach cancer. Most infected people do not develop cancer. Treatment that eradicates the infection can reduce the risk. Berberine has been studied as part of combination regimens with antibiotics and acid-suppressing medicines to eradicate H. pylori. Berberine alone has not been shown to prevent or treat stomach cancer and does not replace prescribed treatment for the infection.\n\nUncertainties: Trials are often short and use different preparations. Long-term effects on disease outcomes and lifespan are unproven.\n\nSafety: Avoid during pregnancy and breastfeeding and do not give to infants. Kidney disease, organ transplantation or treatment with glucose-lowering medicines requires medical assessment. Berberine can affect blood glucose and increase tacrolimus and cyclosporine levels, with risks including kidney toxicity. People with autoimmune disease, particularly those receiving immunosuppressive treatment, should discuss use with their treating clinician. Before surgery, inform the surgical or anaesthesia team and follow their instructions about pausing use. Gastrointestinal symptoms and drug interactions can occur.",
+    "areas": {
+      "digestiveHealth": "Berberine has been studied in combination regimens for Helicobacter pylori, a bacterium that increases stomach cancer risk. Berberine alone has not been shown to eradicate the infection or prevent cancer.",
+      "cardioFitness": "Some studies report improved blood lipids in people with metabolic disorders. Effects on blood pressure remain uncertain, and a reduction in cardiovascular events has not been established.",
+      "energy": "Preclinical research suggests effects on AMPK and glucose metabolism. This is not evidence of increased perceived energy in healthy people."
     }
   },
   "brown_fat_cool_home": {
@@ -1024,15 +1035,6 @@
   "betaine_cardiovascular": {
     "title": "Betaine",
     "description": "Betaine supports cardiovascular function and physical performance."
-  },
-  "ashwagandha_adaptogen": {
-    "title": "Ashwagandha",
-    "description": "Ashwagandha is an adaptogenic herb traditionally used in Ayurvedic medicine. It helps the body manage stress by supporting cortisol balance and promoting relaxation.",
-    "areas": {
-      "nervousSystem": "Ashwagandha supports the nervous system by reducing stress and promoting calm through cortisol regulation.",
-      "energy": "Ashwagandha helps combat fatigue and supports sustained energy levels throughout the day.",
-      "immuneSupport": "Ashwagandha has immune-modulating properties that support overall immune health."
-    }
   },
   "rhodiola_adaptogen": {
     "title": "Rhodiola",

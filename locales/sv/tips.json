@@ -1,11 +1,22 @@
 {
-  "berberine": {
-    "title": "Berberin för blodsocker, blodfetter och metabolism",
-    "description": "Berberin är en växtförening som kan stödja blodsockerbalans, blodfetter, tarmhälsa och metabolism. Används ofta som supplement vid insulinresistens, för att förbättra tarmfloran och kan även hämma Helicobacter pylori.",
+  "ashwagandha_adaptogen": {
+    "targetInfo": "Detta ämne är inget vanligt näringsämne från mat och har därför inget näringsmål i appen. Du kan fortfarande lägga till det som ett preparat i din tillskottsplan, på egen risk.",
+    "title": "Ashwagandha",
+    "description": "Forskningsläge: Ashwagandha (Withania somnifera) är en växt vars extrakt innehåller bland annat withanolider. Små, kortvariga randomiserade studier av vissa standardiserade extrakt har visat minskad upplevd stress och ibland förbättrad sömn jämfört med placebo. Resultaten kan inte överföras till alla produkter eller användare.\n\nHypoteser: Påverkan på stressystemet HPA-axeln har föreslagits som en möjlig förklaring. Lägre kortisol har uppmätts i vissa studier, men detta bevisar inte att en ”kortisolobalans” har korrigerats eller att mekanismen är densamma hos alla. Withanolidernas roll är fortfarande under utredning.\n\nAnvändarrapporter om känslolivet: Det förekommer berättelser om känslomässig avtrubbning, med svagare positiva och negativa känslor, minskad motivation eller minskad förmåga att känna glädje (anhedoni). Vissa beskriver att besvären kvarstår efter avslutad användning. Dessa erfarenheter behöver tas på allvar, men de är inte tillräckliga för att fastställa hur vanligt detta är, hur länge det kan pågå eller om ashwagandha är orsaken. Att känna sig avtrubbad ska inte likställas med en önskad minskning av stress. Studiernas korta uppföljning gör att möjliga kvarstående effekter är otillräckligt kartlagda.\n\nOsäkerheter: Större och längre studier behövs. Effekter på immunförsvar och varaktigt ökad energi är inte fastställda.\n\nSäkerhet: Undvik vid graviditet, amning, inför operation samt vid autoimmun sjukdom eller sköldkörtelsjukdom. Vid annan kronisk sjukdom, nedsatt njurfunktion eller regelbunden medicinering krävs läkarbedömning; efter njurtransplantation även transplantationsläkarens godkännande. Långtidssäkerheten är oklar och leverpåverkan samt läkemedelsinteraktioner har rapporterats.",
     "areas": {
-      "digestiveHealth": "Stödjer tarmflorans balans och hälsa. Kan hämma Helicobacter pylori.",
-      "cardioFitness": "Kan förbättra blodfettsprofilen (kolesterol och triglycerider).",
-      "energy": "Stödjer ämnesomsättning och fettförbränning. Kan bidra till bättre blodsockerreglering."
+      "nervousSystem": "Vissa kortvariga studier visar minskad upplevd stress. Användarrapporter beskriver också känslomässig avtrubbning, ibland efter avslut; orsak, frekvens och varaktighet är osäkra.",
+      "energy": "Minskad trötthet har rapporterats i vissa studier, men någon generell och varaktig energihöjande effekt är inte fastställd.",
+      "immuneSupport": "Immunmodulerande effekter undersöks framför allt prekliniskt. Kliniskt relevant förstärkning av immunförsvaret är inte fastställd."
+    }
+  },
+  "berberine": {
+    "targetInfo": "Detta ämne är inget vanligt näringsämne från mat och har därför inget näringsmål i appen. Du kan fortfarande lägga till det som ett preparat i din tillskottsplan.",
+    "title": "Berberin för blodsocker, blodfetter och metabolism",
+    "description": "Ursprung: Berberin är ett starkt gult växtämne som finns bland annat i berberisarter som Berberis aristata (indisk berberis) och Berberis vulgaris (vanlig berberis), särskilt i rötter och bark. Ämnet bidrar till växtdelarnas gula färg. Berberinextrakt ska inte förväxlas med den vanliga häck- och prydnadsberberisen Berberis thunbergii. Även prydnadsarter kan innehålla berberin, men en trädgårdsbuske är inte likvärdig med ett standardiserat extrakt.\n\nForskningsläge: Berberin är en växtalkaloid som har studerats främst hos personer med typ 2-diabetes och rubbade blodfetter. Vissa randomiserade studier visar lägre blodsocker, HbA1c och blodfetter, men studiernas kvalitet och resultat varierar. Det är inte visat att samma nytta gäller friska personer.\n\nHypoteser: Cell- och djurstudier föreslår att berberin påverkar mitokondriernas energiproduktion och aktiverar energisensorn AMPK. Detta kan bidra till förändrad glukosomsättning, men visar inte att mekanismen förklarar kliniska effekter hos människor.\n\nDjurstudier och autoimmunitet: I musmodeller av autoimmun ledinflammation och MS-liknande sjukdom (EAE) har berberin minskat vissa sjukdomstecken och inflammationsmarkörer. Förändringar i bland annat T-celler har observerats. Detta ger hypoteser om immunmodulering, men visar inte att berberin är en effektiv eller säker behandling av autoimmuna sjukdomar hos människor.\n\nBlodtryck: Berberin har även undersökts vid högt blodtryck. Vissa studier rapporterar sänkningar, men resultaten är inte samstämmiga och underlaget är begränsat. En metaanalys av placebokontrollerade studier vid metabolt syndrom fann ingen statistiskt säkerställd effekt på systoliskt eller diastoliskt blodtryck. Berberin är därför inte en etablerad behandling mot högt blodtryck och ersätter inte ordinerad behandling.\n\nHelicobacter pylori och magsäckscancer: Långvarig infektion med bakterien Helicobacter pylori (H. pylori) kan orsaka kronisk inflammation i magsäcken och ökar risken för magsäckscancer. De flesta smittade utvecklar dock inte cancer. Behandling som avlägsnar infektionen kan minska risken. Berberin har studerats som del av kombinationsbehandling tillsammans med antibiotika och syrahämmande läkemedel för att avlägsna H. pylori. Det är inte visat att berberin ensamt förebygger eller behandlar magsäckscancer, och det ersätter inte ordinerad behandling mot infektionen.\n\nOsäkerheter: Studierna är ofta korta och använder olika preparat. Långsiktiga effekter på sjukdom och livslängd är inte fastställda.\n\nSäkerhet: Undvik under graviditet och amning och ge inte till spädbarn. Vid njursjukdom, organtransplantation eller behandling med blodsockersänkande läkemedel krävs läkarbedömning. Berberin kan påverka blodsockret och höja nivåerna av takrolimus och ciklosporin, med risk för bland annat njurpåverkan. Vid autoimmun sjukdom, särskilt med immundämpande behandling, bör användning bedömas av behandlande läkare. Inför operation ska operations- eller narkosteamet informeras; följ deras instruktioner om uppehåll. Magbesvär och läkemedelsinteraktioner kan förekomma.",
+    "areas": {
+      "digestiveHealth": "Berberin har studerats i kombinationsbehandling mot Helicobacter pylori, en bakterie som ökar risken för magsäckscancer. Det är inte visat att berberin ensamt avlägsnar infektionen eller förebygger cancer.",
+      "cardioFitness": "Vissa studier visar förbättrade blodfetter hos personer med metabola rubbningar. Effekten på blodtryck är osäker och minskad risk för hjärt-kärlhändelser är inte fastställd.",
+      "energy": "Preklinisk forskning föreslår påverkan på AMPK och glukosomsättning. Detta är inte belägg för ökad upplevd energi hos friska."
     }
   },
   "brown_fat_cool_home": {
@@ -923,15 +934,6 @@
   "betaine_cardiovascular": {
     "title": "Betain",
     "description": "Betain stödjer kardiovaskulär funktion och fysisk prestanda."
-  },
-  "ashwagandha_adaptogen": {
-    "title": "Ashwagandha",
-    "description": "Ashwagandha är en adaptogen växt som traditionellt används i ayurvedisk medicin. Den hjälper kroppen att hantera stress genom att stödja kortisolbalans och främja avslappning.",
-    "areas": {
-      "nervousSystem": "Ashwagandha stödjer nervsystemet genom att minska stress och främja lugn via kortisolreglering.",
-      "energy": "Ashwagandha hjälper till att bekämpa trötthet och stödjer varaktiga energinivåer under dagen.",
-      "immuneSupport": "Ashwagandha har immunmodulerande egenskaper som stödjer den övergripande immunhälsan."
-    }
   },
   "rhodiola_adaptogen": {
     "title": "Rhodiola",

@@ -59,7 +59,7 @@ export default function TargetsSection({
     })),
   ];
 
-  if (!rows.length && !weightMissing && !proteinGoalMissing) return null;
+  if (!rows.length && !weightMissing && !proteinGoalMissing && !tip.targetDescriptionKey) return null;
 
   const formatValue = (value: number, unit: string) => {
     let decimals = 1;
@@ -90,17 +90,19 @@ export default function TargetsSection({
       )}
       {tip.targetDescriptionKey && <ThemedText type="explainer">{t(`tips:${tip.targetDescriptionKey}`)}</ThemedText>}
       {trackingUnavailable && <Notice variant="warning" message={t('common:nutritionTargetSection.trackingUnavailable')} />}
-      <View style={styles.targets}>
-        {rows.map(target => (
-          <View key={target.key} style={styles.targetRow}>
-            <ThemedText style={globalStyles.flex1}>{target.label}</ThemedText>
-            <ThemedText type="caption" style={{ color: colors.textMuted }}>
-              {formatValue(target.amount, target.unit)}
-              {periodSuffix}
-            </ThemedText>
-          </View>
-        ))}
-      </View>
+      {rows.length > 0 && (
+        <View style={styles.targets}>
+          {rows.map(target => (
+            <View key={target.key} style={styles.targetRow}>
+              <ThemedText style={globalStyles.flex1}>{target.label}</ThemedText>
+              <ThemedText type="caption" style={{ color: colors.textMuted }}>
+                {formatValue(target.amount, target.unit)}
+                {periodSuffix}
+              </ThemedText>
+            </View>
+          ))}
+        </View>
+      )}
       {onShowJournal && !weightMissing && !proteinGoalMissing && (
         <View style={[styles.journalLink, { borderTopColor: colors.borderLight }]}>
           <DiscreetButton
