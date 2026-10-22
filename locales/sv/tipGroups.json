@@ -30,5 +30,17 @@
   "amino_acids": {
     "title": "Aminosyror och relaterade ämnen",
     "description": "Aminosyror är byggstenar i proteiner och deltar även i bland annat signalering och ämnesomsättning. Gruppen samlar tips om enskilda aminosyror, kombinationer och relaterade ämnen som NAC. Att ett ämne har en biologisk roll innebär inte att tillskott behövs; näringsmål, forskningsläge och säkerhet skiljer sig mellan tipsen."
+  },
+  "light_infrared": {
+    "title": "Ljus och infraröd värme",
+    "description": "Gruppen samlar rött ljus, near infrared (NIR) och far infrared (FIR). De tillhör olika delar av ljusspektrumet och används på olika sätt.\n\nRött ljus och NIR används inom fotobiomodulering, där man studerar hur ljus påverkar cellernas signalering. FIR används bland annat i infrabastu, där uppvärmning och kroppens temperaturreglering är centrala. Ett resultat från infrabastu kan därför inte automatiskt tillskrivas en rödljuspanel, eller tvärtom.\n\nEffekten beror på våglängd, dos, behandlingsområde och utrustning. Läs respektive tips för mekanismer, forskningsläge och säkerhet; en möjlig effekt i cellförsök är inte samma sak som en bevisad hälsoeffekt hos människor."
+  },
+  "light_sleep": {
+    "title": "Ljus och sömn",
+    "description": "Gruppen samlar tips om morgonljus, belysningshygien och nedvarvning med dämpad kvällsbelysning. Tillsammans handlar de om att ge kroppen tydliga signaler för dag och natt.\n\nHär kan du läsa om dagsljus under dagen, dämpad belysning på kvällen och hur ljusvanor samspelar med sömnens timing. Varje tips beskriver sin del och ger praktiska råd."
+  },
+  "nitric_oxide": {
+    "title": "Kväveoxid (NO)",
+    "description": "Kväveoxid (NO) är en kortlivad signalmolekyl som bildas på flera platser i kroppen. Den deltar bland annat i regleringen av blodkärlens tonus. Var NO bildas och i vilken mängd spelar roll; mer NO på ett ställe betyder inte automatiskt bättre cirkulation i hela kroppen.\n\nGruppen samlar tips om näsans och bihålornas NO, arginin, citrullin och nitrat från maten, samt tips där NO-signalering ingår som möjlig mekanism, exempelvis rött ljus och kärlfunktion vid homocysteinomsättning. Dessa vägar har olika forskningsunderlag och ska inte ses som likvärdiga behandlingar.\n\nKopplingen till Viagra: NO aktiverar enzymet lösligt guanylatcyklas, som ökar signalämnet cGMP och får glatt muskulatur i blodkärl att slappna av. Sildenafil, den aktiva substansen i Viagra, hämmar PDE5 som bryter ned cGMP och förstärker därmed NO-signalen vid sexuell stimulering. Effekten beror på att kroppens NO-signal redan har aktiverats; läkemedlet bromsar nedbrytningen av signalämnet cGMP. Sildenafil får inte kombineras med nitratläkemedel, exempelvis nitroglycerin, eftersom blodtrycket kan falla farligt."
   }
 }

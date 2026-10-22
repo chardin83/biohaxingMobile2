@@ -7,6 +7,9 @@ export const tipGroupIds = [
   'fiber_microbiome',
   'sulfate',
   'amino_acids',
+  'light_infrared',
+  'light_sleep',
+  'nitric_oxide',
 ] as const;
 
 export type TipGroupId = (typeof tipGroupIds)[number];

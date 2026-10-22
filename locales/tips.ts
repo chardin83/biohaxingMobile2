@@ -754,7 +754,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'arginine_pump',
-    groupIds: ['amino_acids'],
+    groupIds: ['amino_acids', 'nitric_oxide'],
     level: 6,
     xp: 500,
     areas: [
@@ -807,6 +807,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'homocysteine_methylation_cardio',
+    groupIds: ['nitric_oxide'],
     level: 8,
     xp: 700,
     areas: [
@@ -875,7 +876,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'citrulline_bloodflow_gut',
-    groupIds: ['amino_acids'],
+    groupIds: ['amino_acids', 'nitric_oxide'],
     level: 7,
     xp: 500,
     areas: [
@@ -1069,7 +1070,7 @@ const rawTips: Tip[] = [
     id: 'pre_sleep_wind_down',
     level: 1,
     xp: 0,
-    groupIds: ['sleep_optimization_recovery'],
+    groupIds: ['sleep_optimization_recovery', 'light_sleep'],
     areas: [
       { id: 'sleepQuality', descriptionKey: 'pre_sleep_wind_down.areas.sleepQuality' },
       { id: 'nervousSystem', descriptionKey: 'pre_sleep_wind_down.areas.nervousSystem' },
@@ -1096,6 +1097,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'sunlight_circadian',
+    groupIds: ['light_sleep'],
     level: 1,
     xp: 0,
     areas: [
@@ -2070,6 +2072,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'nitrate_no_efficiency',
+    groupIds: ['nitric_oxide'],
     level: 5,
     xp: 700,
     areas: [
@@ -2182,6 +2185,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'near_infrared_red_light',
+    groupIds: ['light_infrared', 'nitric_oxide'],
     level: 10,
     xp: 500,
     areas: [
@@ -2197,6 +2201,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'far_infrared_light',
+    groupIds: ['light_infrared'],
     level: 10,
     xp: 500,
     areas: [
@@ -2212,6 +2217,7 @@ const rawTips: Tip[] = [
   },
   {
     id: 'nasal_breathing_nitric_oxide',
+    groupIds: ['nitric_oxide'],
     level: 1,
     xp: 300,
     areas: [
@@ -2259,14 +2265,18 @@ const rawTips: Tip[] = [
     bodyParts: ['joints', 'digestiveSystem', 'hair', 'bones'],
   },
   {
-    id: 'blue_light_evening',
+    id: 'lighting_hygiene',
+    groupIds: ['light_sleep'],
     level: 1,
     xp: 200,
-    areas: [{ id: 'sleepQuality', descriptionKey: 'blue_light_evening.areas.sleepQuality' }],
-    title: 'blue_light_evening.title',
-    descriptionKey: 'blue_light_evening.description',
+    areas: [
+      { id: 'sleepQuality', descriptionKey: 'lighting_hygiene.areas.sleepQuality' },
+      { id: 'nervousSystem', descriptionKey: 'lighting_hygiene.areas.nervousSystem' },
+    ],
+    title: 'lighting_hygiene.title',
+    descriptionKey: 'lighting_hygiene.description',
     trainingRelation: 'anytime',
-    preferredDayParts: ['evening', 'night'],
+    preferredDayParts: ['morning', 'midday', 'afternoon', 'evening', 'night'],
     timeRule: 'anytime',
     planCategory: ['other'],
     bodyParts: ['nervousSystem'],

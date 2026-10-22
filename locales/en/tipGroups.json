@@ -30,5 +30,17 @@
   "amino_acids": {
     "title": "Amino acids and related compounds",
     "description": "Amino acids are protein building blocks and also participate in signaling and metabolism. This group includes individual amino acids, combinations, and related compounds such as NAC. A biological role does not establish a need for supplementation; nutrition targets, evidence, and safety differ between tips."
+  },
+  "light_infrared": {
+    "title": "Light and infrared heat",
+    "description": "This group covers red light, near infrared (NIR) and far infrared (FIR). They occupy different parts of the light spectrum and are used in different ways.\n\nRed light and NIR are used in photobiomodulation, which investigates how light affects cellular signalling. FIR is used in infrared saunas, where heating and temperature regulation are central. Findings from an infrared sauna therefore cannot automatically be applied to a red light panel, or vice versa.\n\nEffects depend on wavelength, dose, treatment area and equipment. Read each tip for mechanisms, evidence and safety; a possible effect in cell experiments is not the same as a proven health benefit in humans."
+  },
+  "light_sleep": {
+    "title": "Light and sleep",
+    "description": "This group brings together tips on morning light, lighting hygiene and winding down with dim evening lighting. Together, they focus on giving the body clear signals for day and night.\n\nExplore daylight during the day, dim evening lighting and how light habits interact with sleep timing. Each tip covers its own part and offers practical guidance."
+  },
+  "nitric_oxide": {
+    "title": "Nitric oxide (NO)",
+    "description": "Nitric oxide (NO) is a short-lived signalling molecule produced at several sites in the body. Its roles include regulation of vascular tone. Location and amount matter; more NO in one place does not automatically mean better circulation throughout the body.\n\nThis group brings together tips on nasal and sinus NO, arginine, citrulline and dietary nitrate, alongside tips involving NO signalling as a possible mechanism, such as red light and vascular function in homocysteine metabolism. These pathways have different evidence bases and should not be treated as equivalent therapies.\n\nThe Viagra connection: NO activates soluble guanylate cyclase, increasing the messenger cGMP and relaxing vascular smooth muscle. Sildenafil, the active ingredient in Viagra, inhibits PDE5, which breaks down cGMP, thereby amplifying the NO signal during sexual stimulation. Its effect depends on activation of the body’s NO signalling; the medicine slows the breakdown of the messenger cGMP. Sildenafil must not be combined with nitrate medicines such as nitroglycerin because blood pressure can fall dangerously."
   }
 }
