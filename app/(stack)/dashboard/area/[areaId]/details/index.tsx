@@ -395,7 +395,6 @@ export default function AreaDetailScreen() {
         colors={colors}
         tip={tip}
         myLevel={myLevel}
-        resolvedSupplements={resolvedSupplements}
         titleKey={titleKey}
         isFavorite={isFavorite}
         totalXpEarned={totalXpEarned}

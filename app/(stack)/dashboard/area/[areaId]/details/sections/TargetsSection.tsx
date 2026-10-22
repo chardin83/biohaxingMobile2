@@ -59,7 +59,7 @@ export default function TargetsSection({
     })),
   ];
 
-  if (!rows.length && !weightMissing && !proteinGoalMissing && !tip.targetDescriptionKey) return null;
+  if (!rows.length && !weightMissing && !proteinGoalMissing && !tip.targetDescriptionKey && !tip.noNutritionTarget) return null;
 
   const formatValue = (value: number, unit: string) => {
     let decimals = 1;
@@ -88,6 +88,7 @@ export default function TargetsSection({
       {weightBased && !weightMissing && (
         <ThemedText type="explainer">{t('common:nutritionTargetSection.weightBased', { weight: userProfile?.weightKg })}</ThemedText>
       )}
+      {tip.noNutritionTarget && <ThemedText type="explainer">{t('common:nutritionTargetSection.noNutritionTarget')}</ThemedText>}
       {tip.targetDescriptionKey && <ThemedText type="explainer">{t(`tips:${tip.targetDescriptionKey}`)}</ThemedText>}
       {trackingUnavailable && <Notice variant="warning" message={t('common:nutritionTargetSection.trackingUnavailable')} />}
       {rows.length > 0 && (

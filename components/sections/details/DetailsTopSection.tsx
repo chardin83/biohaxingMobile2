@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { Icon } from 'react-native-paper';
 
-import { Supplement } from "@/app/domain/Supplement";
 import { ThemedText } from "@/components/ThemedText";
 import AppButton from "@/components/ui/AppButton";
 import Badge from "@/components/ui/Badge";
@@ -45,7 +44,6 @@ type DetailsTopSectionProps = {
   colors: any;
   tip: Tip | undefined;
   myLevel: number;
-  resolvedSupplements: Supplement[];
   titleKey: string | undefined;
   isFavorite: boolean;
   totalXpEarned: number;
@@ -67,7 +65,6 @@ const DetailsTopSection: React.FC<DetailsTopSectionProps> = ({
   colors,
   tip,
   myLevel,
-  resolvedSupplements,
   titleKey,
   isFavorite,
   totalXpEarned,
@@ -100,7 +97,7 @@ const DetailsTopSection: React.FC<DetailsTopSectionProps> = ({
     <View style={styles.topSection}>
       <View style={styles.titleRow}>
            <ThemedText type="title" style={{ color: colors.primary }}>
-        {resolvedSupplements[0]?.name ?? t(`tips:${titleKey}`)}
+        {t(`tips:${titleKey}`)}
       </ThemedText>
         <ThemedText type="subtitle" style={{ color: colors.primary }} >
           {t(`areas:${areaId}.title`)}

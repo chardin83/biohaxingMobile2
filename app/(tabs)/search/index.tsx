@@ -41,6 +41,7 @@ export default function TipsSearchScreen() {
   const [selectedPlanCategories, setSelectedPlanCategories] = useState<PlanCategory[]>([]);
   const [selectedBodyParts, setSelectedBodyParts] = useState<string[]>([]);
   const [selectedTargetPeriods, setSelectedTargetPeriods] = useState<TargetPeriod[]>([]);
+  const [hasTargetsFilter, setHasTargetsFilter] = useState<boolean | null>(null);
   const [inPlanFilter, setInPlanFilter] = useState<boolean | null>(null);
   useEffect(() => {
     if (params.inPlan === 'no') setInPlanFilter(false);
@@ -124,6 +125,7 @@ export default function TipsSearchScreen() {
     const q = query.trim().toLowerCase();
     return tips
       .filter(tip => !filterByAge || matchesTipAge(tip, age))
+      .filter(tip => hasTargetsFilter === null || Boolean(tip.targetPeriod) === hasTargetsFilter)
       .filter(
         tip =>
           (selectedAreas.length === 0 || tip.areas.some(a => selectedAreas.includes(a.id))) &&
@@ -151,6 +153,7 @@ export default function TipsSearchScreen() {
     selectedBodyParts,
     selectedTargetPeriods,
     inPlanFilter,
+    hasTargetsFilter,
     plannedTipIds,
     filterByAge,
     age,
@@ -181,12 +184,14 @@ export default function TipsSearchScreen() {
     selectedBodyParts.length +
     selectedTargetPeriods.length +
     Number(inPlanFilter !== null) +
+    Number(hasTargetsFilter !== null) +
     Number(ageFilterActive);
 
   const allLevels = [...new Set(tips.map(tip => tip.level ?? 1))].sort((a, b) => a - b);
 
   const selectedFilterLabels = useMemo(() => {
     const labels = [
+      ...(hasTargetsFilter === null ? [] : [t(hasTargetsFilter ? 'common:filter.withTargets' : 'common:filter.withoutTargets')]),
       ...(ageFilterActive ? [t('common:filter.ageMatching')] : []),
       ...selectedAreas.map(areaId => t('areas:' + areaId + '.title')),
       ...selectedLevels.map(level => `${t('common:filter.level')} ${level}`),
@@ -197,7 +202,7 @@ export default function TipsSearchScreen() {
     ];
 
     return labels;
-  }, [selectedAreas, selectedLevels, selectedPlanCategories, selectedBodyParts, selectedTargetPeriods, inPlanFilter, t, ageFilterActive]);
+  }, [selectedAreas, selectedLevels, selectedPlanCategories, selectedBodyParts, selectedTargetPeriods, inPlanFilter, hasTargetsFilter, t, ageFilterActive]);
 
   const visibleSelectedFilterLabels = selectedFilterLabels.slice(0, 3);
   const hiddenSelectedFilterCount = Math.max(0, selectedFilterLabels.length - visibleSelectedFilterLabels.length);
@@ -326,6 +331,28 @@ export default function TipsSearchScreen() {
               </Badge>
             ))}
           </View>
+          <ThemedText type="label" style={styles.filterLabel}>
+            {t('common:filter.hasTargets')}
+          </ThemedText>
+          <View style={styles.filterView}>
+            {([null, true, false] as const).map(value => {
+              let labelKey = 'allTips';
+              if (value === true) labelKey = 'withTargets';
+              if (value === false) labelKey = 'withoutTargets';
+              return (
+                <Badge
+                  key={String(value)}
+                  variant="overlay"
+                  style={[styles.toggleBadge, hasTargetsFilter === value && { backgroundColor: colors.accentDefault }]}
+                  onPress={() => setHasTargetsFilter(value)}
+                >
+                  <ThemedText type="caption" style={styles.badgeLabel}>
+                    {t(`common:filter.${labelKey}`)}
+                  </ThemedText>
+                </Badge>
+              );
+            })}
+          </View>
           {/* Area-filter */}
           <ThemedText type="label" style={styles.filterLabel}>
             {t('common:filter.area')}
@@ -430,6 +457,7 @@ export default function TipsSearchScreen() {
             setSelectedBodyParts([]);
             setSelectedTargetPeriods([]);
             setInPlanFilter(null);
+            setHasTargetsFilter(null);
             setFilterByAge(false);
           }}
         >

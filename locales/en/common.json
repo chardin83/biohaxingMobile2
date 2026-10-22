@@ -579,6 +579,7 @@
     "saveError": "Could not save goals. Please try again."
   },
   "nutritionTargetSection": {
+    "noNutritionTarget": "There is no established nutrition target for this substance in the app. You can still add it as a product to your supplement plan.",
     "premiumExplainer": "You can add this tip to your plan, but goal tracking requires Premium.",
     "title": "Goals",
     "showJournal": "View in journal",
@@ -765,6 +766,7 @@
     "xpInfo": "XP tracks your progress in the app. Education XP comes from exploring tips and questions. Nutrition XP comes from completing nutrition tips (daily/weekly targets).\n\nCurrent breakdown: \n Education XP: {{education}} • Nutrition XP: {{nutrition}}."
   },
   "search": {
+    "noTipsFound": "No tips found",
     "goalIntro": {
       "training": {
         "title": "Build your training plan.",
@@ -788,6 +790,10 @@
     "supplement": "Supplement"
   },
   "filter": {
+    "hasTargets": "Tips with targets",
+    "allTips": "All tips",
+    "withTargets": "With targets",
+    "withoutTargets": "Without targets",
     "ageMatching": "Match my age",
     "ageUnknown": "Add your birth date in personal settings to filter by age.",
     "inPlan": "In plan",

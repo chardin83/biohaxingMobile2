@@ -19,7 +19,7 @@ jest.mock('react-i18next', () => ({
 }));
 jest.mock('@/locales/tips', () => ({
   tips: [
-    { id: 'basic', level: 1 },
+    { id: 'basic', level: 1, targetPeriod: 'daily', habitTargets: [{ trackingKey: 'example', amount: 5, unit: 'minutes' }] },
     { id: 'current', level: 2, minAge: 65 },
     { id: 'advanced', level: 3 },
     { id: 'hidden-a', level: 4 },
@@ -226,4 +226,21 @@ it('shows age-targeted tips for older users and handles a missing birth date wit
   expect(screen.getByText('tips:current')).toBeTruthy();
   fireEvent.press(screen.getByText('Filter'));
   expect(screen.getByText('common:filter.ageUnknown')).toBeTruthy();
+});
+
+it('filters tips with and without targets and resets the filter', () => {
+  const screen = render(<TipsSearchScreen />);
+  fireEvent.press(screen.getByText('Filter'));
+  fireEvent.press(screen.getByText('common:filter.withTargets'));
+  expect(screen.getByText('tips:basic')).toBeTruthy();
+  expect(screen.queryByText('tips:current')).toBeNull();
+  fireEvent.press(screen.getByText('common:filter.withoutTargets'));
+  expect(screen.queryByText('tips:basic')).toBeNull();
+  expect(screen.getByText('tips:current')).toBeTruthy();
+  fireEvent.press(screen.getByText('common:filter.allTips'));
+  expect(screen.getByText('tips:basic')).toBeTruthy();
+  expect(screen.getByText('tips:current')).toBeTruthy();
+  fireEvent.press(screen.getByText('common:filter.withTargets'));
+  fireEvent.press(screen.getByText('common:filter.clearAll'));
+  expect(screen.getByText('tips:current')).toBeTruthy();
 });

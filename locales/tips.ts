@@ -206,6 +206,7 @@ type TipBase = {
   };
   targetIconName?: TipTargetIconName; // Valfri ikon för target-rader i UI
   targetDescriptionKey?: string;
+  noNutritionTarget?: boolean;
   veganInfo?: string;
   nutritionFoods?: TipNutritionFood[]; // Rekommenderade livsmedel för nutritionstips
   bodyParts?: string[]; // Rekommenderade delar av kroppen för detta tip
@@ -256,7 +257,7 @@ const rawTips: Tip[] = [
     ],
     title: 'berberine.title',
     descriptionKey: 'berberine.description',
-    targetDescriptionKey: 'berberine.targetInfo',
+    noNutritionTarget: true,
     supplements: [{ id: 'berberine' }],
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'midday'],
@@ -1870,7 +1871,7 @@ const rawTips: Tip[] = [
     ],
     title: 'ashwagandha_adaptogen.title',
     descriptionKey: 'ashwagandha_adaptogen.description',
-    targetDescriptionKey: 'ashwagandha_adaptogen.targetInfo',
+    noNutritionTarget: true,
     supplements: [{ id: 'ashwagandha' }],
     trainingRelation: 'anytime',
     preferredDayParts: ['evening'],
@@ -1890,6 +1891,7 @@ const rawTips: Tip[] = [
     ],
     title: 'rhodiola_adaptogen.title',
     descriptionKey: 'rhodiola_adaptogen.description',
+    noNutritionTarget: true,
     supplements: [{ id: 'rhodiolaRosea' }],
     trainingRelation: 'anytime',
     preferredDayParts: ['morning'],
@@ -1926,6 +1928,7 @@ const rawTips: Tip[] = [
     ],
     title: 'reishi_mushroom.title',
     descriptionKey: 'reishi_mushroom.description',
+    noNutritionTarget: true,
     supplements: [{ id: 'reishi' }],
     trainingRelation: 'anytime',
     preferredDayParts: ['evening'],
@@ -2178,15 +2181,15 @@ const rawTips: Tip[] = [
     level: 9,
     xp: 700,
     areas: [
-      { id: 'strength', descriptionKey: 'astaxanthin_recovery_antioxidant.areas.strength' },
       { id: 'energy', descriptionKey: 'astaxanthin_recovery_antioxidant.areas.energy' },
+      { id: 'strength', descriptionKey: 'astaxanthin_recovery_antioxidant.areas.strength' },
       { id: 'cardioFitness', descriptionKey: 'astaxanthin_recovery_antioxidant.areas.cardioFitness' },
     ],
     title: 'astaxanthin_recovery_antioxidant.title',
     descriptionKey: 'astaxanthin_recovery_antioxidant.description',
+    noNutritionTarget: true,
     supplements: [{ id: 'astaxanthin' }, { id: 'vitaminETocotrienols' }, { id: 'vitaminEMixedTocopherols' }, { id: 'vitaminE' }],
-    trainingRelation: 'avoidNearWorkout',
-    preferredDayParts: ['evening'],
+    trainingRelation: 'anytime',
     timeRule: 'anytime',
     analyzePrompt: 'astaxanthin_recovery_antioxidant.analyzePrompt',
     planCategory: ['supplement'],

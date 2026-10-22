@@ -23,6 +23,7 @@ export type InformationCardLinkRow = Readonly<{
   key: string;
   title: string;
   subtitle?: string;
+  subtitleNumberOfLines?: number;
   iconName?: IconSymbolName;
   icon?: React.ReactNode;
   items?: readonly InformationItem[];
@@ -97,6 +98,7 @@ export function InformationCardLink({
                 key: row.key,
                 title: row.title,
                 subtitle: row.subtitle,
+                subtitleNumberOfLines: row.subtitleNumberOfLines,
                 iconName: row.iconName ?? iconName,
                 icon: row.icon,
                 accessory: row.accessory,

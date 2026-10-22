@@ -58,7 +58,7 @@ it.each(['habitTargets', 'activityTargets', 'hydrationTargets', 'fiberTargets'] 
 });
 
 it('does not show an empty goal card', () => {
-  const tip = tips.find(item => !item.targetPeriod && !item.targetDescriptionKey);
+  const tip = tips.find(item => !item.targetPeriod && !item.targetDescriptionKey && !item.noNutritionTarget);
   expect(tip).toBeDefined();
   const screen = render(<TargetsSection tip={tip} colors={Colors.light} t={t} />);
   expect(screen.queryByText('common:nutritionTargetSection.title')).toBeNull();
@@ -138,11 +138,11 @@ it('links to the person card nutrition goals and hides tracking when protein is 
   expect(screen.getByText('common:nutritionTargetSection.showJournal')).toBeTruthy();
 });
 
-it.each(['berberine', 'ashwagandha_adaptogen'])('shows an explanatory target card without inventing a nutrition goal for %s', tipId => {
+it.each(['berberine', 'ashwagandha_adaptogen', 'astaxanthin_recovery_antioxidant', 'reishi_mushroom', 'rhodiola_adaptogen'])('shows an explanatory target card without inventing a nutrition goal for %s', tipId => {
   const tip = tips.find(item => item.id === tipId)!;
   const screen = render(<TargetsSection tip={tip} colors={Colors.light} t={t} />);
   expect(tip.targetPeriod).toBeUndefined();
   expect(screen.getByText('common:nutritionTargetSection.title')).toBeTruthy();
-  expect(screen.getByText(`tips:${tipId}.targetInfo`)).toBeTruthy();
+  expect(screen.getByText('common:nutritionTargetSection.noNutritionTarget')).toBeTruthy();
   expect(screen.queryByText(/common:nutritionTargetSection.periods/)).toBeNull();
 });

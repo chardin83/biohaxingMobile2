@@ -13,6 +13,7 @@ export type CardLinkListRow = {
   readonly key: string;
   readonly title: string;
   readonly subtitle?: string;
+  readonly subtitleNumberOfLines?: number;
   readonly subtitleContent?: React.ReactNode;
   readonly value?: string;
   readonly iconName?: IconSymbolName;
@@ -67,7 +68,7 @@ export function CardLinkList({ rows, showIcon = true, style, footer }: Props) {
                   </View>
                 )}
                 {row.subtitle && (
-                  <ThemedText type="caption" style={styles.subtitle}>
+                  <ThemedText type="caption" style={styles.subtitle} numberOfLines={row.subtitleNumberOfLines} ellipsizeMode="tail">
                     {row.subtitle}
                   </ThemedText>
                 )}
