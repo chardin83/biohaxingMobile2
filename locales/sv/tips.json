@@ -167,18 +167,18 @@
     }
   },
   "electrolytes_balance": {
-    "title": "Elektrolyter för vätskebalans och prestation",
-    "description": "Elektrolyter som natrium, kalium och magnesium hjälper kroppen att reglera vätskebalans, nervsignaler, muskelkontraktion och blodtryck. När du svettas mycket, tränar hårt eller dricker stora mängder vanligt vatten utan att ersätta mineraler kan låga elektrolytnivåer bidra till trötthet, huvudvärk, sämre prestation eller muskelkramper. För natrium är mineralrikt salt eller buljong ofta mer relevant än att bara öka vanligt bordssalt, särskilt eftersom högt intag av vanligt bordssalt kan bidra till förhöjt blodtryck hos känsliga personer.",
+    "title": "Elektrolyter – behövs extra tillskott?",
+    "description": "För vanliga motionärer behövs oftast inga extra elektrolyter. Vatten och vanlig mat räcker oftast. Elektrolytdryck och salttabletter är inte en nödvändig del av ett vanligt träningspass, och att svettas är i sig inget bevis på brist. Extra salt kan i stället öka ett redan högt saltintag och påverka blodtrycket.\n\nElektrolyter som natrium, kalium, magnesium och kalcium är livsnödvändiga – men det betyder inte att mer i tillskottsform är bättre.\n\nLångvarig träning i värme: Extra natrium och vätska kan vara relevant vid stora, långvariga svettförluster – exempelvis för ultralöpare, vid långa cykellopp eller flera timmars arbete i värme. Svenska Fotbollförbundets råd nämner elektrolytdryck som ett alternativ vid pass över en timme i värme. Det är ingen automatisk gräns för tillskott: behovet beror på svettmängd, temperatur, intensitet, varaktighet och vad du äter och dricker.\n\nSvettmängd och svettest: Inför exempelvis ett ultralopp kan en idrottsdietist hjälpa till med en individuell vätske- och saltplan. Vägning före och efter ett träningspass, med hänsyn till drucken vätska och eventuell urin, ger en grov uppskattning av vätskeförlusten. Ett svettest med analys av svettens natriumhalt kan dessutom uppskatta saltförlusten. Testa i förhållanden som liknar tävlingen; resultatet varierar med bland annat värmeacklimatisering och är ingen exakt doseringsorder. Saltfläckar på kläderna räcker inte för att bestämma hur mycket natrium du behöver.\n\nBlodtryck och svenska kostråd: Det allmänna svenska rådet är högst 6 gram salt per dag för vuxna, ungefär 2,4 gram natrium, från all mat och dryck tillsammans. Det är en övre gräns för vardagskosten, inte ett mål att fylla upp. Högt saltintag kan höja blodtrycket. Havssalt, ”mineralrikt” salt och buljong kan också ge mycket natrium och är inte automatiskt bättre för blodtrycket än bordssalt. Stora svettförluster vid långvarig idrott behöver bedömas separat.\n\nUndvik överdrivet drickande: Under långa lopp kan mer vätska än kroppen förlorar späda ut blodets natrium och orsaka farlig hyponatremi. Elektrolytdryck eller salttabletter gör inte överdrickande säkert. Tilltagande huvudvärk, illamående eller förvirring under eller efter ett lopp ska inte självbehandlas med mer vatten eller salt; förvirring, kramper eller sänkt medvetande kräver akut hjälp.\n\nVar extra försiktig vid högt blodtryck, hjärt- eller njursjukdom och läkemedel som påverkar vätska eller salter. Kaliumtillskott kan vara riskabla vid nedsatt njurfunktion och vissa läkemedel. Diskutera tillskott med vården.",
     "areas": {
-      "energy": "Elektrolyter hjälper till att upprätthålla cellernas vätskebalans och nerv-muskel-funktion, vilket stödjer stabil energi och minskar trötthet.",
-      "cardioFitness": "Vid träning och värme hjälper tillräckliga elektrolyter till att bevara blodvolym, vätskestatus och fysisk prestationsförmåga.",
-      "nervousSystem": "Natrium och kalium är avgörande för nervimpulser, medan magnesium stödjer normal neuromuskulär avslappning och signalering."
+      "energy": "Vid stora svettförluster kan anpassad vätske- och natriumtillförsel stödja prestationsförmågan. Trötthet och muskelkramp är inte i sig bevis på elektrolytbrist.",
+      "cardioFitness": "Vätskeförlust kan påverka blodvolym och cirkulation. Extra salt behövs inte rutinmässigt och högt natriumintag kan höja blodtrycket; långvarig idrott i värme kräver individuell bedömning.",
+      "nervousSystem": "Natrium, kalium, magnesium och kalcium behövs för normal nerv- och muskelfunktion. Både för låga och för höga nivåer kan vara skadliga; tillskott är inte automatiskt bättre."
     },
     "nutritionFoods": {
       "title": "Livsmedel och drycker som stödjer elektrolytbalans",
       "items": {
         "coconutWater": {
-          "details": "Ett glas kokosvatten ger kalium och vätska, vilket kan vara användbart efter värme eller lättare träning."
+          "details": "Kokosvatten bidrar med vätska och kalium, men har varierande innehåll och är inte automatiskt anpassat för stora natriumförluster vid uthållighetsidrott."
         },
         "potatoes": {
           "details": "Potatis är rik på kalium, ett av de viktigaste mineralerna för muskel- och nervfunktion."
@@ -1035,10 +1035,24 @@
   },
   "nitrate_no_efficiency": {
     "title": "Nitrat och kväveoxid för kärlhälsa",
-    "description": "Nitrat från exempelvis rödbetor och gröna bladgrönsaker kan omvandlas till nitrit och vidare till kväveoxid (NO). Kväveoxid hjälper blodkärlen att vidgas och spelar en viktig roll för blodflöde, blodtrycksreglering och kärlens funktion.",
+    "description": "Rödbetor, rucola och spenat innehåller nitrat som kan bidra till kroppens bildning av kväveoxid (NO). Rödbetsjuice har studerats både för blodtryck och fysisk prestation. Det är framför allt nitratinnehållet som behöver anges när man jämför med forskningen – ett visst antal gram rödbetspulver säger inte hur stor nitratmängden är.\n\nFrån munnen till blodkärlen: En del av nitratet koncentreras i saliven. Bakterier på tungan omvandlar det till nitrit, som sedan kan omvandlas vidare till NO, bland annat i sura och syrefattiga miljöer. Detta är en annan väg än NO-bildning från arginin. Govoni med flera visade 2008 att antibakteriellt munskölj kraftigt minskade ökningen av nitrit i blodet efter nitratintag (PMID 18793740). Ändra dock inte ordinerad munvård för att förstärka en tillskottseffekt.\n\nBlodtryck – lovande men inte enhetligt: Kapil med flera randomiserade 68 personer med högt blodtryck till 250 ml rödbetsjuice om dagen eller nitratfattig placebojuice under fyra veckor. Studien rapporterade sänkt blodtryck med nitrat (Hypertension, 2015; PMID 25421976). Bondonno med flera fann däremot ingen sänkning av hem- eller dygnsblodtryck efter en veckas nitratrik juice hos behandlade personer med högt blodtryck (2015; PMID 26135348). Effekten varierar alltså mellan personer och försöksupplägg. Blodtryckssänkning i en kort studie visar inte i sig färre hjärtinfarkter eller stroke på lång sikt.\n\nUthållighet och syrekostnad: Bailey med flera visade 2009 att nitratrik rödbetsjuice kunde minska syrekostnaden vid ett givet cykelarbete och förlänga tiden till utmattning i ett laboratorietest (Journal of Applied Physiology; DOI 10.1152/japplphysiol.00722.2009). Det innebär inte automatiskt samma förbättring i en tävling. Senare sammanställningar visar att effekten beror på bland annat testtyp och träningsnivå; alla får inte bättre prestation, och en akut effekt är inte samma sak som större långsiktig träningseffekt.\n\nMängd och timing i forskning: Australian Institute of Sport beskriver cirka 6–8 mmol nitrat, ungefär 350–500 mg, omkring 2–3 timmar före aktivitet som vanligt i idrottsstudier. Detta är en beskrivning av studieupplägg, inte ett dagligt näringsmål eller en personlig dosrekommendation. Halten varierar mellan rödbetor, juicer och extrakt; mer är inte säkert bättre.\n\nPraktiskt och säkerhet: Rödbetor och bladgrönsaker kan ingå i vanlig mat utan att du behöver ett koncentrerat tillskott. Juice kan ge magbesvär och tillfälligt rödfärgad urin eller avföring. Vid lågt blodtryck, blodtrycksmedicinering eller njursjukdom bör koncentrerade produkter diskuteras med vården. Ersätt inte ordinerad behandling. Använd inte nitrit eller kemiska nitratprodukter för egen dosering; långvarigt bruk av koncentrerade tillskott är mindre väl undersökt än korta försök.",
     "areas": {
-      "cardioFitness": "Ökad tillgänglighet av kväveoxid kan förbättra blodkärlens förmåga att vidga sig och kan bidra till lägre blodtryck och bättre kärlfunktion. Nitrat från kosten har i studier särskilt kopplats till en minskning av systoliskt blodtryck.",
-      "energy": "Förbättrat blodflöde kan hjälpa syre och näringsämnen att nå arbetande vävnader mer effektivt. Nitrat och kväveoxid kan dessutom påverka hur effektivt muskler använder syre under fysisk aktivitet."
+      "cardioFitness": "Nitratrik rödbetsjuice har sänkt blodtrycket i vissa randomiserade studier, men inte i alla. Det är inte visat att tillskott förebygger hjärtinfarkt eller stroke; det ersätter inte behandling av högt blodtryck.",
+      "energy": "Nitrat kan i vissa försök minska musklernas syrekostnad vid ett givet arbete och förbättra uthållighet. Det är ingen generell energikick och effekten varierar med träningsnivå och aktivitet."
+    },
+    "nutritionFoods": {
+      "title": "Nitratrika grönsaker",
+      "items": {
+        "beets": {
+          "details": "Rödbetor är en källa till nitrat och kan ätas som en del av vanlig mat. Nitratinnehållet varierar; en portion motsvarar inte automatiskt mängden i en standardiserad rödbetsshot."
+        },
+        "arugula": {
+          "details": "Rucola är en nitratrik bladgrönsak som passar i exempelvis sallader. Halten varierar med odling och förvaring, så en viss mängd blad ger ingen exakt nitratdos."
+        },
+        "spinach": {
+          "details": "Spenat bidrar med nitrat och andra näringsämnen. Använd som en del av en varierad grönsakskost; nitratinnehållet varierar och är inte ett fast dagligt mål."
+        }
+      }
     }
   },
   "l_carnitine_fat_transport": {

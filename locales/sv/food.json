@@ -29,6 +29,7 @@
     "gramsShort": "g"
   },
   "foods": {
+    "arugula": { "name": "Rucola" },
     "cauliflower": { "name": "Blomkål" },
     "cabbage": { "name": "Vitkål" },
     "garlic": { "name": "Vitlök" },

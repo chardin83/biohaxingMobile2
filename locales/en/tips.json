@@ -195,18 +195,18 @@
     }
   },
   "electrolytes_balance": {
-    "title": "Electrolytes for fluid balance and performance",
-    "description": "Electrolytes such as sodium, potassium, and magnesium help regulate fluid balance, nerve signaling, muscle contraction, and blood pressure. When you sweat a lot, train hard, or drink large amounts of plain water without replacing minerals, low electrolyte status can contribute to fatigue, headaches, reduced performance, or muscle cramps. For sodium, mineral-rich salt or broth is often more relevant than simply increasing regular table salt, especially since high intake of ordinary table salt can contribute to elevated blood pressure in salt-sensitive individuals.",
+    "title": "Electrolytes – do you need supplements?",
+    "description": "Most recreational exercisers do not need additional electrolytes. Water and normal food are usually sufficient. Electrolyte drinks and salt tablets are not an essential part of a regular workout, and sweating alone does not establish a deficiency. Extra salt may instead add to an already high intake and affect blood pressure.\n\nElectrolytes such as sodium, potassium, magnesium and calcium are essential – but that does not mean more in supplement form is better.\n\nProlonged exercise in heat: Additional sodium and fluid may be relevant with substantial, sustained sweat losses – for example in ultrarunning, long cycling events or several hours of work in heat. Swedish Football Association guidance mentions electrolyte drinks as an option for sessions exceeding an hour in heat. This is not an automatic supplementation threshold: needs depend on sweat rate, temperature, intensity, duration and food and drink intake.\n\nSweat rate and testing: Before an ultra event, a sports dietitian can help develop an individual fluid and sodium plan. Weighing before and after a training session, accounting for fluid consumed and any urine, gives a rough estimate of fluid loss. A sweat test measuring sweat sodium concentration can additionally estimate salt loss. Test in conditions resembling the event; results vary with factors including heat acclimation and are not exact dosing instructions. Salt marks on clothing cannot determine how much sodium you need.\n\nBlood pressure and Swedish dietary guidance: General Swedish advice is no more than 6 grams of salt per day for adults, approximately 2.4 grams of sodium, from all food and drink combined. This is an upper limit for the everyday diet, not a target to reach. High salt intake can raise blood pressure. Sea salt, “mineral-rich” salt and broth can also provide substantial sodium and are not automatically better for blood pressure than table salt. Major sweat losses during prolonged sport require separate assessment.\n\nAvoid overdrinking: During long events, consuming more fluid than the body loses can dilute blood sodium and cause dangerous hyponatraemia. Electrolyte drinks or salt tablets do not make overdrinking safe. Worsening headache, nausea or confusion during or after an event should not be self-treated with more water or salt; confusion, seizures or reduced consciousness require emergency help.\n\nTake particular care with hypertension, heart or kidney disease and medicines affecting fluids or electrolytes. Potassium supplements can be hazardous with impaired kidney function and certain medicines. Discuss supplementation with a healthcare professional.",
     "areas": {
-      "energy": "Electrolytes help maintain cellular fluid balance and nerve-muscle function, which supports stable energy and reduces fatigue.",
-      "cardioFitness": "During exercise and heat exposure, adequate electrolytes help preserve blood volume, hydration status, and physical performance.",
-      "nervousSystem": "Sodium and potassium are essential for nerve impulses, while magnesium supports normal neuromuscular relaxation and signaling."
+      "energy": "With major sweat losses, individually adjusted fluid and sodium intake may support performance. Fatigue and cramps alone do not establish electrolyte deficiency.",
+      "cardioFitness": "Fluid loss can affect blood volume and circulation. Extra salt is not routinely needed and high sodium intake can raise blood pressure; prolonged sport in heat requires individual assessment.",
+      "nervousSystem": "Sodium, potassium, magnesium and calcium support normal nerve and muscle function. Both low and high levels can be harmful; supplementation is not automatically better."
     },
     "nutritionFoods": {
       "title": "Electrolyte-supporting foods and drinks",
       "items": {
         "coconutWater": {
-          "details": "A glass of coconut water provides potassium and fluid, useful after heat or light training."
+          "details": "Coconut water provides fluid and potassium, but composition varies and it is not automatically suitable for major sodium losses during endurance events."
         },
         "potatoes": {
           "details": "Potatoes are rich in potassium, one of the key minerals involved in muscle and nerve function."
@@ -1061,10 +1061,24 @@
   },
   "nitrate_no_efficiency": {
     "title": "Nitrate and nitric oxide for vascular health",
-    "description": "Nitrate from sources such as beetroot and green leafy vegetables can be converted to nitrite and then to nitric oxide (NO). Nitric oxide helps blood vessels dilate and plays an important role in blood flow, blood pressure regulation, and vascular function.",
+    "description": "Beetroot, rocket and spinach contain nitrate that can contribute to nitric oxide (NO) formation. Beetroot juice has been studied for both blood pressure and exercise performance. Nitrate content is the key quantity when comparing a product with research – a given weight of beetroot powder does not establish its nitrate dose.\n\nFrom the mouth to blood vessels: Some nitrate is concentrated in saliva. Bacteria on the tongue convert it to nitrite, which can subsequently form NO, including in acidic and low-oxygen conditions. This differs from NO synthesis from arginine. Govoni and colleagues showed in 2008 that antibacterial mouthwash markedly reduced the rise in blood nitrite after nitrate intake (PMID 18793740). Do not change prescribed oral care to enhance a supplement’s effects.\n\nBlood pressure – promising but inconsistent: Kapil and colleagues randomised 68 people with hypertension to 250 ml of beetroot juice daily or nitrate-depleted placebo juice for four weeks. The study reported lower blood pressure with nitrate (Hypertension, 2015; PMID 25421976). In contrast, Bondonno and colleagues found no reduction in home or ambulatory blood pressure after one week of nitrate-rich juice in treated hypertensive participants (2015; PMID 26135348). Responses therefore vary across people and protocols. Lower blood pressure in a short trial does not itself establish fewer heart attacks or strokes over the long term.\n\nEndurance and oxygen cost: Bailey and colleagues showed in 2009 that nitrate-rich beetroot juice could reduce the oxygen cost of a given cycling workload and extend time to exhaustion in a laboratory test (Journal of Applied Physiology; DOI 10.1152/japplphysiol.00722.2009). This does not automatically translate into the same improvement in competition. Later evidence syntheses indicate that effects depend on factors including test type and training status; not everyone performs better, and an acute effect is not the same as greater long-term training adaptation.\n\nAmounts and timing in research: The Australian Institute of Sport describes approximately 6–8 mmol of nitrate, around 350–500 mg, about 2–3 hours before activity as common in sports studies. This describes research protocols, not a daily nutrition target or personal dosing recommendation. Content varies between beetroot, juices and extracts; more is not necessarily better.\n\nPractical use and safety: Beetroot and leafy vegetables can be part of ordinary meals without a concentrated supplement. Juice may cause gastrointestinal discomfort and temporary red discolouration of urine or stools. Discuss concentrated products with a healthcare professional if you have low blood pressure, take blood pressure medicines or have kidney disease. Do not replace prescribed treatment. Do not self-dose nitrite or chemical nitrate products; long-term use of concentrated supplements is less well studied than short trials.",
     "areas": {
-      "cardioFitness": "Higher availability of nitric oxide can improve blood vessel dilation and may contribute to lower blood pressure and better vascular function. Dietary nitrate has been particularly linked to a reduction in systolic blood pressure in studies.",
-      "energy": "Improved blood flow can help oxygen and nutrients reach working tissues more efficiently. Nitric oxide may also influence how efficiently muscles use oxygen during physical activity."
+      "cardioFitness": "Nitrate-rich beetroot juice has lowered blood pressure in some randomised trials, but not all. Supplements have not been shown to prevent heart attacks or strokes and do not replace hypertension treatment.",
+      "energy": "In some experiments, nitrate reduces the muscular oxygen cost of a given workload and improves endurance. It is not a general energy boost, and effects vary with training status and activity."
+    },
+    "nutritionFoods": {
+      "title": "Nitrate-rich vegetables",
+      "items": {
+        "beets": {
+          "details": "Beetroot provides nitrate and can be part of ordinary meals. Nitrate content varies; a serving does not automatically match the amount in a standardised beetroot shot."
+        },
+        "arugula": {
+          "details": "Rocket is a nitrate-rich leafy vegetable suitable for salads and other meals. Content varies with growing and storage conditions, so a given weight does not provide an exact nitrate dose."
+        },
+        "spinach": {
+          "details": "Spinach provides nitrate and other nutrients. Include it as part of a varied vegetable intake; nitrate content varies and is not a fixed daily target."
+        }
+      }
     }
   },
   "l_carnitine_fat_transport": {

@@ -29,6 +29,7 @@
     "gramsShort": "g"
   },
   "foods": {
+    "arugula": { "name": "Rocket (arugula)" },
     "cauliflower": { "name": "Cauliflower" },
     "cabbage": { "name": "White cabbage" },
     "garlic": { "name": "Garlic" },
