@@ -8,7 +8,7 @@ import { tips } from '@/locales/tips';
 import { getNutritionCompletion, restoreCompletedNutritionTargets } from '@/services/targetProgress/completedNutritionProgress';
 import { normalizeNutritionTargets } from '@/services/targetProgress/normalizeNutritionTargets';
 import type { NutritionTargetDefinition } from '@/services/targetProgress/targetProgressTypes';
-import { getTipProteinGoal } from '@/utils/resolveNutritionTip';
+import { getTipMacroGoals, getTipProteinGoal } from '@/utils/resolveNutritionTip';
 
 type NutritionPlanTarget = NutritionTargetDefinition & {
   tipId: string;
@@ -30,7 +30,7 @@ export const useNutritionPlanProgress = (selectedDate: string): TipProgressItem[
 
       const title = t(`tips:${tip.id}.title`);
 
-      return normalizeNutritionTargets(tip, userProfile?.weightKg, getTipProteinGoal(tip, userProfile)).map(target => ({
+      return normalizeNutritionTargets(tip, userProfile?.weightKg, getTipProteinGoal(tip, userProfile), getTipMacroGoals(tip, userProfile)).map(target => ({
         ...target,
 
         tipId: tip.id,

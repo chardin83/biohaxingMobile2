@@ -96,10 +96,10 @@ const DetailsTopSection: React.FC<DetailsTopSectionProps> = ({
   return (
     <View style={styles.topSection}>
       <View style={styles.titleRow}>
-           <ThemedText type="title" style={{ color: colors.primary }}>
-        {t(`tips:${titleKey}`)}
-      </ThemedText>
-        <ThemedText type="subtitle" style={{ color: colors.primary }} >
+        <ThemedText type="title" style={[styles.centeredTitle, { color: colors.primary }]}>
+          {t(`tips:${titleKey}`)}
+        </ThemedText>
+        <ThemedText type="subtitle" style={[styles.centeredTitle, { color: colors.primary }]}>
           {t(`areas:${areaId}.title`)}
         </ThemedText>
       </View>
@@ -279,6 +279,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,
+  },
+  centeredTitle: {
+    textAlign: 'center',
   },
   levelBadge: {
     position: 'absolute',

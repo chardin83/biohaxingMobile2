@@ -10,7 +10,7 @@ import DiscreetButton from '@/components/ui/DiscreetButton';
 import Notice from '@/components/ui/Notice';
 import PremiumLink from '@/components/ui/PremiumLink';
 import type { Tip } from '@/locales/tips';
-import { getTipProteinGoal, hasProfileProteinTargets, hasValidProteinGoal, hasValidTargetWeight, hasWeightBasedTargets, resolveNutritionTip } from '@/utils/resolveNutritionTip';
+import { getTipMacroGoals, getTipProteinGoal, hasProfileProteinTargets, hasValidProteinGoal, hasValidTargetWeight, hasWeightBasedTargets, resolveNutritionTip } from '@/utils/resolveNutritionTip';
 
 export default function TargetsSection({
   tip,
@@ -26,10 +26,11 @@ export default function TargetsSection({
   if (!tip) return null;
   const tipId = tip.id;
   const trackingUnavailable = (weightMissing || proteinGoalMissing) && plans?.nutrition?.some(plan => plan.tipId === tipId);
-  tip = resolveNutritionTip(tip, userProfile?.weightKg, getTipProteinGoal(tip, userProfile));
+  tip = resolveNutritionTip(tip, userProfile?.weightKg, getTipProteinGoal(tip, userProfile), getTipMacroGoals(tip, userProfile));
 
   const nutritionGroups = [
     { targets: tip.proteinTargets, labelGroup: 'macroLabels' },
+    { targets: tip.macroTargets, labelGroup: 'macroLabels' },
     { targets: tip.fiberTargets, labelGroup: 'fiberLabels' },
     { targets: tip.polyphenolTargets, labelGroup: 'polyphenolLabels' },
     { targets: tip.mineralTargets, labelGroup: 'mineralLabels' },

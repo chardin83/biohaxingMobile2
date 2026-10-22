@@ -14,12 +14,12 @@ import { getNutritionCompletion, restoreCompletedNutritionTargets } from '@/serv
 import { resolveDailyNutritionTargetDetails } from '@/services/targetProgress/nutritionTargetProgress';
 import type { NutritionTargetDefinition } from '@/services/targetProgress/targetProgressTypes';
 import type { NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
-import { getTipProteinGoal, hasProfileProteinTargets, hasValidProteinGoal, hasValidTargetWeight, hasWeightBasedTargets, resolveNutritionTip } from '@/utils/resolveNutritionTip';
+import { getTipMacroGoals, getTipProteinGoal, hasProfileProteinTargets, hasValidProteinGoal, hasValidTargetWeight, hasWeightBasedTargets, resolveNutritionTip } from '@/utils/resolveNutritionTip';
 
 type NutritionLabelGroup = 'macroLabels' | 'aminoAcidLabels' | 'mineralLabels' | 'vitaminLabels' | 'fiberLabels' | 'polyphenolLabels' | 'nutrientLabels';
 
 const getNutritionLabelGroup = (tag: string, unit: NutritionTargetUnit): NutritionLabelGroup => {
-  if (tag === 'protein') return 'macroLabels';
+  if (tag === 'protein' || tag === 'carbohydrates' || tag === 'fat') return 'macroLabels';
   if (isNutrientTargetTag(tag)) return 'nutrientLabels';
   if (isAminoAcidTargetTag(tag)) {
     return 'aminoAcidLabels';
@@ -62,7 +62,7 @@ export const useNutritionTipTargets = (dateKeys: string[]): Record<string, Recor
       const sourceTip = tips.find(candidate => candidate.id === planTip.tipId);
       if (hasWeightBasedTargets(sourceTip) && !hasValidTargetWeight(userProfile?.weightKg)) return;
       if (hasProfileProteinTargets(sourceTip) && !hasValidProteinGoal(getTipProteinGoal(sourceTip, userProfile))) return;
-      const tip = sourceTip ? resolveNutritionTip(sourceTip, userProfile?.weightKg, getTipProteinGoal(sourceTip, userProfile)) : undefined;
+      const tip = sourceTip ? resolveNutritionTip(sourceTip, userProfile?.weightKg, getTipProteinGoal(sourceTip, userProfile), getTipMacroGoals(sourceTip, userProfile)) : undefined;
 
       if (tip?.targetPeriod !== 'daily') {
         return;
@@ -70,6 +70,7 @@ export const useNutritionTipTargets = (dateKeys: string[]): Record<string, Recor
 
       const rawTargets = [
         ...(tip.proteinTargets ?? []),
+        ...(tip.macroTargets ?? []),
         ...(tip.nutrientTargets ?? []),
         ...(tip.mineralTargets ?? []),
         ...(tip.vitaminTargets ?? []),

@@ -16,7 +16,7 @@ import { VITAMIN_TYPE_KEYS } from '@/constants/vitamins';
 import type { Tip } from '@/locales/tips';
 import { getNutritionCompletion } from '@/services/targetProgress/completedNutritionProgress';
 import { NutritionTargetPeriod, NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
-import { getTipProteinGoal, hasProfileProteinTargets, hasValidProteinGoal, hasValidTargetWeight, hasWeightBasedTargets, resolveNutritionTip } from '@/utils/resolveNutritionTip';
+import { getTipMacroGoals, getTipProteinGoal, hasProfileProteinTargets, hasValidProteinGoal, hasValidTargetWeight, hasWeightBasedTargets, resolveNutritionTip } from '@/utils/resolveNutritionTip';
 
 export type NutritionPlanDetailsTarget = {
   key: string;
@@ -58,7 +58,7 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgre
     const polyphenolTargets = tip.polyphenolTargets ?? [];
     const mineralTargets = tip.mineralTargets ?? [];
     const vitaminTargets = tip.vitaminTargets ?? [];
-    const resolvedTip = resolveNutritionTip(tip, userProfile?.weightKg, getTipProteinGoal(tip, userProfile));
+    const resolvedTip = resolveNutritionTip(tip, userProfile?.weightKg, getTipProteinGoal(tip, userProfile), getTipMacroGoals(tip, userProfile));
     const proteinTargets = resolvedTip.proteinTargets ?? [];
     const aminoAcidTargets = resolvedTip.aminoAcidTargets ?? [];
     const trackingTargets = (tip.trackingTargets ?? []).map(target => ({
@@ -69,6 +69,7 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgre
     const allTargets: NutritionTargetSource[] = completion?.targets ?? [
       ...(tip.nutrientTargets ?? []),
       ...proteinTargets,
+      ...(resolvedTip.macroTargets ?? []),
       ...fiberTargets,
       ...polyphenolTargets,
       ...mineralTargets,
@@ -106,7 +107,7 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgre
       let labelGroup: 'macroLabels' | 'weeklyTrackingLabels' | 'fiberLabels' | 'aminoAcidLabels' | 'mineralLabels' | 'vitaminLabels' | 'polyphenolLabels' | 'nutrientLabels' =
         'polyphenolLabels';
 
-      if (trackingKey === 'protein') {
+      if (trackingKey === 'protein' || trackingKey === 'carbohydrates' || trackingKey === 'fat') {
         labelGroup = 'macroLabels';
       } else if (isNutrientTargetTag(trackingKey)) {
         labelGroup = 'nutrientLabels';

@@ -4,7 +4,7 @@ import { useStorage } from '@/app/context/StorageContext';
 import { tips } from '@/locales/tips';
 import { normalizeNutritionTargets } from '@/services/targetProgress/normalizeNutritionTargets';
 import { getTargetProgress } from '@/services/targetProgress/targetProgressService';
-import { getTipProteinGoal } from '@/utils/resolveNutritionTip';
+import { getTipMacroGoals, getTipProteinGoal } from '@/utils/resolveNutritionTip';
 
 export type NutritionTargetHistoryItem = {
   tag: string;
@@ -36,7 +36,7 @@ export const useNutritionPlanProgressHistory = (dateKeys: string[]): NutritionPr
           return;
         }
 
-        const nutritionTargets = normalizeNutritionTargets(tip, userProfile?.weightKg, getTipProteinGoal(tip, userProfile));
+        const nutritionTargets = normalizeNutritionTargets(tip, userProfile?.weightKg, getTipProteinGoal(tip, userProfile), getTipMacroGoals(tip, userProfile));
 
         if (nutritionTargets.length === 0) {
           return;

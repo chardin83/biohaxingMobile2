@@ -100,6 +100,8 @@ export type AminoAcidTarget = {
 } & BaseTarget<'mg'> &
   WeightedTarget;
 
+export type MacroTarget = BaseTarget<'g'> & { tag: 'protein' | 'carbohydrates' | 'fat' };
+
 export type ProteinTarget = BaseTarget<'g'> & {
   tag: 'protein';
   fromUserProteinGoal?: boolean;
@@ -208,6 +210,7 @@ type TipBase = {
   targetDescriptionKey?: string;
   noNutritionTarget?: boolean;
   requiresMacroSetup?: boolean;
+  requiresCalculatedMacros?: boolean;
   veganInfo?: string;
   nutritionFoods?: TipNutritionFood[]; // Rekommenderade livsmedel för nutritionstips
   bodyParts?: string[]; // Rekommenderade delar av kroppen för detta tip
@@ -222,6 +225,7 @@ type TipWithoutTargets = {
   vitaminTargets?: never;
   aminoAcidTargets?: never;
   proteinTargets?: never;
+  macroTargets?: never;
   trackingTargets?: never;
   hydrationTargets?: never;
   activityTargets?: never;
@@ -237,6 +241,7 @@ type TipWithTargets = {
   vitaminTargets?: VitaminTarget[]; // Vitaminmål som används för plan-uppföljning
   aminoAcidTargets?: AminoAcidTarget[]; // Aminosyramål som används för plan-uppföljning
   proteinTargets?: ProteinTarget[];
+  macroTargets?: MacroTarget[];
   trackingTargets?: TrackingTarget[]; // Flexibla tracking-mål (växter, färger, fisk, etc.)
   hydrationTargets?: HydrationTarget[]; // Vätskemål
   activityTargets?: ActivityTarget[]; // Träningsmål som kan verifieras från aktivitetsdata
@@ -1320,6 +1325,33 @@ const rawTips: Tip[] = [
     planCategory: ['supplement'],
     bodyParts: ['digestiveSystem', 'immuneSystem', 'teeth'],
     microbiomeIds: ['Lactobacillus'],
+  },
+  {
+    id: 'profile_macro_goals',
+    minAge: 18,
+    level: 1,
+    xp: 300,
+    areas: [
+      { id: 'longevity', descriptionKey: 'profile_macro_goals.areas.longevity' },
+      { id: 'energy', descriptionKey: 'profile_macro_goals.areas.energy' },
+      { id: 'strength', descriptionKey: 'profile_macro_goals.areas.strength' },
+    ],
+    title: 'profile_macro_goals.title',
+    descriptionKey: 'profile_macro_goals.description',
+    targetDescriptionKey: 'profile_macro_goals.targets.description',
+    requiresMacroSetup: true,
+    requiresCalculatedMacros: true,
+    trainingRelation: 'anytime',
+    timeRule: 'anytime',
+    planCategory: ['nutrition'],
+    targetPeriod: 'daily',
+    targetIconName: 'target',
+    macroTargets: [
+      { tag: 'protein', amount: 0, unit: 'g' },
+      { tag: 'carbohydrates', amount: 0, unit: 'g' },
+      { tag: 'fat', amount: 0, unit: 'g' },
+    ],
+    bodyParts: ['cells', 'muscles'],
   },
   {
     id: 'protein_older_adults',

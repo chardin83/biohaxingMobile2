@@ -12,14 +12,16 @@ let mockWeight: number | undefined = 70;
 let mockProteinGoal: number | undefined = 140;
 let mockPlanned = false;
 let mockMacroSetup = true;
+let mockCalculatedMacros = false;
 jest.mock('@/app/context/StorageContext', () => ({
-  useStorage: () => ({ userProfile: { nutritionGuideCompleted: mockMacroSetup, nutritionEnergySource: 'custom', weightKg: mockWeight, nutritionGoals: { protein: mockProteinGoal, carbohydrates: 220, fat: 65 } }, plans: { nutrition: mockPlanned ? [{ tipId: 'protein_rotation' }] : [] } }),
+  useStorage: () => ({ userProfile: { nutritionGuideCompleted: mockMacroSetup, nutritionEnergySource: mockCalculatedMacros ? 'henry' : 'custom', nutritionDistribution: mockCalculatedMacros ? 'balanced' : 'custom', birthDate: '1980-01-01', heightCm: 170, biologicalSex: 'female', activityPal: 1.6, weightKg: mockWeight, nutritionGoals: { protein: mockProteinGoal, carbohydrates: 220, fat: 65 } }, plans: { nutrition: mockPlanned ? [{ tipId: 'protein_rotation' }] : [] } }),
 }));
 beforeEach(() => {
   mockWeight = 70;
   mockProteinGoal = 140;
   mockPlanned = false;
   mockMacroSetup = true;
+  mockCalculatedMacros = false;
   mockPush.mockClear();
 });
 
@@ -159,4 +161,18 @@ it('uses the saved macro goal for 65+ and links to setup until macros are config
   expect(screen.getByText('common:nutritionTargetSection.macroSetupRequired')).toBeTruthy();
   fireEvent.press(screen.getByText('common:nutritionTargetSection.setMacroGoals'));
   expect(mockPush).toHaveBeenCalledWith('/settings/nutrition');
+});
+
+it('shows all calculated macros and blocks them when the user switches to custom goals', () => {
+  const tip = tips.find(item => item.id === 'profile_macro_goals')!;
+  mockCalculatedMacros = true;
+  const screen = render(<TargetsSection tip={tip} colors={Colors.light} t={t} />);
+  for (const amount of [140, 220, 65]) {
+    expect(screen.getByText(new RegExp(`${amount}.*g / common:nutritionTargetSection.periods.daily`))).toBeTruthy();
+  }
+  mockCalculatedMacros = false;
+  screen.rerender(<TargetsSection tip={tip} colors={Colors.light} t={t} />);
+  expect(screen.queryByText(/140.*g/)).toBeNull();
+  expect(screen.queryByText(/220.*g/)).toBeNull();
+  expect(screen.getByText('common:nutritionTargetSection.setMacroGoals')).toBeTruthy();
 });

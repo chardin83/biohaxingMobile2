@@ -19,6 +19,7 @@ export function getPlannedGoalCategories(plans: PlansByCategory): Set<GoalCatego
             tip.vitaminTargets,
             tip.aminoAcidTargets,
             tip.proteinTargets,
+            tip.macroTargets,
             tip.nutrientTargets,
             tip.trackingTargets,
             tip.hydrationTargets,
