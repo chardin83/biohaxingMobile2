@@ -14,7 +14,7 @@ import PremiumLink from '@/components/ui/PremiumLink';
 import type { Tip } from '@/locales/tips';
 import { formatMonthDay, toDateKey } from '@/utils/dateUtils';
 import { getTipProgressKey } from '@/utils/nutritionTipProgress';
-import { getMissingNutritionSettings } from '@/utils/resolveNutritionTip';
+import { getMissingNutritionSettings,getTipProteinGoal } from '@/utils/resolveNutritionTip';
 
 import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
@@ -199,7 +199,7 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
   const dailyTips = nutritionPlanTipProgressByPeriod.daily.filter(tip => !untrackedIds.has(tip.tipId));
   const weeklyTips = nutritionPlanTipProgressByPeriod.weekly.filter(tip => !untrackedIds.has(tip.tipId));
   const hasPremiumBlockedTips = untrackedTips.some(tip => {
-    const missing = getMissingNutritionSettings(tip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein);
+    const missing = getMissingNutritionSettings(tip, userProfile?.weightKg, getTipProteinGoal(tip, userProfile));
     return !missing.weight && !missing.proteinGoal && tip.trackingTargets?.some(target => target.aiInstruction?.trim());
   });
 
@@ -339,7 +339,7 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                 <ThemedText type="title3">{t('journal:nutritionLogger.untrackedTargets', { count: untrackedTips.length })}</ThemedText>
                 <View style={[styles.untrackedGroup, { borderColor: colors.warning }]}>
                   {untrackedTips.map((tip, index) => {
-                    const missing = getMissingNutritionSettings(tip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein);
+                    const missing = getMissingNutritionSettings(tip, userProfile?.weightKg, getTipProteinGoal(tip, userProfile));
                     const needsProfile = missing.weight || missing.proteinGoal;
                     const progress = [...nutritionPlanTipProgressByPeriod.daily, ...nutritionPlanTipProgressByPeriod.weekly].find(
                       item => item.tipId === tip.id
@@ -389,10 +389,10 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                             {missing.proteinGoal && (
                               <View style={styles.profileRow}>
                                 <ThemedText type="explainer" style={globalStyles.flex1}>
-                                  {t('common:nutritionTargetSection.proteinGoalRequired')}
+                                  {t(tip.requiresMacroSetup ? 'common:nutritionTargetSection.macroSetupRequired' : 'common:nutritionTargetSection.proteinGoalRequired')}
                                 </ThemedText>
                                 <DiscreetButton
-                                  title={t('common:nutritionTargetSection.setProteinGoal')}
+                                  title={t(tip.requiresMacroSetup ? 'common:nutritionTargetSection.setMacroGoals' : 'common:nutritionTargetSection.setProteinGoal')}
                                   onPress={() => router.push('/settings/nutrition')}
                                   icon="person"
                                   rightIcon="chevron.right"

@@ -14,7 +14,7 @@ import { getNutritionCompletion, restoreCompletedNutritionTargets } from '@/serv
 import { resolveDailyNutritionTargetDetails } from '@/services/targetProgress/nutritionTargetProgress';
 import type { NutritionTargetDefinition } from '@/services/targetProgress/targetProgressTypes';
 import type { NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
-import { hasProfileProteinTargets, hasValidProteinGoal, hasValidTargetWeight, hasWeightBasedTargets, resolveNutritionTip } from '@/utils/resolveNutritionTip';
+import { getTipProteinGoal, hasProfileProteinTargets, hasValidProteinGoal, hasValidTargetWeight, hasWeightBasedTargets, resolveNutritionTip } from '@/utils/resolveNutritionTip';
 
 type NutritionLabelGroup = 'macroLabels' | 'aminoAcidLabels' | 'mineralLabels' | 'vitaminLabels' | 'fiberLabels' | 'polyphenolLabels' | 'nutrientLabels';
 
@@ -61,8 +61,8 @@ export const useNutritionTipTargets = (dateKeys: string[]): Record<string, Recor
     (plans?.nutrition ?? []).forEach(planTip => {
       const sourceTip = tips.find(candidate => candidate.id === planTip.tipId);
       if (hasWeightBasedTargets(sourceTip) && !hasValidTargetWeight(userProfile?.weightKg)) return;
-      if (hasProfileProteinTargets(sourceTip) && !hasValidProteinGoal(userProfile?.nutritionGoals?.protein)) return;
-      const tip = sourceTip ? resolveNutritionTip(sourceTip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein) : undefined;
+      if (hasProfileProteinTargets(sourceTip) && !hasValidProteinGoal(getTipProteinGoal(sourceTip, userProfile))) return;
+      const tip = sourceTip ? resolveNutritionTip(sourceTip, userProfile?.weightKg, getTipProteinGoal(sourceTip, userProfile)) : undefined;
 
       if (tip?.targetPeriod !== 'daily') {
         return;
@@ -158,5 +158,5 @@ export const useNutritionTipTargets = (dateKeys: string[]): Record<string, Recor
     });
 
     return result;
-  }, [dateKeys, plans, userProfile?.weightKg, userProfile?.nutritionGoals?.protein, dailyNutritionTracking, weeklyNutritionTracking, takenDates, nutritionXpClaims, t]);
+  }, [dateKeys, plans, userProfile, dailyNutritionTracking, weeklyNutritionTracking, takenDates, nutritionXpClaims, t]);
 };

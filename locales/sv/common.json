@@ -585,6 +585,8 @@
     "saveError": "Kunde inte spara målen. Försök igen."
   },
   "nutritionTargetSection": {
+    "macroSetupRequired": "Slutför dina makroinställningar för att aktivera målet. Tipset använder sedan samma proteinmål som dina makron.",
+    "setMacroGoals": "Ställ in makromål",
     "noNutritionTarget": "Det finns inget fastställt näringsmål för detta ämne i appen. Du kan ändå lägga till det som ett preparat i din tillskottsplan.",
     "premiumExplainer": "Du kan lägga till tipset i din plan, men måluppföljelse kräver premium.",
     "title": "Mål",

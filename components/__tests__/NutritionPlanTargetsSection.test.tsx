@@ -53,7 +53,7 @@ it('shows only the link for the setting that is missing', () => {
 });
 
 it('shows all targets for a premium-blocked tip', () => {
-  const sulfurTip: Tip = { ...tip, trackingTargets: [{ trackingKey: 'sulfur_rich_vegetables', amount: 1, unit: 'items', aiInstruction: 'Detect visible vegetables' }] };
+  const sulfurTip: Tip = { ...tip, targetPeriod: 'daily', trackingTargets: [{ trackingKey: 'sulfur_rich_vegetables', amount: 1, unit: 'items', aiInstruction: 'Detect visible vegetables' }] };
   const progress: TipProgressItem = {
     tipId: sulfurTip.id, title: sulfurTip.title, period: 'daily',
     targets: [

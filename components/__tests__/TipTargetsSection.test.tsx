@@ -11,13 +11,15 @@ jest.mock('expo-router', () => ({ router: { push: (...args: unknown[]) => mockPu
 let mockWeight: number | undefined = 70;
 let mockProteinGoal: number | undefined = 140;
 let mockPlanned = false;
+let mockMacroSetup = true;
 jest.mock('@/app/context/StorageContext', () => ({
-  useStorage: () => ({ userProfile: { weightKg: mockWeight, nutritionGoals: { protein: mockProteinGoal } }, plans: { nutrition: mockPlanned ? [{ tipId: 'protein_rotation' }] : [] } }),
+  useStorage: () => ({ userProfile: { nutritionGuideCompleted: mockMacroSetup, nutritionEnergySource: 'custom', weightKg: mockWeight, nutritionGoals: { protein: mockProteinGoal, carbohydrates: 220, fat: 65 } }, plans: { nutrition: mockPlanned ? [{ tipId: 'protein_rotation' }] : [] } }),
 }));
 beforeEach(() => {
   mockWeight = 70;
   mockProteinGoal = 140;
   mockPlanned = false;
+  mockMacroSetup = true;
   mockPush.mockClear();
 });
 
@@ -145,4 +147,16 @@ it.each(['berberine', 'ashwagandha_adaptogen', 'astaxanthin_recovery_antioxidant
   expect(screen.getByText('common:nutritionTargetSection.title')).toBeTruthy();
   expect(screen.getByText('common:nutritionTargetSection.noNutritionTarget')).toBeTruthy();
   expect(screen.queryByText(/common:nutritionTargetSection.periods/)).toBeNull();
+});
+
+it('uses the saved macro goal for 65+ and links to setup until macros are configured', () => {
+  const tip = tips.find(item => item.id === 'protein_older_adults')!;
+  const screen = render(<TargetsSection tip={tip} colors={Colors.light} t={t} />);
+  expect(screen.getByText(/140.*g \/ common:nutritionTargetSection.periods.daily/)).toBeTruthy();
+  mockMacroSetup = false;
+  screen.rerender(<TargetsSection tip={tip} colors={Colors.light} t={t} />);
+  expect(screen.queryByText(/140.*g/)).toBeNull();
+  expect(screen.getByText('common:nutritionTargetSection.macroSetupRequired')).toBeTruthy();
+  fireEvent.press(screen.getByText('common:nutritionTargetSection.setMacroGoals'));
+  expect(mockPush).toHaveBeenCalledWith('/settings/nutrition');
 });

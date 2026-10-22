@@ -16,7 +16,7 @@ import { VITAMIN_TYPE_KEYS } from '@/constants/vitamins';
 import type { Tip } from '@/locales/tips';
 import { getNutritionCompletion } from '@/services/targetProgress/completedNutritionProgress';
 import { NutritionTargetPeriod, NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
-import { hasProfileProteinTargets, hasValidProteinGoal, hasValidTargetWeight, hasWeightBasedTargets, resolveNutritionTip } from '@/utils/resolveNutritionTip';
+import { getTipProteinGoal, hasProfileProteinTargets, hasValidProteinGoal, hasValidTargetWeight, hasWeightBasedTargets, resolveNutritionTip } from '@/utils/resolveNutritionTip';
 
 export type NutritionPlanDetailsTarget = {
   key: string;
@@ -49,7 +49,7 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgre
   const { userProfile, nutritionCompletions: nutritionXpClaims } = useStorage();
   const weightBased = hasWeightBasedTargets(tip);
   const weightMissing = weightBased && !hasValidTargetWeight(userProfile?.weightKg);
-  const proteinGoalMissing = hasProfileProteinTargets(tip) && !hasValidProteinGoal(userProfile?.nutritionGoals?.protein);
+  const proteinGoalMissing = hasProfileProteinTargets(tip) && !hasValidProteinGoal(getTipProteinGoal(tip, userProfile));
 
   const targets = React.useMemo<NutritionPlanDetailsTarget[]>(() => {
     if (!tip) return [];
@@ -58,7 +58,7 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgre
     const polyphenolTargets = tip.polyphenolTargets ?? [];
     const mineralTargets = tip.mineralTargets ?? [];
     const vitaminTargets = tip.vitaminTargets ?? [];
-    const resolvedTip = resolveNutritionTip(tip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein);
+    const resolvedTip = resolveNutritionTip(tip, userProfile?.weightKg, getTipProteinGoal(tip, userProfile));
     const proteinTargets = resolvedTip.proteinTargets ?? [];
     const aminoAcidTargets = resolvedTip.aminoAcidTargets ?? [];
     const trackingTargets = (tip.trackingTargets ?? []).map(target => ({
@@ -132,7 +132,7 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgre
         value: formatValue(target.amount, target.unit),
       };
     });
-  }, [t, tip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein, nutritionXpClaims, selectedDateKey]);
+  }, [t, tip, userProfile, nutritionXpClaims, selectedDateKey]);
 
   const targetProgressInfoText = React.useMemo(() => {
     const hasDailyTargets = targets.some(target => target.period === 'daily');
@@ -160,7 +160,7 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgre
         </ThemedText>
       )}
       {weightBased && <ThemedText type="explainer">{t('nutritionTargetSection.whoAverageReference')}</ThemedText>}
-      {proteinGoalMissing && <ThemedText type="explainer">{t('nutritionTargetSection.proteinGoalRequired')}</ThemedText>}
+      {proteinGoalMissing && <ThemedText type="explainer">{t(tip?.requiresMacroSetup ? 'nutritionTargetSection.macroSetupRequired' : 'nutritionTargetSection.proteinGoalRequired')}</ThemedText>}
       <View style={styles.targetList}>
         {targets.map(target => {
           const progressTarget = targetProgressMap.get(`${target.tag}|${target.unit}|${target.period}`);

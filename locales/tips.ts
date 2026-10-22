@@ -207,6 +207,7 @@ type TipBase = {
   targetIconName?: TipTargetIconName; // Valfri ikon för target-rader i UI
   targetDescriptionKey?: string;
   noNutritionTarget?: boolean;
+  requiresMacroSetup?: boolean;
   veganInfo?: string;
   nutritionFoods?: TipNutritionFood[]; // Rekommenderade livsmedel för nutritionstips
   bodyParts?: string[]; // Rekommenderade delar av kroppen för detta tip
@@ -1319,6 +1320,30 @@ const rawTips: Tip[] = [
     planCategory: ['supplement'],
     bodyParts: ['digestiveSystem', 'immuneSystem', 'teeth'],
     microbiomeIds: ['Lactobacillus'],
+  },
+  {
+    id: 'protein_older_adults',
+    minAge: 65,
+    level: 1,
+    xp: 300,
+    groupIds: ['amino_acids'],
+    areas: [
+      { id: 'longevity', descriptionKey: 'protein_older_adults.areas.longevity' },
+      { id: 'strength', descriptionKey: 'protein_older_adults.areas.strength' },
+    ],
+    title: 'protein_older_adults.title',
+    descriptionKey: 'protein_older_adults.description',
+    targetDescriptionKey: 'protein_older_adults.targets.description',
+    requiresMacroSetup: true,
+    trainingRelation: 'anytime',
+    preferredDayParts: ['morning', 'midday', 'evening'],
+    timeRule: 'anytime',
+    planCategory: ['nutrition'],
+    targetPeriod: 'daily',
+    targetIconName: 'protein',
+    proteinTargets: [{ tag: 'protein', amount: 0, fromUserProteinGoal: true, unit: 'g' }],
+    nutritionFoods: [{ key: 'eggs' }, { key: 'salmon' }, { key: 'greekYogurt' }, { key: 'soybeans' }, { key: 'chickpeas' }],
+    bodyParts: ['muscles', 'bones'],
   },
   {
     id: 'protein_rotation',

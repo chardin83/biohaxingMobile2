@@ -10,7 +10,7 @@ import DiscreetButton from '@/components/ui/DiscreetButton';
 import Notice from '@/components/ui/Notice';
 import PremiumLink from '@/components/ui/PremiumLink';
 import type { Tip } from '@/locales/tips';
-import { hasProfileProteinTargets, hasValidProteinGoal, hasValidTargetWeight, hasWeightBasedTargets, resolveNutritionTip } from '@/utils/resolveNutritionTip';
+import { getTipProteinGoal, hasProfileProteinTargets, hasValidProteinGoal, hasValidTargetWeight, hasWeightBasedTargets, resolveNutritionTip } from '@/utils/resolveNutritionTip';
 
 export default function TargetsSection({
   tip,
@@ -22,11 +22,11 @@ export default function TargetsSection({
   const { userProfile, plans } = useStorage();
   const weightBased = hasWeightBasedTargets(tip);
   const weightMissing = weightBased && !hasValidTargetWeight(userProfile?.weightKg);
-  const proteinGoalMissing = hasProfileProteinTargets(tip) && !hasValidProteinGoal(userProfile?.nutritionGoals?.protein);
+  const proteinGoalMissing = hasProfileProteinTargets(tip) && !hasValidProteinGoal(getTipProteinGoal(tip, userProfile));
   if (!tip) return null;
   const tipId = tip.id;
   const trackingUnavailable = (weightMissing || proteinGoalMissing) && plans?.nutrition?.some(plan => plan.tipId === tipId);
-  tip = resolveNutritionTip(tip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein);
+  tip = resolveNutritionTip(tip, userProfile?.weightKg, getTipProteinGoal(tip, userProfile));
 
   const nutritionGroups = [
     { targets: tip.proteinTargets, labelGroup: 'macroLabels' },
@@ -140,10 +140,10 @@ export default function TargetsSection({
       {proteinGoalMissing && (
         <View style={[styles.settingsRow, { borderTopColor: colors.borderLight }]}>
           <ThemedText type="explainer" style={globalStyles.flex1}>
-            {t('common:nutritionTargetSection.proteinGoalRequired')}
+            {t(tip.requiresMacroSetup ? 'common:nutritionTargetSection.macroSetupRequired' : 'common:nutritionTargetSection.proteinGoalRequired')}
           </ThemedText>
           <DiscreetButton
-            title={t('common:nutritionTargetSection.setProteinGoal')}
+            title={t(tip.requiresMacroSetup ? 'common:nutritionTargetSection.setMacroGoals' : 'common:nutritionTargetSection.setProteinGoal')}
             onPress={() => router.push('/settings/nutrition')}
             color={colors.primary}
             icon="person"

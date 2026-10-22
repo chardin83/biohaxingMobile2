@@ -41,6 +41,7 @@ import { type FoodKey, getFoodProduct } from '@/utils/foodProduct';
 import { formatWithUnit } from '@/utils/formatters';
 import { getNutritionTargetMedalEmoji, getNutritionTargetMedalType } from '@/utils/medals';
 import { scaleNutritionComposition } from '@/utils/nutritionComposition';
+import { getTipProteinGoal } from '@/utils/resolveNutritionTip';
 
 type ContributingNutritionEntry = {
   id: string;
@@ -561,7 +562,7 @@ export default function TipTargetDetailsScreen() {
   const completion = getNutritionCompletion(nutritionXpClaims, tipId, isWeeklyTarget ? 'weekly' : 'daily', selectedDateKey);
   const completedTarget = completion?.targets?.find(target => target.tag === targetTagParam && target.unit === targetUnit);
   const currentTarget = tipMeta
-    ? normalizeNutritionTargets(tipMeta, userProfile?.weightKg, userProfile?.nutritionGoals?.protein)
+    ? normalizeNutritionTargets(tipMeta, userProfile?.weightKg, getTipProteinGoal(tipMeta, userProfile))
       .find(target => target.trackingKey === targetTagParam && target.unit === targetUnit)
     : undefined;
   const targetAmount = completedTarget?.amount ?? currentTarget?.amount ?? parseNumber(params.targetAmount);

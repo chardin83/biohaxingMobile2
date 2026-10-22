@@ -95,6 +95,7 @@ export default function NutritionSettings({ initiallyEditing = false, onBack = b
     setError(false);
     try {
       await updateUserProfile({
+        nutritionGuideCompleted: true,
         nutritionGoals: { protein: Math.max(draft.protein!, minimumProtein), carbohydrates: draft.carbohydrates!, fat: draft.fat! },
         nutritionDistribution: draftDistribution,
         nutritionEnergySource: draftEnergySource,

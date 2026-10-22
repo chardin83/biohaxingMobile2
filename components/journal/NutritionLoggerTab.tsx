@@ -22,6 +22,7 @@ import { hasAlcohol } from '@/utils/drinkAlcohol';
 import { hasCaffeine } from '@/utils/drinkCaffeine';
 import { type FoodKey, getFoodProduct, getMealProduct } from '@/utils/foodProduct';
 import { getNutritionTrackingAnalysis } from '@/utils/nutritionTrackingPrompt';
+import { getTipProteinGoal } from '@/utils/resolveNutritionTip';
 import { isNutritionTipUntracked } from '@/utils/untrackedNutritionTips';
 
 import { Collapsible } from '../Collapsible';
@@ -39,12 +40,12 @@ import CaffeineLoggingInfoModal from './CaffeineLoggingInfoModal';
 import DrinkLoggingInfoModal from './DrinkLoggingInfoModal';
 import DrinkPickerBottomSheet from './DrinkPickerBottomSheet';
 import EntryEditModal from './EntryEditModal';
+import FoodIdentificationModal from './FoodIdentificationModal';
 import FoodPickerBottomSheet from './FoodPickerBottomSheet';
 import { LoggedDrinksSection } from './LoggedDrinksSection';
 import { LoggedMealsSection } from './LoggedMealsSection';
 import MacroGoalsCard from './MacroGoalsCard';
 import MealLoggerBottomSheet from './MealLoggerBottomSheet';
-import FoodIdentificationModal from './FoodIdentificationModal';
 import NutritionAnalysisBottomSheet from './NutritionAnalysisBottomSheet';
 import NutritionAnalysisReviewModal from './NutritionAnalysisReviewModal';
 import NutritionPlanTargetsSection from './NutritionPlanTargetsSection';
@@ -173,8 +174,8 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
 
   const untrackedNutritionTips = useMemo(() => {
     const planTipIds = new Set((plans?.nutrition ?? []).map(planTip => planTip.tipId));
-    return tips.filter(tip => planTipIds.has(tip.id) && isNutritionTipUntracked(tip, userProfile?.weightKg, userProfile?.nutritionGoals?.protein, PREMIUM));
-  }, [plans, userProfile?.weightKg, userProfile?.nutritionGoals?.protein]);
+    return tips.filter(tip => planTipIds.has(tip.id) && isNutritionTipUntracked(tip, userProfile?.weightKg, getTipProteinGoal(tip, userProfile), PREMIUM));
+  }, [plans, userProfile]);
 
   const {
     targets: activeTrackingTargetsForAI,

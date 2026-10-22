@@ -585,6 +585,8 @@
     "saveError": "Could not save goals. Please try again."
   },
   "nutritionTargetSection": {
+    "macroSetupRequired": "Complete your macro settings to activate this target. The tip then uses the same protein goal as your macros.",
+    "setMacroGoals": "Set macro goals",
     "noNutritionTarget": "There is no established nutrition target for this substance in the app. You can still add it as a product to your supplement plan.",
     "premiumExplainer": "You can add this tip to your plan, but goal tracking requires Premium.",
     "title": "Goals",
