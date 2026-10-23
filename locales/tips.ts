@@ -253,6 +253,12 @@ export type Tip = TipBase & (TipWithoutTargets | TipWithTargets);
 
 const rawTips: Tip[] = [
   {
+    id: 'glycemic_index', level: 1, xp: 300,
+    title: 'glycemic_index.title', descriptionKey: 'glycemic_index.description',
+    areas: [{ id: 'energy', descriptionKey: 'glycemic_index.areas.energy' }],
+    noNutritionTarget: true, planCategory: ['nutrition'], timeRule: 'anytime',
+  },
+  {
     id: 'berberine',
     level: 7,
     xp: 500,

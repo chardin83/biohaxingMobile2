@@ -16,6 +16,7 @@ export function buildBarcodeEnrichmentInput({ product, amount, productType }: Ba
     carbohydrates: product.nutrition.carbohydratesPer100g,
     fat: product.nutrition.fatPer100g,
     fiber: product.nutrition.fiberPer100g,
+    glycemicIndex: product.nutrition.glycemicIndex ?? product.composition?.glycemicIndex,
     caffeineMg: product.nutrition.caffeineMgPer100g,
     alcoholGrams: product.nutrition.alcoholGramsPer100g,
   };
@@ -41,7 +42,7 @@ export function buildBarcodeEnrichmentInput({ product, amount, productType }: Ba
 /** Track AI provenance independently of the displayed amount or rounding. */
 export function getAiEstimatedBarcodeNutrients(context: BarcodeAnalysisContext, analysis: NutritionData): AiEstimatedNutrient[] {
   const input = buildBarcodeEnrichmentInput(context);
-  const keys: AiEstimatedNutrient[] = ['calories', 'protein', 'carbohydrates', 'fat', 'fiber', 'caffeineMg', 'alcoholGrams'];
+  const keys: AiEstimatedNutrient[] = ['calories', 'protein', 'carbohydrates', 'fat', 'fiber', 'caffeineMg', 'alcoholGrams', 'glycemicIndex'];
   return keys.filter(key => {
     const value = analysis[key];
     if (typeof value !== 'number' || !Number.isFinite(value)) return false;

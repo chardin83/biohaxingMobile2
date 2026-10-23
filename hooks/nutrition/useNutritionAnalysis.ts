@@ -226,6 +226,8 @@ export const useNutritionAnalysis = ({
           analyzedFoods: analyzedFoods.map(food => ({ ...food })),
           analysis: {
             ...result.analysis,
+            glycemicIndex: barcodeContext ? (buildBarcodeEnrichmentInput(barcodeContext).knownNutritionPer100.glycemicIndex ?? result.analysis.glycemicIndex) : result.analysis.glycemicIndex,
+            aiEstimatedNutrients: result.analysis.glycemicIndex === undefined ? undefined : ['glycemicIndex'],
             analysisTier: data.analysisTier ?? (PREMIUM ? 'premium' : 'trial'),
             ...(barcodeContext && {
               aiEstimatedNutrients: getAiEstimatedBarcodeNutrients(barcodeContext, result.analysis),

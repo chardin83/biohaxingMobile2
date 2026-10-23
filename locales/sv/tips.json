@@ -1,4 +1,11 @@
 {
+  "glycemic_index": {
+    "title": "Lär känna matens GI",
+    "description": "GI (glykemiskt index) beskriver kolhydratmatens blodsockersvar jämfört med glukos. Portionsstorlek, tillagning och resten av måltiden spelar också roll. Jämför GI för dina registrerade livsmedel i näringsöversikten. Streckkodsdata används när värdet finns; annars kan AI uppskatta det. Saknat värde visas som — och betyder inte noll. Dagens GI viktas med kolhydratmängden för poster med känt GI och är en uppskattning för dessa poster.",
+    "areas": {
+      "energy": "Utforska hur olika kolhydratkällor och tillagning påverkar måltidens GI."
+    }
+  },
   "profile_macro_goals": {
     "title": "Följ dina dagliga makromål",
     "description": "Ditt behov av energi och näring beror bland annat på ålder, kroppsstorlek och fysisk aktivitet. I appens makroguide används födelsedatum, kroppsvikt, längd, biologiskt kön och aktivitetsnivå (PAL) för att uppskatta energibehovet. Den valda fördelningen omvandlas sedan till gram protein, kolhydrater och fett, med appens åldersanpassning för protein.\n\nSå används tipset: Slutför den automatiska makroguiden och spara en förvald makrofördelning. Tipset hämtar exakt dessa sparade mål och följer samma mängder som makrokortet i dagboken. Det lägger inte på ett separat proteinmål eller extra mängder ovanpå dina makron.\n\nEgna mål: Manuellt inskrivna makron, en egen energinivå eller en egen makrofördelning aktiverar inte detta tips. Har du sådana mål visas i stället en länk till makroinställningarna. Du kan fortfarande använda egna mål i den vanliga makrouppföljningen.\n\nMatens kvalitet spelar också roll: Protein, kolhydrater och fett fyller olika funktioner. Variera proteinkällor, fiberrika livsmedel och fettkällor. Samma antal gram kan komma från måltider med mycket olika innehåll av fibrer, vitaminer och mineraler.\n\nBeräkningen är en uppskattning, inte en individuell medicinsk ordination. Se över guiden när vikt eller aktivitetsnivå förändras. Vid sjukdom eller särskilda näringsbehov kan individuell bedömning behövas. Tipset är avsett för vuxna från 18 år, även personer som är 65+.",

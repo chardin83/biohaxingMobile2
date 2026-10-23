@@ -1,3 +1,4 @@
+import { getWeightedGlycemicIndex } from '@/utils/glycemicIndex';
 import { roundToOneDecimal } from '@/utils/analyzeNutrition';
 
 import { getStorageSize } from '../shared/storageSize';
@@ -40,6 +41,7 @@ const buildDailyNutritionSummary = (sourceEntries: NutritionEntry[], dateKey: st
   );
 
   const totals = {
+    glycemicIndex: getWeightedGlycemicIndex(entries),
     protein: roundToOneDecimal(rawTotals.protein),
     calories: roundToOneDecimal(rawTotals.calories),
     carbohydrates: roundToOneDecimal(rawTotals.carbohydrates),

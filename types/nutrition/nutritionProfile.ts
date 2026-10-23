@@ -19,6 +19,8 @@ export type NutritionComposition = {
   carbohydrates: number;
   fat: number;
   fiber: number;
+  // Dimensionless index (glucose = 100); never scale by portion size.
+  glycemicIndex?: number;
   caffeineMg?: number;
   alcoholGrams?: number;
   fiberByType?: Partial<Record<FiberType, number>>;

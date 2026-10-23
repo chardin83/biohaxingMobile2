@@ -1,4 +1,11 @@
 {
+  "glycemic_index": {
+    "title": "Understand the GI of your food",
+    "description": "GI (glycemic index) describes the blood glucose response to carbohydrate foods compared with glucose. Portion size, preparation and the rest of the meal also matter. Compare GI in the nutrition summary. Barcode values are used when available; AI can otherwise estimate them. Missing values appear as — and do not mean zero. Daily GI is weighted by carbohydrate amounts for entries with known GI and estimates only those entries.",
+    "areas": {
+      "energy": "Explore how carbohydrate sources and preparation affect meal GI."
+    }
+  },
   "profile_macro_goals": {
     "title": "Follow your daily macro goals",
     "description": "Energy and nutrient needs depend on factors including age, body size, and physical activity. The app’s macro guide uses birth date, weight, height, biological sex, and physical activity level (PAL) to estimate energy needs. The selected distribution is then converted into grams of protein, carbohydrates, and fat, including the app’s age adjustment for protein.\n\nUsing this tip: Complete the automatic macro guide and save a preset distribution. This tip reads those exact saved goals and tracks the same amounts as the journal’s macro card. It does not add a separate protein target or additional amounts on top of your macros.\n\nCustom goals: Manually entered macros, a custom energy intake, or a custom distribution do not activate this tip. A link to macro settings is shown instead. You can still use custom goals in ordinary macro tracking.\n\nFood quality matters too: Protein, carbohydrates, and fat have different roles. Include varied protein sources, fiber-rich foods, and fat sources. Identical macro totals can come from meals with very different fiber, vitamin, and mineral content.\n\nThe calculation is an estimate, not an individualized medical prescription. Review the guide when weight or activity changes. Illness or special nutritional needs may require individual assessment. This tip is intended for adults aged 18 and over, including those aged 65+.",

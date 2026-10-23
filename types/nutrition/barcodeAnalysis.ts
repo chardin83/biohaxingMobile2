@@ -2,7 +2,7 @@ import type { MineralType } from '@/constants/minerals';
 import type { VitaminType } from '@/constants/vitamins';
 import type { BarcodeProduct, BarcodeProductType } from '@/services/openFoodFacts';
 
-export type KnownBarcodeNutrition = Partial<Record<'calories' | 'protein' | 'carbohydrates' | 'fat' | 'fiber' | 'caffeineMg' | 'alcoholGrams', number>>;
+export type KnownBarcodeNutrition = Partial<Record<'calories' | 'protein' | 'carbohydrates' | 'fat' | 'fiber' | 'caffeineMg' | 'alcoholGrams' | 'glycemicIndex', number>>;
 
 export type BarcodeEnrichmentInput = {
   barcode: string;

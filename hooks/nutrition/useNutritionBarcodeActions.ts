@@ -23,6 +23,7 @@ export const useNutritionBarcodeActions = ({ selectedDate, onNutritionEntrySelec
       const factor = amount / 100;
       const nutrition = {
         ...scaleBarcodeMicronutrients(product.nutrition, factor),
+        glycemicIndex: product.nutrition.glycemicIndex,
         name: product.name,
         calories: (product.nutrition.caloriesPer100g ?? 0) * factor,
         protein: (product.nutrition.proteinPer100g ?? 0) * factor,

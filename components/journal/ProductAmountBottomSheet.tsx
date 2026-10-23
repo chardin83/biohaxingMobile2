@@ -177,6 +177,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
 
       return {
         ...scaleBarcodeMicronutrients(per100, factor),
+        glycemicIndex: per100.glycemicIndex,
         name: nutritionProduct.name,
         calories: Math.round((per100.caloriesPer100g ?? 0) * factor),
         protein: round1((per100.proteinPer100g ?? 0) * factor),

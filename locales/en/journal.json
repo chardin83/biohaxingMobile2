@@ -95,6 +95,7 @@
     "alcoholPortionInfo": "{{grams}} g alcohol · {{glasses}} standard drinks",
     "alcoholStrength": "Alcohol strength",
     "alcoholLabel": "Alcohol",
+    "glycemicIndexAmount": "GI (glycemic index): {{value}}",
     "alcoholGrams": "{{value}} g",
     "alcoholInfo": {
       "title": "What is a standard drink?",

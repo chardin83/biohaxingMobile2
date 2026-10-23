@@ -57,10 +57,12 @@ export interface NutritionAnalysisResponse {
     carbohydrates?: number;
     fat?: number;
     fiber?: number;
+    glycemicIndex?: number;
     caffeineMg?: number;
     alcoholGrams?: number;
 
     nutritionDetails?: {
+      glycemicIndex?: number;
       caffeineMg?: number;
       alcoholGrams?: number;
       fiber?: {
@@ -147,6 +149,7 @@ export interface NutritionAnalysisResponse {
   };
 
   nutritionDetails?: {
+    glycemicIndex?: number;
     caffeineMg?: number;
     alcoholGrams?: number;
     fiber?: {
@@ -285,7 +288,7 @@ function appendNutritionOptions(form: FormData, params: AnalyseParams, locale: '
   const analysisTier: NutritionAnalysisTier = PREMIUM ? (params.analysisTier ?? 'premium') : params.analysisTier === 'trial' ? 'trial' : 'free';
   const languageInstruction = locale === 'sv' ? 'Write all free-text outputs in Swedish.' : 'Write all free-text outputs in English.';
 
-  form.append('prompt', `${params.prompt ?? ''}\n${languageInstruction}`.trim());
+  form.append('prompt', `${params.prompt ?? ''}\n${languageInstruction}\nReturn nutrition.glycemicIndex as a dimensionless glycemic index (glucose = 100), never scaled by portion size. Preserve barcodeProduct.knownNutritionPer100.glycemicIndex when provided; otherwise estimate only when supported by the identified food and preparation, and omit when unknown or not applicable. Include glycemicIndex in aiEstimatedNutrients when estimated.`.trim());
   if (params.stage) form.append('stage', params.stage);
   if (params.barcodeProduct) form.append('barcodeProduct', JSON.stringify(params.barcodeProduct));
   if (params.mealName) form.append('mealName', params.mealName);

@@ -95,6 +95,7 @@
     "alcoholPortionInfo": "{{grams}} g alkohol · {{glasses}} standardglas",
     "alcoholStrength": "Alkoholhalt",
     "alcoholLabel": "Alkohol",
+    "glycemicIndexAmount": "GI (glykemiskt index): {{value}}",
     "alcoholGrams": "{{value}} g",
     "alcoholInfo": {
       "title": "Vad är ett standardglas?",

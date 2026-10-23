@@ -7,6 +7,7 @@ import type { PolyphenolType } from '@/constants/polyphenols';
 import type { VitaminType } from '@/constants/vitamins';
 import type { FoodServing } from '@/types/nutrition/foodCatalogTypes';
 import type { NutritionComposition } from '@/types/nutrition/nutritionProfile';
+import { normalizeGlycemicIndex } from '@/utils/glycemicIndex';
 import { getOpenFoodFactsCalories } from '@/utils/openFoodFactsEnergy';
 import { getOpenFoodFactsMicronutrients } from '@/utils/openFoodFactsMicronutrients';
 
@@ -27,6 +28,7 @@ export interface BarcodeNutrition {
   saltPer100g?: number;
   sodiumPer100g?: number;
   polyphenolsMgPer100g?: Partial<Record<PolyphenolType, number>>;
+  glycemicIndex?: number;
   caffeineMgPer100g?: number;
   alcoholGramsPer100g?: number;
 }
@@ -70,6 +72,7 @@ interface OpenFoodFactsNutriments {
   'sugars_100g'?: number;
   'salt_100g'?: number;
   'sodium_100g'?: number;
+  'glycemic-index_100g'?: number;
   'caffeine_100g'?: number;
   'alcohol_100g'?: number;
 }
@@ -231,6 +234,7 @@ const fetchProductByBarcode = async (normalizedBarcode: string): Promise<Barcode
       sodiumPer100g: nutriments.sodium_100g,
       // Open Food Facts standardizes mass nutrients to grams.
       alcoholGramsPer100g: nutriments.alcohol_100g === undefined ? undefined : nutriments.alcohol_100g * 0.789,
+      glycemicIndex: normalizeGlycemicIndex(nutriments['glycemic-index_100g']),
       caffeineMgPer100g: nutriments.caffeine_100g === undefined ? undefined : nutriments.caffeine_100g * 1000,
     },
   };

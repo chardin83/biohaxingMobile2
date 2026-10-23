@@ -609,6 +609,10 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
           text={t('journal:nutritionLogger.caffeineAmount', { value: caffeineMg === undefined ? '—' : Math.round(caffeineMg) })}
         />
       </View>
+      <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]} testID="nutrition-gi">
+        <NutrientText aiEstimated={nutrition.aiEstimatedNutrients?.includes('glycemicIndex')}
+          text={t('journal:nutritionLogger.glycemicIndexAmount', { value: nutrition.glycemicIndex === undefined ? '—' : Math.round(nutrition.glycemicIndex) })} />
+      </View>
       <AlcoholSection nutrition={nutrition} onAlcoholInfo={() => setAlcoholInfoVisible(true)} />
 
       <View style={[styles.biohaxingPanel, analysisPanelColor]} testID="nutrition-biohaxing-extras">

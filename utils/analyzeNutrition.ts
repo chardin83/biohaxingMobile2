@@ -1,3 +1,4 @@
+import { normalizeGlycemicIndex } from './glycemicIndex';
 import { NutritionData, WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { ALL_AMINO_ACID_KEYS, AminoAcidType } from '@/constants/aminoAcids';
 import { FIBER_CATEGORY_SUBTYPES, FIBER_TYPE_KEYS, type FiberSubtype } from '@/constants/fiber';
@@ -517,6 +518,11 @@ const readAlcoholGrams = (candidate: any): number | null =>
   pickFirstNumber(candidate, ['alcoholGrams', 'alcohol_grams'])
   ?? pickFirstNumber(candidate?.nutritionDetails, ['alcoholGrams', 'alcohol_grams']);
 
+const readGlycemicIndex = (candidate: any): number | undefined => normalizeGlycemicIndex(
+  pickFirstNumber(candidate, ['glycemicIndex', 'glycemic_index', 'gi'])
+  ?? pickFirstNumber(candidate?.nutritionDetails, ['glycemicIndex', 'glycemic_index', 'gi'])
+);
+
 const readCaffeineMg = (candidate: any): number | null =>
   pickFirstNumber(candidate, ['caffeineMg', 'caffeine_mg'])
   ?? pickFirstNumber(candidate?.nutritionDetails, ['caffeineMg', 'caffeine_mg'])
@@ -532,6 +538,7 @@ const extractFromCandidate = (candidate: any): NutritionData | null => {
   const fiber = pickFirstNumber(candidate, ['fiber', 'fibre', 'fiber_g', 'dietary_fiber']);
   const caffeineMg = readCaffeineMg(candidate);
   const alcoholGrams = readAlcoholGrams(candidate);
+  const glycemicIndex = readGlycemicIndex(candidate);
 
   if (protein === null && calories === null && carbohydrates === null && fat === null && fiber === null && caffeineMg === null && alcoholGrams === null) {
     return null;
@@ -555,6 +562,7 @@ const extractFromCandidate = (candidate: any): NutritionData | null => {
     carbohydrates: carbohydrates ?? 0,
     fat: fat ?? 0,
     fiber: fiber ?? 0,
+    glycemicIndex,
     alcoholGrams: alcoholGrams === null ? undefined : Math.max(0, alcoholGrams),
     caffeineMg: caffeineMg === null ? undefined : Math.round(Math.max(0, caffeineMg)),
     fiberByType: emptyFiberTotals(),
@@ -623,7 +631,7 @@ export const extractStructuredAnalysis = (data: any, parsedContent: any): Nutrit
     if (extracted) {
       const caffeineMg = extracted.caffeineMg ?? readCaffeineMg(data) ?? readCaffeineMg(parsedContent);
       const alcoholGrams = extracted.alcoholGrams ?? readAlcoholGrams(data) ?? readAlcoholGrams(parsedContent);
-      return { ...extracted, alcoholGrams: alcoholGrams === null ? undefined : Math.max(0, alcoholGrams), caffeineMg: caffeineMg === null ? undefined : Math.round(Math.max(0, caffeineMg)) };
+      return { ...extracted, glycemicIndex: extracted.glycemicIndex ?? readGlycemicIndex(data) ?? readGlycemicIndex(parsedContent), alcoholGrams: alcoholGrams === null ? undefined : Math.max(0, alcoholGrams), caffeineMg: caffeineMg === null ? undefined : Math.round(Math.max(0, caffeineMg)) };
     }
   }
 
