@@ -1,4 +1,4 @@
-import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { BottomSheetModal, BottomSheetScrollView, type BottomSheetScrollViewMethods } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -77,6 +77,10 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
     const sheetDesign = useBottomSheetDesign(colors);
 
     const bottomSheetRef = useRef<BottomSheetModal>(null);
+    const scrollRef = useRef<BottomSheetScrollViewMethods>(null);
+    const typePosition = useRef(0);
+    const amountPosition = useRef(0);
+    const [hasSubmitted, setHasSubmitted] = useState(false);
 
     const [product, setProduct] = useState<BarcodeProduct | null>(null);
     const [gramsText, setGramsText] = useState('100');
@@ -91,6 +95,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
       ref,
       () => ({
         present: nextProduct => {
+          setHasSubmitted(false);
           setProduct(nextProduct);
           setCalorieOverride(undefined);
           setAlcoholPercent(getAlcoholPercent(nextProduct));
@@ -131,6 +136,19 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
 
       return value;
     }, [gramsText]);
+
+    const typeError = hasSubmitted && !productType;
+    const amountError = hasSubmitted && grams <= 0;
+    const validateForm = () => {
+      setHasSubmitted(true);
+      Keyboard.dismiss();
+      if (!productType || grams <= 0) {
+        const position = !productType ? typePosition.current : amountPosition.current;
+        scrollRef.current?.scrollTo({ y: Math.max(0, position - 16), animated: true });
+        return false;
+      }
+      return true;
+    };
 
     const factor = grams / 100;
     const alcoholAdjustedProduct = useMemo(
@@ -178,7 +196,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
     const calculationNoteKey = getCalculationNoteKey(product, productType);
 
     const handleSave = () => {
-      if (!product || grams <= 0 || !productType) return;
+      if (!product || !validateForm() || !productType) return;
 
       Keyboard.dismiss();
       onSave(adjustedProduct ?? product, grams, productType, productType === 'drink' ? time : undefined);
@@ -193,11 +211,12 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
         backgroundStyle={sheetDesign.backgroundStyle}
         handleComponent={sheetDesign.handleComponent}
         onDismiss={() => {
+          setHasSubmitted(false);
           setProduct(null);
           setProductType(undefined);
         }}
       >
-        <BottomSheetScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <BottomSheetScrollView ref={scrollRef} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
           {product ? (
             <>
               <View style={styles.productHeader}>
@@ -241,12 +260,13 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
               </View>
 
               {!product.fromCatalog && (
-                <View style={styles.typeSection}>
-                  <ThemedText type="defaultSemiBold">{t('journal:nutritionLogger.barcodeProduct.type')}</ThemedText>
+                <View style={styles.typeSection} onLayout={event => { typePosition.current = event.nativeEvent.layout.y; }}>
+                  <ThemedText type="defaultSemiBold" style={typeError ? { color: colors.error } : undefined}>{t('journal:nutritionLogger.barcodeProduct.type')}</ThemedText>
 
                   <View style={styles.typeOptions}>
                     <OptionSelector
                       value={productType}
+                      error={typeError}
                       onChange={setProductType}
                       options={[
                         { value: 'food', label: t('journal:nutritionLogger.barcodeProduct.meal'), icon: 'meal' },
@@ -254,10 +274,11 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
                       ]}
                     />
                   </View>
+                  {typeError && <ThemedText type="caption" accessibilityLiveRegion="polite" style={{ color: colors.error }}>{t('labeledInput.requiredError')}</ThemedText>}
                 </View>
               )}
 
-              <View style={styles.amountSection}>
+              <View style={styles.amountSection} onLayout={event => { amountPosition.current = event.nativeEvent.layout.y; }}>
                 <View style={styles.quantityFields}>
                   {productType === 'drink' && alcoholPercent !== undefined && (
                     <View style={[styles.quantityField, { borderColor: colors.border }]}>
@@ -274,7 +295,7 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
                       />
                     </View>
                   )}
-                  <View style={[styles.quantityField, { borderColor: colors.border }]}>
+                  <View style={[styles.quantityField, { borderColor: amountError ? colors.error : colors.border }]}>
                     <ThemedText type="caption">
                       {t('journal:nutritionLogger.barcodeProduct.amount')} ({amountUnit})
                     </ThemedText>
@@ -289,6 +310,8 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
                     />
                   </View>
                 </View>
+
+                {amountError && <ThemedText type="caption" accessibilityLiveRegion="polite" style={{ color: colors.error }}>{t('journal:nutritionLogger.barcodeProduct.enterPositiveAmount')}</ThemedText>}
 
                 {productType === 'drink' && alcoholPercent !== undefined && scaledNutrition && (
                   <Notice
@@ -355,9 +378,8 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
                     variant="premium"
                     icon="crown"
                     rightIcon="chevron.right"
-                    disabled={grams <= 0 || !productType}
                     onPress={async () => {
-                      if (!productType || grams <= 0) return;
+                      if (!validateForm() || !productType) return;
                       Keyboard.dismiss();
                       if (!PREMIUM && (await getFreePhotoAnalysesRemaining()) === 0) {
                         onDiscoverPremium?.();
@@ -373,7 +395,6 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
               <AppButton
                 title={t('journal:nutritionLogger.barcodeProduct.add')}
                 onPress={handleSave}
-                disabled={grams <= 0}
                 variant="primary"
                 style={styles.saveButton}
               />
@@ -390,7 +411,6 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
                 {t(`journal:nutritionLogger.barcodeProduct.${calculationNoteKey}`)}
               </ThemedText>
 
-              {/* <AppButton title="Lägg till" onPress={handleSave} disabled={grams <= 0} variant="primary" style={styles.saveButton} /> */}
             </>
           ) : null}
         </BottomSheetScrollView>

@@ -267,6 +267,7 @@
       "lookupFailedMessage": "Försök igen."
     },
     "barcodeProduct": {
+      "enterPositiveAmount": "Ange en mängd större än 0 för att fortsätta.",
       "servingSize": "Portion: {{value}}",
       "energyConflict": "Energivärdena från Open Food Facts stämmer inte överens: {{kcal}} kcal och {{kj}} kJ per 100 {{unit}}. Kontrollera förpackningen och ange rätt kcal-värde nedan, eller välj Komplettera med Premium för en AI-uppskattning. Ett manuellt ändrat värde behålls.",
       "editCalories": "Energi (kcal per 100 {{unit}})",

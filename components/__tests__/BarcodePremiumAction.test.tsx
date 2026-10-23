@@ -3,6 +3,8 @@ import React from 'react';
 
 import ProductAmountBottomSheet, { type ProductAmountBottomSheetRef } from '../journal/ProductAmountBottomSheet';
 
+const mockScrollTo = jest.fn();
+let mockAmount = 200;
 let mockRemaining = 3;
 let mockPremium = false;
 jest.mock('@/constants/Premium', () => ({
@@ -14,6 +16,8 @@ jest.mock('@/services/nutrition/photoAnalysisQuota', () => ({ getFreePhotoAnalys
 beforeEach(() => {
   mockRemaining = 3;
   mockPremium = false;
+  mockAmount = 200;
+  mockScrollTo.mockClear();
 });
 jest.mock('@/services/gptServices', () => ({
   ALCOHOL_TYPES: ['red_wine', 'white_wine', 'beer', 'spirits', 'oak_aged_spirits'],
@@ -28,16 +32,18 @@ jest.mock('@gorhom/bottom-sheet', () => {
       ReactModule.useImperativeHandle(ref, () => ({ present: jest.fn(), dismiss: jest.fn() }));
       return <View>{children}</View>;
     }),
-    BottomSheetScrollView: View,
+    BottomSheetScrollView: ReactModule.forwardRef(({ children, ...props }: any, ref: any) => {
+      ReactModule.useImperativeHandle(ref, () => ({ scrollTo: mockScrollTo }));
+      return <View {...props}>{children}</View>;
+    }),
   };
 });
-jest.mock('@react-navigation/native', () => ({ useTheme: () => ({ colors: {} }) }));
+jest.mock('@react-navigation/native', () => ({ useTheme: () => ({ colors: { error: '#ff0000', border: '#cccccc' } }) }));
 jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key, i18n: { language: 'sv' } }) }));
 jest.mock('../ui/BottomSheetDesign', () => ({ useBottomSheetDesign: () => ({}) }));
 jest.mock('../ThemedText', () => ({ ThemedText: require('react-native').Text }));
 jest.mock('../NutritionBreakdown', () => () => null);
 jest.mock('../ui/IconSymbol', () => ({ IconSymbol: () => null }));
-jest.mock('../ui/OptionSelector', () => () => null);
 jest.mock('../ui/Notice', () => ({ message }: any) => {
   const { Text } = require('react-native');
   return <Text>{message}</Text>;
@@ -48,7 +54,7 @@ jest.mock('../NumberStepper', () => ({
   default: ({ onChange, accessibilityLabel }: any) => {
     const { Text } = require('react-native');
     return (
-      <Text accessibilityLabel={accessibilityLabel} onPress={() => onChange(200)}>
+      <Text accessibilityLabel={accessibilityLabel} onPress={() => onChange(mockAmount)}>
         amount
       </Text>
     );
@@ -150,4 +156,55 @@ test.each([
   act(() => ref.current?.present({ ...product, productType: 'drink', ...volume }));
   fireEvent.press(screen.getByText('journal:nutritionLogger.barcodeProduct.add'));
   expect(onSave).toHaveBeenCalledWith(expect.objectContaining(volume), expected, 'drink', expect.any(Date));
+});
+
+test('keeps Premium clickable and marks and scrolls to the required type after submitting', async () => {
+  mockPremium = true;
+  mockRemaining = 0;
+  const ref = React.createRef<ProductAmountBottomSheetRef>();
+  const analyze = jest.fn();
+  const screen = render(<ProductAmountBottomSheet ref={ref} onSave={jest.fn()} onAnalyzePremium={analyze} />);
+  act(() => ref.current?.present({ ...product, productType: undefined }));
+  const buttonName = 'journal:nutritionLogger.barcodeProduct.analyzePremium';
+  expect(screen.getByRole('button', { name: buttonName }).props.accessibilityState.disabled).toBe(false);
+  expect(screen.queryByText('labeledInput.requiredError')).toBeNull();
+  fireEvent(screen.getByText('journal:nutritionLogger.barcodeProduct.type').parent!, 'layout', { nativeEvent: { layout: { y: 420 } } });
+  await act(async () => fireEvent.press(screen.getByText(buttonName)));
+  expect(analyze).not.toHaveBeenCalled();
+  expect(screen.getByText('labeledInput.requiredError')).toBeTruthy();
+  expect(screen.getByText('journal:nutritionLogger.barcodeProduct.type').props.style).toEqual({ color: '#ff0000' });
+  expect(mockScrollTo).toHaveBeenCalledWith({ y: 404, animated: true });
+  fireEvent.press(screen.getByText('journal:nutritionLogger.barcodeProduct.drink'));
+  expect(screen.queryByText('labeledInput.requiredError')).toBeNull();
+  await act(async () => fireEvent.press(screen.getByText(buttonName)));
+  expect(analyze).toHaveBeenCalledWith(expect.objectContaining({ barcode: product.barcode }), 100, 'drink', expect.any(Date));
+});
+
+test('validates missing type on Add and clears validation for a newly opened product', () => {
+  const ref = React.createRef<ProductAmountBottomSheetRef>();
+  const save = jest.fn();
+  const screen = render(<ProductAmountBottomSheet ref={ref} onSave={save} />);
+  act(() => ref.current?.present({ ...product, productType: undefined }));
+  fireEvent.press(screen.getByText('journal:nutritionLogger.barcodeProduct.add'));
+  expect(save).not.toHaveBeenCalled();
+  expect(screen.getByText('labeledInput.requiredError')).toBeTruthy();
+  act(() => ref.current?.present({ ...product, productType: undefined }));
+  expect(screen.queryByText('labeledInput.requiredError')).toBeNull();
+  fireEvent.press(screen.getByText('journal:nutritionLogger.barcodeProduct.meal'));
+  fireEvent.press(screen.getByText('journal:nutritionLogger.barcodeProduct.add'));
+  expect(save).toHaveBeenCalledWith(expect.anything(), 100, 'food', undefined);
+});
+
+test('keeps actions clickable with zero amount and shows inline validation on submit', async () => {
+  mockAmount = 0;
+  const ref = React.createRef<ProductAmountBottomSheetRef>();
+  const analyze = jest.fn();
+  const screen = render(<ProductAmountBottomSheet ref={ref} onSave={jest.fn()} onAnalyzePremium={analyze} />);
+  act(() => ref.current?.present(product));
+  fireEvent.press(screen.getByLabelText('journal:nutritionLogger.barcodeProduct.amount'));
+  const buttonName = 'journal:nutritionLogger.barcodeProduct.analyzePremium';
+  expect(screen.getByRole('button', { name: buttonName }).props.accessibilityState.disabled).toBe(false);
+  await act(async () => fireEvent.press(screen.getByText(buttonName)));
+  expect(analyze).not.toHaveBeenCalled();
+  expect(screen.getByText('journal:nutritionLogger.barcodeProduct.enterPositiveAmount')).toBeTruthy();
 });

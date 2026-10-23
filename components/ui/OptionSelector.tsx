@@ -19,11 +19,12 @@ interface OptionSelectorProps<T extends string> {
   value?: T;
   onChange: (value: T) => void;
   disabled?: boolean;
+  error?: boolean;
   accessibilityLabel?: string;
   compact?: boolean;
 }
 
-const OptionSelector = <T extends string>({ options, value, onChange, disabled = false, accessibilityLabel, compact = false }: OptionSelectorProps<T>) => {
+const OptionSelector = <T extends string>({ options, value, onChange, disabled = false, error = false, accessibilityLabel, compact = false }: OptionSelectorProps<T>) => {
   const { colors } = useTheme();
 
   return (
@@ -32,7 +33,7 @@ const OptionSelector = <T extends string>({ options, value, onChange, disabled =
         styles.container,
         compact && styles.compactContainer,
         {
-          borderColor: colors.border,
+          borderColor: error ? colors.error : colors.border,
         },
       ]}
     >
