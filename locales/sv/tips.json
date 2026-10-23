@@ -349,22 +349,22 @@
   },
   "homocysteine_methylation_cardio": {
     "title": "Metylering och hjärt-kärlstöd (homocystein)",
-    "description": "Homocystein är en svavelhaltig aminosyra som bildas i metioninomsättningen. Om nivåerna är kroniskt förhöjda kopplas det till ökad kardiovaskulär risk och sämre kärlfunktion. En praktisk strategi är att stödja metylering och redoxbalans med näringsämnen som TMG (trimetylglycin), B-vitaminer (särskilt B6, folat/B9 och B12), glycin, NAC och grönt-te-katekiner (EGCG, ibland felaktigt kallat ICG), tillsammans med folat- och kolinrik mat.",
+    "description": "Metylering innebär att en metylgrupp överförs mellan molekyler. Processen behövs bland annat för reglering av genaktivitet och omsättning av flera ämnen i kroppen. Metionin omvandlas till S-adenosylmetionin (SAM), som donerar metylgrupper. Efter donationen bildas S-adenosylhomocystein (SAH) och sedan homocystein. Det är ett reglerat kretslopp – ”mer metylering” är inte ett allmänt hälsomål.\n\nÅtervinning med folat, B12 och TMG: Homocystein kan återbildas till metionin genom enzymet metioninsyntas, med vitamin B12 och metylfolat. Enzymet MTHFR hjälper till att bilda metylfolat och behöver FAD från vitamin B2. En alternativ väg, främst i lever och njurar, använder betain (TMG) som metyldonator via enzymet BHMT. Kolin från maten kan också omvandlas till betain. De olika vägarna samspelar men ersätter inte alla varandras funktioner.\n\nKopplingen till glutation: Homocystein kan även gå vidare genom transsulfurering till cystein, med hjälp av B6-beroende enzymer. Cystein kan tillsammans med glycin och glutamat användas till glutation. Detta förklarar den biologiska kopplingen till glycin och NAC, men visar inte att alla behöver kombinera dem med B-vitaminer. EGCG och selen är inte direkta metyldonatorer, och hela preparatkombinationen i tipset är inte en kliniskt validerad behandling.\n\nKärlhälsa – samband och hypoteser: Förhöjt homocystein är kopplat till ökad kärlrisk. Laboratorieförsök pekar på oxidativ stress, påverkan på kärlens endotel och minskad tillgänglighet av kväveoxid (NO). Ett samband eller en möjlig mekanism bevisar dock inte att sänkning med tillskott förebygger sjukdom. Homocystein påverkas också av bland annat B12-/folatstatus och njurfunktion.\n\nVad människostudier visar: I HOPE-2 fick 5 522 personer med kärlsjukdom eller diabetes B-vitaminer eller placebo i ungefär fem år. Homocystein sjönk, men det sammansatta huvudutfallet av hjärt-kärldöd, hjärtinfarkt och stroke förbättrades inte; stroke var däremot ett positivt sekundärt utfall (Lonn med flera, 2006; PMID 16531613). I kinesiska CSPPT minskade första stroke från 3,4 till 2,7 procent med folsyra plus enalapril jämfört med enalapril ensamt under cirka 4,5 år (2015; PMID 25771069). Resultatet gällde personer med högt blodtryck i en miljö utan obligatorisk folsyraberikning och kan inte direkt överföras till alla användare.\n\nTMG och avvägningar: Betain kan sänka homocystein, men vissa randomiserade studier med gramdoser har samtidigt visat ökat LDL-kolesterol (Olthof med flera, PLOS Medicine, 2005; DOI 10.1371/journal.pmed.0020135). Ett bättre laboratorievärde är alltså inte automatiskt en nettovinst för kärlhälsan. Det finns inte heller stöd för att en sådan tillskottskombination förlänger livet.\n\nPraktiskt och säkerhet: Börja med en varierad kost med folatrika grönsaker och baljväxter samt lämpliga källor till B12 och kolin. Vid förhöjt homocystein bör orsaken bedömas, snarare än att bara fylla på flera preparat. Höga doser folsyra kan dölja blodbildsförändringar vid B12-brist medan nervskador fortsätter. Långvarigt höga B6-doser kan orsaka perifer neuropati; EFSA:s övre gräns för vuxna är 12 mg per dag och är ingen måldos. Tipsets näringsmål är inte en ordination att lägga tillskott ovanpå kosten. Behandling av blodtryck och blodfetter samt rökstopp ersätts inte av homocysteinsänkning.",
     "areas": {
-      "cardioFitness": "Att hålla homocystein inom ett hälsosamt intervall stödjer endotelfunktion, kväveoxidsignalering och kärlens motståndskraft. TMG donerar metylgrupper, folat/B12 stödjer remetylering och B6 stödjer transsulfurering. NAC och glycin stödjer dessutom glutationstatus och kontroll av oxidativ stress.",
-      "longevity": "Metyleringseffektivitet påverkar DNA-underhåll, avgiftningskapacitet och inflammatorisk ton över tid. Kombinationen av metyldonatorer (TMG, folat, B12) med kofaktorer som B6 och glycin kan hjälpa till att balansera en-kolmetabolismen i ett långsiktigt preventivt upplägg."
+      "cardioFitness": "Förhöjt homocystein är kopplat till kärlrisk och möjliga störningar i endotel och NO-signalering. B-vitaminer kan sänka värdet, men stora studier har inte generellt visat färre hjärtinfarkter; vissa grupper har fått minskad strokerisk.",
+      "longevity": "Enkolmetabolismen behövs för metylering och cellernas normala funktion. Att korrigera näringsbrist är relevant, men extra metyldonatorer eller sänkt homocystein har inte visats förlänga människors liv."
     },
     "nutritionFoods": {
       "title": "Livsmedel som stödjer metylering",
       "items": {
         "beets": {
-          "details": "Rödbetor är naturligt rika på betain (TMG-precursor) som kan stödja remetylering av homocystein."
+          "details": "Rödbetor innehåller betain, även kallat TMG, som kan donera metylgrupper vid omvandlingen av homocystein till metionin."
         },
         "spinach": {
           "details": "Spenat bidrar med folat som behövs i metyleringsvägar kopplade till homocysteinmetabolism."
         },
         "eggs": {
-          "details": "Äggulor innehåller kolin, en viktig metyldonator för lever- och metyleringsfunktion. Ägg innehåller också vitamin B12, cystein och selen."
+          "details": "Ägg bidrar med kolin och vitamin B12. Kolin kan omvandlas till betain, medan B12 behövs tillsammans med folat i en annan väg för omvandling av homocystein till metionin."
         },
         "broccoli": {
           "details": "Broccoli bidrar med folat och svavelföreningar som stödjer avgiftning och redoxbalans. Broccoli innehåller också magnesium, B6 och cystein som är relevanta för homocysteinmetabolismen."
@@ -374,6 +374,9 @@
         },
         "salmon": {
           "details": "Lax bidrar med metionin, B-vitaminer och omega-3 som stödjer hjärt-kärlhälsa när det balanseras med metyleringskofaktorer."
+        },
+        "brazilNuts": {
+          "details": "Paranötter är mycket selenrika – redan 1–2 nötter kan täcka dagsbehovet. Halten varierar kraftigt, så detta är ingen exakt eller garanterat säker daglig dos. Ät små mängder och undvik att rutinmässigt kombinera dem med selentillskott. För mycket selen under längre tid kan vara skadligt. Selen ingår i antioxidativa enzymer men är ingen direkt metyldonator."
         }
       }
     }
@@ -471,13 +474,13 @@
     }
   },
   "nature_parasympathetic": {
-    "title": "Tid i naturen",
-    "description": "Att tillbringa tid i naturliga miljöer aktiverar det parasympatiska nervsystemet och minskar stress. Skogsbad (Shinrin-yoku) och exponering för naturliga miljöer har visat sig sänka kortisol, minska blodtryck och förbättra det övergripande välbefinnandet.",
+    "title": "Skogsbada",
+    "description": "Tid i naturen kan ge utrymme för återhämtning, rörelse och en paus från vardagens krav. Skogsbad, på japanska shinrin-yoku, betyder att ta in skogens atmosfär med sinnena. Begreppet introducerades i Japan 1982. Det handlar om lugn närvaro snarare än att bada i vatten eller prestera på en vandring.\n\nSå kan du skogsbada: Välj en plats där du känner dig trygg. Gå långsamt eller sitt en stund och lägg märke till ljuset mellan träden, fågelljud, dofter och markens struktur. Låt mobilen vila och andas som vanligt utan att pressa. Börja gärna med en kort stund; en park eller ett närliggande grönområde kan också göra naturkontakten tillgänglig i vardagen.\n\nVad forskningen visar: Park med flera undersökte 280 unga vuxna i fältförsök i 24 japanska skogar. Korta stunder av promenad och sittande i skog jämfördes med stadsmiljö och gav bland annat lägre kortisol, puls och blodtryck samt HRV-mönster förenliga med mer parasympatisk aktivitet (2010; PMID 19568835). Studierna beskriver främst korttidseffekter. Små urval, förväntningar, buller, rörelse och skillnader mellan miljöerna gör det svårt att avgöra exakt vad som orsakar effekten och hur länge den håller i sig.\n\nImmunförsvar och skogens dofter: Små studier, bland annat en med tolv män, har rapporterat ökad aktivitet hos NK-celler efter flerdagars skogsvistelser (Li med flera, 2007; PMID 17903349). Flyktiga växtämnen, ibland kallade fytoncider, och minskad stress har föreslagits som mekanismer. Det är inte bevis för färre infektioner eller minskad cancerrisk hos människor.\n\nVeckomålet: White med flera fann ett samband mellan minst 120 minuters naturvistelse per vecka och bättre självrapporterad hälsa och välbefinnande (2019; PMID 31197192). Studien var observationell och fastställer ingen medicinsk miniminivå. Appens två timmar är ett praktiskt vanemål som kan delas upp i flera tillfällen. Anpassa efter ork, tillgänglighet och väder – återhämtningen ska inte bli ännu ett prestationskrav.",
     "habitTargets": { "description": "Tillbringa minst två timmar i naturen under veckan." },
     "areas": {
-      "nervousSystem": "Naturexponering aktiverar det parasympatiska nervsystemet, vilket minskar stresshormoner och främjar avslappning och återhämtning.",
-      "immuneSupport": "Tid i naturen har visat sig öka aktiviteten hos naturliga mördarceller och stärka immunfunktionen.",
-      "energy": "Naturliga miljöer återställer mental energi, minskar trötthet och förbättrar humöret genom exponering för naturligt ljus och frisk luft."
+      "nervousSystem": "Lugn naturvistelse kan minska upplevd stress. Vissa fältstudier visar lägre puls och HRV-förändringar förenliga med parasympatisk återhämtning, men effekten varierar och är inte en garanterad ”aktivering” av vagusnerven.",
+      "immuneSupport": "Små studier har sett förändrad NK-cellsaktivitet efter skogsvistelser. Detta är preliminära biomarkörfynd, inte bevis för att skogsbad förebygger infektioner eller cancer.",
+      "energy": "Naturvistelse kan ge en paus från krävande intryck och underlätta lugn rörelse och mental återhämtning. Hur mycket piggare eller lugnare man känner sig varierar."
     }
   },
   "hrv_recovery_monitoring": {
@@ -495,13 +498,13 @@
     }
   },
   "social_connection_vagal": {
-    "title": "Social kontakt och vagal ton",
-    "description": "Positiva sociala interaktioner och meningsfulla relationer aktiverar vagusnerven och stärker parasympatisk ton. Social kontakt är avgörande för nervsystemets reglering, emotionellt välbefinnande och övergripande hälsa.",
-    "habitTargets": { "description": "Ha två meningsfulla sociala kontakter under veckan." },
+    "title": "Social kontakt och gemenskap",
+    "description": "Social kontakt handlar både om att ha människor omkring sig och att känna tillhörighet, trygghet och ömsesidigt stöd. Social isolering beskriver få kontakter, medan ensamhet är upplevelsen av att relationerna inte motsvarar ens behov. Man kan känna sig ensam i ett stort nätverk och trivas med mycket egentid. Kvaliteten på relationerna är därför viktig, inte bara antalet möten.\n\nVad forskningen visar: Holt-Lunstad med flera sammanställde 148 studier med över 308 000 deltagare och fann att starkare sociala relationer var kopplade till bättre överlevnad under uppföljningen (PLOS Medicine, 2010; PMID 20668659). Wang med flera analyserade 90 prospektiva kohortstudier med cirka 2,2 miljoner deltagare: social isolering var förknippad med ungefär 32 procent högre relativ dödlighet och ensamhet med cirka 14 procent (Nature Human Behaviour, 2023; PMID 37337095). Det är gruppsamband, inte en prognos för individen eller bevis för att ett visst antal samtal förlänger livet. Sjukdom kan också göra det svårare att behålla kontakten med andra.\n\nMöjliga mekanismer: Trygga relationer kan ge praktisk hjälp, stödja rörelse och sömn och dämpa upplevd stress. I ett mindre experiment med 37 friska män minskade stöd från en vän kortisolreaktionen vid ett standardiserat stresstest (Heinrichs med flera, 2003; PMID 14675803). En metaanalys av 41 studier fann också ett litet samband mellan socialt stöd och lägre inflammationsmarkörer (Uchino med flera, 2018; PMID 29565600). Detta innebär inte att social kontakt alltid sänker kortisol, aktiverar vagusnerven på ett mätbart sätt eller ”stärker immunförsvaret”.\n\nBlå zoner: Begreppet används för områden där ovanligt hög livslängd har rapporterats, exempelvis delar av Sardinien. Gemenskap och delaktighet i familj och lokalsamhälle lyfts ofta fram som möjliga bidragande faktorer. I en studie av 160 äldre i Sardiniens blå zon var nöjdhet med sociala relationer kopplad till bättre självrapporterat psykiskt välbefinnande (2018; PMID 29495425). Studien visar inte att relationerna orsakade den höga livslängden. Kost, fysisk aktivitet, ekonomi, genetik och kvaliteten på befolkningsregistren behöver också vägas in; blå zoner är ingen färdig bevisad livslängdsmetod.\n\nPraktiskt: Vanemålet avser främst att träffas i verkliga livet (IRL), exempelvis under en promenad, en gemensam måltid eller en föreningsaktivitet. Prioritera personlig, ömsesidig kontakt där ni lyssnar och deltar i varandras liv. Att läsa forum, scrolla eller skriva enstaka kommentarer på nätet räknas inte som ett sådant möte. Ett personligt telefon- eller videosamtal kan vara ett alternativ när avstånd, hälsa eller andra omständigheter gör det svårt att ses; digitala relationer kan också vara betydelsefulla. Regelbundenhet och ömsesidighet kan vara mer användbart än att samla många ytliga kontakter. Appens två kontakter per vecka är en enkel vanestart, inte ett vetenskapligt fastställt minimum. Anpassa efter ork och behov; relationer som präglas av konflikt eller otrygghet kan i stället vara belastande.",
+    "habitTargets": { "description": "Ha två meningsfulla sociala kontakter under veckan, helst genom att träffas i verkliga livet." },
     "areas": {
-      "nervousSystem": "Positiva sociala interaktioner aktiverar vagusnerven, vilket förbättrar hjärtfrekvensvariabilitet och främjar parasympatisk nervsystemaktivering.",
-      "immuneSupport": "Starka sociala kontakter har visat sig minska inflammation, stärka immunfunktionen och öka livslängden.",
-      "energy": "Meningsfulla relationer och socialt stöd minskar stress och förbättrar energinivåer genom att sänka kortisol och förbättra emotionell resiliens."
+      "nervousSystem": "Tryggt socialt stöd kan dämpa upplevd stress och påverka kroppens stressreaktioner. Vagusnerven ingår i autonom reglering, men social kontakt är inte en direkt mätning eller garanterad träning av ”vagal ton”.",
+      "immuneSupport": "Socialt stöd har i studier ett litet samband med lägre inflammationsmarkörer. Det är en möjlig länk mellan relationer och hälsa, men inte bevis för att fler kontakter förebygger infektioner eller generellt stärker immunförsvaret.",
+      "energy": "Meningsfulla relationer kan ge emotionellt stöd och underlätta återhämtning, sömn och aktivitet. Effekten på upplevd ork varierar; trygghet och kvalitet i kontakten spelar roll."
     }
   },
   "calming_music_waves": {

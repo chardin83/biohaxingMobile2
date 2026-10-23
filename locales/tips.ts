@@ -847,6 +847,7 @@ const rawTips: Tip[] = [
       { key: 'eggs', nutrientTags: ['tmg', 'vitamin_b12', 'glycine', 'selenium', 'cysteine'] },
       { key: 'broccoli', nutrientTags: ['tmg', 'vitamin_b6', 'vitamin_b9', 'cysteine'] },
       { key: 'salmon', nutrientTags: ['tmg', 'vitamin_b6', 'vitamin_b12', 'glycine'] },
+      { key: 'chickpeas', nutrientTags: ['vitamin_b6', 'vitamin_b9'] },
       { key: 'brazilNuts', nutrientTags: ['selenium'] },
     ],
     bodyParts: ['bloodVessels', 'heart', 'liver'],
