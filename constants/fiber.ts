@@ -8,6 +8,8 @@ export const FIBER_TYPE_KEYS = [
 export type FiberType = typeof FIBER_TYPE_KEYS[number];
 export type FiberCategory = Exclude<FiberType, 'fiber_total'>;
 
+// Practical subgroups include both chemical fiber types and source-specific fractions.
+// 'psyllium' means the gel-forming fiber fraction from the husk, not whole husk mass.
 const FIBER_GEL_FORMING_SUBTYPES = ['beta_glucans', 'pectin', 'psyllium', 'mucilage'] as const;
 export type FiberGelForming = (typeof FIBER_GEL_FORMING_SUBTYPES)[number];
 
@@ -38,3 +40,6 @@ export const FIBER_CATEGORY_SUBTYPES: Record<FiberCategory, FiberSubtype[]> = {
   fiber_non_gel_forming: [...FIBER_NON_GEL_FORMING_SUBTYPES],
   fiber_fermentable: [...FIBER_FERMENTABLE_SUBTYPES],
 };
+
+export const isFiberSubtypeTargetTag = (tag: string): tag is FiberSubtype =>
+  Object.values(FIBER_CATEGORY_SUBTYPES).some(subtypes => subtypes.includes(tag as FiberSubtype));

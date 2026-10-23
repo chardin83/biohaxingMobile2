@@ -111,7 +111,7 @@ export const NutritionPlanDetailsSection: React.FC<Props> = ({ tip, targetProgre
         labelGroup = 'macroLabels';
       } else if (isNutrientTargetTag(trackingKey)) {
         labelGroup = 'nutrientLabels';
-      } else if (target.unit === 'plants' || target.unit === 'items' || target.unit === 'count') {
+      } else if (tip.trackingTargets?.some(item => item.trackingKey === trackingKey) || target.unit === 'plants' || target.unit === 'items' || target.unit === 'count') {
         labelGroup = 'weeklyTrackingLabels';
       } else if (target.unit === 'g') {
         labelGroup = 'fiberLabels';

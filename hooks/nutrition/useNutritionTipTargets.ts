@@ -147,9 +147,9 @@ export const useNutritionTipTargets = (dateKeys: string[]): Record<string, Recor
         });
 
         for (const raw of tip.trackingTargets ?? []) {
-          const details = resolveDailyNutritionTargetDetails({ target: { ...raw, source: 'nutrition', period: 'daily' }, dateKey, dailyNutritionTracking, weeklyNutritionTracking });
+          const details = resolveDailyNutritionTargetDetails({ target: { ...raw, source: 'nutrition', period: 'daily', supplementIds: tipSupplementIds }, dateKey, dailyNutritionTracking, weeklyNutritionTracking, takenDates });
           targets.push({ tag: raw.trackingKey, unit: raw.unit, period: 'daily', amount: raw.amount,
-            actual: details.actual, foodActual: details.foodActual, supplementActual: 0,
+            actual: details.actual, foodActual: details.foodActual, supplementActual: details.supplementActual, supplementIds: tipSupplementIds,
             isMet: details.actual >= raw.amount,
             label: t(`journal:nutritionLogger.weeklyTrackingLabels.${raw.trackingKey}`) });
         }

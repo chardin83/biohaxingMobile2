@@ -24,7 +24,7 @@ import Container from '@/components/ui/Container';
 import DiscreetButton from '@/components/ui/DiscreetButton';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { isAminoAcidTargetTag } from '@/constants/aminoAcids';
-import { isFiberTargetTag } from '@/constants/fiber';
+import { isFiberSubtypeTargetTag, isFiberTargetTag } from '@/constants/fiber';
 import { isMineralTargetTag } from '@/constants/minerals';
 import { isPolyphenolTargetTag } from '@/constants/polyphenols';
 import { isVitaminTargetTag } from '@/constants/vitamins';
@@ -244,6 +244,10 @@ const getNutritionEntryContributionForTarget = (entry: NutritionEntry, targetTag
 
   if (isAminoAcidTargetTag(targetTag) && entry.aminoAcidsByType?.[targetTag]) {
     return getTargetValueFromMilligrams(Number(entry.aminoAcidsByType[targetTag]) || 0, targetUnit);
+  }
+
+  if (isFiberSubtypeTargetTag(targetTag)) {
+    return Number(entry.fiberSubtypeTotals?.[targetTag]) || 0;
   }
 
   if (isFiberTargetTag(targetTag) && entry.fiberByType?.[targetTag]) {

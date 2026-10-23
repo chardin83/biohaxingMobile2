@@ -85,7 +85,6 @@
         { "id": "lTyrosine", "name": "L-Tyrosin", "quantity": "500", "unit": "mg" },
         { "id": "fadogia", "name": "Fadogia agrestis", "quantity": "300", "unit": "mg" },
         { "id": "shilajit", "name": "Shilajit", "quantity": "500", "unit": "mg" },
-        { "id": "psyllium", "name": "Psylliumfröskal", "quantity": "1", "unit": "tsk" },
         { "id": "tmg", "name": "TMG (Trimetylglycin)", "quantity": "500", "unit": "mg" },
         { "id": "holyBasil", "name": "Helig basilika (Tulsi)", "quantity": "", "unit": "" },
         { "id": "reishi", "name": "Reishi", "quantity": "500", "unit": "mg", "description": "Medicinalsvamp som ofta används för immunbalans, återhämtning och lugn." },

@@ -3,7 +3,9 @@ import type { FoodNutrientProfile } from './foodCatalogTypes';
 // Only nutrients absent from the matched USDA record, app metadata and estimates belong here.
 // For foods with no reliable matching USDA preparation/product, the original profile is retained.
 // Such legacy amounts are unverified; this file does not establish nutritional provenance.
-// Independent fructan assays can exceed legacy total-fibre values. Do not add the two totals.
+// Independent fructan/RS assays can exceed legacy total-fibre values; do not add them.
+// RS estimates below are g/100 g edible food, not dry weight. Fermentable values
+// include only the assigned RS fraction, not all fermentable fibre. Preparation varies.
 export const FOOD_SUPPLEMENTARY_PROFILES = {
   cauliflower: {
     sulfurRichVegetable: true,
@@ -140,7 +142,25 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     fiberByType: { fiber_non_gel_forming: 2.2 },
     defaultServings: [{"grams":30},{"grams":60},{"grams":90}]
   },
+  oatBran: {
+    // Dry oat-bran reference: Kungsörnen product declaration, per 100 g.
+    // https://www.kungsornen.se/produkter/havrekli-300g/
+    // Product-specific baseline; prefer the actual package for other brands.
+    calories: 350,
+    protein: 18,
+    carbohydrates: 41,
+    fat: 8.5,
+    fiber: 18,
+    fiberByType: { fiber_total: 18, fiber_gel_forming: 6.5, fiber_fermentable: 6.5 },
+    fiberSubtypeTotals: { beta_glucans: 6.5 },
+    mineralsByType: { phosphorus: 720, magnesium: 240, iron: 7.5, zinc: 3.4 },
+    vitaminsByType: { vitamin_b1: 0.84, vitamin_b3: 5.4 },
+    defaultServings: [{ grams: 15 }, { grams: 30 }, { grams: 50 }],
+  },
   oats: {
+    // Estimated raw-oat beta-glucans: mean 4.40 g/100 g; varies by cultivar/product.
+    // https://pmc.ncbi.nlm.nih.gov/articles/PMC8063794/
+    fiberSubtypeTotals: { beta_glucans: 4.4 },
     fiberByType: { fiber_fermentable: 5.2, fiber_gel_forming: 4.2 },
     defaultServings: [{"grams":40,"labelKey":"halfCup"},{"grams":80,"labelKey":"oneCup"},{"grams":160,"labelKey":"twoCups"}]
   },
@@ -183,8 +203,11 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     carbohydrates: 23,
     fat: 0.3,
     fiber: 2.6,
-    fiberByType: { fiber_total: 2.6, fiber_fermentable: 1.6 },
+    fiberByType: { fiber_total: 2.6, fiber_fermentable: 2.8 },
     mineralsByType: { potassium: 358, magnesium: 27 },
+    // Estimated resistant starch: Unripe cooking-banana proxy; variety/ripeness varies.
+    // Patterson et al. 2020: https://doi.org/10.1016/j.jand.2019.10.019
+    fiberSubtypeTotals: { resistant_starch: 2.8 },
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}],
   },
   chicoryRoot: {
@@ -196,14 +219,67 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     },
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
+  cookedCooledPasta: {
+    // Approximate plain cooked-pasta composition per 100 g, used as a baseline.
+    calories: 158,
+    protein: 5.8,
+    carbohydrates: 30.9,
+    fat: 0.9,
+    fiber: 1.8,
+    fiberByType: { fiber_total: 1.8, fiber_fermentable: 1.0 },
+    // Estimated resistant starch: Cooked/chilled pasta weighted mean.
+    // Patterson et al. 2020: https://doi.org/10.1016/j.jand.2019.10.019
+    fiberSubtypeTotals: { resistant_starch: 1.0 },
+    defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }],
+  },
+  cookedCooledJasmineRice: {
+    // Matvaretabellen food 05.338, cooked jasmine rice, per 100 g:
+    // https://www.matvaretabellen.no/en/rice-jasmin-cooked/
+    // Cooked baseline, not a measured chilled profile. Sugar: 0.1 g/100 g.
+    calories: 115,
+    protein: 2.4,
+    carbohydrates: 25.7,
+    fat: 0.2,
+    fiber: 0,
+    fiberByType: { fiber_total: 0, fiber_fermentable: 0.74 },
+    mineralsByType: { potassium: 10, magnesium: 3, phosphorus: 22, zinc: 0.5, copper: 0.04 },
+    vitaminsByType: { vitamin_b1: 0.01, vitamin_b2: 0.01, vitamin_b3: 0.2, vitamin_b6: 0.13, vitamin_b9: 0.003 },
+    // Estimated resistant starch: Chiu & Stewart 2013, Table 1: refrigerated rice-cooker jasmine.
+    // https://doi.org/10.6133/apjcn.2013.22.3.08
+    fiberSubtypeTotals: { resistant_starch: 0.74 },
+    defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }],
+  },
+  cookedCooledBasmatiRice: {
+    // Matvaretabellen food 05.337, cooked basmati rice, per 100 g:
+    // https://www.matvaretabellen.no/en/rice-basmati-cooked/
+    // Cooked baseline, not a measured chilled profile. Sugar: 0.1 g/100 g.
+    calories: 115,
+    protein: 3,
+    carbohydrates: 25,
+    fat: 0.3,
+    fiber: 0.2,
+    fiberByType: { fiber_total: 0.2, fiber_fermentable: 0.9 },
+    mineralsByType: { calcium: 6, potassium: 14, magnesium: 9, phosphorus: 33, iron: 0.1, zinc: 0.5, selenium: 0.005, copper: 0.09 },
+    vitaminsByType: { vitamin_b1: 0.02, vitamin_b2: 0.01, vitamin_b3: 0.3, vitamin_b6: 0.07, vitamin_b9: 0.002 },
+    // Estimated resistant starch: Chilled white long-grain rice proxy, not a basmati-specific assay.
+    // Patterson et al. 2020: https://doi.org/10.1016/j.jand.2019.10.019
+    fiberSubtypeTotals: { resistant_starch: 0.9 },
+    defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }],
+  },
   cookedCooledPotato: {
+    // Boiled potato flesh baseline per 100 g (USDA SR Legacy NDB 11365), not rice.
+    // Total fibre: https://www.nal.usda.gov/sites/default/files/page-files/Total_Dietary_Fiber.pdf
+    // Cooling study: https://doi.org/10.1016/j.foodchem.2016.03.120
     calories: 87,
     protein: 1.9,
     carbohydrates: 20.1,
     fat: 0.1,
-    fiber: 2.2,
-    fiberByType: { fiber_total: 2.2, fiber_fermentable: 0.9 },
-    mineralsByType: { potassium: 379, magnesium: 23 },
+    fiber: 1.8,
+    fiberByType: { fiber_total: 1.8, fiber_fermentable: 1.3 },
+    mineralsByType: { potassium: 379, magnesium: 22 },
+    // Estimated resistant starch: Cooked/chilled potato, unspecified variety weighted mean.
+    // Patterson et al. 2020: https://doi.org/10.1016/j.jand.2019.10.019
+    fiberSubtypeTotals: { resistant_starch: 1.3 },
     defaultServings: [{"grams":85,"labelKey":"halfCup"},{"grams":170,"labelKey":"oneCup"},{"grams":340,"labelKey":"twoCups"}],
   },
   psylliumHusk: {
@@ -213,8 +289,11 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     fat: 0.5,
     fiber: 80,
     fiberByType: { fiber_total: 80, fiber_fermentable: 24, fiber_gel_forming: 52 },
+    // Estimated gel-forming psyllium fraction from the existing category estimate.
+    // Not a separate assay or dry husk mass; do not add it to total fibre again.
+    fiberSubtypeTotals: { psyllium: 52 },
     mineralsByType: { calcium: 80, iron: 4 },
-    defaultServings: [{"grams":30},{"grams":60},{"grams":90}],
+    defaultServings: [{ grams: 2.5 }, { grams: 5 }, { grams: 10 }],
   },
   apples: {
     fiberByType: { fiber_fermentable: 1.1, fiber_gel_forming: 1 },

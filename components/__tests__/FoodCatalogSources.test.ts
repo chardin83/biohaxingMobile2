@@ -51,3 +51,52 @@ it('deep-merges sourced nutrients while retaining the unverified missing groups'
   expect(USDA_FOOD_NUTRIENT_PROFILES.blackCurrants).not.toHaveProperty('fiber');
   expect(FOOD_NUTRIENT_PROFILES.blackCurrants.fiber).toBe(FOOD_SUPPLEMENTARY_PROFILES.blackCurrants.fiber);
 });
+
+it('makes cooked cooled pasta available as a catalog food with servings and its image', () => {
+  const pasta = getFoodProduct('cookedCooledPasta', 'Cooked and cooled pasta');
+  expect(FOOD_SUPPLEMENTARY_PROFILES.cookedCooledPasta).toBeDefined();
+  expect(pasta.fromCatalog).toBe(true);
+  expect(pasta.productType).toBe('food');
+  expect(pasta.quantityValue).toBe(100);
+  expect(pasta.quantityUnit).toBe('g');
+  expect(pasta.servings?.map(serving => serving.grams)).toEqual([50, 100, 200]);
+  expect(pasta.image).toBeTruthy();
+  expect(pasta.composition?.calories).toBeGreaterThan(0);
+  expect(pasta.composition?.fiberSubtypeTotals?.resistant_starch).toBe(1);
+});
+
+it('uses a boiled-potato baseline for cooled potatoes with an estimated chilled resistant-starch amount', () => {
+  const potato = getFoodProduct('cookedCooledPotato', 'Cooked and cooled potato');
+  expect(potato.composition).toMatchObject({
+    calories: 87,
+    protein: 1.9,
+    carbohydrates: 20.1,
+    fat: 0.1,
+    fiber: 1.8,
+    mineralsByType: { potassium: 379, magnesium: 22 },
+  });
+  expect(potato.composition?.fiberByType).toEqual({ fiber_total: 1.8, fiber_fermentable: 1.3 });
+  expect(potato.composition?.fiberSubtypeTotals?.resistant_starch).toBe(1.3);
+  expect(potato.image).toBeTruthy();
+});
+
+it('keeps jasmine and basmati as separate cooked baselines with a shared image', () => {
+  const jasmine = getFoodProduct('cookedCooledJasmineRice', 'Jasmine');
+  const basmati = getFoodProduct('cookedCooledBasmatiRice', 'Basmati');
+  expect(jasmine.composition).toMatchObject({ calories: 115, protein: 2.4, carbohydrates: 25.7, fat: 0.2, fiber: 0 });
+  expect(basmati.composition).toMatchObject({ calories: 115, protein: 3, carbohydrates: 25, fat: 0.3, fiber: 0.2 });
+  expect(jasmine.image).toBeTruthy();
+  expect(jasmine.image).toBe(basmati.image);
+  for (const rice of [jasmine, basmati]) {
+    expect(rice.fromCatalog).toBe(true);
+    expect(rice.quantityValue).toBe(100);
+    expect(rice.servings?.map(serving => serving.grams)).toEqual([50, 100, 200]);
+    expect(rice.composition?.fiberSubtypeTotals?.resistant_starch).toBeGreaterThan(0);
+  }
+});
+
+ it.each([['greenBanana', 2.8], ['cookedCooledPasta', 1], ['cookedCooledPotato', 1.3], ['cookedCooledJasmineRice', 0.74], ['cookedCooledBasmatiRice', 0.9]] as const)('preserves resistant starch for %s through catalog product creation', (key, amount) => {
+  const product = getFoodProduct(key, key);
+  expect(product.composition?.fiberSubtypeTotals?.resistant_starch).toBe(amount);
+  expect(product.composition?.fiberByType?.fiber_fermentable).toBeGreaterThanOrEqual(amount);
+});

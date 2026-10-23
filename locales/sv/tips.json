@@ -554,60 +554,105 @@
       "immuneSupport": "Genom att interagera med immunförsvaret i tarmen kan L. reuteri stödja mer balanserad immunsignalering och lägre överdriven inflammatorisk ton. Vissa stammar har också studerats för bättre immunbalans i munnen och minskad tillväxt av bakterier kopplade till karies och irriterat tandkött."
     }
   },
-  "fiber_butyrate": {
-    "title": "Fermenterbara fibrer och butyrat",
-    "description": "Fermenterbara fibrer bryts ned av tarmbakterier till kortkedjiga fettsyror, framför allt butyrat — tjocktarmscellernas primära bränsle och en nyckelregulator av tarminflammation. Sikta på 30 g totalfiber varav minst 15 g fermenterbara.",
+  "resistant_starch_barrier": {
+    "title": "Resistent stärkelse, tarmbarriär och butyrat",
+    "description": "Resistent stärkelse undgår nedbrytning i tunntarmen och kan bli mat åt bakterier i tjocktarmen. Den finns exempelvis i grön, mindre mogen banan. När kokt pasta eller potatis kyls kan en del stärkelse omorganiseras till en mer svårnedbruten form, så kallad retrograderad stärkelse. En del kan finnas kvar efter återuppvärmning. Nykokt pasta kan också innehålla resistent stärkelse; nedkylning innebär inte en garanterad ökning med en viss mängd. Mängden varierar; kall pasta är fortfarande kolhydratrik mat.\n\nButyrat och tarmbarriären: Bakterier kan fermentera resistent stärkelse till kortkedjiga fettsyror, bland annat butyrat. Mogna tjocktarmsceller använder butyrat som bränsle, och experiment visar påverkan på barriärfunktion och immunsignalering. Bakterier samarbetar i nedbrytningen, och responsen varierar mellan personer (2016; PMID 27357127). Detta är ingen behandling för inflammatorisk tarmsjukdom.\n\nVeckomålet: Ät grön banan, kall kokt potatis, kall pasta eller kallt ris vid tre måltider i veckan. AI-analysen räknar måltider med dessa källor i nutrition. Även mat som först kylts ned och sedan återuppvärmts räknas. Ange i beskrivningen eller ingredienslistan att potatisen, pastan eller riset är kallt/nedkylt eller återuppvärmt efter nedkylning, eftersom historiken inte säkert går att se på bilden. En måltid räknas en gång även om flera källor ingår. Tre gånger per vecka är en enkel vanestart, inte en vetenskapligt fastställd dos för tarmbarriären.\n\nBörja med små mängder efter tolerans. Kyl tillagad mat snabbt och förvara omkring 4 °C; låt inte pasta eller potatis stå framme i flera timmar för att bilda resistent stärkelse. Livsmedelsverket varnar för att bland annat Bacillus cereus kan bilda värmetåliga gifter vid felaktig förvaring.",
     "areas": {
-      "digestiveHealth": "Resistent stärkelse och inulin jäses av Faecalibacterium och Roseburia till butyrat, vilket stärker tarmslemhinnan och minskar inflammation.",
-      "immuneSupport": "Butyrat reglerar T-cells differentiering och intestinal immuntolerens, vilket minskar risken för inflammatoriska reaktioner.",
-      "longevity": "Högre butyratproduktion är kopplad till minskad tarmpermeabilitet, lägre systemisk inflammation och friskare åldrande."
+      "digestiveHealth": "Resistent stärkelse kan ge bakterier substrat för butyratbildning. Butyrat är bränsle för mogna tjocktarmsceller och deltar i tarmbarriärens funktion.",
+      "immuneSupport": "Butyrat påverkar immunsignalering i experiment. Det ger en möjlig koppling till tarmens immunbalans, men vanemålet är ingen bevisad behandling mot inflammation."
+    },
+    "nutritionFoods": {
+      "items": {
+        "greenBanana": {
+          "details": "Uppskattat 2,8 g resistent stärkelse per 100 g, med omogen kokbanan som referens. Sort och mognad påverkar mängden."
+        },
+        "cookedCooledPotato": {
+          "details": "Uppskattat 1,3 g resistent stärkelse per 100 g kokt och kyld potatis. Sort och tillagning påverkar mängden. Kyl snabbt och förvara kallt."
+        },
+        "cookedCooledPasta": {
+          "details": "Uppskattat 1,0 g resistent stärkelse per 100 g kokt och kyld pasta. Mängden varierar med sort och kylning. Kyl snabbt och förvara kallt."
+        },
+        "cookedCooledJasmineRice": {
+          "details": "Uppskattat 0,74 g resistent stärkelse per 100 g, baserat på en studie av kylt jasminris. Mängden varierar med tillagning och kylning. Kyl snabbt och förvara kallt."
+        },
+        "cookedCooledBasmatiRice": {
+          "details": "Uppskattat 0,9 g resistent stärkelse per 100 g, med kylt vitt långkornigt ris som referens. Värdet är inte uppmätt specifikt för basmati. Kyl snabbt och förvara kallt."
+        }
+      }
+    },
+    "targetDescription": "Ät kall pasta, potatis eller ris, eller gröna bananer, tre gånger i veckan. Mat som först har kylts ned och sedan värmts upp igen räknas också. OBS! Vid AI-analys: dubbelkolla att tillagningssättet anges som kallt/nedkylt eller återuppvärmt, och rätta vid behov. Enbart nykokt eller uppvärmd mat utan tidigare nedkylning räknas inte."
+  },
+  "fiber_total_intake": {
+    "title": "Öka ditt fiberintag",
+    "description": "Nästa steg är att öka den totala mängden fibrer från varierad mat. Svenska råd anger vanligen 25–35 gram per dag för vuxna; appens mål är 30 gram. Detta är mängden totalt från dagens mat, inte ett krav på ett fiberpulver.\n\nVälj exempelvis fullkorn, havre, baljväxter, frukt och grönsaker. Olika fibrer har olika egenskaper: vissa ger volym, andra bildar gel eller fermenteras av tarmbakterier. All fiber behöver inte vara resistent stärkelse.\n\nÖka stegvis och fördela över måltiderna. Anpassa efter magens tolerans och drick tillräckligt. Vid IBS eller andra tarmbesvär kan mängd och fibertyp behöva anpassas med dietist.",
+    "areas": {
+      "digestiveHealth": "Ett varierat fiberintag stödjer normal tarmfunktion. Öka gradvis och anpassa efter tolerans."
+    },
+    "nutritionFoods": {
+      "items": {
+        "oats": {
+          "details": "Havre innehåller fermenterbara betaglukaner. Mängden varierar mellan produkter."
+        },
+        "soybeans": {
+          "details": "Sojabönor bidrar med flera fibertyper, bland annat fermenterbara oligosackarider."
+        }
+      }
+    }
+  },
+  "fiber_butyrate": {
+    "title": "Fermenterbara fibrer, acetat och propionat",
+    "description": "Fermenterbara fibrer används av tarmens mikroorganismer och ger bland annat acetat, propionat, butyrat och gaser. Här ligger fokus på andra fiberkällor utöver den resistenta stärkelsen i introduktionstipset. Total mängd fibrer följs i det separata tipset på level 2.\n\nAcetat och propionat: Acetat bildas av många bakterier och kan användas i kroppens ämnesomsättning eller av andra bakterier vid butyratbildning. Propionat tas till stor del om hand av levern. Båda deltar i signalering via receptorer, bland annat FFAR2 och FFAR3, som studeras för samband med tarmfunktion, mättnad och metabolism. Det innebär inte att en viss fiber säkert sänker aptit, blodsocker eller vikt.\n\nOlika fibrer: Inulin och fruktooligosackarider finns exempelvis i lök och cikoria, galaktooligosackarider i baljväxter, betaglukaner i havre och korn och pektin i frukt. Bakterier samarbetar genom korsmatning, där en arts nedbrytningsprodukter blir en annans substrat. Löslighet, gelbildning och fermenterbarhet är olika egenskaper.\n\nMänniskostudier visar att olika fibrer ger olika svar: i en studie med 174 personer gav resistent stärkelse och inulin olika mikrobiom- och fettsyresvar (2019; PMID 30696735). En annan studie visade att olika stärkelsestrukturer kunde styra produktionen mot propionat eller butyrat (2020; PMID 32004499). Fettsyror i avföringen är det som återstår efter upptag och speglar inte hela produktionen.\n\nPraktiskt: Variera baljväxter, fullkorn, havre, frukt och grönsaker. Målet här gäller enbart fermenterbara fibrer: 15 gram per dag som appens planeringsmål, inte en officiell svensk rekommendation eller en bestämd mängd acetat. Öka gradvis efter tolerans; inulin och andra lättfermenterade fibrer kan ge gaser och smärta, särskilt vid IBS.",
+    "areas": {
+      "digestiveHealth": "Fermenterbara fibrer ger olika blandningar av acetat, propionat och butyrat. Bakteriernas samarbete och fiberns struktur påverkar resultatet.",
+      "immuneSupport": "Kortkedjiga fettsyror deltar i signalering mellan mikrobiom, tarmceller och immunsystem. Kliniska effekter av enskilda fibrer behöver bedömas separat.",
+      "longevity": "Acetat och propionat studeras för kopplingar till metabolism och åldrande. Att öka en viss fettsyra har inte visats förlänga människors liv."
     },
     "nutritionFoods": {
       "title": "Fermenterbara fiberkällor",
       "items": {
         "oats": {
-          "details": "En halv kopp torrhavre (~40 g) ger ~4 g betaglukan, en fermenterbar fiber som stimulerar butyratproducerande bakterier."
+          "details": "Havre innehåller fermenterbara betaglukaner. Mängden varierar mellan produkter."
         },
-        "legumes": {
-          "details": "1 kopp kokta baljväxter (~180 g) ger 8-15 g fermenterbara fibrer inklusive resistent stärkelse och GOS."
-        },
-        "greenBanana": {
-          "details": "En medelstor grön banan (~120 g) innehåller 5-6 g resistent stärkelse, vilket sjunker kraftigt vid mogning."
+        "soybeans": {
+          "details": "Sojabönor bidrar med flera fibertyper, bland annat fermenterbara oligosackarider."
         },
         "chicoryRoot": {
-          "details": "100 g cikoriarot innehåller 35-40 g inulin och FOS, bland de rikaste kostmässiga källorna till fermenterbara fibrer."
-        },
-        "cookedCooledPotato": {
-          "details": "Att kyla kokta stärkelserika livsmedel över natten ökar innehållet av resistent stärkelse med 2-4 g per 100 g."
+          "details": "Cikoriarot är en källa till inulin. Koncentrerade produkter kan ge gasbesvär; börja försiktigt."
         }
       }
     }
   },
-  "fiber_gel_forming_focus": {
-    "title": "Fokus på gelbildande fibrer",
-    "description": "Gelbildande fibrer binder vatten och bildar viskositet i tarmen. Den viktigaste kardiometabola effekten är ofta förbättrade blodfetter, särskilt sänkt LDL-kolesterol, bland annat via bindning av gallsyror och ökad kolesterolutsöndring. Sikta på 30 g totalfiber och minst 10 g gelbildande fibrer per dag.",
+  "oat_barley_beta_glucans_ldl": {
+    "title": "Betaglukaner för lägre LDL",
+    "description": "Betaglukaner från havre och korn är lösliga, viskösa fibrer som kan bidra till lägre LDL-kolesterol. De bildar en gel i tarmen och kan minska återupptaget av gallsyror. Levern behöver då använda mer kolesterol för att bilda nya gallsyror. Effekten beror bland annat på dos, viskositet och hur livsmedlet har bearbetats.\n\nMålet är 3 g betaglukaner från havre eller korn per dag, den mängd som ligger bakom europeiska hälsopåståenden om kolesterol. Det är mängden betaglukaner som räknas, inte vikten havregryn eller totalfiber. Forskningsstödet för LDL gäller havre och korn. Betaglukaner från svamp och jäst har annan struktur och kan inte förutsättas ge samma effekt (EFSA, 2010; doi:10.2903/j.efsa.2010.1885).\n\nVälj exempelvis havregryn, havrekli eller kornprodukter. Hur mycket som behövs beror på produktens betaglukaninnehåll; använd deklarerade värden när de finns. Katalogens havrevärde är en uppskattning, och torr havre ska inte förväxlas med samma vikt färdig gröt. Du kan fördela intaget över dagens måltider. Öka gradvis efter tolerans.\n\nDetta är ett kostmål för regelbundet intag, inte en garanti för en viss LDL-sänkning. Effekten behöver följas med blodprov och beror även på resten av kosten.",
+    "targetDescription": "Få i dig 3 g betaglukaner från havre eller korn dagligen. Räkna själva betaglukanmängden, inte totalfiber eller livsmedlets vikt.",
     "areas": {
-      "digestiveHealth": "Gelbildande fibrer som betaglukaner, pektin, psyllium och mucilage kan förbättra tarmfunktion och stödja tarmbarriären.",
-      "immuneSupport": "Genom förbättrad lipidmetabolism och lägre inflammatorisk ton från tarmen kan gelbildande fibrer stödja en bättre immunbalans.",
-      "longevity": "Högre intag av viskösa gelbildande fibrer är kopplat till lägre LDL-kolesterol, bättre kardiometabola markörer och bättre långsiktiga hälsoresultat."
+      "longevity": "Havre- och kornbetaglukaner kan sänka LDL, en etablerad riskfaktor för hjärt-kärlsjukdom. Effekten innebär inte att en viss livslängd kan utlovas.",
+      "digestiveHealth": "Betaglukaner binder vatten och kan fermenteras av tarmbakterier. Öka intaget gradvis om du lätt får gaser."
     },
     "nutritionFoods": {
-      "title": "Livsmedel med gelbildande fibrer",
+      "title": "Havre och korn",
       "items": {
+        "oatBran": { "details": "Havrekli kan användas i gröt, yoghurt eller bakning. Referensvärdet är 6,5 g betaglukaner per 100 g torrt havrekli; cirka 47 g ger då drygt 3 g betaglukaner. Andra produkter kan skilja sig – kontrollera förpackningen. Väg kliet före tillagning." },
         "oats": {
-          "details": "Betaglukaner i havre och korn är klassiska gelbildande fibrer med väldokumenterad LDL-sänkande effekt."
-        },
+          "details": "Havre innehåller betaglukaner. Katalogen använder uppskattat 4,4 g per 100 g torr havre; produkt och sort påverkar mängden. Kontrollera förpackningen när innehållet anges."
+        }
+      }
+    }
+  },
+  "psyllium_ldl": {
+    "title": "Psyllium för lägre LDL",
+    "description": "Psylliumfröskal innehåller vattenbindande, gelbildande fibrer, främst arabinoxylaner. De är inte betaglukaner. Gelen kan minska återupptaget av gallsyror och därmed bidra till lägre LDL-kolesterol.\n\nEn metaanalys av 28 randomiserade studier fann i genomsnitt cirka 0,33 mmol/L lägre LDL vid en mediandos på 10,2 g psyllium per dag. Resultaten varierade mellan studier och personer. Appen följer i stället 5,2 g gelbildande psylliumfibrer per dag. Det motsvarar cirka 10 g torra skal med katalogens uppskattning på 52 procent gelbildande fiber. Det är en omräkning för uppföljning, inte en separat vetenskapligt fastställd fiberdos (2018; PMID 30239559).\n\nBörja med en mindre mängd och öka gradvis efter tolerans. Dosen kan delas upp under dagen. Blanda med tillräcklig vätska, drick direkt enligt produktens anvisningar och svälj aldrig skalen torra. Vid blandprodukter räknas endast mängden psylliumskal, inte hela produktvikten.\n\nPsyllium kan påverka upptaget av läkemedel; följ förpackningens tidsintervall och fråga apotek om du tar mediciner. Använd inte vid sväljsvårigheter eller misstänkt förträngning/tarmstopp utan medicinsk bedömning. Effekten på LDL följs med blodprov och ersätter inte ordinerad behandling.",
+    "targetDescription": "Sikta på 5,2 g gelbildande psylliumfibrer per dag, vilket enligt appens uppskattning motsvarar cirka 10 g torra skal. Om din förpackning anger 1 tsk = 2,5 g skal ger det cirka 1,3 g gelbildande psylliumfibrer med appens schablon. Teskedsvikten varierar – kontrollera förpackningen eller väg mängden och ange gram vid registrering. Börja lägre, öka gradvis och följ produktens anvisningar om vätska och dosering.",
+    "areas": {
+      "longevity": "Psyllium kan ge en måttlig sänkning av LDL. Detta är relevant för hjärt-kärlhälsa, men är inte bevis för förlängd livslängd.",
+      "digestiveHealth": "Psyllium håller kvar vatten och kan förbättra avföringens konsistens. Tillräcklig vätska och gradvis upptrappning är viktiga."
+    },
+    "nutritionFoods": {
+      "title": "Psylliumfröskal",
+      "items": {
         "psylliumHusk": {
-          "details": "1 matsked psyllium (~9 g) är rik på gelbildande fibrer och är ett av de mest effektiva kostverktygen för att sänka LDL-kolesterol."
-        },
-        "chiaSeeds": {
-          "details": "Chia bildar ett mucilage-gel i kontakt med vatten och bidrar både med totalfiber och gelbildande fiber."
-        },
-        "apples": {
-          "details": "Äpplen innehåller pektin, en gelbildande fiber kopplad till bättre avföringskonsistens och mikrobiomstöd."
-        },
-        "okra": {
-          "details": "Okra innehåller mucilage och pektin som bidrar till gelbildning och bättre tarmkomfort."
+          "details": "Ange vikten torra psylliumskal. Katalogen uppskattar 52 procent som gelbildande psylliumfibrer: 2,5 g skal ger 1,3 g, 5 g ger 2,6 g och 10 g ger 5,2 g. Målet använder samma fibervärde som näringsanalysen. Vatten vid blötläggning räknas inte. Väg mängden; teskedsvikten varierar mellan produkter."
         }
       }
     }

@@ -29,6 +29,10 @@
     "gramsShort": "g"
   },
   "foods": {
+    "cookedCooledJasmineRice": { "name": "Jasmine rice, cooked and cooled" },
+    "cookedCooledBasmatiRice": { "name": "Basmati rice, cooked and cooled" },
+    "cookedCooledRice": { "name": "Cooked and cooled rice" },
+    "cookedCooledPasta": { "name": "Cooked and cooled pasta" },
     "arugula": { "name": "Rocket (arugula)" },
     "cauliflower": { "name": "Cauliflower" },
     "cabbage": { "name": "White cabbage" },
@@ -98,7 +102,7 @@
       "name": "Beef shank (slow-cooked)"
     },
     "cookedCooledPotato": {
-      "name": "Cooked and cooled potato or rice"
+      "name": "Cooked and cooled potato"
     },
     "cottageCheese": {
       "name": "Cottage cheese"
@@ -150,6 +154,7 @@
     "chanterelles": {
       "name": "Chanterelles"
     },
+    "oatBran": { "name": "Oat bran, dry" },
     "oats": {
       "name": "Oats"
     },

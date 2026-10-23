@@ -126,6 +126,8 @@
     "confidenceLow": "Låg säkerhet",
     "confidenceUnknown": "Okänd säkerhet",
     "fiberLabels": {
+      "psyllium": "Psyllium",
+      "beta_glucans": "Betaglukaner",
       "fiber_total": "Fibrer totalt",
       "fiber_gel_forming": "Gelbildande fibrer",
       "fiber_non_gel_forming": "Ej gelbildande fibrer",
@@ -203,6 +205,7 @@
       "plant_diversity": "Växtdiversitet"
     },
     "weeklyTrackingLabels": {
+      "resistant_starch_meals": "Måltider med resistent stärkelse",
       "sulfur_rich_vegetables": "Svavelrika grönsaker",
       "unique_plants": "Unika växter",
       "vegetable_colors": "Grönsaksfarger",

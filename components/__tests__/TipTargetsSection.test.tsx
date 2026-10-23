@@ -176,3 +176,11 @@ it('shows all calculated macros and blocks them when the user switches to custom
   expect(screen.queryByText(/220.*g/)).toBeNull();
   expect(screen.getByText('common:nutritionTargetSection.setMacroGoals')).toBeTruthy();
 });
+
+ it.each([['oat_barley_beta_glucans_ldl', 'beta_glucans', 3], ['psyllium_ldl', 'psyllium', 5.2]] as const)('shows a single daily gram goal for %s', (id, key, amount) => {
+  const tip = tips.find(item => item.id === id)!;
+  const screen = render(<TargetsSection tip={tip} colors={Colors.light} t={(translationKey: string, options?: { defaultValue?: string }) => translationKey.startsWith('journal:') ? translationKey : t(translationKey, options)} />);
+  expect(screen.getByText(`journal:nutritionLogger.fiberLabels.${key}`)).toBeTruthy();
+  expect(screen.getByText(`${amount.toFixed(1)} g / common:nutritionTargetSection.periods.daily`)).toBeTruthy();
+  expect(screen.queryByText('journal:nutritionLogger.fiberLabels.fiber_total')).toBeNull();
+});

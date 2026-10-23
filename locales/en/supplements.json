@@ -85,7 +85,6 @@
         { "id": "lTyrosine", "name": "L-Tyrosine", "quantity": "500", "unit": "mg" },
         { "id": "fadogia", "name": "Fadogia agrestis", "quantity": "300", "unit": "mg" },
         { "id": "shilajit", "name": "Shilajit", "quantity": "500", "unit": "mg" },
-        { "id": "psyllium", "name": "Psylliumhusk", "quantity": "1", "unit": "tsk" },
         { "id": "tmg", "name": "TMG (Trimetylglycin)", "quantity": "500", "unit": "mg" },
         { "id": "holyBasil", "name": "Holy Basil (Tulsi)", "quantity": "", "unit": "" },
         { "id": "reishi", "name": "Reishi", "quantity": "500", "unit": "mg", "description": "Medicinal mushroom commonly used for immune balance, recovery, and calm." },

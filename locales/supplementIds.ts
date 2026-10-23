@@ -80,7 +80,6 @@ export const supplementIds = {
   lGlutamine: 'lGlutamine',
   fadogia: 'fadogia',
   shilajit: 'shilajit',
-  psyllium: 'psyllium',
   tmg: 'tmg',
   reishi: 'reishi',
   lionsMane: 'lionsMane',

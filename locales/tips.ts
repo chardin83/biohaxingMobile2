@@ -73,7 +73,7 @@ type WeightedTarget = {
 };
 
 export type FiberTarget = {
-  tag: FiberType;
+  tag: FiberType | FiberSubtype;
 } & BaseTarget<'g'> &
   WeightedTarget;
 
@@ -113,7 +113,7 @@ export type NutrientTarget = {
   WeightedTarget;
 
 export type TrackingTarget = {
-  trackingKey: string; // e.g., 'unique_plants', 'vegetable_colors', 'fish_meals', 'fatty_fish_meals'
+  trackingKey: string; // Dynamic counts or lists.
   // Optional dynamic guidance sent to AI for this key
   aiInstruction?: string; // Optional dynamic guidance sent to AI for this key
 } & BaseTarget<'items' | 'count'>;
@@ -1399,8 +1399,51 @@ const rawTips: Tip[] = [
     bodyParts: ['muscles'],
   },
   {
-    id: 'fiber_butyrate',
+    id: 'resistant_starch_barrier',
+    level: 1,
+    xp: 300,
+    groupIds: ['fiber_microbiome'],
+    areas: [
+      { id: 'digestiveHealth', descriptionKey: 'resistant_starch_barrier.areas.digestiveHealth' },
+      { id: 'immuneSupport', descriptionKey: 'resistant_starch_barrier.areas.immuneSupport' },
+    ],
+    title: 'resistant_starch_barrier.title',
+    descriptionKey: 'resistant_starch_barrier.description',
+    targetDescriptionKey: 'resistant_starch_barrier.targetDescription',
+    trainingRelation: 'anytime',
+    timeRule: 'anytime',
+    planCategory: ['nutrition'],
+    targetPeriod: 'weekly',
+    targetIconName: 'target',
+    trackingTargets: [{
+      trackingKey: 'resistant_starch_meals',
+      amount: 3,
+      unit: 'count',
+      aiInstruction: "Return a numeric count of 1 for this meal when the confirmed ingredients/description support an unripe green banana, or cooked pasta, potatoes or rice served cold/cooled, or reheated after earlier cooling/refrigeration. Return 0 otherwise. Do not infer cooling merely from cooked, hot, warm or heated food. Use the confirmed preparation field and user description: cold or cooled qualifies; previously cooled then reheated also qualifies; cooked alone does not. Reheated food qualifies when prior cooling is supported; heated or warmed alone does not establish this. No refrigeration duration is required. Count the meal once even if several qualifying foods are present. Keep this preparation-based count separate from nutrition: a small estimated resistant-starch amount alone must not qualify a freshly cooked meal, and a qualifying meal does not require a fixed resistant-starch gram threshold. Do not estimate grams in this tracking signal.",
+    }],
+    nutritionFoods: [{ key: 'greenBanana' }, { key: 'cookedCooledPotato' }, { key: 'cookedCooledPasta' }, { key: 'cookedCooledJasmineRice' }, { key: 'cookedCooledBasmatiRice' }],
+    bodyParts: ['digestiveSystem'],
+  },
+  {
+    id: 'fiber_total_intake',
     level: 2,
+    xp: 400,
+    groupIds: ['fiber_microbiome'],
+    areas: [{ id: 'digestiveHealth', descriptionKey: 'fiber_total_intake.areas.digestiveHealth' }],
+    title: 'fiber_total_intake.title',
+    descriptionKey: 'fiber_total_intake.description',
+    trainingRelation: 'anytime',
+    timeRule: 'anytime',
+    planCategory: ['nutrition'],
+    targetPeriod: 'daily',
+    targetIconName: 'fiber',
+    fiberTargets: [{ tag: 'fiber_total', amount: 30, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 }],
+    nutritionFoods: [{ key: 'oats' }, { key: 'soybeans' }],
+    bodyParts: ['digestiveSystem'],
+  },
+  {
+    id: 'fiber_butyrate',
+    level: 3,
     xp: 500,
     groupIds: ['fiber_microbiome'],
     areas: [
@@ -1417,13 +1460,12 @@ const rawTips: Tip[] = [
     targetPeriod: 'daily',
     targetIconName: 'fiber',
     fiberTargets: [
-      { tag: 'fiber_total', amount: 30, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
       { tag: 'fiber_fermentable', amount: 15, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
     ],
     nutritionFoods: [
       {
         key: 'oats',
-        nutrientTags: ['fiber_total', 'fiber_fermentable'],
+        nutrientTags: ['fiber_fermentable'],
         fiberSubtypes: ['beta_glucans', 'resistant_starch'],
         microbiomeSupport: ['Roseburia', 'Faecalibacterium'],
         sourceRefs: ['USDA FoodData Central'],
@@ -1431,106 +1473,66 @@ const rawTips: Tip[] = [
       },
       {
         key: 'soybeans',
-        nutrientTags: ['fiber_total', 'fiber_fermentable'],
+        nutrientTags: ['fiber_fermentable'],
         fiberSubtypes: ['resistant_starch', 'galactooligosaccharides', 'inulin'],
         microbiomeSupport: ['Roseburia', 'Faecalibacterium', 'Ruminococcus'],
         sourceRefs: ['USDA FoodData Central'],
         defaultConfidence: 'high',
       },
       {
-        key: 'greenBanana',
-        nutrientTags: ['fiber_total', 'fiber_fermentable'],
-        fiberSubtypes: ['resistant_starch'],
-        microbiomeSupport: ['Faecalibacterium', 'Ruminococcus'],
-        sourceRefs: ['USDA FoodData Central'],
-        defaultConfidence: 'high',
-      },
-      {
         key: 'chicoryRoot',
-        nutrientTags: ['fiber_total', 'fiber_fermentable'],
+        nutrientTags: ['fiber_fermentable'],
         fiberSubtypes: ['inulin', 'fructooligosaccharides'],
         microbiomeSupport: ['Roseburia', 'Faecalibacterium'],
         sourceRefs: ['USDA FoodData Central'],
         defaultConfidence: 'high',
-      },
-      {
-        key: 'cookedCooledPotato',
-        nutrientTags: ['fiber_total', 'fiber_fermentable'],
-        fiberSubtypes: ['resistant_starch'],
-        microbiomeSupport: ['Faecalibacterium', 'Ruminococcus'],
-        sourceRefs: ['USDA FoodData Central'],
-        defaultConfidence: 'medium',
       },
     ],
     bodyParts: ['digestiveSystem'],
     microbiomeIds: ['Roseburia', 'Faecalibacterium', 'Ruminococcus'],
   },
   {
-    id: 'fiber_gel_forming_focus',
+    id: 'oat_barley_beta_glucans_ldl',
+    minAge: 18,
     level: 3,
     xp: 500,
     groupIds: ['fiber_microbiome'],
-    areas: [
-      { id: 'digestiveHealth', descriptionKey: 'fiber_gel_forming_focus.areas.digestiveHealth' },
-      { id: 'immuneSupport', descriptionKey: 'fiber_gel_forming_focus.areas.immuneSupport' },
-      { id: 'longevity', descriptionKey: 'fiber_gel_forming_focus.areas.longevity' },
-    ],
-    title: 'fiber_gel_forming_focus.title',
-    descriptionKey: 'fiber_gel_forming_focus.description',
     trainingRelation: 'anytime',
     preferredDayParts: ['morning', 'afternoon'],
     timeRule: 'anytime',
     planCategory: ['nutrition'],
     targetPeriod: 'daily',
     targetIconName: 'fiber',
-    fiberTargets: [
-      { tag: 'fiber_total', amount: 30, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
-      { tag: 'fiber_gel_forming', amount: 10, unit: 'g', sourceBackedWeight: 1, inferredWeight: 0.7 },
-    ],
-    nutritionFoods: [
-      {
-        key: 'oats',
-        nutrientTags: ['fiber_total', 'fiber_gel_forming'],
-        fiberSubtypes: ['beta_glucans'],
-        microbiomeSupport: ['Roseburia', 'Faecalibacterium'],
-        sourceRefs: ['USDA FoodData Central'],
-        defaultConfidence: 'high',
-      },
-      {
-        key: 'psylliumHusk',
-        nutrientTags: ['fiber_total', 'fiber_gel_forming'],
-        fiberSubtypes: ['psyllium', 'mucilage'],
-        microbiomeSupport: ['Faecalibacterium', 'Roseburia'],
-        sourceRefs: ['USDA FoodData Central'],
-        defaultConfidence: 'high',
-      },
-      {
-        key: 'chiaSeeds',
-        nutrientTags: ['fiber_total', 'fiber_gel_forming'],
-        fiberSubtypes: ['mucilage'],
-        microbiomeSupport: ['Faecalibacterium', 'Ruminococcus'],
-        sourceRefs: ['USDA FoodData Central'],
-        defaultConfidence: 'high',
-      },
-      {
-        key: 'apples',
-        nutrientTags: ['fiber_total', 'fiber_gel_forming'],
-        fiberSubtypes: ['pectin'],
-        microbiomeSupport: ['Akkermansia', 'Roseburia'],
-        sourceRefs: ['USDA FoodData Central'],
-        defaultConfidence: 'high',
-      },
-      {
-        key: 'okra',
-        nutrientTags: ['fiber_total', 'fiber_gel_forming'],
-        fiberSubtypes: ['mucilage', 'pectin'],
-        microbiomeSupport: ['Faecalibacterium', 'Roseburia'],
-        sourceRefs: ['USDA FoodData Central'],
-        defaultConfidence: 'medium',
-      },
-    ],
     bodyParts: ['digestiveSystem'],
-    microbiomeIds: ['Roseburia', 'Faecalibacterium', 'Akkermansia'],
+    areas: [{ id: 'longevity', descriptionKey: 'oat_barley_beta_glucans_ldl.areas.longevity' }, { id: 'digestiveHealth', descriptionKey: 'oat_barley_beta_glucans_ldl.areas.digestiveHealth' }],
+    title: 'oat_barley_beta_glucans_ldl.title',
+    descriptionKey: 'oat_barley_beta_glucans_ldl.description',
+    targetDescriptionKey: 'oat_barley_beta_glucans_ldl.targetDescription',
+    fiberTargets: [{ tag: 'beta_glucans', amount: 3, unit: 'g' }],
+    nutritionFoods: [
+      { key: 'oats', nutrientTags: ['fiber_gel_forming'], fiberSubtypes: ['beta_glucans'] },
+      { key: 'oatBran', nutrientTags: ['fiber_gel_forming'], fiberSubtypes: ['beta_glucans'], sourceRefs: ['https://www.kungsornen.se/produkter/havrekli-300g/'], defaultConfidence: 'high' },
+    ],
+  },
+  {
+    id: 'psyllium_ldl',
+    minAge: 18,
+    level: 3,
+    xp: 500,
+    groupIds: ['fiber_microbiome'],
+    trainingRelation: 'anytime',
+    preferredDayParts: ['morning', 'afternoon'],
+    timeRule: 'anytime',
+    planCategory: ['nutrition'],
+    targetPeriod: 'daily',
+    targetIconName: 'fiber',
+    bodyParts: ['digestiveSystem'],
+    areas: [{ id: 'longevity', descriptionKey: 'psyllium_ldl.areas.longevity' }, { id: 'digestiveHealth', descriptionKey: 'psyllium_ldl.areas.digestiveHealth' }],
+    title: 'psyllium_ldl.title',
+    descriptionKey: 'psyllium_ldl.description',
+    targetDescriptionKey: 'psyllium_ldl.targetDescription',
+    fiberTargets: [{ tag: 'psyllium', amount: 5.2, unit: 'g' }],
+    nutritionFoods: [{ key: 'psylliumHusk', fiberSubtypes: ['psyllium'] }],
   },
   {
     id: 'fiber_non_gel_forming_focus',

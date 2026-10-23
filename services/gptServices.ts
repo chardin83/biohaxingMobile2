@@ -1,5 +1,3 @@
-import type { BarcodeEnrichmentInput } from '@/types/nutrition/barcodeAnalysis';
-import type { IdentifiedFood } from '@/types/nutrition/nutritionAnalysis';
 // services/gptService.ts
 import debug from 'debug';
 import { t } from 'i18next';
@@ -12,6 +10,8 @@ import i18n from '@/app/i18n';
 import { ENDPOINTS } from '@/config';
 import { PREMIUM } from '@/constants/Premium';
 import { tips } from '@/locales/tips';
+import type { BarcodeEnrichmentInput } from '@/types/nutrition/barcodeAnalysis';
+import type { IdentifiedFood } from '@/types/nutrition/nutritionAnalysis';
 
 const log = debug('app:gptServices');
 

@@ -42,7 +42,7 @@ Detta är en implementerbarhetsbedömning och förslag till produktmål. Inga ta
 | HRV och återhämtningsovervakning — `hrv_recovery_monitoring` | Antal dagar med registrerad HRV-mätning, exempelvis 5 per vecka. Målet är datainsamling, inte ett universellt HRV-värde. | Ny habit trackingKey: hrv_measurement_days; daily-check eller koppling till metric-logg. Registrering och etiketter behöver kopplas in. |
 | Lugnande musik och ljudterapi — `calming_music_waves` | Loggade minuter lugn musik/ljud, exempelvis 10 minuter per dag. | Ny habit trackingKey: calming_music; minutes. Registrering och etiketter behöver kopplas in. |
 | Näsandning och kväveoxid — `nasal_breathing_nitric_oxide` | Minuter med bekväm näsandning i en vald lugn övning, exempelvis 5 minuter per dag. | Ny habit trackingKey: nasal_breathing; minutes. Registrering och etiketter behöver kopplas in. |
-| Blått och rött ljus på kvällen — `blue_light_evening` | Daglig check av vald kvällsbelysnings-/skärmrutin före läggdags. | Ny habit trackingKey: evening_light_routine; daily-check. Registrering och etiketter behöver kopplas in. |
+| Belysningshygien — `lighting_hygiene` | Daglig check av vald kvällsbelysnings-/skärmrutin före läggdags. | Ny habit trackingKey: evening_light_routine; daily-check. Registrering och etiketter behöver kopplas in. |
 
 ### B – möjligt, behöver utökad modell (7)
 

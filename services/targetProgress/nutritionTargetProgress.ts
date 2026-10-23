@@ -248,13 +248,7 @@ export const resolveDailyNutritionTargetDetails = ({
     : resolveFoodActual({ target, summary });
 
   const resolvedSupplementIds = supplementIds ?? target.supplementIds ?? [];
-
-  const supplementActual = resolveSupplementActual({
-    target,
-    dateKey,
-    takenDates,
-    supplementIds: resolvedSupplementIds,
-  });
+  const supplementActual = resolveSupplementActual({ target, dateKey, takenDates, supplementIds: resolvedSupplementIds });
 
   return {
     actual: foodActual + supplementActual,

@@ -29,6 +29,10 @@
     "gramsShort": "g"
   },
   "foods": {
+    "cookedCooledJasmineRice": { "name": "Jasminris, kokt och kylt" },
+    "cookedCooledBasmatiRice": { "name": "Basmatiris, kokt och kylt" },
+    "cookedCooledRice": { "name": "Kokt och kylt ris" },
+    "cookedCooledPasta": { "name": "Kokt och kyld pasta" },
     "arugula": { "name": "Rucola" },
     "cauliflower": { "name": "Blomkål" },
     "cabbage": { "name": "Vitkål" },
@@ -98,7 +102,7 @@
       "name": "Nötlägg (långkokt)"
     },
     "cookedCooledPotato": {
-      "name": "Kokt och kyld potatis eller ris"
+      "name": "Kokt och kyld potatis"
     },
     "cottageCheese": {
       "name": "Keso"
@@ -150,6 +154,7 @@
     "chanterelles": {
       "name": "Kantareller"
     },
+    "oatBran": { "name": "Havrekli, torrt" },
     "oats": {
       "name": "Havre"
     },

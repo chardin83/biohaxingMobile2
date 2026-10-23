@@ -126,6 +126,8 @@
     "confidenceLow": "Low confidence",
     "confidenceUnknown": "Unknown confidence",
     "fiberLabels": {
+      "psyllium": "Psyllium",
+      "beta_glucans": "Beta-glucans",
       "fiber_total": "Fiber total",
       "fiber_gel_forming": "Gel-forming fiber",
       "fiber_non_gel_forming": "Non-gel-forming fiber",
@@ -203,6 +205,7 @@
       "plant_diversity": "Plant diversity"
     },
     "weeklyTrackingLabels": {
+      "resistant_starch_meals": "Meals with resistant starch",
       "sulfur_rich_vegetables": "Sulfur-rich vegetables",
       "unique_plants": "Unique plants",
       "vegetable_colors": "Vegetable colors",

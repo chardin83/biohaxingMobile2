@@ -657,60 +657,105 @@
       "immuneSupport": "By interacting with the gut immune system, L. reuteri may help support more balanced immune signaling and lower excessive inflammatory tone. Some strains are also studied for oral immune balance and reduced growth of bacteria associated with caries and gum irritation."
     }
   },
-  "fiber_butyrate": {
-    "title": "Fermentable fiber and butyrate",
-    "description": "Fermentable fibers are broken down by gut bacteria into short-chain fatty acids, especially butyrate. Butyrate is the primary fuel for colon cells and a key regulator of gut inflammation. Aim for 30 g total fiber with at least 15 g fermentable.",
+  "resistant_starch_barrier": {
+    "title": "Resistant starch, the gut barrier and butyrate",
+    "description": "Resistant starch escapes digestion in the small intestine and can feed bacteria in the colon. It occurs in less ripe, green bananas. Cooling cooked pasta or potatoes can reorganise some starch into a less digestible form called retrograded starch. Some can remain after reheating. Freshly cooked pasta may also contain resistant starch; cooling does not guarantee a fixed increase. Amounts vary; cold pasta is still carbohydrate-rich food.\n\nButyrate and the gut barrier: Bacteria can ferment resistant starch into short-chain fatty acids including butyrate. Mature colon cells use butyrate as fuel, and experiments show effects on barrier function and immune signalling. Bacteria cooperate in breakdown and responses vary between people (2016; PMID 27357127). This is not a treatment for inflammatory bowel disease.\n\nWeekly target: Eat green banana, cooked cooled potatoes, cold pasta or cold rice at three meals per week. AI analysis counts meals containing these sources in nutrition tracking. Food that was cooled and then reheated also counts. Specify in the description or ingredient list that potatoes, pasta or rice are cold/cooled or reheated after cooling, since this history cannot reliably be established from the image. Each meal counts once even if it contains several qualifying foods. Three times weekly is a simple habit starting point, not an established dose for the gut barrier.\n\nStart with small amounts according to tolerance. Cool cooked food promptly and refrigerate at around 4 °C; do not leave pasta or potatoes out for hours to produce resistant starch. The Swedish Food Agency warns that organisms including Bacillus cereus can produce heat-stable toxins when food is stored incorrectly.",
     "areas": {
-      "digestiveHealth": "Resistant starch and inulin are fermented by Faecalibacterium and Roseburia to produce butyrate, which strengthens the gut lining and reduces inflammation.",
-      "immuneSupport": "Butyrate regulates T-cell differentiation and intestinal immune tolerance, reducing risk of inflammatory responses.",
-      "longevity": "Higher butyrate production is linked to reduced intestinal permeability, lower systemic inflammation, and healthier aging."
+      "digestiveHealth": "Resistant starch can provide bacterial substrates for butyrate formation. Butyrate fuels mature colon cells and participates in gut barrier function.",
+      "immuneSupport": "Butyrate affects immune signalling in experiments. This provides a possible link to intestinal immune regulation, but the habit target is not a proven treatment for inflammation."
+    },
+    "nutritionFoods": {
+      "items": {
+        "greenBanana": {
+          "details": "Estimated resistant starch: 2.8 g per 100 g, using unripe cooking banana as a proxy. Variety and ripeness affect the amount."
+        },
+        "cookedCooledPotato": {
+          "details": "Estimated resistant starch: 1.3 g per 100 g cooked and cooled potato. Variety and preparation affect the amount. Cool promptly and keep refrigerated."
+        },
+        "cookedCooledPasta": {
+          "details": "Estimated resistant starch: 1.0 g per 100 g cooked and cooled pasta. Variety and chilling affect the amount. Cool promptly and keep refrigerated."
+        },
+        "cookedCooledJasmineRice": {
+          "details": "Estimated resistant starch: 0.74 g per 100 g, based on a study of chilled jasmine rice. Preparation and chilling affect the amount. Cool promptly and keep refrigerated."
+        },
+        "cookedCooledBasmatiRice": {
+          "details": "Estimated resistant starch: 0.9 g per 100 g, using chilled white long-grain rice as a proxy. Not measured specifically for basmati. Cool promptly and keep refrigerated."
+        }
+      }
+    },
+    "targetDescription": "Eat cold pasta, potatoes or rice, or green bananas, three times a week. Food that was cooled and then reheated also counts. Note: during AI analysis, check that preparation is identified as cold/cooled or reheated after cooling, and correct it if needed. Freshly cooked or heated food without earlier cooling does not count."
+  },
+  "fiber_total_intake": {
+    "title": "Increase your fibre intake",
+    "description": "The next step is to increase total fibre from varied foods. Swedish advice commonly recommends 25–35 grams daily for adults; the app target is 30 grams. This is total intake from daily food, not a requirement for fibre powder.\n\nChoose whole grains, oats, legumes, fruit and vegetables. Fibres differ: some add bulk, others form gels or are fermented by gut bacteria. Fibre does not all need to be resistant starch.\n\nIncrease gradually and spread intake across meals. Adapt to digestive tolerance and drink enough. With IBS or other bowel symptoms, a dietitian can help tailor amounts and types.",
+    "areas": {
+      "digestiveHealth": "A varied fibre intake supports normal bowel function. Increase gradually and adapt to tolerance."
+    },
+    "nutritionFoods": {
+      "items": {
+        "oats": {
+          "details": "Oats provide fermentable beta-glucans. Amounts vary between products."
+        },
+        "soybeans": {
+          "details": "Soybeans provide several fibre types, including fermentable oligosaccharides."
+        }
+      }
+    }
+  },
+  "fiber_butyrate": {
+    "title": "Fermentable fibres, acetate and propionate",
+    "description": "Fermentable fibres feed intestinal microorganisms, producing acetate, propionate, butyrate and gases. This tip focuses on fibre sources beyond the resistant starch covered in the introductory tip. Total fibre is tracked in the separate level 2 tip.\n\nAcetate and propionate: Many bacteria produce acetate, which can be used in metabolism or by other bacteria to produce butyrate. Propionate is largely handled by the liver. Both participate in receptor signalling, including FFAR2 and FFAR3, investigated for links to gut function, satiety and metabolism. This does not establish that a particular fibre reliably reduces appetite, blood glucose or weight.\n\nDifferent fibres: Inulin and fructooligosaccharides occur in onions and chicory, galactooligosaccharides in legumes, beta-glucans in oats and barley, and pectin in fruit. Bacteria cooperate through cross-feeding, using each other’s breakdown products. Solubility, gel formation and fermentability are distinct properties.\n\nHuman studies show different responses to different fibres: a study involving 174 people found different microbiome and fatty acid responses to resistant starches and inulin (2019; PMID 30696735). Another found different starch structures could direct production towards propionate or butyrate (2020; PMID 32004499). Faecal fatty acids reflect what remains after absorption, not total production.\n\nPractical use: Vary legumes, whole grains, oats, fruit and vegetables. This target concerns fermentable fibre only: 15 grams daily as an app planning target, not an official Swedish recommendation or a defined acetate amount. Increase gradually according to tolerance; inulin and other rapidly fermented fibres may cause gas and pain, particularly with IBS.",
+    "areas": {
+      "digestiveHealth": "Fermentable fibres produce different mixtures of acetate, propionate and butyrate. Microbial cooperation and fibre structure influence the result.",
+      "immuneSupport": "Short-chain fatty acids participate in signalling between microbes, gut cells and the immune system. Clinical effects of specific fibres require separate assessment.",
+      "longevity": "Acetate and propionate are studied for links to metabolism and ageing. Increasing one fatty acid has not been shown to extend human lifespan."
     },
     "nutritionFoods": {
       "title": "Fermentable fiber foods",
       "items": {
         "oats": {
-          "details": "Half a cup dry oats (~40 g) provides roughly 4 g beta-glucan, fueling butyrate-producing bacteria."
+          "details": "Oats provide fermentable beta-glucans. Amounts vary between products."
         },
-        "legumes": {
-          "details": "1 cup cooked legumes (~180 g) delivers 8-15 g fermentable fiber including resistant starch and GOS."
-        },
-        "greenBanana": {
-          "details": "One medium green banana (~120 g) contains 5-6 g resistant starch, which drops sharply on ripening."
+        "soybeans": {
+          "details": "Soybeans provide several fibre types, including fermentable oligosaccharides."
         },
         "chicoryRoot": {
-          "details": "100 g chicory root supplies 35-40 g inulin and FOS, among the richest sources of fermentable fiber."
-        },
-        "cookedCooledPotato": {
-          "details": "Cooling cooked starchy foods overnight increases resistant starch content by 2-4 g per 100 g."
+          "details": "Chicory root provides inulin. Concentrated products may cause gas; start cautiously."
         }
       }
     }
   },
-  "fiber_gel_forming_focus": {
-    "title": "Gel-forming fiber focus",
-    "description": "Gel-forming fibers absorb water and create viscosity in the gut. Their most important cardiometabolic effect is lowering blood lipids, especially LDL cholesterol, partly by binding bile acids and increasing cholesterol excretion. Aim for 30 g total fiber and at least 10 g gel-forming fiber daily.",
+  "oat_barley_beta_glucans_ldl": {
+    "title": "Beta-glucans for lower LDL",
+    "description": "Beta-glucans from oats and barley are soluble, viscous fibers that can help lower LDL cholesterol. They form a gel in the gut and can reduce bile acid reabsorption, increasing the liver’s use of cholesterol to make new bile acids. Effects depend on dose, viscosity and food processing.\n\nThe daily target is 3 g of oat or barley beta-glucans, the amount underlying European cholesterol health claims. This means beta-glucans, not the weight of oats or total fiber. The LDL evidence concerns oats and barley. Mushroom and yeast beta-glucans have a different structure and cannot be assumed to have the same effect (EFSA, 2010; doi:10.2903/j.efsa.2010.1885).\n\nChoose foods such as oats, oat bran or barley products. The amount needed depends on the product’s beta-glucan content; prefer declared values when available. The catalog’s oat value is an estimate, and dry oats must not be confused with the same weight of cooked porridge. Intake can be spread across meals. Increase gradually according to tolerance.\n\nThis target supports regular intake, not a guaranteed LDL reduction. Effects should be assessed with blood tests and also depend on the rest of the diet.",
+    "targetDescription": "Consume 3 g of oat or barley beta-glucans daily. Count beta-glucans themselves, not total fiber or food weight.",
     "areas": {
-      "digestiveHealth": "Gel-forming fibers such as beta-glucans, pectin, psyllium, and mucilage improve stool quality and support gut barrier function.",
-      "immuneSupport": "By improving lipid metabolism and gut-derived inflammatory tone, gel-forming fibers can support better immune regulation.",
-      "longevity": "Higher intake of viscous gel-forming fibers is consistently associated with lower LDL cholesterol, improved cardiometabolic markers, and better long-term health outcomes."
+      "longevity": "Oat and barley beta-glucans can lower LDL, an established cardiovascular risk factor. This does not promise a particular lifespan.",
+      "digestiveHealth": "Beta-glucans bind water and can be fermented by gut bacteria. Increase gradually if prone to gas."
     },
     "nutritionFoods": {
-      "title": "Gel-forming fiber foods",
+      "title": "Oats and barley",
       "items": {
+        "oatBran": { "details": "Oat bran can be used in porridge, yogurt or baking. The reference value is 6.5 g beta-glucans per 100 g dry oat bran; about 47 g then provides just over 3 g beta-glucans. Other products can differ – check the package. Weigh the bran before cooking." },
         "oats": {
-          "details": "Beta-glucans in oats and barley are classic gel-forming fibers with well-documented LDL-lowering effects."
-        },
+          "details": "Oats contain beta-glucans. The catalog uses an estimated 4.4 g per 100 g dry oats; the amount varies by product and variety. Prefer declared package values when available."
+        }
+      }
+    }
+  },
+  "psyllium_ldl": {
+    "title": "Psyllium for lower LDL",
+    "description": "Psyllium husk contains water-binding, gel-forming fibers, predominantly arabinoxylans rather than beta-glucans. The gel can reduce bile acid reabsorption and help lower LDL cholesterol.\n\nA meta-analysis of 28 randomised trials found an average LDL reduction of about 0.33 mmol/L at a median dose of 10.2 g psyllium daily. Results varied between studies and individuals. The app instead tracks 5.2 g gel-forming psyllium fiber daily. This corresponds to about 10 g dry husk using the catalog estimate of 52 percent gel-forming fiber. This is a tracking conversion, not a separately established scientific fiber dose (2018; PMID 30239559).\n\nStart with a smaller amount and increase gradually according to tolerance. Intake can be divided throughout the day. Mix with enough liquid and drink promptly according to product instructions; never swallow the husk dry. For mixtures, count only the psyllium husk fraction rather than the entire product weight.\n\nPsyllium can affect medicine absorption; follow the package’s spacing instructions and ask a pharmacist if taking medicines. Do not use with swallowing difficulties or suspected intestinal narrowing or obstruction without medical assessment. Assess LDL effects through blood tests; this does not replace prescribed treatment.",
+    "targetDescription": "Aim for 5.2 g gel-forming psyllium fiber daily, corresponding to about 10 g dry husk using the app estimate. If your package specifies 1 tsp = 2.5 g husk, this provides about 1.3 g gel-forming psyllium fiber using that estimate. Teaspoon weights vary – check the package or weigh the amount and enter grams when logging. Start lower, increase gradually and follow the product instructions for fluid and dosing.",
+    "areas": {
+      "longevity": "Psyllium can moderately reduce LDL, which is relevant to cardiovascular health but does not establish longer lifespan.",
+      "digestiveHealth": "Psyllium retains water and can improve stool consistency. Adequate fluid and gradual increases are important."
+    },
+    "nutritionFoods": {
+      "title": "Psyllium husk",
+      "items": {
         "psylliumHusk": {
-          "details": "1 tablespoon psyllium (~9 g) is rich in gel-forming fiber and is one of the most effective dietary tools to lower LDL cholesterol."
-        },
-        "chiaSeeds": {
-          "details": "Chia forms a mucilage gel in contact with water and contributes both total and gel-forming fiber."
-        },
-        "apples": {
-          "details": "Apples are rich in pectin, a gel-forming fiber associated with better stool consistency and microbiome support."
-        },
-        "okra": {
-          "details": "Okra contains mucilage and pectin that contribute to gel formation and gut comfort."
+          "details": "Enter dry psyllium husk weight. The catalog estimates 52 percent as gel-forming psyllium fiber: 2.5 g husk provides 1.3 g, 5 g provides 2.6 g and 10 g provides 5.2 g. The target uses the same fiber value as the nutrition analysis. Water added for soaking does not count. Weigh the amount; teaspoon weights vary between products."
         }
       }
     }
