@@ -4,6 +4,8 @@ import { useNutritionBarcodeActions } from '@/hooks/nutrition/useNutritionBarcod
 import { getDrinkProduct } from '@/locales/drinkCatalog';
 import { toRecordedAt } from '@/utils/dateUtils';
 
+jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
+
 const mockAddNutrition = jest.fn().mockReturnValue({ id: 'nutrition-coffee' });
 const mockAddDrink = jest.fn();
 jest.mock('@/app/context/StorageContext', () => ({ useStorage: () => ({ addNutritionEntry: mockAddNutrition, addDrinkEntry: mockAddDrink }) }));

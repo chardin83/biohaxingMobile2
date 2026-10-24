@@ -205,13 +205,14 @@
     "plantDiversityLabels": {
       "plant_diversity": "Växtdiversitet"
     },
+    "plantColorLabels": {"red": "röd", "orange": "orange", "yellow": "gul", "green": "grön", "purple": "lila", "white": "vit"},
     "weeklyTrackingLabels": {
       "glycemic_index_meals": "Logga en måltid med GI",
       "glycemic_index_review": "Följ upp GI via länken",
       "resistant_starch_meals": "Måltider med resistent stärkelse",
       "sulfur_rich_vegetables": "Svavelrika grönsaker",
       "unique_plants": "Unika växter",
-      "vegetable_colors": "Grönsaksfarger",
+      "vegetable_colors": "Färger från frukt, bär och grönsaker",
       "fish_meals": "Fiskåtagningar",
       "fatty_fish_meals": "Fet fiskåtagningar"
     },

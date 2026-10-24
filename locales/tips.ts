@@ -2201,7 +2201,7 @@ const rawTips: Tip[] = [
         amount: 6,
         unit: 'items',
         aiInstruction:
-          'Track only colors represented by visible vegetables. For each, return an object with the English color as en and the translation in the user\'s language as local, e.g. { en: "red", local: "röd" }. Never infer color from egg, pasta, dairy, meat, or dressing.',
+          'Track only colors represented by visible fruits, berries and vegetables. For each, return an object with the English color as en and the translation in the user\'s language as local, e.g. { en: "red", local: "röd" }. Never infer color from egg, pasta, dairy, meat, or dressing.',
       },
     ],
   },

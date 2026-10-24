@@ -28,6 +28,7 @@ import { isFiberSubtypeTargetTag, isFiberTargetTag } from '@/constants/fiber';
 import { isMineralTargetTag } from '@/constants/minerals';
 import { isPolyphenolTargetTag } from '@/constants/polyphenols';
 import { isVitaminTargetTag } from '@/constants/vitamins';
+import { useCatalogColorTracking } from '@/hooks/nutrition/useCatalogColorTracking';
 import { useSupplementMap } from '@/locales/supplements';
 import { getTipTargetIconName, type NutrientTag, tips } from '@/locales/tips';
 import type { BarcodeProduct } from '@/services/openFoodFacts';
@@ -753,16 +754,19 @@ export default function TipTargetDetailsScreen() {
     foodAmountBottomSheetRef.current?.present(getFoodProduct(foodKey, foodName));
   }, []);
 
+  const trackCatalogColor = useCatalogColorTracking(selectedDateKey);
+
   const handleSaveFood = React.useCallback(
     (product: BarcodeProduct, grams: number) => {
       if (!product.composition) return;
 
-      addNutritionEntry(selectedDateKey, {
+      const entry = addNutritionEntry(selectedDateKey, {
         type: 'food',
         recordedAt: toRecordedAt(selectedDateKey, new Date()),
         name: `${product.name} (${grams} g)`,
         ...scaleNutritionComposition(product.composition, grams / 100),
       });
+      trackCatalogColor(entry.id, product, grams);
       router.push({
         pathname: '/(tabs)/journal',
         params: {
@@ -772,7 +776,7 @@ export default function TipTargetDetailsScreen() {
         },
       });
     },
-    [addNutritionEntry, router, selectedDateKey, tipId]
+    [addNutritionEntry, router, selectedDateKey, tipId, trackCatalogColor]
   );
 
   const handleOpenMedalInfo = React.useCallback(() => {

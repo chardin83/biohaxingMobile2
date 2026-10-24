@@ -1,11 +1,11 @@
 // services/openFoodFactsService.ts
-
 import type { ImageSourcePropType } from 'react-native';
 
 import type { MineralType } from '@/constants/minerals';
 import type { PolyphenolType } from '@/constants/polyphenols';
 import type { VitaminType } from '@/constants/vitamins';
 import type { FoodServing } from '@/types/nutrition/foodCatalogTypes';
+import type { FoodColor } from '@/types/nutrition/foodColor';
 import type { NutritionComposition } from '@/types/nutrition/nutritionProfile';
 import { normalizeGlycemicIndex } from '@/utils/glycemicIndex';
 import { getOpenFoodFactsCalories } from '@/utils/openFoodFactsEnergy';
@@ -37,6 +37,7 @@ export interface BarcodeNutrition {
 export type BarcodeProductType = 'food' | 'drink';
 
 export interface BarcodeProduct {
+  vegetableColor?: FoodColor;
   barcode: string;
   name: string;
   brand?: string;

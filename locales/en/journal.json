@@ -205,13 +205,14 @@
     "plantDiversityLabels": {
       "plant_diversity": "Plant diversity"
     },
+    "plantColorLabels": {"red": "red", "orange": "orange", "yellow": "yellow", "green": "green", "purple": "purple", "white": "white"},
     "weeklyTrackingLabels": {
       "glycemic_index_meals": "Log a meal with GI",
       "glycemic_index_review": "Review GI using the link",
       "resistant_starch_meals": "Meals with resistant starch",
       "sulfur_rich_vegetables": "Sulfur-rich vegetables",
       "unique_plants": "Unique plants",
-      "vegetable_colors": "Vegetable colors",
+      "vegetable_colors": "Fruit, berry and vegetable colors",
       "fish_meals": "Fish meals",
       "fatty_fish_meals": "Fatty fish meals"
     },

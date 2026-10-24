@@ -1191,8 +1191,8 @@
     }
   },
   "eat_colorful_veggies": {
-    "title": "Ät färgglada grönsaker",
-    "description": "Att äta grönsaker i olika färger ger ett brett spektrum av antioxidanter och näringsämnen. Variera färgerna på tallriken för att stödja matsmältning och immunförsvar.",
+    "title": "Ät färgglada växter",
+    "description": "Att äta frukt, bär och grönsaker i olika färger ger ett brett spektrum av antioxidanter och näringsämnen. Variera färgerna på tallriken för att stödja matsmältning och immunförsvar.\n\nUppföljning: Målet är sex olika färger under veckan från frukt, bär och grönsaker. Katalogval med angiven färg räknas automatiskt, till exempel orange för apelsin. Samma färg räknas bara en gång, även om du loggar flera livsmedel med den färgen.",
     "areas": {
       "digestiveHealth": "Färgglada grönsaker stödjer tarmhälsa och matsmältning.",
       "immuneSupport": "Olika färger ger olika antioxidanter som stärker immunförsvaret."

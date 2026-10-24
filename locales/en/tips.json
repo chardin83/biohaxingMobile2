@@ -76,8 +76,8 @@
     }
   },
   "eat_colorful_veggies": {
-    "title": "Eat colorful vegetables",
-    "description": "Eating vegetables in a variety of colors provides a broad spectrum of antioxidants and nutrients. Vary the colors on your plate to support digestion and immune function.",
+    "title": "Eat colorful plants",
+    "description": "Eating fruit, berries and vegetables in a variety of colors provides a broad spectrum of antioxidants and nutrients. Vary the colors on your plate to support digestion and immune function.\n\nTracking: The goal is six different colors during the week from fruit, berries and vegetables. Catalog foods with a recorded color count automatically, for example orange for an orange. Each color counts once, even when several foods share it.",
     "areas": {
       "digestiveHealth": "Colorful vegetables support gut health and digestion.",
       "immuneSupport": "Different colors provide different antioxidants that strengthen the immune system."

@@ -9,6 +9,8 @@ import { hasCaffeine } from '@/utils/drinkCaffeine';
 import { scaleNutritionComposition } from '@/utils/nutritionComposition';
 import { scaleBarcodeMicronutrients } from '@/utils/openFoodFactsMicronutrients';
 
+import { useCatalogColorTracking } from './useCatalogColorTracking';
+
 interface UseNutritionBarcodeActionsParams {
   selectedDate: string;
   onNutritionEntrySelected: (entry: NutritionEntry) => void;
@@ -16,6 +18,7 @@ interface UseNutritionBarcodeActionsParams {
 
 export const useNutritionBarcodeActions = ({ selectedDate, onNutritionEntrySelected }: UseNutritionBarcodeActionsParams) => {
   const { addNutritionEntry, addDrinkEntry } = useStorage();
+  const trackCatalogColor = useCatalogColorTracking(selectedDate);
 
   return useCallback(
     (product: BarcodeProduct, amount: number, productType: BarcodeProductType, time = new Date()) => {
@@ -64,11 +67,12 @@ export const useNutritionBarcodeActions = ({ selectedDate, onNutritionEntrySelec
           recordedAt,
           ...nutrition,
         });
+        trackCatalogColor(nutritionEntry.id, product, amount);
         onNutritionEntrySelected(nutritionEntry);
       }
 
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
     },
-    [addDrinkEntry, addNutritionEntry, onNutritionEntrySelected, selectedDate]
+    [addDrinkEntry, addNutritionEntry, onNutritionEntrySelected, selectedDate, trackCatalogColor]
   );
 };

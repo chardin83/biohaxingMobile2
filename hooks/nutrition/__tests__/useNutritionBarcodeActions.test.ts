@@ -4,6 +4,8 @@ import { useStorage } from '@/app/context/StorageContext';
 
 import { useNutritionBarcodeActions } from '../useNutritionBarcodeActions';
 
+jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
+
 jest.mock('@/app/context/StorageContext', () => ({ useStorage: jest.fn() }));
 jest.mock('expo-haptics', () => ({ impactAsync: async () => {}, ImpactFeedbackStyle: { Light: 'light' } }));
 jest.mock('@/utils/drinkCaffeine', () => ({ hasCaffeine: () => false }));
