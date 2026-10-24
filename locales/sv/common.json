@@ -1,4 +1,8 @@
 {
+  "longevityTrendsChart": {
+    "title": "Dina mätvärden för livslängd",
+    "explainer": "Tryck på GI för att se utvecklingen och periodens genomsnitt. Värdena hämtas automatiskt från matloggen."
+  },
   "tipGroupSection": {
     "title": "Grupp",
     "otherTips": "Andra tips i gruppen",

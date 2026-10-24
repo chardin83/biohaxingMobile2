@@ -21,6 +21,10 @@ export type NutritionComposition = {
   fiber: number;
   // Dimensionless index (glucose = 100); never scale by portion size.
   glycemicIndex?: number;
+  // Percentage of logged carbohydrates with known GI, for aggregate summaries.
+  glycemicIndexCoverage?: number;
+  // True when the catalog GI uses a related preparation/product as a proxy.
+  glycemicIndexIsEstimate?: boolean;
   caffeineMg?: number;
   alcoholGrams?: number;
   fiberByType?: Partial<Record<FiberType, number>>;

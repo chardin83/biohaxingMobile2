@@ -34,8 +34,21 @@ it('defaults to the current time when no time was provided', () => {
   }
 });
 
-it.each(['tea', 'energy_drink'] as const)('preserves caffeine information when logging %s', type => {
+it.each(['tea', 'energy_drink', 'sugar_free_energy_drink'] as const)('preserves caffeine information when logging %s', type => {
   const { result } = renderHook(() => useNutritionBarcodeActions({ selectedDate: '2026-10-16', onNutritionEntrySelected: jest.fn() }));
   act(() => result.current(getDrinkProduct(type, type), 200, 'drink'));
   expect(mockAddDrink).toHaveBeenCalledWith('2026-10-16', expect.objectContaining({ type, caffeinated: true }));
+});
+
+it('logs sugar-free energy drink macros and caffeine together', () => {
+  const { result } = renderHook(() => useNutritionBarcodeActions({ selectedDate: '2026-10-16', onNutritionEntrySelected: jest.fn() }));
+  act(() => result.current(getDrinkProduct('sugar_free_energy_drink', 'Sugar-free energy drink'), 250, 'drink'));
+  expect(mockAddNutrition).toHaveBeenCalledWith('2026-10-16', expect.objectContaining({ carbohydrates: 0, caffeineMg: 80, glycemicIndex: undefined }));
+  expect(mockAddDrink).toHaveBeenCalledWith('2026-10-16', expect.objectContaining({ type: 'sugar_free_energy_drink', caffeinated: true, amountMl: 250 }));
+});
+
+it('keeps a catalog drink GI reference unchanged while scaling its carbs', () => {
+  const { result } = renderHook(() => useNutritionBarcodeActions({ selectedDate: '2026-10-16', onNutritionEntrySelected: jest.fn() }));
+  act(() => result.current(getDrinkProduct('juice', 'Juice'), 200, 'drink'));
+  expect(mockAddNutrition).toHaveBeenCalledWith('2026-10-16', expect.objectContaining({ carbohydrates: 21, glycemicIndex: 50, glycemicIndexIsEstimate: true }));
 });

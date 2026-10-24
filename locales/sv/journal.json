@@ -298,6 +298,8 @@
       "water": "Vatten",
       "coffee": "Kaffe",
       "tea": "Te",
+      "sugar_free_soft_drink": "Sockerfri läsk",
+      "sugar_free_energy_drink": "Sockerfri energidryck",
       "soft_drink": "Läsk",
       "energy_drink": "Energidryck",
       "juice": "Juice",

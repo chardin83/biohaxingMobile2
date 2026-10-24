@@ -10,6 +10,7 @@ import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { LIFE_STYLE_ITEMS } from '@/constants/lifeStyle';
+import { getGlycemicIndexCoverage, type GlycemicIndexCoveragePoint } from '@/utils/glycemicIndex';
 
 export interface MetricTrendPoint {
   readonly date: string;
@@ -56,6 +57,8 @@ interface MetricTrendChartProps {
   readonly unit?: string;
   readonly showYAxisUnit?: boolean;
   readonly valueFormatter?: (value: number) => string;
+  readonly showPeriodAverage?: boolean;
+  readonly glycemicIndexCoverage?: readonly GlycemicIndexCoveragePoint[];
   readonly daysToShow?: number;
   readonly height?: number;
   readonly yAxisBounds?: { min: number; max: number };
@@ -99,6 +102,12 @@ type EmptyChartLabel = {
 function formatShortDate(date: string) {
   const [, month, day] = date.split('-');
   return `${day}/${month}`;
+}
+
+function formatComparisonValue(value: number | undefined, comparison?: MetricComparisonSeries): string {
+  if (value === undefined || !comparison) return '—';
+  const unitSuffix = comparison.unit ? ` ${comparison.unit}` : '';
+  return comparison.valueFormatter?.(value) ?? `${Number(value.toFixed(1))}${unitSuffix}`;
 }
 
 function toDateTimestamp(date: string) {
@@ -172,6 +181,8 @@ function MetricTrendChartContent({
   onViewRegisteredValues,
   xAxisLabelFormatter,
   referenceLines,
+  showPeriodAverage = false,
+  glycemicIndexCoverage,
   yAxisBounds,
   eventSeries,
   seriesSelector,
@@ -265,9 +276,22 @@ function MetricTrendChartContent({
     const sortedData = [...data].sort((left, right) => toDateTimestamp(left.date) - toDateTimestamp(right.date));
     return sortedData.filter(entry => {
       const ts = toDateTimestamp(entry.date);
-      return ts >= windowStartTs && ts <= todayTs;
+      return Number.isFinite(entry.value) && ts >= windowStartTs && ts <= todayTs;
     });
   }, [data, daysToShow]);
+
+  const displayedReferenceLines = React.useMemo(() => {
+    if (!showPeriodAverage || chartData.length === 0) return referenceLines ?? [];
+    const average = chartData.reduce((total, point) => total + point.value, 0) / chartData.length;
+    return [
+      ...(referenceLines ?? []),
+      {
+        value: average,
+        label: t('trendChart.periodAverage', { value: Number(average.toFixed(1)) }),
+        color: colors.warmColor,
+      },
+    ];
+  }, [chartData, colors.warmColor, referenceLines, showPeriodAverage, t]);
 
   const subtitleText = React.useMemo(() => {
     const isWholeWeeks = daysToShow % 7 === 0;
@@ -325,6 +349,25 @@ function MetricTrendChartContent({
     </View>
   );
 
+  const coverageText = React.useMemo(() => {
+    if (!glycemicIndexCoverage) return null;
+    const end = getTodayUtcDateString();
+    const start = new Date(toDateTimestamp(end) - (daysToShow - 1) * 86400000).toISOString().slice(0, 10);
+    const coverage = getGlycemicIndexCoverage(glycemicIndexCoverage, start, end);
+    return coverage === undefined ? t('glycemic_index.noCarbohydrates') : t('glycemic_index.coverage', { value: Math.round(coverage) });
+  }, [daysToShow, glycemicIndexCoverage, t]);
+  const coverageLabel =
+    coverageText !== null ? (
+      <View testID="gi-period-coverage">
+        <ThemedText type="caption" style={dynamicStyles.subtitleText}>
+          {coverageText}
+        </ThemedText>
+        <ThemedText type="caption" style={dynamicStyles.subtitleText}>
+          {t('glycemic_index.coverageExplanation')}
+        </ThemedText>
+      </View>
+    ) : null;
+
   const latestValue = chartData.at(-1)?.value;
   const minValue = chartData.length > 0 ? Math.min(...chartData.map(entry => entry.value)) : undefined;
   const maxValue = chartData.length > 0 ? Math.max(...chartData.map(entry => entry.value)) : undefined;
@@ -381,7 +424,7 @@ function MetricTrendChartContent({
     const innerWidth = Math.max(chartWidth - CHART_PADDING.left - CHART_PADDING.right, 1);
     const innerHeight = Math.max(height - CHART_PADDING.top - CHART_PADDING.bottom, 1);
     const dataValues = chartData.map(entry => entry.value);
-    const referenceValues = (referenceLines ?? []).map(line => line.value);
+    const referenceValues = displayedReferenceLines.map(line => line.value);
     const allValues = [...dataValues, ...referenceValues];
     const rawMin = yAxisBounds?.min ?? Math.min(...(allValues.length ? allValues : [0, 1]));
     const rawMax = yAxisBounds?.max ?? Math.max(...(allValues.length ? allValues : [0, 1]));
@@ -398,7 +441,7 @@ function MetricTrendChartContent({
     ];
     const gridLines = axisEntries.map(({ value }) => CHART_PADDING.top + ((paddedMax - value) / paddedRange) * innerHeight);
 
-    const referenceLinePoints = (referenceLines ?? []).map(line => ({
+    const referenceLinePoints = displayedReferenceLines.map(line => ({
       y: CHART_PADDING.top + ((paddedMax - line.value) / paddedRange) * innerHeight,
       value: line.value,
       label: line.label,
@@ -436,7 +479,7 @@ function MetricTrendChartContent({
     const comparisonBottom = comparison?.yAxisBounds?.min ?? comparisonMin - comparisonRange * 0.2;
     const comparisonTop = comparisonMax + comparisonRange * Y_AXIS_HEADROOM;
     const comparisonY = (value: number) => CHART_PADDING.top + ((comparisonTop - value) / Math.max(comparisonTop - comparisonBottom, 1)) * innerHeight;
-    const comparisonPoints = comparisonData.map(point => ({ x: getXForDate(point.date), y: comparisonY(point.value) }));
+    const comparisonPoints = comparisonData.map(point => ({ date: point.date, x: getXForDate(point.date), y: comparisonY(point.value) }));
     const comparisonAxis = comparisonData.length
       ? [comparisonMax, (comparisonMax + comparisonMin) / 2, comparisonMin].map((value, index) => ({ id: index, value, y: comparisonY(value) }))
       : [];
@@ -473,7 +516,7 @@ function MetricTrendChartContent({
       eventSeriesPoints,
       xAxisPoints,
     };
-  }, [chartData, comparisonData, comparison?.yAxisBounds, chartWidth, daysToShow, eventSeries, height, referenceLines, xAxisDates, yAxisBounds]);
+  }, [chartData, comparisonData, comparison?.yAxisBounds, chartWidth, daysToShow, eventSeries, height, displayedReferenceLines, xAxisDates, yAxisBounds]);
 
   const yAxisEntries = chartGeometry?.axisEntries ?? [];
   const selectDateAtX = (x: number) => {
@@ -483,6 +526,7 @@ function MetricTrendChartContent({
   };
   const selectedValue = chartData.find(point => point.date === selectedDate)?.value;
   const selectedComparisonValue = comparisonData.find(point => point.date === selectedDate)?.value;
+  const selectedComparisonLabel = formatComparisonValue(selectedComparisonValue, comparison);
   const lifeStyleDate = selectedDate ?? getTodayUtcDateString();
   const selectedLifeStyleEntries = Object.entries(lifeStyleLog[lifeStyleDate] ?? {}).filter(([, entry]) => entry !== undefined);
   const selectionVisible = selectedDate !== undefined && xAxisDates[0] !== undefined && selectedDate >= xAxisDates[0];
@@ -512,6 +556,7 @@ function MetricTrendChartContent({
         <View style={styles.header}>
           <ThemedText type="title3">{t('metrics:trendChart.title', { metric: metricName })}</ThemedText>
           {periodControls}
+          {coverageLabel}
         </View>
 
         <View style={[styles.chartRow, dynamicStyles.chartRow]}>
@@ -614,6 +659,7 @@ function MetricTrendChartContent({
         <View>
           <ThemedText type="title3">{t('metrics:trendChart.title', { metric: metricName })}</ThemedText>
           {periodControls}
+          {coverageLabel}
         </View>
         <View style={styles.summary}>
           <View style={styles.summaryItem}>
@@ -676,6 +722,8 @@ function MetricTrendChartContent({
                 return (
                   <React.Fragment key={`reference-${referenceLine.value}`}>
                     <Line
+                      testID="metric-chart-reference-line"
+                      accessibilityLabel={referenceLine.label}
                       x1={CHART_PADDING.left}
                       x2={chartWidth - CHART_PADDING.right}
                       y1={referenceLine.y}
@@ -693,8 +741,8 @@ function MetricTrendChartContent({
                 <Path testID="comparison-line" d={buildPath(chartGeometry.comparisonPoints)} fill="none" stroke={comparison.color} strokeWidth={3} />
               )}
               {comparison &&
-                chartGeometry.comparisonPoints.map((point, index) => (
-                  <Circle key={`comparison-${index}`} cx={point.x} cy={point.y} r={3} fill={comparison.color} />
+                chartGeometry.comparisonPoints.map(point => (
+                  <Circle key={`comparison-${point.date}`} cx={point.x} cy={point.y} r={3} fill={comparison.color} />
                 ))}
               {chartGeometry.points.map((point, index) => {
                 const isLatestPoint = index === chartGeometry.points.length - 1;
@@ -763,10 +811,7 @@ function MetricTrendChartContent({
                   <View style={[styles.legendDot, { backgroundColor: comparison.color }]} />
                   <ThemedText type="caption" style={[styles.tooltipText, styles.tooltipValue]}>
                     {comparison.metricName}:{' '}
-                    {selectedComparisonValue === undefined
-                      ? '—'
-                      : (comparison.valueFormatter?.(selectedComparisonValue) ??
-                        `${Number(selectedComparisonValue.toFixed(1))}${comparison.unit ? ` ${comparison.unit}` : ''}`)}
+                    {selectedComparisonLabel}
                   </ThemedText>
                 </View>
               )}

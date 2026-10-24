@@ -29,6 +29,7 @@ import { storeLifeStyleHabitResults } from '@/services/targetProgress/lifeStyleH
 //import { seedHabitTestDataOnce } from '@/services/testData/temporaryHabitTestData';
 import { type NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import { VerdictValue } from '@/types/verdict';
+import { buildGlycemicIndexMetrics } from '@/utils/glycemicIndexMetrics';
 import { refreshRecoveryAfterMetricChanges } from '@/wearables/recoveryMetrics';
 import { useWearable } from '@/wearables/wearableProvider';
 
@@ -65,7 +66,7 @@ import {
   updateHabitEntryInTracking,
 } from './storage/habits/habitStorage';
 import type { DailyHabitTracking, HabitEntry } from './storage/habits/habitTypes';
-import { type LifeStyleStorageValue,useLifeStyleStorage } from './storage/lifeStyle/useLifeStyleStorage';
+import { type LifeStyleStorageValue, useLifeStyleStorage } from './storage/lifeStyle/useLifeStyleStorage';
 import { getAllMetricEntries, syncMetricEntries } from './storage/metrics/metricStorage';
 import { MetricEntry } from './storage/metrics/metricTypes';
 import {
@@ -158,7 +159,14 @@ interface StorageContextType extends LifeStyleStorageValue {
   incrementTipChat: (areaId: string, tipId: string, questionType: string) => number;
   addChatMessageXP: (areaId: string, tipId: string) => number;
   setTipVerdict: (areaId: string, tipId: string, verdict: VerdictValue) => number;
-  claimNutritionTipCompletionXP?: (input: { claimKey: string; tipId: string; period: NutritionTargetPeriod; periodKey: string; amount: number; targets: NutritionXpClaim['targets'] }) => number;
+  claimNutritionTipCompletionXP?: (input: {
+    claimKey: string;
+    tipId: string;
+    period: NutritionTargetPeriod;
+    periodKey: string;
+    amount: number;
+    targets: NutritionXpClaim['targets'];
+  }) => number;
   nutritionXpClaims?: Record<string, NutritionXpClaim>;
   nutritionCompletions?: Record<string, NutritionXpClaim>;
   dailyNutritionTracking: DailyNutritionTracking;
@@ -854,9 +862,14 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     [setMetricEntries]
   );
 
+  const metricEntriesWithNutrition = useMemo(
+    () => [...metricEntriesState.filter(entry => entry.metricId !== 'glycemic_index'), ...buildGlycemicIndexMetrics(dailyNutritionTrackingState)],
+    [metricEntriesState, dailyNutritionTrackingState]
+  );
+
   const getMetricHistory = useCallback(
-    (metricId: MetricId): MetricEntry[] => metricEntriesState.filter(entry => entry.metricId === metricId),
-    [metricEntriesState]
+    (metricId: MetricId): MetricEntry[] => metricEntriesWithNutrition.filter(entry => entry.metricId === metricId),
+    [metricEntriesWithNutrition]
   );
 
   const clearMetricEntries = useCallback(() => {
@@ -1117,7 +1130,14 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   );
 
   const claimNutritionTipCompletionXP = useCallback(
-    (input: { claimKey: string; tipId: string; period: NutritionTargetPeriod; periodKey: string; amount: number; targets: NutritionXpClaim['targets'] }): number => {
+    (input: {
+      claimKey: string;
+      tipId: string;
+      period: NutritionTargetPeriod;
+      periodKey: string;
+      amount: number;
+      targets: NutritionXpClaim['targets'];
+    }): number => {
       const { claimKey, tipId, period, periodKey, amount, targets } = input;
 
       if (!claimKey || !Number.isFinite(amount) || amount <= 0) {
@@ -1317,7 +1337,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       setShowMusic,
       tempPlans,
       setTempPlans,
-      metricEntries: metricEntriesState,
+      metricEntries: metricEntriesWithNutrition,
       setMetricEntries,
       addMetricEntry,
       upsertMetricEntries,
@@ -1334,7 +1354,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     }),
     // prettier-ignore
     [lifeStyle, plansState, setPlans, saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, clearSupplementTakenDates, clearSupplementCustom, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, userProfileInitialized, hasProcessedAutomaticHabits, hasCompletedInitialSync, isSyncing, newAutomaticHabitGoals, myXPState, setMyXP, clearNutritionXP, clearEducationXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, viewedTipsState, setViewedTips, claimTipReadingXP, claimTipAreaXP, recordTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState,
-      dailyNutritionTrackingState, addNutritionEntry, updateNutritionEntry, removeNutritionEntry, clearDailyNutritionTracking, weeklyNutritionTrackingState, setWeeklyNutritionTracking, dailyDrinkTrackingState, addDrinkEntry, updateDrinkEntry, removeDrinkEntry, clearDailyDrinkTracking, trainingPlanSettingsState, setTrainingPlanSettings, dailyTrainingTrackingState, addTrainingEntry, updateTrainingEntry, removeTrainingEntry, clearDailyTrainingTracking, dailyHabitTrackingState, addHabitEntry, updateHabitEntry, removeHabitEntry, clearDailyHabitTracking, showMusicState, setShowMusic, tempPlans, setTempPlans, metricEntriesState, addMetricEntry, upsertMetricEntries, setMetricEntries, getMetricHistory, clearMetricEntries, healthSyncEnabledState, setHealthSyncEnabled, hideBarcodeInfoState, setHideBarcodeInfo, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
+      dailyNutritionTrackingState, addNutritionEntry, updateNutritionEntry, removeNutritionEntry, clearDailyNutritionTracking, weeklyNutritionTrackingState, setWeeklyNutritionTracking, dailyDrinkTrackingState, addDrinkEntry, updateDrinkEntry, removeDrinkEntry, clearDailyDrinkTracking, trainingPlanSettingsState, setTrainingPlanSettings, dailyTrainingTrackingState, addTrainingEntry, updateTrainingEntry, removeTrainingEntry, clearDailyTrainingTracking, dailyHabitTrackingState, addHabitEntry, updateHabitEntry, removeHabitEntry, clearDailyHabitTracking, showMusicState, setShowMusic, tempPlans, setTempPlans, metricEntriesWithNutrition, metricEntriesState, addMetricEntry, upsertMetricEntries, setMetricEntries, getMetricHistory, clearMetricEntries, healthSyncEnabledState, setHealthSyncEnabled, hideBarcodeInfoState, setHideBarcodeInfo, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

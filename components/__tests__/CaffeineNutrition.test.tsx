@@ -111,3 +111,13 @@ it('opens and closes the standard drink explanation from the alcohol info button
   fireEvent.press(screen.getByText('common:general.understood'));
   expect(screen.queryByText('journal:nutritionLogger.alcoholInfo.description')).toBeNull();
 });
+
+it('shows carbohydrate-based GI coverage in the daily nutrition summary', () => {
+  mockTracking = addNutritionEntryToTracking({}, date, { ...food, id: 'known-gi', carbohydrates: 20, glycemicIndex: 50 });
+  mockTracking = addNutritionEntryToTracking(mockTracking, date, { ...food, id: 'unknown-gi', carbohydrates: 80 });
+  const { result } = renderHook(() => useNutritionLoggerData(date));
+  expect(result.current.dailyNutrition.glycemicIndex).toBe(50);
+  expect(result.current.dailyNutrition.glycemicIndexCoverage).toBe(20);
+  const screen = render(<NutritionBreakdown nutrition={result.current.dailyNutrition} keyPrefix="coverage" />);
+  expect(screen.getByText('metrics:glycemic_index.coverage')).toBeTruthy();
+});

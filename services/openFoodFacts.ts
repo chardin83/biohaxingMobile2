@@ -29,6 +29,7 @@ export interface BarcodeNutrition {
   sodiumPer100g?: number;
   polyphenolsMgPer100g?: Partial<Record<PolyphenolType, number>>;
   glycemicIndex?: number;
+  glycemicIndexIsEstimate?: boolean;
   caffeineMgPer100g?: number;
   alcoholGramsPer100g?: number;
 }

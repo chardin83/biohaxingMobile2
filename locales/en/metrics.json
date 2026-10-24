@@ -1,4 +1,13 @@
 {
+  "glycemic_index": {
+    "coverage": "GI covers {{value}}% of logged carbohydrates",
+    "noCarbohydrates": "No logged carbohydrates to calculate coverage",
+    "coverageExplanation": "Missing GI is not zero. Carbohydrate-free food needs no GI. The average describes only entries with known GI.",
+
+    "shortName": "GI",
+    "name": "GI (glycemic index)",
+    "description": "Calculated automatically from the food log. Each point is the carbohydrate-weighted daily GI for entries with known GI. The average line shows the unweighted mean of these daily values in the selected period. Days without data are excluded. Catalog reference values and AI estimates may contribute; this estimates the food you logged."
+  },
   "availability": {"noData": "No registered values"},
   "groups": {"cardio": "Heart and circulation", "bloodSugar": "Blood sugar", "nutrients": "Vitamins and minerals", "hormones": "Hormones", "recovery": "Nervous system and recovery", "sleep": "Sleep", "body": "Body measurements", "digestion": "Digestion", "activity": "Training and activity", "energy": "Energy", "mind": "Stress and focus"},
   "recovery_status": { "name": "Recovery status", "description": "Recovery score calculated during sync from resting heart rate, sleep and HRV compared with your personal baseline." },
@@ -10,6 +19,7 @@
         "high": "High"
     },
     "units": {
+    "index": "GI",
         "miu_l": "mIU/L",
         "uiu_ml": "uIU/mL",
         "pmol_l": "pmol/L",
@@ -122,6 +132,7 @@
         "description": "HRV (SDNN), ms."
     },
     "trendChart": {
+    "periodAverage": "Period average: {{value}}",
         "lifeStyleLog": "Lifestyle log",
         "noLifeStyleEntries": "No lifestyle entries logged for this day.",
         "lifeStyleEntries": "{{date}}: {{count}} lifestyle entries logged",

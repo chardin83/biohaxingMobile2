@@ -5,6 +5,7 @@ import type { IconSymbolName } from '@/components/ui/icon-symbol-map';
 export type MetricSystem = 'EU' | 'US' | 'all';
 
 export type MetricUnit =
+  | 'index'
   | 'mIU/L'
   | 'µIU/mL'
   | 'pmol/L'
@@ -33,7 +34,7 @@ export type MetricUnit =
   | 'bss' // Bristol Stool Scale
   | 'ml/kg/min';
 
-export type MetricSource = 'lab' | 'home' | 'wearable' | 'questionnaire';
+export type MetricSource = 'lab' | 'home' | 'wearable' | 'questionnaire' | 'nutrition';
 
 export const METRIC_GROUPS = ['cardio', 'bloodSugar', 'nutrients', 'hormones', 'recovery', 'sleep', 'body', 'digestion', 'activity', 'energy', 'mind'] as const;
 export type MetricGroup = (typeof METRIC_GROUPS)[number];
@@ -60,6 +61,12 @@ export type MetricDefinition = {
   suggestedFrequency?: 'daily' | 'weekly' | 'monthly' | 'perTest';
 };
 export const metrics = {
+  glycemic_index: {
+    id: 'glycemic_index', group: 'bloodSugar', iconName: 'chart', emoji: '🍽️',
+    nameKey: 'glycemic_index.name', descriptionKey: 'glycemic_index.description',
+    canonicalUnit: 'index', source: 'nutrition', suggestedFrequency: 'daily',
+    units: [{ unit: 'index', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 }],
+  },
   // ---------------- LIPIDS ----------------
 
   ldl: {
@@ -629,6 +636,7 @@ export type TipMetricLink = {
 };
 
 export const tipMetricLinks: Record<string, TipMetricLink[]> = {
+  glycemic_index: [{ metricId: 'glycemic_index', kind: 'primary' }],
   // --- Intermittent fasting ---
   'intermittent_fasting_12h': [
     { metricId: 'fasting_glucose', kind: 'primary' },

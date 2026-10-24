@@ -100,3 +100,29 @@ it('keeps jasmine and basmati as separate cooked baselines with a shared image',
   expect(product.composition?.fiberSubtypeTotals?.resistant_starch).toBe(amount);
   expect(product.composition?.fiberByType?.fiber_fermentable).toBeGreaterThanOrEqual(amount);
 });
+
+it('includes independent GI references without adding them to USDA data', () => {
+  expect(FOOD_NUTRIENT_PROFILES.apples.glycemicIndex).toBe(36);
+  expect(FOOD_NUTRIENT_PROFILES.orange.glycemicIndex).toBe(43);
+  expect(FOOD_NUTRIENT_PROFILES.chickpeas.glycemicIndex).toBe(28);
+  expect(FOOD_NUTRIENT_PROFILES.soybeans.glycemicIndex).toBe(16);
+  expect(FOOD_NUTRIENT_PROFILES.kiwi.glycemicIndex).toBe(39);
+  expect(FOOD_NUTRIENT_PROFILES.watermelon.glycemicIndex).toBe(76);
+  expect(USDA_FOOD_NUTRIENT_PROFILES.apples).not.toHaveProperty('glycemicIndex');
+  for (const key of ['beef', 'eggs', 'salmon', 'extraVirginOliveOil', 'potatoes'] as const) {
+    expect(FOOD_NUTRIENT_PROFILES[key].glycemicIndex).toBeUndefined();
+  }
+});
+
+it('preserves GI and preparation-proxy flags in catalog products and portions', () => {
+  const { scaleNutritionComposition } = require('@/utils/nutritionComposition');
+  for (const [key, gi] of [
+    ['cookedCooledJasmineRice', 89], ['cookedCooledBasmatiRice', 67],
+    ['cookedCooledPasta', 49], ['cookedCooledPotato', 78],
+  ] as const) {
+    const product = getFoodProduct(key, key);
+    expect(product.composition?.glycemicIndex).toBe(gi);
+    expect(product.composition?.glycemicIndexIsEstimate).toBe(true);
+    expect(scaleNutritionComposition(product.composition!, 2)).toMatchObject({ glycemicIndex: gi, glycemicIndexIsEstimate: true });
+  }
+});

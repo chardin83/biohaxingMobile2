@@ -11,7 +11,9 @@ const DRINK_IMAGES: Record<DrinkType, ImageSourcePropType> = {
   coffee: require('@/assets/images/drinks/coffee.png'),
   tea: require('@/assets/images/drinks/tea.png'),
   soft_drink: require('@/assets/images/drinks/softDrink.png'),
+  sugar_free_soft_drink: require('@/assets/images/drinks/softDrink.png'),
   energy_drink: require('@/assets/images/drinks/energyDrink.png'),
+  sugar_free_energy_drink: require('@/assets/images/drinks/energyDrink.png'),
   juice: require('@/assets/images/drinks/juice.png'),
   milk: require('@/assets/images/drinks/milk.png'),
   red_wine: require('@/assets/images/drinks/redWine.png'),
@@ -35,6 +37,8 @@ type DrinkNutritionPer100ml = {
 };
 
 type DrinkDefaults = {
+  glycemicIndex?: number;
+  glycemicIndexIsEstimate?: boolean;
   amountMl: number;
   per100ml: DrinkNutritionPer100ml;
   polyphenolsMgPer100ml?: Partial<Record<PolyphenolType, number>>;
@@ -56,10 +60,21 @@ const DRINK_DEFAULTS: Record<DrinkType, DrinkDefaults> = {
   water: { amountMl: 250, per100ml: n(0, 0, 0, 0) },
   coffee: { amountMl: 200, per100ml: n(1, 0.1, 0, 0), caffeineMgPer100ml: 45, polyphenolsMgPer100ml: { polyphenols_total: 200, chlorogenic_acids: 150, phenolic_acids: 170 } },
   tea: { amountMl: 250, per100ml: n(1, 0, 0.2, 0), caffeineMgPer100ml: 50 / 2.2, polyphenolsMgPer100ml: { polyphenols_total: 110, flavonoids_total: 80, flavanols: 60, catechins: 40 } },
-  soft_drink: { amountMl: 330, per100ml: n(42, 0, 10.6, 0) },
+  // GI reference: soda mean, Atkinson et al. 2008, Table 1 (glucose = 100).
+  // https://doi.org/10.2337/dc08-1239. Generic reference, not every brand/formulation.
+  soft_drink: { amountMl: 330, per100ml: n(42, 0, 10.6, 0), glycemicIndex: 59, glycemicIndexIsEstimate: true },
+  // Coca-Cola Zero Sugar label baseline: 0.3 kcal and 0 g carbs per 100 ml.
+  // https://www.coca-cola.com/se/sv/brands/coca-cola
+  // GI is not applicable to these zero-carb defaults; do not assign numeric zero.
+  sugar_free_soft_drink: { amountMl: 330, per100ml: n(0.3, 0, 0, 0) },
   energy_drink: { amountMl: 250, per100ml: n(45, 0, 11, 0), caffeineMgPer100ml: 32 },
-  juice: { amountMl: 200, per100ml: n(45, 0.5, 10.5, 0.1, 0.2), polyphenolsMgPer100ml: { polyphenols_total: 70, flavonoids_total: 45 } },
-  milk: { amountMl: 200, per100ml: n(46, 3.4, 4.8, 1.5) },
+  // Red Bull AG Sugarfree label baseline: 3 kcal, 0 g carbs, 32 mg caffeine/100 ml.
+  // https://cdn-s1.lyreco.com/staticswebshop/sds/ITCH/1249411.pdf
+  sugar_free_energy_drink: { amountMl: 250, per100ml: n(3, 0, 0, 0), caffeineMgPer100ml: 32 },
+  // Orange juice GI mean, Atkinson 2008 Table 1; proxy for unspecified juice.
+  juice: { glycemicIndex: 50, glycemicIndexIsEstimate: true, amountMl: 200, per100ml: n(45, 0.5, 10.5, 0.1, 0.2), polyphenolsMgPer100ml: { polyphenols_total: 70, flavonoids_total: 45 } },
+  // Semi-skimmed Arla milk GI 34, Henry et al. 2005, listed at https://glycemicindex.com/gi-search/.
+  milk: { glycemicIndex: 34, glycemicIndexIsEstimate: true, amountMl: 200, per100ml: n(46, 3.4, 4.8, 1.5) },
   red_wine: {
     alcoholPercent: 12.5,
     amountMl: 150,
@@ -74,7 +89,7 @@ const DRINK_DEFAULTS: Record<DrinkType, DrinkDefaults> = {
 };
 
 export const getDrinkProduct = (type: DrinkType, name: string): BarcodeProduct => {
-  const { amountMl, per100ml, polyphenolsMgPer100ml, caffeineMgPer100ml, alcoholPercent } = DRINK_DEFAULTS[type];
+  const { amountMl, per100ml, polyphenolsMgPer100ml, caffeineMgPer100ml, alcoholPercent, glycemicIndex, glycemicIndexIsEstimate } = DRINK_DEFAULTS[type];
 
   return {
     barcode: '',
@@ -87,6 +102,8 @@ export const getDrinkProduct = (type: DrinkType, name: string): BarcodeProduct =
     caffeinated: hasCaffeine({ type }),
     fromCatalog: true,
     nutrition: {
+      glycemicIndex,
+      glycemicIndexIsEstimate,
       caloriesPer100g: per100ml.calories,
       proteinPer100g: per100ml.protein,
       carbohydratesPer100g: per100ml.carbohydrates,
@@ -100,12 +117,14 @@ export const getDrinkProduct = (type: DrinkType, name: string): BarcodeProduct =
 };
 
 export const getDrinkNutritionData = (type: DrinkType, name: string, amountMl?: number): NutritionData => {
-  const { amountMl: defaultAmountMl, per100ml, polyphenolsMgPer100ml, caffeineMgPer100ml, alcoholPercent } = DRINK_DEFAULTS[type];
+  const { amountMl: defaultAmountMl, per100ml, polyphenolsMgPer100ml, caffeineMgPer100ml, alcoholPercent, glycemicIndex, glycemicIndexIsEstimate } = DRINK_DEFAULTS[type];
   const factor = (amountMl ?? defaultAmountMl) / 100;
   const round1 = (value: number) => Math.round(value * 10) / 10;
 
   return {
     name,
+    glycemicIndex,
+    glycemicIndexIsEstimate,
     calories: Math.round(per100ml.calories * factor),
     alcoholGrams: round1((alcoholPercent ?? 0) * 0.789 * factor),
     caffeineMg: Math.round((caffeineMgPer100ml ?? 0) * factor),

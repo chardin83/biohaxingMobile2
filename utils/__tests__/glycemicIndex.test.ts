@@ -28,3 +28,24 @@ it('passes barcode GI without portion scaling and marks only missing GI as estim
   expect(getAiEstimatedBarcodeNutrients(context, nutrition)).not.toContain('glycemicIndex');
   expect(getAiEstimatedBarcodeNutrients({ ...context, product: { ...context.product, nutrition: {} } }, nutrition)).toContain('glycemicIndex');
 });
+
+it('calculates coverage by carbohydrate amount, preserving missing versus genuine zero GI', () => {
+  const { getGlycemicIndexSummary } = require('../glycemicIndex');
+  expect(getGlycemicIndexSummary([{ carbohydrates: 20, glycemicIndex: 50 }, { carbohydrates: 80 }, { carbohydrates: 0 }])).toMatchObject({ glycemicIndex: 50, coverage: 20 });
+  expect(getGlycemicIndexSummary([{ carbohydrates: 20 }])).toMatchObject({ glycemicIndex: undefined, coverage: 0 });
+  expect(getGlycemicIndexSummary([{ carbohydrates: 0 }])).toMatchObject({ glycemicIndex: undefined, coverage: undefined });
+  expect(getGlycemicIndexSummary([{ carbohydrates: 20, glycemicIndex: 0 }])).toMatchObject({ glycemicIndex: 0, coverage: 100 });
+  expect(getGlycemicIndexSummary([{ carbohydrates: NaN, glycemicIndex: 50 }, { carbohydrates: -1 }, { carbohydrates: 20, glycemicIndex: -2 }])).toMatchObject({ glycemicIndex: undefined, coverage: 0 });
+});
+
+it('includes days without any GI in period coverage, excluding outside and future dates', () => {
+  const { getGlycemicIndexCoverage } = require('../glycemicIndex');
+  const points = [
+    { date: '2026-10-01', knownCarbohydrates: 1000, totalCarbohydrates: 1000 },
+    { date: '2026-10-22', knownCarbohydrates: 20, totalCarbohydrates: 20 },
+    { date: '2026-10-23', knownCarbohydrates: 0, totalCarbohydrates: 80 },
+    { date: '2026-10-24', knownCarbohydrates: 1000, totalCarbohydrates: 1000 },
+  ];
+  expect(getGlycemicIndexCoverage(points, '2026-10-17', '2026-10-23')).toBe(20);
+  expect(getGlycemicIndexCoverage([], '2026-10-17', '2026-10-23')).toBeUndefined();
+});

@@ -1,8 +1,18 @@
 {
+  "glycemic_index": {
+    "coverage": "GI täcker {{value}} % av loggade kolhydrater",
+    "noCarbohydrates": "Inga loggade kolhydrater att beräkna täckning för",
+    "coverageExplanation": "Saknat GI räknas inte som noll. Mat utan kolhydrater behöver inget GI. Snittet beskriver endast underlaget med känt GI.",
+
+    "shortName": "GI",
+    "name": "GI (glykemiskt index)",
+    "description": "Beräknas automatiskt från matloggen. Varje punkt är dagens kolhydratviktade GI för poster med känt GI. Snittlinjen visar det oviktade genomsnittet av dessa dagsvärden under vald period. Dagar utan värde räknas inte. Katalogens referensvärden och uppskattningar från AI kan ingå; detta är en uppskattning av registrerad mat."
+  },
   "availability": {"noData": "Inga registrerade värden"},
   "groups": {"cardio": "Hjärta och kärl", "bloodSugar": "Blodsocker", "nutrients": "Vitaminer och mineraler", "hormones": "Hormoner", "recovery": "Nervsystem och återhämtning", "sleep": "Sömn", "body": "Kroppsmått", "digestion": "Matsmältning", "activity": "Träning och aktivitet", "energy": "Energi", "mind": "Stress och fokus"},
   "recovery_status": { "name": "Återhämtningsstatus", "description": "Återhämtningspoäng beräknad vid synk från vilopuls, sömn och HRV jämfört med din personliga baslinje." },
     "units": {
+    "index": "GI",
         "miu_l": "mIU/L",
         "uiu_ml": "µIU/mL",
         "pmol_l": "pmol/L",
@@ -115,6 +125,7 @@
         "description": "HRV (SDNN), ms."
     },
     "trendChart": {
+    "periodAverage": "Periodens snitt: {{value}}",
         "lifeStyleLog": "Livsstilslogg",
         "noLifeStyleEntries": "Inga livsstilsuppgifter loggade den här dagen.",
         "lifeStyleEntries": "{{date}}: {{count}} livsstilsuppgifter loggade",

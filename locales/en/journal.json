@@ -298,6 +298,8 @@
       "water": "Water",
       "coffee": "Coffee",
       "tea": "Tea",
+      "sugar_free_soft_drink": "Sugar-free soft drink",
+      "sugar_free_energy_drink": "Sugar-free energy drink",
       "soft_drink": "Soft drink",
       "energy_drink": "Energy drink",
       "juice": "Juice",

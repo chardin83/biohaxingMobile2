@@ -19,3 +19,9 @@ it.each(['hrv_rmssd', 'hrv_sdnn'] as const)('uses the explicit %s chart selector
   expect(result.current?.unit).toBe('ms');
   expect(mockHistory).not.toHaveBeenCalledWith('hrv');
 });
+
+it('configures automatic GI history with a period average line', () => {
+  mockEntries = [{ metricId: 'glycemic_index', value: 52, unit: 'index', recordedAt: new Date().toISOString() }];
+  const { result } = renderHook(() => useMetricConfig({ metricId: 'glycemic_index' }));
+  expect(result.current).toMatchObject({ unit: 'GI', showPeriodAverage: true, data: [expect.objectContaining({ value: 52 })] });
+});

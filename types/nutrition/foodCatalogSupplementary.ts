@@ -1,5 +1,6 @@
 import type { FoodNutrientProfile } from './foodCatalogTypes';
 
+// GI references are independent of USDA. Preparation proxies are marked as estimates.
 // Only nutrients absent from the matched USDA record, app metadata and estimates belong here.
 // For foods with no reliable matching USDA preparation/product, the original profile is retained.
 // Such legacy amounts are unverified; this file does not establish nutritional provenance.
@@ -135,6 +136,9 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
   chickpeas: {
+    // GI (glucose = 100): Cooked chickpeas; pooled mean, Table 1.
+    // https://doi.org/10.2337/dc08-1239
+    glycemicIndex: 28,
     fiberByType: { fiber_fermentable: 3.5 },
     defaultServings: [{"grams":82,"labelKey":"halfCup"},{"grams":164,"labelKey":"oneCup"},{"grams":328,"labelKey":"twoCups"}]
   },
@@ -165,6 +169,9 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":40,"labelKey":"halfCup"},{"grams":80,"labelKey":"oneCup"},{"grams":160,"labelKey":"twoCups"}]
   },
   soybeans: {
+    // GI (glucose = 100): Cooked soya beans; pooled mean, Table 1.
+    // https://doi.org/10.2337/dc08-1239
+    glycemicIndex: 16,
     fiberByType: { fiber_fermentable: 2.4, fiber_non_gel_forming: 2.6, fiber_gel_forming: 1 },
     defaultServings: [{"grams":85,"labelKey":"halfCup"},{"grams":170,"labelKey":"oneCup"},{"grams":340,"labelKey":"twoCups"}]
   },
@@ -220,6 +227,10 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
   cookedCooledPasta: {
+    // GI (glucose = 100): Cooked white spaghetti proxy, Table 1; no numerical cooling reduction assumed. Not a chilled-pasta assay.
+    // https://doi.org/10.2337/dc08-1239
+    glycemicIndex: 49,
+    glycemicIndexIsEstimate: true,
     // Approximate plain cooked-pasta composition per 100 g, used as a baseline.
     calories: 158,
     protein: 5.8,
@@ -233,6 +244,10 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }],
   },
   cookedCooledJasmineRice: {
+    // GI (glucose = 100): Cooked SunRice Jasmine reference, Sydney GI service (2006); proxy for this chilled catalog entry. No cooling reduction assumed.
+    // https://glycemicindex.com/gi-search/
+    glycemicIndex: 89,
+    glycemicIndexIsEstimate: true,
     // Matvaretabellen food 05.338, cooked jasmine rice, per 100 g:
     // https://www.matvaretabellen.no/en/rice-jasmin-cooked/
     // Cooked baseline, not a measured chilled profile. Sugar: 0.1 g/100 g.
@@ -250,6 +265,10 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }],
   },
   cookedCooledBasmatiRice: {
+    // GI (glucose = 100): Cooked SunRice basmati reference, Kataoka et al. (2013); proxy for this chilled catalog entry. No cooling reduction assumed.
+    // https://glycemicindex.com/gi-search/
+    glycemicIndex: 67,
+    glycemicIndexIsEstimate: true,
     // Matvaretabellen food 05.337, cooked basmati rice, per 100 g:
     // https://www.matvaretabellen.no/en/rice-basmati-cooked/
     // Cooked baseline, not a measured chilled profile. Sugar: 0.1 g/100 g.
@@ -267,6 +286,10 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }],
   },
   cookedCooledPotato: {
+    // GI (glucose = 100): Boiled-potato proxy, Table 1; no numerical cooling reduction assumed. Not a chilled-potato assay.
+    // https://doi.org/10.2337/dc08-1239
+    glycemicIndex: 78,
+    glycemicIndexIsEstimate: true,
     // Boiled potato flesh baseline per 100 g (USDA SR Legacy NDB 11365), not rice.
     // Total fibre: https://www.nal.usda.gov/sites/default/files/page-files/Total_Dietary_Fiber.pdf
     // Cooling study: https://doi.org/10.1016/j.foodchem.2016.03.120
@@ -296,6 +319,9 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{ grams: 2.5 }, { grams: 5 }, { grams: 10 }],
   },
   apples: {
+    // GI (glucose = 100): Raw apple; pooled mean, Table 1.
+    // https://doi.org/10.2337/dc08-1239
+    glycemicIndex: 36,
     fiberByType: { fiber_fermentable: 1.1, fiber_gel_forming: 1 },
     polyphenolByType: {
       polyphenols_total: 170,
@@ -580,6 +606,9 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
   orange: {
+    // GI (glucose = 100): Raw orange; pooled mean, Table 1.
+    // https://doi.org/10.2337/dc08-1239
+    glycemicIndex: 43,
     fiberByType: { fiber_fermentable: 1.2, fiber_gel_forming: 0.8 },
     fiberSubtypeTotals: {
       pectin: 0.9,
@@ -926,6 +955,9 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
   kiwi: {
+    // GI (glucose = 100): Green kiwifruit reference (Zespri Green); other varieties may differ.
+    // https://www.nzkgi.org.nz/wp-content/uploads/2016/12/2017-Kiwifruit-Book-Web-version.pdf
+    glycemicIndex: 39,
     fiberByType: { fiber_fermentable: 1.4, fiber_gel_forming: 0.9, fiber_non_gel_forming: 0.5 },
     fiberSubtypeTotals: {
       pectin: 0.95,
@@ -1327,6 +1359,9 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":30,"labelKey":"quarterCup"},{"grams":60,"labelKey":"halfCup"},{"grams":120,"labelKey":"oneCup"}]
   },
   watermelon: {
+    // GI (glucose = 100): Raw watermelon; pooled mean, Table 1.
+    // https://doi.org/10.2337/dc08-1239
+    glycemicIndex: 76,
     fiberByType: { fiber_fermentable: 0.15, fiber_gel_forming: 0.08, fiber_non_gel_forming: 0.17 },
     fiberSubtypeTotals: {
       pectin: 0.1,

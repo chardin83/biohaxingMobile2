@@ -24,6 +24,7 @@ function formatDuration(minutesTotal: number) {
 }
 
 function formatMetricValue(entry: MetricValueEntry) {
+  if (entry.metricId === 'glycemic_index') return String(Number(entry.value.toFixed(1)));
   if (entry.metricId === 'sleep_duration' || entry.metricId === 'deep_sleep' || entry.metricId === 'rem_sleep') {
     return formatDuration(entry.value);
   }
@@ -42,7 +43,7 @@ type MetricValuesTableSectionProps = {
   header?: React.ReactNode;
   colors: any;
   emptyText: string;
-  onAddPress: () => void;
+  onAddPress?: () => void;
   onEditEntry?: (entry: MetricValueEntry) => void;
   onDeleteEntry?: (entry: MetricValueEntry) => void;
   onAddSleepBatchPress?: () => void;
@@ -137,9 +138,9 @@ export function MetricValuesTableSection({
         <ThemedText style={styles.tableCellLarge} type="caption">
           {entry.notes || ''}
         </ThemedText>
-        <ThemedText type="default" style={[styles.icon, { color: colors.textLight || '#888' }]}>
+        {(onEditEntry || onDeleteEntry) && <ThemedText type="default" style={[styles.icon, { color: colors.textLight || '#888' }]}>
           ⋮
-        </ThemedText>
+        </ThemedText>}
       </View>
     </SwipeableRow>
   );
@@ -162,7 +163,7 @@ export function MetricValuesTableSection({
         ListHeaderComponent={
           <View>
             {header}
-            <AppButton onPress={onAddPress} style={styles.addButton} title={`+ ${addButtonTitle}`} />
+            {onAddPress && <AppButton onPress={onAddPress} style={styles.addButton} title={`+ ${addButtonTitle}`} />}
             {onAddSleepBatchPress && <AppButton onPress={onAddSleepBatchPress} style={styles.addButton} title={addSleepBatchButtonTitle} variant="secondary" />}
             <ThemedText type="defaultSemiBold" style={styles.registeredEntriesTitle}>
               {registeredValuesTitle}
@@ -188,7 +189,7 @@ export function MetricValuesTableSection({
 
   return (
     <>
-      <AppButton onPress={onAddPress} style={styles.addButton} title={`+ ${addButtonTitle}`} />
+      {onAddPress && <AppButton onPress={onAddPress} style={styles.addButton} title={`+ ${addButtonTitle}`} />}
       {onAddSleepBatchPress && <AppButton onPress={onAddSleepBatchPress} style={styles.addButton} variant="secondary" title={addSleepBatchButtonTitle} />}
 
       {entries.length === 0 ? (

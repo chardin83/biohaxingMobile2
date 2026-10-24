@@ -242,6 +242,8 @@ export default function MetricDetailScreen() {
           accentColor={selectedConfig.accentColor}
           xAxisLabelFormatter={selectedConfig.xAxisLabelFormatter}
           referenceLines={selectedConfig.referenceLines}
+          showPeriodAverage={selectedConfig.showPeriodAverage}
+          glycemicIndexCoverage={selectedConfig.glycemicIndexCoverage}
           yAxisBounds={selectedConfig.yAxisBounds}
           onViewRegisteredValues={openMetricValuesTable}
           eventSeries={targetEventSeries.length > 0 ? targetEventSeries : undefined}

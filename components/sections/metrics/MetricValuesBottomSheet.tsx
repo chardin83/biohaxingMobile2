@@ -246,10 +246,10 @@ export function MetricValuesBottomSheet({
             entries={registeredEntries}
             colors={colors}
             emptyText={t('metrics:trendChart.empty', { metric: metricName ?? t(`metrics:${metricId}.name`) })}
-            onAddPress={handleOpenAddMetricSheet}
+            onAddPress={metricId === 'glycemic_index' ? undefined : handleOpenAddMetricSheet}
             onAddSleepBatchPress={isSleepRelatedMetric ? handleOpenSleepBatchSheet : undefined}
-            onEditEntry={handleEditEntry}
-            onDeleteEntry={handleDeleteEntry}
+            onEditEntry={metricId === 'glycemic_index' ? undefined : handleEditEntry}
+            onDeleteEntry={metricId === 'glycemic_index' ? undefined : handleDeleteEntry}
             registeredValuesTitle={t('common:metricValuesBottomSheet.registeredValuesTitle')}
             dateLabel={t('common:metricValuesBottomSheet.columns.date')}
             valueLabel={t('common:metricValuesBottomSheet.columns.value')}

@@ -611,8 +611,13 @@ const NutritionBreakdown: React.FC<NutritionBreakdownProps> = ({ nutrition, keyP
       </View>
       <View style={[styles.nutrientRowWithIcon, { borderBottomColor: colors.textMuted }]} testID="nutrition-gi">
         <NutrientText aiEstimated={nutrition.aiEstimatedNutrients?.includes('glycemicIndex')}
-          text={t('journal:nutritionLogger.glycemicIndexAmount', { value: nutrition.glycemicIndex === undefined ? '—' : Math.round(nutrition.glycemicIndex) })} />
+          text={t('journal:nutritionLogger.glycemicIndexAmount', { value: nutrition.glycemicIndex === undefined ? '—' : `${nutrition.glycemicIndexIsEstimate ? '≈' : ''}${Math.round(nutrition.glycemicIndex)}` })} />
       </View>
+      {nutrition.glycemicIndexCoverage !== undefined && (
+        <ThemedText type="caption" style={{ color: colors.textMuted }}>
+          {t('metrics:glycemic_index.coverage', { value: Math.round(nutrition.glycemicIndexCoverage) })}
+        </ThemedText>
+      )}
       <AlcoholSection nutrition={nutrition} onAlcoholInfo={() => setAlcoholInfoVisible(true)} />
 
       <View style={[styles.biohaxingPanel, analysisPanelColor]} testID="nutrition-biohaxing-extras">

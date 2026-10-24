@@ -1,4 +1,4 @@
-import { getWeightedGlycemicIndex } from '@/utils/glycemicIndex';
+import { getGlycemicIndexSummary } from '@/utils/glycemicIndex';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -122,9 +122,12 @@ export const useNutritionLoggerData = (selectedDate: string) => {
 
   const dailyNutrition = useMemo<NutritionData>(() => {
     const entries = summary?.entries ?? [];
+    const gi = getGlycemicIndexSummary(entries);
     return {
       name: t('journal:nutritionLogger.dailySummary'),
-      glycemicIndex: getWeightedGlycemicIndex(entries),
+      glycemicIndex: gi.glycemicIndex,
+      glycemicIndexCoverage: gi.coverage,
+      glycemicIndexIsEstimate: entries.some(entry => entry.glycemicIndex !== undefined && entry.carbohydrates > 0 && entry.glycemicIndexIsEstimate),
       calories: summary?.totals.calories,
       protein: summary?.totals.protein,
       carbohydrates: summary?.totals.carbohydrates,

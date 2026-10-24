@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { type MetricId } from '@/locales/metrics';
+import { buildGlycemicIndexCoverage } from '@/utils/glycemicIndexMetrics';
+import type { GlycemicIndexCoveragePoint } from '@/utils/glycemicIndex';
 import { buildHRVDailyTrend } from '@/utils/hrvHistory';
 import { buildTrendData } from '@/utils/metrics';
 import { RECOVERY_THRESHOLDS } from '@/utils/recoveryStatus';
@@ -18,6 +20,8 @@ export type MetricChartConfig = {
   yAxisBounds?: { min: number; max: number };
   data: MetricTrendPoint[];
   accentColor: string;
+  showPeriodAverage?: boolean;
+  glycemicIndexCoverage?: GlycemicIndexCoveragePoint[];
   daysToShow?: number;
   xAxisLabelFormatter?: (date: string) => string;
   valueFormatter?: (value: number) => string;
@@ -33,6 +37,8 @@ type MetricMeta = {
   unit?: string;
   yAxisBounds?: { min: number; max: number };
   accentColor: (colors: ThemeColors) => string;
+  showPeriodAverage?: boolean;
+  glycemicIndexCoverage?: GlycemicIndexCoveragePoint[];
   daysToShow?: number;
   xAxisLabelFormatter?: (date: string) => string;
   valueFormatter?: (value: number) => string;
@@ -67,6 +73,12 @@ function formatSleepDuration(valueInMinutes: number) {
 }
 
 const ALL_METRIC_CHART_META: Partial<Record<MetricId, MetricMeta>> = {
+  glycemic_index: {
+    metricNameKey: 'metrics:glycemic_index.name',
+    unit: 'GI',
+    showPeriodAverage: true,
+    accentColor: colors => colors.primary,
+  },
   recovery_status: {
     metricNameKey: 'metrics:recoveryStatus.title',
     unit: '/100',
@@ -164,7 +176,7 @@ type UseMetricConfigInput = {
 export function useMetricConfig({ metricId, data: dataOverride }: UseMetricConfigInput): MetricChartConfig | null {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { getMetricHistory } = useStorage();
+  const { getMetricHistory, dailyNutritionTracking } = useStorage();
 
   return React.useMemo(() => {
     if (!metricId) {
@@ -183,6 +195,8 @@ export function useMetricConfig({ metricId, data: dataOverride }: UseMetricConfi
       data,
       accentColor: meta?.accentColor(colors) ?? colors.primary,
       daysToShow: meta?.daysToShow,
+      showPeriodAverage: meta?.showPeriodAverage,
+      glycemicIndexCoverage: metricId === 'glycemic_index' ? buildGlycemicIndexCoverage(dailyNutritionTracking ?? {}) : undefined,
       xAxisLabelFormatter: meta?.xAxisLabelFormatter,
       valueFormatter: meta?.valueFormatter,
       referenceLines: meta?.referenceLines?.map(line => ({
@@ -191,5 +205,5 @@ export function useMetricConfig({ metricId, data: dataOverride }: UseMetricConfi
         color: line.color(colors),
       })),
     };
-  }, [colors, dataOverride, getMetricHistory, metricId, t]);
+  }, [colors, dailyNutritionTracking, dataOverride, getMetricHistory, metricId, t]);
 }

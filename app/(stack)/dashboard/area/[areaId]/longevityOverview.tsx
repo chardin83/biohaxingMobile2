@@ -2,6 +2,7 @@ import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { LongevityTrendsChart } from '@/components/metrics/LongevityTrendsChart';
 import { ThemedText } from '@/components/ThemedText';
 import { InformationCardLink } from '@/components/ui/InformationCardLink';
 import MicrobiomeListCard from '@/components/ui/MicrobiomeListCard';
@@ -21,6 +22,8 @@ export default function LongevityOverview({ mainGoalId }: Readonly<{ mainGoalId:
       </ThemedText>
 
       <WearableStatus />
+
+      <LongevityTrendsChart />
 
       <InformationCardLink
         title={t('longevity.information.title')}

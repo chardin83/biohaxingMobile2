@@ -91,7 +91,7 @@ it('recalculates tags when entries or bedtime change and preserves manual answer
   expect(syncCaffeineLifeStyle({}, { [date]: [{ ...coffeeAt(18), type: 'water' }] }, '22:00')).toEqual({});
 });
 
-it.each(['coffee', 'tea', 'energy_drink'] as const)('logs caffeine from %s', type => {
+it.each(['coffee', 'tea', 'energy_drink', 'sugar_free_energy_drink'] as const)('logs caffeine from %s', type => {
   const log = syncCaffeineLifeStyle({}, { [date]: [{ ...coffeeAt(20), type }] }, '23:00');
   expect(log[date].caffeine?.value).toBe(true);
   expect(log[date].caffeineBeforeSleep?.value).toBe(true);

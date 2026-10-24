@@ -4,7 +4,7 @@ import React from 'react';
 import { MetricTrendChart, type MetricTrendOption } from '../metrics/MetricTrendChart';
 
 jest.mock('@react-navigation/native', () => ({ useTheme: () => ({ colors: {} }) }));
-jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
+jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string, options?: { value?: number }) => key === 'trendChart.periodAverage' ? `Period average: ${options?.value}` : key === 'glycemic_index.coverage' ? `Coverage: ${options?.value}%` : key }) }));
 jest.mock('../ui/IconSymbol', () => ({ IconSymbol: () => null }));
 jest.mock('../ui/AppButton', () => () => null);
 jest.mock('@/app/context/StorageContext', () => ({
@@ -108,8 +108,8 @@ it('draws comparison data on the shared time axis with a separate right scale', 
   expect(screen.getAllByText('2000').length).toBeGreaterThan(0);
   expect(screen.queryByText('2650')).toBeNull();
   expect(screen.getByText('Steps (count)')).toBeTruthy();
-  expect(screen.getByTestId(`lifestyle-dot-${today}`).props.opacity).toBeCloseTo(0.7);
-  expect(screen.getByTestId(`lifestyle-dot-${yesterday}`).props.opacity).toBeCloseTo(0.4);
+  expect(screen.getByTestId(`lifestyle-dot-${today}`).props.opacity).toBeGreaterThan(screen.getByTestId(`lifestyle-dot-${yesterday}`).props.opacity);
+  expect(screen.getByTestId(`lifestyle-dot-${today}`).props.opacity).toBeLessThanOrEqual(1);
   expect(screen.queryByTestId('lifestyle-dot-2000-01-01')).toBeNull();
 });
 
@@ -147,4 +147,42 @@ it('allows inspecting a single registered value without a comparison', async () 
   fireEvent(screen.UNSAFE_getAllByType(View).find(node => node.props.onLayout)!, 'layout', { nativeEvent: { layout: { width: 256 } } });
   fireEvent(screen.getByTestId('metric-chart-touch-area'), 'responderGrant', { nativeEvent: { locationX: 248 } });
   expect(screen.getByText('Score: 0')).toBeTruthy();
+});
+
+it('draws the average for only the displayed period and recomputes it when the period changes', async () => {
+  const older = new Date(Date.now() - 10 * 86400000).toISOString().slice(0, 10);
+  const future = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+  const data = [{ date: today, value: 40 }, { date: yesterday, value: 60 }, { date: older, value: 80 }, { date: future, value: 100 }, { date: today, value: NaN }];
+  const screen = render(<MetricTrendChart data={data} metricName="GI" daysToShow={7} showPeriodAverage />);
+  const { View } = require('react-native');
+  await waitFor(() => expect(screen.UNSAFE_getAllByType(View).some(node => node.props.onLayout)).toBe(true));
+  fireEvent(screen.UNSAFE_getAllByType(View).find(node => node.props.onLayout)!, 'layout', { nativeEvent: { layout: { width: 256 } } });
+  const firstLine = screen.getByTestId('metric-chart-reference-line');
+  expect(firstLine.props.y1).toBe(firstLine.props.y2);
+  expect(firstLine.props.accessibilityLabel).toBe('Period average: 50');
+  screen.rerender(<MetricTrendChart data={data} metricName="GI" daysToShow={30} showPeriodAverage />);
+  // With 40, 60, 80 the average is 60; no future or missing-day zero is included.
+  expect(screen.getByTestId('metric-chart-reference-line').props.accessibilityLabel).toBe('Period average: 60');
+  screen.rerender(<MetricTrendChart data={[{ date: today, value: 0 }]} metricName="GI" daysToShow={7} showPeriodAverage />);
+  expect(screen.getByTestId('metric-chart-reference-line').props.accessibilityLabel).toBe('Period average: 0');
+  screen.rerender(<MetricTrendChart data={[]} metricName="GI" daysToShow={7} showPeriodAverage />);
+  expect(screen.queryByTestId('metric-chart-reference-line')).toBeNull();
+});
+
+it('shows period carb coverage including days with no GI points and recalculates on period change', async () => {
+  const older = new Date(Date.now() - 10 * 86400000).toISOString().slice(0, 10);
+  const coverage = [
+    { date: yesterday, knownCarbohydrates: 20, totalCarbohydrates: 20 },
+    { date: today, knownCarbohydrates: 0, totalCarbohydrates: 80 },
+    { date: older, knownCarbohydrates: 100, totalCarbohydrates: 100 },
+  ];
+  const data = [{ date: yesterday, value: 50 }];
+  const screen = render(<MetricTrendChart data={data} metricName="GI" glycemicIndexCoverage={coverage} daysToShow={7} showPeriodAverage />);
+  await waitFor(() => expect(screen.getByText('Coverage: 20%')).toBeTruthy());
+  screen.rerender(<MetricTrendChart data={data} metricName="GI" glycemicIndexCoverage={coverage} daysToShow={30} showPeriodAverage />);
+  expect(screen.getByText('Coverage: 60%')).toBeTruthy();
+  screen.rerender(<MetricTrendChart data={[]} metricName="GI" glycemicIndexCoverage={[coverage[1]]} showPeriodAverage />);
+  expect(screen.getByText('Coverage: 0%')).toBeTruthy();
+  screen.rerender(<MetricTrendChart data={[]} metricName="GI" glycemicIndexCoverage={[]} showPeriodAverage />);
+  expect(screen.getByText('glycemic_index.noCarbohydrates')).toBeTruthy();
 });

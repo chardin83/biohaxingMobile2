@@ -1,4 +1,8 @@
 {
+  "longevityTrendsChart": {
+    "title": "Your longevity metrics",
+    "explainer": "Tap GI to see the trend and period average. Values are calculated automatically from your food log."
+  },
   "tipGroupSection": {
     "title": "Group",
     "otherTips": "Other tips in this group",
