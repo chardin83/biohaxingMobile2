@@ -230,6 +230,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":12,"labelKey":"oneTablespoon"},{"grams":24,"labelKey":"twoTablespoons"},{"grams":48,"labelKey":"fourTablespoons"}]
   },
   greenBanana: {
+    catalogTrackingCounts: { resistant_starch_meals: 1 },
     plantName: 'banana',
     calories: 90,
     protein: 1.1,
@@ -254,6 +255,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
   cookedCooledPasta: {
+    catalogTrackingCounts: { resistant_starch_meals: 1 },
     plantName: 'wheat',
     // GI (glucose = 100): Cooked white spaghetti proxy, Table 1; no numerical cooling reduction assumed. Not a chilled-pasta assay.
     // https://doi.org/10.2337/dc08-1239
@@ -272,6 +274,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }],
   },
   cookedCooledJasmineRice: {
+    catalogTrackingCounts: { resistant_starch_meals: 1 },
     plantName: 'rice',
     // GI (glucose = 100): Cooked SunRice Jasmine reference, Sydney GI service (2006); proxy for this chilled catalog entry. No cooling reduction assumed.
     // https://glycemicindex.com/gi-search/
@@ -294,6 +297,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }],
   },
   cookedCooledBasmatiRice: {
+    catalogTrackingCounts: { resistant_starch_meals: 1 },
     plantName: 'rice',
     // GI (glucose = 100): Cooked SunRice basmati reference, Kataoka et al. (2013); proxy for this chilled catalog entry. No cooling reduction assumed.
     // https://glycemicindex.com/gi-search/
@@ -316,6 +320,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }],
   },
   cookedCooledPotato: {
+    catalogTrackingCounts: { resistant_starch_meals: 1 },
     plantName: 'potato',
     vegetableColor: 'white',
     // GI (glucose = 100): Boiled-potato proxy, Table 1; no numerical cooling reduction assumed. Not a chilled-potato assay.
@@ -466,6 +471,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":78,"labelKey":"halfCup"},{"grams":156,"labelKey":"oneCup"},{"grams":312,"labelKey":"twoCups"}]
   },
   salmon: {
+    catalogTrackingCounts: { fish_meals: 1, fatty_fish_meals: 1 },
     aminoAcidsByType: { glutamine: 2800 },
     mineralsByType: { iodine: 0.03 },
     vitaminsByType: { vitamin_b7: 0.000005 },
@@ -627,6 +633,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     ]
   },
   canTuna: {
+    catalogTrackingCounts: { fish_meals: 1 },
     aminoAcidsByType: { glutamine: 3800 },
     mineralsByType: { iodine: 0.02 },
     microbiomeSupport: [
@@ -738,6 +745,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":120,"labelKey":"halfCup"},{"grams":240,"labelKey":"oneCup"},{"grams":480,"labelKey":"twoCups"}]
   },
   cod: {
+    catalogTrackingCounts: { fish_meals: 1 },
     aminoAcidsByType: { glutamine: 2600 },
     mineralsByType: { iodine: 0.11 },
     microbiomeSupport: [
@@ -1185,6 +1193,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":75,"labelKey":"halfCup"},{"grams":150,"labelKey":"oneCup"},{"grams":300,"labelKey":"twoCups"}]
   },
   sardines: {
+    catalogTrackingCounts: { fish_meals: 1, fatty_fish_meals: 1 },
     aminoAcidsByType: { glutamine: 3100 },
     mineralsByType: { iodine: 0.035 },
     microbiomeSupport: [

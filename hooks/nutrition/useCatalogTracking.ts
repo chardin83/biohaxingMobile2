@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { WeeklyNutritionValue } from '@/app/context/storage/nutrition/nutritionTypes';
@@ -10,7 +10,7 @@ import { getNutritionTrackingAnalysis } from '@/utils/nutritionTrackingPrompt';
 export const useCatalogTracking = (selectedDate: string) => {
   const { plans, setWeeklyNutritionTracking } = useStorage();
   const { t } = useTranslation();
-  const { keys } = getNutritionTrackingAnalysis(plans?.nutrition ?? [], true);
+  const { keys } = useMemo(() => getNutritionTrackingAnalysis(plans?.nutrition ?? [], true), [plans?.nutrition]);
   const tracksColors = keys.has('vegetable_colors');
   const tracksPlants = keys.has('unique_plants');
 
@@ -25,6 +25,9 @@ export const useCatalogTracking = (selectedDate: string) => {
     if (tracksPlants && product.plantName) {
       signals.unique_plants = [{ en: product.plantName, local: product.name }];
     }
+    for (const [key, count] of Object.entries(product.catalogTrackingCounts ?? {})) {
+      if (keys.has(key) && Number.isFinite(count) && count > 0) signals[key] = count;
+    }
     if (!Object.keys(signals).length) return;
     const weekKey = getTargetDates(selectedDate, 'weekly')[0];
     const contribution = {
@@ -36,5 +39,5 @@ export const useCatalogTracking = (selectedDate: string) => {
       ...previous,
       [weekKey]: [...(previous[weekKey] ?? []), contribution],
     }));
-  }, [selectedDate, setWeeklyNutritionTracking, t, tracksColors, tracksPlants]);
+  }, [selectedDate, setWeeklyNutritionTracking, t, tracksColors, tracksPlants, keys]);
 };

@@ -8,5 +8,6 @@ export type FoodNutrientProfile = NutritionComposition & {
   vegetableColor?: FoodColor;
   /** Canonical plant identity, shared by preparations of the same plant. */
   plantName?: string;
+  catalogTrackingCounts?: Record<string, number>;
   defaultServings: FoodServing[];
 };

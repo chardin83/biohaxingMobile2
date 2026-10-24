@@ -39,6 +39,7 @@ export type BarcodeProductType = 'food' | 'drink';
 export interface BarcodeProduct {
   vegetableColor?: FoodColor;
   plantName?: string;
+  catalogTrackingCounts?: Record<string, number>;
   barcode: string;
   name: string;
   brand?: string;

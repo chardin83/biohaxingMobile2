@@ -103,3 +103,44 @@ it('saves both active catalog goals in one contribution through the target-page 
     },
   }]);
 });
+
+it.each([
+  ['salmon', { fish_meals: 1, fatty_fish_meals: 1 }],
+  ['sardines', { fish_meals: 1, fatty_fish_meals: 1 }],
+  ['cod', { fish_meals: 1 }],
+  ['canTuna', { fish_meals: 1 }],
+  ['greenBanana', { resistant_starch_meals: 1 }],
+  ['cookedCooledPotato', { resistant_starch_meals: 1 }],
+  ['cookedCooledPasta', { resistant_starch_meals: 1 }],
+  ['cookedCooledJasmineRice', { resistant_starch_meals: 1 }],
+  ['cookedCooledBasmatiRice', { resistant_starch_meals: 1 }],
+] as const)('tracks confirmed catalog meal counts for %s independently of portion scaling', (key, signals) => {
+  mockPlanTips = [{ tipId: 'fish_omega3_weekly' }, { tipId: 'resistant_starch_barrier' }];
+  const { result } = renderHook(() => useSaveNutritionProduct({ selectedDate: '2026-10-24', onFoodSaved: jest.fn() }));
+  const product = getFoodProduct(key, key);
+  act(() => result.current(product, 250, 'food'));
+  expect(mockWeekly['2026-10-19']).toEqual([{ nutritionEntryId: 'orange-entry', date: '2026-10-24', signals }]);
+  expect(product.composition).not.toHaveProperty('catalogTrackingCounts');
+});
+
+it('does not infer resistant-starch preparation or fish from unrelated catalog foods', () => {
+  mockPlanTips = [{ tipId: 'fish_omega3_weekly' }, { tipId: 'resistant_starch_barrier' }];
+  const { result } = renderHook(() => useCatalogTracking('2026-10-24'));
+  act(() => {
+    for (const key of ['potatoes', 'oats', 'oysters', 'chickenBreast'] as const) {
+      result.current(key, getFoodProduct(key, key), 100);
+    }
+    result.current('zero', getFoodProduct('salmon', 'Lax'), 0);
+  });
+  expect(mockSetWeekly).not.toHaveBeenCalled();
+});
+
+it('does not save catalog meal counts for inactive goals', () => {
+  mockPlanTips = [];
+  const { result } = renderHook(() => useCatalogTracking('2026-10-24'));
+  act(() => {
+    result.current('fish', getFoodProduct('salmon', 'Lax'), 100);
+    result.current('rice', getFoodProduct('cookedCooledJasmineRice', 'Ris'), 100);
+  });
+  expect(mockSetWeekly).not.toHaveBeenCalled();
+});
