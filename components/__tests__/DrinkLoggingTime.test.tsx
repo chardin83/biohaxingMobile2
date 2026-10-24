@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react-native';
 
-import { useNutritionBarcodeActions } from '@/hooks/nutrition/useNutritionBarcodeActions';
+import { useSaveNutritionProduct } from '@/hooks/nutrition/useSaveNutritionProduct';
 import { getDrinkProduct } from '@/locales/drinkCatalog';
 import { toRecordedAt } from '@/utils/dateUtils';
 
@@ -17,7 +17,7 @@ it('saves the selected drink time to both the drink and its nutrition entry on t
   const selectedDate = '2026-10-15';
   const time = new Date(2026, 9, 16, 20, 51);
   const product = getDrinkProduct('coffee', 'Coffee');
-  const { result } = renderHook(() => useNutritionBarcodeActions({ selectedDate, onNutritionEntrySelected: jest.fn() }));
+  const { result } = renderHook(() => useSaveNutritionProduct({ selectedDate, onFoodSaved: jest.fn() }));
   act(() => result.current(product, 200, 'drink', time));
   const recordedAt = toRecordedAt(selectedDate, time);
   expect(mockAddNutrition).toHaveBeenCalledWith(selectedDate, expect.objectContaining({ type: 'drink', recordedAt }));
@@ -28,7 +28,7 @@ it('defaults to the current time when no time was provided', () => {
   jest.useFakeTimers();
   try {
     jest.setSystemTime(new Date(2026, 9, 16, 12, 34));
-    const { result } = renderHook(() => useNutritionBarcodeActions({ selectedDate: '2026-10-16', onNutritionEntrySelected: jest.fn() }));
+    const { result } = renderHook(() => useSaveNutritionProduct({ selectedDate: '2026-10-16', onFoodSaved: jest.fn() }));
     act(() => result.current(getDrinkProduct('coffee', 'Coffee'), 200, 'drink'));
     expect(mockAddDrink).toHaveBeenCalledWith('2026-10-16', expect.objectContaining({ recordedAt: new Date().toISOString() }));
   } finally {
@@ -37,20 +37,20 @@ it('defaults to the current time when no time was provided', () => {
 });
 
 it.each(['tea', 'energy_drink', 'sugar_free_energy_drink'] as const)('preserves caffeine information when logging %s', type => {
-  const { result } = renderHook(() => useNutritionBarcodeActions({ selectedDate: '2026-10-16', onNutritionEntrySelected: jest.fn() }));
+  const { result } = renderHook(() => useSaveNutritionProduct({ selectedDate: '2026-10-16', onFoodSaved: jest.fn() }));
   act(() => result.current(getDrinkProduct(type, type), 200, 'drink'));
   expect(mockAddDrink).toHaveBeenCalledWith('2026-10-16', expect.objectContaining({ type, caffeinated: true }));
 });
 
 it('logs sugar-free energy drink macros and caffeine together', () => {
-  const { result } = renderHook(() => useNutritionBarcodeActions({ selectedDate: '2026-10-16', onNutritionEntrySelected: jest.fn() }));
+  const { result } = renderHook(() => useSaveNutritionProduct({ selectedDate: '2026-10-16', onFoodSaved: jest.fn() }));
   act(() => result.current(getDrinkProduct('sugar_free_energy_drink', 'Sugar-free energy drink'), 250, 'drink'));
   expect(mockAddNutrition).toHaveBeenCalledWith('2026-10-16', expect.objectContaining({ carbohydrates: 0, caffeineMg: 80, glycemicIndex: undefined }));
   expect(mockAddDrink).toHaveBeenCalledWith('2026-10-16', expect.objectContaining({ type: 'sugar_free_energy_drink', caffeinated: true, amountMl: 250 }));
 });
 
 it('keeps a catalog drink GI reference unchanged while scaling its carbs', () => {
-  const { result } = renderHook(() => useNutritionBarcodeActions({ selectedDate: '2026-10-16', onNutritionEntrySelected: jest.fn() }));
+  const { result } = renderHook(() => useSaveNutritionProduct({ selectedDate: '2026-10-16', onFoodSaved: jest.fn() }));
   act(() => result.current(getDrinkProduct('juice', 'Juice'), 200, 'drink'));
   expect(mockAddNutrition).toHaveBeenCalledWith('2026-10-16', expect.objectContaining({ carbohydrates: 21, glycemicIndex: 50, glycemicIndexIsEstimate: true }));
 });

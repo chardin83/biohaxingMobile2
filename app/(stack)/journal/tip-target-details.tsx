@@ -28,20 +28,18 @@ import { isFiberSubtypeTargetTag, isFiberTargetTag } from '@/constants/fiber';
 import { isMineralTargetTag } from '@/constants/minerals';
 import { isPolyphenolTargetTag } from '@/constants/polyphenols';
 import { isVitaminTargetTag } from '@/constants/vitamins';
-import { useCatalogColorTracking } from '@/hooks/nutrition/useCatalogColorTracking';
+import { useSaveNutritionProduct } from '@/hooks/nutrition/useSaveNutritionProduct';
 import { useSupplementMap } from '@/locales/supplements';
 import { getTipTargetIconName, type NutrientTag, tips } from '@/locales/tips';
-import type { BarcodeProduct } from '@/services/openFoodFacts';
 import { getNutritionCompletion } from '@/services/targetProgress/completedNutritionProgress';
 import { normalizeNutritionTargets } from '@/services/targetProgress/normalizeNutritionTargets';
 import { toGrams, toMicrograms, toMilligrams } from '@/services/targetProgress/nutritionTargetProgress';
 import { FOOD_IMAGES, FOOD_NUTRIENT_PROFILES, type FoodServing } from '@/types/nutrition/foodProfiles';
 import { type NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
-import { formatMonthDayRange, fromDateKey, toDateKey, toRecordedAt } from '@/utils/dateUtils';
+import { formatMonthDayRange, fromDateKey, toDateKey } from '@/utils/dateUtils';
 import { type FoodKey, getFoodProduct } from '@/utils/foodProduct';
 import { formatWithUnit } from '@/utils/formatters';
 import { getNutritionTargetMedalEmoji, getNutritionTargetMedalType } from '@/utils/medals';
-import { scaleNutritionComposition } from '@/utils/nutritionComposition';
 import { getTipMacroGoals, getTipProteinGoal } from '@/utils/resolveNutritionTip';
 
 type ContributingNutritionEntry = {
@@ -497,6 +495,9 @@ const getPeriodPresentation = ({
   };
 };
 
+const getRouteString = (value: string | string[] | undefined, fallback = ''): string =>
+  (Array.isArray(value) ? value[0] : value) ?? fallback;
+
 export default function TipTargetDetailsScreen() {
   const router = useRouter();
   const { colors } = useTheme();
@@ -505,7 +506,7 @@ export default function TipTargetDetailsScreen() {
   const supplementMap = useSupplementMap();
   const foodAmountBottomSheetRef = useRef<ProductAmountBottomSheetRef>(null);
   const medalInfoBottomSheetRef = useRef<BottomSheetModal | null>(null);
-  const { dailyNutritionTracking, takenDates, weeklyNutritionTracking, addNutritionEntry, nutritionCompletions: nutritionXpClaims, userProfile } = useStorage();
+  const { dailyNutritionTracking, takenDates, weeklyNutritionTracking, nutritionCompletions: nutritionXpClaims, userProfile } = useStorage();
   const params = useLocalSearchParams<{
     tipId?: string;
     tipTitle?: string;
@@ -522,7 +523,7 @@ export default function TipTargetDetailsScreen() {
 
   const tipId = params.tipId ?? '';
   const tipMeta = tips.find(candidate => candidate.id === tipId);
-  const targetTagParam = (Array.isArray(params.targetTag) ? params.targetTag[0] : params.targetTag) ?? '';
+  const targetTagParam = getRouteString(params.targetTag);
   const targetSupplementIds = useMemo(() => new Set(parseCommaSeparated(params.targetSupplementIds)), [params.targetSupplementIds]);
   const listedSupplements = (tipMeta?.supplements ?? [])
     .filter(reference => (targetSupplementIds.size > 0 ? targetSupplementIds.has(reference.id) : true))
@@ -555,7 +556,7 @@ export default function TipTargetDetailsScreen() {
   }, [t, tipMeta?.id, tipMeta?.nutritionFoods, targetTagParam]);
   const tipTitle = params.tipTitle ?? tipId;
   const targetLabel = params.targetLabel ?? '';
-  const targetPeriod = (Array.isArray(params.targetPeriod) ? params.targetPeriod[0] : params.targetPeriod) ?? 'daily';
+  const targetPeriod = getRouteString(params.targetPeriod, 'daily');
   const isWeeklyTarget = targetPeriod === 'weekly';
   const today = toDateKey(new Date());
   const initialDateKey = params.dateKey && params.dateKey.length > 0 ? params.dateKey : today;
@@ -754,30 +755,19 @@ export default function TipTargetDetailsScreen() {
     foodAmountBottomSheetRef.current?.present(getFoodProduct(foodKey, foodName));
   }, []);
 
-  const trackCatalogColor = useCatalogColorTracking(selectedDateKey);
-
-  const handleSaveFood = React.useCallback(
-    (product: BarcodeProduct, grams: number) => {
-      if (!product.composition) return;
-
-      const entry = addNutritionEntry(selectedDateKey, {
-        type: 'food',
-        recordedAt: toRecordedAt(selectedDateKey, new Date()),
-        name: `${product.name} (${grams} g)`,
-        ...scaleNutritionComposition(product.composition, grams / 100),
-      });
-      trackCatalogColor(entry.id, product, grams);
-      router.push({
-        pathname: '/(tabs)/journal',
-        params: {
-          selectedDate: selectedDateKey,
-          openTab: 'meal',
-          tipId,
-        },
-      });
-    },
-    [addNutritionEntry, router, selectedDateKey, tipId, trackCatalogColor]
-  );
+  const handleFoodSaved = React.useCallback(() => {
+    router.push({
+      pathname: '/(tabs)/journal',
+      params: {
+        selectedDate: selectedDateKey,
+        openTab: 'meal',
+        tipId,
+        focusTipId: tipId,
+        focusRequestId: String(Date.now()),
+      },
+    });
+  }, [router, selectedDateKey, tipId]);
+  const handleSaveFood = useSaveNutritionProduct({ selectedDate: selectedDateKey, onFoodSaved: handleFoodSaved });
 
   const handleOpenMedalInfo = React.useCallback(() => {
     medalInfoBottomSheetRef.current?.present();

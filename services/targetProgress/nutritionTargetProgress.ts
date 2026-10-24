@@ -4,14 +4,16 @@ import type {
   DailyNutritionTracking,
   NutritionEntry,
   WeeklyNutritionTracking,
-  WeeklyNutritionValue,
 } from '@/app/context/storage/nutrition/nutritionTypes';
 import type { SupplementTime } from '@/app/domain/SupplementTime';
 import type { NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
 import { normalizeGlycemicIndex } from '@/utils/glycemicIndex';
 
 import { getTargetDates } from './dateRange';
+import { aggregateWeeklyNutritionTracking, getWeeklyNutritionValueCount } from './nutritionTracking';
 import type { NutritionTargetDefinition } from './targetProgressTypes';
+
+export { aggregateWeeklyNutritionTracking } from './nutritionTracking';
 
 export type TakenDates = Record<string, SupplementTime[]>;
 
@@ -272,41 +274,6 @@ export const resolveDailyNutritionTargetDetails = ({
   };
 };
 
-export const aggregateWeeklyNutritionTracking = (
-  weeklyNutritionTracking: WeeklyNutritionTracking,
-  weekStartKey: string
-): Record<string, WeeklyNutritionValue> => {
-  const result: Record<string, WeeklyNutritionValue> = {};
-
-  const contributions = weeklyNutritionTracking[weekStartKey] ?? [];
-
-  contributions.forEach(contribution => {
-    Object.entries(contribution.signals).forEach(([trackingKey, value]) => {
-      const existing = result[trackingKey];
-
-      if (typeof value === 'number' && Number.isFinite(value)) {
-        const existingNumber = typeof existing === 'number' ? existing : 0;
-
-        result[trackingKey] = existingNumber + value;
-
-        return;
-      }
-
-      if (!Array.isArray(value)) {
-        return;
-      }
-
-      const existingItems = Array.isArray(existing) ? existing : [];
-
-      const allItems = [...existingItems, ...value];
-
-      result[trackingKey] = Array.from(new Map(allItems.map(item => [`${item.en}|${item.local}`, item])).values());
-    });
-  });
-
-  return result;
-};
-
 const resolveWeeklyNutritionTarget = ({
   target,
   selectedDate,
@@ -327,17 +294,7 @@ const resolveWeeklyNutritionTarget = ({
 
   const value = aggregated[target.trackingKey];
 
-  if (typeof value === 'number' && Number.isFinite(value)) {
-    return value;
-  }
-
-  if (Array.isArray(value)) {
-    const uniqueItems = new Set(value.map(item => (item.en || item.local).trim().toLowerCase()).filter(Boolean));
-
-    return uniqueItems.size;
-  }
-
-  return 0;
+  return getWeeklyNutritionValueCount(value);
 };
 
 export const resolveNutritionTarget = ({

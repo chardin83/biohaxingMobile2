@@ -1,4 +1,4 @@
-import { useTheme } from '@react-navigation/native';
+import { useIsFocused, useTheme } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useWindowDimensions, View } from 'react-native';
@@ -23,6 +23,14 @@ export default function Journal() {
     focusTipId?: string;
     focusRequestId?: string;
   }>();
+  const isFocused = useIsFocused();
+  const [readyToFocus, setReadyToFocus] = useState(false);
+  useEffect(() => {
+    setReadyToFocus(false);
+    if (!isFocused) return;
+    const frame = requestAnimationFrame(() => setReadyToFocus(true));
+    return () => cancelAnimationFrame(frame);
+  }, [isFocused, params.focusRequestId]);
   const today = toLocalDateKey(new Date());
   const initialDate = params.selectedDate ?? today;
   const [selectedDate, setSelectedDate] = useState<string | null>(initialDate);
@@ -33,18 +41,20 @@ export default function Journal() {
   const { height } = useWindowDimensions();
   const handledFocusRequest = useRef<string | undefined>(undefined);
   const focusRequest = params.focusRequestId ?? params.focusTipId;
+  const canFocusGoal = isFocused && readyToFocus && selectedDate === initialDate && activeDayEditTab === (params.openTab ?? 'meal');
   const handleGoalFocus = useCallback((target: View) => {
-    if (!focusRequest || handledFocusRequest.current === focusRequest) return;
+    if (!canFocusGoal || !focusRequest || handledFocusRequest.current === focusRequest) return;
     handledFocusRequest.current = focusRequest;
     containerRef.current?.scrollToElement(target);
-  }, [focusRequest]);
-  const goalFocus = useMemo(() => ({ tipId: params.focusTipId, requestId: focusRequest, onFocus: handleGoalFocus }), [params.focusTipId, focusRequest, handleGoalFocus]);
+  }, [canFocusGoal, focusRequest]);
+  const goalFocus = useMemo(() => ({ tipId: canFocusGoal ? params.focusTipId : undefined, requestId: focusRequest, onFocus: handleGoalFocus }), [canFocusGoal, params.focusTipId, focusRequest, handleGoalFocus]);
 
   const handleDayPress = (day: string) => {
     setSelectedDate(day);
   };
 
   const handleTipCompleted = (targetY?: number) => {
+    if (!isFocused || !readyToFocus || (focusRequest && handledFocusRequest.current !== focusRequest)) return;
     if (typeof targetY === 'number') {
       containerRef.current?.scrollTo({ y: Math.max(0, targetY - 120), animated: true });
       return;

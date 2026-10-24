@@ -10,9 +10,9 @@ import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { PREMIUM } from '@/constants/Premium';
 import { useNutritionAnalysis } from '@/hooks/nutrition/useNutritionAnalysis';
-import { useNutritionBarcodeActions } from '@/hooks/nutrition/useNutritionBarcodeActions';
 import { useNutritionLoggerData } from '@/hooks/nutrition/useNutritionLoggerData';
 import { useNutritionTipCompletion } from '@/hooks/nutrition/useNutritionTipCompletion';
+import { useSaveNutritionProduct } from '@/hooks/nutrition/useSaveNutritionProduct';
 import { getDrinkProduct } from '@/locales/drinkCatalog';
 import { tips } from '@/locales/tips';
 import type { DrinkType } from '@/services/gptServices';
@@ -156,7 +156,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
       addWeeklyTrackingContribution(entry.id, selectedDate, sourceContribution.signals);
     }
   };
-  const handleSaveBarcodeProduct = useNutritionBarcodeActions({ selectedDate, onNutritionEntrySelected: handleNutritionEntrySaved });
+  const handleSaveBarcodeProduct = useSaveNutritionProduct({ selectedDate, onFoodSaved: handleNutritionEntrySaved });
   const clearSelectedNutrition = useCallback(() => {
     setSelectedNutrition(null);
     setSelectedNutritionEntryId(null);

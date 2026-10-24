@@ -20,7 +20,7 @@ import { useNutritionTipTargets } from '@/hooks/nutrition/useNutritionTipTargets
 import { useProgressWeeks } from '@/hooks/useWeekProgress';
 import { tips } from '@/locales/tips';
 import { getNutritionCompletion, restoreCompletedNutritionTargets } from '@/services/targetProgress/completedNutritionProgress';
-import { aggregateWeeklyNutritionTracking } from '@/services/targetProgress/nutritionTargetProgress';
+import { aggregateWeeklyNutritionTracking, getWeeklyNutritionValueCount } from '@/services/targetProgress/nutritionTracking';
 import { NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import { formatMonthDay, fromDateKey, toDateKey } from '@/utils/dateUtils';
 
@@ -39,19 +39,7 @@ const getWeeklyProgressText = (tipId: string, weekStartISO: string, weeklyNutrit
 
   const weekData = aggregateWeeklyNutritionTracking(weeklyNutritionTracking, weekStartISO);
 
-  const getActual = (trackingKey: string): number => {
-    const value = weekData[trackingKey];
-
-    if (Array.isArray(value)) {
-      return value.length;
-    }
-
-    if (typeof value === 'number' && Number.isFinite(value)) {
-      return value;
-    }
-
-    return 0;
-  };
+  const getActual = (trackingKey: string): number => getWeeklyNutritionValueCount(weekData[trackingKey]);
 
   const preferredTarget = trackingTargets.find(target => getActual(target.trackingKey) < (target.amount ?? 0)) ?? trackingTargets[0];
   const amount = preferredTarget.amount ?? 0;
@@ -334,12 +322,7 @@ export default function NutritionProgressScreen() {
 
     for (const target of tipObj?.trackingTargets ?? []) {
       const value = weekData[target.trackingKey];
-      let actual = 0;
-      if (Array.isArray(value)) {
-        actual = value.length;
-      } else if (typeof value === 'number' && Number.isFinite(value)) {
-        actual = value;
-      }
+      const actual = getWeeklyNutritionValueCount(value);
 
       const amount = target.amount ?? 0;
       if (amount <= 0) {

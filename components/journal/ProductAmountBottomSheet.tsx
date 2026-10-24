@@ -2,7 +2,7 @@ import { BottomSheetModal, BottomSheetScrollView, type BottomSheetScrollViewMeth
 import { useTheme } from '@react-navigation/native';
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, Keyboard, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Image, Keyboard, Pressable, StyleSheet, View } from 'react-native';
 
 import type { NutritionData } from '@/app/context/storage/nutrition/nutritionTypes';
 import { PREMIUM } from '@/constants/Premium';
@@ -81,6 +81,22 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
     const typePosition = useRef(0);
     const amountPosition = useRef(0);
     const [hasSubmitted, setHasSubmitted] = useState(false);
+    const savingRef = useRef(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const pendingSaveRef = useRef<(() => void) | null>(null);
+
+    useEffect(() => {
+      if (!isSaving) return;
+      let timeout: ReturnType<typeof setTimeout> | undefined;
+      // Paint the disabled button before saving triggers storage updates and navigation.
+      const frame = requestAnimationFrame(() => {
+        timeout = setTimeout(() => pendingSaveRef.current?.(), 0);
+      });
+      return () => {
+        cancelAnimationFrame(frame);
+        clearTimeout(timeout);
+      };
+    }, [isSaving]);
 
     const [product, setProduct] = useState<BarcodeProduct | null>(null);
     const [gramsText, setGramsText] = useState('100');
@@ -95,6 +111,8 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
       ref,
       () => ({
         present: nextProduct => {
+          savingRef.current = false;
+          setIsSaving(false);
           setHasSubmitted(false);
           setProduct(nextProduct);
           setCalorieOverride(undefined);
@@ -198,18 +216,28 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
     const calculationNoteKey = getCalculationNoteKey(product, productType);
 
     const handleSave = () => {
-      if (!product || !validateForm() || !productType) return;
+      if (savingRef.current || !product || !validateForm() || !productType) return;
 
+      savingRef.current = true;
       Keyboard.dismiss();
-      onSave(adjustedProduct ?? product, grams, productType, productType === 'drink' ? time : undefined);
-      bottomSheetRef.current?.dismiss();
+      pendingSaveRef.current = () => {
+        try {
+          onSave(adjustedProduct ?? product, grams, productType, productType === 'drink' ? time : undefined);
+          bottomSheetRef.current?.dismiss();
+        } catch (error) {
+          savingRef.current = false;
+          setIsSaving(false);
+          throw error;
+        }
+      };
+      setIsSaving(true);
     };
 
     return (
       <BottomSheetModal
         ref={bottomSheetRef}
         snapPoints={snapPoints}
-        enablePanDownToClose
+        enablePanDownToClose={!isSaving}
         backgroundStyle={sheetDesign.backgroundStyle}
         handleComponent={sheetDesign.handleComponent}
         onDismiss={() => {
@@ -262,8 +290,15 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
               </View>
 
               {!product.fromCatalog && (
-                <View style={styles.typeSection} onLayout={event => { typePosition.current = event.nativeEvent.layout.y; }}>
-                  <ThemedText type="defaultSemiBold" style={typeError ? { color: colors.error } : undefined}>{t('journal:nutritionLogger.barcodeProduct.type')}</ThemedText>
+                <View
+                  style={styles.typeSection}
+                  onLayout={event => {
+                    typePosition.current = event.nativeEvent.layout.y;
+                  }}
+                >
+                  <ThemedText type="defaultSemiBold" style={typeError ? { color: colors.error } : undefined}>
+                    {t('journal:nutritionLogger.barcodeProduct.type')}
+                  </ThemedText>
 
                   <View style={styles.typeOptions}>
                     <OptionSelector
@@ -276,11 +311,20 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
                       ]}
                     />
                   </View>
-                  {typeError && <ThemedText type="caption" accessibilityLiveRegion="polite" style={{ color: colors.error }}>{t('labeledInput.requiredError')}</ThemedText>}
+                  {typeError && (
+                    <ThemedText type="caption" accessibilityLiveRegion="polite" style={{ color: colors.error }}>
+                      {t('labeledInput.requiredError')}
+                    </ThemedText>
+                  )}
                 </View>
               )}
 
-              <View style={styles.amountSection} onLayout={event => { amountPosition.current = event.nativeEvent.layout.y; }}>
+              <View
+                style={styles.amountSection}
+                onLayout={event => {
+                  amountPosition.current = event.nativeEvent.layout.y;
+                }}
+              >
                 <View style={styles.quantityFields}>
                   {productType === 'drink' && alcoholPercent !== undefined && (
                     <View style={[styles.quantityField, { borderColor: colors.border }]}>
@@ -313,7 +357,11 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
                   </View>
                 </View>
 
-                {amountError && <ThemedText type="caption" accessibilityLiveRegion="polite" style={{ color: colors.error }}>{t('journal:nutritionLogger.barcodeProduct.enterPositiveAmount')}</ThemedText>}
+                {amountError && (
+                  <ThemedText type="caption" accessibilityLiveRegion="polite" style={{ color: colors.error }}>
+                    {t('journal:nutritionLogger.barcodeProduct.enterPositiveAmount')}
+                  </ThemedText>
+                )}
 
                 {productType === 'drink' && alcoholPercent !== undefined && scaledNutrition && (
                   <Notice
@@ -394,12 +442,25 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
                 </View>
               ) : null}
 
-              <AppButton
-                title={t('journal:nutritionLogger.barcodeProduct.add')}
-                onPress={handleSave}
-                variant="primary"
-                style={styles.saveButton}
-              />
+              {isSaving ? (
+                <View
+                  testID="nutrition-product-save-locked"
+                  accessible
+                  accessibilityRole="button"
+                  accessibilityLabel={t('journal:nutritionLogger.barcodeProduct.add')}
+                  accessibilityState={{ disabled: true, busy: true }}
+                  style={[styles.saveButton, styles.savingButton, { borderColor: colors.primary }]}
+                >
+                  <ActivityIndicator testID="nutrition-product-saving" color={colors.primary} />
+                </View>
+              ) : (
+                <AppButton
+                  title={t('journal:nutritionLogger.barcodeProduct.add')}
+                  onPress={handleSave}
+                  variant="primary"
+                  style={styles.saveButton}
+                />
+              )}
 
               <ThemedText
                 type="caption"
@@ -412,7 +473,6 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
               >
                 {t(`journal:nutritionLogger.barcodeProduct.${calculationNoteKey}`)}
               </ThemedText>
-
             </>
           ) : null}
         </BottomSheetScrollView>
@@ -424,6 +484,14 @@ const ProductAmountBottomSheet = forwardRef<ProductAmountBottomSheetRef, Product
 ProductAmountBottomSheet.displayName = 'ProductAmountBottomSheet';
 
 const styles = StyleSheet.create({
+  savingButton: {
+    minHeight: 54,
+    borderWidth: 1.5,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    opacity: 0.5,
+  },
   energyWarning: { gap: 8, marginBottom: 16 },
   premiumAnalysis: { marginTop: 16, gap: 10 },
   timeSection: { marginTop: 6, alignItems: 'flex-start' },

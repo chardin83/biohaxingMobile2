@@ -9,6 +9,7 @@ import type { FoodNutrientProfile } from './foodCatalogTypes';
 // include only the assigned RS fraction, not all fermentable fibre. Preparation varies.
 export const FOOD_SUPPLEMENTARY_PROFILES = {
   cauliflower: {
+    plantName: 'cauliflower',
     vegetableColor: 'white',
     sulfurRichVegetable: true,
     fiberByType: { fiber_fermentable: 0.09 },
@@ -18,6 +19,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }]
   },
   cabbage: {
+    plantName: 'cabbage',
     vegetableColor: 'white',
     sulfurRichVegetable: true,
     fiberByType: { fiber_fermentable: 0.03 },
@@ -27,6 +29,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }]
   },
   garlic: {
+    plantName: 'garlic',
     vegetableColor: 'white',
     sulfurRichVegetable: true,
     fiberByType: { fiber_fermentable: 12.5 },
@@ -36,6 +39,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{ grams: 3 }, { grams: 6 }, { grams: 9 }]
   },
   onions: {
+    plantName: 'onion',
     vegetableColor: 'white',
     sulfurRichVegetable: true,
     fiberByType: { fiber_fermentable: 1.97 },
@@ -45,6 +49,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{ grams: 25 }, { grams: 50 }, { grams: 100 }]
   },
   leeks: {
+    plantName: 'leek',
     sulfurRichVegetable: true,
     fiberByType: { fiber_fermentable: 0.24 },
     // Fructans, fresh-weight mean: https://doi.org/10.3389/fnut.2024.1446771, Table 1.
@@ -53,6 +58,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{ grams: 25 }, { grams: 50 }, { grams: 100 }]
   },
   brusselsSprouts: {
+    plantName: 'brussels sprouts',
     vegetableColor: 'green',
     sulfurRichVegetable: true,
     fiberByType: { fiber_fermentable: 0.14 },
@@ -62,6 +68,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }]
   },
   kale: {
+    plantName: 'kale',
     vegetableColor: 'green',
     sulfurRichVegetable: true,
     fiberByType: { fiber_non_gel_forming: 2.5, fiber_fermentable: 0.9, fiber_gel_forming: 0.2 },
@@ -115,24 +122,29 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":90,"labelKey":"halfCup"},{"grams":180,"labelKey":"oneCup"},{"grams":360,"labelKey":"twoCups"}]
   },
   chard: {
+    plantName: 'chard',
     vegetableColor: 'green',
     fiberByType: { fiber_non_gel_forming: 1.1, fiber_fermentable: 0.4 },
     defaultServings: [{"grams":90,"labelKey":"halfCup"},{"grams":180,"labelKey":"oneCup"},{"grams":360,"labelKey":"twoCups"}]
   },
   pumpkinSeeds: {
+    plantName: 'pumpkin',
     fiberByType: { fiber_non_gel_forming: 4.2, fiber_fermentable: 1.3 },
     defaultServings: [{"grams":30},{"grams":60},{"grams":90}]
   },
   almonds: {
+    plantName: 'almond',
     fiberByType: { fiber_non_gel_forming: 8.7, fiber_fermentable: 2.9 },
     defaultServings: [{"grams":30},{"grams":60},{"grams":90}]
   },
   darkChocolate: {
+    plantName: 'cocoa',
     fiberByType: { fiber_non_gel_forming: 7.9, fiber_fermentable: 2.2 },
     polyphenolByType: { polyphenols_total: 1700, flavonoids_total: 1100, flavanols: 500 },
     defaultServings: [{"grams":30},{"grams":60},{"grams":90}]
   },
   blackBeans: {
+    plantName: 'black bean',
     fiberByType: { fiber_fermentable: 4.8, fiber_non_gel_forming: 3 },
     defaultServings: [{"grams":85,"labelKey":"halfCup"},{"grams":170,"labelKey":"oneCup"},{"grams":340,"labelKey":"twoCups"}]
   },
@@ -143,6 +155,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
   chickpeas: {
+    plantName: 'chickpea',
     // GI (glucose = 100): Cooked chickpeas; pooled mean, Table 1.
     // https://doi.org/10.2337/dc08-1239
     glycemicIndex: 28,
@@ -150,10 +163,12 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":82,"labelKey":"halfCup"},{"grams":164,"labelKey":"oneCup"},{"grams":328,"labelKey":"twoCups"}]
   },
   cashews: {
+    plantName: 'cashew',
     fiberByType: { fiber_non_gel_forming: 2.2 },
     defaultServings: [{"grams":30},{"grams":60},{"grams":90}]
   },
   oatBran: {
+    plantName: 'oat',
     // Dry oat-bran reference: Kungsörnen product declaration, per 100 g.
     // https://www.kungsornen.se/produkter/havrekli-300g/
     // Product-specific baseline; prefer the actual package for other brands.
@@ -169,6 +184,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{ grams: 15 }, { grams: 30 }, { grams: 50 }],
   },
   oats: {
+    plantName: 'oat',
     // Estimated raw-oat beta-glucans: mean 4.40 g/100 g; varies by cultivar/product.
     // https://pmc.ncbi.nlm.nih.gov/articles/PMC8063794/
     fiberSubtypeTotals: { beta_glucans: 4.4 },
@@ -176,6 +192,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":40,"labelKey":"halfCup"},{"grams":80,"labelKey":"oneCup"},{"grams":160,"labelKey":"twoCups"}]
   },
   soybeans: {
+    plantName: 'soybean',
     // GI (glucose = 100): Cooked soya beans; pooled mean, Table 1.
     // https://doi.org/10.2337/dc08-1239
     glycemicIndex: 16,
@@ -183,6 +200,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":85,"labelKey":"halfCup"},{"grams":170,"labelKey":"oneCup"},{"grams":340,"labelKey":"twoCups"}]
   },
   chiaSeeds: {
+    plantName: 'chia',
     fiberByType: { fiber_fermentable: 9.5, fiber_gel_forming: 14.5 },
     aminoAcidsByType: { glutamine: 3.5 },
     vitaminsByType: { vitamin_b5: 0.9, vitamin_b6: 0.47, vitamin_b7: 0.000007, vitamin_k: 0.0002 },
@@ -212,6 +230,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":12,"labelKey":"oneTablespoon"},{"grams":24,"labelKey":"twoTablespoons"},{"grams":48,"labelKey":"fourTablespoons"}]
   },
   greenBanana: {
+    plantName: 'banana',
     calories: 90,
     protein: 1.1,
     carbohydrates: 23,
@@ -225,6 +244,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}],
   },
   chicoryRoot: {
+    plantName: 'chicory',
     fiberByType: { fiber_fermentable: 3.1 },
     polyphenolByType: {
       polyphenols_total: 180,
@@ -234,6 +254,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
   cookedCooledPasta: {
+    plantName: 'wheat',
     // GI (glucose = 100): Cooked white spaghetti proxy, Table 1; no numerical cooling reduction assumed. Not a chilled-pasta assay.
     // https://doi.org/10.2337/dc08-1239
     glycemicIndex: 49,
@@ -251,6 +272,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }],
   },
   cookedCooledJasmineRice: {
+    plantName: 'rice',
     // GI (glucose = 100): Cooked SunRice Jasmine reference, Sydney GI service (2006); proxy for this chilled catalog entry. No cooling reduction assumed.
     // https://glycemicindex.com/gi-search/
     glycemicIndex: 89,
@@ -272,6 +294,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }],
   },
   cookedCooledBasmatiRice: {
+    plantName: 'rice',
     // GI (glucose = 100): Cooked SunRice basmati reference, Kataoka et al. (2013); proxy for this chilled catalog entry. No cooling reduction assumed.
     // https://glycemicindex.com/gi-search/
     glycemicIndex: 67,
@@ -293,6 +316,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{ grams: 50 }, { grams: 100 }, { grams: 200 }],
   },
   cookedCooledPotato: {
+    plantName: 'potato',
     vegetableColor: 'white',
     // GI (glucose = 100): Boiled-potato proxy, Table 1; no numerical cooling reduction assumed. Not a chilled-potato assay.
     // https://doi.org/10.2337/dc08-1239
@@ -314,6 +338,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":85,"labelKey":"halfCup"},{"grams":170,"labelKey":"oneCup"},{"grams":340,"labelKey":"twoCups"}],
   },
   psylliumHusk: {
+    plantName: 'psyllium',
     calories: 200,
     protein: 2,
     carbohydrates: 88,
@@ -327,6 +352,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{ grams: 2.5 }, { grams: 5 }, { grams: 10 }],
   },
   apples: {
+    plantName: 'apple',
     // GI (glucose = 100): Raw apple; pooled mean, Table 1.
     // https://doi.org/10.2337/dc08-1239
     glycemicIndex: 36,
@@ -342,16 +368,19 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
   okra: {
+    plantName: 'okra',
     vegetableColor: 'green',
     fiberByType: { fiber_fermentable: 1.3, fiber_gel_forming: 1.2 },
     defaultServings: [{"grams":80,"labelKey":"halfCup"},{"grams":160,"labelKey":"oneCup"},{"grams":320,"labelKey":"twoCups"}]
   },
   beets: {
+    plantName: 'beet',
     vegetableColor: 'purple',
     polyphenolByType: { polyphenols_total: 120, flavonoids_total: 40 },
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
   spinach: {
+    plantName: 'spinach',
     vegetableColor: 'green',
     polyphenolByType: {
       polyphenols_total: 120,
@@ -382,6 +411,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     ]
   },
   broccoli: {
+    plantName: 'broccoli',
     vegetableColor: 'green',
     sulfurRichVegetable: true,
     fiberByType: { fiber_non_gel_forming: 1.5, fiber_fermentable: 0.8, fiber_gel_forming: 0.3 },
@@ -454,6 +484,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
   avocado: {
+    plantName: 'avocado',
     vegetableColor: 'green',
     fiberByType: { fiber_non_gel_forming: 4.2, fiber_fermentable: 1.6 },
     defaultServings: [
@@ -463,6 +494,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     ]
   },
   bellPeppers: {
+    plantName: 'bell pepper',
     fiberByType: { fiber_non_gel_forming: 1.3, fiber_fermentable: 0.6 },
     fiberSubtypeTotals: {
       cellulose: 0.7,
@@ -506,6 +538,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":60,"labelKey":"halfBellPepper"},{"grams":120,"labelKey":"oneBellPepper"},{"grams":240,"labelKey":"twoBellPeppers"}]
   },
   blackCurrants: {
+    plantName: 'black currant',
     vegetableColor: 'purple',
     fiber: 4.3,
     fiberByType: { fiber_total: 4.3, fiber_fermentable: 2.1, fiber_gel_forming: 1.5 },
@@ -548,6 +581,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":85,"labelKey":"halfCup"},{"grams":170,"labelKey":"oneCup"},{"grams":340,"labelKey":"twoCups"}]
   },
   brazilNuts: {
+    plantName: 'brazil nut',
     fiberByType: { fiber_non_gel_forming: 5.4, fiber_fermentable: 1.5 },
     fiberSubtypeTotals: {
       cellulose: 2.8,
@@ -620,6 +654,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
   orange: {
+    plantName: 'orange',
     vegetableColor: 'orange',
     // GI (glucose = 100): Raw orange; pooled mean, Table 1.
     // https://doi.org/10.2337/dc08-1239
@@ -659,6 +694,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":30},{"grams":60},{"grams":90}]
   },
   coconutWater: {
+    plantName: 'coconut',
     fiberByType: { fiber_gel_forming: 0.1, fiber_non_gel_forming: 0.5, fiber_fermentable: 0.4 },
     fiberSubtypeTotals: {
       beta_glucans: 0.01,
@@ -732,6 +768,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
   cucumber: {
+    plantName: 'cucumber',
     vegetableColor: 'green',
     fiberByType: { fiber_non_gel_forming: 0.3, fiber_fermentable: 0.2 },
     aminoAcidsByType: { citrulline: 25 },
@@ -971,6 +1008,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
   kiwi: {
+    plantName: 'kiwi',
     vegetableColor: 'green',
     // GI (glucose = 100): Green kiwifruit reference (Zespri Green); other varieties may differ.
     // https://www.nzkgi.org.nz/wp-content/uploads/2016/12/2017-Kiwifruit-Book-Web-version.pdf
@@ -1036,6 +1074,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
   pomegranate: {
+    plantName: 'pomegranate',
     vegetableColor: 'red',
     fiberByType: { fiber_fermentable: 1.4, fiber_non_gel_forming: 2.2 },
     polyphenolByType: {
@@ -1047,6 +1086,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
   potatoes: {
+    plantName: 'potato',
     vegetableColor: 'white',
     fiberByType: { fiber_fermentable: 0.8, fiber_non_gel_forming: 1.1, fiber_gel_forming: 0.3 },
     fiberSubtypeTotals: {
@@ -1096,6 +1136,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":150},{"grams":300},{"grams":450}]
   },
   raspberries: {
+    plantName: 'raspberry',
     vegetableColor: 'red',
     fiberByType: { fiber_fermentable: 2.3, fiber_gel_forming: 1.7 },
     fiberSubtypeTotals: {
@@ -1157,6 +1198,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
   sauerkraut: {
+    plantName: 'cabbage',
     fiberByType: { fiber_fermentable: 1.4, fiber_non_gel_forming: 1.2 },
     fiberSubtypeTotals: {
       cellulose: 0.5,
@@ -1207,6 +1249,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
   sesameSeeds: {
+    plantName: 'sesame',
     fiberByType: { fiber_non_gel_forming: 8.5, fiber_fermentable: 2.2 },
     aminoAcidsByType: { glutamine: 3800 },
     vitaminsByType: { vitamin_b7: 0.00001 },
@@ -1270,6 +1313,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":50},{"grams":100},{"grams":200}]
   },
   strawberries: {
+    plantName: 'strawberry',
     vegetableColor: 'red',
     fiberByType: { fiber_fermentable: 0.9, fiber_gel_forming: 0.6 },
     fiberSubtypeTotals: {
@@ -1322,6 +1366,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":75,"labelKey":"halfCup"},{"grams":150,"labelKey":"oneCup"},{"grams":300,"labelKey":"twoCups"}]
   },
   sunflowerSeeds: {
+    plantName: 'sunflower',
     fiberByType: { fiber_non_gel_forming: 6.1, fiber_fermentable: 1.8 },
     aminoAcidsByType: { glutamine: 5300 },
     vitaminsByType: { vitamin_b7: 0.000066 },
@@ -1351,6 +1396,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":30},{"grams":60},{"grams":90}]
   },
   walnuts: {
+    plantName: 'walnut',
     fiberByType: { fiber_non_gel_forming: 4.8, fiber_fermentable: 1.4 },
     aminoAcidsByType: { glutamine: 290 },
     vitaminsByType: { vitamin_b7: 0.000019 },
@@ -1380,6 +1426,7 @@ export const FOOD_SUPPLEMENTARY_PROFILES = {
     defaultServings: [{"grams":30,"labelKey":"quarterCup"},{"grams":60,"labelKey":"halfCup"},{"grams":120,"labelKey":"oneCup"}]
   },
   watermelon: {
+    plantName: 'watermelon',
     vegetableColor: 'red',
     // GI (glucose = 100): Raw watermelon; pooled mean, Table 1.
     // https://doi.org/10.2337/dc08-1239

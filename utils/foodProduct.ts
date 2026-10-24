@@ -9,12 +9,13 @@ export type FoodKey = keyof typeof FOOD_NUTRIENT_PROFILES;
 export const FOOD_KEYS = Object.keys(FOOD_NUTRIENT_PROFILES) as FoodKey[];
 
 export const getFoodProduct = (key: FoodKey, name: string): BarcodeProduct => {
-  const { defaultServings, vegetableColor, ...composition } = FOOD_NUTRIENT_PROFILES[key] as FoodNutrientProfile;
+  const { defaultServings, vegetableColor, plantName, ...composition } = FOOD_NUTRIENT_PROFILES[key] as FoodNutrientProfile;
   delete composition.sulfurRichVegetable;
 
   return {
     barcode: '',
     vegetableColor,
+    plantName,
     name,
     quantityValue: defaultServings[1]?.grams ?? defaultServings[0]?.grams ?? 100,
     quantityUnit: 'g',

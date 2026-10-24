@@ -14,11 +14,13 @@ jest.mock('@/constants/Premium', () => ({
 }));
 jest.mock('@/services/nutrition/photoAnalysisQuota', () => ({ getFreePhotoAnalysesRemaining: async () => mockRemaining }));
 beforeEach(() => {
+  jest.useFakeTimers();
   mockRemaining = 3;
   mockPremium = false;
   mockAmount = 200;
   mockScrollTo.mockClear();
 });
+afterEach(() => { jest.clearAllTimers(); jest.useRealTimers(); });
 jest.mock('@/services/gptServices', () => ({
   ALCOHOL_TYPES: ['red_wine', 'white_wine', 'beer', 'spirits', 'oak_aged_spirits'],
   isAlcohol: (type: string) => ['red_wine', 'white_wine', 'beer', 'spirits', 'oak_aged_spirits'].includes(type),
@@ -91,6 +93,7 @@ test('normal barcode saving stays available and catalog foods do not offer barco
   const screen = render(<ProductAmountBottomSheet ref={ref} onSave={onSave} onAnalyzePremium={jest.fn()} />);
   act(() => ref.current?.present(product));
   fireEvent.press(screen.getByText('journal:nutritionLogger.barcodeProduct.add'));
+  act(() => jest.advanceTimersByTime(50));
   expect(onSave).toHaveBeenCalledWith(product, 100, 'food', undefined);
   act(() => ref.current?.present({ ...product, fromCatalog: true }));
   expect(screen.queryByText('journal:nutritionLogger.barcodeProduct.analyzePremium')).toBeNull();
@@ -133,6 +136,7 @@ test('warns about conflicting energy and saves the manually entered kcal value',
   expect(screen.getByText('journal:nutritionLogger.barcodeProduct.energyConflict')).toBeTruthy();
   fireEvent.press(screen.getByLabelText('journal:nutritionLogger.barcodeProduct.editCalories'));
   fireEvent.press(screen.getByText('journal:nutritionLogger.barcodeProduct.add'));
+  act(() => jest.advanceTimersByTime(50));
   expect(onSave).toHaveBeenCalledWith(
     expect.objectContaining({ nutrition: expect.objectContaining({ caloriesPer100g: 200, energyKjPer100g: expect.any(Number) }) }),
     100,
@@ -143,6 +147,7 @@ test('warns about conflicting energy and saves the manually entered kcal value',
   act(() => ref.current?.present(product));
   expect(screen.queryByText('journal:nutritionLogger.barcodeProduct.energyConflict')).toBeNull();
   fireEvent.press(screen.getByText('journal:nutritionLogger.barcodeProduct.add'));
+  act(() => jest.advanceTimersByTime(50));
   expect(onSave).toHaveBeenLastCalledWith(product, 100, 'food', undefined);
 });
 
@@ -155,6 +160,7 @@ test.each([
   const screen = render(<ProductAmountBottomSheet ref={ref} onSave={onSave} />);
   act(() => ref.current?.present({ ...product, productType: 'drink', ...volume }));
   fireEvent.press(screen.getByText('journal:nutritionLogger.barcodeProduct.add'));
+  act(() => jest.advanceTimersByTime(50));
   expect(onSave).toHaveBeenCalledWith(expect.objectContaining(volume), expected, 'drink', expect.any(Date));
 });
 
@@ -186,12 +192,14 @@ test('validates missing type on Add and clears validation for a newly opened pro
   const screen = render(<ProductAmountBottomSheet ref={ref} onSave={save} />);
   act(() => ref.current?.present({ ...product, productType: undefined }));
   fireEvent.press(screen.getByText('journal:nutritionLogger.barcodeProduct.add'));
+  act(() => jest.advanceTimersByTime(50));
   expect(save).not.toHaveBeenCalled();
   expect(screen.getByText('labeledInput.requiredError')).toBeTruthy();
   act(() => ref.current?.present({ ...product, productType: undefined }));
   expect(screen.queryByText('labeledInput.requiredError')).toBeNull();
   fireEvent.press(screen.getByText('journal:nutritionLogger.barcodeProduct.meal'));
   fireEvent.press(screen.getByText('journal:nutritionLogger.barcodeProduct.add'));
+  act(() => jest.advanceTimersByTime(50));
   expect(save).toHaveBeenCalledWith(expect.anything(), 100, 'food', undefined);
 });
 
@@ -207,4 +215,30 @@ test('keeps actions clickable with zero amount and shows inline validation on su
   await act(async () => fireEvent.press(screen.getByText(buttonName)));
   expect(analyze).not.toHaveBeenCalled();
   expect(screen.getByText('journal:nutritionLogger.barcodeProduct.enterPositiveAmount')).toBeTruthy();
+});
+
+test('blocks rapid repeated saves until a new product is presented', () => {
+  const ref = React.createRef<ProductAmountBottomSheetRef>();
+  const onSave = jest.fn();
+  const screen = render(<ProductAmountBottomSheet ref={ref} onSave={onSave} />);
+  act(() => ref.current?.present(product));
+  const button = screen.getByText('journal:nutritionLogger.barcodeProduct.add');
+  act(() => {
+    fireEvent.press(button);
+    fireEvent.press(button);
+  });
+  expect(onSave).not.toHaveBeenCalled();
+  expect(screen.getByTestId('nutrition-product-saving')).toBeTruthy();
+  const lockedButton = screen.getByTestId('nutrition-product-save-locked');
+  expect(lockedButton.props.onPress).toBeUndefined();
+  fireEvent.press(lockedButton);
+  fireEvent.press(lockedButton);
+  expect(onSave).not.toHaveBeenCalled();
+  expect(screen.getByRole('button', { name: 'journal:nutritionLogger.barcodeProduct.add' }).props.accessibilityState.disabled).toBe(true);
+  act(() => jest.advanceTimersByTime(50));
+  expect(onSave).toHaveBeenCalledTimes(1);
+  act(() => ref.current?.present(product));
+  fireEvent.press(screen.getByText('journal:nutritionLogger.barcodeProduct.add'));
+  act(() => jest.advanceTimersByTime(50));
+  expect(onSave).toHaveBeenCalledTimes(2);
 });
