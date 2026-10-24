@@ -22,6 +22,9 @@ export type XpBreakdown = {
 };
 
 export type NutritionXpClaim = {
+  // Kontrollsumma av periodens matlogg, tillskott och GI-uppföljning.
+  // Upptäcker ändrat underlag så att målstatusen kan räknas om, utan att lagra hela underlaget igen.
+  // Ändrade mål påverkar inte kontrollsumman: targets behåller målen och resultatet som gällde när de uppfylldes.
   inputSignature: string;
   targets: TipTargetItem[];
   xp: number;

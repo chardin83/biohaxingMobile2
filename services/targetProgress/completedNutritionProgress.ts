@@ -3,6 +3,7 @@ import type { DailyNutritionTracking, TipTargetItem, WeeklyNutritionTracking } f
 import type { NutritionXpClaim } from '@/app/context/storage/xp/xpTyptes';
 import type { SupplementTime } from '@/app/domain/SupplementTime';
 import type { NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
+import { stringChecksum } from '@/utils/stringChecksum';
 
 import { getTargetDates } from './dateRange';
 
@@ -29,11 +30,11 @@ export type NutritionCompletionInputs = {
 
 export function getNutritionInputSignature(period: NutritionTargetPeriod, date: string, inputs: NutritionCompletionInputs): string {
   const dates = getTargetDates(date, period);
-  return JSON.stringify({
+  return stringChecksum(JSON.stringify({
     days: dates.map(day => [day, inputs.dailyNutritionTracking[day] ?? null, inputs.takenDates[day] ?? [], inputs.dailyHabitTracking?.[day]?.glycemic_index_review ?? null]),
     weekly: period === 'weekly' ? inputs.weeklyNutritionTracking[dates[0]] ?? null
       : (inputs.weeklyNutritionTracking[getTargetDates(date, 'weekly')[0]] ?? []).filter(item => item.date === date),
-  });
+  }));
 }
 
 // XP claims remain stored even when their completion snapshot is no longer valid.

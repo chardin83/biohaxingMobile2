@@ -245,12 +245,12 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
         } => item.minutes !== null
       )
       .map(({ entry, minutes }) => {
-        console.log('[WearableSync] intense before bedtime', {
+        /*console.log('[WearableSync] intense before bedtime', {
           date: entry.date,
           lastIntenseExerciseAt: entry.lastIntenseExerciseAt,
           bedtime: userProfile.bedtime,
           minutes,
-        });
+        });*/
         return {
           metricId: 'intense_exercise_before_sleep',
           value: minutes,
