@@ -1,3 +1,4 @@
+import type { DailyHabitTracking } from '@/app/context/storage/habits/habitTypes';
 import type { DailyNutritionTracking, TipTargetItem, WeeklyNutritionTracking } from '@/app/context/storage/nutrition/nutritionTypes';
 import type { NutritionXpClaim } from '@/app/context/storage/xp/xpTyptes';
 import type { SupplementTime } from '@/app/domain/SupplementTime';
@@ -20,6 +21,7 @@ export function restoreCompletedNutritionTargets(current: TipTargetItem[], compl
 }
 
 export type NutritionCompletionInputs = {
+  dailyHabitTracking?: DailyHabitTracking;
   dailyNutritionTracking: DailyNutritionTracking;
   weeklyNutritionTracking: WeeklyNutritionTracking;
   takenDates: Record<string, SupplementTime[]>;
@@ -28,7 +30,7 @@ export type NutritionCompletionInputs = {
 export function getNutritionInputSignature(period: NutritionTargetPeriod, date: string, inputs: NutritionCompletionInputs): string {
   const dates = getTargetDates(date, period);
   return JSON.stringify({
-    days: dates.map(day => [day, inputs.dailyNutritionTracking[day] ?? null, inputs.takenDates[day] ?? []]),
+    days: dates.map(day => [day, inputs.dailyNutritionTracking[day] ?? null, inputs.takenDates[day] ?? [], inputs.dailyHabitTracking?.[day]?.glycemic_index_review ?? null]),
     weekly: period === 'weekly' ? inputs.weeklyNutritionTracking[dates[0]] ?? null
       : (inputs.weeklyNutritionTracking[getTargetDates(date, 'weekly')[0]] ?? []).filter(item => item.date === date),
   });

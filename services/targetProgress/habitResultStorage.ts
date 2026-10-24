@@ -13,7 +13,9 @@ export const getActiveHabitTarget = (plans: PlanTipEntry[], key: string, date: s
     const started = new Date(plan.startedAt);
     if (Number.isNaN(started.getTime()) || date < toDateKey(started)) continue;
     const tip = tips.find(item => item.id === plan.tipId);
-    const target = tip?.habitTargets?.find(item => item.trackingKey === key);
+    const target = tip?.habitTargets?.find(item => item.trackingKey === key) ?? (tip?.goalConfirmation?.trackingKey === key
+      ? { trackingKey: tip.goalConfirmation.trackingKey, amount: 1, unit: 'count' as const, inputMode: 'daily-check' as const }
+      : undefined);
     if (target) return { target, period: tip!.targetPeriod };
   }
   return undefined;

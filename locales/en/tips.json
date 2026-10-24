@@ -1,9 +1,20 @@
 {
   "glycemic_index": {
-    "title": "Understand the GI of your food",
-    "description": "GI (glycemic index) describes the blood glucose response to carbohydrate foods compared with glucose. Portion size, preparation and the rest of the meal also matter. Compare GI in the nutrition summary. Barcode values are used when available; AI can otherwise estimate them. Missing values appear as — and do not mean zero. Daily GI is weighted by carbohydrate amounts for entries with known GI and estimates only those entries.",
+    "title": "Review your GI every day",
+    "description": "GI (glycemic index) describes the blood glucose response to carbohydrates in a food compared with glucose. Lower GI generally means a smaller response to the same amount of available carbohydrate. Portion size, preparation, ripeness and the rest of the meal also matter. GI alone does not determine how healthy a food is.\n\nInsulin sensitivity: Insulin helps cells take up glucose from the blood. With insulin resistance, cells respond less well to insulin. GI can help you choose carbohydrate sources with a lower glucose response as part of eating habits that support metabolic health. Some research reports improved insulin-resistance markers with lower-GI diets, but results vary. Low GI or reviewing a chart does not guarantee prevention of insulin resistance. Physical activity, sleep, overall diet and weight management when appropriate also matter.\n\nEveryday choices: Vary fibre-rich carbohydrate sources such as pulses and whole grains, and consider portion sizes. Compare similar foods and preparations rather than simply chasing the lowest GI number.\n\nYour daily goal has two parts in one nutrition tip: log at least one carbohydrate-containing meal with known GI, and open the GI page using the goal link once a day. Both parts are needed to complete today’s tip. Review the trend, period average and coverage. After five seconds with the page active, today’s review is recorded automatically. The goal is to review your eating habits, not to reach a specific GI. Add the tip to your plan to activate the goal.\n\nReading the data: Daily GI is weighted by carbohydrate amounts in entries with known GI. The period average is the mean of daily values with known GI. Coverage is the proportion of all logged carbohydrates with known GI. Low coverage means the average describes only part of what you logged. Missing GI is not zero, and carbohydrate-free foods do not need GI. Catalog references and AI estimates may contribute. Missing GI in older meals is not filled in automatically.\n\nSources: NIDDK, Insulin Resistance & Prediabetes; Yu et al. 2025 (PMID 40018272); Sacks et al. 2014, OmniCarb (PMID 25514303).",
     "areas": {
-      "energy": "Explore how carbohydrate sources and preparation affect meal GI."
+      "energy": "GI helps compare carbohydrate sources and understand estimated meal glucose responses. Review both the average and how much logged food has known GI.",
+      "longevity": "GI can support food choices for metabolic health. Insulin sensitivity depends on several habits; lower GI does not guarantee protection against insulin resistance."
+    },
+    "habitTargets": {
+      "description": "Open the GI page once a day and review the average and coverage. Today’s goal is recorded after five seconds on the active page."
+    },
+    "goalReview": {
+      "link": "Open GI and coverage",
+      "pendingTitle": "Review today’s GI",
+      "pendingDescription": "Review GI and coverage. The review part is recorded after 5 seconds.",
+      "completedTitle": "Today’s GI review completed",
+      "completedDescription": "You reviewed GI today. Also log a meal with GI to complete the full daily tip."
     }
   },
   "profile_macro_goals": {

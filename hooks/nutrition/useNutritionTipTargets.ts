@@ -45,7 +45,7 @@ const getNutritionLabelGroup = (tag: string, unit: NutritionTargetUnit): Nutriti
 };
 
 export const useNutritionTipTargets = (dateKeys: string[]): Record<string, Record<string, TipTargetItem[]>> => {
-  const { plans, userProfile, dailyNutritionTracking, weeklyNutritionTracking, takenDates, nutritionCompletions: nutritionXpClaims } = useStorage();
+  const { plans, userProfile, dailyNutritionTracking, dailyHabitTracking, weeklyNutritionTracking, takenDates, nutritionCompletions: nutritionXpClaims } = useStorage();
 
   const { t } = useTranslation();
 
@@ -147,7 +147,7 @@ export const useNutritionTipTargets = (dateKeys: string[]): Record<string, Recor
         });
 
         for (const raw of tip.trackingTargets ?? []) {
-          const details = resolveDailyNutritionTargetDetails({ target: { ...raw, source: 'nutrition', period: 'daily', supplementIds: tipSupplementIds }, dateKey, dailyNutritionTracking, weeklyNutritionTracking, takenDates });
+          const details = resolveDailyNutritionTargetDetails({ target: { ...raw, source: 'nutrition', period: 'daily', supplementIds: tipSupplementIds }, dateKey, dailyNutritionTracking, dailyHabitTracking, weeklyNutritionTracking, takenDates });
           targets.push({ tag: raw.trackingKey, unit: raw.unit, period: 'daily', amount: raw.amount,
             actual: details.actual, foodActual: details.foodActual, supplementActual: details.supplementActual, supplementIds: tipSupplementIds,
             isMet: details.actual >= raw.amount,
@@ -159,5 +159,5 @@ export const useNutritionTipTargets = (dateKeys: string[]): Record<string, Recor
     });
 
     return result;
-  }, [dateKeys, plans, userProfile, dailyNutritionTracking, weeklyNutritionTracking, takenDates, nutritionXpClaims, t]);
+  }, [dateKeys, plans, userProfile, dailyNutritionTracking, dailyHabitTracking, weeklyNutritionTracking, takenDates, nutritionXpClaims, t]);
 };

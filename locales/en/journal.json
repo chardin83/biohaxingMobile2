@@ -206,6 +206,8 @@
       "plant_diversity": "Plant diversity"
     },
     "weeklyTrackingLabels": {
+      "glycemic_index_meals": "Log a meal with GI",
+      "glycemic_index_review": "Review GI using the link",
       "resistant_starch_meals": "Meals with resistant starch",
       "sulfur_rich_vegetables": "Sulfur-rich vegetables",
       "unique_plants": "Unique plants",

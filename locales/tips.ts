@@ -159,7 +159,8 @@ export type HabitTarget = {
     | 'balance_training'
     | 'nasal_breathing'
     | 'calming_music'
-    | 'hrv_recovery_review';
+    | 'hrv_recovery_review'
+    | 'glycemic_index_review';
   buttonLabels?: string[];
   lifeStyleKeys?: LifeStyleId[];
   inputMode?: HabitInputMode;
@@ -255,8 +256,27 @@ const rawTips: Tip[] = [
   {
     id: 'glycemic_index', level: 1, xp: 300,
     title: 'glycemic_index.title', descriptionKey: 'glycemic_index.description',
-    areas: [{ id: 'energy', descriptionKey: 'glycemic_index.areas.energy' }],
-    noNutritionTarget: true, planCategory: ['nutrition'], timeRule: 'anytime',
+    areas: [
+      { id: 'energy', descriptionKey: 'glycemic_index.areas.energy' },
+      { id: 'longevity', descriptionKey: 'glycemic_index.areas.longevity' },
+    ],
+    planCategory: ['nutrition'], timeRule: 'anytime',
+    targetPeriod: 'daily', targetIconName: 'target',
+    trackingTargets: [
+      { trackingKey: 'glycemic_index_meals', amount: 1, unit: 'count' },
+      { trackingKey: 'glycemic_index_review', amount: 1, unit: 'count' },
+    ],
+    goalLinks: [{
+      id: 'glycemic-index', titleKey: 'glycemic_index.goalReview.link', icon: 'chart',
+      href: { pathname: '/(stack)/plan/[tipId]/metric/[metricId]', params: { tipId: 'glycemic_index', metricId: 'glycemic_index' } },
+    }],
+    goalConfirmation: {
+      trackingKey: 'glycemic_index_review', seconds: 5,
+      pendingTitleKey: 'glycemic_index.goalReview.pendingTitle',
+      pendingDescriptionKey: 'glycemic_index.goalReview.pendingDescription',
+      completedTitleKey: 'glycemic_index.goalReview.completedTitle',
+      completedDescriptionKey: 'glycemic_index.goalReview.completedDescription',
+    },
   },
   {
     id: 'berberine',

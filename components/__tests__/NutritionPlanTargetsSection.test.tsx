@@ -67,3 +67,14 @@ it('shows all targets for a premium-blocked tip', () => {
   expect(screen.getByText('Svavelrika grönsaker')).toBeTruthy();
   expect(screen.getByText('journal:nutritionLogger.untrackedTargetsExplainer')).toBeTruthy();
 });
+
+it('offers the GI follow-up link inside the single nutrition goal card', () => {
+  const AppButton = require('../ui/AppButton').default;
+  const screen = render(<NutritionPlanTargetsSection {...props} untrackedTips={[]} nutritionPlanTipProgressByPeriod={{ daily: [{
+    tipId: 'glycemic_index', title: 'GI', period: 'daily', targets: [], metCount: 0, totalCount: 2, progress: 0, isFulfilled: false,
+  }], weekly: [] }} />);
+  const link = screen.UNSAFE_getAllByType(AppButton).find(button => button.props.title === 'tips:glycemic_index.goalReview.link');
+  expect(link).toBeTruthy();
+  link!.props.onPress();
+  expect(mockPush).toHaveBeenCalledWith({ pathname: '/(stack)/plan/[tipId]/metric/[metricId]', params: { tipId: 'glycemic_index', metricId: 'glycemic_index' } });
+});

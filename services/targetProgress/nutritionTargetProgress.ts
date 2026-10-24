@@ -1,3 +1,4 @@
+import type { DailyHabitTracking } from '@/app/context/storage/habits/habitTypes';
 import type {
   DailyNutritionSummary,
   DailyNutritionTracking,
@@ -7,6 +8,7 @@ import type {
 } from '@/app/context/storage/nutrition/nutritionTypes';
 import type { SupplementTime } from '@/app/domain/SupplementTime';
 import type { NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
+import { normalizeGlycemicIndex } from '@/utils/glycemicIndex';
 
 import { getTargetDates } from './dateRange';
 import type { NutritionTargetDefinition } from './targetProgressTypes';
@@ -231,6 +233,7 @@ export const resolveDailyNutritionTargetDetails = ({
   dateKey,
   dailyNutritionTracking,
   weeklyNutritionTracking = {},
+  dailyHabitTracking = {},
   takenDates = {},
   supplementIds,
 }: {
@@ -238,14 +241,26 @@ export const resolveDailyNutritionTargetDetails = ({
   dateKey: string;
   dailyNutritionTracking: DailyNutritionTracking;
   weeklyNutritionTracking?: WeeklyNutritionTracking;
+  dailyHabitTracking?: DailyHabitTracking;
   takenDates?: TakenDates;
   supplementIds?: readonly string[];
 }): NutritionTargetDetails => {
   const summary = dailyNutritionTracking[dateKey];
 
-  const foodActual = target.unit === 'items' || target.unit === 'count'
-    ? resolveWeeklyNutritionTarget({ target, selectedDate: dateKey, weeklyNutritionTracking, onlyDate: dateKey })
-    : resolveFoodActual({ target, summary });
+  let foodActual: number;
+  if (target.trackingKey === 'glycemic_index_meals') {
+    foodActual = (summary?.entries ?? []).filter(
+      entry =>
+        entry.type === 'meal' && Number.isFinite(entry.carbohydrates) && entry.carbohydrates > 0 && normalizeGlycemicIndex(entry.glycemicIndex) !== undefined
+    ).length;
+  } else if (target.trackingKey === 'glycemic_index_review') {
+    foodActual = dailyHabitTracking[dateKey]?.glycemic_index_review?.isFulfilled ? 1 : 0;
+  } else {
+    foodActual =
+      target.unit === 'items' || target.unit === 'count'
+        ? resolveWeeklyNutritionTarget({ target, selectedDate: dateKey, weeklyNutritionTracking, onlyDate: dateKey })
+        : resolveFoodActual({ target, summary });
+  }
 
   const resolvedSupplementIds = supplementIds ?? target.supplementIds ?? [];
   const supplementActual = resolveSupplementActual({ target, dateKey, takenDates, supplementIds: resolvedSupplementIds });
@@ -305,7 +320,10 @@ const resolveWeeklyNutritionTarget = ({
 }): number => {
   const weekStartKey = getTargetDates(selectedDate, 'weekly')[0];
 
-  const aggregated = aggregateWeeklyNutritionTracking(onlyDate ? { [weekStartKey]: (weeklyNutritionTracking[weekStartKey] ?? []).filter(item => item.date === onlyDate) } : weeklyNutritionTracking, weekStartKey);
+  const aggregated = aggregateWeeklyNutritionTracking(
+    onlyDate ? { [weekStartKey]: (weeklyNutritionTracking[weekStartKey] ?? []).filter(item => item.date === onlyDate) } : weeklyNutritionTracking,
+    weekStartKey
+  );
 
   const value = aggregated[target.trackingKey];
 
@@ -327,6 +345,7 @@ export const resolveNutritionTarget = ({
   selectedDate,
   dailyNutritionTracking,
   weeklyNutritionTracking,
+  dailyHabitTracking = {},
   takenDates = {},
   supplementIds,
 }: {
@@ -334,6 +353,7 @@ export const resolveNutritionTarget = ({
   selectedDate: string;
   dailyNutritionTracking: DailyNutritionTracking;
   weeklyNutritionTracking: WeeklyNutritionTracking;
+  dailyHabitTracking?: DailyHabitTracking;
   takenDates?: TakenDates;
   supplementIds?: readonly string[];
 }): number => {
@@ -350,6 +370,7 @@ export const resolveNutritionTarget = ({
     dateKey: selectedDate,
     dailyNutritionTracking,
     weeklyNutritionTracking,
+    dailyHabitTracking,
     takenDates,
     supplementIds,
   }).actual;

@@ -26,7 +26,7 @@ export default function TipGoalConfirmation({ tip }: Readonly<{ tip: Tip }>) {
   const today = toDateKey(new Date());
   const confirmation = tip.goalConfirmation;
   const key = confirmation?.trackingKey;
-  const eligible = key && getActiveHabitTarget(plans.other.filter(plan => plan.tipId === tip.id), key, today);
+  const eligible = key && getActiveHabitTarget([...plans.other, ...(plans.nutrition ?? [])].filter(plan => plan.tipId === tip.id), key, today);
   const completed = dailyHabitTracking[today]?.[key ?? '']?.isFulfilled === true;
   if (!eligible || !confirmation || !key) return null;
   return (

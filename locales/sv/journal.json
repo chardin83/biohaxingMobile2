@@ -206,6 +206,8 @@
       "plant_diversity": "Växtdiversitet"
     },
     "weeklyTrackingLabels": {
+      "glycemic_index_meals": "Logga en måltid med GI",
+      "glycemic_index_review": "Följ upp GI via länken",
       "resistant_starch_meals": "Måltider med resistent stärkelse",
       "sulfur_rich_vegetables": "Svavelrika grönsaker",
       "unique_plants": "Unika växter",

@@ -1,9 +1,20 @@
 {
   "glycemic_index": {
-    "title": "Lär känna matens GI",
-    "description": "GI (glykemiskt index) beskriver kolhydratmatens blodsockersvar jämfört med glukos. Portionsstorlek, tillagning och resten av måltiden spelar också roll. Jämför GI för dina registrerade livsmedel i näringsöversikten. Streckkodsdata används när värdet finns; annars kan AI uppskatta det. Saknat värde visas som — och betyder inte noll. Dagens GI viktas med kolhydratmängden för poster med känt GI och är en uppskattning för dessa poster.",
+    "title": "Följ ditt GI varje dag",
+    "description": "GI (glykemiskt index) beskriver hur kolhydraterna i ett livsmedel påverkar blodsockret jämfört med glukos. Ett lägre GI innebär normalt ett mindre blodsockersvar för samma mängd tillgängliga kolhydrater. Portionsstorlek, tillagning, mognad och resten av måltiden spelar också roll. GI säger därför inte ensamt hur hälsosam maten är.\n\nInsulinkänslighet: Insulin hjälper kroppens celler att ta upp glukos från blodet. Vid insulinresistens svarar cellerna sämre på insulin. GI kan vara ett verktyg för att välja kolhydratkällor med ett lägre blodsockersvar, som en del av matvanor som stödjer metabol hälsa. Viss forskning visar förbättrade mått på insulinresistens med kost med lägre GI, men resultaten varierar. Lågt GI eller att följa ett diagram garanterar inte att insulinresistens förebyggs. Rörelse, sömn, kostens helhet och vikt vid behov har också betydelse.\n\nAnvänd i vardagen: Variera fiberrika kolhydratkällor som baljväxter och fullkorn, och se till portionsstorleken. Jämför liknande livsmedel och tillagningssätt snarare än att bara jaga det lägsta GI-talet.\n\nDitt dagliga mål har två delar i samma nutritionstips: logga minst en måltid med kolhydrater och känt GI, och öppna GI-sidan via mållänken en gång per dag. Båda delarna behövs för att dagens tips ska vara uppfyllt. Titta på utvecklingen, periodens snitt och täckningen. När sidan är aktiv i fem sekunder registreras dagens uppföljning automatiskt. Målet gäller att följa upp dina matvanor, inte att nå ett visst GI. Lägg till tipset i planen för att aktivera målet.\n\nSå läser du värdena: Dagens GI viktas efter kolhydratmängden i poster med känt GI. Periodens snitt är genomsnittet av dagsvärden med känt GI. Täckningen visar hur stor andel av alla loggade kolhydrater som har GI. Låg täckning betyder att snittet bara beskriver en del av det du loggat. Saknat GI betyder inte noll, och mat utan kolhydrater behöver inget GI. Katalogreferenser och AI-uppskattningar kan ingå. Gamla måltider med saknat GI fylls inte automatiskt i.\n\nKällor: NIDDK, Insulin Resistance & Prediabetes; Yu m.fl. 2025 (PMID 40018272); Sacks m.fl. 2014, OmniCarb (PMID 25514303).",
     "areas": {
-      "energy": "Utforska hur olika kolhydratkällor och tillagning påverkar måltidens GI."
+      "energy": "GI kan hjälpa dig jämföra kolhydratkällor och förstå måltidernas uppskattade blodsockersvar. Följ både snittet och hur stor del av maten som har känt GI.",
+      "longevity": "GI kan vara ett stöd i matval för metabol hälsa. Insulinkänslighet påverkas av flera vanor; ett lägre GI är ingen garanti mot insulinresistens."
+    },
+    "habitTargets": {
+      "description": "Öppna GI-sidan en gång om dagen och gå igenom snittet och täckningen. Dagens mål registreras efter fem sekunder på den aktiva sidan."
+    },
+    "goalReview": {
+      "link": "Öppna GI och täckning",
+      "pendingTitle": "Följ upp dagens GI",
+      "pendingDescription": "Titta på GI och täckningen. Delmålet för uppföljning registreras efter 5 sekunder.",
+      "completedTitle": "Dagens GI-uppföljning klar",
+      "completedDescription": "Du har följt upp GI idag. Logga också en måltid med GI för att klara hela dagens tips."
     }
   },
   "profile_macro_goals": {

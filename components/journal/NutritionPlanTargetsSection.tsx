@@ -11,10 +11,10 @@ import { globalStyles } from '@/app/theme/globalStyles';
 import TipTarget from '@/components/TipTarget';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import PremiumLink from '@/components/ui/PremiumLink';
-import type { Tip } from '@/locales/tips';
+import { type Tip, tips } from '@/locales/tips';
 import { formatMonthDay, toDateKey } from '@/utils/dateUtils';
 import { getTipProgressKey } from '@/utils/nutritionTipProgress';
-import { getMissingNutritionSettings,getTipProteinGoal } from '@/utils/resolveNutritionTip';
+import { getMissingNutritionSettings, getTipProteinGoal } from '@/utils/resolveNutritionTip';
 
 import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
@@ -66,6 +66,7 @@ const TipProgressRow: React.FC<TipProgressRowProps> = ({
   language,
   router,
 }) => {
+  const goalLinks = tips.find(definition => definition.id === tip.tipId)?.goalLinks;
   const tipKey = getTipProgressKey(tip);
   const completionAnim = getCompletionAnimValue(tipKey);
   const dateKey = tip.dateKey ?? toDateKey(new Date());
@@ -172,6 +173,17 @@ const TipProgressRow: React.FC<TipProgressRowProps> = ({
               <TipTarget key={`${tip.tipId}-${target.tag}-${target.unit}-${target.period}`} tip={tip} target={target} colors={colors} />
             ))
           )}
+          {!isNotActiveYet &&
+            goalLinks?.map(link => (
+              <AppButton
+                key={link.id}
+                title={t(`tips:${link.titleKey}`)}
+                icon={link.icon}
+                rightIcon="chevron.right"
+                onPress={() => router.push(link.href)}
+                style={styles.appButtonGoalLink}
+              />
+            ))}
         </View>
       </Animated.View>
     </JournalGoalAnchor>
@@ -389,10 +401,16 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                             {missing.proteinGoal && (
                               <View style={styles.profileRow}>
                                 <ThemedText type="explainer" style={globalStyles.flex1}>
-                                  {t(tip.requiresMacroSetup ? 'common:nutritionTargetSection.macroSetupRequired' : 'common:nutritionTargetSection.proteinGoalRequired')}
+                                  {t(
+                                    tip.requiresMacroSetup
+                                      ? 'common:nutritionTargetSection.macroSetupRequired'
+                                      : 'common:nutritionTargetSection.proteinGoalRequired'
+                                  )}
                                 </ThemedText>
                                 <DiscreetButton
-                                  title={t(tip.requiresMacroSetup ? 'common:nutritionTargetSection.setMacroGoals' : 'common:nutritionTargetSection.setProteinGoal')}
+                                  title={t(
+                                    tip.requiresMacroSetup ? 'common:nutritionTargetSection.setMacroGoals' : 'common:nutritionTargetSection.setProteinGoal'
+                                  )}
                                   onPress={() => router.push('/settings/nutrition')}
                                   icon="person"
                                   rightIcon="chevron.right"
@@ -516,6 +534,9 @@ const styles = StyleSheet.create({
   notActiveText: {
     marginTop: 2,
     marginBottom: 2,
+  },
+  appButtonGoalLink: {
+    marginTop: 8,
   },
   emptyTargetsContainer: {
     paddingVertical: 32,

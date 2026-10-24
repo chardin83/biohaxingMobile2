@@ -9,7 +9,7 @@ import TipGoalConfirmation from '../metrics/TipGoalConfirmation';
 const tip = tips.find(item => item.id === 'hrv_recovery_monitoring')!;
 
 const mockLog = jest.fn();
-const mockStorage = { plans: { other: [{ tipId: 'hrv_recovery_monitoring', startedAt: '2026-01-01' }] }, dailyHabitTracking: {} as Record<string, Record<string, { isFulfilled: boolean }>> };
+const mockStorage = { plans: { other: [{ tipId: 'hrv_recovery_monitoring', startedAt: '2026-01-01' }], nutrition: [] as { tipId: string; startedAt: string }[] }, dailyHabitTracking: {} as Record<string, Record<string, { isFulfilled: boolean }>> };
 jest.mock('@/app/context/StorageContext', () => ({ useStorage: () => mockStorage }));
 jest.mock('@/hooks/useHabitTracking', () => ({ useHabitTracking: () => ({ logHabit: mockLog }) }));
 jest.mock('@react-navigation/native', () => ({ useIsFocused: () => true, useTheme: () => ({ colors: jest.requireActual('@/app/theme/Colors').Colors.light }) }));
@@ -22,6 +22,7 @@ beforeEach(() => {
   jest.setSystemTime(new Date('2026-10-11T12:00:00Z'));
   mockLog.mockClear();
   mockStorage.dailyHabitTracking = {};
+  mockStorage.plans.nutrition = [];
   mockStorage.plans.other = [{ tipId: 'hrv_recovery_monitoring', startedAt: '2026-01-01' }];
 });
 afterEach(() => jest.useRealTimers());
@@ -60,4 +61,26 @@ it('uses the tip configuration for the countdown and confirmation text', () => {
 it('does not show a confirmation for a tip without that configuration', () => {
   const screen = render(<TipGoalConfirmation tip={{ ...tip, goalConfirmation: undefined }} />);
   expect(screen.queryByTestId('countdown-circle')).toBeNull();
+});
+
+it('records the GI review once after five seconds and keeps it separate from HRV', () => {
+  const gi = tips.find(item => item.id === 'glycemic_index')!;
+  mockStorage.plans.other = [];
+  mockStorage.plans.nutrition = [{ tipId: 'glycemic_index', startedAt: '2026-01-01' }];
+  const screen = render(<TipGoalConfirmation tip={gi} />);
+  act(() => jest.advanceTimersByTime(4900));
+  expect(mockLog).not.toHaveBeenCalled();
+  act(() => jest.advanceTimersByTime(100));
+  expect(mockLog).toHaveBeenCalledWith({ trackingKey: 'glycemic_index_review', selectedDate: '2026-10-11', value: 1, slot: 'daily' });
+  mockStorage.dailyHabitTracking = { '2026-10-11': { glycemic_index_review: { isFulfilled: true } } };
+  screen.rerender(<TipGoalConfirmation tip={gi} />);
+  expect(screen.getByText('glycemic_index.goalReview.completedTitle')).toBeTruthy();
+  expect(screen.queryByTestId('countdown-circle')).toBeNull();
+  act(() => jest.advanceTimersByTime(10000));
+  expect(mockLog).toHaveBeenCalledTimes(1);
+});
+
+it('links the GI goal directly to its metric page with the daily confirmation context', () => {
+  const gi = tips.find(item => item.id === 'glycemic_index')!;
+  expect(gi.goalLinks?.[0].href).toEqual({ pathname: '/(stack)/plan/[tipId]/metric/[metricId]', params: { tipId: 'glycemic_index', metricId: 'glycemic_index' } });
 });

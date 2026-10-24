@@ -773,11 +773,11 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
 
   const addHabitEntry = useCallback(
     (dateKey: string, trackingKey: string, entry: HabitEntry) => {
-      const result = prepareManualHabitResult(plansState.other, trackingKey, dateKey, entry);
+      const result = prepareManualHabitResult([...plansState.other, ...plansState.nutrition], trackingKey, dateKey, entry);
       if (!result) return;
       setDailyHabitTracking(prev => addHabitEntryToTracking(prev, dateKey, trackingKey, result));
     },
-    [setDailyHabitTracking, plansState.other]
+    [setDailyHabitTracking, plansState.other, plansState.nutrition]
   );
 
   const updateHabitEntry = useCallback(
@@ -785,11 +785,11 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       setDailyHabitTracking(prev => {
         const existing = prev[dateKey]?.[trackingKey];
         if (!existing) return prev;
-        const result = prepareManualHabitResult(plansState.other, trackingKey, dateKey, { ...existing, ...updates });
+        const result = prepareManualHabitResult([...plansState.other, ...plansState.nutrition], trackingKey, dateKey, { ...existing, ...updates });
         return result ? updateHabitEntryInTracking(prev, dateKey, trackingKey, result) : prev;
       });
     },
-    [setDailyHabitTracking, plansState.other]
+    [setDailyHabitTracking, plansState.other, plansState.nutrition]
   );
 
   const removeHabitEntry = useCallback(
@@ -1146,6 +1146,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
 
       const inputSignature = getNutritionInputSignature(period, periodKey, {
         dailyNutritionTracking: dailyNutritionTrackingState,
+        dailyHabitTracking: dailyHabitTrackingState,
         weeklyNutritionTracking: weeklyNutritionTrackingState,
         takenDates: takenDatesState,
       });
@@ -1179,7 +1180,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
 
       return amount;
     },
-    [awardXP, nutritionXpClaimsState, dailyNutritionTrackingState, weeklyNutritionTrackingState, takenDatesState]
+    [awardXP, nutritionXpClaimsState, dailyNutritionTrackingState, dailyHabitTrackingState, weeklyNutritionTrackingState, takenDatesState]
   );
 
   const clearNutritionXP = useCallback(() => {
@@ -1306,6 +1307,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       nutritionXpClaims: nutritionXpClaimsState,
       nutritionCompletions: getCurrentNutritionCompletions(nutritionXpClaimsState, {
         dailyNutritionTracking: dailyNutritionTrackingState,
+        dailyHabitTracking: dailyHabitTrackingState,
         weeklyNutritionTracking: weeklyNutritionTrackingState,
         takenDates: takenDatesState,
       }),

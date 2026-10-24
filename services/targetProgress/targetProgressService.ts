@@ -44,6 +44,7 @@ export const getTargetProgress = ({
         selectedDate,
         dailyNutritionTracking: storage.dailyNutritionTracking,
         weeklyNutritionTracking: storage.weeklyNutritionTracking,
+        dailyHabitTracking: storage.dailyHabitTracking,
         takenDates: storage.takenDates,
       });
       break;
