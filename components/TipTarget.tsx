@@ -6,6 +6,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { TipTargetItem, WeeklyTrackingItem } from '@/app/context/storage/nutrition/nutritionTypes';
 import { getTipTargetIconName } from '@/locales/tips';
 import { type NutritionTargetUnit } from '@/types/nutrition/nutritionTargets';
+import { toDateKey } from '@/utils/dateUtils';
 import { formatWithUnit } from '@/utils/formatters';
 import { getNutritionTargetMedalEmoji, getNutritionTargetMedalType } from '@/utils/medals';
 
@@ -67,7 +68,7 @@ const TipTarget: React.FC<TipTargetProps> = ({ tip, target, colors }) => {
   const amountValueText = valueFormatter(target.amount, target.unit, target.tag);
   const targetValueText = `${currentValueText} / ${amountValueText}` + (medalEmoji ? ` ${medalEmoji}` : '');
 
-  const dateKey = tip.dateKey ?? new Date().toISOString().split('T')[0];
+  const dateKey = tip.dateKey ?? toDateKey(new Date());
 
   const openTargetDetails = () => {
     router.push({

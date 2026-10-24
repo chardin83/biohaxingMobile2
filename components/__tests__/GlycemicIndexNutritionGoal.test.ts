@@ -61,3 +61,10 @@ it('invalidates a completion snapshot if the review is undone', () => {
   mockStorage.dailyHabitTracking = { [date]: { glycemic_index_review: { value: 1, isFulfilled: true } } };
   expect(getNutritionInputSignature('daily', date, mockStorage)).not.toBe(signature);
 });
+
+it('carries the selected journal date on the progress item when browsing history', () => {
+  const { result, rerender } = renderHook(({ selectedDate }: { selectedDate: string }) => useNutritionPlanProgress(selectedDate), { initialProps: { selectedDate: '2026-10-10' } });
+  expect(result.current[0].dateKey).toBe('2026-10-10');
+  rerender({ selectedDate: '2026-10-09' });
+  expect(result.current[0].dateKey).toBe('2026-10-09');
+});

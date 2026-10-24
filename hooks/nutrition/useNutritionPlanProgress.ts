@@ -85,6 +85,7 @@ export const useNutritionPlanProgress = (selectedDate: string): TipProgressItem[
       if (!existing) {
         byTip.set(item.tipId, {
           tipId: item.tipId,
+          dateKey: selectedDate,
 
           title: item.title,
 
