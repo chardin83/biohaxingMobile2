@@ -1,4 +1,7 @@
 {
+  "tipDetails": {
+    "openHint": "Opens information about this tip."
+  },
   "alcoholLoggingInfo": {
     "title": "Alcohol in your lifestyle log",
     "description": "When you log an alcoholic drink in the journal, alcohol consumption is also recorded in your lifestyle log.",
@@ -261,6 +264,10 @@
       "description": "Point the camera at the product's barcode",
       "cameraPermission": "Camera permission is required to scan barcodes.",
       "allowCamera": "Allow camera",
+      "manualDescription": "Can't scan the barcode? Enter the number manually.",
+      "barcode": "Barcode",
+      "barcodePlaceholder": "E.g. 7310865004703",
+      "search": "Find product",
       "productNotFoundTitle": "Product not found",
       "productNotFoundMessage": "The product is not available in Open Food Facts.",
       "lookupFailedTitle": "Lookup failed",
@@ -283,10 +290,6 @@
       "nutritionForAmount": "Nutrition for selected amount",
       "add": "Add",
       "nutritionCalculatedPer100g": "Nutrition calculated from values per 100 g",
-      "manualDescription": "Can't scan the barcode? Enter the number manually.",
-      "barcode": "Barcode",
-      "barcodePlaceholder": "E.g. 7310865004703",
-      "search": "Find product",
       "nutritionCalculatedPer100ml": "Nutrition values calculated from values per 100 ml",
       "nutritionCalculatedPerMeal": "Nutrition values for the whole meal (100 % = the logged amount)",
       "analyzePremium": "Add Premium analysis",

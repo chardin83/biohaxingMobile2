@@ -1,4 +1,7 @@
 {
+  "tipDetails": {
+    "openHint": "Öppnar information om tipset."
+  },
   "alcoholLoggingInfo": {
     "title": "Alkohol i din livsstilslogg",
     "description": "När du loggar en alkoholhaltig dryck i journalen registreras alkoholintaget även i din livsstilslogg.",

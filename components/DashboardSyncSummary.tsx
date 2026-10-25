@@ -14,12 +14,13 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { ONBOARDING_FINISH_STEPS } from '@/constants/onboarding';
 import { getPlannedGoalCategories, type GoalCategory } from '@/services/targetProgress/plannedGoalCategories';
 import { toDateKey } from '@/utils/dateUtils';
+import { getPendingNutritionSetupTipId } from '@/utils/pendingNutritionSetup';
 import { useWearable } from '@/wearables/wearableProvider';
 
 function useDashboardSummary() {
   const { t } = useTranslation('common');
   const { colors } = useTheme();
-  const { automaticHabitSummary, plans, onboardingStep, setOnboardingStep, hideHealthSyncPrompt, dailyNutritionTracking } = useStorage();
+  const { automaticHabitSummary, plans, onboardingStep, setOnboardingStep, hideHealthSyncPrompt, dailyNutritionTracking, userProfile } = useStorage();
   const { syncError } = useWearable();
   const [dismissed, setDismissed] = React.useState(false);
   const [welcomeStep, setWelcomeStep] = React.useState<number | null>(null);
@@ -43,13 +44,19 @@ function useDashboardSummary() {
   const hasProgress = !isPending && !syncError && (automaticHabitSummary?.newGoalsCount ?? 0) > 0;
   const isWelcome = !isPending && !syncError && !hasProgress && plannedCategories.size === 0;
   const isUpToDate = !isPending && !syncError && !isWelcome && (automaticHabitSummary?.newGoalsCount ?? 0) === 0;
-  const actions = getSummaryActions(showFirstMeal, hideHealthSyncPrompt, plannedCategories);
+  const pendingSetupTipId = React.useMemo(() => getPendingNutritionSetupTipId((plans ?? EMPTY_PLANS).nutrition, userProfile), [plans, userProfile]);
+  React.useEffect(() => {
+    if (pendingSetupTipId) setDismissed(false);
+  }, [pendingSetupTipId]);
+  const suggestions = getSummaryActions(showFirstMeal, hideHealthSyncPrompt, plannedCategories, pendingSetupTipId);
+  const actions = hasProgress ? suggestions.filter(action => action === 'setup') : suggestions;
   const { accent, text: foreground, background: cardBackground, border: cardBorder, iconBackground } = colors.dashboardSync;
   const { titleKey, descriptionKey, headingIcon } = getSummaryHeading(isPending, !!syncError, isWelcome, isUpToDate);
   const title = t(titleKey);
   return {
     t,
     actions,
+    pendingSetupTipId,
     dismissed,
     dismiss,
     setDismissed,
@@ -75,10 +82,16 @@ function useDashboardSummary() {
   };
 }
 
-type SummaryActionKey = 'meal' | 'health' | GoalCategory | 'manual';
+type SummaryActionKey = 'setup' | 'meal' | 'health' | GoalCategory | 'manual';
 
-function getSummaryActions(showFirstMeal: boolean, hideHealthSyncPrompt: boolean, plannedCategories: ReadonlySet<GoalCategory>): SummaryActionKey[] {
+function getSummaryActions(
+  showFirstMeal: boolean,
+  hideHealthSyncPrompt: boolean,
+  plannedCategories: ReadonlySet<GoalCategory>,
+  pendingSetupTipId?: string
+): SummaryActionKey[] {
   const actions: SummaryActionKey[] = [];
+  if (pendingSetupTipId) actions.push('setup');
   if (showFirstMeal) actions.push('meal');
   if (!hideHealthSyncPrompt) actions.push('health');
   for (const category of ['nutrition', 'other', 'training'] as const) {
@@ -114,7 +127,7 @@ function OnboardingSummary({ state }: Readonly<{ state: SummaryState }>) {
         <CloseButton onPress={dismiss} color={accent} />
       </View>
       <SummaryCountdown state={state} />
-      <SummaryActions actions={state.actions} />
+      <SummaryActions actions={state.actions} pendingSetupTipId={state.pendingSetupTipId} />
     </View>
   );
 }
@@ -143,12 +156,8 @@ function SyncSummary({ state }: Readonly<{ state: SummaryState }>) {
         <CloseButton onPress={dismiss} color={accent} />
       </View>
 
-      {!state.hasProgress && (
-        <>
-          <SummaryCountdown state={state} />
-          <SummaryActions actions={state.actions} />
-        </>
-      )}
+      <SummaryCountdown state={state} />
+      <SummaryActions actions={state.actions} pendingSetupTipId={state.pendingSetupTipId} />
     </View>
   );
 }
@@ -182,19 +191,40 @@ function SummaryInformation({ state }: Readonly<{ state: SummaryState }>) {
   );
 }
 
-function SummaryActions({ actions }: Readonly<{ actions: SummaryActionKey[] }>) {
+function SummaryActions({ actions, pendingSetupTipId }: Readonly<{ actions: SummaryActionKey[]; pendingSetupTipId?: string }>) {
   return (
     <>
       {actions.map(action => (
-        <DashboardAction key={action} action={action} />
+        <DashboardAction key={action} action={action} pendingSetupTipId={pendingSetupTipId} />
       ))}
     </>
   );
 }
 
-function DashboardAction({ action }: Readonly<{ action: SummaryActionKey }>) {
+function DashboardAction({ action, pendingSetupTipId }: Readonly<{ action: SummaryActionKey; pendingSetupTipId?: string }>) {
   const { t } = useTranslation('common');
   const router = useRouter();
+  if (action === 'setup') {
+    if (!pendingSetupTipId) return null;
+    return (
+      <SummaryAction
+        icon="settings"
+        title={t('dashboard.sync.completeSetupTitle')}
+        description={t('dashboard.sync.completeSetupDescription')}
+        onPress={() =>
+          router.push({
+            pathname: '/(tabs)/journal',
+            params: {
+              selectedDate: toDateKey(new Date()),
+              openTab: 'meal',
+              focusTipId: pendingSetupTipId,
+              focusRequestId: String(Date.now()),
+            },
+          })
+        }
+      />
+    );
+  }
   if (action === 'meal')
     return (
       <SummaryAction

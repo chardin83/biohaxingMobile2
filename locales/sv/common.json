@@ -813,6 +813,8 @@
       "upToDateDescription": "Inga nya mål sedan senaste besöket.",
       "welcomeTitle": "Välkommen!",
       "welcomeDescription": "Kom igång med att välja ditt första mål.",
+      "completeSetupTitle": "Slutför inställningar",
+      "completeSetupDescription": "Ange uppgifter som behövs för personliga mål",
       "firstMealTitle": "Lägg in din första måltid",
       "firstTipTitle": "Lägg till ditt första tips",
       "firstTipDescription": "Lägg till bra vanor, nutrition eller träning.",

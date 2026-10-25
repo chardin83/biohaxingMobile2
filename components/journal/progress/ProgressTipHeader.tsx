@@ -5,6 +5,8 @@ import { ThemedText } from '@/components/ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { getTipTargetIconName } from '@/locales/tips';
 
+import TipTitleLink from '../TipTitleLink';
+
 type ProgressTipHeaderProps = {
   tipId: string;
   title: string;
@@ -23,9 +25,7 @@ const ProgressTipHeader = ({ tipId, title, progress, progressColor }: ProgressTi
           <IconSymbol name={icon} size={20} color={colors.textMuted} />
         </View>
       )}
-      <ThemedText type="defaultSemiBold" style={styles.title}>
-        {title}
-      </ThemedText>
+      <TipTitleLink tipId={tipId} title={title} style={styles.title} />
       {progress && (
         <ThemedText type="title3" style={{ color: progressColor }}>
           {progress}

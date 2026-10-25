@@ -813,6 +813,8 @@
       "upToDateDescription": "No new goals since your last visit.",
       "welcomeTitle": "Welcome!",
       "welcomeDescription": "Get started by choosing your first goal.",
+      "completeSetupTitle": "Complete your setup",
+      "completeSetupDescription": "Enter the details needed for your personal goals",
       "firstMealTitle": "Log your first meal",
       "firstTipTitle": "Add your first tip",
       "firstTipDescription": "Add good habits, nutrition or training.",

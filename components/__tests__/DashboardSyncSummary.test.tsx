@@ -3,6 +3,7 @@ import i18next from 'i18next';
 import React from 'react';
 import { Platform } from 'react-native';
 
+import type { UserProfile } from '@/app/context/storage/userProfile/userProfileTypes';
 import { EMPTY_PLANS, type PlansByCategory, type PlanTipEntry } from '@/app/context/storage/plans/planTypes';
 import { useStorage } from '@/app/context/StorageContext';
 import { DashboardSyncSummary } from '@/components/DashboardSyncSummary';
@@ -11,9 +12,22 @@ import { tips } from '@/locales/tips';
 import { GOAL_CATEGORIES, type GoalCategory } from '@/services/targetProgress/plannedGoalCategories';
 import { useWearable } from '@/wearables/wearableProvider';
 
+const completeProfile: UserProfile = {
+  birthDate: '1990-01-01',
+  weightKg: 70,
+  heightCm: 170,
+  biologicalSex: 'female',
+  activityPal: 1.6,
+  nutritionGuideCompleted: true,
+  nutritionEnergySource: 'henry',
+  nutritionDistribution: 'balanced',
+  nutritionGoals: { protein: 140, carbohydrates: 220, fat: 65 },
+};
+let mockUserProfile: UserProfile = { ...completeProfile };
 let mockNutritionEntries: Array<{ type: 'meal' | 'food' | 'drink' }> = [{ type: 'meal' }];
 beforeEach(() => {
   jest.clearAllMocks();
+  mockUserProfile = { ...completeProfile };
   mockNutritionEntries = [{ type: 'meal' }];
 });
 const mockPush = jest.fn();
@@ -63,6 +77,7 @@ function setSummary(
     automaticHabitSummary: { isReady, newGoalsCount: count },
     dailyNutritionTracking: { '2026-01-01': { entries: mockNutritionEntries } },
     plans,
+    userProfile: mockUserProfile,
     onboardingStep,
     setOnboardingStep: mockSetOnboardingStep,
     healthSyncEnabled,
@@ -323,4 +338,63 @@ it('prioritizes actual progress over the onboarding welcome and keeps a normal s
   setSummary(false, 0);
   const loading = render(<DashboardSyncSummary />);
   expect(loading.queryByRole('button', { name: /Synkar dina framsteg/ })).toBeNull();
+});
+
+function plansWithNutritionTip(tipId: string): PlansByCategory {
+  const plans = plansFor(GOAL_CATEGORIES);
+  return { ...plans, nutrition: [{ ...plans.nutrition[0], tipId }] };
+}
+
+it('puts missing personal setup before meals and health, and links to that untracked goal in the journal', () => {
+  mockUserProfile = {};
+  mockNutritionEntries = [];
+  const plans = plansWithNutritionTip('protein_rotation');
+  setSummary(false, 0, null, plans, 7);
+  const screen = render(<DashboardSyncSummary />);
+  expect(actionTitles(screen)).toEqual(['Slutför inställningar', mealTitle]);
+  expect(screen.getByText('Ange uppgifter som behövs för personliga mål')).toBeTruthy();
+  fireEvent.press(screen.getByRole('button', { name: 'Slutför inställningar' }));
+  expect(mockPush).toHaveBeenCalledWith({
+    pathname: '/(tabs)/journal',
+    params: {
+      selectedDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
+      openTab: 'meal',
+      focusTipId: 'protein_rotation',
+      focusRequestId: expect.any(String),
+    },
+  });
+  setSummary(true, 0, null, plans, 7);
+  screen.rerender(<DashboardSyncSummary />);
+  expect(actionTitles(screen)).toEqual(['Slutför inställningar', mealTitle]);
+  mockUserProfile = { ...completeProfile };
+  setSummary(true, 0, null, plans, 7);
+  screen.rerender(<DashboardSyncSummary />);
+  expect(actionTitles(screen)).toEqual([mealTitle, healthTitle()]);
+});
+
+it('does not promote goals that are untracked only because of Premium', () => {
+  const tip = tips.find(item => item.id === 'plant_diversity_30_week')!;
+  mockUserProfile = {};
+  setSummary(true, 0, null, plansWithNutritionTip(tip.id), 7, true, true);
+  const screen = render(<DashboardSyncSummary />);
+  expect(screen.queryByText('Slutför inställningar')).toBeNull();
+});
+
+it('keeps required setup above other suggestions even when new progress is shown', () => {
+  mockUserProfile = {};
+  setSummary(true, 1, null, plansWithNutritionTip('protein_rotation'), 7);
+  const screen = render(<DashboardSyncSummary />);
+  expect(screen.getByText('Nya framsteg!')).toBeTruthy();
+  expect(actionTitles(screen)).toEqual(['Slutför inställningar']);
+});
+
+it('restores a dismissed summary when a newly added goal needs setup', () => {
+  setSummary(true, 0);
+  const screen = render(<DashboardSyncSummary />);
+  fireEvent.press(screen.getByRole('button', { name: 'Stäng' }));
+  expect(screen.queryByTestId('dashboard-sync-summary')).toBeNull();
+  mockUserProfile = {};
+  setSummary(true, 0, null, plansWithNutritionTip('protein_rotation'), 7);
+  screen.rerender(<DashboardSyncSummary />);
+  expect(actionTitles(screen)[0]).toBe('Slutför inställningar');
 });

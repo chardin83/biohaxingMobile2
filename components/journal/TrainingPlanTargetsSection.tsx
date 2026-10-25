@@ -17,6 +17,7 @@ import type { TargetPeriod, TrainingTargetDefinition } from '@/services/targetPr
 
 import JournalGoalAnchor from './JournalGoalAnchor';
 import ProgressButton from './ProgressButton';
+import TipTitleLink from './TipTitleLink';
 
 type TrainingPlanTargetsSectionProps = {
   selectedDate: string;
@@ -195,9 +196,7 @@ export const TrainingPlanTargetsSection: React.FC<TrainingPlanTargetsSectionProp
         ]}
       >
         <View style={styles.tipHeader}>
-          <ThemedText type="defaultSemiBold" style={styles.tipTitle}>
-            {tip.title}
-          </ThemedText>
+          <TipTitleLink tipId={tip.tipId} title={tip.title} style={styles.tipTitle} />
 
           {tip.isFulfilled && <Icon source="check-circle" size={34} color={colors.xp} />}
         </View>

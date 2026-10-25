@@ -24,6 +24,7 @@ import OptionSelector from '../ui/OptionSelector';
 import JournalGoalAnchor from './JournalGoalAnchor';
 import ProgressButton from './ProgressButton';
 import { RegisterHabitValueBottomSheet } from './RegisterHabitValueBottomSheet';
+import TipTitleLink from './TipTitleLink';
 
 type OtherTipProgress = {
   tipId: string;
@@ -388,9 +389,7 @@ export default function OtherLoggerTab({
     return (
       <JournalGoalAnchor tipId={item.tipId} key={`${item.tipId}-${item.trackingKey}`} style={styles.tip}>
         <View style={styles.header}>
-          <ThemedText type="title3" style={styles.title}>
-            {item.title}
-          </ThemedText>
+          <TipTitleLink tipId={item.tipId} title={item.title} type="title3" style={styles.title} />
 
           {item.isFulfilled && (
             <Pressable accessibilityRole="button" accessibilityLabel={t('journal:otherTips.showCompletionButtons')} onPress={() => toggleExpanded(item.tipId)}>

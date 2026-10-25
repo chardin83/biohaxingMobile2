@@ -2,7 +2,7 @@ import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 
 import { TipProgressItem, TipTargetPeriod } from '@/app/context/storage/nutrition/nutritionTypes';
@@ -22,6 +22,7 @@ import { Card } from '../ui/Card';
 import DiscreetButton from '../ui/DiscreetButton';
 import JournalGoalAnchor from './JournalGoalAnchor';
 import ProgressButton from './ProgressButton';
+import TipTitleLink from './TipTitleLink';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -115,24 +116,7 @@ const TipProgressRow: React.FC<TipProgressRowProps> = ({
           ]}
         >
           <View style={styles.planTipProgressHeader}>
-            <TouchableOpacity
-              activeOpacity={0.7}
-              disabled={!tip.areaId}
-              onPress={() => {
-                if (!tip.areaId) return;
-                router.push({
-                  pathname: `/dashboard/area/${tip.areaId}/details` as any,
-                  params: {
-                    tipId: tip.tipId,
-                  },
-                });
-              }}
-              style={styles.tipTitleButton}
-            >
-              <ThemedText type="defaultSemiBold" style={styles.fulfilledTipTextBlock}>
-                {tip.title}
-              </ThemedText>
-            </TouchableOpacity>
+            <TipTitleLink tipId={tip.tipId} title={tip.title} style={styles.tipTitleButton} />
             {tip.isFulfilled && <Icon source="check-circle" size={34} color={colors.xp} />}
           </View>
 
@@ -366,21 +350,10 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                           index < untrackedTips.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.textMuted },
                         ]}
                       >
-                        <TouchableOpacity
-                          accessibilityRole="link"
-                          onPress={() =>
-                            router.push({
-                              pathname: `/dashboard/area/${tip.areas[0].id}/details` as any,
-                              params: { tipId: tip.id },
-                            })
-                          }
-                          style={styles.untrackedTipTitle}
-                        >
-                          <ThemedText type="defaultSemiBold" style={styles.untrackedTitleText}>
-                            {t(`tips:${tip.title}`)}
-                          </ThemedText>
+                        <View style={styles.untrackedTipTitle}>
+                          <TipTitleLink tipId={tip.id} title={t(`tips:${tip.title}`)} />
                           <IconSymbol name={needsProfile ? 'person' : 'crown'} size={20} color={needsProfile ? colors.primary : colors.gold} />
-                        </TouchableOpacity>
+                        </View>
                         {!needsProfile && targets.map(target => <TipTarget key={target.tag} tip={progress!} target={target} colors={colors} />)}
                         {needsProfile && (
                           <View style={styles.profileLinks}>
@@ -458,11 +431,7 @@ const styles = StyleSheet.create({
   },
   premiumText: { flex: 1 },
   untrackedTipTitle: { paddingVertical: 8, flexDirection: 'row', alignItems: 'center', gap: 12 },
-  untrackedTitleText: { flex: 1 },
   untrackedSection: { borderTopWidth: StyleSheet.hairlineWidth, marginTop: 16, paddingTop: 16, marginBottom: 16, gap: 10 },
-  fulfilledTipTextBlock: {
-    flex: 1,
-  },
   planTipProgressRow: {
     width: '100%',
     alignSelf: 'stretch',
