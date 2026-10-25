@@ -29,6 +29,7 @@ export function hasValidProteinGoal(proteinGoal: number | undefined): proteinGoa
 
 /** Read saved goals; never calculate a separate protein goal for a tip. */
 export function getTipProteinGoal(tip: WeightBasedTip | undefined, profile?: UserProfile): number | undefined {
+  if (tip?.macroTargets?.length && profile?.trackMacros === false) return undefined;
   const protein = profile?.nutritionGoals?.protein;
   if (tip?.requiresCalculatedMacros && (
     profile?.nutritionEnergySource !== 'henry' ||

@@ -23,6 +23,7 @@ export default function TargetsSection({
   const weightBased = hasWeightBasedTargets(tip);
   const weightMissing = weightBased && !hasValidTargetWeight(userProfile?.weightKg);
   const proteinGoalMissing = hasProfileProteinTargets(tip) && !hasValidProteinGoal(getTipProteinGoal(tip, userProfile));
+  const macrosDisabled = Boolean(tip?.macroTargets?.length) && userProfile?.trackMacros === false;
   if (!tip) return null;
   const tipId = tip.id;
   const trackingUnavailable = (weightMissing || proteinGoalMissing) && plans?.nutrition?.some(plan => plan.tipId === tipId);
@@ -138,7 +139,24 @@ export default function TargetsSection({
           />
         </View>
       )}
-      {proteinGoalMissing && (
+      {macrosDisabled && (
+        <View style={[styles.settingsRow, { borderTopColor: colors.borderLight }]}>
+          <ThemedText type="explainer" style={globalStyles.flex1}>
+            {t('common:nutritionGoals.logger.disabled')}
+          </ThemedText>
+          <DiscreetButton
+            title={t('common:nutritionGoals.logger.track')}
+            onPress={() => router.push({
+              pathname: '/(tabs)/journal',
+              params: { openTab: 'meal', focusTipId: 'macro-goals-settings', focusRequestId: String(Date.now()) },
+            })}
+            color={colors.primary}
+            rightIcon="chevron.right"
+            accessibilityRole="link"
+          />
+        </View>
+      )}
+      {proteinGoalMissing && !macrosDisabled && (
         <View style={[styles.settingsRow, { borderTopColor: colors.borderLight }]}>
           <ThemedText type="explainer" style={globalStyles.flex1}>
             {t(tip.requiresMacroSetup ? 'common:nutritionTargetSection.macroSetupRequired' : 'common:nutritionTargetSection.proteinGoalRequired')}

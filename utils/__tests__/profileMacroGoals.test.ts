@@ -5,6 +5,7 @@ import { normalizeNutritionTargets } from '@/services/targetProgress/normalizeNu
 import { resolveNutritionTarget } from '@/services/targetProgress/nutritionTargetProgress';
 import { getTipMacroGoals, getTipProteinGoal } from '@/utils/resolveNutritionTip';
 import { matchesTipAge } from '@/utils/tipAge';
+import { isNutritionTipUntracked } from '@/utils/untrackedNutritionTips';
 
 const tip = tips.find(item => item.id === 'profile_macro_goals')!;
 const profile: UserProfile = {
@@ -28,6 +29,13 @@ it('uses all three saved macros exactly and updates when they change', () => {
   ]);
   expect(targetsFor({ ...profile, nutritionGoals: { protein: 120, carbohydrates: 300, fat: 80 } }).map(target => target.amount)).toEqual([120, 300, 80]);
   expect(tip.macroTargets?.every(target => target.amount === 0)).toBe(true);
+});
+
+it('moves disabled macro goals to untracked even when saved goals are complete', () => {
+  const disabled = { ...profile, trackMacros: false };
+  expect(targetsFor(disabled)).toEqual([]);
+  expect(isNutritionTipUntracked(tip, disabled.weightKg, getTipProteinGoal(tip, disabled), true)).toBe(true);
+  expect(targetsFor({ ...disabled, trackMacros: true })).toHaveLength(3);
 });
 
 it.each([

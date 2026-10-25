@@ -13,8 +13,9 @@ let mockProteinGoal: number | undefined = 140;
 let mockPlanned = false;
 let mockMacroSetup = true;
 let mockCalculatedMacros = false;
+let mockTrackMacros = true;
 jest.mock('@/app/context/StorageContext', () => ({
-  useStorage: () => ({ userProfile: { nutritionGuideCompleted: mockMacroSetup, nutritionEnergySource: mockCalculatedMacros ? 'henry' : 'custom', nutritionDistribution: mockCalculatedMacros ? 'balanced' : 'custom', birthDate: '1980-01-01', heightCm: 170, biologicalSex: 'female', activityPal: 1.6, weightKg: mockWeight, nutritionGoals: { protein: mockProteinGoal, carbohydrates: 220, fat: 65 } }, plans: { nutrition: mockPlanned ? [{ tipId: 'protein_rotation' }] : [] } }),
+  useStorage: () => ({ userProfile: { trackMacros: mockTrackMacros, nutritionGuideCompleted: mockMacroSetup, nutritionEnergySource: mockCalculatedMacros ? 'henry' : 'custom', nutritionDistribution: mockCalculatedMacros ? 'balanced' : 'custom', birthDate: '1980-01-01', heightCm: 170, biologicalSex: 'female', activityPal: 1.6, weightKg: mockWeight, nutritionGoals: { protein: mockProteinGoal, carbohydrates: 220, fat: 65 } }, plans: { nutrition: mockPlanned ? [{ tipId: 'protein_rotation' }] : [] } }),
 }));
 beforeEach(() => {
   mockWeight = 70;
@@ -22,6 +23,7 @@ beforeEach(() => {
   mockPlanned = false;
   mockMacroSetup = true;
   mockCalculatedMacros = false;
+  mockTrackMacros = true;
   mockPush.mockClear();
 });
 
@@ -183,4 +185,15 @@ it('shows all calculated macros and blocks them when the user switches to custom
   expect(screen.getByText(`journal:nutritionLogger.fiberLabels.${key}`)).toBeTruthy();
   expect(screen.getByText(`${amount.toFixed(1)} g / common:nutritionTargetSection.periods.daily`)).toBeTruthy();
   expect(screen.queryByText('journal:nutritionLogger.fiberLabels.fiber_total')).toBeNull();
+});
+
+ it('links disabled tracking to the existing macro card from tip details', () => {
+  mockCalculatedMacros = true;
+  mockTrackMacros = false;
+  const tip = tips.find(item => item.id === 'profile_macro_goals')!;
+  const screen = render(<TargetsSection tip={tip} colors={Colors.light} t={t} />);
+  expect(screen.queryByText('common:nutritionTargetSection.setMacroGoals')).toBeNull();
+  expect(screen.queryByText('common:nutritionTargetSection.macroSetupRequired')).toBeNull();
+  fireEvent.press(screen.getByText('common:nutritionGoals.logger.track'));
+  expect(mockPush).toHaveBeenCalledWith({ pathname: '/(tabs)/journal', params: { openTab: 'meal', focusTipId: 'macro-goals-settings', focusRequestId: expect.any(String) } });
 });

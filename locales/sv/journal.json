@@ -338,7 +338,9 @@
       "caffeine": "Koffein"
     },
     "macroLabels": {
-      "protein": "Totalprotein"
+      "protein": "Totalprotein",
+      "carbohydrates": "Kolhydrater",
+      "fat": "Fett"
     },
     "reviewIngredientsTitle": "Ingredienser i analysen",
     "reviewIngredientsDescription": "Ingredienser, mängder och enheter från backendens svar på näringsanalysen.",

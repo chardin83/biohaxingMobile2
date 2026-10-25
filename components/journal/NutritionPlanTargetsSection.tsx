@@ -336,6 +336,7 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                 <View style={[styles.untrackedGroup, { borderColor: colors.warning }]}>
                   {untrackedTips.map((tip, index) => {
                     const missing = getMissingNutritionSettings(tip, userProfile?.weightKg, getTipProteinGoal(tip, userProfile));
+                    const macrosDisabled = Boolean(tip.macroTargets?.length) && userProfile?.trackMacros === false;
                     const needsProfile = missing.weight || missing.proteinGoal;
                     const progress = [...nutritionPlanTipProgressByPeriod.daily, ...nutritionPlanTipProgressByPeriod.weekly].find(
                       item => item.tipId === tip.id
@@ -371,7 +372,19 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                                 />
                               </View>
                             )}
-                            {missing.proteinGoal && (
+                            {macrosDisabled && (
+                              <DiscreetButton
+                                title={t('common:nutritionGoals.logger.track')}
+                                onPress={() =>
+                                  router.push({
+                                    pathname: '/(tabs)/journal',
+                                    params: { openTab: 'meal', focusTipId: 'macro-goals-settings', focusRequestId: String(Date.now()) },
+                                  })
+                                }
+                                rightIcon="chevron.right"
+                              />
+                            )}
+                            {missing.proteinGoal && !macrosDisabled && (
                               <View style={styles.profileRow}>
                                 <ThemedText type="explainer" style={globalStyles.flex1}>
                                   {t(

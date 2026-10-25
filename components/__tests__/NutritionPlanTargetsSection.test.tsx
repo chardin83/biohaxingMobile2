@@ -78,3 +78,11 @@ it('offers the GI follow-up link inside the single nutrition goal card', () => {
   link!.props.onPress();
   expect(mockPush).toHaveBeenCalledWith({ pathname: '/(stack)/plan/[tipId]/metric/[metricId]', params: { tipId: 'glycemic_index', metricId: 'glycemic_index' } });
 });
+
+it('links disabled macro tracking to the macro card instead of restarting setup', () => {
+  const macroTip = tips.find(item => item.id === 'profile_macro_goals')!;
+  const screen = render(<NutritionPlanTargetsSection {...props} untrackedTips={[macroTip]} userProfile={{ trackMacros: false, nutritionGoals: { protein: 140, carbohydrates: 250, fat: 67 } }} />);
+  expect(screen.queryByText('common:nutritionTargetSection.setMacroGoals')).toBeNull();
+  fireEvent.press(screen.getByText('common:nutritionGoals.logger.track'));
+  expect(mockPush).toHaveBeenCalledWith({ pathname: '/(tabs)/journal', params: { openTab: 'meal', focusTipId: 'macro-goals-settings', focusRequestId: expect.any(String) } });
+});

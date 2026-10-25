@@ -1,6 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import { router } from 'expo-router';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Switch, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
@@ -13,6 +13,7 @@ import AppButton from '../ui/AppButton';
 import { Card } from '../ui/Card';
 import { IconSymbol } from '../ui/IconSymbol';
 import Pill from '../ui/Pill';
+import JournalGoalAnchor, { JournalGoalFocusContext } from './JournalGoalAnchor';
 
 const CHART_SIZE = 104;
 const CHART_RADIUS = 46;
@@ -24,7 +25,11 @@ export default function MacroGoalsCard({ totals = {} }: Readonly<{ totals?: Dail
   const { t } = useTranslation('common');
   const { colors } = useTheme();
   const { userProfile, updateUserProfile } = useStorage();
+  const focus = useContext(JournalGoalFocusContext);
   const [expanded, setExpanded] = useState(false);
+  useEffect(() => {
+    if (focus?.tipId === 'macro-goals-settings') setExpanded(true);
+  }, [focus?.tipId, focus?.requestId]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
   const tracking = userProfile.trackMacros !== false;
@@ -126,47 +131,49 @@ export default function MacroGoalsCard({ totals = {} }: Readonly<{ totals?: Dail
   }
 
   return (
-    <Card style={styles.card}>
-      <Pressable
-        style={styles.header}
-        accessibilityRole="button"
-        accessibilityLabel={t('nutritionGoals.logger.options')}
-        accessibilityState={{ expanded }}
-        onPress={() => setExpanded(current => !current)}
-      >
-        <ThemedText type="title3" style={styles.label}>
-          {t('nutritionGoals.logger.title')}
-        </ThemedText>
-        <Pill label={t(tracking ? 'nutritionGoals.logger.on' : 'nutritionGoals.logger.off')} active={tracking} />
-        <IconSymbol name={expanded ? 'expandMore' : 'chevron.right'} size={18} color={colors.text} />
-      </Pressable>
-      {expanded && (
-        <View style={[styles.options, { borderColor: colors.borderLight }]}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={t('nutritionGoals.logger.edit')}
-            onPress={() => router.push(goals ? '/settings/nutrition-goals' : '/settings/nutrition')}
-            style={styles.editRow}
-          >
-            <ThemedText style={styles.label}>{t('nutritionGoals.logger.edit')}</ThemedText>
-            <IconSymbol name="chevron.right" size={16} color={colors.text} />
-          </Pressable>
-          <View style={styles.toggleRow}>
-            <ThemedText style={styles.label}>{t('nutritionGoals.logger.track')}</ThemedText>
-            <Switch
-              accessibilityLabel={t('nutritionGoals.logger.track')}
-              value={tracking}
-              disabled={saving}
-              onValueChange={toggleTracking}
-              trackColor={{ true: colors.primary, false: colors.border }}
-            />
+    <JournalGoalAnchor tipId="macro-goals-settings">
+      <Card style={styles.card}>
+        <Pressable
+          style={styles.header}
+          accessibilityRole="button"
+          accessibilityLabel={t('nutritionGoals.logger.options')}
+          accessibilityState={{ expanded }}
+          onPress={() => setExpanded(current => !current)}
+        >
+          <ThemedText type="title3" style={styles.label}>
+            {t('nutritionGoals.logger.title')}
+          </ThemedText>
+          <Pill label={t(tracking ? 'nutritionGoals.logger.on' : 'nutritionGoals.logger.off')} active={tracking} />
+          <IconSymbol name={expanded ? 'expandMore' : 'chevron.right'} size={18} color={colors.text} />
+        </Pressable>
+        {expanded && (
+          <View style={[styles.options, { borderColor: colors.borderLight }]}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('nutritionGoals.logger.edit')}
+              onPress={() => router.push(goals ? '/settings/nutrition-goals' : '/settings/nutrition')}
+              style={styles.editRow}
+            >
+              <ThemedText style={styles.label}>{t('nutritionGoals.logger.edit')}</ThemedText>
+              <IconSymbol name="chevron.right" size={16} color={colors.text} />
+            </Pressable>
+            <View style={styles.toggleRow}>
+              <ThemedText style={styles.label}>{t('nutritionGoals.logger.track')}</ThemedText>
+              <Switch
+                accessibilityLabel={t('nutritionGoals.logger.track')}
+                value={tracking}
+                disabled={saving}
+                onValueChange={toggleTracking}
+                trackColor={{ true: colors.primary, false: colors.border }}
+              />
+            </View>
           </View>
-        </View>
-      )}
-      {goalsContent}
-      {error && <ThemedText type="error">{t('nutritionGoals.logger.saveError')}</ThemedText>}
-      {expanded && <AppButton title={t('general.close')} variant="secondary" style={styles.closeButton} onPress={() => setExpanded(false)} />}
-    </Card>
+        )}
+        {goalsContent}
+        {error && <ThemedText type="error">{t('nutritionGoals.logger.saveError')}</ThemedText>}
+        {expanded && <AppButton title={t('general.close')} variant="secondary" style={styles.closeButton} onPress={() => setExpanded(false)} />}
+      </Card>
+    </JournalGoalAnchor>
   );
 }
 

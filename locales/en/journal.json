@@ -338,7 +338,9 @@
       "caffeine": "Caffeine"
     },
     "macroLabels": {
-      "protein": "Total protein"
+      "protein": "Total protein",
+      "carbohydrates": "Carbohydrates",
+      "fat": "Fat"
     },
     "reviewIngredientsTitle": "Ingredients in the analysis",
     "reviewIngredientsDescription": "Ingredients, amounts and units returned by the nutrition analysis backend.",
