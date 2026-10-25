@@ -20,7 +20,7 @@ export default function ReadConfirmation({ read, active, onConfirm, xp = XP_FOR_
     <View style={[styles.row, !read && !readyToConfirm && styles.countdownSpace]}>
       {!read && <XPBadge amount={xp} showPlus />}
       {!read && !readyToConfirm && active && <CountdownCircle seconds={INFORMATION_READ_SECONDS} color={colors.xp} onComplete={() => setReadyToConfirm(true)} />}
-      {!read && readyToConfirm && <DiscreetButton title={t('common:tipDetails.iHaveRead')} color={colors.xp} rightIcon="check" onPress={onConfirm} />}
+      {!read && readyToConfirm && <DiscreetButton title={t('common:tipDetails.iHaveRead')} color={colors.xpText} rightIcon="check" onPress={onConfirm} />}
       {read && <View style={styles.check}><XPBadge checked /></View>}
     </View>
   );

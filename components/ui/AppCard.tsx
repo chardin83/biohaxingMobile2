@@ -73,11 +73,7 @@ const AppCard: React.FC<AppCardProps> = ({
           <ThemedText type="title3" style={[styles.cardTitle, { color: colors.primaryText }]}>
             {title}
           </ThemedText>
-          {subtitle && (
-            <ThemedText type="defaultSemiBold" style={{ color: colors.textWhite }}>
-              {subtitle}
-            </ThemedText>
-          )}
+          {subtitle && <ThemedText type="defaultSemiBold">{subtitle}</ThemedText>}
           {description && (
             <ThemedText type="default" style={[{ color: colors.textLight }]}>
               {description}

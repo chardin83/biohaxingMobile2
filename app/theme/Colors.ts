@@ -41,6 +41,7 @@ export const Colors = {
     progressSuccessIcon: '#0B1B14',
     progressSuccessCell: '#67E8C0',
     xp: '#CBEA3C',
+    xpText: '#526300',
 
     buttonGlowBackground: 'rgba(31, 174, 158, 0.18)',
     buttonGlow: 'rgba(31, 174, 158, 0.85)',
@@ -141,6 +142,7 @@ export const Colors = {
     goldenGlowButtonGlow: 'rgba(255, 170, 60, 0.9)',
 
     gold: 'rgba(255,215,100,0.95)',
+    goldText: '#856000',
     goldSoft: 'rgba(255,215,100,0.75)',
     goldSuperSoft: 'rgba(255,215,100,0.55)',
     goldTransparent: 'rgba(255,215,100,0.07)',
@@ -232,6 +234,7 @@ export const Colors = {
     progressSuccessIcon: '#0B1B14',
     progressSuccessCell: '#67E8C0',
     xp: '#B6F000',
+    xpText: '#B6F000',
     buttonGlowBackground: 'rgba(4,26,34,0.2)',
     buttonGlow: '#00ffffcc',
     buttonTextGlow: '#00ffff88',
@@ -328,6 +331,7 @@ export const Colors = {
     goldenGlowButtonGlow: 'rgba(255, 180, 80, 0.8)',
 
     gold: 'rgba(255,215,100,0.95)',
+    goldText: 'rgba(255,215,100,0.95)',
     goldSoft: 'rgba(255,215,100,0.75)',
     goldSuperSoft: 'rgba(255,215,100,0.55)',
     goldTransparent: 'rgba(255,215,100,0.07)',

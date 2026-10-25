@@ -11,9 +11,9 @@ export default function PremiumLink({ onPress }: Readonly<{ onPress: () => void 
   const { t } = useTranslation();
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={t('common:premium.premium')} onPress={onPress} hitSlop={8} style={styles.link}>
-      <IconSymbol name="crown" size={18} color={colors.gold} />
-      <ThemedText type="caption" style={{ color: colors.gold }}>{t('common:premium.premium')}</ThemedText>
-      <IconSymbol name="chevron.right" size={14} color={colors.gold} />
+      <IconSymbol name="crown" size={18} color={colors.goldText} />
+      <ThemedText type="caption" style={{ color: colors.goldText }}>{t('common:premium.premium')}</ThemedText>
+      <IconSymbol name="chevron.right" size={14} color={colors.goldText} />
     </Pressable>
   );
 }

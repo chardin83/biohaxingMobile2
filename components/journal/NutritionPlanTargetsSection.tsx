@@ -353,7 +353,7 @@ const NutritionPlanTargetsSection: React.FC<NutritionPlanTargetsSectionProps> = 
                       >
                         <View style={styles.untrackedTipTitle}>
                           <TipTitleLink tipId={tip.id} title={t(`tips:${tip.title}`)} />
-                          <IconSymbol name={needsProfile ? 'person' : 'crown'} size={20} color={needsProfile ? colors.primary : colors.gold} />
+                          <IconSymbol name={needsProfile ? 'person' : 'crown'} size={20} color={needsProfile ? colors.primary : colors.goldText} />
                         </View>
                         {!needsProfile && targets.map(target => <TipTarget key={target.tag} tip={progress!} target={target} colors={colors} />)}
                         {needsProfile && (
