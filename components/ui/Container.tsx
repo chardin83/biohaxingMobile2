@@ -1,8 +1,8 @@
 import { useTheme } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RefreshControl, ScrollView, ScrollViewProps,StyleSheet, Text, View, ViewProps } from 'react-native';
+import { RefreshControl, ScrollView, ScrollViewProps, StyleSheet, Text, useWindowDimensions, View, ViewProps } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Colors } from '@/app/theme/Colors';
@@ -59,6 +59,10 @@ const Container = forwardRef<ContainerScrollRef, ContainerProps>(
     const internalScrollRef = useRef<ScrollView>(null);
     const { t } = useTranslation('common');
     const insets = useSafeAreaInsets();
+    const { fontScale } = useWindowDimensions();
+    const inlineFooter = fontScale >= 1.5;
+    const [footerHeight, setFooterHeight] = useState(0);
+    const [headerHeight, setHeaderHeight] = useState(0);
 
     const { sync, isSyncing } = useWearableStorageSync();
 
@@ -80,6 +84,10 @@ const Container = forwardRef<ContainerScrollRef, ContainerProps>(
 
     const { dark, colors } = useTheme();
 
+    const chromeBackground = dark ? 'rgba(11,16,33,0.98)' : colors.background;
+    const chromeFade = dark
+      ? (['rgba(11,16,33,0)', 'rgba(11,16,33,0.68)', 'rgba(11,16,33,0.98)'] as const)
+      : (['rgba(248,245,240,0)', 'rgba(248,245,240,0.68)', 'rgba(248,245,240,1)'] as const);
     const showStepIndicator = showBackButton && !!currentStep && !!totalSteps;
     // Dynamic paddingTop based on backbutton
     let defaultPaddingTop = 40;
@@ -93,7 +101,21 @@ const Container = forwardRef<ContainerScrollRef, ContainerProps>(
       { flexGrow: 1, paddingHorizontal: 18, paddingBottom: 200, paddingTop: defaultPaddingTop },
       contentContainerStyle,
       centerContent ? styles.centerContent : null,
+      !inlineFooter && footerHeight > 0 && { paddingBottom: footerHeight + 24 },
+      showStepIndicator && { paddingTop: Math.max(defaultPaddingTop, headerHeight + 20) },
     ];
+
+    const footerContent = footer && (
+      <View
+        testID="container-footer"
+        onLayout={event => setFooterHeight(event.nativeEvent.layout.height)}
+        style={[styles.footerWrapper, inlineFooter && styles.inlineFooter, { paddingBottom: insets.bottom + 16, backgroundColor: chromeBackground }]}
+        pointerEvents="box-none"
+      >
+        <LinearGradient pointerEvents="none" colors={chromeFade} locations={[0, 0.55, 1]} style={styles.footerFade} />
+        {footer}
+      </View>
+    );
 
     const content = (
       <>
@@ -101,20 +123,19 @@ const Container = forwardRef<ContainerScrollRef, ContainerProps>(
           <View
             style={[
               styles.backButtonWrapper,
-              showStepIndicator ? [styles.backButtonWrapperWithStep, { paddingTop: insets.top + 10 }] : styles.backButtonWrapperPlain,
+              showStepIndicator
+                ? [styles.backButtonWrapperWithStep, { paddingTop: insets.top + 10, backgroundColor: chromeBackground }]
+                : styles.backButtonWrapperPlain,
             ]}
+            testID="container-step-header"
+            onLayout={event => setHeaderHeight(event.nativeEvent.layout.height)}
             pointerEvents="box-none"
           >
             {showStepIndicator && (
               <>
-                <View style={styles.headerSurface} />
+                <View style={[styles.headerSurface, { backgroundColor: chromeBackground }]} />
 
-                <LinearGradient
-                  pointerEvents="none"
-                  colors={['rgba(11,16,33,0.98)', 'rgba(11,16,33,0.68)', 'rgba(11,16,33,0)']}
-                  locations={[0, 0.5, 1]}
-                  style={styles.headerFade}
-                />
+                <LinearGradient pointerEvents="none" colors={[chromeFade[2], chromeFade[1], chromeFade[0]]} locations={[0, 0.5, 1]} style={styles.headerFade} />
               </>
             )}
 
@@ -132,7 +153,7 @@ const Container = forwardRef<ContainerScrollRef, ContainerProps>(
             </View>
 
             {showStepIndicator && (
-              <View style={[styles.progressTrack, { backgroundColor: colors.border }]}>
+              <View accessible={false} importantForAccessibility="no-hide-descendants" style={[styles.progressTrack, { backgroundColor: colors.border }]}>
                 <View
                   style={[
                     styles.progressFill,
@@ -149,6 +170,8 @@ const Container = forwardRef<ContainerScrollRef, ContainerProps>(
         {scrollable ? (
           <ScrollView
             ref={internalScrollRef}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
             style={[styles.scrollView, style]}
             contentContainerStyle={mergedContentContainerStyle}
             refreshControl={
@@ -167,34 +190,15 @@ const Container = forwardRef<ContainerScrollRef, ContainerProps>(
             {...rest}
           >
             {children}
+            {inlineFooter && footerContent}
           </ScrollView>
         ) : (
           <View style={[style, ...mergedContentContainerStyle]} {...rest}>
             {children}
+            {inlineFooter && footerContent}
           </View>
         )}
-        {footer && (
-          <View style={[styles.footerWrapper, { paddingBottom: insets.bottom + 16 }]} pointerEvents="box-none">
-            <LinearGradient
-              pointerEvents="none"
-              colors={['rgba(11,16,33,0)', 'rgba(11,16,33,0.65)', 'rgba(11,16,33,0.96)']}
-              locations={[0, 0.55, 1]}
-              style={styles.footerFade}
-            />
-            {footer && (
-              <View style={[styles.footerWrapper, { paddingBottom: insets.bottom + 12 }]}>
-                <LinearGradient
-                  pointerEvents="none"
-                  colors={['rgba(11,16,33,0)', 'rgba(11,16,33,0.72)', 'rgba(11,16,33,0.98)']}
-                  locations={[0, 0.5, 1]}
-                  style={styles.footerFade}
-                />
-
-                {footer}
-              </View>
-            )}
-          </View>
-        )}
+        {!inlineFooter && footerContent}
       </>
     );
 
@@ -221,6 +225,7 @@ const Container = forwardRef<ContainerScrollRef, ContainerProps>(
 );
 
 const styles = StyleSheet.create({
+  inlineFooter: { position: 'relative', marginTop: 24 },
   backButtonWrapper: {
     zIndex: 10,
     position: 'absolute',
@@ -241,14 +246,10 @@ const styles = StyleSheet.create({
   backButtonWrapperWithStep: {
     top: 0,
     paddingBottom: 16,
-
-    // Själva headerområdet är mörkt
-    backgroundColor: 'rgba(11,16,33,0.98)',
   },
 
   headerSurface: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(11,16,33,0.98)',
   },
 
   headerFade: {
@@ -263,6 +264,8 @@ const styles = StyleSheet.create({
 
   backButtonRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
     alignItems: 'center',
     justifyContent: 'space-between',
   },
@@ -301,8 +304,6 @@ const styles = StyleSheet.create({
 
     paddingHorizontal: 18,
     paddingTop: 14,
-
-    backgroundColor: 'rgba(11,16,33,0.98)',
   },
 
   footerFade: {
@@ -314,7 +315,6 @@ const styles = StyleSheet.create({
   },
   footerDarkOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(11,16,33,0.95)',
   },
   scrollView: {
     flex: 1,

@@ -28,19 +28,10 @@ jest.mock('@/components/ThemedText', () => ({
     return <Text>{children}</Text>;
   },
 }));
-jest.mock('@/components/ui/Checkbox', () => ({
-  Checkbox: ({ label, checked, onPress, disabled }: any) => {
-    const { Pressable, Text } = require('react-native');
-    return (
-      <Pressable accessibilityRole="checkbox" accessibilityLabel={label} accessibilityState={{ checked }} disabled={disabled} onPress={onPress}>
-        <Text>{label}</Text>
-      </Pressable>
-    );
-  },
-}));
 beforeEach(() => {
   jest.clearAllMocks();
   mockStorage.profileSharing = { ...DEFAULT_PROFILE_SHARING };
+  mockStorage.shareArchivedPlans = false;
   mockStorage.shareHealthPlan = true;
   mockStorage.shareInterests = true;
 });
@@ -111,4 +102,24 @@ it.each(['healthPlan', 'interests', 'age'] as const)('marks %s red when unchecke
   }
   screen.rerender(<AISharingControls requirePersonalDetails />);
   expect(StyleSheet.flatten(screen.getByTestId(`sharing-${field}`).props.style).borderColor).toBe('red');
+});
+
+it.each([
+  ['sharing-healthPlan', 'aiSharing.healthPlanDescription', 'plan'],
+  ['sharing-interests', 'aiSharing.interestsDescription', 'interests'],
+  ['sharing-archivedPlans', 'aiSharing.archivedPlansDescription', 'archives'],
+  ['sharing-age', 'aiSharing.fields.age.description', 'age'],
+  ['sharing-activityPal', 'aiSharing.fields.activityPal.description', 'activity'],
+] as const)('toggles the whole %s card, including the description, exactly once', async (testID, description, kind) => {
+  const screen = render(<AISharingControls requirePersonalDetails />);
+  const setters = {
+    plan: mockSetPlan,
+    interests: mockStorage.setShareInterests,
+    archives: mockStorage.setShareArchivedPlans,
+    age: mockSetPersonal,
+    activity: mockSetPersonal,
+  };
+  expect(screen.getByTestId(testID).props.accessibilityRole).toBe('checkbox');
+  fireEvent.press(screen.getByText(description));
+  await waitFor(() => expect(setters[kind]).toHaveBeenCalledTimes(1));
 });

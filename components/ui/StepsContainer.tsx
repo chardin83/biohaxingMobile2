@@ -5,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 
 import Container from './Container';
+import StepHeading from './StepHeading';
 
 type Props = Omit<
   React.ComponentProps<typeof Container>,
@@ -40,9 +41,7 @@ export default function StepsContainer({ title, subtitle, description, footer, f
         ) : undefined
       }
     >
-      <ThemedText type="title2" style={styles.title}>
-        {title}
-      </ThemedText>
+      <StepHeading style={styles.title}>{title}</StepHeading>
       {Boolean(subtitle) && (
         <ThemedText type="title3" style={styles.subtitle}>
           {subtitle}

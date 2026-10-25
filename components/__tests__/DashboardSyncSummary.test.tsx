@@ -11,6 +11,11 @@ import { tips } from '@/locales/tips';
 import { GOAL_CATEGORIES, type GoalCategory } from '@/services/targetProgress/plannedGoalCategories';
 import { useWearable } from '@/wearables/wearableProvider';
 
+let mockNutritionEntries: Array<{ type: 'meal' | 'food' | 'drink' }> = [{ type: 'meal' }];
+beforeEach(() => {
+  jest.clearAllMocks();
+  mockNutritionEntries = [{ type: 'meal' }];
+});
 const mockPush = jest.fn();
 const mockSetOnboardingStep = jest.fn();
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }));
@@ -56,6 +61,7 @@ function setSummary(
 ) {
   jest.mocked(useStorage).mockReturnValue({
     automaticHabitSummary: { isReady, newGoalsCount: count },
+    dailyNutritionTracking: { '2026-01-01': { entries: mockNutritionEntries } },
     plans,
     onboardingStep,
     setOnboardingStep: mockSetOnboardingStep,
@@ -65,249 +71,256 @@ function setSummary(
   jest.mocked(useWearable).mockReturnValue({ syncError: error } as unknown as ReturnType<typeof useWearable>);
 }
 
-it('shows a spinner until sync and habit processing finish, then shows the actual count', () => {
+const mealTitle = 'Lägg in din första måltid';
+const nutritionTitle = 'Lägg till ditt första näringsmål';
+const habitsTitle = 'Lägg till ditt första mål för goda vanor';
+const trainingTitle = 'Lägg till ditt första träningsmål';
+const manualTitle = 'Kom ihåg att logga manuellt.';
+const healthTitle = () => (Platform.OS === 'android' ? 'Koppla Health Connect' : 'Koppla Apple Hälsa');
+
+function actionTitles(screen: ReturnType<typeof render>): string[] {
+  return screen.queryAllByTestId('dashboard-summary-action').map(node => node.props.accessibilityLabel);
+}
+
+it('replaces suggestions with clickable progress information after sync', () => {
   setSummary(false, 0);
   const screen = render(<DashboardSyncSummary />);
+  expect(actionTitles(screen)).toEqual([healthTitle()]);
   expect(screen.getByTestId('dashboard-sync-spinner')).toBeTruthy();
-  expect(screen.queryByText('Nya framsteg!')).toBeNull();
   setSummary(true, 1);
   screen.rerender(<DashboardSyncSummary />);
   expect(screen.queryByTestId('dashboard-sync-spinner')).toBeNull();
   expect(screen.getByText('Nya framsteg!')).toBeTruthy();
-  expect(screen.getByLabelText('1 nytt habit-mål.')).toBeTruthy();
-  fireEvent.press(screen.getByText('Kom ihåg att logga manuellt.'));
-  expect(mockPush).toHaveBeenCalledWith('/(tabs)/journal');
-});
-
-it('uses plural and zero forms without inventing progress', () => {
+  expect(screen.getByText('Sedan ditt senaste besök har appen automatiskt registrerat: 1 nytt habit-mål.')).toBeTruthy();
+  expect(actionTitles(screen)).toEqual([]);
+  fireEvent.press(screen.getByRole('button', { name: /Nya framsteg!/ }));
+  expect(mockPush).toHaveBeenCalledWith('/(stack)/journal/habits/progress');
   setSummary(true, 2);
-  const screen = render(<DashboardSyncSummary />);
-  expect(screen.getByLabelText('2 nya habit-mål.')).toBeTruthy();
-  setSummary(true, 0);
   screen.rerender(<DashboardSyncSummary />);
-  expect(screen.getByText('Allt är uppdaterat!')).toBeTruthy();
-  expect(screen.getByText('Inga nya mål sedan senaste besöket.')).toBeTruthy();
+  expect(screen.getByText('Sedan ditt senaste besök har appen automatiskt registrerat: 2 nya habit-mål.')).toBeTruthy();
+  expect(actionTitles(screen)).toEqual([]);
 });
 
-it('shows failed sync information and keeps the manual logging link available', () => {
-  setSummary(true, 0, 'offline');
+it.each([false, true])('prioritizes meal and health above all missing goals, ready=%s', ready => {
+  mockNutritionEntries = [];
+  setSummary(ready, 0, null, EMPTY_PLANS, 7);
   const screen = render(<DashboardSyncSummary />);
-  expect(screen.getByText('Synkningen kunde inte slutföras')).toBeTruthy();
-  expect(screen.queryByText('Nya framsteg!')).toBeNull();
-  expect(screen.queryByTestId('countdown-circle')).toBeNull();
-  expect(screen.getByText('Kom ihåg att logga manuellt.')).toBeTruthy();
-});
-
-it('counts down from five and dismisses only the up-to-date card at zero', () => {
-  jest.useFakeTimers();
-  try {
-    setSummary(false, 0);
-    const screen = render(<DashboardSyncSummary />);
-    expect(screen.queryByTestId('countdown-circle')).toBeNull();
-    setSummary(true, 0);
-    screen.rerender(<DashboardSyncSummary />);
-    expect(screen.getByText('5')).toBeTruthy();
-    act(() => jest.advanceTimersByTime(1000));
-    expect(screen.getByText('4')).toBeTruthy();
-    act(() => jest.advanceTimersByTime(3000));
-    expect(screen.getByText('1')).toBeTruthy();
-    act(() => jest.advanceTimersByTime(1000));
-    expect(screen.queryByTestId('dashboard-sync-summary')).toBeNull();
-    screen.unmount();
-  } finally {
-    jest.useRealTimers();
-  }
-});
-
-it('dismisses the whole card with the close button without navigating', () => {
-  mockPush.mockClear();
-  setSummary(true, 1);
-  const screen = render(<DashboardSyncSummary />);
-  fireEvent.press(screen.getByRole('button', { name: 'Stäng' }));
-  expect(screen.queryByTestId('dashboard-sync-summary')).toBeNull();
-  expect(mockPush).not.toHaveBeenCalled();
-});
-
-it('cancels automatic dismissal if new progress arrives during the countdown', () => {
-  jest.useFakeTimers();
-  try {
-    setSummary(true, 0);
-    const screen = render(<DashboardSyncSummary />);
-    act(() => jest.advanceTimersByTime(3000));
-    setSummary(true, 1);
-    screen.rerender(<DashboardSyncSummary />);
-    expect(screen.queryByTestId('countdown-circle')).toBeNull();
-    act(() => jest.advanceTimersByTime(5000));
-    expect(screen.getByText('Nya framsteg!')).toBeTruthy();
-    screen.unmount();
-  } finally {
-    jest.useRealTimers();
-  }
-});
-
-it('welcomes users without goal tips and opens search for their first tip', () => {
-  mockPush.mockClear();
-  setSummary(true, 0, null, EMPTY_PLANS);
-  const screen = render(<DashboardSyncSummary />);
-  expect(screen.getByText('Kom igång')).toBeTruthy();
-  expect(screen.queryByText('Kom ihåg att logga manuellt.')).toBeNull();
-  expect(screen.queryByTestId('countdown-circle')).toBeNull();
-  fireEvent.press(screen.getByText('Lägg till ditt första tips'));
-  expect(mockPush).toHaveBeenCalledWith({ pathname: '/(tabs)/search', params: { planCategories: 'other,nutrition,training', targetPeriods: 'daily,weekly' } });
+  expect(actionTitles(screen)).toEqual([mealTitle, healthTitle()]);
 });
 
 it.each([
-  ['training', 'Lägg till ditt första träningsmål'],
-  ['nutrition', 'Lägg till ditt första nutritionsmål'],
-  ['other', 'Lägg till ditt första mål för goda vanor'],
-] as const)('offers a missing %s goal instead of closing the card', (missing, label) => {
-  mockPush.mockClear();
-  setSummary(true, 0, null, plansFor(GOAL_CATEGORIES.filter(category => category !== missing)));
+  { categories: [] as GoalCategory[], hidden: false, expected: () => [healthTitle(), nutritionTitle] },
+  { categories: [] as GoalCategory[], hidden: true, expected: () => [nutritionTitle, habitsTitle] },
+  { categories: ['nutrition'] as GoalCategory[], hidden: true, expected: () => [habitsTitle, trainingTitle] },
+  { categories: ['nutrition', 'other'] as GoalCategory[], hidden: true, expected: () => [trainingTitle] },
+  { categories: ['other'] as GoalCategory[], hidden: true, expected: () => [nutritionTitle, trainingTitle] },
+  { categories: [...GOAL_CATEGORIES], hidden: true, expected: () => [manualTitle] },
+])('selects at most two actions in priority order for $categories, health hidden=$hidden', ({ categories, hidden, expected }) => {
+  setSummary(false, 0, null, plansFor(categories), 7, true, hidden);
   const screen = render(<DashboardSyncSummary />);
-  expect(screen.getByText('Allt är uppdaterat!')).toBeTruthy();
-  expect(screen.queryByTestId('countdown-circle')).toBeNull();
-  expect(screen.queryByText('Kom ihåg att logga manuellt.')).toBeNull();
-  fireEvent.press(screen.getByText(label));
+  expect(actionTitles(screen)).toEqual(expected());
+  setSummary(true, 0, null, plansFor(categories), 7, true, hidden);
+  screen.rerender(<DashboardSyncSummary />);
+  expect(actionTitles(screen)).toEqual(expected());
+});
+
+it.each([5, 6, 7])('uses the same priorities for onboarding state %s', step => {
+  mockNutritionEntries = [];
+  setSummary(false, 0, null, EMPTY_PLANS, step);
+  const screen = render(<DashboardSyncSummary />);
+  expect(actionTitles(screen)).toEqual([mealTitle, healthTitle()]);
+  setSummary(true, 0, null, EMPTY_PLANS, step);
+  screen.rerender(<DashboardSyncSummary />);
+  expect(actionTitles(screen)).toEqual([mealTitle, healthTitle()]);
+  expect(screen.queryByText('Lägg till ditt första tips')).toBeNull();
+});
+
+it('shows missing habit goals before sync completes without adding any new actions at completion', () => {
+  setSummary(false, 0, null, plansFor(['nutrition']), 7, true, true);
+  const screen = render(<DashboardSyncSummary />);
+  expect(actionTitles(screen)).toEqual([habitsTitle, trainingTitle]);
+  setSummary(true, 0, null, plansFor(['nutrition']), 7, true, true);
+  screen.rerender(<DashboardSyncSummary />);
+  expect(actionTitles(screen)).toEqual([habitsTitle, trainingTitle]);
+});
+
+it.each([
+  ['training', trainingTitle],
+  ['nutrition', nutritionTitle],
+  ['other', habitsTitle],
+] as const)('links the %s action to its specific search filters', (missing, title) => {
+  setSummary(false, 0, null, plansFor(GOAL_CATEGORIES.filter(category => category !== missing)), 7, false, true);
+  const screen = render(<DashboardSyncSummary />);
+  fireEvent.press(screen.getByRole('button', { name: title }));
   expect(mockPush).toHaveBeenCalledWith({ pathname: '/(tabs)/search', params: { planCategories: missing, targetPeriods: 'daily,weekly', goalIntro: missing } });
 });
 
-it('offers every missing category when only habits have been added', () => {
-  setSummary(true, 0, null, plansFor(['other']));
-  const screen = render(<DashboardSyncSummary />);
-  expect(screen.getByText('Lägg till ditt första träningsmål')).toBeTruthy();
-  expect(screen.getByText('Lägg till ditt första nutritionsmål')).toBeTruthy();
-  expect(screen.queryByText('Lägg till ditt första mål för goda vanor')).toBeNull();
-  expect(screen.queryByTestId('countdown-circle')).toBeNull();
-});
-
-it('does not count tips without measurable targets as goal tips', () => {
-  const tip = tips.find(item => !item.targetPeriod)!;
-  const plans = plansFor(['other']);
-  plans.other = [{ ...plans.other[0], tipId: tip.id }];
-  setSummary(true, 0, null, plans);
-  const screen = render(<DashboardSyncSummary />);
-  expect(screen.getByText('Kom igång')).toBeTruthy();
-});
-
-it('shows the first-goal welcome after onboarding without an accepted AI tip, even while sync is pending', () => {
-  setSummary(false, 0, null, EMPTY_PLANS, 6);
-  const screen = render(<DashboardSyncSummary />);
-  expect(screen.getByText('Välkommen!')).toBeTruthy();
-  expect(screen.getByText('Kom igång med att välja ditt första mål.')).toBeTruthy();
-  expect(screen.queryByText('Allt är uppdaterat!')).toBeNull();
-  expect(screen.queryByTestId('dashboard-sync-spinner')).toBeNull();
-  fireEvent.press(screen.getByText('Lägg till ditt första tips'));
-  expect(mockPush).toHaveBeenCalledWith({ pathname: '/(tabs)/search', params: { planCategories: 'other,nutrition,training', targetPeriods: 'daily,weekly' } });
-  expect(mockSetOnboardingStep).toHaveBeenCalledWith(7);
-});
-
-it.each([
-  ['ios', 'Koppla Apple Hälsa'],
-  ['android', 'Koppla Health Connect'],
-] as const)('offers health configuration on %s after an accepted AI plan', (platform, title) => {
+it.each(['ios', 'android'] as const)('links health configuration on %s even when sync is enabled', platform => {
   const replacement = jest.replaceProperty(Platform, 'OS', platform);
   try {
-    setSummary(false, 0, null, plansFor(['other']), 5);
+    setSummary(false, 0, null, plansFor(GOAL_CATEGORIES), 7, true);
     const screen = render(<DashboardSyncSummary />);
-    expect(screen.getByText(title)).toBeTruthy();
-    expect(screen.getByText('Synka aktivitet, sömn och andra hälsodata.')).toBeTruthy();
-    expect(screen.queryByText('Allt är uppdaterat!')).toBeNull();
-    expect(screen.queryByTestId('countdown-circle')).toBeNull();
-    expect(screen.getByText('Välkommen!')).toBeTruthy();
-    expect(screen.getByText('Din AI-plan är redo. Utforska dagboken – logga måltider och vanor.')).toBeTruthy();
-    fireEvent.press(screen.getByText(title));
+    fireEvent.press(screen.getByRole('button', { name: healthTitle() }));
     expect(mockPush).toHaveBeenCalledWith('/(stack)/settings/health-sync');
   } finally {
     replacement.restore();
   }
 });
 
-it('does not prompt to connect health when sync is already enabled', () => {
-  setSummary(true, 0, null, plansFor(GOAL_CATEGORIES), 5, true);
+it('respects hide health and promotes the next goal in the queue', () => {
+  mockNutritionEntries = [];
+  setSummary(false, 0, null, EMPTY_PLANS, 7);
   const screen = render(<DashboardSyncSummary />);
-  expect(screen.queryByText('Koppla Apple Hälsa')).toBeNull();
-  expect(screen.getByText('Välkommen!')).toBeTruthy();
-  expect(screen.getByText('Din AI-plan är redo. Utforska dagboken – logga måltider och vanor.')).toBeTruthy();
-});
-
-it('keeps the AI welcome available when opening health configuration', () => {
-  mockSetOnboardingStep.mockClear();
-  setSummary(true, 0, null, plansFor(['other']), 5);
-  const screen = render(<DashboardSyncSummary />);
-  mockSetOnboardingStep.mockClear();
-  fireEvent.press(screen.getByText(Platform.OS === 'android' ? 'Koppla Health Connect' : 'Koppla Apple Hälsa'));
-  expect(mockSetOnboardingStep).not.toHaveBeenCalled();
-  expect(screen.getByText('Välkommen!')).toBeTruthy();
-});
-it('offers a recovery health link for an AI plan after the old handler dismissed its welcome', () => {
-  const plans = plansFor(['other']);
-  plans.other[0].createdBy = 'AI';
-  setSummary(true, 0, null, plans, 7);
-  const screen = render(<DashboardSyncSummary />);
-  fireEvent.press(screen.getByText(Platform.OS === 'android' ? 'Koppla Health Connect' : 'Koppla Apple Hälsa'));
-  expect(mockPush).toHaveBeenCalledWith('/(stack)/settings/health-sync');
-});
-
-it.each([5, 7])('respects the saved hide-health preference for onboarding state %s', step => {
-  const plans = plansFor(['other']);
-  plans.other[0].createdBy = 'AI';
-  setSummary(true, 0, null, plans, step, false, true);
-  const screen = render(<DashboardSyncSummary />);
-  const title = Platform.OS === 'android' ? 'Koppla Health Connect' : 'Koppla Apple Hälsa';
-  expect(screen.queryByText(title)).toBeNull();
-  setSummary(true, 0, null, plans, step, false, false);
+  expect(actionTitles(screen)).toEqual([mealTitle, healthTitle()]);
+  setSummary(false, 0, null, EMPTY_PLANS, 7, false, true);
   screen.rerender(<DashboardSyncSummary />);
-  expect(screen.getByText(title)).toBeTruthy();
+  expect(actionTitles(screen)).toEqual([mealTitle, nutritionTitle]);
 });
 
-it('shows the onboarding welcome once, then restores the normal status after restarting', () => {
-  mockSetOnboardingStep.mockClear();
+it.each(['meal', 'food'] as const)('removes the first-meal action after a %s entry but does not count drinks', type => {
+  mockNutritionEntries = [{ type: 'drink' }];
+  setSummary(false, 0, null, EMPTY_PLANS, 7);
+  const screen = render(<DashboardSyncSummary />);
+  expect(actionTitles(screen)).toEqual([mealTitle, healthTitle()]);
+  fireEvent.press(screen.getByRole('button', { name: mealTitle }));
+  const today = new Date();
+  const selectedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  expect(mockPush).toHaveBeenCalledWith({ pathname: '/(tabs)/journal', params: { openTab: 'meal', selectedDate } });
+  mockNutritionEntries = [{ type }];
+  setSummary(false, 0, null, EMPTY_PLANS, 7);
+  screen.rerender(<DashboardSyncSummary />);
+  expect(actionTitles(screen)).toEqual([healthTitle(), nutritionTitle]);
+});
+
+it('does not count unmeasurable tips as an existing goal', () => {
   const plans = plansFor(GOAL_CATEGORIES);
-  plans.other[0].createdBy = 'AI';
-  setSummary(true, 0, null, plans, 5, false, true);
+  plans.other = [{ ...plans.other[0], tipId: tips.find(tip => !tip.targetPeriod)!.id }];
+  setSummary(false, 0, null, plans, 7, false, true);
+  const screen = render(<DashboardSyncSummary />);
+  expect(actionTitles(screen)).toEqual([habitsTitle]);
+});
+
+it('retains the welcome during its visit, consumes it once, and restores ordinary status on restart', () => {
+  setSummary(false, 0, null, plansFor(GOAL_CATEGORIES), 5);
   const firstVisit = render(<DashboardSyncSummary />);
   expect(firstVisit.getByText('Välkommen!')).toBeTruthy();
+  expect(firstVisit.getByText('Din AI-plan är redo. Utforska dagboken – logga måltider och vanor.')).toBeTruthy();
   expect(mockSetOnboardingStep).toHaveBeenCalledWith(7);
-  setSummary(true, 0, null, plans, 7, false, true);
+  mockSetOnboardingStep.mockClear();
+  fireEvent.press(firstVisit.getByRole('button', { name: healthTitle() }));
+  expect(mockSetOnboardingStep).not.toHaveBeenCalled();
+  setSummary(true, 0, null, plansFor(GOAL_CATEGORIES), 7);
   firstVisit.rerender(<DashboardSyncSummary />);
   expect(firstVisit.getByText('Välkommen!')).toBeTruthy();
   firstVisit.unmount();
   const nextVisit = render(<DashboardSyncSummary />);
   expect(nextVisit.queryByText('Välkommen!')).toBeNull();
   expect(nextVisit.getByText('Allt är uppdaterat!')).toBeTruthy();
-  expect(nextVisit.getByText('Inga nya mål sedan senaste besöket.')).toBeTruthy();
-  expect(nextVisit.queryByText('Koppla Apple Hälsa')).toBeNull();
 });
 
-it('does not repeat the welcome on restarting without any goals', () => {
-  setSummary(true, 0, null, EMPTY_PLANS, 7);
+it('uses the non-AI welcome text when the AI plan was skipped', () => {
+  setSummary(false, 0, null, EMPTY_PLANS, 6);
   const screen = render(<DashboardSyncSummary />);
-  expect(screen.queryByText('Välkommen!')).toBeNull();
+  expect(screen.getByText('Välkommen!')).toBeTruthy();
   expect(screen.getByText('Kom igång med att välja ditt första mål.')).toBeTruthy();
 });
 
-
-it('links from the up-to-date card to health settings even when sync is enabled, unless hidden', () => {
-  setSummary(true, 0, null, plansFor(GOAL_CATEGORIES), 7, true);
-  const screen = render(<DashboardSyncSummary />);
-  const title = Platform.OS === 'android' ? 'Koppla Health Connect' : 'Koppla Apple Hälsa';
-  expect(screen.getByText('Allt är uppdaterat!')).toBeTruthy();
-  fireEvent.press(screen.getByText(title));
-  expect(mockPush).toHaveBeenCalledWith('/(stack)/settings/health-sync');
-  setSummary(true, 0, null, plansFor(GOAL_CATEGORIES), 7, true, true);
-  screen.rerender(<DashboardSyncSummary />);
-  expect(screen.queryByText(title)).toBeNull();
+it('only shows the manual action when there are no other suggestions, and counts down after sync', () => {
+  jest.useFakeTimers();
+  try {
+    setSummary(false, 0, null, plansFor(GOAL_CATEGORIES), 7, true, true);
+    const screen = render(<DashboardSyncSummary />);
+    expect(actionTitles(screen)).toEqual([manualTitle]);
+    fireEvent.press(screen.getByRole('button', { name: manualTitle }));
+    expect(mockPush).toHaveBeenCalledWith('/(tabs)/journal');
+    act(() => jest.advanceTimersByTime(6000));
+    expect(screen.getByTestId('dashboard-sync-summary')).toBeTruthy();
+    expect(screen.queryByText('5')).toBeNull();
+    setSummary(true, 0, null, plansFor(GOAL_CATEGORIES), 7, true, true);
+    screen.rerender(<DashboardSyncSummary />);
+    expect(screen.getByText('5')).toBeTruthy();
+    act(() => jest.advanceTimersByTime(1000));
+    expect(screen.getByText('4')).toBeTruthy();
+    act(() => jest.advanceTimersByTime(4000));
+    expect(screen.queryByTestId('dashboard-sync-summary')).toBeNull();
+  } finally {
+    jest.useRealTimers();
+  }
 });
 
+it('cancels the closing timer when a higher-priority action becomes available', () => {
+  jest.useFakeTimers();
+  try {
+    setSummary(true, 0, null, plansFor(GOAL_CATEGORIES), 7, true, true);
+    const screen = render(<DashboardSyncSummary />);
+    act(() => jest.advanceTimersByTime(3000));
+    setSummary(true, 0, null, plansFor(GOAL_CATEGORIES), 7, true, false);
+    screen.rerender(<DashboardSyncSummary />);
+    expect(actionTitles(screen)).toEqual([healthTitle()]);
+    expect(screen.queryByText('5')).toBeNull();
+    act(() => jest.advanceTimersByTime(6000));
+    expect(screen.getByTestId('dashboard-sync-summary')).toBeTruthy();
+  } finally {
+    jest.useRealTimers();
+  }
+});
 
-it('shows the health settings link while syncing unless the prompt is hidden', () => {
-  setSummary(false, 0, null, plansFor(GOAL_CATEGORIES), 7, true);
+it('keeps sync failures in the heading and never auto-dismisses them', () => {
+  jest.useFakeTimers();
+  try {
+    setSummary(false, 0, null, plansFor(GOAL_CATEGORIES), 7, true, true);
+    const screen = render(<DashboardSyncSummary />);
+    const initialActions = actionTitles(screen);
+    setSummary(true, 0, 'offline', plansFor(GOAL_CATEGORIES), 7, true, true);
+    screen.rerender(<DashboardSyncSummary />);
+    expect(screen.getByText('Synkningen kunde inte slutföras')).toBeTruthy();
+    expect(screen.getByText('Vi visar framsteg från sparad data. Dra nedåt för att försöka synka igen.')).toBeTruthy();
+    expect(actionTitles(screen)).toEqual(initialActions);
+    expect(screen.queryByText('5')).toBeNull();
+    act(() => jest.advanceTimersByTime(6000));
+    expect(screen.getByTestId('dashboard-sync-summary')).toBeTruthy();
+  } finally {
+    jest.useRealTimers();
+  }
+});
+
+it('closes the whole summary with the close button', () => {
+  setSummary(false, 0);
   const screen = render(<DashboardSyncSummary />);
-  const title = Platform.OS === 'android' ? 'Koppla Health Connect' : 'Koppla Apple Hälsa';
-  expect(screen.getByTestId('dashboard-sync-spinner')).toBeTruthy();
-  fireEvent.press(screen.getByText(title));
-  expect(mockPush).toHaveBeenCalledWith('/(stack)/settings/health-sync');
-  setSummary(false, 0, null, plansFor(GOAL_CATEGORIES), 7, true, true);
-  screen.rerender(<DashboardSyncSummary />);
-  expect(screen.queryByText(title)).toBeNull();
+  fireEvent.press(screen.getByRole('button', { name: 'Stäng' }));
+  expect(screen.queryByTestId('dashboard-sync-summary')).toBeNull();
+  expect(mockPush).not.toHaveBeenCalled();
+});
+
+it('keeps progress visible without suggestion buttons or automatic dismissal even when only the manual fallback was eligible', () => {
+  jest.useFakeTimers();
+  try {
+    setSummary(true, 0, null, plansFor(GOAL_CATEGORIES), 7, true, true);
+    const screen = render(<DashboardSyncSummary />);
+    expect(screen.getByText('5')).toBeTruthy();
+    act(() => jest.advanceTimersByTime(3000));
+    setSummary(true, 2, null, plansFor(GOAL_CATEGORIES), 7, true, true);
+    screen.rerender(<DashboardSyncSummary />);
+    expect(actionTitles(screen)).toEqual([]);
+    expect(screen.queryByText('5')).toBeNull();
+    act(() => jest.advanceTimersByTime(6000));
+    expect(screen.getByText('Nya framsteg!')).toBeTruthy();
+    fireEvent.press(screen.getByRole('button', { name: 'Stäng' }));
+    expect(screen.queryByTestId('dashboard-sync-summary')).toBeNull();
+    expect(mockPush).not.toHaveBeenCalled();
+  } finally {
+    jest.useRealTimers();
+  }
+});
+
+it('prioritizes actual progress over the onboarding welcome and keeps a normal status noninteractive', () => {
+  mockNutritionEntries = [];
+  setSummary(true, 1, null, EMPTY_PLANS, 5);
+  const screen = render(<DashboardSyncSummary />);
+  expect(screen.getByRole('button', { name: /Nya framsteg!/ })).toBeTruthy();
+  expect(actionTitles(screen)).toEqual([]);
+  screen.unmount();
+  setSummary(false, 0);
+  const loading = render(<DashboardSyncSummary />);
+  expect(loading.queryByRole('button', { name: /Synkar dina framsteg/ })).toBeNull();
 });

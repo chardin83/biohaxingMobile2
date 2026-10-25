@@ -1,6 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { StyleProp, StyleSheet, TouchableOpacity, View, type ViewProps, ViewStyle } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 
@@ -13,18 +13,35 @@ type CheckboxProps = {
   labelContent?: React.ReactNode;
   accessibilityLabel?: string;
   disabled?: boolean;
+  accessibilityHint?: string;
+  description?: string;
+  onLayout?: ViewProps['onLayout'];
 };
 
-export const Checkbox: React.FC<CheckboxProps> = ({ checked, onPress, style, testID, label, labelContent, disabled, accessibilityLabel }) => {
+export const Checkbox: React.FC<CheckboxProps> = ({
+  checked,
+  onPress,
+  style,
+  testID,
+  label,
+  labelContent,
+  disabled,
+  accessibilityLabel,
+  accessibilityHint,
+  description,
+  onLayout,
+}) => {
   const { colors } = useTheme();
 
   return (
     <TouchableOpacity
       onPress={disabled ? undefined : onPress}
-      style={[styles.row, style]}
+      style={[styles.row, description && styles.withDescription, style]}
       accessibilityRole="checkbox"
       accessibilityLabel={accessibilityLabel ?? label}
-      accessibilityState={{ checked }}
+      accessibilityState={{ checked, disabled: !!disabled }}
+      accessibilityHint={accessibilityHint ?? description}
+      onLayout={onLayout}
       testID={testID}
       hitSlop={8}
       activeOpacity={0.7}
@@ -41,19 +58,30 @@ export const Checkbox: React.FC<CheckboxProps> = ({ checked, onPress, style, tes
         {checked && <ThemedText style={[styles.checkboxIcon, { color: colors.checkboxCheck }]}>✓</ThemedText>}
       </View>
       {(labelContent != null || !!label) && (
-        <ThemedText type="default" style={[styles.checkboxLabel, !checked && styles.checkboxLabelUnchecked]}>
-          {labelContent ?? label}
-        </ThemedText>
+        <View style={styles.labelColumn}>
+          <ThemedText selectable={false} type="default" style={[styles.checkboxLabel, !checked && styles.checkboxLabelUnchecked]}>
+            {labelContent ?? label}
+          </ThemedText>
+          {description && (
+            <ThemedText selectable={false} type="explainer" style={styles.description}>
+              {description}
+            </ThemedText>
+          )}
+        </View>
       )}
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
+  withDescription: { alignItems: 'flex-start', marginTop: 0 },
+  labelColumn: { flexShrink: 1, gap: 2 },
+  description: { marginLeft: 4 },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 4,
+    minHeight: 48,
     gap: 8,
   },
   box: {

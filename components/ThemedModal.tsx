@@ -57,6 +57,8 @@ export const ThemedModal = ({
     <Modal animationType="slide" transparent visible={visible} onRequestClose={onClose}>
       <BlurView intensity={25} tint={dark ? 'dark' : 'light'} style={styles.overlay}>
         <View
+          accessibilityViewIsModal
+          onAccessibilityEscape={onClose}
           style={[
             styles.modal,
             {
@@ -67,7 +69,7 @@ export const ThemedModal = ({
           ]}
         >
           {iconName && <IconSymbol name={iconName} size={40} color={iconColor ?? colors.warning} />}
-          <ThemedText type="title2" style={[styles.title, { color: titleColor ?? colors.primary }]}>
+          <ThemedText accessibilityRole="header" type="title2" style={[styles.title, { color: titleColor ?? colors.primary }]}>
             {title}
           </ThemedText>
 
@@ -84,7 +86,16 @@ export const ThemedModal = ({
               />
               {showCancelButton && <CancelButton onPress={onClose} />}
               {onSecondarySave && <AppButton onPress={onSecondarySave} title={ok2Label ?? t('general.secondary')} variant="primary" />}
-              {onSave && <AppButton onPress={onSave} title={okLabel ?? t('general.save')} variant="primary" disabled={onSaveDisabled} glow={onSaveGlow} style={!showCancelButton && !onSecondarySave ? styles.fullWidthButton : undefined} />}
+              {onSave && (
+                <AppButton
+                  onPress={onSave}
+                  title={okLabel ?? t('general.save')}
+                  variant="primary"
+                  disabled={onSaveDisabled}
+                  glow={onSaveGlow}
+                  style={!showCancelButton && !onSecondarySave ? styles.fullWidthButton : undefined}
+                />
+              )}
             </View>
           )}
         </View>
@@ -115,6 +126,8 @@ const styles = StyleSheet.create({
   buttonRow: {
     position: 'relative',
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',

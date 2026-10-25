@@ -22,5 +22,5 @@ export function CloseButton({ onPress, color, accessibilityLabel }: Props) {
 }
 
 const styles = StyleSheet.create({
-  button: { width: 16, height: 16, alignItems: 'center', justifyContent: 'center' },
+  button: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
 });

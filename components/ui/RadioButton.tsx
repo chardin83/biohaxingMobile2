@@ -51,7 +51,7 @@ export default function RadioButton({
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 12, gap: 12 },
+  row: { minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 12, gap: 12 },
   checkWrapper: { alignItems: 'center', justifyContent: 'center', position: 'relative' },
   checkLayer1: { position: 'absolute', left: -0.6, top: -0.4 },
   checkLayer2: { position: 'absolute', left: 0.6, top: 0.4 },

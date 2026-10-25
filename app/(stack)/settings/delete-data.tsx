@@ -20,6 +20,7 @@ import { getUserProfileStorageSize } from '@/app/context/storage/userProfile/use
 import { clearUserProfile } from '@/app/context/storage/userProfile/userProfileStore';
 import { getKnowledgeXpStorageSize, getNutritionXpStorageSize } from '@/app/context/storage/xp/xpStorage';
 import { useStorage } from '@/app/context/StorageContext';
+import { resetPreferredTheme } from '@/app/context/themeEvents';
 import { type Supplement } from '@/app/domain/Supplement';
 import { type SupplementPlanEntry } from '@/app/domain/SupplementPlanEntry';
 import { ThemedText } from '@/components/ThemedText';
@@ -330,6 +331,7 @@ export default function DeleteDataPage() {
 
           try {
             await deleteSelectedData();
+            if (allSelected) await resetPreferredTheme();
           } catch (error) {
             console.error('Failed to delete selected data', error);
             Alert.alert(t('privacy.deleteData.errorTitle'), t('privacy.deleteData.errorMessage'));

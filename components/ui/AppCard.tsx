@@ -23,6 +23,7 @@ interface AppCardProps {
   xp?: number;
   onPress?: () => void;
   testID?: string;
+  accessibilityHint?: string;
 }
 
 const AppCard: React.FC<AppCardProps> = ({
@@ -38,11 +39,18 @@ const AppCard: React.FC<AppCardProps> = ({
   xp,
   onPress,
   testID,
+  accessibilityHint,
 }) => {
   const { colors } = useTheme();
+  const actionRole = onPress ? 'button' : undefined;
 
   return (
     <TouchableOpacity
+      accessible={onPress ? true : undefined}
+      accessibilityRole={showCheckbox ? 'checkbox' : actionRole}
+      accessibilityLabel={showCheckbox ? [title, subtitle, description].filter(Boolean).join('. ') : undefined}
+      accessibilityHint={accessibilityHint}
+      accessibilityState={showCheckbox ? { checked: isActive, disabled: !onPress } : { disabled: !onPress }}
       onPress={onPress}
       disabled={!onPress}
       style={[
@@ -62,7 +70,7 @@ const AppCard: React.FC<AppCardProps> = ({
         )}
 
         <View style={styles.textWrapper}>
-          <ThemedText type="title3" style={[styles.cardTitle, { color: colors.primary }]}>
+          <ThemedText type="title3" style={[styles.cardTitle, { color: colors.primaryText }]}>
             {title}
           </ThemedText>
           {subtitle && (
@@ -89,6 +97,7 @@ const AppCard: React.FC<AppCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
+    borderWidth: 1,
     width: '90%',
     borderRadius: globalStyles.borders.borderRadius,
   },

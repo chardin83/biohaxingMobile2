@@ -22,7 +22,7 @@ const times = [
 export default function OnboardingSupplements() {
   const { t } = useTranslation('common');
   const router = useRouter();
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
   const { setPlans, setOnboardingStep, userProfile } = useStorage();
   const supplements = useSupplements()
     .slice()
@@ -86,12 +86,12 @@ export default function OnboardingSupplements() {
   };
   const title =
     stage === 'times' ? (
-      <Text style={{ color: '#FFFFFF' }}>
-        {t('onboarding.supplementTimesLead')} <Text style={{ color: colors.primary }}>{t('onboarding.supplementsAccent')}</Text>
+      <Text style={{ color: dark ? colors.textWhite : colors.text }}>
+        {t('onboarding.supplementTimesLead')} <Text style={{ color: colors.primaryText }}>{t('onboarding.supplementsAccent')}</Text>
       </Text>
     ) : (
-      <Text style={{ color: '#FFFFFF' }}>
-        {t('onboarding.selectSupplementsLead')} <Text style={{ color: colors.primary }}>{t('onboarding.supplementsWord')}</Text>
+      <Text style={{ color: dark ? colors.textWhite : colors.text }}>
+        {t('onboarding.selectSupplementsLead')} <Text style={{ color: colors.primaryText }}>{t('onboarding.supplementsWord')}</Text>
         {'\n'}
         <Text>{t('onboarding.supplementsForTime', { time: t(`onboarding.${active?.key}`) })}</Text>
       </Text>
@@ -110,14 +110,15 @@ export default function OnboardingSupplements() {
         contentContainerStyle={styles.container}
       >
         <View style={styles.question}>
-          <Text accessibilityRole="header" style={styles.title}>
-            {t('onboarding.supplementsLead')} <Text style={{ color: colors.primary }}>{t('onboarding.supplementsAccent')}</Text>
+          <Text accessibilityRole="header" style={[styles.title, { color: dark ? colors.textWhite : colors.text }]}>
+            {t('onboarding.supplementsLead')} <Text style={{ color: colors.primaryText }}>{t('onboarding.supplementsAccent')}</Text>
           </Text>
           <Text style={[styles.description, { color: colors.text }]}>{t('onboarding.supplementsDescription')}</Text>
           <View style={styles.answers}>
             <View style={styles.answer}>
               <AppButton
                 title={t('onboarding.yes')}
+                accessibilityLabel={`${t('onboarding.yes')}. ${t('onboarding.supplementsYesDescription')}`}
                 variant="primary"
                 rightIcon="chevron.right"
                 rightIconAtEdge
@@ -129,7 +130,14 @@ export default function OnboardingSupplements() {
               <Text style={[styles.answerDescription, { color: colors.text }]}>{t('onboarding.supplementsYesDescription')}</Text>
             </View>
             <View style={styles.answer}>
-              <AppButton title={t('onboarding.no')} variant="secondary" rightIcon="chevron.right" rightIconAtEdge onPress={() => finish(false)} />
+              <AppButton
+                title={t('onboarding.no')}
+                accessibilityLabel={`${t('onboarding.no')}. ${t('onboarding.supplementsNoDescription')}`}
+                variant="secondary"
+                rightIcon="chevron.right"
+                rightIconAtEdge
+                onPress={() => finish(false)}
+              />
               <Text style={[styles.answerDescription, { color: colors.text }]}>{t('onboarding.supplementsNoDescription')}</Text>
             </View>
           </View>
@@ -143,6 +151,11 @@ export default function OnboardingSupplements() {
       currentStep={userProfile.trackMacros ? 8 : 6}
       totalSteps={userProfile.trackMacros ? 9 : 7}
       onBackPress={back}
+      footerHelp={
+        (stage === 'times' ? activeTimes.length === 0 : !selected[active?.key]?.length)
+          ? t(stage === 'times' ? 'onboarding.selectSupplementTime' : 'onboarding.selectSupplement')
+          : undefined
+      }
       footer={
         <AppButton
           title={t('onboarding.continue')}
@@ -182,12 +195,16 @@ export default function OnboardingSupplements() {
             autoCorrect={false}
             returnKeyType="search"
           />
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('onboarding.selectedSupplements')}</Text>
+          <Text accessibilityRole="header" style={[styles.sectionTitle, { color: colors.text }]}>
+            {t('onboarding.selectedSupplements')}
+          </Text>
           {selectedSupplements.length === 0 && <Text style={[styles.emptyText, { color: colors.textMuted }]}>{t('onboarding.noSelectedSupplements')}</Text>}
           {selectedSupplements.map(item => (
             <AppCard key={item.id} title={item.name} description={item.description} showCheckbox isActive onPress={() => toggleSupplement(item.id)} />
           ))}
-          <Text style={[styles.sectionTitle, styles.catalogTitle, { color: colors.text }]}>{t('onboarding.popularSupplements')}</Text>
+          <Text accessibilityRole="header" style={[styles.sectionTitle, styles.catalogTitle, { color: colors.text }]}>
+            {t('onboarding.popularSupplements')}
+          </Text>
           {availableSupplements.length === 0 && <Text style={[styles.emptyText, { color: colors.textMuted }]}>{t('onboarding.noMatchingSupplements')}</Text>}
           {availableSupplements.map(item => (
             <AppCard key={item.id} title={item.name} description={item.description} showCheckbox onPress={() => toggleSupplement(item.id)} />

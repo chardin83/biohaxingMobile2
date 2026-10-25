@@ -68,6 +68,7 @@ export default function NutritionDistributionStep({ currentStep = 4, totalSteps 
           title={t(onContinue ? 'onboarding.continue' : 'onboarding.finish')}
           variant="primary"
           rightIcon="chevron.right"
+          busy={saving}
           disabled={saving || !energyNeeds}
           onPress={finish}
         />

@@ -51,11 +51,13 @@ export default function NutritionActivitySettings({ currentStep = 2, totalSteps 
       currentStep={currentStep}
       totalSteps={totalSteps}
       onBackPress={onBack}
+      footerHelp={!ACTIVITY_LEVELS.some(level => level.pal === selected) ? t('onboarding.selectActivity') : undefined}
       footer={
         <AppButton
           title={t('onboarding.continue')}
           variant="primary"
           rightIcon="chevron.right"
+          busy={saving}
           disabled={saving || !ACTIVITY_LEVELS.some(level => level.pal === selected)}
           onPress={onContinue ?? (() => router.push('/settings/nutrition-summary'))}
         />
@@ -70,7 +72,7 @@ export default function NutritionActivitySettings({ currentStep = 2, totalSteps 
               selected={selected === level.pal}
               disabled={saving}
               onPress={() => selectLevel(level.pal)}
-              accessibilityLabel={`${title}, PAL ${level.pal}`}
+              accessibilityLabel={`${title}. ${t(`nutritionGoals.activity.${level.key}.description`)}. PAL ${level.pal}`}
               style={[
                 styles.option,
                 index < ACTIVITY_LEVELS.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderLight },

@@ -36,11 +36,14 @@ const DiscreetButton: React.FC<DiscreetButtonProps> = ({
       onPress={disabled ? undefined : onPress}
       activeOpacity={0.6}
       accessibilityRole={accessibilityRole}
+      accessibilityLabel={title}
+      accessibilityHint={explainer}
+      accessibilityState={{ disabled: !!disabled }}
       disabled={disabled}
     >
-      {icon && <IconSymbol name={icon} size={explainer ? 32 : 18} color={disabled ? colors.textMuted : (color ?? colors.primary)} />}
+      {icon && <IconSymbol name={icon} size={explainer ? 32 : 18} color={disabled ? colors.textMuted : (color ?? colors.primaryText)} />}
       <View style={styles.textColumn}>
-        <ThemedText type="buttonText" style={[larger && styles.addTargetButtonText, { color: disabled ? colors.textMuted : (color ?? colors.primary) }]}>
+        <ThemedText type="buttonText" style={[larger && styles.addTargetButtonText, { color: disabled ? colors.textMuted : (color ?? colors.primaryText) }]}>
           {title}
         </ThemedText>
         {Boolean(explainer) && (
@@ -49,7 +52,7 @@ const DiscreetButton: React.FC<DiscreetButtonProps> = ({
           </ThemedText>
         )}
       </View>
-      {rightIcon && <IconSymbol name={rightIcon} size={18} color={disabled ? colors.textMuted : (color ?? colors.primary)} />}
+      {rightIcon && <IconSymbol name={rightIcon} size={18} color={disabled ? colors.textMuted : (color ?? colors.primaryText)} />}
     </TouchableOpacity>
   );
 };
@@ -60,6 +63,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
+    minHeight: 48,
     paddingVertical: 4,
     paddingHorizontal: 8,
     flexDirection: 'row',

@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { AccessibilityInfo, StyleSheet, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import AppButton from '@/components/ui/AppButton';
@@ -38,10 +38,24 @@ export default function NutritionPersonalDetails({
     height: !Number.isFinite(userProfile.heightCm) || !userProfile.heightCm || userProfile.heightCm <= 0 ? required : undefined,
     sex: !userProfile.biologicalSex ? required : undefined,
   };
+  const relevantErrors = profileOnly ? { age: errors.age } : errors;
+  const fieldLabels = {
+    age: t('privacy.person.birthday'),
+    weight: t('privacy.person.weight'),
+    height: t('privacy.person.height'),
+    sex: t('privacy.person.biologicalSex'),
+  };
+  const validationMessage = Object.entries(relevantErrors)
+    .filter(([, message]) => Boolean(message))
+    .map(([field, message]) => `${fieldLabels[field as keyof typeof fieldLabels]}: ${message}`)
+    .join('. ');
   const unsupportedSex = userProfile.biologicalSex === 'intersex';
   const continueGuide = () => {
     setSubmitted(true);
-    if (profileOnly ? errors.age : Object.values(errors).some(Boolean)) return;
+    if (profileOnly ? errors.age : Object.values(errors).some(Boolean)) {
+      AccessibilityInfo.announceForAccessibility(validationMessage);
+      return;
+    }
     if (onContinue) onContinue();
     else router.push('/settings/nutrition-activity');
   };

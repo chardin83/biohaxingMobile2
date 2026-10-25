@@ -83,72 +83,71 @@ export default function AISharingControls({
     <View style={styles.content}>
       <ThemedText>{t('aiSharing.description')}</ThemedText>
       {requirePersonalDetails && <ThemedText type="explainer">{t('aiSharing.requiredForPlan')}</ThemedText>}
-      <View style={optionStyle('healthPlan')} onLayout={event => onRequiredFieldLayout?.('healthPlan', event.nativeEvent.layout.y)} testID="sharing-healthPlan">
-        <Checkbox
-          checked={!!shareHealthPlan}
-          onPress={() => saveRequired('healthPlan', () => setShareHealthPlan(!shareHealthPlan))}
-          label={t('aiSharing.healthPlan')}
-          labelContent={requiredLabel('healthPlan', 'aiSharing.healthPlan')}
-          disabled={saving}
-        />
-        <ThemedText type="explainer" style={styles.details}>
-          {t('aiSharing.healthPlanDescription')}
-        </ThemedText>
-      </View>
-      <View style={optionStyle('interests')} onLayout={event => onRequiredFieldLayout?.('interests', event.nativeEvent.layout.y)} testID="sharing-interests">
-        <Checkbox
-          checked={!!shareInterests}
-          onPress={() => saveRequired('interests', () => setShareInterests(!shareInterests))}
-          label={t('aiSharing.interests')}
-          labelContent={requiredLabel('interests', 'aiSharing.interests')}
-          disabled={saving}
-        />
-        <ThemedText type="explainer" style={styles.details}>
-          {t('aiSharing.interestsDescription')}
-        </ThemedText>
-      </View>
-      <View style={[styles.option, { borderColor: colors.border, backgroundColor: colors.secondaryBackground }]}>
-        <Checkbox
-          checked={!!shareArchivedPlans}
-          onPress={() => save(() => setShareArchivedPlans(!shareArchivedPlans))}
-          label={t('aiSharing.archivedPlans')}
-          disabled={saving}
-        />
-        <ThemedText type="explainer" style={styles.details}>
-          {t('aiSharing.archivedPlansDescription')}
-        </ThemedText>
-      </View>
+      <Checkbox
+        style={optionStyle('healthPlan')}
+        onLayout={event => onRequiredFieldLayout?.('healthPlan', event.nativeEvent.layout.y)}
+        testID="sharing-healthPlan"
+        checked={!!shareHealthPlan}
+        onPress={() => saveRequired('healthPlan', () => setShareHealthPlan(!shareHealthPlan))}
+        label={t('aiSharing.healthPlan')}
+        labelContent={requiredLabel('healthPlan', 'aiSharing.healthPlan')}
+        description={t('aiSharing.healthPlanDescription')}
+        accessibilityHint={missing('healthPlan') ? t('aiSharing.requiredForPlan') : undefined}
+        disabled={saving}
+      />
+      <Checkbox
+        style={optionStyle('interests')}
+        onLayout={event => onRequiredFieldLayout?.('interests', event.nativeEvent.layout.y)}
+        testID="sharing-interests"
+        checked={!!shareInterests}
+        onPress={() => saveRequired('interests', () => setShareInterests(!shareInterests))}
+        label={t('aiSharing.interests')}
+        labelContent={requiredLabel('interests', 'aiSharing.interests')}
+        description={t('aiSharing.interestsDescription')}
+        accessibilityHint={missing('interests') ? t('aiSharing.requiredForPlan') : undefined}
+        disabled={saving}
+      />
+      <Checkbox
+        style={optionStyle()}
+        testID="sharing-archivedPlans"
+        checked={!!shareArchivedPlans}
+        onPress={() => save(() => setShareArchivedPlans(!shareArchivedPlans))}
+        label={t('aiSharing.archivedPlans')}
+        description={t('aiSharing.archivedPlansDescription')}
+        disabled={saving}
+      />
       <ThemedText type="defaultSemiBold">{t('aiSharing.personalDetails')}</ThemedText>
       {PROFILE_SHARING_FIELDS.map((field: ProfileSharingField) => (
-        <View
+        <Checkbox
           key={field}
           style={optionStyle(field === 'age' ? 'age' : undefined)}
           testID={`sharing-${field}`}
           onLayout={event => {
             if (field === 'age') onRequiredFieldLayout?.('age', event.nativeEvent.layout.y);
           }}
-        >
-          <Checkbox
-            checked={profileSharing?.[field] === true}
-            onPress={() => {
-              const action = () => setProfileSharing({ ...profileSharing, [field]: !profileSharing?.[field] });
-              return field === 'age' ? saveRequired('age', action) : save(action);
-            }}
-            label={t(`aiSharing.fields.${field}.label`)}
-            labelContent={field === 'age' ? requiredLabel('age', `aiSharing.fields.${field}.label`) : undefined}
-            disabled={saving}
-          />
-          <ThemedText type="explainer" style={styles.details}>
-            {t(`aiSharing.fields.${field}.description`)}
-          </ThemedText>
-        </View>
+          checked={profileSharing?.[field] === true}
+          onPress={() => {
+            const action = () => setProfileSharing({ ...profileSharing, [field]: !profileSharing?.[field] });
+            return field === 'age' ? saveRequired('age', action) : save(action);
+          }}
+          label={t(`aiSharing.fields.${field}.label`)}
+          accessibilityHint={field === 'age' && missing('age') ? t('aiSharing.requiredForPlan') : undefined}
+          labelContent={field === 'age' ? requiredLabel('age', `aiSharing.fields.${field}.label`) : undefined}
+          description={t(`aiSharing.fields.${field}.description`)}
+          disabled={saving}
+        />
       ))}
       {error && (
         <ThemedText type="error" accessibilityLiveRegion="polite">
           {t('aiSharing.saveError')}
         </ThemedText>
       )}
-      <Notice variant="subtle" iconName="shieldCheck" title={t('aiSharing.privacyTitle')} message={`${t('aiSharing.privacyMessage')} ${t('aiSharing.changeLater')}`} />
+      <Notice
+        variant="subtle"
+        iconName="shieldCheck"
+        title={t('aiSharing.privacyTitle')}
+        message={`${t('aiSharing.privacyMessage')} ${t('aiSharing.changeLater')}`}
+      />
     </View>
   );
 }
@@ -157,5 +156,4 @@ const styles = StyleSheet.create({
   content: { gap: 16 },
   invalidOption: { borderWidth: 1 },
   option: { borderWidth: 1, borderRadius: 16, padding: 16, gap: 8 },
-  details: { marginLeft: 34 },
 });

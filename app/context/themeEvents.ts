@@ -24,6 +24,11 @@ export const setPreferredTheme = async (t: ThemeChoice) => {
   }
 };
 
+export const resetPreferredTheme = async () => {
+  await AsyncStorage.removeItem(STORAGE_KEY);
+  emit('device');
+};
+
 export const getStoredPreferredTheme = async (): Promise<ThemeChoice | null> => {
   try {
     const v = await AsyncStorage.getItem(STORAGE_KEY);

@@ -100,7 +100,7 @@ describe('NumberStepper', () => {
     expect(getByDisplayValue('12,')).toBeTruthy();
     fireEvent.changeText(getByLabelText('Protein'), '12,5');
     expect(onChange).toHaveBeenLastCalledWith(12.5);
-    fireEvent.press(getByLabelText('+1'));
+    fireEvent.press(getByLabelText('Protein, +1'));
     expect(onChange).toHaveBeenLastCalledWith(13.5);
   });
 

@@ -6,18 +6,27 @@ import { AppTheme } from '@/app/theme/AppTheme';
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'defaultLarge' |  'title' | 'title2' | 'title3' | 'defaultSemiBold' | 'subtitle' | 'link' | 'caption' | 'value' | 'label' | 'explainer' | 'pill' | 'buttonText' | 'error';
+  type?:
+    | 'default'
+    | 'defaultLarge'
+    | 'title'
+    | 'title2'
+    | 'title3'
+    | 'defaultSemiBold'
+    | 'subtitle'
+    | 'link'
+    | 'caption'
+    | 'value'
+    | 'label'
+    | 'explainer'
+    | 'pill'
+    | 'buttonText'
+    | 'error';
   uppercase?: boolean;
   numberOfLines?: number;
 };
 
-function getTextColor(
-  colors: AppTheme['colors'],
-  dark: boolean,
-  type: ThemedTextProps['type'],
-  lightColor?: string,
-  darkColor?: string
-) {
+function getTextColor(colors: AppTheme['colors'], dark: boolean, type: ThemedTextProps['type'], lightColor?: string, darkColor?: string) {
   if (dark && darkColor) return darkColor;
   if (!dark && lightColor) return lightColor;
   if (type === 'label') return colors.textTertiary ?? colors.text;
@@ -70,13 +79,10 @@ export function ThemedText({ style, lightColor, darkColor, type = 'default', upp
 
   return (
     <Text
-      style={[
-        { color },
-        textStyle,
-        uppercase && styles.uppercase,
-        style,
-      ]}
+      style={[{ color }, textStyle, uppercase && styles.uppercase, style]}
       numberOfLines={numberOfLines} // Lägg till denna rad
+      accessibilityRole={type === 'error' ? 'alert' : undefined}
+      accessibilityLiveRegion={type === 'error' ? 'polite' : undefined}
       selectable={true}
       {...rest}
     />
@@ -88,7 +94,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
   },
-   defaultLarge: {
+  defaultLarge: {
     fontSize: 16,
     lineHeight: 24,
   },

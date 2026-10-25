@@ -1,7 +1,7 @@
 import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet } from 'react-native';
+import { AccessibilityInfo, ScrollView, StyleSheet } from 'react-native';
 
 import { useSession } from '@/app/context/SessionStorage';
 import { useStorage } from '@/app/context/StorageContext';
@@ -16,9 +16,10 @@ interface AIInfoPopupProps {
   onConfirm?: () => void;
   requirePersonalDetails?: boolean;
   busy?: boolean;
+  autoOpen?: boolean;
 }
 
-const AIInfoPopup: React.FC<AIInfoPopupProps> = ({ visible, setVisible, requirePersonalDetails = false, busy = false, onConfirm }) => {
+const AIInfoPopup: React.FC<AIInfoPopupProps> = ({ visible, setVisible, requirePersonalDetails = false, busy = false, autoOpen = true, onConfirm }) => {
   const { t } = useTranslation('common');
   const { colors } = useTheme();
   const scrollRef = useRef<ScrollView>(null);
@@ -29,18 +30,18 @@ const AIInfoPopup: React.FC<AIInfoPopupProps> = ({ visible, setVisible, requireP
   const { forceOpenPopup, setForceOpenPopup } = useSession();
 
   useEffect(() => {
-    if (forceOpenPopup) {
+    if (autoOpen && forceOpenPopup) {
       setVisible(true);
       setForceOpenPopup(false);
     }
-  }, [forceOpenPopup, setForceOpenPopup, setVisible]);
+  }, [autoOpen, forceOpenPopup, setForceOpenPopup, setVisible]);
 
   useEffect(() => {
-    if (!hasVisitedChat) {
+    if (autoOpen && !hasVisitedChat) {
       setVisible(true);
       setHasVisitedChat(true);
     }
-  }, [hasVisitedChat, setHasVisitedChat, setVisible]);
+  }, [autoOpen, hasVisitedChat, setHasVisitedChat, setVisible]);
 
   useEffect(() => {
     if (!visible) setShowRequiredErrors(false);
@@ -67,6 +68,7 @@ const AIInfoPopup: React.FC<AIInfoPopupProps> = ({ visible, setVisible, requireP
           : undefined;
     if (requirePersonalDetails && firstMissing) {
       setShowRequiredErrors(true);
+      AccessibilityInfo.announceForAccessibility(t('aiSharing.requiredForPlan'));
       if (scrollFrame.current !== null) cancelAnimationFrame(scrollFrame.current);
       scrollFrame.current = requestAnimationFrame(() => {
         scrollRef.current?.scrollTo({ y: Math.max(0, (positions.current[firstMissing] ?? 0) - 12), animated: true });
@@ -88,7 +90,7 @@ const AIInfoPopup: React.FC<AIInfoPopupProps> = ({ visible, setVisible, requireP
           </ThemedText>
         </>
       }
-      titleColor="#FFFFFF"
+      titleColor={colors.text}
       onClose={close}
       onSave={confirm}
       onSaveDisabled={busy}

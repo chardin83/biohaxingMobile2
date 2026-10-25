@@ -1,5 +1,7 @@
 import { pruneCustomSupplementReferences } from '../delete-data';
 
+jest.mock('@/components/ui/IconSymbol', () => ({ IconSymbol: () => null }));
+
 describe('pruneCustomSupplementReferences', () => {
   it('removes custom multivitamin entries from all supplement plans', () => {
     const plans = {

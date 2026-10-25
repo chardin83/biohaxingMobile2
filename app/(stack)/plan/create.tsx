@@ -696,7 +696,7 @@ export default function CreatePlanScreen({ onboarding = false }: { onboarding?: 
         )}
       </Card>
       <TipDetailsBottomSheet tipId={selectedTipId} onDismiss={() => setSelectedTipId(null)} />
-      <AIInfoPopup requirePersonalDetails busy={loading} visible={showAIPopup} setVisible={setShowAIPopup} onConfirm={handleCreatePlan} />
+      <AIInfoPopup autoOpen={false} requirePersonalDetails busy={loading} visible={showAIPopup} setVisible={setShowAIPopup} onConfirm={handleCreatePlan} />
     </Container>
   );
 }

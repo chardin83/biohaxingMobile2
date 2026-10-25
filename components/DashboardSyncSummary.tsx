@@ -12,14 +12,14 @@ import { CountdownCircle } from '@/components/ui/CountdownCircle';
 import type { IconSymbolName } from '@/components/ui/icon-symbol-map';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { ONBOARDING_FINISH_STEPS } from '@/constants/onboarding';
-import { getPlannedGoalCategories, GOAL_CATEGORIES } from '@/services/targetProgress/plannedGoalCategories';
+import { getPlannedGoalCategories, type GoalCategory } from '@/services/targetProgress/plannedGoalCategories';
+import { toDateKey } from '@/utils/dateUtils';
 import { useWearable } from '@/wearables/wearableProvider';
 
 function useDashboardSummary() {
   const { t } = useTranslation('common');
   const { colors } = useTheme();
-  const router = useRouter();
-  const { automaticHabitSummary, plans, onboardingStep, setOnboardingStep, healthSyncEnabled, hideHealthSyncPrompt, hasConnectedAppleHealth } = useStorage();
+  const { automaticHabitSummary, plans, onboardingStep, setOnboardingStep, hideHealthSyncPrompt, dailyNutritionTracking } = useStorage();
   const { syncError } = useWearable();
   const [dismissed, setDismissed] = React.useState(false);
   const [welcomeStep, setWelcomeStep] = React.useState<number | null>(null);
@@ -37,35 +37,31 @@ function useDashboardSummary() {
     setDismissed(true);
     if (hasOnboardingWelcome) setOnboardingStep(ONBOARDING_FINISH_STEPS.welcomeDismissed);
   };
+  const showFirstMeal = !Object.values(dailyNutritionTracking ?? {}).some(day => day.entries.some(entry => entry.type !== 'drink'));
   const isPending = !automaticHabitSummary?.isReady;
   const plannedCategories = React.useMemo(() => getPlannedGoalCategories(plans ?? EMPTY_PLANS), [plans]);
-  const hasSavedAIPlan =
-    [...(plans?.training ?? []), ...(plans?.nutrition ?? []), ...(plans?.other ?? [])].some(entry => entry.createdBy === 'AI') ||
-    (plans?.supplements ?? []).some(plan => plan.supplements.some(entry => entry.createdBy === 'AI'));
-  const needsHealthSetup = hasSavedAIPlan && !healthSyncEnabled && !hideHealthSyncPrompt && !hasConnectedAppleHealth;
-  const missingCategories = GOAL_CATEGORIES.filter(category => !plannedCategories.has(category));
-  const isWelcome = !isPending && !syncError && plannedCategories.size === 0;
+  const hasProgress = !isPending && !syncError && (automaticHabitSummary?.newGoalsCount ?? 0) > 0;
+  const isWelcome = !isPending && !syncError && !hasProgress && plannedCategories.size === 0;
   const isUpToDate = !isPending && !syncError && !isWelcome && (automaticHabitSummary?.newGoalsCount ?? 0) === 0;
-  const { accent, text: foreground, highlight, background: cardBackground, border: cardBorder, innerBorder, iconBackground } = colors.dashboardSync;
+  const actions = getSummaryActions(showFirstMeal, hideHealthSyncPrompt, plannedCategories);
+  const { accent, text: foreground, background: cardBackground, border: cardBorder, iconBackground } = colors.dashboardSync;
   const { titleKey, descriptionKey, headingIcon } = getSummaryHeading(isPending, !!syncError, isWelcome, isUpToDate);
   const title = t(titleKey);
   return {
     t,
-    router,
+    actions,
     dismissed,
     dismiss,
     setDismissed,
     showOnboardingWelcome,
     hasAIPlan,
+    showFirstMeal,
     setOnboardingStep,
-    healthSyncEnabled,
     hideHealthSyncPrompt,
-    hasConnectedAppleHealth,
     isPending,
+    hasProgress,
     isWelcome,
     isUpToDate,
-    missingCategories,
-    needsHealthSetup,
     automaticHabitSummary,
     syncError,
     title,
@@ -73,12 +69,23 @@ function useDashboardSummary() {
     headingIcon,
     accent,
     foreground,
-    highlight,
     cardBackground,
     cardBorder,
-    innerBorder,
     iconBackground,
   };
+}
+
+type SummaryActionKey = 'meal' | 'health' | GoalCategory | 'manual';
+
+function getSummaryActions(showFirstMeal: boolean, hideHealthSyncPrompt: boolean, plannedCategories: ReadonlySet<GoalCategory>): SummaryActionKey[] {
+  const actions: SummaryActionKey[] = [];
+  if (showFirstMeal) actions.push('meal');
+  if (!hideHealthSyncPrompt) actions.push('health');
+  for (const category of ['nutrition', 'other', 'training'] as const) {
+    if (!plannedCategories.has(category)) actions.push(category);
+  }
+  if (actions.length === 0) actions.push('manual');
+  return actions.slice(0, 2);
 }
 
 type SummaryState = ReturnType<typeof useDashboardSummary>;
@@ -86,36 +93,12 @@ type SummaryState = ReturnType<typeof useDashboardSummary>;
 export function DashboardSyncSummary() {
   const state = useDashboardSummary();
   if (state.dismissed) return null;
-  if (state.showOnboardingWelcome) return <OnboardingSummary state={state} />;
+  if (state.showOnboardingWelcome && !state.hasProgress) return <OnboardingSummary state={state} />;
   return <SyncSummary state={state} />;
 }
 
 function OnboardingSummary({ state }: Readonly<{ state: SummaryState }>) {
-  const {
-    t,
-    router,
-    hasAIPlan,
-    setOnboardingStep,
-    healthSyncEnabled,
-    hideHealthSyncPrompt,
-    hasConnectedAppleHealth,
-    cardBackground,
-    cardBorder,
-    iconBackground,
-    accent,
-    foreground,
-    dismiss,
-  } = state;
-
-  const platformKey = Platform.OS === 'android' ? 'android' : 'apple';
-  const healthIcon = Platform.OS === 'android' ? 'smartphone' : 'applelogo';
-  const openNextStep = () => {
-    if (hasAIPlan) router.push('/(stack)/settings/health-sync');
-    else {
-      setOnboardingStep(ONBOARDING_FINISH_STEPS.welcomeDismissed);
-      router.push({ pathname: '/(tabs)/search', params: { planCategories: 'other,nutrition,training', targetPeriods: 'daily,weekly' } });
-    }
-  };
+  const { t, hasAIPlan, cardBackground, cardBorder, iconBackground, accent, foreground, dismiss } = state;
   return (
     <View style={[styles.container, { backgroundColor: cardBackground, borderColor: cardBorder }]} testID="dashboard-sync-summary">
       <View style={styles.heading}>
@@ -130,40 +113,14 @@ function OnboardingSummary({ state }: Readonly<{ state: SummaryState }>) {
         </View>
         <CloseButton onPress={dismiss} color={accent} />
       </View>
-      {(!hasAIPlan || (!healthSyncEnabled && !hideHealthSyncPrompt && !hasConnectedAppleHealth)) && (
-        <SummaryAction
-          icon={hasAIPlan ? healthIcon : 'pencil'}
-          title={t(hasAIPlan ? `dashboard.sync.connectHealth.${platformKey}` : 'dashboard.sync.firstTipTitle')}
-          description={hasAIPlan ? t('dashboard.sync.connectHealth.description') : undefined}
-          onPress={openNextStep}
-        />
-      )}
+      <SummaryCountdown state={state} />
+      <SummaryActions actions={state.actions} />
     </View>
   );
 }
 
 function SyncSummary({ state }: Readonly<{ state: SummaryState }>) {
-  const {
-    t,
-    router,
-    cardBackground,
-    cardBorder,
-    iconBackground,
-    accent,
-    foreground,
-    dismiss,
-    isPending,
-    headingIcon,
-    title,
-    descriptionKey,
-    isUpToDate,
-    missingCategories,
-    setDismissed,
-    isWelcome,
-    needsHealthSetup,
-    hideHealthSyncPrompt,
-  } = state;
-
+  const { cardBackground, cardBorder, iconBackground, accent, dismiss, isPending, headingIcon } = state;
   return (
     <View
       style={[
@@ -181,89 +138,104 @@ function SyncSummary({ state }: Readonly<{ state: SummaryState }>) {
           {isPending ? <ActivityIndicator color={accent} testID="dashboard-sync-spinner" /> : <IconSymbol name={headingIcon} size={30} color={accent} />}
         </View>
         <View style={styles.headingText}>
-          <ThemedText style={[styles.title, { color: foreground }]}>{title}</ThemedText>
-          <ThemedText style={[styles.description, { color: foreground }]}>{t(descriptionKey)}</ThemedText>
+          <SummaryInformation state={state} />
         </View>
         <CloseButton onPress={dismiss} color={accent} />
       </View>
 
-      {isUpToDate && missingCategories.length === 0 && (
-        <View style={styles.countdown}>
-          <CountdownCircle onComplete={() => setDismissed(true)} accessibilityLabel={t('dashboard.sync.closingCountdown')} />
-        </View>
-      )}
-
-      {!isPending && !isUpToDate && !isWelcome && <SummaryStats state={state} />}
-
-      {isWelcome && (
-        <SummaryAction
-          icon="pencil"
-          title={t('dashboard.sync.firstTipTitle')}
-          description={t('dashboard.sync.firstTipDescription')}
-          onPress={() => router.push({ pathname: '/(tabs)/search', params: { planCategories: 'other,nutrition,training', targetPeriods: 'daily,weekly' } })}
-        />
-      )}
-
-      {isUpToDate &&
-        missingCategories.map(category => (
-          <SummaryAction
-            key={category}
-            icon={categoryIcons[category]}
-            title={t(`dashboard.sync.addGoal.${category}`)}
-            onPress={() =>
-              router.push({ pathname: '/(tabs)/search', params: { planCategories: category, targetPeriods: 'daily,weekly', goalIntro: category } })
-            }
-          />
-        ))}
-
-      {(needsHealthSetup || ((isPending || isUpToDate) && !hideHealthSyncPrompt)) && (
-        <SummaryAction
-          icon={Platform.OS === 'android' ? 'smartphone' : 'applelogo'}
-          title={t(`dashboard.sync.connectHealth.${Platform.OS === 'android' ? 'android' : 'apple'}`)}
-          description={t('dashboard.sync.connectHealth.description')}
-          onPress={() => router.push('/(stack)/settings/health-sync')}
-        />
-      )}
-
-      {!isWelcome && !(isUpToDate && missingCategories.length > 0) && (
-        <SummaryAction
-          icon="calendar"
-          title={t('dashboard.sync.manualTitle')}
-          description={t('dashboard.sync.manualDescription')}
-          onPress={() => router.push('/(tabs)/journal')}
-        />
+      {!state.hasProgress && (
+        <>
+          <SummaryCountdown state={state} />
+          <SummaryActions actions={state.actions} />
+        </>
       )}
     </View>
   );
 }
 
-function SummaryStats({ state }: Readonly<{ state: SummaryState }>) {
-  const { t, syncError, automaticHabitSummary, iconBackground, accent, highlight, foreground, innerBorder } = state;
+function SummaryInformation({ state }: Readonly<{ state: SummaryState }>) {
+  const { t, title, descriptionKey, foreground, hasProgress, automaticHabitSummary } = state;
+  const router = useRouter();
+  const countText = t('dashboard.sync.newHabitGoals', { count: automaticHabitSummary?.newGoalsCount ?? 0 });
+  const description = hasProgress ? `${t(descriptionKey)} ${countText}` : t(descriptionKey);
+  const content = (
+    <>
+      <ThemedText selectable={!hasProgress} style={[styles.title, { color: foreground }]}>
+        {title}
+      </ThemedText>
+      <ThemedText selectable={!hasProgress} style={[styles.description, { color: foreground }]}>
+        {description}
+      </ThemedText>
+    </>
+  );
+  if (!hasProgress) return content;
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`${title}. ${description}`}
+      accessibilityHint={t('dashboard.sync.openProgressHint')}
+      onPress={() => router.push('/(stack)/journal/habits/progress')}
+      style={styles.progressInformation}
+    >
+      {content}
+    </Pressable>
+  );
+}
+
+function SummaryActions({ actions }: Readonly<{ actions: SummaryActionKey[] }>) {
   return (
     <>
-      {syncError && <ThemedText style={styles.error}>{t('dashboard.sync.errorDescription')}</ThemedText>}
-      <View style={styles.stats}>
-        <View style={styles.stat} accessibilityLabel={t('dashboard.sync.newHabitGoals', { count: automaticHabitSummary?.newGoalsCount ?? 0 })}>
-          <View style={[styles.statIcon, { backgroundColor: iconBackground }]}>
-            <IconSymbol name="lotus" size={29} color={accent} />
-          </View>
-          <View style={styles.statText}>
-            <ThemedText style={[styles.number, { color: highlight }]}>{automaticHabitSummary?.newGoalsCount ?? 0}</ThemedText>
-            <ThemedText style={[styles.statLabel, { color: foreground }]}>{t('dashboard.sync.habitGoalsLabel')}</ThemedText>
-          </View>
-        </View>
-        <View style={[styles.divider, { backgroundColor: innerBorder }]} />
-        <View style={styles.stat}>
-          <View style={[styles.statIcon, { backgroundColor: iconBackground }]}>
-            <IconSymbol name="trainingRunning" size={30} color={accent} />
-          </View>
-          <View style={styles.statText}>
-            <ThemedText style={[styles.number, { color: highlight }]}>0</ThemedText>
-            <ThemedText style={[styles.statLabel, { color: foreground }]}>{t('dashboard.sync.trainingGoalsLabel')}</ThemedText>
-          </View>
-        </View>
-      </View>
+      {actions.map(action => (
+        <DashboardAction key={action} action={action} />
+      ))}
     </>
+  );
+}
+
+function DashboardAction({ action }: Readonly<{ action: SummaryActionKey }>) {
+  const { t } = useTranslation('common');
+  const router = useRouter();
+  if (action === 'meal')
+    return (
+      <SummaryAction
+        icon="meal"
+        title={t('dashboard.sync.firstMealTitle')}
+        onPress={() => router.push({ pathname: '/(tabs)/journal', params: { openTab: 'meal', selectedDate: toDateKey(new Date()) } })}
+      />
+    );
+  if (action === 'health')
+    return (
+      <SummaryAction
+        icon={Platform.OS === 'android' ? 'smartphone' : 'applelogo'}
+        title={t(`dashboard.sync.connectHealth.${Platform.OS === 'android' ? 'android' : 'apple'}`)}
+        description={t('dashboard.sync.connectHealth.description')}
+        onPress={() => router.push('/(stack)/settings/health-sync')}
+      />
+    );
+  if (action === 'manual')
+    return (
+      <SummaryAction
+        icon="calendar"
+        title={t('dashboard.sync.manualTitle')}
+        description={t('dashboard.sync.manualDescription')}
+        onPress={() => router.push('/(tabs)/journal')}
+      />
+    );
+  return (
+    <SummaryAction
+      icon={categoryIcons[action]}
+      title={t(`dashboard.sync.addGoal.${action}`)}
+      onPress={() => router.push({ pathname: '/(tabs)/search', params: { planCategories: action, targetPeriods: 'daily,weekly', goalIntro: action } })}
+    />
+  );
+}
+
+function SummaryCountdown({ state }: Readonly<{ state: SummaryState }>) {
+  if (state.isPending || state.syncError || state.hasProgress || state.actions[0] !== 'manual') return null;
+  return (
+    <View style={styles.countdown}>
+      <CountdownCircle onComplete={() => state.setDismissed(true)} accessibilityLabel={state.t('dashboard.sync.closingCountdown')} />
+    </View>
   );
 }
 
@@ -275,6 +247,7 @@ function getSummaryHeading(isPending: boolean, hasError: boolean, isWelcome: boo
   else if (isUpToDate) titleKey = 'dashboard.sync.upToDateTitle';
   let descriptionKey = 'dashboard.sync.progressDescription';
   if (isPending) descriptionKey = 'dashboard.sync.loadingDescription';
+  else if (hasError) descriptionKey = 'dashboard.sync.errorDescription';
   else if (isWelcome) descriptionKey = 'dashboard.sync.welcomeDescription';
   else if (isUpToDate) descriptionKey = 'dashboard.sync.upToDateDescription';
   let headingIcon: IconSymbolName = 'firework';
@@ -300,7 +273,10 @@ function SummaryAction({
   const palette = colors.dashboardSync;
   return (
     <Pressable
+      testID="dashboard-summary-action"
       accessibilityRole="button"
+      accessibilityLabel={title}
+      accessibilityHint={description}
       onPress={onPress}
       style={[styles.manualLink, { borderColor: palette.innerBorder, backgroundColor: palette.linkBackground }]}
     >
@@ -323,18 +299,11 @@ const styles = StyleSheet.create({
   heading: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
   countdown: { alignItems: 'center', paddingVertical: 4 },
   headingText: { flex: 1, gap: 4 },
+  progressInformation: { gap: 4, minHeight: 44 },
   title: { fontSize: 21, lineHeight: 27, fontWeight: '700' },
   description: { fontSize: 14, lineHeight: 20 },
   iconCircle: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center' },
-  stats: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 2 },
-  stat: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 },
-  statIcon: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center' },
-  statText: { flex: 1 },
-  number: { fontSize: 29, lineHeight: 34, fontWeight: '700' },
-  statLabel: { fontSize: 12, lineHeight: 17 },
-  divider: { width: 1, alignSelf: 'stretch' },
   manualLink: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 10, borderRadius: 12, borderWidth: 1 },
   manualText: { flex: 1, gap: 3 },
   manualDescription: { fontSize: 13, lineHeight: 19 },
-  error: { fontSize: 13, lineHeight: 19 },
 });

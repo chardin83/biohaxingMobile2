@@ -33,24 +33,23 @@ export default function BackButton({ onPress, style }: BackButtonProps) {
 
   return (
     <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={t('back')}
       onPress={handlePress}
-      style={[
-        styles.backButton,
-        Platform.OS === 'android' && styles.androidButton,
-        style,
-        { backgroundColor },
-      ]}
+      style={[styles.backButton, Platform.OS === 'android' && styles.androidButton, style, { backgroundColor }]}
     >
-      {Platform.OS === 'ios' ? (() => {
-        const bg = String(colors.tabBarBackground ?? colors.background ?? '');
-        const { tint, intensity } = getBlurSettings(bg);
-        return <BlurView tint={tint} intensity={intensity} style={StyleSheet.absoluteFill} />;
-      })() : (
+      {Platform.OS === 'ios' ? (
+        (() => {
+          const bg = String(colors.tabBarBackground ?? colors.background ?? '');
+          const { tint, intensity } = getBlurSettings(bg);
+          return <BlurView tint={tint} intensity={intensity} style={StyleSheet.absoluteFill} />;
+        })()
+      ) : (
         // Android: solid dark-blue background
         <View style={[StyleSheet.absoluteFill, { backgroundColor: androidBg }]} />
       )}
       <View style={styles.buttonContent} pointerEvents="box-none">
-        <ThemedText type="defaultSemiBold">
+        <ThemedText type="defaultSemiBold" style={styles.label}>
           <ThemedText type="title2" style={[{ color: colors.primary }]}>
             {'‹'}
           </ThemedText>{' '}
@@ -74,9 +73,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    minWidth: 48,
-    maxWidth: 120,
-    minHeight: 28,
+    minWidth: 44,
+    minHeight: 44,
+    maxWidth: '100%',
+    flexShrink: 1,
     elevation: 2,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -87,18 +87,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 2,
     elevation: 1,
-    minWidth: 0,
-    maxWidth: 120,
-    minHeight: 0,
+    minWidth: 44,
+    minHeight: 44,
     shadowOffset: undefined,
     shadowOpacity: 0,
     shadowRadius: 0,
   },
   buttonContent: {
+    maxWidth: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%',
-    height: '100%',
   },
+  label: { flexShrink: 1 },
 });

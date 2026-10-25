@@ -1,7 +1,7 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleProp, StyleSheet, TextInput, TextInputProps, TextStyle, View, ViewStyle } from 'react-native';
+import { StyleProp, StyleSheet, TextInput, TextInputProps, TextStyle, useWindowDimensions, View, ViewStyle } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 
@@ -68,10 +68,11 @@ const LabeledInput: React.FC<Props> = ({
   ...textInputProps
 }) => {
   const { colors } = useTheme();
+  const { fontScale } = useWindowDimensions();
   const { t } = useTranslation();
   const { placeholder, ...restProps } = textInputProps;
   const flattenedInputStyle = StyleSheet.flatten(inputStyle) as TextStyle | undefined;
-  const baseMinHeight = multilineInput && typeof flattenedInputStyle?.minHeight === 'number' ? flattenedInputStyle.minHeight : 40;
+  const baseMinHeight = multilineInput && typeof flattenedInputStyle?.minHeight === 'number' ? flattenedInputStyle.minHeight : Math.max(48, 40 * fontScale);
 
   const [inputHeight, setInputHeight] = React.useState(baseMinHeight);
   const [hasEdited, setHasEdited] = React.useState(false);
@@ -85,7 +86,7 @@ const LabeledInput: React.FC<Props> = ({
     return () => reportError?.(inputId, false);
   }, [reportError, inputId, hasError]);
 
-  const height = multilineInput ? Math.max(baseMinHeight, inputHeight) : 40;
+  const height = multilineInput ? Math.max(baseMinHeight, inputHeight) : baseMinHeight;
 
   let labelSuffix = '';
 
@@ -139,6 +140,9 @@ const LabeledInput: React.FC<Props> = ({
           onContentSizeChange={handleContentSizeChange}
           editable={!disabled}
           {...restProps}
+          accessibilityLabel={restProps.accessibilityLabel ?? `${displayLabel}${suffix ? `, ${suffix}` : ''}`}
+          accessibilityHint={displayedError ?? helperText ?? restProps.accessibilityHint}
+          accessibilityState={{ ...restProps.accessibilityState, disabled }}
           value={textValue}
           onChangeText={text => {
             setHasEdited(true);

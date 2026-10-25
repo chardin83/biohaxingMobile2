@@ -7,7 +7,7 @@ import { useStorage } from '@/app/context/StorageContext';
 import AppCard from '@/components/ui/AppCard';
 import { Area, areas } from '@/locales/areas';
 
-export default function Areas({ invalid = false }: Readonly<{ invalid?: boolean }>) {
+export default function Areas({ invalid = false, onboarding = false }: Readonly<{ invalid?: boolean; onboarding?: boolean }>) {
   const { myAreas, setMyAreas } = useStorage();
   const { colors } = useTheme();
 
@@ -16,8 +16,17 @@ export default function Areas({ invalid = false }: Readonly<{ invalid?: boolean 
   };
 
   return (
-    <View style={styles.content}>
-      <Text style={[styles.title, { color: colors.primary }]}>{t('common:areas.selectAreas')}</Text>
+    <View style={[styles.content, onboarding && styles.onboardingContent]}>
+      <Text accessibilityRole="header" style={[styles.title, { color: onboarding ? colors.text : colors.primaryText }]}>
+        {onboarding ? (
+          <>
+            {t('common:areas.selectAreasLead')} <Text style={{ color: colors.primaryText }}>{t('common:areas.selectAreasAccent')}</Text>{' '}
+            {t('common:areas.selectAreasEnd')}
+          </>
+        ) : (
+          t('common:areas.selectAreas')
+        )}
+      </Text>
       {areas.map(item => (
         <AppCard
           key={item.id}
@@ -27,7 +36,7 @@ export default function Areas({ invalid = false }: Readonly<{ invalid?: boolean 
           isActive={myAreas.includes(item.id)}
           onPress={() => handlePress(item)}
           showCheckbox={true}
-          style={invalid ? [styles.invalid, { borderColor: colors.error }] : undefined}
+          style={invalid ? { borderColor: colors.error } : undefined}
         />
       ))}
     </View>
@@ -35,7 +44,7 @@ export default function Areas({ invalid = false }: Readonly<{ invalid?: boolean 
 }
 
 const styles = StyleSheet.create({
-  invalid: { borderWidth: 1 },
+  onboardingContent: { paddingTop: 24 },
   content: {
     width: '100%',
     alignItems: 'center',

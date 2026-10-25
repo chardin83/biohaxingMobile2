@@ -27,7 +27,7 @@ export default function OnboardingAreas() {
   const [areaSelectionAttempted, setAreaSelectionAttempted] = useState(false);
   const areaSelectionError = areaSelectionAttempted && myAreas.length === 0;
   const router = useRouter();
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
 
   const chooseMacros = async (trackMacros: boolean) => {
     if (saving) return;
@@ -91,14 +91,16 @@ export default function OnboardingAreas() {
     >
       {choosingMacros ? (
         <View style={styles.macroQuestion}>
-          <Text accessibilityRole="header" style={[styles.title, styles.macroTitle]}>
-            {t('onboarding.trackMacrosLead')} <Text style={{ color: colors.primary }}>{t('common:onboarding.trackMacrosAccent')}</Text>
+          <Text accessibilityRole="header" style={[styles.title, { color: dark ? colors.textWhite : colors.text }]}>
+            {t('onboarding.trackMacrosLead')} <Text style={{ color: colors.primaryText }}>{t('common:onboarding.trackMacrosAccent')}</Text>
           </Text>
           <Text style={[styles.description, { color: colors.text }]}>{t('onboarding.macrosDescription')}</Text>
           <View style={styles.answers}>
             <View style={styles.answer}>
               <AppButton
                 title={t('onboarding.yes')}
+                accessibilityLabel={`${t('onboarding.yes')}. ${t('onboarding.macrosYesDescription')}`}
+                busy={saving}
                 rightIcon="chevron.right"
                 rightIconAtEdge
                 variant="primary"
@@ -110,6 +112,8 @@ export default function OnboardingAreas() {
             <View style={styles.answer}>
               <AppButton
                 title={t('onboarding.no')}
+                accessibilityLabel={`${t('onboarding.no')}. ${t('onboarding.macrosNoDescription')}`}
+                busy={saving}
                 rightIcon="chevron.right"
                 rightIconAtEdge
                 variant="secondary"
@@ -119,10 +123,10 @@ export default function OnboardingAreas() {
               <Text style={[styles.answerDescription, { color: colors.text }]}>{t('onboarding.macrosNoDescription')}</Text>
             </View>
           </View>
-          {error && <Text style={{ color: colors.text }}>{t('onboarding.saveError')}</Text>}
+          {error && <Notice variant="error" message={t('onboarding.saveError')} />}
         </View>
       ) : (
-        <Areas invalid={areaSelectionError} />
+        <Areas onboarding invalid={areaSelectionError} />
       )}
     </Container>
   );
@@ -193,9 +197,6 @@ const styles = StyleSheet.create({
   },
   macroQuestion: {
     marginTop: 48,
-  },
-  macroTitle: {
-    color: '#FFFFFF',
   },
   description: {
     fontSize: 16,

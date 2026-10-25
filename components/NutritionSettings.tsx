@@ -154,6 +154,7 @@ export default function NutritionSettings({
               style={styles.footerButton}
               title={t(continueOnSave ? 'onboarding.continue' : 'general.save')}
               variant="primary"
+              busy={saving}
               disabled={saving || !canSave}
               onPress={() => save(onSaved)}
             />

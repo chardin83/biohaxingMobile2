@@ -47,11 +47,21 @@ export function CardLinkList({ rows, showIcon = true, style, footer }: Props) {
   return (
     <CardContainer style={style}>
       {rows.map((row, index) => (
-        <View key={row.key} style={[index === rows.length - 1 ? styles.rowNoBorder : [styles.rowBorder, { borderBottomColor: colors.borderLight }], Boolean(row.errorText) && [styles.errorRow, { borderColor: colors.surfaceRedBorder, borderBottomColor: colors.surfaceRedBorder, backgroundColor: colors.surfaceRed }]]}>
+        <View
+          key={row.key}
+          style={[
+            index === rows.length - 1 ? styles.rowNoBorder : [styles.rowBorder, { borderBottomColor: colors.borderLight }],
+            Boolean(row.errorText) && [
+              styles.errorRow,
+              { borderColor: colors.surfaceRedBorder, borderBottomColor: colors.surfaceRedBorder, backgroundColor: colors.surfaceRed },
+            ],
+          ]}
+        >
           <Pressable
             onPress={row.onPress}
             disabled={row.disabled}
             accessibilityRole="button"
+            accessibilityLabel={[row.title, row.value, row.subtitle, row.errorText].filter(Boolean).join('. ')}
             accessibilityState={{ expanded: row.expanded, disabled: row.disabled }}
             style={singleRow ? styles.container : styles.row}
           >
@@ -64,7 +74,9 @@ export function CardLinkList({ rows, showIcon = true, style, footer }: Props) {
                 {Boolean(row.errorText) && (
                   <View style={styles.errorText}>
                     <IconSymbol name="error" size={16} color={colors.error} />
-                    <ThemedText type="caption" accessibilityLiveRegion="polite" style={{ color: colors.error }}>{row.errorText}</ThemedText>
+                    <ThemedText type="caption" accessibilityLiveRegion="polite" style={{ color: colors.error }}>
+                      {row.errorText}
+                    </ThemedText>
                   </View>
                 )}
                 {row.subtitle && (

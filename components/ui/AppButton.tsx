@@ -15,6 +15,7 @@ interface AppButtonProps {
   variant?: Variant;
   style?: StyleProp<ViewStyle>;
   disabled?: boolean;
+  busy?: boolean;
   glow?: boolean;
   accessibilityLabel?: string;
   accessibilityHint?: string;
@@ -31,6 +32,7 @@ const AppButton: React.FC<AppButtonProps> = ({
   variant = 'primary',
   style,
   disabled = false,
+  busy = false,
   glow = false,
   accessibilityLabel,
   accessibilityHint,
@@ -76,7 +78,7 @@ const AppButton: React.FC<AppButtonProps> = ({
     textColorStyle = { color: colors.xp };
   } else if (isPrimary) {
     textColorStyle = {
-      color: colors.primary,
+      color: colors.primaryText,
     };
   } else if (isDanger) {
     textColorStyle = {
@@ -118,7 +120,7 @@ const AppButton: React.FC<AppButtonProps> = ({
         disabled={disabled}
         accessibilityLabel={accessibilityLabel || title}
         accessibilityRole="button"
-        accessibilityState={{ disabled }}
+        accessibilityState={{ disabled, busy }}
         accessibilityHint={accessibilityHint}
         accessible
       >
@@ -154,6 +156,7 @@ const AppButton: React.FC<AppButtonProps> = ({
 };
 
 const baseStyle: ViewStyle = {
+  minHeight: 48,
   paddingVertical: 14,
   paddingHorizontal: 18,
   borderRadius: globalStyles.borders.borderRadius,
@@ -184,6 +187,8 @@ const styles = StyleSheet.create({
   premiumContent: { width: '100%' },
   premiumText: { flex: 1, flexShrink: 1 },
   text: {
+    flexShrink: 1,
+    textAlign: 'center',
     fontWeight: 'bold',
     textTransform: 'uppercase',
     letterSpacing: 1,

@@ -147,7 +147,8 @@ export function DateTimeInput({
               {Platform.OS === 'ios' ? (
                 <View style={[styles.pickerContainer, { borderColor: colors.border }]}>
                   <DateTimePicker
-                    value={value}
+                    textColor={colors.text}
+                  value={value}
                     mode={showTime && showDate ? 'datetime' : 'date'}
                     display="spinner"
                     is24Hour
@@ -173,6 +174,7 @@ export function DateTimeInput({
               <NativeViewGestureHandler disallowInterruption enabled={Platform.OS === 'ios'}>
               <View style={[styles.pickerContainer, { borderColor: colors.border }]}>
                 <DateTimePicker
+                  textColor={colors.text}
                   value={value}
                   mode="time"
                   display={Platform.OS === 'ios' ? 'spinner' : 'default'}

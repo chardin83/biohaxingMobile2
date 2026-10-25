@@ -371,6 +371,9 @@
     "day": "day"
   },
   "areas": {
+    "selectAreasLead": "Select what",
+    "selectAreasAccent": "areas",
+    "selectAreasEnd": "you want to focus on",
     "selectAreas": "Select what areas you want to focus on",
     "editArea": "Edit area",
     "addArea": "Add area",
@@ -751,6 +754,10 @@
     "supplementNotFound": "⚠️ I couldn't find {{supplement}} in the list of supplements."
   },
   "onboarding": {
+    "selectSupplementTime": "Select at least one time to continue.",
+    "selectSupplement": "Select at least one supplement to continue.",
+    "selectActivity": "Select an activity level to continue.",
+
     "selectAtLeastOneArea": "Select at least 1 area to continue",
     "finish": "Finish",
     "welcomeTo": "Welcome to",
@@ -800,11 +807,13 @@
     "sync": {
       "loadingTitle": "Syncing your progress",
       "loadingDescription": "We are fetching health data and checking your automatic habits.",
+      "openProgressHint": "Opens your habit goals in the journal.",
       "progressTitle": "New progress!",
       "upToDateTitle": "Everything is up to date!",
       "upToDateDescription": "No new goals since your last visit.",
       "welcomeTitle": "Welcome!",
       "welcomeDescription": "Get started by choosing your first goal.",
+      "firstMealTitle": "Log your first meal",
       "firstTipTitle": "Add your first tip",
       "firstTipDescription": "Add good habits, nutrition or training.",
       "addGoal": {

@@ -18,10 +18,10 @@ export default function OnboardingWelcome() {
 
   return (
     <Container background="gradient" gradientKey="sunrise" gradientLocations={colors.gradients?.sunrise?.locations2 as any} centerContent>
-      <Image source={smartImage} style={styles.image} resizeMode="cover" />
+      <Image accessible={false} importantForAccessibility="no" source={smartImage} style={styles.image} resizeMode="cover" />
 
       <View style={styles.content}>
-        <ThemedText type="title2" style={styles.welcomeText}>
+        <ThemedText accessibilityRole="header" type="title2" style={styles.welcomeText}>
           {t('onboarding.welcomeTo')}
         </ThemedText>
         <ThemedText type="title" style={[styles.brand, { color: colors.primary }]}>

@@ -69,7 +69,15 @@ export default function NumberStepper({
 
   return (
     <View style={[styles.container, compact && styles.compactContainer]}>
-      <Pressable accessibilityRole="button" accessibilityLabel={`-${step}`} disabled={disabled} onPress={() => adjust(-step)} hitSlop={10}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel ? `${accessibilityLabel}, −${step}` : `-${step}`}
+        accessibilityState={{ disabled }}
+        style={styles.adjustButton}
+        disabled={disabled}
+        onPress={() => adjust(-step)}
+        hitSlop={10}
+      >
         <ThemedText type="title2">−</ThemedText>
       </Pressable>
 
@@ -79,6 +87,7 @@ export default function NumberStepper({
         value={text}
         placeholder="–"
         editable={!disabled}
+        accessibilityState={{ disabled }}
         keyboardType="decimal-pad"
         selectTextOnFocus
         onChangeText={nextText => {
@@ -101,7 +110,15 @@ export default function NumberStepper({
         }}
       />
 
-      <Pressable accessibilityRole="button" accessibilityLabel={`+${step}`} disabled={disabled} onPress={() => adjust(step)} hitSlop={10}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel ? `${accessibilityLabel}, +${step}` : `+${step}`}
+        accessibilityState={{ disabled }}
+        style={styles.adjustButton}
+        disabled={disabled}
+        onPress={() => adjust(step)}
+        hitSlop={10}
+      >
         <ThemedText type="title2">+</ThemedText>
       </Pressable>
     </View>
@@ -109,6 +126,7 @@ export default function NumberStepper({
 }
 
 const styles = StyleSheet.create({
+  adjustButton: { minWidth: 48, minHeight: 48, alignItems: 'center', justifyContent: 'center' },
   compactContainer: { gap: 8 },
   compactInput: { minWidth: 36, maxWidth: 64 },
   input: { minWidth: 48, maxWidth: 90, paddingVertical: 0, fontSize: 16, fontWeight: '700', textAlign: 'center' },

@@ -1,7 +1,7 @@
 import { useTheme } from '@react-navigation/native';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, type StyleProp, StyleSheet, View, type ViewStyle } from 'react-native';
+import { AccessibilityInfo, Platform, Pressable, type StyleProp, StyleSheet, View, type ViewStyle } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 
@@ -39,6 +39,11 @@ export default function Notice({
   const { colors } = useTheme();
   const { t } = useTranslation('common');
   const [dismissed, setDismissed] = React.useState(false);
+  React.useEffect(() => {
+    if (variant === 'error' && Platform.OS === 'ios') {
+      AccessibilityInfo.announceForAccessibility([title, message].filter(Boolean).join('. '));
+    }
+  }, [variant, title, message]);
   const isTutorial = variant === 'tutorial';
   const actionLabel = isTutorial ? t('general.understood') : dismissLabel;
   const dismiss = () => {
@@ -65,6 +70,8 @@ export default function Notice({
 
   return (
     <View
+      accessible={variant === 'error' ? true : undefined}
+      accessibilityLabel={variant === 'error' ? [title, message].filter(Boolean).join('. ') : undefined}
       accessibilityRole={variant === 'error' ? 'alert' : undefined}
       accessibilityLiveRegion={variant === 'error' ? 'polite' : undefined}
       style={[

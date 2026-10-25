@@ -13,8 +13,10 @@ export function IconSymbol({ name, size = 24, color, style }: Readonly<IconSymbo
   const iconName = ICON_SYMBOLS[name];
 
   if (iconName && 'materialCommunity' in iconName) {
-    return <MaterialCommunityIcons name={iconName.materialCommunity} size={size} color={color} style={style} />;
+    return (
+      <MaterialCommunityIcons accessible={false} importantForAccessibility="no" name={iconName.materialCommunity} size={size} color={color} style={style} />
+    );
   }
 
-  return <MaterialIcons name={iconName?.material ?? 'help'} size={size} color={color} style={style} />;
+  return <MaterialIcons accessible={false} importantForAccessibility="no" name={iconName?.material ?? 'help'} size={size} color={color} style={style} />;
 }
