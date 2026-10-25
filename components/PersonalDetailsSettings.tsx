@@ -13,7 +13,11 @@ import CardLinkList from './ui/CardLinkList';
 import { DateTimeInput } from './ui/DateTimeInput';
 import RadioButton from './ui/RadioButton';
 
-export default function PersonalDetailsSettings({ style, errors }: Readonly<{ style?: StyleProp<ViewStyle>; errors?: Partial<Record<'age' | 'weight' | 'height' | 'sex', string>> }>) {
+export default function PersonalDetailsSettings({
+  style,
+  errors,
+  ageOnly = false,
+}: Readonly<{ style?: StyleProp<ViewStyle>; ageOnly?: boolean; errors?: Partial<Record<'age' | 'weight' | 'height' | 'sex', string>> }>) {
   const { t } = useTranslation('common');
   const { colors } = useTheme();
   const { userProfile, updateUserProfile } = useStorage();
@@ -90,108 +94,110 @@ export default function PersonalDetailsSettings({ style, errors }: Readonly<{ st
   return (
     <CardLinkList
       style={style}
-      rows={[
-        {
-          key: 'age',
-          errorText: errors?.age,
-          title: t(birthday ? 'privacy.person.ageTitle' : 'privacy.person.birthday'),
-          iconName: 'calendar',
-          value: birthday ? t('privacy.person.age', { count: getAge(birthday, today) }) : undefined,
-          expanded: !birthday || showBirthdayInput,
-          disabled: !birthday || birthdaySaving,
-          onPress: () => setShowBirthdayInput(current => !current),
-          content: (
-            <View style={styles.birthdayPicker}>
-              <DateTimeInput
-                value={birthday ?? today}
-                onChange={handleBirthdayChange}
-                showDate
-                showTime={false}
-                buttonIcon="calendar"
-                buttonLabel={birthday ? undefined : t('privacy.person.chooseBirthday')}
-                dateLabel={t('privacy.person.birthday')}
-                maxDate={today}
-                disabled={birthdaySaving}
-              />
-              {birthdayError && <ThemedText type="error">{t('privacy.person.birthdaySaveError')}</ThemedText>}
-            </View>
-          ),
-        },
-        {
-          key: 'weight',
-          errorText: errors?.weight,
-          title: t('privacy.person.weight'),
-          iconName: 'weight',
-          value: displayedWeight ? `${displayedWeight} kg` : t('privacy.person.notSet'),
-          expanded: editingWeight,
-          onPress: () => {
-            if (!editingWeight) setWeight(userProfile.weightKg ?? 0);
-            setWeightError(false);
-            setEditingWeight(current => !current);
-          },
-          content: (
-            <View style={styles.weightEditor}>
-              <View style={styles.weightInput}>
-                <NumberStepper value={weight} onChange={handleWeightChange} min={0} max={500} step={1} accessibilityLabel={t('privacy.person.weight')} />
-                <ThemedText>kg</ThemedText>
+      rows={(
+        [
+          {
+            key: 'age',
+            errorText: errors?.age,
+            title: t(birthday ? 'privacy.person.ageTitle' : 'privacy.person.birthday'),
+            iconName: 'calendar',
+            value: birthday ? t('privacy.person.age', { count: getAge(birthday, today) }) : undefined,
+            expanded: !birthday || showBirthdayInput,
+            disabled: !birthday || birthdaySaving,
+            onPress: () => setShowBirthdayInput(current => !current),
+            content: (
+              <View style={styles.birthdayPicker}>
+                <DateTimeInput
+                  value={birthday ?? today}
+                  onChange={handleBirthdayChange}
+                  showDate
+                  showTime={false}
+                  buttonIcon="calendar"
+                  buttonLabel={birthday ? undefined : t('privacy.person.chooseBirthday')}
+                  dateLabel={t('privacy.person.birthday')}
+                  maxDate={today}
+                  disabled={birthdaySaving}
+                />
+                {birthdayError && <ThemedText type="error">{t('privacy.person.birthdaySaveError')}</ThemedText>}
               </View>
-              {weightError && <ThemedText type="error">{t('privacy.person.weightSaveError')}</ThemedText>}
-            </View>
-          ),
-        },
-        {
-          key: 'height',
-          errorText: errors?.height,
-          title: t('privacy.person.height'),
-          iconName: 'height',
-          value: displayedHeight ? `${displayedHeight} cm` : t('privacy.person.notSet'),
-          expanded: editingHeight,
-          onPress: () => {
-            if (!editingHeight) setHeight(userProfile.heightCm ?? 170);
-            setHeightError(false);
-            setEditingHeight(current => !current);
+            ),
           },
-          content: (
-            <View style={styles.weightEditor}>
-              <View style={styles.weightInput}>
-                <NumberStepper value={height} onChange={handleHeightChange} min={0} max={300} step={1} accessibilityLabel={t('privacy.person.height')} />
-                <ThemedText>cm</ThemedText>
+          {
+            key: 'weight',
+            errorText: errors?.weight,
+            title: t('privacy.person.weight'),
+            iconName: 'weight',
+            value: displayedWeight ? `${displayedWeight} kg` : t('privacy.person.notSet'),
+            expanded: editingWeight,
+            onPress: () => {
+              if (!editingWeight) setWeight(userProfile.weightKg ?? 0);
+              setWeightError(false);
+              setEditingWeight(current => !current);
+            },
+            content: (
+              <View style={styles.weightEditor}>
+                <View style={styles.weightInput}>
+                  <NumberStepper value={weight} onChange={handleWeightChange} min={0} max={500} step={1} accessibilityLabel={t('privacy.person.weight')} />
+                  <ThemedText>kg</ThemedText>
+                </View>
+                {weightError && <ThemedText type="error">{t('privacy.person.weightSaveError')}</ThemedText>}
               </View>
-              {heightError && <ThemedText type="error">{t('privacy.person.heightSaveError')}</ThemedText>}
-            </View>
-          ),
-        },
-        {
-          key: 'sex',
-          errorText: errors?.sex,
-          title: t('privacy.person.biologicalSex'),
-          iconName: 'person',
-          value: userProfile.biologicalSex ? t(`privacy.person.sexOptions.${userProfile.biologicalSex}`) : t('privacy.person.notSet'),
-          expanded: editingSex,
-          onPress: () => setEditingSex(current => !current),
-          content: (
-            <View>
-              {(['female', 'male', 'intersex'] as const).map((choice, index) => (
-                <RadioButton
-                  key={choice}
-                  selected={userProfile.biologicalSex === choice}
-                  disabled={sexSaving}
-                  accessibilityLabel={t(`privacy.person.sexOptions.${choice}`)}
-                  onPress={() => handleSexChange(choice)}
-                  style={index < 2 ? { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderLight } : undefined}
-                >
-                  <ThemedText>{t(`privacy.person.sexOptions.${choice}`)}</ThemedText>
-                </RadioButton>
-              ))}
-              {sexError && (
-                <ThemedText type="error" style={styles.weightEditor}>
-                  {t('privacy.person.sexSaveError')}
-                </ThemedText>
-              )}
-            </View>
-          ),
-        },
-      ]}
+            ),
+          },
+          {
+            key: 'height',
+            errorText: errors?.height,
+            title: t('privacy.person.height'),
+            iconName: 'height',
+            value: displayedHeight ? `${displayedHeight} cm` : t('privacy.person.notSet'),
+            expanded: editingHeight,
+            onPress: () => {
+              if (!editingHeight) setHeight(userProfile.heightCm ?? 170);
+              setHeightError(false);
+              setEditingHeight(current => !current);
+            },
+            content: (
+              <View style={styles.weightEditor}>
+                <View style={styles.weightInput}>
+                  <NumberStepper value={height} onChange={handleHeightChange} min={0} max={300} step={1} accessibilityLabel={t('privacy.person.height')} />
+                  <ThemedText>cm</ThemedText>
+                </View>
+                {heightError && <ThemedText type="error">{t('privacy.person.heightSaveError')}</ThemedText>}
+              </View>
+            ),
+          },
+          {
+            key: 'sex',
+            errorText: errors?.sex,
+            title: t('privacy.person.biologicalSex'),
+            iconName: 'person',
+            value: userProfile.biologicalSex ? t(`privacy.person.sexOptions.${userProfile.biologicalSex}`) : t('privacy.person.notSet'),
+            expanded: editingSex,
+            onPress: () => setEditingSex(current => !current),
+            content: (
+              <View>
+                {(['female', 'male', 'intersex'] as const).map((choice, index) => (
+                  <RadioButton
+                    key={choice}
+                    selected={userProfile.biologicalSex === choice}
+                    disabled={sexSaving}
+                    accessibilityLabel={t(`privacy.person.sexOptions.${choice}`)}
+                    onPress={() => handleSexChange(choice)}
+                    style={index < 2 ? { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.borderLight } : undefined}
+                  >
+                    <ThemedText>{t(`privacy.person.sexOptions.${choice}`)}</ThemedText>
+                  </RadioButton>
+                ))}
+                {sexError && (
+                  <ThemedText type="error" style={styles.weightEditor}>
+                    {t('privacy.person.sexSaveError')}
+                  </ThemedText>
+                )}
+              </View>
+            ),
+          },
+        ] satisfies React.ComponentProps<typeof CardLinkList>['rows']
+      ).filter(row => !ageOnly || row.key === 'age')}
     />
   );
 }

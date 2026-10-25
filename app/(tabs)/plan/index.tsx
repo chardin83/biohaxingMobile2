@@ -36,6 +36,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import PlanEditActions from '@/components/ui/PlanEditActions';
 import { PressableCard } from '@/components/ui/PressableCard';
 import { formatDate } from '@/utils/dateUtils';
+import { getSupplementTimeIcon } from '@/utils/supplementTimeIcon';
 
 import { Plan } from '../../domain/Plan';
 
@@ -88,16 +89,6 @@ async function scheduleSupplementNotification(plan: Plan): Promise<string | unde
     return undefined;
   }
 }
-
-const getSupplementTimeIcon = (preferredTime: string): React.ComponentProps<typeof IconSymbol>['name'] => {
-  const hour = Number.parseInt((preferredTime || '').split(':')[0] ?? '', 10);
-
-  if (!Number.isFinite(hour)) return 'pill';
-  if (hour >= 5 && hour < 11) return 'alarm';
-  if (hour >= 11 && hour < 19) return 'sunny';
-  if (hour >= 19 && hour < 22) return 'moon';
-  return 'moon';
-};
 
 // Plan category mapping not currently used; remove to avoid unused warnings
 

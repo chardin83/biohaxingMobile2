@@ -1,40 +1,45 @@
-import { useTheme } from '@react-navigation/native';
+import { useIsFocused, useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
-import { ActivityIndicator, StyleSheet,View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { useStorage } from '../context/StorageContext';
 
 export default function IndexRedirector() {
   const { hasCompletedOnboarding, isInitialized, onboardingStep } = useStorage();
   const router = useRouter();
+  const isFocused = useIsFocused();
   const { colors } = useTheme();
 
   useEffect(() => {
-    if (!isInitialized) return;
+    if (!isInitialized || !isFocused) return;
 
     if (hasCompletedOnboarding) {
-      router.push('/dashboard');
+      router.replace('/dashboard');
     } else {
       switch (onboardingStep) {
         case 0:
-          router.push('/(onboarding)/onboardingwelcome');
+          router.replace('/(onboarding)/onboardingwelcome');
           break;
         case 1:
-          router.push('/(onboarding)/onboardinggoals');
+          router.replace('/(onboarding)/onboardingareas');
+          break;
+        case 2:
+          router.replace('/(onboarding)/onboardingareas');
+          break;
+        case 4:
+          router.replace('/(onboarding)/onboardingplan');
           break;
         default:
-          router.push('/(onboarding)/onboardingsupplements');
+          router.replace('/(onboarding)/onboardingsupplements');
           break;
       }
     }
-  }, [isInitialized, hasCompletedOnboarding, onboardingStep, router]);
+  }, [isInitialized, isFocused, hasCompletedOnboarding, onboardingStep, router]);
 
   if (!isInitialized) {
     return (
-      <View
-        style={[styles.container, { backgroundColor: colors.background }]}
-      >
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );

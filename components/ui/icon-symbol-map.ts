@@ -281,6 +281,15 @@ export const ICON_SYMBOLS = {
     sf: 'book.closed',
     material: 'menu-book',
   },
+  'shieldCheck': {
+    sf: 'checkmark.shield.fill',
+    material: 'verified-user',
+    materialCommunity: 'shield-check',
+  },
+  'shield': {
+    sf: 'shield.fill',
+    material: 'shield',
+  },
   'privacy': {
     sf: 'hand.raised.fill',
     material: 'privacy-tip',

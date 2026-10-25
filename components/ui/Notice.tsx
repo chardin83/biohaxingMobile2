@@ -9,7 +9,7 @@ import { CloseButton } from './CloseButton';
 import type { IconSymbolName } from './icon-symbol-map';
 import { IconSymbol } from './IconSymbol';
 
-type NoticeVariant = 'info' | 'success' | 'warning' | 'tutorial';
+type NoticeVariant = 'info' | 'success' | 'warning' | 'tutorial' | 'subtle' | 'error';
 
 type NoticeProps = Readonly<{
   title?: string;
@@ -49,6 +49,8 @@ export default function Notice({
   const isWarning = variant === 'warning';
 
   const variantStyles = {
+    error: { backgroundColor: 'rgba(255,59,48,0.1)', accentColor: colors.error, iconName: 'error' },
+    subtle: { backgroundColor: 'transparent', accentColor: colors.textMuted, iconName: 'privacy' },
     info: { backgroundColor: colors.infoWeak, accentColor: colors.infoColor, iconName: 'info' },
     success: { backgroundColor: colors.surfaceGreen, accentColor: colors.surfaceGreenBorder, iconName: 'check' },
     warning: { backgroundColor: colors.surfaceWarning, accentColor: colors.warning, iconName: 'warning' },
@@ -56,40 +58,45 @@ export default function Notice({
   } as const;
 
   const { backgroundColor, accentColor, iconName: defaultIconName } = variantStyles[variant];
-  const textColor = isWarning || isTutorial ? accentColor : undefined;
+  const textColor = isWarning || isTutorial || variant === 'error' ? accentColor : undefined;
   const textStyle = textColor ? { color: textColor } : undefined;
 
   if (dismissed) return null;
 
   return (
     <View
+      accessibilityRole={variant === 'error' ? 'alert' : undefined}
+      accessibilityLiveRegion={variant === 'error' ? 'polite' : undefined}
       style={[
         styles.container,
         {
           backgroundColor,
-          borderColor: accentColor,
+          borderColor: variant === 'subtle' ? colors.borderLight : accentColor,
         },
         style,
       ]}
     >
-      {showIcon && <View
-        style={[
-          styles.icon,
-          {
-            backgroundColor: colors.cardBackground,
-            borderColor: accentColor,
-          },
-        ]}
-      >
-        <IconSymbol name={iconName ?? defaultIconName} size={iconName ? 20 : 16} color={accentColor} />
-      </View>}
+      {showIcon && (
+        <View
+          style={[
+            styles.icon,
+            {
+              backgroundColor: colors.cardBackground,
+              borderColor: accentColor,
+            },
+            variant === 'subtle' && styles.subtleIcon,
+          ]}
+        >
+          <IconSymbol name={iconName ?? defaultIconName} size={iconName ? 20 : 16} color={accentColor} />
+        </View>
+      )}
       <View style={styles.textContainer}>
         {title ? (
           <ThemedText type="defaultSemiBold" style={textStyle}>
             {title}
           </ThemedText>
         ) : null}
-        <ThemedText type="caption" style={textStyle}>
+        <ThemedText type={variant === 'subtle' ? 'explainer' : 'caption'} style={textStyle}>
           {message}
         </ThemedText>
         {children}
@@ -116,6 +123,7 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     borderRadius: 10,
   },
+  subtleIcon: { backgroundColor: 'transparent', borderWidth: 0, width: 20, height: 20 },
   icon: {
     width: 28,
     height: 28,

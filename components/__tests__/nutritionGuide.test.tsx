@@ -275,3 +275,27 @@ describe('nutrition guide completion', () => {
     expect(mockDismissTo).not.toHaveBeenCalled();
   });
 });
+
+describe('personal details without macro tracking', () => {
+  beforeEach(() => { jest.clearAllMocks(); });
+  it('requires only age when not tracking macros', () => {
+    const Details = jest.requireActual('@/components/NutritionPersonalDetails').default;
+    mockProfile = { birthDate: '1990-01-01' };
+    const next = jest.fn();
+    const screen = render(<Details profileOnly onContinue={next} />);
+    fireEvent.press(screen.getByText('onboarding.continue'));
+    expect(next).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText('nutritionGoals.manualTitle')).toBeNull();
+  });
+  it.each([
+    { biologicalSex: 'female' },
+    {},
+  ])('does not proceed with incomplete required profile: %j', profile => {
+    const Details = jest.requireActual('@/components/NutritionPersonalDetails').default;
+    mockProfile = profile;
+    const next = jest.fn();
+    const screen = render(<Details profileOnly onContinue={next} />);
+    fireEvent.press(screen.getByText('onboarding.continue'));
+    expect(next).not.toHaveBeenCalled();
+  });
+});

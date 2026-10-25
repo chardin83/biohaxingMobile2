@@ -1,8 +1,19 @@
 {
-   "healthSync": {
+  "healthSync": {
     "appleTitle": "Apple Health",
+    "appleIntroduction": "Sync your activity, sleep and other health data for better insights.",
     "androidTitle": "Health Connect",
     "appleDescription": "When enabled, the app can read health data from Apple Health...",
-    "androidDescription": "When enabled, the app can read health data from Health Connect..."
+    "androidDescription": "When enabled, the app can read health data from Health Connect...",
+    "hideApplePrompt": "I don’t use Apple Health – don’t show again",
+    "hideAndroidPrompt": "I don’t use Health Connect – don’t show again",
+    "preferenceSaveError": "Could not save your choice. Please try again.",
+    "connectApple": "Connect Apple Health",
+    "openApple": "Open Apple Health",
+    "permissionsTitle": "Change permissions",
+    "permissionsSteps": "1. Open Apple Health\n2. Tap Sharing\n3. Select Apps\n4. Select Biohaxing",
+    "manageAppleData": "Change which data types are shared",
+    "connectAppleDescription": "Choose which health data Biohaxing may read.",
+    "connectionError": "Could not open Apple Health. Please try again."
   }
 }

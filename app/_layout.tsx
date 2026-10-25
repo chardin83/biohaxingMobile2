@@ -140,7 +140,11 @@ export default function RootLayout() {
                             }}
                           />
                           <Stack.Screen
-                            name="(onboarding)/onboardinggoals"
+                            name="(onboarding)/onboardingplan"
+                            options={{ headerShown: false, title: '' }}
+                          />
+                          <Stack.Screen
+                            name="(onboarding)/onboardingareas"
                             options={{
                               headerShown: false,
                               title: '',

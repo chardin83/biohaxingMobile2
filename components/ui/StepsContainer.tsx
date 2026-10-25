@@ -10,7 +10,7 @@ type Props = Omit<
   React.ComponentProps<typeof Container>,
   'ref' | 'background' | 'gradientKey' | 'gradientLocations' | 'showBackButton' | 'contentContainerStyle'
 > & {
-  title: string;
+  title: React.ReactNode;
   subtitle?: string;
   description?: string;
   footerHelp?: string;

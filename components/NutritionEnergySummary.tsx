@@ -12,7 +12,9 @@ import SettingsCard from '@/components/ui/SettingsCard';
 import StepsContainer from '@/components/ui/StepsContainer';
 import { calculateEnergyNeeds } from '@/utils/energyNeeds';
 
-export default function NutritionEnergySummary() {
+import type { NutritionStepNavigation } from './nutritionStepNavigation';
+
+export default function NutritionEnergySummary({ currentStep = 3, totalSteps = 4, onContinue, onBack, onManual }: NutritionStepNavigation = {}) {
   const { colors } = useTheme();
   const { t, i18n } = useTranslation('common');
   const { userProfile } = useStorage();
@@ -23,15 +25,22 @@ export default function NutritionEnergySummary() {
     <StepsContainer
       title={t('nutritionGoals.summary.title')}
       description={t('nutritionGoals.summary.description')}
-      currentStep={3}
-      footerHelp={userProfile.biologicalSex === 'intersex' ? t('nutritionGoals.endGuideHelp') : undefined}
+      currentStep={currentStep}
+      totalSteps={totalSteps}
+      onBackPress={onBack}
+      footerHelp={!onContinue && userProfile.biologicalSex === 'intersex' ? t('nutritionGoals.endGuideHelp') : undefined}
       footer={
         <AppButton
-          title={t(userProfile.biologicalSex === 'intersex' ? 'nutritionGoals.endGuide' : 'onboarding.continue')}
+          title={t(!onContinue && userProfile.biologicalSex === 'intersex' ? 'nutritionGoals.endGuide' : 'onboarding.continue')}
           variant="primary"
           rightIcon="chevron.right"
           disabled={!energy && userProfile.biologicalSex !== 'intersex'}
-          onPress={() => router.push(userProfile.biologicalSex === 'intersex' ? '/settings/nutrition-manual' : '/settings/nutrition-distribution')}
+          onPress={() => {
+            if (onContinue) {
+              if (userProfile.biologicalSex === 'intersex') onManual?.();
+              else onContinue();
+            } else router.push(userProfile.biologicalSex === 'intersex' ? '/settings/nutrition-manual' : '/settings/nutrition-distribution');
+          }}
         />
       }
     >
@@ -65,11 +74,7 @@ export default function NutritionEnergySummary() {
         </>
       ) : null}
       {!energy && userProfile.biologicalSex === 'intersex' && (
-        <Notice
-          variant="info"
-          title={t('nutritionGoals.summary.unsupportedSexTitle')}
-          message={t('nutritionGoals.summary.unsupportedSex')}
-        />
+        <Notice variant="info" title={t('nutritionGoals.summary.unsupportedSexTitle')} message={t('nutritionGoals.summary.unsupportedSex')} />
       )}
     </StepsContainer>
   );

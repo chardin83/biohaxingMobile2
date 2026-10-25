@@ -11,6 +11,8 @@ import RadioButton from '@/components/ui/RadioButton';
 import SettingsCard from '@/components/ui/SettingsCard';
 import StepsContainer from '@/components/ui/StepsContainer';
 
+import type { NutritionStepNavigation } from './nutritionStepNavigation';
+
 const ACTIVITY_LEVELS = [
   { key: 'bedbound', pal: 1.1 },
   { key: 'sedentary', pal: 1.2 },
@@ -22,7 +24,7 @@ const ACTIVITY_LEVELS = [
   { key: 'eliteAthlete', pal: 2.4 },
 ] as const;
 
-export default function NutritionActivitySettings() {
+export default function NutritionActivitySettings({ currentStep = 2, totalSteps = 4, onContinue, onBack }: NutritionStepNavigation = {}) {
   const { t, i18n } = useTranslation('common');
   const { colors } = useTheme();
   const { userProfile, updateUserProfile } = useStorage();
@@ -46,14 +48,16 @@ export default function NutritionActivitySettings() {
     <StepsContainer
       title={t('nutritionGoals.activity.title')}
       description={t('nutritionGoals.activity.description')}
-      currentStep={2}
+      currentStep={currentStep}
+      totalSteps={totalSteps}
+      onBackPress={onBack}
       footer={
         <AppButton
           title={t('onboarding.continue')}
           variant="primary"
           rightIcon="chevron.right"
           disabled={saving || !ACTIVITY_LEVELS.some(level => level.pal === selected)}
-          onPress={() => router.push('/settings/nutrition-summary')}
+          onPress={onContinue ?? (() => router.push('/settings/nutrition-summary'))}
         />
       }
     >

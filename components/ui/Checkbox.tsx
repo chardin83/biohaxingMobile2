@@ -10,10 +10,12 @@ type CheckboxProps = {
   style?: StyleProp<ViewStyle>;
   testID?: string;
   label?: string;
+  labelContent?: React.ReactNode;
+  accessibilityLabel?: string;
   disabled?: boolean;
 };
 
-export const Checkbox: React.FC<CheckboxProps> = ({ checked, onPress, style, testID, label, disabled }) => {
+export const Checkbox: React.FC<CheckboxProps> = ({ checked, onPress, style, testID, label, labelContent, disabled, accessibilityLabel }) => {
   const { colors } = useTheme();
 
   return (
@@ -21,6 +23,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({ checked, onPress, style, tes
       onPress={disabled ? undefined : onPress}
       style={[styles.row, style]}
       accessibilityRole="checkbox"
+      accessibilityLabel={accessibilityLabel ?? label}
       accessibilityState={{ checked }}
       testID={testID}
       hitSlop={8}
@@ -35,18 +38,11 @@ export const Checkbox: React.FC<CheckboxProps> = ({ checked, onPress, style, tes
             : [styles.boxUnchecked, { borderColor: colors.checkboxUncheckedBorder }],
         ]}
       >
-        {checked && (
-          <ThemedText style={[styles.checkboxIcon, { color: colors.checkboxCheck }]}>
-            ✓
-          </ThemedText>
-        )}
+        {checked && <ThemedText style={[styles.checkboxIcon, { color: colors.checkboxCheck }]}>✓</ThemedText>}
       </View>
-      {!!label && (
-        <ThemedText
-          type="default"
-          style={[styles.checkboxLabel, !checked && styles.checkboxLabelUnchecked]}
-        >
-          {label}
+      {(labelContent != null || !!label) && (
+        <ThemedText type="default" style={[styles.checkboxLabel, !checked && styles.checkboxLabelUnchecked]}>
+          {labelContent ?? label}
         </ThemedText>
       )}
     </TouchableOpacity>
@@ -76,6 +72,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   checkboxLabel: {
+    flexShrink: 1,
     marginLeft: 4,
   },
   checkboxLabelUnchecked: {

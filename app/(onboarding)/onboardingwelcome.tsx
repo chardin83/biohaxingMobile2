@@ -33,7 +33,7 @@ export default function OnboardingWelcome() {
 
         <AppButton
           title={t('onboarding.getStarted')}
-          onPress={() => router.push('/(onboarding)/onboardingsupplements')}
+          onPress={() => router.push('/(onboarding)/onboardingareas')}
           variant="primary"
           style={styles.button}
           rightIcon="chevron.right"

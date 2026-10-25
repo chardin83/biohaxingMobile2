@@ -3,7 +3,7 @@ import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { PlanTipEntry } from '@/app/context/storage/plans/planTypes';
 import { useStorage } from '@/app/context/StorageContext';
@@ -18,22 +18,53 @@ import { Card } from '@/components/ui/Card';
 import { Checkbox } from '@/components/ui/Checkbox';
 import Container from '@/components/ui/Container';
 import { GoldenGlowButton } from '@/components/ui/GoldenGlowButton';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import LabeledInput from '@/components/ui/LabeledInput';
+import Notice from '@/components/ui/Notice';
+import TipDetailsBottomSheet from '@/components/ui/TipDetailsBottomSheet';
+import { ONBOARDING_FINISH_STEPS } from '@/constants/onboarding';
 import { tips } from '@/locales/tips';
 import { createPlan } from '@/services/gptServices';
+import { getPlanProfile } from '@/utils/planProfile';
+import { resolvePlanTip } from '@/utils/resolvePlanTip';
 
-export default function CreatePlanScreen() {
+export default function CreatePlanScreen({ onboarding = false }: { onboarding?: boolean } = {}) {
   const router = useRouter();
   const { colors } = useTheme();
   const { t, i18n } = useTranslation(['common', 'plan']);
-  const { plans, tempPlans, setTempPlans, setPlans, myAreas, myLevel, shareHealthPlan } = useStorage();
+  const {
+    plans,
+    tempPlans,
+    setTempPlans,
+    setPlans,
+    myAreas,
+    myLevel,
+    shareHealthPlan,
+    shareInterests,
+    shareArchivedPlans,
+    archivedPlans,
+    profileSharing,
+    userProfile,
+    setHasCompletedOnboarding,
+    setOnboardingStep,
+  } = useStorage();
 
+  const [selectedTipId, setSelectedTipId] = React.useState<string | null>(null);
   const [selectedGoals, setSelectedGoals] = React.useState<string[]>([]);
   const [customGoal, setCustomGoal] = React.useState('');
   const [showAIPopup, setShowAIPopup] = React.useState(false);
   const [AIPopUpOpened, setAIPopUpOpened] = React.useState(false);
 
+  const generationInFlight = React.useRef(false);
   const [loading, setLoading] = React.useState(false);
+  const [generationError, setGenerationError] = React.useState(false);
+  const [selectionAttempted, setSelectionAttempted] = React.useState(false);
+  React.useEffect(() => setSelectionAttempted(false), [tempPlans]);
+  const completeOnboarding = (acceptedAIPlan: boolean) => {
+    setOnboardingStep(acceptedAIPlan ? ONBOARDING_FINISH_STEPS.withAI : ONBOARDING_FINISH_STEPS.withoutAI);
+    setHasCompletedOnboarding(true);
+    router.replace('/dashboard');
+  };
   const [showAllReason, setShowAllReason] = React.useState(false);
   const reasonSummary = tempPlans?.reasonSummary?.text ?? '';
   const reasonTooLong = reasonSummary.length > 300; // Justera om du vill, eller mät rader
@@ -57,8 +88,8 @@ export default function CreatePlanScreen() {
   const tipTitleById = React.useCallback(
     (id?: string) => {
       if (!id) return t('createPlan.untitled');
-      const tip = tips.find(candidate => candidate.id === id);
-      return t(`tips:${id}.title`, { defaultValue: tip?.title ?? id });
+      const tip = resolvePlanTip(String(id), tips, candidate => t(`tips:${candidate.title}`));
+      return tip ? t(`tips:${tip.title}`) : t('createPlan.untitled');
     },
     [t]
   );
@@ -82,6 +113,7 @@ export default function CreatePlanScreen() {
         ? (tempPlans.training ?? []).map(tip => ({
             key: `training:${tip.tipId}`,
             label: tipTitleById(tip.tipId),
+            tipId: tip.tipId,
           }))
         : [],
     [tempPlans, tipTitleById]
@@ -93,6 +125,7 @@ export default function CreatePlanScreen() {
         ? (tempPlans.nutrition ?? []).map(tip => ({
             key: `nutrition:${tip.tipId}`,
             label: tipTitleById(tip.tipId),
+            tipId: tip.tipId,
           }))
         : [],
     [tempPlans, tipTitleById]
@@ -104,6 +137,7 @@ export default function CreatePlanScreen() {
         ? (tempPlans.other ?? []).map(tip => ({
             key: `other:${tip.tipId}`,
             label: tipTitleById(tip.tipId),
+            tipId: tip.tipId,
           }))
         : [],
     [tempPlans, tipTitleById]
@@ -140,11 +174,20 @@ export default function CreatePlanScreen() {
     [plans]
   );
 
-  const existingTrainingItems = useMemo(() => (plans ? (plans.training ?? []).map(tip => tipTitleById(tip.tipId)) : []), [plans, tipTitleById]);
+  const existingTrainingItems = useMemo(
+    () => (plans ? (plans.training ?? []).map(tip => ({ label: tipTitleById(tip.tipId), tipId: tip.tipId })) : []),
+    [plans, tipTitleById]
+  );
 
-  const existingNutritionItems = useMemo(() => (plans ? (plans.nutrition ?? []).map(tip => tipTitleById(tip.tipId)) : []), [plans, tipTitleById]);
+  const existingNutritionItems = useMemo(
+    () => (plans ? (plans.nutrition ?? []).map(tip => ({ label: tipTitleById(tip.tipId), tipId: tip.tipId })) : []),
+    [plans, tipTitleById]
+  );
 
-  const existingOtherItems = useMemo(() => (plans ? (plans.other ?? []).map(tip => tipTitleById(tip.tipId)) : []), [plans, tipTitleById]);
+  const existingOtherItems = useMemo(
+    () => (plans ? (plans.other ?? []).map(tip => ({ label: tipTitleById(tip.tipId), tipId: tip.tipId })) : []),
+    [plans, tipTitleById]
+  );
 
   const newSupplementCount = newSupplementItems.length;
   const newTrainingCount = newTrainingItems.length;
@@ -186,11 +229,36 @@ export default function CreatePlanScreen() {
     }));
   };
 
-  const renderNewList = (items: { key: string; label: string }[], category: keyof ApprovalsState) =>
+  const renderTipLink = (label: string, tipId?: string) => {
+    const tip = tipId ? resolvePlanTip(tipId, tips, candidate => t(`tips:${candidate.title}`)) : undefined;
+    if (!tip) return <ThemedText style={styles.tipLabel}>{label}</ThemedText>;
+    return (
+      <TouchableOpacity
+        style={styles.tipLink}
+        onPress={() => setSelectedTipId(tip.id)}
+        accessibilityRole="button"
+        accessibilityLabel={t('createPlan.tipDetails', { title: label })}
+      >
+        <ThemedText style={styles.tipLabel}>{label}</ThemedText>
+        <IconSymbol name="chevron.right" size={18} color={colors.primary} />
+      </TouchableOpacity>
+    );
+  };
+
+  const renderNewList = (items: { key: string; label: string; tipId?: string }[], category: keyof ApprovalsState) =>
     items.length ? (
       items.map((item, idx) => {
         const checked = approvals[category]?.[item.key] ?? true;
-        return <Checkbox key={`${item.key}-${idx}`} checked={checked} onPress={() => toggleApproval(category, item.key)} label={item.label} />;
+        return (
+          <View key={`${item.key}-${idx}`} style={styles.tipRow}>
+            <Checkbox
+              checked={checked}
+              onPress={() => toggleApproval(category, item.key)}
+              accessibilityLabel={t('createPlan.selectTip', { title: item.label })}
+            />
+            {renderTipLink(item.label, item.tipId)}
+          </View>
+        );
       })
     ) : (
       <ThemedText type="default" style={styles.listItem}>
@@ -198,19 +266,24 @@ export default function CreatePlanScreen() {
       </ThemedText>
     );
 
-  const renderExistingList = (items: string[]) => {
-    return items.length ? (
+  const renderExistingList = (items: (string | { label: string; tipId: string })[]) =>
+    items.length ? (
       items.map((item, idx) => (
-        <ThemedText key={`${item}-${idx}`} type="explainer" style={styles.listItem}>
-          •{item}
-        </ThemedText>
+        <View key={idx} style={styles.tipRow}>
+          {typeof item === 'string' ? (
+            <ThemedText type="explainer" style={styles.listItem}>
+              •{item}
+            </ThemedText>
+          ) : (
+            renderTipLink(item.label, item.tipId)
+          )}
+        </View>
       ))
     ) : (
       <ThemedText type="explainer" style={styles.listItem}>
         {t('createPlan.none')}
       </ThemedText>
     );
-  };
 
   const countSelected = React.useCallback(
     (items: { key: string }[], category: keyof ApprovalsState) =>
@@ -226,7 +299,16 @@ export default function CreatePlanScreen() {
   const newNutritionSelectedCount = countSelected(newNutritionItems, 'nutrition');
   const newOtherSelectedCount = countSelected(newOtherItems, 'other');
 
+  const hasSelectedTips = newSupplementSelectedCount + newTrainingSelectedCount + newNutritionSelectedCount + newOtherSelectedCount > 0;
+  const selectionError = selectionAttempted && !hasSelectedTips;
+  const tipCardStyle = (count: number) => (selectionError && count > 0 ? { borderColor: colors.error, borderWidth: 1 } : undefined);
   const handleAccept = () => {
+    if (!tempPlans || loading) return;
+    if (!hasSelectedTips) {
+      setSelectionAttempted(true);
+      return;
+    }
+    let acceptedAIPlan = false;
     if (tempPlans) {
       const now = new Date().toISOString();
       const filteredPlans = {
@@ -278,6 +360,13 @@ export default function CreatePlanScreen() {
             startedAt: tip.startedAt ?? now,
           })),
       };
+
+      acceptedAIPlan =
+        filteredPlans.training.length +
+          filteredPlans.nutrition.length +
+          filteredPlans.other.length +
+          filteredPlans.supplements.reduce((count, plan) => count + plan.supplements.length, 0) >
+        0;
 
       const mergeTips = (existing: PlanTipEntry[], incoming: PlanTipEntry[]): PlanTipEntry[] => {
         const seen = new Set(existing.map(item => item.tipId));
@@ -342,16 +431,23 @@ export default function CreatePlanScreen() {
       }));
     }
     setTempPlans(null);
-    router.push('/(tabs)/plan');
+    if (onboarding) completeOnboarding(acceptedAIPlan);
+    else router.push('/(tabs)/plan');
   };
 
   const handleCancel = () => {
     setTempPlans(null);
-    router.push('/(tabs)/plan');
+    if (onboarding) completeOnboarding(false);
+    else router.push('/(tabs)/plan');
   };
 
+  const profileMissingAge = getPlanProfile(userProfile).age === undefined;
   const handleCreatePlan = () => {
-    if (shareHealthPlan) {
+    if (profileMissingAge) return;
+    if (generationInFlight.current || tempPlans) return;
+    setGenerationError(false);
+    if (shareHealthPlan && shareInterests && profileSharing?.age) {
+      generationInFlight.current = true;
       setLoading(true);
       const activeLanguage = (i18n.resolvedLanguage ?? i18n.language ?? 'en').toLowerCase();
       const locale: 'sv' | 'en' = activeLanguage.startsWith('sv') ? 'sv' : 'en';
@@ -363,9 +459,13 @@ export default function CreatePlanScreen() {
 
       console.log('[createPlan] goals:', goals);
       // Skicka både goals och myAreas till backend
-      createPlan(plans, goals, myLevel, locale, myAreas)
+      createPlan(plans, goals, myLevel, locale, myAreas, userProfile, profileSharing, shareArchivedPlans ? archivedPlans : undefined)
         .then(res => setTempPlans(res.plans))
-        .finally(() => setLoading(false));
+        .catch(() => setGenerationError(true))
+        .finally(() => {
+          generationInFlight.current = false;
+          setLoading(false);
+        });
     } else {
       setShowAIPopup(true);
       setAIPopUpOpened(true);
@@ -401,7 +501,19 @@ export default function CreatePlanScreen() {
   });
 
   return (
-    <Container background="gradient" showBackButton onBackPress={() => router.replace('/(tabs)/plan')}>
+    <Container
+      background="gradient"
+      contentContainerStyle={onboarding ? styles.onboardingContent : undefined}
+      showBackButton
+      currentStep={onboarding ? (userProfile.trackMacros ? 9 : 7) : undefined}
+      totalSteps={onboarding ? (userProfile.trackMacros ? 9 : 7) : undefined}
+      onBackPress={onboarding ? () => router.replace('/(onboarding)/onboardingsupplements') : () => router.replace('/(tabs)/plan')}
+      footer={
+        onboarding && !tempPlans ? (
+          <AppButton title={t('onboarding.skipAIPlan')} variant="secondary" disabled={loading} onPress={() => completeOnboarding(false)} />
+        ) : undefined
+      }
+    >
       <Card style={styles.card}>
         <View style={styles.title}>
           <GradientText>{t('createPlan.title')}</GradientText>
@@ -421,7 +533,7 @@ export default function CreatePlanScreen() {
             }}
             label={goal}
             style={globalStyles.marginBottom8}
-            disabled={!!tempPlans || loading} // Disable checkbox when tempPlans or loading is true
+            disabled={!!tempPlans || loading || profileMissingAge} // Disable checkbox when tempPlans or loading is true
           />
         ))}
         <LabeledInput
@@ -439,21 +551,33 @@ export default function CreatePlanScreen() {
           }}
           label=""
           returnKeyType="done"
-          disabled={!!tempPlans || loading} // Disable TextInput when tempPlans or loading is true
+          disabled={!!tempPlans || loading || profileMissingAge} // Disable TextInput when tempPlans or loading is true
         />
 
+        {profileMissingAge && (
+          <View style={styles.sectionSpacer}>
+            <ThemedText>{t('onboarding.ageRequiredForAI')}</ThemedText>
+            <AppButton title={t('onboarding.completeProfile')} variant="secondary" onPress={() => router.push('/settings/person')} />
+          </View>
+        )}
         <GoldenGlowButton
           style={styles.noMarginBottom}
-          title={t('createPlan.createAIPlan')}
+          title={t(loading ? 'createPlan.creatingAIPlan' : 'createPlan.createAIPlan')}
+          loading={loading}
           onPress={handleCreatePlan}
           accessibilityLabel={t('createPlan.createAIPlanLabel')}
           accessibilityRole="button"
           accessibilityHint={tempPlans ? t('createPlan.createAIPlanHint') : undefined}
-          disabled={!!tempPlans || loading}
+          disabled={!!tempPlans || loading || profileMissingAge}
         />
         <ThemedText type="error" style={styles.sectionSpacer}>
-          {!shareHealthPlan && AIPopUpOpened ? t('createPlan.sharePlanError') : ''}
+          {(!shareHealthPlan || !shareInterests || !profileSharing?.age) && AIPopUpOpened ? t('aiSharing.requiredForPlan') : ''}
         </ThemedText>
+        {generationError && (
+          <ThemedText type="error" accessibilityLiveRegion="polite">
+            {t('onboarding.aiPlanError')}
+          </ThemedText>
+        )}
         {loading && (
           <View style={styles.loadingWrapper}>
             <View style={styles.loadingRow}>
@@ -499,7 +623,7 @@ export default function CreatePlanScreen() {
 
         {tempPlans && (
           <>
-            <Card>
+            <Card style={tipCardStyle(newSupplementItems.length)}>
               <Collapsible
                 title={supplementsTitle}
                 contentStyle={styles.collapsibleContent}
@@ -515,7 +639,7 @@ export default function CreatePlanScreen() {
                 </ThemedText>
               </Collapsible>
             </Card>
-            <Card>
+            <Card style={tipCardStyle(newTrainingItems.length)}>
               <Collapsible
                 title={trainingTitle}
                 contentStyle={styles.collapsibleContent}
@@ -531,7 +655,7 @@ export default function CreatePlanScreen() {
                 </ThemedText>
               </Collapsible>
             </Card>
-            <Card>
+            <Card style={tipCardStyle(newNutritionItems.length)}>
               <Collapsible
                 title={nutritionTitle}
                 contentStyle={styles.collapsibleContent}
@@ -547,7 +671,7 @@ export default function CreatePlanScreen() {
                 </ThemedText>
               </Collapsible>
             </Card>
-            <Card>
+            <Card style={tipCardStyle(newOtherItems.length)}>
               <Collapsible
                 title={otherTitle}
                 contentStyle={styles.collapsibleContent}
@@ -563,19 +687,26 @@ export default function CreatePlanScreen() {
                 </ThemedText>
               </Collapsible>
             </Card>
+            {selectionError && <Notice variant="error" iconName="error" message={t('createPlan.selectAtLeastOne')} style={styles.selectionError} />}
             <View style={styles.buttonRow}>
-              <AppButton title={t('createPlan.acceptAIPlan')} onPress={handleAccept} glow />
-              <AppButton title={t('general.cancel')} onPress={handleCancel} variant="secondary" />
+              <AppButton title={t('createPlan.acceptAIPlan')} onPress={handleAccept} disabled={loading} glow />
+              <AppButton title={t(onboarding ? 'onboarding.skipAIPlan' : 'general.cancel')} onPress={handleCancel} disabled={loading} variant="secondary" />
             </View>
           </>
         )}
       </Card>
-      <AIInfoPopup visible={showAIPopup} setVisible={setShowAIPopup} sharePlanText={t('createPlan.sharePlanText')} />
+      <TipDetailsBottomSheet tipId={selectedTipId} onDismiss={() => setSelectedTipId(null)} />
+      <AIInfoPopup requirePersonalDetails busy={loading} visible={showAIPopup} setVisible={setShowAIPopup} onConfirm={handleCreatePlan} />
     </Container>
   );
 }
 
 const styles = StyleSheet.create({
+  selectionError: { marginTop: 12, marginBottom: 8 },
+  tipRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginVertical: 6 },
+  tipLink: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 8 },
+  tipLabel: { flex: 1 },
+  onboardingContent: { paddingTop: 130, paddingBottom: 180 },
   card: {
     marginTop: 30,
     marginHorizontal: 16,

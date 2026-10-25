@@ -15,7 +15,8 @@ import { IconSymbol } from './ui/IconSymbol';
 
 interface ThemedModalProps {
   visible: boolean;
-  title: string;
+  title: React.ReactNode;
+  titleColor?: string;
   iconName?: IconSymbolName;
   iconColor?: string;
   onClose: () => void;
@@ -35,6 +36,7 @@ interface ThemedModalProps {
 export const ThemedModal = ({
   visible,
   title,
+  titleColor,
   iconName,
   iconColor,
   onClose,
@@ -65,7 +67,7 @@ export const ThemedModal = ({
           ]}
         >
           {iconName && <IconSymbol name={iconName} size={40} color={iconColor ?? colors.warning} />}
-          <ThemedText type="title2" style={[styles.title, { color: colors.primary }]}>
+          <ThemedText type="title2" style={[styles.title, { color: titleColor ?? colors.primary }]}>
             {title}
           </ThemedText>
 

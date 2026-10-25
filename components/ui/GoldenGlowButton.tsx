@@ -2,7 +2,7 @@ import { useTheme } from '@react-navigation/native';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Platform, Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
@@ -11,6 +11,7 @@ interface GoldenGlowButtonProps {
   title?: string;
   onPress?: () => void;
   disabled?: boolean;
+  loading?: boolean;
   style?: StyleProp<ViewStyle>;
   transparent?: boolean;
   accessibilityLabel?: string;
@@ -22,6 +23,7 @@ export const GoldenGlowButton: React.FC<GoldenGlowButtonProps> = ({
   title,
   onPress,
   disabled = false,
+  loading = false,
   style,
   transparent = true,
   accessibilityLabel,
@@ -39,11 +41,11 @@ export const GoldenGlowButton: React.FC<GoldenGlowButtonProps> = ({
   return (
     <Pressable
       onPress={onPress}
-      disabled={disabled}
-      style={[styles.wrap, style, disabled && styles.disabled]}
+      disabled={disabled || loading}
+      style={[styles.wrap, style, (disabled || loading) && styles.disabled]}
       accessibilityLabel={accessibilityLabel ?? title}
       accessibilityRole={accessibilityRole}
-      accessibilityState={{ disabled }}
+      accessibilityState={{ disabled: disabled || loading, busy: loading }}
       accessibilityHint={accessibilityHint}
       accessible={true}
     >
@@ -65,12 +67,7 @@ export const GoldenGlowButton: React.FC<GoldenGlowButtonProps> = ({
         <View style={[styles.frame, { borderRadius }]}>
           {/* Gradient border */}
           <LinearGradient
-            colors={[
-              rgbaFromAny(border, 0.22),
-              rgbaFromAny(border, 0.18),
-              rgbaFromAny(gold, 0.4),
-              rgbaFromAny(gold, 0.65),
-            ]}
+            colors={[rgbaFromAny(border, 0.22), rgbaFromAny(border, 0.18), rgbaFromAny(gold, 0.4), rgbaFromAny(gold, 0.65)]}
             locations={[0, 0.45, 0.78, 1]}
             start={{ x: 0.5, y: 0 }}
             end={{ x: 0.5, y: 1 }}
@@ -78,14 +75,8 @@ export const GoldenGlowButton: React.FC<GoldenGlowButtonProps> = ({
           />
           {/* Inre yta */}
           <View style={{ padding: thickness }}>
-            <View
-              style={[styles.inner, { borderRadius: borderRadius - thickness }]}
-            >
-              <BlurView
-                intensity={Platform.OS === 'ios' ? 18 : 12}
-                tint="dark"
-                style={[StyleSheet.absoluteFill, { borderRadius: borderRadius - thickness }]}
-              />
+            <View style={[styles.inner, { borderRadius: borderRadius - thickness }]}>
+              <BlurView intensity={Platform.OS === 'ios' ? 18 : 12} tint="dark" style={[StyleSheet.absoluteFill, { borderRadius: borderRadius - thickness }]} />
               <View
                 pointerEvents="none"
                 style={[
@@ -96,14 +87,10 @@ export const GoldenGlowButton: React.FC<GoldenGlowButtonProps> = ({
                   },
                 ]}
               />
-              <View
-                style={[styles.content, { borderRadius: borderRadius - thickness }]}
-              >
+              <View style={[styles.content, { borderRadius: borderRadius - thickness }]}>
+                {loading && <ActivityIndicator color={colors.goldenGlowButtonText} style={styles.spinner} />}
                 {title && (
-                  <ThemedText
-                    type={transparent ? 'title3' : 'defaultSemiBold'}
-                    style={[styles.title, { color: colors.goldenGlowButtonText }]}
-                  >
+                  <ThemedText type={transparent ? 'title3' : 'defaultSemiBold'} style={[styles.title, { color: colors.goldenGlowButtonText }]}>
                     {title}
                   </ThemedText>
                 )}
@@ -135,6 +122,7 @@ function rgbaFromAny(color: string, alpha: number) {
 }
 
 const styles = StyleSheet.create({
+  spinner: { marginBottom: 8 },
   wrap: { width: '100%', marginBottom: 20 },
   glowWrap: { overflow: 'visible' },
   frame: { overflow: 'hidden' },

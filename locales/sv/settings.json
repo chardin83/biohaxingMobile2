@@ -1,8 +1,19 @@
 {
   "healthSync": {
-    "appleTitle": "Apple Health",
+    "appleTitle": "Apple Hälsa",
+    "appleIntroduction": "Synkronisera din aktivitet, sömn och andra hälsodata för att få bättre insikter.",
     "androidTitle": "Health Connect",
     "appleDescription": "När du aktiverar detta kan appen läsa hälsodata från Apple Health för att förbättra hälsostatistik. Data lagras lokalt och delas inte utan ditt uttryckliga tillstånd.",
-    "androidDescription": "När du aktiverar detta kan appen läsa hälsodata från Health Connect för att förbättra hälsostatistik. Data lagras lokalt och delas inte utan ditt uttryckliga tillstånd."
+    "androidDescription": "När du aktiverar detta kan appen läsa hälsodata från Health Connect för att förbättra hälsostatistik. Data lagras lokalt och delas inte utan ditt uttryckliga tillstånd.",
+    "hideApplePrompt": "Jag använder inte Apple Hälsa – visa inte igen",
+    "hideAndroidPrompt": "Jag använder inte Health Connect – visa inte igen",
+    "preferenceSaveError": "Det gick inte att spara valet. Försök igen.",
+    "connectApple": "Anslut Apple Hälsa",
+    "openApple": "Öppna Apple Hälsa",
+    "permissionsTitle": "Ändra behörigheter",
+    "permissionsSteps": "1. Öppna Apple Hälsa\n2. Tryck på Delning\n3. Välj Appar\n4. Välj Biohaxing",
+    "manageAppleData": "Ändra vilka datatyper som delas",
+    "connectAppleDescription": "Välj vilka hälsodata Biohaxing får läsa.",
+    "connectionError": "Det gick inte att öppna Apple Hälsa. Försök igen."
   }
 }

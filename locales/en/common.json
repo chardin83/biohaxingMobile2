@@ -106,9 +106,38 @@
     "privacySubtitle": "Manage data, AI shares and privacy settings"
   },
   "aiSharing": {
-    "description": "Choose what information the AI may use to provide you personalized health advice:",
-    "healthPlan": "Health plan and supplements",
-    "journal": "Journal (not shared)"
+    "description": "Choose which information AI may use to create your health plan.",
+    "healthPlan": "Health plan · required",
+    "journal": "Journal (not shared)",
+    "title": "What would you like to share with AI?",
+    "healthPlanDescription": "Your active health plan, including tips and supplements. Helps AI build on your current plan.",
+    "personalDetails": "Personal details",
+    "personalDetailsDescription": "Age, biological sex and activity level, plus height and weight if provided. Used to personalize your plan and select age-appropriate tips.",
+    "noIdentity": "Biological sex, height, weight, date of birth, name and email are not sent.",
+    "requiredForPlan": "Required choices must be selected to create the AI plan",
+    "journalNotShared": "Journal entries are not shared.",
+    "changeLater": "You can change your choices later under Data sharing.",
+    "confirm": "Done",
+    "saveError": "Could not save your choice. Please try again.",
+    "fields": {
+      "age": {
+        "label": "Age · required",
+        "description": "Used to select age-appropriate tips and avoid advice for the wrong age group. Only your age in completed years is sent."
+      },
+      "activityPal": {
+        "label": "Activity level",
+        "description": "Helps AI adapt advice to how much you move and exercise."
+      }
+    },
+    "interests": "Areas of interest · required",
+    "interestsDescription": "Your selected interests, such as men’s or women’s health, and what you want to focus on. Guides which tips AI prioritizes.",
+    "archivedPlans": "Archived health plans",
+    "archivedPlansDescription": "Previous tips and supplements help AI avoid repetition. Comments are not shared.",
+    "requiredChoice": "Select this option to create the AI plan.",
+    "titleLead": "What would you like to",
+    "titleAccent": "share with AI?",
+    "privacyTitle": "Your privacy",
+    "privacyMessage": "Only information you approve is shared with AI."
   },
   "privacy": {
     "disclaimer": "We never share your identity (name or email) with the AI.",
@@ -318,19 +347,14 @@
     "duplicateWarning": "The AI plan includes {{count}} duplicates already in your plan.",
     "goals": {
       "title": "What is your goal/goals?",
-      "suggestions": [
-        "Build muscle",
-        "Lose weight",
-        "Get more energy",
-        "Improve fitness",
-        "Feel better",
-        "Get stronger",
-        "Better eating habits"
-      ],
+      "suggestions": ["Build muscle", "Lose weight", "Get more energy", "Improve fitness", "Feel better", "Get stronger", "Better eating habits"],
       "customPlaceholder": "Custom goal..."
     },
-    "sharePlanText": "Required to generate an AI plan.",
-    "sharePlanError": "You must share your health plan to generate an AI plan."
+    "sharePlanText": "To create an AI plan, you share your plan, goals and profile details: age, biological sex, activity level, and height and weight if provided. Your date of birth is not sent.",
+    "sharePlanError": "You must share your health plan to generate an AI plan.",
+    "tipDetails": "Read more about {{title}}",
+    "selectTip": "Select {{title}}",
+    "selectAtLeastOne": "Select at least 1 tip to create the AI plan"
   },
   "supplementForm": {
     "dosage": "Dosage",
@@ -727,13 +751,50 @@
     "supplementNotFound": "⚠️ I couldn't find {{supplement}} in the list of supplements."
   },
   "onboarding": {
+    "selectAtLeastOneArea": "Select at least 1 area to continue",
     "finish": "Finish",
     "welcomeTo": "Welcome to",
     "discoverHealth": "Discover what can improve your health.",
     "getStarted": "Get started",
     "whatSupplementDoYouTakeAlready": "What supplements do you take already?",
     "continue": "Continue",
-    "stepOf": "Step {{current}} of {{total}}"
+    "stepOf": "Step {{current}} of {{total}}",
+    "trackMacros": "Would you like to track macros?",
+    "yes": "Yes",
+    "no": "No",
+    "takeSupplements": "Do you take any supplements?",
+    "supplementTimes": "When do you take your supplements?",
+    "breakfast": "Breakfast",
+    "lunch": "Lunch",
+    "dinner": "Dinner",
+    "evening": "Evening",
+    "selectSupplements": "Select supplements for {{time}}",
+    "saveError": "Could not save. Please try again.",
+    "trackMacrosLead": "Would you like to track",
+    "trackMacrosAccent": "macros?",
+    "macrosDescription": "Macros are protein, carbohydrates and fat – nutrients that give your body energy. We help you set daily targets based on your age, body measurements and how much you move. You can track your intake and adjust your targets later.",
+    "macrosYesDescription": "I want to set macro targets.",
+    "macrosNoDescription": "I want to focus on other goals (nutrients, lifestyle). I can set up macros later.",
+    "supplementsLead": "Do you take any",
+    "supplementsAccent": "supplements?",
+    "supplementsDescription": "Organize the supplements you already take into a daily routine. Choose when you take them – breakfast, lunch, dinner or evening – and add your supplements for each time.",
+    "supplementsYesDescription": "I want to add my supplements and when I take them.",
+    "supplementsNoDescription": "I want to continue without supplements. I can add them later.",
+    "supplementTimesLead": "When do you take your",
+    "selectSupplementsLead": "Choose your",
+    "supplementsWord": "supplements",
+    "supplementsForTime": "For {{time}}",
+    "selectedSupplements": "Selected supplements",
+    "noSelectedSupplements": "You haven’t selected any supplements for this time yet.",
+    "searchSupplements": "Search supplements",
+    "noMatchingSupplements": "No more supplements match your search.",
+    "popularSupplements": "Popular supplements",
+    "skipAIPlan": "Skip the AI plan",
+    "aiPlanError": "Could not create the plan. Please try again.",
+    "profileTitle": "About you",
+    "profileDescription": "Enter your age to personalize your plan. Your selected goals and interests guide which tips you receive.",
+    "ageRequiredForAI": "Enter your age in your personal details before creating an AI plan.",
+    "completeProfile": "Complete personal details"
   },
   "dashboard": {
     "sync": {
@@ -743,7 +804,7 @@
       "upToDateTitle": "Everything is up to date!",
       "upToDateDescription": "No new goals since your last visit.",
       "welcomeTitle": "Welcome!",
-      "welcomeDescription": "You do not seem to have added any tips with goals yet. Add some tips to get started.",
+      "welcomeDescription": "Get started by choosing your first goal.",
       "firstTipTitle": "Add your first tip",
       "firstTipDescription": "Add good habits, nutrition or training.",
       "addGoal": {
@@ -762,7 +823,15 @@
       "manualTitle": "Remember to log manually.",
       "manualDescription": "Food, drinks, supplements and other habits that are not recorded automatically.",
       "errorTitle": "Sync could not be completed",
-      "errorDescription": "We are showing progress from saved data. Pull down to try syncing again."
+      "errorDescription": "We are showing progress from saved data. Pull down to try syncing again.",
+      "connectHealth": {
+        "apple": "Connect Apple Health",
+        "android": "Connect Health Connect",
+        "description": "Sync activity, sleep and other health data.",
+        "configure": "Open settings"
+      },
+      "aiPlanReady": "Your AI plan is ready. Explore the journal – log meals and habits.",
+      "getStartedTitle": "Get started"
     },
     "appTitle": "BIOHAXING",
     "level": "LEVEL",

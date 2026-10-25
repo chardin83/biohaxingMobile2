@@ -3,9 +3,8 @@ import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
-import HealthSyncSettings from '@/components/HealthSyncSettings';
 import { ThemedText } from '@/components/ThemedText';
 import { CardLinkList } from '@/components/ui/CardLinkList';
 import Container from '@/components/ui/Container';
@@ -119,7 +118,17 @@ export default function SettingsPage() {
         {t('settings.integrations')}
       </ThemedText>
 
-      <HealthSyncSettings style={styles.cardSpacing} />
+      <CardLinkList
+        style={styles.cardSpacing}
+        rows={[
+          {
+            key: 'health-sync',
+            title: t(Platform.OS === 'ios' ? 'settings:healthSync.appleTitle' : 'settings:healthSync.androidTitle'),
+            iconName: Platform.OS === 'ios' ? 'applelogo' : 'smartphone',
+            onPress: () => router.push('/(stack)/settings/health-sync'),
+          },
+        ]}
+      />
 
       <ThemedText type="label" style={styles.title} uppercase>
         {t('settings.myData')}

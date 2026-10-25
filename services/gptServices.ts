@@ -2,7 +2,8 @@
 import debug from 'debug';
 import { t } from 'i18next';
 
-import { PlansByCategory } from '@/app/context/storage/plans/planTypes';
+import { type ArchivedPlansByCategory, PlansByCategory } from '@/app/context/storage/plans/planTypes';
+import type { UserProfile } from '@/app/context/storage/userProfile/userProfileTypes';
 import { ReasonSummary } from '@/app/context/StorageContext';
 import { GPTResponse } from '@/app/domain/GPTResponse';
 import { Message } from '@/app/domain/Message';
@@ -10,8 +11,12 @@ import i18n from '@/app/i18n';
 import { ENDPOINTS } from '@/config';
 import { PREMIUM } from '@/constants/Premium';
 import { tips } from '@/locales/tips';
+import type { ProfileSharing } from '@/types/aiSharing';
 import type { BarcodeEnrichmentInput } from '@/types/nutrition/barcodeAnalysis';
 import type { IdentifiedFood } from '@/types/nutrition/nutritionAnalysis';
+import { getArchivedPlanContext } from '@/utils/archivedPlanContext';
+import { getSharedPlanProfile, isTipAgeEligible } from '@/utils/planProfile';
+import { resolvePlanTip } from '@/utils/resolvePlanTip';
 
 const log = debug('app:gptServices');
 
@@ -19,7 +24,21 @@ type SupportLevel = 'high' | 'medium' | 'low' | 'unknown';
 type DrinkConfidence = 'high' | 'medium' | 'low' | 'unknown';
 
 export type DrinkType =
-  'water' | 'coffee' | 'tea' | 'soft_drink' | 'sugar_free_soft_drink' | 'energy_drink' | 'sugar_free_energy_drink' | 'juice' | 'milk' | 'red_wine' | 'white_wine' | 'beer' | 'spirits' | 'oak_aged_spirits' | 'drink';
+  | 'water'
+  | 'coffee'
+  | 'tea'
+  | 'soft_drink'
+  | 'sugar_free_soft_drink'
+  | 'energy_drink'
+  | 'sugar_free_energy_drink'
+  | 'juice'
+  | 'milk'
+  | 'red_wine'
+  | 'white_wine'
+  | 'beer'
+  | 'spirits'
+  | 'oak_aged_spirits'
+  | 'drink';
 
 export const ALCOHOL_TYPES = ['red_wine', 'white_wine', 'beer', 'spirits', 'oak_aged_spirits'] as const satisfies readonly DrinkType[];
 
@@ -288,7 +307,10 @@ function appendNutritionOptions(form: FormData, params: AnalyseParams, locale: '
   const analysisTier: NutritionAnalysisTier = PREMIUM ? (params.analysisTier ?? 'premium') : params.analysisTier === 'trial' ? 'trial' : 'free';
   const languageInstruction = locale === 'sv' ? 'Write all free-text outputs in Swedish.' : 'Write all free-text outputs in English.';
 
-  form.append('prompt', `${params.prompt ?? ''}\n${languageInstruction}\nReturn nutrition.glycemicIndex as a dimensionless glycemic index (glucose = 100), never scaled by portion size. Preserve barcodeProduct.knownNutritionPer100.glycemicIndex when provided; otherwise estimate only when supported by the identified food and preparation, and omit when unknown or not applicable. Include glycemicIndex in aiEstimatedNutrients when estimated.`.trim());
+  form.append(
+    'prompt',
+    `${params.prompt ?? ''}\n${languageInstruction}\nReturn nutrition.glycemicIndex as a dimensionless glycemic index (glucose = 100), never scaled by portion size. Preserve barcodeProduct.knownNutritionPer100.glycemicIndex when provided; otherwise estimate only when supported by the identified food and preparation, and omit when unknown or not applicable. Include glycemicIndex in aiEstimatedNutrients when estimated.`.trim()
+  );
   if (params.stage) form.append('stage', params.stage);
   if (params.barcodeProduct) form.append('barcodeProduct', JSON.stringify(params.barcodeProduct));
   if (params.mealName) form.append('mealName', params.mealName);
@@ -418,6 +440,7 @@ type PlanTipPayload = {
   id: string;
   title: string;
   areas: string[];
+  minAge?: number;
 };
 
 export interface CreatePlanResponse {
@@ -447,17 +470,23 @@ function normalizePlanTips(
         startedAt?: string;
       }>
     | undefined,
-  category: 'training' | 'nutrition' | 'other'
+  category: 'training' | 'nutrition' | 'other',
+  locale: 'sv' | 'en',
+  age: number
 ) {
   const now = new Date().toISOString();
-  return (items ?? []).map((item: any) => ({
-    tipId: item.tipId ?? item.id,
-    startedAt: item.startedAt ?? now,
-    createdBy: item.createdBy ?? 'AI',
-    editedAt: item.editedAt ?? now,
-    editedBy: item.editedBy ?? item.createdBy ?? 'AI',
-    planCategory: category,
-  }));
+  return (items ?? []).map((item: any) => {
+    const tip = resolvePlanTip(item, tips, candidate => i18n.t(`tips:${candidate.title}`, { lng: locale }));
+    if (!tip || !isTipAgeEligible(tip, age)) throw new Error('createPlan: unknown or age-ineligible tip reference');
+    return {
+      tipId: tip.id,
+      startedAt: item.startedAt ?? now,
+      createdBy: item.createdBy ?? 'AI',
+      editedAt: item.editedAt ?? now,
+      editedBy: item.editedBy ?? item.createdBy ?? 'AI',
+      planCategory: category,
+    };
+  });
 }
 
 function normalizeReasonSummary(value: any): ReasonSummary {
@@ -475,13 +504,19 @@ export async function createPlan(
   goals: string[],
   myLevel: number,
   locale: 'sv' | 'en',
-  userAreas: string[]
+  userAreas: string[],
+  userProfile: UserProfile,
+  profileSharing: ProfileSharing,
+  archivedPlans?: ArchivedPlansByCategory
 ): Promise<CreatePlanResponse> {
-  const filteredTips = tips.filter(tip => (tip.level ?? 1) <= myLevel);
+  const profile = getSharedPlanProfile(userProfile, profileSharing);
+  if (profile.age === undefined) throw new Error('createPlan: age is required');
+  const filteredTips = tips.filter(tip => (tip.level ?? 1) <= myLevel && isTipAgeEligible(tip, profile.age));
 
   const translatedTips: PlanTipPayload[] = filteredTips.map(tip => ({
     id: tip.id,
-    title: i18n.t(`tips:${tip.title}`),
+    title: i18n.t(`tips:${tip.title}`, { lng: locale }),
+    minAge: tip.minAge,
     areas: tip.areas.map(a => a.id),
     planCategory: tip.planCategory,
     supplements: tip.supplements,
@@ -495,7 +530,7 @@ export async function createPlan(
   const response = await fetch(ENDPOINTS.createPlan, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ tips: translatedTips, plans, goals, userAreas, locale }),
+    body: JSON.stringify({ tips: translatedTips, plans, goals, userAreas, locale, userProfile: profile, ...(archivedPlans ? { archivedPlans: getArchivedPlanContext(archivedPlans) } : {}) }),
   });
 
   const text = await response.text();
@@ -510,9 +545,9 @@ export async function createPlan(
     plans: {
       ...newPlans,
       reasonSummary: normalizeReasonSummary((newPlans as any).reasonSummary),
-      training: normalizePlanTips(newPlans.training as any, 'training'),
-      nutrition: normalizePlanTips(newPlans.nutrition as any, 'nutrition'),
-      other: normalizePlanTips(newPlans.other as any, 'other'),
+      training: normalizePlanTips(newPlans.training as any, 'training', locale, profile.age),
+      nutrition: normalizePlanTips(newPlans.nutrition as any, 'nutrition', locale, profile.age),
+      other: normalizePlanTips(newPlans.other as any, 'other', locale, profile.age),
     },
   };
 }

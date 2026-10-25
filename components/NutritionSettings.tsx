@@ -40,6 +40,9 @@ export function ManualNutritionSettings() {
 }
 
 type NutritionSettingsProps = {
+  currentStep?: number;
+  totalSteps?: number;
+  continueOnSave?: boolean;
   initiallyEditing?: boolean;
   onBack?: () => void;
   onSaved?: () => void;
@@ -47,7 +50,16 @@ type NutritionSettingsProps = {
   saveProfileUpdates?: Partial<UserProfile>;
 };
 
-export default function NutritionSettings({ initiallyEditing = false, onBack = backToPreviousPage, onSaved, onOpen, saveProfileUpdates }: Readonly<NutritionSettingsProps>) {
+export default function NutritionSettings({
+  currentStep,
+  totalSteps,
+  continueOnSave = false,
+  initiallyEditing = false,
+  onBack = backToPreviousPage,
+  onSaved,
+  onOpen,
+  saveProfileUpdates,
+}: Readonly<NutritionSettingsProps>) {
   const { colors } = useTheme();
   const { t } = useTranslation('common');
   const { userProfile, updateUserProfile } = useStorage();
@@ -128,6 +140,8 @@ export default function NutritionSettings({ initiallyEditing = false, onBack = b
 
   return (
     <Container
+      currentStep={currentStep}
+      totalSteps={totalSteps}
       background="gradient"
       gradientKey="sunrise"
       gradientLocations={colors.gradients?.sunrise?.locations3}
@@ -136,7 +150,13 @@ export default function NutritionSettings({ initiallyEditing = false, onBack = b
       footer={
         editing ? (
           <View style={styles.actions}>
-            <AppButton style={styles.footerButton} title={t('general.save')} variant="primary" disabled={saving || !canSave} onPress={() => save(onSaved)} />
+            <AppButton
+              style={styles.footerButton}
+              title={t(continueOnSave ? 'onboarding.continue' : 'general.save')}
+              variant="primary"
+              disabled={saving || !canSave}
+              onPress={() => save(onSaved)}
+            />
             <AppButton
               style={styles.footerButton}
               title={t('general.cancel')}

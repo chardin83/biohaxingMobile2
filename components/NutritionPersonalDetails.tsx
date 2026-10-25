@@ -11,9 +11,17 @@ import StepsContainer from '@/components/ui/StepsContainer';
 import { fromDateKey, getAge } from '@/utils/dateUtils';
 
 import HenryInfoNotice from './HenryInfoNotice';
+import type { NutritionStepNavigation } from './nutritionStepNavigation';
 import PersonalDetailsSettings from './PersonalDetailsSettings';
 
-export default function NutritionPersonalDetails() {
+export default function NutritionPersonalDetails({
+  currentStep = 1,
+  totalSteps = 4,
+  onContinue,
+  onBack,
+  onManual,
+  profileOnly = false,
+}: NutritionStepNavigation & { profileOnly?: boolean } = {}) {
   const { t } = useTranslation('common');
   const { userProfile } = useStorage();
   const [submitted, setSubmitted] = useState(false);
@@ -33,29 +41,41 @@ export default function NutritionPersonalDetails() {
   const unsupportedSex = userProfile.biologicalSex === 'intersex';
   const continueGuide = () => {
     setSubmitted(true);
-    if (Object.values(errors).some(Boolean)) return;
-    router.push('/settings/nutrition-activity');
+    if (profileOnly ? errors.age : Object.values(errors).some(Boolean)) return;
+    if (onContinue) onContinue();
+    else router.push('/settings/nutrition-activity');
   };
 
   return (
     <StepsContainer
-      title={t('nutritionTargetSection.title')}
-      subtitle={t('nutritionGoals.personalDetailsTitle')}
-      currentStep={1}
+      title={t(profileOnly ? 'onboarding.profileTitle' : 'nutritionTargetSection.title')}
+      subtitle={t(profileOnly ? 'onboarding.profileDescription' : 'nutritionGoals.personalDetailsTitle')}
+      currentStep={currentStep}
+      totalSteps={totalSteps}
+      onBackPress={onBack}
       footer={<AppButton title={t('onboarding.continue')} variant="primary" rightIcon="chevron.right" onPress={continueGuide} />}
     >
-      <PersonalDetailsSettings errors={submitted ? errors : undefined} />
-      {submitted && unsupportedSex && <Notice title={t('nutritionGoals.summary.unsupportedSexTitle')} message={t('nutritionGoals.summary.unsupportedSex')} />}
-      <HenryInfoNotice />
-      <View style={styles.manualContainer}>
-        <DiscreetButton
-          title={t('nutritionGoals.manualTitle')}
-          explainer={t('nutritionGoals.manualDescription')}
-          icon="pencil"
-          rightIcon="chevron.right"
-          onPress={() => router.push('/settings/nutrition-manual')}
-        />
-      </View>
+      <PersonalDetailsSettings ageOnly={profileOnly} errors={submitted ? (profileOnly ? { age: errors.age } : errors) : undefined} />
+      {!profileOnly && submitted && unsupportedSex && (
+        <Notice title={t('nutritionGoals.summary.unsupportedSexTitle')} message={t('nutritionGoals.summary.unsupportedSex')} />
+      )}
+      {!profileOnly && <HenryInfoNotice />}
+      {!profileOnly && (
+        <View style={styles.manualContainer}>
+          <DiscreetButton
+            title={t('nutritionGoals.manualTitle')}
+            explainer={t('nutritionGoals.manualDescription')}
+            icon="pencil"
+            rightIcon="chevron.right"
+            onPress={() => {
+              if (onManual) {
+                setSubmitted(true);
+                if (!errors.age && !errors.sex) onManual();
+              } else router.push('/settings/nutrition-manual');
+            }}
+          />
+        </View>
+      )}
     </StepsContainer>
   );
 }

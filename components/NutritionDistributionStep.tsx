@@ -14,11 +14,12 @@ import { DEFAULT_GOALS, goalsForDistribution, MACROS, minimumProteinGoal } from 
 
 import NumberStepper from './NumberStepper';
 import NutritionDistributionSelector from './NutritionDistributionSelector';
+import type { NutritionStepNavigation } from './nutritionStepNavigation';
 import ProteinReferenceNotice from './ProteinReferenceNotice';
 import { ThemedText } from './ThemedText';
 import { IconSymbol } from './ui/IconSymbol';
 
-export default function NutritionDistributionStep() {
+export default function NutritionDistributionStep({ currentStep = 4, totalSteps = 4, onContinue, onBack }: NutritionStepNavigation = {}) {
   const { colors } = useTheme();
   const { t } = useTranslation('common');
   const { userProfile, updateUserProfile } = useStorage();
@@ -47,7 +48,8 @@ export default function NutritionDistributionStep() {
         nutritionEnergySource: distribution === 'custom' ? 'custom' : 'henry',
         nutritionGuideCompleted: true,
       });
-      router.dismissTo('/settings/nutrition');
+      if (onContinue) onContinue();
+      else router.dismissTo('/settings/nutrition');
     } catch {
       setError(true);
     } finally {
@@ -58,8 +60,18 @@ export default function NutritionDistributionStep() {
   return (
     <StepsContainer
       title={t('nutritionGoals.distribution')}
-      currentStep={4}
-      footer={<AppButton title={t('onboarding.finish')} variant="primary" rightIcon="chevron.right" disabled={saving || !energyNeeds} onPress={finish} />}
+      currentStep={currentStep}
+      totalSteps={totalSteps}
+      onBackPress={onBack}
+      footer={
+        <AppButton
+          title={t(onContinue ? 'onboarding.continue' : 'onboarding.finish')}
+          variant="primary"
+          rightIcon="chevron.right"
+          disabled={saving || !energyNeeds}
+          onPress={finish}
+        />
+      }
     >
       <NutritionDistributionSelector
         birthDate={userProfile.birthDate}

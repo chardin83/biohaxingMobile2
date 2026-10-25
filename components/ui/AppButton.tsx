@@ -20,6 +20,7 @@ interface AppButtonProps {
   accessibilityHint?: string;
   icon?: IconSymbolName;
   rightIcon?: IconSymbolName;
+  rightIconAtEdge?: boolean;
   disabledText?: string;
   content?: React.ReactNode;
 }
@@ -35,6 +36,7 @@ const AppButton: React.FC<AppButtonProps> = ({
   accessibilityHint,
   icon,
   rightIcon,
+  rightIconAtEdge = false,
   disabledText,
   content,
 }) => {
@@ -121,14 +123,21 @@ const AppButton: React.FC<AppButtonProps> = ({
         accessible
       >
         <View style={styles.buttonContent}>
-          <View style={[styles.content, variant === 'premium' && styles.premiumContent]}>
+          <View style={[styles.content, variant === 'premium' && styles.premiumContent, rightIconAtEdge && styles.edgeContent]}>
             {leftIcon && <IconSymbol name={leftIcon} size={26} color={iconColor} />}
 
             <ThemedText type="defaultSemiBold" style={[styles.text, textColorStyle, variant === 'premium' && styles.premiumText]}>
               {title}
             </ThemedText>
 
-            {rightIcon && <IconSymbol name={rightIcon} size={18} color={iconColor} />}
+            {rightIcon &&
+              (rightIconAtEdge ? (
+                <View style={styles.edgeIcon}>
+                  <IconSymbol name={rightIcon} size={18} color={iconColor} />
+                </View>
+              ) : (
+                <IconSymbol name={rightIcon} size={18} color={iconColor} />
+              ))}
           </View>
 
           {content}
@@ -170,6 +179,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 10,
   },
+  edgeContent: { width: '100%', paddingHorizontal: 28 },
+  edgeIcon: { position: 'absolute', right: 0 },
   premiumContent: { width: '100%' },
   premiumText: { flex: 1, flexShrink: 1 },
   text: {

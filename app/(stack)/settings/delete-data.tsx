@@ -29,6 +29,7 @@ import Container from '@/components/ui/Container';
 import InfoNotice from '@/components/ui/InfoNotice';
 import Notice from '@/components/ui/Notice';
 import SettingIcon from '@/components/ui/SettingIcon';
+import { DEFAULT_PROFILE_SHARING } from '@/types/aiSharing';
 
 const DELETE_OPTION_KEYS = {
   plans: 'plans',
@@ -90,11 +91,15 @@ export default function DeleteDataPage() {
     clearDailyDrinkTracking,
     setViewedTips,
     setShareHealthPlan,
+    setShareInterests,
+    setShareArchivedPlans,
+    setProfileSharing,
     clearSupplementTakenDates,
     clearSupplementCustom,
     clearNutritionXP,
     clearEducationXP,
     setHealthSyncEnabled,
+    setHideHealthSyncPrompt,
     setHasCompletedOnboarding,
     setOnboardingStep,
   } = useStorage();
@@ -216,6 +221,9 @@ export default function DeleteDataPage() {
       });
 
       setShareHealthPlan(false);
+      await setShareInterests(false);
+      await setShareArchivedPlans(false);
+      await setProfileSharing({ ...DEFAULT_PROFILE_SHARING });
       await clearArchivedPlans();
       setTrainingPlanSettings({});
     } else if (selected.supplements) {
@@ -229,6 +237,7 @@ export default function DeleteDataPage() {
     if (selected.healthData) {
       clearMetricEntries();
       setHealthSyncEnabled(false);
+      await setHideHealthSyncPrompt(false);
     }
 
     if (selected.logs) {
@@ -257,6 +266,9 @@ export default function DeleteDataPage() {
     if (selected.sharing) {
       setHasVisitedChat(false);
       setShareHealthPlan(false);
+      await setShareInterests(false);
+      await setShareArchivedPlans(false);
+      await setProfileSharing({ ...DEFAULT_PROFILE_SHARING });
       await clearChat();
     }
   }, [
@@ -270,10 +282,14 @@ export default function DeleteDataPage() {
     clearDailyHabitTracking,
     setHasVisitedChat,
     setHealthSyncEnabled,
+    setHideHealthSyncPrompt,
     clearMetricEntries,
     setMyAreas,
     setPlans,
     setShareHealthPlan,
+    setShareInterests,
+    setShareArchivedPlans,
+    setProfileSharing,
     clearSupplementTakenDates,
     clearDailyNutritionTracking,
     clearDailyTrainingTracking,

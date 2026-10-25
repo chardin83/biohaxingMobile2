@@ -26,6 +26,7 @@ import { countNewAutomaticHabitGoals, getAutomaticHabitGoalKeys } from '@/servic
 import { getCurrentNutritionCompletions, getNutritionInputSignature } from '@/services/targetProgress/completedNutritionProgress';
 import { prepareManualHabitResult, storeAutomaticSleepResults } from '@/services/targetProgress/habitResultStorage';
 import { storeLifeStyleHabitResults } from '@/services/targetProgress/lifeStyleHabitResults';
+import { DEFAULT_PROFILE_SHARING, type ProfileSharing } from '@/types/aiSharing';
 //import { seedHabitTestDataOnce } from '@/services/testData/temporaryHabitTestData';
 import { type NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import { VerdictValue } from '@/types/verdict';
@@ -43,9 +44,13 @@ import {
   saveHasVisitedChat,
   saveHealthSyncEnabled,
   saveHideBarcodeInfo,
+  saveHideHealthSyncPrompt,
   saveMyAreas,
   saveOnboardingStep,
+  saveProfileSharing,
+  saveShareArchivedPlans,
   saveShareHealthPlan,
+  saveShareInterests,
   saveShowMusic,
 } from './storage/app/appStorage';
 import {
@@ -66,6 +71,7 @@ import {
   updateHabitEntryInTracking,
 } from './storage/habits/habitStorage';
 import type { DailyHabitTracking, HabitEntry } from './storage/habits/habitTypes';
+import { markAppleHealthConnectionCompleted } from './storage/health/appleHealthConnectionHistory';
 import { type LifeStyleStorageValue, useLifeStyleStorage } from './storage/lifeStyle/useLifeStyleStorage';
 import { getAllMetricEntries, syncMetricEntries } from './storage/metrics/metricStorage';
 import { MetricEntry } from './storage/metrics/metricTypes';
@@ -121,6 +127,12 @@ interface StorageContextType extends LifeStyleStorageValue {
   archiveSupplement: (supplementName: string, planName: string, preferredTime: string) => Promise<unknown>;
   hasVisitedChat: boolean;
   setHasVisitedChat: (val: boolean) => void;
+  profileSharing: ProfileSharing;
+  setProfileSharing: (val: ProfileSharing) => Promise<void>;
+  shareInterests: boolean;
+  setShareInterests: (val: boolean) => Promise<void>;
+  shareArchivedPlans: boolean;
+  setShareArchivedPlans: (val: boolean) => Promise<void>;
   shareHealthPlan: boolean;
   setShareHealthPlan: (val: boolean) => void;
   takenDates: Record<string, SupplementTime[]>;
@@ -206,6 +218,10 @@ interface StorageContextType extends LifeStyleStorageValue {
   getMetricHistory: (metricId: MetricId) => MetricEntry[];
   clearMetricEntries: () => void;
   healthSyncEnabled: boolean;
+  hasConnectedAppleHealth: boolean;
+  markAppleHealthConnected: () => Promise<void>;
+  hideHealthSyncPrompt: boolean;
+  setHideHealthSyncPrompt: (val: boolean) => Promise<void>;
   setHealthSyncEnabled: (val: boolean) => void;
   hideBarcodeInfo: boolean;
   setHideBarcodeInfo: (val: boolean) => void;
@@ -222,6 +238,9 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const [plansState, setPlansState] = useState<PlansByCategory>(EMPTY_PLANS);
   const [archivedPlansState, setArchivedPlansState] = useState<ArchivedPlansByCategory>(EMPTY_ARCHIVED_PLANS);
   const [hasVisitedChatState, setHasVisitedChatState] = useState(false);
+  const [profileSharingState, setProfileSharingState] = useState<ProfileSharing>({ ...DEFAULT_PROFILE_SHARING });
+  const [shareInterestsState, setShareInterestsState] = useState(false);
+  const [shareArchivedPlansState, setShareArchivedPlansState] = useState(false);
   const [shareHealthPlanState, setShareHealthPlanState] = useState(false);
   const [takenDatesState, setTakenDatesState] = useState<Record<string, SupplementTime[]>>({});
   const [customSupplementsState, setCustomSupplementsState] = useState<Supplement[]>([]);
@@ -251,6 +270,8 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const [showMusicState, setShowMusicState] = useState(true);
   const [tempPlans, setTempPlans] = useState<PlansByCategory | null>(null);
   const [metricEntriesState, setMetricEntriesState] = useState<MetricEntry[]>([]);
+  const [hideHealthSyncPromptState, setHideHealthSyncPromptState] = useState(false);
+  const [hasConnectedAppleHealthState, setHasConnectedAppleHealthState] = useState(false);
   const [healthSyncEnabledState, setHealthSyncEnabledState] = useState(false);
   const [hideBarcodeInfoState, setHideBarcodeInfoState] = useState(false);
   const [nutritionXpClaimsState, setNutritionXpClaimsState] = useState<Record<string, NutritionXpClaim>>({});
@@ -338,7 +359,10 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
 
         setHasVisitedChatState(app.hasVisitedChat);
 
+        setShareInterestsState(app.shareInterests);
+        setShareArchivedPlansState(app.shareArchivedPlans);
         setShareHealthPlanState(app.shareHealthPlan);
+        setProfileSharingState(app.profileSharing);
 
         setMyAreasState(app.myAreas);
 
@@ -349,6 +373,8 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
         setShowMusicState(app.showMusic);
 
         setHealthSyncEnabledState(app.healthSyncEnabled);
+        setHasConnectedAppleHealthState(app.hasConnectedAppleHealth);
+        setHideHealthSyncPromptState(app.hideHealthSyncPrompt);
 
         setHideBarcodeInfoState(app.hideBarcodeInfo);
 
@@ -502,10 +528,24 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     await saveHasVisitedChat(val);
   };
 
-  const setShareHealthPlan = async (val: boolean) => {
-    setShareHealthPlanState(val);
+  const setProfileSharing = async (val: ProfileSharing) => {
+    await saveProfileSharing(val);
+    setProfileSharingState(val);
+  };
 
+  const setShareInterests = async (val: boolean) => {
+    await saveShareInterests(val);
+    setShareInterestsState(val);
+  };
+
+  const setShareArchivedPlans = async (val: boolean) => {
+    await saveShareArchivedPlans(val);
+    setShareArchivedPlansState(val);
+  };
+
+  const setShareHealthPlan = async (val: boolean) => {
     await saveShareHealthPlan(val);
+    setShareHealthPlanState(val);
   };
 
   const setMyAreas = (update: string[] | ((prev: string[]) => string[])) => {
@@ -534,6 +574,16 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     setShowMusicState(val);
 
     saveShowMusic(val).catch(console.error);
+  }, []);
+
+  const setHideHealthSyncPrompt = useCallback(async (val: boolean) => {
+    await saveHideHealthSyncPrompt(val);
+    setHideHealthSyncPromptState(val);
+  }, []);
+
+  const markAppleHealthConnected = useCallback(async () => {
+    await markAppleHealthConnectionCompleted();
+    setHasConnectedAppleHealthState(true);
   }, []);
 
   const setHealthSyncEnabled = useCallback((val: boolean) => {
@@ -1262,6 +1312,12 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       archiveSupplement,
       hasVisitedChat: hasVisitedChatState,
       setHasVisitedChat,
+      profileSharing: profileSharingState,
+      setProfileSharing,
+      shareInterests: shareInterestsState,
+      setShareInterests,
+      shareArchivedPlans: shareArchivedPlansState,
+      setShareArchivedPlans,
       shareHealthPlan: shareHealthPlanState,
       setShareHealthPlan,
       takenDates: takenDatesState,
@@ -1346,6 +1402,10 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       clearMetricEntries,
       getMetricHistory,
       healthSyncEnabled: healthSyncEnabledState,
+      hasConnectedAppleHealth: hasConnectedAppleHealthState,
+      markAppleHealthConnected,
+      hideHealthSyncPrompt: hideHealthSyncPromptState,
+      setHideHealthSyncPrompt,
       setHealthSyncEnabled,
       hideBarcodeInfo: hideBarcodeInfoState,
       setHideBarcodeInfo,
@@ -1355,8 +1415,8 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       clearUserProfile,
     }),
     // prettier-ignore
-    [lifeStyle, plansState, setPlans, saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareHealthPlanState, takenDatesState, customSupplementsState, clearSupplementTakenDates, clearSupplementCustom, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, userProfileInitialized, hasProcessedAutomaticHabits, hasCompletedInitialSync, isSyncing, newAutomaticHabitGoals, myXPState, setMyXP, clearNutritionXP, clearEducationXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, viewedTipsState, setViewedTips, claimTipReadingXP, claimTipAreaXP, recordTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState,
-      dailyNutritionTrackingState, addNutritionEntry, updateNutritionEntry, removeNutritionEntry, clearDailyNutritionTracking, weeklyNutritionTrackingState, setWeeklyNutritionTracking, dailyDrinkTrackingState, addDrinkEntry, updateDrinkEntry, removeDrinkEntry, clearDailyDrinkTracking, trainingPlanSettingsState, setTrainingPlanSettings, dailyTrainingTrackingState, addTrainingEntry, updateTrainingEntry, removeTrainingEntry, clearDailyTrainingTracking, dailyHabitTrackingState, addHabitEntry, updateHabitEntry, removeHabitEntry, clearDailyHabitTracking, showMusicState, setShowMusic, tempPlans, setTempPlans, metricEntriesWithNutrition, metricEntriesState, addMetricEntry, upsertMetricEntries, setMetricEntries, getMetricHistory, clearMetricEntries, healthSyncEnabledState, setHealthSyncEnabled, hideBarcodeInfoState, setHideBarcodeInfo, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
+    [lifeStyle, plansState, setPlans, saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareInterestsState, shareArchivedPlansState, shareHealthPlanState, profileSharingState, takenDatesState, customSupplementsState, clearSupplementTakenDates, clearSupplementCustom, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, userProfileInitialized, hasProcessedAutomaticHabits, hasCompletedInitialSync, isSyncing, newAutomaticHabitGoals, myXPState, setMyXP, clearNutritionXP, clearEducationXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, viewedTipsState, setViewedTips, claimTipReadingXP, claimTipAreaXP, recordTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState,
+      dailyNutritionTrackingState, addNutritionEntry, updateNutritionEntry, removeNutritionEntry, clearDailyNutritionTracking, weeklyNutritionTrackingState, setWeeklyNutritionTracking, dailyDrinkTrackingState, addDrinkEntry, updateDrinkEntry, removeDrinkEntry, clearDailyDrinkTracking, trainingPlanSettingsState, setTrainingPlanSettings, dailyTrainingTrackingState, addTrainingEntry, updateTrainingEntry, removeTrainingEntry, clearDailyTrainingTracking, dailyHabitTrackingState, addHabitEntry, updateHabitEntry, removeHabitEntry, clearDailyHabitTracking, showMusicState, setShowMusic, tempPlans, setTempPlans, metricEntriesWithNutrition, addMetricEntry, upsertMetricEntries, setMetricEntries, getMetricHistory, clearMetricEntries, healthSyncEnabledState, setHealthSyncEnabled, hasConnectedAppleHealthState, markAppleHealthConnected, hideHealthSyncPromptState, setHideHealthSyncPrompt, hideBarcodeInfoState, setHideBarcodeInfo, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

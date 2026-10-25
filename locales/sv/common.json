@@ -106,9 +106,38 @@
     "privacySubtitle": "Hantera data, AI-delningar och integritetsinställningar"
   },
   "aiSharing": {
-    "description": "Välj vilken information AI:n får använda för att ge dig personliga hälsoråd:",
-    "healthPlan": "Hälsoplan och tillskott",
-    "journal": "Dagbok (delas inte)"
+    "description": "Välj vilka uppgifter AI:n får använda för att skapa din hälsoplan.",
+    "healthPlan": "Hälsoplan · obligatorisk",
+    "journal": "Dagbok (delas inte)",
+    "title": "Vad vill du dela med AI?",
+    "healthPlanDescription": "Dina aktiva tips och kosttillskott. Hjälper AI bygga vidare på nuvarande plan.",
+    "personalDetails": "Personliga uppgifter",
+    "personalDetailsDescription": "Ålder, biologiskt kön och aktivitetsnivå samt längd och vikt om du har angett dem. Används för att anpassa planen och välja åldersanpassade tips.",
+    "noIdentity": "Biologiskt kön, längd, vikt, födelsedatum, namn och e-post skickas inte.",
+    "requiredForPlan": "Obligatoriska val krävs för att skapa AI-planen",
+    "journalNotShared": "Dagboksinlägg delas inte.",
+    "changeLater": "Du kan ändra dina val senare under Datadelning.",
+    "confirm": "Klart",
+    "saveError": "Ditt val kunde inte sparas. Försök igen.",
+    "fields": {
+      "age": {
+        "label": "Ålder · obligatorisk",
+        "description": "Din ålder används för åldersanpassade tips."
+      },
+      "activityPal": {
+        "label": "Aktivitetsnivå",
+        "description": "Hur mycket du rör på dig och tränar"
+      }
+    },
+    "interests": "Intresseområden · obligatoriskt",
+    "interestsDescription": "Dina hälsointressen styr vilka tips AI:n prioriterar.",
+    "archivedPlans": "Arkiverade hälsoplaner",
+    "archivedPlansDescription": "Tidigare tips och tillskott hjälper AI:n att undvika upprepningar.",
+    "requiredChoice": "Kryssa i detta val för att skapa AI-planen.",
+    "titleLead": "Vad vill du",
+    "titleAccent": "dela med AI?",
+    "privacyTitle": "Din integritet",
+    "privacyMessage": "Endast uppgifter du godkänner delas med AI."
   },
   "privacy": {
     "disclaimer": "Vi delar aldrig din identitet (som namn eller e-post) med AI:n.",
@@ -318,19 +347,14 @@
     "duplicateWarning": "AI-planen innehaller {{count}} dubbletter som redan finns i din plan.",
     "goals": {
       "title": "Vad är ditt/dina mål?",
-      "suggestions": [
-        "Bygga muskler",
-        "Gå ner i vikt",
-        "Få mer energi",
-        "Förbättra konditionen",
-        "Må bättre",
-        "Bli starkare",
-        "Bättre matvanor"
-      ],
+      "suggestions": ["Bygga muskler", "Gå ner i vikt", "Få mer energi", "Förbättra konditionen", "Må bättre", "Bli starkare", "Bättre matvanor"],
       "customPlaceholder": "Eget mål..."
     },
-    "sharePlanText": "Obligatoriskt för att generera en AI-plan.",
-    "sharePlanError": "Du måste dela din hälsoplan för att generera AI-plan."
+    "sharePlanText": "För att skapa en AI-plan delar du din plan, dina mål och dina profiluppgifter: ålder, biologiskt kön, aktivitetsnivå samt längd och vikt om du har angett dem. Födelsedatum skickas inte.",
+    "sharePlanError": "Du måste dela din hälsoplan för att generera AI-plan.",
+    "tipDetails": "Visa mer om {{title}}",
+    "selectTip": "Välj {{title}}",
+    "selectAtLeastOne": "Välj minst 1 tips för att skapa AI-planen"
   },
   "supplementForm": {
     "dosage": "Dos",
@@ -727,13 +751,50 @@
     "supplementNotFound": "⚠️ Jag kunde inte hitta {{supplement}} i listan över kosttillskott."
   },
   "onboarding": {
+    "selectAtLeastOneArea": "Välj minst 1 område för att fortsätta",
     "finish": "Slutför",
     "welcomeTo": "Välkommen till",
     "discoverHealth": "Upptäck vad som kan förbättra din hälsa.",
     "getStarted": "Kom igång",
     "whatSupplementDoYouTakeAlready": "Vilka tillskott tar du redan?",
     "continue": "Fortsätt",
-    "stepOf": "Steg {{current}} av {{total}}"
+    "stepOf": "Steg {{current}} av {{total}}",
+    "trackMacros": "Vill du följa makros?",
+    "yes": "Ja",
+    "no": "Nej",
+    "takeSupplements": "Tar du några supplement?",
+    "supplementTimes": "När tar du dina kosttillskott?",
+    "breakfast": "Frukost",
+    "lunch": "Lunch",
+    "dinner": "Middag",
+    "evening": "Kväll",
+    "selectSupplements": "Välj supplement för {{time}}",
+    "saveError": "Det gick inte att spara. Försök igen.",
+    "trackMacrosLead": "Vill du följa",
+    "trackMacrosAccent": "makros?",
+    "macrosDescription": "Makros är protein, kolhydrater och fett – näringsämnen som ger kroppen energi. Vi hjälper dig att sätta dagliga mål utifrån din ålder, dina kroppsmått och hur mycket du rör dig. Du kan följa ditt intag och justera målen senare.",
+    "macrosYesDescription": "Jag vill sätta makromål.",
+    "macrosNoDescription": "Jag vill fokusera på andra mål (näringsämnen, livsstil). Det går att ställa in makros senare.",
+    "supplementsLead": "Tar du några",
+    "supplementsAccent": "kosttillskott?",
+    "supplementsDescription": "Samla kosttillskotten du redan tar i en daglig rutin. Välj när du tar dem – frukost, lunch, middag eller kväll – och lägg till dina kosttillskott för varje tidpunkt.",
+    "supplementsYesDescription": "Jag vill lägga till mina kosttillskott och när jag tar dem.",
+    "supplementsNoDescription": "Jag vill fortsätta utan kosttillskott. Det går att lägga till dem senare.",
+    "supplementTimesLead": "När tar du dina",
+    "selectSupplementsLead": "Välj dina",
+    "supplementsWord": "kosttillskott",
+    "supplementsForTime": "Till {{time}}",
+    "selectedSupplements": "Valda kosttillskott",
+    "noSelectedSupplements": "Du har inte valt några kosttillskott för den här tidpunkten ännu.",
+    "searchSupplements": "Sök kosttillskott",
+    "noMatchingSupplements": "Inga fler kosttillskott matchar din sökning.",
+    "popularSupplements": "Populära kosttillskott",
+    "skipAIPlan": "Hoppa över AI-planen",
+    "aiPlanError": "Det gick inte att skapa planen. Försök igen.",
+    "profileTitle": "Om dig",
+    "profileDescription": "Ange din ålder så att planen kan anpassas efter dig. Dina valda mål och intresseområden styr vilka tips du får.",
+    "ageRequiredForAI": "Ange din ålder i dina personuppgifter innan du skapar en AI-plan.",
+    "completeProfile": "Fyll i personuppgifter"
   },
   "dashboard": {
     "sync": {
@@ -742,8 +803,8 @@
       "progressTitle": "Nya framsteg!",
       "upToDateTitle": "Allt är uppdaterat!",
       "upToDateDescription": "Inga nya mål sedan senaste besöket.",
-      "welcomeTitle": "Välkommen!!",
-      "welcomeDescription": "Du verkar inte ha lagt in några tips med mål ännu. Lägg till några tips för att komma igång.",
+      "welcomeTitle": "Välkommen!",
+      "welcomeDescription": "Kom igång med att välja ditt första mål.",
       "firstTipTitle": "Lägg till ditt första tips",
       "firstTipDescription": "Lägg till bra vanor, nutrition eller träning.",
       "addGoal": {
@@ -762,7 +823,15 @@
       "manualTitle": "Kom ihåg att logga manuellt.",
       "manualDescription": "Kost, dryck, tillskott och andra vanor som inte registreras automatiskt.",
       "errorTitle": "Synkningen kunde inte slutföras",
-      "errorDescription": "Vi visar framsteg från sparad data. Dra nedåt för att försöka synka igen."
+      "errorDescription": "Vi visar framsteg från sparad data. Dra nedåt för att försöka synka igen.",
+      "connectHealth": {
+        "apple": "Koppla Apple Hälsa",
+        "android": "Koppla Health Connect",
+        "description": "Synka aktivitet, sömn och andra hälsodata.",
+        "configure": "Öppna konfigurationen"
+      },
+      "aiPlanReady": "Din AI-plan är redo. Utforska dagboken – logga måltider och vanor.",
+      "getStartedTitle": "Kom igång"
     },
     "appTitle": "BIOHAXING",
     "level": "LEVEL",

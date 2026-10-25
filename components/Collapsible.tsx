@@ -31,7 +31,7 @@ export function Collapsible({
   onOpenChange?: (isOpen: boolean) => void;
   titleType?: 'default' | 'title' | 'title2' | 'title3' | 'defaultSemiBold' | 'subtitle' | 'link' | 'caption' | 'value' | 'label' | 'explainer'; // ny prop
 }) {
-  const [internalIsOpen, setIsOpen] = useState(!initialCollapsed);
+  const [internalIsOpen, setInternalIsOpen] = useState(!initialCollapsed);
   const isOpen = controlledIsOpen ?? internalIsOpen;
   const { colors } = useTheme();
   const chevron = <IconSymbol name="chevron.right" size={18} color={colors.icon} style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }} />;
@@ -41,7 +41,7 @@ export function Collapsible({
       <TouchableOpacity
         style={styles.heading}
         onPress={() => {
-          setIsOpen(!isOpen);
+          setInternalIsOpen(!isOpen);
           onOpenChange?.(!isOpen);
         }}
         activeOpacity={0.8}
