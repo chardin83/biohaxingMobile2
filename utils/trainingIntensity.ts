@@ -1,3 +1,4 @@
+import type { TrainingLogEntry } from '@/app/context/storage/training/trainingTypes';
 import type { TrainingIntensityInterval } from '@/types/training';
 
 type HeartRatePoint = { time: number; value: number };
@@ -29,6 +30,8 @@ export function calculateWorkoutIntensity(samples: HeartRatePoint[], startTime: 
     .sort((a, b) => a.time - b.time);
   const intensityIntervals: TrainingIntensityInterval[] = [];
   const moderateIntervals: TrainingIntensityInterval[] = [];
+  const lowIntensityIntervals: TrainingIntensityInterval[] = [];
+  let lowIntensityMs = 0;
   const highIntensityIntervals: TrainingIntensityInterval[] = [];
   let highIntensityMs = 0;
   let hasCoverage = false;
@@ -51,6 +54,13 @@ export function calculateWorkoutIntensity(samples: HeartRatePoint[], startTime: 
       appendInterval(highIntensityIntervals, ...highIntensity);
     }
     const aboveModerate = hasModerateThreshold ? intervalAbove(current, next, moderateThreshold!) : undefined;
+    if (hasModerateThreshold) {
+      lowIntensityMs += duration - (aboveModerate ? aboveModerate[1] - aboveModerate[0] : 0);
+      if (aboveModerate) {
+        appendInterval(lowIntensityIntervals, current.time, aboveModerate[0]);
+        appendInterval(lowIntensityIntervals, aboveModerate[1], next.time);
+      } else appendInterval(lowIntensityIntervals, current.time, next.time);
+    }
     if (!aboveModerate) continue;
     moderateMs += aboveModerate[1] - aboveModerate[0] - (vigorous ? vigorous[1] - vigorous[0] : 0);
     if (vigorous) {
@@ -63,7 +73,7 @@ export function calculateWorkoutIntensity(samples: HeartRatePoint[], startTime: 
     intensityMinutes: intenseMs / 60000,
     intensityIntervals,
     ...(hasHighIntensityThreshold ? { highIntensityMinutes: highIntensityMs / 60000, highIntensityIntervals } : {}),
-    ...(hasModerateThreshold ? { moderateMinutes: Math.max(0, moderateMs / 60000), moderateIntervals } : {}),
+    ...(hasModerateThreshold ? { lowIntensityMinutes: Math.max(0, lowIntensityMs / 60000), lowIntensityIntervals, moderateMinutes: Math.max(0, moderateMs / 60000), moderateIntervals } : {}),
   };
 }
 
@@ -83,4 +93,21 @@ export function calculateWorkoutAverageHeartRate(samples: HeartRatePoint[], star
     observedDuration += duration;
   }
   return observedDuration > 0 ? Math.round(weightedHeartRate / observedDuration) : undefined;
+}
+
+
+/** Resolve a manually declared intensity without pretending it came from heart-rate measurements. */
+export function resolveTrainingEntryIntensity(entry: TrainingLogEntry): TrainingLogEntry {
+  if ((entry.origin !== undefined && entry.origin !== 'manual') || !entry.intensity || !Number.isFinite(entry.durationMinutes) || entry.durationMinutes <= 0) return entry;
+  return {
+    ...entry,
+    lowIntensityMinutes: entry.intensity === 'low' ? entry.durationMinutes : 0,
+    moderateMinutes: entry.intensity === 'moderate' ? entry.durationMinutes : 0,
+    intensityMinutes: entry.intensity === 'intense' || entry.intensity === 'high' ? entry.durationMinutes : 0,
+    highIntensityMinutes: entry.intensity === 'high' ? entry.durationMinutes : 0,
+    lowIntensityIntervals: undefined,
+    moderateIntervals: undefined,
+    intensityIntervals: undefined,
+    highIntensityIntervals: undefined,
+  };
 }

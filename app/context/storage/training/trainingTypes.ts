@@ -17,6 +17,8 @@ export type TrainingLogEntry = SampleProvenance & {
   intensity?: TrainingIntensity;
   highIntensityMinutes?: number;
   highIntensityIntervals?: TrainingIntensityInterval[];
+  lowIntensityMinutes?: number;
+  lowIntensityIntervals?: TrainingIntensityInterval[];
   moderateMinutes?: number;
   moderateIntervals?: TrainingIntensityInterval[];
   intensityMinutes?: number;

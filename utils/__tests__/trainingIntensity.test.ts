@@ -58,3 +58,11 @@ it('averages observed pulse intervals by duration without filling gaps', () => {
   expect(calculateWorkoutAverageHeartRate([point(0, 100), point(20, 160)], start, end)).toBeUndefined();
   expect(calculateWorkoutAverageHeartRate([], start, end)).toBeUndefined();
 });
+
+
+it('measures low time from actual pulse coverage without treating missing time as low', () => {
+  expect(calculateWorkoutIntensity([point(0, 80), point(10, 80)], start, end, 140, 100, 170)).toMatchObject({ lowIntensityMinutes: 10, lowIntensityIntervals: [{ startTime: '2026-10-20T10:00:00.000Z', endTime: '2026-10-20T10:10:00.000Z' }] });
+  expect(calculateWorkoutIntensity([point(0, 80), point(10, 160), point(20, 80)], start, end, 140, 100)?.lowIntensityMinutes).toBe(5);
+  expect(calculateWorkoutIntensity([point(0, 100), point(10, 100)], start, end, 140, 100)?.lowIntensityMinutes).toBe(0);
+  expect(calculateWorkoutIntensity([point(0, 80), point(20, 80)], start, end, 140, 100)).toBeUndefined();
+});

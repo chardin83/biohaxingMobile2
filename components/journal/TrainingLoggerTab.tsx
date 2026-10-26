@@ -7,6 +7,7 @@ import { isImportedTraining } from '@/app/context/storage/training/trainingImpor
 import { useStorage } from '@/app/context/StorageContext';
 import { type TrainingActivityType, type TrainingIntensity } from '@/types/training';
 import { DEFAULT_TRAINING_ACTIVITY, TRAINING_ACTIVITY_OPTIONS } from '@/types/trainingActivityOptions';
+import { TRAINING_INTENSITY_OPTIONS } from '@/types/trainingIntensityOptions';
 
 import { LoggedTrainingSection } from '../LoggedTrainingSection';
 import { ThemedText } from '../ThemedText';
@@ -15,6 +16,7 @@ import { CancelButton } from '../ui/CancelButton';
 import { IconSymbol } from '../ui/IconSymbol';
 import LabeledInput from '../ui/LabeledInput';
 import LabeledStepperInput from '../ui/LabeledStepperInput';
+import { DailyTrainingSummary } from './DailyTrainingSummary';
 import { TrainingPlanTargetsSection } from './TrainingPlanTargetsSection';
 
 type TrainingLoggerTabProps = {
@@ -29,7 +31,7 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
   const [selectedTrainingType, setSelectedTrainingType] = useState<TrainingActivityType>(DEFAULT_TRAINING_ACTIVITY);
   const [durationMinutes, setDurationMinutes] = useState('');
   const [distanceKm, setDistanceKm] = useState('');
-  const [intensity, setIntensity] = useState<TrainingIntensity>('medium');
+  const [intensity, setIntensity] = useState<TrainingIntensity>('moderate');
   const [trainingNotes, setTrainingNotes] = useState('');
   const [trainingFormError, setTrainingFormError] = useState<string | null>(null);
   const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
@@ -44,26 +46,8 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
     [t]
   );
 
-  const intensityOptions = useMemo<
-    Array<{
-      key: TrainingIntensity;
-      label: string;
-    }>
-  >(
-    () => [
-      {
-        key: 'low',
-        label: t('training:trainingIntensityLow'),
-      },
-      {
-        key: 'medium',
-        label: t('training:trainingIntensityMedium'),
-      },
-      {
-        key: 'high',
-        label: t('training:trainingIntensityHigh'),
-      },
-    ],
+  const intensityOptions = useMemo(
+    () => TRAINING_INTENSITY_OPTIONS.map(option => ({ key: option.key, label: t(option.labelKey) })),
     [t]
   );
 
@@ -90,7 +74,7 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
     setDurationMinutes('');
     setDistanceKm('');
     setTrainingNotes('');
-    setIntensity('medium');
+    setIntensity('moderate');
     setTrainingFormError(null);
     setEditingEntryId(null);
     setIsFormOpen(false);
@@ -161,7 +145,7 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
       setSelectedTrainingType(entry.activityType);
       setDurationMinutes(String(entry.durationMinutes));
       setDistanceKm(typeof entry.distanceKm === 'number' ? String(entry.distanceKm) : '');
-      setIntensity(entry.intensity ?? 'medium');
+      setIntensity(entry.intensity ?? 'moderate');
       setTrainingNotes(entry.notes ?? '');
       setTrainingFormError(null);
       setEditingEntryId(entry.id);
@@ -283,6 +267,8 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
       ) : (
         <AppButton title={t('training:trainingOpenFormButton')} onPress={() => setIsFormOpen(true)} icon="trainingRunning" style={styles.openFormButton} />
       )}
+
+      <DailyTrainingSummary entries={dayTrainingEntries} />
 
       {dayTrainingEntries.length === 0 ? (
         <ThemedText

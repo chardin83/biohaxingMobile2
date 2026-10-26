@@ -6,7 +6,9 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { isImportedTraining } from '@/app/context/storage/training/trainingImport';
 import type { TrainingLogEntry } from '@/app/context/storage/training/trainingTypes';
 import { TRAINING_ACTIVITY_LABEL_KEYS, TRAINING_ACTIVITY_OPTIONS } from '@/types/trainingActivityOptions';
+import { TRAINING_INTENSITY_LABEL_KEYS } from '@/types/trainingIntensityOptions';
 import { toLocalDateKey } from '@/utils/metricDateUtils';
+import { resolveTrainingEntryIntensity } from '@/utils/trainingIntensity';
 
 import { Collapsible } from './Collapsible';
 import { ThemedText } from './ThemedText';
@@ -18,12 +20,6 @@ type LoggedTrainingSectionProps = {
   entries: TrainingLogEntry[];
   onEdit: (entryId: string) => void;
   onDelete: (entryId: string) => void;
-};
-
-const INTENSITY_LABEL_KEYS: Record<NonNullable<TrainingLogEntry['intensity']>, string> = {
-  low: 'training:trainingIntensityLow',
-  medium: 'training:trainingIntensityMedium',
-  high: 'training:trainingIntensityHigh',
 };
 
 export const LoggedTrainingSection: React.FC<LoggedTrainingSectionProps> = ({ entries, onEdit, onDelete }) => {
@@ -48,7 +44,8 @@ export const LoggedTrainingSection: React.FC<LoggedTrainingSectionProps> = ({ en
   return (
     <Card>
       <Collapsible title={`${t('training:trainingListTitle')} (${entries.length})`} titleType="defaultSemiBold" contentStyle={styles.list}>
-        {entries.map(entry => {
+        {entries.map(originalEntry => {
+          const entry = resolveTrainingEntryIntensity(originalEntry);
           const imported = isImportedTraining(entry);
           const activity = entry.activityType === 'other' && entry.activityName ? entry.activityName : t(TRAINING_ACTIVITY_LABEL_KEYS[entry.activityType]);
           const icon = TRAINING_ACTIVITY_OPTIONS.find(option => option.key === entry.activityType)?.icon ?? 'trainingGym';
@@ -122,7 +119,7 @@ export const LoggedTrainingSection: React.FC<LoggedTrainingSectionProps> = ({ en
                 )}
                 {entry.intensity && (
                   <ThemedText type="caption" style={{ color: colors.textMuted }}>
-                    {t(INTENSITY_LABEL_KEYS[entry.intensity])}
+                    {t(TRAINING_INTENSITY_LABEL_KEYS[entry.intensity])}
                   </ThemedText>
                 )}
                 {entry.notes && (

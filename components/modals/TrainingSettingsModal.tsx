@@ -8,6 +8,7 @@ import { ThemedText } from '@/components/ThemedText';
 import LabeledInput from '@/components/ui/LabeledInput';
 import { type TrainingActivityFilter, type TrainingIntensityFilter } from '@/types/training';
 import { TRAINING_ACTIVITY_OPTIONS } from '@/types/trainingActivityOptions';
+import { TRAINING_INTENSITY_OPTIONS } from '@/types/trainingIntensityOptions';
 
 type TrainingSettingsModalProps = {
   visible: boolean;
@@ -66,9 +67,7 @@ const TrainingSettingsModal: React.FC<TrainingSettingsModalProps> = ({
 
   const intensityOptions: Array<{ key: TrainingIntensityFilter; label: string }> = [
     { key: 'any', label: t('plan.trainingAnyIntensity') },
-    { key: 'low', label: t('plan.trainingIntensityLowOrHigher') },
-    { key: 'medium', label: t('plan.trainingIntensityMediumOrHigher') },
-    { key: 'high', label: t('training:trainingIntensityHigh') },
+    ...TRAINING_INTENSITY_OPTIONS.map(option => ({ key: option.key, label: t('training:trainingIntensityAtLeast', { intensity: t(option.labelKey) }) })),
   ];
 
   useEffect(() => {

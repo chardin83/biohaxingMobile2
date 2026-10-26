@@ -55,6 +55,8 @@ export type WorkoutSession = SampleProvenance & {
   averageHeartRate?: number;
   highIntensityMinutes?: number;
   highIntensityIntervals?: TrainingIntensityInterval[];
+  lowIntensityMinutes?: number;
+  lowIntensityIntervals?: TrainingIntensityInterval[];
   moderateMinutes?: number;
   moderateIntervals?: TrainingIntensityInterval[];
   intensityMinutes?: number;
@@ -72,6 +74,8 @@ export type DailyActivity = SampleProvenance & {
   activeMinutes?: number;
   highIntensityMinutes?: number;
   highIntensityIntervals?: TrainingIntensityInterval[];
+  lowIntensityMinutes?: number;
+  lowIntensityIntervals?: TrainingIntensityInterval[];
   moderateMinutes?: number;
   moderateIntervals?: TrainingIntensityInterval[];
   intensityMinutes?: number;

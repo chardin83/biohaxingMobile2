@@ -3,8 +3,9 @@ import { type TrainingActivityFilter, type TrainingIntensity, type TrainingInten
 
 const TRAINING_INTENSITY_RANK: Record<TrainingIntensity, number> = {
   low: 1,
-  medium: 2,
-  high: 3,
+  moderate: 2,
+  intense: 3,
+  high: 4,
 };
 
 type TrainingProgressTarget = {

@@ -1,5 +1,5 @@
 export type TrainingActivityType = 'running' | 'gym' | 'cycling' | 'walking' | 'other';
-export type TrainingIntensity = 'low' | 'medium' | 'high';
+export type TrainingIntensity = 'low' | 'moderate' | 'intense' | 'high';
 export type TrainingIntensityInterval = { startTime: string; endTime: string };
 
 export type TrainingActivityFilter = TrainingActivityType | 'any';
