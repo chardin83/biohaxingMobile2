@@ -110,11 +110,11 @@ it('syncs workouts to the training log without a target and derives active minut
   const adapter = createAdapter([]);
   jest.mocked(adapter.getDailyActivity).mockResolvedValue([{
     source: 'healthconnect', date: '2026-10-20', activeMinutes: 60, intensityMinutes: 15,
-    workouts: [{ source: 'healthconnect', sourceRecordId: 'session-1', intensityMinutes: 15, sourceId: 'com.garmin.connect', startTime: '2026-10-20T10:00:00Z', endTime: '2026-10-20T11:00:00Z', activityType: 'running' }],
+    workouts: [{ source: 'healthconnect', sourceRecordId: 'session-1', highIntensityMinutes: 3, intensityMinutes: 15, sourceId: 'com.garmin.connect', startTime: '2026-10-20T10:00:00Z', endTime: '2026-10-20T11:00:00Z', activityType: 'running' }],
   }]);
   const metrics = jest.fn();
   const training = jest.fn();
   await syncWearableMetricsToStorage(adapter, metrics, 30, training);
-  expect(training).toHaveBeenCalledWith([expect.objectContaining({ origin: 'healthconnect', sourceRecordId: 'session-1', durationMinutes: 60, intensityMinutes: 15, activityType: 'running' })]);
+  expect(training).toHaveBeenCalledWith([expect.objectContaining({ origin: 'healthconnect', sourceRecordId: 'session-1', durationMinutes: 60, highIntensityMinutes: 3, intensityMinutes: 15, activityType: 'running' })]);
   expect(metrics.mock.calls[0][0].some((entry: { metricId: string }) => entry.metricId === 'active_minutes' || entry.metricId === 'intensity_minutes')).toBe(false);
 });

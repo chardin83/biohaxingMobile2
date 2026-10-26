@@ -19,15 +19,18 @@ function appendInterval(intervals: TrainingIntensityInterval[], start: number, e
 }
 
 /** Disjoint moderate/vigorous time, interpolated only across gaps of at most ten minutes. */
-export function calculateWorkoutIntensity(samples: HeartRatePoint[], startTime: string, endTime: string, threshold: number, moderateThreshold?: number) {
+export function calculateWorkoutIntensity(samples: HeartRatePoint[], startTime: string, endTime: string, threshold: number, moderateThreshold?: number, highIntensityThreshold?: number) {
   const start = Date.parse(startTime);
   const end = Date.parse(endTime);
   if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start || !Number.isFinite(threshold) || threshold <= 0) return undefined;
   const hasModerateThreshold = moderateThreshold !== undefined && Number.isFinite(moderateThreshold) && moderateThreshold > 0 && moderateThreshold < threshold;
+  const hasHighIntensityThreshold = highIntensityThreshold !== undefined && Number.isFinite(highIntensityThreshold) && highIntensityThreshold > threshold;
   const points = samples.filter(point => Number.isFinite(point.time) && Number.isFinite(point.value) && point.value > 0 && point.time >= start && point.time <= end)
     .sort((a, b) => a.time - b.time);
   const intensityIntervals: TrainingIntensityInterval[] = [];
   const moderateIntervals: TrainingIntensityInterval[] = [];
+  const highIntensityIntervals: TrainingIntensityInterval[] = [];
+  let highIntensityMs = 0;
   let hasCoverage = false;
   let intenseMs = 0;
   let moderateMs = 0;
@@ -42,6 +45,11 @@ export function calculateWorkoutIntensity(samples: HeartRatePoint[], startTime: 
       intenseMs += vigorous[1] - vigorous[0];
       appendInterval(intensityIntervals, ...vigorous);
     }
+    const highIntensity = hasHighIntensityThreshold ? intervalAbove(current, next, highIntensityThreshold!) : undefined;
+    if (highIntensity) {
+      highIntensityMs += highIntensity[1] - highIntensity[0];
+      appendInterval(highIntensityIntervals, ...highIntensity);
+    }
     const aboveModerate = hasModerateThreshold ? intervalAbove(current, next, moderateThreshold!) : undefined;
     if (!aboveModerate) continue;
     moderateMs += aboveModerate[1] - aboveModerate[0] - (vigorous ? vigorous[1] - vigorous[0] : 0);
@@ -54,6 +62,7 @@ export function calculateWorkoutIntensity(samples: HeartRatePoint[], startTime: 
   return {
     intensityMinutes: intenseMs / 60000,
     intensityIntervals,
+    ...(hasHighIntensityThreshold ? { highIntensityMinutes: highIntensityMs / 60000, highIntensityIntervals } : {}),
     ...(hasModerateThreshold ? { moderateMinutes: Math.max(0, moderateMs / 60000), moderateIntervals } : {}),
   };
 }

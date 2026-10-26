@@ -166,6 +166,9 @@ const ALL_METRIC_CHART_META: Partial<Record<MetricId, MetricMeta>> = {
       buildTrendData(getMetricHistory('sleep_duration'), (value, unit) => (unit === 'hours' ? Math.round(value * 60) : Math.round(value))),
   },
 
+  high_intensity_minutes: {
+    metricNameKey: 'metrics:highIntensityMinutes.name', unit: 'min', accentColor: colors => colors.intenseActivity,
+  },
   moderate_minutes: {
     metricNameKey: 'metrics:moderateMinutes.name', unit: 'min', accentColor: colors => colors.chart.activeMinutes,
   },

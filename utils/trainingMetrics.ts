@@ -41,7 +41,7 @@ function intervalMinutes(intervals: Interval[]) {
   return intervals.reduce((sum, [start, end]) => sum + (end - start) / 60000, 0);
 }
 
-function measuredTime(entries: TrainingLogEntry[], key: 'moderateMinutes' | 'intensityMinutes') {
+function measuredTime(entries: TrainingLogEntry[], key: 'moderateMinutes' | 'intensityMinutes' | 'highIntensityMinutes') {
   const intervals: Interval[] = [];
   let withoutIntervals = 0;
   let hasData = false;
@@ -49,7 +49,7 @@ function measuredTime(entries: TrainingLogEntry[], key: 'moderateMinutes' | 'int
     const minutes = entry[key];
     if (typeof minutes !== 'number' || !Number.isFinite(minutes) || minutes < 0 || !Number.isFinite(entry.durationMinutes) || entry.durationMinutes <= 0) continue;
     hasData = true;
-    const measuredIntervals = key === 'moderateMinutes' ? entry.moderateIntervals : entry.intensityIntervals;
+    const measuredIntervals = key === 'moderateMinutes' ? entry.moderateIntervals : key === 'highIntensityMinutes' ? entry.highIntensityIntervals : entry.intensityIntervals;
     if (!measuredIntervals) {
       withoutIntervals += Math.min(minutes, entry.durationMinutes);
       continue;
@@ -101,3 +101,17 @@ function buildIntensityMetric(tracking: DailyTrainingTracking, metricId: 'intens
 export const buildIntensityMinutesMetrics = (tracking: DailyTrainingTracking) => buildIntensityMetric(tracking, 'intensity_minutes');
 export const buildModerateMinutesMetrics = (tracking: DailyTrainingTracking) => buildIntensityMetric(tracking, 'moderate_minutes');
 export const buildWeightedTrainingMinutesMetrics = (tracking: DailyTrainingTracking) => buildIntensityMetric(tracking, 'weighted_training_minutes');
+
+
+/** A subset of vigorous minutes; it must never add a third weighting to WHO totals. */
+export function buildHighIntensityMinutesMetrics(tracking: DailyTrainingTracking): MetricEntry[] {
+  return Object.entries(tracking).flatMap(([date, entries]) => {
+    const measured = measuredTime(entries, 'highIntensityMinutes');
+    if (!measured.hasData) return [];
+    return [{
+      metricId: 'high_intensity_minutes' as const,
+      value: Math.round(intervalMinutes(measured.intervals) + measured.withoutIntervals),
+      unit: 'min', recordedAt: `${date}T00:00:00`, origin: 'training' as const,
+    }];
+  }).sort((a, b) => a.recordedAt.localeCompare(b.recordedAt));
+}

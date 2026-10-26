@@ -588,6 +588,12 @@ export const metrics = {
     canonicalUnit: 'min', source: 'training', suggestedFrequency: 'daily',
     units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
+  high_intensity_minutes: {
+    id: 'high_intensity_minutes', group: 'activity', iconName: 'trainingRunning', emoji: '🔥',
+    nameKey: 'highIntensityMinutes.name', descriptionKey: 'highIntensityMinutes.description',
+    canonicalUnit: 'min', source: 'training', suggestedFrequency: 'daily',
+    units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
+  },
   weighted_training_minutes: {
     id: 'weighted_training_minutes', group: 'activity', iconName: 'trainingRunning', emoji: '⚖️',
     nameKey: 'weightedTrainingMinutes.name', descriptionKey: 'weightedTrainingMinutes.description',

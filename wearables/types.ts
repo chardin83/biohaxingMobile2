@@ -52,6 +52,8 @@ export type WorkoutSession = SampleProvenance & {
   activityType: TrainingActivityType;
   activityName?: string;
   distanceKm?: number;
+  highIntensityMinutes?: number;
+  highIntensityIntervals?: TrainingIntensityInterval[];
   moderateMinutes?: number;
   moderateIntervals?: TrainingIntensityInterval[];
   intensityMinutes?: number;
@@ -67,6 +69,8 @@ export type DailyActivity = SampleProvenance & {
   lastIntenseProvenance?: SampleProvenance;
   steps?: number;
   activeMinutes?: number;
+  highIntensityMinutes?: number;
+  highIntensityIntervals?: TrainingIntensityInterval[];
   moderateMinutes?: number;
   moderateIntervals?: TrainingIntensityInterval[];
   intensityMinutes?: number;

@@ -4,6 +4,7 @@
   "trainingTypeRunning": "Löpning",
   "trainingTypeGym": "Gym",
   "trainingTypeCycling": "Cykling",
+  "trainingHighIntensityMinutes": "{{value}} högintensiva min",
   "trainingModerateMinutes": "{{value}} måttliga min",
   "trainingIntenseMinutes": "{{value}} intensiva min",
   "trainingTypeOther": "Övrig träning",

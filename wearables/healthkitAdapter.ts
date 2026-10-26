@@ -1,5 +1,5 @@
 import { getUserProfile } from '@/app/context/storage/userProfile/userProfileStore';
-import { MODERATE_HEART_RATE_FRACTION, VIGOROUS_HEART_RATE_FRACTION } from '@/constants/TrainingIntensity';
+import { HIGH_INTENSITY_HEART_RATE_FRACTION, MODERATE_HEART_RATE_FRACTION, VIGOROUS_HEART_RATE_FRACTION } from '@/constants/TrainingIntensity';
 import type { MetricId } from '@/locales/metrics';
 import { calculateWorkoutIntensity } from '@/utils/trainingIntensity';
 
@@ -639,7 +639,7 @@ export class HealthKitAdapter implements WearableAdapter {
         const intensityHrThreshold = maxHeartRate * VIGOROUS_HEART_RATE_FRACTION;
         const workoutIntensity = calculateWorkoutIntensity(sessionHeartRates.map(sample => ({
           time: Date.parse(sample.startDate ?? sample.endDate ?? ''), value: Number(sample.value),
-        })), start, end, intensityHrThreshold, maxHeartRate * MODERATE_HEART_RATE_FRACTION);
+        })), start, end, intensityHrThreshold, maxHeartRate * MODERATE_HEART_RATE_FRACTION, maxHeartRate * HIGH_INTENSITY_HEART_RATE_FRACTION);
         if (workoutIntensity) {
           Object.assign(importedWorkout, workoutIntensity);
           day.intensityMinutes = (day.intensityMinutes ?? 0) + workoutIntensity.intensityMinutes;

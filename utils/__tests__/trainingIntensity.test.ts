@@ -37,3 +37,17 @@ it('classifies exact thresholds into non-overlapping bands', () => {
   expect(calculateWorkoutIntensity([point(0, 140), point(10, 140)], start, end, 140, 100)).toMatchObject({ moderateMinutes: 0, intensityMinutes: 10 });
   expect(calculateWorkoutIntensity([point(0, 80), point(10, 80)], start, end, 140, 100)).toMatchObject({ moderateMinutes: 0, intensityMinutes: 0 });
 });
+
+
+it('measures time at or above 85% as a subset of vigorous activity', () => {
+  const result = calculateWorkoutIntensity([point(0, 150), point(10, 190), point(20, 150)], start, end, 140, 100, 170)!;
+  expect(result.highIntensityMinutes).toBe(10);
+  expect(result.intensityMinutes).toBe(20);
+  expect(result.highIntensityIntervals).toEqual([
+    { startTime: '2026-10-20T10:05:00.000Z', endTime: '2026-10-20T10:10:00.000Z' },
+    { startTime: '2026-10-20T10:10:00.000Z', endTime: '2026-10-20T10:15:00.000Z' },
+  ]);
+  expect(calculateWorkoutIntensity([point(0, 170), point(10, 170)], start, end, 140, 100, 170)?.highIntensityMinutes).toBe(10);
+  expect(calculateWorkoutIntensity([point(0, 160), point(10, 160)], start, end, 140, 100, 170)?.highIntensityMinutes).toBe(0);
+  expect(calculateWorkoutIntensity([], start, end, 140, 100, 170)).toBeUndefined();
+});

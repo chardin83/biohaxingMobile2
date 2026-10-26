@@ -107,5 +107,5 @@ it('attaches measured intensity to the Health Connect workout', async () => {
     { time: Date.parse('2026-10-20T10:10:00Z'), value: 150, provenance: { sourceId: 'com.garmin.connect' } },
   ]);
   const result = await adapter.getDailyActivity({ start: '2026-10-20T00:00:00Z', end: '2026-10-21T00:00:00Z' });
-  expect(result[0].workouts?.[0]).toMatchObject({ moderateMinutes: 0, moderateIntervals: [], intensityMinutes: 10, intensityIntervals: [{ startTime: '2026-10-20T10:00:00.000Z', endTime: '2026-10-20T10:10:00.000Z' }] });
+  expect(result[0].workouts?.[0]).toMatchObject({ highIntensityMinutes: 0, highIntensityIntervals: [], moderateMinutes: 0, moderateIntervals: [], intensityMinutes: 10, intensityIntervals: [{ startTime: '2026-10-20T10:00:00.000Z', endTime: '2026-10-20T10:10:00.000Z' }] });
 });

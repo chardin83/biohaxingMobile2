@@ -1,7 +1,7 @@
 import type { DailyTrainingTracking, TrainingLogEntry } from '@/app/context/storage/training/trainingTypes';
 import { calculateTrainingWeeklyProgress } from '@/utils/trainingProgress';
 
-import { buildActiveMinutesMetrics, buildIntensityMinutesMetrics, buildModerateMinutesMetrics, buildWeightedTrainingMinutesMetrics } from '../trainingMetrics';
+import { buildActiveMinutesMetrics, buildHighIntensityMinutesMetrics, buildIntensityMinutesMetrics, buildModerateMinutesMetrics, buildWeightedTrainingMinutesMetrics } from '../trainingMetrics';
 
 const entry: TrainingLogEntry = { id: 'run', date: '2026-10-20', activityType: 'running', durationMinutes: 60, createdAt: '', origin: 'healthkit', startTime: '2026-10-20T10:00:00Z', endTime: '2026-10-20T11:00:00Z' };
 
@@ -65,4 +65,20 @@ it('deduplicates overlaps across intensity bands, assigning disputed intervals t
   expect(buildModerateMinutesMetrics(tracking)[0].value).toBe(15);
   expect(buildIntensityMinutesMetrics(tracking)[0].value).toBe(30);
   expect(buildWeightedTrainingMinutesMetrics(tracking)[0].value).toBe(75);
+});
+
+
+it('derives high-intensity daily minutes, deduplicates overlaps and updates after deletion', () => {
+  const a = { ...entry, highIntensityMinutes: 30, highIntensityIntervals: [{ startTime: '2026-10-20T10:00:00Z', endTime: '2026-10-20T10:30:00Z' }] };
+  const b = { ...entry, id: 'second', highIntensityMinutes: 30, highIntensityIntervals: [{ startTime: '2026-10-20T10:15:00Z', endTime: '2026-10-20T10:45:00Z' }] };
+  expect(buildHighIntensityMinutesMetrics({ [entry.date]: [a, b] })[0]).toMatchObject({ metricId: 'high_intensity_minutes', value: 45, origin: 'training' });
+  expect(buildHighIntensityMinutesMetrics({ [entry.date]: [b] })[0].value).toBe(30);
+  expect(buildHighIntensityMinutesMetrics({ [entry.date]: [] })).toEqual([]);
+  expect(buildHighIntensityMinutesMetrics({ [entry.date]: [entry] })).toEqual([]);
+  expect(buildHighIntensityMinutesMetrics({ [entry.date]: [{ ...entry, highIntensityMinutes: 0, highIntensityIntervals: [] }] })[0].value).toBe(0);
+});
+
+it('never adds high-intensity minutes on top of the existing WHO weighting', () => {
+  const measured = { ...entry, moderateMinutes: 20, intensityMinutes: 10, highIntensityMinutes: 5 };
+  expect(buildWeightedTrainingMinutesMetrics({ [entry.date]: [measured] })[0].value).toBe(40);
 });

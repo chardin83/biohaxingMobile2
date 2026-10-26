@@ -10,7 +10,7 @@ import {
 } from 'react-native-health-connect';
 
 import { getUserProfile } from '@/app/context/storage/userProfile/userProfileStore';
-import { MODERATE_HEART_RATE_FRACTION, VIGOROUS_HEART_RATE_FRACTION } from '@/constants/TrainingIntensity';
+import { HIGH_INTENSITY_HEART_RATE_FRACTION, MODERATE_HEART_RATE_FRACTION, VIGOROUS_HEART_RATE_FRACTION } from '@/constants/TrainingIntensity';
 import { calculateWorkoutIntensity } from '@/utils/trainingIntensity';
 
 import { selectMetricSource, selectMetricSourcesByDay } from './metricSourcePriority';
@@ -472,7 +472,7 @@ export class HealthConnectAdapter implements WearableAdapter {
           'intensity_minutes'
         );
         const threshold = maxHeartRate * VIGOROUS_HEART_RATE_FRACTION;
-        const workoutIntensity = calculateWorkoutIntensity(sessionHeartRates, session.startTime, session.endTime, threshold, maxHeartRate * MODERATE_HEART_RATE_FRACTION);
+        const workoutIntensity = calculateWorkoutIntensity(sessionHeartRates, session.startTime, session.endTime, threshold, maxHeartRate * MODERATE_HEART_RATE_FRACTION, maxHeartRate * HIGH_INTENSITY_HEART_RATE_FRACTION);
         const lastIntenseExerciseAt = this.getLastIntenseExerciseAt(sessionHeartRates, session.startTime, session.endTime, threshold);
         if (workoutIntensity) {
           Object.assign(importedWorkout, workoutIntensity);

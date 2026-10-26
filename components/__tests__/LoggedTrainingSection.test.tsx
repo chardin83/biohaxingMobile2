@@ -6,7 +6,7 @@ import type { TrainingLogEntry } from '@/app/context/storage/training/trainingTy
 import { LoggedTrainingSection } from '../LoggedTrainingSection';
 
 jest.mock('@react-navigation/native', () => ({ useTheme: () => ({ colors: {} }) }));
-jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string, options?: { value?: number }) => key === 'training:trainingIntenseMinutes' ? `${options?.value} intensiva min` : key === 'training:trainingModerateMinutes' ? `${options?.value} måttliga min` : key }) }));
+jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string, options?: { value?: number }) => key === 'training:trainingIntenseMinutes' ? `${options?.value} intensiva min` : key === 'training:trainingModerateMinutes' ? `${options?.value} måttliga min` : key === 'training:trainingHighIntensityMinutes' ? `${options?.value} högintensiva min` : key }) }));
 jest.mock('../Collapsible', () => ({ Collapsible: ({ children }: any) => children }));
 jest.mock('../ThemedText', () => ({ ThemedText: ({ children }: any) => {
   const { Text } = require('react-native');
@@ -19,9 +19,10 @@ const entry: TrainingLogEntry = { id: 'run', date: '2026-10-20', activityType: '
 
 it('shows measured intense minutes, including zero, but omits missing data in the journal', () => {
   const props = { onEdit: jest.fn(), onDelete: jest.fn() };
-  const screen = render(<LoggedTrainingSection {...props} entries={[{ ...entry, moderateMinutes: 20, intensityMinutes: 15 }]} />);
+  const screen = render(<LoggedTrainingSection {...props} entries={[{ ...entry, moderateMinutes: 20, intensityMinutes: 15, highIntensityMinutes: 5 }]} />);
   expect(screen.getByText('15 intensiva min')).toBeTruthy();
   expect(screen.getByText('20 måttliga min')).toBeTruthy();
+  expect(screen.getByText('5 högintensiva min')).toBeTruthy();
   screen.rerender(<LoggedTrainingSection {...props} entries={[{ ...entry, intensityMinutes: 0 }]} />);
   expect(screen.getByText('0 intensiva min')).toBeTruthy();
   screen.rerender(<LoggedTrainingSection {...props} entries={[entry]} />);
