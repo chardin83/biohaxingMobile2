@@ -742,6 +742,7 @@
     "purchaseUnavailable": "Premium purchases are not available yet."
   },
   "chat": {
+    "assistantName": "Coach",
     "weeklyQuestions": "This week’s questions",
     "questionsRemaining": "{{remaining}} of {{total}} remaining",
     "questionsReset": "Questions are replenished every Monday.",

@@ -742,6 +742,7 @@
     "purchaseUnavailable": "Premiumköp är inte tillgängligt ännu."
   },
   "chat": {
+    "assistantName": "Coach",
     "weeklyQuestions": "Veckans frågor",
     "questionsRemaining": "{{remaining}} av {{total}} kvar",
     "questionsReset": "Frågorna fylls på varje måndag.",

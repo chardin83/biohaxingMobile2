@@ -11,6 +11,7 @@ import { subscribeToChatClear } from '@/app/context/chatEvents';
 import { globalStyles } from '@/app/theme/globalStyles';
 import AIInfoPopup from '@/components/AllInfoPopup';
 import BackButton from '@/components/BackButton';
+import ChatMessageContent from '@/components/ChatMessageContent';
 import CoachOverview from '@/components/CoachOverview';
 import { ThemedText } from '@/components/ThemedText';
 import LabeledInput from '@/components/ui/LabeledInput';
@@ -329,17 +330,15 @@ export default function ChatWithGPT4o(): JSX.Element {
                 ]}
               >
                 <ThemedText type="label" uppercase style={{ color: colors.textLight }}>
-                  {msg.role === 'user' ? 'Du' : t('chat.tabTitle')}:
+                  {msg.role === 'user' ? 'Du' : t('common:chat.assistantName')}:
                 </ThemedText>
-                <ThemedText type="default">
-                  {msg.content}
-                </ThemedText>
+                {msg.role === 'user' ? <ThemedText type="default">{msg.content}</ThemedText> : <ChatMessageContent content={msg.content} />}
               </View>
             ))}
 
             {loading && (
               <View style={[styles.messageBubble, styles.assistantBubble, { backgroundColor: colors.assistantBubble }]}>
-                <ThemedText type="label" uppercase style={{ color: colors.textLight }}>{t('chat.tabTitle')}:</ThemedText>
+                <ThemedText type="label" uppercase style={{ color: colors.textLight }}>{t('common:chat.assistantName')}:</ThemedText>
                 <View style={styles.typingIndicator}>
                   <Animated.View style={[styles.typingDot, { opacity: dot1Anim, backgroundColor: colors.primary }]} />
                   <Animated.View style={[styles.typingDot, { opacity: dot2Anim, backgroundColor: colors.primary }]} />
