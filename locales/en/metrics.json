@@ -1,4 +1,5 @@
 {
+  "aiAnalysis": {"summary": "Analysis {{count}} days · {{metrics}}", "title": "Analyze measurements", "description": "Analyze your measurements and discover trends and possible relationships.\nThe analysis is based on the selected period and the measurements shown", "noData": "There are no measurements to analyze for this period.", "error": "Could not load the analysis. Please try again.", "analyze": "Analyze measurements", "unlock": "Unlock with Premium", "premiumOnly": "Premium only – no free analyses included"},
   "glycemic_index": {
     "coverage": "GI covers {{value}}% of logged carbohydrates",
     "noCarbohydrates": "No logged carbohydrates to calculate coverage",

@@ -1,5 +1,5 @@
 // Temporary development switch. Replace with subscription status when available.
-export const PREMIUM = false;
+export const PREMIUM = true;
 
 /** All subscription allowances. A null premium limit means it is not decided yet. */
 export const PREMIUM_QUOTAS = {

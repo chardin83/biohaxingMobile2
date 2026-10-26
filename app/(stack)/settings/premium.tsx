@@ -29,7 +29,7 @@ export default function PremiumSettingsPage() {
       {PREMIUM ? (
         <Card>
           <View style={styles.member}>
-            <IconSymbol name="crown" size={32} color={colors.gold} />
+            <IconSymbol name="crown" size={32} color={colors.premium} />
             <ThemedText type="title2">{t('premium.premium')}</ThemedText>
             <ThemedText>{t('premium.activeSubscription')}</ThemedText>
             <AppButton title={t('premium.cancelSubscription')} onPress={manageSubscription} />

@@ -109,7 +109,7 @@ export default function SettingsPage() {
           title: t('common:premium.premium'),
           subtitle: t('settings.premiumDescription'),
           iconName: 'crown',
-          iconColor: colors.gold,
+          iconColor: colors.premium,
           onPress: () => router.push('/(stack)/settings/premium'),
         }]}
       />

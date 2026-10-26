@@ -143,6 +143,7 @@ export const Colors = {
 
     gold: 'rgba(255,215,100,0.95)',
     goldText: '#856000',
+    premium: '#856000',
     goldSoft: 'rgba(255,215,100,0.75)',
     goldSuperSoft: 'rgba(255,215,100,0.55)',
     goldTransparent: 'rgba(255,215,100,0.07)',
@@ -332,6 +333,7 @@ export const Colors = {
 
     gold: 'rgba(255,215,100,0.95)',
     goldText: 'rgba(255,215,100,0.95)',
+    premium: 'rgba(255,215,100,0.95)',
     goldSoft: 'rgba(255,215,100,0.75)',
     goldSuperSoft: 'rgba(255,215,100,0.55)',
     goldTransparent: 'rgba(255,215,100,0.07)',

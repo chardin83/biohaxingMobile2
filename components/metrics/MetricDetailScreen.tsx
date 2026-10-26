@@ -13,6 +13,8 @@ import Container from '@/components/ui/Container';
 import { useNutritionPlanProgressHistory } from '@/hooks/nutrition/useNutritionPlanProgressHistory';
 import { type MetricId, metrics } from '@/locales/metrics';
 import { tips } from '@/locales/tips';
+import { buildMetricAnalysisContext } from '@/services/metricAnalysis';
+import MetricAnalysis from './MetricAnalysis';
 import { toDateKey } from '@/utils/dateUtils';
 
 import { MetricValuesBottomSheet } from '../sections/metrics/MetricValuesBottomSheet';
@@ -157,6 +159,14 @@ export default function MetricDetailScreen() {
     defaultValue: '',
   });
 
+  const analysisMetric = buildMetricAnalysisContext(selectedConfig, selectedDays);
+  analysisMetric.description = description;
+  const analysisContext = JSON.stringify({
+    metric: analysisMetric,
+    comparison: comparisonMetricId && comparisonConfig ? buildMetricAnalysisContext(comparisonConfig, selectedDays) : undefined,
+    visibleTargets: targetEventSeries.map(({ label, dates }) => ({ label, dates })),
+  });
+
   return (
     <Container background="default" gradientLocations={themeGradients.sunrise.locations2 as any} showBackButton onBackPress={() => router.back()}>
       <View style={styles.content}>
@@ -227,14 +237,18 @@ export default function MetricDetailScreen() {
         </Card>
 
         <MetricTrendChart
-          comparison={comparisonConfig && comparisonMetricId ? {
-            data: comparisonConfig.data,
-            metricName: comparisonConfig.metricName,
-            unit: comparisonConfig.unit ?? metrics[comparisonMetricId].canonicalUnit,
-            color: colors.warmColor,
-            valueFormatter: comparisonConfig.valueFormatter,
-            yAxisBounds: comparisonConfig.yAxisBounds,
-          } : undefined}
+          comparison={
+            comparisonConfig && comparisonMetricId
+              ? {
+                  data: comparisonConfig.data,
+                  metricName: comparisonConfig.metricName,
+                  unit: comparisonConfig.unit ?? metrics[comparisonMetricId].canonicalUnit,
+                  color: colors.warmColor,
+                  valueFormatter: comparisonConfig.valueFormatter,
+                  yAxisBounds: comparisonConfig.yAxisBounds,
+                }
+              : undefined
+          }
           data={selectedConfig.data}
           metricName={selectedConfig.metricName}
           unit={selectedConfig.unit || undefined}
@@ -247,6 +261,13 @@ export default function MetricDetailScreen() {
           yAxisBounds={selectedConfig.yAxisBounds}
           onViewRegisteredValues={openMetricValuesTable}
           eventSeries={targetEventSeries.length > 0 ? targetEventSeries : undefined}
+        />
+        <MetricAnalysis
+          key={analysisContext}
+          context={analysisContext}
+          hasData={analysisMetric.values.length > 0}
+          days={selectedDays}
+          metricNames={[selectedConfig.metricName, ...(comparisonMetricId && comparisonConfig ? [comparisonConfig.metricName] : [])]}
         />
       </View>
 

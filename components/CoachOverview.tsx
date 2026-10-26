@@ -42,9 +42,9 @@ export default function CoachOverview({ remaining, total, onDiscoverPremium }: P
         </Card>
       )}
       {remaining === 0 && !premiumDismissed && (
-        <Card style={{ borderColor: colors.gold, borderWidth: StyleSheet.hairlineWidth, backgroundColor: colors.goldTransparent }}>
+        <Card style={{ borderColor: colors.premium, borderWidth: StyleSheet.hairlineWidth, backgroundColor: colors.goldTransparent }}>
           <View style={styles.cardHeading}>
-            <IconSymbol name="crown" size={24} color={colors.gold} />
+            <IconSymbol name="crown" size={24} color={colors.premium} />
             <ThemedText type="title3" style={styles.cardTitle}>
               {t('chat.premiumTitle')}
             </ThemedText>

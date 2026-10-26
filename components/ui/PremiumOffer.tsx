@@ -38,7 +38,7 @@ export default function PremiumOffer({ onStartPremium, onDismiss }: Props) {
           <View style={styles.featureCell} />
           <View style={[styles.valueCell, styles.columnHeader, { backgroundColor: colors.overlayLight }]}><ThemedText type="defaultSemiBold">{t('premium.free')}</ThemedText></View>
           <View style={[styles.valueCell, styles.columnHeader, { backgroundColor: colors.primaryVeryWeak }]}>
-            <IconSymbol name="crown" size={20} color={colors.gold} /><ThemedText type="defaultSemiBold" style={{ color: colors.primary }}>{t('premium.premium')}</ThemedText>
+            <IconSymbol name="crown" size={20} color={colors.premium} /><ThemedText type="defaultSemiBold" style={{ color: colors.primary }}>{t('premium.premium')}</ThemedText>
           </View>
         </View>
         {features.map(feature => <View key={feature.key} style={[styles.row, { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.border }]}>

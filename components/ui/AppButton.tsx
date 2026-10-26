@@ -43,7 +43,8 @@ const AppButton: React.FC<AppButtonProps> = ({
   content,
 }) => {
   const { colors } = useTheme();
-  const leftIcon = icon;
+  const leftIcon = icon ?? (variant === 'premium' ? 'crown' : undefined);
+  const resolvedRightIcon = rightIcon ?? (variant === 'premium' ? 'chevron.right' : undefined);
 
   const isPrimary = variant === 'primary';
   const isDanger = variant === 'danger';
@@ -51,7 +52,7 @@ const AppButton: React.FC<AppButtonProps> = ({
   let buttonVariantStyle;
 
   if (variant === 'premium') {
-    buttonVariantStyle = { borderColor: colors.gold };
+    buttonVariantStyle = { borderColor: colors.premium };
   } else if (variant === 'xp') {
     buttonVariantStyle = { borderColor: colors.xp };
   } else if (isPrimary) {
@@ -73,7 +74,7 @@ const AppButton: React.FC<AppButtonProps> = ({
   let textColorStyle;
 
   if (variant === 'premium') {
-    textColorStyle = { color: colors.gold };
+    textColorStyle = { color: colors.premium };
   } else if (variant === 'xp') {
     textColorStyle = { color: colors.xp };
   } else if (isPrimary) {
@@ -132,13 +133,13 @@ const AppButton: React.FC<AppButtonProps> = ({
               {title}
             </ThemedText>
 
-            {rightIcon &&
+            {resolvedRightIcon &&
               (rightIconAtEdge ? (
                 <View style={styles.edgeIcon}>
-                  <IconSymbol name={rightIcon} size={18} color={iconColor} />
+                  <IconSymbol name={resolvedRightIcon} size={18} color={iconColor} />
                 </View>
               ) : (
-                <IconSymbol name={rightIcon} size={18} color={iconColor} />
+                <IconSymbol name={resolvedRightIcon} size={18} color={iconColor} />
               ))}
           </View>
 
