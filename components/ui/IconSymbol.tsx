@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 
+import AIChatIcon from './AIChatIcon';
 import { ICON_SYMBOLS, IconSymbolName } from './icon-symbol-map';
 
 interface IconSymbolProps {
@@ -10,6 +11,8 @@ interface IconSymbolProps {
 }
 
 export function IconSymbol({ name, size = 24, color, style }: Readonly<IconSymbolProps>) {
+  if (name === 'aiChat') return <AIChatIcon size={size} color={color} style={style} />;
+
   const iconName = ICON_SYMBOLS[name];
 
   if (iconName && 'materialCommunity' in iconName) {

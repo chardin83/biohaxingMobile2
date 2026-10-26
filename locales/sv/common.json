@@ -1,4 +1,5 @@
 {
+  "aiChatBox": {"placeholder": "Skriv en egen fråga…", "send": "Skicka fråga", "title": "Vill du veta mer", "description": "Ställ en följdfråga. AI:n använder samma data och period.", "answering": "AI svarar…"},
   "longevityTrendsChart": {
     "title": "Dina mätvärden för livslängd",
     "explainer": "Tryck på GI för att se utvecklingen och periodens genomsnitt. Värdena hämtas automatiskt från matloggen."

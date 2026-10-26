@@ -1,4 +1,5 @@
 {
+  "aiChatBox": {"placeholder": "Ask your own question…", "send": "Send question", "title": "Want to know more", "description": "Ask a follow-up question. AI uses the same data and period.", "answering": "AI is answering…"},
   "longevityTrendsChart": {
     "title": "Your longevity metrics",
     "explainer": "Tap GI to see the trend and period average. Values are calculated automatically from your food log."

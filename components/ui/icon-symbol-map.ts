@@ -149,6 +149,11 @@ export const ICON_SYMBOLS = {
     sf: 'bubble.left.and.bubble.right.fill',
     material: 'chat',
   },
+  // IconSymbol composes this icon from Expo's chat-bubble-outline and auto-awesome.
+  'aiChat': {
+    sf: 'bubble.left',
+    material: 'chat-bubble-outline',
+  },
   'ellipsis': {
     sf: 'ellipsis',
     material: 'more-horiz',

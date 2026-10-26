@@ -2,6 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SymbolView } from 'expo-symbols';
 import { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
+import AIChatIcon from './AIChatIcon';
 import { ICON_SYMBOLS, IconSymbolName } from './icon-symbol-map';
 
 export function IconSymbol({
@@ -17,6 +18,8 @@ export function IconSymbol({
   style?: StyleProp<ViewStyle & TextStyle>;
   weight?: 'regular' | 'bold';
 }>) {
+  if (name === 'aiChat') return <AIChatIcon size={size} color={color} style={style} />;
+
   const definition = ICON_SYMBOLS[name];
   if (definition && 'useMaterialCommunityOnIOS' in definition && definition.useMaterialCommunityOnIOS) {
     return <MaterialCommunityIcons name={definition.materialCommunity} size={size} color={color} style={style} />;
