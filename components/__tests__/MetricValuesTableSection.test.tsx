@@ -4,6 +4,7 @@ import React from 'react';
 import type { MetricEntry } from '@/app/context/storage/metrics/metricTypes';
 
 import { MetricValuesTableSection } from '../sections/metrics/MetricValuesTableSection';
+import { SwipeableRow } from '../ui/SwipeableRow';
 
 jest.mock('@gorhom/bottom-sheet', () => ({ BottomSheetFlatList: require('react-native').FlatList }));
 jest.mock('@react-navigation/native', () => ({ useTheme: () => ({ colors: {} }) }));
@@ -101,4 +102,16 @@ it('omits the time column when every day has only one measurement', () => {
   const { queryByText } = render(<MetricValuesTableSection {...tableProps} entries={entries} />);
   expect(queryByText('common:general.time')).toBeNull();
   expect(queryByText('08:00')).toBeNull();
+});
+
+it('locks imported Health rows for editing while keeping delete available', () => {
+  const entries: MetricEntry[] = [
+    { metricId: 'hrv_rmssd', recordedAt: '2026-10-26T08:00:00Z', value: 42, unit: 'ms', origin: 'healthkit' },
+    { metricId: 'hrv_rmssd', recordedAt: '2026-10-26T09:00:00Z', value: 45, unit: 'ms', origin: 'manual' },
+  ];
+  const screen = render(<MetricValuesTableSection {...tableProps} entries={entries} onEditEntry={jest.fn()} onDeleteEntry={jest.fn()} />);
+  const rows = screen.UNSAFE_getAllByType(SwipeableRow);
+  expect(rows[0].props.onEdit).toBeUndefined();
+  expect(rows[0].props.onDelete).toEqual(expect.any(Function));
+  expect(rows[1].props.onEdit).toEqual(expect.any(Function));
 });

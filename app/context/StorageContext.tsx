@@ -2,6 +2,8 @@
 import * as Crypto from 'expo-crypto';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
+import { isDeletedSyncedMetric } from '@/app/context/storage/metrics/deletedMetricStorage';
+import { getLegacyMetricSyncKey, getMetricSyncKey, protectImportedMetrics } from '@/app/context/storage/metrics/metricProvenance';
 import { subscribeArchivedPlans, subscribePlans } from '@/app/context/storage/plans/planEvents';
 import { getPlanStorage, saveTrainingPlanSettings } from '@/app/context/storage/plans/planStorage';
 import {
@@ -20,8 +22,8 @@ import {
   type TrainingPlanSettings,
 } from '@/app/context/storage/plans/planTypes';
 import { getAreaViewXP, getInsightQuestionXP, getTipReadingXP, TIP_READING_FIELDS, type TipReadingSection } from '@/constants/tipXP';
-import { levels, XP_FOR_VERDICT, XP_PER_CHAT_MESSAGE, type XpSource } from '@/constants/XP';
-import { MetricId } from '@/locales/metrics';
+import { isMaxXpPreviewEnabled, levels, XP_FOR_VERDICT, XP_PER_CHAT_MESSAGE, type XpSource } from '@/constants/XP';
+import { MetricId, metrics as metricDefinitions } from '@/locales/metrics';
 import { countNewAutomaticHabitGoals, getAutomaticHabitGoalKeys } from '@/services/targetProgress/automaticHabitSummary';
 import { getCurrentNutritionCompletions, getNutritionInputSignature } from '@/services/targetProgress/completedNutritionProgress';
 import { prepareManualHabitResult, storeAutomaticSleepResults } from '@/services/targetProgress/habitResultStorage';
@@ -31,6 +33,8 @@ import { DEFAULT_PROFILE_SHARING, type ProfileSharing } from '@/types/aiSharing'
 import { type NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import { VerdictValue } from '@/types/verdict';
 import { buildGlycemicIndexMetrics } from '@/utils/glycemicIndexMetrics';
+import { buildCalorieMetrics } from '@/utils/nutritionMetrics';
+import { reconcileSyncedMetrics } from '@/wearables/reconcileSyncedMetrics';
 import { refreshRecoveryAfterMetricChanges } from '@/wearables/recoveryMetrics';
 import { useWearable } from '@/wearables/wearableProvider';
 
@@ -857,12 +861,12 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
    * Metrics
    */
 
-  const setMetricEntries = useCallback((updater: MetricEntry[] | ((prev: MetricEntry[]) => MetricEntry[])) => {
+  const setMetricEntries = useCallback((updater: MetricEntry[] | ((prev: MetricEntry[]) => MetricEntry[]), fromSync = false) => {
     setMetricEntriesState(prev => {
       const proposed = typeof updater === 'function' ? updater(prev) : updater;
-      const updated = refreshRecoveryAfterMetricChanges(prev, proposed);
+      const updated = refreshRecoveryAfterMetricChanges(prev, fromSync ? proposed : protectImportedMetrics(prev, proposed));
 
-      syncMetricEntries(prev, updated);
+      syncMetricEntries(prev, updated, !fromSync);
 
       return updated;
     });
@@ -870,7 +874,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
 
   const addMetricEntry = useCallback(
     (entry: MetricEntry) => {
-      setMetricEntries(prev => [...prev, entry]);
+      setMetricEntries(prev => [...prev, { ...entry, origin: entry.origin ?? 'manual' }]);
     },
     [setMetricEntries]
   );
@@ -882,38 +886,51 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       }
 
       setMetricEntries(prev => {
-        const next = [...prev];
+        const next = reconcileSyncedMetrics(prev, entries);
         const existingIndexByKey = new Map<string, number>();
+        const legacyIndexByKey = new Map<string, number>();
 
         next.forEach((entry, index) => {
-          existingIndexByKey.set(`${entry.metricId}|${entry.recordedAt}`, index);
-        });
-
-        entries.forEach(entry => {
-          const key = `${entry.metricId}|${entry.recordedAt}`;
-
-          const existingIndex = existingIndexByKey.get(key);
-
-          if (existingIndex === undefined) {
-            existingIndexByKey.set(key, next.length);
-            next.push(entry);
-            return;
+          existingIndexByKey.set(getMetricSyncKey(entry), index);
+          if (entry.provenanceVersion !== 1 && !entry.sourceRecordId && !entry.sourceId) {
+            legacyIndexByKey.set(getLegacyMetricSyncKey(entry), index);
           }
-
-          next[existingIndex] = {
-            ...next[existingIndex],
-            ...entry,
-          };
         });
+
+        entries
+          .filter(entry => !isDeletedSyncedMetric(entry))
+          .forEach(entry => {
+            const key = getMetricSyncKey(entry);
+
+            const legacyKey = getLegacyMetricSyncKey(entry);
+            const existingIndex = existingIndexByKey.get(key) ?? (entry.provenanceVersion === 1 ? legacyIndexByKey.get(legacyKey) : undefined);
+
+            if (existingIndex === undefined) {
+              existingIndexByKey.set(key, next.length);
+              next.push(entry);
+              return;
+            }
+
+            existingIndexByKey.set(key, existingIndex);
+            legacyIndexByKey.delete(legacyKey);
+            next[existingIndex] = {
+              ...next[existingIndex],
+              ...entry,
+            };
+          });
 
         return next.sort((a, b) => new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime());
-      });
+      }, true);
     },
     [setMetricEntries]
   );
 
   const metricEntriesWithNutrition = useMemo(
-    () => [...metricEntriesState.filter(entry => entry.metricId !== 'glycemic_index'), ...buildGlycemicIndexMetrics(dailyNutritionTrackingState)],
+    () => [
+      ...metricEntriesState.filter(entry => metricDefinitions[entry.metricId]?.source === 'metrics'),
+      ...buildGlycemicIndexMetrics(dailyNutritionTrackingState),
+      ...buildCalorieMetrics(dailyNutritionTrackingState),
+    ],
     [metricEntriesState, dailyNutritionTrackingState]
   );
 
@@ -1340,12 +1357,12 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       },
       onboardingStep: onboardingStepState,
       setOnboardingStep,
-      myXP: myXPState,
+      myXP: isMaxXpPreviewEnabled() ? Math.max(myXPState, levels.at(-1)?.requiredXP ?? myXPState) : myXPState,
       setMyXP,
       clearNutritionXP,
       clearEducationXP,
       xpBreakdown: xpBreakdownState,
-      myLevel: myLevelState,
+      myLevel: isMaxXpPreviewEnabled() ? (levels.at(-1)?.level ?? myLevelState) : myLevelState,
       setMyLevel,
       levelUpModalVisible,
       setLevelUpModalVisible,

@@ -12,7 +12,7 @@ const tracking = (entries: NutritionEntry[]): DailyNutritionTracking => ({
 
 it('derives daily GI from logged entries, excluding unknown GI and zero-carb entries', () => {
   expect(buildGlycemicIndexMetrics(tracking([food(10, 40), food(30, 60), food(100), food(0, 100)]))).toEqual([
-    { metricId: 'glycemic_index', value: 55, unit: 'index', recordedAt: '2026-10-23T00:00:00' },
+    { metricId: 'glycemic_index', origin: 'nutrition', value: 55, unit: 'index', recordedAt: '2026-10-23T00:00:00' },
   ]);
 });
 

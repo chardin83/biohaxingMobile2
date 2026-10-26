@@ -1,4 +1,9 @@
 {
+  "unknownOriginalSource": "Okänd originalkälla",
+  "sourceAndNotes": "Källa / anteckningar",
+  "origins": {"manual": "Manuellt registrerat", "nutrition": "Matloggen", "calculated": "Beräknat", "healthkit": "Apple Health", "healthconnect": "Health Connect", "garmin": "Garmin", "fitbit": "Fitbit", "mock": "Testdata", "none": "—"},
+  "sources": {"title": "Datakälla", "metrics": "Mätvärden", "nutrition": "Matloggen"},
+  "calories": {"name": "Loggade kalorier", "description": "Summan av kalorier i mat och dryck som loggats per dag. Dagar utan loggade poster saknar värde. En ofullständigt loggad dag visar inte ditt totala energiintag. Snittlinjen visar medelvärdet av dagsvärdena under vald period."},
   "aiAnalysis": {"periodDays": "{{count}} dagar", "followUpTitle": "Utforska vidare", "answering": "AI svarar…", "retry": "Försök igen", "summary": "Analys {{count}} dagar · {{metrics}}", "title": "Analysera mätvärden", "description": "Analysera dina mätvärden och upptäck trender och möjliga samband.\nAnalysen utgår från vald period och de mätvärden som visas", "noData": "Det finns inga mätvärden att analysera under vald period.", "error": "Analysen kunde inte hämtas. Försök igen.", "analyze": "Analysera mätvärden", "unlock": "Lås upp med Premium", "premiumOnly": "Endast Premium – inga kostnadsfria analyser ingår"},
   "glycemic_index": {
     "coverage": "GI täcker {{value}} % av loggade kolhydrater",
@@ -12,7 +17,7 @@
   "availability": {"noData": "Inga registrerade värden"},
   "groups": {"cardio": "Hjärta och kärl", "bloodSugar": "Blodsocker", "nutrients": "Vitaminer och mineraler", "hormones": "Hormoner", "recovery": "Nervsystem och återhämtning", "sleep": "Sömn", "body": "Kroppsmått", "digestion": "Matsmältning", "activity": "Träning och aktivitet", "energy": "Energi", "mind": "Stress och fokus"},
   "recovery_status": { "name": "Återhämtningsstatus", "description": "Återhämtningspoäng beräknad vid synk från vilopuls, sömn och HRV jämfört med din personliga baslinje." },
-    "units": {
+    "units": {"kcal": "kcal",
     "index": "GI",
         "miu_l": "mIU/L",
         "uiu_ml": "µIU/mL",

@@ -13,11 +13,9 @@ import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import OptionSelector from '@/components/ui/OptionSelector';
-import { useNutritionPlanProgressHistory } from '@/hooks/nutrition/useNutritionPlanProgressHistory';
 import { type MetricId, metrics } from '@/locales/metrics';
 import { tips } from '@/locales/tips';
 import { buildMetricAnalysisContext } from '@/services/metricAnalysis';
-import { toDateKey } from '@/utils/dateUtils';
 
 import { MetricValuesBottomSheet } from '../sections/metrics/MetricValuesBottomSheet';
 import MetricAnalysis from './MetricAnalysis';
@@ -26,22 +24,6 @@ import { MetricTrendChart } from './MetricTrendChart';
 import TipGoalConfirmation from './TipGoalConfirmation';
 
 type TimeWindowOption = 7 | 30 | 90;
-
-const getDatesInRange = (days: number, endDate: string): string[] => {
-  const dates: string[] = [];
-  const today = new Date(`${endDate}T12:00:00`);
-
-  for (let offset = days - 1; offset >= 0; offset -= 1) {
-    const date = new Date(today);
-
-    date.setHours(0, 0, 0, 0);
-    date.setDate(date.getDate() - offset);
-
-    dates.push(toDateKey(date));
-  }
-
-  return dates;
-};
 
 export default function MetricDetailScreen() {
   const router = useRouter();
@@ -64,7 +46,7 @@ export default function MetricDetailScreen() {
     setPeriodEnd(current => {
       const shifted = new Date(`${current}T00:00:00Z`);
       shifted.setUTCDate(shifted.getUTCDate() + direction * selectedDays);
-      return [shifted.toISOString().slice(0, 10), new Date().toISOString().slice(0, 10)].sort()[0];
+      return [shifted.toISOString().slice(0, 10), new Date().toISOString().slice(0, 10)].sort((a, b) => a.localeCompare(b))[0];
     });
   };
 
@@ -91,60 +73,6 @@ export default function MetricDetailScreen() {
 
     return tips.find(candidate => candidate.id === resolvedTipId);
   }, [resolvedTipId]);
-
-  const datesInRange = React.useMemo(() => getDatesInRange(selectedDays, periodEnd), [selectedDays, periodEnd]);
-
-  const nutritionProgressHistory = useNutritionPlanProgressHistory(datesInRange);
-
-  const targetEventSeries = React.useMemo(() => {
-    if (!tip?.id || datesInRange.length === 0) {
-      return [];
-    }
-
-    const targetDefinitions = datesInRange
-      .map(dateKey => nutritionProgressHistory[dateKey]?.find(item => item.tipId === tip.id))
-      .find(progress => progress?.targets.length)?.targets;
-
-    if (!targetDefinitions?.length) {
-      return [];
-    }
-
-    // Logging and opening the GI page are completion tasks, not chart observations.
-    const chartTargets = targetDefinitions.filter(target => target.tag !== 'glycemic_index_meals' && target.tag !== 'glycemic_index_review');
-
-    return chartTargets.map((targetDefinition, targetIndex) => {
-      const fulfilledDates = datesInRange.filter(dateKey => {
-        const tipProgress = nutritionProgressHistory[dateKey]?.find(item => item.tipId === tip.id);
-
-        const target = tipProgress?.targets.find(
-          candidate => candidate.tag === targetDefinition.tag && candidate.unit === targetDefinition.unit && candidate.period === targetDefinition.period
-        );
-
-        return target?.isMet === true;
-      });
-
-      const translatedTarget = t(`common:nutrition.${targetDefinition.tag}`, {
-        defaultValue: targetDefinition.tag,
-      });
-      let color = colors.accentStrong;
-      if (targetIndex === 0) {
-        color = colors.warmColor;
-      } else if (targetIndex === 1) {
-        color = colors.primary;
-      }
-
-      return {
-        label: t('common:general.targetReachedWithName', {
-          name: translatedTarget,
-          defaultValue: translatedTarget,
-        }),
-
-        dates: fulfilledDates,
-
-        color,
-      };
-    });
-  }, [nutritionProgressHistory, datesInRange, tip?.id, t, colors.warmColor, colors.primary, colors.accentStrong]);
 
   const selectedConfig = useMetricConfig({
     metricId: resolvedMetricId,
@@ -180,7 +108,6 @@ export default function MetricDetailScreen() {
     metric: analysisMetric,
     comparison:
       comparisonMetricId && comparisonConfig ? buildMetricAnalysisContext(comparisonConfig, selectedDays, new Date(`${periodEnd}T00:00:00Z`)) : undefined,
-    visibleTargets: targetEventSeries.map(({ label, dates }) => ({ label, dates })),
   });
 
   return (
@@ -263,7 +190,6 @@ export default function MetricDetailScreen() {
           glycemicIndexCoverage={selectedConfig.glycemicIndexCoverage}
           yAxisBounds={selectedConfig.yAxisBounds}
           onViewRegisteredValues={openMetricValuesTable}
-          eventSeries={targetEventSeries.length > 0 ? targetEventSeries : undefined}
         />
         <MetricAnalysis
           key={analysisContext}

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, StyleSheet } from 'react-native';
 import { Portal } from 'react-native-paper';
 
+import { canEditMetric, getMetricSyncKey } from '@/app/context/storage/metrics/metricProvenance';
 import type { MetricEntry } from '@/app/context/storage/metrics/metricTypes';
 import { useStorage } from '@/app/context/StorageContext';
 import { RegisterMetricBottomSheet } from '@/components/RegisterMetricBottomSheet';
@@ -116,6 +117,7 @@ export function MetricValuesBottomSheet({
 
   const isSameEntry = React.useCallback((left: MetricValueEntry, right: MetricValueEntry) => {
     return (
+      getMetricSyncKey(left) === getMetricSyncKey(right) &&
       left.metricId === right.metricId &&
       left.recordedAt === right.recordedAt &&
       left.value === right.value &&
@@ -125,6 +127,7 @@ export function MetricValuesBottomSheet({
   }, []);
 
   const handleEditEntry = React.useCallback((entry: MetricValueEntry) => {
+    if (!canEditMetric(entry)) return;
     setEditingEntry(entry);
     setMetricValue(String(entry.value));
     setMetricUnit(entry.unit);
@@ -246,14 +249,14 @@ export function MetricValuesBottomSheet({
             entries={registeredEntries}
             colors={colors}
             emptyText={t('metrics:trendChart.empty', { metric: metricName ?? t(`metrics:${metricId}.name`) })}
-            onAddPress={metricId === 'glycemic_index' ? undefined : handleOpenAddMetricSheet}
+            onAddPress={metricId && metrics[metricId].source === 'nutrition' ? undefined : handleOpenAddMetricSheet}
             onAddSleepBatchPress={isSleepRelatedMetric ? handleOpenSleepBatchSheet : undefined}
-            onEditEntry={metricId === 'glycemic_index' ? undefined : handleEditEntry}
-            onDeleteEntry={metricId === 'glycemic_index' ? undefined : handleDeleteEntry}
+            onEditEntry={metricId && metrics[metricId].source === 'nutrition' ? undefined : handleEditEntry}
+            onDeleteEntry={metricId && metrics[metricId].source === 'nutrition' ? undefined : handleDeleteEntry}
             registeredValuesTitle={t('common:metricValuesBottomSheet.registeredValuesTitle')}
             dateLabel={t('common:metricValuesBottomSheet.columns.date')}
             valueLabel={t('common:metricValuesBottomSheet.columns.value')}
-            notesLabel={t('common:metricValuesBottomSheet.columns.notes')}
+            notesLabel={t('metrics:sourceAndNotes')}
           />
         ) : (
           <BottomSheetView style={styles.contentContainer} accessibilityState={{ busy: true }}>

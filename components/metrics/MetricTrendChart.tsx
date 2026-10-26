@@ -30,12 +30,6 @@ export type MetricTrendSelector = {
   readonly onChange: (value: string) => void;
 };
 
-type ChartEventSeries = {
-  label: string;
-  dates: string[];
-  color?: string;
-};
-
 type AxisEntry = {
   readonly id: 'max' | 'mid' | 'min';
   readonly value: number;
@@ -72,7 +66,6 @@ interface MetricTrendChartProps {
     color?: string;
     labelOffsetY?: number;
   }>;
-  readonly eventSeries?: ChartEventSeries[];
   readonly seriesSelector?: MetricTrendSelector;
 }
 
@@ -186,7 +179,6 @@ function MetricTrendChartContent({
   showPeriodAverage = false,
   glycemicIndexCoverage,
   yAxisBounds,
-  eventSeries,
   seriesSelector,
   comparison,
 }: Readonly<MetricTrendChartProps>) {
@@ -244,34 +236,6 @@ function MetricTrendChartContent({
         },
       }),
     [colors.borderLight, colors.overlayLight, colors.primary, colors.text, colors.textMuted, height]
-  );
-
-  const getTargetLabel = React.useCallback(
-    (tag: string) => {
-      const keys = [
-        `journal:nutritionLogger.mineralLabels.${tag}`,
-        `journal:nutritionLogger.polyphenolLabels.${tag}`,
-        `journal:nutritionLogger.vitaminLabels.${tag}`,
-        `journal:nutritionLogger.fiberLabels.${tag}`,
-        `journal:nutritionLogger.aminoAcidLabels.${tag}`,
-        `journal:nutritionLogger.plantDiversityLabels.${tag}`,
-        `journal:nutritionLogger.weeklyTrackingLabels.${tag}`,
-        `journal:nutritionLogger.fiberSubtypeLabels.${tag}`,
-      ];
-
-      for (const key of keys) {
-        const translated = t(key, {
-          defaultValue: '',
-        });
-
-        if (translated) {
-          return translated;
-        }
-      }
-
-      return tag;
-    },
-    [t]
   );
 
   const chartData = React.useMemo<MetricTrendPoint[]>(() => {
@@ -493,21 +457,6 @@ function MetricTrendChartContent({
       ? [comparisonMax, (comparisonMax + comparisonMin) / 2, comparisonMin].map((value, index) => ({ id: index, value, y: comparisonY(value) }))
       : [];
 
-    const eventSeriesPoints = (eventSeries ?? []).map(series => ({
-      label: series.label,
-      color: series.color,
-      points: series.dates
-        .filter(date => {
-          const ts = toDateTimestamp(date);
-
-          return ts >= windowStartTs && ts <= todayTs;
-        })
-        .map(date => ({
-          date,
-          x: getXForDate(date),
-        })),
-    }));
-
     const xAxisPoints = xAxisDates.map(date => ({
       date,
       x: getXForDate(date),
@@ -522,10 +471,9 @@ function MetricTrendChartContent({
       chartBottom: CHART_PADDING.top + innerHeight,
       gridLines,
       referenceLinePoints,
-      eventSeriesPoints,
       xAxisPoints,
     };
-  }, [chartData, comparisonData, comparison?.yAxisBounds, chartWidth, daysToShow, endDate, eventSeries, height, displayedReferenceLines, xAxisDates, yAxisBounds]);
+  }, [chartData, comparisonData, comparison?.yAxisBounds, chartWidth, daysToShow, endDate, height, displayedReferenceLines, xAxisDates, yAxisBounds]);
 
   const yAxisEntries = chartGeometry?.axisEntries ?? [];
   const selectDateAtX = (x: number) => {
@@ -877,20 +825,6 @@ function MetricTrendChartContent({
             </ThemedText>
           </View>
         )}
-        {eventSeries?.map((series, index) => (
-          <View key={`${series.label}-${index}`} style={styles.legendItem}>
-            <View
-              style={[
-                styles.legendDot,
-                {
-                  backgroundColor: series.color ?? colors.primary,
-                },
-              ]}
-            />
-
-            <ThemedText type="caption">{getTargetLabel(series.label)}</ThemedText>
-          </View>
-        ))}
       </View>
 
       {!!chartGeometry && (
@@ -953,26 +887,6 @@ function MetricTrendChartContent({
             ))}
           </View>
 
-          {!!eventSeries?.length && (
-            <View style={styles.eventRows}>
-              {chartGeometry.eventSeriesPoints.map((series, seriesIndex) => (
-                <View key={`${series.label}-${seriesIndex}`} style={styles.eventRow}>
-                  {series.points.map(event => (
-                    <View
-                      key={`${series.label}-${event.date}`}
-                      style={[
-                        styles.eventDot,
-                        {
-                          left: event.x - 4,
-                          backgroundColor: series.color ?? colors.primary,
-                        },
-                      ]}
-                    />
-                  ))}
-                </View>
-              ))}
-            </View>
-          )}
         </>
       )}
 
@@ -1094,24 +1008,6 @@ const styles = StyleSheet.create({
   },
 
   legendDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  eventRows: {
-    marginLeft: CHART_FRAME_OFFSET,
-    marginTop: 4,
-    gap: 4,
-  },
-
-  eventRow: {
-    position: 'relative',
-    height: 12,
-  },
-
-  eventDot: {
-    position: 'absolute',
-    top: 2,
     width: 8,
     height: 8,
     borderRadius: 4,

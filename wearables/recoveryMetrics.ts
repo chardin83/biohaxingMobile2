@@ -6,7 +6,7 @@ import { buildRecoveryTrend, calculateRecoveryScore } from '@/utils/recoveryStat
 // Only recalculate the sync window; saved history provides the preceding baseline.
 export function buildSyncedRecoveryMetrics(saved: MetricEntry[], incoming: MetricEntry[]): MetricEntry[] {
   const inputIds = new Set(['resting_hr', 'sleep_duration', 'hrv_rmssd', 'hrv_sdnn']);
-  const dates = incoming.filter(entry => inputIds.has(entry.metricId)).map(entry => toLocalDateKey(new Date(entry.recordedAt))).sort();
+  const dates = incoming.filter(entry => inputIds.has(entry.metricId)).map(entry => toLocalDateKey(new Date(entry.recordedAt))).sort((a, b) => a.localeCompare(b));
   if (!dates.length) return [];
   const firstDate = dates[0];
   const lastDate = dates.at(-1)!;
@@ -26,6 +26,7 @@ export function buildSyncedRecoveryMetrics(saved: MetricEntry[], incoming: Metri
     .filter(point => point.date >= firstDate)
     .map(point => ({
       metricId: 'recovery_status',
+      origin: 'calculated' as const,
       value: point.value,
       unit: 'score_0_100',
       recordedAt: `${point.date}T00:00:00.000Z`,
@@ -80,7 +81,7 @@ export function refreshRecoveryAfterMetricChanges(previous: MetricEntry[], updat
     const series = [history('resting_hr'), history('sleep_duration'), hrv];
     if (series.some(items => !items.some(entry => toLocalDateKey(new Date(entry.recordedAt)) === date))) continue;
     const score = calculateRecoveryScore(series[0], series[1], series[2]);
-    if (score !== null) recalculated.push({ metricId: 'recovery_status', value: score, unit: 'score_0_100', recordedAt: `${date}T00:00:00.000Z`, notes: 'Recalculated after source metric changes' });
+    if (score !== null) recalculated.push({ metricId: 'recovery_status', origin: 'calculated' as const, value: score, unit: 'score_0_100', recordedAt: `${date}T00:00:00.000Z`, notes: 'Recalculated after source metric changes' });
   }
   return [...updated.filter(entry => entry.metricId !== 'recovery_status' || !affectedDays.has(toLocalDateKey(new Date(entry.recordedAt)))), ...recalculated]
     .sort((a, b) => a.recordedAt.localeCompare(b.recordedAt));

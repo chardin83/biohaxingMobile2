@@ -1,9 +1,13 @@
+import { isDeletedSyncedMetric, loadDeletedMetricKeys } from '@/app/context/storage/metrics/deletedMetricStorage';
 import { getAllMetricEntries } from '@/app/context/storage/metrics/metricStorage';
 import { MetricEntry } from '@/app/context/storage/metrics/metricTypes';
 import { getUserProfile } from '@/app/context/storage/userProfile/userProfileStore';
 import { ClockTime } from '@/types/ClockTime';
 
+import { prioritizeSyncedMetrics } from './metricSourcePriority';
+import { reconcileSyncedMetrics } from './reconcileSyncedMetrics';
 import { buildSyncedRecoveryMetrics } from './recoveryMetrics';
+import { copyProvenance } from './sampleProvenance';
 import { BloodPressureReading, WearableAdapter } from './types';
 
 export const WEARABLE_SYNC_INTERVAL_MS = 5 * 60 * 1000;
@@ -131,22 +135,14 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
     )
   );*/
 
-  const detectedVendor = (
-    adapter as WearableAdapter & {
-      vendor?: string;
-    }
-  ).vendor;
-
-  const vendorSuffix = detectedVendor ? ` (${detectedVendor})` : '';
-
-  const notesLabel = adapter.source === 'healthkit' ? `AppleHealth${vendorSuffix}` : `HealthConnect${vendorSuffix}`;
+  const notesLabel = adapter.source === 'healthkit' ? 'AppleHealth' : 'HealthConnect';
 
   //console.log('[WearableSync] Activity from adapter:', activity);
 
   //console.log('[WearableSync] Blood pressure from adapter:', bloodPressure);
 
   const bloodPressureEntries = bloodPressure.filter(isValidBloodPressureReading).flatMap(reading => {
-    const readingNotes = reading.sourceName ? `${notesLabel} (${reading.sourceName})` : notesLabel;
+    const readingNotes = notesLabel;
 
     return [
       {
@@ -155,6 +151,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
         unit: 'mmHg',
         recordedAt: reading.recordedAt,
         notes: readingNotes,
+        ...copyProvenance(reading),
       } satisfies MetricEntry,
 
       {
@@ -163,6 +160,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
         unit: 'mmHg',
         recordedAt: reading.recordedAt,
         notes: readingNotes,
+        ...copyProvenance(reading),
       } satisfies MetricEntry,
     ];
   });
@@ -178,6 +176,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
             unit: 'min',
             recordedAt: toRecordedAt(entry.date),
             notes: notesLabel,
+            ...copyProvenance(entry),
           }) satisfies MetricEntry
       ),
 
@@ -189,6 +188,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
           unit: 'min',
           recordedAt: toRecordedAt(entry.date),
           notes: notesLabel,
+          ...copyProvenance(entry),
         }) satisfies MetricEntry
     ),
 
@@ -200,6 +200,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
           unit: 'min',
           recordedAt: toRecordedAt(entry.date),
           notes: notesLabel,
+          ...copyProvenance(entry),
         }) satisfies MetricEntry
     ),
 
@@ -207,6 +208,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
       .map(entry => ({
         date: entry.date,
         bedtimeMinutes: toBedtimeMinutes(entry.startTime),
+        ...copyProvenance(entry),
       }))
       .filter(hasBedtime)
       .map(
@@ -217,6 +219,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
             unit: 'min_from_midnight',
             recordedAt: toRecordedAt(entry.date),
             notes: notesLabel,
+            ...copyProvenance(entry),
           }) satisfies MetricEntry
       ),
 
@@ -228,6 +231,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
           unit: 'ml/kg/min',
           recordedAt: toRecordedAt(entry.date),
           notes: notesLabel,
+          ...copyProvenance(entry),
         }) satisfies MetricEntry
     ),
 
@@ -257,6 +261,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
           unit: 'min',
           recordedAt: toRecordedAt(entry.date),
           notes: notesLabel,
+          ...copyProvenance(entry.lastIntenseProvenance ?? entry),
         } satisfies MetricEntry;
       }),
 
@@ -270,6 +275,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
             unit: 'min',
             recordedAt: toRecordedAt(entry.date),
             notes: notesLabel,
+            ...copyProvenance(entry.activeProvenance ?? entry),
           }) satisfies MetricEntry
       ),
 
@@ -283,6 +289,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
             unit: 'min',
             recordedAt: toRecordedAt(entry.date),
             notes: notesLabel,
+            ...copyProvenance(entry.intensityProvenance ?? entry),
           }) satisfies MetricEntry
       ),
 
@@ -302,6 +309,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
               unit: 'ms',
               recordedAt: entry.recordedAt ?? toRecordedAt(entry.date),
               notes: notesLabel,
+              ...copyProvenance(entry),
             }) satisfies MetricEntry
         )
     ),
@@ -316,17 +324,28 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
             unit: 'bpm',
             recordedAt: toRecordedAt(entry.date),
             notes: notesLabel,
+            ...copyProvenance(entry),
           }) satisfies MetricEntry
       ),
 
     ...bloodPressureEntries,
   ];
 
-  entries.push(...buildSyncedRecoveryMetrics(savedMetrics, entries));
-  upsertMetricEntries(entries);
+  await loadDeletedMetricKeys();
+  const importedEntries: MetricEntry[] = entries.map(entry => ({ ...entry, origin: adapter.source }));
+  const activeEntries = prioritizeSyncedMetrics(importedEntries.filter(entry => !isDeletedSyncedMetric(entry)));
+  const recoveryEntries = buildSyncedRecoveryMetrics(
+    reconcileSyncedMetrics(
+      savedMetrics.filter(entry => !isDeletedSyncedMetric(entry)),
+      activeEntries
+    ),
+    activeEntries
+  ).map(entry => ({ ...entry, origin: 'calculated' as const }));
+  const syncedEntries = [...activeEntries, ...recoveryEntries];
+  upsertMetricEntries(syncedEntries);
 
   return {
-    entryCount: entries.length,
+    entryCount: syncedEntries.length,
     bloodPressureReadingCount: bloodPressure.length,
   };
 }

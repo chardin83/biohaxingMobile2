@@ -15,7 +15,7 @@ type StorageLogOptions = {
 export const STORAGE_LOG_OPTIONS: StorageLogOptions = {
   include: [
     //'lifeStyleLog',
-    //'dailyNutritionTracking', // Måltider och näringsvärden, inklusive dryckers näring.
+    'dailyNutritionTracking', // GI-underlag: matposter med glycemicIndex och carbohydrates.
     //'dailyDrinkTracking', // Drycker, tidpunkter och kopplingar till näringsposter.
     // 'weeklyNutritionTracking',
     //'dailyHabitTracking', // Bland annat glycemic_index_review från den dagliga GI-uppföljningen.
@@ -25,7 +25,7 @@ export const STORAGE_LOG_OPTIONS: StorageLogOptions = {
   ], // Tom lista = alla.
   exclude: ['metricEntries'], // Döljer även metricEntries:... . Tom lista = dölj inget.
   keysOnly: false, // true = visa bara nyckelnamnen, utan innehåll.
-  date: '2026-10-23', // 'today' = idag (lokalt datum), '2026-10-16' = vald dag, null = alla dagar.
+  date: '2026-10-25', // 'today' = idag (lokalt datum), '2026-10-16' = vald dag, null = alla dagar.
 };
 
 const matchesNamespace = (key: string, namespaces: string[]) => namespaces.some(namespace => key === namespace || key.startsWith(namespace + ':'));

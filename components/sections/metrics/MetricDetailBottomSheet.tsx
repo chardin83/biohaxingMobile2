@@ -63,13 +63,13 @@ export const MetricDetailBottomSheet: React.FC<MetricDetailBottomSheetProps> = (
           entries={registeredEntries}
           colors={colors}
           emptyText={t('metrics:trendChart.empty', { metric: t(`metrics:${selectedMetricId}.name`) })}
-          onAddPress={selectedMetricId === 'glycemic_index' ? undefined : () => onAddMetric(selectedMetricId)}
-          onEditEntry={selectedMetricId === 'glycemic_index' ? undefined : onEditEntry}
-          onDeleteEntry={selectedMetricId === 'glycemic_index' ? undefined : onDeleteEntry}
+          onAddPress={metrics[selectedMetricId].source === 'nutrition' ? undefined : () => onAddMetric(selectedMetricId)}
+          onEditEntry={metrics[selectedMetricId].source === 'nutrition' ? undefined : onEditEntry}
+          onDeleteEntry={metrics[selectedMetricId].source === 'nutrition' ? undefined : onDeleteEntry}
           registeredValuesTitle={t('common:metricValuesBottomSheet.registeredValuesTitle')}
           dateLabel={t('common:metricValuesBottomSheet.columns.date')}
           valueLabel={t('common:metricValuesBottomSheet.columns.value')}
-          notesLabel={t('common:metricValuesBottomSheet.columns.notes')}
+          notesLabel={t('metrics:sourceAndNotes')}
         />
 
         <ThemedText type="defaultSemiBold" style={styles.unitsTitle}>
@@ -98,10 +98,10 @@ export const MetricDetailBottomSheet: React.FC<MetricDetailBottomSheetProps> = (
         <View style={styles.metaInfo}>
           <View style={styles.metaItem}>
             <ThemedText type="caption" style={{ color: colors.textMuted }}>
-              Källa
+              {t('metrics:sources.title')}
             </ThemedText>
             <ThemedText type="defaultSemiBold" style={styles.metaTextSpacing}>
-              {metric.source}
+              {t(`metrics:sources.${metric.source}`)}
             </ThemedText>
           </View>
           {metric.suggestedFrequency && (

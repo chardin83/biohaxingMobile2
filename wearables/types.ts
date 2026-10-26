@@ -1,3 +1,5 @@
+import type { SampleProvenance } from '@/app/context/storage/metrics/metricTypes';
+
 export type SourceId = 'none' | 'mock' | 'garmin' | 'fitbit' | 'healthkit' | 'healthconnect';
 
 export type TimeRange = {
@@ -5,7 +7,7 @@ export type TimeRange = {
   end: string; // ISO
 };
 
-export type SleepSummary = {
+export type SleepSummary = SampleProvenance & {
   source: SourceId;
   date: string; // YYYY-MM-DD (local)
   durationMinutes: number;
@@ -22,7 +24,7 @@ export type SleepSummary = {
 
 export type SleepSummaryWithTarget = SleepSummary & { targetBedtime: string };
 
-export type HRVSummary = {
+export type HRVSummary = SampleProvenance & {
   source: SourceId;
   date: string;
   recordedAt?: string; // Original sample timestamp; daily summaries may omit it.
@@ -30,21 +32,24 @@ export type HRVSummary = {
   sdnnMs?: number;
 };
 
-export type RestingHeartRateSummary = {
+export type RestingHeartRateSummary = SampleProvenance & {
   source: SourceId;
   date: string;
   bpm: number;
 };
 
-export type VO2MaxSummary = {
+export type VO2MaxSummary = SampleProvenance & {
   source: SourceId;
   date: string;
   value: number;
 };
 
-export type DailyActivity = {
+export type DailyActivity = SampleProvenance & {
   source: SourceId;
   date: string; // YYYY-MM-DD
+  activeProvenance?: SampleProvenance;
+  intensityProvenance?: SampleProvenance;
+  lastIntenseProvenance?: SampleProvenance;
   steps?: number;
   activeMinutes?: number;
   intensityMinutes?: number;
@@ -63,7 +68,7 @@ export type AdapterStatus = (
 ) &
   AdapterStatusMeta;
 
-export interface BloodPressureReading {
+export interface BloodPressureReading extends SampleProvenance {
   recordedAt: string;
   systolic: number;
   diastolic: number;

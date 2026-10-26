@@ -1,5 +1,9 @@
 import { getUserProfile } from '@/app/context/storage/userProfile/userProfileStore';
+import type { MetricId } from '@/locales/metrics';
 
+import { selectMetricSource, selectMetricSourcesByDay } from './metricSourcePriority';
+import { normalizeSleep, type SleepInterval, type SleepState } from './normalizeSleep';
+import { aggregateProvenance, healthKitProvenance } from './sampleProvenance';
 import {
   BloodPressureReading,
   DailyActivity,
@@ -11,6 +15,8 @@ import {
   WearableAdapter,
   WearablePermission,
 } from './types';
+
+type RawSourceMetadata = { id?: string; sourceId?: string; sourceName?: string };
 
 type HealthKitModule = {
   initHealthKit?: (...args: any[]) => any;
@@ -66,30 +72,8 @@ function minutesBetween(start: string, end: string): number {
   return Math.round((new Date(end).getTime() - new Date(start).getTime()) / 60000);
 }
 
-type SleepDayAggregate = {
-  durationMinutes: number;
-  stages: {
-    deepMinutes?: number;
-    remMinutes?: number;
-    lightMinutes?: number;
-    awakeMinutes?: number;
-  };
-  startTime?: string;
-  endTime?: string;
-};
-
-type Interval = { start: number; end: number };
-
-type SleepDayIntervals = {
-  all: Interval[];
-  deep: Interval[];
-  rem: Interval[];
-  light: Interval[];
-  awake: Interval[];
-};
-
 // Minimal shape for HealthKit sleep samples we consume
-type RawSleepSample = {
+type RawSleepSample = RawSourceMetadata & {
   value?: string | number | null;
   metadata?: Record<string, unknown> | string | null;
   startDate?: string;
@@ -104,7 +88,7 @@ type RawSleepSample = {
   value?: number;
 };*/
 
-type RawWorkoutSample = {
+type RawWorkoutSample = RawSourceMetadata & {
   start?: string;
   end?: string;
   startDate?: string;
@@ -114,7 +98,7 @@ type RawWorkoutSample = {
   activityId?: number;
 };
 
-type RawBloodPressureSample = {
+type RawBloodPressureSample = RawSourceMetadata & {
   bloodPressureSystolicValue?: number;
   bloodPressureDiastolicValue?: number;
   startDate?: string;
@@ -123,21 +107,13 @@ type RawBloodPressureSample = {
   sourceName?: string;
 };
 
-type RawHeartRateSample = {
+type RawHeartRateSample = RawSourceMetadata & {
   startDate?: string;
   endDate?: string;
   value?: number;
 };
 
-type RawHRVSample = {
-  startDate?: string;
-  endDate?: string;
-  value?: number;
-  sourceId?: string;
-  sourceName?: string;
-};
-
-type RawVO2MaxSample = {
+type RawHRVSample = RawSourceMetadata & {
   startDate?: string;
   endDate?: string;
   value?: number;
@@ -145,62 +121,23 @@ type RawVO2MaxSample = {
   sourceName?: string;
 };
 
-function detectVendorFromSamples(samples: any[]): string | null {
-  if (!samples?.length) {
-    return null;
-  }
+type RawVO2MaxSample = RawSourceMetadata & {
+  startDate?: string;
+  endDate?: string;
+  value?: number;
+  sourceId?: string;
+  sourceName?: string;
+};
 
-  const vendors = [
-    { name: 'Garmin', keywords: ['garmin'] },
-    { name: 'Fitbit', keywords: ['fitbit'] },
-    { name: 'Apple', keywords: ['apple', 'health'] },
-    { name: 'Samsung', keywords: ['samsung'] },
-  ];
-
-  for (const sample of samples) {
-    const source = [sample?.sourceId, sample?.source, sample?.sourceName].filter(Boolean).join(' ').toLowerCase();
-
-    const vendor = vendors.find(({ keywords }) => keywords.some(keyword => source.includes(keyword)));
-
-    if (vendor) {
-      return vendor.name;
-    }
-  }
-
-  return null;
-}
-
-function getStageKeyForSample(sample: RawSleepSample): 'deep' | 'rem' | 'light' | 'awake' {
-  const rawValue = sample.value;
-  const value = rawValue || rawValue === 0 ? String(rawValue).toLowerCase() : '';
-  const metadataStr = sample.metadata ? JSON.stringify(sample.metadata).toLowerCase() : '';
-
-  if (value.includes('deep') || metadataStr.includes('deep')) return 'deep';
-  // Some vendors (e.g. Garmin) label segments as 'CORE'. Map to light by default.
-  if (value.includes('core') || metadataStr.includes('core')) return 'light';
-  if (value.includes('rem') || metadataStr.includes('rem')) return 'rem';
-  if (value.includes('awake') || value.includes('wake') || metadataStr.includes('awake') || metadataStr.includes('wake')) return 'awake';
-  if (typeof rawValue === 'number' && rawValue === 2) return 'awake';
-  return 'light';
-}
-
-function mergeIntervalsTotalMinutes(intervals: Interval[]) {
-  if (!intervals || intervals.length === 0) return 0;
-  const sorted = intervals.slice().sort((a, b) => a.start - b.start);
-  let total = 0;
-  let cur = { ...sorted[0] };
-  for (let i = 1; i < sorted.length; i++) {
-    const it = sorted[i];
-    if (it.start <= cur.end) {
-      // overlap or contiguous
-      cur.end = Math.max(cur.end, it.end);
-    } else {
-      total += Math.round((cur.end - cur.start) / 60000);
-      cur = { ...it };
-    }
-  }
-  total += Math.round((cur.end - cur.start) / 60000);
-  return total;
+function getSleepState(sample: RawSleepSample): SleepState {
+  const value = String(sample.value ?? '').toLowerCase();
+  if (value.includes('inbed') || value.includes('in_bed') || sample.value === 0) return 'inBed';
+  if (value.includes('awake') || sample.value === 2) return 'awake';
+  if (value.includes('deep') || sample.value === 4) return 'deep';
+  if (value.includes('rem') || sample.value === 5) return 'rem';
+  if (value.includes('core') || value.includes('light') || sample.value === 3) return 'light';
+  if (value.includes('asleep') || sample.value === 1) return 'asleep';
+  return 'unknown';
 }
 
 // Try to locate a usable react-native-health module shape from exports/native modules
@@ -232,76 +169,10 @@ async function callInitHealthKit(mod: HealthKitModule) {
   });
 }
 
-// Merge a sample into the given dateKey (used for session-based grouping)
-function mergeSleepSampleWithKey(byDate: Record<string, SleepDayAggregate>, sample: RawSleepSample, dateKey: string) {
-  const start = new Date(sample.startDate ?? 0);
-  const end = new Date(sample.endDate ?? 0);
-  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
-    return;
-  }
-  // Skip overall INBED summary samples which would double-count duration
-  const rawValue = sample.value;
-  const valueStr = rawValue || rawValue === 0 ? String(rawValue).toLowerCase() : '';
-  if (valueStr.includes('inbed') || valueStr.includes('in_bed')) {
-    return;
-  }
-
-  // Ensure aggregate object exists and has interval buckets
-  if (!byDate[dateKey]) {
-    byDate[dateKey] = { durationMinutes: 0, stages: {}, startTime: sample.startDate, endTime: sample.endDate };
-    const intervals: SleepDayIntervals = {
-      all: [],
-      deep: [],
-      rem: [],
-      light: [],
-      awake: [],
-    };
-    (byDate as any)[dateKey]._intervals = intervals;
-  }
-
-  const day = byDate[dateKey];
-  const ints = (byDate as any)[dateKey]._intervals as SleepDayIntervals;
-
-  const interval: Interval = { start: start.getTime(), end: end.getTime() };
-  ints.all.push(interval);
-  const stageKey = getStageKeyForSample(sample);
-  (ints as any)[stageKey].push(interval);
-
-  // keep earliest start and latest end for the day
-  if (!day.startTime || start.getTime() < new Date(day.startTime).getTime()) {
-    day.startTime = sample.startDate;
-  }
-  if (!day.endTime || end.getTime() > new Date(day.endTime).getTime()) {
-    day.endTime = sample.endDate;
-  }
-
-  byDate[dateKey] = day;
-}
-
-// After collecting intervals via mergeSleepSample, compute merged totals per day
-function finalizeAggregates(byDate: Record<string, SleepDayAggregate>) {
-  Object.keys(byDate).forEach(dateKey => {
-    const day = byDate[dateKey];
-    const ints = (byDate as any)[dateKey]._intervals as SleepDayIntervals | undefined;
-    if (!ints) {
-      // Fallback: leave existing duration/stages
-      return;
-    }
-
-    day.durationMinutes = mergeIntervalsTotalMinutes(ints.all);
-
-    day.stages.deepMinutes = mergeIntervalsTotalMinutes(ints.deep);
-    day.stages.remMinutes = mergeIntervalsTotalMinutes(ints.rem);
-    day.stages.lightMinutes = mergeIntervalsTotalMinutes(ints.light);
-    day.stages.awakeMinutes = mergeIntervalsTotalMinutes(ints.awake);
-  });
-}
-
 export class HealthKitAdapter implements WearableAdapter {
   source = 'healthkit' as const;
   private initialized = false;
   private initErrorMessage: string | null = null;
-  private vendor: string | null = null;
 
   private async ensureInit() {
     if (this.initialized) return;
@@ -371,67 +242,6 @@ export class HealthKitAdapter implements WearableAdapter {
     return error instanceof Error ? error : new Error(String(error));
   }
 
-  private groupSleepSamplesIntoSessions(samples: RawSleepSample[]): RawSleepSample[][] {
-    const sorted = [...samples].sort((a, b) => new Date(a.startDate ?? a.endDate ?? 0).getTime() - new Date(b.startDate ?? b.endDate ?? 0).getTime());
-    const sessions: RawSleepSample[][] = [];
-    const graceMs = 1000;
-    let currentSession: RawSleepSample[] = [];
-    let currentEnd = 0;
-
-    for (const sample of sorted) {
-      const start = new Date(sample.startDate ?? sample.endDate ?? 0).getTime();
-      const end = new Date(sample.endDate ?? sample.startDate ?? 0).getTime();
-
-      if (currentSession.length > 0 && start > currentEnd + graceMs) {
-        sessions.push(currentSession);
-        currentSession = [];
-      }
-
-      currentSession.push(sample);
-      currentEnd = Math.max(currentEnd, end);
-    }
-
-    if (currentSession.length > 0) {
-      sessions.push(currentSession);
-    }
-
-    return sessions;
-  }
-
-  private aggregateSleepSessions(sessions: RawSleepSample[][]): Record<string, SleepDayAggregate> {
-    const byDate: Record<string, SleepDayAggregate> = {};
-
-    for (const session of sessions) {
-      const sessionEnd = Math.max(...session.map(sample => new Date(sample.endDate ?? sample.startDate ?? 0).getTime()));
-
-      const dateKey = toLocalDateISO(new Date(sessionEnd).toISOString());
-
-      for (const sample of session) {
-        mergeSleepSampleWithKey(byDate, sample, dateKey);
-      }
-    }
-
-    finalizeAggregates(byDate);
-
-    return byDate;
-  }
-
-  private mapSleepAggregates(byDate: Record<string, SleepDayAggregate>, source: SleepSummary['source']): SleepSummary[] {
-    return Object.entries(byDate).map(([date, aggregate]) => ({
-      source,
-      date,
-      durationMinutes: aggregate.durationMinutes,
-      startTime: aggregate.startTime,
-      endTime: aggregate.endTime,
-      stages: {
-        deepMinutes: aggregate.stages.deepMinutes ?? 0,
-        remMinutes: aggregate.stages.remMinutes ?? 0,
-        lightMinutes: aggregate.stages.lightMinutes ?? 0,
-        awakeMinutes: aggregate.stages.awakeMinutes ?? 0,
-      },
-    }));
-  }
-
   async getSleep(range: TimeRange): Promise<SleepSummary[]> {
     try {
       await this.ensureInit();
@@ -459,19 +269,13 @@ export class HealthKitAdapter implements WearableAdapter {
         );
       });
 
-      const vendor = detectVendorFromSamples(samples);
-
-      if (vendor) {
-        this.vendor = vendor;
-      }
-
-      //console.debug('[HealthKitAdapter] raw sleep samples', samples);
-
-      const sessions = this.groupSleepSamplesIntoSessions(samples);
-
-      const byDate = this.aggregateSleepSessions(sessions);
-
-      return this.mapSleepAggregates(byDate, this.source);
+      const intervals: SleepInterval[] = samples.map(sample => ({
+        ...healthKitProvenance(sample),
+        startTime: sample.startDate ?? '',
+        endTime: sample.endDate ?? '',
+        state: getSleepState(sample),
+      }));
+      return normalizeSleep(intervals, this.source);
     } catch (error) {
       if (error instanceof Error) {
         this.initErrorMessage = error.message;
@@ -510,12 +314,6 @@ export class HealthKitAdapter implements WearableAdapter {
         );
       });
 
-      const vendor = detectVendorFromSamples(samples);
-
-      if (vendor) {
-        this.vendor = vendor;
-      }
-
       return samples.flatMap(sample => {
         const systolic = Number(sample.bloodPressureSystolicValue);
 
@@ -532,7 +330,7 @@ export class HealthKitAdapter implements WearableAdapter {
             systolic,
             diastolic,
             recordedAt,
-            sourceName: sample.sourceName ?? sample.sourceId,
+            ...healthKitProvenance(sample),
           } satisfies BloodPressureReading,
         ];
       });
@@ -582,12 +380,27 @@ export class HealthKitAdapter implements WearableAdapter {
   }
 
   private toHRVSummaries(samples: RawHRVSample[]): HRVSummary[] {
+    samples = this.selectDailySamples(samples, 'hrv_sdnn');
     const byDate = this.groupSamplesByDate(samples);
     return Object.entries(byDate).map(([date, values]) => ({
       source: this.source,
       date,
+      ...aggregateProvenance(
+        samples
+          .filter(sample => (sample.endDate ?? sample.startDate) && toLocalDateISO((sample.endDate ?? sample.startDate)!) === date)
+          .map(healthKitProvenance)
+      ),
       sdnnMs: this.average(values) * 1000,
     }));
+  }
+
+  private selectDailySamples<T extends RawSourceMetadata & { value?: number; startDate?: string; endDate?: string }>(samples: T[], metricId: MetricId): T[] {
+    const valid = samples.flatMap(sample => {
+      const recordedAt = sample.endDate ?? sample.startDate;
+      if (!recordedAt || !Number.isFinite(Date.parse(recordedAt)) || !Number.isFinite(Number(sample.value))) return [];
+      return [{ ...sample, ...healthKitProvenance(sample), date: toLocalDateISO(recordedAt) }];
+    });
+    return selectMetricSourcesByDay(valid, metricId);
   }
 
   private average(values: number[]): number {
@@ -626,7 +439,7 @@ export class HealthKitAdapter implements WearableAdapter {
         console.debug('[HealthKitAdapter] getRestingHeartRateSamples is not available');
         return [];
       }
-      const samples = await this.getRestingHeartRateSamples(health, range);
+      const samples = this.selectDailySamples(await this.getRestingHeartRateSamples(health, range), 'resting_hr');
       //console.debug('[HealthKitAdapter] resting HR samples count', samples.length);
       if (samples.length > 0) {
         //console.debug('[HealthKitAdapter] resting HR sample0', samples[0]);
@@ -635,6 +448,11 @@ export class HealthKitAdapter implements WearableAdapter {
       return Object.entries(byDate).map(([date, values]) => ({
         source: this.source,
         date,
+        ...aggregateProvenance(
+          samples
+            .filter(sample => (sample.endDate ?? sample.startDate) && toLocalDateISO((sample.endDate ?? sample.startDate)!) === date)
+            .map(healthKitProvenance)
+        ),
         bpm: this.average(values),
       }));
     } catch (error) {
@@ -705,6 +523,7 @@ export class HealthKitAdapter implements WearableAdapter {
         return [
           {
             source: this.source,
+            ...healthKitProvenance(sample),
             date: toLocalDateISO(sampleDate),
             value: Math.round(value * 10) / 10,
           } satisfies VO2MaxSummary,
@@ -766,7 +585,16 @@ export class HealthKitAdapter implements WearableAdapter {
         const day = getDay(entry.date);
         day.steps = entry.steps;
       }
-      for (const workout of workoutSamples) {
+      const preferredWorkouts = selectMetricSourcesByDay(
+        workoutSamples.flatMap(workout => {
+          const start = workout.startDate ?? workout.start;
+          const end = workout.endDate ?? workout.end;
+          if (!start || !end || !Number.isFinite(Date.parse(end)) || !Number.isFinite(minutesBetween(start, end)) || minutesBetween(start, end) <= 0) return [];
+          return [{ ...workout, ...healthKitProvenance(workout), date: toLocalDateISO(end) }];
+        }),
+        'active_minutes'
+      );
+      for (const workout of preferredWorkouts) {
         const start = workout.startDate ?? workout.start;
         const end = workout.endDate ?? workout.end;
         if (!start || !end) {
@@ -778,19 +606,41 @@ export class HealthKitAdapter implements WearableAdapter {
         }
         const day = getDay(end);
         day.activeMinutes = (day.activeMinutes ?? 0) + activeMinutes;
+        const workoutProvenance = healthKitProvenance(workout);
+        day.activeProvenance = aggregateProvenance([...(day.activeProvenance ? [day.activeProvenance] : []), workoutProvenance]);
         if (!maxHeartRate) {
           continue;
         }
+        const sessionHeartRates = selectMetricSource(
+          heartRateSamples
+            .filter(sample => {
+              const time = Date.parse(sample.startDate ?? sample.endDate ?? '');
+              return time >= Date.parse(start) && time <= Date.parse(end) && Number.isFinite(Number(sample.value));
+            })
+            .map(sample => ({ ...sample, ...healthKitProvenance(sample) })),
+          'intensity_minutes'
+        );
         const intensityHrThreshold = maxHeartRate * 0.7;
-        const intenseMinutes = this.calculateIntenseMinutes(heartRateSamples, start, end, intensityHrThreshold);
+        const intenseMinutes = this.calculateIntenseMinutes(sessionHeartRates, start, end, intensityHrThreshold);
         day.intensityMinutes = (day.intensityMinutes ?? 0) + intenseMinutes;
-        const lastIntenseExerciseAt = this.getLastIntenseExerciseAt(heartRateSamples, start, end, intensityHrThreshold);
+        const intensityProvenance = aggregateProvenance([
+          workoutProvenance,
+          ...sessionHeartRates
+            .filter(sample => {
+              const time = new Date(sample.startDate ?? sample.endDate ?? '').getTime();
+              return time >= new Date(start).getTime() && time <= new Date(end).getTime();
+            })
+            .map(healthKitProvenance),
+        ]);
+        day.intensityProvenance = aggregateProvenance([...(day.intensityProvenance ? [day.intensityProvenance] : []), intensityProvenance]);
+        const lastIntenseExerciseAt = this.getLastIntenseExerciseAt(sessionHeartRates, start, end, intensityHrThreshold);
 
         if (
           lastIntenseExerciseAt &&
           (!day.lastIntenseExerciseAt || new Date(lastIntenseExerciseAt).getTime() > new Date(day.lastIntenseExerciseAt).getTime())
         ) {
           day.lastIntenseExerciseAt = lastIntenseExerciseAt;
+          day.lastIntenseProvenance = intensityProvenance;
         }
       }
       return [...activityByDay.values()].map(entry => ({

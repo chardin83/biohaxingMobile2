@@ -11,6 +11,7 @@ export function buildGlycemicIndexMetrics(tracking: DailyNutritionTracking): Met
       metricId: 'glycemic_index' as const,
       value,
       unit: 'index',
+      origin: 'nutrition' as const,
       // Local midnight keeps the nutrition date intact in tables and latest-value filters.
       recordedAt: `${date}T00:00:00`,
     }];

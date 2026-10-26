@@ -1,4 +1,8 @@
 // Central XP configuration for awards across the app
+// Temporary preview: disable to restore the user's actual XP and level.
+export const PREVIEW_MAX_XP = true;
+export const isMaxXpPreviewEnabled = () => __DEV__ && PREVIEW_MAX_XP;
+
 export const XP_FOR_RELATED_FOODS_READ = 5; // Reading related foods, once per tip
 export const XP_FOR_RELATED_METRICS_READ = 5; // Reading related metrics, once per tip
 export const XP_FOR_TIMING_READ = 5; // Reading when a tip fits, once per tip

@@ -1,4 +1,5 @@
 import {
+  aggregateRecord,
   getGrantedPermissions,
   getSdkStatus,
   initialize,
@@ -10,6 +11,9 @@ import {
 
 import { getUserProfile } from '@/app/context/storage/userProfile/userProfileStore';
 
+import { selectMetricSource, selectMetricSourcesByDay } from './metricSourcePriority';
+import { getSleepEpisodes, normalizeSleep, type SleepInterval, type SleepState } from './normalizeSleep';
+import { aggregateProvenance, healthConnectProvenance } from './sampleProvenance';
 import {
   BloodPressureReading,
   DailyActivity,
@@ -203,34 +207,58 @@ export class HealthConnectAdapter implements WearableAdapter {
     try {
       await this.ensureInit();
 
-      const result = await readRecords('SleepSession', {
-        timeRangeFilter: {
-          operator: 'between',
-          startTime: range.start,
-          endTime: range.end,
-        },
-      });
-
-      return result.records.map(record => {
+      const records = [];
+      let pageToken: string | undefined;
+      do {
+        const page = await readRecords('SleepSession', {
+          timeRangeFilter: { operator: 'between', startTime: range.start, endTime: range.end },
+          ascendingOrder: true,
+          pageSize: 1000,
+          pageToken,
+        });
+        records.push(...page.records);
+        pageToken = page.pageToken;
+      } while (pageToken);
+      const stateByStage: Record<number, SleepState> = {
+        [SLEEP_STAGE.awake]: 'awake',
+        [SLEEP_STAGE.outOfBed]: 'awake',
+        [SLEEP_STAGE.sleeping]: 'asleep',
+        [SLEEP_STAGE.light]: 'light',
+        [SLEEP_STAGE.deep]: 'deep',
+        [SLEEP_STAGE.rem]: 'rem',
+      };
+      const intervals: SleepInterval[] = records.flatMap(record => {
+        const provenance = healthConnectProvenance(record);
         const stages = record.stages ?? [];
-
-        const sumStageMinutes = (stageType: number) =>
-          stages.filter(stage => stage.stage === stageType).reduce((sum, stage) => sum + minutesBetween(stage.startTime, stage.endTime), 0);
-
-        return {
-          source: this.source,
-          date: toLocalDateISO(record.endTime),
-          startTime: record.startTime,
-          endTime: record.endTime,
-          durationMinutes: minutesBetween(record.startTime, record.endTime),
-          stages: {
-            deepMinutes: sumStageMinutes(SLEEP_STAGE.deep),
-            remMinutes: sumStageMinutes(SLEEP_STAGE.rem),
-            lightMinutes: sumStageMinutes(SLEEP_STAGE.light),
-            awakeMinutes: sumStageMinutes(SLEEP_STAGE.awake),
-          },
-        } satisfies SleepSummary;
+        // Session-wide fallback is used only when there is no staging information.
+        if (!stages.length) return [{ ...provenance, startTime: record.startTime, endTime: record.endTime, state: 'asleep' as const }];
+        return stages.flatMap(stage => {
+          const start = Math.max(Date.parse(stage.startTime), Date.parse(record.startTime));
+          const end = Math.min(Date.parse(stage.endTime), Date.parse(record.endTime));
+          if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return [];
+          return [
+            { ...provenance, startTime: new Date(start).toISOString(), endTime: new Date(end).toISOString(), state: stateByStage[stage.stage] ?? 'unknown' },
+          ];
+        });
       });
+      const preferredSources = new Map<string, string[]>();
+      for (const episode of getSleepEpisodes(intervals)) {
+        if (new Set(episode.map(item => item.sourceId ?? item.sourceName ?? 'unknown')).size < 2) continue;
+        try {
+          const aggregate = await aggregateRecord({
+            recordType: 'SleepSession',
+            timeRangeFilter: {
+              operator: 'between',
+              startTime: new Date(episode[0].start).toISOString(),
+              endTime: new Date(Math.max(...episode.map(item => item.end))).toISOString(),
+            },
+          });
+          preferredSources.set(String(episode[0].start), aggregate.dataOrigins ?? []);
+        } catch (error) {
+          console.warn('[HealthConnectAdapter] Sleep source priority unavailable; resolving overlaps locally', error);
+        }
+      }
+      return normalizeSleep(intervals, this.source, preferredSources);
     } catch (err) {
       console.warn('[HealthConnectAdapter] getSleep failed', err);
 
@@ -269,7 +297,7 @@ export class HealthConnectAdapter implements WearableAdapter {
             systolic: Math.round(systolic * 10) / 10,
             diastolic: Math.round(diastolic * 10) / 10,
             recordedAt,
-            sourceName: record.metadata?.dataOrigin,
+            ...healthConnectProvenance(record),
           } satisfies BloodPressureReading,
         ];
       });
@@ -304,6 +332,7 @@ export class HealthConnectAdapter implements WearableAdapter {
     samples.push(
       ...result.records.map(record => ({
         source: this.source,
+        ...healthConnectProvenance(record),
         date: toLocalDateISO(record.time),
         recordedAt: new Date(record.time).toISOString(),
         rmssdMs: record.heartRateVariabilityMillis,
@@ -328,6 +357,7 @@ export class HealthConnectAdapter implements WearableAdapter {
         .filter(record => typeof record.beatsPerMinute === 'number')
         .map(record => ({
           source: this.source,
+          ...healthConnectProvenance(record),
           date: toLocalDateISO(record.time),
           bpm: record.beatsPerMinute,
         }));
@@ -353,6 +383,7 @@ export class HealthConnectAdapter implements WearableAdapter {
         .filter(record => typeof record.vo2MillilitersPerMinuteKilogram === 'number')
         .map(record => ({
           source: this.source,
+          ...healthConnectProvenance(record),
           date: toLocalDateISO(record.time),
           value: Math.round(record.vo2MillilitersPerMinuteKilogram * 10) / 10,
         }));
@@ -395,9 +426,17 @@ export class HealthConnectAdapter implements WearableAdapter {
         const day = getDay(record.endTime);
         day.steps = (day.steps ?? 0) + record.count;
       }
-      const validSessions = exerciseSessions
-        .map(session => ({ session, activeMinutes: minutesBetween(session.startTime, session.endTime) }))
-        .filter(({ activeMinutes }) => Number.isFinite(activeMinutes) && activeMinutes > 0);
+      const validSessions = selectMetricSourcesByDay(
+        exerciseSessions
+          .map(session => ({
+            session,
+            ...healthConnectProvenance(session),
+            date: toLocalDateISO(session.endTime),
+            activeMinutes: minutesBetween(session.startTime, session.endTime),
+          }))
+          .filter(({ activeMinutes, date }) => Number.isFinite(activeMinutes) && activeMinutes > 0 && !date.includes('NaN')),
+        'active_minutes'
+      );
       const sessionActivities = await Promise.all(
         validSessions.map(async ({ session, activeMinutes }) => ({
           session,
@@ -408,17 +447,33 @@ export class HealthConnectAdapter implements WearableAdapter {
       for (const { session, activeMinutes, heartRateSamples } of sessionActivities) {
         const day = getDay(session.endTime);
         day.activeMinutes = (day.activeMinutes ?? 0) + activeMinutes;
+        const sessionProvenance = healthConnectProvenance(session);
+        day.activeProvenance = aggregateProvenance([...(day.activeProvenance ? [day.activeProvenance] : []), sessionProvenance]);
         if (!maxHeartRate) {
           continue;
         }
+        const sessionHeartRates = selectMetricSource(
+          heartRateSamples
+            .filter(sample => sample.time >= Date.parse(session.startTime) && sample.time <= Date.parse(session.endTime) && Number.isFinite(sample.value))
+            .map(sample => ({ ...sample, ...sample.provenance })),
+          'intensity_minutes'
+        );
         const threshold = maxHeartRate * 0.7;
-        const intenseMinutes = this.calculateIntenseMinutes(heartRateSamples, session.startTime, session.endTime, threshold);
-        const lastIntenseExerciseAt = this.getLastIntenseExerciseAt(heartRateSamples, session.startTime, session.endTime, threshold);
+        const intenseMinutes = this.calculateIntenseMinutes(sessionHeartRates, session.startTime, session.endTime, threshold);
+        const lastIntenseExerciseAt = this.getLastIntenseExerciseAt(sessionHeartRates, session.startTime, session.endTime, threshold);
         day.intensityMinutes = (day.intensityMinutes ?? 0) + intenseMinutes;
+        const intensityProvenance = aggregateProvenance([
+          sessionProvenance,
+          ...sessionHeartRates
+            .filter(sample => sample.time >= new Date(session.startTime).getTime() && sample.time <= new Date(session.endTime).getTime())
+            .map(sample => sample.provenance),
+        ]);
+        day.intensityProvenance = aggregateProvenance([...(day.intensityProvenance ? [day.intensityProvenance] : []), intensityProvenance]);
         if (lastIntenseExerciseAt) {
           const currentLastIntenseAt = day.lastIntenseExerciseAt;
           if (!currentLastIntenseAt || new Date(lastIntenseExerciseAt).getTime() > new Date(currentLastIntenseAt).getTime()) {
             day.lastIntenseExerciseAt = lastIntenseExerciseAt;
+            day.lastIntenseProvenance = intensityProvenance;
           }
         }
       }
@@ -461,6 +516,7 @@ export class HealthConnectAdapter implements WearableAdapter {
       record.samples.map(sample => ({
         time: new Date(sample.time).getTime(),
         value: sample.beatsPerMinute,
+        provenance: healthConnectProvenance(record),
       }))
     );
   }

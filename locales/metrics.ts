@@ -5,6 +5,7 @@ import type { IconSymbolName } from '@/components/ui/icon-symbol-map';
 export type MetricSystem = 'EU' | 'US' | 'all';
 
 export type MetricUnit =
+  | 'kcal'
   | 'index'
   | 'mIU/L'
   | 'µIU/mL'
@@ -34,7 +35,8 @@ export type MetricUnit =
   | 'bss' // Bristol Stool Scale
   | 'ml/kg/min';
 
-export type MetricSource = 'lab' | 'home' | 'wearable' | 'questionnaire' | 'nutrition';
+// Data provider for this metric, not the origin of an individual measurement.
+export type MetricSource = 'metrics' | 'nutrition';
 
 export const METRIC_GROUPS = ['cardio', 'bloodSugar', 'nutrients', 'hormones', 'recovery', 'sleep', 'body', 'digestion', 'activity', 'energy', 'mind'] as const;
 export type MetricGroup = (typeof METRIC_GROUPS)[number];
@@ -61,6 +63,12 @@ export type MetricDefinition = {
   suggestedFrequency?: 'daily' | 'weekly' | 'monthly' | 'perTest';
 };
 export const metrics = {
+  calories: {
+    id: 'calories', group: 'energy', iconName: 'flame', emoji: '🔥',
+    nameKey: 'calories.name', descriptionKey: 'calories.description',
+    canonicalUnit: 'kcal', source: 'nutrition', suggestedFrequency: 'daily',
+    units: [{ unit: 'kcal', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 0 }],
+  },
   glycemic_index: {
     id: 'glycemic_index', group: 'bloodSugar', iconName: 'chart', emoji: '🍽️',
     nameKey: 'glycemic_index.name', descriptionKey: 'glycemic_index.description',
@@ -77,7 +85,7 @@ export const metrics = {
     nameKey: 'ldl.name',
     descriptionKey: 'ldl.description',
     canonicalUnit: 'mmol/L',
-    source: 'lab',
+    source: 'metrics',
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'mmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
@@ -93,7 +101,7 @@ export const metrics = {
     nameKey: 'apob.name',
     descriptionKey: 'apob.description',
     canonicalUnit: 'g/L',
-    source: 'lab',
+    source: 'metrics',
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'g/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
@@ -109,7 +117,7 @@ export const metrics = {
     nameKey: 'triglycerides.name',
     descriptionKey: 'triglycerides.description',
     canonicalUnit: 'mmol/L',
-    source: 'lab',
+    source: 'metrics',
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'mmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
@@ -125,7 +133,7 @@ export const metrics = {
     nameKey: 'hdl.name',
     descriptionKey: 'hdl.description',
     canonicalUnit: 'mmol/L',
-    source: 'lab',
+    source: 'metrics',
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'mmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
@@ -141,7 +149,7 @@ export const metrics = {
     nameKey: 'blood_lactate.name',
     descriptionKey: 'blood_lactate.description',
     canonicalUnit: 'mmol/L',
-    source: 'home',
+    source: 'metrics',
     suggestedFrequency: 'perTest',
     units: [
       {
@@ -164,7 +172,7 @@ export const metrics = {
     nameKey: 'systolic_bp.name',
     descriptionKey: 'systolic_bp.description',
     canonicalUnit: 'mmHg',
-    source: 'home',
+    source: 'metrics',
     suggestedFrequency: 'weekly',
     units: [{ unit: 'mmHg', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -177,7 +185,7 @@ export const metrics = {
     nameKey: 'diastolic_bp.name',
     descriptionKey: 'diastolic_bp.description',
     canonicalUnit: 'mmHg',
-    source: 'home',
+    source: 'metrics',
     suggestedFrequency: 'weekly',
     units: [{ unit: 'mmHg', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -192,7 +200,7 @@ export const metrics = {
     nameKey: 'fasting_glucose.name',
     descriptionKey: 'fasting_glucose.description',
     canonicalUnit: 'mmol/L',
-    source: 'lab',
+    source: 'metrics',
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'mmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 },
@@ -208,7 +216,7 @@ export const metrics = {
     nameKey: 'hba1c.name',
     descriptionKey: 'hba1c.description',
     canonicalUnit: 'mmol/mol',
-    source: 'lab',
+    source: 'metrics',
     suggestedFrequency: 'perTest',
     units: [
       { unit: 'mmol/mol', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 0 },
@@ -224,7 +232,7 @@ export const metrics = {
     nameKey: 'fasting_insulin.name',
     descriptionKey: 'fasting_insulin.description',
     canonicalUnit: 'mIU/L',
-    source: 'lab',
+    source: 'metrics',
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'mIU/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 },
@@ -242,7 +250,7 @@ export const metrics = {
     nameKey: 'vitd_25oh.name',
     descriptionKey: 'vitd_25oh.description',
     canonicalUnit: 'nmol/L',
-    source: 'lab',
+    source: 'metrics',
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'nmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 0 },
@@ -258,7 +266,7 @@ export const metrics = {
     nameKey: 'calcium.name',
     descriptionKey: 'calcium.description',
     canonicalUnit: 'mmol/L',
-    source: 'lab',
+    source: 'metrics',
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'mmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
@@ -274,7 +282,7 @@ export const metrics = {
     nameKey: 'pth.name',
     descriptionKey: 'pth.description',
     canonicalUnit: 'pmol/L',
-    source: 'lab',
+    source: 'metrics',
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'pmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 },
@@ -292,7 +300,7 @@ export const metrics = {
     nameKey: 'tsh.name',
     descriptionKey: 'tsh.description',
     canonicalUnit: 'mIU/L',
-    source: 'lab',
+    source: 'metrics',
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'mIU/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 2 },
@@ -308,7 +316,7 @@ export const metrics = {
     nameKey: 'free_t4.name',
     descriptionKey: 'free_t4.description',
     canonicalUnit: 'pmol/L',
-    source: 'lab',
+    source: 'metrics',
     suggestedFrequency: 'monthly',
     units: [
       { unit: 'pmol/L', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 },
@@ -326,7 +334,7 @@ export const metrics = {
     nameKey: 'recovery_status.name',
     descriptionKey: 'recovery_status.description',
     canonicalUnit: 'score_0_100',
-    source: 'wearable',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'score_0_100', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -339,7 +347,7 @@ export const metrics = {
     nameKey: 'resting_hr.name',
     descriptionKey: 'resting_hr.description',
     canonicalUnit: 'bpm',
-    source: 'wearable',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'bpm', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -352,7 +360,7 @@ export const metrics = {
     nameKey: 'hrv_rmssd.name',
     descriptionKey: 'hrv_rmssd.description',
     canonicalUnit: 'ms',
-    source: 'wearable',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'ms', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -365,7 +373,7 @@ export const metrics = {
     nameKey: 'hrv_sdnn.name',
     descriptionKey: 'hrv_sdnn.description',
     canonicalUnit: 'ms',
-    source: 'wearable',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'ms', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -378,7 +386,7 @@ export const metrics = {
     nameKey: 'intense_exercise_before_sleep.name',
     descriptionKey: 'intense_exercise_before_sleep.description',
     canonicalUnit: 'min',
-    source: 'questionnaire',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -393,7 +401,7 @@ export const metrics = {
     nameKey: 'sleep_duration.name',
     descriptionKey: 'sleep_duration.description',
     canonicalUnit: 'min',
-    source: 'wearable',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -406,7 +414,7 @@ export const metrics = {
     nameKey: 'sleep_bedtime.name',
     descriptionKey: 'sleep_bedtime.description',
     canonicalUnit: 'min_from_midnight',
-    source: 'wearable',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'min_from_midnight', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -419,7 +427,7 @@ export const metrics = {
     nameKey: 'deep_sleep.name',
     descriptionKey: 'deep_sleep.description',
     canonicalUnit: 'min',
-    source: 'wearable',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -432,7 +440,7 @@ export const metrics = {
     nameKey: 'rem_sleep.name',
     descriptionKey: 'rem_sleep.description',
     canonicalUnit: 'min',
-    source: 'wearable',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -445,7 +453,7 @@ export const metrics = {
     nameKey: 'sleep_wake.name',
     descriptionKey: 'sleep_wake.description',
     canonicalUnit: 'min_from_midnight',
-    source: 'wearable',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'min_from_midnight', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -458,7 +466,7 @@ export const metrics = {
     nameKey: 'sleep_quality.name',
     descriptionKey: 'sleep_quality.description',
     canonicalUnit: 'score_0_10',
-    source: 'questionnaire',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -471,7 +479,7 @@ export const metrics = {
     nameKey: 'sleep_latency.name',
     descriptionKey: 'sleep_latency.description',
     canonicalUnit: 'min',
-    source: 'questionnaire',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -486,7 +494,7 @@ export const metrics = {
     nameKey: 'weight.name',
     descriptionKey: 'weight.description',
     canonicalUnit: 'kg',
-    source: 'home',
+    source: 'metrics',
     suggestedFrequency: 'weekly',
     units: [
       { unit: 'kg', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 },
@@ -502,7 +510,7 @@ export const metrics = {
     nameKey: 'waist.name',
     descriptionKey: 'waist.description',
     canonicalUnit: 'cm',
-    source: 'home',
+    source: 'metrics',
     suggestedFrequency: 'weekly',
     units: [
       { unit: 'cm', system: 'EU', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 0 },
@@ -520,7 +528,7 @@ export const metrics = {
     nameKey: 'bss.name',
     descriptionKey: 'bss.description',
     canonicalUnit: 'bss',
-    source: 'questionnaire',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'bss', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -533,7 +541,7 @@ export const metrics = {
     nameKey: 'bloating.name',
     descriptionKey: 'bloating.description',
     canonicalUnit: 'score_0_10',
-    source: 'questionnaire',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -545,7 +553,7 @@ export const metrics = {
     nameKey: 'activeMinutes.name',
     descriptionKey: 'activeMinutes.description',
     canonicalUnit: 'min',
-    source: 'wearable',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -557,7 +565,7 @@ export const metrics = {
     nameKey: 'steps.name',
     descriptionKey: 'steps.description',
     canonicalUnit: 'count',
-    source: 'wearable',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'count', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -569,7 +577,7 @@ export const metrics = {
     nameKey: 'intensityMinutes.name',
     descriptionKey: 'intensityMinutes.description',
     canonicalUnit: 'min',
-    source: 'wearable',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -584,7 +592,7 @@ export const metrics = {
     nameKey: 'energy.name',
     descriptionKey: 'energy.description',
     canonicalUnit: 'score_0_10',
-    source: 'questionnaire',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -597,7 +605,7 @@ export const metrics = {
     nameKey: 'stress.name',
     descriptionKey: 'stress.description',
     canonicalUnit: 'score_0_10',
-    source: 'questionnaire',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -610,7 +618,7 @@ export const metrics = {
     nameKey: 'focus.name',
     descriptionKey: 'focus.description',
     canonicalUnit: 'score_0_10',
-    source: 'questionnaire',
+    source: 'metrics',
     suggestedFrequency: 'daily',
     units: [{ unit: 'score_0_10', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
@@ -622,7 +630,7 @@ export const metrics = {
     nameKey: 'vo2_max.name',
     descriptionKey: 'vo2_max.description',
     canonicalUnit: 'ml/kg/min',
-    source: 'wearable',
+    source: 'metrics',
     suggestedFrequency: 'weekly',
     units: [{ unit: 'ml/kg/min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 }, precision: 1 }],
   },

@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { type MetricId } from '@/locales/metrics';
-import { buildGlycemicIndexCoverage } from '@/utils/glycemicIndexMetrics';
 import type { GlycemicIndexCoveragePoint } from '@/utils/glycemicIndex';
+import { buildGlycemicIndexCoverage } from '@/utils/glycemicIndexMetrics';
 import { buildHRVDailyTrend } from '@/utils/hrvHistory';
 import { buildTrendData } from '@/utils/metrics';
 import { RECOVERY_THRESHOLDS } from '@/utils/recoveryStatus';
@@ -73,6 +73,11 @@ function formatSleepDuration(valueInMinutes: number) {
 }
 
 const ALL_METRIC_CHART_META: Partial<Record<MetricId, MetricMeta>> = {
+  calories: {
+    unit: 'kcal',
+    showPeriodAverage: true,
+    accentColor: colors => colors.primary,
+  },
   glycemic_index: {
     metricNameKey: 'metrics:glycemic_index.name',
     unit: 'GI',

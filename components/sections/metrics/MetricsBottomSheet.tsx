@@ -4,6 +4,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 
+import { canEditMetric, getMetricSyncKey } from '@/app/context/storage/metrics/metricProvenance';
 import { MetricEntry } from '@/app/context/storage/metrics/metricTypes';
 import { useStorage } from '@/app/context/StorageContext';
 import { RegisterMetricBottomSheet } from '@/components/RegisterMetricBottomSheet';
@@ -108,6 +109,7 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
   };
 
   const handleEditMetricEntry = (entry: MetricEntry) => {
+    if (!canEditMetric(entry)) return;
     setEditingEntry(entry);
     setMetricDraftId(entry.metricId);
     setMetricValue(String(entry.value));
@@ -126,6 +128,7 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
       return prev.filter(current => {
         if (
           !removed &&
+          getMetricSyncKey(current) === getMetricSyncKey(entry) &&
           current.metricId === entry.metricId &&
           current.recordedAt === entry.recordedAt &&
           current.value === entry.value &&

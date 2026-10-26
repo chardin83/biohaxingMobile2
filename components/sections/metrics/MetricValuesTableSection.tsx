@@ -3,6 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
+import { canEditMetric, getMetricOrigin, getMetricSyncKey, isImportedMetric } from '@/app/context/storage/metrics/metricProvenance';
 import type { MetricEntry } from '@/app/context/storage/metrics/metricTypes';
 import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
@@ -118,8 +119,8 @@ export function MetricValuesTableSection({
   const addSleepBatchButtonTitle = t('metricValuesTableSection.addSleepBatchButton');
   const renderEntry = ({ item: entry, index }: { item: MetricValueEntry; index: number }) => (
     <SwipeableRow
-      key={`${entry.metricId}-${entry.recordedAt}-${entry.value}`}
-      onEdit={onEditEntry ? () => onEditEntry(entry) : undefined}
+      key={`${getMetricSyncKey(entry)}-${entry.value}`}
+      onEdit={onEditEntry && canEditMetric(entry) ? () => onEditEntry(entry) : undefined}
       onDelete={onDeleteEntry ? () => onDeleteEntry(entry) : undefined}
       containerStyle={styles.swipeRowContent}
     >
@@ -136,11 +137,21 @@ export function MetricValuesTableSection({
           {formatMetricValue(entry)}
         </ThemedText>
         <ThemedText style={styles.tableCellLarge} type="caption">
-          {entry.notes || ''}
+          {isImportedMetric(entry)
+            ? `${t(`metrics:origins.${getMetricOrigin(entry)}`)} · ${
+                entry.provenanceVersion === 1
+                  ? [
+                      ...new Set((entry.sourceRecords?.length ? entry.sourceRecords : [entry]).map(record => record.sourceName ?? record.sourceId ?? t('metrics:unknownOriginalSource'))),
+                    ].join(', ')
+                  : t('metrics:unknownOriginalSource')
+              }`
+            : [t(`metrics:origins.${getMetricOrigin(entry)}`), entry.notes].filter(Boolean).join(' · ')}
         </ThemedText>
-        {(onEditEntry || onDeleteEntry) && <ThemedText type="default" style={[styles.icon, { color: colors.textLight || '#888' }]}>
-          ⋮
-        </ThemedText>}
+        {(onEditEntry || onDeleteEntry) && (
+          <ThemedText type="default" style={[styles.icon, { color: colors.textLight || '#888' }]}>
+            ⋮
+          </ThemedText>
+        )}
       </View>
     </SwipeableRow>
   );
@@ -154,7 +165,7 @@ export function MetricValuesTableSection({
         ListFooterComponent={
           count < entries.length ? <ActivityIndicator accessibilityRole="progressbar" color={colors.primary} style={styles.loadingIndicator} /> : null
         }
-        keyExtractor={(entry: MetricValueEntry) => `${entry.metricId}-${entry.recordedAt}-${entry.value}`}
+        keyExtractor={(entry: MetricValueEntry) => `${getMetricSyncKey(entry)}-${entry.value}`}
         renderItem={renderEntry}
         initialNumToRender={12}
         maxToRenderPerBatch={12}
