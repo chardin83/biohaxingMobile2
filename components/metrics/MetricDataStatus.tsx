@@ -25,8 +25,8 @@ export function MetricDataStatus({ recordedAt, hasPermission }: MetricDataStatus
 
     return (
       <View style={styles.warningContainer}>
-        <IconSymbol name="warning" size={16} color={colors.gold} style={styles.warningIcon} />
-        <ThemedText type="pill" style={{ color: colors.gold }}>
+        <IconSymbol name="warning" size={16} color={colors.warning} style={styles.warningIcon} />
+        <ThemedText type="pill" style={{ color: colors.warning }}>
           {new Date(recordedAt).toLocaleDateString(undefined, {
             day: 'numeric',
             month: 'short',
@@ -41,8 +41,8 @@ export function MetricDataStatus({ recordedAt, hasPermission }: MetricDataStatus
       <View style={styles.missingContainer}>
         <ThemedText type="title2">—</ThemedText>
         <View style={styles.warningContainer}>
-          <IconSymbol name="warning" size={16} color={colors.gold} style={styles.warningIcon} />
-          <ThemedText type="pill" style={{ color: colors.gold }}>
+          <IconSymbol name="warning" size={16} color={colors.warning} style={styles.warningIcon} />
+          <ThemedText type="pill" style={{ color: colors.warning }}>
             {t('metrics:warnings.missing_permission')}
           </ThemedText>
         </View>

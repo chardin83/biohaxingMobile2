@@ -28,6 +28,7 @@ export const Colors = {
     borderLight: 'rgba(233, 7, 14, 0.08)',
     progressBar: '#FFB300',
     icon: '#FFB300',
+    intenseActivity: '#FFB300',
     iconBackground: '#FFF3DD',
     iconBorder: 'rgba(233, 7, 14, 0.08)',
 
@@ -212,6 +213,7 @@ export const Colors = {
     modalBackground: '#122033',
     tint: tintColorDark,
     icon: '#2fe0c5',
+    intenseActivity: '#FFD764',
     iconBackground: '#0f2f33',
     iconBorder: 'rgba(47, 224, 197, 0.35)',
     //tabIconDefault: '#9BA1A6',
