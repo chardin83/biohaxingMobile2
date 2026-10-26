@@ -1,5 +1,6 @@
 import { getUserProfile } from '@/app/context/storage/userProfile/userProfileStore';
 import type { MetricId } from '@/locales/metrics';
+import { calculateWorkoutIntensity } from '@/utils/trainingIntensity';
 
 import { selectMetricSource, selectMetricSourcesByDay } from './metricSourcePriority';
 import { normalizeSleep, type SleepInterval, type SleepState } from './normalizeSleep';
@@ -14,6 +15,7 @@ import {
   VO2MaxSummary,
   WearableAdapter,
   WearablePermission,
+  WorkoutSession,
 } from './types';
 import { healthKitWorkoutType } from './workoutTypes';
 
@@ -609,7 +611,7 @@ export class HealthKitAdapter implements WearableAdapter {
         const day = getDay(end);
         day.activeMinutes = (day.activeMinutes ?? 0) + activeMinutes;
         const workoutProvenance = healthKitProvenance(workout);
-        day.workouts = [...(day.workouts ?? []), {
+        const importedWorkout: WorkoutSession = {
           source: 'healthkit',
           ...workoutProvenance,
           startTime: start,
@@ -618,7 +620,8 @@ export class HealthKitAdapter implements WearableAdapter {
           activityName: workout.activityName,
           // react-native-health's getSamples workout query returns miles.
           distanceKm: typeof workout.distance === 'number' && Number.isFinite(workout.distance) && workout.distance >= 0 ? workout.distance * 1.609344 : undefined,
-        }];
+        };
+        day.workouts = [...(day.workouts ?? []), importedWorkout];
         day.activeProvenance = aggregateProvenance([...(day.activeProvenance ? [day.activeProvenance] : []), workoutProvenance]);
         if (!maxHeartRate) {
           continue;
@@ -633,8 +636,13 @@ export class HealthKitAdapter implements WearableAdapter {
           'intensity_minutes'
         );
         const intensityHrThreshold = maxHeartRate * 0.7;
-        const intenseMinutes = this.calculateIntenseMinutes(sessionHeartRates, start, end, intensityHrThreshold);
-        day.intensityMinutes = (day.intensityMinutes ?? 0) + intenseMinutes;
+        const workoutIntensity = calculateWorkoutIntensity(sessionHeartRates.map(sample => ({
+          time: Date.parse(sample.startDate ?? sample.endDate ?? ''), value: Number(sample.value),
+        })), start, end, intensityHrThreshold);
+        if (workoutIntensity) {
+          Object.assign(importedWorkout, workoutIntensity);
+          day.intensityMinutes = (day.intensityMinutes ?? 0) + workoutIntensity.intensityMinutes;
+        }
         const intensityProvenance = aggregateProvenance([
           workoutProvenance,
           ...sessionHeartRates
@@ -724,52 +732,6 @@ export class HealthKitAdapter implements WearableAdapter {
         }
       );
     });
-  }
-
-  private calculateIntenseMinutes(samples: RawHeartRateSample[], workoutStart: string, workoutEnd: string, threshold: number): number {
-    const workoutStartMs = new Date(workoutStart).getTime();
-    const workoutEndMs = new Date(workoutEnd).getTime();
-    if (Number.isNaN(workoutStartMs) || Number.isNaN(workoutEndMs) || workoutEndMs <= workoutStartMs) {
-      return 0;
-    }
-    const maxGapMs = 10 * 60 * 1000;
-    const workoutSamples = samples
-      .map(sample => {
-        const recordedAt = sample.startDate ?? sample.endDate;
-        return {
-          time: recordedAt ? new Date(recordedAt).getTime() : Number.NaN,
-          value: Number(sample.value),
-        };
-      })
-      .filter(sample => Number.isFinite(sample.time) && Number.isFinite(sample.value) && sample.time >= workoutStartMs && sample.time <= workoutEndMs)
-      .sort((left, right) => left.time - right.time);
-    if (workoutSamples.length < 2) {
-      return 0;
-    }
-    let intenseMs = 0;
-    for (let i = 0; i < workoutSamples.length - 1; i++) {
-      const current = workoutSamples[i];
-      const next = workoutSamples[i + 1];
-      const durationMs = next.time - current.time;
-      if (durationMs <= 0 || durationMs > maxGapMs) {
-        continue;
-      }
-      if (current.value >= threshold && next.value >= threshold) {
-        intenseMs += durationMs;
-        continue;
-      }
-      if (current.value < threshold && next.value < threshold) {
-        continue;
-      }
-      const fraction = (threshold - current.value) / (next.value - current.value);
-      const crossingTime = current.time + durationMs * fraction;
-      if (current.value < threshold) {
-        intenseMs += next.time - crossingTime;
-      } else {
-        intenseMs += crossingTime - current.time;
-      }
-    }
-    return intenseMs / 60000;
   }
 
   private getLastIntenseExerciseAt(samples: RawHeartRateSample[], workoutStart: string, workoutEnd: string, threshold: number): string | undefined {

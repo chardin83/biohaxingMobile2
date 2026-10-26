@@ -34,7 +34,7 @@ import { type NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import { VerdictValue } from '@/types/verdict';
 import { buildGlycemicIndexMetrics } from '@/utils/glycemicIndexMetrics';
 import { buildCalorieMetrics } from '@/utils/nutritionMetrics';
-import { buildActiveMinutesMetrics } from '@/utils/trainingMetrics';
+import { buildActiveMinutesMetrics, buildIntensityMinutesMetrics } from '@/utils/trainingMetrics';
 import { reconcileSyncedMetrics } from '@/wearables/reconcileSyncedMetrics';
 import { refreshRecoveryAfterMetricChanges } from '@/wearables/recoveryMetrics';
 import { useWearable } from '@/wearables/wearableProvider';
@@ -944,11 +944,12 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
   const combinedMetricEntries = useMemo(
     () => [
       ...metricEntriesState.filter(entry => metricDefinitions[entry.metricId]?.source === 'metrics' || (
-        entry.metricId === 'active_minutes' && dailyTrainingTrackingState[entry.recordedAt.slice(0, 10)] === undefined
+        (entry.metricId === 'active_minutes' || entry.metricId === 'intensity_minutes') && dailyTrainingTrackingState[entry.recordedAt.slice(0, 10)] === undefined
       )),
       ...buildGlycemicIndexMetrics(dailyNutritionTrackingState),
       ...buildCalorieMetrics(dailyNutritionTrackingState),
       ...buildActiveMinutesMetrics(dailyTrainingTrackingState),
+      ...buildIntensityMinutesMetrics(dailyTrainingTrackingState),
     ],
     [metricEntriesState, dailyNutritionTrackingState, dailyTrainingTrackingState]
   );

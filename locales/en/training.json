@@ -4,6 +4,7 @@
   "trainingTypeRunning": "Running",
   "trainingTypeGym": "Gym",
   "trainingTypeCycling": "Cycling",
+  "trainingIntenseMinutes": "{{value}} intense min",
   "trainingTypeOther": "Other workout",
   "trainingTypeWalking": "Walking",
   "trainingDurationLabel": "Time (minutes)",

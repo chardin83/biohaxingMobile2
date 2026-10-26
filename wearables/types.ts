@@ -1,5 +1,5 @@
 import type { SampleProvenance } from '@/app/context/storage/metrics/metricTypes';
-import type { TrainingActivityType } from '@/types/training';
+import type { TrainingActivityType, TrainingIntensityInterval } from '@/types/training';
 
 export type SourceId = 'none' | 'mock' | 'garmin' | 'fitbit' | 'healthkit' | 'healthconnect';
 
@@ -52,6 +52,8 @@ export type WorkoutSession = SampleProvenance & {
   activityType: TrainingActivityType;
   activityName?: string;
   distanceKm?: number;
+  intensityMinutes?: number;
+  intensityIntervals?: TrainingIntensityInterval[];
 };
 
 export type DailyActivity = SampleProvenance & {

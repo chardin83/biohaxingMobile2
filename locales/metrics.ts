@@ -577,7 +577,7 @@ export const metrics = {
     nameKey: 'intensityMinutes.name',
     descriptionKey: 'intensityMinutes.description',
     canonicalUnit: 'min',
-    source: 'metrics',
+    source: 'training',
     suggestedFrequency: 'daily',
     units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },

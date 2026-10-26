@@ -10,6 +10,7 @@ import {
 } from 'react-native-health-connect';
 
 import { getUserProfile } from '@/app/context/storage/userProfile/userProfileStore';
+import { calculateWorkoutIntensity } from '@/utils/trainingIntensity';
 
 import { selectMetricSource, selectMetricSourcesByDay } from './metricSourcePriority';
 import { getSleepEpisodes, normalizeSleep, type SleepInterval, type SleepState } from './normalizeSleep';
@@ -24,6 +25,7 @@ import {
   VO2MaxSummary,
   WearableAdapter,
   WearablePermission,
+  WorkoutSession,
 } from './types';
 import { healthConnectWorkoutType } from './workoutTypes';
 
@@ -449,14 +451,15 @@ export class HealthConnectAdapter implements WearableAdapter {
         const day = getDay(session.endTime);
         day.activeMinutes = (day.activeMinutes ?? 0) + activeMinutes;
         const sessionProvenance = healthConnectProvenance(session);
-        day.workouts = [...(day.workouts ?? []), {
+        const importedWorkout: WorkoutSession = {
           source: 'healthconnect',
           ...sessionProvenance,
           startTime: session.startTime,
           endTime: session.endTime,
           activityType: healthConnectWorkoutType(session.exerciseType),
           activityName: session.title,
-        }];
+        };
+        day.workouts = [...(day.workouts ?? []), importedWorkout];
         day.activeProvenance = aggregateProvenance([...(day.activeProvenance ? [day.activeProvenance] : []), sessionProvenance]);
         if (!maxHeartRate) {
           continue;
@@ -468,9 +471,12 @@ export class HealthConnectAdapter implements WearableAdapter {
           'intensity_minutes'
         );
         const threshold = maxHeartRate * 0.7;
-        const intenseMinutes = this.calculateIntenseMinutes(sessionHeartRates, session.startTime, session.endTime, threshold);
+        const workoutIntensity = calculateWorkoutIntensity(sessionHeartRates, session.startTime, session.endTime, threshold);
         const lastIntenseExerciseAt = this.getLastIntenseExerciseAt(sessionHeartRates, session.startTime, session.endTime, threshold);
-        day.intensityMinutes = (day.intensityMinutes ?? 0) + intenseMinutes;
+        if (workoutIntensity) {
+          Object.assign(importedWorkout, workoutIntensity);
+          day.intensityMinutes = (day.intensityMinutes ?? 0) + workoutIntensity.intensityMinutes;
+        }
         const intensityProvenance = aggregateProvenance([
           sessionProvenance,
           ...sessionHeartRates
@@ -530,45 +536,6 @@ export class HealthConnectAdapter implements WearableAdapter {
         provenance: healthConnectProvenance(record),
       }))
     );
-  }
-
-  private calculateIntenseMinutes(samples: Array<{ time: number; value: number }>, workoutStart: string, workoutEnd: string, threshold: number): number {
-    const workoutStartMs = new Date(workoutStart).getTime();
-    const workoutEndMs = new Date(workoutEnd).getTime();
-    if (Number.isNaN(workoutStartMs) || Number.isNaN(workoutEndMs) || workoutEndMs <= workoutStartMs) {
-      return 0;
-    }
-    const maxGapMs = 10 * 60 * 1000;
-    const workoutSamples = samples
-      .filter(sample => Number.isFinite(sample.time) && Number.isFinite(sample.value) && sample.time >= workoutStartMs && sample.time <= workoutEndMs)
-      .sort((left, right) => left.time - right.time);
-    if (workoutSamples.length < 2) {
-      return 0;
-    }
-    let intenseMs = 0;
-    for (let i = 0; i < workoutSamples.length - 1; i++) {
-      const current = workoutSamples[i];
-      const next = workoutSamples[i + 1];
-      const durationMs = next.time - current.time;
-      if (durationMs <= 0 || durationMs > maxGapMs) {
-        continue;
-      }
-      if (current.value >= threshold && next.value >= threshold) {
-        intenseMs += durationMs;
-        continue;
-      }
-      if (current.value < threshold && next.value < threshold) {
-        continue;
-      }
-      const fraction = (threshold - current.value) / (next.value - current.value);
-      const crossingTime = current.time + durationMs * fraction;
-      if (current.value < threshold) {
-        intenseMs += next.time - crossingTime;
-      } else {
-        intenseMs += crossingTime - current.time;
-      }
-    }
-    return intenseMs / 60000;
   }
 
   private getLastIntenseExerciseAt(

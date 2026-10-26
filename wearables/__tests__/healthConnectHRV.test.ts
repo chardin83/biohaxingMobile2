@@ -93,3 +93,19 @@ it('imports workout sessions from all pages with original source and activity ty
   expect(result[0].activeMinutes).toBe(90);
   expect(readRecords).toHaveBeenLastCalledWith('ExerciseSession', expect.objectContaining({ pageToken: 'workouts-next' }));
 });
+
+it('attaches measured intensity to the Health Connect workout', async () => {
+  const { getUserProfile } = require('@/app/context/storage/userProfile/userProfileStore');
+  getUserProfile.mockResolvedValue({ maxHeartRate: 200 });
+  const adapter = new HealthConnectAdapter();
+  jest.mocked(readRecords).mockResolvedValueOnce({ records: [] } as any);
+  jest.spyOn(adapter as any, 'getExerciseSessions').mockResolvedValue([
+    { exerciseType: 56, startTime: '2026-10-20T10:00:00Z', endTime: '2026-10-20T11:00:00Z', metadata: { id: 'pulse-run', dataOrigin: 'com.garmin.connect' } },
+  ]);
+  jest.spyOn(adapter as any, 'getHeartRateSamples').mockResolvedValue([
+    { time: Date.parse('2026-10-20T10:00:00Z'), value: 150, provenance: { sourceId: 'com.garmin.connect' } },
+    { time: Date.parse('2026-10-20T10:10:00Z'), value: 150, provenance: { sourceId: 'com.garmin.connect' } },
+  ]);
+  const result = await adapter.getDailyActivity({ start: '2026-10-20T00:00:00Z', end: '2026-10-21T00:00:00Z' });
+  expect(result[0].workouts?.[0]).toMatchObject({ intensityMinutes: 10, intensityIntervals: [{ startTime: '2026-10-20T10:00:00.000Z', endTime: '2026-10-20T10:10:00.000Z' }] });
+});

@@ -43,3 +43,22 @@ it('exposes the original workout and converts the native distance in miles to ki
   const result = await adapter.getDailyActivity({ start: '2026-10-20T00:00:00Z', end: '2026-10-21T00:00:00Z' });
   expect(result[0].workouts?.[0]).toMatchObject({ source: 'healthkit', sourceRecordId: 'run', sourceName: 'Garmin', activityType: 'running', startTime: '2026-10-20T10:00:00Z', distanceKm: 8.04672 });
 });
+
+it('attaches pulse-based intensity to the imported workout and leaves missing pulse data unknown', async () => {
+  const { getUserProfile } = require('@/app/context/storage/userProfile/userProfileStore');
+  getUserProfile.mockResolvedValue({ maxHeartRate: 200 });
+  const adapter = new HealthKitAdapter();
+  jest.spyOn(adapter as any, 'getDailyStepCounts').mockResolvedValue([]);
+  const pulse = jest.spyOn(adapter as any, 'getHeartRateSamples').mockResolvedValue([
+    { startDate: '2026-10-20T10:00:00Z', value: 150, sourceId: 'com.apple.health' },
+    { startDate: '2026-10-20T10:10:00Z', value: 150, sourceId: 'com.apple.health' },
+  ]);
+  jest.spyOn(adapter as any, 'getWorkoutSamples').mockResolvedValue([
+    { id: 'pulse-run', activityName: 'Running', start: '2026-10-20T10:00:00Z', end: '2026-10-20T11:00:00Z' },
+  ]);
+  const range = { start: '2026-10-20T00:00:00Z', end: '2026-10-21T00:00:00Z' };
+  const result = await adapter.getDailyActivity(range);
+  expect(result[0].workouts?.[0]).toMatchObject({ intensityMinutes: 10, intensityIntervals: [{ startTime: '2026-10-20T10:00:00.000Z', endTime: '2026-10-20T10:10:00.000Z' }] });
+  pulse.mockResolvedValue([]);
+  expect((await adapter.getDailyActivity(range))[0].workouts?.[0].intensityMinutes).toBeUndefined();
+});

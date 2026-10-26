@@ -290,7 +290,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
       ),
 
     ...activity
-      .filter(entry => typeof entry.intensityMinutes === 'number')
+      .filter(entry => typeof entry.intensityMinutes === 'number' && !upsertTrainingEntries)
       .map(
         entry =>
           ({

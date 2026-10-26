@@ -248,7 +248,7 @@
     },
     "intensityMinutes": {
         "name": "Intensity minutes",
-        "description": "Total minutes of high-intensity physical activity. Includes all intensity levels.",
+        "description": "Heart-rate-based time during logged workouts at or above 70% of your specified maximum heart rate. Workouts without sufficient heart-rate data have no value. Overlapping intervals are counted only once.",
         "shortName": "Intensity min",
         "missingMaxHeartRate": "Max heart rate missing"
     },

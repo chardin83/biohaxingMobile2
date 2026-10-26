@@ -1,4 +1,4 @@
-import type { TrainingActivityType, TrainingIntensity } from '@/types/training';
+import type { TrainingActivityType, TrainingIntensity, TrainingIntensityInterval } from '@/types/training';
 
 import type { SampleProvenance } from '../metrics/metricTypes';
 import type { DailyTracking } from '../types/trackingTypes';
@@ -14,6 +14,8 @@ export type TrainingLogEntry = SampleProvenance & {
   durationMinutes: number;
   distanceKm?: number;
   intensity?: TrainingIntensity;
+  intensityMinutes?: number;
+  intensityIntervals?: TrainingIntensityInterval[];
   notes?: string;
   createdAt: string;
 };
