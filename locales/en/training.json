@@ -4,6 +4,7 @@
   "trainingTypeRunning": "Running",
   "trainingTypeGym": "Gym",
   "trainingTypeCycling": "Cycling",
+  "trainingTypeOther": "Other workout",
   "trainingTypeWalking": "Walking",
   "trainingDurationLabel": "Time (minutes)",
   "trainingDurationPlaceholder": "Enter minutes",

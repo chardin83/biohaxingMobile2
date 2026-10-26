@@ -34,6 +34,7 @@ import { type NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import { VerdictValue } from '@/types/verdict';
 import { buildGlycemicIndexMetrics } from '@/utils/glycemicIndexMetrics';
 import { buildCalorieMetrics } from '@/utils/nutritionMetrics';
+import { buildActiveMinutesMetrics } from '@/utils/trainingMetrics';
 import { reconcileSyncedMetrics } from '@/wearables/reconcileSyncedMetrics';
 import { refreshRecoveryAfterMetricChanges } from '@/wearables/recoveryMetrics';
 import { useWearable } from '@/wearables/wearableProvider';
@@ -96,6 +97,7 @@ import {
   saveCustomSupplements,
   saveTakenDates,
 } from './storage/supplements/supplementStorage';
+import { mergeImportedTraining, rememberDeletedTraining } from './storage/training/trainingImport';
 import {
   addTrainingEntryToTracking,
   getTrainingStorage,
@@ -202,6 +204,7 @@ interface StorageContextType extends LifeStyleStorageValue {
     updater: Record<string, TrainingPlanSettings> | ((prev: Record<string, TrainingPlanSettings>) => Record<string, TrainingPlanSettings>)
   ) => void;
   dailyTrainingTracking: DailyTrainingTracking;
+  upsertTrainingEntries: (entries: TrainingLogEntry[]) => void;
   addTrainingEntry: (entry: TrainingLogInput) => TrainingLogEntry;
   updateTrainingEntry: (dateKey: string, entryId: string, updates: Partial<TrainingLogInput>) => void;
   removeTrainingEntry: (dateKey: string, entryId: string) => void;
@@ -762,6 +765,10 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     });
   }, []);
 
+  const upsertTrainingEntries = useCallback((entries: TrainingLogEntry[]) => {
+    setDailyTrainingTracking(previous => mergeImportedTraining(previous, entries));
+  }, [setDailyTrainingTracking]);
+
   const addTrainingEntry = useCallback(
     (entry: TrainingLogInput): TrainingLogEntry => {
       const nextEntry: TrainingLogEntry = {
@@ -786,13 +793,22 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
 
   const removeTrainingEntry = useCallback(
     (dateKey: string, entryId: string) => {
-      setDailyTrainingTracking(prev => removeTrainingEntryFromTracking(prev, dateKey, entryId));
+      setDailyTrainingTracking(prev => {
+        const entry = prev[dateKey]?.find(item => item.id === entryId);
+        if (entry) rememberDeletedTraining(entry).catch(console.error);
+        const updated = removeTrainingEntryFromTracking(prev, dateKey, entryId);
+        // Retain the known empty day so legacy daily metrics do not reappear.
+        return entry && !updated[dateKey] ? { ...updated, [dateKey]: [] } : updated;
+      });
     },
     [setDailyTrainingTracking]
   );
 
   const clearDailyTrainingTracking = useCallback(() => {
-    setDailyTrainingTracking({});
+    setDailyTrainingTracking(previous => {
+      Object.values(previous).flat().forEach(entry => rememberDeletedTraining(entry).catch(console.error));
+      return Object.fromEntries(Object.keys(previous).map(date => [date, []]));
+    });
   }, [setDailyTrainingTracking]);
 
   /*
@@ -925,18 +941,21 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     [setMetricEntries]
   );
 
-  const metricEntriesWithNutrition = useMemo(
+  const combinedMetricEntries = useMemo(
     () => [
-      ...metricEntriesState.filter(entry => metricDefinitions[entry.metricId]?.source === 'metrics'),
+      ...metricEntriesState.filter(entry => metricDefinitions[entry.metricId]?.source === 'metrics' || (
+        entry.metricId === 'active_minutes' && dailyTrainingTrackingState[entry.recordedAt.slice(0, 10)] === undefined
+      )),
       ...buildGlycemicIndexMetrics(dailyNutritionTrackingState),
       ...buildCalorieMetrics(dailyNutritionTrackingState),
+      ...buildActiveMinutesMetrics(dailyTrainingTrackingState),
     ],
-    [metricEntriesState, dailyNutritionTrackingState]
+    [metricEntriesState, dailyNutritionTrackingState, dailyTrainingTrackingState]
   );
 
   const getMetricHistory = useCallback(
-    (metricId: MetricId): MetricEntry[] => metricEntriesWithNutrition.filter(entry => entry.metricId === metricId),
-    [metricEntriesWithNutrition]
+    (metricId: MetricId): MetricEntry[] => combinedMetricEntries.filter(entry => entry.metricId === metricId),
+    [combinedMetricEntries]
   );
 
   const clearMetricEntries = useCallback(() => {
@@ -1399,6 +1418,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       trainingPlanSettings: trainingPlanSettingsState,
       setTrainingPlanSettings,
       dailyTrainingTracking: dailyTrainingTrackingState,
+      upsertTrainingEntries,
       addTrainingEntry,
       updateTrainingEntry,
       removeTrainingEntry,
@@ -1412,7 +1432,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       setShowMusic,
       tempPlans,
       setTempPlans,
-      metricEntries: metricEntriesWithNutrition,
+      metricEntries: combinedMetricEntries,
       setMetricEntries,
       addMetricEntry,
       upsertMetricEntries,
@@ -1433,7 +1453,7 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
     }),
     // prettier-ignore
     [lifeStyle, plansState, setPlans, saveSupplementToPlan, archivedPlansState, hasVisitedChatState, shareInterestsState, shareArchivedPlansState, shareHealthPlanState, profileSharingState, takenDatesState, customSupplementsState, clearSupplementTakenDates, clearSupplementCustom, myAreasState, errorMessage, hasCompletedOnboardingState, onboardingStepState, isInitialized, userProfileInitialized, hasProcessedAutomaticHabits, hasCompletedInitialSync, isSyncing, newAutomaticHabitGoals, myXPState, setMyXP, clearNutritionXP, clearEducationXP, xpBreakdownState, myLevelState, levelUpModalVisible, newLevelReached, viewedTipsState, setViewedTips, claimTipReadingXP, claimTipAreaXP, recordTipView, incrementTipChat, addChatMessageXP, setTipVerdict, claimNutritionTipCompletionXP, nutritionXpClaimsState,
-      dailyNutritionTrackingState, addNutritionEntry, updateNutritionEntry, removeNutritionEntry, clearDailyNutritionTracking, weeklyNutritionTrackingState, setWeeklyNutritionTracking, dailyDrinkTrackingState, addDrinkEntry, updateDrinkEntry, removeDrinkEntry, clearDailyDrinkTracking, trainingPlanSettingsState, setTrainingPlanSettings, dailyTrainingTrackingState, addTrainingEntry, updateTrainingEntry, removeTrainingEntry, clearDailyTrainingTracking, dailyHabitTrackingState, addHabitEntry, updateHabitEntry, removeHabitEntry, clearDailyHabitTracking, showMusicState, setShowMusic, tempPlans, setTempPlans, metricEntriesWithNutrition, addMetricEntry, upsertMetricEntries, setMetricEntries, getMetricHistory, clearMetricEntries, healthSyncEnabledState, setHealthSyncEnabled, hasConnectedAppleHealthState, markAppleHealthConnected, hideHealthSyncPromptState, setHideHealthSyncPrompt, hideBarcodeInfoState, setHideBarcodeInfo, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
+      dailyNutritionTrackingState, addNutritionEntry, updateNutritionEntry, removeNutritionEntry, clearDailyNutritionTracking, weeklyNutritionTrackingState, setWeeklyNutritionTracking, dailyDrinkTrackingState, addDrinkEntry, updateDrinkEntry, removeDrinkEntry, clearDailyDrinkTracking, trainingPlanSettingsState, setTrainingPlanSettings, dailyTrainingTrackingState, upsertTrainingEntries, addTrainingEntry, updateTrainingEntry, removeTrainingEntry, clearDailyTrainingTracking, dailyHabitTrackingState, addHabitEntry, updateHabitEntry, removeHabitEntry, clearDailyHabitTracking, showMusicState, setShowMusic, tempPlans, setTempPlans, combinedMetricEntries, addMetricEntry, upsertMetricEntries, setMetricEntries, getMetricHistory, clearMetricEntries, healthSyncEnabledState, setHealthSyncEnabled, hasConnectedAppleHealthState, markAppleHealthConnected, hideHealthSyncPromptState, setHideHealthSyncPrompt, hideBarcodeInfoState, setHideBarcodeInfo, userProfileState, saveUserProfile, updateUserProfile, clearUserProfile]
   );
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

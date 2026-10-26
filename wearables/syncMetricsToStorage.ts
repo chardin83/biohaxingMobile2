@@ -1,6 +1,8 @@
 import { isDeletedSyncedMetric, loadDeletedMetricKeys } from '@/app/context/storage/metrics/deletedMetricStorage';
 import { getAllMetricEntries } from '@/app/context/storage/metrics/metricStorage';
 import { MetricEntry } from '@/app/context/storage/metrics/metricTypes';
+import { loadDeletedTrainingKeys, workoutToTrainingEntry } from '@/app/context/storage/training/trainingImport';
+import type { TrainingLogEntry } from '@/app/context/storage/training/trainingTypes';
 import { getUserProfile } from '@/app/context/storage/userProfile/userProfileStore';
 import { ClockTime } from '@/types/ClockTime';
 
@@ -90,9 +92,11 @@ function getMinutesBeforeBedtime(lastIntenseExerciseAt: string, bedtime: ClockTi
   return Math.round((bedtimeAt.getTime() - intenseAt.getTime()) / 60000);
 }
 
-export async function syncWearableMetricsToStorage(adapter: WearableAdapter, upsertMetricEntries: UpsertMetricEntries, lookbackDays = 30) {
+export async function syncWearableMetricsToStorage(adapter: WearableAdapter, upsertMetricEntries: UpsertMetricEntries, lookbackDays = 30, upsertTrainingEntries?: (entries: TrainingLogEntry[]) => void) {
+  const start = new Date(Date.now() - lookbackDays * 24 * 60 * 60 * 1000);
+  start.setHours(0, 0, 0, 0);
   const range = {
-    start: new Date(Date.now() - lookbackDays * 24 * 60 * 60 * 1000).toISOString(),
+    start: start.toISOString(),
     end: new Date().toISOString(),
   };
 
@@ -134,6 +138,12 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
       2
     )
   );*/
+
+  if (upsertTrainingEntries) {
+    await loadDeletedTrainingKeys();
+    const workouts = activity.flatMap(day => day.workouts ?? []).map(workoutToTrainingEntry).filter((entry): entry is TrainingLogEntry => entry !== undefined);
+    upsertTrainingEntries(workouts);
+  }
 
   const notesLabel = adapter.source === 'healthkit' ? 'AppleHealth' : 'HealthConnect';
 
@@ -266,7 +276,7 @@ export async function syncWearableMetricsToStorage(adapter: WearableAdapter, ups
       }),
 
     ...activity
-      .filter(entry => typeof entry.activeMinutes === 'number')
+      .filter(entry => typeof entry.activeMinutes === 'number' && !upsertTrainingEntries)
       .map(
         entry =>
           ({

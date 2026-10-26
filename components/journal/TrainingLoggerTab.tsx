@@ -3,6 +3,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { isImportedTraining } from '@/app/context/storage/training/trainingImport';
 import { useStorage } from '@/app/context/StorageContext';
 import { type TrainingActivityType, type TrainingIntensity } from '@/types/training';
 import { DEFAULT_TRAINING_ACTIVITY, TRAINING_ACTIVITY_OPTIONS } from '@/types/trainingActivityOptions';
@@ -153,14 +154,14 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
     (entryId: string) => {
       const entry = dayTrainingEntries.find(item => item.id === entryId);
 
-      if (!entry) {
+      if (!entry || isImportedTraining(entry)) {
         return;
       }
 
       setSelectedTrainingType(entry.activityType);
       setDurationMinutes(String(entry.durationMinutes));
       setDistanceKm(typeof entry.distanceKm === 'number' ? String(entry.distanceKm) : '');
-      setIntensity(entry.intensity);
+      setIntensity(entry.intensity ?? 'medium');
       setTrainingNotes(entry.notes ?? '');
       setTrainingFormError(null);
       setEditingEntryId(entry.id);

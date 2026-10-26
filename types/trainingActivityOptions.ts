@@ -21,4 +21,5 @@ export const TRAINING_ACTIVITY_LABEL_KEYS: Record<TrainingActivityType, string> 
   gym: 'training:trainingTypeGym',
   cycling: 'training:trainingTypeCycling',
   walking: 'training:trainingTypeWalking',
+  other: 'training:trainingTypeOther',
 };

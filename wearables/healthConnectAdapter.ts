@@ -25,6 +25,7 @@ import {
   WearableAdapter,
   WearablePermission,
 } from './types';
+import { healthConnectWorkoutType } from './workoutTypes';
 
 const PERMISSIONS: Permission[] = [
   {
@@ -448,6 +449,14 @@ export class HealthConnectAdapter implements WearableAdapter {
         const day = getDay(session.endTime);
         day.activeMinutes = (day.activeMinutes ?? 0) + activeMinutes;
         const sessionProvenance = healthConnectProvenance(session);
+        day.workouts = [...(day.workouts ?? []), {
+          source: 'healthconnect',
+          ...sessionProvenance,
+          startTime: session.startTime,
+          endTime: session.endTime,
+          activityType: healthConnectWorkoutType(session.exerciseType),
+          activityName: session.title,
+        }];
         day.activeProvenance = aggregateProvenance([...(day.activeProvenance ? [day.activeProvenance] : []), sessionProvenance]);
         if (!maxHeartRate) {
           continue;
@@ -491,16 +500,18 @@ export class HealthConnectAdapter implements WearableAdapter {
   }
 
   private async getExerciseSessions(range: TimeRange) {
-    const result = await readRecords('ExerciseSession', {
-      timeRangeFilter: {
-        operator: 'between',
-        startTime: range.start,
-        endTime: range.end,
-      },
-      ascendingOrder: true,
-    });
-
-    return result.records;
+    const records = [];
+    let pageToken: string | undefined;
+    do {
+      const result = await readRecords('ExerciseSession', {
+        timeRangeFilter: { operator: 'between', startTime: range.start, endTime: range.end },
+        ascendingOrder: true,
+        pageToken,
+      });
+      records.push(...result.records);
+      pageToken = result.pageToken;
+    } while (pageToken);
+    return records;
   }
 
   private async getHeartRateSamples(range: TimeRange) {

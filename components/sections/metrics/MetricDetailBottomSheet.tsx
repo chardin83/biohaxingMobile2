@@ -63,9 +63,9 @@ export const MetricDetailBottomSheet: React.FC<MetricDetailBottomSheetProps> = (
           entries={registeredEntries}
           colors={colors}
           emptyText={t('metrics:trendChart.empty', { metric: t(`metrics:${selectedMetricId}.name`) })}
-          onAddPress={metrics[selectedMetricId].source === 'nutrition' ? undefined : () => onAddMetric(selectedMetricId)}
-          onEditEntry={metrics[selectedMetricId].source === 'nutrition' ? undefined : onEditEntry}
-          onDeleteEntry={metrics[selectedMetricId].source === 'nutrition' ? undefined : onDeleteEntry}
+          onAddPress={metrics[selectedMetricId].source !== 'metrics' ? undefined : () => onAddMetric(selectedMetricId)}
+          onEditEntry={metrics[selectedMetricId].source !== 'metrics' ? undefined : onEditEntry}
+          onDeleteEntry={metrics[selectedMetricId].source !== 'metrics' ? undefined : onDeleteEntry}
           registeredValuesTitle={t('common:metricValuesBottomSheet.registeredValuesTitle')}
           dateLabel={t('common:metricValuesBottomSheet.columns.date')}
           valueLabel={t('common:metricValuesBottomSheet.columns.value')}

@@ -38,7 +38,7 @@ export const calculateTrainingWeeklyProgress = ({
     const matchesActivity = !hasActivityFilter || entry.activityType === target.activityType;
 
     const matchesIntensity =
-      !hasIntensityFilter || TRAINING_INTENSITY_RANK[entry.intensity] >= TRAINING_INTENSITY_RANK[target.minimumIntensity as TrainingIntensity];
+      !hasIntensityFilter || (entry.intensity !== undefined && TRAINING_INTENSITY_RANK[entry.intensity] >= TRAINING_INTENSITY_RANK[target.minimumIntensity as TrainingIntensity]);
 
     return meetsDuration && matchesActivity && matchesIntensity;
   });

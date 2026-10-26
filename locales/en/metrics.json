@@ -1,8 +1,8 @@
 {
   "unknownOriginalSource": "Unknown original source",
   "sourceAndNotes": "Source / notes",
-  "origins": {"manual": "Manually entered", "nutrition": "Food log", "calculated": "Calculated", "healthkit": "Apple Health", "healthconnect": "Health Connect", "garmin": "Garmin", "fitbit": "Fitbit", "mock": "Testdata", "none": "—"},
-  "sources": {"title": "Data source", "metrics": "Measurements", "nutrition": "Food log"},
+  "origins": {"manual": "Manually entered", "training": "Training log", "nutrition": "Food log", "calculated": "Calculated", "healthkit": "Apple Health", "healthconnect": "Health Connect", "garmin": "Garmin", "fitbit": "Fitbit", "mock": "Testdata", "none": "—"},
+  "sources": {"title": "Data source", "metrics": "Measurements", "training": "Training log", "nutrition": "Food log"},
   "calories": {"name": "Logged calories", "description": "Total calories from food and drinks logged each day. Days without logged entries have no value. A partially logged day does not represent your total energy intake. The average line shows the mean of daily values in the selected period."},
   "aiAnalysis": {"periodDays": "{{count}} days", "followUpTitle": "Explore further", "answering": "AI is answering…", "retry": "Try again", "summary": "Analysis {{count}} days · {{metrics}}", "title": "Analyze measurements", "description": "Analyze your measurements and discover trends and possible relationships.\nThe analysis is based on the selected period and the measurements shown", "noData": "There are no measurements to analyze for this period.", "error": "Could not load the analysis. Please try again.", "analyze": "Analyze measurements", "unlock": "Unlock with Premium", "premiumOnly": "Premium only – no free analyses included"},
   "glycemic_index": {
@@ -243,7 +243,7 @@
     },
     "activeMinutes": {
         "name": "Active minutes",
-        "description": "Total minutes of physical activity.",
+        "description": "Total time from imported and manually logged workouts per day, at any intensity. Overlapping imported workouts are counted only once.",
         "shortName": "Active min"
     },
     "intensityMinutes": {

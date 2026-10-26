@@ -14,5 +14,5 @@ export type MetricEntry = SampleProvenance & {
   unit: string;
   recordedAt: string;
   notes?: string;
-  origin?: 'manual' | 'healthkit' | 'healthconnect' | 'garmin' | 'fitbit' | 'mock' | 'none' | 'nutrition' | 'calculated';
+  origin?: 'manual' | 'healthkit' | 'healthconnect' | 'garmin' | 'fitbit' | 'mock' | 'none' | 'nutrition' | 'training' | 'calculated';
 };

@@ -1,4 +1,5 @@
 import type { SampleProvenance } from '@/app/context/storage/metrics/metricTypes';
+import type { TrainingActivityType } from '@/types/training';
 
 export type SourceId = 'none' | 'mock' | 'garmin' | 'fitbit' | 'healthkit' | 'healthconnect';
 
@@ -44,9 +45,19 @@ export type VO2MaxSummary = SampleProvenance & {
   value: number;
 };
 
+export type WorkoutSession = SampleProvenance & {
+  source: 'healthkit' | 'healthconnect';
+  startTime: string;
+  endTime: string;
+  activityType: TrainingActivityType;
+  activityName?: string;
+  distanceKm?: number;
+};
+
 export type DailyActivity = SampleProvenance & {
   source: SourceId;
   date: string; // YYYY-MM-DD
+  workouts?: WorkoutSession[];
   activeProvenance?: SampleProvenance;
   intensityProvenance?: SampleProvenance;
   lastIntenseProvenance?: SampleProvenance;

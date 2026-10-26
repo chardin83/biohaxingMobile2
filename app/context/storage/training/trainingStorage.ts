@@ -1,5 +1,6 @@
 import { getStorageSize } from '../shared/storageSize';
 import { getDailyRange, getTrackingKeys, removeDailyValue, saveDailyValue } from '../shared/trackingStorage';
+import { isImportedTraining } from './trainingImport';
 import type { DailyTrainingTracking, TrainingLogEntry, TrainingStorage } from './trainingTypes';
 
 const DAILY_TRAINING_NAMESPACE = 'dailyTrainingTracking';
@@ -47,7 +48,7 @@ export const updateTrainingEntryInTracking = (
 ): DailyTrainingTracking => {
   const entries = tracking[dateKey];
 
-  if (!entries) {
+  if (!entries || entries.some(entry => entry.id === entryId && isImportedTraining(entry))) {
     return tracking;
   }
 

@@ -78,3 +78,18 @@ it('uses the activity source priority before summing workouts', async () => {
   const result = await new HealthConnectAdapter().getDailyActivity({ start: '2026-10-20T00:00:00Z', end: '2026-10-21T00:00:00Z' });
   expect(result[0]).toMatchObject({ activeMinutes: 60, activeProvenance: { sourceId: 'com.garmin.connect' } });
 });
+
+it('imports workout sessions from all pages with original source and activity type', async () => {
+  const { getUserProfile } = require('@/app/context/storage/userProfile/userProfileStore');
+  getUserProfile.mockResolvedValue({});
+  jest.mocked(readRecords).mockResolvedValueOnce({ records: [] } as any);
+  jest.mocked(readRecords).mockResolvedValueOnce({ records: [{ exerciseType: 56, startTime: '2026-10-20T10:00:00Z', endTime: '2026-10-20T11:00:00Z', metadata: { id: 'morning', dataOrigin: 'com.garmin.connect' } }], pageToken: 'workouts-next' } as any);
+  jest.mocked(readRecords).mockResolvedValueOnce({ records: [{ exerciseType: 79, startTime: '2026-10-20T16:00:00Z', endTime: '2026-10-20T16:30:00Z', metadata: { id: 'evening', dataOrigin: 'com.garmin.connect' } }] } as any);
+  const result = await new HealthConnectAdapter().getDailyActivity({ start: '2026-10-20T00:00:00Z', end: '2026-10-21T00:00:00Z' });
+  expect(result[0].workouts).toEqual([
+    expect.objectContaining({ source: 'healthconnect', sourceRecordId: 'morning', sourceId: 'com.garmin.connect', activityType: 'running' }),
+    expect.objectContaining({ sourceRecordId: 'evening', activityType: 'walking' }),
+  ]);
+  expect(result[0].activeMinutes).toBe(90);
+  expect(readRecords).toHaveBeenLastCalledWith('ExerciseSession', expect.objectContaining({ pageToken: 'workouts-next' }));
+});

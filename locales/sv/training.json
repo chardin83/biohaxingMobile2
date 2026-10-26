@@ -4,6 +4,7 @@
   "trainingTypeRunning": "Löpning",
   "trainingTypeGym": "Gym",
   "trainingTypeCycling": "Cykling",
+  "trainingTypeOther": "Övrig träning",
   "trainingTypeWalking": "Promenad",
   "trainingDurationLabel": "Tid (minuter)",
   "trainingDurationPlaceholder": "Ange minuter",

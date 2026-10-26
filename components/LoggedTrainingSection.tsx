@@ -3,6 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { isImportedTraining } from '@/app/context/storage/training/trainingImport';
 import { type TrainingLogEntry } from '@/app/context/storage/training/trainingTypes';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { TRAINING_ACTIVITY_LABEL_KEYS } from '@/types/trainingActivityOptions';
@@ -35,19 +36,24 @@ export const LoggedTrainingSection: React.FC<LoggedTrainingSectionProps> = ({ en
       <View style={styles.loggedTrainingSection}>
         <Collapsible title={`${t('training:trainingListTitle')} (${entries.length})`} titleType="default" initialCollapsed>
           {entries.map(entry => (
-            <SwipeableRow key={entry.id} onEdit={() => onEdit(entry.id)} onDelete={() => onDelete(entry.id)} containerStyle={styles.loggedTrainingSwipeContent}>
-              <TouchableOpacity style={styles.loggedTrainingPressable} onPress={() => onEdit(entry.id)} activeOpacity={0.8}>
+            <SwipeableRow key={entry.id} onEdit={isImportedTraining(entry) ? undefined : () => onEdit(entry.id)} onDelete={() => onDelete(entry.id)} containerStyle={styles.loggedTrainingSwipeContent}>
+              <TouchableOpacity style={styles.loggedTrainingPressable} onPress={isImportedTraining(entry) ? undefined : () => onEdit(entry.id)} disabled={isImportedTraining(entry)} activeOpacity={0.8}>
                 <View style={styles.loggedTrainingRow}>
                   <View style={styles.loggedTrainingMain}>
                     <ThemedText type="defaultSemiBold" style={styles.loggedTrainingName}>
-                      {formatTrainingActivity(entry.activityType)}
+                      {entry.activityType === 'other' && entry.activityName ? entry.activityName : formatTrainingActivity(entry.activityType)}
                     </ThemedText>
                     <ThemedText type="explainer" style={{ color: colors.textTertiary }}>
-                      {entry.durationMinutes} {t('training:trainingMinutesUnit')} • {formatTrainingIntensity(entry.intensity)}
+                      {Math.round(entry.durationMinutes)} {t('training:trainingMinutesUnit')}{entry.intensity ? ` • ${formatTrainingIntensity(entry.intensity)}` : ''}
                     </ThemedText>
                     {typeof entry.distanceKm === 'number' && (
                       <ThemedText type="explainer" style={{ color: colors.textTertiary }}>
-                        {entry.distanceKm} km
+                        {Number(entry.distanceKm.toFixed(2))} km
+                      </ThemedText>
+                    )}
+                    {isImportedTraining(entry) && (
+                      <ThemedText type="explainer" style={{ color: colors.textTertiary }}>
+                        {entry.sourceName ?? entry.sourceId ?? t(`metrics:origins.${entry.origin}`)}
                       </ThemedText>
                     )}
                     {entry.notes ? (

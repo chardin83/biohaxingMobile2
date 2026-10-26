@@ -32,3 +32,14 @@ it('uses Garmin activity before an overlapping Oura workout', async () => {
   const result = await adapter.getDailyActivity({ start: '2026-10-20T00:00:00Z', end: '2026-10-21T00:00:00Z' });
   expect(result[0]).toMatchObject({ activeMinutes: 60, activeProvenance: { sourceId: 'com.garmin.connect' } });
 });
+
+it('exposes the original workout and converts the native distance in miles to kilometres', async () => {
+  const adapter = new HealthKitAdapter();
+  jest.spyOn(adapter as any, 'getDailyStepCounts').mockResolvedValue([]);
+  jest.spyOn(adapter as any, 'getHeartRateSamples').mockResolvedValue([]);
+  jest.spyOn(adapter as any, 'getWorkoutSamples').mockResolvedValue([
+    { id: 'run', sourceId: 'com.garmin.connect', sourceName: 'Garmin', activityName: 'Running', distance: 5, start: '2026-10-20T10:00:00Z', end: '2026-10-20T11:00:00Z' },
+  ]);
+  const result = await adapter.getDailyActivity({ start: '2026-10-20T00:00:00Z', end: '2026-10-21T00:00:00Z' });
+  expect(result[0].workouts?.[0]).toMatchObject({ source: 'healthkit', sourceRecordId: 'run', sourceName: 'Garmin', activityType: 'running', startTime: '2026-10-20T10:00:00Z', distanceKm: 8.04672 });
+});

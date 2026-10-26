@@ -249,10 +249,10 @@ export function MetricValuesBottomSheet({
             entries={registeredEntries}
             colors={colors}
             emptyText={t('metrics:trendChart.empty', { metric: metricName ?? t(`metrics:${metricId}.name`) })}
-            onAddPress={metricId && metrics[metricId].source === 'nutrition' ? undefined : handleOpenAddMetricSheet}
+            onAddPress={metricId && metrics[metricId].source !== 'metrics' ? undefined : handleOpenAddMetricSheet}
             onAddSleepBatchPress={isSleepRelatedMetric ? handleOpenSleepBatchSheet : undefined}
-            onEditEntry={metricId && metrics[metricId].source === 'nutrition' ? undefined : handleEditEntry}
-            onDeleteEntry={metricId && metrics[metricId].source === 'nutrition' ? undefined : handleDeleteEntry}
+            onEditEntry={metricId && metrics[metricId].source !== 'metrics' ? undefined : handleEditEntry}
+            onDeleteEntry={metricId && metrics[metricId].source !== 'metrics' ? undefined : handleDeleteEntry}
             registeredValuesTitle={t('common:metricValuesBottomSheet.registeredValuesTitle')}
             dateLabel={t('common:metricValuesBottomSheet.columns.date')}
             valueLabel={t('common:metricValuesBottomSheet.columns.value')}

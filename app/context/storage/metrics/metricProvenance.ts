@@ -11,7 +11,7 @@ export function getMetricOrigin(entry: MetricEntry): NonNullable<MetricEntry['or
 }
 
 export function isImportedMetric(entry: MetricEntry) {
-  return !['manual', 'nutrition', 'calculated'].includes(getMetricOrigin(entry));
+  return !['manual', 'nutrition', 'training', 'calculated'].includes(getMetricOrigin(entry));
 }
 
 export function canEditMetric(entry: MetricEntry) {

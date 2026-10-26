@@ -15,6 +15,7 @@ import {
   WearableAdapter,
   WearablePermission,
 } from './types';
+import { healthKitWorkoutType } from './workoutTypes';
 
 type RawSourceMetadata = { id?: string; sourceId?: string; sourceName?: string };
 
@@ -96,6 +97,7 @@ type RawWorkoutSample = RawSourceMetadata & {
   duration?: number;
   activityName?: string;
   activityId?: number;
+  distance?: number;
 };
 
 type RawBloodPressureSample = RawSourceMetadata & {
@@ -607,6 +609,16 @@ export class HealthKitAdapter implements WearableAdapter {
         const day = getDay(end);
         day.activeMinutes = (day.activeMinutes ?? 0) + activeMinutes;
         const workoutProvenance = healthKitProvenance(workout);
+        day.workouts = [...(day.workouts ?? []), {
+          source: 'healthkit',
+          ...workoutProvenance,
+          startTime: start,
+          endTime: end,
+          activityType: healthKitWorkoutType(workout.activityName),
+          activityName: workout.activityName,
+          // react-native-health's getSamples workout query returns miles.
+          distanceKm: typeof workout.distance === 'number' && Number.isFinite(workout.distance) && workout.distance >= 0 ? workout.distance * 1.609344 : undefined,
+        }];
         day.activeProvenance = aggregateProvenance([...(day.activeProvenance ? [day.activeProvenance] : []), workoutProvenance]);
         if (!maxHeartRate) {
           continue;

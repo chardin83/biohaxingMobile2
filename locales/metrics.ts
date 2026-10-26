@@ -36,7 +36,7 @@ export type MetricUnit =
   | 'ml/kg/min';
 
 // Data provider for this metric, not the origin of an individual measurement.
-export type MetricSource = 'metrics' | 'nutrition';
+export type MetricSource = 'metrics' | 'nutrition' | 'training';
 
 export const METRIC_GROUPS = ['cardio', 'bloodSugar', 'nutrients', 'hormones', 'recovery', 'sleep', 'body', 'digestion', 'activity', 'energy', 'mind'] as const;
 export type MetricGroup = (typeof METRIC_GROUPS)[number];
@@ -553,7 +553,7 @@ export const metrics = {
     nameKey: 'activeMinutes.name',
     descriptionKey: 'activeMinutes.description',
     canonicalUnit: 'min',
-    source: 'metrics',
+    source: 'training',
     suggestedFrequency: 'daily',
     units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },

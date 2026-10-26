@@ -1,4 +1,4 @@
-export type TrainingActivityType = 'running' | 'gym' | 'cycling' | 'walking';
+export type TrainingActivityType = 'running' | 'gym' | 'cycling' | 'walking' | 'other';
 export type TrainingIntensity = 'low' | 'medium' | 'high';
 
 export type TrainingActivityFilter = TrainingActivityType | 'any';
