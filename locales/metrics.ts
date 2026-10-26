@@ -582,6 +582,19 @@ export const metrics = {
     units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
   },
 
+  moderate_minutes: {
+    id: 'moderate_minutes', group: 'activity', iconName: 'trainingWalking', emoji: '🚶',
+    nameKey: 'moderateMinutes.name', descriptionKey: 'moderateMinutes.description',
+    canonicalUnit: 'min', source: 'training', suggestedFrequency: 'daily',
+    units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
+  },
+  weighted_training_minutes: {
+    id: 'weighted_training_minutes', group: 'activity', iconName: 'trainingRunning', emoji: '⚖️',
+    nameKey: 'weightedTrainingMinutes.name', descriptionKey: 'weightedTrainingMinutes.description',
+    canonicalUnit: 'min', source: 'training', suggestedFrequency: 'daily',
+    units: [{ unit: 'min', system: 'all', toCanonical: { mul: 1 }, fromCanonical: { mul: 1 } }],
+  },
+
   // ---------------- SUBJECTIVE ----------------
 
   energy: {

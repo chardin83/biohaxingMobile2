@@ -46,6 +46,11 @@ export const LoggedTrainingSection: React.FC<LoggedTrainingSectionProps> = ({ en
                     <ThemedText type="explainer" style={{ color: colors.textTertiary }}>
                       {Math.round(entry.durationMinutes)} {t('training:trainingMinutesUnit')}{entry.intensity ? ` • ${formatTrainingIntensity(entry.intensity)}` : ''}
                     </ThemedText>
+                    {typeof entry.moderateMinutes === 'number' && Number.isFinite(entry.moderateMinutes) && (
+                      <ThemedText type="explainer" style={{ color: colors.textTertiary }}>
+                        {t('training:trainingModerateMinutes', { value: Math.round(entry.moderateMinutes) })}
+                      </ThemedText>
+                    )}
                     {typeof entry.intensityMinutes === 'number' && Number.isFinite(entry.intensityMinutes) && (
                       <ThemedText type="explainer" style={{ color: colors.textTertiary }}>
                         {t('training:trainingIntenseMinutes', { value: Math.round(entry.intensityMinutes) })}

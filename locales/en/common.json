@@ -1010,11 +1010,11 @@
     }
   },
   "cardioTrendsChart": {
-    "explainer": "Tap VO₂ max, resting heart rate, or training load to view their trends over time.",
+    "explainer": "Tap VO₂ max, resting heart rate, or blood pressure to view their trends over time.",
     "explainers": {
       "vo2_max": "The VO₂ max trend shows how your peak oxygen uptake develops over time. It's the gold standard for cardiovascular fitness — a rising curve is a clear sign of improvement.",
       "resting_hr": "Resting heart rate reflects cardiac efficiency at rest. A declining trend over time is a positive sign of improved cardiovascular fitness and lower stress load.",
-      "training_load": "Training load shows weekly volume of activity and intensity minutes. The reference lines at 150 and 300 help you keep load in the right zone."
+      "systolic_bp": "The blood pressure chart shows how systolic blood pressure (the upper number) changes over time."
     }
   },
   "metricValuesBottomSheet": {

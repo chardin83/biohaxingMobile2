@@ -3,6 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { CardioTrendsChart } from '@/components/metrics/CardioTrendsChart';
+import { WeeklyTrainingCard } from '@/components/metrics/WeeklyTrainingCard';
 import { ThemedText } from '@/components/ThemedText';
 import GenesListCard from '@/components/ui/GenesListCard';
 import { InformationCardLink } from '@/components/ui/InformationCardLink';
@@ -24,6 +25,8 @@ export default function CardioScreen({ mainGoalId }: Readonly<{ mainGoalId: stri
       <WearableStatus />
 
       <CardioTrendsChart />
+
+      <WeeklyTrainingCard />
 
       {/* VO2 Max explanation */}
       <InformationCardLink

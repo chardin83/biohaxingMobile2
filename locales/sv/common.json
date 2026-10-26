@@ -1010,11 +1010,11 @@
     }
   },
   "cardioTrendsChart": {
-    "explainer": "Klicka på VO₂ max, vilopuls eller träningsbelastning för att visa trender över tid.",
+    "explainer": "Klicka på VO₂ max, vilopuls eller blodtryck för att visa trender över tid.",
     "explainers": {
       "vo2_max": "VO₂ max-trenden visar hur din maximala syreupptagningsförmåga utvecklas. Det är guldstandarden för kondition – en stigande kurva är ett tydligt tecken på förbättring.",
       "resting_hr": "Vilopulsen speglar hjärtats effektivitet i vila. En sjunkande trend över tid är ett gott tecken på bättre kardiovaskulär kondition och lägre stressbelastning.",
-      "training_load": "Träningsbelastning visar veckovis volym av aktivitets- och intensitetsminuter. Referenslinjerna vid 150 och 300 hjälper dig hålla belastningen i rätt zon."
+      "systolic_bp": "Blodtrycksgrafen visar hur det systoliska blodtrycket (övertrycket) förändras över tid."
     }
   },
   "metricValuesBottomSheet": {

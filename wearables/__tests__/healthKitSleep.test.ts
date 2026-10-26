@@ -58,7 +58,7 @@ it('attaches pulse-based intensity to the imported workout and leaves missing pu
   ]);
   const range = { start: '2026-10-20T00:00:00Z', end: '2026-10-21T00:00:00Z' };
   const result = await adapter.getDailyActivity(range);
-  expect(result[0].workouts?.[0]).toMatchObject({ intensityMinutes: 10, intensityIntervals: [{ startTime: '2026-10-20T10:00:00.000Z', endTime: '2026-10-20T10:10:00.000Z' }] });
+  expect(result[0].workouts?.[0]).toMatchObject({ moderateMinutes: 0, moderateIntervals: [], intensityMinutes: 10, intensityIntervals: [{ startTime: '2026-10-20T10:00:00.000Z', endTime: '2026-10-20T10:10:00.000Z' }] });
   pulse.mockResolvedValue([]);
   expect((await adapter.getDailyActivity(range))[0].workouts?.[0].intensityMinutes).toBeUndefined();
 });

@@ -34,7 +34,7 @@ import { type NutritionTargetPeriod } from '@/types/nutrition/nutritionTargets';
 import { VerdictValue } from '@/types/verdict';
 import { buildGlycemicIndexMetrics } from '@/utils/glycemicIndexMetrics';
 import { buildCalorieMetrics } from '@/utils/nutritionMetrics';
-import { buildActiveMinutesMetrics, buildIntensityMinutesMetrics } from '@/utils/trainingMetrics';
+import { buildActiveMinutesMetrics, buildIntensityMinutesMetrics, buildModerateMinutesMetrics, buildWeightedTrainingMinutesMetrics } from '@/utils/trainingMetrics';
 import { reconcileSyncedMetrics } from '@/wearables/reconcileSyncedMetrics';
 import { refreshRecoveryAfterMetricChanges } from '@/wearables/recoveryMetrics';
 import { useWearable } from '@/wearables/wearableProvider';
@@ -950,6 +950,8 @@ export const StorageProvider = ({ children }: { children: React.ReactNode }) => 
       ...buildCalorieMetrics(dailyNutritionTrackingState),
       ...buildActiveMinutesMetrics(dailyTrainingTrackingState),
       ...buildIntensityMinutesMetrics(dailyTrainingTrackingState),
+      ...buildModerateMinutesMetrics(dailyTrainingTrackingState),
+      ...buildWeightedTrainingMinutesMetrics(dailyTrainingTrackingState),
     ],
     [metricEntriesState, dailyNutritionTrackingState, dailyTrainingTrackingState]
   );

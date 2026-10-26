@@ -17,3 +17,18 @@ export function getLatestEntryForToday(entries: MetricEntry[], now = new Date())
 export function getLatestMetricEntry<T>(entries: T[]): T | undefined {
   return entries.at(-1);
 }
+
+/** Calendar week in local time, Monday through today. Missing data remains unknown. */
+export function getCurrentWeekMetricTotal(entries: MetricEntry[], now = new Date()): number | undefined {
+  const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  monday.setDate(monday.getDate() - (monday.getDay() + 6) % 7);
+  const start = toLocalDateKey(monday);
+  const today = toLocalDateKey(now);
+  const currentWeek = entries.filter(entry => {
+    const recordedAt = new Date(entry.recordedAt);
+    if (!Number.isFinite(recordedAt.getTime()) || !Number.isFinite(entry.value) || entry.value < 0) return false;
+    const date = toLocalDateKey(recordedAt);
+    return date >= start && date <= today;
+  });
+  return currentWeek.length ? currentWeek.reduce((sum, entry) => sum + entry.value, 0) : undefined;
+}
