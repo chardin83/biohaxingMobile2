@@ -3,30 +3,33 @@ import { useTheme } from '@react-navigation/native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 import { Colors } from '@/app/theme/Colors';
+import ProgressDateNavigator from '@/components/journal/progress/ProgressDateNavigator';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
+import { IconSymbol } from '@/components/ui/IconSymbol';
+import OptionSelector from '@/components/ui/OptionSelector';
 import { useNutritionPlanProgressHistory } from '@/hooks/nutrition/useNutritionPlanProgressHistory';
 import { type MetricId, metrics } from '@/locales/metrics';
 import { tips } from '@/locales/tips';
 import { buildMetricAnalysisContext } from '@/services/metricAnalysis';
-import MetricAnalysis from './MetricAnalysis';
 import { toDateKey } from '@/utils/dateUtils';
 
 import { MetricValuesBottomSheet } from '../sections/metrics/MetricValuesBottomSheet';
+import MetricAnalysis from './MetricAnalysis';
 import { useMetricConfig } from './metricChartConfig';
 import { MetricTrendChart } from './MetricTrendChart';
 import TipGoalConfirmation from './TipGoalConfirmation';
 
 type TimeWindowOption = 7 | 30 | 90;
 
-const getDatesInRange = (days: number): string[] => {
+const getDatesInRange = (days: number, endDate: string): string[] => {
   const dates: string[] = [];
-  const today = new Date();
+  const today = new Date(`${endDate}T12:00:00`);
 
   for (let offset = days - 1; offset >= 0; offset -= 1) {
     const date = new Date(today);
@@ -56,6 +59,15 @@ export default function MetricDetailScreen() {
   const [comparisonDropdownOpen, setComparisonDropdownOpen] = React.useState(false);
   const [selectedDays, setSelectedDays] = React.useState<TimeWindowOption>(30);
 
+  const [periodEnd, setPeriodEnd] = React.useState(() => new Date().toISOString().slice(0, 10));
+  const movePeriod = (direction: number) => {
+    setPeriodEnd(current => {
+      const shifted = new Date(`${current}T00:00:00Z`);
+      shifted.setUTCDate(shifted.getUTCDate() + direction * selectedDays);
+      return [shifted.toISOString().slice(0, 10), new Date().toISOString().slice(0, 10)].sort()[0];
+    });
+  };
+
   const resolvedTipId = React.useMemo(() => {
     const value = Array.isArray(params.tipId) ? params.tipId[0] : params.tipId;
 
@@ -80,7 +92,7 @@ export default function MetricDetailScreen() {
     return tips.find(candidate => candidate.id === resolvedTipId);
   }, [resolvedTipId]);
 
-  const datesInRange = React.useMemo(() => getDatesInRange(selectedDays), [selectedDays]);
+  const datesInRange = React.useMemo(() => getDatesInRange(selectedDays, periodEnd), [selectedDays, periodEnd]);
 
   const nutritionProgressHistory = useNutritionPlanProgressHistory(datesInRange);
 
@@ -97,7 +109,10 @@ export default function MetricDetailScreen() {
       return [];
     }
 
-    return targetDefinitions.map((targetDefinition, targetIndex) => {
+    // Logging and opening the GI page are completion tasks, not chart observations.
+    const chartTargets = targetDefinitions.filter(target => target.tag !== 'glycemic_index_meals' && target.tag !== 'glycemic_index_review');
+
+    return chartTargets.map((targetDefinition, targetIndex) => {
       const fulfilledDates = datesInRange.filter(dateKey => {
         const tipProgress = nutritionProgressHistory[dateKey]?.find(item => item.tipId === tip.id);
 
@@ -159,60 +174,47 @@ export default function MetricDetailScreen() {
     defaultValue: '',
   });
 
-  const analysisMetric = buildMetricAnalysisContext(selectedConfig, selectedDays);
+  const analysisMetric = buildMetricAnalysisContext(selectedConfig, selectedDays, new Date(`${periodEnd}T00:00:00Z`));
   analysisMetric.description = description;
   const analysisContext = JSON.stringify({
     metric: analysisMetric,
-    comparison: comparisonMetricId && comparisonConfig ? buildMetricAnalysisContext(comparisonConfig, selectedDays) : undefined,
+    comparison:
+      comparisonMetricId && comparisonConfig ? buildMetricAnalysisContext(comparisonConfig, selectedDays, new Date(`${periodEnd}T00:00:00Z`)) : undefined,
     visibleTargets: targetEventSeries.map(({ label, dates }) => ({ label, dates })),
   });
 
   return (
     <Container background="default" gradientLocations={themeGradients.sunrise.locations2 as any} showBackButton onBackPress={() => router.back()}>
       <View style={styles.content}>
+        <View style={styles.metricHeading}>
+          <IconSymbol name={metrics[resolvedMetricId].iconName} size={38} color={colors.icon} />
+          <ThemedText type="title" style={styles.metricTitle}>
+            {selectedConfig.metricName}
+          </ThemedText>
+        </View>
         {tip?.goalConfirmation && <TipGoalConfirmation key={tip.id} tip={tip} />}
-        <ThemedText
-          type="title"
-          style={{
-            color: colors.area.cardio,
-          }}
-        >
-          {selectedConfig.metricName}
-        </ThemedText>
 
-        <ThemedText type="subtitle" style={styles.subtitle}>
-          {description}
-        </ThemedText>
+        <ThemedText style={styles.subtitle}>{description}</ThemedText>
 
-        <View style={styles.timeWindowRow}>
-          {([7, 30, 90] as const).map(days => {
-            const isActive = selectedDays === days;
-
-            return (
-              <TouchableOpacity
-                key={days}
-                onPress={() => setSelectedDays(days)}
-                activeOpacity={0.85}
-                style={[
-                  styles.timeWindowButton,
-                  {
-                    borderColor: isActive ? colors.primary : colors.borderLight,
-
-                    backgroundColor: isActive ? colors.primary : colors.cardBackground,
-                  },
-                ]}
-              >
-                <ThemedText
-                  type="caption"
-                  style={{
-                    color: isActive ? colors.background : colors.text,
-                  }}
-                >
-                  {days} dagar
-                </ThemedText>
-              </TouchableOpacity>
-            );
-          })}
+        <View style={styles.periodRow}>
+          <OptionSelector<'7' | '30' | '90'>
+            compact
+            value={String(selectedDays) as '7' | '30' | '90'}
+            onChange={value => setSelectedDays(Number(value) as TimeWindowOption)}
+            options={(['7', '30', '90'] as const).map(value => ({ value, label: value }))}
+          />
+          <ProgressDateNavigator
+            compact
+            label={[analysisMetric.period.from, periodEnd]
+              .map(date => {
+                const dayMonth = date.slice(5).split('-').reverse().join('/');
+                return date.slice(0, 4) === String(new Date().getFullYear()) ? dayMonth : `${dayMonth} ${date.slice(0, 4)}`;
+              })
+              .join(' – ')}
+            canGoForward={periodEnd < new Date().toISOString().slice(0, 10)}
+            onBack={() => movePeriod(-1)}
+            onForward={() => movePeriod(1)}
+          />
         </View>
 
         <Card title={t('metrics:trendChart.compareMetrics')}>
@@ -253,6 +255,7 @@ export default function MetricDetailScreen() {
           metricName={selectedConfig.metricName}
           unit={selectedConfig.unit || undefined}
           daysToShow={selectedDays}
+          endDate={periodEnd}
           accentColor={selectedConfig.accentColor}
           xAxisLabelFormatter={selectedConfig.xAxisLabelFormatter}
           referenceLines={selectedConfig.referenceLines}
@@ -277,6 +280,9 @@ export default function MetricDetailScreen() {
 }
 
 const styles = StyleSheet.create({
+  periodRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
+  metricHeading: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  metricTitle: { flex: 1 },
   content: {
     gap: 12,
     paddingBottom: 100,
@@ -284,18 +290,5 @@ const styles = StyleSheet.create({
 
   subtitle: {
     marginBottom: 8,
-  },
-
-  timeWindowRow: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 8,
-  },
-
-  timeWindowButton: {
-    borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
   },
 });

@@ -186,3 +186,19 @@ it('shows period carb coverage including days with no GI points and recalculates
   screen.rerender(<MetricTrendChart data={[]} metricName="GI" glycemicIndexCoverage={[]} showPeriodAverage />);
   expect(screen.getByText('glycemic_index.noCarbohydrates')).toBeTruthy();
 });
+
+it('moves the chart and period average to the selected historical window', async () => {
+  const data = [
+    { date: '2020-01-01', value: 10 },
+    { date: '2020-01-07', value: 30 },
+    { date: '2020-01-14', value: 80 },
+    { date: today, value: 100 },
+  ];
+  const screen = render(<MetricTrendChart data={data} metricName="GI" daysToShow={7} endDate="2020-01-07" showPeriodAverage />);
+  const { View } = require('react-native');
+  await waitFor(() => expect(screen.UNSAFE_getAllByType(View).some(node => node.props.onLayout)).toBe(true));
+  fireEvent(screen.UNSAFE_getAllByType(View).find(node => node.props.onLayout)!, 'layout', { nativeEvent: { layout: { width: 256 } } });
+  expect(screen.getByTestId('metric-chart-reference-line').props.accessibilityLabel).toBe('Period average: 20');
+  screen.rerender(<MetricTrendChart data={data} metricName="GI" daysToShow={7} endDate="2020-01-14" showPeriodAverage />);
+  expect(screen.getByTestId('metric-chart-reference-line').props.accessibilityLabel).toBe('Period average: 80');
+});

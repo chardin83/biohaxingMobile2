@@ -60,6 +60,7 @@ interface MetricTrendChartProps {
   readonly showPeriodAverage?: boolean;
   readonly glycemicIndexCoverage?: readonly GlycemicIndexCoveragePoint[];
   readonly daysToShow?: number;
+  readonly endDate?: string;
   readonly height?: number;
   readonly yAxisBounds?: { min: number; max: number };
   readonly accentColor?: string;
@@ -176,6 +177,7 @@ function MetricTrendChartContent({
   showYAxisUnit = true,
   valueFormatter,
   daysToShow = 7,
+  endDate = getTodayUtcDateString(),
   height = 180,
   accentColor,
   onViewRegisteredValues,
@@ -194,6 +196,9 @@ function MetricTrendChartContent({
   const { lifeStyleLog } = useStorage();
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [selectedDate, setSelectedDate] = React.useState<string>();
+  React.useEffect(() => {
+    setSelectedDate(undefined);
+  }, [endDate, daysToShow]);
   const selectedOption = seriesSelector?.options.find(option => option.value === seriesSelector.value);
   const data = selectedOption?.data ?? defaultData;
   const metricName = selectedOption?.metricName ?? defaultMetricName;
@@ -271,14 +276,14 @@ function MetricTrendChartContent({
 
   const chartData = React.useMemo<MetricTrendPoint[]>(() => {
     const MS_PER_DAY = 24 * 60 * 60 * 1000;
-    const todayTs = toDateTimestamp(getTodayUtcDateString());
+    const todayTs = toDateTimestamp(endDate);
     const windowStartTs = todayTs - (daysToShow - 1) * MS_PER_DAY;
     const sortedData = [...data].sort((left, right) => toDateTimestamp(left.date) - toDateTimestamp(right.date));
     return sortedData.filter(entry => {
       const ts = toDateTimestamp(entry.date);
       return Number.isFinite(entry.value) && ts >= windowStartTs && ts <= todayTs;
     });
-  }, [data, daysToShow]);
+  }, [data, daysToShow, endDate]);
 
   const displayedReferenceLines = React.useMemo(() => {
     if (!showPeriodAverage || chartData.length === 0) return referenceLines ?? [];
@@ -294,6 +299,10 @@ function MetricTrendChartContent({
   }, [chartData, colors.warmColor, referenceLines, showPeriodAverage, t]);
 
   const subtitleText = React.useMemo(() => {
+    if (endDate !== getTodayUtcDateString()) {
+      const start = new Date(toDateTimestamp(endDate) - (daysToShow - 1) * 86400000).toISOString().slice(0, 10);
+      return `${formatShortDate(start)} – ${formatShortDate(endDate)}`;
+    }
     const isWholeWeeks = daysToShow % 7 === 0;
     if (isWholeWeeks) {
       const weekCount = daysToShow / 7;
@@ -307,7 +316,7 @@ function MetricTrendChartContent({
       count: daysToShow,
       defaultValue: daysToShow === 1 ? 'Last day' : `Last ${daysToShow} days`,
     });
-  }, [daysToShow, t]);
+  }, [endDate, daysToShow, t]);
 
   const periodControls = (
     <View style={styles.periodControls}>
@@ -351,11 +360,11 @@ function MetricTrendChartContent({
 
   const coverageText = React.useMemo(() => {
     if (!glycemicIndexCoverage) return null;
-    const end = getTodayUtcDateString();
+    const end = endDate;
     const start = new Date(toDateTimestamp(end) - (daysToShow - 1) * 86400000).toISOString().slice(0, 10);
     const coverage = getGlycemicIndexCoverage(glycemicIndexCoverage, start, end);
     return coverage === undefined ? t('glycemic_index.noCarbohydrates') : t('glycemic_index.coverage', { value: Math.round(coverage) });
-  }, [daysToShow, glycemicIndexCoverage, t]);
+  }, [endDate, daysToShow, glycemicIndexCoverage, t]);
   const coverageLabel =
     coverageText !== null ? (
       <View testID="gi-period-coverage">
@@ -391,7 +400,7 @@ function MetricTrendChartContent({
   const xAxisDates = React.useMemo(() => {
     const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
-    const todayTs = toDateTimestamp(getTodayUtcDateString());
+    const todayTs = toDateTimestamp(endDate);
     const windowStartTs = todayTs - (daysToShow - 1) * MS_PER_DAY;
 
     const getDateString = (timestamp: number) => new Date(timestamp).toISOString().slice(0, 10);
@@ -403,10 +412,10 @@ function MetricTrendChartContent({
     const middleTs = windowStartTs + (todayTs - windowStartTs) / 2;
 
     return [getDateString(windowStartTs), getDateString(middleTs), getDateString(todayTs)];
-  }, [daysToShow]);
+  }, [daysToShow, endDate]);
 
   const comparisonData = React.useMemo(() => {
-    const end = toDateTimestamp(getTodayUtcDateString());
+    const end = toDateTimestamp(endDate);
     const start = end - (daysToShow - 1) * 86400000;
     return (comparison?.data ?? [])
       .filter(point => {
@@ -414,7 +423,7 @@ function MetricTrendChartContent({
         return Number.isFinite(point.value) && date >= start && date <= end;
       })
       .sort((a, b) => a.date.localeCompare(b.date));
-  }, [comparison?.data, daysToShow]);
+  }, [comparison?.data, daysToShow, endDate]);
 
   const chartGeometry = React.useMemo(() => {
     if (chartWidth === 0 || (chartData.length === 0 && comparisonData.length === 0)) {
@@ -454,7 +463,7 @@ function MetricTrendChartContent({
 
     const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
-    const todayTs = toDateTimestamp(getTodayUtcDateString());
+    const todayTs = toDateTimestamp(endDate);
     const windowStartTs = todayTs - (daysToShow - 1) * MS_PER_DAY;
     const windowRange = Math.max(todayTs - windowStartTs, 1);
 
@@ -516,18 +525,18 @@ function MetricTrendChartContent({
       eventSeriesPoints,
       xAxisPoints,
     };
-  }, [chartData, comparisonData, comparison?.yAxisBounds, chartWidth, daysToShow, eventSeries, height, displayedReferenceLines, xAxisDates, yAxisBounds]);
+  }, [chartData, comparisonData, comparison?.yAxisBounds, chartWidth, daysToShow, endDate, eventSeries, height, displayedReferenceLines, xAxisDates, yAxisBounds]);
 
   const yAxisEntries = chartGeometry?.axisEntries ?? [];
   const selectDateAtX = (x: number) => {
     const fraction = Math.max(0, Math.min(1, (x - CHART_PADDING.left) / Math.max(chartWidth - CHART_PADDING.left - CHART_PADDING.right, 1)));
     const daysAgo = daysToShow - 1 - Math.round(fraction * (daysToShow - 1));
-    setSelectedDate(new Date(toDateTimestamp(getTodayUtcDateString()) - daysAgo * 86400000).toISOString().slice(0, 10));
+    setSelectedDate(new Date(toDateTimestamp(endDate) - daysAgo * 86400000).toISOString().slice(0, 10));
   };
   const selectedValue = chartData.find(point => point.date === selectedDate)?.value;
   const selectedComparisonValue = comparisonData.find(point => point.date === selectedDate)?.value;
   const selectedComparisonLabel = formatComparisonValue(selectedComparisonValue, comparison);
-  const lifeStyleDate = selectedDate ?? getTodayUtcDateString();
+  const lifeStyleDate = selectedDate ?? endDate;
   const selectedLifeStyleEntries = Object.entries(lifeStyleLog[lifeStyleDate] ?? {}).filter(([, entry]) => entry !== undefined);
   const selectionVisible = selectedDate !== undefined && xAxisDates[0] !== undefined && selectedDate >= xAxisDates[0];
   const yAxisLabelStyles = React.useMemo(

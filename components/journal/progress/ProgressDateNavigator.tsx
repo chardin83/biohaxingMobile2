@@ -5,17 +5,18 @@ import { ThemedText } from '@/components/ThemedText';
 
 type ProgressDateNavigatorProps = {
   label: string;
+  compact?: boolean;
   canGoForward: boolean;
   onBack: () => void;
   onForward: () => void;
 };
 
-const ProgressDateNavigator = ({ label, canGoForward, onBack, onForward }: ProgressDateNavigatorProps) => {
+const ProgressDateNavigator = ({ label, canGoForward, onBack, onForward, compact = false }: ProgressDateNavigatorProps) => {
   const { colors } = useTheme();
 
   return (
-    <View style={styles.row}>
-      <TouchableOpacity onPress={onBack} style={styles.arrow}>
+    <View style={[styles.row, compact && styles.compactRow]}>
+      <TouchableOpacity onPress={onBack} style={[styles.arrow, compact && styles.compactArrow]}>
         <ThemedText type="title" style={{ color: colors.primary }}>
           {'‹'}
         </ThemedText>
@@ -23,7 +24,7 @@ const ProgressDateNavigator = ({ label, canGoForward, onBack, onForward }: Progr
       <ThemedText type="caption" style={[styles.label, { color: colors.textMuted }]}>
         {label}
       </ThemedText>
-      <TouchableOpacity onPress={onForward} style={styles.arrow} disabled={!canGoForward}>
+      <TouchableOpacity onPress={onForward} style={[styles.arrow, compact && styles.compactArrow]} disabled={!canGoForward}>
         <ThemedText type="title" style={{ color: canGoForward ? colors.primary : colors.border }}>
           {'›'}
         </ThemedText>
@@ -33,6 +34,8 @@ const ProgressDateNavigator = ({ label, canGoForward, onBack, onForward }: Progr
 };
 
 const styles = StyleSheet.create({
+  compactRow: { flex: 1, marginBottom: 0, gap: 2 },
+  compactArrow: { paddingHorizontal: 4 },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
