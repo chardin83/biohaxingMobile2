@@ -1,4 +1,4 @@
-import { calculateWorkoutIntensity } from '../trainingIntensity';
+import { calculateWorkoutAverageHeartRate, calculateWorkoutIntensity } from '../trainingIntensity';
 
 const start = '2026-10-20T10:00:00Z';
 const end = '2026-10-20T11:00:00Z';
@@ -50,4 +50,11 @@ it('measures time at or above 85% as a subset of vigorous activity', () => {
   expect(calculateWorkoutIntensity([point(0, 170), point(10, 170)], start, end, 140, 100, 170)?.highIntensityMinutes).toBe(10);
   expect(calculateWorkoutIntensity([point(0, 160), point(10, 160)], start, end, 140, 100, 170)?.highIntensityMinutes).toBe(0);
   expect(calculateWorkoutIntensity([], start, end, 140, 100, 170)).toBeUndefined();
+});
+
+
+it('averages observed pulse intervals by duration without filling gaps', () => {
+  expect(calculateWorkoutAverageHeartRate([point(0, 100), point(5, 120), point(15, 160)], start, end)).toBe(130);
+  expect(calculateWorkoutAverageHeartRate([point(0, 100), point(20, 160)], start, end)).toBeUndefined();
+  expect(calculateWorkoutAverageHeartRate([], start, end)).toBeUndefined();
 });

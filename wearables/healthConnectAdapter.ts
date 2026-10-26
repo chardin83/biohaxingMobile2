@@ -11,7 +11,7 @@ import {
 
 import { getUserProfile } from '@/app/context/storage/userProfile/userProfileStore';
 import { HIGH_INTENSITY_HEART_RATE_FRACTION, MODERATE_HEART_RATE_FRACTION, VIGOROUS_HEART_RATE_FRACTION } from '@/constants/TrainingIntensity';
-import { calculateWorkoutIntensity } from '@/utils/trainingIntensity';
+import { calculateWorkoutAverageHeartRate, calculateWorkoutIntensity } from '@/utils/trainingIntensity';
 
 import { selectMetricSource, selectMetricSourcesByDay } from './metricSourcePriority';
 import { getSleepEpisodes, normalizeSleep, type SleepInterval, type SleepState } from './normalizeSleep';
@@ -445,7 +445,7 @@ export class HealthConnectAdapter implements WearableAdapter {
         validSessions.map(async ({ session, activeMinutes }) => ({
           session,
           activeMinutes,
-          heartRateSamples: maxHeartRate ? await this.getHeartRateSamples({ start: session.startTime, end: session.endTime }) : [],
+          heartRateSamples: await this.getHeartRateSamples({ start: session.startTime, end: session.endTime }).catch(() => []),
         }))
       );
       for (const { session, activeMinutes, heartRateSamples } of sessionActivities) {
@@ -462,15 +462,14 @@ export class HealthConnectAdapter implements WearableAdapter {
         };
         day.workouts = [...(day.workouts ?? []), importedWorkout];
         day.activeProvenance = aggregateProvenance([...(day.activeProvenance ? [day.activeProvenance] : []), sessionProvenance]);
-        if (!maxHeartRate) {
-          continue;
-        }
         const sessionHeartRates = selectMetricSource(
           heartRateSamples
             .filter(sample => sample.time >= Date.parse(session.startTime) && sample.time <= Date.parse(session.endTime) && Number.isFinite(sample.value))
             .map(sample => ({ ...sample, ...sample.provenance })),
           'intensity_minutes'
         );
+        importedWorkout.averageHeartRate = calculateWorkoutAverageHeartRate(sessionHeartRates, session.startTime, session.endTime);
+        if (!maxHeartRate) continue;
         const threshold = maxHeartRate * VIGOROUS_HEART_RATE_FRACTION;
         const workoutIntensity = calculateWorkoutIntensity(sessionHeartRates, session.startTime, session.endTime, threshold, maxHeartRate * MODERATE_HEART_RATE_FRACTION, maxHeartRate * HIGH_INTENSITY_HEART_RATE_FRACTION);
         const lastIntenseExerciseAt = this.getLastIntenseExerciseAt(sessionHeartRates, session.startTime, session.endTime, threshold);

@@ -66,3 +66,21 @@ export function calculateWorkoutIntensity(samples: HeartRatePoint[], startTime: 
     ...(hasModerateThreshold ? { moderateMinutes: Math.max(0, moderateMs / 60000), moderateIntervals } : {}),
   };
 }
+
+/** Time-weighted mean over observed pulse intervals, excluding gaps longer than ten minutes. */
+export function calculateWorkoutAverageHeartRate(samples: HeartRatePoint[], startTime: string, endTime: string): number | undefined {
+  const start = Date.parse(startTime);
+  const end = Date.parse(endTime);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return undefined;
+  const points = samples.filter(point => Number.isFinite(point.time) && Number.isFinite(point.value) && point.value > 0 && point.time >= start && point.time <= end)
+    .sort((a, b) => a.time - b.time);
+  let weightedHeartRate = 0;
+  let observedDuration = 0;
+  for (let i = 1; i < points.length; i++) {
+    const duration = points[i].time - points[i - 1].time;
+    if (duration <= 0 || duration > 10 * 60 * 1000) continue;
+    weightedHeartRate += (points[i - 1].value + points[i].value) / 2 * duration;
+    observedDuration += duration;
+  }
+  return observedDuration > 0 ? Math.round(weightedHeartRate / observedDuration) : undefined;
+}

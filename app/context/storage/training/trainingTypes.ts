@@ -13,6 +13,7 @@ export type TrainingLogEntry = SampleProvenance & {
   activityType: TrainingActivityType;
   durationMinutes: number;
   distanceKm?: number;
+  averageHeartRate?: number;
   intensity?: TrainingIntensity;
   highIntensityMinutes?: number;
   highIntensityIntervals?: TrainingIntensityInterval[];

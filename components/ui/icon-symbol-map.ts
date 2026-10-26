@@ -106,6 +106,8 @@ export const ICON_SYMBOLS = {
     sf: 'calendar',
     material: 'calendar-today',
   },
+  'stopwatch': { sf: 'stopwatch', material: 'timer' },
+  'locationPin': { sf: 'mappin', material: 'location-on' },
   'clock': {
     sf: 'clock',
     material: 'schedule',

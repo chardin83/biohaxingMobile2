@@ -1,7 +1,7 @@
 import { getUserProfile } from '@/app/context/storage/userProfile/userProfileStore';
 import { HIGH_INTENSITY_HEART_RATE_FRACTION, MODERATE_HEART_RATE_FRACTION, VIGOROUS_HEART_RATE_FRACTION } from '@/constants/TrainingIntensity';
 import type { MetricId } from '@/locales/metrics';
-import { calculateWorkoutIntensity } from '@/utils/trainingIntensity';
+import { calculateWorkoutAverageHeartRate, calculateWorkoutIntensity } from '@/utils/trainingIntensity';
 
 import { selectMetricSource, selectMetricSourcesByDay } from './metricSourcePriority';
 import { normalizeSleep, type SleepInterval, type SleepState } from './normalizeSleep';
@@ -624,9 +624,6 @@ export class HealthKitAdapter implements WearableAdapter {
         };
         day.workouts = [...(day.workouts ?? []), importedWorkout];
         day.activeProvenance = aggregateProvenance([...(day.activeProvenance ? [day.activeProvenance] : []), workoutProvenance]);
-        if (!maxHeartRate) {
-          continue;
-        }
         const sessionHeartRates = selectMetricSource(
           heartRateSamples
             .filter(sample => {
@@ -636,10 +633,13 @@ export class HealthKitAdapter implements WearableAdapter {
             .map(sample => ({ ...sample, ...healthKitProvenance(sample) })),
           'intensity_minutes'
         );
-        const intensityHrThreshold = maxHeartRate * VIGOROUS_HEART_RATE_FRACTION;
-        const workoutIntensity = calculateWorkoutIntensity(sessionHeartRates.map(sample => ({
+        const pulseValues = sessionHeartRates.map(sample => ({
           time: Date.parse(sample.startDate ?? sample.endDate ?? ''), value: Number(sample.value),
-        })), start, end, intensityHrThreshold, maxHeartRate * MODERATE_HEART_RATE_FRACTION, maxHeartRate * HIGH_INTENSITY_HEART_RATE_FRACTION);
+        }));
+        importedWorkout.averageHeartRate = calculateWorkoutAverageHeartRate(pulseValues, start, end);
+        if (!maxHeartRate) continue;
+        const intensityHrThreshold = maxHeartRate * VIGOROUS_HEART_RATE_FRACTION;
+        const workoutIntensity = calculateWorkoutIntensity(pulseValues, start, end, intensityHrThreshold, maxHeartRate * MODERATE_HEART_RATE_FRACTION, maxHeartRate * HIGH_INTENSITY_HEART_RATE_FRACTION);
         if (workoutIntensity) {
           Object.assign(importedWorkout, workoutIntensity);
           day.intensityMinutes = (day.intensityMinutes ?? 0) + workoutIntensity.intensityMinutes;
