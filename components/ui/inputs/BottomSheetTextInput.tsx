@@ -1,10 +1,12 @@
-import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { BottomSheetTextInput as NativeBottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleProp, StyleSheet, TextInputProps, TextStyle, View, ViewStyle } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
+
+import { getInputLabel, InputLabel } from './InputLabel';
 
 type Props = TextInputProps & {
   label: string;
@@ -14,9 +16,10 @@ type Props = TextInputProps & {
   isOptional?: boolean;
   disabled?: boolean;
   suffix?: string;
+  errorText?: string;
 };
 
-const LabeledBottomSheetInput: React.FC<Props> = ({
+const BottomSheetTextInput: React.FC<Props> = ({
   label,
   containerStyle,
   inputStyle,
@@ -24,6 +27,7 @@ const LabeledBottomSheetInput: React.FC<Props> = ({
   isOptional,
   disabled = false,
   suffix,
+  errorText,
   ...textInputProps
 }) => {
   const { colors } = useTheme();
@@ -42,15 +46,7 @@ const LabeledBottomSheetInput: React.FC<Props> = ({
 
   const height = multilineInput ? Math.max(baseMinHeight, inputHeight) : 40;
 
-  let requiredSuffix = '';
-
-  if (isOptional === true) {
-    requiredSuffix = ` (${t('labeledInput.optional')})`;
-  } else if (isOptional === false) {
-    requiredSuffix = ` (${t('labeledInput.required')})`;
-  }
-
-  const displayLabel = `${label}${requiredSuffix}`;
+  const displayLabel = getInputLabel(label, isOptional, t);
 
   const effectivePlaceholder = typeof placeholder === 'string' && placeholder.trim() === label.trim() ? undefined : placeholder;
 
@@ -70,10 +66,10 @@ const LabeledBottomSheetInput: React.FC<Props> = ({
 
   return (
     <View style={[styles.container, containerStyle]}>
-      <ThemedText type="label">{displayLabel}</ThemedText>
+      <InputLabel label={label} isOptional={isOptional} hasError={Boolean(errorText)} />
 
       <View style={styles.inputRow}>
-        <BottomSheetTextInput
+        <NativeBottomSheetTextInput
           style={[
             styles.input,
             styles.flexInput,
@@ -83,7 +79,7 @@ const LabeledBottomSheetInput: React.FC<Props> = ({
             multilineInput ? styles.inputMultiline : styles.inputSingleLine,
 
             {
-              borderColor: colors.border,
+              borderColor: errorText ? colors.error : colors.border,
               color: colors.text,
               height,
             },
@@ -96,6 +92,8 @@ const LabeledBottomSheetInput: React.FC<Props> = ({
           onContentSizeChange={handleContentSizeChange}
           editable={!disabled}
           {...restProps}
+          accessibilityLabel={restProps.accessibilityLabel ?? displayLabel}
+          accessibilityHint={errorText ?? restProps.accessibilityHint}
           value={textValue}
         />
 
@@ -109,7 +107,7 @@ const LabeledBottomSheetInput: React.FC<Props> = ({
   );
 };
 
-export default LabeledBottomSheetInput;
+export default BottomSheetTextInput;
 
 const styles = StyleSheet.create({
   container: {

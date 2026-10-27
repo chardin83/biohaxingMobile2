@@ -174,8 +174,8 @@ export function MetricValuesBottomSheet({
   const handleSaveMetric = React.useCallback(() => {
     if (!metricId || !metricValue) return;
 
-    const value = Number.parseFloat(metricValue);
-    if (Number.isNaN(value)) return;
+    const value = Number(metricValue.replace(',', '.').trim());
+    if (!Number.isFinite(value)) return;
 
     const metric = metrics[metricId];
 
@@ -270,7 +270,6 @@ export function MetricValuesBottomSheet({
         bottomSheetRef={registerBottomSheetRef}
         isVisible={isRegisterSheetVisible}
         initialSnapIndex={sheetIndex}
-        snapPoints={['30%', '55%', '90%']}
         onClose={handleCloseAddMetricSheet}
         onSave={handleSaveMetric}
         metricId={metricId}
@@ -292,7 +291,6 @@ export function MetricValuesBottomSheet({
           sheetIndex={sheetIndex}
           bottomSheetRef={registerSleepBatchBottomSheetRef}
           colors={colors}
-          styles={styles}
           setMetricEntries={setMetricEntries}
           metrics={metrics}
           handleCloseSleepBatchSheet={handleCloseSleepBatchSheet}
@@ -354,49 +352,5 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     paddingHorizontal: 0,
     minHeight: 0,
-  },
-  sleepBatchContentContainer: {
-    gap: 16,
-    padding: 16,
-    paddingBottom: 32,
-  },
-  sleepTimePickerContainer: {
-    borderWidth: 1,
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  sleepDurationInputRow: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  sleepDurationInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
-  sleepSingleInput: {
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
-  sleepNotesInput: {
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    minHeight: 96,
-    textAlignVertical: 'top',
-  },
-  sleepBatchButtonRow: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 8,
-    marginBottom: 12,
-  },
-  sleepBatchButton: {
-    flex: 1,
   },
 });

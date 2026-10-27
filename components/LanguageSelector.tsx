@@ -8,7 +8,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import i18n from '@/app/i18n';
 import { ThemedText } from '@/components/ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import RadioButton from '@/components/ui/RadioButton';
+import RadioButton from '@/components/ui/inputs/RadioButton';
 import { LANGUAGE_DISPLAY, LanguageCode } from '@/constants/languages';
 
 const STORAGE_KEY = 'preferredLanguage';

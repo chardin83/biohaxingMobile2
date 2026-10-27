@@ -8,6 +8,7 @@ import { useStorage } from '@/app/context/StorageContext';
 import { Supplement } from '@/app/domain/Supplement';
 import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
+import { InputLabel } from '@/components/ui/inputs/InputLabel';
 import { useSupplements } from '@/locales/supplements';
 
 interface SupplementDropdownProps {
@@ -15,6 +16,7 @@ interface SupplementDropdownProps {
   preselectedSupplement: string | null;
   onSupplementSelect: (supplement: Supplement) => void;
   disabled: boolean;
+  errorText?: string;
 }
 
 const SupplementDropdown: React.FC<SupplementDropdownProps> = ({
@@ -22,6 +24,7 @@ const SupplementDropdown: React.FC<SupplementDropdownProps> = ({
   onSupplementSelect,
   preselectedSupplement,
   disabled,
+  errorText,
 }) => {
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
@@ -58,10 +61,9 @@ const SupplementDropdown: React.FC<SupplementDropdownProps> = ({
       <View style={styles.container}>
         {selectedTime && (
           <>
-            <ThemedText type="label">
-              {t('supplementDropdown.chooseSupplement')}
-            </ThemedText>
+            <InputLabel label={t('supplementDropdown.chooseSupplement')} isOptional={false} hasError={Boolean(errorText)} />
             <DropDownPicker
+              props={{ accessibilityLabel: t('supplementDropdown.chooseSupplement'), accessibilityHint: errorText }}
               open={open}
               value={value}
               items={items}
@@ -84,7 +86,7 @@ const SupplementDropdown: React.FC<SupplementDropdownProps> = ({
               style={[
                 styles.dropdown,
                 {
-                  borderColor: colors.border
+                  borderColor: errorText ? colors.error : colors.border
                 },
               ]}
               dropDownContainerStyle={[

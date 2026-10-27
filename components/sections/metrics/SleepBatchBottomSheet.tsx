@@ -1,13 +1,15 @@
-import BottomSheet, { BottomSheetScrollView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import type { RefObject } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
-import AppButton from '@/components/ui/AppButton';
 import { useBottomSheetDesign } from '@/components/ui/BottomSheetDesign';
-import { DateTimeInput } from '@/components/ui/DateTimeInput';
+import BottomSheetTextInput from '@/components/ui/inputs/BottomSheetTextInput';
+import { DateTimeInput } from '@/components/ui/inputs/DateTimeInput';
+import { InputLabel } from '@/components/ui/inputs/InputLabel';
+import { SaveCancelButtons } from '@/components/ui/SaveCancelButtons';
 import { minutesFromMidnight } from '@/utils/sleepTimeUtils';
 
 // Props for the SleepBatchBottomSheet
@@ -15,7 +17,6 @@ export type SleepBatchBottomSheetProps = {
   sheetIndex: number;
   bottomSheetRef: RefObject<BottomSheet | null>;
   colors: any;
-  styles: any;
   setMetricEntries: (fn: (prev: any) => any) => void;
   metrics: any;
   handleCloseSleepBatchSheet: () => void;
@@ -25,7 +26,6 @@ export function SleepBatchBottomSheet({
   sheetIndex,
   bottomSheetRef,
   colors,
-  styles,
   setMetricEntries,
   metrics,
   handleCloseSleepBatchSheet,
@@ -52,8 +52,6 @@ export function SleepBatchBottomSheet({
   const [sleepBatchDeepSleepMinutes, setSleepBatchDeepSleepMinutes] = React.useState('');
   const [sleepBatchRemSleepHours, setSleepBatchRemSleepHours] = React.useState('');
   const [sleepBatchRemSleepMinutes, setSleepBatchRemSleepMinutes] = React.useState('');
-
-  // ...existing code...
 
   const applyDurationFromTimes = React.useCallback((nextBedtime: Date, nextWakeTime: Date) => {
     function getDurationFromTimes(bedtime: Date, wakeTime: Date) {
@@ -177,7 +175,7 @@ export function SleepBatchBottomSheet({
     handleCloseSleepBatchSheet,
   ]);
 
-  let batchBedtimeControl = (
+  const batchBedtimeControl = (
     <DateTimeInput
       value={sleepBatchBedtime}
       onChange={_date => {
@@ -190,7 +188,7 @@ export function SleepBatchBottomSheet({
       maxDate={sleepBatchWakeTime}
     />
   );
-  let batchWakeControl = (
+  const batchWakeControl = (
     <DateTimeInput
       value={sleepBatchWakeTime}
       onChange={_date => {
@@ -216,44 +214,35 @@ export function SleepBatchBottomSheet({
       index={sheetIndex}
       onClose={handleCloseSleepBatchSheet}
     >
-      <BottomSheetScrollView
-        contentContainerStyle={[styles.sleepBatchContentContainer, { backgroundColor: colors.background }]}
-        keyboardShouldPersistTaps="handled"
-      >
+      <BottomSheetScrollView contentContainerStyle={[styles.contentContainer, { backgroundColor: colors.background }]} keyboardShouldPersistTaps="handled">
         <ThemedText type="title3" style={styles.title}>
           {t('sleepBatchBottomSheet.title')}
         </ThemedText>
-        <View style={styles.inputGroup}>
-          <ThemedText type="default" style={styles.inputLabel}>
-            {t('metrics:sleep_bedtime.name')}
-          </ThemedText>
+        <View>
+          <InputLabel label={t('metrics:sleep_bedtime.name')} />
           {batchBedtimeControl}
         </View>
-        <View style={styles.inputGroup}>
-          <ThemedText type="default" style={styles.inputLabel}>
-            {t('metrics:sleep_wake.name')}
-          </ThemedText>
+        <View>
+          <InputLabel label={t('metrics:sleep_wake.name')} />
           {batchWakeControl}
         </View>
-        <View style={styles.inputGroup}>
-          <ThemedText type="default" style={styles.inputLabel}>
-            {t('metrics:sleep_duration.name')}
-          </ThemedText>
+        <View>
+          <InputLabel label={t('metrics:sleep_duration.name')} />
           <View style={styles.sleepDurationInputRow}>
             <BottomSheetTextInput
-              style={[styles.sleepDurationInput, { color: colors.text, borderColor: colors.border }]}
+              containerStyle={styles.durationField}
               value={sleepBatchDurationHours}
               onChangeText={updateBatchDurationHours}
               keyboardType="number-pad"
-              placeholder="Timmar"
+              label={t('sleepBatchBottomSheet.hours')}
               placeholderTextColor={colors.textMuted}
             />
             <BottomSheetTextInput
-              style={[styles.sleepDurationInput, { color: colors.text, borderColor: colors.border }]}
+              containerStyle={styles.durationField}
               value={sleepBatchDurationMinutes}
               onChangeText={updateBatchDurationMinutes}
               keyboardType="number-pad"
-              placeholder="Minuter"
+              label={t('sleepBatchBottomSheet.minutes')}
               placeholderTextColor={colors.textMuted}
             />
           </View>
@@ -261,70 +250,66 @@ export function SleepBatchBottomSheet({
             {t('sleepBatchBottomSheet.durationHint')}
           </ThemedText>
         </View>
-        <View style={styles.inputGroup}>
-          <ThemedText type="default" style={styles.inputLabel}>
-            {t('metrics:deep_sleep.name')}
-          </ThemedText>
+        <View>
+          <InputLabel label={t('metrics:deep_sleep.name')} />
           <View style={styles.sleepDurationInputRow}>
             <BottomSheetTextInput
-              style={[styles.sleepDurationInput, { color: colors.text, borderColor: colors.border }]}
+              containerStyle={styles.durationField}
               value={sleepBatchDeepSleepHours}
               onChangeText={updateBatchDeepSleepHours}
               keyboardType="number-pad"
-              placeholder={t('sleepBatchBottomSheet.hours')}
+              label={t('sleepBatchBottomSheet.hours')}
               placeholderTextColor={colors.textMuted}
             />
             <BottomSheetTextInput
-              style={[styles.sleepDurationInput, { color: colors.text, borderColor: colors.border }]}
+              containerStyle={styles.durationField}
               value={sleepBatchDeepSleepMinutes}
               onChangeText={updateBatchDeepSleepMinutes}
               keyboardType="number-pad"
-              placeholder={t('sleepBatchBottomSheet.minutes')}
+              label={t('sleepBatchBottomSheet.minutes')}
               placeholderTextColor={colors.textMuted}
             />
           </View>
         </View>
-        <View style={styles.inputGroup}>
-          <ThemedText type="default" style={styles.inputLabel}>
-            {t('metrics:rem_sleep.name')}
-          </ThemedText>
+        <View>
+          <InputLabel label={t('metrics:rem_sleep.name')} />
           <View style={styles.sleepDurationInputRow}>
             <BottomSheetTextInput
-              style={[styles.sleepDurationInput, { color: colors.text, borderColor: colors.border }]}
+              containerStyle={styles.durationField}
               value={sleepBatchRemSleepHours}
               onChangeText={updateBatchRemSleepHours}
               keyboardType="number-pad"
-              placeholder={t('sleepBatchBottomSheet.hours')}
+              label={t('sleepBatchBottomSheet.hours')}
               placeholderTextColor={colors.textMuted}
             />
             <BottomSheetTextInput
-              style={[styles.sleepDurationInput, { color: colors.text, borderColor: colors.border }]}
+              containerStyle={styles.durationField}
               value={sleepBatchRemSleepMinutes}
               onChangeText={updateBatchRemSleepMinutes}
               keyboardType="number-pad"
-              placeholder={t('sleepBatchBottomSheet.minutes')}
+              label={t('sleepBatchBottomSheet.minutes')}
               placeholderTextColor={colors.textMuted}
             />
           </View>
         </View>
-        <View style={styles.inputGroup}>
-          <ThemedText type="default" style={styles.inputLabel}>
-            {t('sleepBatchBottomSheet.notesLabel')}
-          </ThemedText>
-          <BottomSheetTextInput
-            style={[styles.sleepNotesInput, { color: colors.text, borderColor: colors.border }]}
-            value={sleepBatchNotes}
-            onChangeText={setSleepBatchNotes}
-            placeholder={t('sleepBatchBottomSheet.notesPlaceholder')}
-            placeholderTextColor={colors.textMuted}
-            multiline
-          />
-        </View>
-        <View style={styles.sleepBatchButtonRow}>
-          <AppButton onPress={handleCloseSleepBatchSheet} title={t('general.cancel')} variant="secondary" style={styles.sleepBatchButton} />
-          <AppButton onPress={handleSaveSleepBatch} title={t('general.saveAll')} style={styles.sleepBatchButton} />
-        </View>
+        <BottomSheetTextInput
+          label={t('sleepBatchBottomSheet.notesLabel')}
+          value={sleepBatchNotes}
+          onChangeText={setSleepBatchNotes}
+          placeholder={t('sleepBatchBottomSheet.notesPlaceholder')}
+          multilineInput
+          inputStyle={styles.notesInput}
+        />
+        <SaveCancelButtons onCancel={handleCloseSleepBatchSheet} onSave={handleSaveSleepBatch} saveTitle={t('general.save')} />
       </BottomSheetScrollView>
     </BottomSheet>
   );
 }
+
+const styles = StyleSheet.create({
+  contentContainer: { gap: 16, padding: 16, paddingBottom: 32 },
+  title: { marginBottom: 8 },
+  sleepDurationInputRow: { flexDirection: 'row', gap: 12 },
+  durationField: { flex: 1 },
+  notesInput: { minHeight: 96 },
+});

@@ -86,7 +86,7 @@ jest.mock('@/components/ThemedText', () => ({
 }));
 jest.mock('@/components/Collapsible', () => ({ Collapsible: ({ children }: any) => children }));
 jest.mock('@/components/ui/Card', () => ({ Card: ({ children }: any) => children }));
-jest.mock('@/components/ui/Checkbox', () => ({
+jest.mock('@/components/ui/inputs/Checkbox', () => ({
   Checkbox: ({ label, accessibilityLabel, onPress, checked }: any) => {
     const { Text, Pressable } = require('react-native');
     return (
@@ -96,7 +96,7 @@ jest.mock('@/components/ui/Checkbox', () => ({
     );
   },
 }));
-jest.mock('@/components/ui/LabeledInput', () => () => null);
+jest.mock('@/components/ui/inputs/TextInput', () => () => null);
 jest.mock('@/components/ui/Container', () => ({ children, footer, currentStep, totalSteps, onBackPress }: any) => {
   const { View, Text, Pressable } = require('react-native');
   return (

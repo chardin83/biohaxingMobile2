@@ -76,6 +76,7 @@
     "detectedDrinksTitle": "Drycker ({{st}})",
     "analysisReadyToSave": "Granska analysen och tryck på Spara om den verkar stämma.",
     "unnamedMeal": "Namnlös måltid",
+    "editMealTitle": "Redigera måltid",
     "editMealNameTitle": "Redigera måltidsnamn",
     "copyMealModalTitle": "Välj en av dina senaste måltider",
     "copyMealEmpty": "Du har inga loggade måltider att kopiera än.",
@@ -378,6 +379,7 @@
     "nutritionSummary": "Näringsöversikt"
   },
   "otherLoggerTab": {
+    "invalidValue": "Ange ett giltigt tal som är noll eller större.",
     "registerToday": "Registrera idag",
     "registeredToday": "Registrerat idag"
   },

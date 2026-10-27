@@ -26,7 +26,7 @@ jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) =>
 jest.mock('../ui/BottomSheetDesign', () => ({ useBottomSheetDesign: () => ({}) }));
 jest.mock('../ThemedText', () => ({ ThemedText: require('react-native').Text }));
 jest.mock('../ui/CancelButton', () => ({ CancelButton: () => null }));
-jest.mock('../ui/DateTimeInput', () => ({
+jest.mock('../ui/inputs/DateTimeInput', () => ({
   DateTimeInput: ({ onChange, onPickerOpenChange }: any) => {
     const { Button } = require('react-native');
     return (
@@ -37,7 +37,7 @@ jest.mock('../ui/DateTimeInput', () => ({
     );
   },
 }));
-jest.mock('../ui/LabeledInput', () => ({
+jest.mock('../ui/inputs/TextInput', () => ({
   __esModule: true,
   default: ({ value, onChangeText }: any) => {
     const { TextInput } = require('react-native');

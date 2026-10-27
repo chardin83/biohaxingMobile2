@@ -2,16 +2,14 @@ import { useTheme } from '@react-navigation/native';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Modal, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
 import { globalStyles } from '@/app/theme/globalStyles';
 import { ThemedText } from '@/components/ThemedText';
 
-import AppButton from './ui/AppButton';
-import { CancelButton } from './ui/CancelButton';
 import type { IconSymbolName } from './ui/icon-symbol-map';
 import { IconSymbol } from './ui/IconSymbol';
+import { SaveCancelButtons } from './ui/SaveCancelButtons';
 
 interface ThemedModalProps {
   visible: boolean;
@@ -24,9 +22,6 @@ interface ThemedModalProps {
   onSaveDisabled?: boolean;
   okLabel?: string;
   onSaveGlow?: boolean;
-
-  onSecondarySave?: () => void;
-  ok2Label?: string;
 
   showCancelButton?: boolean;
   children: React.ReactNode;
@@ -43,14 +38,11 @@ export const ThemedModal = ({
   onSave,
   onSaveDisabled = false,
   onSaveGlow = false,
-  onSecondarySave,
   okLabel,
-  ok2Label,
   showCancelButton = true,
   children,
   style,
 }: ThemedModalProps) => {
-  const { t } = useTranslation();
   const { colors, dark } = useTheme();
 
   return (
@@ -75,7 +67,7 @@ export const ThemedModal = ({
 
           {children}
 
-          {(onSecondarySave || onSave || showCancelButton) && (
+          {(onSave || showCancelButton) && (
             <View style={styles.buttonRow}>
               <LinearGradient
                 colors={[colors.borderLight, 'transparent']}
@@ -84,18 +76,15 @@ export const ThemedModal = ({
                 style={styles.buttonRowFade}
                 pointerEvents="none"
               />
-              {showCancelButton && <CancelButton onPress={onClose} />}
-              {onSecondarySave && <AppButton onPress={onSecondarySave} title={ok2Label ?? t('general.secondary')} variant="primary" />}
-              {onSave && (
-                <AppButton
-                  onPress={onSave}
-                  title={okLabel ?? t('general.save')}
-                  variant="primary"
-                  disabled={onSaveDisabled}
-                  glow={onSaveGlow}
-                  style={!showCancelButton && !onSecondarySave ? styles.fullWidthButton : undefined}
-                />
-              )}
+              <SaveCancelButtons
+                onCancel={onClose}
+                onSave={onSave}
+                showCancelButton={showCancelButton}
+                saveTitle={okLabel}
+                saveDisabled={onSaveDisabled}
+                saveGlow={onSaveGlow}
+                style={styles.actions}
+              />
             </View>
           )}
         </View>
@@ -105,7 +94,7 @@ export const ThemedModal = ({
 };
 
 const styles = StyleSheet.create({
-  fullWidthButton: { width: '100%' },
+  actions: { width: '100%' },
   overlay: {
     flex: 1,
     justifyContent: 'center',
@@ -140,16 +129,5 @@ const styles = StyleSheet.create({
     right: 0,
     height: 12,
     opacity: 0.55,
-  },
-  cancelTextButton: {
-    paddingVertical: 14,
-    paddingHorizontal: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    opacity: 0.78,
-  },
-  cancelText: {
-    textTransform: 'uppercase',
-    letterSpacing: 1,
   },
 });

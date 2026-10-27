@@ -5,7 +5,7 @@ import { Keyboard, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View 
 
 import { ThemedModal } from '@/components/ThemedModal';
 import { ThemedText } from '@/components/ThemedText';
-import LabeledInput from '@/components/ui/LabeledInput';
+import TextInput from '@/components/ui/inputs/TextInput';
 import { type TrainingActivityFilter, type TrainingIntensityFilter } from '@/types/training';
 import { TRAINING_ACTIVITY_OPTIONS } from '@/types/trainingActivityOptions';
 import { TRAINING_INTENSITY_OPTIONS } from '@/types/trainingIntensityOptions';
@@ -85,7 +85,7 @@ const TrainingSettingsModal: React.FC<TrainingSettingsModalProps> = ({
               {trainingTitle}
             </ThemedText>
           ) : null}
-          <LabeledInput
+          <TextInput
             label={sessionsLabel}
             keyboardType="number-pad"
             placeholder={sessionsPlaceholder === sessionsLabel ? undefined : sessionsPlaceholder}
@@ -95,7 +95,7 @@ const TrainingSettingsModal: React.FC<TrainingSettingsModalProps> = ({
             containerStyle={styles.fieldBlock}
             returnKeyType="done"
           />
-          <LabeledInput
+          <TextInput
             label={durationLabel}
             keyboardType="number-pad"
             placeholder={durationPlaceholder === durationLabel ? undefined : durationPlaceholder}

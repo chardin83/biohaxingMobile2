@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { ThemedText } from '@/components/ThemedText';
-import { Checkbox } from '@/components/ui/Checkbox';
+import { Checkbox } from '@/components/ui/inputs/Checkbox';
 import Notice from '@/components/ui/Notice';
 import { PROFILE_SHARING_FIELDS, type ProfileSharingField } from '@/types/aiSharing';
 

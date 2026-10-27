@@ -16,8 +16,8 @@ import { DEFAULT_BEDTIME } from '@/utils/sleepTimeUtils';
 import NumberStepper from './NumberStepper';
 import PersonalDetailsSettings from './PersonalDetailsSettings';
 import CardLinkList from './ui/CardLinkList';
-import { DateTimeInput } from './ui/DateTimeInput';
 import { IconSymbol } from './ui/IconSymbol';
+import { DateTimeInput } from './ui/inputs/DateTimeInput';
 import SettingIcon from './ui/SettingIcon';
 
 const RECOMMENDED_BEDTIME_START: ClockTime = '22:00';

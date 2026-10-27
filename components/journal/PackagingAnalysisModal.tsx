@@ -8,7 +8,7 @@ import type { SelectedImageFile } from '@/types/nutrition/nutritionAnalysis';
 import ImageThumbnailWithDelete from '../ImageThumbnailWithDelete';
 import { ThemedModal } from '../ThemedModal';
 import { ThemedText } from '../ThemedText';
-import LabeledInput from '../ui/LabeledInput';
+import TextInput from '../ui/inputs/TextInput';
 import ImagePickerButton from './ImagePickerButton';
 
 interface PackagingAnalysisModalProps {
@@ -71,7 +71,7 @@ const PackagingAnalysisModal: React.FC<PackagingAnalysisModalProps> = ({ visible
             style={styles.pickerButton}
           />
         )}
-        <LabeledInput
+        <TextInput
           label={t('journal:nutritionLogger.packageFlowDescriptionLabel')}
           placeholder={t('journal:nutritionLogger.packageFlowDescriptionPlaceholder')}
           value={mealDescription}

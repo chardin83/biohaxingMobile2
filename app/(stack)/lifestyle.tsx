@@ -8,7 +8,7 @@ import ProgressDateNavigator from '@/components/journal/progress/ProgressDateNav
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
-import OptionSelector from '@/components/ui/OptionSelector';
+import OptionSelector from '@/components/ui/inputs/OptionSelector';
 import { LIFE_STYLE_ITEMS, type LifeStyleId } from '@/constants/lifeStyle';
 import { formatDate, fromDateKey, toDateKey } from '@/utils/dateUtils';
 

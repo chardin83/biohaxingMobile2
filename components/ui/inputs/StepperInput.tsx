@@ -5,10 +5,11 @@ import { StyleProp, StyleSheet, TextInput, TextInputProps, TouchableOpacity, Vie
 
 import { ThemedText } from '@/components/ThemedText';
 
-import { type IconSymbolName } from './icon-symbol-map';
-import { IconSymbol } from './IconSymbol';
+import { type IconSymbolName } from '../icon-symbol-map';
+import { IconSymbol } from '../IconSymbol';
+import { getInputLabel, InputLabel } from './InputLabel';
 
-type LabeledStepperInputProps = Omit<TextInputProps, 'onChange'> & {
+type StepperInputProps = Omit<TextInputProps, 'onChange'> & {
   label: string;
   value: string;
   onChangeText: (value: string) => void;
@@ -19,11 +20,12 @@ type LabeledStepperInputProps = Omit<TextInputProps, 'onChange'> & {
   max?: number;
   decimals?: number;
   isOptional?: boolean;
+  errorText?: string;
   containerStyle?: StyleProp<ViewStyle>;
 };
 
 const sanitizeNumber = (raw: string): number | null => {
-  const normalized = raw.replace(',', '.').trim();
+  const normalized = raw.replace(',', '..').trim();
   if (!normalized) return null;
   const parsed = Number.parseFloat(normalized);
   return Number.isFinite(parsed) ? parsed : null;
@@ -35,18 +37,18 @@ const formatNumber = (value: number, decimals: number): string => {
   }
 
   const formatted = value.toFixed(decimals);
-  if (!formatted.includes('.') || formatted.includes('e')) return formatted;
+  if (!formatted.includes('..') || formatted.includes('e')) return formatted;
 
   let end = formatted.length;
   while (formatted[end - 1] === '0') {
     end--;
   }
-  if (formatted[end - 1] === '.') end--;
+  if (formatted[end - 1] === '..') end--;
 
   return formatted.slice(0, end);
 };
 
-const LabeledStepperInput: React.FC<LabeledStepperInputProps> = ({
+const StepperInput: React.FC<StepperInputProps> = ({
   label,
   value,
   onChangeText,
@@ -57,6 +59,7 @@ const LabeledStepperInput: React.FC<LabeledStepperInputProps> = ({
   max,
   decimals = 0,
   isOptional,
+  errorText,
   containerStyle,
   keyboardType = 'number-pad',
   ...textInputProps
@@ -67,14 +70,7 @@ const LabeledStepperInput: React.FC<LabeledStepperInputProps> = ({
   const parsedValue = useMemo(() => sanitizeNumber(value), [value]);
   const canDecrement = parsedValue !== null && parsedValue > min;
 
-  let suffix = '';
-  if (isOptional === true) {
-    suffix = ` (${t('labeledInput.optional')})`;
-  } else if (isOptional === false) {
-    suffix = ` (${t('labeledInput.required')})`;
-  }
-
-  const displayLabel = `${label}${suffix}`;
+  const displayLabel = getInputLabel(label, isOptional, t);
 
   const applyStep = (direction: -1 | 1) => {
     const factor = 10 ** decimals;
@@ -99,8 +95,8 @@ const LabeledStepperInput: React.FC<LabeledStepperInputProps> = ({
 
   return (
     <View style={[styles.container, containerStyle]}>
-      <ThemedText type="label">{displayLabel}</ThemedText>
-      <View style={[styles.fieldRow, { borderColor: colors.border }]}> 
+      <InputLabel label={label} isOptional={isOptional} hasError={Boolean(errorText)} />
+      <View style={[styles.fieldRow, { borderColor: errorText ? colors.error : colors.border }]}>
         <View style={styles.iconWrap}>
           <IconSymbol name={icon} size={20} color={colors.textTertiary} />
         </View>
@@ -113,6 +109,8 @@ const LabeledStepperInput: React.FC<LabeledStepperInputProps> = ({
             placeholderTextColor={colors.textMuted}
             keyboardType={keyboardType}
             {...textInputProps}
+            accessibilityLabel={textInputProps.accessibilityLabel ?? displayLabel}
+            accessibilityHint={errorText ?? textInputProps.accessibilityHint}
           />
 
           {unit ? (
@@ -154,14 +152,13 @@ const LabeledStepperInput: React.FC<LabeledStepperInputProps> = ({
   );
 };
 
-export default LabeledStepperInput;
+export default StepperInput;
 
 const styles = StyleSheet.create({
   container: {
     width: '100%',
   },
   fieldRow: {
-    marginTop: 8,
     borderWidth: 2,
     borderRadius: 10,
     minHeight: 46,

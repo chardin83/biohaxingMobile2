@@ -36,7 +36,7 @@ jest.mock('../ui/Container', () => ({
   },
 }));
 jest.mock('../ui/IconSymbol', () => ({ IconSymbol: () => null }));
-jest.mock('../ui/LabeledInput', () => ({
+jest.mock('../ui/inputs/TextInput', () => ({
   __esModule: true,
   default: ({ value, onChangeText }: any) => {
     const mockReact = require('react');

@@ -5,10 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
-import AppButton from '@/components/ui/AppButton';
+import { SaveCancelButtons } from '@/components/ui/SaveCancelButtons';
 
 import { useBottomSheetDesign } from '../ui/BottomSheetDesign';
-import LabeledBottomSheetInput from '../ui/LabeledBottomSheetInput';
+import BottomSheetTextInput from '../ui/inputs/BottomSheetTextInput';
 
 type RegisterHabitValueBottomSheetProps = {
   bottomSheetRef: React.RefObject<BottomSheetModal | null>;
@@ -35,12 +35,21 @@ export const RegisterHabitValueBottomSheet: React.FC<RegisterHabitValueBottomShe
   const snapPoints = useMemo(() => ['35%'], []);
 
   const [value, setValue] = useState('');
+  const [showValidation, setShowValidation] = useState(false);
+  const normalizedValue = value.replace(',', '.').trim();
+  const parsedValue = Number(normalizedValue);
+  const valueIsValid = normalizedValue !== '' && Number.isFinite(parsedValue) && parsedValue >= 0;
+  let errorText: string | undefined;
+  if (showValidation && !valueIsValid) {
+    errorText = normalizedValue === '' ? t('labeledInput.requiredError') : t('journal:otherLoggerTab.invalidValue');
+  }
 
   useEffect(() => {
     if (!isVisible) {
       return;
     }
-    setValue(initialValue != null && initialValue > 0 ? String(initialValue) : '');
+    setShowValidation(false);
+    setValue(initialValue != null && Number.isFinite(initialValue) && initialValue >= 0 ? String(initialValue) : '');
 
     requestAnimationFrame(() => {
       bottomSheetRef.current?.present();
@@ -48,13 +57,9 @@ export const RegisterHabitValueBottomSheet: React.FC<RegisterHabitValueBottomShe
   }, [isVisible, initialValue, bottomSheetRef]);
 
   const handleSave = () => {
-    const parsed = Number.parseFloat(value.replace(',', '.'));
-
-    if (!Number.isFinite(parsed) || parsed < 0) {
-      return;
-    }
-
-    onSave(parsed);
+    setShowValidation(true);
+    if (!valueIsValid) return;
+    onSave(parsedValue);
   };
 
   const handleChange = (index: number) => {
@@ -83,17 +88,18 @@ export const RegisterHabitValueBottomSheet: React.FC<RegisterHabitValueBottomShe
       <BottomSheetScrollView style={styles.content} contentContainerStyle={styles.container} showsVerticalScrollIndicator keyboardShouldPersistTaps="handled">
         <ThemedText type="title2">{title}</ThemedText>
         <View style={styles.valueRow}>
-          <LabeledBottomSheetInput
+          <BottomSheetTextInput
             label={t('journal:otherLoggerTab.registerToday')}
             value={value}
             onChangeText={setValue}
             keyboardType="decimal-pad"
             autoFocus
             isOptional={false}
+            errorText={errorText}
             suffix={unit}
           />
         </View>
-        <AppButton title={t('common:general.save')} onPress={handleSave} disabled={value.trim().length === 0} />
+        <SaveCancelButtons onSave={handleSave} onCancel={onClose} />
       </BottomSheetScrollView>
     </BottomSheetModal>
   );

@@ -13,7 +13,7 @@ jest.mock('../ui/Card', () => ({ Card: require('react-native').View }));
 jest.mock('../Collapsible', () => ({ Collapsible: () => null }));
 jest.mock('../NutritionBreakdown', () => () => null);
 jest.mock('../ui/AddButton', () => () => null);
-jest.mock('../ui/DateTimeInput', () => ({ DateTimeInput: () => null }));
+jest.mock('../ui/inputs/DateTimeInput', () => ({ DateTimeInput: () => null }));
 jest.mock('../ui/IconSymbol', () => ({ IconSymbol: () => null }));
 
 test('shows the confirmed ingredient names and exact weights instead of AI prose', () => {

@@ -12,7 +12,7 @@ import Badge from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import LabeledInput from '@/components/ui/LabeledInput';
+import TextInput from '@/components/ui/inputs/TextInput';
 import Notice from '@/components/ui/Notice';
 import { PressableCard } from '@/components/ui/PressableCard';
 import { bodyParts as allBodyParts } from '@/locales/bodyParts';
@@ -294,7 +294,7 @@ export default function TipsSearchScreen() {
       style={styles.container}
       contentContainerStyle={styles.containerContentOverride}
     >
-      <LabeledInput label={t('search.label')} value={query} onChangeText={setQuery} containerStyle={styles.inputMargin} />
+      <TextInput label={t('search.label')} value={query} onChangeText={setQuery} containerStyle={styles.inputMargin} />
       {showFilter && (
         <ScrollView style={styles.filterScrollView} contentContainerStyle={styles.filterContentContainer} showsVerticalScrollIndicator={false}>
           <TouchableOpacity

@@ -8,12 +8,13 @@ import { Supplement } from '@/app/domain/Supplement';
 import SupplementDropdown from '@/components/SupplementsDropdown';
 import { SupplementWarnings } from '@/components/SupplementWarnings';
 import { ThemedText } from '@/components/ThemedText';
-import LabeledInput, { LabeledInputRow } from '@/components/ui/LabeledInput';
+import TextInput, { TextInputRow } from '@/components/ui/inputs/TextInput';
 
 import AppButton from './ui/AppButton';
 import { useBottomSheetDesign } from './ui/BottomSheetDesign';
 import { CancelButton } from './ui/CancelButton';
-import { DateTimeInput } from './ui/DateTimeInput';
+import { DateTimeInput } from './ui/inputs/DateTimeInput';
+import { InputLabel } from './ui/inputs/InputLabel';
 
 interface SupplementFormProps {
   selectedTime: Date;
@@ -42,7 +43,37 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
   const sheetDesign = useBottomSheetDesign(colors);
   const [supplement, setSupplement] = useState<Supplement | null>(preselectedSupplement);
   const [isSaving, setIsSaving] = useState(false);
-  const hasFixedUnit = Boolean(supplement?.id && supplement.unit?.trim());
+  const [hasFixedUnit, setHasFixedUnit] = useState(Boolean(preselectedSupplement?.id && preselectedSupplement.unit?.trim()));
+  const [showValidation, setShowValidation] = useState(false);
+  const savingRef = useRef(false);
+  const selectionIsValid = Boolean(supplement?.id && supplement.name?.trim());
+  const quantity = supplement?.quantity?.trim() ?? '';
+  const numericQuantity = Number(quantity.replace(',', '.'));
+  const doseIsValid = quantity !== '' && Number.isFinite(numericQuantity) && numericQuantity > 0;
+  const unitIsValid = Boolean(supplement?.unit?.trim());
+  const selectionError = showValidation && !selectionIsValid ? t('labeledInput.requiredError') : undefined;
+  let doseError: string | undefined;
+  if (showValidation && !doseIsValid) {
+    doseError = quantity === '' ? t('labeledInput.requiredError') : t('supplementForm.invalidDosage');
+  }
+  const unitError = showValidation && !unitIsValid ? t('labeledInput.requiredError') : undefined;
+
+  const handleSave = async () => {
+    if (savingRef.current) return;
+    setShowValidation(true);
+    if (!supplement || !selectionIsValid || !doseIsValid || !unitIsValid) return;
+    savingRef.current = true;
+    setIsSaving(true);
+    try {
+      const saved = await onSave(supplement);
+      if (saved !== false) bottomSheetRef.current?.dismiss();
+    } catch (error) {
+      console.error('Failed to save supplement:', error);
+    } finally {
+      savingRef.current = false;
+      setIsSaving(false);
+    }
+  };
   const canEditSelectedTime = Boolean(onSelectedTimeChange);
 
   useEffect(() => {
@@ -57,7 +88,7 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
     <BottomSheetModal
       ref={bottomSheetRef}
       snapPoints={['65%', '90%']}
-      enablePanDownToClose
+      enablePanDownToClose={!isSaving}
       backgroundStyle={sheetDesign.backgroundStyle}
       handleComponent={sheetDesign.handleComponent}
       onDismiss={onCancel}
@@ -74,25 +105,30 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
         <View style={[styles.dropdownWrapper, styles.row]}>
           <SupplementDropdown
             selectedTime={selectedTime}
-            onSupplementSelect={(selectedSupplement: Supplement) => setSupplement(selectedSupplement)}
+            onSupplementSelect={(selectedSupplement: Supplement) => {
+              setSupplement(selectedSupplement);
+              setHasFixedUnit(Boolean(selectedSupplement.id && selectedSupplement.unit?.trim()));
+            }}
+            errorText={selectionError}
             preselectedSupplement={supplement?.name ?? null}
             disabled={isEditing || lockSupplement}
           />
         </View>
-        <LabeledInputRow helperText={t('supplementForm.exampleDosage')}>
-          <LabeledInput
+        <TextInputRow helperText={t('supplementForm.exampleDosage')}>
+          <TextInput
             label={t('supplementForm.dosage')}
             placeholder={t('supplementForm.dosage')}
             value={supplement?.quantity}
             keyboardType="decimal-pad"
             isOptional={false}
+            errorText={doseError}
             onChangeText={text => setSupplement({ ...supplement, quantity: text } as Supplement)}
             containerStyle={styles.inputHalf}
           />
 
           {hasFixedUnit ? (
             <View style={styles.inputHalf}>
-              <ThemedText type="label">{t('supplementForm.unit')}</ThemedText>
+              <InputLabel label={t('supplementForm.unit')} isOptional={false} />
               <View style={[styles.lockedUnitRow, { backgroundColor: colors.secondaryBackground }]}>
                 <ThemedText type="defaultSemiBold">{supplement?.unit}</ThemedText>
                 <ThemedText type="explainer" style={{ color: colors.textMuted }}>
@@ -101,15 +137,17 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
               </View>
             </View>
           ) : (
-            <LabeledInput
+            <TextInput
               label={t('supplementForm.unit')}
+              isOptional={false}
+              errorText={unitError}
               placeholder={t('supplementForm.unit')}
               value={supplement?.unit}
               onChangeText={text => setSupplement({ ...supplement, unit: text } as Supplement)}
               containerStyle={styles.inputHalf}
             />
           )}
-        </LabeledInputRow>
+        </TextInputRow>
 
         <SupplementWarnings supplement={supplement} />
         <View style={styles.buttonColumn}>
@@ -117,21 +155,10 @@ const SupplementForm: React.FC<SupplementFormProps> = ({
             title={isEditing ? t('general.save') : t('general.add')}
             variant="primary"
             disabled={isSaving}
-            onPress={async () => {
-              if (supplement?.name && supplement?.quantity.trim() !== '') {
-                setIsSaving(true);
-                try {
-                  const saved = await onSave(supplement);
-                  if (saved !== false) closeForm();
-                } catch (error) {
-                  console.error('Failed to save supplement:', error);
-                } finally {
-                  setIsSaving(false);
-                }
-              }
-            }}
+            busy={isSaving}
+            onPress={handleSave}
           />
-          <CancelButton onPress={closeForm} />
+          <CancelButton onPress={closeForm} disabled={isSaving} />
         </View>
         {footer}
       </BottomSheetScrollView>

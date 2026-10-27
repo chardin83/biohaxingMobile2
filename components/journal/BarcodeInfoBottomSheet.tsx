@@ -9,9 +9,9 @@ import { ThemedText } from '@/components/ThemedText';
 
 import AppButton from '../ui/AppButton';
 import { useBottomSheetDesign } from '../ui/BottomSheetDesign';
-import { Checkbox } from '../ui/Checkbox';
 import DiscreetButton from '../ui/DiscreetButton';
 import { IconSymbol } from '../ui/IconSymbol';
+import { Checkbox } from '../ui/inputs/Checkbox';
 import Notice from '../ui/Notice';
 
 interface BarcodeInfoBottomSheetProps {

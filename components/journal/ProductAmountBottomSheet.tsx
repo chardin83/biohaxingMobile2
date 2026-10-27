@@ -20,9 +20,9 @@ import NutritionBreakdown from '../NutritionBreakdown';
 import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
 import { useBottomSheetDesign } from '../ui/BottomSheetDesign';
-import { DateTimeInput } from '../ui/DateTimeInput';
+import { DateTimeInput } from '../ui/inputs/DateTimeInput';
+import OptionSelector from '../ui/inputs/OptionSelector';
 import Notice from '../ui/Notice';
-import OptionSelector from '../ui/OptionSelector';
 
 export interface ProductAmountBottomSheetRef {
   present: (product: BarcodeProduct) => void;

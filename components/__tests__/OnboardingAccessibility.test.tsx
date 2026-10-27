@@ -5,12 +5,13 @@ import { AccessibilityInfo, Platform, ScrollView, StyleSheet, Text } from 'react
 import { Colors } from '@/app/theme/Colors';
 import AppButton from '@/components/ui/AppButton';
 import AppCard from '@/components/ui/AppCard';
-import { Checkbox } from '@/components/ui/Checkbox';
 import Container from '@/components/ui/Container';
+import { Checkbox } from '@/components/ui/inputs/Checkbox';
 import Notice from '@/components/ui/Notice';
 import StepHeading from '@/components/ui/StepHeading';
 
 const ReactNative = require('react-native') as typeof import('react-native');
+
 let mockDark = false;
 jest.mock('@react-navigation/native', () => ({
   useTheme: () => ({ dark: mockDark, colors: jest.requireActual('@/app/theme/Colors').Colors[mockDark ? 'dark' : 'light'] }),

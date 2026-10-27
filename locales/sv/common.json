@@ -358,6 +358,7 @@
     "selectAtLeastOne": "Välj minst 1 tips för att skapa AI-planen"
   },
   "supplementForm": {
+    "invalidDosage": "Ange en giltig dos större än noll.",
     "dosage": "Dos",
     "unit": "Enhet",
     "exampleDosage": "Förifylld dos är endast ett exempel, inte en rekommendation. Anpassa efter din produkt."

@@ -13,7 +13,7 @@ import AppButton from './ui/AppButton';
 import { useBottomSheetDesign } from './ui/BottomSheetDesign';
 import { CancelButton } from './ui/CancelButton';
 import DiscreetButton from './ui/DiscreetButton';
-import LabeledInput from './ui/LabeledInput';
+import TextInput from './ui/inputs/TextInput';
 
 type Props = {
   supplements: Supplement[];
@@ -50,7 +50,7 @@ const SaveMultivitaminBottomSheet: React.FC<Props> = ({ supplements, multivitami
         <ThemedText type="title3">
           {t(multivitamin ? 'plan.editMultivitamin' : 'plan.saveAsMultivitamin')}
         </ThemedText>
-        <LabeledInput
+        <TextInput
           label={t('plan.multivitaminName')}
           value={name}
           onChangeText={setName}

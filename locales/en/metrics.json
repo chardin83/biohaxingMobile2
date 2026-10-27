@@ -1,4 +1,5 @@
 {
+  "registration": {"date": "Date", "bedtime": "Bedtime", "valueError": "Enter a valid value.", "unitError": "Enter a unit.", "saveError": "The measurement could not be saved. Please try again.", "unit": "Unit", "unitPlaceholder": "E.g. mg/dL", "value": "Value", "valuePlaceholder": "Enter value", "hours": "Hours", "minutes": "Minutes", "notes": "Note", "notesPlaceholder": "E.g. fasting measurement"},
   "unknownOriginalSource": "Unknown original source",
   "sourceAndNotes": "Source / notes",
   "origins": {"manual": "Manually entered", "training": "Training log", "nutrition": "Food log", "calculated": "Calculated", "healthkit": "Apple Health", "healthconnect": "Health Connect", "garmin": "Garmin", "fitbit": "Fitbit", "mock": "Testdata", "none": "—"},

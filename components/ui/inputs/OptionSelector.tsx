@@ -1,12 +1,10 @@
-// components/ui/OptionSelector.tsx
-
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { ThemedText } from '../ThemedText';
-import { IconSymbolName } from './icon-symbol-map';
-import { IconSymbol } from './IconSymbol';
+import { ThemedText } from '../../ThemedText';
+import { IconSymbolName } from '../icon-symbol-map';
+import { IconSymbol } from '../IconSymbol';
 
 export interface OptionSelectorOption<T extends string> {
   value: T;

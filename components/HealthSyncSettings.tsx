@@ -4,10 +4,10 @@ import { ActivityIndicator, Linking, Platform, StyleProp, StyleSheet, View, View
 
 import { useStorage } from '@/app/context/StorageContext';
 import AppButton from '@/components/ui/AppButton';
-import { Checkbox } from '@/components/ui/Checkbox';
+import { Checkbox } from '@/components/ui/inputs/Checkbox';
+import ThemedSwitch from '@/components/ui/inputs/ThemedSwitch';
 import Notice from '@/components/ui/Notice';
 import SettingIcon from '@/components/ui/SettingIcon';
-import ThemedSwitch from '@/components/ui/ThemedSwitch';
 import { requestHealthConnectPermissions } from '@/services/healtConnectServices';
 import HealthKitAdapter from '@/wearables/healthkitAdapter';
 import { useWearable } from '@/wearables/wearableProvider';

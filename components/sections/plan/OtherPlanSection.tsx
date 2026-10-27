@@ -1,21 +1,18 @@
 import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Portal } from 'react-native-paper';
 
 import { PlanTipEntry } from '@/app/context/storage/plans/planTypes';
 import { useStorage } from '@/app/context/StorageContext';
 import { globalStyles } from '@/app/theme/globalStyles';
-import DefaultSettingsModal from '@/components/modals/DefaultSettingsModal';
 import { PlanMeta } from '@/components/sections/plan/PlanMeta';
 import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import DiscreetButton from '@/components/ui/DiscreetButton';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
-import { PlanHeaderActions } from './PlanHeaderActions';
 
 type Props = {};
 
@@ -23,43 +20,9 @@ export const OtherPlanSection: React.FC<Props> = () => {
   const { t } = useTranslation(['common', 'areas', 'tips']);
   const { colors } = useTheme();
   const router = useRouter();
-  const { plans, setPlans } = useStorage();
+  const { plans } = useStorage();
 
   const otherPlans = plans.other;
-
-  const [otherSettingsVisible, setOtherSettingsVisible] = useState(false);
-  const [otherSettingsTitle, setOtherSettingsTitle] = useState<string | null>(null);
-  const [otherCommentInput, setOtherCommentInput] = useState('');
-  const [otherEditTipId, setOtherEditTipId] = useState<string | null>(null);
-
-  const openOtherSettingsModal = (tipId: string, otherTitle?: string | null) => {
-    setOtherEditTipId(tipId);
-    setOtherSettingsTitle(otherTitle ?? null);
-    const plan = otherPlans.find(g => g.tipId === tipId);
-    setOtherCommentInput(plan?.comment ?? '');
-    setOtherSettingsVisible(true);
-  };
-
-  const closeOtherSettingsModal = () => {
-    setOtherSettingsVisible(false);
-    setOtherSettingsTitle(null);
-    setOtherCommentInput('');
-    setOtherEditTipId(null);
-  };
-
-  const handleSaveOtherSettings = () => {
-    if (!otherEditTipId) {
-      closeOtherSettingsModal();
-      return;
-    }
-    setPlans(prev => ({
-      ...prev,
-      other: prev.other.map(plan =>
-        plan.tipId === otherEditTipId ? { ...plan, comment: otherCommentInput, editedAt: new Date().toISOString(), editedBy: 'you' } : plan
-      ),
-    }));
-    closeOtherSettingsModal();
-  };
 
   const openPlanDetails = (plan: PlanTipEntry, title?: string | null) => {
     if (!plan.tipId) return;
@@ -82,24 +45,6 @@ export const OtherPlanSection: React.FC<Props> = () => {
     });
   };
 
-  const handleDeleteOther = () => {
-    if (!otherEditTipId) {
-      closeOtherSettingsModal();
-      return;
-    }
-    setPlans(prev => ({
-      ...prev,
-      other: prev.other.filter(plan => plan.tipId !== otherEditTipId),
-    }));
-    closeOtherSettingsModal();
-  };
-
-  const handleEditOther = (plan: PlanTipEntry): void => {
-    if (!plan.tipId) return;
-    const title = plan.tipId ? t(`tips:${plan.tipId}.title`) : t('plan.untitled');
-    openOtherSettingsModal(plan.tipId, title);
-  };
-
   if (!otherPlans.length) {
     return <ThemedText type="default">{t('otherPlanSection.noActiveOther')}</ThemedText>;
   }
@@ -108,16 +53,6 @@ export const OtherPlanSection: React.FC<Props> = () => {
     <>
       {otherPlans.map((plan, index) => {
         const tipTitle = plan.tipId ? t(`tips:${plan.tipId}.title`) : t('plan.untitled');
-
-        const editAction = (
-          <PlanHeaderActions
-            trainingSettingsKey={plan.tipId ?? ''}
-            tipTitle={tipTitle}
-            t={t}
-            openTrainingSettingsModal={() => handleEditOther(plan)}
-            styles={styles}
-          />
-        );
 
         return (
           <Card key={plan.tipId ?? `other-${index}`} style={[styles.otherGoalCard, { borderLeftColor: colors.planSectionOtherIcon }]}>
@@ -129,7 +64,6 @@ export const OtherPlanSection: React.FC<Props> = () => {
                 </ThemedText>
                 <IconSymbol name="chevron.right" size={16} color={colors.icon} />
               </TouchableOpacity>
-              <View style={styles.otherCardHeaderRight}>{editAction}</View>
             </View>
             <PlanMeta startedAt={plan.startedAt} createdBy={plan.createdBy} />
             {plan.comment ? (
@@ -156,22 +90,6 @@ export const OtherPlanSection: React.FC<Props> = () => {
           }}
         />
       </View>
-      <Portal>
-        <DefaultSettingsModal
-          visible={otherSettingsVisible}
-          title={t('otherPlanSection.otherSettingsTitle')}
-          nutritionTitle={otherSettingsTitle}
-          commentPlaceholder={t('otherPlanSection.otherCommentPlaceholder')}
-          commentLabel={t('otherPlanSection.otherCommentLabel')}
-          commentValue={otherCommentInput}
-          onChangeComment={setOtherCommentInput}
-          onSave={handleSaveOtherSettings}
-          onClose={closeOtherSettingsModal}
-          onDelete={handleDeleteOther}
-          saveLabel={t('general.save')}
-          deleteLabel={t('general.delete')}
-        />
-      </Portal>
     </>
   );
 };
@@ -191,33 +109,17 @@ const styles = StyleSheet.create({
   },
   otherCardHeaderMain: {
     flex: 1,
+    minWidth: 0,
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 8,
     paddingVertical: 2,
   },
   otherCardTitle: {
+    flex: 1,
+    flexShrink: 1,
+    minWidth: 0,
     textTransform: 'uppercase',
-  },
-  otherCardHeaderRight: {
-    marginLeft: 12,
-  },
-  headerActionsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  planHeaderActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  chartButton: {
-    marginRight: 6,
-  },
-  chartEmoji: {
-    fontSize: 16,
-  },
-  chartEmojiDisabled: {
-    opacity: 0.55,
   },
   commentText: {
     marginBottom: 8,

@@ -226,12 +226,16 @@ const styles = StyleSheet.create({
   },
   nutritionCardHeaderMain: {
     flex: 1,
+    minWidth: 0,
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 8,
     paddingVertical: 2,
   },
   nutritionCardTitle: {
+    flex: 1,
+    flexShrink: 1,
+    minWidth: 0,
     textTransform: 'uppercase',
   },
   nutritionCardHeaderRight: {

@@ -24,7 +24,7 @@ jest.mock('@/components/ui/AppButton', () => ({ __esModule: true, default: ({ ti
 jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
 jest.mock('@/services/healtConnectServices', () => ({ requestHealthConnectPermissions: jest.fn() }));
 jest.mock('@/components/ui/SettingIcon', () => () => null);
-jest.mock('@/components/ui/ThemedSwitch', () => () => null);
+jest.mock('@/components/ui/inputs/ThemedSwitch', () => () => null);
 jest.mock(
   '@/components/ui/SettingsCard',
   () =>
@@ -37,7 +37,7 @@ jest.mock('@/components/ThemedText', () => ({
     return <Text>{children}</Text>;
   },
 }));
-jest.mock('@/components/ui/Checkbox', () => ({
+jest.mock('@/components/ui/inputs/Checkbox', () => ({
   Checkbox: ({ checked, label, onPress, disabled }: any) => {
     const { Pressable, Text } = require('react-native');
     return (

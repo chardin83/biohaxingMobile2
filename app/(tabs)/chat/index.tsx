@@ -14,7 +14,7 @@ import BackButton from '@/components/BackButton';
 import ChatMessageContent from '@/components/ChatMessageContent';
 import CoachOverview from '@/components/CoachOverview';
 import { ThemedText } from '@/components/ThemedText';
-import LabeledInput from '@/components/ui/LabeledInput';
+import TextInput from '@/components/ui/inputs/TextInput';
 import PremiumBottomSheet, { type PremiumBottomSheetRef } from '@/components/ui/PremiumBottomSheet';
 import { PREMIUM } from '@/constants/Premium';
 import { useCoachQuestions } from '@/hooks/useCoachQuestions';
@@ -349,7 +349,7 @@ export default function ChatWithGPT4o(): JSX.Element {
           </ScrollView>
           <View style={[styles.inputContainer, { bottom: inputContainerBottom, borderColor: colors.border, backgroundColor: colors.background }]}>
             <View style={[styles.inputRow]}>
-              <LabeledInput
+              <TextInput
                 label=""
                 value={input}
                 onChangeText={setInput}

@@ -8,8 +8,8 @@ import { Supplement } from '@/app/domain/Supplement';
 import { ThemedText } from './ThemedText';
 import AppButton from './ui/AppButton';
 import { CancelButton } from './ui/CancelButton';
-import { Checkbox } from './ui/Checkbox';
-import { DateTimeInput } from './ui/DateTimeInput';
+import { Checkbox } from './ui/inputs/Checkbox';
+import { DateTimeInput } from './ui/inputs/DateTimeInput';
 
 
 interface PlanSupplementsPickerProps {

@@ -18,23 +18,23 @@ jest.mock('@gorhom/bottom-sheet', () => {
 jest.mock('@react-navigation/native', () => ({ useTheme: () => ({ colors: {} }) }));
 jest.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
 jest.mock('../ui/BottomSheetDesign', () => ({ useBottomSheetDesign: () => ({}) }));
-jest.mock('../ui/DateTimeInput', () => ({ DateTimeInput: () => null }));
+jest.mock('../ui/inputs/DateTimeInput', () => ({ DateTimeInput: () => null }));
 jest.mock('../ui/CancelButton', () => ({ CancelButton: () => null }));
 jest.mock('../SupplementWarnings', () => ({ SupplementWarnings: () => null }));
 jest.mock('../ThemedText', () => ({ ThemedText: require('react-native').Text }));
 jest.mock('../SupplementsDropdown', () => ({
   __esModule: true,
-  default: ({ disabled }: any) => {
-    const { Text } = require('react-native');
-    return <Text>{disabled ? 'locked' : 'unlocked'}</Text>;
+  default: ({ disabled, errorText, onSupplementSelect }: any) => {
+    const { Text, Pressable } = require('react-native');
+    return <Pressable accessibilityLabel="supplement" accessibilityHint={errorText} onPress={() => onSupplementSelect({ id: 'zinc', name: 'Zinc', quantity: '15', unit: 'mg' })}><Text>{disabled ? 'locked' : 'unlocked'}</Text></Pressable>;
   },
 }));
-jest.mock('../ui/LabeledInput', () => ({
+jest.mock('../ui/inputs/TextInput', () => ({
   __esModule: true,
-  LabeledInputRow: ({ children }: any) => children,
-  default: ({ label, value, onChangeText }: any) => {
+  TextInputRow: ({ children }: any) => children,
+  default: ({ label, value, onChangeText, errorText }: any) => {
     const { TextInput } = require('react-native');
-    return <TextInput accessibilityLabel={label} value={value} onChangeText={onChangeText} />;
+    return <TextInput accessibilityLabel={label} accessibilityHint={errorText} value={value} onChangeText={onChangeText} />;
   },
 }));
 jest.mock('../ui/AppButton', () => ({
@@ -74,4 +74,39 @@ it('keeps the form open when saving fails', async () => {
 it('keeps supplement selection available for ordinary new plan entries', () => {
   const { getByText } = render(<SupplementForm {...props} onSave={jest.fn()} />);
   expect(getByText('unlocked')).toBeTruthy();
+});
+
+it('validates missing supplement, dosage and unit on save, then accepts a selected supplement', async () => {
+  const onSave = jest.fn();
+  const screen = render(<SupplementForm {...props} preselectedSupplement={null} onSave={onSave} />);
+  fireEvent.press(screen.getByText('general.add'));
+  expect(onSave).not.toHaveBeenCalled();
+  for (const label of ['supplement', 'supplementForm.dosage', 'supplementForm.unit']) {
+    expect(screen.getByLabelText(label).props.accessibilityHint).toBe('labeledInput.requiredError');
+  }
+  fireEvent.press(screen.getByLabelText('supplement'));
+  expect(screen.getByLabelText('supplement').props.accessibilityHint).toBeUndefined();
+  fireEvent.press(screen.getByText('general.add'));
+  await waitFor(() => expect(onSave).toHaveBeenCalledWith(supplement));
+});
+
+it.each(['', '0', '-1', '12abc', 'Infinity'])('rejects invalid dosage %s', value => {
+  const onSave = jest.fn();
+  const screen = render(<SupplementForm {...props} onSave={onSave} />);
+  fireEvent.changeText(screen.getByLabelText('supplementForm.dosage'), value);
+  fireEvent.press(screen.getByText('general.add'));
+  expect(onSave).not.toHaveBeenCalled();
+  expect(screen.getByLabelText('supplementForm.dosage').props.accessibilityHint).toBeTruthy();
+});
+
+it('requires a unit and allows the full missing unit to be entered', async () => {
+  const onSave = jest.fn();
+  const screen = render(<SupplementForm {...props} preselectedSupplement={{ ...supplement, unit: '' }} onSave={onSave} />);
+  fireEvent.press(screen.getByText('general.add'));
+  expect(onSave).not.toHaveBeenCalled();
+  expect(screen.getByLabelText('supplementForm.unit').props.accessibilityHint).toBe('labeledInput.requiredError');
+  fireEvent.changeText(screen.getByLabelText('supplementForm.unit'), 'm');
+  fireEvent.changeText(screen.getByLabelText('supplementForm.unit'), 'mg');
+  fireEvent.press(screen.getByText('general.add'));
+  await waitFor(() => expect(onSave).toHaveBeenCalledWith(supplement));
 });

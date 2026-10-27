@@ -6,7 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import { getStoredPreferredTheme, setPreferredTheme } from '@/app/context/themeEvents';
 import { ThemedText } from '@/components/ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import RadioButton from '@/components/ui/RadioButton';
+import RadioButton from '@/components/ui/inputs/RadioButton';
 
 export type ThemeChoice = 'device' | 'light' | 'dark';
 const choices: ThemeChoice[] = ['device', 'light', 'dark'];

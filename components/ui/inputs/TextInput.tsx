@@ -1,11 +1,12 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleProp, StyleSheet, TextInput, TextInputProps, TextStyle, useWindowDimensions, View, ViewStyle } from 'react-native';
+import { StyleProp, StyleSheet, TextInput as NativeTextInput, TextInputProps, TextStyle, useWindowDimensions, View, ViewStyle } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 
-import { IconSymbol } from './IconSymbol';
+import { IconSymbol } from '../IconSymbol';
+import { getInputLabel, InputLabel } from './InputLabel';
 
 const InputRowErrorContext = React.createContext<((id: string, hasError: boolean) => void) | null>(null);
 
@@ -22,7 +23,7 @@ function InputHelp({ text }: Readonly<{ text: string }>) {
 }
 
 /** Shared helper text spans the full width beneath adjacent inputs. */
-export function LabeledInputRow({ children, helperText }: Readonly<{ children: React.ReactNode; helperText?: string }>) {
+export function TextInputRow({ children, helperText }: Readonly<{ children: React.ReactNode; helperText?: string }>) {
   const [errors, setErrors] = React.useState<Set<string>>(() => new Set());
   const reportError = React.useCallback((id: string, hasError: boolean) => {
     setErrors(current => {
@@ -55,7 +56,7 @@ type Props = TextInputProps & {
   errorText?: string;
 };
 
-const LabeledInput: React.FC<Props> = ({
+const TextInput: React.FC<Props> = ({
   label,
   containerStyle,
   inputStyle,
@@ -88,15 +89,7 @@ const LabeledInput: React.FC<Props> = ({
 
   const height = multilineInput ? Math.max(baseMinHeight, inputHeight) : baseMinHeight;
 
-  let labelSuffix = '';
-
-  if (isOptional === true) {
-    labelSuffix = ` (${t('labeledInput.optional')})`;
-  } else if (isOptional === false) {
-    labelSuffix = ` (${t('labeledInput.required')})`;
-  }
-
-  const displayLabel = `${label}${labelSuffix}`;
+  const displayLabel = getInputLabel(label, isOptional, t);
 
   const effectivePlaceholder = typeof placeholder === 'string' && placeholder.trim() === label.trim() ? undefined : placeholder;
 
@@ -113,7 +106,7 @@ const LabeledInput: React.FC<Props> = ({
 
   return (
     <View style={[styles.container, containerStyle]}>
-      <ThemedText type="label">{displayLabel}</ThemedText>
+      <InputLabel label={label} isOptional={isOptional} hasError={hasError} />
 
       <View
         style={[
@@ -125,7 +118,7 @@ const LabeledInput: React.FC<Props> = ({
           },
         ]}
       >
-        <TextInput
+        <NativeTextInput
           style={[
             styles.input,
             multilineInput ? styles.inputMultiline : styles.inputSingleLine,
@@ -164,7 +157,7 @@ const LabeledInput: React.FC<Props> = ({
           </ThemedText>
         ) : null}
       </View>
-      {displayedError && (
+      {displayedError && displayedError !== t('labeledInput.requiredError') && (
         <ThemedText type="caption" accessibilityLiveRegion="polite" style={[styles.errorText, { color: colors.error }]}>
           {displayedError}
         </ThemedText>
@@ -174,7 +167,7 @@ const LabeledInput: React.FC<Props> = ({
   );
 };
 
-export default LabeledInput;
+export default TextInput;
 
 const styles = StyleSheet.create({
   errorText: { marginTop: 4 },

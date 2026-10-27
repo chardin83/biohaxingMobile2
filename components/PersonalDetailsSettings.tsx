@@ -10,8 +10,8 @@ import { fromDateKey, getAge, toDateKey } from '@/utils/dateUtils';
 import NumberStepper from './NumberStepper';
 import { ThemedText } from './ThemedText';
 import CardLinkList from './ui/CardLinkList';
-import { DateTimeInput } from './ui/DateTimeInput';
-import RadioButton from './ui/RadioButton';
+import { DateTimeInput } from './ui/inputs/DateTimeInput';
+import RadioButton from './ui/inputs/RadioButton';
 
 export default function PersonalDetailsSettings({
   style,

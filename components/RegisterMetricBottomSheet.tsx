@@ -1,14 +1,16 @@
-import BottomSheet, { BottomSheetScrollView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import { Picker } from '@react-native-picker/picker';
+import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
-import AppButton from '@/components/ui/AppButton';
 import { useBottomSheetDesign } from '@/components/ui/BottomSheetDesign';
-import { DateTimeInput } from '@/components/ui/DateTimeInput';
+import BottomSheetTextInput from '@/components/ui/inputs/BottomSheetTextInput';
+import { DateTimeInput } from '@/components/ui/inputs/DateTimeInput';
+import { InputLabel } from '@/components/ui/inputs/InputLabel';
+import OptionSelector from '@/components/ui/inputs/OptionSelector';
 import Notice from '@/components/ui/Notice';
+import { SaveCancelButtons } from '@/components/ui/SaveCancelButtons';
 import { translateMetricUnit } from '@/utils/translateMetricUnit';
 import { RECOVERY_INPUT_METRIC_IDS } from '@/wearables/recoveryMetrics';
 
@@ -29,8 +31,87 @@ interface RegisterMetricBottomSheetProps {
   setRecordedAt: (value: Date) => void;
   colors: any;
   units?: Array<{ unit: string; system: string }>;
-  onSave: () => void;
+  onSave: () => void | Promise<void>;
   onClose: () => void;
+}
+
+function isValidMetricValue(metricValue: string, metricId?: string): boolean {
+  if (metricValue.trim() === '') return false;
+  const value = Number(metricValue.replace(',', '.').trim());
+  if (!Number.isFinite(value)) return false;
+
+  if (metricId === 'sleep_bedtime') {
+    return Number.isInteger(value) && value >= 0 && value < 1440;
+  }
+  if (['sleep_duration', 'deep_sleep', 'rem_sleep'].includes(metricId ?? '')) {
+    return Number.isInteger(value) && value >= 0 && value <= 1440;
+  }
+  return true;
+}
+
+function getMetricValidation({
+  metricId,
+  metricValue,
+  metricUnit,
+  units,
+  recordedAt,
+}: Pick<RegisterMetricBottomSheetProps, 'metricId' | 'metricValue' | 'metricUnit' | 'units' | 'recordedAt'>) {
+  const isSleepTime = ['sleep_duration', 'deep_sleep', 'rem_sleep', 'sleep_bedtime'].includes(metricId ?? '');
+  return {
+    valueIsValid: isValidMetricValue(metricValue, metricId),
+    unitIsValid: isSleepTime || units?.length === 1 || metricUnit.trim() !== '',
+    dateIsValid: Number.isFinite(recordedAt.getTime()),
+  };
+}
+
+type MetricUnitFieldProps = Pick<RegisterMetricBottomSheetProps, 'units' | 'metricUnit' | 'setMetricUnit' | 'colors'> & { errorText?: string };
+
+function MetricUnitField({ units, metricUnit, setMetricUnit, colors, errorText }: Readonly<MetricUnitFieldProps>) {
+  const { t } = useTranslation('metrics');
+  const uniqueUnits = useMemo(() => {
+    if (!units || units.length === 0) {
+      return [];
+    }
+
+    const seen = new Set<string>();
+    return units.filter(unit => {
+      if (seen.has(unit.unit)) {
+        return false;
+      }
+      seen.add(unit.unit);
+      return true;
+    });
+  }, [units]);
+
+  if (uniqueUnits.length === 0) {
+    return (
+      <BottomSheetTextInput
+        value={metricUnit}
+        onChangeText={setMetricUnit}
+        label={t('registration.unit')}
+        isOptional={false}
+        errorText={errorText}
+        placeholder={t('registration.unitPlaceholder')}
+        placeholderTextColor={colors.textMuted}
+      />
+    );
+  }
+
+  return (
+    <View>
+      <InputLabel label={t('registration.unit')} isOptional={false} hasError={Boolean(errorText)} />
+      <OptionSelector
+        value={metricUnit}
+        onChange={setMetricUnit}
+        error={Boolean(errorText)}
+        accessibilityLabel={t('registration.unit')}
+        options={uniqueUnits.map(unit => ({
+          value: unit.unit,
+          label: translateMetricUnit(unit.unit, t) + (unit.system ? ` (${unit.system})` : ''),
+        }))}
+      />
+    </View>
+  );
 }
 
 export function RegisterMetricBottomSheet({
@@ -54,31 +135,44 @@ export function RegisterMetricBottomSheet({
   onClose,
 }: Readonly<RegisterMetricBottomSheetProps>) {
   const { t } = useTranslation('metrics');
-  const snapPoints = useMemo(() => providedSnapPoints ?? ['25%', '50%', '90%'], [providedSnapPoints]);
-  const sheetDesign = useBottomSheetDesign(colors);
-  const uniqueUnits = useMemo(() => {
-    if (!units || units.length === 0) {
-      return [];
-    }
+  const [isSaving, setIsSaving] = React.useState(false);
+  const [saveError, setSaveError] = React.useState(false);
+  const savingRef = React.useRef(false);
+  const [showValidation, setShowValidation] = React.useState(false);
+  const { valueIsValid, unitIsValid, dateIsValid } = getMetricValidation({ metricId, metricValue, metricUnit, units, recordedAt });
+  const valueError = showValidation && !valueIsValid ? t('registration.valueError') : undefined;
+  const unitError = showValidation && !unitIsValid ? t('registration.unitError') : undefined;
 
-    const seen = new Set<string>();
-    return units.filter(unit => {
-      if (seen.has(unit.unit)) {
-        return false;
-      }
-      seen.add(unit.unit);
-      return true;
-    });
-  }, [units]);
+  React.useEffect(() => {
+    if (isVisible) {
+      setShowValidation(false);
+      setSaveError(false);
+    }
+  }, [isVisible, metricId]);
+
+  const handleSave = async () => {
+    if (savingRef.current) return;
+    setShowValidation(true);
+    if (!valueIsValid || !unitIsValid || !dateIsValid) return;
+    savingRef.current = true;
+    setIsSaving(true);
+    setSaveError(false);
+    try {
+      await onSave();
+    } catch {
+      setSaveError(true);
+    } finally {
+      savingRef.current = false;
+      setIsSaving(false);
+    }
+  };
+  const snapPoints = useMemo(() => providedSnapPoints ?? ['30%', '70%', '90%'], [providedSnapPoints]);
+  const sheetDesign = useBottomSheetDesign(colors);
   const hasOpenedRef = React.useRef(false);
   const hasMetricName = Boolean(metricName);
-  const hasMultipleUnits = uniqueUnits.length > 1;
-  const hasSingleUnit = uniqueUnits.length === 1;
-  const isSleepDurationMetric = metricId === 'sleep_duration';
-  const isSleepStageDurationMetric = metricId === 'deep_sleep' || metricId === 'rem_sleep';
-  const isSleepMinutesMetric = isSleepDurationMetric || isSleepStageDurationMetric;
+  const isSleepMinutesMetric = ['sleep_duration', 'deep_sleep', 'rem_sleep'].includes(metricId ?? '');
   const isSleepBedtimeMetric = metricId === 'sleep_bedtime';
-  const isSleepTimeMetric = isSleepMinutesMetric || isSleepBedtimeMetric;
+  const isSleepTimeMetric = ['sleep_duration', 'deep_sleep', 'rem_sleep', 'sleep_bedtime'].includes(metricId ?? '');
   const defaultBedtimeMinutes = 22 * 60 + 30;
 
   React.useEffect(() => {
@@ -129,38 +223,6 @@ export function RegisterMetricBottomSheet({
     [setMetricValue]
   );
 
-  let unitField = (
-    <BottomSheetTextInput
-      style={[styles.input, { color: colors.text, borderColor: colors.border }]}
-      value={metricUnit}
-      onChangeText={setMetricUnit}
-      placeholder="t.ex. mg/dL"
-      placeholderTextColor={colors.textMuted}
-    />
-  );
-
-  if (hasMultipleUnits) {
-    unitField = (
-      <View style={[styles.input, styles.pickerContainer, { borderColor: colors.border }]}>
-        <Picker selectedValue={metricUnit} onValueChange={setMetricUnit} style={{ color: colors.text }} dropdownIconColor={colors.text}>
-          {uniqueUnits.map(unit => (
-            <Picker.Item
-              key={`${unit.system}-${unit.unit}`}
-              label={translateMetricUnit(unit.unit, t) + (unit.system ? ` (${unit.system})` : '')}
-              value={unit.unit}
-            />
-          ))}
-        </Picker>
-      </View>
-    );
-  } else if (hasSingleUnit) {
-    unitField = (
-      <View style={[styles.input, styles.singleUnitContainer, { borderColor: colors.border }]}>
-        <ThemedText type="defaultSemiBold">{translateMetricUnit(uniqueUnits[0].unit, t)}</ThemedText>
-      </View>
-    );
-  }
-
   if (!isVisible) {
     return null;
   }
@@ -171,7 +233,7 @@ export function RegisterMetricBottomSheet({
       return;
     }
 
-    if (index === -1 && hasOpenedRef.current) {
+    if (index === -1 && hasOpenedRef.current && !savingRef.current) {
       hasOpenedRef.current = false;
       onClose();
     }
@@ -179,11 +241,13 @@ export function RegisterMetricBottomSheet({
 
   let valueField = (
     <BottomSheetTextInput
-      style={[styles.input, { color: colors.text, borderColor: colors.border }]}
       value={metricValue}
       onChangeText={setMetricValue}
       keyboardType="decimal-pad"
-      placeholder="Ange värde"
+      label={t('registration.value')}
+      isOptional={false}
+      errorText={valueError}
+      placeholder={t('registration.valuePlaceholder')}
       placeholderTextColor={colors.textMuted}
     />
   );
@@ -193,21 +257,23 @@ export function RegisterMetricBottomSheet({
       <View style={styles.sleepDurationRow}>
         <View style={styles.sleepDurationField}>
           <BottomSheetTextInput
-            style={[styles.input, { color: colors.text, borderColor: colors.border }]}
             value={metricValue === '' ? '' : sleepDurationHours}
             onChangeText={hours => updateSleepDurationValue(hours, sleepDurationMinutes)}
             keyboardType="number-pad"
-            placeholder="Timmar"
+            label={t('registration.hours')}
+            isOptional={false}
+            errorText={valueError}
             placeholderTextColor={colors.textMuted}
           />
         </View>
         <View style={styles.sleepDurationField}>
           <BottomSheetTextInput
-            style={[styles.input, { color: colors.text, borderColor: colors.border }]}
             value={metricValue === '' ? '' : sleepDurationMinutes}
             onChangeText={minutes => updateSleepDurationValue(sleepDurationHours, minutes)}
             keyboardType="number-pad"
-            placeholder="Minuter"
+            label={t('registration.minutes')}
+            isOptional={false}
+            errorText={valueError}
             placeholderTextColor={colors.textMuted}
           />
         </View>
@@ -217,8 +283,9 @@ export function RegisterMetricBottomSheet({
 
   if (isSleepBedtimeMetric) {
     valueField = (
-      <View style={styles.inputGroup}>
-        <DateTimeInput value={bedtimePickerValue} onChange={handleBedtimeChange} showDate={false} showTime timeLabel="Laggtid" />
+      <View>
+        <InputLabel label={t('registration.bedtime')} isOptional={false} hasError={Boolean(valueError)} />
+        <DateTimeInput hasError={Boolean(valueError)} value={bedtimePickerValue} onChange={handleBedtimeChange} showDate={false} showTime timeLabel="Laggtid" />
         <View style={[styles.input, styles.singleUnitContainer, { borderColor: colors.border }]}>
           <ThemedText type="default">Använder klockslag (HH:mm)</ThemedText>
         </View>
@@ -230,7 +297,7 @@ export function RegisterMetricBottomSheet({
     <BottomSheet
       ref={bottomSheetRef}
       snapPoints={snapPoints}
-      enablePanDownToClose
+      enablePanDownToClose={!isSaving}
       backgroundStyle={sheetDesign.backgroundStyle}
       handleComponent={sheetDesign.handleComponent}
       animateOnMount
@@ -249,42 +316,24 @@ export function RegisterMetricBottomSheet({
           </ThemedText>
         )}
 
-        <View style={styles.inputGroup}>
-          <ThemedText type="default" style={styles.inputLabel}>
-            Värde
-          </ThemedText>
-          {valueField}
+        {valueField}
+
+        {!isSleepTimeMetric && <MetricUnitField units={units} metricUnit={metricUnit} setMetricUnit={setMetricUnit} colors={colors} errorText={unitError} />}
+
+        <View>
+          <InputLabel label={t('registration.date')} isOptional={false} hasError={showValidation && !dateIsValid} />
+          <DateTimeInput value={recordedAt} onChange={setRecordedAt} showDate showTime={false} hasError={showValidation && !dateIsValid} />
         </View>
 
-        {!isSleepTimeMetric && (
-          <View style={styles.inputGroup}>
-            <ThemedText type="default" style={styles.inputLabel}>
-              Enhet
-            </ThemedText>
-            {unitField}
-          </View>
-        )}
+        <BottomSheetTextInput
+          label={t('registration.notes')}
+          value={metricNotes}
+          onChangeText={setMetricNotes}
+          placeholder={t('registration.notesPlaceholder')}
+        />
 
-        <DateTimeInput value={recordedAt} onChange={setRecordedAt} showDate showTime={false} />
-
-        <View style={styles.inputGroup}>
-          <ThemedText type="default" style={styles.inputLabel}>
-            Notering (valfritt)
-          </ThemedText>
-          <BottomSheetTextInput
-            style={[styles.input, styles.textArea, { color: colors.text, borderColor: colors.border }]}
-            value={metricNotes}
-            onChangeText={setMetricNotes}
-            placeholder="T.ex. fastande mätvärde"
-            placeholderTextColor={colors.textMuted}
-            multiline
-          />
-        </View>
-
-        <View style={styles.buttonRow}>
-          <AppButton onPress={onClose} title="Avbryt" variant="secondary" style={styles.button} />
-          <AppButton onPress={onSave} title="Spara" style={styles.button} />
-        </View>
+        {saveError && <Notice message={t('registration.saveError')} />}
+        <SaveCancelButtons onCancel={onClose} onSave={handleSave} busy={isSaving} />
       </BottomSheetScrollView>
     </BottomSheet>
   );
@@ -302,24 +351,11 @@ const styles = StyleSheet.create({
   metricName: {
     marginBottom: 4,
   },
-  inputGroup: {
-    gap: 8,
-  },
-  inputLabel: {
-    marginBottom: 4,
-  },
   input: {
     borderWidth: 1,
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-  },
-  pickerContainer: {
-    padding: 0,
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderRadius: 8,
-    overflow: 'hidden',
   },
   sleepDurationRow: {
     flexDirection: 'row',
@@ -330,18 +366,5 @@ const styles = StyleSheet.create({
   },
   singleUnitContainer: {
     justifyContent: 'center',
-  },
-  textArea: {
-    minHeight: 96,
-    textAlignVertical: 'top',
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 8,
-    marginBottom: 12,
-  },
-  button: {
-    flex: 1,
   },
 });

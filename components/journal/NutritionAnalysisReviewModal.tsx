@@ -13,8 +13,8 @@ import { ThemedModal } from '../ThemedModal';
 import { ThemedText } from '../ThemedText';
 import AddButton from '../ui/AddButton';
 import { Card } from '../ui/Card';
-import { DateTimeInput } from '../ui/DateTimeInput';
 import { IconSymbol } from '../ui/IconSymbol';
+import { DateTimeInput } from '../ui/inputs/DateTimeInput';
 import { IngredientList } from './IngredientList';
 
 interface NutritionAnalysisReviewModalProps {

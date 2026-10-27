@@ -20,7 +20,7 @@ import AppButton from '../ui/AppButton';
 import { Card } from '../ui/Card';
 import DiscreetButton from '../ui/DiscreetButton';
 import { IconSymbol } from '../ui/IconSymbol';
-import OptionSelector from '../ui/OptionSelector';
+import OptionSelector from '../ui/inputs/OptionSelector';
 import JournalGoalAnchor from './JournalGoalAnchor';
 import ProgressButton from './ProgressButton';
 import { RegisterHabitValueBottomSheet } from './RegisterHabitValueBottomSheet';

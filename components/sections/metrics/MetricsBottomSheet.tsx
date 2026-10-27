@@ -56,8 +56,8 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
   const handleSaveMetric = () => {
     if (!metricDraftId || !metricValue) return;
 
-    const value = Number.parseFloat(metricValue);
-    if (Number.isNaN(value)) return;
+    const value = Number(metricValue.replace(',', '.').trim());
+    if (!Number.isFinite(value)) return;
 
     const nextEntry: MetricEntry = {
       metricId: metricDraftId,
@@ -197,7 +197,6 @@ export const MetricsBottomSheet: React.FC<MetricsBottomSheetProps> = ({ bottomSh
         bottomSheetRef={registerBottomSheetRef}
         isVisible={isRegisterSheetVisible}
         initialSnapIndex={sheetIndex}
-        snapPoints={['25%', '50%', '90%']}
         onClose={handleCloseAddMetricSheet}
         onSave={handleSaveMetric}
         metricName={metricDraftId ? t(`metrics:${metricDraftId}.name`) : undefined}

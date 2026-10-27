@@ -12,7 +12,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { Card } from '@/components/ui/Card';
 import Container from '@/components/ui/Container';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import OptionSelector from '@/components/ui/OptionSelector';
+import OptionSelector from '@/components/ui/inputs/OptionSelector';
 import { type MetricId, metrics } from '@/locales/metrics';
 import { tips } from '@/locales/tips';
 import { buildMetricAnalysisContext } from '@/services/metricAnalysis';

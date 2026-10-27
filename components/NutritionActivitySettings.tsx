@@ -7,7 +7,7 @@ import { StyleSheet, View } from 'react-native';
 import { useStorage } from '@/app/context/StorageContext';
 import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
-import RadioButton from '@/components/ui/RadioButton';
+import RadioButton from '@/components/ui/inputs/RadioButton';
 import SettingsCard from '@/components/ui/SettingsCard';
 import StepsContainer from '@/components/ui/StepsContainer';
 

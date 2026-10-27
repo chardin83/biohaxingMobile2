@@ -15,11 +15,11 @@ import ShowAllButton from '@/components/ShowAllButton';
 import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
 import { Card } from '@/components/ui/Card';
-import { Checkbox } from '@/components/ui/Checkbox';
 import Container from '@/components/ui/Container';
 import { GoldenGlowButton } from '@/components/ui/GoldenGlowButton';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import LabeledInput from '@/components/ui/LabeledInput';
+import { Checkbox } from '@/components/ui/inputs/Checkbox';
+import TextInput from '@/components/ui/inputs/TextInput';
 import Notice from '@/components/ui/Notice';
 import TipDetailsBottomSheet from '@/components/ui/TipDetailsBottomSheet';
 import { ONBOARDING_FINISH_STEPS } from '@/constants/onboarding';
@@ -536,7 +536,7 @@ export default function CreatePlanScreen({ onboarding = false }: { onboarding?: 
             disabled={!!tempPlans || loading || profileMissingAge} // Disable checkbox when tempPlans or loading is true
           />
         ))}
-        <LabeledInput
+        <TextInput
           containerStyle={globalStyles.marginBottom16}
           inputStyle={{ backgroundColor: colors.overlayLight, borderColor: colors.cardBorder }}
           placeholder={t('common:createPlan.goals.customPlaceholder')}

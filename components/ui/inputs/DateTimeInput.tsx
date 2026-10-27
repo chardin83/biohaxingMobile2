@@ -9,10 +9,12 @@ import { ThemedText } from '@/components/ThemedText';
 import AppButton from '@/components/ui/AppButton';
 import { formatClockTime } from '@/utils/dateUtils';
 
-import { IconSymbolName } from './icon-symbol-map';
+import { IconSymbolName } from '../icon-symbol-map';
+import { InputLabel } from './InputLabel';
 
 interface DateTimeInputProps {
   value: Date;
+  label?: string;
   onChange: (value: Date) => void;
   dateLabel?: string;
   buttonLabel?: string;
@@ -23,11 +25,13 @@ interface DateTimeInputProps {
   minDate?: Date;
   maxDate?: Date;
   disabled?: boolean;
+  hasError?: boolean;
   onPickerOpenChange?: (isOpen: boolean) => void;
 }
 
 export function DateTimeInput({
   value,
+  label,
   onChange,
   dateLabel,
   buttonLabel,
@@ -38,6 +42,7 @@ export function DateTimeInput({
   minDate,
   maxDate,
   disabled = false,
+  hasError = false,
   onPickerOpenChange,
 }: Readonly<DateTimeInputProps>) {
   const { colors } = useTheme();
@@ -135,7 +140,18 @@ export function DateTimeInput({
 
   return (
     <View style={styles.container}>
-      <AppButton title={buttonLabel ?? buttonTitle} icon={buttonIcon} onPress={handleTogglePicker} variant="secondary" disabled={disabled} />
+      <View>
+        {label && <InputLabel label={label} />}
+        <AppButton
+          title={buttonLabel ?? buttonTitle}
+          accessibilityLabel={label ? `${label}, ${buttonLabel ?? buttonTitle}` : undefined}
+          icon={buttonIcon}
+          onPress={handleTogglePicker}
+          variant="secondary"
+          disabled={disabled}
+          style={hasError ? { borderColor: colors.error } : undefined}
+        />
+      </View>
       {showPicker && (
         <>
           {showDatePicker && (

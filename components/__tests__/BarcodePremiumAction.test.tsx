@@ -50,7 +50,7 @@ jest.mock('../ui/Notice', () => ({ message }: any) => {
   const { Text } = require('react-native');
   return <Text>{message}</Text>;
 });
-jest.mock('../ui/DateTimeInput', () => ({ DateTimeInput: () => null }));
+jest.mock('../ui/inputs/DateTimeInput', () => ({ DateTimeInput: () => null }));
 jest.mock('../NumberStepper', () => ({
   __esModule: true,
   default: ({ onChange, accessibilityLabel }: any) => {

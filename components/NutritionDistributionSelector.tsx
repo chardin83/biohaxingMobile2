@@ -7,7 +7,7 @@ import { DISTRIBUTION_CHOICES, distributionForAge, MACROS } from '@/utils/nutrit
 
 import { ThemedText } from './ThemedText';
 import { IconSymbol } from './ui/IconSymbol';
-import RadioButton from './ui/RadioButton';
+import RadioButton from './ui/inputs/RadioButton';
 import SettingsCard from './ui/SettingsCard';
 
 export default function NutritionDistributionSelector({

@@ -39,7 +39,7 @@ import BarcodeScannerBottomSheet from './BarcodeScannerBottomSheet';
 import CaffeineLoggingInfoModal from './CaffeineLoggingInfoModal';
 import DrinkLoggingInfoModal from './DrinkLoggingInfoModal';
 import DrinkPickerBottomSheet from './DrinkPickerBottomSheet';
-import EntryEditModal from './EntryEditModal';
+import EntryEditBottomSheet from './EntryEditBottomSheet';
 import FoodIdentificationModal from './FoodIdentificationModal';
 import FoodPickerBottomSheet from './FoodPickerBottomSheet';
 import { LoggedDrinksSection } from './LoggedDrinksSection';
@@ -314,8 +314,9 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
     }
 
     const name = editingEntry.name.trim();
+    if (!name) return;
     if (editingEntry.kind === 'meal') {
-      const mealName = name || t('journal:nutritionLogger.unnamedMeal');
+      const mealName = name;
       updateNutritionEntry(selectedDate, editingEntry.id, {
         name: mealName,
         recordedAt: toRecordedAt(selectedDate, editingEntry.recordedAt),
@@ -580,7 +581,7 @@ const NutritionLoggerTab: React.FC<NutritionLoggerTabProps> = ({ selectedDate, o
           onClose={closeAnalysisReviewModal}
           onSave={handleSaveAnalyzedMeal}
         />
-        <EntryEditModal
+        <EntryEditBottomSheet
           visible={editingEntry !== null}
           title={t(editingEntry?.kind === 'drink' ? 'journal:nutritionLogger.editDrinkTitle' : 'journal:nutritionLogger.editMealTitle')}
           nameLabel={t(editingEntry?.kind === 'drink' ? 'journal:nutritionLogger.drinkNameLabel' : 'journal:nutritionLogger.mealNameLabel')}

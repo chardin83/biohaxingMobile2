@@ -358,6 +358,7 @@
     "selectAtLeastOne": "Select at least 1 tip to create the AI plan"
   },
   "supplementForm": {
+    "invalidDosage": "Enter a valid dosage greater than zero.",
     "dosage": "Dosage",
     "unit": "Unit",
     "exampleDosage": "Pre-filled dosage is only an example, not a recommendation. Adjust to your product."

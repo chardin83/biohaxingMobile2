@@ -2,7 +2,7 @@ import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { Pressable, type StyleProp, StyleSheet, View, type ViewStyle } from 'react-native';
 
-import { IconSymbol } from './IconSymbol';
+import { IconSymbol } from '../IconSymbol';
 
 interface RadioButtonProps {
   selected: boolean;

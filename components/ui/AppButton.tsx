@@ -91,7 +91,8 @@ const AppButton: React.FC<AppButtonProps> = ({
     };
   }
 
-  const iconColor = disabled ? colors.textMuted : textColorStyle.color;
+  const isDisabled = disabled || busy;
+  const iconColor = isDisabled ? colors.textMuted : textColorStyle.color;
 
   return (
     <>
@@ -115,13 +116,13 @@ const AppButton: React.FC<AppButtonProps> = ({
                     shadowColor: colors.buttonGlow,
                   }),
             },
-          disabled && styles.disabled,
+          isDisabled && styles.disabled,
           style,
         ]}
-        disabled={disabled}
+        disabled={isDisabled}
         accessibilityLabel={accessibilityLabel || title}
         accessibilityRole="button"
-        accessibilityState={{ disabled, busy }}
+        accessibilityState={{ disabled: isDisabled, busy }}
         accessibilityHint={accessibilityHint}
         accessible
       >
@@ -158,6 +159,7 @@ const AppButton: React.FC<AppButtonProps> = ({
 
 const baseStyle: ViewStyle = {
   minHeight: 48,
+  minWidth: 48,
   paddingVertical: 14,
   paddingHorizontal: 18,
   borderRadius: globalStyles.borders.borderRadius,

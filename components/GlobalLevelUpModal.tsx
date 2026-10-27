@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { useStorage } from '@/app/context/StorageContext';
 import { ThemedText } from '@/components/ThemedText';
-import ThemedSwitch from '@/components/ui/ThemedSwitch';
+import ThemedSwitch from '@/components/ui/inputs/ThemedSwitch';
 
 import { useMusic } from './MusicContext';
 import { useSparks } from './SparksContext';

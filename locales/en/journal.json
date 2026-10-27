@@ -76,6 +76,7 @@
     "detectedDrinksTitle": "Drinks ({{st}})",
     "analysisReadyToSave": "Review the analysis and tap Save if it looks correct.",
     "unnamedMeal": "Unnamed meal",
+    "editMealTitle": "Edit meal",
     "editMealNameTitle": "Edit meal name",
     "copyMealModalTitle": "Choose one of your recent meals",
     "copyMealEmpty": "You have no logged meals to copy yet.",
@@ -378,6 +379,7 @@
     "nutritionSummary": "Nutrition summary"
   },
   "otherLoggerTab": {
+    "invalidValue": "Enter a valid number that is zero or greater.",
     "registerToday": "Register today",
     "registeredToday": "Registered today"
   },

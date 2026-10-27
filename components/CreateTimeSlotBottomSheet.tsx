@@ -6,14 +6,14 @@ import { Platform, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/ThemedText';
-import AppButton from '@/components/ui/AppButton';
 import { useBottomSheetDesign } from '@/components/ui/BottomSheetDesign';
-import { CancelButton } from '@/components/ui/CancelButton';
-import { DateTimeInput } from '@/components/ui/DateTimeInput';
-import LabeledInput from '@/components/ui/LabeledInput';
+import { DateTimeInput } from '@/components/ui/inputs/DateTimeInput';
+import TextInput from '@/components/ui/inputs/TextInput';
+import { SaveDeleteCancelButtons } from '@/components/ui/SaveDeleteCancelButtons';
 import { getTimeSlotNameKey } from '@/utils/timeSlotName';
 
 const SNAP_POINTS = ['50%', '75%', '90%'];
+const EDIT_SNAP_POINTS = ['60%', '75%', '90%'];
 
 export type CreatePlanData = {
   name: string;
@@ -37,6 +37,7 @@ export default function CreateTimeSlotBottomSheet({ visible, onClose, onCreate, 
   const insets = useSafeAreaInsets();
   const design = useBottomSheetDesign(colors);
   const sheetRef = React.useRef<BottomSheetModal>(null);
+  const showDeleteButton = Boolean(initialName) && onDelete !== undefined;
   const wasVisible = React.useRef(false);
   const externalClose = React.useRef(false);
   const manualName = React.useRef(Boolean(initialName));
@@ -61,18 +62,18 @@ export default function CreateTimeSlotBottomSheet({ visible, onClose, onCreate, 
 
   const renderBackdrop = React.useCallback(
     (props: React.ComponentProps<typeof BottomSheetBackdrop>) => (
-      <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} pressBehavior="close" />
+      <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} pressBehavior={saving ? 'none' : 'close'} />
     ),
-    []
+    [saving]
   );
 
   return (
     <BottomSheetModal
       ref={sheetRef}
-      snapPoints={SNAP_POINTS}
+      snapPoints={showDeleteButton ? EDIT_SNAP_POINTS : SNAP_POINTS}
       enableDynamicSizing={false}
       enableContentPanningGesture={false}
-      enablePanDownToClose
+      enablePanDownToClose={!saving}
       backdropComponent={renderBackdrop}
       backgroundStyle={design.backgroundStyle}
       handleComponent={design.handleComponent}
@@ -97,7 +98,7 @@ export default function CreateTimeSlotBottomSheet({ visible, onClose, onCreate, 
             if (!manualName.current) setPlanName(t(`plan.defaultPlan.${getTimeSlotNameKey(nextTime)}`));
           }}
         />
-        <LabeledInput
+        <TextInput
           label={t('plan.timeSlotNameLabel')}
           value={planName}
           isOptional={false}
@@ -107,10 +108,12 @@ export default function CreateTimeSlotBottomSheet({ visible, onClose, onCreate, 
           }}
         />
         {children}
-        <AppButton
-          title={t('general.save')}
-          disabled={saving || !planName.trim()}
-          onPress={async () => {
+        <SaveDeleteCancelButtons
+          busy={saving}
+          saveDisabled={!planName.trim()}
+          onDelete={showDeleteButton ? onDelete : undefined}
+          onCancel={() => sheetRef.current?.dismiss()}
+          onSave={async () => {
             if (saving || !planName.trim()) return;
             setSaving(true);
             try {
@@ -124,8 +127,6 @@ export default function CreateTimeSlotBottomSheet({ visible, onClose, onCreate, 
             }
           }}
         />
-        {Boolean(initialName) && onDelete !== undefined && <AppButton title={t('general.delete')} onPress={onDelete} variant="danger" />}
-        <CancelButton onPress={() => sheetRef.current?.dismiss()} />
       </BottomSheetScrollView>
     </BottomSheetModal>
   );

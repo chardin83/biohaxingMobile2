@@ -12,10 +12,13 @@ import { TRAINING_INTENSITY_OPTIONS } from '@/types/trainingIntensityOptions';
 import { LoggedTrainingSection } from '../LoggedTrainingSection';
 import { ThemedText } from '../ThemedText';
 import AppButton from '../ui/AppButton';
-import { CancelButton } from '../ui/CancelButton';
 import { IconSymbol } from '../ui/IconSymbol';
-import LabeledInput from '../ui/LabeledInput';
-import LabeledStepperInput from '../ui/LabeledStepperInput';
+import { ChoiceInput } from '../ui/inputs/ChoiceInput';
+import { DateTimeInput } from '../ui/inputs/DateTimeInput';
+import { InputLabel } from '../ui/inputs/InputLabel';
+import StepperInput from '../ui/inputs/StepperInput';
+import TextInput from '../ui/inputs/TextInput';
+import { SaveCancelButtons } from '../ui/SaveCancelButtons';
 import { DailyTrainingSummary } from './DailyTrainingSummary';
 import { TrainingPlanTargetsSection } from './TrainingPlanTargetsSection';
 
@@ -30,6 +33,8 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
 
   const [selectedTrainingType, setSelectedTrainingType] = useState<TrainingActivityType>(DEFAULT_TRAINING_ACTIVITY);
   const [durationMinutes, setDurationMinutes] = useState('');
+  const [startTime, setStartTime] = useState<Date | undefined>();
+  const [showRequiredErrors, setShowRequiredErrors] = useState(false);
   const [distanceKm, setDistanceKm] = useState('');
   const [intensity, setIntensity] = useState<TrainingIntensity>('moderate');
   const [trainingNotes, setTrainingNotes] = useState('');
@@ -46,10 +51,8 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
     [t]
   );
 
-  const intensityOptions = useMemo(
-    () => TRAINING_INTENSITY_OPTIONS.map(option => ({ key: option.key, label: t(option.labelKey) })),
-    [t]
-  );
+  const intensityOptions = useMemo(() => TRAINING_INTENSITY_OPTIONS.map(option => ({ value: option.key, label: t(option.labelKey) })), [t]);
+  const intensityIsValid = intensityOptions.some(option => option.value === intensity);
 
   const selectedChipStyle = useMemo(
     () => ({
@@ -69,9 +72,17 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
 
   const dayTrainingEntries = useMemo(() => dailyTrainingTracking[selectedDate] ?? [], [dailyTrainingTracking, selectedDate]);
 
+  const parsedDuration = Number(durationMinutes.trim());
+  const durationIsValid = durationMinutes.trim() !== '' && Number.isInteger(parsedDuration) && parsedDuration > 0;
+  const timeIsValid = startTime !== undefined && Number.isFinite(startTime.getTime());
+  const durationError = showRequiredErrors && !durationIsValid ? t('training:trainingDurationError') : undefined;
+  const timeError = showRequiredErrors && !timeIsValid ? t('training:trainingTimeError') : undefined;
+
   const resetForm = useCallback(() => {
     setSelectedTrainingType(DEFAULT_TRAINING_ACTIVITY);
     setDurationMinutes('');
+    setStartTime(undefined);
+    setShowRequiredErrors(false);
     setDistanceKm('');
     setTrainingNotes('');
     setIntensity('moderate');
@@ -81,12 +92,9 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
   }, []);
 
   const handleSaveTraining = useCallback(() => {
-    const parsedDuration = Number.parseInt(durationMinutes, 10);
-
-    if (!Number.isFinite(parsedDuration) || parsedDuration <= 0) {
-      setTrainingFormError(t('training:trainingDurationError'));
-      return;
-    }
+    setShowRequiredErrors(true);
+    setTrainingFormError(null);
+    if (!durationIsValid || !timeIsValid || !intensityIsValid || !startTime) return;
 
     let parsedDistance: number | undefined;
     const normalizedDistance = distanceKm.replace(',', '.').trim();
@@ -102,7 +110,12 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
       parsedDistance = distanceValue;
     }
 
+    const startedAt = new Date(`${selectedDate}T00:00:00`);
+    startedAt.setHours(startTime.getHours(), startTime.getMinutes(), 0, 0);
+    const endedAt = new Date(startedAt.getTime() + parsedDuration * 60000);
     const values = {
+      startTime: startedAt.toISOString(),
+      endTime: endedAt.toISOString(),
       activityType: selectedTrainingType,
       durationMinutes: parsedDuration,
       distanceKm: parsedDistance,
@@ -123,7 +136,11 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
   }, [
     addTrainingEntry,
     distanceKm,
-    durationMinutes,
+    durationIsValid,
+    intensityIsValid,
+    timeIsValid,
+    startTime,
+    parsedDuration,
     editingEntryId,
     intensity,
     resetForm,
@@ -144,6 +161,8 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
 
       setSelectedTrainingType(entry.activityType);
       setDurationMinutes(String(entry.durationMinutes));
+      setStartTime(entry.startTime ? new Date(entry.startTime) : undefined);
+      setShowRequiredErrors(false);
       setDistanceKm(typeof entry.distanceKm === 'number' ? String(entry.distanceKm) : '');
       setIntensity(entry.intensity ?? 'moderate');
       setTrainingNotes(entry.notes ?? '');
@@ -193,7 +212,21 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
             ))}
           </View>
 
-          <LabeledStepperInput
+          <View>
+            <InputLabel label={t('training:trainingTimeLabel')} isOptional={false} hasError={Boolean(timeError)} />
+            <DateTimeInput
+              hasError={Boolean(timeError)}
+              value={startTime ?? new Date()}
+              onChange={setStartTime}
+              showDate={false}
+              showTime
+              timeLabel={t('training:trainingTimeLabel')}
+              buttonLabel={startTime ? undefined : t('training:trainingTimePlaceholder')}
+              onPickerOpenChange={open => { if (open && !startTime) setStartTime(new Date()); }}
+            />
+          </View>
+
+          <StepperInput
             label={t('training:trainingDurationLabel')}
             value={durationMinutes}
             onChangeText={setDurationMinutes}
@@ -205,46 +238,38 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
             decimals={0}
             min={0}
             isOptional={false}
+            errorText={durationError}
           />
 
-          <LabeledStepperInput
+          <StepperInput
             label={t('training:trainingDistanceLabel')}
             value={distanceKm}
             onChangeText={setDistanceKm}
-            icon="chart"
+            icon="locationPin"
             unit="km"
             placeholder={t('training:trainingDistancePlaceholder')}
             keyboardType="decimal-pad"
             step={0.5}
             decimals={1}
             min={0}
-            isOptional
           />
 
-          <ThemedText type="label" style={styles.sectionLabel}>
-            {t('training:trainingIntensityLabel')}
-          </ThemedText>
+          <ChoiceInput
+            label={t('training:trainingIntensityLabel')}
+            options={intensityOptions}
+            value={intensity}
+            onChange={setIntensity}
+            isOptional={false}
+            showValidation={showRequiredErrors}
+          />
 
-          <View style={styles.chipRow}>
-            {intensityOptions.map(option => (
-              <TouchableOpacity
-                key={option.key}
-                style={[styles.chip, intensity === option.key ? selectedChipStyle : defaultChipStyle]}
-                onPress={() => setIntensity(option.key)}
-              >
-                <ThemedText type="defaultSemiBold">{option.label}</ThemedText>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <LabeledInput
+          <TextInput
             label={t('training:trainingNotesLabel')}
             inputStyle={[styles.input, styles.notesInput]}
             value={trainingNotes}
             onChangeText={setTrainingNotes}
             placeholder={t('training:trainingNotesPlaceholder')}
             multilineInput
-            isOptional
           />
 
           {trainingFormError && (
@@ -260,9 +285,7 @@ export const TrainingLoggerTab: React.FC<TrainingLoggerTabProps> = ({ selectedDa
             </ThemedText>
           )}
 
-          <AppButton title={t('training:trainingSaveButton')} onPress={handleSaveTraining} style={styles.saveButton} />
-
-          <CancelButton onPress={resetForm} />
+          <SaveCancelButtons onSave={handleSaveTraining} onCancel={resetForm} saveTitle={t('training:trainingSaveButton')} layout="column" />
         </View>
       ) : (
         <AppButton title={t('training:trainingOpenFormButton')} onPress={() => setIsFormOpen(true)} icon="trainingRunning" style={styles.openFormButton} />
@@ -297,11 +320,6 @@ const styles = StyleSheet.create({
   sectionLabel: {
     marginTop: 4,
   },
-  chipRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
   activityRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -324,12 +342,6 @@ const styles = StyleSheet.create({
   activityLabel: {
     textAlign: 'center',
   },
-  chip: {
-    borderWidth: 1,
-    borderRadius: 18,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
   input: {
     marginTop: 8,
   },
@@ -339,11 +351,6 @@ const styles = StyleSheet.create({
   },
   errorText: {
     marginTop: 2,
-  },
-  saveButton: {
-    marginTop: 6,
-    paddingVertical: 12,
-    alignItems: 'center',
   },
   openFormButton: {
     marginTop: 6,
